@@ -26,9 +26,10 @@ import illarion.client.net.NetComm;
 import illarion.client.util.ChatHandler;
 import illarion.client.util.UpdateTaskManager;
 import illarion.client.world.interactive.InteractionManager;
-import illarion.common.graphics.LightTracer;
 import illarion.common.util.StoppableStorage;
-import org.newdawn.slick.GameContainer;
+import org.illarion.engine.Engine;
+import org.illarion.engine.EngineException;
+import org.illarion.engine.graphic.LightTracer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -315,8 +316,10 @@ public final class World {
 
     /**
      * Prepare all components of the world. This needs to be called before the world is used.
+     *
+     * @param engine the engine that is used to display the game
      */
-    public static synchronized void initWorldComponents() {
+    public static synchronized void initWorldComponents(@Nonnull final Engine engine) throws EngineException {
         if (INSTANCE.init) {
             return;
         }
@@ -325,14 +328,14 @@ public final class World {
         INSTANCE.aniManager = new AnimationManager();
         INSTANCE.chatHandler = new ChatHandler();
         INSTANCE.clock = new Clock();
-        INSTANCE.map = new GameMap();
+        INSTANCE.map = new GameMap(engine);
         //noinspection ConstantConditions
         INSTANCE.lights = new LightTracer(INSTANCE.map);
-        INSTANCE.mapDisplay = new MapDisplayManager();
-        INSTANCE.musicBox = new MusicBox();
+        INSTANCE.mapDisplay = new MapDisplayManager(engine);
+        INSTANCE.musicBox = new MusicBox(engine);
         INSTANCE.net = new NetComm();
         INSTANCE.people = new People();
-        INSTANCE.player = new Player();
+        INSTANCE.player = new Player(engine);
         INSTANCE.weather = new Weather();
         INSTANCE.interactionManager = new InteractionManager();
 
@@ -344,9 +347,9 @@ public final class World {
     /**
      * Init the GUI of the game.
      *
-     * @param container the container of the game
+     * @param engine the game engine
      */
-    public static synchronized void initGui(final GameContainer container) {
-        INSTANCE.gameGui = new GameScreenController(container.getInput());
+    public static synchronized void initGui(final Engine engine) {
+        INSTANCE.gameGui = new GameScreenController(engine.getInput());
     }
 }

@@ -47,7 +47,7 @@
     <!-- The style of the text on a tab button that is not the activated one. -->
     <style id="nifty-tab-button#text" base="tab-font">
         <attributes align="center" valign="center" textHAlign="center" textVAlign="center" visibleToMouse="false"
-                    color="#000"/>
+                    color="#f"/>
     </style>
 
     <!-- The style of a tab button that is the activated one. -->

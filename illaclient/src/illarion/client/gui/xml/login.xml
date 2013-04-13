@@ -27,7 +27,7 @@
     <resourceBundle id="login-bundle" filename="login"/>
 
     <screen id="login" controller="illarion.client.gui.controller.LoginScreenController">
-        <layer id="layer" backgroundColor="#0000" childLayout="center">
+        <layer id="layer" childLayout="center">
             <effect>
                 <onStartScreen name="fade" start="#00" end="#ff" inherit="true"/>
                 <onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true"/>
@@ -43,7 +43,7 @@
 
                     <panel childLayout="horizontal" marginBottom="15px">
                         <control name="label" text="${login-bundle.password}" textHAlign="left" width="130px"/>
-                        <control name="textfield" id="passwordTxt" maxLength="20" passwordChar="•" marginLeft="10px"/>
+                        <control name="textfield" id="passwordTxt" maxLength="20" passwordChar="*" marginLeft="10px"/>
                     </panel>
 
                     <panel childLayout="horizontal" marginBottom="30px">

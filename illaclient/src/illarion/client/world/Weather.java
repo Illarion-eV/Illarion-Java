@@ -19,12 +19,8 @@
 package illarion.client.world;
 
 import illarion.client.graphics.AnimationUtility;
-import illarion.client.resources.SoundFactory;
 import org.apache.log4j.Logger;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Sound;
+import org.illarion.engine.graphic.Color;
 
 import javax.annotation.Nonnull;
 import java.util.Random;
@@ -86,18 +82,6 @@ public final class Weather {
     private static final int CLOUDS_STEP = 1;
 
     /**
-     * Value lower then this, cause that there are single flashes with a
-     * variable time in between. Values higher then this value cause that there
-     * is a set time between the flashes, but multiple flashes at once.
-     */
-    private static final int FLASH_CENTER_VALUE = 22;
-
-    /**
-     * Color value of a flash. Listed within the array: red, green, blue
-     */
-    private static final Color FLASH_COLOR = new Color(0);
-
-    /**
      * The value the coverage of the visibility is reduced by due a flash.
      */
     private static final int FLASH_COVERAGE = 40;
@@ -106,11 +90,6 @@ public final class Weather {
      * Time between a fast row of flashes.
      */
     private static final int FLASH_WAIT = 4 * 1000;
-
-    /**
-     * Time between two sets of flashes.
-     */
-    private static final int FLASH_WAIT_LONG = 6 * 1000;
 
     /**
      * Additional visibility coverage caused by fog.
@@ -208,17 +187,6 @@ public final class Weather {
      * Additional visibility coverage caused by snow.
      */
     private static final int SNOW_COVERAGE = 15;
-
-    /**
-     * Sound effect ID of a thunder.
-     */
-    private static final int THUNDER_SOUND_ID = 4;
-
-    /**
-     * Time until the next thunder, in relation to the {@link #lightning} value.
-     * A larger value results in a shorter time.
-     */
-    private static final int THUNDER_WAIT_TIME = 20 * 1000;
 
     /**
      * Brightness at underground areas.
@@ -392,7 +360,7 @@ public final class Weather {
      */
     @SuppressWarnings("nls")
     public Weather() {
-        ambientLight = new Color(Color.black);
+        ambientLight = new Color(Color.BLACK);
         ambientTargetColor = new Color(ambientLight);
     }
 
@@ -405,9 +373,9 @@ public final class Weather {
         // if we are underground it is simply very dark
         if (World.getPlayer().getBaseLevel() < 0) {
             // average brightness underground
-            ambientTargetColor.r = UNDERGROUND_BRIGHT;
-            ambientTargetColor.g = UNDERGROUND_BRIGHT;
-            ambientTargetColor.b = UNDERGROUND_BRIGHT;
+            ambientTargetColor.setRedf(UNDERGROUND_BRIGHT);
+            ambientTargetColor.setGreenf(UNDERGROUND_BRIGHT);
+            ambientTargetColor.setBluef(UNDERGROUND_BRIGHT);
             return;
         }
 
@@ -417,32 +385,32 @@ public final class Weather {
 
         // heavily overcast - all grey
         if (cloud > CLOUD_LIMIT) {
-            ambientTargetColor.r =
-                    (AMBIENT_LIGHT_COLORS[nextHour][1][0] * timeAlpha)
-                            + (AMBIENT_LIGHT_COLORS[hour][1][0] * (1f - timeAlpha));
-            ambientTargetColor.g =
-                    (AMBIENT_LIGHT_COLORS[nextHour][1][1] * timeAlpha)
-                            + (AMBIENT_LIGHT_COLORS[hour][1][1] * (1f - timeAlpha));
-            ambientTargetColor.b =
-                    (AMBIENT_LIGHT_COLORS[nextHour][1][2] * timeAlpha)
-                            + (AMBIENT_LIGHT_COLORS[hour][1][2] * (1f - timeAlpha));
+            ambientTargetColor.setRedf((AMBIENT_LIGHT_COLORS[nextHour][1][0] * timeAlpha)
+                    + (AMBIENT_LIGHT_COLORS[hour][1][0] * (1f - timeAlpha)));
+            ambientTargetColor.setGreenf((AMBIENT_LIGHT_COLORS[nextHour][1][1] * timeAlpha)
+                    + (AMBIENT_LIGHT_COLORS[hour][1][1] * (1f - timeAlpha)));
+            ambientTargetColor.setBluef((AMBIENT_LIGHT_COLORS[nextHour][1][2] * timeAlpha)
+                    + (AMBIENT_LIGHT_COLORS[hour][1][2] * (1f - timeAlpha)));
         } else { // partially cloudy, interpolate color
             final float cloudAlpha = (float) cloud / CLOUD_LIMIT;
-            ambientTargetColor.r =
-                    (((AMBIENT_LIGHT_COLORS[nextHour][0][0] * timeAlpha) + (AMBIENT_LIGHT_COLORS[hour][0][0] * (1f - timeAlpha))) * (1f - cloudAlpha))
-                            + (((AMBIENT_LIGHT_COLORS[nextHour][1][0] * timeAlpha) + (AMBIENT_LIGHT_COLORS[hour][1][0] * (1f - timeAlpha))) * cloudAlpha);
-            ambientTargetColor.g =
-                    (((AMBIENT_LIGHT_COLORS[nextHour][0][1] * timeAlpha) + (AMBIENT_LIGHT_COLORS[hour][0][1] * (1f - timeAlpha))) * (1f - cloudAlpha))
-                            + (((AMBIENT_LIGHT_COLORS[nextHour][1][1] * timeAlpha) + (AMBIENT_LIGHT_COLORS[hour][1][1] * (1f - timeAlpha))) * cloudAlpha);
-            ambientTargetColor.b =
-                    (((AMBIENT_LIGHT_COLORS[nextHour][0][2] * timeAlpha) + (AMBIENT_LIGHT_COLORS[hour][0][2] * (1f - timeAlpha))) * (1f - cloudAlpha))
-                            + (((AMBIENT_LIGHT_COLORS[nextHour][1][2] * timeAlpha) + (AMBIENT_LIGHT_COLORS[hour][1][2] * (1f - timeAlpha))) * cloudAlpha);
+            ambientTargetColor.setRedf((((AMBIENT_LIGHT_COLORS[nextHour][0][0] * timeAlpha) +
+                    (AMBIENT_LIGHT_COLORS[hour][0][0] * (1f - timeAlpha))) * (1f - cloudAlpha))
+                    + (((AMBIENT_LIGHT_COLORS[nextHour][1][0] * timeAlpha) +
+                    (AMBIENT_LIGHT_COLORS[hour][1][0] * (1f - timeAlpha))) * cloudAlpha));
+            ambientTargetColor.setGreenf((((AMBIENT_LIGHT_COLORS[nextHour][0][1] * timeAlpha) +
+                    (AMBIENT_LIGHT_COLORS[hour][0][1] * (1f - timeAlpha))) * (1f - cloudAlpha))
+                    + (((AMBIENT_LIGHT_COLORS[nextHour][1][1] * timeAlpha) +
+                    (AMBIENT_LIGHT_COLORS[hour][1][1] * (1f - timeAlpha))) * cloudAlpha));
+            ambientTargetColor.setBluef((((AMBIENT_LIGHT_COLORS[nextHour][0][2] * timeAlpha) +
+                    (AMBIENT_LIGHT_COLORS[hour][0][2] * (1f - timeAlpha))) * (1f - cloudAlpha))
+                    + (((AMBIENT_LIGHT_COLORS[nextHour][1][2] * timeAlpha) +
+                    (AMBIENT_LIGHT_COLORS[hour][1][2] * (1f - timeAlpha))) * cloudAlpha));
         }
 
         // it is somewhat darker in buildings
         if (!outside) {
-            ambientTargetColor.scale(INSIDE_BRIGHTNESS);
-            ambientTargetColor.a = 1.f;
+            ambientTargetColor.multiply(INSIDE_BRIGHTNESS);
+            ambientTargetColor.setAlpha(Color.MAX_INT_VALUE);
         }
     }
 
@@ -454,25 +422,6 @@ public final class Weather {
      */
     private void changeWeather(final int delta) {
         calculateLight();
-        // scheduling lightning
-        if (lightning > 0) {
-            if (nextThunder >= 0) {
-                if (nextThunder-- <= 0) {
-                    // play thunder sound effect
-                    final Sound sound = SoundFactory.getInstance().getSound(THUNDER_SOUND_ID);
-                    sound.play();
-                    nextThunder = -1;
-                }
-            }
-
-            if (nextFlash-- <= 0) {
-                showFlash = (FLASH_WAIT_LONG / 1000) + rnd.nextInt((lightning / ((FLASH_WAIT_LONG / 1000) - 1)) + 1);
-                nextThunder = FLASH_WAIT_LONG - (lightning / THUNDER_WAIT_TIME);
-
-                nextFlash = (FLASH_CENTER_VALUE - (lightning / FLASH_WAIT_LONG))
-                        + rnd.nextInt(FLASH_CENTER_VALUE - (lightning / FLASH_WAIT_LONG));
-            }
-        }
     }
 
     /**
@@ -545,7 +494,7 @@ public final class Weather {
             if ((showFlash > 0) && ((showFlash % FLASH_WAIT) != 0)) {
                 coverage -= FLASH_COVERAGE;
             } else {
-                final float lum = (ambientLight.r + ambientLight.g + ambientLight.b) / 3.f;
+                final float lum = ambientLight.getLuminancef();
                 coverage += (int) ((1 - lum) * LIGHT_COLOR_COVERAGE);
             }
 
@@ -587,41 +536,6 @@ public final class Weather {
      */
     public boolean isOutside() {
         return outside && (World.getPlayer().getBaseLevel() >= 0);
-    }
-
-    /**
-     * Perform all render actions for the map and calculate the changes to the
-     * weather.
-     *
-     * @param delta  the time since the last update of the weather
-     * @param width  the width of the render area
-     * @param height the height of the render area
-     */
-    public void render(@Nonnull final Graphics g, @Nonnull final GameContainer c) {
-        // no weather if inside or while the display is inactive
-        if (!outside || !World.getMapDisplay().isActive()) {
-            return;
-        }
-
-        renderFlash(g, c);
-    }
-
-    /**
-     * Render a flash if needed and count the waiting times down.
-     */
-    private void renderFlash(@Nonnull final Graphics g, @Nonnull final GameContainer c) {
-        if (lightning == 0) {
-            return;
-        }
-
-        if ((showFlash > 0) && ((showFlash-- % FLASH_WAIT) != 0)) {
-            if (FLASH_COLOR.getGreen() == 0) {
-                FLASH_COLOR.r = FLASH_COLOR.g = FLASH_COLOR.b = 1.f;
-            }
-
-            g.setColor(FLASH_COLOR);
-            g.fillRect(0, 0, c.getWidth(), c.getHeight());
-        }
     }
 
     /**

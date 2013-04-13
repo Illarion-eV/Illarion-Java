@@ -47,6 +47,7 @@
         <antcall target="prepare_mantisconnect"/>
         <antcall target="prepare_nifty"/>
         <antcall target="prepare_slick"/>
+        <antcall target="prepare_gdx"/>
         <antcall target="prepare_substance"/>
         <antcall target="prepare_trident"/>
         <antcall target="prepare_swingx"/>
@@ -697,6 +698,37 @@
         <resourcebuild target="${setuplib}/slick.illares" usepack200="true">
             <fileset dir="${signedlibs}">
                 <patternset refid="slick.pattern"/>
+            </fileset>
+        </resourcebuild>
+    </target>
+
+    <target name="prepare_gdx" description="prepare the libGDX bundle"
+            depends="check_optional_dirs,init_libs,register_extensions" if="keys.exist">
+        <resourceprepare targetdir="${signedlibs}" usepack200="true">
+            <fileset refid="gdx"/>
+        </resourceprepare>
+
+        <signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedlibs}"
+                 storetype="${storetype}">
+            <path>
+                <fileset dir="${signedlibs}">
+                    <patternset refid="gdx.pattern"/>
+                </fileset>
+            </path>
+        </signjar>
+
+        <verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no"
+                   storetype="${storetype}">
+            <path>
+                <fileset dir="${signedlibs}">
+                    <patternset refid="gdx.pattern"/>
+                </fileset>
+            </path>
+        </verifyjar>
+
+        <resourcebuild target="${setuplib}/gdx.illares" usepack200="true">
+            <fileset dir="${signedlibs}">
+                <patternset refid="gdx.pattern"/>
             </fileset>
         </resourcebuild>
     </target>

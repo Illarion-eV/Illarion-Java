@@ -19,6 +19,7 @@
 package illarion.client.graphics;
 
 import illarion.common.graphics.Layers;
+import org.illarion.engine.graphic.Sprite;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -91,8 +92,8 @@ public final class FadingCorridor {
      *                  intersection
      * @param height    the height of the area that needs to be checked for
      *                  intersection
-     * @return <code>true</code> in case the area intersects and is "above" the
-     *         avatar image (spoken in z order), so returning <code>true</code>
+     * @return {@code true} in case the area intersects and is "above" the
+     *         avatar image (spoken in z order), so returning {@code true}
      *         means that the tested object needs to be faded out
      */
     protected boolean isInCorridor(final int testLocX, final int testLocY,
@@ -119,6 +120,6 @@ public final class FadingCorridor {
         fading.setBounds(character.getDisplayX() + TOLERANCE,
                 (character.getDisplayY() + TOLERANCE) - characterSprite.getHeight(), characterSprite.getWidth(),
                 characterSprite.getHeight());
-        back = character.getZOrder() - (Layers.DISTANCE / 2);
+        back = character.getOrder() - (Layers.DISTANCE / 2);
     }
 }

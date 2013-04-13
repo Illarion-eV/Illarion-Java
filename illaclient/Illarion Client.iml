@@ -85,15 +85,14 @@
     <orderEntry type="module" module-name="Illarion Nifty-GUI Style" />
     <orderEntry type="module" module-name="Illarion Nifty-GUI Controls" />
     <orderEntry type="library" name="EventBus" level="project" />
-    <orderEntry type="library" name="LWJGL" level="project" />
     <orderEntry type="library" name="Javolution" level="project" />
     <orderEntry type="library" name="log4j" level="project" />
     <orderEntry type="library" name="Nifty-GUI" level="project" />
     <orderEntry type="library" name="GnuTrove" level="project" />
     <orderEntry type="library" name="XPP3" level="project" />
     <orderEntry type="library" name="JOrbis" level="project" />
-    <orderEntry type="library" name="Slick" level="project" />
     <orderEntry type="library" name="JSR" level="project" />
+    <orderEntry type="module" module-name="Illarion Game Engine" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

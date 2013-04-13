@@ -18,11 +18,14 @@
  */
 package illarion.client.resources.loaders;
 
-import illarion.client.graphics.Sprite;
-import illarion.client.graphics.SpriteBuffer;
 import illarion.client.resources.MiscImageFactory;
 import illarion.client.resources.ResourceFactory;
 import illarion.client.resources.data.MiscImageTemplate;
+import org.illarion.engine.assets.Assets;
+import org.illarion.engine.assets.SpriteFactory;
+import org.illarion.engine.graphic.Sprite;
+
+import javax.annotation.Nonnull;
 
 /**
  * This class is used to load the misc images required in the graphics.
@@ -34,6 +37,21 @@ public final class MiscImageLoader extends AbstractResourceLoader<MiscImageTempl
      * The path inside the resources where the GUI images are stored.
      */
     private static final String GUI_PATH = "data/gui/";
+
+    /**
+     * The assets of the game engine that are required to load the data needed for the misc images.
+     */
+    @Nonnull
+    private final Assets assets;
+
+    /**
+     * Create a new misc image loader.
+     *
+     * @param assets the assets instance of the game engine that is used to load the data
+     */
+    public MiscImageLoader(@Nonnull final Assets assets) {
+        this.assets = assets;
+    }
 
     /**
      * Trigger the loading sequence for this loader.
@@ -48,11 +66,14 @@ public final class MiscImageLoader extends AbstractResourceLoader<MiscImageTempl
 
         factory.init();
 
-        final Sprite attackMarkerSprite = SpriteBuffer.getInstance().getSprite(GUI_PATH, "attackMarker", 1, 0, 0,
-                Sprite.HAlign.center, Sprite.VAlign.middle, false);
+        final Sprite attackMarkerSprite = assets.getSpriteFactory().createSprite(getTextures(assets.getTextureManager(),
+                GUI_PATH, "attackMarker", 1), 0, 0, SpriteFactory.CENTER, SpriteFactory.CENTER, false);
+
         getTargetFactory().storeResource(new MiscImageTemplate(MiscImageFactory.ATTACK_MARKER, attackMarkerSprite, 1));
 
         factory.loadingFinished();
+
+        loadingDone();
 
         return factory;
     }

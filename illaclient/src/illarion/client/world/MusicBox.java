@@ -26,11 +26,10 @@ import illarion.common.util.StoppableStorage;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicPatternSubscriber;
-import org.newdawn.slick.Music;
-import org.newdawn.slick.openal.SoundStore;
+import org.illarion.engine.Engine;
+import org.illarion.engine.sound.Music;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
 /**
@@ -59,18 +58,12 @@ public final class MusicBox implements Stoppable {
     private int currentDefaultTrack;
 
     /**
-     * The music that is currently played.
-     */
-    @Nullable
-    private Music currentMusic;
-
-    /**
      * The ID of the music that is currently played.
      */
     private int currentMusicId;
 
     /**
-     * This flag is set <code>true</code> in case the music box is supposed to play the fighting background music.
+     * This flag is set {@code true} in case the music box is supposed to play the fighting background music.
      * This overwrites any other track that is currently played.
      */
     private boolean fightingMusicPlaying;
@@ -81,41 +74,56 @@ public final class MusicBox implements Stoppable {
      */
     private int overrideSoundId;
 
-    /**
-     * This flag is {@code true} in case the music is activated.
-     */
-    private boolean musicEnabled;
-
-    /**
-     * This variables stores the music volume the player selected between {@code 0.f} and {@code 1.f}
-     */
-    private float musicVolume;
+    @Nonnull
+    private final Engine engine;
 
     /**
      * This is the constructor that prepares this class for proper operation.
      */
-    MusicBox() {
+    MusicBox(@Nonnull final Engine engine) {
+        this.engine = engine;
         overrideSoundId = NO_TRACK;
         fightingMusicPlaying = false;
         currentDefaultTrack = NO_TRACK;
 
         StoppableStorage.getInstance().add(this);
 
-        musicEnabled = IllaClient.getCfg().getBoolean("musicOn");
-        musicVolume = IllaClient.getCfg().getFloat("musicVolume") / Player.MAX_CLIENT_VOL;
-
         AnnotationProcessor.process(this);
     }
 
-    @EventTopicPatternSubscriber(topicPattern = "music.*")
-    public void onUpdateConfig(@Nonnull final String topic, @Nonnull final ConfigChangedEvent data) {
+    @EventTopicPatternSubscriber(topicPattern = "music((On)|(Volume))")
+    public void onUpdateMusicConfig(@Nonnull final String topic, @Nonnull final ConfigChangedEvent data) {
         if ("musicOn".equals(topic)) {
-            musicEnabled = IllaClient.getCfg().getBoolean("musicOn");
-            SoundStore.get().setMusicOn(musicEnabled);
+            final boolean musicEnabled = IllaClient.getCfg().getBoolean("musicOn");
+            if (musicEnabled) {
+                final float musicVolume = IllaClient.getCfg().getFloat("musicVolume") / Player.MAX_CLIENT_VOL;
+                engine.getSounds().setMusicVolume(musicVolume);
+            } else {
+                engine.getSounds().setMusicVolume(0.f);
+            }
         } else if ("musicVolume".equals(topic)) {
-            musicVolume = IllaClient.getCfg().getFloat("musicVolume") / Player.MAX_CLIENT_VOL;
-            SoundStore.get().setMusicVolume(musicVolume);
-            SoundStore.get().setCurrentMusicVolume(musicVolume);
+            final float musicVolume = IllaClient.getCfg().getFloat("musicVolume") / Player.MAX_CLIENT_VOL;
+            if (IllaClient.getCfg().getBoolean("musicOn")) {
+                engine.getSounds().setMusicVolume(musicVolume);
+            }
+        }
+    }
+
+    @EventTopicPatternSubscriber(topicPattern = "sound((On)|(Volume))")
+    public void onUpdateSoundConfig(@Nonnull final String topic, @Nonnull final ConfigChangedEvent data) {
+        if ("soundOn".equals(topic)) {
+            final boolean soundEnabled = IllaClient.getCfg().getBoolean("soundOn");
+            if (soundEnabled) {
+                final float soundVolume = IllaClient.getCfg().getFloat("soundVolume") / Player.MAX_CLIENT_VOL;
+                engine.getSounds().setSoundVolume(soundVolume);
+            } else {
+                engine.getSounds().setSoundVolume(0.f);
+            }
+        } else if ("soundVolume".equals(topic)) {
+            final float soundVolume = IllaClient.getCfg().getFloat("soundVolume") / Player.MAX_CLIENT_VOL;
+            if (IllaClient.getCfg().getBoolean("soundOn")) {
+                engine.getSounds().setMusicVolume(soundVolume);
+            }
         }
     }
 
@@ -149,9 +157,7 @@ public final class MusicBox implements Stoppable {
 
     @Override
     public void saveShutdown() {
-        if (currentMusic != null) {
-            currentMusic.stop();
-        }
+        engine.getSounds().stopMusic(0);
     }
 
     /**
@@ -162,26 +168,23 @@ public final class MusicBox implements Stoppable {
      * @param id the ID of the sound track to play
      */
     private void setSoundTrack(final int id) {
-        if (!musicEnabled || (currentMusicId == id)) {
+        if (currentMusicId == id) {
             return;
         }
 
         currentMusicId = id;
 
         if (id == NO_TRACK) {
-            if (currentMusic != null) {
-                currentMusic.fade(500, 0.f, true);
-                currentMusic = null;
-            }
+            engine.getSounds().stopMusic(500);
             return;
         }
 
-        currentMusic = SongFactory.getInstance().getSong(id);
+        final Music currentMusic = SongFactory.getInstance().getSong(id, engine.getAssets().getSoundsManager());
         if (currentMusic == null) {
             LOGGER.error("Requested music was not found: " + id);
             return;
         }
-        currentMusic.loop(1.f, musicVolume);
+        engine.getSounds().playMusic(currentMusic, 250, 250);
     }
 
     /**

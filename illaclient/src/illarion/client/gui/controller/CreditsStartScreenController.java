@@ -25,13 +25,23 @@ import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.resources.SongFactory;
-import org.newdawn.slick.Music;
+import org.illarion.engine.Engine;
+import org.illarion.engine.sound.Music;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class CreditsStartScreenController implements ScreenController, KeyInputHandler {
     private Nifty nifty;
+
+    @Nonnull
+    private final Engine engine;
+
+    public CreditsStartScreenController(@Nonnull final Engine engine) {
+        this.engine = engine;
+    }
 
     @Override
     public void bind(final Nifty nifty, final Screen screen) {
@@ -40,9 +50,9 @@ public final class CreditsStartScreenController implements ScreenController, Key
 
     @Override
     public void onStartScreen() {
-        final Music creditsMusic = SongFactory.getInstance().getSong(2);
-        if ((creditsMusic != null) && !creditsMusic.playing()) {
-            creditsMusic.play();
+        final Music creditsMusic = SongFactory.getInstance().getSong(2, engine.getAssets().getSoundsManager());
+        if (creditsMusic != null) {
+            engine.getSounds().playMusic(creditsMusic, 250, 250);
         }
         nifty.gotoScreen("creditsSingles");
     }

@@ -20,8 +20,8 @@ package illarion.client.resources.data;
 
 import illarion.client.graphics.AvatarClothManager;
 import illarion.client.graphics.AvatarInfo;
-import illarion.client.graphics.Sprite;
-import org.newdawn.slick.Color;
+import org.illarion.engine.graphic.Color;
+import org.illarion.engine.graphic.Sprite;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

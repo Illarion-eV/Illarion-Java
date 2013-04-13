@@ -55,12 +55,13 @@ import illarion.common.types.Rectangle;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
+import org.illarion.engine.GameContainer;
+import org.illarion.engine.input.Button;
+import org.illarion.engine.input.Input;
+import org.illarion.engine.input.Key;
 import org.illarion.nifty.controls.InventorySlot;
 import org.illarion.nifty.controls.ItemContainerCloseEvent;
 import org.illarion.nifty.controls.itemcontainer.builder.ItemContainerBuilder;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Input;
-import org.newdawn.slick.state.StateBasedGame;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -177,7 +178,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
         }
 
         @Override
-        public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
+        public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
             if (!isContainerCreated(itemContainer.getContainerId())) {
                 createNewContainer(itemContainer);
             }
@@ -233,7 +234,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      */
     private final UpdateTask updateMerchantOverlays = new UpdateTask() {
         @Override
-        public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
+        public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
             updateAllMerchantOverlays();
         }
     };
@@ -444,7 +445,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      * @return {@code true} in case the shift key on the keyboard
      */
     private boolean isShiftPressed() {
-        return (input != null) && (input.isKeyDown(Input.KEY_LSHIFT) || input.isKeyDown(Input.KEY_RSHIFT));
+        return (input != null) && input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
     }
 
     @NiftyEventSubscriber(pattern = ".*container[0-9]+.*slot[0-9]+.*")
@@ -452,7 +453,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
         final int slotId = getSlotId(topic);
         final int containerId = getContainerId(topic);
 
-        if (input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON) || input.isMouseButtonDown(Input.MOUSE_RIGHT_BUTTON)) {
+        if (input.isAnyButtonDown(Button.Left, Button.Right)) {
             return;
         }
 
@@ -480,7 +481,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
     public void closeContainer(final int containerId) {
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
-            public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
+            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
                 if (isContainerCreated(containerId)) {
                     removeItemContainer(containerId);
                 }

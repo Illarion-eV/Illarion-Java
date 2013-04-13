@@ -18,37 +18,108 @@
  */
 package illarion.client.loading;
 
-import illarion.client.graphics.TextureLoader;
-import org.newdawn.slick.loading.LoadingList;
+import illarion.common.util.ProgressMonitor;
+import org.illarion.engine.Engine;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * This class is used to create the list of things that need to be loaded before the game is able to start.
+ * This class is used to enlist the required loading tasks and perform the loading operations itself.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@NotThreadSafe
 public final class Loading {
     /**
      * This variable is set to true in case the elements got enlisted already and this class must not do anything
      * anymore.
      */
-    private static boolean loadingDone = false;
+    private boolean loadingDone;
 
     /**
-     * Private constructor to ensure that this class is never instantiated.
+     * The progress monitor that is used to keep track of the loading progress.
      */
-    private Loading() {
-        // nothing
+    @Nullable
+    private ProgressMonitor progressMonitor;
+
+    /**
+     * This is the list of loading tasks that need to be handled.
+     */
+    @Nonnull
+    private final List<LoadingTask> tasks;
+
+    /**
+     * Create a new instance of this class. This also enlists all the required entries.
+     */
+    public Loading() {
+        tasks = new ArrayList<LoadingTask>();
     }
 
-    public static void enlistMissingComponents() {
+    /**
+     * Enlist all components that are still needed to be loaded.
+     *
+     * @param gameEngine the game engine
+     */
+    public void enlistMissingComponents(@Nonnull final Engine gameEngine) {
+        progressMonitor = new ProgressMonitor();
         if (!loadingDone) {
-            TextureLoader.getInstance().enlistAllTextureAtlasLoadQueries();
-
-            LoadingList.get().add(new ResourceTableLoading());
-            LoadingList.get().add(new GameEnvironmentLoading());
+            addToTaskList(new TextureLoadingTask(gameEngine));
+            addToTaskList(new ResourceTableLoading(gameEngine));
+            addToTaskList(new SoundLoadingTask(gameEngine));
+            addToTaskList(new GameEnvironmentLoading(gameEngine));
             loadingDone = true;
         }
+    }
 
-        LoadingList.get().add(new FinishLoading());
+    /**
+     * Perform the text loading step.
+     */
+    public void load() {
+        if (tasks.isEmpty()) {
+            return;
+        }
+
+        final LoadingTask currentTask = tasks.get(0);
+        currentTask.load();
+        if (currentTask.isLoadingDone()) {
+            tasks.remove(0);
+        }
+    }
+
+    /**
+     * Check if all loading operations are done.
+     *
+     * @return {@code true} in case the loading is done
+     */
+    public boolean isLoadingDone() {
+        return tasks.isEmpty();
+    }
+
+    /**
+     * Add a new task to the list of tasks and attach it to the progress monitor.
+     *
+     * @param task the task to add
+     */
+    private void addToTaskList(@Nonnull final LoadingTask task) {
+        tasks.add(task);
+
+        assert progressMonitor != null;
+        progressMonitor.addChild(task.getProgressMonitor());
+    }
+
+    /**
+     * Get the loading progress.
+     *
+     * @return the progress of the loading operation as value between {@code 0.f} and {@code 1.f} (finished)
+     */
+    public float getProgress() {
+        if (progressMonitor == null) {
+            return 1.f;
+        }
+        return progressMonitor.getProgress();
     }
 }

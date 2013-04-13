@@ -30,7 +30,7 @@ import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
-import org.newdawn.slick.GameContainer;
+import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
 

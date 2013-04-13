@@ -18,34 +18,76 @@
  */
 package illarion.client.loading;
 
-import illarion.client.graphics.FontLoader;
+import illarion.client.IllaClient;
 import illarion.client.world.World;
-import org.newdawn.slick.loading.DeferredResource;
+import illarion.common.util.ProgressMonitor;
+import org.apache.log4j.Logger;
+import org.illarion.engine.Engine;
+import org.illarion.engine.EngineException;
 
-import javax.annotation.Nullable;
-import java.io.IOException;
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.NotThreadSafe;
 
 /**
  * This loading task takes care for loading the components of the game environment that still need to be loaded.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class GameEnvironmentLoading implements DeferredResource {
+@NotThreadSafe
+final class GameEnvironmentLoading implements LoadingTask {
     /**
-     * Load the game environment.
+     * This is set {@code true} once the loading of the game components is done.
      */
-    @Override
-    public void load() throws IOException {
-        World.initWorldComponents();
-        FontLoader.getInstance().prepareAllFonts();
-    }
+    private boolean loadingDone;
 
     /**
-     * The human readable description of this loading task.
+     * The monitor for the loading progress.
      */
-    @Nullable
+    @Nonnull
+    private final ProgressMonitor monitor;
+
+    /**
+     * The game engine instance that is used.
+     */
+    @Nonnull
+    private final Engine usedEngine;
+
+    /**
+     * The logger of this class.
+     */
+    @Nonnull
+    private final Logger logger = Logger.getLogger(GameEnvironmentLoading.class);
+
+    /**
+     * The constructor of this loading task.
+     *
+     * @param engine the engine that is used to load the game
+     */
+    GameEnvironmentLoading(@Nonnull final Engine engine) {
+        usedEngine = engine;
+        monitor = new ProgressMonitor();
+    }
+
     @Override
-    public String getDescription() {
-        return null;
+    public void load() {
+        try {
+            World.initWorldComponents(usedEngine);
+        } catch (@Nonnull final EngineException e) {
+            logger.error("Failed to init the components of the world.", e);
+            IllaClient.errorExit("World init failed!");
+        }
+        loadingDone = true;
+        monitor.setProgress(1.f);
+    }
+
+    @Override
+    public boolean isLoadingDone() {
+        return loadingDone;
+    }
+
+    @Nonnull
+    @Override
+    public ProgressMonitor getProgressMonitor() {
+        return monitor;
     }
 }

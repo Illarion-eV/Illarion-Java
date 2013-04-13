@@ -18,13 +18,14 @@
  */
 package illarion.client.resources.loaders;
 
-import illarion.client.graphics.Sprite;
-import illarion.client.graphics.SpriteBuffer;
 import illarion.client.resources.ResourceFactory;
 import illarion.client.resources.data.EffectTemplate;
 import illarion.common.util.TableLoaderEffects;
 import illarion.common.util.TableLoaderSink;
 import org.apache.log4j.Logger;
+import org.illarion.engine.assets.Assets;
+import org.illarion.engine.assets.SpriteFactory;
+import org.illarion.engine.graphic.Sprite;
 
 import javax.annotation.Nonnull;
 
@@ -50,6 +51,21 @@ public final class EffectLoader extends AbstractResourceLoader<EffectTemplate> i
     private static final String EFFECTS_PATH = "data/effects/";
 
     /**
+     * The assets of the game engine that are required to load the data needed for the effects.
+     */
+    @Nonnull
+    private final Assets assets;
+
+    /**
+     * Create a new effect loader.
+     *
+     * @param assets the assets instance of the game engine that is used to load the data
+     */
+    public EffectLoader(@Nonnull final Assets assets) {
+        this.assets = assets;
+    }
+
+    /**
      * Trigger the loading sequence for this loader.
      */
     @Override
@@ -63,6 +79,8 @@ public final class EffectLoader extends AbstractResourceLoader<EffectTemplate> i
         factory.init();
         new TableLoaderEffects(this);
         factory.loadingFinished();
+
+        loadingDone();
 
         return factory;
     }
@@ -80,8 +98,9 @@ public final class EffectLoader extends AbstractResourceLoader<EffectTemplate> i
         final int speed = loader.getAnimationSpeed();
         final int light = loader.getEffectLight();
 
-        final Sprite effectSprite = SpriteBuffer.getInstance().getSprite(EFFECTS_PATH, name, frames, offsetX,
-                offsetY, Sprite.HAlign.center, Sprite.VAlign.middle, false);
+        final Sprite effectSprite = assets.getSpriteFactory().createSprite(getTextures(assets.getTextureManager(),
+                EFFECTS_PATH, name, frames), offsetX, offsetY, SpriteFactory.CENTER, SpriteFactory.CENTER, false);
+
         final EffectTemplate template = new EffectTemplate(effectID, effectSprite, frames, speed, light);
         try {
             getTargetFactory().storeResource(template);

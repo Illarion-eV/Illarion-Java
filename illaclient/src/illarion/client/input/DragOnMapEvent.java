@@ -18,7 +18,7 @@
  */
 package illarion.client.input;
 
-import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
+import org.illarion.engine.input.Button;
 
 import javax.annotation.Nonnull;
 
@@ -41,16 +41,15 @@ public class DragOnMapEvent extends AbstractMouseOnMapEvent {
     /**
      * Create and initialize such a event.
      *
-     * @param startX                 the X coordinate where the dragging starts
-     * @param startY                 the Y coordinate where the dragging starts
-     * @param stopX                  the X coordinate where the dragging is currently
-     * @param stopY                  the Y coordinate where the dragging is currently
-     * @param pressedKey             the key used for the dragging operation
-     * @param inputForwardingControl the control class to change the forwarding behaviour
+     * @param startX     the X coordinate where the dragging starts
+     * @param startY     the Y coordinate where the dragging starts
+     * @param stopX      the X coordinate where the dragging is currently
+     * @param stopY      the Y coordinate where the dragging is currently
+     * @param pressedKey the key used for the dragging operation
      */
-    public DragOnMapEvent(final int startX, final int startY, final int stopX, final int stopY, final int pressedKey,
-                          final ForwardingInputSystem inputForwardingControl) {
-        super(pressedKey, stopX, stopY, inputForwardingControl);
+    public DragOnMapEvent(final int startX, final int startY, final int stopX, final int stopY,
+                          final Button pressedKey) {
+        super(pressedKey, stopX, stopY);
         oldX = startX;
         oldY = startY;
     }

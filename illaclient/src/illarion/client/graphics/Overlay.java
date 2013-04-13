@@ -22,7 +22,7 @@ import illarion.client.resources.OverlayFactory;
 import illarion.client.resources.Resource;
 import illarion.client.resources.data.OverlayTemplate;
 import org.apache.log4j.Logger;
-import org.newdawn.slick.Color;
+import org.illarion.engine.graphic.Color;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

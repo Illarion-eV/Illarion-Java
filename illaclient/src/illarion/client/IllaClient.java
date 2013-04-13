@@ -18,12 +18,7 @@
  */
 package illarion.client;
 
-import de.lessvoid.nifty.slick2d.loaders.SlickAddLoaderLocation;
-import de.lessvoid.nifty.slick2d.loaders.SlickRenderFontLoaders;
-import de.lessvoid.nifty.slick2d.loaders.SlickRenderImageLoaders;
 import illarion.client.crash.DefaultCrashHandler;
-import illarion.client.graphics.FontLoader;
-import illarion.client.graphics.TextureLoader;
 import illarion.client.net.client.LogoutCmd;
 import illarion.client.resources.SongFactory;
 import illarion.client.resources.SoundFactory;
@@ -32,27 +27,22 @@ import illarion.client.resources.loaders.SoundLoader;
 import illarion.client.util.ChatLog;
 import illarion.client.util.GlobalExecutorService;
 import illarion.client.util.Lang;
-import illarion.client.world.MapDimensions;
 import illarion.client.world.Player;
 import illarion.client.world.World;
 import illarion.common.bug.CrashReporter;
 import illarion.common.config.Config;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.config.ConfigSystem;
-import illarion.common.graphics.GraphicResolution;
 import illarion.common.util.*;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.bushe.swing.event.*;
-import org.lwjgl.Sys;
-import org.newdawn.slick.AppGameContainer;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.opengl.renderer.Renderer;
-import org.newdawn.slick.state.GameState;
-import org.newdawn.slick.util.Log;
-import org.newdawn.slick.util.LogSystem;
+import org.illarion.engine.Backend;
+import org.illarion.engine.DesktopGameContainer;
+import org.illarion.engine.EngineException;
+import org.illarion.engine.EngineManager;
+import org.illarion.engine.graphic.GraphicResolution;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -82,7 +72,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     /**
      * The version information of this client. This version is shows at multiple positions within the client.
      */
-    public static final String VERSION = "2.0.15"; //$NON-NLS-1$
+    public static final String VERSION = "2.1.0"; //$NON-NLS-1$
 
     /**
      * The default server the client connects too. The client will always connect to this server.
@@ -150,17 +140,13 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     /**
      * The container that is used to display the game.
      */
-    private AppGameContainer gameContainer;
+    private DesktopGameContainer gameContainer;
 
     /**
      * The default empty constructor used to create the singleton instance of this class.
      */
     private IllaClient() {
 
-    }
-
-    public GameState getGameState(int id) {
-        return game.getState(id);
     }
 
     private void init() {
@@ -187,11 +173,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
             CrashReporter.getInstance().setMode(CrashReporter.MODE_NEVER);
         }
 
-        Renderer.setRenderer(Renderer.IMMEDIATE_RENDERER);
-
-        SlickRenderImageLoaders.getInstance().addLoader(TextureLoader.getInstance(), SlickAddLoaderLocation.first);
-        SlickRenderFontLoaders.getInstance().addLoader(FontLoader.getInstance(), SlickAddLoaderLocation.first);
-
         // Preload sound and music
         try {
             new SongLoader().setTarget(SongFactory.getInstance()).call();
@@ -216,50 +197,43 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         }
 
         try {
+            final int requestedWidth;
+            final int requestedHeight;
+            final boolean fullScreenMode;
+
             if (cfg.getBoolean(CFG_FULLSCREEN)) {
-                gameContainer = new AppGameContainer(game, res.getWidth(), res.getHeight(), true);
+                fullScreenMode = true;
+                requestedHeight = res.getHeight();
+                requestedWidth = res.getWidth();
             } else {
+                fullScreenMode = false;
                 final int windowedWidth = cfg.getInteger("windowWidth");
                 final int windowedHeight = cfg.getInteger("windowHeight");
-                gameContainer = new AppGameContainer(game, (windowedWidth < 0) ? res.getWidth() : windowedWidth,
-                        (windowedHeight < 0) ? res.getHeight() : windowedHeight, false);
+                requestedHeight = (windowedHeight < 0) ? res.getHeight() : windowedHeight;
+                requestedWidth = (windowedWidth < 0) ? res.getWidth() : windowedWidth;
             }
-        } catch (SlickException e) {
+
+            gameContainer = EngineManager.createDesktopGame(Backend.libGDX, game,
+                    requestedWidth, requestedHeight, fullScreenMode);
+        } catch (@Nonnull final EngineException e) {
             LOGGER.error("Fatal error creating game screen!!!", e);
             System.exit(-1);
         }
 
-        gameContainer.setAlwaysRender(true);
-        gameContainer.setUpdateOnlyWhenVisible(false);
-        gameContainer.setMultiSample(2);
-        gameContainer.setVerbose(true);
-        gameContainer.setResizable(true);
-        gameContainer.setTargetFrameRate(res.getRefreshRate());
-        gameContainer.setForceExit(false);
-        if (DEFAULT_SERVER == Servers.realserver) {
-            gameContainer.setShowFPS(false);
-        }
+        gameContainer.setTitle(APPLICATION + ' ' + VERSION);
+        gameContainer.setIcons(new String[]{"illarion_client16.png", "illarion_client32.png",
+                "illarion_client64.png", "illarion_client256.png"});
 
         EventBus.subscribe(CFG_FULLSCREEN, this);
         EventBus.subscribe(CFG_RESOLUTION, this);
 
         try {
-            gameContainer.setIcons(new String[]{"illarion_client16.png", "illarion_client32.png",
-                    "illarion_client64.png", "illarion_client256.png"});
-            gameContainer.start();
-            LOGGER.info("Client shutdown initiated.");
+            gameContainer.setResizeable(true);
+            gameContainer.startGame();
         } catch (@Nonnull final Exception e) {
             LOGGER.fatal("Exception while launching game.", e);
-            Sys.alert("Error", "The client caused a error while starting up: " + e.getMessage());
-        } finally {
-            quitGame();
-            World.cleanEnvironment();
-            cfg.save();
-            GlobalExecutorService.shutdown();
+            exitGameContainer();
         }
-
-        LOGGER.info("Cleanup done.");
-        startFinalKiller();
     }
 
     /**
@@ -267,7 +241,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      *
      * @return the are used to display the game inside
      */
-    public GameContainer getContainer() {
+    public DesktopGameContainer getContainer() {
         return gameContainer;
     }
 
@@ -284,7 +258,17 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     }
 
     public static void exitGameContainer() {
-        INSTANCE.gameContainer.exit();
+        INSTANCE.gameContainer.exitGame();
+
+        LOGGER.info("Client shutdown initiated.");
+
+        getInstance().quitGame();
+        World.cleanEnvironment();
+        getCfg().save();
+        GlobalExecutorService.shutdown();
+
+        LOGGER.info("Cleanup done.");
+        startFinalKiller();
     }
 
     /**
@@ -515,44 +499,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         java.util.logging.Logger.getLogger("javolution").setLevel(Level.SEVERE);
         JavaLogToLog4J.setup();
         StdOutToLog4J.setup();
-        Log.setLogSystem(new LogSystem() {
-            private final Logger log = Logger.getLogger(IllaClient.class);
-
-            @Override
-            public void error(final String s, final Throwable throwable) {
-                log.error(s, throwable);
-            }
-
-            @Override
-            public void error(final Throwable throwable) {
-                log.error("", throwable);
-            }
-
-            @Override
-            public void error(final String s) {
-                log.error(s);
-            }
-
-            @Override
-            public void warn(final String s) {
-                log.warn(s);
-            }
-
-            @Override
-            public void warn(final String s, final Throwable throwable) {
-                log.warn(s, throwable);
-            }
-
-            @Override
-            public void info(final String s) {
-                log.info(s);
-            }
-
-            @Override
-            public void debug(final String s) {
-                log.debug(s);
-            }
-        });
     }
 
     public static final String CFG_FULLSCREEN = "fullscreen";
@@ -617,14 +563,18 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
             try {
                 final GraphicResolution res = new GraphicResolution(resolutionString);
                 final boolean fullScreen = cfg.getBoolean(CFG_FULLSCREEN);
-                gameContainer.setDisplayMode(res.getWidth(), res.getHeight(), fullScreen);
-                gameContainer.setTargetFrameRate(res.getRefreshRate());
+                if (fullScreen) {
+                    gameContainer.setFullScreenResolution(res);
+                    gameContainer.setFullScreen(true);
+                } else {
+                    gameContainer.setWindowSize(res.getWidth(), res.getHeight());
+                    gameContainer.setFullScreen(false);
+                }
                 if (!fullScreen) {
                     cfg.set("windowHeight", res.getHeight());
                     cfg.set("windowWidth", res.getWidth());
                 }
-                MapDimensions.getInstance().reportScreenSize(gameContainer.getWidth(), gameContainer.getHeight());
-            } catch (@Nonnull final SlickException e) {
+            } catch (@Nonnull final EngineException e) {
                 LOGGER.error("Failed to apply graphic mode: " + resolutionString);
             } catch (@Nonnull final IllegalArgumentException ex) {
                 LOGGER.error("Failed to apply graphic mode: " + resolutionString);

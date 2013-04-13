@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Objenesis">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/objenesis" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/illacommon/lib/objenesis" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/objenesis" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/illacommon/lib/objenesis" recursive="false" type="SOURCES" />
+  </library>
+</component>

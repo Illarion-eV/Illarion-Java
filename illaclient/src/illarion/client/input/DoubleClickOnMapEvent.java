@@ -18,7 +18,7 @@
  */
 package illarion.client.input;
 
-import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
+import org.illarion.engine.input.Button;
 
 /**
  * This event is published when a double click operation on the map was noted.
@@ -29,13 +29,11 @@ public final class DoubleClickOnMapEvent extends AbstractMouseOnMapEvent {
     /**
      * Create and initialize such an event.
      *
-     * @param key                    the mouse key that was clicked
-     * @param x                      the x coordinate of the click
-     * @param y                      the y coordinate of the click
-     * @param inputForwardingControl the control class to change the forwarding behaviour
+     * @param key the mouse key that was clicked
+     * @param x   the x coordinate of the click
+     * @param y   the y coordinate of the click
      */
-    public DoubleClickOnMapEvent(final int key, final int x, final int y, final ForwardingInputSystem
-            inputForwardingControl) {
-        super(key, x, y, inputForwardingControl);
+    public DoubleClickOnMapEvent(final Button key, final int x, final int y) {
+        super(key, x, y);
     }
 }

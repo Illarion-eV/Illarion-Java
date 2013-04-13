@@ -48,6 +48,16 @@
     <property name="easyquest.res.deploy" location="${setup}/${easyquest.res}"/>
     <property name="easyquest.bin" location="${compiled}/${easyquest.jar}"/>
 
+    <property name="engine" location="${illacommon.include.dir}/../illagameengine"/>
+    <property name="engine.bin" location="${compiled}/${engine.jar}"/>
+    <property name="engine.res.deploy" location="${setup}/${engine.res}"/>
+    <property name="engine.slick.bin" location="${compiled}/${engine-slick.jar}"/>
+    <property name="engine.slick.res.deploy" location="${setup}/${engine-slick.res}"/>
+    <property name="engine.gdx.bin" location="${compiled}/${engine-gdx.jar}"/>
+    <property name="engine.gdx.res.deploy" location="${setup}/${engine-gdx.res}"/>
+    <property name="engine.nifty.bin" location="${compiled}/${engine-nifty.jar}"/>
+    <property name="engine.nifty.res.deploy" location="${setup}/${engine-nifty.res}"/>
+
     <property name="mapedit" location="${illacommon.include.dir}/../illamapedit"/>
     <property name="mapedit.res.deploy" location="${setup}/${mapedit.res}"/>
     <property name="mapedit.bin" location="${compiled}/${mapedit.jar}"/>
@@ -246,6 +256,18 @@
     </patternset>
     <fileset id="slick" dir="${slick.dir}">
         <patternset refid="slick.pattern"/>
+    </fileset>
+
+    <!-- libGDX 0.9.8 --><!-- http://libgdx.badlogicgames.com/ -->
+    <property name="gdx.dir" location="${common}/lib/gdx"/>
+    <patternset id="gdx.pattern">
+        <include name="gdx.jar"/>
+        <include name="gdx-backend-lwjgl.jar"/>
+        <include name="gdx-backend-lwjgl-natives.jar"/>
+        <include name="gdx-natives.jar"/>
+    </patternset>
+    <fileset id="gdx" dir="${gdx.dir}">
+        <patternset refid="gdx.pattern"/>
     </fileset>
 
     <!-- Nifty 1.4.0-SNAPSHOT --><!-- http://nifty-gui.lessvoid.com/ -->

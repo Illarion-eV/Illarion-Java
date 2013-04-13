@@ -107,12 +107,15 @@ public final class Client implements DevelopmentResource {
             dep.add(Javolution.getInstance());
             dep.add(Log4j.getInstance());
             dep.add(Trove.getInstance());
-            dep.add(Slick.getInstance());
             dep.add(NiftyGui.getInstance());
             dep.add(EventBus.getInstance());
             dep.add(Common.getInstance());
             dep.add(NiftyIllarion.getInstance());
             dep.add(JSR.getInstance());
+
+            dep.add(Engine.getInstance());
+            dep.add(EngineGdx.getInstance());
+            dep.add(EngineNifty.getInstance());
 
             dep.add(Books.getInstance());
             dep.add(Characters.getInstance());

@@ -15,8 +15,6 @@
     <orderEntry type="library" name="GnuTrove" level="project" />
     <orderEntry type="library" name="XZ for Java" level="project" />
     <orderEntry type="library" name="EventBus" level="project" />
-    <orderEntry type="library" name="Nifty-GUI" level="project" />
-    <orderEntry type="library" name="Slick" level="project" />
     <orderEntry type="library" name="JSR" level="project" />
     <orderEntry type="library" name="MantisConnect" level="project" />
     <orderEntry type="library" name="Java API for XML-based RPC" level="project" />

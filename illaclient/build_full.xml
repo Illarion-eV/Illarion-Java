@@ -51,6 +51,7 @@
 
     <target name="build_source" description="Build only the source code" depends="fetch_libs">
         <ant antfile="${common}/build.xml" target="build_common_res"/>
+        <ant antfile="${engine}/build.xml" target="build_engine_res"/>
 
         <ant antfile="${niftycontrols}/build.xml" target="build_nifty_controls_res"/>
         <ant antfile="${niftystyle}/build.xml" target="build_nifty_style_res"/>

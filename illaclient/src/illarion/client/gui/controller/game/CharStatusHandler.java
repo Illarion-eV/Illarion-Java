@@ -26,8 +26,8 @@ import illarion.client.net.server.events.AttributeUpdateReceivedEvent;
 import illarion.client.world.World;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
+import org.illarion.engine.GameContainer;
 import org.illarion.nifty.controls.Progress;
-import org.newdawn.slick.GameContainer;
 
 import javax.annotation.Nonnull;
 

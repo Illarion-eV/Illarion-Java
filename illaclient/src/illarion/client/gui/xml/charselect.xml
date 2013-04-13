@@ -27,7 +27,7 @@
     <resourceBundle id="charselect-bundle" filename="charselect"/>
 
     <screen id="charSelect" controller="illarion.client.gui.controller.CharScreenController">
-        <layer id="layer2" backgroundColor="#0000" childLayout="center">
+        <layer id="layer2" childLayout="center">
             <effect>
                 <onStartScreen name="fade" start="#00" end="#ff" inherit="true"/>
             </effect>

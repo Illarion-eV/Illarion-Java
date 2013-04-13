@@ -18,14 +18,15 @@
  */
 package illarion.client.resources.loaders;
 
-import illarion.client.graphics.Sprite;
-import illarion.client.graphics.SpriteBuffer;
 import illarion.client.resources.ResourceFactory;
 import illarion.client.resources.data.TileTemplate;
 import illarion.common.graphics.TileInfo;
 import illarion.common.util.TableLoaderSink;
 import illarion.common.util.TableLoaderTiles;
 import org.apache.log4j.Logger;
+import org.illarion.engine.assets.Assets;
+import org.illarion.engine.assets.SpriteFactory;
+import org.illarion.engine.graphic.Sprite;
 
 import javax.annotation.Nonnull;
 
@@ -44,6 +45,21 @@ public final class TileLoader extends AbstractResourceLoader<TileTemplate> imple
     private static final Logger LOGGER = Logger.getLogger(ItemLoader.class);
 
     /**
+     * The assets of the game engine that are required to load the data needed for the tiles.
+     */
+    @Nonnull
+    private final Assets assets;
+
+    /**
+     * Create a new tile loader.
+     *
+     * @param assets the assets instance of the game engine that is used to load the data
+     */
+    public TileLoader(@Nonnull final Assets assets) {
+        this.assets = assets;
+    }
+
+    /**
      * Trigger the loading sequence for this loader.
      */
     @Override
@@ -57,6 +73,8 @@ public final class TileLoader extends AbstractResourceLoader<TileTemplate> imple
         factory.init();
         new TableLoaderTiles(this);
         factory.loadingFinished();
+
+        loadingDone();
 
         return factory;
     }
@@ -92,8 +110,8 @@ public final class TileLoader extends AbstractResourceLoader<TileTemplate> imple
                 break;
         }
 
-        final Sprite tileSprite = SpriteBuffer.getInstance().getSprite(TILE_PATH, name, frames, 0,
-                0, Sprite.HAlign.center, Sprite.VAlign.middle, false);
+        final Sprite tileSprite = assets.getSpriteFactory().createSprite(getTextures(assets.getTextureManager(),
+                TILE_PATH, name, frames), 0, 0, SpriteFactory.CENTER, SpriteFactory.CENTER, false);
         final TileTemplate template = new TileTemplate(id, tileSprite, frames, speed, info);
 
         try {

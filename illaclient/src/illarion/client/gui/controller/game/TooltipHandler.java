@@ -31,10 +31,9 @@ import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
 import illarion.common.types.Rectangle;
 import org.bushe.swing.event.EventBus;
+import org.illarion.engine.GameContainer;
+import org.illarion.engine.input.Input;
 import org.illarion.nifty.controls.tooltip.builder.ToolTipBuilder;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Input;
-import org.newdawn.slick.state.StateBasedGame;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -82,7 +81,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
     @Nonnull
     private UpdateTask cleanToolTips = new UpdateTask() {
         @Override
-        public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
+        public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
             for (final Element element : toolTipLayer.getElements()) {
                 element.hide(new EndNotify() {
                     @Override
@@ -115,7 +114,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
 
     @Override
     public void update(@Nonnull final GameContainer container, final int delta) {
-        final Input input = container.getInput();
+        final Input input = container.getEngine().getInput();
         lastMouseX = input.getMouseX();
         lastMouseY = input.getMouseY();
         if (activeTooltipArea != null) {
@@ -149,7 +148,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
 
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
-            public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
+            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
                 showToolTipImpl(location, tooltip);
                 activeTooltipArea = location;
             }

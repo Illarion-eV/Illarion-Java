@@ -19,9 +19,9 @@
 package illarion.client.graphics;
 
 import illarion.common.types.Location;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
+import org.illarion.engine.GameContainer;
+import org.illarion.engine.graphic.Color;
+import org.illarion.engine.graphic.Graphics;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -349,13 +349,13 @@ final class AvatarClothRenderer {
     /**
      * Render all clothes in the correct order.
      */
-    protected void draw(@Nonnull final Graphics g) {
+    void render(@Nonnull final Graphics g) {
         clothLock.readLock().lock();
         try {
             for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
                 final int currentIndex = RENDER_DIR[direction][i];
                 if (currentClothes[currentIndex] != null) {
-                    currentClothes[currentIndex].draw(g);
+                    currentClothes[currentIndex].render(g);
                 }
             }
         } finally {
@@ -366,7 +366,7 @@ final class AvatarClothRenderer {
     /**
      * Update all clothes
      */
-    protected void update(@Nonnull final GameContainer c, final int delta) {
+    void update(@Nonnull final GameContainer c, final int delta) {
         clothLock.readLock().lock();
         try {
             for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
@@ -386,10 +386,10 @@ final class AvatarClothRenderer {
      *
      * @param group the group the item is a part of. So the location its shown
      *              at
-     * @param item  the item that shall be shown itself or <code>null</code> to
+     * @param item  the item that shall be shown itself or {@code null} to
      *              remove the item
      */
-    protected void setCloth(final int group, @Nullable final AvatarCloth item) {
+    void setCloth(final int group, @Nullable final AvatarCloth item) {
         clothLock.writeLock().lock();
         try {
             if (currentClothes[group] != null) {
@@ -424,8 +424,8 @@ final class AvatarClothRenderer {
      * @param newZ     the z coordinate so the layer of this object
      * @param newLayer the global layer of this object
      */
-    protected void setScreenLocation(final int newX, final int newY,
-                                     final int newZ, final int newLayer) {
+    void setScreenLocation(final int newX, final int newY,
+                           final int newZ, final int newLayer) {
         avatarPosX = newX;
         avatarPosY = newY;
         avatarPosZ = newZ;

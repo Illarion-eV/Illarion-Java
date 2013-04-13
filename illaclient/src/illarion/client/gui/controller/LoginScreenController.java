@@ -34,11 +34,8 @@ import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.Game;
 import illarion.client.IllaClient;
 import illarion.client.Login;
-import illarion.client.resources.SongFactory;
 import illarion.client.util.Lang;
-import org.newdawn.slick.Music;
-import org.newdawn.slick.state.StateBasedGame;
-import org.newdawn.slick.state.transition.FadeOutTransition;
+import org.illarion.engine.Engine;
 
 import javax.annotation.Nonnull;
 
@@ -103,10 +100,18 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     /**
      * The game that is the parent of this class.
      */
-    private final StateBasedGame game;
+    @Nonnull
+    private final Game game;
 
-    public LoginScreenController(final StateBasedGame game) {
+    /**
+     * The engine that is used in this game instance.
+     */
+    @Nonnull
+    private final Engine engine;
+
+    public LoginScreenController(@Nonnull final Game game, @Nonnull final Engine engine) {
         this.game = game;
+        this.engine = engine;
     }
 
     /**
@@ -143,10 +148,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
 
     @Override
     public void onStartScreen() {
-        final Music creditsMusic = SongFactory.getInstance().getSong(2);
-        if ((creditsMusic != null) && creditsMusic.playing()) {
-            creditsMusic.fade(500, 0.f, true);
-        }
+        engine.getSounds().stopMusic(500);
     }
 
     @Override
@@ -229,7 +231,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
                 }
             });
         } else {
-            game.enterState(Game.STATE_LOADING, new FadeOutTransition(), null);
+            game.enterState(Game.STATE_LOADING);
         }
     }
 

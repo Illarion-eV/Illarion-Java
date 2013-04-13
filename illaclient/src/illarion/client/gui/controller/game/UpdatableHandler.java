@@ -18,7 +18,7 @@
  */
 package illarion.client.gui.controller.game;
 
-import org.newdawn.slick.GameContainer;
+import org.illarion.engine.GameContainer;
 
 /**
  * This interface has to be implemented by update handlers that want to receive update calls during the main loop.

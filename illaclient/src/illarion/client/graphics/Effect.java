@@ -23,8 +23,8 @@ import illarion.client.resources.Resource;
 import illarion.client.resources.data.EffectTemplate;
 import illarion.client.world.World;
 import illarion.common.graphics.Layers;
-import illarion.common.graphics.LightSource;
 import illarion.common.types.Location;
+import org.illarion.engine.graphic.LightSource;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

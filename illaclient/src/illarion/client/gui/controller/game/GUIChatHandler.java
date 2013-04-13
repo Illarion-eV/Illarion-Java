@@ -34,7 +34,6 @@ import de.lessvoid.nifty.input.NiftyStandardInputEvent;
 import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
-import de.lessvoid.nifty.slick2d.render.font.SlickRenderFont;
 import de.lessvoid.nifty.tools.Color;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.graphics.Avatar;
@@ -52,8 +51,8 @@ import illarion.common.types.Rectangle;
 import illarion.common.util.FastMath;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.state.StateBasedGame;
+import org.illarion.engine.GameContainer;
+import org.illarion.engine.graphic.Font;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -143,7 +142,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         }
 
         @Override
-        public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
+        public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
             addChatLogText(text, color);
         }
     }
@@ -175,7 +174,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         }
 
         @Override
-        public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
+        public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
             addMessageBubble(targetChar, text, color);
         }
     }
@@ -398,7 +397,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         toggleChatLog();
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
-            public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
+            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
                 keyEvent(NiftyStandardInputEvent.SubmitText);
                 keyEvent(NiftyStandardInputEvent.SubmitText);
             }
@@ -494,10 +493,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         final LabelBuilder labelBuilder = new LabelBuilder();
         labelBuilder.style("nifty-label");
 
-        final SlickRenderFont font = FontLoader.getInstance().getFontSave(FontLoader.Fonts.Text);
-        if (font == null) {
-            throw new IllegalStateException("Font resources are missing!");
-        }
+        final Font font = FontLoader.getInstance().getFont(FontLoader.TEXT_FONT);
         final int textWidth = font.getWidth(message);
         if (textWidth > 300) {
             labelBuilder.width("300px");
@@ -506,7 +502,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
             labelBuilder.width(SizeValue.px(textWidth).toString());
             labelBuilder.wrap(false);
         }
-        labelBuilder.font(FontLoader.Fonts.Text.getName());
+        labelBuilder.font(FontLoader.TEXT_FONT);
         labelBuilder.color(color);
         labelBuilder.text(message);
 

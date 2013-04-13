@@ -23,7 +23,7 @@ import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.common.types.Location;
 import org.apache.log4j.Logger;
-import org.newdawn.slick.Color;
+import org.illarion.engine.graphic.Color;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -47,30 +47,30 @@ public final class ChatHandler {
          * Speech mode for emotes.
          */
         @SuppressWarnings("nls")
-        Emote(Color.yellow, "^\\s*[/#]me(.*)\\s*$", "$1"),
+        Emote(Color.WHITE, "^\\s*[/#]me(.*)\\s*$", "$1"),
 
         /**
          * Speech mode for normal spoken text.
          */
-        Normal(Color.white, null, null),
+        Normal(Color.WHITE, null, null),
 
         /**
          * Speech mode for OOC messages.
          */
         @SuppressWarnings("nls")
-        Ooc(Color.gray, "^\\s*[/#]o(oc)?\\s*(.*)\\s*$", "$2"),
+        Ooc(Color.GRAY, "^\\s*[/#]o(oc)?\\s*(.*)\\s*$", "$2"),
 
         /**
          * Speech mode for shouted text.
          */
         @SuppressWarnings("nls")
-        Shout(Color.red, "^\\s*[/#]s(hout)?\\s*(.*)\\s*$", "$2"),
+        Shout(Color.RED, "^\\s*[/#]s(hout)?\\s*(.*)\\s*$", "$2"),
 
         /**
          * Speech mode for whispered text.
          */
         @SuppressWarnings("nls")
-        Whisper(Color.gray, "^\\s*[/#]w(hisper)?\\s*(.*)\\s*$", "$2");
+        Whisper(Color.GRAY, "^\\s*[/#]w(hisper)?\\s*(.*)\\s*$", "$2");
 
         /**
          * The color of this speech mode.
@@ -96,7 +96,7 @@ public final class ChatHandler {
          * @param findRegexp the regular expression used to find out if the line is fits this Chat type or not
          * @param replace    the regular expression needed to isolate the actual text
          */
-        SpeechMode(final Color modeColor, @Nullable @RegEx final String findRegexp,
+        SpeechMode(final org.illarion.engine.graphic.Color modeColor, @Nullable @RegEx final String findRegexp,
                    @Nullable final String replace) {
             color = modeColor;
             if (findRegexp == null) {

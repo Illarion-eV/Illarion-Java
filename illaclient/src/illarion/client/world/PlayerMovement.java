@@ -34,7 +34,8 @@ import illarion.common.util.FastMath;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
-import org.lwjgl.input.Keyboard;
+import org.illarion.engine.input.Input;
+import org.illarion.engine.input.Key;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -192,13 +193,20 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     private int stepsWithPathModification;
 
     /**
+     * The input component of the game engine.
+     */
+    @Nonnull
+    private final Input input;
+
+    /**
      * Default constructor.
      *
      * @param parent the player handler that is controlled by this movement handler
      */
-    public PlayerMovement(@Nonnull final Player parent) {
+    public PlayerMovement(@Nonnull final Input input, @Nonnull final Player parent) {
         moveAnimation.addTarget(this, false);
         parentPlayer = parent;
+        this.input = input;
         AnnotationProcessor.process(this);
     }
 
@@ -211,9 +219,9 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     @EventTopicSubscriber(topic = InputReceiver.EB_TOPIC)
     public void onInputEventReceived(@Nonnull final String topic, @Nonnull final String data) {
         final CharMovementMode moveMode;
-        if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)) {
+        if (input.isAnyKeyDown(Key.LeftCtrl, Key.RightCtrl)) {
             moveMode = CharMovementMode.Run;
-        } else if (Keyboard.isKeyDown(Keyboard.KEY_LMENU)) {
+        } else if (input.isKeyDown(Key.LeftAlt)) {
             moveMode = CharMovementMode.None;
         } else {
             moveMode = CharMovementMode.Walk;
@@ -774,7 +782,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         final float relYOffset = (float) yOffset / (float) distance;
 
         //noinspection IfStatementWithTooManyBranches
-        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+        if (input.isAnyKeyDown(Key.LeftShift, Key.RightShift)) {
             walkTowardsMode = CharMovementMode.None;
         } else if (distance > 200) {
             walkTowardsMode = CharMovementMode.Run;

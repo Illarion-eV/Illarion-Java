@@ -23,8 +23,8 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.gui.*;
 import illarion.client.gui.controller.game.*;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Input;
+import org.illarion.engine.GameContainer;
+import org.illarion.engine.input.Input;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -57,7 +57,7 @@ public final class GameScreenController implements GameGui, ScreenController {
 
         chatHandler = new GUIChatHandler();
         bookHandler = new BookHandler();
-        dialogHandler = new DialogHandler(numberPopupHandler, tooltipHandler);
+        dialogHandler = new DialogHandler(input, numberPopupHandler, tooltipHandler);
         skillsHandler = new SkillsHandler();
         informHandler = new InformHandler();
         inventoryHandler = new GUIInventoryHandler(input, numberPopupHandler, tooltipHandler);
@@ -189,7 +189,7 @@ public final class GameScreenController implements GameGui, ScreenController {
      * @param delta     the time since the last update call
      */
     @Override
-    public void onUpdateGame(final GameContainer container, final int delta) {
+    public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
         for (final UpdatableHandler childController : childUpdateControllers) {
             childController.update(container, delta);
         }

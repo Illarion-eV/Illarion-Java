@@ -18,8 +18,8 @@
  */
 package illarion.client.input;
 
-import de.lessvoid.nifty.slick2d.input.ForwardingInputSystem;
 import illarion.client.world.MapTile;
+import org.illarion.engine.input.Button;
 
 import javax.annotation.Nonnull;
 
@@ -33,7 +33,7 @@ public final class PrimaryKeyMapDrag extends DragOnMapEvent {
     public interface PrimaryKeyMapDragCallback {
         boolean startDraggingItemFromTile(PrimaryKeyMapDrag event, MapTile tile);
 
-        void notHandled(PrimaryKeyMapDrag event);
+        void notHandled();
     }
 
     private final PrimaryKeyMapDragCallback callback;
@@ -42,17 +42,15 @@ public final class PrimaryKeyMapDrag extends DragOnMapEvent {
     /**
      * Create and initialize such an event.
      *
-     * @param startX                 the X coordinate where the dragging starts
-     * @param startY                 the Y coordinate where the dragging starts
-     * @param stopX                  the X coordinate where the dragging is currently
-     * @param stopY                  the Y coordinate where the dragging is currently
-     * @param inputForwardingControl the control class to change the forwarding behaviour
-     * @param callback               the callback instance for this class
+     * @param startX   the X coordinate where the dragging starts
+     * @param startY   the Y coordinate where the dragging starts
+     * @param stopX    the X coordinate where the dragging is currently
+     * @param stopY    the Y coordinate where the dragging is currently
+     * @param callback the callback instance for this class
      */
     public PrimaryKeyMapDrag(final int startX, final int startY, final int stopX, final int stopY,
-                             final ForwardingInputSystem inputForwardingControl,
                              final PrimaryKeyMapDragCallback callback) {
-        super(startX, startY, stopX, stopY, 0, inputForwardingControl);
+        super(startX, startY, stopX, stopY, Button.Left);
         this.callback = callback;
     }
 
@@ -67,7 +65,7 @@ public final class PrimaryKeyMapDrag extends DragOnMapEvent {
     }
 
     @Override
-    public void eventNotHandled() {
-        callback.notHandled(this);
+    public void notHandled() {
+        callback.notHandled();
     }
 }

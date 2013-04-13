@@ -18,8 +18,6 @@
  */
 package illarion.client.resources.loaders;
 
-import illarion.client.graphics.Sprite;
-import illarion.client.graphics.SpriteBuffer;
 import illarion.client.resources.CharacterFactory;
 import illarion.client.resources.ResourceFactory;
 import illarion.client.resources.data.AvatarClothTemplate;
@@ -27,6 +25,9 @@ import illarion.client.resources.data.AvatarTemplate;
 import illarion.common.util.TableLoaderClothes;
 import illarion.common.util.TableLoaderSink;
 import org.apache.log4j.Logger;
+import org.illarion.engine.assets.Assets;
+import org.illarion.engine.assets.SpriteFactory;
+import org.illarion.engine.graphic.Sprite;
 
 import javax.annotation.Nonnull;
 
@@ -42,6 +43,21 @@ public final class ClothLoader extends AbstractResourceLoader<AvatarClothTemplat
      */
     private static final Logger LOGGER = Logger.getLogger(ClothLoader.class);
 
+    /**
+     * The assets of the game engine that are required to load the data needed for the clothes.
+     */
+    @Nonnull
+    private final Assets assets;
+
+    /**
+     * Create a new cloth loader.
+     *
+     * @param assets the assets instance of the game engine that is used to load the data
+     */
+    public ClothLoader(@Nonnull final Assets assets) {
+        this.assets = assets;
+    }
+
     @Override
     public ResourceFactory<AvatarClothTemplate> call() {
         if (!hasTargetFactory()) {
@@ -53,6 +69,8 @@ public final class ClothLoader extends AbstractResourceLoader<AvatarClothTemplat
         factory.init();
         new TableLoaderClothes(this);
         factory.loadingFinished();
+
+        loadingDone();
 
         return factory;
     }
@@ -79,13 +97,17 @@ public final class ClothLoader extends AbstractResourceLoader<AvatarClothTemplat
         final int avatarID = loader.getReferenceCharacterId();
         final int itemID = loader.getReferenceItemId();
         final int location = loader.getClothSlot();
+        final String name = loader.getResourceName();
+        final int frames = loader.getFrameCount();
+        final boolean mirror = loader.isMirrored();
 
         final AvatarTemplate avatarTemplate = CharacterFactory.getInstance().getTemplate(avatarID);
 
-        final Sprite clothSprite = SpriteBuffer.getInstance().getSprite(CLOTH_PATH, loader.getResourceName(),
-                loader.getFrameCount(), loader.getOffsetX() + avatarTemplate.getSprite().getOffsetX(),
-                loader.getOffsetY() + avatarTemplate.getSprite().getOffsetY(), Sprite.HAlign.center,
-                Sprite.VAlign.bottom, loader.isMirrored());
+        final int offsetX = loader.getOffsetX() + avatarTemplate.getSprite().getOffsetX();
+        final int offsetY = loader.getOffsetY() + avatarTemplate.getSprite().getOffsetY();
+
+        final Sprite clothSprite = assets.getSpriteFactory().createSprite(getTextures(assets.getTextureManager(),
+                CLOTH_PATH, name, frames), offsetX, offsetY, SpriteFactory.CENTER, SpriteFactory.BOTTOM, mirror);
         final AvatarClothTemplate template = new AvatarClothTemplate(itemID, clothSprite, loader.getFrameCount(),
                 avatarID, location);
 

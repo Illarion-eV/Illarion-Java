@@ -47,13 +47,14 @@ import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
+import org.illarion.engine.GameContainer;
+import org.illarion.engine.input.Button;
+import org.illarion.engine.input.Input;
+import org.illarion.engine.input.Key;
 import org.illarion.nifty.controls.*;
 import org.illarion.nifty.controls.dialog.input.builder.DialogInputBuilder;
 import org.illarion.nifty.controls.dialog.message.builder.DialogMessageBuilder;
 import org.illarion.nifty.controls.dialog.select.builder.DialogSelectBuilder;
-import org.lwjgl.input.Keyboard;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Input;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -111,7 +112,7 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
     /**
      * The input control that is used in this dialog handler.
      */
-    private Input input;
+    private final Input input;
 
     private DialogMerchant merchantDialog;
     private DialogCrafting craftingDialog;
@@ -130,7 +131,9 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
 
     private int lastCraftingTooltip = -2;
 
-    public DialogHandler(final NumberSelectPopupHandler numberSelectPopupHandler, final TooltipHandler tooltipHandler) {
+    public DialogHandler(final Input input, final NumberSelectPopupHandler numberSelectPopupHandler,
+                         final TooltipHandler tooltipHandler) {
+        this.input = input;
         this.tooltipHandler = tooltipHandler;
         builders = new ConcurrentLinkedQueue<DialogHandler.BuildWrapper>();
         closers = new ConcurrentLinkedQueue<CloseDialogEvent>();
@@ -322,7 +325,7 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
     public void handleTooltipRemovedEvent(final TooltipsRemovedEvent event) {
         lastCraftingTooltip = -2;
 
-        if (input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON) || input.isMouseButtonDown(Input.MOUSE_RIGHT_BUTTON)) {
+        if (input.isAnyButtonDown(Button.Left, Button.Right)) {
             return;
         }
     }
@@ -354,7 +357,7 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
             return;
         }
 
-        if (input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON) || input.isMouseButtonDown(Input.MOUSE_RIGHT_BUTTON)) {
+        if (input.isAnyButtonDown(Button.Left, Button.Right)) {
             return;
         }
 
@@ -369,7 +372,7 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
             return;
         }
 
-        if (input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON) || input.isMouseButtonDown(Input.MOUSE_RIGHT_BUTTON)) {
+        if (input.isAnyButtonDown(Button.Left, Button.Right)) {
             return;
         }
 
@@ -460,7 +463,6 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
 
     @Override
     public void update(@Nonnull final GameContainer container, final int delta) {
-        input = container.getInput();
         while (true) {
             final DialogHandler.BuildWrapper wrapper = builders.poll();
             if (wrapper == null) {
@@ -580,7 +582,7 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
         if (ItemCount.isGreaterOne(list.getItem(index).getBundleSize())) {
             list.buyItem(index);
         } else {
-            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            if (input.isAnyKeyDown(Key.LeftShift, Key.RightShift)) {
                 numberSelect.requestNewPopup(1, 250, new NumberSelectPopupHandler.Callback() {
                     @Override
                     public void popupCanceled() {

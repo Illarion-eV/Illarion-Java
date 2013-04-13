@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ This file is part of the Illarion Game Engine.
+  ~
+  ~ Copyright © 2013 - Illarion e.V.
+  ~
+  ~ The Illarion Game Engine is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ The Illarion Game Engine is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<project name="Illarion Game Engine" default="build_engine" basedir=".">
+    <description>
+        Build the Illarion Game Engine.
+    </description>
+
+    <dirname file="${ant.file.Illarion Game Engine}" property="engine.dir"/>
+    <import file="${engine.dir}/../illacommon/build_include.xml"/>
+
+    <property name="src" location="${engine}/src"/>
+    <property name="classes" location="${engine}/antclasses"/>
+    <property name="jar" location="${engine}/${engine.jar}"/>
+    <property name="jar.slick" location="${engine}/${engine-slick.jar}"/>
+    <property name="jar.gdx" location="${engine}/${engine-gdx.jar}"/>
+    <property name="jar.nifty" location="${engine}/${engine-nifty.jar}"/>
+
+    <target name="build_engine" description="Build the Illarion Game Engine in case its needed."
+            depends="init, compile_engine, build_jar" unless="engine.uptodate">
+        <move file="${jar}" tofile="${engine.bin}"/>
+        <move file="${jar.slick}" tofile="${engine.slick.bin}"/>
+        <move file="${jar.gdx}" tofile="${engine.gdx.bin}"/>
+        <move file="${jar.nifty}" tofile="${engine.nifty.bin}"/>
+    </target>
+
+    <target name="build_engine_res" description="Create the resource files for the Illarion Game Engine"
+            depends="check_optional_dirs, build_engine, register_extensions" if="keys.exist">
+        <resourceprepare targetdir="${signedcompiled}" usepack200="true">
+            <filelist dir="${compiled}">
+                <file name="${engine.jar}"/>
+                <file name="${engine-slick.jar}"/>
+                <file name="${engine-gdx.jar}"/>
+                <file name="${engine-nifty.jar}"/>
+            </filelist>
+        </resourceprepare>
+
+        <signjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" destDir="${signedcompiled}"
+                 storetype="${storetype}">
+            <path>
+                <filelist dir="${signedcompiled}">
+                    <file name="${engine.jar}"/>
+                    <file name="${engine-slick.jar}"/>
+                    <file name="${engine-gdx.jar}"/>
+                    <file name="${engine-nifty.jar}"/>
+                </filelist>
+            </path>
+        </signjar>
+
+        <verifyjar alias="${storealias}" storepass="${storepass}" keystore="${keystore}" certificates="yes" verbose="no"
+                   storetype="${storetype}">
+            <path>
+                <filelist dir="${signedcompiled}">
+                    <file name="${engine.jar}"/>
+                    <file name="${engine-slick.jar}"/>
+                    <file name="${engine-gdx.jar}"/>
+                    <file name="${engine-nifty.jar}"/>
+                </filelist>
+            </path>
+        </verifyjar>
+
+        <resourcebuild target="${engine.res.deploy}" usepack200="true">
+            <filelist dir="${signedcompiled}">
+                <file name="${engine.jar}"/>
+            </filelist>
+        </resourcebuild>
+
+        <resourcebuild target="${engine.slick.res.deploy}" usepack200="true">
+            <filelist dir="${signedcompiled}">
+                <file name="${engine-slick.jar}"/>
+            </filelist>
+        </resourcebuild>
+
+        <resourcebuild target="${engine.gdx.res.deploy}" usepack200="true">
+            <filelist dir="${signedcompiled}">
+                <file name="${engine-gdx.jar}"/>
+            </filelist>
+        </resourcebuild>
+
+        <resourcebuild target="${engine.nifty.res.deploy}" usepack200="true">
+            <filelist dir="${signedcompiled}">
+                <file name="${engine-nifty.jar}"/>
+            </filelist>
+        </resourcebuild>
+    </target>
+
+    <target name="compile_engine">
+        <delete dir="${classes}"/>
+        <mkdir dir="${classes}"/>
+
+        <javac srcdir="${src}" destdir="${classes}" source="${source.version}" target="${target.version}"
+               encoding="${source.encoding}" compiler="${build.compiler}" debug="${build.debug}"
+               debuglevel="${build.debuglevel}">
+            <classpath>
+                <fileset refid="log4j"/>
+                <fileset refid="jsr"/>
+                <fileset refid="slick"/>
+                <fileset refid="gdx"/>
+                <fileset refid="lwjgl"/>
+                <fileset refid="xpp"/>
+                <fileset refid="nifty"/>
+                <pathelement location="${common.bin}"/>
+                <pathelement path="${java.home}/lib"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="build_jar">
+        <jar jarfile="${jar}" basedir="${classes}" index="${build.index}"
+             includes="org/illarion/engine/**"
+             excludes="org/illarion/engine/backend/slick/**,org/illarion/engine/backend/gdx/**,org/illarion/engine/nifty/**">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Built-Date" value="${TODAY}"/>
+                <attribute name="Implementation-Vendor" value="Illarion e.V"/>
+                <attribute name="Implementation-Title" value="Illarion Game Engine"/>
+                <attribute name="Implementation-Version" value="1.00"/>
+            </manifest>
+        </jar>
+
+        <jar jarfile="${jar.slick}" basedir="${classes}"
+             includes="org/illarion/engine/backend/slick/**">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Built-Date" value="${TODAY}"/>
+                <attribute name="Implementation-Vendor" value="Illarion e.V"/>
+                <attribute name="Implementation-Title" value="Illarion Game Engine - Slick2D Backend"/>
+                <attribute name="Implementation-Version" value="1.00"/>
+            </manifest>
+        </jar>
+        <jar jarfile="${jar.slick}" basedir="${src}" update="true" index="${build.index}"
+             includes="org/illarion/engine/backend/slick/shaders/*"/>
+
+        <jar jarfile="${jar.gdx}" basedir="${classes}" index="${build.index}"
+             includes="org/illarion/engine/backend/gdx/**">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Built-Date" value="${TODAY}"/>
+                <attribute name="Implementation-Vendor" value="Illarion e.V"/>
+                <attribute name="Implementation-Title" value="Illarion Game Engine - libGDX Backend"/>
+                <attribute name="Implementation-Version" value="1.00"/>
+            </manifest>
+        </jar>
+        <jar jarfile="${jar.gdx}" basedir="${src}" update="true" index="${build.index}"
+             includes="org/illarion/engine/backend/gdx/shaders/*"/>
+
+
+        <jar jarfile="${jar.nifty}" basedir="${classes}" index="${build.index}"
+             includes="org/illarion/engine/nifty/**">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Built-Date" value="${TODAY}"/>
+                <attribute name="Implementation-Vendor" value="Illarion e.V"/>
+                <attribute name="Implementation-Title" value="Illarion Game Engine - Nifty-GUI Extension"/>
+                <attribute name="Implementation-Version" value="1.00"/>
+            </manifest>
+        </jar>
+    </target>
+</project>

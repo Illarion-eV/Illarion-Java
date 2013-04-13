@@ -19,57 +19,50 @@
 package illarion.client.states;
 
 import de.lessvoid.nifty.Nifty;
-import de.lessvoid.nifty.slick2d.NiftyBasicGameState;
 import illarion.client.Game;
-import illarion.client.gui.controller.LoadScreenController;
-import illarion.client.util.Lang;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.state.StateBasedGame;
+import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
-import java.util.logging.Logger;
 
 /**
- * This game state is active while the game loads. It takes care for showing the loading screen and to trigger the
- * actual loading.
+ * This state is activated during the shutdown of the game.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class EndState extends NiftyBasicGameState {
-
-    private LoadScreenController controller;
-
-    private final Logger log = Logger.getLogger(EndState.class.getName());
+public final class EndState implements GameState {
 
     @Override
-    protected void prepareNifty(@Nonnull final Nifty nifty, final StateBasedGame game) {
-        nifty.setLocale(Lang.getInstance().getLocale());
-        controller = new LoadScreenController(game);
-        nifty.registerScreenController(controller);
-
-        try {
-            nifty.validateXml("illarion/client/gui/xml/shutdown.xml");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        nifty.addXml("illarion/client/gui/xml/shutdown.xml");
+    public void create(@Nonnull final Game game, @Nonnull final GameContainer container, @Nonnull final Nifty nifty) {
+        Util.loadXML(nifty, "illarion/client/gui/xml/shutdown.xml");
     }
 
     @Override
-    public void enterState(final GameContainer container, final StateBasedGame game)
-            throws SlickException {
-        getNifty().gotoScreen("clientEnd");
+    public void dispose() {
     }
 
     @Override
-    public void leaveState(final GameContainer container, final StateBasedGame game)
-            throws SlickException {
-
+    public void resize(@Nonnull final GameContainer container, final int width, final int height) {
     }
 
     @Override
-    public int getID() {
-        return Game.STATE_ENDING;
+    public void update(@Nonnull final GameContainer container, final int delta) {
+    }
+
+    @Override
+    public void render(@Nonnull final GameContainer container) {
+    }
+
+    @Override
+    public boolean isClosingGame() {
+        return false;
+    }
+
+    @Override
+    public void enterState(@Nonnull final GameContainer container, @Nonnull final Nifty nifty) {
+        nifty.gotoScreen("clientEnd");
+    }
+
+    @Override
+    public void leaveState(@Nonnull final GameContainer container) {
     }
 }

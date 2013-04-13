@@ -25,12 +25,12 @@ import illarion.client.graphics.Tile;
 import illarion.client.net.server.TileUpdate;
 import illarion.client.world.interactive.InteractiveMapTile;
 import illarion.common.graphics.Layers;
-import illarion.common.graphics.LightSource;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
 import org.apache.log4j.Logger;
-import org.newdawn.slick.Color;
+import org.illarion.engine.graphic.Color;
+import org.illarion.engine.graphic.LightSource;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -89,7 +89,7 @@ public final class MapTile implements AlphaChangeListener {
      * rendered light value on this tile.
      */
     @Nonnull
-    private final Color light = new Color(0);
+    private final Color light = new Color(Color.WHITE);
 
     /**
      * Light Source that is on the tile.
@@ -137,7 +137,7 @@ public final class MapTile implements AlphaChangeListener {
     /**
      * The temporary light instance that is used for the calculations before its applied to the actual light.
      */
-    private final Color tmpLight = new Color(0);
+    private final Color tmpLight = new Color(Color.WHITE);
 
     /**
      * The reference to the tile that is obstructing this tile.
@@ -793,12 +793,10 @@ public final class MapTile implements AlphaChangeListener {
             LOGGER.warn("Render light of a removed tile.");
             return;
         }
-        tmpLight.scale(factor);
+        tmpLight.multiply(factor);
         tmpLight.add(ambientLight);
-        light.a = 1.f;
-        light.r = tmpLight.r;
-        light.g = tmpLight.g;
-        light.b = tmpLight.b;
+        light.setColor(tmpLight);
+        light.setAlpha(Color.MAX_INT_VALUE);
     }
 
     /**
@@ -889,7 +887,7 @@ public final class MapTile implements AlphaChangeListener {
         if (removedTile) {
             LOGGER.warn("Resetting the light of a removed tile.");
         }
-        tmpLight.scale(0.f);
+        tmpLight.setColor(Color.BLACK);
     }
 
     /**
@@ -901,6 +899,7 @@ public final class MapTile implements AlphaChangeListener {
      */
     private void updateItemList(final int number, @Nonnull final List<ItemId> itemId,
                                 @Nonnull final List<ItemCount> itemCount) {
+        boolean readLock = false;
         itemsLock.writeLock().lock();
         try {
             try {
@@ -909,6 +908,7 @@ public final class MapTile implements AlphaChangeListener {
                     setItem(i, itemId.get(i), itemCount.get(i));
                 }
                 itemsLock.readLock().lock();
+                readLock = true;
             } finally {
                 itemsLock.writeLock().unlock();
             }
@@ -921,7 +921,9 @@ public final class MapTile implements AlphaChangeListener {
                 }
             }
         } finally {
-            itemsLock.readLock().unlock();
+            if (readLock) {
+                itemsLock.readLock().unlock();
+            }
         }
     }
 

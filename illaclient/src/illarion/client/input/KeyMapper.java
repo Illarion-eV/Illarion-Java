@@ -18,11 +18,12 @@
  */
 package illarion.client.input;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
 import org.bushe.swing.event.EventBus;
-import org.newdawn.slick.Input;
+import org.illarion.engine.input.Key;
 
 import javax.annotation.Nonnull;
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * This class is used to generate events based on keys that got pressed.
@@ -31,47 +32,46 @@ import javax.annotation.Nonnull;
  */
 public final class KeyMapper {
     @Nonnull
-    private final TIntObjectHashMap<String> inputMap;
+    private final Map<Key, String> inputMap;
 
     public KeyMapper() {
-        inputMap = new TIntObjectHashMap<String>();
+        inputMap = new EnumMap<Key, String>(Key.class);
 
-        inputMap.put(Input.KEY_ESCAPE, "CloseGame");
+        inputMap.put(Key.Escape, "CloseGame");
 
-        inputMap.put(Input.KEY_I, "ToggleInventory");
-        inputMap.put(Input.KEY_J, "ToggleQuest");
-        inputMap.put(Input.KEY_Q, "ToggleQuest");
-        inputMap.put(Input.KEY_C, "ToggleCharacterWindow");
-        inputMap.put(Input.KEY_ENTER, "SelectChat");
+        inputMap.put(Key.I, "ToggleInventory");
+        inputMap.put(Key.J, "ToggleQuest");
+        inputMap.put(Key.C, "ToggleCharacterWindow");
+        inputMap.put(Key.Enter, "SelectChat");
 
         // walking commands
-        inputMap.put(Input.KEY_W, "WalkNorthEast");
-        inputMap.put(Input.KEY_A, "WalkNorthWest");
-        inputMap.put(Input.KEY_S, "WalkSouthWest");
-        inputMap.put(Input.KEY_D, "WalkSouthEast");
+        inputMap.put(Key.W, "WalkNorthEast");
+        inputMap.put(Key.A, "WalkNorthWest");
+        inputMap.put(Key.S, "WalkSouthWest");
+        inputMap.put(Key.D, "WalkSouthEast");
 
-        inputMap.put(Input.KEY_UP, "WalkNorthEast");
-        inputMap.put(Input.KEY_LEFT, "WalkNorthWest");
-        inputMap.put(Input.KEY_DOWN, "WalkSouthWest");
-        inputMap.put(Input.KEY_RIGHT, "WalkSouthEast");
+        inputMap.put(Key.CursorUp, "WalkNorthEast");
+        inputMap.put(Key.CursorLeft, "WalkNorthWest");
+        inputMap.put(Key.CursorDown, "WalkSouthWest");
+        inputMap.put(Key.CursorRight, "WalkSouthEast");
 
-        inputMap.put(Input.KEY_NUMPAD1, "WalkWest");
-        inputMap.put(Input.KEY_NUMPAD2, "WalkSouthWest");
-        inputMap.put(Input.KEY_NUMPAD3, "WalkSouth");
-        inputMap.put(Input.KEY_NUMPAD4, "WalkNorthWest");
-        inputMap.put(Input.KEY_NUMPAD6, "WalkSouthEast");
-        inputMap.put(Input.KEY_NUMPAD7, "WalkNorth");
-        inputMap.put(Input.KEY_NUMPAD8, "WalkNorthEast");
-        inputMap.put(Input.KEY_NUMPAD9, "WalkEast");
+        inputMap.put(Key.NumPad1, "WalkWest");
+        inputMap.put(Key.NumPad2, "WalkSouthWest");
+        inputMap.put(Key.NumPad3, "WalkSouth");
+        inputMap.put(Key.NumPad4, "WalkNorthWest");
+        inputMap.put(Key.NumPad6, "WalkSouthEast");
+        inputMap.put(Key.NumPad7, "WalkNorth");
+        inputMap.put(Key.NumPad8, "WalkNorthEast");
+        inputMap.put(Key.NumPad9, "WalkEast");
 
-        inputMap.put(Input.KEY_PRIOR, "WalkEast");
-        inputMap.put(Input.KEY_NEXT, "WalkSouth");
-        inputMap.put(Input.KEY_END, "WalkWest");
-        inputMap.put(Input.KEY_HOME, "WalkNorth");
+        inputMap.put(Key.PageUp, "WalkEast");
+        inputMap.put(Key.PageDown, "WalkSouth");
+        inputMap.put(Key.End, "WalkWest");
+        inputMap.put(Key.Home, "WalkNorth");
     }
 
-    public void handleKeyInput(final int key) {
-        if (inputMap.contains(key)) {
+    public void handleKeyInput(@Nonnull final Key key) {
+        if (inputMap.containsKey(key)) {
             EventBus.publish(InputReceiver.EB_TOPIC, inputMap.get(key));
         }
     }

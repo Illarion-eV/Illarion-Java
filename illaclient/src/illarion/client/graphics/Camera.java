@@ -18,17 +18,9 @@
  */
 package illarion.client.graphics;
 
-import illarion.client.Debug;
-import illarion.client.IllaClient;
 import illarion.common.types.Rectangle;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.Graphics;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
 
 /**
  * This helper class is used to hide out all parts of the game map that are not needed to be viewed.
@@ -48,36 +40,10 @@ public final class Camera {
     private final Rectangle viewport;
 
     /**
-     * This is a list of dirty areas on the screen that require a update.
-     */
-    @Nonnull
-    private final List<Rectangle> dirtyAreas;
-
-    /**
-     * A list of areas that were rendered.
-     */
-    @Nonnull
-    private final List<Rectangle> renderedAreas;
-
-    /**
-     * If this flag is set {@code true} the list of dirty areas is ignored and every image is rendered again.
-     */
-    private boolean fullUpdate;
-
-    /**
-     * This counter counts how many areas are marked dirty during one run.
-     */
-    private int dirtyAreaCounter;
-
-    /**
      * Private constructor to avoid any instances being created but the singleton instance.
      */
     private Camera() {
         viewport = new Rectangle();
-        dirtyAreas = new ArrayList<Rectangle>();
-        renderedAreas = new ArrayList<Rectangle>();
-        fullUpdate = false;
-        dirtyAreaCounter = 0;
     }
 
     /**
@@ -127,160 +93,14 @@ public final class Camera {
     }
 
     /**
-     * This function causes the dirty areas array to be cleared. This should be done once all dirty areas are rendered
-     * again.
-     */
-    public void clearDirtyAreas() {
-        synchronized (dirtyAreas) {
-            dirtyAreas.clear();
-        }
-        renderedAreas.clear();
-        fullUpdate = true;
-        dirtyAreaCounter = 0;
-    }
-
-    /**
-     * This function marks a area of the screen as dirty. This means that the next render loop has to update this part
-     * of the screen.
-     *
-     * @param dirtyArea the area that was marked dirty
-     */
-    public void markAreaDirty(@Nonnull final Rectangle dirtyArea) {
-        if (fullUpdate || (dirtyAreaCounter > 200)) {
-            markEverythingDirty();
-            return;
-        }
-
-        dirtyAreaCounter++;
-
-        final Rectangle dirtyRect = new Rectangle();
-        dirtyRect.set(dirtyArea);
-
-        synchronized (dirtyAreas) {
-            final ListIterator<Rectangle> listItr = dirtyAreas.listIterator();
-            while (listItr.hasNext()) {
-                final Rectangle currentDirtyArea = listItr.next();
-                if (currentDirtyArea.intersects(dirtyRect)) {
-                    dirtyRect.add(currentDirtyArea);
-                    listItr.remove();
-                }
-            }
-
-            dirtyAreas.add(dirtyRect);
-        }
-    }
-
-    public void markAreaRendered(final Rectangle area) {
-        if (IllaClient.isDebug(Debug.mapRenderer)) {
-            renderedAreas.add(area);
-        }
-    }
-
-    /**
-     * Mark the entire screen dirty. That causes everything to be rendered again.
-     */
-    public void markEverythingDirty() {
-        fullUpdate = true;
-    }
-
-    /**
-     * Check if a specified area of the screen intersects with any dirty area and return this dirty area.
-     *
-     * @param testArea the tested area
-     * @return the dirty area that intersects with the tested one or {@code null} in case no such area is found
-     */
-    @Nullable
-    public Rectangle getDirtyArea(@Nonnull final Rectangle testArea) {
-        if (fullUpdate) {
-            return viewport;
-        }
-
-        synchronized (dirtyAreas) {
-            for (int i = 0, dirtyAreasSize = dirtyAreas.size(); i < dirtyAreasSize; i++) {
-                final Rectangle dirtArea = dirtyAreas.get(i);
-                if (testArea.intersects(dirtArea)) {
-                    return dirtArea;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    public void clearDirtyAreas(@Nonnull final Graphics g) {
-        g.setColor(Color.black);
-
-        if (fullUpdate) {
-            fillRenderRect(g, viewport);
-            return;
-        }
-
-        synchronized (dirtyAreas) {
-            for (int i = 0, dirtyAreasSize = dirtyAreas.size(); i < dirtyAreasSize; i++) {
-                final Rectangle dirtArea = dirtyAreas.get(i);
-                fillRenderRect(g, dirtArea);
-            }
-        }
-    }
-
-    public void renderDebug(@Nonnull final Graphics g) {
-        if (IllaClient.isDebug(Debug.mapRenderer)) {
-            g.translate(-getViewportOffsetX(), -getViewportOffsetY());
-            debugShowUpdateAreas(g);
-            debugShowRenderedAreas(g);
-            g.translate(getViewportOffsetX(), getViewportOffsetY());
-        }
-    }
-
-    public void debugShowUpdateAreas(@Nonnull final Graphics g) {
-        g.setColor(Color.pink);
-        if (fullUpdate) {
-            debugRenderRect(g, viewport);
-            return;
-        }
-
-        synchronized (dirtyAreas) {
-            for (int i = 0, dirtyAreasSize = dirtyAreas.size(); i < dirtyAreasSize; i++) {
-                final Rectangle dirtArea = dirtyAreas.get(i);
-                debugRenderRect(g, dirtArea);
-            }
-        }
-    }
-
-    public void debugShowRenderedAreas(@Nonnull final Graphics g) {
-        g.setColor(Color.cyan);
-
-        for (final Rectangle area : renderedAreas) {
-            debugRenderRect(g, area);
-        }
-    }
-
-    private static void debugRenderRect(@Nonnull final Graphics g, @Nonnull final Rectangle rectangle) {
-        g.drawRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
-    }
-
-    private static void fillRenderRect(@Nonnull final Graphics g, @Nonnull final Rectangle rectangle) {
-        g.fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
-    }
-
-    /**
-     * Check if anything that is currently displayed is marked as dirty.
-     *
-     * @return {@code true} in case some are of the map is dirty and needs to be rendered again
-     */
-    public boolean isAnythingDirty() {
-        return fullUpdate || (getDirtyArea(viewport) != null);
-    }
-
-    /**
      * Check if a area is at least partly within a area that needs to be updated at this render run.
      *
      * @param testLocX the x location of the area that needs to be checked for intersection with the clipping area
      * @param testLocY the y location of the area that needs to be checked for intersection with the clipping area
      * @param width    the width of the area that needs to be checked
      * @param height   the height of the area that needs to be checked
-     * @return <code>true</code> in case there is no clipping area set or the tested area is at least partly within the
-     *         clipping area, if its fully outside <code>false</code> is returned
+     * @return {@code true} in case there is no clipping area set or the tested area is at least partly within the
+     *         clipping area, if its fully outside {@code false} is returned
      */
     public boolean requiresUpdate(final int testLocX, final int testLocY, final int width, final int height) {
         final Rectangle testRect = new Rectangle();
@@ -293,15 +113,12 @@ public final class Camera {
      * Check if a area is at least partly within a area that needs to be updated at this render run.
      *
      * @param rect the rectangle to test
-     * @return <code>true</code> in case there is no clipping area set or the tested area is at least partly within the
-     *         clipping area, if its fully outside <code>false</code> is returned
+     * @return {@code true} in case there is no clipping area set or the tested area is at least partly within the
+     *         clipping area, if its fully outside {@code false} is returned
      */
     public boolean requiresUpdate(@Nonnull final Rectangle rect) {
-        if (!viewport.intersects(rect) || rect.isEmpty()) {
-            return false;
-        }
+        return !(!viewport.intersects(rect) || rect.isEmpty());
 
-        return fullUpdate || (getDirtyArea(rect) != null);
     }
 
     /**

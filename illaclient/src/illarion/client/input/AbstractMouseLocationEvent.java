@@ -18,7 +18,7 @@
  */
 package illarion.client.input;
 
-import illarion.client.graphics.MapInteractionEvent;
+import org.illarion.engine.graphic.SceneEvent;
 
 import javax.annotation.Nonnull;
 
@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public abstract class AbstractMouseLocationEvent implements MapInteractionEvent {
+public abstract class AbstractMouseLocationEvent implements SceneEvent {
     /**
      * The x coordinate on the screen where the click occurred.
      */
@@ -78,7 +78,7 @@ public abstract class AbstractMouseLocationEvent implements MapInteractionEvent 
     }
 
     @Override
-    public void eventNotHandled() {
-        // do nothing by default
+    public void notHandled() {
+        // nothing
     }
 }

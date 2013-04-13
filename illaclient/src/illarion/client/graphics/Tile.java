@@ -29,9 +29,11 @@ import illarion.common.graphics.MapVariance;
 import illarion.common.graphics.TileInfo;
 import illarion.common.types.Location;
 import org.apache.log4j.Logger;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
+import org.illarion.engine.GameContainer;
+import org.illarion.engine.graphic.Color;
+import org.illarion.engine.graphic.Graphics;
+import org.illarion.engine.graphic.SceneEvent;
+import org.illarion.engine.input.Button;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -105,24 +107,19 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
      * Draw tile and its overlay
      *
      * @param g the graphics object that is used to render the tile.
-     * @return {@code true} in case the object was properly rendered
      */
     @Override
-    public boolean draw(@Nonnull final Graphics g) {
+    public void render(@Nonnull final Graphics g) {
         final MapTile obstructingTile = parentTile.getObstructingTile();
         if ((obstructingTile != null) && obstructingTile.isOpaque()) {
             // do not render tiles that are not visible for sure
-            return true;
+            return;
         }
 
-        if (!super.draw(g)) {
-            return false;
-        }
-
+        super.render(g);
         if (overlay != null) {
-            return overlay.draw(g);
+            overlay.render(g);
         }
-        return true;
     }
 
     @Override
@@ -198,14 +195,15 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
     private static final Logger LOGGER = Logger.getLogger(Tile.class);
 
     @Override
-    public boolean processEvent(@Nonnull final GameContainer container, final int delta, @Nonnull final MapInteractionEvent event) {
+    public boolean isEventProcessed(@Nonnull final GameContainer container, final int delta,
+                                    @Nonnull final SceneEvent event) {
         if (!parentTile.isAtPlayerLevel()) {
             return false;
         }
 
         if (event instanceof ClickOnMapEvent) {
             final ClickOnMapEvent clickEvent = (ClickOnMapEvent) event;
-            if (clickEvent.getKey() != 0) {
+            if (clickEvent.getKey() != Button.Left) {
                 return false;
             }
             if (!isMouseInInteractionRect(clickEvent.getX(), clickEvent.getY())) {

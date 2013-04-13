@@ -39,8 +39,7 @@ import illarion.client.world.World;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.state.StateBasedGame;
+import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -283,7 +282,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
                                        @Nonnull final ListBoxSelectionChangedEvent<QuestEntry> event) {
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
-            public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
+            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
                 updateDisplayedQuest();
             }
         });
@@ -305,7 +304,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
 
         final LabelBuilder titleLabel = new LabelBuilder();
         titleLabel.label(selectedEntry.getName());
-        titleLabel.font(FontLoader.Fonts.Menu.getName());
+        titleLabel.font(FontLoader.MENU_FONT);
         titleLabel.marginLeft("5px");
         titleLabel.marginRight("5px");
         titleLabel.marginBottom("10px");
@@ -316,7 +315,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
         if (!selectedEntry.getDescription().isEmpty()) {
             final LabelBuilder descriptionLabel = new LabelBuilder();
             descriptionLabel.label(selectedEntry.getDescription());
-            descriptionLabel.font(FontLoader.Fonts.Text.getName());
+            descriptionLabel.font(FontLoader.TEXT_FONT);
             descriptionLabel.marginLeft("5px");
             descriptionLabel.marginRight("5px");
             descriptionLabel.width((descriptionArea.getWidth() - 10) + "px");
@@ -328,7 +327,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
         if (selectedEntry.isFinished()) {
             final LabelBuilder finishedLabel = new LabelBuilder();
             finishedLabel.label("${gamescreen-bundle.questFinished}");
-            finishedLabel.font(FontLoader.Fonts.Text.getName());
+            finishedLabel.font(FontLoader.TEXT_FONT);
             finishedLabel.marginLeft("5px");
             finishedLabel.marginRight("5px");
             finishedLabel.marginTop("15px");
@@ -463,8 +462,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
     public void removeQuest(final int questId) {
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
-            public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game,
-                                     final int delta) {
+            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
                 removeQuestInternal(questId);
             }
         });
@@ -504,8 +502,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
     public void setQuest(final int questId, @Nonnull final String name, @Nonnull final String description, final boolean finished) {
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
-            public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game,
-                                     final int delta) {
+            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
                 setQuestInternal(questId, name, description, finished);
             }
         });

@@ -18,13 +18,11 @@
  */
 package illarion.client.graphics;
 
-import de.lessvoid.nifty.slick2d.render.SlickRenderUtils;
-import de.lessvoid.nifty.slick2d.render.font.SlickLoadFontException;
-import de.lessvoid.nifty.slick2d.render.font.SlickRenderFont;
 import illarion.common.types.Rectangle;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
+import org.illarion.engine.GameContainer;
+import org.illarion.engine.graphic.Color;
+import org.illarion.engine.graphic.Font;
+import org.illarion.engine.graphic.Graphics;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,17 +32,11 @@ import javax.annotation.Nullable;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class AvatarTextTag implements Drawable {
+public final class AvatarTextTag {
     /**
      * The color of the background pane that is displayed behind the characterName.
      */
     private static final Color BACK_COLOR = new Color(0.f, 0.f, 0.f, 0.58f);
-
-    /**
-     * This color is used as temporary color during the rendering process.
-     */
-    private static final de.lessvoid.nifty.tools.Color NIFTY_COLOR =
-            new de.lessvoid.nifty.tools.Color(0.f, 0.f, 0.f, 0.f);
 
     /**
      * The space in pixels between the lines.
@@ -108,6 +100,19 @@ public final class AvatarTextTag implements Drawable {
      * The height of this tag. This value is generated once the characterName is set.
      */
     private int height;
+
+    /**
+     * The font used to draw the text tag.
+     */
+    @Nonnull
+    private final Font font;
+
+    /**
+     * Default constructor.
+     */
+    public AvatarTextTag() {
+        font = FontLoader.getInstance().getFont(FontLoader.SMALL_FONT);
+    }
 
     /**
      * Get the height of the characterName tag.
@@ -221,13 +226,6 @@ public final class AvatarTextTag implements Drawable {
             return;
         }
 
-        final SlickRenderFont font;
-        try {
-            font = FontLoader.getInstance().getFont(FontLoader.Fonts.Small);
-        } catch (SlickLoadFontException e) {
-            throw new RuntimeException(e);
-        }
-
         final int nameWidth;
         final int nameHeight;
         if (charName == null) {
@@ -235,7 +233,7 @@ public final class AvatarTextTag implements Drawable {
             nameHeight = 0;
         } else {
             nameWidth = font.getWidth(charName);
-            nameHeight = font.getHeight();
+            nameHeight = font.getLineHeight();
         }
 
         final int healthWidth;
@@ -245,7 +243,7 @@ public final class AvatarTextTag implements Drawable {
             healthHeight = 0;
         } else {
             healthWidth = font.getWidth(healthState);
-            healthHeight = font.getHeight();
+            healthHeight = font.getLineHeight();
         }
 
         width = Math.max(healthWidth, nameWidth);
@@ -268,8 +266,7 @@ public final class AvatarTextTag implements Drawable {
     private int healthStateOffsetX;
     private int healthStateOffsetY;
 
-    @Override
-    public boolean draw(@Nonnull final Graphics g) {
+    public boolean render(@Nonnull final Graphics g) {
         if ((charName == null) && (healthState == null)) {
             return true;
         }
@@ -278,40 +275,17 @@ public final class AvatarTextTag implements Drawable {
             return true;
         }
 
-        final Rectangle parentDirtyArea = Camera.getInstance().getDirtyArea(displayRect);
-        if (parentDirtyArea != null) {
-            g.setWorldClip(parentDirtyArea.getX(), parentDirtyArea.getY(),
-                    parentDirtyArea.getWidth(), parentDirtyArea.getHeight());
+        g.drawRectangle(displayRect, BACK_COLOR);
+
+        if ((charName != null) && (charNameColor != null)) {
+            g.drawText(font, charName, charNameColor, getRenderOriginX() + charNameOffsetX,
+                    getRenderOriginY() + charNameOffsetY);
         }
 
-        g.setColor(BACK_COLOR);
-        g.fillRect(displayRect.getX(), displayRect.getY(), displayRect.getWidth(), displayRect.getHeight());
-
-        final SlickRenderFont font;
-        try {
-            font = FontLoader.getInstance().getFont(FontLoader.Fonts.Small);
-        } catch (SlickLoadFontException e) {
-            throw new RuntimeException(e);
+        if ((healthState != null) && (healthStateColor != null)) {
+            g.drawText(font, healthState, healthStateColor, getRenderOriginX() + healthStateOffsetX,
+                    getRenderOriginY() + healthStateOffsetY);
         }
-
-        if (charName != null) {
-            SlickRenderUtils.convertColorSlickNifty(charNameColor, NIFTY_COLOR);
-            font.renderText(g, charName, getRenderOriginX() + charNameOffsetX, getRenderOriginY() + charNameOffsetY,
-                    NIFTY_COLOR, 1.f, 1.f);
-        }
-
-        if (healthState != null) {
-            SlickRenderUtils.convertColorSlickNifty(healthStateColor, NIFTY_COLOR);
-            font.renderText(g, healthState, getRenderOriginX() + healthStateOffsetX,
-                    getRenderOriginY() + healthStateOffsetY, NIFTY_COLOR, 1.f, 1.f);
-        }
-
-
-        if (parentDirtyArea != null) {
-            g.clearWorldClip();
-        }
-
-        Camera.getInstance().markAreaRendered(displayRect);
 
         return true;
     }
@@ -328,21 +302,11 @@ public final class AvatarTextTag implements Drawable {
     private final Rectangle oldDisplayRect = new Rectangle();
 
     @Nonnull
-    @Override
-    public Rectangle getLastDisplayRect() {
-        return oldDisplayRect;
+    public Rectangle getDisplayRect() {
+        return displayRect;
     }
 
-    @Override
     public void update(@Nonnull final GameContainer container, final int delta) {
         calculateTextLocations();
-        if (dirty) {
-            dirty = false;
-            oldDisplayRect.set(displayRect);
-            displayRect.set(getRenderOriginX() - 1, getRenderOriginY() - 1, width + 2, height + 2);
-
-            Camera.getInstance().markAreaDirty(oldDisplayRect);
-            Camera.getInstance().markAreaDirty(displayRect);
-        }
     }
 }

@@ -19,14 +19,15 @@
 package illarion.client.resources.loaders;
 
 import illarion.client.graphics.AvatarInfo;
-import illarion.client.graphics.Sprite;
-import illarion.client.graphics.SpriteBuffer;
 import illarion.client.resources.ResourceFactory;
 import illarion.client.resources.data.AvatarTemplate;
 import illarion.common.util.TableLoaderCharacters;
 import illarion.common.util.TableLoaderSink;
 import org.apache.log4j.Logger;
-import org.newdawn.slick.Color;
+import org.illarion.engine.assets.Assets;
+import org.illarion.engine.assets.SpriteFactory;
+import org.illarion.engine.graphic.Color;
+import org.illarion.engine.graphic.Sprite;
 
 import javax.annotation.Nonnull;
 
@@ -44,6 +45,21 @@ public final class CharacterLoader extends AbstractResourceLoader<AvatarTemplate
      */
     private static final Logger LOGGER = Logger.getLogger(ItemLoader.class);
 
+    /**
+     * The assets of the game engine that are required to load the data needed for the characters.
+     */
+    @Nonnull
+    private final Assets assets;
+
+    /**
+     * Create a new character loader.
+     *
+     * @param assets the assets instance of the game engine that is used to load the data
+     */
+    public CharacterLoader(@Nonnull final Assets assets) {
+        this.assets = assets;
+    }
+
     @Override
     public ResourceFactory<AvatarTemplate> call() {
         if (!hasTargetFactory()) {
@@ -56,6 +72,8 @@ public final class CharacterLoader extends AbstractResourceLoader<AvatarTemplate
         new TableLoaderCharacters(this);
         factory.loadingFinished();
         AvatarInfo.cleanup();
+
+        loadingDone();
 
         return factory;
     }
@@ -87,10 +105,11 @@ public final class CharacterLoader extends AbstractResourceLoader<AvatarTemplate
         final AvatarInfo info = AvatarInfo.getInstance(appearance, visibleMod);
         info.reportAnimation(animationID);
 
-        final Color defaultColor = new Color(skinRed, skinGreen, skinBlue, 255);
+        final Color defaultColor = new Color(skinRed, skinGreen, skinBlue);
 
-        final Sprite avatarSprite = SpriteBuffer.getInstance().getSprite(CHAR_PATH, name, frames, offsetX,
-                offsetY, Sprite.HAlign.center, Sprite.VAlign.bottom, mirror);
+        final Sprite avatarSprite = assets.getSpriteFactory().createSprite(getTextures(assets.getTextureManager(),
+                CHAR_PATH, name, frames), offsetX, offsetY, SpriteFactory.CENTER, SpriteFactory.BOTTOM, mirror);
+
         final AvatarTemplate template = new AvatarTemplate(avatarId, avatarSprite, frames, stillFrame, defaultColor,
                 shadowOffset, direction, info);
 

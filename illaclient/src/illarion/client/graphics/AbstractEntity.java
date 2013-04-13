@@ -18,19 +18,16 @@
  */
 package illarion.client.graphics;
 
-import illarion.client.graphics.shader.HighlightShader;
-import illarion.client.graphics.shader.Shader;
-import illarion.client.graphics.shader.ShaderManager;
 import illarion.client.resources.data.AbstractEntityTemplate;
 import illarion.client.world.World;
 import illarion.common.types.Location;
 import illarion.common.types.Rectangle;
-import illarion.common.util.FastMath;
 import org.apache.log4j.Logger;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Input;
+import org.illarion.engine.EngineException;
+import org.illarion.engine.GameContainer;
+import org.illarion.engine.graphic.*;
+import org.illarion.engine.graphic.effects.HighlightEffect;
+import org.illarion.engine.input.Input;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -92,7 +89,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
      * The default light that is used in the client.
      */
     @Nonnull
-    protected static final Color DEFAULT_LIGHT = new Color(1.f, 1.f, 1.f, 1.f);
+    protected static final Color DEFAULT_LIGHT = Color.WHITE;
 
     /**
      * The speed value for fading the alpha values by default.
@@ -156,14 +153,14 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
      * The light value that is used to render this entity during the next render loop.
      */
     @Nonnull
-    private Color renderLight = new Color(Color.white);
+    private Color renderLight = new Color(Color.WHITE);
 
     /**
      * This color is the color that was used last time to render the entity. Its used to check if the color changed
      * and the entity needs to be rendered again.
      */
     @Nonnull
-    private final Color lastRenderLight = new Color(Color.white);
+    private final Color lastRenderLight = new Color(Color.WHITE);
 
     /**
      * The color that is used to overwrite the real color of this entity.
@@ -182,12 +179,6 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
     private boolean shown;
 
     /**
-     * This flag is used to determine if the scaling value is used at the rendering or not. Not using the scaling
-     * value has a positive impact on the performance.
-     */
-    private boolean useScale;
-
-    /**
      * The template of this instance.
      */
     private final T template;
@@ -197,7 +188,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
         baseColor = template.getDefaultColor();
         if (baseColor == null) {
             alphaTarget = 255;
-            localLight = new Color(Color.white);
+            localLight = new Color(Color.WHITE);
         } else {
             localLight = new Color(baseColor);
             alphaTarget = baseColor.getAlpha();
@@ -252,7 +243,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
         if (overWriteBaseColor == null) {
             overWriteBaseColor = new Color(newBaseColor);
         } else {
-            copyLightValues(newBaseColor, overWriteBaseColor);
+            overWriteBaseColor.setColor(newBaseColor);
         }
     }
 
@@ -277,68 +268,41 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
     /**
      * Draw this entity to the screen. This also performs a few basic animations such as fading in and out,
      * based on the delta time that is supplied to this function.
-     *
-     * @return true in case the rendering operation was done successfully
      */
     @Override
-    public boolean draw(@Nonnull final Graphics g) {
+    public void render(@Nonnull final Graphics g) {
         if (removedEntity) {
             LOGGER.warn("Drawing a removed " + toString() + " entity is not allowed.");
-            return true;
+            return;
         }
 
         if (getAlpha() == 0) {
-            return true;
+            return;
         }
 
         final int renderLocX = displayX;
         final int renderLocY = displayY;
 
         if (!Camera.getInstance().requiresUpdate(displayRect)) {
-            return true;
+            return;
         }
 
-        final Rectangle parentDirtyArea = Camera.getInstance().getDirtyArea(displayRect);
-        if ((parentDirtyArea != null) && !parentDirtyArea.equals(Camera.getInstance().getViewport())) {
-            g.setClip(parentDirtyArea.getX() - Camera.getInstance().getViewportOffsetX(),
-                    (parentDirtyArea.getY() - Camera.getInstance().getViewportOffsetY()) +
-                            World.getMapDisplay().getHeightOffset(),
-                    parentDirtyArea.getWidth(), parentDirtyArea.getHeight());
-        }
-
-
-        HighlightShader shader = null;
         final int highlight = getHighlight();
-        if (highlight > 0) {
-            shader = ShaderManager.getShader(Shader.Highlight, HighlightShader.class);
-            shader.bind();
-            shader.setTexture(0);
+        if ((highlight > 0) && (highlightEffect != null)) {
             if (highlight == 1) {
-                shader.setHighlightShare(0.05f);
+                highlightEffect.setHighlightColor(COLOR_HIGHLIGHT_WEAK);
             } else {
-                shader.setHighlightShare(0.25f);
+                highlightEffect.setHighlightColor(COLOR_HIGHLIGHT_STRONG);
             }
-        }
-
-        final Sprite sprite = template.getSprite();
-        if (useScale) {
-            sprite.draw(g, renderLocX, renderLocY, renderLight, currentFrame, scale);
+            g.drawSprite(template.getSprite(), renderLocX, renderLocY, renderLight, currentFrame, scale, 0.f,
+                    highlightEffect);
         } else {
-            sprite.draw(g, renderLocX, renderLocY, renderLight, currentFrame);
+            g.drawSprite(template.getSprite(), renderLocX, renderLocY, renderLight, currentFrame, scale, 0.f);
         }
-
-        if (shader != null) {
-            shader.unbind();
-        }
-
-        if ((parentDirtyArea != null) && !parentDirtyArea.equals(Camera.getInstance().getViewport())) {
-            g.clearClip();
-        }
-
-        Camera.getInstance().markAreaRendered(displayRect);
-
-        return true;
     }
+
+    private static final Color COLOR_HIGHLIGHT_STRONG = new ImmutableColor(1.f, 1.f, 1.f, 0.25f);
+    private static final Color COLOR_HIGHLIGHT_WEAK = new ImmutableColor(1.f, 1.f, 1.f, 0.05f);
 
     /**
      * Get the current alpha value.
@@ -405,7 +369,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
      * @return the layer of this entity
      */
     @Override
-    public final int getZOrder() {
+    public final int getOrder() {
         return layerZ;
     }
 
@@ -415,7 +379,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
     @Override
     public void hide() {
         if (shown) {
-            World.getMapDisplay().remove(this);
+            World.getMapDisplay().getGameScene().removeElement(this);
             shown = false;
         }
     }
@@ -462,11 +426,10 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
         }
         if (getLight().getAlpha() != newAlpha) {
             final int oldAlpha = getLight().getAlpha();
-            getLight().a = newAlpha / 255.f;
+            getLight().setAlpha(newAlpha);
             if (alphaListener != null) {
                 alphaListener.alphaChanged(oldAlpha, getLight().getAlpha());
             }
-            wentDirty = true;
         }
     }
 
@@ -512,7 +475,6 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
         }
         if (currentFrame != frame) {
             currentFrame = frame;
-            wentDirty = true;
         }
     }
 
@@ -527,9 +489,9 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
             LOGGER.warn("Changing the light of a removed entity is not allowed.");
             return;
         }
-        final float oldAlpha = localLight.a;
+        final float oldAlpha = localLight.getAlphaf();
         localLight = new Color(light);
-        localLight.a = oldAlpha;
+        localLight.setAlphaf(oldAlpha);
     }
 
     /**
@@ -544,8 +506,6 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
         }
         if (scale != newScale) {
             scale = newScale;
-            useScale = FastMath.abs(1.f - newScale) > FastMath.FLT_EPSILON;
-            wentDirty = true;
         }
     }
 
@@ -561,9 +521,6 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
         if (removedEntity) {
             LOGGER.warn("Changing the screen position of a removed entity is not allowed.");
             return;
-        }
-        if ((dispX != displayX) || (dispY != displayY)) {
-            wentDirty = true;
         }
 
         displayX = dispX;
@@ -592,8 +549,8 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
     }
 
     @Override
-    public boolean processEvent(@Nonnull final GameContainer container, final int delta,
-                                @Nonnull final MapInteractionEvent event) {
+    public boolean isEventProcessed(@Nonnull final GameContainer container, final int delta,
+                                    @Nonnull final SceneEvent event) {
         return false;
     }
 
@@ -622,9 +579,8 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
         if (shown) {
             LOGGER.error("Added entity twice.");
         } else {
-            World.getMapDisplay().add(this);
+            World.getMapDisplay().getGameScene().addElement(this);
             shown = true;
-            wentDirty = true;
         }
     }
 
@@ -637,8 +593,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
             return;
         }
         if (shown) {
-            World.getMapDisplay().readd(this);
-            wentDirty = true;
+            World.getMapDisplay().getGameScene().updateElementLocation(this);
         } else {
             LOGGER.error("Updated display location for hidden item.");
         }
@@ -669,30 +624,14 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
         final Sprite sprite = template.getSprite();
         final int offS = template.getShadowOffset();
 
-        int xOffset = sprite.getOffsetX() + sprite.getAlignOffsetX();
-        int yOffset = sprite.getOffsetY() - sprite.getAlignOffsetY();
+        sprite.getDisplayArea(displayX, displayY, scale, 0.f, displayRect);
 
-        int width = sprite.getWidth();
-        int widthNoShadow = width - offS;
-        int height = sprite.getHeight();
-
-        if (useScale) {
-            xOffset *= scale;
-            yOffset *= scale;
-            width *= scale;
-            widthNoShadow *= scale;
-            height *= scale;
-        }
-
-        final int scrX = displayX + xOffset;
-        final int scrY = displayY - yOffset;
-
-        displayRect.set(scrX, scrY, width, height);
+        final int widthNoShadow = displayRect.getWidth() - (int) (offS * scale);
 
         if (fadingCorridorEffect) {
             final boolean transparent =
-                    FadingCorridor.getInstance().isInCorridor(scrX, scrY, layerZ,
-                            widthNoShadow, height);
+                    FadingCorridor.getInstance().isInCorridor(displayRect.getX(), displayRect.getY(), layerZ,
+                            widthNoShadow, displayRect.getHeight());
 
             if (transparent) {
                 setAlphaTarget(FADE_OUT_ALPHA);
@@ -707,19 +646,29 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
 
         if ((baseColor != null) || (overWriteBaseColor != null)) {
             if (overWriteBaseColor != null) {
-                renderLight = renderLight.multiply(overWriteBaseColor);
+                renderLight.multiply(overWriteBaseColor);
             } else {
-                renderLight = renderLight.multiply(baseColor);
+                renderLight.multiply(baseColor);
             }
         }
 
         if (!renderLight.equals(lastRenderLight)) {
-            wentDirty = true;
-            copyLightValues(renderLight, lastRenderLight);
+            lastRenderLight.setColor(renderLight);
         }
 
-        setEntityAreaDirty();
+        if (getHighlight() > 0) {
+            try {
+                highlightEffect = container.getEngine().getAssets().getEffectManager().getHighlightEffect(true);
+            } catch (EngineException e) {
+                LOGGER.warn("Failed to fetch highlight effect.", e);
+            }
+        } else {
+            highlightEffect = null;
+        }
     }
+
+    @Nullable
+    private HighlightEffect highlightEffect;
 
     /**
      * Get the light local to this tile.
@@ -732,23 +681,15 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
         if (parentLight == null) {
             return new Color(getLight());
         }
-        return parentLight.multiply(getLight());
-    }
-
-    private static void copyLightValues(@Nonnull final Color source, @Nonnull final Color target) {
-        target.r = source.r;
-        target.g = source.g;
-        target.b = source.b;
-        target.a = source.a;
+        final Color localLight = new Color(parentLight);
+        localLight.multiply(getLight());
+        return localLight;
     }
 
     @Nonnull
     private final Rectangle displayRect = new Rectangle();
     @Nonnull
     private final Rectangle interactionRect = new Rectangle();
-    @Nonnull
-    private final Rectangle lastDisplayRect = new Rectangle();
-    private boolean wentDirty;
 
     /**
      * Get the current interactive area of the object.
@@ -777,32 +718,6 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
         return displayRect;
     }
 
-    /**
-     * The display rectangle that was active when rendering the last frame.
-     *
-     * @return the last display rectangle
-     */
-    @Override
-    @Nonnull
-    public Rectangle getLastDisplayRect() {
-        return lastDisplayRect;
-    }
-
-    public final void setEntityAreaDirty() {
-        if (wentDirty || !lastDisplayRect.equals(displayRect)) {
-            wentDirty = false;
-            if (!lastDisplayRect.isEmpty()) {
-                Camera.getInstance().markAreaDirty(lastDisplayRect);
-                if (displayRect.equals(lastDisplayRect)) {
-                    return;
-                }
-            }
-
-            lastDisplayRect.set(displayRect);
-            Camera.getInstance().markAreaDirty(displayRect);
-        }
-    }
-
     private boolean fadingCorridorEffect;
 
     public void setFadingCorridorEffectEnabled(final boolean value) {
@@ -813,7 +728,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
      * This function checks if the entity is made transparent due the color its
      * drawn with.
      *
-     * @return <code>true</code> in case the graphic is turned transparent due
+     * @return {@code true} in case the graphic is turned transparent due
      *         its color
      */
     public boolean isTransparent() {
@@ -830,16 +745,6 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
         if (getAlpha() != alphaTarget) {
             setAlpha(AnimationUtility.translate(getAlpha(), alphaTarget, FADING_SPEED, 0, 255, delta));
         }
-    }
-
-    /**
-     * This function returns if this entity is using the scale value. This value
-     * can be used for optimization.
-     *
-     * @return <code>true</code> in case the scaling value is used
-     */
-    protected boolean usingScale() {
-        return useScale;
     }
 
     /**

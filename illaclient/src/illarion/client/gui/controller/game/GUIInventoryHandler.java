@@ -54,10 +54,11 @@ import org.apache.log4j.Logger;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
+import org.illarion.engine.GameContainer;
+import org.illarion.engine.input.Button;
+import org.illarion.engine.input.Input;
+import org.illarion.engine.input.Key;
 import org.illarion.nifty.controls.InventorySlot;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Input;
-import org.newdawn.slick.state.StateBasedGame;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -168,7 +169,7 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
         }
 
         @Override
-        public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
+        public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
             setSlotItem(slotId, itemId, itemCount);
         }
     }
@@ -189,6 +190,7 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
     private Screen activeScreen;
     private final NumberSelectPopupHandler numberSelect;
     private final TooltipHandler tooltipHandler;
+    @Nonnull
     private final Input input;
 
     /**
@@ -198,7 +200,7 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
 
     private final UpdateTask updateMerchantOverlays = new UpdateTask() {
         @Override
-        public void onUpdateGame(@Nonnull final GameContainer container, final StateBasedGame game, final int delta) {
+        public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
             final Inventory inventory = World.getPlayer().getInventory();
             for (int i = 0; i < Inventory.SLOT_COUNT; i++) {
                 updateMerchantOverlay(i, inventory.getItem(i).getItemID());
@@ -206,7 +208,7 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
         }
     };
 
-    public GUIInventoryHandler(final Input input, final NumberSelectPopupHandler numberSelectPopupHandler,
+    public GUIInventoryHandler(@Nonnull final Input input, final NumberSelectPopupHandler numberSelectPopupHandler,
                                final TooltipHandler tooltipHandler) {
         slots = new String[Inventory.SLOT_COUNT];
         slots[0] = "invslot_bag";
@@ -381,14 +383,14 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
     }
 
     private boolean isShiftPressed() {
-        return (input != null) && (input.isKeyDown(Input.KEY_LSHIFT) || input.isKeyDown(Input.KEY_RSHIFT));
+        return input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
     }
 
     @NiftyEventSubscriber(pattern = "invslot_.*")
     public void onMouseMoveOverInventory(@Nonnull final String topic, final NiftyMouseMovedEvent event) {
         final int slotId = getSlotNumber(topic);
 
-        if (input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON) || input.isMouseButtonDown(Input.MOUSE_RIGHT_BUTTON)) {
+        if (input.isAnyButtonDown(Button.Left, Button.Right)) {
             return;
         }
 
