@@ -19,6 +19,7 @@
 package illarion.client.graphics;
 
 import illarion.client.IllaClient;
+import illarion.client.input.CurrentMouseLocationEvent;
 import illarion.client.world.World;
 import illarion.common.graphics.Layers;
 import illarion.common.graphics.MapConstants;
@@ -29,6 +30,7 @@ import org.illarion.engine.EngineException;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Scene;
 import org.illarion.engine.graphic.effects.FogEffect;
+import org.illarion.engine.input.Input;
 
 import javax.annotation.Nonnull;
 
@@ -251,6 +253,8 @@ public final class MapDisplayManager
 
         Camera.getInstance().setViewport(-offX, -offY, container.getWidth(), container.getHeight());
 
+        final Input engineInput = container.getEngine().getInput();
+        gameScene.publishEvent(new CurrentMouseLocationEvent(engineInput.getMouseX(), engineInput.getMouseY()));
         gameScene.update(container, delta);
     }
 
