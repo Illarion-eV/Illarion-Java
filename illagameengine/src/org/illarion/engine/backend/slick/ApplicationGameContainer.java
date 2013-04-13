@@ -96,6 +96,8 @@ public class ApplicationGameContainer implements DesktopGameContainer {
             slickContainer.setAlwaysRender(true);
             slickContainer.setUpdateOnlyWhenVisible(false);
             slickContainer.setShowFPS(false);
+            slickContainer.setVSync(true);
+            slickContainer.setTargetFrameRate(60);
             Renderer.setRenderer(Renderer.VERTEX_ARRAY_RENDERER);
             Renderer.setLineStripRenderer(Renderer.QUAD_BASED_LINE_STRIP_RENDERER);
             engine = new SlickEngine(slickContainer);
@@ -156,7 +158,6 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         try {
             if (fullScreen) {
                 slickContainer.setDisplayMode(fullScreenResolution.getWidth(), fullScreenResolution.getHeight(), true);
-                slickContainer.setTargetFrameRate(fullScreenResolution.getRefreshRate());
             } else {
                 slickContainer.setDisplayMode(windowWidth, windowHeight, false);
             }

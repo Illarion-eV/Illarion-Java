@@ -88,8 +88,8 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         config.width = width;
         config.fullscreen = fullScreen;
         config.useGL20 = true;
-        config.vSyncEnabled = false;
-        config.useCPUSynch = false;
+        config.vSyncEnabled = true;
+        config.useCPUSynch = true;
 
         windowHeight = height;
         windowWidth = width;
