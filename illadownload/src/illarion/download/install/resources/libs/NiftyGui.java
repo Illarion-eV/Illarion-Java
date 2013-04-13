@@ -92,7 +92,6 @@ public final class NiftyGui
             final String dir = LibraryDirectory.getInstance().getDirectory();
             cp.add(new File(dir, "nifty-1.4.0-SNAPSHOT.jar")); //$NON-NLS-1$
             cp.add(new File(dir, "nifty-default-controls-1.4.0-SNAPSHOT.jar")); //$NON-NLS-1$
-            cp.add(new File(dir, "nifty-slick-renderer-1.4.0-SNAPSHOT.jar")); //$NON-NLS-1$
 
             classpath = cp;
         }
@@ -106,7 +105,6 @@ public final class NiftyGui
     public Collection<Resource> getDependencies() {
         if (dependencies == null) {
             final Collection<Resource> dep = new ArrayList<Resource>(2);
-            dep.add(Slick.getInstance());
             dep.add(EventBus.getInstance());
             dep.add(Xpp.getInstance());
 
@@ -149,8 +147,7 @@ public final class NiftyGui
         if (resources == null) {
             final Collection<URL> res = new ArrayList<URL>();
             try {
-                res.add(new URL(ONLINE_PATH
-                        + "nifty" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
+                res.add(new URL(ONLINE_PATH + "nifty" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
             } catch (@Nonnull final Exception e) {
                 // Catch everything and do nothing!
             }
