@@ -24,6 +24,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
+import com.badlogic.gdx.utils.Pools;
 import illarion.common.types.Rectangle;
 import org.illarion.engine.graphic.*;
 import org.illarion.engine.graphic.effects.TextureEffect;
@@ -103,6 +105,9 @@ class GdxGraphics implements Graphics {
     @Nullable
     private Texture blankBackground;
 
+    /**
+     * The engine implementation used for the rendering.
+     */
     @Nonnull
     private final GdxEngine engine;
 
@@ -183,6 +188,15 @@ class GdxGraphics implements Graphics {
      * This function needs to be called after rendering a frame.
      */
     void endFrame() {
+        flushAll();
+        unsetClippingArea();
+    }
+
+    /**
+     * Stops the render operation of both the shape renderer and the sprite batch renderer to ensure that the
+     * buffered data is flushed to the screen.
+     */
+    private void flushAll() {
         if (shapeRenderer.getCurrentType() != null) {
             shapeRenderer.end();
         }
@@ -406,19 +420,35 @@ class GdxGraphics implements Graphics {
         }
     }
 
-    private int fixY(final int y) {
-        return /*gdxGraphics.getHeight() - */y;
-    }
+    private boolean activeClipping;
 
     @Override
     public void setClippingArea(final int x, final int y, final int width, final int height) {
-        gdxGraphics.getGLCommon().glEnable(GL10.GL_SCISSOR_TEST);
-        gdxGraphics.getGLCommon().glScissor(x, y, width, height);
+        flushAll();
+        if (activeClipping) {
+            unsetClippingArea();
+        }
+        final com.badlogic.gdx.math.Rectangle clippingRect = Pools.obtain(com.badlogic.gdx.math.Rectangle.class);
+        clippingRect.set(x, y, width, height);
+
+        final com.badlogic.gdx.math.Rectangle scissor = Pools.obtain(com.badlogic.gdx.math.Rectangle.class);
+        ScissorStack.calculateScissors(camera, spriteBatch.getTransformMatrix(), clippingRect, scissor);
+        Pools.free(clippingRect);
+
+        if (ScissorStack.pushScissors(scissor)) {
+            activeClipping = true;
+        } else {
+            Pools.free(scissor);
+        }
     }
 
     @Override
     public void unsetClippingArea() {
-        gdxGraphics.getGLCommon().glDisable(GL10.GL_SCISSOR_TEST);
+        if (activeClipping) {
+            flushAll();
+            Pools.free(ScissorStack.popScissors());
+            activeClipping = false;
+        }
     }
 
     /**
@@ -428,15 +458,14 @@ class GdxGraphics implements Graphics {
      * @param offsetY the y component of the offset
      */
     void applyOffset(final int offsetX, final int offsetY) {
-        camera.position.set((camera.viewportWidth / 2.f) + offsetX, (camera.viewportHeight / 2.f) + offsetY,
-                0.f);
+        camera.position.set((camera.viewportWidth / 2.f) + offsetX, (camera.viewportHeight / 2.f) + offsetY, 0.f);
         camera.update();
 
-        spriteBatch.setProjectionMatrix(camera.projection);
-        shapeRenderer.setProjectionMatrix(camera.projection);
+        spriteBatch.setProjectionMatrix(camera.combined);
+        shapeRenderer.setProjectionMatrix(camera.combined);
 
-        spriteBatch.setTransformMatrix(camera.view);
-        shapeRenderer.setTransformMatrix(camera.view);
+        //spriteBatch.setTransformMatrix(camera.view);
+        //shapeRenderer.setTransformMatrix(camera.view);
     }
 
     /**
