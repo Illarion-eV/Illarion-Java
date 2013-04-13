@@ -85,6 +85,7 @@
                 <pathelement location="${niftycontrols.bin}"/>
                 <pathelement location="${common.bin}"/>
                 <pathelement location="${engine.bin}"/>
+                <pathelement location="${engine.nifty.bin}"/>
                 <pathelement path="${java.home}/lib"/>
             </classpath>
         </javac>
