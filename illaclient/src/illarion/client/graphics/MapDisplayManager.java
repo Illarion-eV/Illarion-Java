@@ -293,7 +293,7 @@ public final class MapDisplayManager
         }
 
         final Camera camera = Camera.getInstance();
-        gameScene.render(c.getEngine().getGraphics(), -camera.getViewportOffsetX(), -camera.getViewportOffsetY());
+        gameScene.render(c.getEngine().getGraphics(), camera.getViewportOffsetX(), camera.getViewportOffsetY());
     }
 
     public void setActive(final boolean active) {

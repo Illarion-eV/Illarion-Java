@@ -62,8 +62,8 @@ class GdxFogEffect implements FogEffect, GdxSceneEffect {
     public void activateEffect(@Nonnull final SpriteBatch batch, final int screenWidth, final int screenHeight,
                                final int textureWidth, final int textureHeight) {
         batch.setShader(shader);
-        shader.setUniformf("density", density);
-        shader.setUniformf("center", (float) screenWidth / 2.f / (float) textureWidth,
+        shader.setUniformf("u_density", density);
+        shader.setUniformf("u_center", (float) screenWidth / 2.f / (float) textureWidth,
                 (float) screenHeight / 2.f / (float) textureHeight);
     }
 

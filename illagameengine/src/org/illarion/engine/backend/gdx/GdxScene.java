@@ -91,6 +91,7 @@ class GdxScene extends AbstractScene<GdxSceneEffect> {
             getEffect(i).update(delta);
         }
 
+        camera.setToOrtho(true, container.getWidth(), container.getHeight());
         camera.update();
     }
 
@@ -102,9 +103,9 @@ class GdxScene extends AbstractScene<GdxSceneEffect> {
 
         final GdxGraphics gdxGraphics = (GdxGraphics) graphics;
 
-        final int effectCount = 0;//getEffectCount();
+        final int effectCount = getEffectCount();
         if (effectCount == 0) {
-            gdxGraphics.applyOffset(-offsetX, -offsetY);
+            gdxGraphics.applyOffset(offsetX, offsetY);
             renderScene(graphics);
             gdxGraphics.resetOffset();
         } else {
@@ -112,14 +113,13 @@ class GdxScene extends AbstractScene<GdxSceneEffect> {
             FrameBuffer currentFrameBuffer = getNextFrameBuffer(container.getWidth(), container.getHeight());
             currentFrameBuffer.begin();
             gdxGraphics.beginFrame();
-            gdxGraphics.applyOffset(-offsetX, -offsetY);
+            gdxGraphics.applyOffset(offsetX, offsetY);
             renderScene(graphics);
             gdxGraphics.resetOffset();
-            gdxGraphics.endFrame();
+            gdxGraphics.flushAll();
             currentFrameBuffer.end();
 
-            renderBatch.setProjectionMatrix(camera.projection);
-            renderBatch.setTransformMatrix(camera.view);
+            renderBatch.setProjectionMatrix(camera.combined);
             renderBatch.setColor(Color.WHITE);
             FrameBuffer lastFrameBuffer = currentFrameBuffer;
             for (int i = 0; i < effectCount; i++) {
@@ -137,11 +137,11 @@ class GdxScene extends AbstractScene<GdxSceneEffect> {
                 lastFrameBuffer = currentFrameBuffer;
             }
 
+            renderBatch.setColor(Color.WHITE);
+            renderBatch.setProjectionMatrix(camera.combined);
             renderBatch.begin();
             renderBatch.draw(lastFrameBuffer.getColorBufferTexture(), 0.f, 0.f);
             renderBatch.end();
-
-            gdxGraphics.beginFrame();
         }
     }
 

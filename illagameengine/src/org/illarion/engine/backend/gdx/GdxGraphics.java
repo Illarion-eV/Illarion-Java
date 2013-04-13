@@ -137,9 +137,9 @@ class GdxGraphics implements Graphics {
      * This function needs to be called before all rendering operations of a frame. It will setup the render system.
      */
     void beginFrame() {
-        clear();
-
+        camera.setToOrtho(true, gdxGraphics.getWidth(), gdxGraphics.getHeight());
         resetOffset();
+        clear();
 
         lastBlendingMode = null;
         setBlendingMode(BlendingMode.AlphaBlend);
@@ -196,7 +196,7 @@ class GdxGraphics implements Graphics {
      * Stops the render operation of both the shape renderer and the sprite batch renderer to ensure that the
      * buffered data is flushed to the screen.
      */
-    private void flushAll() {
+    public void flushAll() {
         if (shapeRenderer.getCurrentType() != null) {
             shapeRenderer.end();
         }
@@ -209,7 +209,7 @@ class GdxGraphics implements Graphics {
     @Override
     public void clear() {
         gdxGraphics.getGLCommon().glClearColor(0.f, 0.f, 0.f, 0.f);
-        gdxGraphics.getGLCommon().glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+        gdxGraphics.getGLCommon().glClear(GL10.GL_COLOR_BUFFER_BIT);
     }
 
     @Override
@@ -463,9 +463,6 @@ class GdxGraphics implements Graphics {
 
         spriteBatch.setProjectionMatrix(camera.combined);
         shapeRenderer.setProjectionMatrix(camera.combined);
-
-        //spriteBatch.setTransformMatrix(camera.view);
-        //shapeRenderer.setTransformMatrix(camera.view);
     }
 
     /**

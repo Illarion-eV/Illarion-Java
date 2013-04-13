@@ -1,30 +1,25 @@
-#version 110
-
 #ifdef GL_ES
+#define LOWP lowp
 precision mediump float;
+#else
+#define LOWP
 #endif
 
-// the texture to render
 uniform sampler2D u_texture;
 
-// the coordinates of the center
-uniform vec2 center;
+uniform vec2 u_center;
+uniform float u_density;
 
-// the fog density
-uniform float density;
+varying LOWP vec4 v_color;
+varying vec2 v_texCoords;
 
-// the color of the fog
-const vec4 fogGray = vec4(0.9, 0.9, 0.9, 1.0);
+const vec4 c_fogGray = vec4(0.9, 0.9, 0.9, 1.0);
 
 void main() {
-    // get the distance to the origin
-    float distance = abs(length((center - gl_TexCoord[0].xy) * vec2(1.0, 1.0)));
+    float distance = abs(length((u_center - v_texCoords.xy) * vec2(1.0, 1.0)));
 
-	// get the unaltered color of the fragment
-	vec4 color = texture2D(u_texture, gl_TexCoord[0].st);
+	vec4 color = texture2D(u_texture, v_texCoords.st);
+	float fragmentFogDensity = clamp(u_density * distance, 0.0, 0.98);
 
-	float fragmentFogDensity = clamp(density * distance, 0.0, 0.98);
-
-	// overlay the original color with the fog gray
-	gl_FragColor = vec4(color.rgba * (1.0 - fragmentFogDensity) + fogGray.rgba * fragmentFogDensity);
+	gl_FragColor = vec4(color.rgba * (1.0 - fragmentFogDensity) + c_fogGray.rgba * fragmentFogDensity);
 }

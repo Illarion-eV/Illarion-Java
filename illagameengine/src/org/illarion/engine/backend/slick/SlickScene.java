@@ -133,7 +133,7 @@ class SlickScene extends AbstractScene<SlickSceneEffect> {
             if (effectCount == 0) {
                 // No full screen effects. Just render it
                 slickGraphicsImpl.pushTransform();
-                slickGraphicsImpl.translate(offsetX, offsetY);
+                slickGraphicsImpl.translate(-offsetX, -offsetY);
                 slickGraphicsImpl.setBackground(Color.transparent);
                 slickGraphicsImpl.clear();
                 renderScene(graphics);
@@ -150,7 +150,7 @@ class SlickScene extends AbstractScene<SlickSceneEffect> {
                     currentGraphics.setBackground(Color.transparent);
                     currentGraphics.clear();
                     currentGraphics.pushTransform();
-                    currentGraphics.translate(offsetX, offsetY);
+                    currentGraphics.translate(-offsetX, -offsetY);
                     renderScene(graphics);
                     currentGraphics.popTransform();
                     currentGraphics.flush();
