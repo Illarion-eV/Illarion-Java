@@ -30,7 +30,7 @@ import org.illarion.engine.graphic.effects.SceneEffect;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * This is the abstract implementation of a scene that takes care for the sorting and storing of the scene elements
@@ -79,7 +79,7 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
      */
     protected AbstractScene() {
         sceneElements = new ArrayList<SceneElement>();
-        eventQueue = new ConcurrentLinkedDeque<SceneEvent>();
+        eventQueue = new ConcurrentLinkedQueue<SceneEvent>();
         sceneEffects = new ArrayList<T>();
     }
 
