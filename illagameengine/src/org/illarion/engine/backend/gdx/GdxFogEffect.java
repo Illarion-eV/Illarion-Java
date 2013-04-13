@@ -44,7 +44,7 @@ class GdxFogEffect implements FogEffect, GdxSceneEffect {
 
     GdxFogEffect(@Nonnull final Files files) {
         //noinspection SpellCheckingInspection
-        shader = new ShaderProgram(files.internal("org/illarion/engine/backend/gdx/shaders/fog.vert"),
+        shader = new ShaderProgram(files.internal("org/illarion/engine/backend/gdx/shaders/generic.vert"),
                 files.internal("org/illarion/engine/backend/gdx/shaders/fog.frag"));
     }
 

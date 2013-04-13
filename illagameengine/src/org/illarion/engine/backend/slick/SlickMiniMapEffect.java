@@ -82,8 +82,8 @@ class SlickMiniMapEffect implements MiniMapEffect, SlickTextureEffect {
 
     @Override
     public void activateEffect(@Nonnull final Graphics graphics) {
-        final float miniMapCenterX = (float) (centerX) / (float) WorldMap.WORLD_MAP_WIDTH;
-        final float miniMapCenterY = (float) (centerY) / (float) WorldMap.WORLD_MAP_HEIGHT;
+        final float miniMapCenterX = (float) centerX / (float) WorldMap.WORLD_MAP_WIDTH;
+        final float miniMapCenterY = (float) centerY / (float) WorldMap.WORLD_MAP_HEIGHT;
 
         miniMapShader.bind();
         miniMapShader.setUniform2f("center", miniMapCenterX, miniMapCenterY);

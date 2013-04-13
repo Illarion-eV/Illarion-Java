@@ -344,9 +344,11 @@ class SlickGraphics implements Graphics {
         if (usedEffect != null) {
             usedEffect.activateEffect(slickGraphicsImpl);
         }
-        slickGraphicsImpl.translate(centerX, centerY);
-        slickGraphicsImpl.rotate(0, 0, rotate);
-        slickGraphicsImpl.translate(-centerX, -centerY);
+        if (rotate != 0) {
+            slickGraphicsImpl.translate(centerX + x, centerY + y);
+            slickGraphicsImpl.rotate(0, 0, rotate);
+            slickGraphicsImpl.translate(-centerX - x, -centerY - y);
+        }
         slickGraphicsImpl.drawImage(slickTexture.getBackingImage(), x, y, x + width, y + height, texX, texY,
                 texX + texWidth, texY + texHeight, tempSlickColor1);
 

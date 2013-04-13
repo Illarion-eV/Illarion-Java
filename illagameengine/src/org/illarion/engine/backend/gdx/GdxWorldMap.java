@@ -140,8 +140,9 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
             }
             tempDrawingColor.a = 1.f;
 
-            synchronized (this) {
-                worldMapPixels.drawPixel(texPosX, texPosY, tempDrawingColor.toIntBits());
+            synchronized (worldMapPixels) {
+                worldMapPixels.setColor(tempDrawingColor);
+                worldMapPixels.drawPixel(texPosX, texPosY);
                 mapDirty = true;
             }
         }

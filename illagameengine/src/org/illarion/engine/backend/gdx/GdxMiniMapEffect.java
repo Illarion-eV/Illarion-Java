@@ -52,15 +52,20 @@ class GdxMiniMapEffect implements MiniMapEffect, GdxTextureEffect {
      */
     private int centerY;
 
+    @Nonnull
+    private final WorldMap worldMap;
+
     /**
      * Create a new instance of the mini map effect.
      *
-     * @param files the file system handler used to load the effect data
+     * @param files    the file system handler used to load the effect data
+     * @param worldMap the world map that is displayed
      */
-    GdxMiniMapEffect(@Nonnull final Files files) {
+    GdxMiniMapEffect(@Nonnull final Files files, @Nonnull final WorldMap worldMap) {
         //noinspection SpellCheckingInspection
-        shader = new ShaderProgram(files.internal("org/illarion/engine/backend/gdx/shaders/minimap.vert"),
+        shader = new ShaderProgram(files.internal("org/illarion/engine/backend/gdx/shaders/generic.vert"),
                 files.internal("org/illarion/engine/backend/gdx/shaders/minimap.frag"));
+        this.worldMap = worldMap;
 
     }
 
@@ -72,6 +77,7 @@ class GdxMiniMapEffect implements MiniMapEffect, GdxTextureEffect {
         batch.setShader(shader);
         shader.setUniformf("u_radius", (float) radius / (float) WorldMap.WORLD_MAP_HEIGHT);
         shader.setUniformf("u_markerSize", 2.f / (float) WorldMap.WORLD_MAP_HEIGHT);
+        shader.setUniformf("u_center", miniMapCenterX, miniMapCenterY);
     }
 
     @Override
@@ -81,8 +87,8 @@ class GdxMiniMapEffect implements MiniMapEffect, GdxTextureEffect {
 
     @Override
     public void setCenter(@Nonnull final Location location) {
-        centerX = location.getScX();
-        centerY = location.getScY();
+        centerX = location.getScX() - worldMap.getMapOrigin().getScX();
+        centerY = location.getScY() - worldMap.getMapOrigin().getScY();
     }
 
     @Override

@@ -51,7 +51,7 @@ class GdxHighlightEffect implements HighlightEffect, GdxTextureEffect {
      */
     GdxHighlightEffect(@Nonnull final Files files) {
         //noinspection SpellCheckingInspection
-        shader = new ShaderProgram(files.internal("org/illarion/engine/backend/gdx/shaders/highlight.vert"),
+        shader = new ShaderProgram(files.internal("org/illarion/engine/backend/gdx/shaders/generic.vert"),
                 files.internal("org/illarion/engine/backend/gdx/shaders/highlight.frag"));
         highlightColor = new com.badlogic.gdx.graphics.Color();
     }

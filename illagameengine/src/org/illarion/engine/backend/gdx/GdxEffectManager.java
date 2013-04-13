@@ -73,11 +73,11 @@ class GdxEffectManager implements EffectManager {
     public MiniMapEffect getMiniMapEffect(@Nonnull final WorldMap worldMap, final boolean sharedInstance) throws EngineException {
         if (sharedInstance) {
             if (sharedMiniMapEffect == null) {
-                sharedMiniMapEffect = new GdxMiniMapEffect(files);
+                sharedMiniMapEffect = new GdxMiniMapEffect(files, worldMap);
             }
             return sharedMiniMapEffect;
         }
-        return new GdxMiniMapEffect(files);
+        return new GdxMiniMapEffect(files, worldMap);
     }
 
     @Nonnull

@@ -1,43 +1,35 @@
-#version 110
-
 #ifdef GL_ES
+#define LOWP lowp
 precision mediump float;
+#else
+#define LOWP
 #endif
 
-// the texture to render
 uniform sampler2D u_texture;
 
-// the coordinates of the center
 uniform vec2 u_center;
-
-// the radius distance
 uniform float u_radius;
-
-// center marker size
 uniform float u_markerSize;
 
-// transparent color
-const vec4 transparentColor = vec4(0.0);
+const LOWP vec4 transparentColor = vec4(0.0);
+const LOWP vec4 markerColor = vec4(1.0, 0.0, 0.0, 0.8);
+const LOWP vec4 backgroundColor = vec4(0.0, 0.0, 0.0, 1.0);
 
-// color of the center marker
-const vec4 markerColor = vec4(1.0, 0.0, 0.0, 0.8);
-
-// the color of the default background
-const vec4 backgroundColor = vec4(0.0, 0.0, 0.0, 1.0);
+varying LOWP vec4 v_color;
+varying vec2 v_texCoords;
 
 void main() {
-    // get the distance to the origin
-    float distance = distance(u_center, gl_TexCoord[0].xy);
+    float distance = distance(u_center, v_texCoords.xy);
 
     if (distance < u_markerSize) {
         gl_FragColor = markerColor;
     } else if (distance > u_radius) {
         gl_FragColor = transparentColor;
-    } else if (gl_TexCoord[0].s < 0.0 || gl_TexCoord[0].s >= 1.0) {
+    } else if (v_texCoords.s < 0.0 || v_texCoords.s >= 1.0) {
         gl_FragColor = backgroundColor;
-    } else if (gl_TexCoord[0].t < 0.0 || gl_TexCoord[0].t >= 1.0) {
+    } else if (v_texCoords.t < 0.0 || v_texCoords.t >= 1.0) {
         gl_FragColor = backgroundColor;
     } else {
-        gl_FragColor = texture2D(u_texture, gl_TexCoord[0].st);
+        gl_FragColor = texture2D(u_texture, v_texCoords.st);
     }
 }
