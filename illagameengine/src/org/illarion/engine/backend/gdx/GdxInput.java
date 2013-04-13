@@ -24,6 +24,7 @@ import org.illarion.engine.backend.shared.AbstractForwardingInput;
 import org.illarion.engine.input.Button;
 import org.illarion.engine.input.InputListener;
 import org.illarion.engine.input.Key;
+import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -68,6 +69,7 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
         this.gdxInput = gdxInput;
         gdxInput.setInputProcessor(this);
         events = new LinkedList<Runnable>();
+        Keyboard.enableRepeatEvents(true);
     }
 
     /**
