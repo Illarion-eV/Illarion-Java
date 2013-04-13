@@ -30,12 +30,14 @@
     <property name="jar" location="${engine}/${engine.jar}"/>
     <property name="jar.slick" location="${engine}/${engine-slick.jar}"/>
     <property name="jar.gdx" location="${engine}/${engine-gdx.jar}"/>
+    <property name="jar.nifty" location="${engine}/${engine-nifty.jar}"/>
 
     <target name="build_engine" description="Build the Illarion Game Engine in case its needed."
             depends="init, compile_engine, build_jar" unless="engine.uptodate">
         <move file="${jar}" tofile="${engine.bin}"/>
         <move file="${jar.slick}" tofile="${engine.slick.bin}"/>
         <move file="${jar.gdx}" tofile="${engine.gdx.bin}"/>
+        <move file="${jar.nifty}" tofile="${engine.nifty.bin}"/>
     </target>
 
     <target name="build_engine_res" description="Create the resource files for the Illarion Game Engine"
@@ -45,6 +47,7 @@
                 <file name="${engine.jar}"/>
                 <file name="${engine-slick.jar}"/>
                 <file name="${engine-gdx.jar}"/>
+                <file name="${engine-nifty.jar}"/>
             </filelist>
         </resourceprepare>
 
@@ -55,6 +58,7 @@
                     <file name="${engine.jar}"/>
                     <file name="${engine-slick.jar}"/>
                     <file name="${engine-gdx.jar}"/>
+                    <file name="${engine-nifty.jar}"/>
                 </filelist>
             </path>
         </signjar>
@@ -66,6 +70,7 @@
                     <file name="${engine.jar}"/>
                     <file name="${engine-slick.jar}"/>
                     <file name="${engine-gdx.jar}"/>
+                    <file name="${engine-nifty.jar}"/>
                 </filelist>
             </path>
         </verifyjar>
@@ -85,6 +90,12 @@
         <resourcebuild target="${engine.gdx.res.deploy}" usepack200="true">
             <filelist dir="${signedcompiled}">
                 <file name="${engine-gdx.jar}"/>
+            </filelist>
+        </resourcebuild>
+
+        <resourcebuild target="${engine.nifty.res.deploy}" usepack200="true">
+            <filelist dir="${signedcompiled}">
+                <file name="${engine-nifty.jar}"/>
             </filelist>
         </resourcebuild>
     </target>
@@ -113,7 +124,7 @@
     <target name="build_jar">
         <jar jarfile="${jar}" basedir="${classes}" index="${build.index}"
              includes="org/illarion/engine/**"
-             excludes="org/illarion/engine/backend/slick/**,org/illarion/engine/backend/gdx/**">
+             excludes="org/illarion/engine/backend/slick/**,org/illarion/engine/backend/gdx/**,org/illarion/engine/nifty/**">
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <attribute name="Built-Date" value="${TODAY}"/>
@@ -148,5 +159,17 @@
         </jar>
         <jar jarfile="${jar.gdx}" basedir="${src}" update="true" index="${build.index}"
              includes="org/illarion/engine/backend/gdx/shaders/*"/>
+
+
+        <jar jarfile="${jar.nifty}" basedir="${classes}" index="${build.index}"
+             includes="org/illarion/engine/nifty/**">
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Built-Date" value="${TODAY}"/>
+                <attribute name="Implementation-Vendor" value="Illarion e.V"/>
+                <attribute name="Implementation-Title" value="Illarion Game Engine - Nifty-GUI Extension"/>
+                <attribute name="Implementation-Version" value="1.00"/>
+            </manifest>
+        </jar>
     </target>
 </project>

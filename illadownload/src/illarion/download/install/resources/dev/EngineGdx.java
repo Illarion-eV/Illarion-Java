@@ -18,9 +18,10 @@
  */
 package illarion.download.install.resources.dev;
 
-import illarion.download.install.Installation;
 import illarion.download.install.resources.Resource;
-import illarion.download.install.resources.libs.*;
+import illarion.download.install.resources.libs.JSR;
+import illarion.download.install.resources.libs.LibGdx;
+import illarion.download.install.resources.libs.Log4j;
 import illarion.download.util.Lang;
 
 import javax.annotation.Nonnull;
@@ -31,17 +32,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * This resource contains the Illarion Testserverclient.
+ * This resource contains the Illarion Game Engine - libGDX Backend.
  *
  * @author Martin Karing
- * @version 1.00
- * @since 1.00
  */
-public final class Client implements DevelopmentResource {
+public final class EngineGdx implements DevelopmentResource {
     /**
      * The singleton instance of this class.
      */
-    private static final Client INSTANCE = new Client();
+    private static final EngineGdx INSTANCE = new EngineGdx();
 
     /**
      * The files that are needed to be added to the class path for this
@@ -60,14 +59,9 @@ public final class Client implements DevelopmentResource {
     private Collection<URL> resources;
 
     /**
-     * VM arguments.
-     */
-    private Collection<String> vmArgs;
-
-    /**
      * Private constructor to avoid instances but the singleton instance.
      */
-    private Client() {
+    private EngineGdx() {
         // nothing to do
     }
 
@@ -90,7 +84,7 @@ public final class Client implements DevelopmentResource {
         if (classpath == null) {
             final Collection<File> cp = new ArrayList<File>();
             cp.add(new File(DevelopmentDirectory.getInstance().getDirectory(),
-                    "illarion_client.jar")); //$NON-NLS-1$
+                    "illarion_engine_gdx.jar")); //$NON-NLS-1$
 
             classpath = cp;
         }
@@ -104,27 +98,10 @@ public final class Client implements DevelopmentResource {
     public Collection<Resource> getDependencies() {
         if (dependencies == null) {
             final Collection<Resource> dep = new ArrayList<Resource>();
-            dep.add(Javolution.getInstance());
             dep.add(Log4j.getInstance());
-            dep.add(Trove.getInstance());
-            dep.add(NiftyGui.getInstance());
-            dep.add(EventBus.getInstance());
-            dep.add(Common.getInstance());
-            dep.add(NiftyIllarion.getInstance());
             dep.add(JSR.getInstance());
-
             dep.add(Engine.getInstance());
-            dep.add(EngineGdx.getInstance());
-            dep.add(EngineNifty.getInstance());
-
-            dep.add(Books.getInstance());
-            dep.add(Characters.getInstance());
-            dep.add(Effects.getInstance());
-            dep.add(Items.getInstance());
-            dep.add(Gui.getInstance());
-            dep.add(Sounds.getInstance());
-            dep.add(Tables.getInstance());
-            dep.add(Tiles.getInstance());
+            dep.add(LibGdx.getInstance());
 
             dependencies = dep;
         }
@@ -136,20 +113,19 @@ public final class Client implements DevelopmentResource {
      * upon a call.
      */
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
     public String getLaunchClass() {
-        return "illarion.client.IllaClient";
+        throw new IllegalStateException();
     }
 
     @Override
     public String getName() {
-        return Lang.getMsg(Client.class.getName());
+        return Lang.getMsg(EngineGdx.class.getName());
     }
 
     /**
-     * This resource does not require and program arguments. So this function will return <code>null</code> in any
-     * case.
+     * This resource does not require and program arguments. So this function
+     * will return {@code null} in any case.
      */
     @Nullable
     @Override
@@ -158,14 +134,15 @@ public final class Client implements DevelopmentResource {
     }
 
     /**
-     * Generates and returns the list of files that need to be downloaded to get this resource working.
+     * Generates and returns the list of files that need to be downloaded to get
+     * this resource working.
      */
     @Override
     public Collection<URL> getRequiredResources() {
         if (resources == null) {
             final Collection<URL> res = new ArrayList<URL>();
             try {
-                res.add(new URL(ONLINE_PATH + "illarion_client" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
+                res.add(new URL(ONLINE_PATH + "illarion_engine_gdx" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
             } catch (@Nonnull final Exception e) {
                 // Catch everything and do nothing!
             }
@@ -184,20 +161,13 @@ public final class Client implements DevelopmentResource {
     }
 
     /**
-     * Generate and return the list of virtual machine arguments that are passed to java when the function is called.
+     * Generate and return the list of virtual machine arguments that are passed
+     * to java when the function is called.
      */
     @Nullable
     @Override
     public Collection<String> getVMArguments() {
-        if (Installation.isProduction()) {
-            return null;
-        }
-
-        if (vmArgs == null) {
-            vmArgs = new ArrayList<String>();
-            vmArgs.add("-Dillarion.server=testserver");
-        }
-        return vmArgs;
+        return null;
     }
 
     /**
@@ -205,6 +175,6 @@ public final class Client implements DevelopmentResource {
      */
     @Override
     public boolean isStartable() {
-        return true;
+        return false;
     }
 }

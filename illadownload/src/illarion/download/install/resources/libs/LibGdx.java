@@ -16,11 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Download Utility.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.download.install.resources.dev;
+package illarion.download.install.resources.libs;
 
-import illarion.download.install.Installation;
 import illarion.download.install.resources.Resource;
-import illarion.download.install.resources.libs.*;
 import illarion.download.util.Lang;
 
 import javax.annotation.Nonnull;
@@ -31,17 +29,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * This resource contains the Illarion Testserverclient.
+ * This resource contains the LibGDX graphic engine.
  *
  * @author Martin Karing
- * @version 1.00
- * @since 1.00
  */
-public final class Client implements DevelopmentResource {
+public final class LibGdx
+        implements LibraryResource {
     /**
      * The singleton instance of this class.
      */
-    private static final Client INSTANCE = new Client();
+    private static final LibGdx INSTANCE = new LibGdx();
 
     /**
      * The files that are needed to be added to the class path for this
@@ -50,24 +47,20 @@ public final class Client implements DevelopmentResource {
     private Collection<File> classpath;
 
     /**
-     * The dependencies of this resource.
-     */
-    private Collection<Resource> dependencies;
-
-    /**
      * The resources that are needed to be downloaded for this class.
      */
     private Collection<URL> resources;
 
     /**
-     * VM arguments.
+     * The arguments that are passed to the virtual machine in case this
+     * resource is part of the application.
      */
-    private Collection<String> vmArgs;
+    private Collection<String> vmArguments;
 
     /**
      * Private constructor to avoid instances but the singleton instance.
      */
-    private Client() {
+    private LibGdx() {
         // nothing to do
     }
 
@@ -89,8 +82,11 @@ public final class Client implements DevelopmentResource {
     public Collection<File> getClassPath() {
         if (classpath == null) {
             final Collection<File> cp = new ArrayList<File>();
-            cp.add(new File(DevelopmentDirectory.getInstance().getDirectory(),
-                    "illarion_client.jar")); //$NON-NLS-1$
+            final String dir = LibraryDirectory.getInstance().getDirectory();
+            cp.add(new File(dir, "gdx.jar")); //$NON-NLS-1$
+            cp.add(new File(dir, "gdx-natives.jar")); //$NON-NLS-1$
+            cp.add(new File(dir, "gdx-backend-lwjgl.jar")); //$NON-NLS-1$
+            cp.add(new File(dir, "gdx-backend-lwjgl-natives.jar")); //$NON-NLS-1$
 
             classpath = cp;
         }
@@ -98,37 +94,11 @@ public final class Client implements DevelopmentResource {
     }
 
     /**
-     * Get the dependencies of this resource.
+     * Get the libraries this library requires to work.
      */
     @Override
     public Collection<Resource> getDependencies() {
-        if (dependencies == null) {
-            final Collection<Resource> dep = new ArrayList<Resource>();
-            dep.add(Javolution.getInstance());
-            dep.add(Log4j.getInstance());
-            dep.add(Trove.getInstance());
-            dep.add(NiftyGui.getInstance());
-            dep.add(EventBus.getInstance());
-            dep.add(Common.getInstance());
-            dep.add(NiftyIllarion.getInstance());
-            dep.add(JSR.getInstance());
-
-            dep.add(Engine.getInstance());
-            dep.add(EngineGdx.getInstance());
-            dep.add(EngineNifty.getInstance());
-
-            dep.add(Books.getInstance());
-            dep.add(Characters.getInstance());
-            dep.add(Effects.getInstance());
-            dep.add(Items.getInstance());
-            dep.add(Gui.getInstance());
-            dep.add(Sounds.getInstance());
-            dep.add(Tables.getInstance());
-            dep.add(Tiles.getInstance());
-
-            dependencies = dep;
-        }
-        return dependencies;
+        return null;
     }
 
     /**
@@ -136,20 +106,19 @@ public final class Client implements DevelopmentResource {
      * upon a call.
      */
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
     public String getLaunchClass() {
-        return "illarion.client.IllaClient";
+        throw new IllegalStateException();
     }
 
     @Override
     public String getName() {
-        return Lang.getMsg(Client.class.getName());
+        return Lang.getMsg(LibGdx.class.getName());
     }
 
     /**
-     * This resource does not require and program arguments. So this function will return <code>null</code> in any
-     * case.
+     * This resource does not require and program arguments. So this function
+     * will return {@code null} in any case.
      */
     @Nullable
     @Override
@@ -158,14 +127,15 @@ public final class Client implements DevelopmentResource {
     }
 
     /**
-     * Generates and returns the list of files that need to be downloaded to get this resource working.
+     * Generates and returns the list of files that need to be downloaded to get
+     * this resource working.
      */
     @Override
     public Collection<URL> getRequiredResources() {
         if (resources == null) {
             final Collection<URL> res = new ArrayList<URL>();
             try {
-                res.add(new URL(ONLINE_PATH + "illarion_client" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
+                res.add(new URL(ONLINE_PATH + "gdx" + RESSOURCE_FILE_EXT)); //$NON-NLS-1$
             } catch (@Nonnull final Exception e) {
                 // Catch everything and do nothing!
             }
@@ -178,26 +148,26 @@ public final class Client implements DevelopmentResource {
      * The name of the directory the downloaded files are supposed to be
      * extracted to.
      */
+    @Nonnull
     @Override
     public String getSubDirectory() {
         return LOCAL_LIB_PATH;
     }
 
     /**
-     * Generate and return the list of virtual machine arguments that are passed to java when the function is called.
+     * Generate and return the list of virtual machine arguments that are passed
+     * to java when the function is called.
      */
-    @Nullable
     @Override
     public Collection<String> getVMArguments() {
-        if (Installation.isProduction()) {
-            return null;
+        if (vmArguments == null) {
+            final Collection<String> vmArgs = new ArrayList<String>();
+            vmArgs.add("-Dillarion.components.avaiable.gdx=true"); //$NON-NLS-1$
+
+            vmArguments = vmArgs;
         }
 
-        if (vmArgs == null) {
-            vmArgs = new ArrayList<String>();
-            vmArgs.add("-Dillarion.server=testserver");
-        }
-        return vmArgs;
+        return vmArguments;
     }
 
     /**
@@ -205,6 +175,6 @@ public final class Client implements DevelopmentResource {
      */
     @Override
     public boolean isStartable() {
-        return true;
+        return false;
     }
 }
