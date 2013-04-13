@@ -285,6 +285,7 @@ class GdxGraphics implements Graphics {
      */
     static void transferColor(@Nonnull final Color source, @Nonnull final com.badlogic.gdx.graphics.Color target) {
         target.set(source.getRedf(), source.getGreenf(), source.getBluef(), source.getAlphaf());
+        target.clamp();
     }
 
     @Override
