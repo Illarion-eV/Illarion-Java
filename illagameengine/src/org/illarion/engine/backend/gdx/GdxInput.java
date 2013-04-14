@@ -20,6 +20,7 @@ package org.illarion.engine.backend.gdx;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import illarion.common.util.FastMath;
 import org.illarion.engine.backend.shared.AbstractForwardingInput;
 import org.illarion.engine.input.Button;
 import org.illarion.engine.input.InputListener;
@@ -37,6 +38,22 @@ import java.util.Queue;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 class GdxInput extends AbstractForwardingInput implements InputProcessor {
+    /**
+     * This is the ID of the pointer that is the only one used.
+     */
+    private static final int USED_MOUSE_POINTER = 0;
+
+    /**
+     * This variable stores the size of the area the touch down and the touch up has to be,
+     * in order to accept these events as clicks.
+     */
+    private static final int CLICK_TOLERANCE = 5;
+
+    /**
+     * The time in milliseconds between two clicks to recognise them as a double click.
+     */
+    private static final long DOUBLE_CLICK_DELAY = 250;
+
     /**
      * The input listener that receives the input data when the polling function is called.
      */
@@ -56,9 +73,36 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     private final Input gdxInput;
 
     /**
-     * This is the ID of the pointer that is the only one used.
+     * This variable stores the location where the mouse button was pressed down the last time.
      */
-    private static final int USED_MOUSE_POINTER = 0;
+    private int touchDownX;
+
+    /**
+     * This variable stores the location where the mouse button was pressed down the last time.
+     */
+    private int touchDownY;
+
+    /**
+     * This variable stores the mouse pointer that was pressed last time.
+     */
+    private int touchDownPointer;
+
+    /**
+     * This variable stores the button that was pressed down last time.
+     */
+    @Nullable
+    private Button touchDownButton;
+
+    /**
+     * The button that was clicked at the first click.
+     */
+    @Nullable
+    private Button clickButton;
+
+    /**
+     * The timestamp until the timeout for the next double click runs.
+     */
+    private long clickTimeout;
 
     /**
      * Create a new instance of the libGDX input system.
@@ -470,6 +514,12 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
                 inputListener.buttonDown(x, y, pressedButton);
             }
         });
+
+        touchDownX = x;
+        touchDownY = y;
+        touchDownPointer = pointer;
+        touchDownButton = pressedButton;
+
         return true;
     }
 
@@ -482,6 +532,11 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
         if (releasedButton == null) {
             return true;
         }
+        if ((touchDownButton == releasedButton) && (touchDownPointer == pointer)) {
+            if ((FastMath.abs(touchDownX - x) < CLICK_TOLERANCE) && (FastMath.abs(touchDownY - y) < CLICK_TOLERANCE)) {
+                publishClick(x, y, releasedButton);
+            }
+        }
         events.offer(new Runnable() {
             @Override
             public void run() {
@@ -490,6 +545,36 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
             }
         });
         return true;
+    }
+
+    /**
+     * Publish the event as mouse click event. This function also handles double clicks.
+     *
+     * @param x      the x coordinate where the click happened
+     * @param y      the y coordinate where the click happened
+     * @param button the button that was clicked
+     */
+    private void publishClick(final int x, final int y, @Nonnull final Button button) {
+        if ((clickTimeout == 0) || (clickButton != button) || (System.currentTimeMillis() < clickTimeout)) {
+            clickButton = button;
+            clickTimeout = System.currentTimeMillis() + DOUBLE_CLICK_DELAY;
+            events.offer(new Runnable() {
+                @Override
+                public void run() {
+                    assert inputListener != null;
+                    inputListener.buttonClicked(x, y, button, 1);
+                }
+            });
+        } else {
+            clickTimeout = 0;
+            events.offer(new Runnable() {
+                @Override
+                public void run() {
+                    assert inputListener != null;
+                    inputListener.buttonClicked(x, y, button, 2);
+                }
+            });
+        }
     }
 
     @Override
