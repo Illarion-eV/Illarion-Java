@@ -99,6 +99,7 @@ public final class ReplyFactory {
         register(ShoutMsg.class);
         register(WhisperMsg.class);
         register(ShowcaseMsg.class);
+        register(ShowcaseSingleMsg.class);
         register(SkillMsg.class);
         register(SoundEffectMsg.class);
         register(TargetLostMsg.class);

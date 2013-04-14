@@ -493,7 +493,12 @@ public final class CommandList {
     /**
      * Server message that sends the contents of a showcase.
      */
-    public static final int MSG_SHOWCASE = 0xC5; //
+    public static final int MSG_SHOWCASE = 0xC5;
+
+    /**
+     * Server message that sends the contents of a single showcase slot.
+     */
+    public static final int MSG_SHOWCASE_SINGLE = 0xCF;
 
     /**
      * Server message that contains a skill of the player character.
