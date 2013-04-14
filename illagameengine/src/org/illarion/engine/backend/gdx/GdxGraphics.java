@@ -208,8 +208,8 @@ class GdxGraphics implements Graphics {
 
     @Override
     public void clear() {
-        gdxGraphics.getGLCommon().glClearColor(0.f, 0.f, 0.f, 0.f);
-        gdxGraphics.getGLCommon().glClear(GL10.GL_COLOR_BUFFER_BIT);
+        gdxGraphics.getGLCommon().glClearColor(0.f, 0.f, 0.f, 1.f);
+        gdxGraphics.getGLCommon().glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
     }
 
     @Override
