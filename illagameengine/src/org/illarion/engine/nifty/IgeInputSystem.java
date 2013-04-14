@@ -33,6 +33,8 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class IgeInputSystem implements InputSystem, InputListener {
+    private Key stalledKeyDownKey;
+
     @Override
     public void keyDown(@Nonnull final Key key) {
         if (currentConsumer == null) {
@@ -48,7 +50,9 @@ public class IgeInputSystem implements InputSystem, InputListener {
                     controlDown);
 
             if (!currentConsumer.processKeyboardEvent(event)) {
-                listener.keyDown(key);
+                stalledKeyDownKey = key;
+            } else {
+                stalledKeyDownKey = null;
             }
         }
     }
@@ -82,13 +86,22 @@ public class IgeInputSystem implements InputSystem, InputListener {
         if (input.isForwardingEnabled(ForwardingTarget.Keyboard)) {
             listener.keyTyped(character);
         } else {
-            final boolean shiftDown = input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
-            final boolean controlDown = input.isAnyKeyDown(Key.LeftCtrl, Key.RightCtrl);
-            final KeyboardInputEvent event = new KeyboardInputEvent(-1, character, true, shiftDown, controlDown);
 
-            if (!currentConsumer.processKeyboardEvent(event)) {
-                listener.keyTyped(character);
+            if (Character.isDefined(character)) {
+                final boolean shiftDown = input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
+                final boolean controlDown = input.isAnyKeyDown(Key.LeftCtrl, Key.RightCtrl);
+                final KeyboardInputEvent event = new KeyboardInputEvent(-1, character, true, shiftDown, controlDown);
+                if (!currentConsumer.processKeyboardEvent(event) && (stalledKeyDownKey != null)) {
+                    listener.keyDown(stalledKeyDownKey);
+                    listener.keyTyped(character);
+                }
+            } else {
+                if (stalledKeyDownKey != null) {
+                    listener.keyDown(stalledKeyDownKey);
+                }
             }
+
+            stalledKeyDownKey = null;
         }
     }
 
