@@ -18,6 +18,8 @@
  */
 package org.illarion.engine.graphic;
 
+import illarion.common.util.FastMath;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -84,6 +86,7 @@ public class Color {
         this.green = green;
         this.blue = blue;
         this.alpha = alpha;
+        clamp();
     }
 
     /**
@@ -95,10 +98,8 @@ public class Color {
      * @param alpha the alpha color component
      */
     public Color(final float red, final float green, final float blue, final float alpha) {
-        this.red = Math.round(red * MAX_INT_VALUE);
-        this.green = Math.round(green * MAX_INT_VALUE);
-        this.blue = Math.round(blue * MAX_INT_VALUE);
-        this.alpha = Math.round(alpha * MAX_INT_VALUE);
+        this(Math.round(red * MAX_INT_VALUE), Math.round(green * MAX_INT_VALUE), Math.round(blue * MAX_INT_VALUE),
+                Math.round(alpha * MAX_INT_VALUE));
     }
 
     /**
@@ -177,7 +178,7 @@ public class Color {
      * @param alpha the alpha component of the color
      */
     public void setAlphaf(final float alpha) {
-        this.alpha = Math.round(alpha * MAX_INT_VALUE);
+        setAlpha(Math.round(alpha * MAX_INT_VALUE));
     }
 
     /**
@@ -213,7 +214,7 @@ public class Color {
      * @param blue the blue component of the color
      */
     public void setBluef(final float blue) {
-        this.blue = Math.round(blue * MAX_INT_VALUE);
+        setBlue(Math.round(blue * MAX_INT_VALUE));
     }
 
     /**
@@ -249,7 +250,7 @@ public class Color {
      * @param green the green component of the color
      */
     public void setGreenf(final float green) {
-        this.green = Math.round(green * MAX_INT_VALUE);
+        setGreen(Math.round(green * MAX_INT_VALUE));
     }
 
     /**
@@ -285,7 +286,7 @@ public class Color {
      * @param red the red component of the color
      */
     public void setRedf(final float red) {
-        this.red = Math.round(red * MAX_INT_VALUE);
+        setRed(Math.round(red * MAX_INT_VALUE));
     }
 
     /**
@@ -340,5 +341,15 @@ public class Color {
      */
     public float getLuminancef() {
         return (red + green + blue) / (float) MAX_INT_VALUE / 3.f;
+    }
+
+    /**
+     * Limit the color components to its legal values.
+     */
+    public void clamp() {
+        red = FastMath.clamp(red, 0, MAX_INT_VALUE);
+        green = FastMath.clamp(green, 0, MAX_INT_VALUE);
+        blue = FastMath.clamp(blue, 0, MAX_INT_VALUE);
+        alpha = FastMath.clamp(alpha, 0, MAX_INT_VALUE);
     }
 }

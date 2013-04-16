@@ -31,6 +31,7 @@
     <option name="effort" value="max" />
     <option name="priority" value="Medium" />
   </component>
+  <component name="IdProvider" IDEtalkID="A58D5F5593E149B628FBDAE247EF8DBF" />
   <component name="JavadocGenerationManager">
     <option name="OUTPUT_DIRECTORY" />
     <option name="OPTION_SCOPE" value="protected" />

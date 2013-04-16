@@ -213,7 +213,7 @@ public final class AppearanceMsg extends AbstractReply {
                 (skinColorBlue != Color.MAX_INT_VALUE)) {
             TEMP_COLOR.setRed(skinColorRed);
             TEMP_COLOR.setGreen(skinColorGreen);
-            TEMP_COLOR.setBluef(skinColorBlue);
+            TEMP_COLOR.setBlue(skinColorBlue);
             TEMP_COLOR.setAlpha(Color.MAX_INT_VALUE);
             character.setSkinColor(TEMP_COLOR);
         } else {
@@ -222,7 +222,7 @@ public final class AppearanceMsg extends AbstractReply {
 
         TEMP_COLOR.setRed(hairColorRed);
         TEMP_COLOR.setGreen(hairColorGreen);
-        TEMP_COLOR.setBluef(hairColorBlue);
+        TEMP_COLOR.setBlue(hairColorBlue);
         TEMP_COLOR.setAlpha(Color.MAX_INT_VALUE);
         character.setClothColor(AvatarClothManager.GROUP_HAIR, TEMP_COLOR);
         character.setClothColor(AvatarClothManager.GROUP_BEARD, TEMP_COLOR);

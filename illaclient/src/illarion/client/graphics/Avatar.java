@@ -266,12 +266,8 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
     private static final Logger LOGGER = Logger.getLogger(Avatar.class);
 
     /**
-     * Draw the avatar to the game screen. Calling this function causes the
-     * light value to approach the target light in case the light values are
-     * different. It also draws the name above the avatar in case it needs to be
-     * shown.
-     *
-     * @return true at all times
+     * Draw the avatar to the game screen. Calling this function causes the light value to approach the target light
+     * in case the light values are different. It also draws the name above the avatar in case it needs to be shown.
      */
     @Override
     public void render(@Nonnull final Graphics g) {
@@ -292,8 +288,6 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         if (renderName) {
             avatarTextTag.render(g);
         }
-
-        return;
     }
 
     /**
