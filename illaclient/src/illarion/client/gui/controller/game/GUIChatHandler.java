@@ -356,7 +356,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         final Matcher emoteMatcher = emotePattern.matcher(text);
         if (emoteMatcher.find()) {
             final String cleanMe = REPEATED_SPACE_PATTERN.matcher(emoteMatcher.group(1)).replaceAll(" ").toLowerCase();
-            cleanAndSendText("#" + cleanMe, emoteMatcher.group(2), ChatHandler.SpeechMode.Normal);
+            cleanAndSendText('#' + cleanMe, emoteMatcher.group(2), ChatHandler.SpeechMode.Normal);
             return;
         }
 
@@ -440,6 +440,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
             }
         }
 
+        contentPane.setConstraintHeight(null);
         chatLog.getElement().layoutElements();
         chatLog.setAutoScroll(ScrollPanel.AutoScroll.BOTTOM);
         chatLog.setAutoScroll(ScrollPanel.AutoScroll.OFF);
@@ -477,7 +478,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
      * @param color     the color to show the text in
      */
     private void addMessageBubble(@Nullable final Char character, @Nonnull final String message, final Color color) {
-        if (character == null) {
+        if ((character == null) || (chatLayer == null)) {
             return;
         }
         final Avatar charAvatar = character.getAvatar();
