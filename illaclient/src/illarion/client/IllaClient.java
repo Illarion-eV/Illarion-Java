@@ -537,9 +537,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("questWindowPosY", "100px");
         cfg.setDefault("questShowFinished", false);
         cfg.setDefault("runAutoAvoid", true);
-        cfg.setDefault("serverAddress", Servers.devserver.getServerHost());
-        cfg.setDefault("serverPort", Servers.devserver.getServerPort());
-        cfg.setDefault("clientVersion", Servers.devserver.getClientVersion());
+        cfg.setDefault("serverAddress", Servers.customserver.getServerHost());
+        cfg.setDefault("serverPort", Servers.customserver.getServerPort());
+        cfg.setDefault("clientVersion", Servers.customserver.getClientVersion());
         cfg.setDefault("serverAccountLogin", true);
 
         @Nonnull final Toolkit awtDefaultToolkit = Toolkit.getDefaultToolkit();

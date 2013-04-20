@@ -252,7 +252,7 @@ public final class Login {
             final Login.CharEntry addChar = new Login.CharEntry(charName, status);
 
             switch (IllaClient.DEFAULT_SERVER) {
-                case localserver:
+                case customserver:
                     charList.add(addChar);
                     break;
                 case testserver:

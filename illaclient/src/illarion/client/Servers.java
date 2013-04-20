@@ -26,12 +26,6 @@ package illarion.client;
  */
 @SuppressWarnings("nls")
 public enum Servers {
-    /**
-     * Local server, only for very special applications. It will connect to a
-     * server running at localhost using the same connection parameters like the
-     * Testserver of Illarion.
-     */
-    localserver("Local server", "192.168.1.102", 3012, 122),
 
     /**
      * The Gameserver of Illarion. Normal players should connect to this server.
@@ -51,7 +45,13 @@ public enum Servers {
      * The development server of Illarion. Developers need a client that is
      * allowed to connect to this server.
      */
-    devserver("Dev server", realserver.serverAddr, 3012, 122);
+    devserver("Dev server", realserver.serverAddr, 3012, 122),
+
+    /**
+     * Custom server, only for very special applications. It will connect to a
+     * server running at a user-specified host.
+     */
+    customserver("Custom server", realserver.serverAddr, 3012, 122);
 
     /**
      * The client version that needs to be transfered to the server so it
