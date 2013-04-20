@@ -51,6 +51,11 @@
                         <control id="savePassword" name="checkbox" marginLeft="10px"/>
                     </panel>
 
+                    <panel id="serverPanel" childLayout="horizontal" marginBottom="30px">
+                        <control name="label" text="${login-bundle.server}" textHAlign="left" width="130px"/>
+                        <control name="dropDown" id="server" marginLeft="10px"/>
+                    </panel>
+
                     <panel width="100%" childLayout="center">
                         <panel childLayout="vertical">
                             <panel childLayout="horizontal" marginBottom="10px">

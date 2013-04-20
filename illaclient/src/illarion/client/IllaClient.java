@@ -82,9 +82,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
 
     static {
         String server = System.getProperty("illarion.server");
-        if (server.equals("testserver")) {
+        if ("testserver".equals(server)) {
             DEFAULT_SERVER = Servers.testserver;
-        } else if (server.equals("devserver")) {
+        } else if ("devserver".equals(server)) {
             DEFAULT_SERVER = Servers.devserver;
         } else {
             DEFAULT_SERVER = Servers.realserver;
@@ -537,6 +537,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("questWindowPosY", "100px");
         cfg.setDefault("questShowFinished", false);
         cfg.setDefault("runAutoAvoid", true);
+        cfg.setDefault("server", Login.DEVSERVER);
         cfg.setDefault("serverAddress", Servers.customserver.getServerHost());
         cfg.setDefault("serverPort", Servers.customserver.getServerPort());
         cfg.setDefault("clientVersion", Servers.customserver.getClientVersion());

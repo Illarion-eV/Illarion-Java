@@ -21,10 +21,7 @@ package illarion.client.gui.controller;
 import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
-import de.lessvoid.nifty.controls.ButtonClickedEvent;
-import de.lessvoid.nifty.controls.CheckBox;
-import de.lessvoid.nifty.controls.Label;
-import de.lessvoid.nifty.controls.TextField;
+import de.lessvoid.nifty.controls.*;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.input.NiftyStandardInputEvent;
@@ -34,6 +31,7 @@ import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.Game;
 import illarion.client.IllaClient;
 import illarion.client.Login;
+import illarion.client.Servers;
 import illarion.client.util.Lang;
 import org.illarion.engine.Engine;
 
@@ -69,6 +67,11 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
      * The checkbox that is ticked in case the password is supposed to be saved.
      */
     private CheckBox savePassword;
+
+    /**
+     * The drop down box is used to select a server.
+     */
+    private DropDown<String> server;
 
     /**
      * The generated popup that is shown in case a error occurred during the login.
@@ -132,6 +135,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         nameTxt = screen.findNiftyControl("nameTxt", TextField.class);
         passwordTxt = screen.findNiftyControl("passwordTxt", TextField.class);
         savePassword = screen.findNiftyControl("savePassword", CheckBox.class);
+        final Element serverPanel = screen.findElementByName("serverPanel");
 
         nameTxt.getElement().addInputHandler(this);
         passwordTxt.getElement().addInputHandler(this);
@@ -141,6 +145,18 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         nameTxt.setText(login.getLoginName());
         passwordTxt.setText(login.getPassword());
         savePassword.setChecked(login.storePassword());
+
+        if (IllaClient.DEFAULT_SERVER == Servers.realserver) {
+            serverPanel.hide();
+        } else {
+            server = screen.findNiftyControl("server", DropDown.class);
+            server.addItem("${login-bundle.server.develop}");
+            server.addItem("${login-bundle.server.test}");
+            server.addItem("${login-bundle.server.game}");
+            server.addItem("${login-bundle.server.custom}");
+            server.selectItemByIndex(IllaClient.getCfg().getInteger("server"));
+        }
+
 
         popupError = nifty.createPopup("loginError");
         popupReceiveChars = nifty.createPopup("receivingCharacters");
@@ -217,6 +233,10 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         nifty.showPopup(screen, popupReceiveChars.getId(), null);
         final Login login = Login.getInstance();
         login.setLoginData(nameTxt.getRealText(), passwordTxt.getRealText());
+
+        if (server != null) {
+            login.setServer(server.getSelectedIndex());
+        }
 
         login.storeData(savePassword.isChecked());
 

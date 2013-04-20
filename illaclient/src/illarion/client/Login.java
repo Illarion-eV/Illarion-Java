@@ -58,6 +58,11 @@ import java.util.concurrent.Callable;
  */
 public final class Login {
 
+    public static final int DEVSERVER = 0;
+    public static final int TESTSERVER = 1;
+    public static final int GAMESERVER = 2;
+    public static final int CUSTOMSERVER = 3;
+
     public static final class CharEntry {
         private final String charName;
         private final int charStatus;
@@ -78,6 +83,7 @@ public final class Login {
 
     private String loginName;
     private String password;
+    private Integer server;
     private String loginCharacter;
     private List<Login.CharEntry> charList;
 
@@ -97,15 +103,44 @@ public final class Login {
         password = pass;
     }
 
+    public void setServer(Integer server) {
+        this.server = server;
+    }
+
     public void restoreLoginData() {
         restoreLogin();
         restorePassword();
         restoreStorePassword();
+        restoreServer();
     }
 
     public void storeData(final boolean storePasswd) {
         IllaClient.getCfg().set("lastLogin", loginName);
         IllaClient.getCfg().set("savePassword", storePasswd);
+
+        if (IllaClient.DEFAULT_SERVER != Servers.realserver) {
+            IllaClient.getCfg().set("server", server);
+            switch (server) {
+                case DEVSERVER:
+                    IllaClient.getInstance().setUsedServer(Servers.devserver);
+                    break;
+                case TESTSERVER:
+                    IllaClient.getInstance().setUsedServer(Servers.testserver);
+                    break;
+                case GAMESERVER:
+                    IllaClient.getInstance().setUsedServer(Servers.realserver);
+                    break;
+                case CUSTOMSERVER:
+                    IllaClient.getInstance().setUsedServer(Servers.customserver);
+                    break;
+                default:
+                    IllaClient.getInstance().setUsedServer(Servers.devserver);
+                    break;
+            }
+        } else {
+            IllaClient.getInstance().setUsedServer(Servers.realserver);
+        }
+
         if (storePasswd) {
             storePassword(password);
         } else {
@@ -126,6 +161,10 @@ public final class Login {
             return "";
         }
         return password;
+    }
+
+    public Integer getServer() {
+        return server;
     }
 
     public interface RequestCharListCallback {
@@ -251,7 +290,7 @@ public final class Login {
 
             final Login.CharEntry addChar = new Login.CharEntry(charName, status);
 
-            switch (IllaClient.DEFAULT_SERVER) {
+            switch (IllaClient.getInstance().getUsedServer()) {
                 case customserver:
                     charList.add(addChar);
                     break;
@@ -333,6 +372,10 @@ public final class Login {
 
     private void restoreLogin() {
         loginName = IllaClient.getCfg().getString("lastLogin");
+    }
+
+    private void restoreServer() {
+        server = IllaClient.getCfg().getInteger("server");
     }
 
     /**
