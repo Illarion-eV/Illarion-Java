@@ -137,6 +137,12 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         return slickContainer.getFPS();
     }
 
+    @Nonnull
+    @Override
+    public CharSequence[] getDiagnosticLines() {
+        return new CharSequence[0];
+    }
+
     @Override
     public void setTitle(@Nonnull final String title) {
         this.title = title;

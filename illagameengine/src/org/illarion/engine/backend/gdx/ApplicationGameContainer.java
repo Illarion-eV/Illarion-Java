@@ -22,7 +22,6 @@ import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import org.illarion.engine.DesktopGameContainer;
-import org.illarion.engine.Engine;
 import org.illarion.engine.GameListener;
 import org.illarion.engine.MouseCursor;
 import org.illarion.engine.graphic.GraphicResolution;
@@ -114,7 +113,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
 
     @Nonnull
     @Override
-    public Engine getEngine() {
+    public GdxEngine getEngine() {
         if (engine == null) {
             throw new IllegalStateException("Game is not launched yet.");
         }
@@ -166,6 +165,18 @@ public class ApplicationGameContainer implements DesktopGameContainer {
             return 0;
         }
         return gdxApplication.getGraphics().getFramesPerSecond();
+    }
+
+    private int lastFrameRenderCalls;
+
+    void setLastFrameRenderCalls(final int calls) {
+        lastFrameRenderCalls = calls;
+    }
+
+    @Nonnull
+    @Override
+    public CharSequence[] getDiagnosticLines() {
+        return new CharSequence[] {"Render calls: " + lastFrameRenderCalls};
     }
 
     @Override

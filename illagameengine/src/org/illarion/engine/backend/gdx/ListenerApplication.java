@@ -20,7 +20,7 @@ package org.illarion.engine.backend.gdx;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import org.illarion.engine.GameContainer;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import org.illarion.engine.GameListener;
 
 import javax.annotation.Nonnull;
@@ -42,7 +42,7 @@ class ListenerApplication implements ApplicationListener {
      * The game container of the game engine.
      */
     @Nonnull
-    private final GameContainer container;
+    private final ApplicationGameContainer container;
 
     /**
      * Create a new listener application that forwards the events of libGDX to the engine listener.
@@ -50,14 +50,14 @@ class ListenerApplication implements ApplicationListener {
      * @param listener  the listener of the game engine
      * @param container the game container
      */
-    ListenerApplication(@Nonnull final GameListener listener, @Nonnull final GameContainer container) {
+    ListenerApplication(@Nonnull final GameListener listener, @Nonnull final ApplicationGameContainer container) {
         this.listener = listener;
         this.container = container;
     }
 
     @Override
     public void create() {
-        ((ApplicationGameContainer) container).createEngine();
+        container.createEngine();
         listener.create(container);
     }
 
@@ -75,6 +75,10 @@ class ListenerApplication implements ApplicationListener {
         graphics.beginFrame();
         listener.render(container);
         graphics.endFrame();
+
+        final SpriteBatch batch = container.getEngine().getGraphics().getSpriteBatch();
+        container.setLastFrameRenderCalls(batch.totalRenderCalls);
+        batch.totalRenderCalls = 0;
     }
 
     /**

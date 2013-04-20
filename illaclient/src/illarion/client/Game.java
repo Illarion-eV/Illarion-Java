@@ -202,11 +202,18 @@ public final class Game implements GameListener {
         }
         nifty.render(false);
 
+        int renderLine = 10;
         if (showFPS) {
             final Font fpsFont = container.getEngine().getAssets().getFontManager().getFont(FontLoader.CONSOLE_FONT);
             if (fpsFont != null) {
                 container.getEngine().getGraphics().drawText(fpsFont, "FPS: " + container.getFPS(), Color.WHITE, 10,
-                        10);
+                        renderLine);
+                renderLine += fpsFont.getLineHeight();
+
+                for (final CharSequence line : container.getDiagnosticLines()) {
+                    container.getEngine().getGraphics().drawText(fpsFont, line, Color.WHITE, 10, renderLine);
+                    renderLine += fpsFont.getLineHeight();
+                }
             }
         }
     }

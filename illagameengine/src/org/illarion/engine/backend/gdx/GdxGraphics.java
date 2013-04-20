@@ -120,7 +120,7 @@ class GdxGraphics implements Graphics {
         this.gdxGraphics = gdxGraphics;
         this.engine = engine;
         shapeRenderer = new ShapeRenderer();
-        spriteBatch = new SpriteBatch();
+        spriteBatch = new SpriteBatch(3000);
         tempColor1 = new com.badlogic.gdx.graphics.Color();
         tempColor2 = new com.badlogic.gdx.graphics.Color();
         tempColor3 = new com.badlogic.gdx.graphics.Color();
@@ -182,6 +182,16 @@ class GdxGraphics implements Graphics {
                 break;
         }
         shapeRenderer.begin(ShapeRenderer.ShapeType.FilledRectangle);
+    }
+
+    /**
+     * Get the sprite batch that is used by the graphics device.
+     *
+     * @return the sprite batch
+     */
+    @Nonnull
+    SpriteBatch getSpriteBatch() {
+        return spriteBatch;
     }
 
     /**

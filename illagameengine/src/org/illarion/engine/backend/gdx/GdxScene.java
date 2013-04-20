@@ -37,12 +37,6 @@ import javax.annotation.Nullable;
  */
 class GdxScene extends AbstractScene<GdxSceneEffect> {
     /**
-     * The sprite batch that is used for the rendering operations.
-     */
-    @Nonnull
-    private final SpriteBatch renderBatch;
-
-    /**
      * The container that displays the scene
      */
     @Nonnull
@@ -77,7 +71,6 @@ class GdxScene extends AbstractScene<GdxSceneEffect> {
      */
     GdxScene(@Nonnull final GameContainer container) {
         this.container = container;
-        renderBatch = new SpriteBatch();
         camera = new OrthographicCamera();
         camera.setToOrtho(true);
     }
@@ -119,6 +112,7 @@ class GdxScene extends AbstractScene<GdxSceneEffect> {
             gdxGraphics.flushAll();
             currentFrameBuffer.end();
 
+            final SpriteBatch renderBatch = gdxGraphics.getSpriteBatch();
             renderBatch.setProjectionMatrix(camera.combined);
             renderBatch.setColor(Color.WHITE);
             FrameBuffer lastFrameBuffer = currentFrameBuffer;

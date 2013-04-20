@@ -87,4 +87,12 @@ public interface GameContainer {
      * @return the current FPS
      */
     int getFPS();
+
+    /**
+     * Get the engine diagnostic lines that can be displayed on the screen for debugging.
+     *
+     * @return the diagnostic lines
+     */
+    @Nonnull
+    CharSequence[] getDiagnosticLines();
 }
