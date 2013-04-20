@@ -24,9 +24,6 @@
     <ConfigurationWrapper RunnerId="Debug" />
     <ConfigurationWrapper RunnerId="Profile " />
     <ConfigurationWrapper RunnerId="Run" />
-    <method>
-      <option name="AntTarget" enabled="false" antfile="file://$PROJECT_DIR$/illacommon/build.xml" target="download_libraries" />
-      <option name="Make" enabled="true" />
-    </method>
+    <method />
   </configuration>
 </component>

@@ -219,7 +219,7 @@ public final class NetComm {
 
             final String serverAddress;
             final int serverPort;
-            if (usedServer == Servers.testserver) {
+            if (usedServer != Servers.realserver) {
                 serverAddress = IllaClient.getCfg().getString("serverAddress");
                 serverPort = IllaClient.getCfg().getInteger("serverPort");
             } else {

@@ -148,9 +148,9 @@ public final class OptionScreenController implements ScreenController {
 
         if (serverAddress != null) {
             if (serverResetSettings.isChecked()) {
-                configSystem.set("serverAddress", Servers.testserver.getServerHost());
-                configSystem.set("serverPort", Servers.testserver.getServerPort());
-                configSystem.set("clientVersion", Servers.testserver.getClientVersion());
+                configSystem.set("serverAddress", Servers.devserver.getServerHost());
+                configSystem.set("serverPort", Servers.devserver.getServerPort());
+                configSystem.set("clientVersion", Servers.devserver.getClientVersion());
                 configSystem.set("serverAccountLogin", true);
             } else {
                 configSystem.set("serverAddress", serverAddress.getRealText());

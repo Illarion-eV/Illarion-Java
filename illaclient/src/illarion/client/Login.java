@@ -154,7 +154,7 @@ public final class Login {
     }
 
     public boolean isCharacterListRequired() {
-        return (IllaClient.DEFAULT_SERVER != Servers.testserver)
+        return (IllaClient.DEFAULT_SERVER == Servers.realserver)
                 || IllaClient.getCfg().getBoolean("serverAccountLogin");
     }
 
@@ -260,6 +260,11 @@ public final class Login {
                         charList.add(addChar);
                     }
                     break;
+                case devserver:
+                    if ("devserver".equals(charServer)) {
+                        charList.add(addChar);
+                    }
+                    break;
                 case realserver:
                     if ("illarionserver".equals(charServer)) {
                         charList.add(addChar);
@@ -293,7 +298,7 @@ public final class Login {
         }
 
         final int clientVersion;
-        if (IllaClient.DEFAULT_SERVER == Servers.testserver) {
+        if (IllaClient.DEFAULT_SERVER != Servers.realserver) {
             clientVersion = IllaClient.getCfg().getInteger("clientVersion");
         } else {
             clientVersion = IllaClient.DEFAULT_SERVER.getClientVersion();

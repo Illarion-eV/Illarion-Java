@@ -81,8 +81,11 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     public static final Servers DEFAULT_SERVER;
 
     static {
-        if ("testserver".equals(System.getProperty("illarion.server"))) {
+        String server = System.getProperty("illarion.server");
+        if (server.equals("testserver")) {
             DEFAULT_SERVER = Servers.testserver;
+        } else if (server.equals("devserver")) {
+            DEFAULT_SERVER = Servers.devserver;
         } else {
             DEFAULT_SERVER = Servers.realserver;
         }
@@ -168,8 +171,8 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         Lang.getInstance().recheckLocale(cfg.getString(Lang.LOCALE_CFG));
         CrashReporter.getInstance().setConfig(getCfg());
 
-        // Disable error reporting for the testserver
-        if (DEFAULT_SERVER == Servers.testserver) {
+        // Report errors of the released version only
+        if (DEFAULT_SERVER != Servers.realserver) {
             CrashReporter.getInstance().setMode(CrashReporter.MODE_NEVER);
         }
 
@@ -534,9 +537,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("questWindowPosY", "100px");
         cfg.setDefault("questShowFinished", false);
         cfg.setDefault("runAutoAvoid", true);
-        cfg.setDefault("serverAddress", Servers.testserver.getServerHost());
-        cfg.setDefault("serverPort", Servers.testserver.getServerPort());
-        cfg.setDefault("clientVersion", Servers.testserver.getClientVersion());
+        cfg.setDefault("serverAddress", Servers.devserver.getServerHost());
+        cfg.setDefault("serverPort", Servers.devserver.getServerPort());
+        cfg.setDefault("clientVersion", Servers.devserver.getClientVersion());
         cfg.setDefault("serverAccountLogin", true);
 
         @Nonnull final Toolkit awtDefaultToolkit = Toolkit.getDefaultToolkit();
