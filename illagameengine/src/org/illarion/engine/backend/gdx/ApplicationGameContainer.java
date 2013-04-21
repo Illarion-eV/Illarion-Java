@@ -176,7 +176,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     @Nonnull
     @Override
     public CharSequence[] getDiagnosticLines() {
-        return new CharSequence[] {"Render calls: " + lastFrameRenderCalls};
+        return new CharSequence[]{"Render calls: " + lastFrameRenderCalls};
     }
 
     @Override
@@ -229,13 +229,10 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     @Nonnull
     @Override
     public GraphicResolution[] getFullScreenResolutions() {
-        if (gdxApplication == null) {
-            return new GraphicResolution[0];
-        }
         if (graphicResolutions == null) {
             final List<GraphicResolution> resultResolutions = new ArrayList<GraphicResolution>();
-            final Graphics.DisplayMode[] displayModes = gdxApplication.getGraphics().getDisplayModes();
-            for (@Nullable Graphics.DisplayMode mode : displayModes) {
+            final Graphics.DisplayMode[] displayModes = LwjglApplicationConfiguration.getDisplayModes();
+            for (@Nullable final Graphics.DisplayMode mode : displayModes) {
                 if (mode == null) {
                     continue;
                 }

@@ -37,7 +37,8 @@ class GdxTextureManager extends AbstractTextureManager {
     @Override
     protected GdxTexture loadTexture(@Nonnull final String resource) {
         try {
-            final Texture tex = new Texture(Gdx.files.internal(resource), true);
+            final Texture tex = new Texture(Gdx.files.internal(resource), false);
+            tex.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
             final TextureRegion region = new TextureRegion(tex);
             region.flip(false, false);
             return new GdxTexture(region);
