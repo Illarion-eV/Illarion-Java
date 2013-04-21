@@ -18,6 +18,7 @@
  */
 package org.illarion.engine.backend.gdx;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.GdxRuntimeException;
@@ -36,7 +37,7 @@ class GdxTextureManager extends AbstractTextureManager {
     @Override
     protected GdxTexture loadTexture(@Nonnull final String resource) {
         try {
-            final Texture tex = new Texture(resource);
+            final Texture tex = new Texture(Gdx.files.internal(resource), true);
             final TextureRegion region = new TextureRegion(tex);
             region.flip(false, false);
             return new GdxTexture(region);
