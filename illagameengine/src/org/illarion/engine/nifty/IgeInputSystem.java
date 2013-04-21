@@ -110,6 +110,8 @@ public class IgeInputSystem implements InputSystem, InputListener {
      */
     private int consumeClicks;
 
+    private boolean receivedClick;
+
     @Override
     public void buttonDown(final int mouseX, final int mouseY, @Nonnull final Button button) {
         if (currentConsumer == null) {
@@ -119,7 +121,10 @@ public class IgeInputSystem implements InputSystem, InputListener {
             listener.buttonDown(mouseX, mouseY, button);
         } else {
             final int buttonKey = getNiftyButtonKey(button);
-            if (!currentConsumer.processMouseEvent(mouseX, mouseY, 0, buttonKey, true)) {
+            if (currentConsumer.processMouseEvent(mouseX, mouseY, 0, buttonKey, true)) {
+                consumeClicks++;
+                receivedClick = false;
+            } else {
                 listener.buttonDown(mouseX, mouseY, button);
             }
         }
@@ -134,9 +139,10 @@ public class IgeInputSystem implements InputSystem, InputListener {
             listener.buttonUp(mouseX, mouseY, button);
         } else {
             final int buttonKey = getNiftyButtonKey(button);
-            if (currentConsumer.processMouseEvent(mouseX, mouseY, 0, buttonKey, false)) {
-                consumeClicks++;
-            } else {
+            if (!receivedClick) {
+                consumeClicks--;
+            }
+            if (!currentConsumer.processMouseEvent(mouseX, mouseY, 0, buttonKey, false)) {
                 listener.buttonUp(mouseX, mouseY, button);
             }
         }
@@ -151,6 +157,7 @@ public class IgeInputSystem implements InputSystem, InputListener {
             listener.buttonClicked(mouseX, mouseY, button, count);
         } else {
             consumeClicks--;
+            receivedClick = true;
             if (count > 1) {
                 buttonClicked(mouseX, mouseY, button, count - 1);
             }
