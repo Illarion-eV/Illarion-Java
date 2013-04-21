@@ -120,7 +120,7 @@ class GdxGraphics implements Graphics {
         this.gdxGraphics = gdxGraphics;
         this.engine = engine;
         shapeRenderer = new ShapeRenderer();
-        spriteBatch = new SpriteBatch(3000);
+        spriteBatch = new SpriteBatch(1000, 10);
         tempColor1 = new com.badlogic.gdx.graphics.Color();
         tempColor2 = new com.badlogic.gdx.graphics.Color();
         tempColor3 = new com.badlogic.gdx.graphics.Color();
