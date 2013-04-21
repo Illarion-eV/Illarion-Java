@@ -153,7 +153,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
      * The light value that is used to render this entity during the next render loop.
      */
     @Nonnull
-    private Color renderLight = new Color(Color.WHITE);
+    private final Color renderLight = new Color(Color.WHITE);
 
     /**
      * This color is the color that was used last time to render the entity. Its used to check if the color changed
@@ -642,7 +642,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
 
         updateAlpha(delta);
 
-        renderLight = getLocalLight();
+        renderLight.setColor(getLocalLight());
 
         if ((baseColor != null) || (overWriteBaseColor != null)) {
             if (overWriteBaseColor != null) {
@@ -670,6 +670,9 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
     @Nullable
     private HighlightEffect highlightEffect;
 
+    @Nonnull
+    private final Color tempLight = new Color(Color.WHITE);
+
     /**
      * Get the light local to this tile.
      *
@@ -679,11 +682,11 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
     public Color getLocalLight() {
         final Color parentLight = getParentLight();
         if (parentLight == null) {
-            return new Color(getLight());
+            return getLight();
         }
-        final Color localLight = new Color(parentLight);
-        localLight.multiply(getLight());
-        return localLight;
+        tempLight.setColor(parentLight);
+        tempLight.multiply(getLight());
+        return tempLight;
     }
 
     @Nonnull
