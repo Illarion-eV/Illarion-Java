@@ -201,18 +201,19 @@ class SlickGraphics implements Graphics {
         if (sprite instanceof SlickSprite) {
             final SlickSprite slickSprite = (SlickSprite) sprite;
 
+            final float centerTransX = slickSprite.getWidth() * slickSprite.getCenterX();
+            final float centerTransY = slickSprite.getHeight() * slickSprite.getCenterY();
+            transferColor(color, tempSlickColor1);
+            slickSprite.getDisplayArea(posX, posY, 1.f, 0.f, tempRect);
+
             slickGraphicsImpl.pushTransform();
-            slickGraphicsImpl.translate(posX, posY);
+            slickGraphicsImpl.translate(tempRect.getX(), tempRect.getY());
 
             if (slickSprite.isMirrored()) {
                 slickGraphicsImpl.scale(-scale, scale);
             } else {
                 slickGraphicsImpl.scale(scale, scale);
             }
-            final float centerTransX = slickSprite.getWidth() * slickSprite.getCenterX();
-            final float centerTransY = slickSprite.getHeight() * slickSprite.getCenterY();
-            transferColor(color, tempSlickColor1);
-            slickSprite.getDisplayArea(0, 0, 1.f, 0.f, tempRect);
 
             @Nullable SlickTextureEffect usedEffect = null;
             if ((effects.length > 0) && (effects[0] instanceof SlickTextureEffect)) {
@@ -228,10 +229,9 @@ class SlickGraphics implements Graphics {
             slickImage.setRotation(rotation);
 
             if (slickSprite.isMirrored()) {
-                slickGraphicsImpl.drawImage(slickImage, -tempRect.getX() + tempRect.getWidth(), tempRect.getY(),
-                        tempSlickColor1);
+                slickGraphicsImpl.drawImage(slickImage, -tempRect.getWidth(), 0, tempSlickColor1);
             } else {
-                slickGraphicsImpl.drawImage(slickImage, tempRect.getX(), tempRect.getY(), tempSlickColor1);
+                slickGraphicsImpl.drawImage(slickImage, 0, 0, tempSlickColor1);
             }
 
             if (usedEffect != null) {
