@@ -147,7 +147,7 @@ class SlickScene extends AbstractScene<SlickSceneEffect> {
                     final org.newdawn.slick.Graphics currentGraphics = sceneTarget.getGraphics();
                     org.newdawn.slick.Graphics.setCurrent(currentGraphics);
                     slickGraphics.setSlickGraphicsImpl(currentGraphics);
-                    currentGraphics.setBackground(Color.transparent);
+                    currentGraphics.setBackground(Color.black);
                     currentGraphics.clear();
                     currentGraphics.pushTransform();
                     currentGraphics.translate(-offsetX, -offsetY);
@@ -162,7 +162,7 @@ class SlickScene extends AbstractScene<SlickSceneEffect> {
                         final org.newdawn.slick.Graphics nextGraphics = nextImage.getGraphics();
                         org.newdawn.slick.Graphics.setCurrent(nextGraphics);
 
-                        nextGraphics.setBackground(Color.transparent);
+                        nextGraphics.setBackground(Color.black);
                         nextGraphics.clear();
                         effect.activateEffect(width, height, nextImage.getTexture().getTextureWidth(),
                                 nextImage.getTexture().getTextureHeight());
@@ -175,7 +175,7 @@ class SlickScene extends AbstractScene<SlickSceneEffect> {
 
                     org.newdawn.slick.Graphics.setCurrent(slickGraphicsImpl);
                     slickGraphics.setSlickGraphicsImpl(slickGraphicsImpl);
-                    slickGraphicsImpl.setBackground(Color.transparent);
+                    slickGraphicsImpl.setBackground(Color.black);
                     slickGraphicsImpl.clear();
                     slickGraphicsImpl.drawImage(lastProcessedImage, 0, 0);
                     slickGraphicsImpl.flush();
