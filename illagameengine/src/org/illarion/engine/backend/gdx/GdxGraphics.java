@@ -435,10 +435,13 @@ class GdxGraphics implements Graphics {
 
     @Override
     public void setClippingArea(final int x, final int y, final int width, final int height) {
-        flushAll();
         if (activeClipping) {
             unsetClippingArea();
         }
+        if ((x == 0) && (y == 0) && (width == gdxGraphics.getWidth()) && (height == gdxGraphics.getHeight())) {
+            return;
+        }
+        flushAll();
         final com.badlogic.gdx.math.Rectangle clippingRect = Pools.obtain(com.badlogic.gdx.math.Rectangle.class);
         clippingRect.set(x, y, width, height);
 

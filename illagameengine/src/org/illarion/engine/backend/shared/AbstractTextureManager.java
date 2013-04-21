@@ -188,13 +188,27 @@ public abstract class AbstractTextureManager implements TextureManager {
         return rootDirectories.indexOf(directory);
     }
 
+    /**
+     * Get the directory index for a file. The expected file name should start with the name of the directory.
+     *
+     * @param name the name of the file
+     * @return the index of the directory or {@code -1} in case there is not matching directory
+     */
+    protected int getFileDirectoryIndex(@Nonnull final String name) {
+        for (int i = 0; i < rootDirectories.size(); i++) {
+            if (name.startsWith(rootDirectories.get(i))) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     @Nullable
     @Override
     public Texture getTexture(@Nonnull final String name) {
-        for (int i = 0; i < rootDirectories.size(); i++) {
-            if (name.startsWith(rootDirectories.get(i))) {
-                return getTexture(i, name);
-            }
+        final int directoryIndex = getFileDirectoryIndex(name);
+        if (directoryIndex >= 0) {
+            return getTexture(directoryIndex, name);
         }
         return null;
     }
@@ -273,6 +287,10 @@ public abstract class AbstractTextureManager implements TextureManager {
         return false;
     }
 
+    protected int getRemainingAtlasCount(final int directoryIndex) {
+        return getAtlasCount(directoryIndex) - 1 - lastAtlasIndex.get(directoryIndex);
+    }
+
     @Override
     public float loadRemaining() {
         final int directories = rootDirectories.size();
@@ -289,7 +307,7 @@ public abstract class AbstractTextureManager implements TextureManager {
         }
 
         for (int i = 0; i < directories; i++) {
-            if (lastAtlasIndex.get(i) < (getAtlasCount(i) - 1)) {
+            if (getRemainingAtlasCount(i) > 0) {
                 if (loadNextTextureAtlas(i)) {
                     return (float) (loadAtlasTextures + 1) / (float) totalAtlasTextures;
                 }
@@ -362,6 +380,10 @@ public abstract class AbstractTextureManager implements TextureManager {
         } finally {
             closeQuietly(xmlStream);
         }
+    }
+
+    protected static boolean isAtlas(@Nonnull final String name) {
+        return name.contains(ATLAS_BASE_NAME);
     }
 
     private void parseXmlTag(@Nonnull final String directory, @Nonnull final Texture parentTexture,

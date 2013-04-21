@@ -62,18 +62,11 @@ class GdxFont implements Font {
 
     @Override
     public int getAdvance(final char current, final char next) {
-        @Nullable BitmapFont.Glyph currentGlyph = bitmapFont.getData().getGlyph(current);
-        @Nullable BitmapFont.Glyph nextGlyph = bitmapFont.getData().getGlyph(next);
+        @Nullable final BitmapFont.Glyph currentGlyph = bitmapFont.getData().getGlyph(current);
         if (currentGlyph == null) {
             return 0;
         }
-        final int advance;
-        if (nextGlyph == null) {
-            advance = 0;
-        } else {
-            advance = nextGlyph.xadvance;
-        }
-        return currentGlyph.getKerning(next) + advance;
+        return currentGlyph.getKerning(next) + currentGlyph.xadvance;
     }
 
     /**

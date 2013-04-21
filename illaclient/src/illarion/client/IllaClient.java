@@ -216,7 +216,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
                 requestedWidth = (windowedWidth < 0) ? res.getWidth() : windowedWidth;
             }
 
-            gameContainer = EngineManager.createDesktopGame(Backend.Slick2D, game,
+            gameContainer = EngineManager.createDesktopGame(Backend.libGDX, game,
                     requestedWidth, requestedHeight, fullScreenMode);
         } catch (@Nonnull final EngineException e) {
             LOGGER.error("Fatal error creating game screen!!!", e);

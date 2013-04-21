@@ -18,10 +18,10 @@
  */
 package org.illarion.engine.backend.gdx;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import org.illarion.engine.backend.shared.AbstractTextureManager;
-import org.illarion.engine.graphic.Texture;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,9 +34,9 @@ import javax.annotation.Nullable;
 class GdxTextureManager extends AbstractTextureManager {
     @Nullable
     @Override
-    protected Texture loadTexture(@Nonnull final String resource) {
+    protected GdxTexture loadTexture(@Nonnull final String resource) {
         try {
-            final com.badlogic.gdx.graphics.Texture tex = new com.badlogic.gdx.graphics.Texture(resource);
+            final Texture tex = new Texture(resource);
             final TextureRegion region = new TextureRegion(tex);
             region.flip(false, false);
             return new GdxTexture(region);
