@@ -258,6 +258,8 @@ public final class AvatarTextTag {
         healthStateOffsetX = (width - healthWidth) / 2;
         healthStateOffsetY = nameHeight;
 
+        displayRect.set(displayX - (getWidth() / 2), displayY - avatarHeight - getHeight() - 5, width, height);
+
         dirty = true;
     }
 
@@ -278,24 +280,16 @@ public final class AvatarTextTag {
         g.drawRectangle(displayRect, BACK_COLOR);
 
         if ((charName != null) && (charNameColor != null)) {
-            g.drawText(font, charName, charNameColor, getRenderOriginX() + charNameOffsetX,
-                    getRenderOriginY() + charNameOffsetY);
+            g.drawText(font, charName, charNameColor, displayRect.getX() + charNameOffsetX,
+                    displayRect.getY() + charNameOffsetY);
         }
 
         if ((healthState != null) && (healthStateColor != null)) {
-            g.drawText(font, healthState, healthStateColor, getRenderOriginX() + healthStateOffsetX,
-                    getRenderOriginY() + healthStateOffsetY);
+            g.drawText(font, healthState, healthStateColor, displayRect.getX() + healthStateOffsetX,
+                    displayRect.getY() + healthStateOffsetY);
         }
 
         return true;
-    }
-
-    private int getRenderOriginX() {
-        return displayX - (getWidth() / 2);
-    }
-
-    private int getRenderOriginY() {
-        return displayY - avatarHeight - getHeight() - 5;
     }
 
     private final Rectangle displayRect = new Rectangle();

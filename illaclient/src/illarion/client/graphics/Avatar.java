@@ -53,7 +53,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
     /**
      * The minimal alpha value of a avatar that is needed to show the name tag above the avatar graphic.
      */
-    private static final float HIDE_NAME_ALPHA = 0.5f;
+    private static final int HIDE_NAME_ALPHA = 127;
 
     /**
      * The frame animation that handles the animation of this avatar.
@@ -453,8 +453,8 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
 
         final Input input = container.getEngine().getInput();
 
-        renderName = isMouseInInteractionRect(input) || (input.isKeyDown(Key.RightAlt) && (getAlpha() >
-                HIDE_NAME_ALPHA));
+        renderName = (isMouseInInteractionRect(input) || input.isKeyDown(Key.RightAlt)) && (getAlpha() >
+                HIDE_NAME_ALPHA);
 
         if (renderName) {
             avatarTextTag.setDisplayLocation(getDisplayX(), getDisplayY());

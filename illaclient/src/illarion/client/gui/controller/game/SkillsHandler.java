@@ -50,6 +50,7 @@ import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This handler controls the skill window.
@@ -218,17 +219,23 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
      * @param value the new value of the skill
      */
     private void internalUpdateSkill(@Nonnull final Skill skill, final int value) {
-        final Element skillPanel = skillWindow.getElement().findElementByName("#skill" +
-                Integer.toString(skill.getId()));
+        final Element skillPanel = skillWindow.getElement().findElementByName("#skill" + skill.getId());
 
         boolean skillChanged = false;
         if (value == 0) {
             skillPanel.setConstraintHeight(SizeValue.px(0));
         } else {
-            skillPanel.getParent().getParent().setConstraintHeight(null);
-            skillPanel.getParent().setConstraintHeight(null);
-            skillPanel.getParent().setMarginBottom(SizeValue.px(5));
-            skillPanel.getParent().findElementByName("#headline").setConstraintHeight(SizeValue.px(24));
+            @Nullable final Element skillPanelWindowContent = skillPanel.getParent();
+            if (skillPanelWindowContent != null) {
+                @Nullable final Element skillPanelWindow = skillPanelWindowContent.getParent();
+                if (skillPanelWindow != null) {
+                    skillPanelWindow.setConstraintHeight(null);
+                }
+                skillPanelWindowContent.setConstraintHeight(null);
+                skillPanelWindowContent.setMarginBottom(SizeValue.px(5));
+                skillPanelWindowContent.findElementByName("#headline").setConstraintHeight(SizeValue.px(24));
+            }
+
             skillPanel.setConstraintHeight(SizeValue.px(18));
 
             final Element valueLabel = skillPanel.findElementByName("#value");
