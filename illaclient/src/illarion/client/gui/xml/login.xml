@@ -36,6 +36,12 @@
             <panel height="300px" width="400px" childLayout="vertical">
                 <image filename="data/gui/illarion_title.png" imageMode="normal" align="center" marginBottom="30px"/>
                 <panel childLayout="vertical">
+
+                    <panel id="serverPanel" childLayout="horizontal" marginBottom="2px">
+                        <control name="label" text="${login-bundle.server}" textHAlign="left" width="130px"/>
+                        <control name="dropDown" id="server" marginLeft="10px"/>
+                    </panel>
+
                     <panel childLayout="horizontal" marginBottom="2px">
                         <control name="label" text="${login-bundle.account}" textHAlign="left" width="130px"/>
                         <control name="textfield" id="nameTxt" maxLength="20" marginLeft="10px"/>
@@ -49,11 +55,6 @@
                     <panel childLayout="horizontal" marginBottom="30px">
                         <control name="label" text="${login-bundle.savePassword}" textHAlign="left" width="130px"/>
                         <control id="savePassword" name="checkbox" marginLeft="10px"/>
-                    </panel>
-
-                    <panel id="serverPanel" childLayout="horizontal" marginBottom="30px">
-                        <control name="label" text="${login-bundle.server}" textHAlign="left" width="130px"/>
-                        <control name="dropDown" id="server" marginLeft="10px"/>
                     </panel>
 
                     <panel width="100%" childLayout="center">

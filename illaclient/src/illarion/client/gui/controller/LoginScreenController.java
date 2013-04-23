@@ -157,7 +157,6 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
             server.selectItemByIndex(IllaClient.getCfg().getInteger("server"));
         }
 
-
         popupError = nifty.createPopup("loginError");
         popupReceiveChars = nifty.createPopup("receivingCharacters");
     }
