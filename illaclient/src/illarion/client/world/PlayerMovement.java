@@ -53,7 +53,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     /**
      * This value is the relation of the distance from the character location to the location of the cursor to the
      * plain x or y offset. In case the relation is smaller or equal to this the character will move straight
-     * horizontal or ertical on the screen. Else it will move diagonal.
+     * horizontal or vertical on the screen. Else it will move diagonal.
      */
     private static final double MOUSE_ANGLE = Math.cos(Math.PI / Location.DIR_MOVE8);
 

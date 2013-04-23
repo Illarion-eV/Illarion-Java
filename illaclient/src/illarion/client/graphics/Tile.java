@@ -18,7 +18,7 @@
  */
 package illarion.client.graphics;
 
-import illarion.client.input.ClickOnMapEvent;
+import illarion.client.input.DoubleClickOnMapEvent;
 import illarion.client.resources.Resource;
 import illarion.client.resources.TileFactory;
 import illarion.client.resources.data.TileTemplate;
@@ -201,8 +201,8 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
             return false;
         }
 
-        if (event instanceof ClickOnMapEvent) {
-            final ClickOnMapEvent clickEvent = (ClickOnMapEvent) event;
+        if (event instanceof DoubleClickOnMapEvent) {
+            final DoubleClickOnMapEvent clickEvent = (DoubleClickOnMapEvent) event;
             if (clickEvent.getKey() != Button.Left) {
                 return false;
             }
