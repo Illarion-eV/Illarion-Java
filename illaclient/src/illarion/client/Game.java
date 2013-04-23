@@ -28,6 +28,8 @@ import org.illarion.engine.GameListener;
 import org.illarion.engine.assets.TextureManager;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Font;
+import org.illarion.engine.input.ForwardingListener;
+import org.illarion.engine.input.ForwardingTarget;
 import org.illarion.engine.nifty.IgeInputSystem;
 import org.illarion.engine.nifty.IgeRenderDevice;
 import org.illarion.engine.nifty.IgeSoundDevice;
@@ -119,6 +121,19 @@ public final class Game implements GameListener {
         nifty = new Nifty(new IgeRenderDevice(container, "data/gui/"), new IgeSoundDevice(container.getEngine()),
                 new IgeInputSystem(container.getEngine().getInput(), inputReceiver), new AccurateTimeProvider());
         nifty.setLocale(Lang.getInstance().getLocale());
+        container.getEngine().getInput().addForwardingListener(new ForwardingListener() {
+            @Override
+            public void forwardingEnabledFor(@Nonnull final ForwardingTarget target) {
+                // nothing
+            }
+
+            @Override
+            public void forwardingDisabledFor(@Nonnull final ForwardingTarget target) {
+                if ((target == ForwardingTarget.Mouse) || (target == ForwardingTarget.All)) {
+                    nifty.resetMouseInputEvents();
+                }
+            }
+        });
 
         gameStates[STATE_LOGIN] = new LoginState();
         gameStates[STATE_LOADING] = new LoadingState();
