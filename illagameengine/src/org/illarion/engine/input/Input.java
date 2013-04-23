@@ -127,4 +127,11 @@ public interface Input {
      * @param target the forwarding target that is supposed to be disabled
      */
     void disableForwarding(@Nonnull ForwardingTarget target);
+
+    /**
+     * Add a listener that monitors the forwarding state.
+     *
+     * @param listener the new forwarding listener
+     */
+    void addForwardingListener(@Nonnull ForwardingListener listener);
 }

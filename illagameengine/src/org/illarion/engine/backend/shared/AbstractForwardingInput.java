@@ -18,11 +18,14 @@
  */
 package org.illarion.engine.backend.shared;
 
+import org.illarion.engine.input.ForwardingListener;
 import org.illarion.engine.input.ForwardingTarget;
 import org.illarion.engine.input.Input;
 
 import javax.annotation.Nonnull;
 import java.util.EnumMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,10 +41,17 @@ public abstract class AbstractForwardingInput implements Input {
     private final Map<ForwardingTarget, Boolean> forwardingFlags;
 
     /**
-     * Create a new instance and setup the required interla structures.
+     * The list of forwarding listeners that receive updates in case the forwarding state changed.
+     */
+    @Nonnull
+    private final List<ForwardingListener> forwardingListeners;
+
+    /**
+     * Create a new instance and setup the required internal structures.
      */
     protected AbstractForwardingInput() {
         forwardingFlags = new EnumMap<ForwardingTarget, Boolean>(ForwardingTarget.class);
+        forwardingListeners = new LinkedList<ForwardingListener>();
         disableForwarding(ForwardingTarget.All);
     }
 
@@ -59,6 +69,9 @@ public abstract class AbstractForwardingInput implements Input {
         } else {
             forwardingFlags.put(target, Boolean.TRUE);
         }
+        for (@Nonnull final ForwardingListener listener : forwardingListeners) {
+            listener.forwardingEnabledFor(target);
+        }
     }
 
     @Override
@@ -71,5 +84,13 @@ public abstract class AbstractForwardingInput implements Input {
             forwardingFlags.put(ForwardingTarget.All, Boolean.FALSE);
             forwardingFlags.put(target, Boolean.FALSE);
         }
+        for (@Nonnull final ForwardingListener listener : forwardingListeners) {
+            listener.forwardingDisabledFor(target);
+        }
+    }
+
+    @Override
+    public void addForwardingListener(@Nonnull final ForwardingListener listener) {
+        forwardingListeners.add(listener);
     }
 }
