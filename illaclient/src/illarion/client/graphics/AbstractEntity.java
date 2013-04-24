@@ -271,11 +271,6 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
      */
     @Override
     public void render(@Nonnull final Graphics g) {
-        if (removedEntity) {
-            LOGGER.warn("Drawing a removed " + toString() + " entity is not allowed.");
-            return;
-        }
-
         if (getAlpha() == 0) {
             return;
         }
