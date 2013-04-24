@@ -219,7 +219,11 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
      * @param value the new value of the skill
      */
     private void internalUpdateSkill(@Nonnull final Skill skill, final int value) {
-        final Element skillPanel = skillWindow.getElement().findElementByName("#skill" + skill.getId());
+        @Nullable final Element skillPanel = skillWindow.getElement().findElementByName("#skill" + skill.getId());
+
+        if (skillPanel == null) {
+            return;
+        }
 
         boolean skillChanged = false;
         if (value == 0) {
