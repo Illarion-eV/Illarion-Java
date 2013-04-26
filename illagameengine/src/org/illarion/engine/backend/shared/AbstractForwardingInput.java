@@ -62,30 +62,44 @@ public abstract class AbstractForwardingInput implements Input {
 
     @Override
     public void enableForwarding(@Nonnull final ForwardingTarget target) {
+        boolean changedSomething = false;
         if (target == ForwardingTarget.All) {
             for (@Nonnull final ForwardingTarget currentTarget : ForwardingTarget.values()) {
-                forwardingFlags.put(currentTarget, Boolean.TRUE);
+                if (Boolean.FALSE.equals(forwardingFlags.put(currentTarget, Boolean.TRUE))) {
+                    changedSomething = true;
+                }
             }
         } else {
-            forwardingFlags.put(target, Boolean.TRUE);
+            changedSomething = Boolean.FALSE.equals(forwardingFlags.put(target, Boolean.TRUE));
         }
-        for (@Nonnull final ForwardingListener listener : forwardingListeners) {
-            listener.forwardingEnabledFor(target);
+        if (changedSomething) {
+            for (@Nonnull final ForwardingListener listener : forwardingListeners) {
+                listener.forwardingEnabledFor(target);
+            }
         }
     }
 
     @Override
     public void disableForwarding(@Nonnull final ForwardingTarget target) {
+        boolean changedSomething = false;
         if (target == ForwardingTarget.All) {
             for (@Nonnull final ForwardingTarget currentTarget : ForwardingTarget.values()) {
-                forwardingFlags.put(currentTarget, Boolean.FALSE);
+                if (Boolean.TRUE.equals(forwardingFlags.put(currentTarget, Boolean.FALSE))) {
+                    changedSomething = true;
+                }
             }
         } else {
-            forwardingFlags.put(ForwardingTarget.All, Boolean.FALSE);
-            forwardingFlags.put(target, Boolean.FALSE);
+            if (Boolean.TRUE.equals(forwardingFlags.put(ForwardingTarget.All, Boolean.FALSE))) {
+                changedSomething = true;
+            }
+            if (Boolean.TRUE.equals(forwardingFlags.put(target, Boolean.FALSE))) {
+                changedSomething = true;
+            }
         }
-        for (@Nonnull final ForwardingListener listener : forwardingListeners) {
-            listener.forwardingDisabledFor(target);
+        if (changedSomething) {
+            for (@Nonnull final ForwardingListener listener : forwardingListeners) {
+                listener.forwardingDisabledFor(target);
+            }
         }
     }
 
