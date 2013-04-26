@@ -231,16 +231,31 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     public GraphicResolution[] getFullScreenResolutions() {
         if (graphicResolutions == null) {
             final List<GraphicResolution> resultResolutions = new ArrayList<GraphicResolution>();
-            final Graphics.DisplayMode[] displayModes = LwjglApplicationConfiguration.getDisplayModes();
+            final Graphics.DisplayMode[] displayModes;
+            final boolean ignoreRefreshRate;
+            if (gdxApplication == null) {
+                displayModes = LwjglApplicationConfiguration.getDisplayModes();
+                ignoreRefreshRate = true;
+            } else {
+                displayModes = gdxApplication.getGraphics().getDisplayModes();
+                ignoreRefreshRate = false;
+            }
             for (@Nullable final Graphics.DisplayMode mode : displayModes) {
                 if (mode == null) {
                     continue;
                 }
-                if ((mode.width < 800) || (mode.height < 600) || (mode.bitsPerPixel < 24) || (mode.refreshRate < 50)) {
+                if ((mode.width < 800) || (mode.height < 600) || (mode.bitsPerPixel < 24)) {
                     continue;
                 }
-                resultResolutions.add(new GraphicResolution(mode.width, mode.height, mode.bitsPerPixel,
-                        mode.refreshRate));
+                if (ignoreRefreshRate) {
+                    resultResolutions.add(new GraphicResolution(mode.width, mode.height, mode.bitsPerPixel, -1));
+                } else {
+                    if (mode.refreshRate >= 50) {
+                        resultResolutions.add(new GraphicResolution(mode.width, mode.height, mode.bitsPerPixel,
+                                mode.refreshRate));
+                    }
+                }
+
             }
             graphicResolutions = resultResolutions.toArray(new GraphicResolution[resultResolutions.size()]);
         }
