@@ -22,7 +22,10 @@ import illarion.client.graphics.FontLoader;
 import illarion.client.input.InputReceiver;
 import illarion.client.states.*;
 import illarion.client.util.Lang;
+import illarion.common.config.ConfigChangedEvent;
 import org.apache.log4j.Logger;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.GameListener;
 import org.illarion.engine.assets.TextureManager;
@@ -82,6 +85,8 @@ public final class Game implements GameListener {
      */
     public Game() {
         gameStates = new GameState[4];
+        AnnotationProcessor.process(this);
+        showFPS = IllaClient.getCfg().getBoolean("showFps");
     }
 
     public void enterState(final int stateId) {
@@ -217,23 +222,32 @@ public final class Game implements GameListener {
         }
         nifty.render(false);
 
-        int renderLine = 10;
         if (showFPS) {
             final Font fpsFont = container.getEngine().getAssets().getFontManager().getFont(FontLoader.CONSOLE_FONT);
             if (fpsFont != null) {
+                int renderLine = 10;
                 container.getEngine().getGraphics().drawText(fpsFont, "FPS: " + container.getFPS(), Color.WHITE, 10,
                         renderLine);
                 renderLine += fpsFont.getLineHeight();
 
-                for (final CharSequence line : container.getDiagnosticLines()) {
-                    container.getEngine().getGraphics().drawText(fpsFont, line, Color.WHITE, 10, renderLine);
-                    renderLine += fpsFont.getLineHeight();
+                if (SHOW_RENDER_DIAGNOSTIC) {
+                    for (final CharSequence line : container.getDiagnosticLines()) {
+                        container.getEngine().getGraphics().drawText(fpsFont, line, Color.WHITE, 10, renderLine);
+                        renderLine += fpsFont.getLineHeight();
+                    }
                 }
             }
         }
     }
 
-    private boolean showFPS = true;
+    private static final boolean SHOW_RENDER_DIAGNOSTIC = IllaClient.DEFAULT_SERVER != Servers.realserver;
+
+    private boolean showFPS;
+
+    @EventTopicSubscriber(topic = "showFps")
+    public void onFpsContigChanged(@Nonnull final String topic, @Nonnull final ConfigChangedEvent event) {
+        showFPS = event.getConfig().getBoolean(event.getKey());
+    }
 
     @Override
     public boolean isClosingGame() {

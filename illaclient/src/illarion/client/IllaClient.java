@@ -525,6 +525,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("windowWidth", -1);
         cfg.setDefault("windowHeight", -1);
         cfg.setDefault("savePassword", false);
+        cfg.setDefault("showFps", false);
         cfg.setDefault(CrashReporter.CFG_KEY, CrashReporter.MODE_ASK);
         cfg.setDefault(Lang.LOCALE_CFG, Lang.LOCALE_CFG_ENGLISH);
         cfg.setDefault("inventoryPosX", "100px");
