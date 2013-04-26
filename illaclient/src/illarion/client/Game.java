@@ -245,7 +245,7 @@ public final class Game implements GameListener {
     private boolean showFPS;
 
     @EventTopicSubscriber(topic = "showFps")
-    public void onFpsContigChanged(@Nonnull final String topic, @Nonnull final ConfigChangedEvent event) {
+    public void onFpsConfigChanged(@Nonnull final String topic, @Nonnull final ConfigChangedEvent event) {
         showFPS = event.getConfig().getBoolean(event.getKey());
     }
 

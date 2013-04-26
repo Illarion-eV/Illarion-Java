@@ -70,6 +70,11 @@
                             <panel width="*"/>
                             <control name="checkbox" id="fullscreen"/>
                         </panel>
+                        <panel width="100%" childLayout="horizontal">
+                            <control name="label" text="${options-bundle.showFps}"/>
+                            <panel width="*"/>
+                            <control name="checkbox" id="showFps"/>
+                        </panel>
                     </control>
                     <control id="#soundTab" caption="Sound" name="tab" childLayout="vertical">
                         <panel width="100%" childLayout="horizontal">
