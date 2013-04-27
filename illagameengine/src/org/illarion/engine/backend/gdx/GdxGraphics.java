@@ -343,6 +343,9 @@ class GdxGraphics implements Graphics {
     @Override
     public void drawTexture(@Nonnull final Texture texture, final int x, final int y, final int width,
                             final int height, @Nonnull final Color color, @Nonnull final TextureEffect... effects) {
+        if ((width == 0) || (height == 0)) {
+            return;
+        }
         if (texture instanceof GdxTexture) {
             activateSpriteBatch();
             transferColor(color, tempColor1);
@@ -373,6 +376,9 @@ class GdxGraphics implements Graphics {
     public void drawTexture(@Nonnull final Texture texture, final int x, final int y, final int width,
                             final int height, final int texX, final int texY, final int texWidth,
                             final int texHeight, @Nonnull final Color color, @Nonnull final TextureEffect... effects) {
+        if ((width == 0) || (height == 0)) {
+            return;
+        }
         if (texture instanceof GdxTexture) {
             activateSpriteBatch();
             transferColor(color, tempColor1);
@@ -404,6 +410,9 @@ class GdxGraphics implements Graphics {
                             final int height, final int texX, final int texY, final int texWidth,
                             final int texHeight, final int centerX, final int centerY, final float rotate,
                             @Nonnull final Color color, @Nonnull final TextureEffect... effects) {
+        if ((width == 0) || (height == 0)) {
+            return;
+        }
         if (texture instanceof GdxTexture) {
             activateSpriteBatch();
             transferColor(color, tempColor1);
