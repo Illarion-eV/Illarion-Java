@@ -38,7 +38,7 @@ public final class ItemFactory extends AbstractTemplateFactory<ItemTemplate> {
     /**
      * The ID of the item that is supposed to be displayed by default.
      */
-    public static final int DEFAULT_ITEM_ID = 0;
+    public static final int DEFAULT_ITEM_ID = 2;
 
     /**
      * Get the singleton instance of this factory.
