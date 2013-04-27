@@ -83,16 +83,50 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         this.gameListener = gameListener;
         config = new LwjglApplicationConfiguration();
         config.forceExit = false;
-        config.height = height;
-        config.width = width;
-        config.fullscreen = fullScreen;
         config.useGL20 = true;
         config.vSyncEnabled = true;
         config.useCPUSynch = true;
 
         windowHeight = height;
         windowWidth = width;
-        fullScreenResolution = new GraphicResolution(width, height, -1, -1);
+        fullScreenResolution = getFittingFullScreenResolution(width, height);
+        if (fullScreen) {
+            config.height = fullScreenResolution.getHeight();
+            config.width = fullScreenResolution.getWidth();
+        } else {
+            config.height = height;
+            config.width = width;
+        }
+        config.fullscreen = fullScreen;
+    }
+
+    private GraphicResolution getFittingFullScreenResolution(final int width, final int height) {
+        final GraphicResolution[] resolutions = getFullScreenResolutions();
+        int freq = 0;
+
+        GraphicResolution targetDisplayMode = null;
+        for (@Nonnull final GraphicResolution current : resolutions) {
+            if ((current.getWidth() == width) && (current.getHeight() == height)) {
+                if ((targetDisplayMode == null) || (current.getRefreshRate() >= freq)) {
+                    if ((targetDisplayMode == null) || (current.getBPP() > targetDisplayMode.getBPP())) {
+                        targetDisplayMode = current;
+                        freq = targetDisplayMode.getRefreshRate();
+                    }
+                }
+
+                if ((current.getBPP() == LwjglApplicationConfiguration.getDesktopDisplayMode().bitsPerPixel)
+                        && (current.getRefreshRate() == LwjglApplicationConfiguration.getDesktopDisplayMode().refreshRate)) {
+                    targetDisplayMode = current;
+                    break;
+                }
+            }
+        }
+
+        if (targetDisplayMode == null) {
+            final Graphics.DisplayMode mode = LwjglApplicationConfiguration.getDesktopDisplayMode();
+            return new GraphicResolution(mode.width, mode.height, mode.bitsPerPixel, mode.refreshRate);
+        }
+        return targetDisplayMode;
     }
 
     @Override
