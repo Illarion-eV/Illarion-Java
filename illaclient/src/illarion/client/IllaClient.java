@@ -154,7 +154,11 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
 
     private void init() {
         try {
+            EventServiceLocator.setEventService(EventServiceLocator.SERVICE_NAME_EVENT_BUS, null);
+            EventServiceLocator.setEventService(EventServiceLocator.SERVICE_NAME_SWING_EVENT_SERVICE, null);
             EventServiceLocator.setEventService(EventServiceLocator.SERVICE_NAME_EVENT_BUS, new ThreadSafeEventService());
+            EventServiceLocator.setEventService(EventServiceLocator.SERVICE_NAME_SWING_EVENT_SERVICE,
+                    EventServiceLocator.getEventBusService());
         } catch (EventServiceExistsException e1) {
             LOGGER.error("Failed preparing the EventBus. Settings the Service handler happened too late");
         }
