@@ -89,9 +89,10 @@ public final class MapGroup {
      * @return {@code true} in case one of the overwriting groups is hidden
      */
     private boolean isOverwritingGroupHidden() {
-        if (overwritingGroups != null) {
-            for (int i = 0; i < overwritingGroups.size(); i++) {
-                final MapGroup group = overwritingGroups.get(i);
+        @Nullable final List<MapGroup> lclList = overwritingGroups;
+        if (lclList != null) {
+            for (int i = 0; i < lclList.size(); i++) {
+                final MapGroup group = lclList.get(i);
                 if (group.isHidden()) {
                     return true;
                 }
