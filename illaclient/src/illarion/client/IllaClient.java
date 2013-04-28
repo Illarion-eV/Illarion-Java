@@ -72,7 +72,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     /**
      * The version information of this client. This version is shows at multiple positions within the client.
      */
-    public static final String VERSION = "2.1.2"; //$NON-NLS-1$
+    public static final String VERSION = "2.1.3"; //$NON-NLS-1$
 
     /**
      * The default server the client connects too. The client will always connect to this server.
