@@ -614,7 +614,7 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
             @Override
             public void run() {
                 assert inputListener != null;
-                inputListener.mouseWheelMoved(getMouseX(), getMouseY(), amount);
+                inputListener.mouseWheelMoved(getMouseX(), getMouseY(), -amount);
             }
         });
         return true;
