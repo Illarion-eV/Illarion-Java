@@ -85,11 +85,11 @@ public final class InformMsg extends AbstractReply {
         switch (informType) {
             case 0:
                 gui.getInformGui().showServerInform(informText);
-                gui.getChatGui().addChatMessage(Lang.getMsg("chat.broadcast") + ": " + informText,
-                        ChatGui.COLOR_DEFAULT);
                 break;
             case 1:
                 gui.getInformGui().showBroadcastInform(informText);
+                gui.getChatGui().addChatMessage(Lang.getMsg("chat.broadcast") + ": " + informText,
+                        ChatGui.COLOR_DEFAULT);
                 break;
             case 2:
                 gui.getInformGui().showTextToInform(informText);
