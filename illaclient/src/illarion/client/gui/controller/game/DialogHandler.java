@@ -183,6 +183,7 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
                     addCraftingItemsToDialog(event, craftingDialog);
                     craftingDialog.setProgress(0.f);
                     craftingDialog.selectItemByItemIndex(0);
+                    craftingDialog.setAmount(1);
                     craftingDialog.getElement().show(new EndNotify() {
                         @Override
                         public void perform() {
@@ -239,6 +240,7 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
         }
 
         craftingDialog.setProgress(0.f);
+        craftingDialog.setAmount(craftingDialog.getAmount() - 1);
     }
 
     @EventSubscriber
