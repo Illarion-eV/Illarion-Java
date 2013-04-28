@@ -105,4 +105,18 @@ public interface DialogCrafting extends Window {
      * @return the ID of the dialog
      */
     int getDialogId();
+
+    /**
+     * Get the currently selected amount.
+     *
+     * @return the current amount
+     */
+    int getAmount();
+
+    /**
+     * Set the currently selected amount to a new value.
+     *
+     * @param amount the new amount value
+     */
+    void setAmount(int amount);
 }

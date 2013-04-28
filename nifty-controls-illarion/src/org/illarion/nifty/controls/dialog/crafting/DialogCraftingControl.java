@@ -271,17 +271,17 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
 
         parent.layoutElements();
 
-        niftyInstance.subscribe(currentScreen, getContent().findElementByName("#craftButton").getId(),
+        niftyInstance.subscribe(currentScreen, getContent().findElementById("#craftButton").getId(),
                 ButtonClickedEvent.class, craftButtonEventHandler);
-        niftyInstance.subscribe(currentScreen, getContent().findElementByName("#cancelButton").getId(),
+        niftyInstance.subscribe(currentScreen, getContent().findElementById("#cancelButton").getId(),
                 ButtonClickedEvent.class, closeButtonEventHandler);
-        niftyInstance.subscribe(currentScreen, getContent().findElementByName("#buttonAmountUp").getId(),
+        niftyInstance.subscribe(currentScreen, getContent().findElementById("#buttonAmountUp").getId(),
                 ButtonClickedEvent.class, increaseAmountButtonEventHandler);
-        niftyInstance.subscribe(currentScreen, getContent().findElementByName("#buttonAmountDown").getId(),
+        niftyInstance.subscribe(currentScreen, getContent().findElementById("#buttonAmountDown").getId(),
                 ButtonClickedEvent.class, decreaseAmountButtonEventHandler);
         niftyInstance.subscribe(currentScreen, getItemList().getElement().getId(),
                 ListBoxSelectionChangedEvent.class, listSelectionChangedEventHandler);
-        niftyInstance.subscribe(currentScreen, getContent().findElementByName("#selectedItemInfos").getId(),
+        niftyInstance.subscribe(currentScreen, getContent().findElementById("#selectedItemInfos").getId(),
                 NiftyMouseMovedEvent.class, mouseOverItemEventHandler);
 
     }
@@ -360,14 +360,14 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
     @Nonnull
     @Override
     public Element getCraftingItemDisplay() {
-        return getElement().findElementByName("#selectedItemInfos");
+        return getElement().findElementById("#selectedItemInfos");
     }
 
     @Nonnull
     @Override
     public Element getIngredientItemDisplay(final int index) {
-        final Element ingredientsPanel = getElement().findElementByName("#ingredients");
-        return ingredientsPanel.findElementByName("#ingredient" + Integer.toString(index));
+        final Element ingredientsPanel = getElement().findElementById("#ingredients");
+        return ingredientsPanel.findElementById("#ingredient" + Integer.toString(index));
     }
 
     /**
@@ -379,8 +379,18 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
         return getElement().findNiftyControl("#amountInput", TextField.class);
     }
 
+    @Override
     public int getAmount() {
         return Integer.parseInt(getAmountTextField().getDisplayedText());
+    }
+
+    @Override
+    public void setAmount(final int amount) {
+        if (amount <= 1) {
+            getAmountTextField().setText("");
+        } else {
+            getAmountTextField().setText(Integer.toString(amount));
+        }
     }
 
     private static final class ListEntry {
@@ -390,6 +400,7 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
             this.entry = entry;
         }
 
+        @Override
         @Nonnull
         public String toString() {
             return entry.getTreeLabel();
@@ -418,7 +429,7 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
 
     @Override
     public void startProgress(final double seconds) {
-        final Element progressBar = getContent().findElementByName("#progress");
+        final Element progressBar = getContent().findElementById("#progress");
         progressBar.getNiftyControl(Progress.class).setProgress(0.f);
 
         final List<Effect> effects = progressBar.getEffects(EffectEventId.onCustom, DoubleEffect.class);
@@ -450,13 +461,13 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
      */
     private void setSelectedItem(@Nullable final CraftingItemEntry selectedEntry) {
         if (selectedEntry == null) {
-            final Element image = getContent().findElementByName("#selectedItemImage");
+            final Element image = getContent().findElementById("#selectedItemImage");
             image.getRenderer(ImageRenderer.class).setImage(null);
 
             final Label imageAmount = getContent().findNiftyControl("#selectedItemAmount", Label.class);
             imageAmount.getElement().hide();
 
-            final Element ingredientsPanel = getContent().findElementByName("#ingredients");
+            final Element ingredientsPanel = getContent().findElementById("#ingredients");
 
             int index = 0;
             while (deleteIngredientImage(ingredientsPanel, index)) {
@@ -464,7 +475,7 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
             }
             return;
         }
-        final Element image = getContent().findElementByName("#selectedItemImage");
+        final Element image = getContent().findElementById("#selectedItemImage");
         applyImage(image, selectedEntry.getImage(), 56);
 
         final Label imageAmount = getContent().findNiftyControl("#selectedItemAmount", Label.class);
@@ -479,14 +490,14 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
             imageAmountElement.show();
         }
 
-        final Element title = getContent().findElementByName("#selectedItemName");
+        final Element title = getContent().findElementById("#selectedItemName");
         title.getRenderer(TextRenderer.class).setText(selectedEntry.getName());
 
-        final Element productionTime = getContent().findElementByName("#productionTime");
+        final Element productionTime = getContent().findElementById("#productionTime");
         productionTime.getRenderer(TextRenderer.class).setText("${illarion-dialog-crafting-bundle.craftTime}: "
                 + timeFormat.format(selectedEntry.getCraftTime()) + "s");
 
-        final Element ingredientsPanel = getContent().findElementByName("#ingredients");
+        final Element ingredientsPanel = getContent().findElementById("#ingredients");
 
         final int ingredientsAmount = selectedEntry.getIngredientCount();
         Element currentPanel = null;
@@ -495,6 +506,7 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
                 currentPanel = getIngredientPanel(ingredientsPanel, i / 10);
             }
 
+            assert currentPanel != null;
             final Element currentImage = getIngredientImage(ingredientsPanel.getId(), currentPanel, i % 10);
             applyImage(currentImage.getElements().get(0), selectedEntry.getIngredientImage(i), INGREDIENT_IMAGE_SIZE);
             showIngredientAmount(currentImage, selectedEntry.getIngredientAmount(i));
@@ -521,6 +533,7 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
         return false;
     }
 
+    @Nonnull
     private Element getIngredientPanel(@Nonnull final Element ingredientsPanel, final int index) {
         final List<Element> elements = ingredientsPanel.getElements();
         if ((elements.size() - 1) >= index) {
@@ -537,7 +550,7 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
     }
 
     private boolean deleteIngredientImage(@Nonnull final Element ingredientsPanel, final int index) {
-        final Element image = ingredientsPanel.findElementByName("#ingredient" + Integer.toString(index));
+        final Element image = ingredientsPanel.findElementById("#ingredient" + Integer.toString(index));
         if (image == null) {
             return false;
         }
@@ -546,6 +559,7 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
         return true;
     }
 
+    @Nonnull
     private Element getIngredientImage(final String parentId, @Nonnull final Element parentPanel, final int index) {
         final List<Element> elements = parentPanel.getElements();
         if ((elements.size() - 1) >= index) {
@@ -607,6 +621,7 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
         }
     }
 
+    @Nonnull
     @SuppressWarnings("unchecked")
     private TreeBox<ListEntry> getItemList() {
         return getContent().findNiftyControl("#craftItemList", TreeBox.class);
@@ -629,7 +644,7 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
 
     @Override
     public void setProgress(final float progress) {
-        final Element progressBar = getContent().findElementByName("#progress");
+        final Element progressBar = getContent().findElementById("#progress");
         progressBar.stopEffect(EffectEventId.onCustom);
         progressBar.getNiftyControl(Progress.class).setProgress(progress);
     }
