@@ -18,17 +18,12 @@
  */
 package illarion.common.data;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -60,65 +55,59 @@ class SkillLoader {
             throw new IllegalStateException("Skill XML was not found.");
         }
 
-        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         try {
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(skillXmlStream);
-            doc.getDocumentElement().normalize();
+            final XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
+            parser.setInput(skillXmlStream, "UTF-8");
 
-            findGroup(doc);
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Search the group nodes in the document.
-     *
-     * @param currentNode the node that is the root of the search
-     */
-    private static void findGroup(@Nonnull final Node currentNode) {
-        if ("group".equals(currentNode.getNodeName())) {
-            final NamedNodeMap attributes = currentNode.getAttributes();
-            final String german = attributes.getNamedItem("german").getNodeValue();
-            final String english = attributes.getNamedItem("english").getNodeValue();
-
-            final SkillGroup group = new SkillGroup(german, english);
-
-            final NodeList childNodes = currentNode.getChildNodes();
-            for (int i = 0; i < childNodes.getLength(); i++) {
-                parseSkill(group, childNodes.item(i));
+            int currentTag = parser.nextTag();
+            @Nullable SkillGroup currentGroup = null;
+            while (currentTag != XmlPullParser.END_DOCUMENT) {
+                final String tagName = parser.getName();
+                if ("group".equals(tagName)) {
+                    final int attribCount = parser.getAttributeCount();
+                    String germanName = null;
+                    String englishName = null;
+                    for (int i = 0; i < attribCount; i++) {
+                        final String attribName = parser.getAttributeName(i);
+                        if ("german".equals(attribName)) {
+                            germanName = parser.getAttributeValue(i);
+                        } else if ("english".equals(attribName)) {
+                            englishName = parser.getAttributeValue(i);
+                        }
+                    }
+                    if ((germanName != null) && (englishName != null)) {
+                        currentGroup = new SkillGroup(germanName, englishName);
+                        SkillGroups.getInstance().addSkillGroup(currentGroup);
+                    }
+                } else if ("skill".equals(tagName) && (currentGroup != null)) {
+                    final int attribCount = parser.getAttributeCount();
+                    String serverName = null;
+                    String germanName = null;
+                    String englishName = null;
+                    int serverId = -1;
+                    for (int i = 0; i < attribCount; i++) {
+                        final String attribName = parser.getAttributeName(i);
+                        if ("name".equals(attribName)) {
+                            serverName = parser.getAttributeValue(i);
+                        } else if ("german".equals(attribName)) {
+                            germanName = parser.getAttributeValue(i);
+                        } else if ("english".equals(attribName)) {
+                            englishName = parser.getAttributeValue(i);
+                        } else if ("id".equals(attribName)) {
+                            serverId = Integer.parseInt(parser.getAttributeValue(i));
+                        }
+                    }
+                    if ((germanName != null) && (englishName != null) && (serverName != null) && (serverId >= 0)) {
+                        final Skill skill = new Skill(serverId, serverName, germanName, englishName, currentGroup);
+                        Skills.getInstance().addSkill(skill);
+                    }
+                }
+                currentTag = parser.nextTag();
             }
-
-            SkillGroups.getInstance().addSkillGroup(group);
-        }
-
-        final NodeList childNodes = currentNode.getChildNodes();
-        for (int i = 0; i < childNodes.getLength(); i++) {
-            findGroup(childNodes.item(i));
-        }
-    }
-
-    /**
-     * Parse the skill values from a specified node.
-     *
-     * @param parentGroup the group this skills belong to
-     * @param parsedNode  the node that is parsed
-     */
-    private static void parseSkill(@Nonnull final SkillGroup parentGroup, @Nonnull final Node parsedNode) {
-        if ("skill".equals(parsedNode.getNodeName())) {
-            final NamedNodeMap attributes = parsedNode.getAttributes();
-            final int id = Integer.parseInt(attributes.getNamedItem("id").getNodeValue());
-            final String name = attributes.getNamedItem("name").getNodeValue();
-            final String german = attributes.getNamedItem("german").getNodeValue();
-            final String english = attributes.getNamedItem("english").getNodeValue();
-
-            final Skill skill = new Skill(id, name, german, english, parentGroup);
-            Skills.getInstance().addSkill(skill);
+        } catch (XmlPullParserException e) {
+            // nothing
+        } catch (IOException e) {
+            // nothing
         }
     }
 

@@ -21,6 +21,7 @@
     <orderEntry type="library" name="Apache Axis" level="project" />
     <orderEntry type="library" name="Apache Commons" level="project" />
     <orderEntry type="library" name="wsdl4j" level="project" />
+    <orderEntry type="library" name="XPP3" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

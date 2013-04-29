@@ -104,6 +104,7 @@ public final class Common implements DevelopmentResource {
             dep.add(EventBus.getInstance());
             dep.add(JSR.getInstance());
             dep.add(MantisConnect.getInstance());
+            dep.add(Xpp.getInstance());
 
             dependencies = dep;
         }
