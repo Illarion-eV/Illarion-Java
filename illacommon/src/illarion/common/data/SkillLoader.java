@@ -47,13 +47,11 @@ class SkillLoader {
     /**
      * Load the skills from the XML file.
      */
-    static void load() {
-        synchronized (SkillLoader.class) {
-            if (loadingStarted) {
-                return;
-            }
-            loadingStarted = true;
+    static synchronized void load() {
+        if (loadingStarted) {
+            return;
         }
+        loadingStarted = true;
 
         final InputStream skillXmlStream = Thread.currentThread().getContextClassLoader()
                 .getResourceAsStream("skills.xml");
