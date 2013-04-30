@@ -116,6 +116,7 @@
             <zipgroupfileset refid="log4j"/>
             <zipgroupfileset refid="eventbus"/>
             <zipgroupfileset refid="jsr"/>
+            <zipgroupfileset refid="xpp"/>
             <zipfileset src="${common.bin}"/>
             <metainf dir="${download}">
                 <include name="*.txt"/>
