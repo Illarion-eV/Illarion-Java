@@ -1,0 +1,64 @@
+/*
+ * This file is part of the Illarion Java Applications.
+ *
+ * Copyright © 2013 - Illarion e.V.
+ *
+ * The Illarion Java Applications is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Java Applications is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Java Applications.  If not, see <http://www.gnu.org/licenses/>.
+ */
+include "illabuild"
+include "illaclient"
+include "illacommon"
+include "illadownload"
+include "illaeasynpc"
+include "illaeasyquest"
+include "illagameengine"
+include "illamapedit"
+include "nifty-controls-illarion"
+include "nifty-style-illarion"
+
+rootProject.name = "Illarion Java Applications"
+rootProject.children.each {
+    switch (it.name) {
+        case "illabuild":
+            it.name = "Illarion Build Utility";
+            break;
+        case "illaclient":
+            it.name = "Illarion Client";
+            break;
+        case "illacommon":
+            it.name = "Illarion Common Library";
+            break;
+        case "illadownload":
+            it.name = "Illarion Download Utility";
+            break;
+        case "illaeasynpc":
+            it.name = "Illarion easyNPC Editor";
+            break;
+        case "illaeasyquest":
+            it.name = "Illarion easyQuest Editor";
+            break;
+        case "illagameengine":
+            it.name = "Illarion Game Engine";
+            break;
+        case "illamapedit":
+            it.name = "Illarion Mapeditor";
+            break;
+        case "nifty-controls-illarion":
+            it.name = "Illarion Nifty-GUI Controls";
+            break;
+        case "nifty-style-illarion":
+            it.name = "Illarion Nifty-GUI Style";
+            break;
+    }
+}

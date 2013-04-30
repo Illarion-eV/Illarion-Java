@@ -1,8 +1,6 @@
 <component name="libraryTable">
   <library name="testng-6.8">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/illacommon/lib/testng/testng-6.8.jar!/" />
-    </CLASSES>
+    <CLASSES />
     <JAVADOC />
     <SOURCES />
   </library>

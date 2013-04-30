@@ -3,25 +3,12 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/resources" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/antclasses" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="inheritedJdk" />
-    <orderEntry type="library" name="Javolution" level="project" />
-    <orderEntry type="library" name="log4j" level="project" />
-    <orderEntry type="library" name="SWT" level="project" />
-    <orderEntry type="library" name="Tabsplitter" level="project" />
-    <orderEntry type="library" name="GnuTrove" level="project" />
-    <orderEntry type="library" name="XZ for Java" level="project" />
-    <orderEntry type="library" name="EventBus" level="project" />
-    <orderEntry type="library" name="JSR" level="project" />
-    <orderEntry type="library" name="MantisConnect" level="project" />
-    <orderEntry type="library" name="Java API for XML-based RPC" level="project" />
-    <orderEntry type="library" name="Apache Axis" level="project" />
-    <orderEntry type="library" name="Apache Commons" level="project" />
-    <orderEntry type="library" name="wsdl4j" level="project" />
-    <orderEntry type="library" name="XPP3" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

@@ -12,6 +12,7 @@
         <option name="myLocal" value="false" />
         <coding_rule class="AM_CREATES_EMPTY_JAR_FILE_ENTRY" level="WARNING" enabled="true" />
         <coding_rule class="AM_CREATES_EMPTY_ZIP_FILE_ENTRY" level="WARNING" enabled="true" />
+        <coding_rule class="AT_OPERATION_SEQUENCE_ON_CONCURRENT_ABSTRACTION" level="ERROR" enabled="false" />
         <coding_rule class="AbstractClassNameCheck" level="WARNING" enabled="false">
           <param name="ignoreModifier" value="false" />
           <param name="ignoreName" value="false" />
@@ -47,6 +48,7 @@
         <coding_rule class="BC_IMPOSSIBLE_DOWNCAST_OF_TOARRAY" level="WARNING" enabled="true" />
         <coding_rule class="BC_IMPOSSIBLE_INSTANCEOF" level="ERROR" enabled="true" />
         <coding_rule class="BC_UNCONFIRMED_CAST" level="ERROR" enabled="true" />
+        <coding_rule class="BC_UNCONFIRMED_CAST_OF_RETURN_VALUE" level="ERROR" enabled="false" />
         <coding_rule class="BC_VACUOUS_INSTANCEOF" level="ERROR" enabled="true" />
         <coding_rule class="BIT_ADD_OF_SIGNED_BYTE" level="ERROR" enabled="true" />
         <coding_rule class="BIT_AND" level="ERROR" enabled="true" />
@@ -59,6 +61,7 @@
         <coding_rule class="BX_BOXING_IMMEDIATELY_UNBOXED" level="WARNING" enabled="true" />
         <coding_rule class="BX_BOXING_IMMEDIATELY_UNBOXED_TO_PERFORM_COERCION" level="WARNING" enabled="true" />
         <coding_rule class="BX_UNBOXED_AND_COERCED_FOR_TERNARY_OPERATOR" level="WARNING" enabled="true" />
+        <coding_rule class="BX_UNBOXING_IMMEDIATELY_REBOXED" level="ERROR" enabled="false" />
         <coding_rule class="BasicRulesAvoidDecimalLiteralsInBigDecimalConstructor" level="WARNING" enabled="true" />
         <coding_rule class="BasicRulesAvoidMultipleUnaryOperators" level="WARNING" enabled="true" />
         <coding_rule class="BasicRulesAvoidThreadGroup" level="ERROR" enabled="true" />
@@ -102,12 +105,12 @@
         <coding_rule class="BracesRulesIfElseStmtsMustUseBraces" level="WARNING" enabled="true" />
         <coding_rule class="BracesRulesIfStmtsMustUseBraces" level="WARNING" enabled="true" />
         <coding_rule class="BracesRulesWhileLoopsMustUseBraces" level="WARNING" enabled="true" />
-        <coding_rule class="CD_CIRCULAR_DEPENDENCY" level="WARNING" enabled="true" />
         <coding_rule class="CI_CONFUSED_INHERITANCE" level="INFO" enabled="true" />
         <coding_rule class="CN_IDIOM" level="WARNING" enabled="true" />
         <coding_rule class="CN_IDIOM_NO_SUPER_CALL" level="WARNING" enabled="true" />
         <coding_rule class="CN_IMPLEMENTS_CLONE_BUT_NOT_CLONEABLE" level="WARNING" enabled="true" />
         <coding_rule class="CO_ABSTRACT_SELF" level="WARNING" enabled="true" />
+        <coding_rule class="CO_COMPARETO_RESULTS_MIN_VALUE" level="ERROR" enabled="false" />
         <coding_rule class="CO_SELF_NO_OBJECT" level="WARNING" enabled="true" />
         <coding_rule class="CatchTooGeneralExceptionTypeInspector" level="WARNING" enabled="true">
           <param name="tooGeneralExceptions" value="java.lang.Exception,java.lang.RuntimeException,java.lang.Throwable,java.lang.Error" />
@@ -172,6 +175,7 @@
         <coding_rule class="DLS_DEAD_LOCAL_STORE" level="ERROR" enabled="true" />
         <coding_rule class="DLS_DEAD_LOCAL_STORE_IN_RETURN" level="ERROR" enabled="true" />
         <coding_rule class="DLS_DEAD_LOCAL_STORE_OF_NULL" level="ERROR" enabled="true" />
+        <coding_rule class="DLS_DEAD_LOCAL_STORE_SHADOWS_FIELD" level="ERROR" enabled="false" />
         <coding_rule class="DLS_DEAD_STORE_OF_CLASS_LITERAL" level="ERROR" enabled="true" />
         <coding_rule class="DLS_OVERWRITTEN_INCREMENT" level="ERROR" enabled="true" />
         <coding_rule class="DL_SYNCHRONIZATION_ON_BOOLEAN" level="ERROR" enabled="true" />
@@ -179,13 +183,17 @@
         <coding_rule class="DL_SYNCHRONIZATION_ON_SHARED_CONSTANT" level="ERROR" enabled="true" />
         <coding_rule class="DL_SYNCHRONIZATION_ON_UNSHARED_BOXED_PRIMITIVE" level="ERROR" enabled="true" />
         <coding_rule class="DMI_ANNOTATION_IS_NOT_VISIBLE_TO_REFLECTION" level="WARNING" enabled="true" />
+        <coding_rule class="DMI_ARGUMENTS_WRONG_ORDER" level="ERROR" enabled="false" />
         <coding_rule class="DMI_BAD_MONTH" level="ERROR" enabled="true" />
+        <coding_rule class="DMI_BIGDECIMAL_CONSTRUCTED_FROM_DOUBLE" level="ERROR" enabled="false" />
         <coding_rule class="DMI_BLOCKING_METHODS_ON_URL" level="ERROR" enabled="true" />
         <coding_rule class="DMI_CALLING_NEXT_FROM_HASNEXT" level="ERROR" enabled="true" />
         <coding_rule class="DMI_COLLECTIONS_SHOULD_NOT_CONTAIN_THEMSELVES" level="ERROR" enabled="true" />
         <coding_rule class="DMI_COLLECTION_OF_URLS" level="ERROR" enabled="true" />
         <coding_rule class="DMI_CONSTANT_DB_PASSWORD" level="ERROR" enabled="true" />
+        <coding_rule class="DMI_DOH" level="ERROR" enabled="false" />
         <coding_rule class="DMI_EMPTY_DB_PASSWORD" level="ERROR" enabled="true" />
+        <coding_rule class="DMI_ENTRY_SETS_MAY_REUSE_ENTRY_OBJECTS" level="ERROR" enabled="false" />
         <coding_rule class="DMI_FUTILE_ATTEMPT_TO_CHANGE_MAXPOOL_SIZE_OF_SCHEDULED_THREAD_POOL_EXECUTOR" level="INFO" enabled="true" />
         <coding_rule class="DMI_HARDCODED_ABSOLUTE_FILENAME" level="ERROR" enabled="true" />
         <coding_rule class="DMI_INVOKING_HASHCODE_ON_ARRAY" level="ERROR" enabled="true" />
@@ -204,6 +212,7 @@
         <coding_rule class="DM_BOOLEAN_CTOR" level="WARNING" enabled="true" />
         <coding_rule class="DM_BOXED_PRIMITIVE_TOSTRING" level="WARNING" enabled="true" />
         <coding_rule class="DM_CONVERT_CASE" level="INFO" enabled="true" />
+        <coding_rule class="DM_DEFAULT_ENCODING" level="ERROR" enabled="false" />
         <coding_rule class="DM_EXIT" level="WARNING" enabled="true" />
         <coding_rule class="DM_FP_NUMBER_CTOR" level="WARNING" enabled="true" />
         <coding_rule class="DM_GC" level="WARNING" enabled="true" />
@@ -285,7 +294,6 @@
         <coding_rule class="DotChainInspector" level="WARNING" enabled="true">
           <param name="maxChain" value="10" />
         </coding_rule>
-        <coding_rule class="DoubleCheckedLockingCheck" level="WARNING" enabled="true" />
         <coding_rule class="DuplicateImportInspector" level="WARNING" enabled="true" />
         <coding_rule class="EC_ARRAY_AND_NONARRAY" level="ERROR" enabled="true" />
         <coding_rule class="EC_BAD_ARRAY_COMPARE" level="ERROR" enabled="true" />
@@ -391,6 +399,7 @@
         <coding_rule class="ICAST_BAD_SHIFT_AMOUNT" level="ERROR" enabled="true" />
         <coding_rule class="ICAST_IDIV_CAST_TO_DOUBLE" level="ERROR" enabled="true" />
         <coding_rule class="ICAST_INTEGER_MULTIPLY_CAST_TO_LONG" level="ERROR" enabled="true" />
+        <coding_rule class="ICAST_INT_2_LONG_AS_INSTANT" level="ERROR" enabled="false" />
         <coding_rule class="ICAST_INT_CAST_TO_DOUBLE_PASSED_TO_CEIL" level="ERROR" enabled="true" />
         <coding_rule class="ICAST_INT_CAST_TO_FLOAT_PASSED_TO_ROUND" level="ERROR" enabled="true" />
         <coding_rule class="ICAST_QUESTIONABLE_UNSIGNED_RIGHT_SHIFT" level="ERROR" enabled="true" />
@@ -410,16 +419,17 @@
         <coding_rule class="IM_AVERAGE_COMPUTATION_COULD_OVERFLOW" level="ERROR" enabled="true" />
         <coding_rule class="IM_BAD_CHECK_FOR_ODD" level="ERROR" enabled="true" />
         <coding_rule class="IM_MULTIPLYING_RESULT_OF_IREM" level="ERROR" enabled="true" />
+        <coding_rule class="INT_BAD_COMPARISON_WITH_INT_VALUE" level="ERROR" enabled="false" />
         <coding_rule class="INT_BAD_COMPARISON_WITH_NONNEGATIVE_VALUE" level="ERROR" enabled="true" />
         <coding_rule class="INT_BAD_COMPARISON_WITH_SIGNED_BYTE" level="ERROR" enabled="true" />
         <coding_rule class="INT_BAD_REM_BY_1" level="ERROR" enabled="true" />
+        <coding_rule class="INT_VACUOUS_BIT_OPERATION" level="ERROR" enabled="true" />
         <coding_rule class="INT_VACUOUS_COMPARISON" level="ERROR" enabled="true" />
         <coding_rule class="IO_APPENDING_TO_OBJECT_OUTPUT_STREAM" level="ERROR" enabled="true" />
         <coding_rule class="IP_PARAMETER_IS_DEAD_BUT_OVERWRITTEN" level="ERROR" enabled="true" />
         <coding_rule class="IS2_INCONSISTENT_SYNC" level="ERROR" enabled="true" />
         <coding_rule class="ISC_INSTANTIATE_STATIC_CLASS" level="WARNING" enabled="true" />
         <coding_rule class="IS_FIELD_NOT_GUARDED" level="ERROR" enabled="true" />
-        <coding_rule class="IS_INCONSISTENT_SYNC" level="WARNING" enabled="true" />
         <coding_rule class="ITA_INEFFICIENT_TO_ARRAY" level="ERROR" enabled="true" />
         <coding_rule class="IT_NO_SUCH_ELEMENT" level="INFO" enabled="true" />
         <coding_rule class="IllegalCatchCheck" level="WARNING" enabled="true" />
@@ -458,6 +468,8 @@
         <coding_rule class="J2EE_STORE_OF_NON_SERIALIZABLE_OBJECT_INTO_SESSION" level="ERROR" enabled="true" />
         <coding_rule class="JCIP_FIELD_ISNT_FINAL_IN_IMMUTABLE_CLASS" level="INFO" enabled="true" />
         <coding_rule class="JLM_JSR166_LOCK_MONITORENTER" level="ERROR" enabled="true" />
+        <coding_rule class="JLM_JSR166_UTILCONCURRENT_MONITORENTER" level="ERROR" enabled="false" />
+        <coding_rule class="JML_JSR166_CALLING_WAIT_RATHER_THAN_AWAIT" level="ERROR" enabled="false" />
         <coding_rule class="JUnitRulesJUnitAssertionsShouldIncludeMessage" level="WARNING" enabled="true" />
         <coding_rule class="JUnitRulesJUnitSpelling" level="WARNING" enabled="true" />
         <coding_rule class="JUnitRulesJUnitStaticSuite" level="WARNING" enabled="true" />
@@ -514,6 +526,7 @@
         <coding_rule class="MS_OOI_PKGPROTECT" level="WARNING" enabled="true" />
         <coding_rule class="MS_PKGPROTECT" level="WARNING" enabled="true" />
         <coding_rule class="MS_SHOULD_BE_FINAL" level="WARNING" enabled="true" />
+        <coding_rule class="MS_SHOULD_BE_REFACTORED_TO_BE_FINAL" level="ERROR" enabled="false" />
         <coding_rule class="MTIA_SUSPECT_SERVLET_INSTANCE_FIELD" level="ERROR" enabled="true" />
         <coding_rule class="MTIA_SUSPECT_STRUTS_INSTANCE_FIELD" level="ERROR" enabled="true" />
         <coding_rule class="MWN_MISMATCHED_NOTIFY" level="ERROR" enabled="true" />
@@ -596,12 +609,11 @@
         <coding_rule class="NP_CLONE_COULD_RETURN_NULL" level="ERROR" enabled="true" />
         <coding_rule class="NP_CLOSING_NULL" level="WARNING" enabled="true" />
         <coding_rule class="NP_DEREFERENCE_OF_READLINE_VALUE" level="ERROR" enabled="true" />
-        <coding_rule class="NP_DOES_NOT_HANDLE_NULL" level="WARNING" enabled="true" />
-        <coding_rule class="NP_EQUALS_SHOULD_HANDLE_NULL_ARGUMENT" level="ERROR" enabled="true" />
         <coding_rule class="NP_GUARANTEED_DEREF" level="ERROR" enabled="true" />
         <coding_rule class="NP_GUARANTEED_DEREF_ON_EXCEPTION_PATH" level="ERROR" enabled="true" />
         <coding_rule class="NP_IMMEDIATE_DEREFERENCE_OF_READLINE" level="ERROR" enabled="true" />
         <coding_rule class="NP_LOAD_OF_KNOWN_NULL_VALUE" level="ERROR" enabled="true" />
+        <coding_rule class="NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" level="ERROR" enabled="false" />
         <coding_rule class="NP_NONNULL_PARAM_VIOLATION" level="ERROR" enabled="true" />
         <coding_rule class="NP_NONNULL_RETURN_VIOLATION" level="ERROR" enabled="true" />
         <coding_rule class="NP_NULL_INSTANCEOF" level="ERROR" enabled="true" />
@@ -617,6 +629,7 @@
         <coding_rule class="NP_SYNC_AND_NULL_CHECK_FIELD" level="WARNING" enabled="true" />
         <coding_rule class="NP_TOSTRING_COULD_RETURN_NULL" level="ERROR" enabled="true" />
         <coding_rule class="NP_UNWRITTEN_FIELD" level="WARNING" enabled="true" />
+        <coding_rule class="NP_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD" level="ERROR" enabled="false" />
         <coding_rule class="NPathComplexityCheck" level="WARNING" enabled="true" />
         <coding_rule class="NS_DANGEROUS_NON_SHORT_CIRCUIT" level="ERROR" enabled="true" />
         <coding_rule class="NS_NON_SHORT_CIRCUIT" level="WARNING" enabled="true" />
@@ -657,6 +670,7 @@
         <coding_rule class="NoWhitespaceBeforeCheck" level="INFO" enabled="true" />
         <coding_rule class="NotifyInspector" level="WARNING" enabled="true" />
         <coding_rule class="OBL_UNSATISFIED_OBLIGATION" level="WARNING" enabled="true" />
+        <coding_rule class="OBL_UNSATISFIED_OBLIGATION_EXCEPTION_EDGE" level="ERROR" enabled="false" />
         <coding_rule class="ODR_OPEN_DATABASE_RESOURCE" level="ERROR" enabled="true" />
         <coding_rule class="ODR_OPEN_DATABASE_RESOURCE_EXCEPTION_PATH" level="ERROR" enabled="true" />
         <coding_rule class="OS_OPEN_STREAM" level="ERROR" enabled="true" />
@@ -685,7 +699,10 @@
         <coding_rule class="OuterTypeNumberCheck" level="WARNING" enabled="true" />
         <coding_rule class="OverrideEqualsAndHashCodeInspector" level="WARNING" enabled="true" />
         <coding_rule class="PS_PUBLIC_SEMAPHORES" level="ERROR" enabled="true" />
+        <coding_rule class="PT_ABSOLUTE_PATH_TRAVERSAL" level="ERROR" enabled="false" />
+        <coding_rule class="PT_RELATIVE_PATH_TRAVERSAL" level="ERROR" enabled="false" />
         <coding_rule class="PZLA_PREFER_ZERO_LENGTH_ARRAYS" level="WARNING" enabled="true" />
+        <coding_rule class="PZ_DONT_REUSE_ENTRY_OBJECTS_IN_ITERATORS" level="ERROR" enabled="false" />
         <coding_rule class="PackageAnnotationCheck" level="WARNING" enabled="true" />
         <coding_rule class="PackageDeclarationCheck" level="WARNING" enabled="true">
           <param name="ignoreDirectoryName" value="false" />
@@ -718,14 +735,16 @@
         <coding_rule class="RV_01_TO_INT" level="WARNING" enabled="true" />
         <coding_rule class="RV_ABSOLUTE_VALUE_OF_HASHCODE" level="ERROR" enabled="true" />
         <coding_rule class="RV_ABSOLUTE_VALUE_OF_RANDOM_INT" level="ERROR" enabled="true" />
+        <coding_rule class="RV_CHECK_COMPARETO_FOR_SPECIFIC_RETURN_VALUE" level="ERROR" enabled="false" />
         <coding_rule class="RV_CHECK_FOR_POSITIVE_INDEXOF" level="INFO" enabled="true" />
         <coding_rule class="RV_DONT_JUST_NULL_CHECK_READLINE" level="WARNING" enabled="true" />
         <coding_rule class="RV_EXCEPTION_NOT_THROWN" level="ERROR" enabled="true" />
+        <coding_rule class="RV_NEGATING_RESULT_OF_COMPARETO" level="ERROR" enabled="false" />
         <coding_rule class="RV_REM_OF_HASHCODE" level="ERROR" enabled="true" />
         <coding_rule class="RV_REM_OF_RANDOM_INT" level="ERROR" enabled="true" />
         <coding_rule class="RV_RETURN_VALUE_IGNORED" level="INFO" enabled="true" />
-        <coding_rule class="RV_RETURN_VALUE_IGNORED2" level="WARNING" enabled="true" />
         <coding_rule class="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE" level="WARNING" enabled="true" />
+        <coding_rule class="RV_RETURN_VALUE_IGNORED_INFERRED" level="ERROR" enabled="false" />
         <coding_rule class="RV_RETURN_VALUE_OF_PUTIFABSENT_IGNORED" level="WARNING" enabled="true" />
         <coding_rule class="RedundantImportCheck" level="INFO" enabled="true" />
         <coding_rule class="RedundantModifierCheck" level="INFO" enabled="true" />
@@ -767,6 +786,7 @@
         <coding_rule class="SA_FIELD_SELF_COMPUTATION" level="ERROR" enabled="true" />
         <coding_rule class="SA_LOCAL_DOUBLE_ASSIGNMENT" level="ERROR" enabled="true" />
         <coding_rule class="SA_LOCAL_SELF_ASSIGNMENT" level="ERROR" enabled="true" />
+        <coding_rule class="SA_LOCAL_SELF_ASSIGNMENT_INSTEAD_OF_FIELD" level="ERROR" enabled="false" />
         <coding_rule class="SA_LOCAL_SELF_COMPARISON" level="ERROR" enabled="true" />
         <coding_rule class="SA_LOCAL_SELF_COMPUTATION" level="ERROR" enabled="true" />
         <coding_rule class="SBSC_USE_STRINGBUFFER_CONCATENATION" level="ERROR" enabled="true" />
@@ -861,11 +881,13 @@
         <coding_rule class="SystemPrintlnLoggingInspector" level="WARNING" enabled="true" />
         <coding_rule class="TLW_TWO_LOCK_WAIT" level="WARNING" enabled="true" />
         <coding_rule class="TQ_ALWAYS_VALUE_USED_WHERE_NEVER_REQUIRED" level="ERROR" enabled="true" />
+        <coding_rule class="TQ_COMPARING_VALUES_WITH_INCOMPATIBLE_TYPE_QUALIFIERS" level="ERROR" enabled="false" />
         <coding_rule class="TQ_EXPLICIT_UNKNOWN_SOURCE_VALUE_REACHES_ALWAYS_SINK" level="ERROR" enabled="true" />
         <coding_rule class="TQ_EXPLICIT_UNKNOWN_SOURCE_VALUE_REACHES_NEVER_SINK" level="ERROR" enabled="true" />
         <coding_rule class="TQ_MAYBE_SOURCE_VALUE_REACHES_ALWAYS_SINK" level="ERROR" enabled="true" />
         <coding_rule class="TQ_MAYBE_SOURCE_VALUE_REACHES_NEVER_SINK" level="ERROR" enabled="true" />
         <coding_rule class="TQ_NEVER_VALUE_USED_WHERE_ALWAYS_REQUIRED" level="ERROR" enabled="true" />
+        <coding_rule class="TQ_UNKNOWN_VALUE_USED_WHERE_ALWAYS_STRICTLY_REQUIRED" level="ERROR" enabled="false" />
         <coding_rule class="ThreadSubclassesInspector" level="WARNING" enabled="true" />
         <coding_rule class="ThreadYieldInspector" level="WARNING" enabled="true" />
         <coding_rule class="ThrowTooGeneralExceptionTypeInspector" level="WARNING" enabled="true">
@@ -896,17 +918,17 @@
         <coding_rule class="UL_UNRELEASED_LOCK_EXCEPTION_PATH" level="ERROR" enabled="true" />
         <coding_rule class="UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS" level="ERROR" enabled="true" />
         <coding_rule class="UM_UNNECESSARY_MATH" level="ERROR" enabled="true" />
-        <coding_rule class="UOE_USE_OBJECT_EQUALS" level="WARNING" enabled="true" />
         <coding_rule class="UPM_UNCALLED_PRIVATE_METHOD" level="ERROR" enabled="true" />
         <coding_rule class="URF_UNREAD_FIELD" level="WARNING" enabled="true" />
+        <coding_rule class="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD" level="ERROR" enabled="false" />
         <coding_rule class="UR_UNINIT_READ" level="WARNING" enabled="true" />
         <coding_rule class="UR_UNINIT_READ_CALLED_FROM_SUPER_CONSTRUCTOR" level="WARNING" enabled="true" />
-        <coding_rule class="USM_USELESS_ABSTRACT_METHOD" level="WARNING" enabled="true" />
-        <coding_rule class="USM_USELESS_SUBCLASS_METHOD" level="WARNING" enabled="true" />
         <coding_rule class="UUF_UNUSED_FIELD" level="WARNING" enabled="true" />
+        <coding_rule class="UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD" level="ERROR" enabled="false" />
         <coding_rule class="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" level="WARNING" enabled="true" />
         <coding_rule class="UWF_NULL_FIELD" level="ERROR" enabled="true" />
         <coding_rule class="UWF_UNWRITTEN_FIELD" level="WARNING" enabled="true" />
+        <coding_rule class="UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD" level="ERROR" enabled="false" />
         <coding_rule class="UW_UNCOND_WAIT" level="WARNING" enabled="true" />
         <coding_rule class="UncommentedMainCheck" level="WARNING" enabled="true" />
         <coding_rule class="UnconditionalIfInspector" level="WARNING" enabled="true" />
@@ -937,7 +959,9 @@
         <coding_rule class="VA_FORMAT_STRING_ILLEGAL" level="ERROR" enabled="true" />
         <coding_rule class="VA_FORMAT_STRING_MISSING_ARGUMENT" level="ERROR" enabled="true" />
         <coding_rule class="VA_FORMAT_STRING_NO_PREVIOUS_ARGUMENT" level="ERROR" enabled="true" />
+        <coding_rule class="VA_FORMAT_STRING_USES_NEWLINE" level="ERROR" enabled="false" />
         <coding_rule class="VA_PRIMITIVE_ARRAY_PASSED_TO_OBJECT_VARARG" level="ERROR" enabled="true" />
+        <coding_rule class="VO_VOLATILE_INCREMENT" level="ERROR" enabled="false" />
         <coding_rule class="VO_VOLATILE_REFERENCE_TO_ARRAY" level="WARNING" enabled="true" />
         <coding_rule class="VR_UNRESOLVABLE_REFERENCE" level="WARNING" enabled="true" />
         <coding_rule class="VariableNameClashesWithTypeNameInspector" level="WARNING" enabled="true" />
