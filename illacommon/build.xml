@@ -96,6 +96,7 @@
                 <fileset refid="jsr"/>
                 <fileset refid="eventbus"/>
                 <fileset refid="mantisconnect"/>
+                <fileset refid="xpp"/>
                 <pathelement path="${java.home}/lib"/>
             </classpath>
         </javac>
