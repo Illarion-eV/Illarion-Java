@@ -218,23 +218,12 @@ public final class ConfigDialog {
         }
     }
 
-    /**
-     * This constant set as display system means that the configuration dialog
-     * is displayed using the AWT.
-     */
-    public static final int DISPLAY_AWT = 0;
 
     /**
      * This constant set as display system means that the configuration dialog
      * is displayed using Swing.
      */
     public static final int DISPLAY_SWING = 1;
-
-    /**
-     * This constant set as display system means that the configuration dialog
-     * is displayed using the SWT.
-     */
-    public static final int DISPLAY_SWT = 2;
 
     /**
      * The logger instance that takes care for the logging output of this class.
@@ -249,7 +238,7 @@ public final class ConfigDialog {
 
     /**
      * The display system used in this configuration dialog. Allowed values are
-     * {@link #DISPLAY_AWT}, {@link #DISPLAY_SWING} and {@link #DISPLAY_SWT}.
+     * {@link #DISPLAY_SWING}.
      */
     private int displaySystem;
 
@@ -268,7 +257,7 @@ public final class ConfigDialog {
      */
     public ConfigDialog() {
         pages = FastTable.newInstance();
-        displaySystem = DISPLAY_AWT;
+        displaySystem = DISPLAY_SWING;
     }
 
     /**
@@ -317,9 +306,7 @@ public final class ConfigDialog {
      * Set the display system used to display the configuration dialog.
      *
      * @param newDisplay the constant of the display system
-     * @see #DISPLAY_AWT
      * @see #DISPLAY_SWING
-     * @see #DISPLAY_SWT
      */
     public void setDisplaySystem(final int newDisplay) {
         displaySystem = newDisplay;
@@ -352,14 +339,8 @@ public final class ConfigDialog {
         final TextBuilder builder = TextBuilder.newInstance();
         builder.append("illarion.common.config.gui.ConfigDialog");
         switch (displaySystem) {
-            case DISPLAY_AWT:
-                builder.append("Awt");
-                break;
             case DISPLAY_SWING:
                 builder.append("Swing");
-                break;
-            case DISPLAY_SWT:
-                builder.append("Swt");
                 break;
             default:
                 LOGGER.error("Invalid display system selected");

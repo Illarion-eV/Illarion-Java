@@ -55,21 +55,9 @@ public final class CrashReporter {
 
     /**
      * This constant is used as display value in case the crash reporter is
-     * supposed to display the crash window as AWT window.
-     */
-    public static final int DISPLAY_AWT = 1;
-
-    /**
-     * This constant is used as display value in case the crash reporter is
      * supposed to display the crash window as SWING window.
      */
     public static final int DISPLAY_SWING = 2;
-
-    /**
-     * This constant is used as display value in case the crash reporter is
-     * supposed to display the crash window as SWT window.
-     */
-    public static final int DISPLAY_SWT = 3;
 
     /**
      * This constant is used as mode value in case the crash reporter is
@@ -157,7 +145,7 @@ public final class CrashReporter {
      */
     private CrashReporter() {
         mode = MODE_ASK;
-        display = DISPLAY_AWT;
+        display = DISPLAY_SWING;
     }
 
     /**
@@ -255,14 +243,6 @@ public final class CrashReporter {
                         constr =
                                 Reflection.getInstance().getConstructor(
                                         "illarion.common.bug.ReportDialogSwing()");
-                    } else if (display == DISPLAY_AWT) {
-                        constr =
-                                Reflection.getInstance().getConstructor(
-                                        "illarion.common.bug.ReportDialogAwt()");
-                    } else if (display == DISPLAY_SWT) {
-                        constr =
-                                Reflection.getInstance().getConstructor(
-                                        "illarion.common.bug.ReportDialogSwt()");
                     }
 
                     if (constr == null) {
@@ -321,15 +301,14 @@ public final class CrashReporter {
     /**
      * Set the display mode that is supposed to be used by the crash reporter.
      * Best select the mode so it fits best to the rest of your GUI. The legal
-     * values are {@link #DISPLAY_AWT} and {@link #DISPLAY_SWING}.
+     * values is {@link #DISPLAY_SWING}.
      *
      * @param newDisplay the new display value
      * @throws IllegalArgumentException in case a invalid display mode is chosen
      */
     @SuppressWarnings("nls")
     public void setDisplay(final int newDisplay) {
-        if ((newDisplay != DISPLAY_AWT) && (newDisplay != DISPLAY_SWING)
-                && (newDisplay != DISPLAY_SWT)) {
+        if (newDisplay != DISPLAY_SWING) {
             throw new IllegalArgumentException("Illegal display value: "
                     + Integer.toString(newDisplay));
         }
