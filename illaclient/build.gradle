@@ -17,9 +17,12 @@
  * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 apply plugin: 'java'
+apply plugin: 'application'
 
 archivesBaseName = 'illarion_client'
 project.version = '2.1.3'
+
+mainClassName = "illarion.client.IllaClient"
 
 dependencies {
     compile project(':Illarion Common Library')

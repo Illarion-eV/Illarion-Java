@@ -16,8 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Java Applications.  If not, see <http://www.gnu.org/licenses/>.
  */
-apply plugin: 'java'
-
 task wrapper(type: Wrapper) {
     gradleVersion = '1.5'
 }
