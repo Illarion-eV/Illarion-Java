@@ -13,6 +13,9 @@
 /illaeasyquest/res/template/*/filelist
 /keys
 /bin
+/build
+*/build
+/.gradle/
 /setup/*
 !/setup/publish.sh
 !/setup/publish_release.sh

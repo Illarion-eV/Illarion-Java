@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="nifty-1.4.0-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/artifacts-23/filestore/lessvoid/nifty/1.4.0-SNAPSHOT/jar/55ff824fca2e9025fef1548a82bec96b92c1826a/nifty-1.4.0-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/artifacts-23/filestore/lessvoid/nifty/1.4.0-SNAPSHOT/source/d1fc8292ae814f059e2c6a12b8959bddf390acc2/nifty-1.4.0-SNAPSHOT-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

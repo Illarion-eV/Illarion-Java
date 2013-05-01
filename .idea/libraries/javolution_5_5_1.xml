@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="javolution-5.5.1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/artifacts-23/filestore/javolution/javolution/5.5.1/bundle/3fcba819cdb7861728405963ddc4b2755ab182e5/javolution-5.5.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/artifacts-23/filestore/javolution/javolution/5.5.1/source/aa34cc1954bd712fae27743a2b4b70c01c0fb0f5/javolution-5.5.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

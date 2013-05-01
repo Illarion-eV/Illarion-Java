@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="jglfont-core-1.2">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/artifacts-23/filestore/org.jglfont/jglfont-core/1.2/jar/13dae19f457bf7c8188cdb6f25e64a76123a12fa/jglfont-core-1.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/artifacts-23/filestore/org.jglfont/jglfont-core/1.2/source/68d6abeffdb64c5dec1b39314382eb898323860e/jglfont-core-1.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
