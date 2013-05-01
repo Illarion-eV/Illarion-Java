@@ -27,23 +27,22 @@ import de.lessvoid.nifty.screen.Screen;
 /**
  * @author Stefano Bonicatti &lt;smjert@gmail.com&gt;
  */
-public class CheckBoxOption implements Option<Boolean, CheckBox>{
+public class CheckBoxOption implements Option<Boolean, CheckBox> {
 
     private CheckBox control;
     private String key;
 
-    public CheckBoxOption(String name, Element parent, Nifty nifty, Screen screen)
-    {
+    public CheckBoxOption(String name, Element parent, Nifty nifty, Screen screen) {
         key = name;
 
         CheckboxBuilder checkBoxBuilder = new CheckboxBuilder(name + "GUI");
         Element checkBoxElement = checkBoxBuilder.build(nifty, screen, parent);
         control = checkBoxElement.getNiftyControl(CheckBox.class);
     }
-    
+
     @Override
     public Boolean getValue() {
-        if(control == null)
+        if (control == null)
             return false;
         return control.isChecked();
     }

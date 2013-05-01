@@ -3,7 +3,8 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/resources" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/antclasses" />
       <excludeFolder url="file://$MODULE_DIR$/classes" />
     </content>
@@ -18,6 +19,18 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" exported="" name="log4j-1.2.17" level="project" />
+    <orderEntry type="library" exported="" name="eventbus-1.4" level="project" />
+    <orderEntry type="library" exported="" name="nifty-1.4.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" exported="" name="javolution-5.5.1" level="project" />
+    <orderEntry type="library" exported="" name="jglfont-core-1.2" level="project" />
+    <orderEntry type="library" exported="" name="xpp3-1.1.4c" level="project" />
+    <orderEntry type="library" exported="" name="trove4j-3.0.3" level="project" />
+    <orderEntry type="library" exported="" name="jsr305-2.0.1" level="project" />
+    <orderEntry type="module" module-name="Illarion Nifty-GUI Controls" exported="" />
+    <orderEntry type="module" module-name="Illarion Game Engine" exported="" />
+    <orderEntry type="module" module-name="Illarion Nifty-GUI Style" exported="" scope="RUNTIME" />
+    <orderEntry type="module" module-name="Illarion Common Library" exported="" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

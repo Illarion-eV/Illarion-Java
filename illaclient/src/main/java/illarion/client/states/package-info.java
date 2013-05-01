@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,29 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.client.gui.util;
-
 /**
- * This is just a simple class to have dropdown item with a value that is visually displayed
- * and a hidden id to be used into the code.
+ * This package contains all the states the client can be in. 
  *
- * @author Stefano Bonicatti &lt;smjert@gmail.com&gt;
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class DropDownItem<T> {
-    private final String value;
-    private T key;
-    
-    public DropDownItem(T key, String value)
-    {
-        this.key = key;
-        this.value = value;
-    }
-    
-    public T getKey(){
-        return key;
-    }
-    
-    public String getValue(){
-        return value;
-    }
-}
+package illarion.client.states;

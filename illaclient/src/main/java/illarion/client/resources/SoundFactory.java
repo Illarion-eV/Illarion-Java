@@ -132,7 +132,7 @@ public final class SoundFactory implements ResourceFactory<IdWrapper<String>> {
     @Nonnull
     public List<String> getSoundNames() {
         final List<String> result = new ArrayList<String>();
-        Collections.addAll(result, sounds.values());
+        Collections.addAll(result, sounds.values(new String[0]));
         return result;
     }
 
