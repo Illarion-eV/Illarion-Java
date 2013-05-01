@@ -29,7 +29,10 @@ subprojects {
     repositories {
         mavenCentral()
         maven {
-            url "http://illarion.org/media/java/maven"
+            url 'http://illarion.org/media/java/maven'
+        }
+        maven {
+            url 'http://nifty-gui.sourceforge.net/nifty-maven-repo'
         }
     }
 }
