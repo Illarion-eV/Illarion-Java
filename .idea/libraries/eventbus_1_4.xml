@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="eventbus-1.4">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/artifacts-23/filestore/org.bushe/eventbus/1.4/jar/e30d4442e9628fb2ddc1e544d801505f83bf77b2/eventbus-1.4.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/artifacts-23/filestore/org.bushe/eventbus/1.4/source/cee97288b92ff451723c476ddbc6921c1784f893/eventbus-1.4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

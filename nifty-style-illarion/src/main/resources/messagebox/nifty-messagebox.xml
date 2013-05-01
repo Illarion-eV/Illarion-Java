@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ This file is part of the Illarion Nifty-GUI Style.
+  ~
+  ~ Copyright © 2013 - Illarion e.V.
+  ~
+  ~ The Illarion Nifty-GUI Style is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ The Illarion Nifty-GUI Style is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with the Illarion Nifty-GUI Style.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<nifty-styles>
+    <style id="nifty-standard-messagebox-popup-style">
+        <attributes childLayout="center" backgroundColor="#0006"/>
+    </style>
+
+    <style id="nifty-standard-messagebox-style">
+        <attributes align="center" valign="center" padding="15px" backgroundImage="data/gui/panel/nifty-panel-hint.png"
+                    imageMode="resize:8,210,8,8,8,210,8,209,8,210,8,8"/>
+    </style>
+</nifty-styles>

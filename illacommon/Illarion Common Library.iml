@@ -12,6 +12,16 @@
     <orderEntry type="library" exported="" name="jsr305-2.0.1" level="project" />
     <orderEntry type="library" exported="" name="javolution-5.5.1" level="project" />
     <orderEntry type="library" exported="" name="log4j-1.2.17" level="project" />
+    <orderEntry type="library" exported="" name="axis-saaj-1.4" level="project" />
+    <orderEntry type="library" exported="" name="commons-logging-1.0.4" level="project" />
+    <orderEntry type="library" exported="" name="eventbus-1.4" level="project" />
+    <orderEntry type="library" exported="" name="axis-wsdl4j-1.5.1" level="project" />
+    <orderEntry type="library" exported="" name="mantisconnect-1.1.1.1" level="project" />
+    <orderEntry type="library" exported="" name="commons-discovery-0.2" level="project" />
+    <orderEntry type="library" exported="" name="xpp3-1.1.4c" level="project" />
+    <orderEntry type="library" exported="" name="trove4j-3.0.3" level="project" />
+    <orderEntry type="library" exported="" name="axis-jaxrpc-1.4" level="project" />
+    <orderEntry type="library" exported="" name="axis-1.4" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

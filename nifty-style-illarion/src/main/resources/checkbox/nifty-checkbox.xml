@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ This file is part of the Illarion Nifty-GUI Style.
+  ~
+  ~ Copyright © 2013 - Illarion e.V.
+  ~
+  ~ The Illarion Nifty-GUI Style is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ The Illarion Nifty-GUI Style is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with the Illarion Nifty-GUI Style.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<nifty-styles>
+    <style id="nifty-checkbox-style#panel">
+        <attributes width="23px" height="23px" childLayout="center" backgroundColor="#525e51ff"/>
+        <effect>
+            <onActive name="border" color="#525e51ff" post="true" inset="1px"/>
+            <onFocus name="colorBar" color="#264d1cff" post="true" inset="1px"/>
+            <onEnabled name="renderQuad" startColor="#2228" endColor="#2220" post="true" length="150"/>
+            <onDisabled name="renderQuad" startColor="#2220" endColor="#2228" post="true" length="150"/>
+        </effect>
+    </style>
+
+    <style id="nifty-checkbox-style#select">
+        <attributes align="center" valign="center" width="32px" height="32px"/>
+        <effect overlay="true">
+            <onCustom customKey="show" name="imageSize" startSize="2.0" endSize="1.0" length="250" post="true"/>
+            <onCustom customKey="show" name="fade" start="#0" end="#f" length="250" post="true"/>
+            <onCustom customKey="show" name="imageOverlay" filename="data/gui/checkbox/checkbox.png" width="32px"
+                      height="32px" post="true" neverStopRendering="true"/>
+            <onCustom customKey="hide" name="fade" start="#f" end="#0" length="250" post="true"/>
+            <onCustom customKey="hide" name="imageOverlay" filename="data/gui/checkbox/checkbox.png" width="32px"
+                      height="32px" post="true" length="250"/>
+            <onEnabled name="fade" start="#4" end="#f" length="150" post="false"/>
+            <onDisabled name="fade" start="#f" end="#4" length="150" post="false"/>
+        </effect>
+    </style>
+</nifty-styles>
