@@ -21,7 +21,8 @@
 <!-- This control is designed to define the different slots in the inventory of the Illarion Client. -->
 <nifty-controls>
     <useControls filename="nifty-default-controls.xml"/>
-    <controlDefinition name="inventoryslot" controller="org.illarion.nifty.controls.inventoryslot.InventorySlotControl"
+    <controlDefinition name="inventoryslot"
+                       controller="org.illarion.org.illarion.engine.nifty.controls.inventoryslot.InventorySlotControl"
                        visibleToMouse="true" margin="1px">
         <effect>
             <onHover name="border" border="1px" color="#000077ff" timeType="infinite"/>

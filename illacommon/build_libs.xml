@@ -664,9 +664,9 @@
             </path>
         </verifyjar>
 
-        <resourcebuild target="${setuplib}/nifty.illares" usepack200="true">
+        <resourcebuild target="${setuplib}/org.illarion.engine.nifty.illares" usepack200="true">
             <fileset dir="${signedlibs}">
-                <patternset refid="nifty.pattern"/>
+                <patternset refid="org.illarion.engine.nifty.pattern"/>
             </fileset>
         </resourcebuild>
     </target>

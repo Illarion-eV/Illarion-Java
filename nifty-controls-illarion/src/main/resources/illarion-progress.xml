@@ -20,7 +20,8 @@
 
 <!-- This control is designed to define the different slots in the inventory of the Illarion Client. -->
 <nifty-controls>
-    <controlDefinition name="progress" controller="org.illarion.nifty.controls.progress.ProgressControl"
+    <controlDefinition name="progress"
+                       controller="org.illarion.org.illarion.engine.nifty.controls.progress.ProgressControl"
                        style="illarion-progress" visibleToMouse="false">
         <panel id="#background" style="#background" childLayout="horizontal">
             <panel id="#fillArea" style="#fillArea" childLayout="horizontal">

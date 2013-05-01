@@ -18,7 +18,7 @@
   --><!-- This control is designed to define the different slots in the inventory of the Illarion Client. -->
 <nifty-controls>
     <controlDefinition name="dialog-message" visibleToMouse="true"
-                       controller="org.illarion.nifty.controls.dialog.message.DialogMessageControl">
+                       controller="org.illarion.org.illarion.engine.nifty.controls.dialog.message.DialogMessageControl">
         <control name="window" title="Nachricht" id="#window" visibleToMouse="true" width="422px">
             <panel childLayout="vertical" visibleToMouse="true" width="380px">
                 <control name="label" id="#text" text="-" wrap="true" width="380px"/>

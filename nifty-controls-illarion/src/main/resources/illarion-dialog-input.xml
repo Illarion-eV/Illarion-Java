@@ -18,7 +18,7 @@
   -->
 <nifty-controls>
     <controlDefinition name="dialog-input" style="illarion-dialog-input-single" visibleToMouse="true"
-                       controller="org.illarion.nifty.controls.dialog.input.DialogInputControl">
+                       controller="org.illarion.org.illarion.engine.nifty.controls.dialog.input.DialogInputControl">
         <control name="window" title="Nachricht" id="#window" visibleToMouse="true" width="422px">
             <panel childLayout="vertical" visibleToMouse="true" width="380px">
                 <control name="label" id="#description" style="nifty-label" wrap="true" width="380px"/>

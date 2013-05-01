@@ -181,7 +181,7 @@ class GdxGraphics implements Graphics {
                 gdxGraphics.getGLCommon().glBlendFunc(GL10.GL_DST_COLOR, GL10.GL_ZERO);
                 break;
         }
-        shapeRenderer.begin(ShapeRenderer.ShapeType.FilledRectangle);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
     }
 
     /**
@@ -335,7 +335,7 @@ class GdxGraphics implements Graphics {
         transferColor(topRightColor, tempColor2);
         transferColor(bottomLeftColor, tempColor3);
         transferColor(bottomRightColor, tempColor4);
-        shapeRenderer.filledRect(x, y, width, height, tempColor3, tempColor4, tempColor2, tempColor1);
+        shapeRenderer.rect(x, y, width, height, tempColor3, tempColor4, tempColor2, tempColor1);
         shapeRenderer.end();
         gdxGraphics.getGLCommon().glDisable(GL10.GL_BLEND);
     }

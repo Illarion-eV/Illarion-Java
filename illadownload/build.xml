@@ -182,7 +182,7 @@
             </keepclasseswithmembers>
             <dontwarn name="javax.mail.**"/>
             <dontwarn name="javax.jms.**"/>
-            <dontwarn name="de.lessvoid.nifty.**"/>
+            <dontwarn name="de.lessvoid.org.illarion.engine.nifty.**"/>
             <dontnote name="org.apache.log4j.jmx.Agent"/>
             <dontnote name="org.apache.log4j.net.ZeroConfSupport"/>
             <dontnote name="org.apache.log4j.spi.LocationInfo"/>

@@ -55,8 +55,8 @@
     <property name="engine.slick.res.deploy" location="${setup}/${engine-slick.res}"/>
     <property name="engine.gdx.bin" location="${compiled}/${engine-gdx.jar}"/>
     <property name="engine.gdx.res.deploy" location="${setup}/${engine-gdx.res}"/>
-    <property name="engine.nifty.bin" location="${compiled}/${engine-nifty.jar}"/>
-    <property name="engine.nifty.res.deploy" location="${setup}/${engine-nifty.res}"/>
+    <property name="engine.org.illarion.engine.nifty.bin" location="${compiled}/${engine-nifty.jar}"/>
+    <property name="engine.org.illarion.engine.nifty.res.deploy" location="${setup}/${engine-nifty.res}"/>
 
     <property name="mapedit" location="${illacommon.include.dir}/../illamapedit"/>
     <property name="mapedit.res.deploy" location="${setup}/${mapedit.res}"/>
@@ -271,8 +271,8 @@
     </fileset>
 
     <!-- Nifty 1.4.0-SNAPSHOT --><!-- http://nifty-gui.lessvoid.com/ -->
-    <property name="nifty.dir" location="${common}/lib/nifty"/>
-    <patternset id="nifty.pattern">
+    <property name="org.illarion.engine.nifty.dir" location="${common}/lib/nifty"/>
+    <patternset id="org.illarion.engine.nifty.pattern">
         <include name="nifty*.jar"/>
         <exclude name="*sources*"/>
     </patternset>

@@ -85,7 +85,8 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         config.forceExit = false;
         config.useGL20 = true;
         config.vSyncEnabled = true;
-        config.useCPUSynch = true;
+        config.backgroundFPS = 10;
+        config.foregroundFPS = 60;
 
         windowHeight = height;
         windowWidth = width;

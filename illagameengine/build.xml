@@ -47,7 +47,7 @@
                 <file name="${engine.jar}"/>
                 <file name="${engine-slick.jar}"/>
                 <file name="${engine-gdx.jar}"/>
-                <file name="${engine-nifty.jar}"/>
+                <file name="${engine-org.illarion.engine.nifty.jar}"/>
             </filelist>
         </resourceprepare>
 
@@ -93,9 +93,9 @@
             </filelist>
         </resourcebuild>
 
-        <resourcebuild target="${engine.nifty.res.deploy}" usepack200="true">
+        <resourcebuild target="${engine.org.illarion.engine.nifty.res.deploy}" usepack200="true">
             <filelist dir="${signedcompiled}">
-                <file name="${engine-nifty.jar}"/>
+                <file name="${engine-org.illarion.engine.nifty.jar}"/>
             </filelist>
         </resourcebuild>
     </target>

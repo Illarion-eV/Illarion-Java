@@ -20,7 +20,7 @@
     <resourceBundle id="illarion-dialog-merchant-bundle" filename="illarion-dialog-merchant"/>
 
     <controlDefinition name="dialog-merchant-list-entry" style="illarion-dialog-merchant-line"
-                       controller="org.illarion.nifty.controls.dialog.merchant.DialogMerchantEntryControl">
+                       controller="org.illarion.org.illarion.engine.nifty.controls.dialog.merchant.DialogMerchantEntryControl">
         <panel childLayout="horizontal">
             <panel childLayout="center" style="#imageContainer">
                 <image id="#imageDisplay" style="#imageDisplay"/>
@@ -47,7 +47,7 @@
             <panel width="100%" childLayout="center">
                 <control name="listBox" id="#sellList" vertical="on" horizontal="off"
                          displayItems="9" selection="Disabled" width="100%"
-                         viewConverterClass="org.illarion.nifty.controls.dialog.merchant.MerchantItemListViewConverter">
+                         viewConverterClass="org.illarion.org.illarion.engine.nifty.controls.dialog.merchant.MerchantItemListViewConverter">
                     <control name="dialog-merchant-list-entry" selectable="true"/>
                 </control>
             </panel>
@@ -60,14 +60,14 @@
                      text="${illarion-dialog-merchant-bundle.buyDescription}" margin="1px"/>
             <control name="listBox" id="#buyList" vertical="on" horizontal="off"
                      displayItems="8" selection="Disabled"
-                     viewConverterClass="org.illarion.nifty.controls.dialog.merchant.MerchantItemListViewConverter">
+                     viewConverterClass="org.illarion.org.illarion.engine.nifty.controls.dialog.merchant.MerchantItemListViewConverter">
                 <control name="dialog-merchant-list-entry" selectable="false"/>
             </control>
         </panel>
     </controlDefinition>
 
     <controlDefinition name="dialog-merchant" style="illarion-dialog-merchant" visibleToMouse="true"
-                       controller="org.illarion.nifty.controls.dialog.merchant.DialogMerchantControl">
+                       controller="org.illarion.org.illarion.engine.nifty.controls.dialog.merchant.DialogMerchantControl">
         <control name="window" title="${illarion-dialog-merchant-bundle.title}" visibleToMouse="true">
             <panel childLayout="vertical">
                 <control name="tabGroup">
