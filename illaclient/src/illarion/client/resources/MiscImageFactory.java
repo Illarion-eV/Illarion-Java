@@ -34,6 +34,11 @@ public final class MiscImageFactory extends AbstractTemplateFactory<MiscImageTem
     public static final int ATTACK_MARKER = 0;
 
     /**
+     * The ID of the arrow that is displayed on the mini map to show the direction of the next quest.
+     */
+    public static final int MINI_MAP_ARROW = 1;
+
+    /**
      * The singleton instance.
      */
     private static final MiscImageFactory INSTANCE = new MiscImageFactory();
