@@ -22,6 +22,7 @@ import org.illarion.engine.EngineException;
 import org.illarion.engine.assets.EffectManager;
 import org.illarion.engine.graphic.WorldMap;
 import org.illarion.engine.graphic.effects.FogEffect;
+import org.illarion.engine.graphic.effects.GrayScaleEffect;
 import org.illarion.engine.graphic.effects.HighlightEffect;
 import org.illarion.engine.graphic.effects.MiniMapEffect;
 
@@ -38,19 +39,25 @@ class SlickEffectManager implements EffectManager {
      * The shared instance of the mini map effect.
      */
     @Nullable
-    private MiniMapEffect miniMapEffect;
+    private SlickMiniMapEffect miniMapEffect;
 
     /**
      * The shared instance of the highlight effect.
      */
     @Nullable
-    private HighlightEffect highlightEffect;
+    private SlickHighlightEffect highlightEffect;
 
     /**
      * The shared instance of the fog effect.
      */
     @Nullable
-    private FogEffect fogEffect;
+    private SlickFogEffect fogEffect;
+
+    /**
+     * The shared instance of the gray scale effect.
+     */
+    @Nullable
+    private SlickGrayScaleEffect grayScaleEffect;
 
     @Nonnull
     @Override
@@ -87,5 +94,17 @@ class SlickEffectManager implements EffectManager {
             return fogEffect;
         }
         return new SlickFogEffect();
+    }
+
+    @Nonnull
+    @Override
+    public GrayScaleEffect getGrayScaleEffect(final boolean sharedInstance) throws EngineException {
+        if (sharedInstance) {
+            if (grayScaleEffect == null) {
+                grayScaleEffect = new SlickGrayScaleEffect();
+            }
+            return grayScaleEffect;
+        }
+        return new SlickGrayScaleEffect();
     }
 }

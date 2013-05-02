@@ -52,7 +52,7 @@ class SlickMiniMapEffect implements MiniMapEffect, SlickTextureEffect {
      */
     SlickMiniMapEffect(@Nonnull final WorldMap worldMap) throws SlickEngineException {
         try {
-            miniMapShader = ShaderProgram.loadProgram("org/illarion/engine/backend/slick/shaders/minimap.vert",
+            miniMapShader = ShaderProgram.loadProgram("org/illarion/engine/backend/slick/shaders/generic.vert",
                     "org/illarion/engine/backend/slick/shaders/minimap.frag");
         } catch (@Nonnull final SlickException e) {
             throw new SlickEngineException(e);

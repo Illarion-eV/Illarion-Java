@@ -18,8 +18,7 @@
  */
 package org.illarion.engine.backend.slick;
 
-import org.illarion.engine.graphic.Color;
-import org.illarion.engine.graphic.effects.HighlightEffect;
+import org.illarion.engine.graphic.effects.GrayScaleEffect;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.opengl.shader.ShaderProgram;
@@ -27,52 +26,55 @@ import org.newdawn.slick.opengl.shader.ShaderProgram;
 import javax.annotation.Nonnull;
 
 /**
- * This is the Slick2D implementation of the highlighting effect.
+ * This is the Slick2D implementation of the gray scale effect.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class SlickHighlightEffect implements HighlightEffect, SlickTextureEffect {
+public class SlickGrayScaleEffect implements GrayScaleEffect, SlickTextureEffect, SlickSceneEffect {
     /**
-     * The shader handles drawing the highlighted object.
+     * The shader that is used to change the color.
      */
     @Nonnull
-    private final ShaderProgram highlightShader;
+    private final ShaderProgram shader;
 
     /**
-     * The color that is applied to the texture as highlight.
-     */
-    @Nonnull
-    private final org.newdawn.slick.Color highlightColor;
-
-    /**
-     * Create a new instance of the highlight effect.
+     * Create a new gray scale effect.
      *
-     * @throws SlickEngineException
+     * @throws SlickEngineException in case loading the effect fails
      */
-    SlickHighlightEffect() throws SlickEngineException {
+    SlickGrayScaleEffect() throws SlickEngineException {
         try {
-            highlightShader = ShaderProgram.loadProgram("org/illarion/engine/backend/slick/shaders/generic.vert",
-                    "org/illarion/engine/backend/slick/shaders/highlight.frag");
-        } catch (@Nonnull final SlickException e) {
+            shader = ShaderProgram.loadProgram("org/illarion/engine/backend/slick/shaders/generic.vert",
+                    "org/illarion/engine/backend/slick/shaders/grayScale.frag");
+        } catch (SlickException e) {
             throw new SlickEngineException(e);
         }
-        highlightColor = new org.newdawn.slick.Color(org.newdawn.slick.Color.white);
     }
 
     @Override
     public void activateEffect(@Nonnull final Graphics graphics) {
-        highlightShader.bind();
-        highlightShader.setUniform1i("tex0", 0);
-        highlightShader.setUniform4f("highlight", highlightColor);
+        shader.bind();
+        shader.setUniform1i("tex0", 0);
     }
 
     @Override
     public void disableEffect(@Nonnull final Graphics graphics) {
-        highlightShader.unbind();
+        shader.unbind();
     }
 
     @Override
-    public void setHighlightColor(@Nonnull final Color color) {
-        SlickGraphics.transferColor(color, highlightColor);
+    public void update(final int delta) {
+        // nothing to do
+    }
+
+    @Override
+    public void activateEffect(final int screenWidth, final int screenHeight, final int textureWidth, final int textureHeight) {
+        shader.bind();
+        shader.setUniform1i("tex0", 0);
+    }
+
+    @Override
+    public void disableEffect() {
+        shader.unbind();
     }
 }

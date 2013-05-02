@@ -23,6 +23,7 @@ import org.illarion.engine.EngineException;
 import org.illarion.engine.assets.EffectManager;
 import org.illarion.engine.graphic.WorldMap;
 import org.illarion.engine.graphic.effects.FogEffect;
+import org.illarion.engine.graphic.effects.GrayScaleEffect;
 import org.illarion.engine.graphic.effects.HighlightEffect;
 import org.illarion.engine.graphic.effects.MiniMapEffect;
 
@@ -58,6 +59,12 @@ class GdxEffectManager implements EffectManager {
      */
     @Nullable
     private GdxMiniMapEffect sharedMiniMapEffect;
+
+    /**
+     * The shared instance of the gray scale effect.
+     */
+    @Nullable
+    private GdxGrayScaleEffect sharedGrayScaleEffect;
 
     /**
      * Create a new effect manager.
@@ -102,5 +109,17 @@ class GdxEffectManager implements EffectManager {
             return sharedFogEffect;
         }
         return new GdxFogEffect(files);
+    }
+
+    @Nonnull
+    @Override
+    public GrayScaleEffect getGrayScaleEffect(final boolean sharedInstance) throws EngineException {
+        if (sharedInstance) {
+            if (sharedGrayScaleEffect == null) {
+                sharedGrayScaleEffect = new GdxGrayScaleEffect(files);
+            }
+            return sharedGrayScaleEffect;
+        }
+        return new GdxGrayScaleEffect(files);
     }
 }
