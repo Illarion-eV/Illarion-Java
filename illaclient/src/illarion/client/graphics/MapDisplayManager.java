@@ -21,6 +21,7 @@ package illarion.client.graphics;
 import illarion.client.IllaClient;
 import illarion.client.input.CurrentMouseLocationEvent;
 import illarion.client.world.World;
+import illarion.client.world.characters.CharacterAttribute;
 import illarion.common.graphics.Layers;
 import illarion.common.graphics.MapConstants;
 import illarion.common.types.Location;
@@ -30,6 +31,7 @@ import org.illarion.engine.EngineException;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Scene;
 import org.illarion.engine.graphic.effects.FogEffect;
+import org.illarion.engine.graphic.effects.GrayScaleEffect;
 import org.illarion.engine.input.Input;
 
 import javax.annotation.Nonnull;
@@ -256,20 +258,39 @@ public final class MapDisplayManager
         final Input engineInput = container.getEngine().getInput();
         gameScene.publishEvent(new CurrentMouseLocationEvent(engineInput.getMouseX(), engineInput.getMouseY()));
         gameScene.update(container, delta);
+        updateFog(container);
+        updateDeadView(container);
     }
 
     private boolean fogEnabled;
+    private boolean deadViewEnabled;
 
-    /**
-     * Render all visible map items
-     *
-     * @param c the game container the map is rendered in
-     */
-    public void render(@Nonnull final GameContainer c) {
-        if (!active) {
-            return;
+    private void updateDeadView(@Nonnull final GameContainer c) {
+        final int hitpoints = World.getPlayer().getCharacter().getAttribute(CharacterAttribute.HitPoints);
+        if (hitpoints == 0) {
+            if (!deadViewEnabled) {
+                try {
+                    final GrayScaleEffect effect = c.getEngine().getAssets().getEffectManager().getGrayScaleEffect(true);
+                    gameScene.addEffect(effect);
+                    deadViewEnabled = true;
+                } catch (EngineException e) {
+                    // error activating gray scale
+                }
+            }
+        } else {
+            if (deadViewEnabled) {
+                try {
+                    final GrayScaleEffect effect = c.getEngine().getAssets().getEffectManager().getGrayScaleEffect(true);
+                    gameScene.removeEffect(effect);
+                    deadViewEnabled = false;
+                } catch (EngineException e) {
+                    // error activating gray scale
+                }
+            }
         }
+    }
 
+    private void updateFog(@Nonnull final GameContainer c) {
         final float fog = World.getWeather().getFog();
         if (fog > 0.f) {
             try {
@@ -290,6 +311,17 @@ public final class MapDisplayManager
             } catch (EngineException e) {
                 // error activating fog
             }
+        }
+    }
+
+    /**
+     * Render all visible map items
+     *
+     * @param c the game container the map is rendered in
+     */
+    public void render(@Nonnull final GameContainer c) {
+        if (!active) {
+            return;
         }
 
         final Camera camera = Camera.getInstance();
