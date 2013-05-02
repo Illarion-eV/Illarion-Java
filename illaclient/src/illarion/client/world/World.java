@@ -339,8 +339,6 @@ public final class World {
         INSTANCE.weather = new Weather();
         INSTANCE.interactionManager = new InteractionManager();
 
-        assert INSTANCE.lights != null;
-        //noinspection ConstantConditions
         INSTANCE.lights.start();
     }
 
