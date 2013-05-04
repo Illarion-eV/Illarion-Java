@@ -262,12 +262,24 @@ public final class MapDisplayManager
         updateDeadView(container);
     }
 
+    /**
+     * This flag stores if the fog effect was already applied to the scene.
+     */
     private boolean fogEnabled;
+
+    /**
+     * This flag stores if the gray scale filter that is applied in case the character is dead was already enabled.
+     */
     private boolean deadViewEnabled;
 
+    /**
+     * Update the graphical effects applied in case the character died.
+     *
+     * @param c the game container
+     */
     private void updateDeadView(@Nonnull final GameContainer c) {
-        final int hitpoints = World.getPlayer().getCharacter().getAttribute(CharacterAttribute.HitPoints);
-        if (hitpoints == 0) {
+        final int hitPoints = World.getPlayer().getCharacter().getAttribute(CharacterAttribute.HitPoints);
+        if (hitPoints == 0) {
             if (!deadViewEnabled) {
                 try {
                     final GrayScaleEffect effect = c.getEngine().getAssets().getEffectManager().getGrayScaleEffect(true);
@@ -290,6 +302,11 @@ public final class MapDisplayManager
         }
     }
 
+    /**
+     * Update the graphical effect that shows the fog on the map.
+     *
+     * @param c the game container
+     */
     private void updateFog(@Nonnull final GameContainer c) {
         final float fog = World.getWeather().getFog();
         if (fog > 0.f) {
