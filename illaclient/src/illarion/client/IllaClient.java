@@ -65,14 +65,9 @@ import java.util.Timer;
  */
 public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent> {
     /**
-     * The name of this application.
+     * The identification of this application.
      */
-    public static final String APPLICATION = "Illarion Client"; //$NON-NLS-1$
-
-    /**
-     * The version information of this client. This version is shows at multiple positions within the client.
-     */
-    public static final String VERSION = "2.1.4"; //$NON-NLS-1$
+    public static final AppIdent APPLICATION = new AppIdent("Illarion Client"); //$NON-NLS-1$
 
     /**
      * The default server the client connects too. The client will always connect to this server.
@@ -227,7 +222,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
             System.exit(-1);
         }
 
-        gameContainer.setTitle(APPLICATION + ' ' + VERSION);
+        gameContainer.setTitle(APPLICATION.getApplicationIdentifier());
         gameContainer.setIcons(new String[]{"illarion_client16.png", "illarion_client32.png",
                 "illarion_client64.png", "illarion_client256.png"});
 
@@ -354,16 +349,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      */
     public static InputStream getResource(final String path) {
         return INSTANCE.rscLoader.getResourceAsStream(path);
-    }
-
-    /**
-     * Get a text that identifies the version of this client.
-     *
-     * @return the version text of this client
-     */
-    @Nonnull
-    public static String getVersionText() {
-        return "Illarion Client " + VERSION; //$NON-NLS-1$
     }
 
     /**
@@ -496,7 +481,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         Thread.setDefaultUncaughtExceptionHandler(DefaultCrashHandler.getInstance());
 
         System.out.println("Startup done.");
-        LOGGER.info(getVersionText() + " started.");
+        LOGGER.info(APPLICATION.getApplicationIdentifier() + " started.");
         LOGGER.info("VM: " + System.getProperty("java.version"));
         LOGGER.info("OS: " + System.getProperty("os.name") + ' ' + System.getProperty("os.version") + ' ' + System
                 .getProperty("os.arch"));
