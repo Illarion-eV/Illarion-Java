@@ -24,17 +24,14 @@ import de.lessvoid.nifty.elements.render.ImageRenderer;
 import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
-import illarion.client.gui.events.HideMiniMap;
 import illarion.client.world.World;
-import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventSubscriber;
 
 import javax.annotation.Nonnull;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class GameMiniMapHandler implements ScreenController, EventSubscriber<HideMiniMap> {
+public final class GameMiniMapHandler implements ScreenController {
     /**
      * The instance of Nifty used to control the elements on the screen.
      */
@@ -63,16 +60,11 @@ public final class GameMiniMapHandler implements ScreenController, EventSubscrib
 
     @Override
     public void onStartScreen() {
-        EventBus.subscribe(HideMiniMap.class, this);
+        // nothing to do
     }
 
     @Override
     public void onEndScreen() {
-        EventBus.unsubscribe(HideMiniMap.class, this);
-    }
-
-    @Override
-    public void onEvent(final HideMiniMap event) {
-        nifty.removeElement(screen, miniMapPanel);
+        // nothing to do
     }
 }
