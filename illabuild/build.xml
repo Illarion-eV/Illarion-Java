@@ -53,7 +53,7 @@
         </javac>
     </target>
 
-    <target name="build_jar">
+    <target name="build_jar" depends="get_git_version">
         <jar jarfile="${jar}" basedir="${classes}" includes="illarion/build/**">
             <fileset dir="${classes}">
                 <include name="illarion/build/**"/>
@@ -68,9 +68,9 @@
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <attribute name="Built-Date" value="${TODAY}"/>
-                <attribute name="Implementation-Vendor" value="${easynpc.vendor}"/>
-                <attribute name="Implementation-Title" value="${easynpc.name}"/>
-                <attribute name="Implementation-Version" value="${easynpc.version}"/>
+                <attribute name="Implementation-Vendor" value="Illarion e.V."/>
+                <attribute name="Implementation-Title" value="Illarion Build Utility"/>
+                <attribute name="Implementation-Version" value="${repository.version}"/>
             </manifest>
         </jar>
         <jar jarfile="${jar}" basedir="${src}" includes="public.key" update="true" index="${build.index}"/>

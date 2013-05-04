@@ -121,7 +121,7 @@
         </javac>
     </target>
 
-    <target name="build_jar">
+    <target name="build_jar" depends="get_git_version">
         <jar jarfile="${jar}" basedir="${classes}" index="${build.index}"
              includes="org/illarion/engine/**"
              excludes="org/illarion/engine/backend/slick/**,org/illarion/engine/backend/gdx/**,org/illarion/engine/nifty/**">
@@ -130,7 +130,7 @@
                 <attribute name="Built-Date" value="${TODAY}"/>
                 <attribute name="Implementation-Vendor" value="Illarion e.V"/>
                 <attribute name="Implementation-Title" value="Illarion Game Engine"/>
-                <attribute name="Implementation-Version" value="1.00"/>
+                <attribute name="Implementation-Version" value="${repository.version}"/>
             </manifest>
         </jar>
 
@@ -141,7 +141,7 @@
                 <attribute name="Built-Date" value="${TODAY}"/>
                 <attribute name="Implementation-Vendor" value="Illarion e.V"/>
                 <attribute name="Implementation-Title" value="Illarion Game Engine - Slick2D Backend"/>
-                <attribute name="Implementation-Version" value="1.00"/>
+                <attribute name="Implementation-Version" value="${repository.version}"/>
             </manifest>
         </jar>
         <jar jarfile="${jar.slick}" basedir="${src}" update="true" index="${build.index}"
@@ -154,7 +154,7 @@
                 <attribute name="Built-Date" value="${TODAY}"/>
                 <attribute name="Implementation-Vendor" value="Illarion e.V"/>
                 <attribute name="Implementation-Title" value="Illarion Game Engine - libGDX Backend"/>
-                <attribute name="Implementation-Version" value="1.00"/>
+                <attribute name="Implementation-Version" value="${repository.version}"/>
             </manifest>
         </jar>
         <jar jarfile="${jar.gdx}" basedir="${src}" update="true" index="${build.index}"
@@ -168,7 +168,7 @@
                 <attribute name="Built-Date" value="${TODAY}"/>
                 <attribute name="Implementation-Vendor" value="Illarion e.V"/>
                 <attribute name="Implementation-Title" value="Illarion Game Engine - Nifty-GUI Extension"/>
-                <attribute name="Implementation-Version" value="1.00"/>
+                <attribute name="Implementation-Version" value="${repository.version}"/>
             </manifest>
         </jar>
     </target>

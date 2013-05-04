@@ -80,14 +80,14 @@
         </javac>
     </target>
 
-    <target name="build_jar">
+    <target name="build_jar" depends="get_git_version">
         <jar jarfile="${jar}" basedir="${classes}" includes="org/illarion/nifty/**">
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <attribute name="Built-Date" value="${TODAY}"/>
                 <attribute name="Implementation-Vendor" value="${niftycontrols.vendor}"/>
                 <attribute name="Implementation-Title" value="${niftycontrols.name}"/>
-                <attribute name="Implementation-Version" value="${niftycontrols.version}"/>
+                <attribute name="Implementation-Version" value="${repository.version}"/>
             </manifest>
         </jar>
         <jar jarfile="${jar}" basedir="${niftycontrols}/nifty-controls" update="true" includes="*.xml"/>

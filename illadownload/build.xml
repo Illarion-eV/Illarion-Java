@@ -106,7 +106,7 @@
         </javac>
     </target>
 
-    <target name="build_jar" depends="proguard">
+    <target name="build_jar" depends="proguard, get_git_version">
         <jar jarfile="${jar}" basedir="${classes}" includes="illarion/download/**">
             <fileset dir="${classes}">
                 <include name="illarion/download/**"/>
@@ -126,7 +126,7 @@
                 <attribute name="Built-Date" value="${TODAY}"/>
                 <attribute name="Implementation-Vendor" value="${download.vendor}"/>
                 <attribute name="Implementation-Title" value="${download.name}"/>
-                <attribute name="Implementation-Version" value="${download.version}"/>
+                <attribute name="Implementation-Version" value="${repository.version}"/>
                 <attribute name="Main-Class" value="illarion.download.install.Installation"/>
             </manifest>
         </jar>

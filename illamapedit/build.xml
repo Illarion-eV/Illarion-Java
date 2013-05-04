@@ -94,14 +94,14 @@
         </javac>
     </target>
 
-    <target name="build_jar">
+    <target name="build_jar" depends="get_git_version">
         <jar jarfile="${jar}" basedir="${classes}" includes="illarion/mapedit/**">
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <attribute name="Built-Date" value="${TODAY}"/>
                 <attribute name="Implementation-Vendor" value="${mapedit.vendor}"/>
                 <attribute name="Implementation-Title" value="${mapedit.name}"/>
-                <attribute name="Implementation-Version" value="${mapedit.version}"/>
+                <attribute name="Implementation-Version" value="${repository.version}"/>
             </manifest>
         </jar>
         <jar jarfile="${jar}" basedir="${src}" includes="*.png" update="true"/>
