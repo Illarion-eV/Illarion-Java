@@ -280,10 +280,6 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
     @Override
     public void onStartScreen() {
         buffer.clear();
-
-        final Pointer pointer = createPointer();
-        pointer.setTarget(new Location(3, 3, 0));
-        addPointer(pointer);
     }
 
     @Override
