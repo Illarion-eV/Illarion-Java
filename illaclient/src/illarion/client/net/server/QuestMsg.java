@@ -85,6 +85,7 @@ public final class QuestMsg extends AbstractReply {
     @Override
     @Nonnull
     public String toString() {
-        return toString("ID: " + questId + " Title: \"" + title + '"' + (finished ? " (finished)" : ""));
+        return toString("ID: " + questId + " Title: \"" + title + '"' + (finished ? " (finished)" : "") + " Target " +
+                "Locations: " + targetLocations.length);
     }
 }

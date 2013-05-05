@@ -342,6 +342,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
 
         final MiniMapGui miniMapGui = World.getGameGui().getMiniMapGui();
         for (@Nonnull final GameMiniMapHandler.Pointer pointer : activePointers) {
+            miniMapGui.removePointer(pointer);
             miniMapGui.releasePointer(pointer);
         }
 
@@ -578,7 +579,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
                                   final boolean finished, @Nonnull final Location... locations) {
         final QuestEntry oldEntry = findQuest(questId);
         if (oldEntry == null) {
-            final QuestEntry newEntry = new QuestEntry(questId, name, description, finished);
+            final QuestEntry newEntry = new QuestEntry(questId, name, description, finished, locations);
             if (!finished || showFinishedQuests) {
                 insertToGuiList(newEntry);
                 pulseQuestButton();
@@ -588,7 +589,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
         } else {
             final boolean changeOrder = (oldEntry.isFinished() != finished) || !oldEntry.getName().equals(name);
             final boolean wasFinished = oldEntry.isFinished();
-            oldEntry.updateData(name, description, finished);
+            oldEntry.updateData(name, description, finished, locations);
             pulseQuestButton();
             if (changeOrder) {
                 if (!wasFinished || showFinishedQuests) {
