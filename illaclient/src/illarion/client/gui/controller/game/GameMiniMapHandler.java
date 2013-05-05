@@ -27,11 +27,13 @@ import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
+import illarion.client.graphics.AnimationUtility;
 import illarion.client.gui.MiniMapGui;
 import illarion.client.resources.MiscImageFactory;
 import illarion.client.world.World;
 import illarion.common.types.Location;
 import illarion.common.util.FastMath;
+import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Graphics;
 import org.illarion.engine.graphic.Sprite;
@@ -39,6 +41,7 @@ import org.illarion.engine.nifty.IgeRenderImage;
 
 import javax.annotation.Nonnull;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 /**
@@ -47,7 +50,7 @@ import java.util.Queue;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class GameMiniMapHandler implements MiniMapGui, ScreenController {
+public final class GameMiniMapHandler implements MiniMapGui, ScreenController, UpdatableHandler {
     /**
      * This is the implementation of the pointers. This class is the image that is displayed on the GUI in order to
      * show the arrow on the mini map. It takes care for rendering it with the proper rotation applied.
@@ -70,6 +73,16 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController {
          */
         @Nonnull
         private final Element parentElement;
+
+        /**
+         * The current angle of the arrow in (1/10)°
+         */
+        private int currentAngle;
+
+        /**
+         * The target angle of the arrow in (1/10)°
+         */
+        private int targetAngle;
 
         /**
          * Create a new arrow pointer.
@@ -115,7 +128,7 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController {
         public void renderImage(@Nonnull final Graphics g, final int x, final int y, final int w, final int h, final int srcX,
                                 final int srcY, final int srcW, final int srcH, @Nonnull final Color color, final float scale,
                                 final int centerX, final int centerY) {
-            final float angle = getAngle();
+            final float angle = (float) currentAngle / 10.f;
 
             final int scaledWidth = Math.round(w * scale);
             final int scaledHeight = Math.round(h * scale);
@@ -128,6 +141,40 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController {
             g.drawTexture(arrowSprite.getFrame(0), fixedX + rotationOffsetX,
                     fixedY - rotationOffsetY, scaledWidth, scaledHeight, srcX,
                     srcY, srcW, srcH, centerX - fixedX, centerY - fixedY, angle, color);
+        }
+
+        /**
+         * Update the angle of arrow.
+         *
+         * @param delta the time since the last update
+         */
+        void update(final int delta) {
+            targetAngle = Math.round(getAngle() * 10.f);
+            while (targetAngle < 0) {
+                targetAngle += 3600;
+            }
+            while (targetAngle >= 3600) {
+                targetAngle -= 3600;
+            }
+
+            if (targetAngle == currentAngle) {
+                return;
+            }
+
+            final int angleDiff = targetAngle - currentAngle;
+            if (Math.abs(angleDiff) <= 1800) {
+                currentAngle += AnimationUtility.approach(0, angleDiff, -1800, 1800, delta);
+            } else if (angleDiff > 0) {
+                currentAngle += AnimationUtility.approach(0, angleDiff - 3600, -3600, 0, delta);
+            } else {
+                currentAngle += AnimationUtility.approach(0, angleDiff + 3600, 0, 3600, delta);
+            }
+            while (currentAngle < 0) {
+                currentAngle += 3600;
+            }
+            while (currentAngle >= 3600) {
+                currentAngle -= 3600;
+            }
         }
 
         @Override
@@ -168,10 +215,17 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController {
     private final Queue<MapArrowPointer> buffer;
 
     /**
+     * The list of pointers that are currently active and need to be updated.
+     */
+    @Nonnull
+    private final List<MapArrowPointer> activePointers;
+
+    /**
      * Create a new game mini map handler.
      */
     public GameMiniMapHandler() {
         buffer = new LinkedList<MapArrowPointer>();
+        activePointers = new LinkedList<MapArrowPointer>();
     }
 
     @Override
@@ -216,7 +270,10 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController {
     public void addPointer(@Nonnull final Pointer pointer) {
         if (pointer instanceof MapArrowPointer) {
             final MapArrowPointer arrowPointer = (MapArrowPointer) pointer;
-            arrowPointer.getParentElement().show();
+            if (!activePointers.contains(arrowPointer)) {
+                arrowPointer.getParentElement().show();
+                activePointers.add(arrowPointer);
+            }
         }
     }
 
@@ -224,7 +281,10 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController {
     public void removePointer(@Nonnull final Pointer pointer) {
         if (pointer instanceof MapArrowPointer) {
             final MapArrowPointer arrowPointer = (MapArrowPointer) pointer;
-            arrowPointer.getParentElement().hide();
+            if (activePointers.contains(arrowPointer)) {
+                arrowPointer.getParentElement().hide();
+                activePointers.remove(arrowPointer);
+            }
         }
     }
 
@@ -240,5 +300,12 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController {
     @Override
     public void onEndScreen() {
         buffer.clear();
+    }
+
+    @Override
+    public void update(final GameContainer container, final int delta) {
+        for (@Nonnull final MapArrowPointer pointer : activePointers) {
+            pointer.update(delta);
+        }
     }
 }
