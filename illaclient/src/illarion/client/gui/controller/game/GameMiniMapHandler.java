@@ -149,13 +149,7 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
          * @param delta the time since the last update
          */
         void update(final int delta) {
-            targetAngle = Math.round(getAngle() * 10.f);
-            while (targetAngle < 0) {
-                targetAngle += 3600;
-            }
-            while (targetAngle >= 3600) {
-                targetAngle -= 3600;
-            }
+            targetAngle = ((Math.round(getAngle() * 10.f) % 3600) + 3600) % 3600;
 
             if (targetAngle == currentAngle) {
                 return;
@@ -169,12 +163,7 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
             } else {
                 currentAngle += AnimationUtility.approach(0, angleDiff + 3600, 0, 3600, delta);
             }
-            while (currentAngle < 0) {
-                currentAngle += 3600;
-            }
-            while (currentAngle >= 3600) {
-                currentAngle -= 3600;
-            }
+            currentAngle = ((currentAngle % 3600) + 3600) % 3600;
         }
 
         @Override
