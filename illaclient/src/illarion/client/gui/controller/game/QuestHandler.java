@@ -31,11 +31,13 @@ import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.IllaClient;
 import illarion.client.graphics.FontLoader;
+import illarion.client.gui.MiniMapGui;
 import illarion.client.gui.QuestGui;
 import illarion.client.input.InputReceiver;
 import illarion.client.net.server.events.LoginFinishedEvent;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
+import illarion.common.types.Location;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
@@ -44,6 +46,7 @@ import org.illarion.engine.GameContainer;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -77,16 +80,25 @@ public final class QuestHandler implements QuestGui, ScreenController {
         private boolean finished;
 
         /**
+         * The list of valid target locations for this quest.
+         */
+        @Nonnull
+        private Location[] targetLocations;
+
+        /**
          * The constructor of the quest.
          *
          * @param questId     the ID of the quest
          * @param name        the name of the quest
          * @param description the description of the quest state
          * @param finished    {@code true} in case the quest is finished
+         * @param locations   the valid target locations
          */
-        QuestEntry(final int questId, final String name, final String description, final boolean finished) {
+        QuestEntry(final int questId, final String name, final String description, final boolean finished,
+                   @Nonnull final Location... locations) {
             this.questId = questId;
-            updateData(name, description, finished);
+            targetLocations = new Location[0];
+            updateData(name, description, finished, locations);
         }
 
         /**
@@ -95,11 +107,14 @@ public final class QuestHandler implements QuestGui, ScreenController {
          * @param name        the name of the quest
          * @param description the description of the quest state
          * @param finished    {@code true} in case the quest is finished
+         * @param locations   the valid target locations of this quest
          */
-        void updateData(final String name, final String description, final boolean finished) {
+        void updateData(final String name, final String description, final boolean finished, final Location... locations) {
             this.name = name;
             this.description = description;
             this.finished = finished;
+
+            targetLocations = Arrays.copyOf(locations, locations.length);
         }
 
         @Override
@@ -170,6 +185,27 @@ public final class QuestHandler implements QuestGui, ScreenController {
         public boolean isFinished() {
             return finished;
         }
+
+        /**
+         * Get the amount of target locations assigned to this quest entry.
+         *
+         * @return the target locations
+         */
+        public int getTargetLocationCount() {
+            return targetLocations.length;
+        }
+
+        /**
+         * Get the target location that is assigned to the index.
+         *
+         * @param index the index of the target location
+         * @return the assigned target location
+         * @throws ArrayIndexOutOfBoundsException in case index is {@code < 0} or greater then or equal to the count
+         */
+        @Nonnull
+        public Location getTargetLocation(final int index) {
+            return targetLocations[index];
+        }
     }
 
     /**
@@ -203,10 +239,17 @@ public final class QuestHandler implements QuestGui, ScreenController {
     private boolean loginDone;
 
     /**
+     * The list of pointers that are active with the current quest.
+     */
+    @Nonnull
+    private final List<GameMiniMapHandler.Pointer> activePointers;
+
+    /**
      * Default constructor.
      */
     public QuestHandler() {
         hiddenList = new ArrayList<QuestEntry>();
+        activePointers = new ArrayList<MiniMapGui.Pointer>();
     }
 
     /**
@@ -297,6 +340,11 @@ public final class QuestHandler implements QuestGui, ScreenController {
             oldChildren.markForRemoval();
         }
 
+        final MiniMapGui miniMapGui = World.getGameGui().getMiniMapGui();
+        for (@Nonnull final GameMiniMapHandler.Pointer pointer : activePointers) {
+            miniMapGui.releasePointer(pointer);
+        }
+
         final QuestEntry selectedEntry = getSelectedQuest();
         if (selectedEntry == null) {
             return;
@@ -335,6 +383,13 @@ public final class QuestHandler implements QuestGui, ScreenController {
             finishedLabel.textHAlign(ElementBuilder.Align.Center);
             finishedLabel.wrap(true);
             finishedLabel.build(nifty, screen, descriptionArea);
+        }
+
+        for (int i = 0; i < selectedEntry.getTargetLocationCount(); i++) {
+            final Location target = selectedEntry.getTargetLocation(i);
+            final MiniMapGui.Pointer newPointer = miniMapGui.createPointer();
+            newPointer.setTarget(target);
+            miniMapGui.addPointer(newPointer);
         }
     }
 
@@ -499,11 +554,12 @@ public final class QuestHandler implements QuestGui, ScreenController {
     }
 
     @Override
-    public void setQuest(final int questId, @Nonnull final String name, @Nonnull final String description, final boolean finished) {
+    public void setQuest(final int questId, @Nonnull final String name, @Nonnull final String description,
+                         final boolean finished, @Nonnull final Location... locations) {
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
             public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
-                setQuestInternal(questId, name, description, finished);
+                setQuestInternal(questId, name, description, finished, locations);
             }
         });
     }
@@ -516,9 +572,10 @@ public final class QuestHandler implements QuestGui, ScreenController {
      * @param name        the name of the quest
      * @param description the current description of the quest
      * @param finished    {@code true} if the quest is finished
+     * @param locations   the valid target locations
      */
     private void setQuestInternal(final int questId, @Nonnull final String name, @Nonnull final String description,
-                                  final boolean finished) {
+                                  final boolean finished, @Nonnull final Location... locations) {
         final QuestEntry oldEntry = findQuest(questId);
         if (oldEntry == null) {
             final QuestEntry newEntry = new QuestEntry(questId, name, description, finished);

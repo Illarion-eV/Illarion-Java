@@ -78,7 +78,7 @@ public final class QuestMsg extends AbstractReply {
 
     @Override
     public boolean executeUpdate() {
-        World.getGameGui().getQuestGui().setQuest(questId, title, description, finished);
+        World.getGameGui().getQuestGui().setQuest(questId, title, description, finished, targetLocations);
         return true;
     }
 

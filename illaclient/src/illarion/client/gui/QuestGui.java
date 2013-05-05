@@ -18,6 +18,8 @@
  */
 package illarion.client.gui;
 
+import illarion.common.types.Location;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -59,8 +61,10 @@ public interface QuestGui {
      * @param name        the title of the quest
      * @param description the current description text of the quest
      * @param finished    {@code true} in case this quest is finished already
+     * @param locations   a list of target locations for the text stage of the quest
      */
-    void setQuest(int questId, @Nonnull String name, @Nonnull String description, boolean finished);
+    void setQuest(int questId, @Nonnull String name, @Nonnull String description, boolean finished,
+                  @Nonnull Location... locations);
 
     /**
      * Show the quest log on the screen.
