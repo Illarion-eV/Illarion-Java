@@ -102,6 +102,7 @@ public class InventorySlotControl extends AbstractController implements Inventor
     /**
      * The logger that displays all logging output of this class.
      */
+    @SuppressWarnings("deprecation")
     private static final Logger LOGGER = Logger.getLogger(InventorySlotControl.class);
 
     /**
@@ -115,13 +116,13 @@ public class InventorySlotControl extends AbstractController implements Inventor
         this.screen = screen;
         this.nifty = nifty;
 
-        droppable = element.findElementByName("#droppable");
-        draggable = droppable.findElementByName("#draggable");
-        draggedImage = draggable.findElementByName("#draggableImage");
-        backgroundImage = element.findElementByName("#backgroundImage");
-        backgroundImageLabel = element.findElementByName("#backgroundImageLabel");
-        staticBackgroundImage = element.findElementByName("#staticBackgroundImage");
-        merchantOverlay = element.findElementByName("#merchantOverlay");
+        droppable = element.findElementById("#droppable");
+        draggable = droppable.findElementById("#draggable");
+        draggedImage = draggable.findElementById("#draggableImage");
+        backgroundImage = element.findElementById("#backgroundImage");
+        backgroundImageLabel = element.findElementById("#backgroundImageLabel");
+        staticBackgroundImage = element.findElementById("#staticBackgroundImage");
+        merchantOverlay = element.findElementById("#merchantOverlay");
 
         dragStartEvent = new EventTopicSubscriber<DraggableDragStartedEvent>() {
             @Override
