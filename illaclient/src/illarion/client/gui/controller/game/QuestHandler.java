@@ -345,6 +345,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
             miniMapGui.removePointer(pointer);
             miniMapGui.releasePointer(pointer);
         }
+        activePointers.clear();
 
         final QuestEntry selectedEntry = getSelectedQuest();
         if (selectedEntry == null) {
