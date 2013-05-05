@@ -39,6 +39,11 @@ public final class MiscImageFactory extends AbstractTemplateFactory<MiscImageTem
     public static final int MINI_MAP_ARROW = 1;
 
     /**
+     * The ID of the point that is displayed on the mini map in case the target is on the mini map area.
+     */
+    public static final int MINI_MAP_POINT = 2;
+
+    /**
      * The singleton instance.
      */
     private static final MiscImageFactory INSTANCE = new MiscImageFactory();

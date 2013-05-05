@@ -58,10 +58,17 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
      */
     private static final class MapArrowPointer implements IgeRenderImage, Pointer {
         /**
-         * The sprite that contains the arrow.
+         * The sprite that contains the arrow. This is displayed in case the point is outside the area of the mini map.
          */
         @Nonnull
         private final Sprite arrowSprite;
+
+        /**
+         * The sprite that contains the point. This is displayed in case the target location is on the area of the
+         * mini map.
+         */
+        @Nonnull
+        private final Sprite pointSprite;
 
         /**
          * The location the arrow is supposed to point to.
@@ -86,10 +93,21 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
         private int targetAngle;
 
         /**
+         * The current delta value of the X coordinates.
+         */
+        private int currentDeltaX;
+
+        /**
+         * The current delta value of the Y coordinates.
+         */
+        private int currentDeltaY;
+
+        /**
          * Create a new arrow pointer.
          */
         MapArrowPointer(@Nonnull final Element parentElement) {
             arrowSprite = MiscImageFactory.getInstance().getTemplate(MiscImageFactory.MINI_MAP_ARROW).getSprite();
+            pointSprite = MiscImageFactory.getInstance().getTemplate(MiscImageFactory.MINI_MAP_POINT).getSprite();
             targetLocation = new Location();
             this.parentElement = parentElement;
         }
@@ -110,10 +128,7 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
         }
 
         private float getAngle() {
-            final double dX = targetLocation.getScX() - World.getPlayer().getLocation().getScX();
-            final double dY = targetLocation.getScY() - World.getPlayer().getLocation().getScY();
-
-            final double angle = Math.toDegrees(Math.atan2(dY, dX));
+            final double angle = Math.toDegrees(Math.atan2(currentDeltaY, currentDeltaX));
 
             return (float) angle + 45.f;
         }
@@ -129,19 +144,47 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
         public void renderImage(@Nonnull final Graphics g, final int x, final int y, final int w, final int h, final int srcX,
                                 final int srcY, final int srcW, final int srcH, @Nonnull final Color color, final float scale,
                                 final int centerX, final int centerY) {
-            final float angle = (float) currentAngle / 10.f;
-
             final int scaledWidth = Math.round(w * scale);
             final int scaledHeight = Math.round(h * scale);
 
-            final int rotationOffsetX = Math.round(FastMath.sin(FastMath.toRadians(angle)) * arrowSprite.getOffsetY());
-            final int rotationOffsetY = Math.round(FastMath.cos(FastMath.toRadians(angle)) * arrowSprite.getOffsetY());
-
             final int fixedX = x + Math.round((w - scaledWidth) * ((float) centerX / (float) w));
             final int fixedY = y + Math.round((h - scaledHeight) * ((float) centerY / (float) h));
-            g.drawTexture(arrowSprite.getFrame(0), fixedX + rotationOffsetX,
-                    fixedY - rotationOffsetY, scaledWidth, scaledHeight, srcX,
-                    srcY, srcW, srcH, centerX - fixedX, centerY - fixedY, angle, color);
+
+            if (isOnMapArea()) {
+                final int offsetX = (FastMath.sqrt(FastMath.sqr(currentDeltaX) / 2) * -FastMath.sign(currentDeltaX)) +
+                        (FastMath.sqrt(FastMath.sqr(currentDeltaY) / 2) * -FastMath.sign(currentDeltaY));
+                final int offsetY = (FastMath.sqrt(FastMath.sqr(currentDeltaX) / 2) * FastMath.sign(currentDeltaX)) +
+                        (FastMath.sqrt(FastMath.sqr(currentDeltaY) / 2) * -FastMath.sign(currentDeltaY));
+
+                g.drawTexture(pointSprite.getFrame(0), fixedX - offsetX, fixedY - offsetY,
+                        scaledWidth, scaledHeight, srcX, srcY, srcW, srcH, centerX - fixedX, centerY - fixedY,
+                        0.f, color);
+            } else {
+                final float angle = (float) currentAngle / 10.f;
+
+                final int spriteOffsetX = arrowSprite.getOffsetX();
+                final int spriteOffsetY = arrowSprite.getOffsetY();
+
+                final float radianAngle = FastMath.toRadians(angle);
+                final float sinAngle = FastMath.sin(radianAngle);
+                final float cosAngle = FastMath.cos(radianAngle);
+
+                final int rotationOffsetX = Math.round((spriteOffsetX * cosAngle) + (spriteOffsetY * sinAngle));
+                final int rotationOffsetY = Math.round((spriteOffsetX * sinAngle) + (spriteOffsetY * cosAngle));
+
+                g.drawTexture(arrowSprite.getFrame(0), fixedX + rotationOffsetX, fixedY - rotationOffsetY,
+                        scaledWidth, scaledHeight, srcX, srcY, srcW, srcH, centerX - fixedX, centerY - fixedY,
+                        angle, color);
+            }
+        }
+
+        /**
+         * This functions returns if this pointer is on the mini map right now or outside of it.
+         *
+         * @return {@code true} in case the pointer is on the map
+         */
+        private boolean isOnMapArea() {
+            return FastMath.sqrt(FastMath.sqr(currentDeltaX) + FastMath.sqr(currentDeltaY)) < 71;
         }
 
         /**
@@ -150,8 +193,26 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
          * @param delta the time since the last update
          */
         void update(final int delta) {
-            targetAngle = ((Math.round(getAngle() * 10.f) % 3600) + 3600) % 3600;
+            final int dX = targetLocation.getScX() - World.getPlayer().getLocation().getScX();
+            final int dY = targetLocation.getScY() - World.getPlayer().getLocation().getScY();
 
+            if ((currentDeltaX != dX) || (currentDeltaY != dY)) {
+                currentDeltaX = dX;
+                currentDeltaY = dY;
+
+                System.out.println("New dX: " + dX + " New dY: " + dY);
+                targetAngle = ((Math.round(getAngle() * 10.f) % 3600) + 3600) % 3600;
+            }
+
+            animateAngle(delta);
+        }
+
+        /**
+         * Perform the animation of this arrow.
+         *
+         * @param delta the time since the last update
+         */
+        private void animateAngle(final int delta) {
             if (targetAngle == currentAngle) {
                 return;
             }

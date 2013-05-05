@@ -76,6 +76,10 @@ public final class MiscImageLoader extends AbstractResourceLoader<MiscImageTempl
                 "minimap_arrow", 1), 0, 71, SpriteFactory.CENTER, SpriteFactory.TOP, false);
         getTargetFactory().storeResource(new MiscImageTemplate(MiscImageFactory.MINI_MAP_ARROW, miniMapArrowSprite, 1));
 
+        final Sprite miniMapPointSprite = sf.createSprite(getTextures(assets.getTextureManager(), GUI_PATH,
+                "minimap_point", 1), 0, 0, SpriteFactory.CENTER, SpriteFactory.CENTER, false);
+        getTargetFactory().storeResource(new MiscImageTemplate(MiscImageFactory.MINI_MAP_POINT, miniMapPointSprite, 1));
+
         factory.loadingFinished();
 
         loadingDone();
