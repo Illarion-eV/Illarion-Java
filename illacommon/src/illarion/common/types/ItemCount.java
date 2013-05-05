@@ -26,6 +26,8 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 /**
  * This class is used to store the stack size of a item.
@@ -132,6 +134,37 @@ public final class ItemCount implements Comparable<ItemCount> {
     @Override
     public String toString() {
         return "Item count: " + Integer.toString(value);
+    }
+
+    /**
+     * Get the item number as short formatted text. This shortens all value greater then 999.
+     * <p>This function uses the default locale</p>
+     *
+     * @return the string
+     */
+    @Nonnull
+    public String getShortText() {
+        return getShortText(Locale.getDefault(Locale.Category.FORMAT));
+    }
+
+    /**
+     * Get the item number as short formatted text. This shortens all value greater then 999.
+     *
+     * @param locale the locale used for the format
+     * @return the string
+     */
+    @Nonnull
+    public String getShortText(@Nonnull final Locale locale) {
+        if (value < 1000) {
+            return Integer.toString(value);
+        }
+        final NumberFormat formatter = NumberFormat.getNumberInstance(locale);
+        if (value < 10000) {
+            formatter.setMaximumFractionDigits(1);
+        } else {
+            formatter.setMaximumFractionDigits(0);
+        }
+        return formatter.format((double) value / 1000.0) + 'k';
     }
 
     /**

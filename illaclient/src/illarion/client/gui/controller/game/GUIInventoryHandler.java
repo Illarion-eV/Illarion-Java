@@ -38,6 +38,7 @@ import illarion.client.input.InputReceiver;
 import illarion.client.net.server.events.DialogMerchantReceivedEvent;
 import illarion.client.resources.ItemFactory;
 import illarion.client.resources.data.ItemTemplate;
+import illarion.client.util.Lang;
 import illarion.client.util.LookAtTracker;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
@@ -480,7 +481,7 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
             invSlot.setImage(niftyImage);
             if (ItemCount.isGreaterOne(count)) {
                 assert count != null;
-                invSlot.setLabelText(Integer.toString(count.getValue()));
+                invSlot.setLabelText(count.getShortText(Lang.getInstance().getLocale()));
                 slotLabelVisibility[slotId] = true;
                 invSlot.showLabel();
             } else {
