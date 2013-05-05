@@ -230,8 +230,10 @@ class GdxGraphics implements Graphics {
             final GdxSprite gdxSprite = (GdxSprite) sprite;
 
             gdxSprite.getDisplayArea(posX, posY, scale, rotation, tempEngineRectangle);
-            final int centerTransX = Math.round(gdxSprite.getWidth() * gdxSprite.getCenterX());
-            final int centerTransY = Math.round(gdxSprite.getHeight() * gdxSprite.getCenterY());
+            final int centerTransX = Math.round((gdxSprite.getWidth() * gdxSprite.getCenterX()) +
+                    (gdxSprite.getOffsetX() * scale));
+            final int centerTransY = Math.round((gdxSprite.getHeight() * gdxSprite.getCenterY()) +
+                    (gdxSprite.getOffsetY() * scale));
 
             activateSpriteBatch();
             transferColor(color, tempColor1);

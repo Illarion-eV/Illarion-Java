@@ -127,6 +127,14 @@ public interface GameGui {
     SkillGui getSkillGui();
 
     /**
+     * Get the GUI that controls the mini map display.
+     *
+     * @return the mini map display control
+     */
+    @Nonnull
+    MiniMapGui getMiniMapGui();
+
+    /**
      * Check if the GUI is ready to work.
      *
      * @return {@code true} in case the GUI is ready

@@ -1408,6 +1408,26 @@ public final class FastMath {
     }
 
     /**
+     * Convert a float value from radians to degrees.
+     *
+     * @param radians the value in radians
+     * @return the value in degrees
+     */
+    public static float toDegree(final float radians) {
+        return radians * RAD_TO_DEG;
+    }
+
+    /**
+     * Convert a float value from degrees to radians.
+     *
+     * @param degree the value in degrees
+     * @return the value in radians
+     */
+    public static float toRadians(final float degree) {
+        return degree * DEG_TO_RAD;
+    }
+
+    /**
      * Fast Trig functions for x86. This forces the trig function to stay within
      * the safe area on the x86 processor (-45 degrees to +45 degrees) The
      * results may be very slightly off from what the Math and StrictMath trig
