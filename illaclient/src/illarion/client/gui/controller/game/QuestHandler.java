@@ -391,6 +391,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
             final MiniMapGui.Pointer newPointer = miniMapGui.createPointer();
             newPointer.setTarget(target);
             miniMapGui.addPointer(newPointer);
+            activePointers.add(newPointer);
         }
     }
 

@@ -18,6 +18,7 @@
  */
 package illarion.client.gui.controller.game;
 
+import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.builder.ElementBuilder;
 import de.lessvoid.nifty.builder.ImageBuilder;
@@ -249,9 +250,18 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
     @Override
     public void releasePointer(@Nonnull final Pointer pointer) {
         if (pointer instanceof MapArrowPointer) {
-            removePointer(pointer);
             final MapArrowPointer arrowPointer = (MapArrowPointer) pointer;
-            buffer.offer(arrowPointer);
+            activePointers.remove(arrowPointer);
+            if (arrowPointer.getParentElement().isVisible()) {
+                arrowPointer.getParentElement().hide(new EndNotify() {
+                    @Override
+                    public void perform() {
+                        buffer.offer(arrowPointer);
+                    }
+                });
+            } else {
+                buffer.offer(arrowPointer);
+            }
         }
     }
 
@@ -259,10 +269,14 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
     public void addPointer(@Nonnull final Pointer pointer) {
         if (pointer instanceof MapArrowPointer) {
             final MapArrowPointer arrowPointer = (MapArrowPointer) pointer;
-            if (!activePointers.contains(arrowPointer)) {
-                arrowPointer.getParentElement().show();
-                activePointers.add(arrowPointer);
-            }
+            arrowPointer.getParentElement().show(new EndNotify() {
+                @Override
+                public void perform() {
+                    if (!activePointers.contains(arrowPointer)) {
+                        activePointers.add(arrowPointer);
+                    }
+                }
+            });
         }
     }
 
@@ -270,10 +284,8 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
     public void removePointer(@Nonnull final Pointer pointer) {
         if (pointer instanceof MapArrowPointer) {
             final MapArrowPointer arrowPointer = (MapArrowPointer) pointer;
-            if (activePointers.contains(arrowPointer)) {
-                arrowPointer.getParentElement().hide();
-                activePointers.remove(arrowPointer);
-            }
+            activePointers.remove(arrowPointer);
+            arrowPointer.getParentElement().hide();
         }
     }
 
