@@ -138,17 +138,6 @@ public final class ItemCount implements Comparable<ItemCount> {
 
     /**
      * Get the item number as short formatted text. This shortens all value greater then 999.
-     * <p>This function uses the default locale</p>
-     *
-     * @return the string
-     */
-    @Nonnull
-    public String getShortText() {
-        return getShortText(Locale.getDefault(Locale.Category.FORMAT));
-    }
-
-    /**
-     * Get the item number as short formatted text. This shortens all value greater then 999.
      *
      * @param locale the locale used for the format
      * @return the string
