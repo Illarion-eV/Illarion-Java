@@ -306,7 +306,7 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
                 "selectDialog" + Integer.toString(event.getId()), event.getTitle());
         builder.dialogId(event.getId());
         builder.message(event.getMessage());
-        builder.width(builder.pixels(500));
+        builder.width(builder.pixels(750));
         builders.add(new DialogHandler.BuildWrapper(builder, parentArea, new DialogHandler.PostBuildTask() {
             @Override
             public void run(@Nonnull final Element createdElement) {
