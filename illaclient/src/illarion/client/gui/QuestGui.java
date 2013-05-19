@@ -67,6 +67,11 @@ public interface QuestGui {
                   @Nonnull Location... locations);
 
     /**
+     * Toggle the visibility state of the quest log.
+     */
+    void toggleQuestLog();
+
+    /**
      * Show the quest log on the screen.
      */
     void showQuestLog();

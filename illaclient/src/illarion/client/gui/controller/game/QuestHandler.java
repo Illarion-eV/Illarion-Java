@@ -33,14 +33,12 @@ import illarion.client.IllaClient;
 import illarion.client.graphics.FontLoader;
 import illarion.client.gui.MiniMapGui;
 import illarion.client.gui.QuestGui;
-import illarion.client.input.InputReceiver;
 import illarion.client.net.server.events.LoginFinishedEvent;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
 import illarion.common.types.Location;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
-import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
@@ -260,23 +258,6 @@ public final class QuestHandler implements QuestGui, ScreenController {
     @EventSubscriber
     public void onLoginDoneReceived(final LoginFinishedEvent data) {
         loginDone = true;
-    }
-
-    /**
-     * The event subscriber for input events.
-     *
-     * @param topic the event topic
-     * @param data  the event data
-     */
-    @EventTopicSubscriber(topic = InputReceiver.EB_TOPIC)
-    public void onInputEvent(final String topic, @Nonnull final String data) {
-        if ("ToggleQuest".equals(data)) {
-            if (isQuestLogVisible()) {
-                hideQuestLog();
-            } else {
-                showQuestLog();
-            }
-        }
     }
 
     @Override
@@ -565,6 +546,15 @@ public final class QuestHandler implements QuestGui, ScreenController {
                 setQuestInternal(questId, name, description, finished, locations);
             }
         });
+    }
+
+    @Override
+    public void toggleQuestLog() {
+        if (isQuestLogVisible()) {
+            hideQuestLog();
+        } else {
+            showQuestLog();
+        }
     }
 
     /**

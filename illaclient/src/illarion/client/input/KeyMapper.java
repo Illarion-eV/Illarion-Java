@@ -42,8 +42,6 @@ public final class KeyMapper {
         inputMap.put(Key.Escape, "CloseGame");
 
         inputMap.put(Key.I, "ToggleInventory");
-        inputMap.put(Key.J, "ToggleQuest");
-        inputMap.put(Key.Q, "ToggleQuest");
         inputMap.put(Key.C, "ToggleCharacterWindow");
         inputMap.put(Key.Enter, "SelectChat");
 
@@ -84,6 +82,10 @@ public final class KeyMapper {
                         slot.getInteractive().openContainer();
                     }
                 }
+                break;
+            case Q:
+            case J:
+                World.getGameGui().getQuestGui().toggleQuestLog();
                 break;
             default:
                 if (inputMap.containsKey(key)) {
