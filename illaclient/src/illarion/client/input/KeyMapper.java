@@ -18,6 +18,8 @@
  */
 package illarion.client.input;
 
+import illarion.client.world.World;
+import illarion.client.world.items.InventorySlot;
 import org.bushe.swing.event.EventBus;
 import org.illarion.engine.input.Key;
 
@@ -72,8 +74,21 @@ public final class KeyMapper {
     }
 
     public void handleKeyInput(@Nonnull final Key key) {
-        if (inputMap.containsKey(key)) {
-            EventBus.publish(InputReceiver.EB_TOPIC, inputMap.get(key));
+        switch (key) {
+            case B:
+                if (World.getPlayer().hasContainer(0)) {
+                    World.getPlayer().removeContainer(0);
+                } else {
+                    final InventorySlot slot = World.getPlayer().getInventory().getItem(0);
+                    if (slot.containsItem()) {
+                        slot.getInteractive().openContainer();
+                    }
+                }
+                break;
+            default:
+                if (inputMap.containsKey(key)) {
+                    EventBus.publish(InputReceiver.EB_TOPIC, inputMap.get(key));
+                }
         }
     }
 }
