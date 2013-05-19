@@ -77,7 +77,7 @@ final class Sender extends Thread implements NetCommWriter {
      * The buffer that is used to temporary store the decoded characters that
      * were send to the player.
      */
-    private final CharBuffer encodingBuffer = CharBuffer.allocate(255);
+    private final CharBuffer encodingBuffer = CharBuffer.allocate(65535);
 
     /**
      * The output stream of the socket connection to the server. The encoded
@@ -236,7 +236,7 @@ final class Sender extends Thread implements NetCommWriter {
         buffer.putShort((short) 0);
 
         encodingBuffer.clear();
-        encodingBuffer.put(value, 0, Math.min(1 << Short.SIZE, value.length()));
+        encodingBuffer.put(value, 0, Math.min(encodingBuffer.capacity(), value.length()));
         encodingBuffer.flip();
 
         encoder.encode(encodingBuffer, buffer, true);
