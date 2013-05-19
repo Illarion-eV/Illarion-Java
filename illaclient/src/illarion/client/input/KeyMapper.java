@@ -41,6 +41,7 @@ public final class KeyMapper {
 
         inputMap.put(Key.I, "ToggleInventory");
         inputMap.put(Key.J, "ToggleQuest");
+        inputMap.put(Key.Q, "ToggleQuest");
         inputMap.put(Key.C, "ToggleCharacterWindow");
         inputMap.put(Key.Enter, "SelectChat");
 
