@@ -30,7 +30,7 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class GdxGrayScaleEffect implements GrayScaleEffect, GdxSceneEffect, GdxTextureEffect {
+class GdxGrayScaleEffect implements GrayScaleEffect, GdxSceneEffect, GdxTextureEffect {
     /**
      * The pixel shader that is required for this effect.
      */

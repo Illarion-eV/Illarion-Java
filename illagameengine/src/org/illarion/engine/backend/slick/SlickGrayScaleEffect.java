@@ -30,7 +30,7 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class SlickGrayScaleEffect implements GrayScaleEffect, SlickTextureEffect, SlickSceneEffect {
+class SlickGrayScaleEffect implements GrayScaleEffect, SlickTextureEffect, SlickSceneEffect {
     /**
      * The shader that is used to change the color.
      */
