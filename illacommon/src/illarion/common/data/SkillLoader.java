@@ -22,6 +22,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import java.io.IOException;
@@ -103,9 +104,9 @@ class SkillLoader {
                 }
                 currentTag = parser.nextTag();
             }
-        } catch (XmlPullParserException e) {
+        } catch (@Nonnull final XmlPullParserException e) {
             // nothing
-        } catch (IOException e) {
+        } catch (@Nonnull final IOException e) {
             // nothing
         }
         loadingFinished = true;
