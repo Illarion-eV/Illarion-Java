@@ -35,21 +35,20 @@ import java.io.InputStream;
 @NotThreadSafe
 class SkillLoader {
     /**
-     * This value is turned true once the loading is started.
+     * This value is turned {@code true} once the loading is finished.
      */
-    private static boolean loadingStarted;
+    private static boolean loadingFinished;
 
     /**
      * Load the skills from the XML file.
      */
     static synchronized void load() {
-        if (loadingStarted) {
+        if (loadingFinished) {
             return;
         }
-        loadingStarted = true;
 
-        final InputStream skillXmlStream = Thread.currentThread().getContextClassLoader()
-                .getResourceAsStream("skills.xml");
+        final ClassLoader ccl = Thread.currentThread().getContextClassLoader();
+        final InputStream skillXmlStream = ccl.getResourceAsStream("skills.xml");
 
         if (skillXmlStream == null) {
             throw new IllegalStateException("Skill XML was not found.");
@@ -109,6 +108,7 @@ class SkillLoader {
         } catch (IOException e) {
             // nothing
         }
+        loadingFinished = true;
     }
 
     /**
