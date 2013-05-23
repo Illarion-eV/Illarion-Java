@@ -40,13 +40,31 @@ public abstract class AbstractMultiActionHelper implements Runnable {
     private int actionCount;
 
     /**
+     * The amount of clicks that are allowed at the maximum.
+     * <p/>
+     * {@code -1} means that there is no limit
+     */
+    private final int countLimit;
+
+    /**
      * Create a instance of this class and set the timeout that should be used to group events.
      *
      * @param timeoutInMs the timeout value in milliseconds
      */
     protected AbstractMultiActionHelper(final int timeoutInMs) {
+        this(timeoutInMs, -1);
+    }
+
+    /**
+     * Create a instance of this class and set the timeout that should be used to group events.
+     *
+     * @param timeoutInMs the timeout value in milliseconds
+     * @param limit       the amount of clicks allowed at the maximum
+     */
+    protected AbstractMultiActionHelper(final int timeoutInMs, final int limit) {
         timer = new Timer(timeoutInMs, this);
         timer.setRepeats(false);
+        countLimit = limit;
         reset();
     }
 
@@ -62,8 +80,12 @@ public abstract class AbstractMultiActionHelper implements Runnable {
      * Send one action pulse to the helper.
      */
     public final void pulse() {
-        timer.restart();
         actionCount++;
+        if ((actionCount < countLimit) && (countLimit > -1)) {
+            timer.restart();
+        } else {
+            run();
+        }
     }
 
     /**
