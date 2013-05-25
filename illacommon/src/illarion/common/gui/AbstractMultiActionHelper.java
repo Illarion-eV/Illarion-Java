@@ -81,7 +81,7 @@ public abstract class AbstractMultiActionHelper implements Runnable {
      */
     public final void pulse() {
         actionCount++;
-        if ((actionCount < countLimit) && (countLimit > -1)) {
+        if ((actionCount < countLimit) || (countLimit == -1)) {
             timer.restart();
         } else {
             run();
