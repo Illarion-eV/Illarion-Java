@@ -220,8 +220,16 @@ public class InventorySlotControl extends AbstractController implements Inventor
      */
     protected void setVisibleOfDraggedImage(final boolean value) {
         if (draggedImage.isVisible() != value) {
-            draggedImage.setVisible(value);
-            draggedImage.getParent().layoutElements();
+            if (value) {
+                draggedImage.show(new EndNotify() {
+                    @Override
+                    public void perform() {
+                        draggable.getParent().layoutElements();
+                    }
+                });
+            } else {
+                draggedImage.hide();
+            }
         }
     }
 
