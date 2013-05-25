@@ -151,6 +151,11 @@ public class InventorySlotControl extends AbstractController implements Inventor
     @Override
     public void setImage(@Nullable final NiftyImage image) {
         final NiftyImage oldImage = draggedImage.getRenderer(ImageRenderer.class).getImage();
+
+        if (oldImage == image) {
+            return;
+        }
+
         draggedImage.getRenderer(ImageRenderer.class).setImage(image);
         backgroundImage.getRenderer(ImageRenderer.class).setImage(image);
 
