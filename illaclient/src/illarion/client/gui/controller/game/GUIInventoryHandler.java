@@ -118,7 +118,7 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
          * The constructor for this class. The timeout time is set to the system default double click interval.
          */
         InventoryClickActionHelper() {
-            super(IllaClient.getCfg().getInteger("doubleClickInterval"));
+            super(IllaClient.getCfg().getInteger("doubleClickInterval"), 2);
         }
 
         @Override

@@ -40,7 +40,7 @@ import java.util.Properties;
 public final class DialogSelectEntryControl extends AbstractController {
     @Nonnull
     private AbstractMultiActionHelper doubleClickHelper = new AbstractMultiActionHelper((Integer) java.awt.Toolkit
-            .getDefaultToolkit().getDesktopProperty("awt.multiClickInterval")) {
+            .getDefaultToolkit().getDesktopProperty("awt.multiClickInterval"), 2) {
         @Override
         public void executeAction(final int count) {
             if (count == 2) {

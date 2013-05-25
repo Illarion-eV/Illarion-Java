@@ -83,7 +83,6 @@ public final class InputReceiver implements InputListener {
                     EventBus.publish(new ClickOnMapEvent(key, x, y));
                     break;
                 case 2:
-
                     World.getMapDisplay().getGameScene().publishEvent(new DoubleClickOnMapEvent(key, x, y));
                     break;
             }
