@@ -253,7 +253,7 @@ final class Sender extends Thread implements NetCommWriter {
      */
     @Override
     public void writeUByte(final short value) {
-        buffer.put((byte) (value % ((1 << Byte.SIZE) - 1)));
+        buffer.put((byte) (value % (1 << Byte.SIZE)));
     }
 
     /**
@@ -263,7 +263,7 @@ final class Sender extends Thread implements NetCommWriter {
      */
     @Override
     public void writeUInt(final long value) {
-        buffer.putInt((int) (value % ((1L << Integer.SIZE) - 1)));
+        buffer.putInt((int) (value % (1L << Integer.SIZE)));
     }
 
     /**
@@ -273,6 +273,6 @@ final class Sender extends Thread implements NetCommWriter {
      */
     @Override
     public void writeUShort(final int value) {
-        buffer.putShort((short) (value % ((1 << Short.SIZE) - 1)));
+        buffer.putShort((short) (value % (1 << Short.SIZE)));
     }
 }
