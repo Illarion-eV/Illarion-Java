@@ -302,7 +302,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
                     addNewScript().loadScript(easyScript);
                     setCurrentTabTitle(easyScript.getSourceScriptFile().getName());
                 } catch (@Nonnull final IOException e1) {
-                    e1.printStackTrace();
+                    LOGGER.warn("Originally opened file: " + file + " could not be opened.");
                 }
             }
         }
