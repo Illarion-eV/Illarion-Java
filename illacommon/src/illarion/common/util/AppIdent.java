@@ -135,7 +135,28 @@ public class AppIdent {
         if (indexOfSeparator == -1) {
             return appVersion;
         }
-        return appVersion.substring(0, indexOfSeparator - 1);
+        return appVersion.substring(0, indexOfSeparator);
+    }
+
+    /**
+     * Get the amount of commit that are applied to this version of the application since the release.
+     *
+     * @return the commit count
+     */
+    public int getCommitCount() {
+        final int indexOfSeparator = appVersion.indexOf('-');
+        if (indexOfSeparator == -1) {
+            return 0;
+        }
+        final int indexSecondSeparator = appVersion.indexOf('-', indexOfSeparator + 1);
+        if (indexSecondSeparator == -1) {
+            return 0;
+        }
+        try {
+            return Integer.parseInt(appVersion.substring(indexOfSeparator + 1, indexSecondSeparator));
+        } catch (@Nonnull final NumberFormatException e) {
+            return 0;
+        }
     }
 
     /**
