@@ -1,53 +1,44 @@
 /*
  * This file is part of the Illarion Common Library.
  *
- * Copyright © 2011 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute i and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- * 
- * The Illarion Common Library is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * the Illarion Common Library. If not, see <http://www.gnu.org/licenses/>.
+ * The Illarion Common Library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Common Library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.bug;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-
+import illarion.common.util.MessageSource;
 import javolution.text.TextBuilder;
 
-import illarion.common.util.MessageSource;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * This is the dialog implementation for Swing. It will display a dialog that
  * contains the error problem description and the error message and allows the
  * user to choose what to do.
- * 
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ReportDialogSwing implements ReportDialog {
     /**
      * Button listener helper class. This class is assigned to the buttons of
      * the dialog.
-     * 
+     *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private final class ButtonListener implements ActionListener {
@@ -65,8 +56,8 @@ public final class ReportDialogSwing implements ReportDialog {
          * Public constructor so the parent class is able to create a instance.
          * Also this sets the result value that is put in place in case the
          * button this listener is assigned to is clicked.
-         * 
-         * @param dialog the dialog that is closed upon calling this listener
+         *
+         * @param dialog    the dialog that is closed upon calling this listener
          * @param setResult the result value that is supposed to be set
          */
         public ButtonListener(final JDialog dialog, final int setResult) {
@@ -139,7 +130,7 @@ public final class ReportDialogSwing implements ReportDialog {
     public void showDialog() {
         if ((messages == null) || (crashData == null)) {
             throw new IllegalStateException(
-                "The message source and the crash data needs to be set.");
+                    "The message source and the crash data needs to be set.");
         }
         final JDialog dialog = new JDialog();
 
@@ -151,7 +142,7 @@ public final class ReportDialogSwing implements ReportDialog {
         dialog.getContentPane().add(mainPanel);
 
         final JTextArea introText =
-            new JTextArea(messages.getMessage(crashData.getDescription()));
+                new JTextArea(messages.getMessage(crashData.getDescription()));
         introText.setMargin(new Insets(10, 10, 10, 10));
         introText.setEditable(false);
         introText.setCursor(null);
@@ -161,19 +152,19 @@ public final class ReportDialogSwing implements ReportDialog {
 
         final TextBuilder builder = TextBuilder.newInstance();
         builder.append(messages
-            .getMessage("illarion.common.bug.details.Intro"));
+                .getMessage("illarion.common.bug.details.Intro"));
         builder.append(NL).append(NL);
 
         builder.append(messages
-            .getMessage("illarion.common.bug.details.Application"));
+                .getMessage("illarion.common.bug.details.Application"));
         builder.append(' ');
-        builder.append(crashData.getApplicationName());
+        builder.append(crashData.getApplicationIdentifier().getApplicationName());
         builder.append(NL);
 
         builder.append(messages
-            .getMessage("illarion.common.bug.details.Version"));
+                .getMessage("illarion.common.bug.details.Version"));
         builder.append(' ');
-        builder.append(crashData.getApplicationVersion());
+        builder.append(crashData.getApplicationIdentifier().getApplicationVersion());
         builder.append(NL);
 
         builder.append(messages.getMessage("illarion.common.bug.details.OS"));
@@ -182,13 +173,13 @@ public final class ReportDialogSwing implements ReportDialog {
         builder.append(NL);
 
         builder.append(messages
-            .getMessage("illarion.common.bug.details.Thread"));
+                .getMessage("illarion.common.bug.details.Thread"));
         builder.append(' ');
         builder.append(crashData.getThreadName());
         builder.append(NL);
 
         builder.append(messages
-            .getMessage("illarion.common.bug.details.Stack"));
+                .getMessage("illarion.common.bug.details.Stack"));
         builder.append(NL);
         builder.append(crashData.getStackBacktrace());
 
@@ -206,19 +197,19 @@ public final class ReportDialogSwing implements ReportDialog {
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         final JButton alwaysButton =
-            new JButton(
-                messages.getMessage("illarion.common.bug.buttons.always"));
+                new JButton(
+                        messages.getMessage("illarion.common.bug.buttons.always"));
         final JButton onceButton =
-            new JButton(
-                messages.getMessage("illarion.common.bug.buttons.once"));
+                new JButton(
+                        messages.getMessage("illarion.common.bug.buttons.once"));
         final JButton notButton =
-            new JButton(messages.getMessage("illarion.common.bug.buttons.not"));
+                new JButton(messages.getMessage("illarion.common.bug.buttons.not"));
         final JButton neverButton =
-            new JButton(
-                messages.getMessage("illarion.common.bug.buttons.never"));
+                new JButton(
+                        messages.getMessage("illarion.common.bug.buttons.never"));
 
         alwaysButton
-            .addActionListener(new ButtonListener(dialog, SEND_ALWAYS));
+                .addActionListener(new ButtonListener(dialog, SEND_ALWAYS));
         onceButton.addActionListener(new ButtonListener(dialog, SEND_ONCE));
         notButton.addActionListener(new ButtonListener(dialog, SEND_NOT));
         neverButton.addActionListener(new ButtonListener(dialog, SEND_NEVER));
@@ -243,7 +234,7 @@ public final class ReportDialogSwing implements ReportDialog {
 
     /**
      * Set the result value. This is used instead of a synthetic accessor.
-     * 
+     *
      * @param newResult the new result value
      */
     void setResult(final int newResult) {

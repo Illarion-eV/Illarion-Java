@@ -19,6 +19,7 @@
 package illarion.common.bug;
 
 import illarion.common.config.Config;
+import illarion.common.util.AppIdent;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.MessageSource;
 import javolution.lang.Reflection;
@@ -175,7 +176,7 @@ public final class CrashReporter {
         LOGGER.fatal("Fatal error exception: " + crash.getExceptionName());
         LOGGER.fatal("Fatal error thread: " + crash.getThreadName());
         LOGGER.fatal("Fatal error backtrace: " + crash.getStackBacktrace());
-        LOGGER.fatal(crash.getApplicationName() + " is going down. Brace for impact.");
+        LOGGER.fatal(crash.getApplicationIdentifier().getApplicationName() + " is going down. Brace for impact.");
         final Calendar cal = Calendar.getInstance();
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         final String dateStr = sdf.format(cal.getTime());
@@ -397,18 +398,21 @@ public final class CrashReporter {
                 return;
             }
 
-            final IProject selectedProject = bugReportProject.getSubProject(data.getApplicationName());
+            final AppIdent application = data.getApplicationIdentifier();
+
+            final IProject selectedProject = bugReportProject.getSubProject(application.getApplicationName());
             if (selectedProject == null) {
-                LOGGER.error("Failed to find " + data.getApplicationName() + " project.");
+                LOGGER.error("Failed to find " + application.getApplicationName() + " project.");
                 return;
             }
 
             final IIssue issue = mantisSession.newIssue(selectedProject.getId());
             issue.setCategory("Automatic");
             issue.setSummary(data.getExceptionName() + " in Thread " + data.getThreadName());
-            issue.setDescription("Thread: " + data.getThreadName() + "\nException: " + data.getExceptionName() +
-                    "\nBacktrace:\n" + data.getStackBacktrace() + "\nDescription: " + data.getDescription());
-            issue.setVersion(data.getApplicationVersion());
+            issue.setDescription("Application:" + application.getApplicationIdentifier() + "\nThread: " +
+                    data.getThreadName() + "\nException: " + data.getExceptionName() + "\nBacktrace:\n" +
+                    data.getStackBacktrace() + "\nDescription: " + data.getDescription());
+            issue.setVersion(application.getApplicationRootVersion());
             issue.setOs(System.getProperty("os.name"));
             issue.setOsBuild(System.getProperty("os.version"));
             issue.setReproducibility(new MCAttribute(REPRODUCIBILITY_NA_NUM, null));

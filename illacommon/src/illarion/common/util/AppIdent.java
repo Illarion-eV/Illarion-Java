@@ -20,8 +20,7 @@ package illarion.common.util;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.jar.Attributes;
@@ -32,18 +31,23 @@ import java.util.jar.Manifest;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class AppIdent {
+public class AppIdent implements Externalizable {
+    /**
+     * Serialization UID.
+     */
+    public static final long serialVersionUID = 1L;
+
     /**
      * The name of the application.
      */
     @Nonnull
-    private final String appName;
+    private String appName;
 
     /**
      * The version of the application.
      */
     @Nonnull
-    private final String appVersion;
+    private String appVersion;
 
     /**
      * Create a new instance of the application identification class. Specify the name and the version of the
@@ -55,6 +59,12 @@ public class AppIdent {
     public AppIdent(@Nonnull final String appName, @Nonnull final String appVersion) {
         this.appName = appName;
         this.appVersion = appVersion;
+    }
+
+    /**
+     * Constructor for deserialization.
+     */
+    public AppIdent() {
     }
 
     /**
@@ -170,5 +180,24 @@ public class AppIdent {
             return appName;
         }
         return appName + ' ' + appVersion;
+    }
+
+    @Override
+    public void writeExternal(@Nonnull final ObjectOutput out) throws IOException {
+        out.writeLong(serialVersionUID);
+        out.writeObject(appName);
+        out.writeObject(appVersion);
+    }
+
+    @Override
+    public void readExternal(@Nonnull final ObjectInput in) throws IOException, ClassNotFoundException {
+        final long version = in.readLong();
+        if (version == 1L) {
+            appName = in.readObject().toString();
+            appVersion = in.readObject().toString();
+        } else {
+            throw new ClassNotFoundException("Class version invalid. Found: " + Long.toString(version) +
+                    " expected: 1");
+        }
     }
 }

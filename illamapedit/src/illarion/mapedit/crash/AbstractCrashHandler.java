@@ -122,8 +122,6 @@ abstract class AbstractCrashHandler implements Thread.UncaughtExceptionHandler {
      * @param e the reason of the crash
      */
     private void reportError(@Nonnull final Thread t, @Nonnull final Throwable e) {
-        CrashReporter.getInstance().reportCrash(
-                new CrashData(MapEditor.APPLICATION, MapEditor.VERSION,
-                        getCrashMessage(), t, e));
+        CrashReporter.getInstance().reportCrash(new CrashData(MapEditor.APPLICATION, getCrashMessage(), t, e));
     }
 }

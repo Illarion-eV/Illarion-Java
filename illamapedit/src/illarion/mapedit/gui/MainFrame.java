@@ -67,7 +67,7 @@ public class MainFrame extends JRibbonFrame {
 
     public void initialize(final WindowListener controller) {
         addWindowListener(controller);
-        setTitle(String.format("%s %s", Lang.getMsg("application.Name"), MapEditor.getVersion()));
+        setTitle(MapEditor.APPLICATION.getApplicationIdentifier());
         setSize(getSavedDimension());
         getRibbon().setApplicationMenu(new MainMenu());
         getRibbon().configureHelp(ImageLoader.getResizableIcon("help"), new ActionEventPublisher(new ShowHelpDialogEvent()));

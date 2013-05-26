@@ -19,6 +19,7 @@
 package illarion.easynpc.writer;
 
 import illarion.easynpc.ParsedNpc;
+import illarion.easynpc.Parser;
 import illarion.easynpc.data.CharacterLanguage;
 
 import javax.annotation.Nonnull;
@@ -352,7 +353,7 @@ public final class EasyNpcWriter {
                 }
 
                 target.write(String.format("-- %1$-47s%2$27s --%n",
-                        "", illarion.easynpc.Parser.FULLNAME));
+                        "", Parser.APPLICATION.getApplicationIdentifier()));
 
                 target
                         .write("--------------------------------------------------------------------------------");

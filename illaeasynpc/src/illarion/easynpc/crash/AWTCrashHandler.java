@@ -52,9 +52,7 @@ public final class AWTCrashHandler {
      */
     @SuppressWarnings("nls")
     public void handle(@Nonnull final Throwable e) {
-        final CrashData data =
-                new CrashData(Parser.APPLICATION, Parser.VERSION, "crash.awt",
-                        Thread.currentThread(), e);
+        final CrashData data = new CrashData(Parser.APPLICATION, "crash.awt", Thread.currentThread(), e);
         CrashReporter.getInstance().reportCrash(data, true);
     }
 }

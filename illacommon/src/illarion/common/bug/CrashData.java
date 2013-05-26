@@ -18,6 +18,7 @@
  */
 package illarion.common.bug;
 
+import illarion.common.util.AppIdent;
 import javolution.lang.Immutable;
 import javolution.text.TextBuilder;
 
@@ -38,7 +39,7 @@ public final class CrashData implements Immutable, Externalizable {
     /**
      * Serialization UID.
      */
-    public static final long serialVersionUID = 1L;
+    public static final long serialVersionUID = 2L;
 
     /**
      * The string that is used to introduce a caused part of the crash data.
@@ -61,48 +62,45 @@ public final class CrashData implements Immutable, Externalizable {
     /**
      * The human readable description of the problem
      */
+    @Nonnull
     private String description;
 
     /**
      * The exception that caused the crash.
      */
+    @Nonnull
     private String exception;
 
     /**
      * The name of the exception class.
      */
+    @Nonnull
     private String exceptionName;
 
     /**
-     * The name of the application that crashed.
+     * The application identifier for the application that crashed.
      */
-    private String name;
+    @Nonnull
+    private AppIdent applicationIdentifier;
 
     /**
      * The thread the crash happened in.
      */
+    @Nonnull
     private String threadName;
-
-    /**
-     * The version of the application that crashed
-     */
-    private String version;
 
     /**
      * The constructor that collects all data for such a crash data object.
      *
-     * @param appName            the name of the application that crashed
-     * @param appVersion         the version of the application that crashed
+     * @param appIdent           the application identifier
      * @param problemDescription the human readable description of the error.
      *                           This is not send to the server, its just displayed
      * @param crashThread        the thread that crashed
      * @param crashException     the exception that caused the crash
      */
-    public CrashData(final String appName, final String appVersion,
-                     final String problemDescription, @Nonnull final Thread crashThread,
-                     @Nonnull final Throwable crashException) {
-        name = appName;
-        version = appVersion;
+    public CrashData(@Nonnull final AppIdent appIdent, @Nonnull final String problemDescription,
+                     @Nonnull final Thread crashThread, @Nonnull final Throwable crashException) {
+        applicationIdentifier = appIdent;
         threadName = crashThread.getName();
 
         final TextBuilder builder = TextBuilder.newInstance();
@@ -162,21 +160,13 @@ public final class CrashData implements Immutable, Externalizable {
     }
 
     /**
-     * Get the name of the application the crash happened in.
+     * Get the identifier of the application.
      *
-     * @return the name of the application
+     * @return the identifier of the application
      */
-    String getApplicationName() {
-        return name;
-    }
-
-    /**
-     * Get the version of the application the crash happened in.
-     *
-     * @return the version of the application
-     */
-    String getApplicationVersion() {
-        return version;
+    @Nonnull
+    AppIdent getApplicationIdentifier() {
+        return applicationIdentifier;
     }
 
     /**
@@ -184,6 +174,7 @@ public final class CrashData implements Immutable, Externalizable {
      *
      * @return the description of the problem
      */
+    @Nonnull
     String getDescription() {
         return description;
     }
@@ -193,6 +184,7 @@ public final class CrashData implements Immutable, Externalizable {
      *
      * @return the simple name of the exception
      */
+    @Nonnull
     String getExceptionName() {
         return exceptionName;
     }
@@ -202,6 +194,7 @@ public final class CrashData implements Immutable, Externalizable {
      *
      * @return the stack backtrace
      */
+    @Nonnull
     String getStackBacktrace() {
         return exception;
     }
@@ -211,6 +204,7 @@ public final class CrashData implements Immutable, Externalizable {
      *
      * @return the name of the thread that crashed
      */
+    @Nonnull
     String getThreadName() {
         return threadName;
     }
@@ -218,8 +212,7 @@ public final class CrashData implements Immutable, Externalizable {
     @Override
     public void writeExternal(@Nonnull final ObjectOutput out) throws IOException {
         out.writeLong(serialVersionUID);
-        out.writeObject(name);
-        out.writeObject(version);
+        out.writeObject(applicationIdentifier);
         out.writeObject(threadName);
         out.writeObject(exception);
         out.writeObject(description);
@@ -230,15 +223,22 @@ public final class CrashData implements Immutable, Externalizable {
     public void readExternal(@Nonnull final ObjectInput in) throws IOException, ClassNotFoundException {
         final long fileVersion = in.readLong();
         if (fileVersion == 1L) {
-            name = (String) in.readObject();
-            version = (String) in.readObject();
+            final String name = (String) in.readObject();
+            final String version = (String) in.readObject();
+            applicationIdentifier = new AppIdent(name, version);
+            threadName = (String) in.readObject();
+            exception = (String) in.readObject();
+            description = (String) in.readObject();
+            exceptionName = (String) in.readObject();
+        } else if (fileVersion == 2L) {
+            applicationIdentifier = (AppIdent) in.readObject();
             threadName = (String) in.readObject();
             exception = (String) in.readObject();
             description = (String) in.readObject();
             exceptionName = (String) in.readObject();
         } else {
             throw new ClassNotFoundException("Class version invalid. Found: " + Long.toString(fileVersion) +
-                    " expected: 1");
+                    " expected: 1 or 2");
         }
     }
 }

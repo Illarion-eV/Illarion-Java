@@ -409,8 +409,7 @@ public final class LuaWriter {
                     }
                 }
 
-                target.write(String.format("-- %1$-47s%2$27s --%n", "",
-                        Parser.FULLNAME));
+                target.write(String.format("-- %1$-47s%2$27s --%n", "", Parser.APPLICATION.getApplicationIdentifier()));
 
                 target.write(commentSepLine);
                 target.write(NL);
