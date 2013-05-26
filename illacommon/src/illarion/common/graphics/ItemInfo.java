@@ -219,7 +219,7 @@ public final class ItemInfo {
             if (testItemInfo.obstacle != obstacle) {
                 continue;
             }
-            if (FastMath.equals(testItemInfo.variance, prepVariance, FastMath.FLT_EPSILON)) {
+            if (!FastMath.equals(testItemInfo.variance, prepVariance, FastMath.FLT_EPSILON)) {
                 continue;
             }
             if (testItemInfo.opacity != opacity) {

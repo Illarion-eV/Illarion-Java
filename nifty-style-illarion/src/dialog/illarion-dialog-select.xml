@@ -23,7 +23,7 @@
     </style>
 
     <style id="illarion-dialog-select-line">
-        <attributes height="46px" width="100%" margin="1px" visibleToMouse="true"/>
+        <attributes height="46px" width="100%" padding="1px" visibleToMouse="true"/>
         <effect>
             <onHover name="colorBar" color="#264d1cff" neverStopRendering="true" timeType="infinite"/>
         </effect>

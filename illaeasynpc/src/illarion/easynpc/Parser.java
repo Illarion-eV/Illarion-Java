@@ -18,6 +18,7 @@
  */
 package illarion.easynpc;
 
+import illarion.common.util.AppIdent;
 import illarion.common.util.Crypto;
 import illarion.common.util.TableLoader;
 import illarion.easynpc.docu.DocuEntry;
@@ -46,22 +47,10 @@ import java.util.regex.Pattern;
  */
 public final class Parser implements DocuEntry {
     /**
-     * The name of this application.
+     * The identifier of this application.
      */
     @SuppressWarnings("nls")
-    public static final String APPLICATION = "Illarion easyNPC";
-
-    /**
-     * The version and name of this parser.
-     */
-    @SuppressWarnings("nls")
-    public static final String VERSION = "1.23.1";
-
-    /**
-     * The full name of the application. (Name and Version)
-     */
-    @SuppressWarnings("nls")
-    public static final String FULLNAME = "easyNPC Parser v" + VERSION;
+    public static final AppIdent APPLICATION = new AppIdent("Illarion easyNPC Editor");
 
     /**
      * The singleton instance of this class.
