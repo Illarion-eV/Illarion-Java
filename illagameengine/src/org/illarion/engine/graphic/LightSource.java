@@ -21,7 +21,6 @@ package org.illarion.engine.graphic;
 import illarion.common.types.Location;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +47,7 @@ public final class LightSource {
      *                 in order to receive the parameters of the light
      * @return the prepared instance of the light source
      */
-    @Nullable
+    @Nonnull
     @SuppressWarnings("nls")
     public static LightSource createLight(final Location loc,
                                           final int encoding) {
