@@ -41,11 +41,6 @@ import java.util.List;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class LightTracer extends Thread implements Stoppable {
-    /**
-     * The current base level. Means the Z coordinate of the level the player is
-     * currently on.
-     */
-    private static int baseLevel;
 
     /**
      * The logger instance that takes care for the logging output of this class.
@@ -73,16 +68,6 @@ public final class LightTracer extends Thread implements Stoppable {
     }
 
     /**
-     * Get the current base level and so the current z level of the player
-     * location.
-     *
-     * @return the z level of the player location
-     */
-    public static int getBaseLevel() {
-        return baseLevel;
-    }
-
-    /**
      * Get the pre-calculated light rays for a given size of the light.
      *
      * @param size the length of the ray that is needed
@@ -95,16 +80,6 @@ public final class LightTracer extends Thread implements Stoppable {
         }
 
         throw new IllegalArgumentException("invalid shadow ray size " + size);
-    }
-
-    /**
-     * Set the current base level. The base level always has to be the level the
-     * player character is on.
-     *
-     * @param lvl the current z level of the player character location
-     */
-    public static void setBaseLevel(final int lvl) {
-        baseLevel = lvl;
     }
 
     /**
@@ -243,22 +218,6 @@ public final class LightTracer extends Thread implements Stoppable {
      */
     public boolean isEmpty() {
         return tidyLights.isEmpty() && dirtyLights.isEmpty();
-    }
-
-    /**
-     * Notify light system about relevant change.
-     *
-     * @param x the x coordinate of the location the change occurred at
-     * @param y the y coordinate of the location the change occurred at
-     * @param z the z coordinate of the location the change occurred at
-     * @deprecated better use {@link #notifyChange(Location)}
-     */
-    @Deprecated
-    public void notifyChange(final int x, final int y, final int z) {
-        final Location loc = Location.getInstance();
-        loc.setSC(x, y, z);
-        notifyChange(loc);
-        loc.recycle();
     }
 
     /**
