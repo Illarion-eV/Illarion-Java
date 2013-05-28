@@ -24,7 +24,6 @@ import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.Location;
 import illarion.common.util.FastMath;
-import org.illarion.engine.graphic.LightTracer;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -83,7 +82,6 @@ public final class LocationMsg extends AbstractReply {
         World.getPlayer().setLocation(loc);
         // graphics location
         World.getMapDisplay().setLocation(loc);
-        LightTracer.setBaseLevel(loc.getScZ());
 
         // switch mini-map if required
         World.getMap().getMinimap().setPlayerLocation(loc);
