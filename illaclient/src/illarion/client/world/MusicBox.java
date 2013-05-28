@@ -210,7 +210,8 @@ public final class MusicBox implements Stoppable {
 
         final int newId;
         if (tile == null) {
-            newId = NO_TRACK;
+            // in case the tile is not found, stick with the default tracks to prevent the music from acting up
+            newId = currentDefaultTrack;
         } else {
             newId = tile.getTileMusic();
         }
