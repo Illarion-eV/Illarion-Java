@@ -212,13 +212,20 @@ public class Map {
     }
 
     @Override
-    public boolean equals(@Nonnull final Object obj) {
-        if (getClass() != obj.getClass()) {
-            return false;
+    public boolean equals(@Nullable final Object obj) {
+        if (super.equals(obj)) {
+            return true;
         }
-        final Map map = (Map) obj;
-        return name.equals(map.name) && path.equals(map.path);
+
+        if (obj instanceof Map) {
+            final Map otherMap = (Map) obj;
+            return name.equals(otherMap.name) && path.equals(otherMap.path);
+        }
+        return false;
     }
 
-
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
 }
