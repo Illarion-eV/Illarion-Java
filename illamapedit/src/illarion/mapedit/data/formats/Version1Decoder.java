@@ -18,12 +18,12 @@
  */
 package illarion.mapedit.data.formats;
 
+import illarion.common.graphics.TileInfo;
 import illarion.mapedit.crash.exceptions.FormatCorruptedException;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapItem;
 import illarion.mapedit.data.MapTile;
 import illarion.mapedit.data.MapWarpPoint;
-import illarion.mapedit.resource.Overlay;
 import illarion.mapedit.resource.loaders.ItemLoader;
 import org.apache.log4j.Logger;
 
@@ -111,10 +111,11 @@ public class Version1Decoder implements Decoder {
         final int tid = Integer.parseInt(sections[2]);
         final int tmid = Integer.parseInt(sections[3]);
         final MapTile tile;
-        if (Overlay.shapeID(tid) == 0) {
-            tile = MapTile.MapTileFactory.createNew(tid, 0, 0, tmid);
+        if (TileInfo.hasOverlay(tid)) {
+            tile = MapTile.MapTileFactory.createNew(TileInfo.getBaseID(tid), TileInfo.getOverlayID(tid),
+                    TileInfo.getShapeId(tid), tmid);
         } else {
-            tile = MapTile.MapTileFactory.createNew(Overlay.baseID(tid), Overlay.overlayID(tid), Overlay.shapeID(tid), tmid);
+            tile = MapTile.MapTileFactory.createNew(tid, 0, 0, tmid);
         }
         map.setTileAt(tx, ty, tile);
     }
