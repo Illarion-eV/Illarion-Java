@@ -73,6 +73,8 @@ public final class LocationMsg extends AbstractReply {
         if (isLongRange) {
             World.getMapDisplay().setActive(false);
             World.getMap().clear();
+        } else {
+            World.getMap().checkInside();
         }
 
         // stop the attack in case there is any
