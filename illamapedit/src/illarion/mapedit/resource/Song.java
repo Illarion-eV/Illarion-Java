@@ -40,7 +40,8 @@ public class Song implements Comparable<Song> {
 
     /**
      * Default constructor
-     * @param clipID id of the clip
+     *
+     * @param clipID   id of the clip
      * @param fileName fileName of the file
      */
     public Song(final int clipID, final String fileName) {
@@ -50,6 +51,7 @@ public class Song implements Comparable<Song> {
 
     /**
      * Get the id of the clip
+     *
      * @return clipID
      */
     public int getClipID() {
@@ -68,8 +70,7 @@ public class Song implements Comparable<Song> {
     /**
      * Play the sound file
      */
-    public void play()
-    {
+    public void play() {
         try {
             OggPlayer.play(SONG_DIR + fileName);
         } catch (IOException e) {
@@ -79,13 +80,24 @@ public class Song implements Comparable<Song> {
         }
     }
 
-    /**
-     * Compares the songs clipID
-     * @param o Other song
-     * @return + if clipId > o.clipID otherwise -
-     */
+    @Override
+    public boolean equals(final Object o) {
+        if (super.equals(o)) {
+            return true;
+        }
+        if (o instanceof Song) {
+            return ((Song) o).clipID == clipID;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return clipID;
+    }
+
     @Override
     public int compareTo(final Song o) {
-        return  clipID - o.getClipID();
+        return clipID - o.getClipID();
     }
 }

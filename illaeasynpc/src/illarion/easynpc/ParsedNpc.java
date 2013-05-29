@@ -71,6 +71,23 @@ public final class ParsedNpc {
             return line.getLineNumber() - o.line.getLineNumber();
         }
 
+        @Override
+        public int hashCode() {
+            return line.getLineNumber();
+        }
+
+        @Override
+        public boolean equals(final Object o) {
+            if (super.equals(o)) {
+                return true;
+            }
+
+            if (o instanceof ParsedNpc.Error) {
+                return ((Error) o).line.getLineNumber() == line.getLineNumber();
+            }
+            return false;
+        }
+
         /**
          * Get the line the error occurred on.
          *

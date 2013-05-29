@@ -71,13 +71,33 @@ public class ConditionTemplate implements Comparable<ConditionTemplate> {
         return (title != null) && (condition != null) && (parameters.size() > 0);
     }
 
-    @Nullable
+    @Override
+    @Nonnull
     public String toString() {
-        return title;
+        return (title == null) ? "" : title;
     }
 
     @Override
-    public int compareTo(@Nonnull ConditionTemplate o) {
+    public int compareTo(@Nonnull final ConditionTemplate o) {
         return toString().compareTo(o.toString());
+    }
+
+    @Override
+    public boolean equals(@Nullable final Object o) {
+        if (super.equals(o)) {
+            return true;
+        }
+        if (o instanceof ConditionTemplate) {
+            final ConditionTemplate otherTemplate = (ConditionTemplate) o;
+            if (otherTemplate.toString().equals(toString())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return toString().hashCode();
     }
 }
