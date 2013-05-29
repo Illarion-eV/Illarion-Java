@@ -18,6 +18,7 @@
  */
 package illarion.client.input;
 
+import illarion.client.net.client.CloseShowcaseCmd;
 import illarion.client.world.World;
 import illarion.client.world.items.InventorySlot;
 import org.bushe.swing.event.EventBus;
@@ -76,6 +77,7 @@ public final class KeyMapper {
             case B:
                 if (World.getPlayer().hasContainer(0)) {
                     World.getPlayer().removeContainer(0);
+                    World.getNet().sendCommand(new CloseShowcaseCmd(0));
                 } else {
                     final InventorySlot slot = World.getPlayer().getInventory().getItem(0);
                     if (slot.containsItem()) {
