@@ -121,16 +121,24 @@ final class Utils {
             return;
         }
 
-        final StringWriter writer = new StringWriter();
-        final ScriptWriter scriptWriter = new ScriptWriter();
-        scriptWriter.setSource(npc);
-        scriptWriter.setTargetLanguage(ScriptWriter.ScriptWriterTarget.EasyNPC);
-        scriptWriter.setWritingTarget(writer);
+        StringWriter writer = null;
         try {
+            writer = new StringWriter();
+            final ScriptWriter scriptWriter = new ScriptWriter();
+            scriptWriter.setSource(npc);
+            scriptWriter.setTargetLanguage(ScriptWriter.ScriptWriterTarget.EasyNPC);
+            scriptWriter.setWritingTarget(writer);
             scriptWriter.write();
-            writer.close();
         } catch (@Nonnull final IOException e) {
             LOGGER.error("Error occured while writing a script.", e);
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (@Nonnull final IOException ignored) {
+                    // nothing
+                }
+            }
         }
 
         editor.setScriptText(writer.getBuffer().toString());
