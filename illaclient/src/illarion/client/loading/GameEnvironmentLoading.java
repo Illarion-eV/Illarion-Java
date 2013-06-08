@@ -20,6 +20,7 @@ package illarion.client.loading;
 
 import illarion.client.IllaClient;
 import illarion.client.world.World;
+import illarion.common.data.SkillLoader;
 import illarion.common.util.ProgressMonitor;
 import org.apache.log4j.Logger;
 import org.illarion.engine.Engine;
@@ -71,6 +72,7 @@ final class GameEnvironmentLoading implements LoadingTask {
     @Override
     public void load() {
         try {
+            SkillLoader.load();
             World.initWorldComponents(usedEngine);
         } catch (@Nonnull final EngineException e) {
             logger.error("Failed to init the components of the world.", e);

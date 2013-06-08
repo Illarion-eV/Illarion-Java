@@ -18,6 +18,7 @@
  */
 package illarion.easynpc.parser.talk.conditions;
 
+import illarion.common.data.SkillLoader;
 import illarion.common.data.Skills;
 import illarion.easynpc.Lang;
 import illarion.easynpc.data.CompareOperators;
@@ -47,6 +48,13 @@ public final class Skill extends ConditionParser {
     @SuppressWarnings("nls")
     private static final Pattern SKILL_FIND = Pattern.compile("\\s*skill\\(([a-z,\\s]+)\\)\\s*([=~!<>]{1,2})\\s*"
             + AdvNumber.ADV_NUMBER_REGEXP + "\\s*,\\s*", Pattern.CASE_INSENSITIVE);
+
+    /**
+     * Default constructor that takes care of loading the depending data.
+     */
+    public Skill() {
+        SkillLoader.load();
+    }
 
     /**
      * Extract a condition from the working string.
