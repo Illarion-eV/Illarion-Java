@@ -36,6 +36,7 @@ import illarion.client.util.Lang;
 import org.illarion.engine.Engine;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This is the screen controller that takes care of displaying the login screen.
@@ -271,7 +272,15 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
             nifty.showPopup(screen, popupError.getId(), popupError.findElementByName("#closeButton"));
             popupIsVisible = true;
         } else {
-            nifty.gotoScreen("charSelect");
+            @Nullable final Screen charSelectScreen = nifty.getScreen("charSelect");
+            if (charSelectScreen == null) {
+                throw new IllegalStateException("The character select screen was not found! This is bad.");
+            }
+            @Nonnull final ScreenController charScreenController = charSelectScreen.getScreenController();
+            if (charScreenController instanceof CharScreenController) {
+                ((CharScreenController) charScreenController).fillMyListBox();
+            }
+            nifty.gotoScreen(charSelectScreen.getScreenId());
         }
     }
 

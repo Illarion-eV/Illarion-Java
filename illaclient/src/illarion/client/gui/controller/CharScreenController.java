@@ -37,12 +37,14 @@ import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class CharScreenController implements ScreenController, KeyInputHandler {
 
     private Nifty nifty;
     private Screen screen;
 
+    @Nullable
     private ListBox<String> listBox;
 
     private final Game game;
@@ -54,14 +56,14 @@ public class CharScreenController implements ScreenController, KeyInputHandler {
      */
     private Element popupLanguageChange;
 
-    public CharScreenController(Game game) {
+    public CharScreenController(@Nonnull final Game game) {
         this.game = game;
         AnnotationProcessor.process(this);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
+    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
         this.nifty = nifty;
         this.screen = screen;
 
@@ -100,10 +102,13 @@ public class CharScreenController implements ScreenController, KeyInputHandler {
 
     }
 
-    private void fillMyListBox() {
-        for (final Login.CharEntry entry : Login.getInstance().getCharacterList()) {
-            if (entry.getStatus() == 0) {
-                listBox.addItem(entry.getName());
+    public void fillMyListBox() {
+        if (listBox != null) {
+            listBox.clear();
+            for (@Nonnull final Login.CharEntry entry : Login.getInstance().getCharacterList()) {
+                if (entry.getStatus() == 0) {
+                    listBox.addItem(entry.getName());
+                }
             }
         }
     }
