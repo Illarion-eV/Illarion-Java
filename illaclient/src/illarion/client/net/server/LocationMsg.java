@@ -73,8 +73,6 @@ public final class LocationMsg extends AbstractReply {
         if (isLongRange) {
             World.getMapDisplay().setActive(false);
             World.getMap().clear();
-        } else {
-            World.getMap().checkInside();
         }
 
         // stop the attack in case there is any
@@ -87,6 +85,10 @@ public final class LocationMsg extends AbstractReply {
 
         // switch mini-map if required
         World.getMap().getMinimap().setPlayerLocation(loc);
+
+        if (!isLongRange) {
+            World.getMap().checkInside();
+        }
 
         World.getPlayer().getCharacter().relistLight();
         World.getPlayer().getCharacter().updateLight(loc);
