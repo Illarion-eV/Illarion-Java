@@ -300,6 +300,8 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
                 return Key.PageUp;
             case Input.Keys.PAGE_DOWN:
                 return Key.PageDown;
+            case Input.Keys.TAB:
+                return Key.Tab;
             default:
                 return null;
         }
@@ -450,6 +452,8 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
                 return Input.Keys.PAGE_UP;
             case PageDown:
                 return Input.Keys.PAGE_DOWN;
+            case Tab:
+                return Input.Keys.TAB;
         }
         return Input.Keys.UNKNOWN;
     }

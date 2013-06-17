@@ -369,6 +369,8 @@ public class IgeInputSystem implements InputSystem, InputListener {
                 return KeyboardInputEvent.KEY_PRIOR;
             case PageDown:
                 return KeyboardInputEvent.KEY_NEXT;
+            case Tab:
+                return KeyboardInputEvent.KEY_TAB;
         }
         return -1;
     }

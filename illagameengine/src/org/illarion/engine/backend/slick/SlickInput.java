@@ -226,6 +226,8 @@ class SlickInput extends AbstractForwardingInput implements org.newdawn.slick.In
                 return Key.PageUp;
             case Input.KEY_NEXT:
                 return Key.PageDown;
+            case Input.KEY_TAB:
+                return Key.Tab;
             default:
                 return null;
         }
@@ -394,6 +396,8 @@ class SlickInput extends AbstractForwardingInput implements org.newdawn.slick.In
                 return Input.KEY_PRIOR;
             case PageDown:
                 return Input.KEY_NEXT;
+            case Tab:
+                return Input.KEY_TAB;
         }
         return -1;
     }
