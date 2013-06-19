@@ -81,8 +81,8 @@ public class IgeTextureRenderImage implements IgeRenderImage {
                             final float scale, final int centerX, final int centerY) {
         final int scaledWidth = Math.round(w * scale);
         final int scaledHeight = Math.round(h * scale);
-        final int fixedX = Math.round(x + ((w - scaledWidth) * ((float) w / (float) centerX)));
-        final int fixedY = Math.round(y + ((h - scaledHeight) * ((float) h / (float) centerY)));
+        final int fixedX = (int) Math.round(x + ((w - scaledWidth) * ((double) w / (double) centerX)));
+        final int fixedY = (int) Math.round(y + ((h - scaledHeight) * ((double) h / (double) centerY)));
         g.drawTexture(texture, fixedX, fixedY, scaledWidth, scaledHeight, srcX, srcY, srcW, srcH, color);
     }
 }

@@ -88,11 +88,11 @@ public abstract class AbstractSoundsManager implements SoundsManager {
     public final Music getMusic(@Nonnull final String ref) {
         @Nullable final Music existingMusic = loadedMusic.get(ref);
         if (existingMusic == null) {
-            @Nullable final Music loadedMusic = loadMusic(ref);
-            if (loadedMusic != null) {
-                this.loadedMusic.put(ref, loadedMusic);
+            @Nullable final Music loadedMusicHandle = loadMusic(ref);
+            if (loadedMusicHandle != null) {
+                loadedMusic.put(ref, loadedMusicHandle);
             }
-            return loadedMusic;
+            return loadedMusicHandle;
         }
         return existingMusic;
     }

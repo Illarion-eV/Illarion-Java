@@ -159,6 +159,7 @@ public abstract class AbstractTextureManager implements TextureManager {
         final String directory = rootDirectories.get(directoryIndex);
 
         InputStream in = null;
+        DataInputStream dIn = null;
         int result = 0;
         try {
             in = Thread.currentThread().getContextClassLoader().getResourceAsStream(directory + "atlas.count");
@@ -166,11 +167,12 @@ public abstract class AbstractTextureManager implements TextureManager {
                 return 0;
             }
 
-            final DataInputStream dIn = new DataInputStream(in);
+            dIn = new DataInputStream(in);
             result = dIn.readInt();
         } catch (@Nonnull final IOException e) {
             expectedAtlasCount.set(directoryIndex, 0);
         } finally {
+            closeQuietly(dIn);
             closeQuietly(in);
         }
         expectedAtlasCount.set(directoryIndex, result);

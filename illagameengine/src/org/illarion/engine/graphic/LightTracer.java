@@ -41,12 +41,6 @@ import java.util.List;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class LightTracer extends Thread implements Stoppable {
-
-    /**
-     * The logger instance that takes care for the logging output of this class.
-     */
-    private static final Logger LOGGER = Logger.getLogger(LightTracer.class);
-
     /**
      * The maximal radius of the light. So length of the light rays is between 1
      * and the value of this constant.
@@ -54,10 +48,15 @@ public final class LightTracer extends Thread implements Stoppable {
     public static final int MAX_RADIUS = 6;
 
     /**
+     * The logger instance that takes care for the logging output of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(LightTracer.class);
+
+    /**
      * The storage of the pre-calculated rays.
      */
     @Nonnull
-    private final static LightRays[] RAYS;
+    private static final LightRays[] RAYS;
 
     static {
         RAYS = new LightRays[MAX_RADIUS];
@@ -65,21 +64,6 @@ public final class LightTracer extends Thread implements Stoppable {
         for (int i = 0; i < MAX_RADIUS; ++i) {
             RAYS[i] = new LightRays(i + 1);
         }
-    }
-
-    /**
-     * Get the pre-calculated light rays for a given size of the light.
-     *
-     * @param size the length of the ray that is needed
-     * @return the pre-calculated rays.
-     */
-    @SuppressWarnings("nls")
-    public static LightRays getRays(final int size) {
-        if ((size > 0) && (size <= MAX_RADIUS)) {
-            return RAYS[size - 1];
-        }
-
-        throw new IllegalArgumentException("invalid shadow ray size " + size);
     }
 
     /**
@@ -99,7 +83,7 @@ public final class LightTracer extends Thread implements Stoppable {
      * If this variable is set to <code>true</code> the light calculations are
      * restarted at the next loop of the light tracer thread cycle.
      */
-    private volatile boolean doRestart = false;
+    private volatile boolean doRestart;
 
     /**
      * This variable stores the last index of a tiny light that was handled.
@@ -116,12 +100,6 @@ public final class LightTracer extends Thread implements Stoppable {
      * calculating results for all light sources handled by this light tracer.
      */
     private final LightingMap mapSource;
-
-    /**
-     * Pause flag that is used to interrupt the light tracer for a short time.
-     */
-    private boolean pause;
-
     /**
      * The running flag that needs to be <code>true</code> as long as the light
      * tracer is supposed to calculate the lights.
@@ -148,8 +126,22 @@ public final class LightTracer extends Thread implements Stoppable {
         mapSource = tracerMapSource;
         dirtyLights = new ArrayList<LightSource>();
         tidyLights = new ArrayList<LightSource>();
-        pause = false;
         running = false;
+    }
+
+    /**
+     * Get the pre-calculated light rays for a given size of the light.
+     *
+     * @param size the length of the ray that is needed
+     * @return the pre-calculated rays.
+     */
+    @SuppressWarnings("nls")
+    public static LightRays getRays(final int size) {
+        if ((size > 0) && (size <= MAX_RADIUS)) {
+            return RAYS[size - 1];
+        }
+
+        throw new IllegalArgumentException("invalid shadow ray size " + size);
     }
 
     /**
@@ -167,7 +159,7 @@ public final class LightTracer extends Thread implements Stoppable {
                 dirtyLights.add(light);
             }
             setDirty(true);
-            lightsListsLock.notify();
+            lightsListsLock.notifyAll();
         }
     }
 
@@ -252,14 +244,6 @@ public final class LightTracer extends Thread implements Stoppable {
     }
 
     /**
-     * Interrupt the calculations of the light tracer until {@link #start()} is
-     * called next time.
-     */
-    public void pause() {
-        pause = true;
-    }
-
-    /**
      * Refresh the light tracer and force all lights to recalculate the values.
      */
     public void refresh() {
@@ -333,7 +317,7 @@ public final class LightTracer extends Thread implements Stoppable {
     private void restart() {
         doRestart = true;
         synchronized (lightsListsLock) {
-            lightsListsLock.notify();
+            lightsListsLock.notifyAll();
         }
     }
 
@@ -354,7 +338,7 @@ public final class LightTracer extends Thread implements Stoppable {
             LightSource light = null;
             boolean dirtyLight = false;
             synchronized (lightsListsLock) {
-                if (dirty && !pause) {
+                if (dirty) {
                     if (!tidyLights.isEmpty()
                             && ((tidyLights.size() - 1) > lastTinyIndex)) {
                         lastTinyIndex++;
@@ -398,7 +382,7 @@ public final class LightTracer extends Thread implements Stoppable {
     public void saveShutdown() {
         running = false;
         synchronized (lightsListsLock) {
-            lightsListsLock.notify();
+            lightsListsLock.notifyAll();
         }
     }
 
@@ -437,14 +421,6 @@ public final class LightTracer extends Thread implements Stoppable {
      */
     @Override
     public synchronized void start() {
-        if (pause) {
-            pause = false;
-            synchronized (lightsListsLock) {
-                lightsListsLock.notify();
-            }
-            return;
-        }
-
         if (running) {
             return;
         }

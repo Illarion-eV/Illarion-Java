@@ -83,8 +83,8 @@ public class IgeMiniMapRenderImage implements IgeRenderImage {
 
         final int scaledWidth = Math.round(w * scale);
         final int scaledHeight = Math.round(h * scale);
-        final int fixedX = Math.round(x + ((w - scaledWidth) * ((float) centerX / (float) w)));
-        final int fixedY = Math.round(y + ((h - scaledHeight) * ((float) centerY / (float) h)));
+        final int fixedX = (int) Math.round(x + ((w - scaledWidth) * ((double) centerX / (double) w)));
+        final int fixedY = (int) Math.round(y + ((h - scaledHeight) * ((double) centerY / (double) h)));
         g.drawTexture(map.getWorldMap(), fixedX, fixedY, scaledWidth, scaledHeight, srcX + miniMapOriginX,
                 srcY + miniMapOriginY, srcW, srcH, centerX - fixedX, centerY - fixedY, -45.f, color, effect);
     }

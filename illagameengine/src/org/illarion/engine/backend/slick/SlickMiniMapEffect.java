@@ -46,6 +46,21 @@ class SlickMiniMapEffect implements MiniMapEffect, SlickTextureEffect {
     private final ShaderProgram miniMapShader;
 
     /**
+     * The radius of the rendered area
+     */
+    private int radius;
+
+    /**
+     * The x coordinate of the center location on the mini map.
+     */
+    private int centerX;
+
+    /**
+     * The y coordinate of the center location on the mini map.
+     */
+    private int centerY;
+
+    /**
      * Create a new instance of the mini map effect.
      *
      * @throws SlickEngineException in case loading the effect fails
@@ -64,21 +79,6 @@ class SlickMiniMapEffect implements MiniMapEffect, SlickTextureEffect {
         }
 
     }
-
-    /**
-     * The radius of the rendered area
-     */
-    private int radius;
-
-    /**
-     * The x coordinate of the center location on the mini map.
-     */
-    private int centerX;
-
-    /**
-     * The y coordinate of the center location on the mini map.
-     */
-    private int centerY;
 
     @Override
     public void activateEffect(@Nonnull final Graphics graphics) {

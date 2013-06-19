@@ -49,6 +49,30 @@ public class IgeRenderDevice implements RenderDevice {
     private final GameContainer container;
 
     /**
+     * A instance of the color class for temporary use. This class is used to transfer the color values from
+     * Nifty-GUI color instances to instances of the game engine.
+     */
+    private final org.illarion.engine.graphic.Color tempColor1;
+
+    /**
+     * A instance of the color class for temporary use. This class is used to transfer the color values from
+     * Nifty-GUI color instances to instances of the game engine.
+     */
+    private final org.illarion.engine.graphic.Color tempColor2;
+
+    /**
+     * A instance of the color class for temporary use. This class is used to transfer the color values from
+     * Nifty-GUI color instances to instances of the game engine.
+     */
+    private final org.illarion.engine.graphic.Color tempColor3;
+
+    /**
+     * A instance of the color class for temporary use. This class is used to transfer the color values from
+     * Nifty-GUI color instances to instances of the game engine.
+     */
+    private final org.illarion.engine.graphic.Color tempColor4;
+
+    /**
      * Create a new render device.
      *
      * @param container      the container the GUI is displayed in
@@ -162,30 +186,6 @@ public class IgeRenderDevice implements RenderDevice {
                     srcH, tempColor1, scale, centerX, centerY);
         }
     }
-
-    /**
-     * A instance of the color class for temporary use. This class is used to transfer the color values from
-     * Nifty-GUI color instances to instances of the game engine.
-     */
-    private final org.illarion.engine.graphic.Color tempColor1;
-
-    /**
-     * A instance of the color class for temporary use. This class is used to transfer the color values from
-     * Nifty-GUI color instances to instances of the game engine.
-     */
-    private final org.illarion.engine.graphic.Color tempColor2;
-
-    /**
-     * A instance of the color class for temporary use. This class is used to transfer the color values from
-     * Nifty-GUI color instances to instances of the game engine.
-     */
-    private final org.illarion.engine.graphic.Color tempColor3;
-
-    /**
-     * A instance of the color class for temporary use. This class is used to transfer the color values from
-     * Nifty-GUI color instances to instances of the game engine.
-     */
-    private final org.illarion.engine.graphic.Color tempColor4;
 
     @Override
     public void renderFont(final RenderFont font, final String text, final int x, final int y, final Color fontColor, final float sizeX, final float sizeY) {

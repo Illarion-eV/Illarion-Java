@@ -48,8 +48,8 @@ public interface Graphics {
      * @param rotation the rotation that should be applied to the sprite
      * @param effects  the effects that are supposed to be applied to this sprite while drawing
      */
-    void drawSprite(@Nonnull Sprite sprite, int posX, int posY, @Nonnull Color color, int frame, float scale,
-                    float rotation, @Nonnull TextureEffect... effects);
+    void drawSprite(@Nonnull Sprite sprite, int posX, int posY, @Nonnull Color color, int frame, double scale,
+                    double rotation, @Nonnull TextureEffect... effects);
 
     /**
      * Set the method used to blend the colors of overlapping areas.
@@ -80,8 +80,8 @@ public interface Graphics {
      * @param scaleX the scale applied to the width of the text
      * @param scaleY the scale applied to the height of the text
      */
-    void drawText(@Nonnull Font font, @Nonnull CharSequence text, @Nonnull Color color, int x, int y, float scaleX,
-                  float scaleY);
+    void drawText(@Nonnull Font font, @Nonnull CharSequence text, @Nonnull Color color, int x, int y, double scaleX,
+                  double scaleY);
 
     /**
      * Draw a rectangle with a solid color.
@@ -168,7 +168,7 @@ public interface Graphics {
      * @param effects   the effects that are supposed to be applied to this texture while drawing
      */
     void drawTexture(@Nonnull Texture texture, int x, int y, int width, int height, int texX, int texY, int texWidth,
-                     int texHeight, int centerX, int centerY, float rotate, @Nonnull Color color,
+                     int texHeight, int centerX, int centerY, double rotate, @Nonnull Color color,
                      @Nonnull TextureEffect... effects);
 
     /**

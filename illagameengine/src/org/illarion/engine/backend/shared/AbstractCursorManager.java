@@ -48,9 +48,9 @@ public abstract class AbstractCursorManager implements CursorManager {
     @Nullable
     @Override
     public final MouseCursor getCursor(@Nonnull final String ref, final int hotspotX, final int hotspotY) {
-        @Nullable MouseCursor bufferedCursor = loadedCursors.get(ref);
+        @Nullable final MouseCursor bufferedCursor = loadedCursors.get(ref);
         if (bufferedCursor == null) {
-            @Nullable MouseCursor newCursor = loadCursor(ref, hotspotX, hotspotY);
+            @Nullable final MouseCursor newCursor = loadCursor(ref, hotspotX, hotspotY);
             if (newCursor != null) {
                 loadedCursors.put(ref, newCursor);
             }
