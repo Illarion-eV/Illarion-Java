@@ -355,7 +355,6 @@ public final class MapDisplayManager
      * @param location
      */
     public void setLocation(@Nonnull final Location location) {
-        // origin.setSC(location.scX, location.scY, 0);
         origin.set(location);
         ani.stop();
         levelAni.stop();
@@ -363,6 +362,8 @@ public final class MapDisplayManager
         dX = 0;
         dY = 0;
         dL = -elevation;
+
+        World.getMap().getMinimap().setPlayerLocation(location);
     }
 
     /**

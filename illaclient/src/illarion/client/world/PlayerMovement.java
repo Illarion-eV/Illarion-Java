@@ -616,7 +616,6 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         if (positionDirty && (moveAnimation.animationProgress() > POSITION_UPDATE_PROCESS)) {
             // update mini-map and world-map position
             final Location targetLoc = parentPlayer.getLocation();
-            World.getMap().getMinimap().setPlayerLocation(targetLoc);
 
             // process obstructed tiles
             // Game.getMap().checkObstructions();

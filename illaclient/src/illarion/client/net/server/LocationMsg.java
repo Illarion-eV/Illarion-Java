@@ -39,7 +39,7 @@ public final class LocationMsg extends AbstractReply {
     /**
      * The location of the player.
      */
-    private transient Location loc;
+    private Location loc;
 
     /**
      * Decode the player location data the receiver got and prepare it for the execution.
@@ -82,9 +82,6 @@ public final class LocationMsg extends AbstractReply {
         World.getPlayer().setLocation(loc);
         // graphics location
         World.getMapDisplay().setLocation(loc);
-
-        // switch mini-map if required
-        World.getMap().getMinimap().setPlayerLocation(loc);
 
         if (!isLongRange) {
             World.getMap().checkInside();
