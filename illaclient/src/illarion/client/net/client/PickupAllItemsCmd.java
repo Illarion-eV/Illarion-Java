@@ -30,12 +30,12 @@ import javax.annotation.concurrent.Immutable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @Immutable
-public final class PickupAllItemsCmd extends AbstractCommand {
+public final class PickUpAllItemsCmd extends AbstractCommand {
     /**
      * Default constructor for the pickup all command.
      */
-    public PickupAllItemsCmd() {
-        super(CommandList.CMD_PICKUP_ALL);
+    public PickUpAllItemsCmd() {
+        super(CommandList.CMD_PICK_UP_ALL);
     }
 
     @Override

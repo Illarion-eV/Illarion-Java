@@ -32,33 +32,33 @@ import javax.annotation.concurrent.Immutable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @Immutable
-public final class PickupItemCmd extends AbstractCommand {
+public final class PickUpItemCmd extends AbstractCommand {
     /**
      * The location on the map where the item is fetched from.
      */
     @Nonnull
-    private final Location pickupLocation;
+    private final Location pickUpLocation;
 
     /**
      * Default constructor for the pickup command.
      *
      * @param location the location the item is taken from
      */
-    public PickupItemCmd(@Nonnull final Location location) {
-        super(CommandList.CMD_PICKUP);
+    public PickUpItemCmd(@Nonnull final Location location) {
+        super(CommandList.CMD_PICK_UP);
 
-        pickupLocation = new Location(location);
+        pickUpLocation = new Location(location);
     }
 
     @Override
     public void encode(@Nonnull final NetCommWriter writer) {
-        writer.writeLocation(pickupLocation);
+        writer.writeLocation(pickUpLocation);
     }
 
     @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString(pickupLocation.toString());
+        return toString(pickUpLocation.toString());
     }
 }

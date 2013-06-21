@@ -19,7 +19,7 @@
 package illarion.client.input;
 
 import illarion.client.net.client.CloseShowcaseCmd;
-import illarion.client.net.client.PickupAllItemsCmd;
+import illarion.client.net.client.PickUpAllItemsCmd;
 import illarion.client.world.World;
 import illarion.client.world.items.InventorySlot;
 import org.bushe.swing.event.EventBus;
@@ -91,7 +91,7 @@ public final class KeyMapper {
                 World.getGameGui().getQuestGui().toggleQuestLog();
                 break;
             case P:
-                World.getNet().sendCommand(new PickupAllItemsCmd());
+                World.getNet().sendCommand(new PickUpAllItemsCmd());
                 break;
             default:
                 if (inputMap.containsKey(key)) {

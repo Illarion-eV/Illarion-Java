@@ -207,12 +207,12 @@ public final class CommandList {
     /**
      * Client command to pick of a item from a specific map location.
      */
-    public static final int CMD_PICKUP = 0xED;
+    public static final int CMD_PICK_UP = 0xED;
 
     /**
      * Client command to pick up all items around the character.
      */
-    public static final int CMD_PICKUP_ALL = 0xEE;
+    public static final int CMD_PICK_UP_ALL = 0xEE;
 
     /**
      * Client command to perform a use action of one or two items on different locations.

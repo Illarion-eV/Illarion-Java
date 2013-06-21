@@ -139,8 +139,8 @@
                         <control id="invslot_belt6" name="inventoryslot" height="55px" width="62px" x="161px"
                                  y="389px"/>
                     </panel>
-                    <control name="button" style="nifty-button" width="227px" label="${gamescreen-bundle.pickupAll}"
-                             marginTop="7px" id="pickupItemsBtn"/>
+                    <control name="button" style="nifty-button" width="227px" label="${gamescreen-bundle.pickUpAll}"
+                             marginTop="7px" id="pickUpItemsBtn"/>
                 </panel>
             </control>
             <control id="book" name="window" style="nifty-window" title="${gamescreen-bundle.book}"
