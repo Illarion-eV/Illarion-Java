@@ -200,44 +200,9 @@ public final class CommandList {
     public static final int CMD_TRADE_ITEM = 0x52;
 
     /**
-     * Client command to turn the player character east.
-     */
-    public static final int CMD_TURN_E = 0x42; // NO_UCD
-
-    /**
      * Client command to turn the player character north.
      */
-    public static final int CMD_TURN_N = 0x40;
-
-    /**
-     * Client command to turn the player character north east.
-     */
-    public static final int CMD_TURN_NE = 0x41; // NO_UCD
-
-    /**
-     * Client command to turn the player character north west.
-     */
-    public static final int CMD_TURN_NW = 0x47; // NO_UCD
-
-    /**
-     * Client command to turn the player character south.
-     */
-    public static final int CMD_TURN_S = 0x44; // NO_UCD
-
-    /**
-     * Client command to turn the player character south east.
-     */
-    public static final int CMD_TURN_SE = 0x43; // NO_UCD
-
-    /**
-     * Client command to turn the player character south west.
-     */
-    public static final int CMD_TURN_SW = 0x45; // NO_UCD
-
-    /**
-     * Client command to turn the player character west.
-     */
-    public static final int CMD_TURN_W = 0x46; // NO_UCD
+    public static final int CMD_TURN = 0x11;
 
     /**
      * Client command to pick of a item from a specific map location.
