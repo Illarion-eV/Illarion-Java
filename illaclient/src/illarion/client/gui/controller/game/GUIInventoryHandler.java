@@ -35,6 +35,7 @@ import illarion.client.gui.EntitySlickRenderImage;
 import illarion.client.gui.InventoryGui;
 import illarion.client.gui.Tooltip;
 import illarion.client.input.InputReceiver;
+import illarion.client.net.client.PickupAllItemsCmd;
 import illarion.client.net.server.events.DialogMerchantReceivedEvent;
 import illarion.client.resources.ItemFactory;
 import illarion.client.resources.data.ItemTemplate;
@@ -264,6 +265,11 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
         if (data.equals("ToggleInventory")) {
             toggleInventory();
         }
+    }
+
+    @NiftyEventSubscriber(id = "pickupItemsBtn")
+    public void onPickupItemsBtnClick(final String topic, @Nonnull final ButtonClickedEvent event) {
+        World.getNet().sendCommand(new PickupAllItemsCmd());
     }
 
     public void toggleInventory() {

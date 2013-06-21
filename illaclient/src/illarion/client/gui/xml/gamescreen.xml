@@ -105,8 +105,8 @@
         </layer>
         <layer id="windows" childLayout="absolute-inside">
             <control id="inventory" name="window" style="nifty-window" title="${gamescreen-bundle.inventory}"
-                     visible="false" width="270px" height="500px" hideOnClose="true" visibleToMouse="true">
-                <panel childLayout="center">
+                     visible="false" width="270px" height="520px" hideOnClose="true" visibleToMouse="true">
+                <panel childLayout="vertical">
                     <panel height="448px" width="227px" childLayout="absolute"
                            backgroundImage="data/gui/inventory.png" visibleToMouse="true" halign="center"
                            valign="center">
@@ -139,6 +139,8 @@
                         <control id="invslot_belt6" name="inventoryslot" height="55px" width="62px" x="161px"
                                  y="389px"/>
                     </panel>
+                    <control name="button" style="nifty-button" width="227px" label="${gamescreen-bundle.pickupAll}"
+                             marginTop="7px" id="pickupItemsBtn"/>
                 </panel>
             </control>
             <control id="book" name="window" style="nifty-window" title="${gamescreen-bundle.book}"
