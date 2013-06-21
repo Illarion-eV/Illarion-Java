@@ -21,8 +21,18 @@ task wrapper(type: Wrapper) {
 }
 
 subprojects {
-    sourceCompatibility = 1.6
-    targetCompatibility = 1.6
+    sourceCompatibility = JavaVersion.VERSION_1_6
+    targetCompatibility = JavaVersion.VERSION_1_6
+
+    task gitVersion {
+        def gitVersion = 'unknown'
+        try {
+            def proc = 'git describe --tags head'.execute()
+            gitVersion = proc.in.readLines().get(0)
+        } catch (ignored) {
+        }
+        project.version = gitVersion
+    }
 
     repositories {
         mavenCentral()

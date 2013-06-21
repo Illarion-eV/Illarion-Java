@@ -1,8 +1,6 @@
 <component name="libraryTable">
   <library name="lwjgl-platform-2.8.5-natives-linux">
-    <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/artifacts-23/filestore/org.lwjgl.lwjgl/lwjgl-platform/2.8.5/jar/8989a6b7f8fc900a7d50161aa23edcab13764b4d/lwjgl-platform-2.8.5-natives-linux.jar!/" />
-    </CLASSES>
+    <CLASSES />
     <JAVADOC />
     <SOURCES />
   </library>

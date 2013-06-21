@@ -19,7 +19,10 @@
 apply plugin: 'java'
 
 archivesBaseName = 'nifty-controls-illarion'
-project.version = '2.1.3'
+
+jar.doFirst {
+    gitVersion
+}
 
 dependencies {
     compile project(':Illarion Common Library')
