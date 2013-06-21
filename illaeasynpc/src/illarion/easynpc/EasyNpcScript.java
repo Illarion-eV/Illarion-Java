@@ -233,6 +233,10 @@ public final class EasyNpcScript {
      * @throws IOException error thrown in case reading failed
      */
     public void readFromInputStream(final File sourceFile) throws IOException {
+        if (!sourceFile.exists() || !sourceFile.isFile() || !sourceFile.canRead()) {
+            throw new FileNotFoundException(sourceFile.getAbsolutePath());
+        }
+
         for (final Charset charset : ENCODINGS) {
             final CharsetDecoder decoder = charset.newDecoder();
             decoder.onMalformedInput(CodingErrorAction.REPORT);
@@ -254,6 +258,8 @@ public final class EasyNpcScript {
                 return;
             }
         }
+
+        throw new IOException("Can't read file: " + sourceFile.getAbsolutePath());
     }
 
     /**

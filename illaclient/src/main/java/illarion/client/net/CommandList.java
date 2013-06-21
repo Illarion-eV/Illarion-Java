@@ -80,49 +80,9 @@ public final class CommandList {
     public static final int CMD_DRAG_MAP_INV = 0xE5;
 
     /**
-     * Client command to drag a item located east of the player character to another position on the game map.
+     * Client command to drag a item from the map to another location on the map
      */
-    public static final int CMD_DRAG_MAP_MAP_E = 0x22;
-
-    /**
-     * Client command to drag a item located north of the player character to another position on the game map.
-     */
-    public static final int CMD_DRAG_MAP_MAP_N = 0x20;
-
-    /**
-     * Client command to drag a item located northeast of the player character to another position on the game map.
-     */
-    public static final int CMD_DRAG_MAP_MAP_NE = 0x21;
-
-    /**
-     * Client command to drag a item located northwest of the player character to another position on the game map.
-     */
-    public static final int CMD_DRAG_MAP_MAP_NW = 0x27;
-
-    /**
-     * Client command to drag a item located south of the player character to another position on the game map.
-     */
-    public static final int CMD_DRAG_MAP_MAP_S = 0x24;
-
-    /**
-     * Client command to drag a item located southeast of the player character to another position on the game map.
-     */
-    public static final int CMD_DRAG_MAP_MAP_SE = 0x23;
-
-    /**
-     * Client command to drag a item located southwest of the player character to another position on the game map.
-     */
-    public static final int CMD_DRAG_MAP_MAP_SW = 0x25;
-
-    /**
-     * Client command to drag a item located west of the player character to another position on the game map.
-     */
-    public static final int CMD_DRAG_MAP_MAP_W = 0x26;
-
-    /**
-     * Client command to drag an item located below the player character to another position on the game map.
-     */
-    public static final int CMD_DRAG_MAP_MAP_ZERO = 0x2A; // NO_UCD
+    public static final int CMD_DRAG_MAP_MAP = 0xEF;
 
     /**
      * Client command to drag a item from a position on the game map into a container.
@@ -240,44 +200,19 @@ public final class CommandList {
     public static final int CMD_TRADE_ITEM = 0x52;
 
     /**
-     * Client command to turn the player character east.
-     */
-    public static final int CMD_TURN_E = 0x42; // NO_UCD
-
-    /**
      * Client command to turn the player character north.
      */
-    public static final int CMD_TURN_N = 0x40;
+    public static final int CMD_TURN = 0x11;
 
     /**
-     * Client command to turn the player character north east.
+     * Client command to pick of a item from a specific map location.
      */
-    public static final int CMD_TURN_NE = 0x41; // NO_UCD
+    public static final int CMD_PICK_UP = 0xED;
 
     /**
-     * Client command to turn the player character north west.
+     * Client command to pick up all items around the character.
      */
-    public static final int CMD_TURN_NW = 0x47; // NO_UCD
-
-    /**
-     * Client command to turn the player character south.
-     */
-    public static final int CMD_TURN_S = 0x44; // NO_UCD
-
-    /**
-     * Client command to turn the player character south east.
-     */
-    public static final int CMD_TURN_SE = 0x43; // NO_UCD
-
-    /**
-     * Client command to turn the player character south west.
-     */
-    public static final int CMD_TURN_SW = 0x45; // NO_UCD
-
-    /**
-     * Client command to turn the player character west.
-     */
-    public static final int CMD_TURN_W = 0x46; // NO_UCD
+    public static final int CMD_PICK_UP_ALL = 0xEE;
 
     /**
      * Client command to perform a use action of one or two items on different locations.

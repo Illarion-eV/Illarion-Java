@@ -21,6 +21,7 @@ package illarion.client.graphics;
 import illarion.client.IllaClient;
 import illarion.client.input.CurrentMouseLocationEvent;
 import illarion.client.world.World;
+import illarion.client.world.characters.CharacterAttribute;
 import illarion.common.graphics.Layers;
 import illarion.common.graphics.MapConstants;
 import illarion.common.types.Location;
@@ -30,6 +31,7 @@ import org.illarion.engine.EngineException;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Scene;
 import org.illarion.engine.graphic.effects.FogEffect;
+import org.illarion.engine.graphic.effects.GrayScaleEffect;
 import org.illarion.engine.input.Input;
 
 import javax.annotation.Nonnull;
@@ -256,20 +258,56 @@ public final class MapDisplayManager
         final Input engineInput = container.getEngine().getInput();
         gameScene.publishEvent(new CurrentMouseLocationEvent(engineInput.getMouseX(), engineInput.getMouseY()));
         gameScene.update(container, delta);
+        updateFog(container);
+        updateDeadView(container);
     }
 
+    /**
+     * This flag stores if the fog effect was already applied to the scene.
+     */
     private boolean fogEnabled;
 
     /**
-     * Render all visible map items
-     *
-     * @param c the game container the map is rendered in
+     * This flag stores if the gray scale filter that is applied in case the character is dead was already enabled.
      */
-    public void render(@Nonnull final GameContainer c) {
-        if (!active) {
-            return;
-        }
+    private boolean deadViewEnabled;
 
+    /**
+     * Update the graphical effects applied in case the character died.
+     *
+     * @param c the game container
+     */
+    private void updateDeadView(@Nonnull final GameContainer c) {
+        final int hitPoints = World.getPlayer().getCharacter().getAttribute(CharacterAttribute.HitPoints);
+        if (hitPoints == 0) {
+            if (!deadViewEnabled) {
+                try {
+                    final GrayScaleEffect effect = c.getEngine().getAssets().getEffectManager().getGrayScaleEffect(true);
+                    gameScene.addEffect(effect);
+                    deadViewEnabled = true;
+                } catch (EngineException e) {
+                    // error activating gray scale
+                }
+            }
+        } else {
+            if (deadViewEnabled) {
+                try {
+                    final GrayScaleEffect effect = c.getEngine().getAssets().getEffectManager().getGrayScaleEffect(true);
+                    gameScene.removeEffect(effect);
+                    deadViewEnabled = false;
+                } catch (EngineException e) {
+                    // error activating gray scale
+                }
+            }
+        }
+    }
+
+    /**
+     * Update the graphical effect that shows the fog on the map.
+     *
+     * @param c the game container
+     */
+    private void updateFog(@Nonnull final GameContainer c) {
         final float fog = World.getWeather().getFog();
         if (fog > 0.f) {
             try {
@@ -291,6 +329,17 @@ public final class MapDisplayManager
                 // error activating fog
             }
         }
+    }
+
+    /**
+     * Render all visible map items
+     *
+     * @param c the game container the map is rendered in
+     */
+    public void render(@Nonnull final GameContainer c) {
+        if (!active) {
+            return;
+        }
 
         final Camera camera = Camera.getInstance();
         gameScene.render(c.getEngine().getGraphics(), camera.getViewportOffsetX(), camera.getViewportOffsetY());
@@ -306,7 +355,6 @@ public final class MapDisplayManager
      * @param location
      */
     public void setLocation(@Nonnull final Location location) {
-        // origin.setSC(location.scX, location.scY, 0);
         origin.set(location);
         ani.stop();
         levelAni.stop();
@@ -314,6 +362,8 @@ public final class MapDisplayManager
         dX = 0;
         dY = 0;
         dL = -elevation;
+
+        World.getMap().getMinimap().setPlayerLocation(location);
     }
 
     /**

@@ -30,6 +30,21 @@ import javax.annotation.Nonnull;
  */
 public interface WorldMap {
     /**
+     * This constant is used to define that a specific tile is empty.
+     */
+    int NO_TILE = 0;
+
+    /**
+     * The amount of tiles that are stored on the world map texture in height.
+     */
+    int WORLD_MAP_HEIGHT = 1024;
+
+    /**
+     * The amount of tiles that are stored on the world map texture in width.
+     */
+    int WORLD_MAP_WIDTH = 1024;
+
+    /**
      * Get the origin location of the world map.
      *
      * @return the origin location
@@ -52,21 +67,6 @@ public interface WorldMap {
      */
     @Nonnull
     Texture getWorldMap();
-
-    /**
-     * This constant is used to define that a specific tile is empty.
-     */
-    int NO_TILE = 0;
-
-    /**
-     * The amount of tiles that are stored on the world map texture in height.
-     */
-    int WORLD_MAP_HEIGHT = 1024;
-
-    /**
-     * The amount of tiles that are stored on the world map texture in width.
-     */
-    int WORLD_MAP_WIDTH = 1024;
 
     /**
      * Mark a tile as changed. The world map is supposed to update this tile at some later point.

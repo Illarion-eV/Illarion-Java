@@ -29,7 +29,7 @@ import java.util.List;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class EngineManager {
+public final class EngineManager {
     private EngineManager() {
     }
 

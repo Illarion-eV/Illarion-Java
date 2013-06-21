@@ -21,6 +21,7 @@ package org.illarion.engine.backend.slick;
 import org.lwjgl.opengl.DisplayMode;
 
 import javax.annotation.Nonnull;
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
@@ -28,21 +29,25 @@ import java.util.Comparator;
  *
  * @author Stefano Bonicatti &lt;smjert@gmail.com&gt;
  */
-final class DisplayModeSorter implements Comparator<DisplayMode> {
+final class DisplayModeSorter implements Comparator<DisplayMode>, Serializable {
     @Override
     public int compare(@Nonnull final DisplayMode a, @Nonnull final DisplayMode b) {
         //Width
-        if (a.getWidth() != b.getWidth())
+        if (a.getWidth() != b.getWidth()) {
             return (a.getWidth() > b.getWidth()) ? 1 : -1;
+        }
         //Height
-        if (a.getHeight() != b.getHeight())
+        if (a.getHeight() != b.getHeight()) {
             return (a.getHeight() > b.getHeight()) ? 1 : -1;
+        }
         //Bit depth
-        if (a.getBitsPerPixel() != b.getBitsPerPixel())
+        if (a.getBitsPerPixel() != b.getBitsPerPixel()) {
             return (a.getBitsPerPixel() > b.getBitsPerPixel()) ? 1 : -1;
+        }
         //Refresh rate
-        if (a.getFrequency() != b.getFrequency())
+        if (a.getFrequency() != b.getFrequency()) {
             return (a.getFrequency() > b.getFrequency()) ? 1 : -1;
+        }
         //All fields are equal
         return 0;
     }

@@ -260,6 +260,10 @@ public final class GameMiniMap implements WorldMapDataProvider {
 
     @Override
     public void requestTile(@Nonnull final Location location, @Nonnull final WorldMapDataProviderCallback callback) {
+        if (location.getScZ() != mapLevel) {
+            callback.setTile(WorldMap.NO_TILE, WorldMap.NO_TILE, false);
+            return;
+        }
         final int tileData = mapData.getShort(encodeLocation(location));
 
         if (tileData == 0) {
@@ -301,7 +305,6 @@ public final class GameMiniMap implements WorldMapDataProvider {
         } else {
             newMapOriginX = ((playerLoc.getScX() / WORLDMAP_WIDTH) * WORLDMAP_WIDTH) - WORLDMAP_WIDTH;
         }
-
 
         final int newMapOriginY;
         if (playerLoc.getScY() >= 0) {

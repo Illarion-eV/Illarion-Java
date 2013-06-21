@@ -102,7 +102,7 @@
         </copy>
     </target>
 
-    <target name="build_jar">
+    <target name="build_jar" depends="get_git_version">
         <jar jarfile="${jar}" basedir="${classes}" includes="illarion/easynpc/**">
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>

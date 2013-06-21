@@ -65,6 +65,7 @@ public class IgeTextureRenderImage implements IgeRenderImage {
         texture.dispose();
     }
 
+    @Override
     public void renderImage(@Nonnull final Graphics g, final int x, final int y, final int width, final int height,
                             @Nonnull final Color color, final float imageScale) {
         final int scaledWidth = Math.round(width * imageScale);
@@ -74,13 +75,14 @@ public class IgeTextureRenderImage implements IgeRenderImage {
         g.drawTexture(texture, fixedX, fixedY, scaledWidth, scaledHeight, color);
     }
 
+    @Override
     public void renderImage(@Nonnull final Graphics g, final int x, final int y, final int w, final int h,
                             final int srcX, final int srcY, final int srcW, final int srcH, @Nonnull final Color color,
                             final float scale, final int centerX, final int centerY) {
         final int scaledWidth = Math.round(w * scale);
         final int scaledHeight = Math.round(h * scale);
-        final int fixedX = Math.round(x + ((w - scaledWidth) * ((float) w / (float) centerX)));
-        final int fixedY = Math.round(y + ((h - scaledHeight) * ((float) h / (float) centerY)));
+        final int fixedX = (int) Math.round(x + ((w - scaledWidth) * ((double) w / (double) centerX)));
+        final int fixedY = (int) Math.round(y + ((h - scaledHeight) * ((double) h / (double) centerY)));
         g.drawTexture(texture, fixedX, fixedY, scaledWidth, scaledHeight, srcX, srcY, srcW, srcH, color);
     }
 }

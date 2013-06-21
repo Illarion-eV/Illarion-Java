@@ -40,6 +40,21 @@ import java.util.Queue;
  */
 class SlickWorldMap implements WorldMap, WorldMapDataProviderCallback {
     /**
+     * The height and width in pixels that is updated at once.
+     */
+    private static final int MAX_UPDATE_SIZE = 64;
+
+    /**
+     * The area in pixels that is allowed to be updated during one render step.
+     */
+    private static final int MAX_UPDATE_AREA = MAX_UPDATE_SIZE * MAX_UPDATE_SIZE;
+
+    /**
+     * The logger of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(SlickWorldMap.class);
+
+    /**
      * The provider that supplies the class with the required data.
      */
     @Nonnull
@@ -96,21 +111,6 @@ class SlickWorldMap implements WorldMap, WorldMapDataProviderCallback {
      */
     @Nonnull
     private final Queue<Rectangle> dirtyTiles;
-
-    /**
-     * The height and width in pixels that is updated at once.
-     */
-    private static final int MAX_UPDATE_SIZE = 64;
-
-    /**
-     * The area in pixels that is allowed to be updated during one render step.
-     */
-    private static final int MAX_UPDATE_AREA = MAX_UPDATE_SIZE * MAX_UPDATE_SIZE;
-
-    /**
-     * The logger of this class.
-     */
-    private static final Logger LOGGER = Logger.getLogger(SlickWorldMap.class);
 
     /**
      * Create a new instance of the Slick2D implementation of the world map.

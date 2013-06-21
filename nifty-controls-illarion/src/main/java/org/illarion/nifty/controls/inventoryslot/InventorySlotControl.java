@@ -102,6 +102,7 @@ public class InventorySlotControl extends AbstractController implements Inventor
     /**
      * The logger that displays all logging output of this class.
      */
+    @SuppressWarnings("deprecation")
     private static final Logger LOGGER = Logger.getLogger(InventorySlotControl.class);
 
     /**
@@ -115,13 +116,13 @@ public class InventorySlotControl extends AbstractController implements Inventor
         this.screen = screen;
         this.nifty = nifty;
 
-        droppable = element.findElementByName("#droppable");
-        draggable = droppable.findElementByName("#draggable");
-        draggedImage = draggable.findElementByName("#draggableImage");
-        backgroundImage = element.findElementByName("#backgroundImage");
-        backgroundImageLabel = element.findElementByName("#backgroundImageLabel");
-        staticBackgroundImage = element.findElementByName("#staticBackgroundImage");
-        merchantOverlay = element.findElementByName("#merchantOverlay");
+        droppable = element.findElementById("#droppable");
+        draggable = droppable.findElementById("#draggable");
+        draggedImage = draggable.findElementById("#draggableImage");
+        backgroundImage = element.findElementById("#backgroundImage");
+        backgroundImageLabel = element.findElementById("#backgroundImageLabel");
+        staticBackgroundImage = element.findElementById("#staticBackgroundImage");
+        merchantOverlay = element.findElementById("#merchantOverlay");
 
         dragStartEvent = new EventTopicSubscriber<DraggableDragStartedEvent>() {
             @Override
@@ -150,6 +151,11 @@ public class InventorySlotControl extends AbstractController implements Inventor
     @Override
     public void setImage(@Nullable final NiftyImage image) {
         final NiftyImage oldImage = draggedImage.getRenderer(ImageRenderer.class).getImage();
+
+        if (oldImage == image) {
+            return;
+        }
+
         draggedImage.getRenderer(ImageRenderer.class).setImage(image);
         backgroundImage.getRenderer(ImageRenderer.class).setImage(image);
 
@@ -188,6 +194,8 @@ public class InventorySlotControl extends AbstractController implements Inventor
             draggedImage.setVisible(false);
             draggable.setVisible(false);
             draggable.getNiftyControl(Draggable.class).disable(true);
+            hideLabel();
+            hideMerchantOverlay();
         }
     }
 
@@ -214,8 +222,16 @@ public class InventorySlotControl extends AbstractController implements Inventor
      */
     protected void setVisibleOfDraggedImage(final boolean value) {
         if (draggedImage.isVisible() != value) {
-            draggedImage.setVisible(value);
-            draggedImage.getParent().layoutElements();
+            if (value) {
+                draggedImage.show(new EndNotify() {
+                    @Override
+                    public void perform() {
+                        draggable.getParent().layoutElements();
+                    }
+                });
+            } else {
+                draggedImage.hide();
+            }
         }
     }
 
@@ -283,10 +299,16 @@ public class InventorySlotControl extends AbstractController implements Inventor
         } else {
             hideLabel();
         }
+        if (merchantOverlay.getRenderer(ImageRenderer.class).getImage() == null) {
+            merchantOverlay.hideWithoutEffect();
+        } else {
+            merchantOverlay.showWithoutEffects();
+        }
     }
 
     @Override
     public void hideMerchantOverlay() {
+        merchantOverlay.getRenderer(ImageRenderer.class).setImage(null);
         merchantOverlay.hideWithoutEffect();
     }
 

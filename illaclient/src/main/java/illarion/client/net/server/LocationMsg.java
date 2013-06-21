@@ -23,7 +23,7 @@ import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.Location;
-import org.illarion.engine.graphic.LightTracer;
+import illarion.common.util.FastMath;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -39,7 +39,7 @@ public final class LocationMsg extends AbstractReply {
     /**
      * The location of the player.
      */
-    private transient Location loc;
+    private Location loc;
 
     /**
      * Decode the player location data the receiver got and prepare it for the execution.
@@ -60,10 +60,20 @@ public final class LocationMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        World.getMapDisplay().setActive(false);
+        final Location oldLoc = World.getPlayer().getLocation();
 
-        // drop the whole map and expect update
-        World.getMap().clear();
+        boolean isLongRange = false;
+        if (Math.max(FastMath.abs(oldLoc.getScX() - loc.getScX()), FastMath.abs(oldLoc.getScY() - loc.getScY())) > 4) {
+            isLongRange = true;
+        }
+        if (FastMath.abs(oldLoc.getScZ() - loc.getScZ()) > 3) {
+            isLongRange = true;
+        }
+
+        if (isLongRange) {
+            World.getMapDisplay().setActive(false);
+            World.getMap().clear();
+        }
 
         // stop the attack in case there is any
         World.getPlayer().getCombatHandler().standDown();
@@ -72,10 +82,10 @@ public final class LocationMsg extends AbstractReply {
         World.getPlayer().setLocation(loc);
         // graphics location
         World.getMapDisplay().setLocation(loc);
-        LightTracer.setBaseLevel(loc.getScZ());
 
-        // switch mini-map if required
-        World.getMap().getMinimap().setPlayerLocation(loc);
+        if (!isLongRange) {
+            World.getMap().checkInside();
+        }
 
         World.getPlayer().getCharacter().relistLight();
         World.getPlayer().getCharacter().updateLight(loc);

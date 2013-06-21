@@ -36,26 +36,34 @@ import javax.annotation.concurrent.ThreadSafe;
 @ThreadSafe
 public final class TurnCmd extends AbstractCommand {
     /**
+     * The direction the character is supposed to turn to.
+     */
+    private byte direction;
+
+    /**
      * Default constructor for the turn message.
      *
      * @param direction the direction to turn to
      */
     public TurnCmd(final int direction) {
-        super(CommandList.CMD_TURN_N + direction);
+        super(CommandList.CMD_TURN);
 
         if ((direction < 0) || (direction >= Location.DIR_MOVE8)) {
             throw new IllegalArgumentException("Direction out of range: " + direction);
         }
+
+        this.direction = (byte) direction;
     }
 
     @Override
     public void encode(@Nonnull final NetCommWriter writer) {
+        writer.writeByte(direction);
     }
 
     @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("Direction: " + (getId() - CommandList.CMD_TURN_N));
+        return toString("Direction: " + direction);
     }
 }

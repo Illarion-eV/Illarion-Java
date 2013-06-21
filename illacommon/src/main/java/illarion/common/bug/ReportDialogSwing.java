@@ -158,13 +158,13 @@ public final class ReportDialogSwing implements ReportDialog {
         builder.append(messages
                 .getMessage("illarion.common.bug.details.Application"));
         builder.append(' ');
-        builder.append(crashData.getApplicationName());
+        builder.append(crashData.getApplicationIdentifier().getApplicationName());
         builder.append(NL);
 
         builder.append(messages
                 .getMessage("illarion.common.bug.details.Version"));
         builder.append(' ');
-        builder.append(crashData.getApplicationVersion());
+        builder.append(crashData.getApplicationIdentifier().getApplicationVersion());
         builder.append(NL);
 
         builder.append(messages.getMessage("illarion.common.bug.details.OS"));

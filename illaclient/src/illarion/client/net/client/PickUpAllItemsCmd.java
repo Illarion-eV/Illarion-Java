@@ -16,13 +16,36 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.client.gui.events;
+package illarion.client.net.client;
+
+import illarion.client.net.CommandList;
+import illarion.common.net.NetCommWriter;
+
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 /**
- * This event is fired in order to hide the mini map from the GUI for what ever reason.
+ * This command is used to tell the server that the character is picking up all items in range.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@SuppressWarnings({"ClassMayBeInterface", "EmptyClass"})
-public final class HideMiniMap {
+@Immutable
+public final class PickUpAllItemsCmd extends AbstractCommand {
+    /**
+     * Default constructor for the pickup all command.
+     */
+    public PickUpAllItemsCmd() {
+        super(CommandList.CMD_PICK_UP_ALL);
+    }
+
+    @Override
+    public void encode(@Nonnull final NetCommWriter writer) {
+    }
+
+    @Nonnull
+    @SuppressWarnings("nls")
+    @Override
+    public String toString() {
+        return toString(null);
+    }
 }

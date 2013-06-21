@@ -40,6 +40,12 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public abstract class AbstractScene<T extends SceneEffect> implements Scene, Comparator<SceneElement> {
     /**
+     * The logger of this class.
+     */
+    @SuppressWarnings("UnusedDeclaration")
+    private static final Logger LOGGER = Logger.getLogger(AbstractScene.class);
+
+    /**
      * This list of elements in the scene. This list is kept sorted.
      */
     @Nonnull
@@ -56,11 +62,6 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
      */
     @Nonnull
     private final List<T> sceneEffects;
-
-    /**
-     * The logger of this class.
-     */
-    private static final Logger LOGGER = Logger.getLogger(AbstractScene.class);
 
     /**
      * This is the snapshot array that is taken and filled shortly before the update calls. Is then used to render

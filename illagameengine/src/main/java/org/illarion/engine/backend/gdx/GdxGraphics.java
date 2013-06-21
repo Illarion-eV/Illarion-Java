@@ -112,6 +112,21 @@ class GdxGraphics implements Graphics {
     private final GdxEngine engine;
 
     /**
+     * This flag is set {@code true} in case the sprite batch rendering is currently activated.
+     */
+    private boolean spriteBatchActive;
+
+    /**
+     * The blending mode that was applied last.
+     */
+    private BlendingMode lastBlendingMode;
+
+    /**
+     * This is set {@code true} in case the clipping is activated.
+     */
+    private boolean activeClipping;
+
+    /**
      * Create a new instance of the graphics engine that is using libGDX to render.
      *
      * @param gdxGraphics the libGDX graphics instance that is used
@@ -148,8 +163,6 @@ class GdxGraphics implements Graphics {
             blankBackground = engine.getAssets().getTextureManager().getTexture("data/gui/", "blank.png");
         }
     }
-
-    private boolean spriteBatchActive;
 
     private void activateSpriteBatch() {
         if (spriteBatchActive) {
@@ -224,14 +237,16 @@ class GdxGraphics implements Graphics {
 
     @Override
     public void drawSprite(@Nonnull final Sprite sprite, final int posX, final int posY, @Nonnull final Color color,
-                           final int frame, final float scale, final float rotation,
+                           final int frame, final double scale, final double rotation,
                            @Nonnull final TextureEffect... effects) {
         if (sprite instanceof GdxSprite) {
             final GdxSprite gdxSprite = (GdxSprite) sprite;
 
             gdxSprite.getDisplayArea(posX, posY, scale, rotation, tempEngineRectangle);
-            final int centerTransX = Math.round(gdxSprite.getWidth() * gdxSprite.getCenterX());
-            final int centerTransY = Math.round(gdxSprite.getHeight() * gdxSprite.getCenterY());
+            final double centerTransX = (gdxSprite.getWidth() * gdxSprite.getCenterX()) +
+                    (gdxSprite.getOffsetX() * scale);
+            final double centerTransY = (gdxSprite.getHeight() * gdxSprite.getCenterY()) +
+                    (gdxSprite.getOffsetY() * scale);
 
             activateSpriteBatch();
             transferColor(color, tempColor1);
@@ -249,20 +264,15 @@ class GdxGraphics implements Graphics {
             tempRegion.setRegion(gdxSprite.getFrame(frame).getTextureRegion());
             tempRegion.flip(gdxSprite.isMirrored(), true);
             spriteBatch.draw(tempRegion, tempEngineRectangle.getX(), tempEngineRectangle.getY(),
-                    centerTransX, centerTransY,
+                    (float) centerTransX, (float) centerTransY,
                     tempEngineRectangle.getWidth(), tempEngineRectangle.getHeight(),
-                    1.f, 1.f, rotation);
+                    1.f, 1.f, (float) rotation);
 
             if (usedEffect != null) {
                 usedEffect.disableEffect(spriteBatch);
             }
         }
     }
-
-    /**
-     * The blending mode that was applied last.
-     */
-    private BlendingMode lastBlendingMode;
 
     @Override
     public void setBlendingMode(@Nonnull final BlendingMode mode) {
@@ -300,12 +310,12 @@ class GdxGraphics implements Graphics {
 
     @Override
     public void drawText(@Nonnull final Font font, @Nonnull final CharSequence text, @Nonnull final Color color,
-                         final int x, final int y, final float scaleX, final float scaleY) {
+                         final int x, final int y, final double scaleX, final double scaleY) {
         if (font instanceof GdxFont) {
             activateSpriteBatch();
             transferColor(color, tempColor1);
             final BitmapFont bitmapFont = ((GdxFont) font).getBitmapFont();
-            bitmapFont.setScale(scaleX, scaleY);
+            bitmapFont.setScale((float) scaleX, (float) scaleY);
             bitmapFont.setColor(tempColor1);
             bitmapFont.draw(spriteBatch, text, x, y - bitmapFont.getAscent());
         }
@@ -408,7 +418,7 @@ class GdxGraphics implements Graphics {
     @Override
     public void drawTexture(@Nonnull final Texture texture, final int x, final int y, final int width,
                             final int height, final int texX, final int texY, final int texWidth,
-                            final int texHeight, final int centerX, final int centerY, final float rotate,
+                            final int texHeight, final int centerX, final int centerY, final double rotate,
                             @Nonnull final Color color, @Nonnull final TextureEffect... effects) {
         if ((width == 0) || (height == 0)) {
             return;
@@ -432,15 +442,13 @@ class GdxGraphics implements Graphics {
             if (!tempRegion.isFlipY()) {
                 tempRegion.flip(false, true);
             }
-            spriteBatch.draw(tempRegion, x, y, centerX, centerY, width, height, 1.f, 1.f, rotate);
+            spriteBatch.draw(tempRegion, x, y, centerX, centerY, width, height, 1.f, 1.f, (float) rotate);
 
             if (usedEffect != null) {
                 usedEffect.disableEffect(spriteBatch);
             }
         }
     }
-
-    private boolean activeClipping;
 
     @Override
     public void setClippingArea(final int x, final int y, final int width, final int height) {

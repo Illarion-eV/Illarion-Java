@@ -54,12 +54,12 @@ public abstract class AbstractSprite<T extends Texture> implements Sprite {
     /**
      * The X coordinate of the center coordinate of the sprite.
      */
-    private final float centerX;
+    private final double centerX;
 
     /**
      * The Y coordinate of the center coordinate of the sprite.
      */
-    private final float centerY;
+    private final double centerY;
 
     /**
      * This mirror flag. In case its set {@code true} the sprite will be rendered vertically mirrored.
@@ -83,7 +83,7 @@ public abstract class AbstractSprite<T extends Texture> implements Sprite {
      * @param mirror   the mirrored flag
      */
     protected AbstractSprite(@Nonnull final T[] textures, final int offsetX, final int offsetY,
-                             final float centerX, final float centerY, final boolean mirror) {
+                             final double centerX, final double centerY, final boolean mirror) {
         if (textures.length == 0) {
             throw new IllegalArgumentException("Amount of textures does not fit.");
         }
@@ -102,17 +102,17 @@ public abstract class AbstractSprite<T extends Texture> implements Sprite {
         this.centerY = centerY;
         this.mirror = mirror;
 
-        final float centerTransX = getWidth() * getCenterX();
-        final float centerTransY = getHeight() * getCenterY();
+        final double centerTransX = width * centerX;
+        final double centerTransY = height * centerY;
 
-        final int realOffsetX;
-        if (isMirrored()) {
-            realOffsetX = Math.round(-centerTransX - getOffsetX());
+        final long realOffsetX;
+        if (mirror) {
+            realOffsetX = Math.round(-centerTransX - offsetX);
         } else {
-            realOffsetX = Math.round(-centerTransX + getOffsetX());
+            realOffsetX = Math.round(-centerTransX + offsetX);
         }
-        final int realOffsetY = Math.round(-centerTransY - getOffsetY());
-        displayRectangle = new Rectangle(realOffsetX, realOffsetY, getWidth(), getHeight());
+        final long realOffsetY = Math.round(-centerTransY - offsetY);
+        displayRectangle = new Rectangle((int) realOffsetX, (int) realOffsetY, width, height);
     }
 
     @Override
@@ -149,11 +149,11 @@ public abstract class AbstractSprite<T extends Texture> implements Sprite {
         return offsetY;
     }
 
-    public float getCenterX() {
+    public double getCenterX() {
         return centerX;
     }
 
-    public float getCenterY() {
+    public double getCenterY() {
         return centerY;
     }
 
@@ -162,7 +162,7 @@ public abstract class AbstractSprite<T extends Texture> implements Sprite {
     }
 
     @Override
-    public Rectangle getDisplayArea(final int x, final int y, final float scale, final float rotation,
+    public Rectangle getDisplayArea(final int x, final int y, final double scale, final double rotation,
                                     @Nullable final Rectangle storage) {
         @Nonnull final Rectangle targetRectangle;
         if (storage == null) {
@@ -171,16 +171,16 @@ public abstract class AbstractSprite<T extends Texture> implements Sprite {
             targetRectangle = storage;
         }
 
-        final int displayWidth = FastMath.floor(displayRectangle.getWidth() * scale);
-        final int displayHeight = FastMath.floor(displayRectangle.getHeight() * scale);
-        final int displayX;
+        final long displayWidth = FastMath.floor(displayRectangle.getWidth() * scale);
+        final long displayHeight = FastMath.floor(displayRectangle.getHeight() * scale);
+        final long displayX;
         if (isMirrored()) {
             displayX = FastMath.floor(x - (displayRectangle.getX() * scale) - displayWidth);
         } else {
             displayX = FastMath.floor(x + (displayRectangle.getX() * scale));
         }
-        final int displayY = FastMath.floor(y + (displayRectangle.getY() * scale));
-        targetRectangle.set(displayX, displayY, displayWidth, displayHeight);
+        final long displayY = FastMath.floor(y + (displayRectangle.getY() * scale));
+        targetRectangle.set((int) displayX, (int) displayY, (int) displayWidth, (int) displayHeight);
 
         return targetRectangle;
     }

@@ -129,7 +129,11 @@ public class InteractiveMapTile implements Draggable, DropTarget {
             return;
         }
 
-        World.getNet().sendCommand(new DragMapMapCmd(getLocation(), targetTile.getLocation(), count));
+        if (targetTile.getLocation().equals(World.getPlayer().getLocation())) {
+            World.getNet().sendCommand(new PickUpItemCmd(getLocation()));
+        } else {
+            World.getNet().sendCommand(new DragMapMapCmd(getLocation(), targetTile.getLocation(), count));
+        }
     }
 
     @Override

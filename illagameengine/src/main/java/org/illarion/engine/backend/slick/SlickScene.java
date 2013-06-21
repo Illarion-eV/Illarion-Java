@@ -37,6 +37,11 @@ import javax.annotation.Nullable;
  */
 class SlickScene extends AbstractScene<SlickSceneEffect> {
     /**
+     * The logger of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(SlickScene.class);
+
+    /**
      * The instance of the slick container this scene is rendered in.
      */
     @Nonnull
@@ -53,11 +58,6 @@ class SlickScene extends AbstractScene<SlickSceneEffect> {
      */
     @Nullable
     private Image processImage1;
-
-    /**
-     * The logger of this class.
-     */
-    private static final Logger LOGGER = Logger.getLogger(SlickScene.class);
 
     /**
      * The last image that was requested. This variable is required to flip-flop the textures.

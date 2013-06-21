@@ -503,11 +503,6 @@ public final class MapTile implements AlphaChangeListener {
      * light sources.
      */
     private void checkLight() {
-        // light sources are only on player level
-        if (!World.getPlayer().isBaseLevel(tileLocation)) {
-            return;
-        }
-
         int newLightValue = 0;
 
         itemsLock.readLock().lock();

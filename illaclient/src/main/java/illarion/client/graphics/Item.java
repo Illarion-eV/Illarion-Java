@@ -25,6 +25,7 @@ import illarion.client.input.PrimaryKeyMapDrag;
 import illarion.client.resources.ItemFactory;
 import illarion.client.resources.Resource;
 import illarion.client.resources.data.ItemTemplate;
+import illarion.client.util.Lang;
 import illarion.client.util.LookAtTracker;
 import illarion.client.world.MapTile;
 import illarion.common.graphics.MapConstants;
@@ -280,7 +281,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
 
         // write number to text for display
         if (count.getValue() > 1) {
-            number = new TextTag(Integer.toString(count.getValue()), Color.YELLOW);
+            number = new TextTag(count.getShortText(Lang.getInstance().getLocale()), Color.YELLOW);
             number.setOffset((MapConstants.TILE_W / 2) - number.getHeight() - number.getWidth(),
                     -number.getHeight() / 2);
         } else {

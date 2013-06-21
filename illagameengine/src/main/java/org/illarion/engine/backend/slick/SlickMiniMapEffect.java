@@ -46,26 +46,6 @@ class SlickMiniMapEffect implements MiniMapEffect, SlickTextureEffect {
     private final ShaderProgram miniMapShader;
 
     /**
-     * Create a new instance of the mini map effect.
-     *
-     * @throws SlickEngineException in case loading the effect fails
-     */
-    SlickMiniMapEffect(@Nonnull final WorldMap worldMap) throws SlickEngineException {
-        try {
-            miniMapShader = ShaderProgram.loadProgram("org/illarion/engine/backend/slick/shaders/minimap.vert",
-                    "org/illarion/engine/backend/slick/shaders/minimap.frag");
-        } catch (@Nonnull final SlickException e) {
-            throw new SlickEngineException(e);
-        }
-        if (worldMap instanceof SlickWorldMap) {
-            this.worldMap = (SlickWorldMap) worldMap;
-        } else {
-            throw new IllegalArgumentException("worldMap has incorrect type: " + worldMap.getClass().toString());
-        }
-
-    }
-
-    /**
      * The radius of the rendered area
      */
     private int radius;
@@ -79,6 +59,26 @@ class SlickMiniMapEffect implements MiniMapEffect, SlickTextureEffect {
      * The y coordinate of the center location on the mini map.
      */
     private int centerY;
+
+    /**
+     * Create a new instance of the mini map effect.
+     *
+     * @throws SlickEngineException in case loading the effect fails
+     */
+    SlickMiniMapEffect(@Nonnull final WorldMap worldMap) throws SlickEngineException {
+        try {
+            miniMapShader = ShaderProgram.loadProgram("org/illarion/engine/backend/slick/shaders/generic.vert",
+                    "org/illarion/engine/backend/slick/shaders/minimap.frag");
+        } catch (@Nonnull final SlickException e) {
+            throw new SlickEngineException(e);
+        }
+        if (worldMap instanceof SlickWorldMap) {
+            this.worldMap = (SlickWorldMap) worldMap;
+        } else {
+            throw new IllegalArgumentException("worldMap has incorrect type: " + worldMap.getClass().toString());
+        }
+
+    }
 
     @Override
     public void activateEffect(@Nonnull final Graphics graphics) {

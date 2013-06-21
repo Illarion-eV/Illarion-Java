@@ -298,13 +298,11 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
                     continue;
                 }
                 try {
-                    final EasyNpcScript easyScript =
-                            new EasyNpcScript(new File(file));
+                    final EasyNpcScript easyScript = new EasyNpcScript(new File(file));
                     addNewScript().loadScript(easyScript);
-                    setCurrentTabTitle(easyScript.getSourceScriptFile()
-                            .getName());
+                    setCurrentTabTitle(easyScript.getSourceScriptFile().getName());
                 } catch (@Nonnull final IOException e1) {
-                    e1.printStackTrace();
+                    LOGGER.warn("Originally opened file: " + file + " could not be opened.");
                 }
             }
         }

@@ -18,6 +18,10 @@
  */
 package illarion.client.input;
 
+import illarion.client.net.client.CloseShowcaseCmd;
+import illarion.client.net.client.PickUpAllItemsCmd;
+import illarion.client.world.World;
+import illarion.client.world.items.InventorySlot;
 import org.bushe.swing.event.EventBus;
 import org.illarion.engine.input.Key;
 
@@ -40,7 +44,6 @@ public final class KeyMapper {
         inputMap.put(Key.Escape, "CloseGame");
 
         inputMap.put(Key.I, "ToggleInventory");
-        inputMap.put(Key.J, "ToggleQuest");
         inputMap.put(Key.C, "ToggleCharacterWindow");
         inputMap.put(Key.Enter, "SelectChat");
 
@@ -71,8 +74,29 @@ public final class KeyMapper {
     }
 
     public void handleKeyInput(@Nonnull final Key key) {
-        if (inputMap.containsKey(key)) {
-            EventBus.publish(InputReceiver.EB_TOPIC, inputMap.get(key));
+        switch (key) {
+            case B:
+                if (World.getPlayer().hasContainer(0)) {
+                    World.getPlayer().removeContainer(0);
+                    World.getNet().sendCommand(new CloseShowcaseCmd(0));
+                } else {
+                    final InventorySlot slot = World.getPlayer().getInventory().getItem(0);
+                    if (slot.containsItem()) {
+                        slot.getInteractive().openContainer();
+                    }
+                }
+                break;
+            case Q:
+            case J:
+                World.getGameGui().getQuestGui().toggleQuestLog();
+                break;
+            case P:
+                World.getNet().sendCommand(new PickUpAllItemsCmd());
+                break;
+            default:
+                if (inputMap.containsKey(key)) {
+                    EventBus.publish(InputReceiver.EB_TOPIC, inputMap.get(key));
+                }
         }
     }
 }

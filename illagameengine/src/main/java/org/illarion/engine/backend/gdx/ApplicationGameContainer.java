@@ -70,6 +70,26 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     private GdxEngine engine;
 
     /**
+     * The count of render calls that were performed during the rendering of the last frame.
+     */
+    private int lastFrameRenderCalls;
+
+    /**
+     * The width of the application in windowed mode.
+     */
+    private int windowWidth;
+
+    /**
+     * The height of the application in windowed mode.
+     */
+    private int windowHeight;
+
+    /**
+     * The graphic resolution that applied in full screen mode.
+     */
+    private GraphicResolution fullScreenResolution;
+
+    /**
      * Create a new desktop game that is drawn using libGDX.
      *
      * @param gameListener the game listener that receives the updates regarding the game
@@ -108,11 +128,10 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         GraphicResolution targetDisplayMode = null;
         for (@Nonnull final GraphicResolution current : resolutions) {
             if ((current.getWidth() == width) && (current.getHeight() == height)) {
-                if ((targetDisplayMode == null) || (current.getRefreshRate() >= freq)) {
-                    if ((targetDisplayMode == null) || (current.getBPP() > targetDisplayMode.getBPP())) {
-                        targetDisplayMode = current;
-                        freq = targetDisplayMode.getRefreshRate();
-                    }
+                if ((targetDisplayMode == null) || ((current.getRefreshRate() >= freq)
+                        && (current.getBPP() > targetDisplayMode.getBPP()))) {
+                    targetDisplayMode = current;
+                    freq = targetDisplayMode.getRefreshRate();
                 }
 
                 if ((current.getBPP() == LwjglApplicationConfiguration.getDesktopDisplayMode().bitsPerPixel)
@@ -202,8 +221,6 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         return gdxApplication.getGraphics().getFramesPerSecond();
     }
 
-    private int lastFrameRenderCalls;
-
     void setLastFrameRenderCalls(final int calls) {
         lastFrameRenderCalls = calls;
     }
@@ -228,21 +245,6 @@ public class ApplicationGameContainer implements DesktopGameContainer {
             gdxApplication.getGraphics().setTitle(title);
         }
     }
-
-    /**
-     * The width of the application in windowed mode.
-     */
-    private int windowWidth;
-
-    /**
-     * The height of the application in windowed mode.
-     */
-    private int windowHeight;
-
-    /**
-     * The graphic resolution that applied in full screen mode.
-     */
-    private GraphicResolution fullScreenResolution;
 
     @Override
     public void setWindowSize(final int width, final int height) throws GdxEngineException {

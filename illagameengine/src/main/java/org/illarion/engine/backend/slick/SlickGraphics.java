@@ -131,6 +131,13 @@ class SlickGraphics implements Graphics {
     private org.newdawn.slick.Graphics slickGraphicsImpl;
 
     /**
+     * The rectangle used to exchange data with the drawn components. Its only used inside a single drawing function,
+     * never beyond that.
+     */
+    @Nonnull
+    private final illarion.common.types.Rectangle tempRect = new illarion.common.types.Rectangle();
+
+    /**
      * This function is used to transfer the color values from the engines color instances to a slick color instance.
      *
      * @param source the source color
@@ -184,16 +191,9 @@ class SlickGraphics implements Graphics {
         slickGraphicsImpl.fill(fourColorRect, fourColorRect);
     }
 
-    /**
-     * The rectangle used to exchange data with the drawn components. Its only used inside a single drawing function,
-     * never beyond that.
-     */
-    @Nonnull
-    private final illarion.common.types.Rectangle tempRect = new illarion.common.types.Rectangle();
-
     @Override
     public void drawSprite(@Nonnull final Sprite sprite, final int posX, final int posY, @Nonnull final Color color,
-                           final int frame, final float scale, final float rotation,
+                           final int frame, final double scale, final double rotation,
                            @Nonnull final TextureEffect... effects) {
         if (slickGraphicsImpl == null) {
             throw new IllegalStateException("Using graphics outside of the render loop is not allowed.");
@@ -201,8 +201,8 @@ class SlickGraphics implements Graphics {
         if (sprite instanceof SlickSprite) {
             final SlickSprite slickSprite = (SlickSprite) sprite;
 
-            final float centerTransX = slickSprite.getWidth() * slickSprite.getCenterX();
-            final float centerTransY = slickSprite.getHeight() * slickSprite.getCenterY();
+            final double centerTransX = slickSprite.getWidth() * slickSprite.getCenterX();
+            final double centerTransY = slickSprite.getHeight() * slickSprite.getCenterY();
             transferColor(color, tempSlickColor1);
             slickSprite.getDisplayArea(posX, posY, 1.f, 0.f, tempRect);
 
@@ -210,9 +210,9 @@ class SlickGraphics implements Graphics {
             slickGraphicsImpl.translate(tempRect.getX(), tempRect.getY());
 
             if (slickSprite.isMirrored()) {
-                slickGraphicsImpl.scale(-scale, scale);
+                slickGraphicsImpl.scale((float) -scale, (float) scale);
             } else {
-                slickGraphicsImpl.scale(scale, scale);
+                slickGraphicsImpl.scale((float) scale, (float) scale);
             }
 
             @Nullable SlickTextureEffect usedEffect = null;
@@ -225,8 +225,8 @@ class SlickGraphics implements Graphics {
             }
 
             final Image slickImage = slickSprite.getFrame(frame).getBackingImage();
-            slickImage.setCenterOfRotation(centerTransX, centerTransY);
-            slickImage.setRotation(rotation);
+            slickImage.setCenterOfRotation((float) centerTransX, (float) centerTransY);
+            slickImage.setRotation((float) rotation);
 
             if (slickSprite.isMirrored()) {
                 slickGraphicsImpl.drawImage(slickImage, -tempRect.getWidth(), 0, tempSlickColor1);
@@ -256,7 +256,7 @@ class SlickGraphics implements Graphics {
 
     @Override
     public void drawText(@Nonnull final Font font, @Nonnull final CharSequence text, @Nonnull final Color color,
-                         final int x, final int y, final float scaleX, final float scaleY) {
+                         final int x, final int y, final double scaleX, final double scaleY) {
         if (slickGraphicsImpl == null) {
             throw new IllegalStateException("Using graphics outside of the render loop is not allowed.");
         }
@@ -265,7 +265,7 @@ class SlickGraphics implements Graphics {
             org.newdawn.slick.Graphics.setCurrent(slickGraphicsImpl);
             slickGraphicsImpl.pushTransform();
             slickGraphicsImpl.translate(x, y);
-            slickGraphicsImpl.scale(scaleX, scaleY);
+            slickGraphicsImpl.scale((float) scaleX, (float) scaleY);
             transferColor(color, tempSlickColor1);
             internalFont.drawString(0, 0, text, tempSlickColor1);
             slickGraphicsImpl.popTransform();
@@ -327,7 +327,7 @@ class SlickGraphics implements Graphics {
     @Override
     public void drawTexture(@Nonnull final Texture texture, final int x, final int y, final int width,
                             final int height, final int texX, final int texY, final int texWidth,
-                            final int texHeight, final int centerX, final int centerY, final float rotate,
+                            final int texHeight, final int centerX, final int centerY, final double rotate,
                             @Nonnull final Color color, @Nonnull final TextureEffect... effects) {
         if (slickGraphicsImpl == null) {
             throw new IllegalStateException("Using graphics outside of the render loop is not allowed.");
@@ -346,7 +346,7 @@ class SlickGraphics implements Graphics {
         }
         if (rotate != 0) {
             slickGraphicsImpl.translate(centerX + x, centerY + y);
-            slickGraphicsImpl.rotate(0, 0, rotate);
+            slickGraphicsImpl.rotate(0, 0, (float) rotate);
             slickGraphicsImpl.translate(-centerX - x, -centerY - y);
         }
         slickGraphicsImpl.drawImage(slickTexture.getBackingImage(), x, y, x + width, y + height, texX, texY,

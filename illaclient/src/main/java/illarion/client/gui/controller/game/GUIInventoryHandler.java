@@ -35,9 +35,11 @@ import illarion.client.gui.EntitySlickRenderImage;
 import illarion.client.gui.InventoryGui;
 import illarion.client.gui.Tooltip;
 import illarion.client.input.InputReceiver;
+import illarion.client.net.client.PickUpAllItemsCmd;
 import illarion.client.net.server.events.DialogMerchantReceivedEvent;
 import illarion.client.resources.ItemFactory;
 import illarion.client.resources.data.ItemTemplate;
+import illarion.client.util.Lang;
 import illarion.client.util.LookAtTracker;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
@@ -117,7 +119,7 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
          * The constructor for this class. The timeout time is set to the system default double click interval.
          */
         InventoryClickActionHelper() {
-            super(IllaClient.getCfg().getInteger("doubleClickInterval"));
+            super(IllaClient.getCfg().getInteger("doubleClickInterval"), 2);
         }
 
         @Override
@@ -263,6 +265,11 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
         if (data.equals("ToggleInventory")) {
             toggleInventory();
         }
+    }
+
+    @NiftyEventSubscriber(id = "pickUpItemsBtn")
+    public void onPickUpItemsBtnClick(final String topic, @Nonnull final ButtonClickedEvent event) {
+        World.getNet().sendCommand(new PickUpAllItemsCmd());
     }
 
     public void toggleInventory() {
@@ -480,7 +487,7 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
             invSlot.setImage(niftyImage);
             if (ItemCount.isGreaterOne(count)) {
                 assert count != null;
-                invSlot.setLabelText(Integer.toString(count.getValue()));
+                invSlot.setLabelText(count.getShortText(Lang.getInstance().getLocale()));
                 slotLabelVisibility[slotId] = true;
                 invSlot.showLabel();
             } else {

@@ -109,7 +109,7 @@ public class ImmutableColor extends Color {
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */
     @Override
-    public void setAlphaf(final float alpha) {
+    public void setAlphaf(final float fAlpha) {
         throwImmutableException();
     }
 
@@ -129,7 +129,7 @@ public class ImmutableColor extends Color {
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */
     @Override
-    public void setBluef(final float blue) {
+    public void setBluef(final float fBlue) {
         throwImmutableException();
     }
 
@@ -149,7 +149,7 @@ public class ImmutableColor extends Color {
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */
     @Override
-    public void setGreenf(final float green) {
+    public void setGreenf(final float fGreen) {
         throwImmutableException();
     }
 
@@ -169,7 +169,7 @@ public class ImmutableColor extends Color {
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */
     @Override
-    public void setRedf(final float red) {
+    public void setRedf(final float fRed) {
         throwImmutableException();
     }
 

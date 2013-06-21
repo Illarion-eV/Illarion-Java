@@ -50,11 +50,6 @@ public class GameMapProcessor2 {
             tileBelow.setObstructingTile(tile);
         }
 
-        // check if the tile is at or below the player location. In this case the map groups do not matter.
-        if (tile.getLocation().getScZ() <= playerLocation.getScZ()) {
-            return;
-        }
-
         final List<MapGroup> groups = getSurroundingMapGroups(tile.getLocation());
         final MapGroup tileGroup;
         if (groups.isEmpty()) {
@@ -87,7 +82,7 @@ public class GameMapProcessor2 {
     private static MapGroup lastInsideGroup;
 
     public static void checkInside() {
-        final Location playerLocation = World.getPlayer().getCharacter().getLocation();
+        final Location playerLocation = World.getPlayer().getLocation();
 
         final MapTile tileAbove = getFirstTileAbove(playerLocation, playerLocation.getScZ() + 2, false);
         final MapGroup realTileAboveGroup = (tileAbove == null) ? null : tileAbove.getMapGroup();

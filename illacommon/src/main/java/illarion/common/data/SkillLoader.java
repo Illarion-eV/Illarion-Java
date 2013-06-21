@@ -22,92 +22,101 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * This class takes care for loading the skills from the XML file as required.
+ * This class takes care for loading the skills from the XML file as required. Calling this function is required
+ * before the skills and skill groups are used.
+ * <p/>
+ * This function blocks the execution of the current thread until loading the Skill is done for sure.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @NotThreadSafe
-class SkillLoader {
+public class SkillLoader {
     /**
-     * This value is turned true once the loading is started.
+     * This value is turned {@code true} once the loading is finished.
      */
-    private static boolean loadingStarted;
+    private static boolean loadingFinished;
 
     /**
      * Load the skills from the XML file.
      */
-    static synchronized void load() {
-        if (loadingStarted) {
+    public static void load() {
+        if (loadingFinished) {
             return;
         }
-        loadingStarted = true;
 
-        final InputStream skillXmlStream = Thread.currentThread().getContextClassLoader()
-                .getResourceAsStream("skills.xml");
-
-        if (skillXmlStream == null) {
-            throw new IllegalStateException("Skill XML was not found.");
-        }
-
-        try {
-            final XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
-            parser.setInput(skillXmlStream, "UTF-8");
-
-            int currentTag = parser.nextTag();
-            @Nullable SkillGroup currentGroup = null;
-            while (currentTag != XmlPullParser.END_DOCUMENT) {
-                final String tagName = parser.getName();
-                if ("group".equals(tagName)) {
-                    final int attribCount = parser.getAttributeCount();
-                    String germanName = null;
-                    String englishName = null;
-                    for (int i = 0; i < attribCount; i++) {
-                        final String attribName = parser.getAttributeName(i);
-                        if ("german".equals(attribName)) {
-                            germanName = parser.getAttributeValue(i);
-                        } else if ("english".equals(attribName)) {
-                            englishName = parser.getAttributeValue(i);
-                        }
-                    }
-                    if ((germanName != null) && (englishName != null)) {
-                        currentGroup = new SkillGroup(germanName, englishName);
-                        SkillGroups.getInstance().addSkillGroup(currentGroup);
-                    }
-                } else if ("skill".equals(tagName) && (currentGroup != null)) {
-                    final int attribCount = parser.getAttributeCount();
-                    String serverName = null;
-                    String germanName = null;
-                    String englishName = null;
-                    int serverId = -1;
-                    for (int i = 0; i < attribCount; i++) {
-                        final String attribName = parser.getAttributeName(i);
-                        if ("name".equals(attribName)) {
-                            serverName = parser.getAttributeValue(i);
-                        } else if ("german".equals(attribName)) {
-                            germanName = parser.getAttributeValue(i);
-                        } else if ("english".equals(attribName)) {
-                            englishName = parser.getAttributeValue(i);
-                        } else if ("id".equals(attribName)) {
-                            serverId = Integer.parseInt(parser.getAttributeValue(i));
-                        }
-                    }
-                    if ((germanName != null) && (englishName != null) && (serverName != null) && (serverId >= 0)) {
-                        final Skill skill = new Skill(serverId, serverName, germanName, englishName, currentGroup);
-                        Skills.getInstance().addSkill(skill);
-                    }
-                }
-                currentTag = parser.nextTag();
+        synchronized (SkillLoader.class) {
+            if (loadingFinished) {
+                return;
             }
-        } catch (XmlPullParserException e) {
-            // nothing
-        } catch (IOException e) {
-            // nothing
+            final ClassLoader ccl = Thread.currentThread().getContextClassLoader();
+            final InputStream skillXmlStream = ccl.getResourceAsStream("skills.xml");
+
+            if (skillXmlStream == null) {
+                throw new IllegalStateException("Skill XML was not found.");
+            }
+
+            try {
+                final XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
+                parser.setInput(skillXmlStream, "UTF-8");
+
+                int currentTag = parser.nextTag();
+                @Nullable SkillGroup currentGroup = null;
+                while (currentTag != XmlPullParser.END_DOCUMENT) {
+                    final String tagName = parser.getName();
+                    if ("group".equals(tagName)) {
+                        final int attribCount = parser.getAttributeCount();
+                        String germanName = null;
+                        String englishName = null;
+                        for (int i = 0; i < attribCount; i++) {
+                            final String attribName = parser.getAttributeName(i);
+                            if ("german".equals(attribName)) {
+                                germanName = parser.getAttributeValue(i);
+                            } else if ("english".equals(attribName)) {
+                                englishName = parser.getAttributeValue(i);
+                            }
+                        }
+                        if ((germanName != null) && (englishName != null)) {
+                            currentGroup = new SkillGroup(germanName, englishName);
+                            SkillGroups.getInstance().addSkillGroup(currentGroup);
+                        }
+                    } else if ("skill".equals(tagName) && (currentGroup != null)) {
+                        final int attribCount = parser.getAttributeCount();
+                        String serverName = null;
+                        String germanName = null;
+                        String englishName = null;
+                        int serverId = -1;
+                        for (int i = 0; i < attribCount; i++) {
+                            final String attribName = parser.getAttributeName(i);
+                            if ("name".equals(attribName)) {
+                                serverName = parser.getAttributeValue(i);
+                            } else if ("german".equals(attribName)) {
+                                germanName = parser.getAttributeValue(i);
+                            } else if ("english".equals(attribName)) {
+                                englishName = parser.getAttributeValue(i);
+                            } else if ("id".equals(attribName)) {
+                                serverId = Integer.parseInt(parser.getAttributeValue(i));
+                            }
+                        }
+                        if ((germanName != null) && (englishName != null) && (serverName != null) && (serverId >= 0)) {
+                            final Skill skill = new Skill(serverId, serverName, germanName, englishName, currentGroup);
+                            Skills.getInstance().addSkill(skill);
+                        }
+                    }
+                    currentTag = parser.nextTag();
+                }
+            } catch (@Nonnull final XmlPullParserException e) {
+                // nothing
+            } catch (@Nonnull final IOException e) {
+                // nothing
+            }
+            loadingFinished = true;
         }
     }
 

@@ -33,9 +33,11 @@ import illarion.client.IllaClient;
 import illarion.client.Login;
 import illarion.client.Servers;
 import illarion.client.util.Lang;
+import org.apache.log4j.Logger;
 import org.illarion.engine.Engine;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This is the screen controller that takes care of displaying the login screen.
@@ -71,6 +73,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     /**
      * The drop down box is used to select a server.
      */
+    @Nullable
     private DropDown<String> server;
 
     /**
@@ -112,6 +115,11 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     @Nonnull
     private final Engine engine;
 
+    /**
+     * This is the logging instance for this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(LoginScreenController.class);
+
     public LoginScreenController(@Nonnull final Game game, @Nonnull final Engine engine) {
         this.game = game;
         this.engine = engine;
@@ -135,7 +143,6 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         nameTxt = screen.findNiftyControl("nameTxt", TextField.class);
         passwordTxt = screen.findNiftyControl("passwordTxt", TextField.class);
         savePassword = screen.findNiftyControl("savePassword", CheckBox.class);
-        final Element serverPanel = screen.findElementByName("serverPanel");
 
         nameTxt.getElement().addInputHandler(this);
         passwordTxt.getElement().addInputHandler(this);
@@ -147,14 +154,24 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         savePassword.setChecked(login.storePassword());
 
         if (IllaClient.DEFAULT_SERVER == Servers.realserver) {
-            serverPanel.hide();
+            @Nullable final Element serverPanel = screen.findElementById("serverPanel");
+            if (serverPanel != null) {
+                serverPanel.hide();
+            } else {
+                LOGGER.error("Failed to find server panel on the screen.");
+            }
         } else {
+            //noinspection unchecked
             server = screen.findNiftyControl("server", DropDown.class);
-            server.addItem("${login-bundle.server.develop}");
-            server.addItem("${login-bundle.server.test}");
-            server.addItem("${login-bundle.server.game}");
-            server.addItem("${login-bundle.server.custom}");
-            server.selectItemByIndex(IllaClient.getCfg().getInteger("server"));
+            if (server != null) {
+                server.addItem("${login-bundle.server.develop}");
+                server.addItem("${login-bundle.server.test}");
+                server.addItem("${login-bundle.server.game}");
+                server.addItem("${login-bundle.server.custom}");
+                server.selectItemByIndex(IllaClient.getCfg().getInteger("server"));
+            } else {
+                LOGGER.error("Failed to find server drop down on the login screen.");
+            }
         }
 
         popupError = nifty.createPopup("loginError");
@@ -235,6 +252,8 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
 
         if (server != null) {
             login.setServer(server.getSelectedIndex());
+        } else {
+            login.setServer(Login.GAMESERVER);
         }
 
         login.storeData(savePassword.isChecked());
@@ -271,7 +290,15 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
             nifty.showPopup(screen, popupError.getId(), popupError.findElementByName("#closeButton"));
             popupIsVisible = true;
         } else {
-            nifty.gotoScreen("charSelect");
+            @Nullable final Screen charSelectScreen = nifty.getScreen("charSelect");
+            if (charSelectScreen == null) {
+                throw new IllegalStateException("The character select screen was not found! This is bad.");
+            }
+            @Nonnull final ScreenController charScreenController = charSelectScreen.getScreenController();
+            if (charScreenController instanceof CharScreenController) {
+                ((CharScreenController) charScreenController).fillMyListBox();
+            }
+            nifty.gotoScreen(charSelectScreen.getScreenId());
         }
     }
 

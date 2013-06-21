@@ -76,15 +76,15 @@ class GdxScene extends AbstractScene<GdxSceneEffect> {
     }
 
     @Override
-    public void update(@Nonnull final GameContainer container, final int delta) {
-        updateScene(container, delta);
+    public void update(@Nonnull final GameContainer c, final int delta) {
+        updateScene(c, delta);
 
         final int effectCount = getEffectCount();
         for (int i = 0; i < effectCount; i++) {
             getEffect(i).update(delta);
         }
 
-        camera.setToOrtho(true, container.getWidth(), container.getHeight());
+        camera.setToOrtho(true, c.getWidth(), c.getHeight());
         camera.update();
     }
 

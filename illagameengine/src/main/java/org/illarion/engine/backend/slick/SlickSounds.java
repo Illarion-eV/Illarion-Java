@@ -40,6 +40,41 @@ class SlickSounds implements MusicListener, Sounds {
      */
     private static final float DEFAULT_PITCH = 1.f;
 
+    /**
+     * The map of active sounds.
+     */
+    @Nonnull
+    private final Map<Integer, SlickSound> activeSoundsMap;
+
+    /**
+     * The last handle of the sound that was triggered.
+     */
+    private int lastHandle = Integer.MIN_VALUE;
+
+    /**
+     * The currently played music track.
+     */
+    @Nullable
+    private SlickMusic currentMusic;
+
+    /**
+     * The next music track that is supposed to launch once the current track finished playing.
+     */
+    @Nullable
+    private SlickMusic nextMusic;
+
+    /**
+     * The fade in time of the next track.
+     */
+    private int nextFadeInTime;
+
+    /**
+     * Create the implementation of the slick sounds and setup the internal values.
+     */
+    SlickSounds() {
+        activeSoundsMap = new HashMap<Integer, SlickSound>();
+    }
+
     @Override
     public float getMusicVolume() {
         return SoundStore.get().getMusicVolume();
@@ -83,18 +118,6 @@ class SlickSounds implements MusicListener, Sounds {
         return false;
     }
 
-    /**
-     * Create the implementation of the slick sounds and setup the internal values.
-     */
-    SlickSounds() {
-        activeSoundsMap = new HashMap<Integer, SlickSound>();
-    }
-
-    @Nonnull
-    private final Map<Integer, SlickSound> activeSoundsMap;
-
-    private int lastHandle = Integer.MIN_VALUE;
-
     @Override
     public boolean isSoundPlaying(@Nonnull final Sound sound, final int handle) {
         if (!(sound instanceof SlickSound)) {
@@ -110,23 +133,6 @@ class SlickSounds implements MusicListener, Sounds {
         activeSoundsMap.remove(handle);
         return false;
     }
-
-    /**
-     * The currently played music track.
-     */
-    @Nullable
-    private SlickMusic currentMusic;
-
-    /**
-     * The next music track that is supposed to launch once the current track finished playing.
-     */
-    @Nullable
-    private SlickMusic nextMusic;
-
-    /**
-     * The fade in time of the next track.
-     */
-    private int nextFadeInTime;
 
     @Override
     public void playMusic(@Nonnull final Music music, final int fadeOutTime, final int fadeInTime) {

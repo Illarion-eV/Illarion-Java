@@ -51,7 +51,7 @@ class SlickHighlightEffect implements HighlightEffect, SlickTextureEffect {
      */
     SlickHighlightEffect() throws SlickEngineException {
         try {
-            highlightShader = ShaderProgram.loadProgram("org/illarion/engine/backend/slick/shaders/highlight.vert",
+            highlightShader = ShaderProgram.loadProgram("org/illarion/engine/backend/slick/shaders/generic.vert",
                     "org/illarion/engine/backend/slick/shaders/highlight.frag");
         } catch (@Nonnull final SlickException e) {
             throw new SlickEngineException(e);

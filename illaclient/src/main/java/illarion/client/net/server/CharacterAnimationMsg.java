@@ -47,18 +47,6 @@ public final class CharacterAnimationMsg extends AbstractReply {
     private CharacterId charId;
 
     /**
-     * Create a new instance of the character animation message as recycle
-     * object.
-     *
-     * @return a new instance of this message object
-     */
-    @Nonnull
-    @Override
-    public CharacterAnimationMsg clone() {
-        return new CharacterAnimationMsg();
-    }
-
-    /**
      * Decode the character animation data the receiver got and prepare it for
      * the execution.
      *

@@ -20,6 +20,7 @@ package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
 import illarion.common.net.NetCommWriter;
+import illarion.common.util.Md5Crypto;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
@@ -58,7 +59,9 @@ public final class LoginCmd extends AbstractCommand {
     public LoginCmd(final String charName, final String password, final int version) {
         super(CommandList.CMD_LOGIN);
         this.charName = charName;
-        this.password = password;
+
+        final Md5Crypto crypto = new Md5Crypto();
+        this.password = crypto.crypt(password, "illarion");
         this.version = (short) version;
     }
 

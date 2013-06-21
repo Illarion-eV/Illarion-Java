@@ -67,14 +67,14 @@
         </resourcebuild>
     </target>
 
-    <target name="build_jar">
+    <target name="build_jar" depends="get_git_version">
         <jar jarfile="${jar}" basedir="${src}" index="true" includes="**/*.xml">
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <attribute name="Built-Date" value="${TODAY}"/>
                 <attribute name="Implementation-Vendor" value="${niftystyle.vendor}"/>
                 <attribute name="Implementation-Title" value="${niftystyle.name}"/>
-                <attribute name="Implementation-Version" value="${niftystyle.version}"/>
+                <attribute name="Implementation-Version" value="${repository.version}"/>
             </manifest>
         </jar>
     </target>

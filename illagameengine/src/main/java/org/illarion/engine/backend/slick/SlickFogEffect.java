@@ -48,7 +48,7 @@ class SlickFogEffect implements FogEffect, SlickSceneEffect {
      */
     SlickFogEffect() throws SlickEngineException {
         try {
-            fogShader = ShaderProgram.loadProgram("org/illarion/engine/backend/slick/shaders/fog.vert",
+            fogShader = ShaderProgram.loadProgram("org/illarion/engine/backend/slick/shaders/generic.vert",
                     "org/illarion/engine/backend/slick/shaders/fog.frag");
         } catch (SlickException e) {
             throw new SlickEngineException(e);

@@ -21,6 +21,7 @@ package org.illarion.engine.assets;
 import org.illarion.engine.EngineException;
 import org.illarion.engine.graphic.WorldMap;
 import org.illarion.engine.graphic.effects.FogEffect;
+import org.illarion.engine.graphic.effects.GrayScaleEffect;
 import org.illarion.engine.graphic.effects.HighlightEffect;
 import org.illarion.engine.graphic.effects.MiniMapEffect;
 
@@ -62,4 +63,14 @@ public interface EffectManager {
      */
     @Nonnull
     FogEffect getFogEffect(boolean sharedInstance) throws EngineException;
+
+    /**
+     * Get the effect that is used to render the scene or a single texture as gray scale.
+     *
+     * @param sharedInstance {@code true} to receive the shared instance, {@code false} to create a new one
+     * @return the gray scale effect
+     * @throws EngineException in case creating the effect fails
+     */
+    @Nonnull
+    GrayScaleEffect getGrayScaleEffect(boolean sharedInstance) throws EngineException;
 }

@@ -39,6 +39,7 @@ import illarion.client.net.client.CloseShowcaseCmd;
 import illarion.client.net.server.events.DialogMerchantReceivedEvent;
 import illarion.client.resources.ItemFactory;
 import illarion.client.resources.data.ItemTemplate;
+import illarion.client.util.Lang;
 import illarion.client.util.LookAtTracker;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
@@ -125,7 +126,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
          * The constructor for this class. The timeout time is set to the system default double click interval.
          */
         ContainerClickActionHelper() {
-            super(IllaClient.getCfg().getInteger("doubleClickInterval"));
+            super(IllaClient.getCfg().getInteger("doubleClickInterval"), 2);
         }
 
         @Override
@@ -269,7 +270,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
             case Any:
             case Merchant:
                 World.getUpdateTaskManager().addTask(updateMerchantOverlays);
-
+                break;
             case Message:
                 break;
             case Input:
@@ -633,7 +634,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
                         new EntitySlickRenderImage(displayedItem));
 
                 conSlot.setImage(niftyImage);
-                conSlot.setLabelText(Integer.toString(count.getValue()));
+                conSlot.setLabelText(count.getShortText(Lang.getInstance().getLocale()));
                 if (count.getValue() > 1) {
                     conSlot.showLabel();
                 } else {

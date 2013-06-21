@@ -21,6 +21,7 @@ package illarion.mapedit.processing;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.map.hash.TIntIntHashMap;
+import illarion.common.graphics.TileInfo;
 import illarion.common.types.Location;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapTile;
@@ -313,7 +314,7 @@ public final class MapTransitions {
             if (checkTiles[i] == null) {
                 continue;
             }
-            final int tileId = Overlay.baseID(checkTiles[i].getId());
+            final int tileId = TileInfo.getBaseID(checkTiles[i].getId());
             if (analysedTiles.contains(tileId)) {
                 analysedTiles.put(tileId, analysedTiles.get(tileId) + 1);
             } else {
@@ -373,7 +374,7 @@ public final class MapTransitions {
             if (checkTiles[i] == null) {
                 continue;
             }
-            final int tileId = Overlay.baseID(checkTiles[i].getId());
+            final int tileId = TileInfo.getBaseID(checkTiles[i].getId());
             if ((tileId == 0) || (tileId > 31) || (tileId == centerTileID)) {
                 checkTiles[i] = null;
                 continue;
@@ -440,7 +441,7 @@ public final class MapTransitions {
             return;
         }
 
-        final int centerTileId = Overlay.baseID(centerTile.getId());
+        final int centerTileId = TileInfo.getBaseID(centerTile.getId());
         if ((centerTileId == 0) || (centerTileId > 31)) {
             return;
         }

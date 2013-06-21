@@ -18,7 +18,7 @@
   -->
 <nifty-controls>
     <controlDefinition name="dialog-select-list-entry" style="illarion-dialog-select-line"
-                       controller="org.illarion.org.illarion.engine.nifty.controls.dialog.select.DialogSelectEntryControl">
+                       controller="org.illarion.nifty.controls.dialog.select.DialogSelectEntryControl">
         <panel childLayout="horizontal">
             <panel childLayout="center" style="#imageContainer">
                 <image id="#imageDisplay" style="#imageDisplay"/>
@@ -31,18 +31,18 @@
     </controlDefinition>
 
     <controlDefinition name="dialog-select" visibleToMouse="true" style="illarion-dialog-select"
-                       controller="org.illarion.org.illarion.engine.nifty.controls.dialog.select.DialogSelectControl">
+                       controller="org.illarion.nifty.controls.dialog.select.DialogSelectControl">
         <control name="window" title="Nachricht" id="#window" visibleToMouse="true">
             <panel childLayout="vertical" visibleToMouse="true" width="100%">
                 <control name="label" style="nifty-label" id="#message" width="100%" padding="5px" wrap="true"/>
                 <panel width="100%" childLayout="center">
                     <control name="listBox" id="#list" vertical="optional" horizontal="off"
-                             displayItems="4" selection="Disabled" width="100%"
-                             viewConverterClass="org.illarion.org.illarion.engine.nifty.controls.dialog.select.SelectItemViewConverter">
+                             displayItems="6" selection="Disabled" width="100%"
+                             viewConverterClass="org.illarion.nifty.controls.dialog.select.SelectItemViewConverter">
                         <control name="dialog-select-list-entry" selectable="true"/>
                     </control>
                 </panel>
-                <panel id="#buttons" childLayout="center" visibleToMouse="true" width="100%">
+                <panel id="#buttons" childLayout="center" visibleToMouse="true" width="100%" padding="5px">
                     <panel childLayout="horizontal" align="center">
                         <control name="button" id="#button" label="Cancel"/>
                     </panel>

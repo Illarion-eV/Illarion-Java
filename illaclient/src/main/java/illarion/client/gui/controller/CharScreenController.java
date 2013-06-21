@@ -37,31 +37,69 @@ import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-public class CharScreenController implements ScreenController, KeyInputHandler {
-
+/**
+ * This is the screen controller that takes care for the logic behind the character selection screen.
+ *
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
+ */
+public final class CharScreenController implements ScreenController, KeyInputHandler {
+    /**
+     * The instance of the Nifty-GUI that is used.
+     */
+    @Nullable
     private Nifty nifty;
+
+    /**
+     * The screen this controller is bound to.
+     */
+    @Nullable
     private Screen screen;
 
+    /**
+     * The list box that stores the character entries.
+     */
+    @Nullable
     private ListBox<String> listBox;
 
+    /**
+     * The game instance that is used.
+     */
+    @Nonnull
     private final Game game;
+
+    /**
+     * The label that displays any problems to the player.
+     */
+    @Nullable
     private Label statusLabel;
+
+    /**
+     * This flag is set {@code true} in case the language of the client was changed and the player needs to be
+     * informed that a restart of the client is required.
+     */
     private boolean showLanguageChangedPopup;
 
     /**
      * The generated popup that is shown in case the client language got changed.
      */
+    @Nullable
     private Element popupLanguageChange;
 
-    public CharScreenController(Game game) {
+    /**
+     * Create a instance of the character screen controller.
+     *
+     * @param game the reference to the game that is required by the controller
+     */
+    public CharScreenController(@Nonnull final Game game) {
         this.game = game;
         AnnotationProcessor.process(this);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
+    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
         this.nifty = nifty;
         this.screen = screen;
 
@@ -77,6 +115,12 @@ public class CharScreenController implements ScreenController, KeyInputHandler {
         fillMyListBox();
     }
 
+    /**
+     * This class is used to react on changes of the configuration.
+     *
+     * @param topic the event topic
+     * @param event the actual event data
+     */
     @EventTopicSubscriber(topic = Lang.LOCALE_CFG)
     public void onConfigChanged(final String topic, final ConfigChangedEvent event) {
         showLanguageChangedPopup = true;
@@ -84,12 +128,19 @@ public class CharScreenController implements ScreenController, KeyInputHandler {
 
     @Override
     public void onStartScreen() {
+        if (nifty == null) {
+            throw new IllegalStateException("Instance of Nifty is not set. Controller was not properly bound.");
+        }
+        if (popupLanguageChange == null) {
+            throw new IllegalStateException(
+                    "Language change popup was not created. Controller was not properly bound.");
+        }
         if (showLanguageChangedPopup) {
             nifty.showPopup(screen, popupLanguageChange.getId(), null);
             if (Lang.getInstance().isGerman()) {
-                popupLanguageChange.findElementByName("#english").hideWithoutEffect();
+                popupLanguageChange.findElementById("#english").hideWithoutEffect();
             } else {
-                popupLanguageChange.findElementByName("#german").hideWithoutEffect();
+                popupLanguageChange.findElementById("#german").hideWithoutEffect();
             }
             nifty.closePopup(popupLanguageChange.getId());
         }
@@ -97,18 +148,24 @@ public class CharScreenController implements ScreenController, KeyInputHandler {
 
     @Override
     public void onEndScreen() {
-
+        showLanguageChangedPopup = false;
     }
 
-    private void fillMyListBox() {
-        for (final Login.CharEntry entry : Login.getInstance().getCharacterList()) {
-            if (entry.getStatus() == 0) {
-                listBox.addItem(entry.getName());
+    public void fillMyListBox() {
+        if (listBox != null) {
+            listBox.clear();
+            for (@Nonnull final Login.CharEntry entry : Login.getInstance().getCharacterList()) {
+                if (entry.getStatus() == 0) {
+                    listBox.addItem(entry.getName());
+                }
             }
         }
     }
 
     public void play() {
+        if ((listBox == null) || (statusLabel == null)) {
+            throw new IllegalStateException("CharScreenController was not bound properly.");
+        }
         if (listBox.getSelection().isEmpty()) {
             statusLabel.setText("No character selected");
             statusLabel.getElement().getParent().layoutElements();
@@ -120,6 +177,9 @@ public class CharScreenController implements ScreenController, KeyInputHandler {
     }
 
     public void logout() {
+        if ((nifty == null) || (statusLabel == null)) {
+            throw new IllegalStateException("CharScreenController was not bound properly.");
+        }
         statusLabel.setText("");
         nifty.gotoScreen("login");
     }

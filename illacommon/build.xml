@@ -102,7 +102,7 @@
         </javac>
     </target>
 
-    <target name="build_jar">
+    <target name="build_jar" depends="get_git_version">
         <jar jarfile="${jar}" basedir="${classes}" includes="illarion/common/**">
             <metainf dir="${common}">
                 <include name="*.txt"/>
@@ -112,7 +112,7 @@
                 <attribute name="Built-Date" value="${TODAY}"/>
                 <attribute name="Implementation-Vendor" value="${common.vendor}"/>
                 <attribute name="Implementation-Title" value="${common.name}"/>
-                <attribute name="Implementation-Version" value="${common.version}"/>
+                <attribute name="Implementation-Version" value="${repository.version}"/>
             </manifest>
         </jar>
         <jar jarfile="${jar}" basedir="${src}" includes="public.key" update="true" index="${build.index}"/>

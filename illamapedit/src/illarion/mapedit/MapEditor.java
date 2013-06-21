@@ -45,16 +45,10 @@ import java.io.IOException;
  */
 public final class MapEditor {
     /**
-     * The string that represents the name of this application.
+     * The identifier of the application.
      */
     @SuppressWarnings("nls")
-    public static final String APPLICATION = "Illarion Mapeditor";
-
-    /**
-     * The version number of the map editor.
-     */
-    @SuppressWarnings("nls")
-    public static final String VERSION = "2.0 alpha";
+    public static final AppIdent APPLICATION = new AppIdent("Illarion Mapeditor");
 
     /**
      * The instance of the map editor.
@@ -108,11 +102,6 @@ public final class MapEditor {
         StoppableStorage.getInstance().shutdown();
         CrashReporter.getInstance().waitForReport();
         saveConfiguration();
-    }
-
-    @Nonnull
-    public static String getVersion() {
-        return VERSION;
     }
 
     /**

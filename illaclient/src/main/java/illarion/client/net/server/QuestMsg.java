@@ -78,13 +78,14 @@ public final class QuestMsg extends AbstractReply {
 
     @Override
     public boolean executeUpdate() {
-        World.getGameGui().getQuestGui().setQuest(questId, title, description, finished);
+        World.getGameGui().getQuestGui().setQuest(questId, title, description, finished, targetLocations);
         return true;
     }
 
     @Override
     @Nonnull
     public String toString() {
-        return toString("ID: " + questId + " Title: \"" + title + '"' + (finished ? " (finished)" : ""));
+        return toString("ID: " + questId + " Title: \"" + title + '"' + (finished ? " (finished)" : "") + " Target " +
+                "Locations: " + targetLocations.length);
     }
 }
