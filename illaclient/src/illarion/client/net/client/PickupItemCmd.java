@@ -59,6 +59,6 @@ public final class PickupItemCmd extends AbstractCommand {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("Location: " + pickupLocation);
+        return toString(pickupLocation.toString());
     }
 }
