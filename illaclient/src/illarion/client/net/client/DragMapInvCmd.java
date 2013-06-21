@@ -19,7 +19,6 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
-import illarion.client.world.World;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.ItemCount;
 import illarion.common.types.Location;
@@ -36,9 +35,10 @@ import javax.annotation.concurrent.Immutable;
 @Immutable
 public final class DragMapInvCmd extends AbstractDragCommand {
     /**
-     * The direction the source location is at, relative to the character.
+     * The location the item that is moved by this command is located at.
      */
-    private final short direction;
+    @Nonnull
+    private final Location srcLoc;
 
     /**
      * The inventory slot that is the target of this drag operation.
@@ -55,13 +55,13 @@ public final class DragMapInvCmd extends AbstractDragCommand {
     public DragMapInvCmd(@Nonnull final Location source, final int destination, @Nonnull final ItemCount count) {
         super(CommandList.CMD_DRAG_MAP_INV, count);
 
-        direction = (short) World.getPlayer().getLocation().getDirection(source);
+        srcLoc = new Location(source);
         dstPos = (short) destination;
     }
 
     @Override
     public void encode(@Nonnull final NetCommWriter writer) {
-        writer.writeUByte(direction);
+        writer.writeLocation(srcLoc);
         writer.writeUByte(dstPos);
         getCount().encode(writer);
     }
@@ -70,6 +70,6 @@ public final class DragMapInvCmd extends AbstractDragCommand {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("Source Dir: " + direction + " Destination: " + dstPos + ' ' + getCount());
+        return toString("Source: " + srcLoc + " Destination: " + dstPos + ' ' + getCount());
     }
 }
