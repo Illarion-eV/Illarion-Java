@@ -217,10 +217,6 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
     @Override
     public boolean isEventProcessed(@Nonnull final GameContainer container, final int delta,
                                     @Nonnull final SceneEvent event) {
-        if (!parentTile.isAtPlayerLevel()) {
-            return false;
-        }
-
         if (event instanceof CurrentMouseLocationEvent) {
             final CurrentMouseLocationEvent moveEvent = (CurrentMouseLocationEvent) event;
             if (!isMouseInInteractionRect(moveEvent.getX(), moveEvent.getY())) {
@@ -245,6 +241,10 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
                 parentTile.getInteractive().lookAt();
             }
             return true;
+        }
+
+        if (!parentTile.isAtPlayerLevel()) {
+            return false;
         }
 
         if (event instanceof DoubleClickOnMapEvent) {

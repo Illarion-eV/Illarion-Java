@@ -193,7 +193,11 @@ public class InteractiveMapTile implements Draggable, DropTarget {
      * @return {@code true} in case the character is allowed to use anything on this tile or the tile itself
      */
     public boolean isInUseRange() {
-        return World.getPlayer().getLocation().getDistance(getLocation()) < 2;
+        @Nonnull final Location playerLocation = World.getPlayer().getLocation();
+        if (playerLocation.getScZ() == getLocation().getScZ()) {
+            return playerLocation.getDistance(getLocation()) < 2;
+        }
+        return false;
     }
 
     /**
