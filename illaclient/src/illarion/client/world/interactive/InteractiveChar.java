@@ -152,7 +152,7 @@ public final class InteractiveChar implements Draggable, DropTarget {
     public int getDisplayLevel() {
         @Nullable final Avatar avatar = parentChar.getAvatar();
         if (avatar == null) {
-            return Integer.MIN_VALUE;
+            return Integer.MAX_VALUE;
         }
         return avatar.getOrder();
     }

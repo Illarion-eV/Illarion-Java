@@ -146,7 +146,8 @@ public final class InteractionManager {
             @Nullable final InteractiveChar playerChar = World.getPlayer().getCharacter().getInteractive();
             @Nullable final InteractiveMapTile targetTile;
             if ((playerChar != null) && playerChar.isCharOnScreenLoc(x, y)) {
-                if ((possibleTile != null) && (possibleTile.getElevationDisplayLevel() > playerChar.getDisplayLevel())) {
+                if ((possibleTile != null) && (possibleTile.getElevationDisplayLevel() < playerChar.getDisplayLevel()
+                )) {
                     targetTile = possibleTile;
                 } else {
                     targetTile = playerChar.getInteractiveTile();

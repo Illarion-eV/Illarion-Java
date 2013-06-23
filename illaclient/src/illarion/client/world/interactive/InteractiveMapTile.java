@@ -236,7 +236,7 @@ public class InteractiveMapTile implements Draggable, DropTarget {
     public int getElevationDisplayLevel() {
         @Nullable final Tile tile = parentTile.getTile();
         if (tile == null) {
-            return Integer.MIN_VALUE;
+            return Integer.MAX_VALUE;
         }
         @Nullable final Item elevatingItem = parentTile.getElevatingItem();
         if (elevatingItem == null) {
