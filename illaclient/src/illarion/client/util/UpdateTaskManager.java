@@ -37,20 +37,57 @@ public final class UpdateTaskManager {
     private final Queue<UpdateTask> taskQueue;
 
     /**
+     * This value is set {@code true} while the updates are executed.
+     */
+    private boolean isInUpdateCall;
+
+    /**
+     * This is the container the current update run is executed for.
+     */
+    @Nullable
+    private GameContainer currentContainer;
+
+    /**
+     * The delta value of the current update run.
+     */
+    private int currentDelta;
+
+    /**
+     * The thread that is tasked to execute the updates.
+     */
+    @Nullable
+    private Thread currentThread;
+
+    /**
      * The default constructor that prepares the internal structures.
      */
     public UpdateTaskManager() {
         taskQueue = new ConcurrentLinkedQueue<UpdateTask>();
     }
 
+    /**
+     * This function is triggered during the update loop of the game and triggers the update tasks.
+     *
+     * @param container the game container
+     * @param delta     the time since the last update
+     */
     public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
-        while (true) {
-            @Nullable final UpdateTask task = taskQueue.poll();
-            if (task == null) {
-                return;
-            }
+        currentContainer = container;
+        currentDelta = delta;
+        currentThread = Thread.currentThread();
+        isInUpdateCall = true;
+        try {
+            while (true) {
+                @Nullable final UpdateTask task = taskQueue.poll();
+                if (task == null) {
+                    return;
+                }
 
-            task.onUpdateGame(container, delta);
+                task.onUpdateGame(container, delta);
+            }
+        } finally {
+            isInUpdateCall = false;
+            currentContainer = null;
         }
     }
 
@@ -60,6 +97,10 @@ public final class UpdateTaskManager {
      * @param task the task to execute
      */
     public void addTask(@Nonnull final UpdateTask task) {
-        taskQueue.offer(task);
+        if (isInUpdateCall && (currentThread == Thread.currentThread()) && (currentContainer != null)) {
+            task.onUpdateGame(currentContainer, currentDelta);
+        } else {
+            taskQueue.offer(task);
+        }
     }
 }

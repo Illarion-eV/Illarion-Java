@@ -70,4 +70,9 @@ public interface InventoryGui {
      * @param tooltip the tooltip
      */
     void showTooltip(int slotId, @Nonnull Tooltip tooltip);
+
+    /**
+     * Hide the inventory in case its shown and show it in case its hidden.
+     */
+    void toggleInventory();
 }
