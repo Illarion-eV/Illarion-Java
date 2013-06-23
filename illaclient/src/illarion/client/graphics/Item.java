@@ -217,7 +217,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
     @Override
     public boolean isEventProcessed(@Nonnull final GameContainer container, final int delta,
                                     @Nonnull final SceneEvent event) {
-        if (getAlpha() == 0) {
+        if (getLocalLight().getAlpha() == 0) {
             return false;
         }
 

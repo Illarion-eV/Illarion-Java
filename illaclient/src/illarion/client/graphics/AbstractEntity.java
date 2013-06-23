@@ -639,6 +639,10 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
 
         renderLight.setColor(getLocalLight());
 
+        if (renderLight.getAlpha() == 0) {
+            return;
+        }
+
         if ((baseColor != null) || (overWriteBaseColor != null)) {
             if (overWriteBaseColor != null) {
                 renderLight.multiply(overWriteBaseColor);
@@ -678,6 +682,9 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
         final Color parentLight = getParentLight();
         if (parentLight == null) {
             return getLight();
+        }
+        if (parentLight.getAlpha() == 0) {
+            return parentLight;
         }
         tempLight.setColor(parentLight);
         tempLight.multiply(getLight());
