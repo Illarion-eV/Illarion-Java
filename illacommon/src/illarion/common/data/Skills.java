@@ -39,12 +39,7 @@ public final class Skills {
      * The singleton instance of this class.
      */
     @Nonnull
-    private static final Skills INSTANCE;
-
-    static {
-        INSTANCE = new Skills();
-        SkillLoader.load();
-    }
+    private static final Skills INSTANCE = new Skills();
 
     /**
      * Get the singleton instance of this class.

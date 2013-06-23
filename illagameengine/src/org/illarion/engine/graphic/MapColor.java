@@ -34,9 +34,8 @@ public final class MapColor {
      * are not used in the client.
      */
     @SuppressWarnings("nls")
-    public static final String[] COLOR_NAMES = {"Black",
-            "Green", "Brown", "Gray", "Blue", "Yellow", "Red", "White",
-            "Dark green"};
+    public static final String[] COLOR_NAMES = {"Black", "Green", "Brown", "Gray", "Blue", "Yellow", "Red", "White",
+            "Dark green",};
 
     /**
      * Amount of color value, excluding the alpha value, in a color.
@@ -55,13 +54,21 @@ public final class MapColor {
             new ImmutableColor(255, 255, 204), // yellow
             new ImmutableColor(205, 101, 101), // red
             new ImmutableColor(255, 255, 255), // white
-            new ImmutableColor(140, 160, 100) // dark green
+            new ImmutableColor(140, 160, 100), // dark green
     };
 
     /**
      * The error and debug logger of the client.
      */
     private static final Logger LOGGER = Logger.getLogger(MapColor.class);
+
+    /**
+     * Private constructor so nothing can create a instance of this utility
+     * class.
+     */
+    private MapColor() {
+        // nothing is allowed to create a instance of this class
+    }
 
     /**
      * Get the values of a color that is defined.
@@ -96,13 +103,5 @@ public final class MapColor {
         map.put((byte) COLORS[color].getGreen());
         map.put((byte) COLORS[color].getBlue());
         map.put((byte) alpha);
-    }
-
-    /**
-     * Private constructor so nothing can create a instance of this utility
-     * class.
-     */
-    private MapColor() {
-        // nothing is allowed to create a instance of this class
     }
 }

@@ -86,7 +86,6 @@ public class Color {
         this.green = green;
         this.blue = blue;
         this.alpha = alpha;
-        clamp();
     }
 
     /**
@@ -175,10 +174,10 @@ public class Color {
     /**
      * Set the alpha component of the color.
      *
-     * @param alpha the alpha component of the color
+     * @param fAlpha the alpha component of the color
      */
-    public void setAlphaf(final float alpha) {
-        setAlpha(Math.round(alpha * MAX_INT_VALUE));
+    public void setAlphaf(final float fAlpha) {
+        setAlpha(Math.round(fAlpha * MAX_INT_VALUE));
     }
 
     /**
@@ -211,10 +210,10 @@ public class Color {
     /**
      * Set the blue component of the color.
      *
-     * @param blue the blue component of the color
+     * @param fBlue the blue component of the color
      */
-    public void setBluef(final float blue) {
-        setBlue(Math.round(blue * MAX_INT_VALUE));
+    public void setBluef(final float fBlue) {
+        setBlue(Math.round(fBlue * MAX_INT_VALUE));
     }
 
     /**
@@ -247,10 +246,10 @@ public class Color {
     /**
      * Set the green component of the color.
      *
-     * @param green the green component of the color
+     * @param fGreen the green component of the color
      */
-    public void setGreenf(final float green) {
-        setGreen(Math.round(green * MAX_INT_VALUE));
+    public void setGreenf(final float fGreen) {
+        setGreen(Math.round(fGreen * MAX_INT_VALUE));
     }
 
     /**
@@ -283,10 +282,10 @@ public class Color {
     /**
      * Set the red component of the color.
      *
-     * @param red the red component of the color
+     * @param fRed the red component of the color
      */
-    public void setRedf(final float red) {
-        setRed(Math.round(red * MAX_INT_VALUE));
+    public void setRedf(final float fRed) {
+        setRed(Math.round(fRed * MAX_INT_VALUE));
     }
 
     /**

@@ -37,12 +37,7 @@ public final class SkillGroups {
      * The singleton instance of this class.
      */
     @Nonnull
-    private static final SkillGroups INSTANCE;
-
-    static {
-        INSTANCE = new SkillGroups();
-        SkillLoader.load();
-    }
+    private static final SkillGroups INSTANCE = new SkillGroups();
 
     /**
      * Get the instance of this class.

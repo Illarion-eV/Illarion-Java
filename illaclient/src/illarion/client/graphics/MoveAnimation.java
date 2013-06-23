@@ -107,8 +107,6 @@ public class MoveAnimation extends AbstractAnimation {
             return;
         }
 
-        System.out.println("Reset Move animation!");
-
         setRunning(false);
         setPosition(dstX, dstY, dstZ);
         animationFinished(false);

@@ -158,8 +158,8 @@ public final class GraphicResolution {
      */
     @Override
     public boolean equals(final Object compObj) {
-        if (compObj instanceof String) {
-            return equals((String) compObj);
+        if (super.equals(compObj)) {
+            return true;
         }
         if (compObj instanceof GraphicResolution) {
             return equals((GraphicResolution) compObj);
@@ -223,7 +223,7 @@ public final class GraphicResolution {
      */
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return toString().hashCode();
     }
 
     /**

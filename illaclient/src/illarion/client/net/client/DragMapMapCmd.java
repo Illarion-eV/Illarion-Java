@@ -19,7 +19,6 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
-import illarion.client.world.World;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.ItemCount;
 import illarion.common.types.Location;
@@ -40,6 +39,12 @@ import javax.annotation.concurrent.Immutable;
 @Immutable
 public final class DragMapMapCmd extends AbstractDragCommand {
     /**
+     * The source location of the move operation.
+     */
+    @Nonnull
+    private final Location srcLoc;
+
+    /**
      * The location on the map that is the target of the move operation.
      */
     @Nonnull
@@ -54,12 +59,14 @@ public final class DragMapMapCmd extends AbstractDragCommand {
      */
     public DragMapMapCmd(@Nonnull final Location source, @Nonnull final Location destination,
                          @Nonnull final ItemCount count) {
-        super(CommandList.CMD_DRAG_MAP_MAP_N + World.getPlayer().getLocation().getDirection(source), count);
+        super(CommandList.CMD_DRAG_MAP_MAP, count);
+        srcLoc = new Location(source);
         dstLoc = new Location(destination);
     }
 
     @Override
     public void encode(@Nonnull final NetCommWriter writer) {
+        writer.writeLocation(srcLoc);
         writer.writeLocation(dstLoc);
         getCount().encode(writer);
     }
@@ -68,37 +75,9 @@ public final class DragMapMapCmd extends AbstractDragCommand {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        final int currID = getId();
         final StringBuilder builder = new StringBuilder();
         builder.append("Source: ");
-        switch (currID) {
-            case CommandList.CMD_DRAG_MAP_MAP_N:
-                builder.append("North");
-                break;
-            case CommandList.CMD_DRAG_MAP_MAP_NE:
-                builder.append("Northeast");
-                break;
-            case CommandList.CMD_DRAG_MAP_MAP_E:
-                builder.append("East");
-                break;
-            case CommandList.CMD_DRAG_MAP_MAP_SE:
-                builder.append("Southeast");
-                break;
-            case CommandList.CMD_DRAG_MAP_MAP_S:
-                builder.append("South");
-                break;
-            case CommandList.CMD_DRAG_MAP_MAP_SW:
-                builder.append("Southwest");
-                break;
-            case CommandList.CMD_DRAG_MAP_MAP_W:
-                builder.append("West");
-                break;
-            case CommandList.CMD_DRAG_MAP_MAP_NW:
-                builder.append("Northwest");
-                break;
-            default:
-                builder.append("unknown");
-        }
+        builder.append(srcLoc.toString());
         builder.append(" Destination: ");
         builder.append(dstLoc.toString());
         builder.append(' ');

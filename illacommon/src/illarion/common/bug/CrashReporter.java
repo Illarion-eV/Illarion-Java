@@ -28,9 +28,7 @@ import org.apache.log4j.Logger;
 import org.mantisbt.connect.IMCSession;
 import org.mantisbt.connect.MCException;
 import org.mantisbt.connect.axis.MCSession;
-import org.mantisbt.connect.model.IIssue;
-import org.mantisbt.connect.model.IProject;
-import org.mantisbt.connect.model.MCAttribute;
+import org.mantisbt.connect.model.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -371,6 +369,8 @@ public final class CrashReporter {
     private static final long SEVERITY_CRASH_NUM = 70;
     private static final long PRIORITY_HIGH_NUM = 40;
 
+    private static final String CATEGORY = "Automatic";
+
     /**
      * Send the data of the crash to the Illarion server.
      *
@@ -406,22 +406,87 @@ public final class CrashReporter {
                 return;
             }
 
-            final IIssue issue = mantisSession.newIssue(selectedProject.getId());
-            issue.setCategory("Automatic");
-            issue.setSummary(data.getExceptionName() + " in Thread " + data.getThreadName());
-            issue.setDescription("Application:" + application.getApplicationIdentifier() + "\nThread: " +
-                    data.getThreadName() + "\nException: " + data.getExceptionName() + "\nBacktrace:\n" +
-                    data.getStackBacktrace() + "\nDescription: " + data.getDescription());
-            issue.setVersion(application.getApplicationRootVersion());
-            issue.setOs(System.getProperty("os.name"));
-            issue.setOsBuild(System.getProperty("os.version"));
-            issue.setReproducibility(new MCAttribute(REPRODUCIBILITY_NA_NUM, null));
-            issue.setSeverity(new MCAttribute(SEVERITY_CRASH_NUM, null));
-            issue.setPriority(new MCAttribute(PRIORITY_HIGH_NUM, null));
-            issue.setPrivate(false);
+            final String summery = data.getExceptionName() + " in Thread " + data.getThreadName();
 
-            final long id = mantisSession.addIssue(issue);
-            LOGGER.info("Added new Issue #" + id);
+            final String exceptionDescription = "Exception: " + data.getExceptionName() + "\nBacktrace:\n" +
+                    data.getStackBacktrace() + "\nDescription: " + data.getDescription();
+
+            final String description = "Application:" + application.getApplicationIdentifier() + "\nThread: " +
+                    data.getThreadName() + '\n' + exceptionDescription;
+
+            @Nullable IIssue similarIssue = null;
+            @Nullable IIssue possibleDuplicateIssue = null;
+            @Nullable IIssue duplicateIssue = null;
+
+            @Nonnull final IIssueHeader[] headers = mantisSession.getProjectIssueHeaders(selectedProject.getId());
+            for (@Nonnull final IIssueHeader header : headers) {
+                if (!header.getCategory().equals(CATEGORY)) {
+                    continue;
+                }
+
+                if (!header.getSummary().equals(summery)) {
+                    continue;
+                }
+
+                @Nonnull final IIssue checkedIssue = mantisSession.getIssue(header.getId());
+
+                if (!checkedIssue.getDescription().endsWith(exceptionDescription)) {
+                    continue;
+                }
+
+                similarIssue = checkedIssue;
+
+                if (!checkedIssue.getVersion().equals(application.getApplicationRootVersion())) {
+                    continue;
+                }
+
+                if (!checkedIssue.getOs().equals(System.getProperty("os.name"))) {
+                    continue;
+                }
+
+                if (!checkedIssue.getOsBuild().equals(System.getProperty("os.version"))) {
+                    continue;
+                }
+
+                possibleDuplicateIssue = checkedIssue;
+
+                if (!checkedIssue.getDescription().equals(description)) {
+                    continue;
+                }
+
+                duplicateIssue = checkedIssue;
+                break;
+            }
+
+            if (duplicateIssue != null) {
+                final INote note = mantisSession.newNote("Same problem problem occurred again.");
+                mantisSession.addNote(duplicateIssue.getId(), note);
+            } else if (possibleDuplicateIssue != null) {
+                final INote note = mantisSession.newNote("A problem that is by all means very similar occurred:\n" +
+                        description + "\nOperating System: " + System.getProperty("os.name") + ' ' +
+                        System.getProperty("os.version"));
+                mantisSession.addNote(possibleDuplicateIssue.getId(), note);
+            } else {
+                final IIssue issue = mantisSession.newIssue(selectedProject.getId());
+                issue.setCategory(CATEGORY);
+                issue.setSummary(summery);
+                issue.setDescription(description);
+                issue.setVersion(application.getApplicationRootVersion());
+                issue.setOs(System.getProperty("os.name"));
+                issue.setOsBuild(System.getProperty("os.version"));
+                issue.setReproducibility(new MCAttribute(REPRODUCIBILITY_NA_NUM, null));
+                issue.setSeverity(new MCAttribute(SEVERITY_CRASH_NUM, null));
+                issue.setPriority(new MCAttribute(PRIORITY_HIGH_NUM, null));
+                issue.setPrivate(false);
+
+                final long id = mantisSession.addIssue(issue);
+                LOGGER.info("Added new Issue #" + id);
+
+                if (similarIssue != null) {
+                    mantisSession.addNote(id, mantisSession.newNote("Similar issue was found at #" +
+                            similarIssue.getId()));
+                }
+            }
         } catch (MCException e) {
             LOGGER.error("Failed to send error reporting data.", e);
         }

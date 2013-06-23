@@ -22,6 +22,7 @@ import javolution.lang.Immutable;
 import javolution.text.TextBuilder;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Represents a single item, with a position, an id, a quality, and data.
@@ -110,12 +111,20 @@ public class MapItem implements Immutable {
     }
 
     @Override
-    public boolean equals(@Nonnull final Object obj) {
-        if (getClass() != obj.getClass()) {
-            return false;
+    public boolean equals(@Nullable final Object obj) {
+        if (super.equals(obj)) {
+            return true;
         }
-        final MapItem it = (MapItem) obj;
-        return it.itemId == itemId;
+
+        if (obj instanceof MapItem) {
+            return ((MapItem) obj).itemId == itemId;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return itemId;
     }
 
     /**

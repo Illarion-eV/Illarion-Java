@@ -19,7 +19,6 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
-import illarion.client.world.World;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.ItemCount;
 import illarion.common.types.Location;
@@ -35,9 +34,10 @@ import javax.annotation.concurrent.Immutable;
 @Immutable
 public final class DragMapScCmd extends AbstractDragCommand {
     /**
-     * The source location of the dragging event.
+     * The location where the item that is moved is located at.
      */
-    private final short direction;
+    @Nonnull
+    private final Location srcLoc;
 
     /**
      * The target container of the dragging event.
@@ -61,14 +61,14 @@ public final class DragMapScCmd extends AbstractDragCommand {
                         @Nonnull final ItemCount count) {
         super(CommandList.CMD_DRAG_MAP_SC, count);
 
-        direction = (short) World.getPlayer().getLocation().getDirection(source);
+        srcLoc = new Location(source);
         targetContainer = (short) destinationContainer;
         targetContainerSlot = (short) destinationSlot;
     }
 
     @Override
     public void encode(@Nonnull final NetCommWriter writer) {
-        writer.writeUByte(direction);
+        writer.writeLocation(srcLoc);
         writer.writeUByte(targetContainer);
         writer.writeUByte(targetContainerSlot);
         getCount().encode(writer);
@@ -77,7 +77,7 @@ public final class DragMapScCmd extends AbstractDragCommand {
     @Nonnull
     @Override
     public String toString() {
-        return toString("SourceDirection: " + direction + " Destination: " + targetContainer + '/' +
+        return toString("Source: " + srcLoc + " Destination: " + targetContainer + '/' +
                 targetContainerSlot + ' ' + getCount());
     }
 }

@@ -20,56 +20,45 @@ package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
 import illarion.common.net.NetCommWriter;
-import illarion.common.types.ItemCount;
 import illarion.common.types.Location;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 /**
- * Client Command: Dragging a item from a map position to a inventory slot ({@link CommandList#CMD_DRAG_MAP_INV}).
+ * This command is used to tell the server that a item on a specified location on the map is picked up and added
+ * anywhere to the inventory of the player.
  *
- * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @Immutable
-public final class DragMapInvCmd extends AbstractDragCommand {
+public final class PickUpItemCmd extends AbstractCommand {
     /**
-     * The location the item that is moved by this command is located at.
+     * The location on the map where the item is fetched from.
      */
     @Nonnull
-    private final Location srcLoc;
+    private final Location pickUpLocation;
 
     /**
-     * The inventory slot that is the target of this drag operation.
-     */
-    private final short dstPos;
-
-    /**
-     * Default constructor for the dragging from map to inventory command.
+     * Default constructor for the pickup command.
      *
-     * @param source      the location from where the item is taken
-     * @param destination the destination slot in the inventory
-     * @param count       the amount of items to move
+     * @param location the location the item is taken from
      */
-    public DragMapInvCmd(@Nonnull final Location source, final int destination, @Nonnull final ItemCount count) {
-        super(CommandList.CMD_DRAG_MAP_INV, count);
+    public PickUpItemCmd(@Nonnull final Location location) {
+        super(CommandList.CMD_PICK_UP);
 
-        srcLoc = new Location(source);
-        dstPos = (short) destination;
+        pickUpLocation = new Location(location);
     }
 
     @Override
     public void encode(@Nonnull final NetCommWriter writer) {
-        writer.writeLocation(srcLoc);
-        writer.writeUByte(dstPos);
-        getCount().encode(writer);
+        writer.writeLocation(pickUpLocation);
     }
 
     @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("Source: " + srcLoc + " Destination: " + dstPos + ' ' + getCount());
+        return toString(pickUpLocation.toString());
     }
 }

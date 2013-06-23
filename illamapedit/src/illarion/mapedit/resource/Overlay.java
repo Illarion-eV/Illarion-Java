@@ -56,40 +56,6 @@ public class Overlay {
         return imgs;
     }
 
-    /**
-     * Returns the overlay id of the tile
-     *
-     * @param id
-     * @return
-     */
-    public static int overlayID(final int id) {
-        if ((id & SHAPE_MASK) > 0) {
-            return (id & OVERLAY_MASK) >> 5;
-        }
-        return 0;
-    }
-
-    public static int shapeID(final int id) {
-        final int shape = (id & SHAPE_MASK) >> 10;
-        if (shape <= 0) {
-            return 0;
-        }
-        return shape;
-    }
-
-    /**
-     * Return the base id of a tile
-     *
-     * @param id
-     * @return
-     */
-    public static int baseID(final int id) {
-        if ((id & SHAPE_MASK) > 0) {
-            return id & BASE_MASK;
-        }
-        return id;
-    }
-
     public static int generateTileId(final int baseId, final int overlayId, final int shapeId) {
         return (baseId & BASE_MASK) | ((overlayId << 5) & OVERLAY_MASK) | ((shapeId << 10) & SHAPE_MASK);
     }

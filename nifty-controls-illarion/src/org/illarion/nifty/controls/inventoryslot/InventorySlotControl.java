@@ -194,6 +194,8 @@ public class InventorySlotControl extends AbstractController implements Inventor
             draggedImage.setVisible(false);
             draggable.setVisible(false);
             draggable.getNiftyControl(Draggable.class).disable(true);
+            hideLabel();
+            hideMerchantOverlay();
         }
     }
 
@@ -297,10 +299,16 @@ public class InventorySlotControl extends AbstractController implements Inventor
         } else {
             hideLabel();
         }
+        if (merchantOverlay.getRenderer(ImageRenderer.class).getImage() == null) {
+            merchantOverlay.hideWithoutEffect();
+        } else {
+            merchantOverlay.showWithoutEffects();
+        }
     }
 
     @Override
     public void hideMerchantOverlay() {
+        merchantOverlay.getRenderer(ImageRenderer.class).setImage(null);
         merchantOverlay.hideWithoutEffect();
     }
 

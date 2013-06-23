@@ -200,7 +200,6 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
                 currentDeltaX = dX;
                 currentDeltaY = dY;
 
-                System.out.println("New dX: " + dX + " New dY: " + dY);
                 targetAngle = ((Math.round(getAngle() * 10.f) % 3600) + 3600) % 3600;
             }
 

@@ -33,7 +33,51 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class IgeInputSystem implements InputSystem, InputListener {
+    /**
+     * This value contains a key that was stalled as key down to properly detect typing events.
+     */
+    @Nullable
     private Key stalledKeyDownKey;
+
+    /**
+     * The amount of mouse click events that should be consumed by the Nifty-GUI.
+     */
+    private int consumeClicks;
+
+    /**
+     * This is set {@code true} in case the input system detected a mouse click.
+     */
+    private boolean receivedClick;
+
+    /**
+     * The input implementation of the engine.
+     */
+    @Nonnull
+    private final Input input;
+
+    /**
+     * This is the consumer that receives the input data. This is {@code null} while Nifty is not expecting input data.
+     */
+    @Nullable
+    private NiftyInputConsumer currentConsumer;
+
+    /**
+     * This is the listener that is supposed to receive the input data that was not processed by the Nifty-GUI.
+     */
+    @Nonnull
+    private final InputListener listener;
+
+    /**
+     * Create a new input device and set the input implementation that provides the input data.
+     *
+     * @param input    the input implementation
+     * @param listener the listener that receives input data was was not processed by the Nifty-GUI
+     */
+    public IgeInputSystem(@Nonnull final Input input, @Nonnull final InputListener listener) {
+        input.setListener(this);
+        this.input = input;
+        this.listener = listener;
+    }
 
     @Override
     public void keyDown(@Nonnull final Key key) {
@@ -104,13 +148,6 @@ public class IgeInputSystem implements InputSystem, InputListener {
             stalledKeyDownKey = null;
         }
     }
-
-    /**
-     * The amount of mouse click events that should be consumed by the Nifty-GUI.
-     */
-    private int consumeClicks;
-
-    private boolean receivedClick;
 
     @Override
     public void buttonDown(final int mouseX, final int mouseY, @Nonnull final Button button) {
@@ -369,6 +406,8 @@ public class IgeInputSystem implements InputSystem, InputListener {
                 return KeyboardInputEvent.KEY_PRIOR;
             case PageDown:
                 return KeyboardInputEvent.KEY_NEXT;
+            case Tab:
+                return KeyboardInputEvent.KEY_TAB;
         }
         return -1;
     }
@@ -377,36 +416,6 @@ public class IgeInputSystem implements InputSystem, InputListener {
     public void setResourceLoader(final NiftyResourceLoader niftyResourceLoader) {
         // not needed
     }
-
-    /**
-     * The input implementation of the engine.
-     */
-    @Nonnull
-    private final Input input;
-
-    /**
-     * Create a new input device and set the input implementation that provides the input data.
-     *
-     * @param input    the input implementation
-     * @param listener the listener that receives input data was was not processed by the Nifty-GUI
-     */
-    public IgeInputSystem(@Nonnull final Input input, @Nonnull final InputListener listener) {
-        input.setListener(this);
-        this.input = input;
-        this.listener = listener;
-    }
-
-    /**
-     * This is the consumer that receives the input data. This is {@code null} while Nifty is not expecting input data.
-     */
-    @Nullable
-    private NiftyInputConsumer currentConsumer;
-
-    /**
-     * This is the listener that is supposed to receive the input data that was not processed by the Nifty-GUI.
-     */
-    @Nonnull
-    private final InputListener listener;
 
     @Override
     public void forwardEvents(@Nonnull final NiftyInputConsumer inputEventConsumer) {

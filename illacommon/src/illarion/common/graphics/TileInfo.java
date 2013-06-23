@@ -78,7 +78,7 @@ public final class TileInfo implements Immutable {
      * @return the base tile ID
      */
     public static int getBaseID(final int id) {
-        if ((id & SHAPE_MASK) > 0) {
+        if ((id & SHAPE_MASK) != 0) {
             return id & BASE_MASK;
         }
         return id;
@@ -91,7 +91,7 @@ public final class TileInfo implements Immutable {
      * @return the overlay tile ID
      */
     public static int getOverlayID(final int id) {
-        if ((id & SHAPE_MASK) > 0) {
+        if ((id & SHAPE_MASK) != 0) {
             return (id & OVERLAY_MASK) >> 5;
         }
         return 0;

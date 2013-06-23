@@ -42,10 +42,10 @@ import java.util.List;
  */
 public final class LightTracer extends Thread implements Stoppable {
     /**
-     * The current base level. Means the Z coordinate of the level the player is
-     * currently on.
+     * The maximal radius of the light. So length of the light rays is between 1
+     * and the value of this constant.
      */
-    private static int baseLevel;
+    public static final int MAX_RADIUS = 6;
 
     /**
      * The logger instance that takes care for the logging output of this class.
@@ -53,16 +53,10 @@ public final class LightTracer extends Thread implements Stoppable {
     private static final Logger LOGGER = Logger.getLogger(LightTracer.class);
 
     /**
-     * The maximal radius of the light. So length of the light rays is between 1
-     * and the value of this constant.
-     */
-    public static final int MAX_RADIUS = 6;
-
-    /**
      * The storage of the pre-calculated rays.
      */
     @Nonnull
-    private final static LightRays[] RAYS;
+    private static final LightRays[] RAYS;
 
     static {
         RAYS = new LightRays[MAX_RADIUS];
@@ -70,41 +64,6 @@ public final class LightTracer extends Thread implements Stoppable {
         for (int i = 0; i < MAX_RADIUS; ++i) {
             RAYS[i] = new LightRays(i + 1);
         }
-    }
-
-    /**
-     * Get the current base level and so the current z level of the player
-     * location.
-     *
-     * @return the z level of the player location
-     */
-    public static int getBaseLevel() {
-        return baseLevel;
-    }
-
-    /**
-     * Get the pre-calculated light rays for a given size of the light.
-     *
-     * @param size the length of the ray that is needed
-     * @return the pre-calculated rays.
-     */
-    @SuppressWarnings("nls")
-    public static LightRays getRays(final int size) {
-        if ((size > 0) && (size <= MAX_RADIUS)) {
-            return RAYS[size - 1];
-        }
-
-        throw new IllegalArgumentException("invalid shadow ray size " + size);
-    }
-
-    /**
-     * Set the current base level. The base level always has to be the level the
-     * player character is on.
-     *
-     * @param lvl the current z level of the player character location
-     */
-    public static void setBaseLevel(final int lvl) {
-        baseLevel = lvl;
     }
 
     /**
@@ -124,7 +83,7 @@ public final class LightTracer extends Thread implements Stoppable {
      * If this variable is set to <code>true</code> the light calculations are
      * restarted at the next loop of the light tracer thread cycle.
      */
-    private volatile boolean doRestart = false;
+    private volatile boolean doRestart;
 
     /**
      * This variable stores the last index of a tiny light that was handled.
@@ -141,12 +100,6 @@ public final class LightTracer extends Thread implements Stoppable {
      * calculating results for all light sources handled by this light tracer.
      */
     private final LightingMap mapSource;
-
-    /**
-     * Pause flag that is used to interrupt the light tracer for a short time.
-     */
-    private boolean pause;
-
     /**
      * The running flag that needs to be <code>true</code> as long as the light
      * tracer is supposed to calculate the lights.
@@ -173,8 +126,22 @@ public final class LightTracer extends Thread implements Stoppable {
         mapSource = tracerMapSource;
         dirtyLights = new ArrayList<LightSource>();
         tidyLights = new ArrayList<LightSource>();
-        pause = false;
         running = false;
+    }
+
+    /**
+     * Get the pre-calculated light rays for a given size of the light.
+     *
+     * @param size the length of the ray that is needed
+     * @return the pre-calculated rays.
+     */
+    @SuppressWarnings("nls")
+    public static LightRays getRays(final int size) {
+        if ((size > 0) && (size <= MAX_RADIUS)) {
+            return RAYS[size - 1];
+        }
+
+        throw new IllegalArgumentException("invalid shadow ray size " + size);
     }
 
     /**
@@ -192,7 +159,7 @@ public final class LightTracer extends Thread implements Stoppable {
                 dirtyLights.add(light);
             }
             setDirty(true);
-            lightsListsLock.notify();
+            lightsListsLock.notifyAll();
         }
     }
 
@@ -246,22 +213,6 @@ public final class LightTracer extends Thread implements Stoppable {
     }
 
     /**
-     * Notify light system about relevant change.
-     *
-     * @param x the x coordinate of the location the change occurred at
-     * @param y the y coordinate of the location the change occurred at
-     * @param z the z coordinate of the location the change occurred at
-     * @deprecated better use {@link #notifyChange(Location)}
-     */
-    @Deprecated
-    public void notifyChange(final int x, final int y, final int z) {
-        final Location loc = Location.getInstance();
-        loc.setSC(x, y, z);
-        notifyChange(loc);
-        loc.recycle();
-    }
-
-    /**
      * Notify the light system about a change on the map. This notify is
      * forwarded to all light sources and those only take the notify into
      * account in case its within the range of their rays. So every change on
@@ -290,14 +241,6 @@ public final class LightTracer extends Thread implements Stoppable {
         if (changedSomething) {
             restart();
         }
-    }
-
-    /**
-     * Interrupt the calculations of the light tracer until {@link #start()} is
-     * called next time.
-     */
-    public void pause() {
-        pause = true;
     }
 
     /**
@@ -374,7 +317,7 @@ public final class LightTracer extends Thread implements Stoppable {
     private void restart() {
         doRestart = true;
         synchronized (lightsListsLock) {
-            lightsListsLock.notify();
+            lightsListsLock.notifyAll();
         }
     }
 
@@ -395,7 +338,7 @@ public final class LightTracer extends Thread implements Stoppable {
             LightSource light = null;
             boolean dirtyLight = false;
             synchronized (lightsListsLock) {
-                if (dirty && !pause) {
+                if (dirty) {
                     if (!tidyLights.isEmpty()
                             && ((tidyLights.size() - 1) > lastTinyIndex)) {
                         lastTinyIndex++;
@@ -439,7 +382,7 @@ public final class LightTracer extends Thread implements Stoppable {
     public void saveShutdown() {
         running = false;
         synchronized (lightsListsLock) {
-            lightsListsLock.notify();
+            lightsListsLock.notifyAll();
         }
     }
 
@@ -478,14 +421,6 @@ public final class LightTracer extends Thread implements Stoppable {
      */
     @Override
     public synchronized void start() {
-        if (pause) {
-            pause = false;
-            synchronized (lightsListsLock) {
-                lightsListsLock.notify();
-            }
-            return;
-        }
-
         if (running) {
             return;
         }

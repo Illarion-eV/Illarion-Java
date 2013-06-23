@@ -145,12 +145,14 @@ public final class CreditsPerson implements Comparable<CreditsPerson> {
         if (super.equals(other)) {
             return true;
         }
-        if (other == null) {
-            return false;
-        }
         if (other instanceof CreditsPerson) {
             return name.equals(((CreditsPerson) other).name);
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
     }
 }

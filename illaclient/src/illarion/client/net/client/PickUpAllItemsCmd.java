@@ -20,50 +20,32 @@ package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
 import illarion.common.net.NetCommWriter;
-import illarion.common.types.Location;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
-import javax.annotation.concurrent.ThreadSafe;
 
 /**
- * This command is used to inform the server that the character turns towards a specified direction.
+ * This command is used to tell the server that the character is picking up all items in range.
  *
- * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @Immutable
-@ThreadSafe
-public final class TurnCmd extends AbstractCommand {
+public final class PickUpAllItemsCmd extends AbstractCommand {
     /**
-     * The direction the character is supposed to turn to.
+     * Default constructor for the pickup all command.
      */
-    private byte direction;
-
-    /**
-     * Default constructor for the turn message.
-     *
-     * @param direction the direction to turn to
-     */
-    public TurnCmd(final int direction) {
-        super(CommandList.CMD_TURN);
-
-        if ((direction < 0) || (direction >= Location.DIR_MOVE8)) {
-            throw new IllegalArgumentException("Direction out of range: " + direction);
-        }
-
-        this.direction = (byte) direction;
+    public PickUpAllItemsCmd() {
+        super(CommandList.CMD_PICK_UP_ALL);
     }
 
     @Override
     public void encode(@Nonnull final NetCommWriter writer) {
-        writer.writeByte(direction);
     }
 
     @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("Direction: " + direction);
+        return toString(null);
     }
 }

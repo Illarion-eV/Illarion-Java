@@ -21,7 +21,6 @@ package org.illarion.engine.graphic;
 import illarion.common.types.Location;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +40,89 @@ public final class LightSource {
     private static final List<LightSource>[] CACHE = new List[LightTracer.MAX_RADIUS];
 
     /**
+     * The brightness of the light. This acts like a general modifier on the
+     * brightness of the light that reduces anyway with increasing distance from
+     * the light source.
+     */
+    private double bright;
+
+    /**
+     * The color of the light itself.
+     */
+    @Nonnull
+    private final Color color;
+
+    /**
+     * The dirty flag, this is set to true in case there are further
+     * calculations needed and to false in case all calculations are done.
+     */
+    private boolean dirty;
+
+    /**
+     * The intensity array stores the calculated light intensity values. These
+     * result from the pre-calculated light rays along with the situation on the
+     * map such as objects that block out the light.
+     */
+    @Nonnull
+    private final double[][] intensity;
+
+    /**
+     * Invert flag. If this is set to true it results in a reduce of the light
+     * share on a tile instead of a increase.
+     */
+    private boolean invert;
+
+    /**
+     * Store if this light is currently in the cache.
+     */
+    private boolean lightCached;
+
+    /**
+     * The location of the light source on the map.
+     */
+    @Nonnull
+    private Location location;
+
+    /**
+     * The reference map that is used to get the data how the light spreads on
+     * the map.
+     */
+    private LightingMap mapSource;
+
+    /**
+     * The light rays that spread from the light source.
+     */
+    private final LightRays rays;
+
+    /**
+     * The length of the light rays that are send out by this light source.
+     */
+    private int size;
+
+    /**
+     * A location instance for temporary purposes. This is for calculations or
+     * to get some data from other classes.
+     */
+    private final Location tempLocation = new Location();
+
+    /**
+     * Constructor for a new light source at a given location with some encoded
+     * settings.
+     *
+     * @param location the location of the light source on the server map
+     * @param encoding the encoding of the light, this contains the color, the
+     *                 brightness, the size and the inversion flag
+     */
+    private LightSource(@Nonnull final Location location, final int encoding) {
+        final int newSize = (encoding / 10000) % 10;
+        rays = LightTracer.getRays(newSize);
+        intensity = new double[(newSize * 2) + 1][(newSize * 2) + 1];
+        color = new Color(Color.WHITE);
+
+        init(location, encoding);
+    }
+
+    /**
      * Retrieve a light from the cache or create a new one.
      *
      * @param loc      the location of the light source on the map
@@ -48,7 +130,7 @@ public final class LightSource {
      *                 in order to receive the parameters of the light
      * @return the prepared instance of the light source
      */
-    @Nullable
+    @Nonnull
     @SuppressWarnings("nls")
     public static LightSource createLight(final Location loc,
                                           final int encoding) {
@@ -100,89 +182,6 @@ public final class LightSource {
     }
 
     /**
-     * The brightness of the light. This acts like a general modifier on the
-     * brightness of the light that reduces anyway with increasing distance from
-     * the light source.
-     */
-    private float bright;
-
-    /**
-     * The color of the light itself.
-     */
-    @Nonnull
-    private final transient Color color;
-
-    /**
-     * The dirty flag, this is set to true in case there are further
-     * calculations needed and to false in case all calculations are done.
-     */
-    private boolean dirty;
-
-    /**
-     * The intensity array stores the calculated light intensity values. These
-     * result from the pre-calculated light rays along with the situation on the
-     * map such as objects that block out the light.
-     */
-    @Nonnull
-    private final float[][] intensity;
-
-    /**
-     * Invert flag. If this is set to true it results in a reduce of the light
-     * share on a tile instead of a increase.
-     */
-    private boolean invert;
-
-    /**
-     * Store if this light is currently in the cache.
-     */
-    private boolean lightCached = false;
-
-    /**
-     * The location of the light source on the map.
-     */
-    @Nonnull
-    private transient Location location;
-
-    /**
-     * The reference map that is used to get the data how the light spreads on
-     * the map.
-     */
-    private transient LightingMap mapSource;
-
-    /**
-     * The light rays that spread from the light source.
-     */
-    private final LightRays rays;
-
-    /**
-     * The length of the light rays that are send out by this light source.
-     */
-    private int size;
-
-    /**
-     * A location instance for temporary purposes. This is for calculations or
-     * to get some data from other classes.
-     */
-    private final Location tempLocation = new Location();
-
-    /**
-     * Constructor for a new light source at a given location with some encoded
-     * settings.
-     *
-     * @param location the location of the light source on the server map
-     * @param encoding the encoding of the light, this contains the color, the
-     *                 brightness, the size and the inversion flag
-     */
-    private LightSource(@Nonnull final Location location, final int encoding) {
-        final int newSize = (encoding / 10000) % 10;
-        rays = LightTracer.getRays(newSize);
-        intensity = new float[(newSize * 2) + 1][(newSize * 2) + 1];
-        color = new Color(Color.WHITE);
-
-        init(location, encoding);
-    }
-
-    /**
      * Apply shadow map to rendering target. So all calculated intensity values
      * are added to the map by this function.
      */
@@ -200,18 +199,16 @@ public final class LightSource {
             tempLocation.setSC(tempLocation.getScX(), yOff,
                     tempLocation.getScZ());
             while (tempLocation.getScY() < yLimit) {
-                final float locIntensity =
-                        intensity[tempLocation.getScX() - xOff][tempLocation
-                                .getScY() - yOff];
+                final double locIntensity = intensity[tempLocation.getScX() - xOff][tempLocation.getScY() - yOff];
                 if (locIntensity == 0) {
                     tempLocation.addSC(0, 1, 0);
                     continue;
                 }
 
-                final float factor = locIntensity * bright;
+                final double factor = locIntensity * bright;
 
-                Color tempColor = new Color(color);
-                tempColor.multiply(factor);
+                final Color tempColor = new Color(color);
+                tempColor.multiply((float) factor);
                 if (invert) {
                     tempColor.multiply(-1.f);
                 }
@@ -347,19 +344,18 @@ public final class LightSource {
     /**
      * Set light intensity in shadow map and return opacity value.
      *
-     * @param x      the X offset of the location thats intensity shall be set to the
+     * @param x      the X offset of the location that's intensity shall be set to the
      *               location of the light source
-     * @param y      the Y offset of the location thats intensity shall be set to the
+     * @param y      the Y offset of the location that's intensity shall be set to the
      *               location of the light source
      * @param newInt the intensity that shall for this location now
-     * @return the obscurity of the location thats light intensity was just set
+     * @return the obscurity of the location that's light intensity was just set
      */
-    public int setIntensity(final int x, final int y, final float newInt) {
-        assert (lightCached == false);
+    public int setIntensity(final int x, final int y, final double newInt) {
+        assert !lightCached;
         tempLocation.setSC(location.getScX() + x, location.getScY() + y, location.getScZ());
 
-        if (((x == 0) && (y == 0))
-                || mapSource.acceptsLight(tempLocation, x, y)) {
+        if (((x == 0) && (y == 0)) || mapSource.acceptsLight(tempLocation, x, y)) {
             intensity[x + size][y + size] = newInt;
         }
         return mapSource.blocksView(tempLocation);
@@ -373,7 +369,7 @@ public final class LightSource {
      * @param newMapSource the map that contains the light source
      */
     public void setMapSource(final LightingMap newMapSource) {
-        assert (lightCached == false);
+        assert !lightCached;
         if ((mapSource == null) || (mapSource != newMapSource)) {
             mapSource = newMapSource;
             dirty = true;

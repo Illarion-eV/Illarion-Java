@@ -45,6 +45,8 @@ import org.illarion.engine.graphic.LightSource;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
+import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -262,6 +264,12 @@ public final class Char implements AnimatedMove {
      */
     @Nonnull
     private final Map<CharacterAttribute, Integer> attributes;
+
+    /**
+     * The reference to the interactive character instance that points to this character.
+     */
+    @Nullable
+    private Reference<InteractiveChar> interactiveCharRef;
 
     /**
      * Constructor to create a new character.
@@ -768,7 +776,15 @@ public final class Char implements AnimatedMove {
      */
     @Nullable
     public InteractiveChar getInteractive() {
-        return new InteractiveChar(this);
+        if (interactiveCharRef != null) {
+            @Nullable final InteractiveChar interactiveChar = interactiveCharRef.get();
+            if (interactiveChar != null) {
+                return interactiveChar;
+            }
+        }
+        final InteractiveChar interactiveChar = new InteractiveChar(this);
+        interactiveCharRef = new SoftReference<InteractiveChar>(interactiveChar);
+        return interactiveChar;
     }
 
     /**

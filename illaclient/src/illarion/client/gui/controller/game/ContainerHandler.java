@@ -270,7 +270,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
             case Any:
             case Merchant:
                 World.getUpdateTaskManager().addTask(updateMerchantOverlays);
-
+                break;
             case Message:
                 break;
             case Input:

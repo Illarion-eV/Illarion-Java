@@ -37,6 +37,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.NotThreadSafe;
 import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -146,10 +147,37 @@ public final class MapTile implements AlphaChangeListener {
     private Reference<MapTile> obstructingTileRef;
 
     /**
+     * The reference to the interactive map tile that was buffered for later usage.
+     */
+    @Nullable
+    private Reference<InteractiveMapTile> interactiveMapTileRef;
+
+    /**
      * The map group this tile is assigned to.
      */
     @Nullable
     private MapGroup group;
+
+    /**
+     * Get the item that causes the elevation.
+     *
+     * @return get the item that causes a elevation in case there is any
+     */
+    @Nullable
+    public Item getElevatingItem() {
+        if (elevation == 0) {
+            return null;
+        }
+        itemsLock.readLock().lock();
+        try {
+            if ((items == null) || (items.size() <= elevationIndex)) {
+                return null;
+            }
+            return items.get(elevationIndex);
+        } finally {
+            itemsLock.readLock().unlock();
+        }
+    }
 
     public void setObstructingTile(@Nonnull final MapTile tile) {
         obstructingTileRef = new WeakReference<MapTile>(tile);
@@ -503,11 +531,6 @@ public final class MapTile implements AlphaChangeListener {
      * light sources.
      */
     private void checkLight() {
-        // light sources are only on player level
-        if (!World.getPlayer().isBaseLevel(tileLocation)) {
-            return;
-        }
-
         int newLightValue = 0;
 
         itemsLock.readLock().lock();
@@ -648,7 +671,16 @@ public final class MapTile implements AlphaChangeListener {
         if (removedTile) {
             LOGGER.warn("Request a interactive reference to a removed tile.");
         }
-        return new InteractiveMapTile(this);
+        if (interactiveMapTileRef != null) {
+            @Nullable final InteractiveMapTile interactiveMapTile = interactiveMapTileRef.get();
+            if (interactiveMapTile != null) {
+                return interactiveMapTile;
+            }
+        }
+
+        final InteractiveMapTile interactiveMapTile = new InteractiveMapTile(this);
+        interactiveMapTileRef = new SoftReference<InteractiveMapTile>(interactiveMapTile);
+        return interactiveMapTile;
     }
 
     /**

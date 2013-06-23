@@ -18,6 +18,7 @@
  */
 package illarion.mapedit.data;
 
+import illarion.common.graphics.TileInfo;
 import illarion.mapedit.resource.Overlay;
 import javolution.text.TextBuilder;
 import javolution.util.FastList;
@@ -47,9 +48,9 @@ public class MapTile {
 
         @Nonnull
         public static MapTile setId(final int id, @Nonnull final MapTile old) {
-            final int baseId = (Overlay.shapeID(id) == 0) ? id : Overlay.baseID(id);
-            final int overlayId = (Overlay.shapeID(id) == 0) ? 0 : Overlay.overlayID(id);
-            final int shapeId = Overlay.shapeID(id);
+            final int baseId = (TileInfo.hasOverlay(id)) ? id : TileInfo.getBaseID(id);
+            final int overlayId = (TileInfo.hasOverlay(id)) ? 0 : TileInfo.getOverlayID(id);
+            final int shapeId = TileInfo.getShapeId(id);
             return new MapTile(baseId, overlayId, shapeId, old.musicID, old.mapItems, old.mapWarpPoint);
         }
 

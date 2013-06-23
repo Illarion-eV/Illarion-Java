@@ -248,7 +248,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
 
         final GraphicResolution[] result = new GraphicResolution[displayModes.length];
 
-        for (int i = 0, displayModesLength = displayModes.length; i < displayModesLength; i++) {
+        for (int i = 0; i < displayModes.length; i++) {
             final DisplayMode mode = displayModes[i];
             result[i] = new GraphicResolution(mode.getWidth(), mode.getHeight(), mode.getBitsPerPixel(),
                     mode.getFrequency());

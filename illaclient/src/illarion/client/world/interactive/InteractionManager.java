@@ -141,7 +141,20 @@ public final class InteractionManager {
         }
 
         try {
-            final InteractiveMapTile targetTile = World.getMap().getInteractive().getInteractiveTileOnScreenLoc(x, y);
+            @Nullable final InteractiveMapTile possibleTile = World.getMap().getInteractive()
+                    .getInteractiveTileOnScreenLoc(x, y);
+            @Nullable final InteractiveChar playerChar = World.getPlayer().getCharacter().getInteractive();
+            @Nullable final InteractiveMapTile targetTile;
+            if ((playerChar != null) && playerChar.isCharOnScreenLoc(x, y)) {
+                if ((possibleTile != null) && (possibleTile.getElevationDisplayLevel() < playerChar.getDisplayLevel()
+                )) {
+                    targetTile = possibleTile;
+                } else {
+                    targetTile = playerChar.getInteractiveTile();
+                }
+            } else {
+                targetTile = possibleTile;
+            }
             if (targetTile == null) {
                 return;
             }

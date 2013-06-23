@@ -18,6 +18,7 @@
  */
 package illarion.easynpc.parser.talk.consequences;
 
+import illarion.common.data.SkillLoader;
 import illarion.common.data.Skills;
 import illarion.easynpc.Lang;
 import illarion.easynpc.data.CalculationOperators;
@@ -46,6 +47,13 @@ public final class Skill extends ConsequenceParser {
     @SuppressWarnings("nls")
     private static final Pattern STRING_FIND = Pattern.compile("\\s*skill\\s*\\(\\s*([a-z," +
             "\\s]+)\\s*\\)\\s*([+\\-=]+)\\s*" + AdvNumber.ADV_NUMBER_REGEXP + "\\s*,\\s*", Pattern.CASE_INSENSITIVE);
+
+    /**
+     * Default constructor that takes care of loading the depending data.
+     */
+    public Skill() {
+        SkillLoader.load();
+    }
 
     /**
      * Extract a condition from the working string.
