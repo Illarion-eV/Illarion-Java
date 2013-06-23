@@ -143,4 +143,17 @@ public final class InteractiveChar implements Draggable, DropTarget {
     public MapTile getMapTile() {
         return World.getMap().getMapAt(parentChar.getLocation());
     }
+
+    /**
+     * Get the display level. This can be used to determine the order of multiple objects in the render list.
+     *
+     * @return the display level
+     */
+    public int getDisplayLevel() {
+        @Nullable final Avatar avatar = parentChar.getAvatar();
+        if (avatar == null) {
+            return Integer.MIN_VALUE;
+        }
+        return avatar.getOrder();
+    }
 }

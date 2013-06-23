@@ -158,6 +158,27 @@ public final class MapTile implements AlphaChangeListener {
     @Nullable
     private MapGroup group;
 
+    /**
+     * Get the item that causes the elevation.
+     *
+     * @return get the item that causes a elevation in case there is any
+     */
+    @Nullable
+    public Item getElevatingItem() {
+        if (elevation == 0) {
+            return null;
+        }
+        itemsLock.readLock().lock();
+        try {
+            if ((items == null) || (items.size() <= elevationIndex)) {
+                return null;
+            }
+            return items.get(elevationIndex);
+        } finally {
+            itemsLock.readLock().unlock();
+        }
+    }
+
     public void setObstructingTile(@Nonnull final MapTile tile) {
         obstructingTileRef = new WeakReference<MapTile>(tile);
     }

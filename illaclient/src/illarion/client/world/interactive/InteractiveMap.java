@@ -84,12 +84,29 @@ public final class InteractiveMap {
 
         final int playerBase = World.getPlayer().getBaseLevel();
         final int base = playerBase - 2;
-        final int lowX = helpLoc.getScX() + ((2 - playerBase) * TILE_PERSPECTIVE_OFFSET);
-        final int lowY = helpLoc.getScY() - ((2 - playerBase) * TILE_PERSPECTIVE_OFFSET);
+        final int lowX = helpLoc.getScX() - (base * TILE_PERSPECTIVE_OFFSET);
+        final int lowY = helpLoc.getScY() + (base * TILE_PERSPECTIVE_OFFSET);
 
         for (int i = 4; i >= 0; --i) {
             final int levelOffset = TILE_PERSPECTIVE_OFFSET * i;
-            @Nullable final MapTile foundTile = parentMap.getMapAt(lowX - levelOffset, lowY + levelOffset, base + i);
+
+            final int tilePosX = lowX - levelOffset;
+            final int tilePosY = lowY + levelOffset;
+            final int tilePosZ = base + i;
+
+            @Nullable final MapTile foundElevatedTile = parentMap.getMapAt(tilePosX - 1, tilePosY + 1, tilePosZ);
+            if ((foundElevatedTile != null) && (foundElevatedTile.getElevation() > 0)) {
+                helpLoc.setDC(displayX, displayY + foundElevatedTile.getElevation());
+
+                final int elevatedX = helpLoc.getScX() - (tilePosZ * TILE_PERSPECTIVE_OFFSET);
+                final int elevatedY = helpLoc.getScY() + (tilePosZ * TILE_PERSPECTIVE_OFFSET);
+
+                if ((elevatedX == (tilePosX - 1)) && (elevatedY == (tilePosY + 1))) {
+                    return foundElevatedTile;
+                }
+            }
+
+            @Nullable final MapTile foundTile = parentMap.getMapAt(tilePosX, tilePosY, tilePosZ);
             if ((foundTile != null) && !foundTile.isHidden()) {
                 return foundTile;
             }
