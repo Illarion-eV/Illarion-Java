@@ -34,7 +34,6 @@ import illarion.client.IllaClient;
 import illarion.client.gui.EntitySlickRenderImage;
 import illarion.client.gui.InventoryGui;
 import illarion.client.gui.Tooltip;
-import illarion.client.input.InputReceiver;
 import illarion.client.net.client.PickUpAllItemsCmd;
 import illarion.client.net.server.events.DialogMerchantReceivedEvent;
 import illarion.client.resources.ItemFactory;
@@ -55,7 +54,6 @@ import illarion.common.types.Rectangle;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
-import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.input.Button;
 import org.illarion.engine.input.Input;
@@ -260,18 +258,12 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
         World.getUpdateTaskManager().addTask(updateMerchantOverlays);
     }
 
-    @EventTopicSubscriber(topic = InputReceiver.EB_TOPIC)
-    public void onInputEvent(final String topic, @Nonnull final String data) {
-        if (data.equals("ToggleInventory")) {
-            toggleInventory();
-        }
-    }
-
     @NiftyEventSubscriber(id = "pickUpItemsBtn")
     public void onPickUpItemsBtnClick(final String topic, @Nonnull final ButtonClickedEvent event) {
         World.getNet().sendCommand(new PickUpAllItemsCmd());
     }
 
+    @Override
     public void toggleInventory() {
         if (inventoryWindow != null) {
             if (inventoryWindow.isVisible()) {
