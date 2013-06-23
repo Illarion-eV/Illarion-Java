@@ -48,11 +48,6 @@ public final class KeyMapper {
         inputMap.put(Key.Enter, "SelectChat");
 
         // walking commands
-        inputMap.put(Key.W, "WalkNorthEast");
-        inputMap.put(Key.A, "WalkNorthWest");
-        inputMap.put(Key.S, "WalkSouthWest");
-        inputMap.put(Key.D, "WalkSouthEast");
-
         inputMap.put(Key.CursorUp, "WalkNorthEast");
         inputMap.put(Key.CursorLeft, "WalkNorthWest");
         inputMap.put(Key.CursorDown, "WalkSouthWest");
