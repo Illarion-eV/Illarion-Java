@@ -87,11 +87,9 @@ public final class InteractiveMap {
         final int lowX = helpLoc.getScX() + ((2 - playerBase) * TILE_PERSPECTIVE_OFFSET);
         final int lowY = helpLoc.getScY() - ((2 - playerBase) * TILE_PERSPECTIVE_OFFSET);
 
-        MapTile foundTile;
-        int levelOffset;
         for (int i = 4; i >= 0; --i) {
-            levelOffset = TILE_PERSPECTIVE_OFFSET * i;
-            foundTile = parentMap.getMapAt(lowX - levelOffset, lowY + levelOffset, base + i);
+            final int levelOffset = TILE_PERSPECTIVE_OFFSET * i;
+            @Nullable final MapTile foundTile = parentMap.getMapAt(lowX - levelOffset, lowY + levelOffset, base + i);
             if ((foundTile != null) && !foundTile.isHidden()) {
                 return foundTile;
             }
