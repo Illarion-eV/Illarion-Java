@@ -43,8 +43,6 @@ public final class KeyMapper {
 
         inputMap.put(Key.Escape, "CloseGame");
 
-        inputMap.put(Key.Enter, "SelectChat");
-
         // walking commands
         inputMap.put(Key.CursorUp, "WalkNorthEast");
         inputMap.put(Key.CursorLeft, "WalkNorthWest");
@@ -91,6 +89,9 @@ public final class KeyMapper {
                 break;
             case P:
                 World.getNet().sendCommand(new PickUpAllItemsCmd());
+                break;
+            case Enter:
+                World.getGameGui().getChatGui().activateChatBox();
                 break;
             default:
                 if (inputMap.containsKey(key)) {

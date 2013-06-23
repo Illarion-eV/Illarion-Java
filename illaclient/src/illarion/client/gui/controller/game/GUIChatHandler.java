@@ -40,7 +40,6 @@ import illarion.client.graphics.Avatar;
 import illarion.client.graphics.Camera;
 import illarion.client.graphics.FontLoader;
 import illarion.client.gui.ChatGui;
-import illarion.client.input.InputReceiver;
 import illarion.client.net.client.IntroduceCmd;
 import illarion.client.net.client.SayCmd;
 import illarion.client.util.ChatHandler;
@@ -50,7 +49,6 @@ import illarion.client.world.World;
 import illarion.common.types.Rectangle;
 import illarion.common.util.FastMath;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
-import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Font;
 
@@ -68,22 +66,32 @@ import java.util.regex.Pattern;
 public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenController, UpdatableHandler {
     @Override
     public void activateChatBox() {
-        if (chatMsg != null) {
-            chatMsg.setFocus();
-        }
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
+            @Override
+            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+                if (chatMsg != null) {
+                    chatMsg.setFocus();
+                }
+            }
+        });
     }
 
     @Override
     public void deactivateChatBox(final boolean clear) {
-        if (chatMsg != null) {
-            if (chatMsg.hasFocus()) {
-                assert screen != null;
-                screen.getFocusHandler().setKeyFocus(null);
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
+            @Override
+            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+                if (chatMsg != null) {
+                    if (chatMsg.hasFocus()) {
+                        assert screen != null;
+                        screen.getFocusHandler().setKeyFocus(null);
+                    }
+                    if (clear) {
+                        chatMsg.setText("");
+                    }
+                }
             }
-            if (clear) {
-                chatMsg.setText("");
-            }
-        }
+        });
     }
 
     /**
@@ -256,15 +264,6 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
      * The pattern to detect a ooc.
      */
     private final Pattern oocPattern = Pattern.compile("^\\s*[/#]o(oc)?\\s*(.*)\\s*$", Pattern.CASE_INSENSITIVE);
-
-    @EventTopicSubscriber(topic = InputReceiver.EB_TOPIC)
-    public void onInputEventReceived(@Nonnull final String topic, final String event) {
-        if (topic.equals(InputReceiver.EB_TOPIC)) {
-            if ("SelectChat".equals(event)) {
-                activateChatBox();
-            }
-        }
-    }
 
     @NiftyEventSubscriber(id = "expandTextLogBtn")
     public void onChatButtonClicked(final String topic, final ButtonClickedEvent data) {

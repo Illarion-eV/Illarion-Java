@@ -34,7 +34,6 @@ import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.IllaClient;
 import illarion.client.gui.SkillGui;
-import illarion.client.input.InputReceiver;
 import illarion.client.net.server.events.LoginFinishedEvent;
 import illarion.client.util.Lang;
 import illarion.client.util.UpdateTask;
@@ -46,7 +45,6 @@ import illarion.common.data.SkillGroups;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
-import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
@@ -331,18 +329,6 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
     @NiftyEventSubscriber(id = "openSkillsBtn")
     public void onSkillWindowButtonClickedEvent(final String topic, final ButtonClickedEvent event) {
         toggleSkillWindow();
-    }
-
-    @EventTopicSubscriber(topic = InputReceiver.EB_TOPIC)
-    public void onInputEvent(final String topic, final String data) {
-        if ("ToggleCharacterWindow".equals(data)) {
-            World.getUpdateTaskManager().addTask(new UpdateTask() {
-                @Override
-                public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
-                    toggleSkillWindow();
-                }
-            });
-        }
     }
 
     @NiftyEventSubscriber(id = "characterInformation")
