@@ -37,6 +37,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.NotThreadSafe;
 import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -144,6 +145,12 @@ public final class MapTile implements AlphaChangeListener {
      */
     @Nullable
     private Reference<MapTile> obstructingTileRef;
+
+    /**
+     * The reference to the interactive map tile that was buffered for later usage.
+     */
+    @Nullable
+    private Reference<InteractiveMapTile> interactiveMapTileRef;
 
     /**
      * The map group this tile is assigned to.
@@ -643,7 +650,16 @@ public final class MapTile implements AlphaChangeListener {
         if (removedTile) {
             LOGGER.warn("Request a interactive reference to a removed tile.");
         }
-        return new InteractiveMapTile(this);
+        if (interactiveMapTileRef != null) {
+            @Nullable final InteractiveMapTile interactiveMapTile = interactiveMapTileRef.get();
+            if (interactiveMapTile != null) {
+                return interactiveMapTile;
+            }
+        }
+
+        final InteractiveMapTile interactiveMapTile = new InteractiveMapTile(this);
+        interactiveMapTileRef = new SoftReference<InteractiveMapTile>(interactiveMapTile);
+        return interactiveMapTile;
     }
 
     /**
