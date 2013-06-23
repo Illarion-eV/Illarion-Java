@@ -43,7 +43,6 @@ public final class KeyMapper {
 
         inputMap.put(Key.Escape, "CloseGame");
 
-        inputMap.put(Key.C, "ToggleCharacterWindow");
         inputMap.put(Key.Enter, "SelectChat");
 
         // walking commands
@@ -80,8 +79,12 @@ public final class KeyMapper {
                     }
                 }
                 break;
+            case C:
+                World.getGameGui().getSkillGui().toggleSkillWindow();
+                break;
             case I:
                 World.getGameGui().getInventoryGui().toggleInventory();
+                break;
             case Q:
             case J:
                 World.getGameGui().getQuestGui().toggleQuestLog();

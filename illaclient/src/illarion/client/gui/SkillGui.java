@@ -29,6 +29,21 @@ import javax.annotation.Nonnull;
  */
 public interface SkillGui {
     /**
+     * Hide the skill window.
+     */
+    void hideSkillWindow();
+
+    /**
+     * Show the skill window.
+     */
+    void showSkillWindow();
+
+    /**
+     * Toggle the visibility state of the skill window.
+     */
+    void toggleSkillWindow();
+
+    /**
      * Update the value of the skill.
      *
      * @param skill the skill that is updated

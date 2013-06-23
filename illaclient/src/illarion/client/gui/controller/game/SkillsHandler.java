@@ -107,39 +107,56 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
         IllaClient.getCfg().set("skillWindowPosY", Integer.toString(skillWindow.getElement().getY()) + "px");
     }
 
+    @Override
     public void showSkillWindow() {
-        if (skillWindow != null) {
-            skillWindow.getElement().show(new EndNotify() {
-                @Override
-                public void perform() {
-                    skillWindow.moveToFront();
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
+            @Override
+            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+                if (skillWindow != null) {
+                    skillWindow.getElement().show(new EndNotify() {
+                        @Override
+                        public void perform() {
+                            skillWindow.moveToFront();
+                        }
+                    });
                 }
-            });
-
-        }
-    }
-
-    public void hideSkillWindow() {
-        if (skillWindow != null) {
-            skillWindow.getElement().hide();
-        }
-    }
-
-    public void toggleSkillWindow() {
-        if (skillWindow != null) {
-            if (skillWindow.getElement().isVisible()) {
-                hideSkillWindow();
-            } else {
-                showSkillWindow();
             }
-        }
+        });
+    }
+
+    @Override
+    public void hideSkillWindow() {
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
+            @Override
+            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+                if (skillWindow != null) {
+                    skillWindow.getElement().hide();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void toggleSkillWindow() {
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
+            @Override
+            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+                if (skillWindow != null) {
+                    if (skillWindow.getElement().isVisible()) {
+                        hideSkillWindow();
+                    } else {
+                        showSkillWindow();
+                    }
+                }
+            }
+        });
     }
 
     /**
      * This function creates the entries for every single skill.
      */
     private void createSkillEntries() {
-        final Element content = skillWindow.getElement().findElementByName("#textContent");
+        final Element content = skillWindow.getElement().findElementById("#textContent");
 
         int groupCnt = 0;
         for (final SkillGroup group : SkillGroups.getInstance().getSkillGroups()) {

@@ -265,32 +265,47 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
 
     @Override
     public void toggleInventory() {
-        if (inventoryWindow != null) {
-            if (inventoryWindow.isVisible()) {
-                hideInventory();
-            } else {
-                showInventory();
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
+            @Override
+            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+                if (inventoryWindow != null) {
+                    if (inventoryWindow.isVisible()) {
+                        hideInventory();
+                    } else {
+                        showInventory();
+                    }
+                }
             }
-        }
+        });
     }
 
     @Override
     public void hideInventory() {
-        if (inventoryWindow != null) {
-            inventoryWindow.hide();
-        }
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
+            @Override
+            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+                if (inventoryWindow != null) {
+                    inventoryWindow.hide();
+                }
+            }
+        });
     }
 
     @Override
     public void showInventory() {
-        if (inventoryWindow != null) {
-            inventoryWindow.show(new EndNotify() {
-                @Override
-                public void perform() {
-                    inventoryWindow.getNiftyControl(Window.class).moveToFront();
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
+            @Override
+            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+                if (inventoryWindow != null) {
+                    inventoryWindow.show(new EndNotify() {
+                        @Override
+                        public void perform() {
+                            inventoryWindow.getNiftyControl(Window.class).moveToFront();
+                        }
+                    });
                 }
-            });
-        }
+            }
+        });
     }
 
     @NiftyEventSubscriber(id = "inventory")
