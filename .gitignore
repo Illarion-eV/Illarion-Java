@@ -27,3 +27,4 @@ cache.properties
 *.log
 *.log.*
 .DS_Store
+.idea/libraries/
