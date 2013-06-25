@@ -10,6 +10,19 @@
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="inheritedJdk" />
+    <orderEntry type="library" exported="" name="laf-plugin-7.2.1" level="project" />
+    <orderEntry type="library" exported="" name="trove4j-3.0.3" level="project" />
+    <orderEntry type="library" exported="" name="eventbus-1.4" level="project" />
+    <orderEntry type="library" exported="" name="substance-7.2.1" level="project" />
+    <orderEntry type="library" exported="" name="laf-widget-7.2.1" level="project" />
+    <orderEntry type="library" exported="" name="rsyntaxtextarea-2.0.7" level="project" />
+    <orderEntry type="library" exported="" name="flamingo-7.2.1" level="project" />
+    <orderEntry type="library" exported="" name="substance-flamingo-7.2.1" level="project" />
+    <orderEntry type="library" exported="" name="jsr305-2.0.1" level="project" />
+    <orderEntry type="library" exported="" name="trident-7.2.1-swing" level="project" />
+    <orderEntry type="library" exported="" name="javolution-5.5.1" level="project" />
+    <orderEntry type="library" exported="" name="log4j-1.2.17" level="project" />
+    <orderEntry type="module" module-name="Illarion Common Library" exported="" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

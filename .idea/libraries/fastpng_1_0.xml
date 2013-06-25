@@ -1,8 +1,6 @@
 <component name="libraryTable">
   <library name="fastpng-1.0">
-    <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/artifacts-23/filestore/net.sourceforge/fastpng/1.0/jar/4cd6db8fbf28e9217e621bb239c2042f727fc69d/fastpng-1.0.jar!/" />
-    </CLASSES>
+    <CLASSES />
     <JAVADOC />
     <SOURCES>
       <root url="jar://$USER_HOME$/.gradle/caches/artifacts-23/filestore/net.sourceforge/fastpng/1.0/source/b633cf690dcc38eb25a7c3d0607ae0f9d49c274d/fastpng-1.0-sources.jar!/" />

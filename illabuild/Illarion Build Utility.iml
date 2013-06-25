@@ -11,12 +11,12 @@
     <orderEntry type="library" exported="" name="ant-launcher-1.9.1" level="project" />
     <orderEntry type="library" exported="" name="javolution-5.5.1" level="project" />
     <orderEntry type="library" exported="" name="jsr305-2.0.1" level="project" />
-    <orderEntry type="library" exported="" name="fastpng-1.0" level="project" />
     <orderEntry type="library" exported="" name="trove4j-3.0.3" level="project" />
     <orderEntry type="library" exported="" name="log4j-1.2.17" level="project" />
     <orderEntry type="library" exported="" name="ant-1.9.1" level="project" />
     <orderEntry type="module" module-name="Illarion Common Library" exported="" />
     <orderEntry type="library" exported="" name="xz-1.3" level="project" />
+    <orderEntry type="library" exported="" name="pngdecoder-20130527" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

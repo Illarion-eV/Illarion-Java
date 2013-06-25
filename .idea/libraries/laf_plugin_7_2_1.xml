@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="laf-plugin-7.2.1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/artifacts-23/filestore/com.github.insubstantial/laf-plugin/7.2.1/jar/4f9b94ae083bde63d04036a6b6f9d6803e063bf6/laf-plugin-7.2.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/artifacts-23/filestore/com.github.insubstantial/laf-plugin/7.2.1/source/9880a76691b04e3170abbbba812aa55c15b20902/laf-plugin-7.2.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

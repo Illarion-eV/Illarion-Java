@@ -1,0 +1,40 @@
+/*
+ * This file is part of the Illarion Client.
+ *
+ * Copyright © 2013 - Illarion e.V.
+ *
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
+ */
+apply plugin: 'java'
+apply plugin: 'application'
+
+archivesBaseName = 'illarion_mapedit'
+
+mainClassName = "illarion.mapedit.MapEditor"
+
+dependencies {
+    compile project(':Illarion Common Library')
+    compile group: 'javolution', name: 'javolution', version: '5.5.1'
+    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.1'
+    compile group: 'log4j', name: 'log4j', version: '1.2.17'
+    compile group: 'net.sf.trove4j', name: 'trove4j', version: '3.0.3'
+    compile group: 'org.bushe', name: 'eventbus', version: '1.4'
+    compile group: 'com.github.insubstantial', name: 'substance', version: '7.2.1'
+    compile group: 'com.github.insubstantial', name: 'substance-flamingo', version: '7.2.1'
+    compile group: 'org.swinglabs', name: 'swingx', version: '1.6.1'
+}
+
+jar.doFirst {
+    gitVersion
+}

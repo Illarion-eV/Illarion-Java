@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="swingx-1.6.1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/artifacts-23/filestore/org.swinglabs/swingx/1.6.1/jar/a4abf05f5f1d3b020ec4099495dcd1452b615e26/swingx-1.6.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/artifacts-23/filestore/org.swinglabs/swingx/1.6.1/source/7c1109578f8789c630447b96748782f1ed5b8d08/swingx-1.6.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
