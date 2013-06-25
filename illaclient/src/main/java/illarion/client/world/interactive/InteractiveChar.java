@@ -18,11 +18,16 @@
  */
 package illarion.client.world.interactive;
 
+import illarion.client.graphics.Avatar;
+import illarion.client.graphics.MapDisplayManager;
 import illarion.client.world.Char;
+import illarion.client.world.MapTile;
+import illarion.client.world.World;
 import illarion.common.types.ItemCount;
 import illarion.common.types.Location;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 /**
@@ -78,6 +83,34 @@ public final class InteractiveChar implements Draggable, DropTarget {
     }
 
     /**
+     * Check if the avatar of the character is located at the specified screen coordinates.
+     *
+     * @param screenX the screen X coordinate
+     * @param screenY the screen Y coordinate
+     * @return {@code true} in case the character is at the screen location
+     */
+    public boolean isCharOnScreenLoc(final int screenX, final int screenY) {
+        final MapDisplayManager displayManager = World.getMapDisplay();
+
+        return isCharOnDisplayLoc(displayManager.getWorldX(screenX), displayManager.getWorldY(screenY));
+    }
+
+    /**
+     * Check if the avatar of the character is located at the specified display coordinates.
+     *
+     * @param displayX the display X coordinate
+     * @param displayY the display Y coordinate
+     * @return {@code true} in case the character is at the display location
+     */
+    public boolean isCharOnDisplayLoc(final int displayX, final int displayY) {
+        @Nullable final Avatar avatar = parentChar.getAvatar();
+        if (avatar == null) {
+            return false;
+        }
+        return avatar.getDisplayRect().isInside(displayX, displayY);
+    }
+
+    /**
      * Get the location of the character on the map.
      *
      * @return the location of the character on the map
@@ -85,5 +118,42 @@ public final class InteractiveChar implements Draggable, DropTarget {
     @Nonnull
     public Location getLocation() {
         return parentChar.getLocation();
+    }
+
+    /**
+     * Get the interactive tile this character is standing on.
+     *
+     * @return the interactive tile of this character
+     */
+    @Nullable
+    public InteractiveMapTile getInteractiveTile() {
+        @Nullable final MapTile parentTile = getMapTile();
+        if (parentTile == null) {
+            return null;
+        }
+        return parentTile.getInteractive();
+    }
+
+    /**
+     * Get the map tile this character is standing on.
+     *
+     * @return the tile this character is standing on
+     */
+    @Nullable
+    public MapTile getMapTile() {
+        return World.getMap().getMapAt(parentChar.getLocation());
+    }
+
+    /**
+     * Get the display level. This can be used to determine the order of multiple objects in the render list.
+     *
+     * @return the display level
+     */
+    public int getDisplayLevel() {
+        @Nullable final Avatar avatar = parentChar.getAvatar();
+        if (avatar == null) {
+            return Integer.MAX_VALUE;
+        }
+        return avatar.getOrder();
     }
 }

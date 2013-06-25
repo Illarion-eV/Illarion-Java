@@ -19,6 +19,7 @@
 package illarion.client.graphics;
 
 import illarion.client.input.DoubleClickOnMapEvent;
+import illarion.client.input.PointOnMapEvent;
 import illarion.client.resources.Resource;
 import illarion.client.resources.TileFactory;
 import illarion.client.resources.data.TileTemplate;
@@ -197,6 +198,12 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
     @Override
     public boolean isEventProcessed(@Nonnull final GameContainer container, final int delta,
                                     @Nonnull final SceneEvent event) {
+        if (event instanceof PointOnMapEvent) {
+            final PointOnMapEvent pointEvent = (PointOnMapEvent) event;
+            if (isMouseInInteractionRect(pointEvent.getX(), pointEvent.getY())) {
+                return true;
+            }
+        }
         if (!parentTile.isAtPlayerLevel()) {
             return false;
         }

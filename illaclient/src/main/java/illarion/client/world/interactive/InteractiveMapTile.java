@@ -19,6 +19,7 @@
 package illarion.client.world.interactive;
 
 import illarion.client.graphics.Item;
+import illarion.client.graphics.Tile;
 import illarion.client.net.client.*;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
@@ -193,7 +194,11 @@ public class InteractiveMapTile implements Draggable, DropTarget {
      * @return {@code true} in case the character is allowed to use anything on this tile or the tile itself
      */
     public boolean isInUseRange() {
-        return World.getPlayer().getLocation().getDistance(getLocation()) < 2;
+        @Nonnull final Location playerLocation = World.getPlayer().getLocation();
+        if (playerLocation.getScZ() == getLocation().getScZ()) {
+            return playerLocation.getDistance(getLocation()) < 2;
+        }
+        return false;
     }
 
     /**
@@ -218,5 +223,25 @@ public class InteractiveMapTile implements Draggable, DropTarget {
             return null;
         }
         return topItem.getItemId();
+    }
+
+    /**
+     * Get the display level. This can be used to determine the order of multiple objects in the render list. In this
+     * case this function is quite a hack so use it with care. It does only use the order of the tile in case there
+     * are no items on it. In case there are any items that have a elevation, the function returns the display level
+     * of the elevating object.
+     *
+     * @return the display level
+     */
+    public int getElevationDisplayLevel() {
+        @Nullable final Tile tile = parentTile.getTile();
+        if (tile == null) {
+            return Integer.MAX_VALUE;
+        }
+        @Nullable final Item elevatingItem = parentTile.getElevatingItem();
+        if (elevatingItem == null) {
+            return tile.getOrder();
+        }
+        return elevatingItem.getOrder();
     }
 }

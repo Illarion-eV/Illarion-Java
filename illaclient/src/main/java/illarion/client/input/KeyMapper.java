@@ -43,16 +43,7 @@ public final class KeyMapper {
 
         inputMap.put(Key.Escape, "CloseGame");
 
-        inputMap.put(Key.I, "ToggleInventory");
-        inputMap.put(Key.C, "ToggleCharacterWindow");
-        inputMap.put(Key.Enter, "SelectChat");
-
         // walking commands
-        inputMap.put(Key.W, "WalkNorthEast");
-        inputMap.put(Key.A, "WalkNorthWest");
-        inputMap.put(Key.S, "WalkSouthWest");
-        inputMap.put(Key.D, "WalkSouthEast");
-
         inputMap.put(Key.CursorUp, "WalkNorthEast");
         inputMap.put(Key.CursorLeft, "WalkNorthWest");
         inputMap.put(Key.CursorDown, "WalkSouthWest");
@@ -86,12 +77,21 @@ public final class KeyMapper {
                     }
                 }
                 break;
+            case C:
+                World.getGameGui().getSkillGui().toggleSkillWindow();
+                break;
+            case I:
+                World.getGameGui().getInventoryGui().toggleInventory();
+                break;
             case Q:
             case J:
                 World.getGameGui().getQuestGui().toggleQuestLog();
                 break;
             case P:
                 World.getNet().sendCommand(new PickUpAllItemsCmd());
+                break;
+            case Enter:
+                World.getGameGui().getChatGui().activateChatBox();
                 break;
             default:
                 if (inputMap.containsKey(key)) {
