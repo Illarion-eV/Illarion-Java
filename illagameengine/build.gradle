@@ -18,16 +18,29 @@
  */
 apply plugin: 'java'
 
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+            exclude '**/slick/**'
+        }
+        resources {
+            srcDir 'src/main/resources'
+            exclude '**/slick/**'
+        }
+    }
+}
+
 archivesBaseName = 'illarion_engine'
 dependencies {
     compile project(':Illarion Common Library')
     compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.1'
     compile group: 'lessvoid', name: 'nifty', version: '1.4.0-SNAPSHOT'
-    compile group: 'org.newdawn', name: 'slick', version: '264'
+    //compile group: 'org.newdawn', name: 'slick', version: '264'
     compile group: 'com.badlogic.gdx', name: 'gdx', version: '0.9.9-SNAPSHOT'
     compile group: 'com.badlogic.gdx', name: 'gdx-backend-lwjgl', version: '0.9.9-SNAPSHOT'
-    compile group: 'org.lwjgl.lwjgl', name: 'lwjgl', version: '2.8.5'
-    compile group: 'org.lwjgl.lwjgl', name: 'lwjgl_util', version: '2.8.5'
+    //compile group: 'org.lwjgl.lwjgl', name: 'lwjgl', version: '2.8.5'
+    //compile group: 'org.lwjgl.lwjgl', name: 'lwjgl_util', version: '2.8.5'
 }
 
 jar.doFirst {

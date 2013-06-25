@@ -41,7 +41,7 @@ processResources.dependsOn {
 
 task createFileLists {
     ['condition','handler','trigger'].each {directory ->
-        filesTree = fileTree('src/main/resources') {
+        FileTree filesTree = fileTree('src/main/resources') {
             include "template/$directory/*.lua"
         }
 

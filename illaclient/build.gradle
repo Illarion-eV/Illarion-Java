@@ -36,6 +36,10 @@ dependencies {
     compile group: 'lessvoid', name: 'nifty', version: '1.4.0-SNAPSHOT'
 }
 
+build.doLast {
+    configurations.runtime.collect{value -> println(value.name)}
+}
+
 jar.doFirst {
     gitVersion
 }
