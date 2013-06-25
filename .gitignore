@@ -10,7 +10,6 @@
 /illacommon/illabuild.jar
 /illacommon/tempBuildTool_*
 /illacommon/src/skills.xml
-/illaeasyquest/res/template/*/filelist
 /keys
 /bin
 /build
@@ -30,3 +29,4 @@ cache.properties
 .idea/libraries/
 .idea/modules.xml
 *.iml
+illaeasyquest/src/main/resources/template/*/filelist
