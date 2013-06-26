@@ -17,6 +17,7 @@
  * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 apply plugin: 'java'
+apply plugin: 'fatjar'
 
 archivesBaseName = 'illarion_download'
 
@@ -34,15 +35,20 @@ dependencies {
 ext.buildDate = null
 compileJava.doLast {
     project.buildDate = new Date();
-    jar.manifest {
+    fatJar.manifest {
         attributes   \
               'Implementation-Version': project.ext.fullVersion,   \
               'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ')
     }
 }
 
-tasks.jar.onlyIf { return project.buildDate != null }
-jar {
+build.dependsOn 'fatJar'
+build.dependsOn 'proguard'
+build.dependsOn 'postprocessProguard'
+
+tasks.fatJarPrepareFiles.onlyIf { return project.buildDate != null }
+tasks.fatJar.onlyIf { return project.buildDate != null }
+fatJar {
     doFirst {
         gitVersion
 
@@ -57,7 +63,25 @@ jar {
               'Main-Class': 'illarion.download.install.Installation'
         }
     }
-    doLast {
-        configurations.runtime.collect { value -> println(value.name) }
+}
+
+task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'fatJar') {
+    logging.captureStandardOutput LogLevel.INFO
+    configuration 'illadownload.pro'
+}
+
+task deleteOldFatJar(type: Delete, dependsOn: 'proguard') {
+    delete 'build/libs/' + archivesBaseName + '-' + project.version + '.jar'
+}
+
+task setupProguardOutput(type: Copy, dependsOn: 'deleteOldFatJar') {
+    from 'build/libs/proguard_result.jar'
+    into 'build/libs/'
+    rename { filename ->
+        filename.replace('proguard_result', archivesBaseName + '-' + project.version)
     }
+}
+
+task postprocessProguard(type: Delete, dependsOn: 'setupProguardOutput') {
+    delete 'build/libs/proguard_result.jar'
 }
