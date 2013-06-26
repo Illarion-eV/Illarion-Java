@@ -17,11 +17,8 @@
  * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 apply plugin: 'java'
-apply plugin: 'application'
 
 archivesBaseName = 'illarion_easyquest'
-
-mainClassName = "illarion.easyquest.gui.MainFrame"
 
 dependencies {
     compile project(':Illarion Common Library')
@@ -40,7 +37,7 @@ processResources.dependsOn {
 }
 
 task createFileLists {
-    ['condition','handler','trigger'].each {directory ->
+    ['condition', 'handler', 'trigger'].each { directory ->
         FileTree filesTree = fileTree('src/main/resources') {
             include "template/$directory/*.lua"
         }
@@ -48,7 +45,7 @@ task createFileLists {
         File listFile = file("src/main/resources/template/$directory/filelist")
         listFile.createNewFile()
         listFile.write("")
-        filesTree.visit{file ->
+        filesTree.visit { file ->
             if (file.relativePath.toString().endsWith('.lua')) {
                 listFile << "template/$directory/$file.relativePath\n"
             }
@@ -56,6 +53,33 @@ task createFileLists {
     }
 }
 
-jar.doFirst {
-    gitVersion
+ext.buildDate = null
+compileJava.doLast {
+    buildDate = new Date();
+    jar.manifest {
+        attributes  \
+             'Implementation-Version': project.ext.fullVersion,  \
+             'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ')
+    }
+}
+
+tasks.jar.onlyIf { return project.buildDate != null }
+jar {
+    doFirst {
+        gitVersion
+
+        manifest {
+            attributes  \
+             'Implementation-Title': 'Illarion easyQuest Editor',  \
+             'Implementation-Version': project.ext.fullVersion,  \
+             'Implementation-Vendor': 'Illarion e.V.',  \
+             'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),  \
+             'Built-By': System.getProperty('user.name'),  \
+             'Built-JDK': System.getProperty('java.version'),  \
+             'Main-Class': 'illarion.easyquest.gui.MainFrame'
+        }
+    }
+    doLast {
+        configurations.runtime.collect { value -> println(value.name) }
+    }
 }

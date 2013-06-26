@@ -20,9 +20,9 @@ task wrapper(type: Wrapper) {
     gradleVersion = '1.5'
 }
 
-subprojects {
-    sourceCompatibility = JavaVersion.VERSION_1_6
-    targetCompatibility = JavaVersion.VERSION_1_6
+allprojects {
+    def sourceCompatibility = JavaVersion.VERSION_1_6
+    def targetCompatibility = JavaVersion.VERSION_1_6
 
     task gitVersion {
         def gitVersion = 'unknown'
@@ -31,9 +31,20 @@ subprojects {
             gitVersion = proc.in.readLines().get(0)
         } catch (ignored) {
         }
-        project.version = gitVersion
-    }
 
+        def mainVersion = ''
+        def indexOfSeparator = gitVersion.indexOf('-')
+        if (indexOfSeparator == -1) {
+            mainVersion = gitVersion
+        }
+        mainVersion = gitVersion.substring(0, indexOfSeparator);
+
+        project.version = mainVersion
+        project.ext.fullVersion = gitVersion
+    }
+}
+
+subprojects {
     repositories {
         mavenCentral()
         maven {

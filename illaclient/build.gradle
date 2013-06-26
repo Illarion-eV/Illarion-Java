@@ -17,11 +17,8 @@
  * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 apply plugin: 'java'
-apply plugin: 'application'
 
 archivesBaseName = 'illarion_client'
-
-mainClassName = "illarion.client.IllaClient"
 
 dependencies {
     compile project(':Illarion Common Library')
@@ -36,10 +33,33 @@ dependencies {
     compile group: 'lessvoid', name: 'nifty', version: '1.4.0-SNAPSHOT'
 }
 
-build.doLast {
-    configurations.runtime.collect{value -> println(value.name)}
+ext.buildDate = null
+compileJava.doLast {
+    buildDate = new Date();
+    jar.manifest {
+        attributes  \
+             'Implementation-Version': project.ext.fullVersion,  \
+             'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ')
+    }
 }
 
-jar.doFirst {
-    gitVersion
+tasks.jar.onlyIf { return project.buildDate != null }
+jar {
+    doFirst {
+        gitVersion
+
+        manifest {
+            attributes  \
+             'Implementation-Title': 'Illarion Client',  \
+             'Implementation-Version': project.ext.fullVersion,  \
+             'Implementation-Vendor': 'Illarion e.V.',  \
+             'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),  \
+             'Built-By': System.getProperty('user.name'),  \
+             'Built-JDK': System.getProperty('java.version'),  \
+             'Main-Class': 'illarion.client.IllaClient'
+        }
+    }
+    doLast {
+        configurations.runtime.collect { value -> println(value.name) }
+    }
 }

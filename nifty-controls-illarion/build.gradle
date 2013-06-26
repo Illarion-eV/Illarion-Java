@@ -20,13 +20,36 @@ apply plugin: 'java'
 
 archivesBaseName = 'nifty-controls-illarion'
 
-jar.doFirst {
-    gitVersion
-}
-
 dependencies {
     compile project(':Illarion Common Library')
     compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.1'
     compile group: 'lessvoid', name: 'nifty', version: '1.4.0-SNAPSHOT'
     compile group: 'lessvoid', name: 'nifty-default-controls', version: '1.4.0-SNAPSHOT'
+}
+
+ext.buildDate = null
+compileJava.doLast {
+    buildDate = new Date();
+    jar.manifest {
+        attributes  \
+             'Implementation-Version': project.ext.fullVersion,  \
+             'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ')
+    }
+}
+
+tasks.jar.onlyIf { return project.buildDate != null }
+jar {
+    doFirst {
+        gitVersion
+
+        manifest {
+            attributes  \
+             'Implementation-Title': 'Illarion Nifty-GUI Controls',  \
+             'Implementation-Version': project.ext.fullVersion,  \
+             'Implementation-Vendor': 'Illarion e.V.',  \
+             'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),  \
+             'Built-By': System.getProperty('user.name'),  \
+             'Built-JDK': System.getProperty('java.version')
+        }
+    }
 }

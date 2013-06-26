@@ -17,11 +17,8 @@
  * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 apply plugin: 'java'
-apply plugin: 'application'
 
 archivesBaseName = 'illarion_easynpc'
-
-mainClassName = "illarion.easynpc.gui.MainFrame"
 
 dependencies {
     compile project(':Illarion Common Library')
@@ -35,6 +32,33 @@ dependencies {
     compile group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '2.0.7'
 }
 
-jar.doFirst {
-    gitVersion
+ext.buildDate = null
+compileJava.doLast {
+    buildDate = new Date();
+    jar.manifest {
+        attributes  \
+             'Implementation-Version': project.ext.fullVersion,  \
+             'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ')
+    }
+}
+
+tasks.jar.onlyIf { return project.buildDate != null }
+jar {
+    doFirst {
+        gitVersion
+
+        manifest {
+            attributes  \
+             'Implementation-Title': 'Illarion easyNPC Editor',  \
+             'Implementation-Version': project.ext.fullVersion,  \
+             'Implementation-Vendor': 'Illarion e.V.',  \
+             'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),  \
+             'Built-By': System.getProperty('user.name'),  \
+             'Built-JDK': System.getProperty('java.version'),  \
+             'Main-Class': 'illarion.easynpc.gui.MainFrame'
+        }
+    }
+    doLast {
+        configurations.runtime.collect { value -> println(value.name) }
+    }
 }

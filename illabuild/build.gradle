@@ -31,6 +31,32 @@ dependencies {
     compile group: 'de.matthiasmann', name: 'pngdecoder', version: '20130527'
 }
 
-jar.doFirst {
-    gitVersion
+ext.buildDate = null
+compileJava.doLast {
+    buildDate = new Date();
+    jar.manifest {
+        attributes  \
+             'Implementation-Version': project.ext.fullVersion,  \
+             'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ')
+    }
+}
+
+tasks.jar.onlyIf { return project.buildDate != null }
+jar {
+    doFirst {
+        gitVersion
+
+        manifest {
+            attributes  \
+             'Implementation-Title': 'Illarion Build Utility',  \
+             'Implementation-Version': project.ext.fullVersion,  \
+             'Implementation-Vendor': 'Illarion e.V.',  \
+             'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),  \
+             'Built-By': System.getProperty('user.name'),  \
+             'Built-JDK': System.getProperty('java.version')
+        }
+    }
+    doLast {
+        configurations.runtime.collect { value -> println(value.name) }
+    }
 }
