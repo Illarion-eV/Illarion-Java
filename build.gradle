@@ -36,8 +36,9 @@ allprojects {
         def indexOfSeparator = gitVersion.indexOf('-')
         if (indexOfSeparator == -1) {
             mainVersion = gitVersion
+        } else {
+            mainVersion = gitVersion.substring(0, indexOfSeparator) + '-SNAPSHOT'
         }
-        mainVersion = gitVersion.substring(0, indexOfSeparator);
 
         project.version = mainVersion
         project.ext.fullVersion = gitVersion

@@ -47,11 +47,11 @@ task downloadSkills {
 
 ext.buildDate = null
 compileJava.doLast {
-    buildDate = new Date();
+    project.buildDate = new Date();
     jar.manifest {
-        attributes  \
-             'Implementation-Version': project.ext.fullVersion,  \
-             'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ')
+        attributes   \
+              'Implementation-Version': project.ext.fullVersion,   \
+              'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ')
     }
 }
 
@@ -61,13 +61,13 @@ jar {
         gitVersion
 
         manifest {
-            attributes  \
-             'Implementation-Title': 'Illarion Common Library',  \
-             'Implementation-Version': project.ext.fullVersion,  \
-             'Implementation-Vendor': 'Illarion e.V.',  \
-             'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),  \
-             'Built-By': System.getProperty('user.name'),  \
-             'Built-JDK': System.getProperty('java.version')
+            attributes   \
+              'Implementation-Title': 'Illarion Common Library',   \
+              'Implementation-Version': project.ext.fullVersion,   \
+              'Implementation-Vendor': 'Illarion e.V.',   \
+              'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),   \
+              'Built-By': System.getProperty('user.name'),   \
+              'Built-JDK': System.getProperty('java.version')
         }
     }
 }
