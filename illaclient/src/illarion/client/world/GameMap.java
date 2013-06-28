@@ -558,6 +558,17 @@ public final class GameMap implements LightingMap, Stoppable {
         }
     }
 
+    public void updateTiles(@Nonnull final Collection<TileUpdate> updateDataList) {
+        mapLock.writeLock().lock();
+        try {
+            for (@Nonnull final TileUpdate updateData : updateDataList) {
+                updateTile(updateData);
+            }
+        } finally {
+            mapLock.writeLock().unlock();
+        }
+    }
+
     /**
      * Perform a update of a single map tile regarding the update information. This can add a new tile,
      * update a old one or delete one tile.
@@ -594,15 +605,10 @@ public final class GameMap implements LightingMap, Stoppable {
             if (newTile) {
                 mapLock.writeLock().lock();
                 try {
-                    try {
-                        tiles.put(locKey, tile);
-                    } finally {
-                        mapLock.readLock().lock();
-                        mapLock.writeLock().unlock();
-                    }
+                    tiles.put(locKey, tile);
                     GameMapProcessor2.processTile(tile);
                 } finally {
-                    mapLock.readLock().unlock();
+                    mapLock.writeLock().unlock();
                 }
             }
             World.getLights().notifyChange(updateData.getLocation());
@@ -618,5 +624,6 @@ public final class GameMap implements LightingMap, Stoppable {
                 World.getMusicBox().updatePlayerLocation();
             }
         }
+        minimap.update(updateData);
     }
 }
