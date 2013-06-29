@@ -206,9 +206,9 @@ public final class People {
     public void clipCharacters() {
         charsLock.writeLock().lock();
         try {
-
+            @Nonnull final Player player = World.getPlayer();
             for (final Char character : chars.values()) {
-                if (!World.getPlayer().isOnScreen(character.getLocation(), 0)) {
+                if (!player.isOnScreen(character.getLocation(), 0)) {
                     addCharacterToRemoveList(character);
                 }
             }

@@ -544,6 +544,9 @@ public final class Player {
      * @return true if the position is within the clipping distance and the tolerance
      */
     public boolean isOnScreen(@Nonnull final Location testLoc, final int tolerance) {
+        if (Math.abs(testLoc.getScZ() - playerLocation.getScZ()) > 2) {
+            return false;
+        }
         final int width = MapDimensions.getInstance().getStripesWidth() >> 1;
         final int height = MapDimensions.getInstance().getStripesHeight() >> 1;
         final int limit = (Math.max(width, height) + tolerance) - 2;
@@ -563,8 +566,6 @@ public final class Player {
             return;
         }
 
-        final boolean levelChange = newLoc.getScZ() != playerLocation.getScZ();
-
         // set logical location
         movementHandler.cancelAutoWalk();
         updateLocation(newLoc);
@@ -573,11 +574,7 @@ public final class Player {
         movementHandler.stopAnimation();
 
         // clear away invisible characters
-        if (levelChange) {
-            World.getPeople().clear();
-        } else {
-            World.getPeople().clipCharacters();
-        }
+        World.getPeople().clipCharacters();
     }
 
     /**
