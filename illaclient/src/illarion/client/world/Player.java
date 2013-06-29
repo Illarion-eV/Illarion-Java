@@ -37,6 +37,7 @@ import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
 import illarion.common.util.Bresenham;
 import illarion.common.util.DirectoryManager;
+import illarion.common.util.FastMath;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -556,7 +557,8 @@ public final class Player {
 
     /**
      * Change the location of the character. This will instantly change the position on the map where the client is
-     * shown. Calling this function is a result of any warp requested by the server.
+     * shown. Calling this function is a result of any warp requested by the server. Calling this function will
+     * subsequently cause all other components of the client to be updated according to the new location.
      *
      * @param newLoc new location of the character on the map
      */
@@ -566,15 +568,37 @@ public final class Player {
             return;
         }
 
+        boolean isLongRange = false;
+        if (playerLocation.getSqrtDistance(newLoc) > 4) {
+            isLongRange = true;
+        }
+        if (FastMath.abs(playerLocation.getScZ() - newLoc.getScZ()) > 3) {
+            isLongRange = true;
+        }
+
+        if (isLongRange) {
+            World.getMapDisplay().setActive(false);
+            World.getMap().clear();
+        }
+
         // set logical location
         movementHandler.cancelAutoWalk();
         updateLocation(newLoc);
         character.setLocation(newLoc);
         character.stopAnimation();
         movementHandler.stopAnimation();
+        World.getPlayer().getCombatHandler().standDown();
+        World.getMapDisplay().setLocation(newLoc);
 
-        // clear away invisible characters
-        World.getPeople().clipCharacters();
+        World.getPlayer().getCharacter().relistLight();
+        World.getPlayer().getCharacter().updateLight(newLoc);
+
+        if (isLongRange) {
+            World.getPeople().clear();
+        } else {
+            World.getMap().checkInside();
+            World.getPeople().clipCharacters();
+        }
     }
 
     /**

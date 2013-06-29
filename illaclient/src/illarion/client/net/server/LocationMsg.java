@@ -23,7 +23,6 @@ import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.Location;
-import illarion.common.util.FastMath;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -60,35 +59,7 @@ public final class LocationMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        final Location oldLoc = World.getPlayer().getLocation();
-
-        boolean isLongRange = false;
-        if (Math.max(FastMath.abs(oldLoc.getScX() - loc.getScX()), FastMath.abs(oldLoc.getScY() - loc.getScY())) > 4) {
-            isLongRange = true;
-        }
-        if (FastMath.abs(oldLoc.getScZ() - loc.getScZ()) > 3) {
-            isLongRange = true;
-        }
-
-        if (isLongRange) {
-            World.getMapDisplay().setActive(false);
-            World.getMap().clear();
-        }
-
-        // stop the attack in case there is any
-        World.getPlayer().getCombatHandler().standDown();
-
-        // logical location
         World.getPlayer().setLocation(loc);
-        // graphics location
-        World.getMapDisplay().setLocation(loc);
-
-        if (!isLongRange) {
-            World.getMap().checkInside();
-        }
-
-        World.getPlayer().getCharacter().relistLight();
-        World.getPlayer().getCharacter().updateLight(loc);
         return true;
     }
 
