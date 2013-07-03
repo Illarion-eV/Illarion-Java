@@ -76,6 +76,8 @@ public final class GameMapProcessor extends Thread {
     @SuppressWarnings("nls")
     public GameMapProcessor(@Nonnull final GameMap parentMap) {
         super("Map Processor");
+        setDaemon(true);
+        setPriority(MIN_PRIORITY);
         parent = parentMap;
         unchecked = new LinkedBlockingDeque<Long>();
         running = false;
@@ -88,8 +90,8 @@ public final class GameMapProcessor extends Thread {
     public synchronized void start() {
         pauseLoop = false;
         if (running) {
-            synchronized (unchecked) {
-                unchecked.notify();
+            synchronized (this) {
+                notify();
             }
         } else {
             running = true;
@@ -106,6 +108,7 @@ public final class GameMapProcessor extends Thread {
         while (running) {
             try {
                 hasAndProcessUnchecked();
+                yield();
             } catch (@Nonnull final InterruptedException e) {
                 LOGGER.info("Map processor got interrupted!");
             }
@@ -119,8 +122,8 @@ public final class GameMapProcessor extends Thread {
         final long key = unchecked.takeFirst();
 
         while (pauseLoop) {
-            synchronized (unchecked) {
-                unchecked.wait();
+            synchronized (this) {
+                wait();
             }
         }
 

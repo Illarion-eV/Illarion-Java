@@ -590,7 +590,9 @@ public final class Player {
         World.getPlayer().getCombatHandler().standDown();
         World.getMapDisplay().setLocation(newLoc);
 
-        World.getPlayer().getCharacter().relistLight();
+        if (isLongRange) {
+            World.getPlayer().getCharacter().relistLight();
+        }
         World.getPlayer().getCharacter().updateLight(newLoc);
 
         if (isLongRange) {
@@ -614,6 +616,7 @@ public final class Player {
 
         playerLocation.set(newLoc);
         World.getMusicBox().updatePlayerLocation();
+        World.getMap().updateAllTiles();
     }
 
     /**

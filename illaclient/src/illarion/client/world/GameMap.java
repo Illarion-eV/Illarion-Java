@@ -277,8 +277,7 @@ public final class GameMap implements LightingMap, Stoppable {
     }
 
     /**
-     * Clear the entire map. That will cause that all tiles are recycled and
-     * send back into the recycle factory.
+     * Clear the entire map. This will cause all the tiles and items to be removed. It does not touch the characters.
      */
     public void clear() {
         mapLock.writeLock().lock();
@@ -288,7 +287,15 @@ public final class GameMap implements LightingMap, Stoppable {
         } finally {
             mapLock.writeLock().unlock();
         }
-        World.getLights().clear();
+    }
+
+    /**
+     * Check if the map is currently empty.
+     *
+     * @return {@code true} in case the map is empty
+     */
+    public boolean isEmpty() {
+        return tiles.isEmpty();
     }
 
     /**
@@ -555,6 +562,26 @@ public final class GameMap implements LightingMap, Stoppable {
     public void updateTile(@Nonnull final MapTile tile) {
         if (processor != null) {
             processor.reportUnchecked(tile.getLocation().getKey());
+        }
+    }
+
+    /**
+     * This function sends all tiles to the map processor and causes it to check the tiles again.
+     */
+    public void updateAllTiles() {
+        if (processor != null) {
+            mapLock.readLock().lock();
+            try {
+                tiles.forEachValue(new TObjectProcedure<MapTile>() {
+                    @Override
+                    public boolean execute(final MapTile object) {
+                        updateTile(object);
+                        return true;
+                    }
+                });
+            } finally {
+                mapLock.readLock().unlock();
+            }
         }
     }
 
