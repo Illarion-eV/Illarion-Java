@@ -16,6 +16,7 @@
 */build
 /.gradle/
 /setup/*
+*/build
 !/setup/publish.sh
 !/setup/publish_release.sh
 !/setup/prepare.sh

@@ -277,8 +277,7 @@ public final class GameMap implements LightingMap, Stoppable {
     }
 
     /**
-     * Clear the entire map. That will cause that all tiles are recycled and
-     * send back into the recycle factory.
+     * Clear the entire map. This will cause all the tiles and items to be removed. It does not touch the characters.
      */
     public void clear() {
         mapLock.writeLock().lock();
@@ -288,7 +287,15 @@ public final class GameMap implements LightingMap, Stoppable {
         } finally {
             mapLock.writeLock().unlock();
         }
-        World.getLights().clear();
+    }
+
+    /**
+     * Check if the map is currently empty.
+     *
+     * @return {@code true} in case the map is empty
+     */
+    public boolean isEmpty() {
+        return tiles.isEmpty();
     }
 
     /**
@@ -559,6 +566,37 @@ public final class GameMap implements LightingMap, Stoppable {
     }
 
     /**
+     * This function sends all tiles to the map processor and causes it to check the tiles again.
+     */
+    public void updateAllTiles() {
+        if (processor != null) {
+            mapLock.readLock().lock();
+            try {
+                tiles.forEachValue(new TObjectProcedure<MapTile>() {
+                    @Override
+                    public boolean execute(final MapTile object) {
+                        updateTile(object);
+                        return true;
+                    }
+                });
+            } finally {
+                mapLock.readLock().unlock();
+            }
+        }
+    }
+
+    public void updateTiles(@Nonnull final Collection<TileUpdate> updateDataList) {
+        mapLock.writeLock().lock();
+        try {
+            for (@Nonnull final TileUpdate updateData : updateDataList) {
+                updateTile(updateData);
+            }
+        } finally {
+            mapLock.writeLock().unlock();
+        }
+    }
+
+    /**
      * Perform a update of a single map tile regarding the update information. This can add a new tile,
      * update a old one or delete one tile.
      *
@@ -594,15 +632,10 @@ public final class GameMap implements LightingMap, Stoppable {
             if (newTile) {
                 mapLock.writeLock().lock();
                 try {
-                    try {
-                        tiles.put(locKey, tile);
-                    } finally {
-                        mapLock.readLock().lock();
-                        mapLock.writeLock().unlock();
-                    }
+                    tiles.put(locKey, tile);
                     GameMapProcessor2.processTile(tile);
                 } finally {
-                    mapLock.readLock().unlock();
+                    mapLock.writeLock().unlock();
                 }
             }
             World.getLights().notifyChange(updateData.getLocation());
@@ -618,5 +651,6 @@ public final class GameMap implements LightingMap, Stoppable {
                 World.getMusicBox().updatePlayerLocation();
             }
         }
+        minimap.update(updateData);
     }
 }

@@ -33,10 +33,17 @@ import java.util.List;
  */
 public class GameMapProcessor2 {
     /**
+     * This singleton instance of this class.
+     */
+    private static final GameMapProcessor2 INSTANCE = new GameMapProcessor2();
+
+
+    /**
      * Process a single new tile.
      *
      * @param tile the tile to process
      */
+    @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
     public static void processTile(final MapTile tile) {
         final Location playerLocation = World.getPlayer().getLocation();
 

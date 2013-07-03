@@ -28,6 +28,9 @@ import javolution.util.FastList;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Servermessage: Map stripe ( {@link illarion.client.net.CommandList#MSG_MAP_STRIPE}).
@@ -66,7 +69,7 @@ public final class MapStripeMsg
     /**
      * The list of tiles that are inside the update and all containing informations.
      */
-    private final FastList<TileUpdate> tiles = new FastList<TileUpdate>();
+    private final List<TileUpdate> tiles = new LinkedList<TileUpdate>();
 
     /**
      * Decode the map stripe data the receiver got and prepare it for the execution.
@@ -96,7 +99,7 @@ public final class MapStripeMsg
             } else if (dir == DIR_RIGHT) {
                 workLoc.addSC(1, 1, 0);
             }
-            tiles.addLast(workUpdate);
+            tiles.add(workUpdate);
         }
     }
 
@@ -110,11 +113,7 @@ public final class MapStripeMsg
     public boolean executeUpdate() {
         final GameMap map = World.getMap();
         map.startTileUpdate();
-        while (!tiles.isEmpty()) {
-            final TileUpdate currUpdate = tiles.removeFirst();
-            map.updateTile(currUpdate);
-            map.getMinimap().update(currUpdate);
-        }
+        map.updateTiles(tiles);
         map.finishTileUpdate();
 
         World.getLights().refresh();
@@ -129,7 +128,7 @@ public final class MapStripeMsg
      */
     @Override
     public boolean processNow() {
-        return true;// Gui.getInstance().getClock().isSet();
+        return true;
     }
 
     /**
