@@ -87,7 +87,7 @@ public class MainFrame extends JRibbonFrame {
         add(mapPanel, BorderLayout.CENTER);
         add(settingsPanel, BorderLayout.EAST);
         final RibbonTask task = new RibbonTask(Lang.getMsg("gui.mainframe.ribbon"),
-                /*new ClipboardBand(),*/  new ViewBand(getRendererManager()), new ZoomBand(), new MapFileBand(config),
+                new ViewBand(getRendererManager()), new ZoomBand(), new MapFileBand(config),
                 new ToolBand());
 
         final JXStatusBar status = new JXStatusBar();

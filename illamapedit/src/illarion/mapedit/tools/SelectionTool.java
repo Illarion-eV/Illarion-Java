@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Mapeditor.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Mapeditor is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +20,7 @@ package illarion.mapedit.tools;
 
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
-import illarion.mapedit.data.MapTile;
-import illarion.mapedit.history.GroupAction;
-import illarion.mapedit.history.MusicIDChangedAction;
-import illarion.mapedit.tools.panel.MusicPanel;
+import illarion.mapedit.tools.panel.SelectionPanel;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import javax.annotation.Nonnull;
@@ -31,42 +28,26 @@ import javax.annotation.Nullable;
 import javax.swing.*;
 
 /**
+ * Tool for selecting tiles
  *
- * @author Tim
+ * @author Fredrik K
  */
-public class MusicTool extends AbstractTool {
-
+public class SelectionTool extends AbstractTool {
     @Nonnull
-    private final MusicPanel panel;
+    protected SelectionPanel panel;
 
-
-    public MusicTool() {
-        panel = new MusicPanel();
+    public SelectionTool() {
+        panel = new SelectionPanel();
     }
 
     @Override
-    public void clickedAt(final int x, final int y, @Nonnull final Map map) {
-        final int musicID = panel.getMusicID();
-        final int radius = panel.getRadius();
-        final GroupAction action = new GroupAction();
-        for (int i = (x - radius) + 1; i <= ((x + radius) - 1); i++) {
-            for (int j = (y - radius) + 1; j <= ((y + radius) - 1); j++) {
-                final MapTile tile = map.getTileAt(i, j);
-                if ((tile != null) && (tile.getMusicID() != musicID)) {
-                    action.addAction(new MusicIDChangedAction(i, j, tile.getMusicID(), musicID, map));
-                    map.setTileAt(i, j, MapTile.MapTileFactory.setMusicId(musicID, tile));
-
-                }
-            }
-        }
-        if (!action.isEmpty()) {
-            getHistory().addEntry(action);
-        }
+    public void clickedAt(final int x, final int y, final Map map) {
+        map.setSelected(x, y, !panel.isDeselectChecked());
     }
 
     @Override
     public String getLocalizedName() {
-        return Lang.getMsg("tools.MusicTool");
+        return Lang.getMsg("tools.SelectionTool");
     }
 
     @Nullable
@@ -75,7 +56,7 @@ public class MusicTool extends AbstractTool {
         return null;
     }
 
-    @Nonnull
+    @Nullable
     @Override
     public JPanel getSettingsPanel() {
         return panel;

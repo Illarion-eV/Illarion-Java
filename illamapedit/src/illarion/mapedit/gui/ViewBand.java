@@ -42,17 +42,14 @@ public class ViewBand extends JRibbonBand {
         super(Lang.getMsg("gui.viewband.Name"), null);
 
         final TileRenderer tileRenderer = new TileRenderer(manager);
-        final ItemRenderer itemRenderer = new ItemRenderer(manager);
-        final GridRenderer gridRenderer = new GridRenderer(manager);
-        final MusicRenderer musicRenderer = new MusicRenderer(manager);
-        final WarpRenderer warpRenderer = new WarpRenderer(manager);
+        manager.addRenderer(new SelectedTileRenderer(manager));
 
         newRenderButton(manager, tileRenderer);
-        newRenderButton(manager, itemRenderer);
+        newRenderButton(manager, new ItemRenderer(manager));
         renderEmptyTilesButton(tileRenderer);
-        newRenderButton(manager, gridRenderer);
-        newRenderButton(manager, musicRenderer);
-        newRenderButton(manager, warpRenderer);
+        newRenderButton(manager, new GridRenderer(manager));
+        newRenderButton(manager, new MusicRenderer(manager));
+        newRenderButton(manager, new WarpRenderer(manager));
 
         final List<RibbonBandResizePolicy> resize = new FastList<RibbonBandResizePolicy>();
         resize.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));

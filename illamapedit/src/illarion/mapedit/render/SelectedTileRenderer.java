@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Mapeditor.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Mapeditor is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,17 +29,16 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 
 /**
- * This method renders the grid, to see the tiles better.
+ * This class renders a border around the selected tiles
  *
- * @author Tim
+ * @author Fredrik K
  */
-public class GridRenderer extends AbstractMapRenderer {
-
+public class SelectedTileRenderer extends AbstractMapRenderer {
 
     /**
-     * Creates a new map renderer
+     * Creates a new SelectedTileRenderer
      */
-    public GridRenderer(final RendererManager manager) {
+    public SelectedTileRenderer(final RendererManager manager) {
         super(manager);
     }
 
@@ -51,36 +50,44 @@ public class GridRenderer extends AbstractMapRenderer {
         final AffineTransform transform = g.getTransform();
 
         g.translate(0, getTileHeight() + 1);
+        g.setColor(Color.ORANGE);
 
-        g.setColor(Color.LIGHT_GRAY);
-        for (int x = 0; x <= width; ++x) {
-            g.drawLine(
-                    SwingLocation.displayCoordinateX(x + map.getX(), map.getY(), z),
-                    SwingLocation.displayCoordinateY(x + map.getX(), map.getY(), z),
-                    SwingLocation.displayCoordinateX(x + map.getX(), height + map.getY(), z),
-                    SwingLocation.displayCoordinateY(x + map.getX(), height + map.getY(), z));
+        for (int x = 0; x < width; ++x) {
+            for (int y = 0; y < height; ++y) {
+                if (map.isSelected(x, y)) {
+                    final int mapX = x + map.getX();
+                    final int mapY = y + map.getY();
+                    if (!map.isSelected(x-1, y))
+                        drawLine(mapX, mapY, mapX, mapY+1, z, g);
+                    if (!map.isSelected(x+1, y))
+                        drawLine(mapX+1, mapY, mapX+1, mapY+1, z, g);
+                    if (!map.isSelected(x, y-1))
+                        drawLine(mapX,mapY,mapX+1,mapY,z,g);
+                    if (!map.isSelected(x, y+1))
+                        drawLine(mapX, mapY+1, mapX+1, mapY+1, z, g);
+                }
+            }
         }
-        for (int y = 0; y <= height; ++y) {
-            g.drawLine(
-                    SwingLocation.displayCoordinateX(map.getX(), y + map.getY(), z),
-                    SwingLocation.displayCoordinateY(map.getX(), y + map.getY(), z),
-                    SwingLocation.displayCoordinateX(width + map.getX(), y + map.getY(), z),
-                    SwingLocation.displayCoordinateY(width + map.getX(), y + map.getY(), z));
-        }
-
 
         g.setTransform(transform);
+    }
 
+    private void drawLine(int fromX, int fromY, int toX, int toY, int z, @Nonnull final Graphics2D g) {
+        g.drawLine(
+                SwingLocation.displayCoordinateX(fromX, fromY, z),
+                SwingLocation.displayCoordinateY(fromX, fromY, z),
+                SwingLocation.displayCoordinateX(toX, toY, z),
+                SwingLocation.displayCoordinateY(toX, toY, z));
     }
 
     @Override
     protected int getRenderPriority() {
-        return 4;
+        return 5;
     }
 
     @Override
     public String getLocalizedName() {
-        return Lang.getMsg("renderer.Grid");
+        return Lang.getMsg("renderer.SelectedTiles");
     }
 
     @Override
@@ -90,6 +97,6 @@ public class GridRenderer extends AbstractMapRenderer {
 
     @Override
     public boolean isDefaultOn() {
-        return false;
+        return true;
     }
 }
