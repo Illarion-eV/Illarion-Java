@@ -57,14 +57,18 @@ public class SelectedTileRenderer extends AbstractMapRenderer {
                 if (map.isSelected(x, y)) {
                     final int mapX = x + map.getX();
                     final int mapY = y + map.getY();
-                    if (!map.isSelected(x-1, y))
-                        drawLine(mapX, mapY, mapX, mapY+1, z, g);
-                    if (!map.isSelected(x+1, y))
-                        drawLine(mapX+1, mapY, mapX+1, mapY+1, z, g);
-                    if (!map.isSelected(x, y-1))
-                        drawLine(mapX,mapY,mapX+1,mapY,z,g);
-                    if (!map.isSelected(x, y+1))
-                        drawLine(mapX, mapY+1, mapX+1, mapY+1, z, g);
+                    if (!map.isSelected(x-1, y)) {
+                        drawLine(mapX, mapY, mapX, mapY + 1, z, g);
+                    }
+                    if (!map.isSelected(x+1, y)) {
+                        drawLine(mapX + 1, mapY, mapX + 1, mapY + 1, z, g);
+                    }
+                    if (!map.isSelected(x, y-1)) {
+                        drawLine(mapX, mapY, mapX + 1, mapY, z, g);
+                    }
+                    if (!map.isSelected(x, y+1)) {
+                        drawLine(mapX, mapY + 1, mapX + 1, mapY + 1, z, g);
+                    }
                 }
             }
         }

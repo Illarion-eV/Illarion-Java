@@ -41,8 +41,15 @@ public class SelectionTool extends AbstractTool {
     }
 
     @Override
-    public void clickedAt(final int x, final int y, final Map map) {
-        map.setSelected(x, y, !panel.isDeselectChecked());
+    public void clickedAt(final int x, final int y, @Nonnull final Map map) {
+        final int radius = panel.getRadius();
+        for (int i = (x - radius) + 1; i <= ((x + radius) - 1); i++) {
+            for (int j = (y - radius) + 1; j <= ((y + radius) - 1); j++) {
+                if (map.contains(i, j)) {
+                    map.setSelected(i, j, !panel.isDeselectChecked());
+                }
+            }
+        }
     }
 
     @Override

@@ -23,6 +23,4 @@ package illarion.mapedit.events;
  */
 public class ClipboardCutEvent {
 
-    public ClipboardCutEvent() {
-    }
 }

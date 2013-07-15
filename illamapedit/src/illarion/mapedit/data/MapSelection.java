@@ -1,6 +1,5 @@
 package illarion.mapedit.data;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -10,7 +9,7 @@ import java.util.HashMap;
  */
 public class MapSelection {
 
-    private HashMap<MapPosition, MapTile> selectedTiles;
+    private final HashMap<MapPosition, MapTile> selectedTiles;
     private int minX = Integer.MAX_VALUE;
     private int minY = Integer.MAX_VALUE;
 

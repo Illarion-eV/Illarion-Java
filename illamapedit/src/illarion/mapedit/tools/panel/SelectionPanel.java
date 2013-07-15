@@ -19,6 +19,7 @@
 package illarion.mapedit.tools.panel;
 
 import illarion.mapedit.Lang;
+import illarion.mapedit.tools.ToolManager;
 
 import javax.annotation.Nonnull;
 import javax.swing.*;
@@ -32,6 +33,8 @@ import java.awt.*;
 public class SelectionPanel  extends JPanel {
     @Nonnull
     protected JCheckBox delCheckBox;
+    @Nonnull
+    private final JSpinner radiusSpinner;
 
     /**
      * Default constructor
@@ -41,10 +44,18 @@ public class SelectionPanel  extends JPanel {
 
         final JPanel northPanel = new JPanel(new GridLayout(0, 2));
         delCheckBox = new JCheckBox();
+        radiusSpinner = new JSpinner(new SpinnerNumberModel(1, 1, ToolManager.TOOL_RADIUS, 1));
+
         northPanel.add(new JLabel(Lang.getMsg("tools.SelectionTool.Delete")));
         northPanel.add(delCheckBox);
+        northPanel.add(new JLabel(Lang.getMsg("tools.TileBrushTool.Radius")));
+        northPanel.add(radiusSpinner);
 
         add(northPanel, BorderLayout.NORTH);
+    }
+
+    public int getRadius() {
+        return (Integer) radiusSpinner.getValue();
     }
 
     /**
