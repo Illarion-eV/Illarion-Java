@@ -19,13 +19,24 @@
 package illarion.mapedit.gui;
 
 import illarion.mapedit.Lang;
+import illarion.mapedit.events.ClipboardCopyEvent;
+import illarion.mapedit.events.ClipboardCutEvent;
+import illarion.mapedit.events.ClipboardPasteEvent;
+import illarion.mapedit.events.DidPasteEvent;
 import illarion.mapedit.resource.loaders.ImageLoader;
+import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventSubscriber;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
+import org.pushingpixels.flamingo.api.common.JCommandToggleButton;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
 import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
 import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
 
+import javax.annotation.Nonnull;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,17 +46,44 @@ import java.util.List;
  * @author Tim
  */
 public class ClipboardBand extends JRibbonBand {
+
+    final JCommandToggleButton paste;
+
     public ClipboardBand() {
         super(Lang.getMsg("gui.clipboardband.Name"), null);
-
+        AnnotationProcessor.process(this);
         final JCommandButton copy = new JCommandButton(Lang.getMsg("gui.clipboardband.Copy"),
                 ImageLoader.getResizableIcon("editcopy"));
-        final JCommandButton paste = new JCommandButton(Lang.getMsg("gui.clipboardband.Paste"),
+        paste = new JCommandToggleButton(Lang.getMsg("gui.clipboardband.Paste"),
                 ImageLoader.getResizableIcon("editpaste"));
         final JCommandButton cut = new JCommandButton(Lang.getMsg("gui.clipboardband.Cut"),
                 ImageLoader.getResizableIcon("editcut"));
 
-        addCommandButton(paste, RibbonElementPriority.TOP);
+        final ActionListener copyListener = new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                EventBus.publish(new ClipboardCopyEvent());
+            }
+        };
+        copy.addActionListener(copyListener);
+
+        final ActionListener pasteListener = new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                EventBus.publish(new ClipboardPasteEvent());
+            }
+        };
+        paste.addActionListener(pasteListener);
+
+        final ActionListener cutListener = new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                EventBus.publish(new ClipboardCutEvent());
+            }
+        };
+        cut.addActionListener(cutListener);
+
+        addCommandButton(paste, RibbonElementPriority.MEDIUM);
         addCommandButton(copy, RibbonElementPriority.MEDIUM);
         addCommandButton(cut, RibbonElementPriority.MEDIUM);
 
@@ -53,5 +91,10 @@ public class ClipboardBand extends JRibbonBand {
         policies.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
         policies.add(new CoreRibbonResizePolicies.High2Mid(getControlPanel()));
         setResizePolicies(policies);
+    }
+
+    @EventSubscriber
+    public void onDidPaste(@Nonnull final DidPasteEvent e) {
+        paste.getActionModel().setSelected(false);
     }
 }

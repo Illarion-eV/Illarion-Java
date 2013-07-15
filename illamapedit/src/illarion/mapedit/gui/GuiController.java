@@ -24,8 +24,8 @@ import illarion.mapedit.MapEditor;
 import illarion.mapedit.crash.exceptions.FormatCorruptedException;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapIO;
-import illarion.mapedit.events.GlobalActionEvents;
-import illarion.mapedit.events.UpdateMapListEvent;
+import illarion.mapedit.data.MapSelection;
+import illarion.mapedit.events.*;
 import illarion.mapedit.events.map.RepaintRequestEvent;
 import illarion.mapedit.events.menu.MapNewEvent;
 import illarion.mapedit.events.menu.MapOpenEvent;
@@ -78,6 +78,9 @@ public class GuiController extends WindowAdapter {
     private boolean started;
 
     private boolean notSaved;
+
+    @Nullable
+    private MapSelection clipboard;
 
     public GuiController(final Config config) {
         AnnotationProcessor.process(this);
@@ -262,5 +265,31 @@ public class GuiController extends WindowAdapter {
     @EventTopicSubscriber(topic = GlobalActionEvents.CLOSE_MAP)
     public void onMapClosed(final String topic, final ActionEvent event) {
         removeMap(selected);
+    }
+
+    @EventSubscriber
+    public void onCopyClipboard(@Nonnull final ClipboardCopyEvent e) {
+        if (getSelected() != null) {
+            clipboard = getSelected().copySelectedTiles();
+        }
+    }
+
+    @EventSubscriber
+    public void onCutClipboard(@Nonnull final ClipboardCutEvent e) {
+        if (getSelected() != null) {
+            clipboard = getSelected().cutSelectedTiles();
+            EventBus.publish(new RepaintRequestEvent());
+            setSaved(false);
+        }
+    }
+
+    @EventSubscriber
+    public void onPasteClipboard(@Nonnull final PasteEvent e) {
+        EventBus.publish(new DidPasteEvent());
+        if (getSelected() != null && clipboard != null) {
+            getSelected().pasteTiles(e.getX(),e.getY(),clipboard);
+            EventBus.publish(new RepaintRequestEvent());
+            setSaved(false);
+        }
     }
 }

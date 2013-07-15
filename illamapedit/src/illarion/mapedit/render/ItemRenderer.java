@@ -114,7 +114,7 @@ public class ItemRenderer extends AbstractMapRenderer {
 
     @Override
     protected int getRenderPriority() {
-        return 5;
+        return 6;
     }
 
     @Override

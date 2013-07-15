@@ -76,7 +76,7 @@ public class MusicRenderer extends AbstractMapRenderer {
 
     @Override
     protected int getRenderPriority() {
-        return 7;
+        return 8;
     }
 
     @Override
