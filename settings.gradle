@@ -31,13 +31,13 @@ rootProject.name = "Illarion Java Applications"
 rootProject.children.each {
     switch (it.name) {
         case "illabuild":
-            it.name = "Illarion Build Utility";
+            it.name = "build";
             break;
         case "illaclient":
             it.name = "Illarion Client";
             break;
         case "illacommon":
-            it.name = "Illarion Common Library";
+            it.name = "common";
             break;
         case "illadownload":
             it.name = "Illarion Download Utility";

@@ -18,7 +18,6 @@
  */
 package illarion.build.imagepacker;
 
-import illarion.build.TextureConverterNG;
 import illarion.common.util.FastMath;
 import org.apache.tools.ant.BuildException;
 import org.w3c.dom.Document;
@@ -30,6 +29,7 @@ import javax.annotation.Nullable;
 import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.image.*;
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.*;
@@ -54,7 +54,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
         /**
          * The file that will be analyzed once this task is executed.
          */
-        private final TextureConverterNG.FileEntry file;
+        private final File file;
 
         /**
          * The image packer that is the parent to this class.
@@ -68,8 +68,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
          * @param par   the image packer that is the parent to this class
          * @param entry the entry that is analyzed when this task is running
          */
-        private AnalyseFileTask(final ImagePacker par,
-                                final TextureConverterNG.FileEntry entry) {
+        private AnalyseFileTask(final ImagePacker par, final File entry) {
             file = entry;
             parent = par;
         }
@@ -262,10 +261,10 @@ public final class ImagePacker implements Comparator<TextureElement> {
      * Add a image to the image packer. This function will not analyse the image
      * right away, it will rather shedule it for analysing it in future.
      *
-     * @param fileEntry the entry that defines the location of the source file
+     * @param file the entry that defines the location of the source file
      */
-    public void addImage(final TextureConverterNG.FileEntry fileEntry) {
-        getExecService().execute(new ImagePacker.AnalyseFileTask(this, fileEntry));
+    public void addImage(final File file) {
+        getExecService().execute(new ImagePacker.AnalyseFileTask(this, file));
     }
 
     @Override
@@ -716,7 +715,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
                     } else if (sourceType == TYPE_GREY_ALPHA) {
                         Arrays.fill(targetImage, locTarget, locTarget + 3, sourceImage.get(locSource));
                         targetImage[locTarget + 3] = sourceImage.get(locSource + 1);
-                    } else if (sourceType == TYPE_GREY) {
+                    } else {
                         Arrays.fill(targetImage, locTarget, locTarget + 3, sourceImage.get(locSource));
                         targetImage[locTarget + 3] = -1;
                     }
@@ -814,7 +813,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
      *
      * @param fileEntry the file entry to process
      */
-    void processAddImage(@Nonnull final TextureConverterNG.FileEntry fileEntry) {
+    void processAddImage(@Nonnull final File fileEntry) {
         try {
             final Sprite sprite = new Sprite(fileEntry);
 
@@ -822,9 +821,8 @@ public final class ImagePacker implements Comparator<TextureElement> {
                 return;
             }
 
-            if ((sprite.getWidth() > MAX_SIZE)
-                    || (sprite.getHeight() > MAX_SIZE)) {
-                System.out.println("Image " + fileEntry.getFileName() //$NON-NLS-1$
+            if ((sprite.getWidth() > MAX_SIZE) || (sprite.getHeight() > MAX_SIZE)) {
+                System.out.println("Image " + fileEntry.getName() //$NON-NLS-1$
                         + " ignored - too large"); //$NON-NLS-1$
                 return;
             }
@@ -845,9 +843,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
                 }
             }
         } catch (@Nonnull final Exception e) {
-            System.out.println("Failed reading image " //$NON-NLS-1$
-                    + fileEntry.getFileName());
-            e.printStackTrace();
+            System.out.println("Failed reading image " + fileEntry.getName());
         }
     }
 
@@ -856,7 +852,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
      *
      * @return the executor service
      */
-    @Nullable
+    @Nonnull
     private ExecutorService getExecService() {
         if (execService == null) {
             execService =

@@ -21,7 +21,7 @@ apply plugin: 'java'
 archivesBaseName = 'illarion_client'
 
 dependencies {
-    compile project(':Illarion Common Library')
+    compile project(':common')
     compile project(':Illarion Game Engine')
     compile project(':Illarion Nifty-GUI Controls')
     runtime project(':Illarion Nifty-GUI Style')

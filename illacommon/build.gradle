@@ -17,7 +17,9 @@
  * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 apply plugin: 'java'
+apply plugin: 'maven-publish'
 
+group = 'org.illarion'
 archivesBaseName = 'illarion_common'
 
 dependencies {
@@ -58,16 +60,35 @@ compileJava.doLast {
 tasks.jar.onlyIf { return project.buildDate != null }
 jar {
     doFirst {
-        gitVersion
+        gitversion()
 
         manifest {
             attributes   \
               'Implementation-Title': 'Illarion Common Library',   \
-              'Implementation-Version': project.ext.fullVersion,   \
               'Implementation-Vendor': 'Illarion e.V.',   \
-              'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),   \
               'Built-By': System.getProperty('user.name'),   \
               'Built-JDK': System.getProperty('java.version')
+        }
+    }
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+    repositories {
+        maven {
+            url "file://$buildDir/repo"
         }
     }
 }

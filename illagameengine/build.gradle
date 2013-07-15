@@ -33,7 +33,7 @@ sourceSets {
 
 archivesBaseName = 'illarion_engine'
 dependencies {
-    compile project(':Illarion Common Library')
+    compile project(':common')
     compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.1'
     compile group: 'lessvoid', name: 'nifty', version: '1.4.0-SNAPSHOT'
     //compile group: 'org.newdawn', name: 'slick', version: '264'

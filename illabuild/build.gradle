@@ -18,16 +18,17 @@
  */
 apply plugin: 'java'
 apply plugin: 'groovy'
+apply plugin: 'maven-publish'
 
+group = 'org.illarion'
 archivesBaseName = 'illarion_build'
 
 dependencies {
-    compile project(':Illarion Common Library')
+    compile project(':common')
     compile group: 'javolution', name: 'javolution', version: '5.5.1'
     compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.1'
     compile group: 'log4j', name: 'log4j', version: '1.2.17'
     compile group: 'net.sf.trove4j', name: 'trove4j', version: '3.0.3'
-    compile group: 'org.apache.ant', name: 'ant', version: '1.9.1'
     compile group: 'org.tukaani', name: 'xz', version: '1.3'
     compile group: 'de.matthiasmann', name: 'pngdecoder', version: '20130527'
     compile gradleApi()
@@ -61,5 +62,26 @@ jar {
     }
     doLast {
         configurations.runtime.collect { value -> println(value.name) }
+    }
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+    repositories {
+        maven {
+            url "file://$buildDir/repo"
+        }
     }
 }

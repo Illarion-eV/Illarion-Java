@@ -20,16 +20,12 @@ package illarion.build.imagepacker;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
-import illarion.build.TextureConverterNG;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.ByteBuffer;
 
 /**
@@ -63,7 +59,7 @@ public final class Sprite implements TextureElement {
      * The file this sprite was load from.
      */
     @Nonnull
-    private final TextureConverterNG.FileEntry file;
+    private final File file;
 
     /**
      * Create a sprite based on a file
@@ -72,15 +68,15 @@ public final class Sprite implements TextureElement {
      * @throws IOException
      * @throws FileNotFoundException
      */
-    public Sprite(@Nonnull final TextureConverterNG.FileEntry fileEntry)
-            throws FileNotFoundException, IOException {
+    public Sprite(@Nonnull final File fileEntry)
+            throws IOException {
         PNGDecoder tempDecoder = null;
         InputStream inputStream = null;
         try {
-            inputStream = new FileInputStream(fileEntry.getFile());
+            inputStream = new FileInputStream(fileEntry);
             tempDecoder = new PNGDecoder(inputStream);
         } catch (IOException e) {
-            System.err.println("Error for image: " + fileEntry.getFileName() + ": " + e.getLocalizedMessage());
+            System.err.println("Error for image: " + fileEntry.getName() + ": " + e.getLocalizedMessage());
         }
 
         if (tempDecoder != null) {
@@ -91,24 +87,24 @@ public final class Sprite implements TextureElement {
                 inputStream.close();
                 inputStream = null;
             }
-            BufferedImage image = ImageIO.read(fileEntry.getFile());
+            BufferedImage image = ImageIO.read(fileEntry);
             height = image.getHeight();
             width = image.getWidth();
 
             BufferedImage tempImage = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
             tempImage.getGraphics().drawImage(image, 0, 0, null);
-            ImageIO.write(tempImage, "PNG", fileEntry.getFile());
+            ImageIO.write(tempImage, "PNG", fileEntry);
             try {
-                inputStream = new FileInputStream(fileEntry.getFile());
+                inputStream = new FileInputStream(fileEntry);
                 tempDecoder = new PNGDecoder(inputStream);
             } catch (IOException e) {
-                System.err.println("Can't fix image: " + fileEntry.getFileName());
+                System.err.println("Can't fix image: " + fileEntry.getName());
                 throw e;
             }
         }
         decoder = tempDecoder;
         getType();
-        name = stripFileExtension(fileEntry.getFileName());
+        name = stripFileExtension(fileEntry.getName());
         file = fileEntry;
 
         decoder = null;
@@ -192,7 +188,7 @@ public final class Sprite implements TextureElement {
 
         InputStream stream = null;
         try {
-            stream = new FileInputStream(file.getFile());
+            stream = new FileInputStream(file);
             decoder = new PNGDecoder(stream);
         } catch (IOException e) {
         }
