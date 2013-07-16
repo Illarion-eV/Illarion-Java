@@ -18,9 +18,7 @@
  */
 package illarion.mapedit.tools;
 
-import illarion.mapedit.events.ItemSelectedEvent;
-import illarion.mapedit.events.TileSelectedEvent;
-import illarion.mapedit.events.ToolSelectedEvent;
+import illarion.mapedit.events.*;
 import illarion.mapedit.events.map.MapClickedEvent;
 import illarion.mapedit.events.map.MapDragFinishedEvent;
 import illarion.mapedit.events.map.MapDraggedEvent;
@@ -55,6 +53,7 @@ public final class ToolManager implements Disposable {
     private AbstractTool actualTool;
     private TileImg selectedTile;
     private ItemImg selectedItem;
+    private boolean doPaste = false;
 
     public ToolManager(final GuiController controller, final RendererManager renderer) {
         this.controller = controller;
@@ -94,7 +93,11 @@ public final class ToolManager implements Disposable {
 
     @EventSubscriber
     public void clickedAt(@Nonnull final MapClickedEvent e) {
-        if ((actualTool != null) && (e.getButton() == MouseButton.LeftButton)) {
+        if (e.getButton() != MouseButton.LeftButton) return;
+        if (doPaste) {
+            EventBus.publish(new PasteEvent(e.getX(), e.getY()));
+            doPaste = false;
+        } else if ((actualTool != null)) {
             actualTool.clickedAt(e.getX(), e.getY(), e.getMap());
             EventBus.publish(new RepaintRequestEvent());
             controller.setSaved(false);
@@ -134,5 +137,10 @@ public final class ToolManager implements Disposable {
     @Nonnull
     public HistoryManager getHistory() {
         return controller.getHistoryManager();
+    }
+
+    @EventSubscriber
+    public void onPasteClipboard(@Nonnull final ClipboardPasteEvent e) {
+        doPaste = true;
     }
 }

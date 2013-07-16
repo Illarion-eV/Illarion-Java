@@ -228,4 +228,97 @@ public class Map {
     public int hashCode() {
         return name.hashCode();
     }
+    /**
+     * Checks if the is selected
+     *
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @return {@code true} if x and y is a selected tile
+     */
+    public boolean isSelected(final int x, final int y) {
+        MapTile tile = getTileAt(x, y);
+        if (tile != null) {
+            return tile.isSelected();
+        }
+        return false;
+    }
+
+    /**
+     * Set the selected state of a tile on the map
+     *
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @param selected the selected state the tile should have
+     */
+    public void setSelected(final int x, final int y, final boolean selected) {
+        MapTile tile = getTileAt(x,y);
+        if (tile != null) {
+            tile.setSelected(selected);
+        }
+    }
+
+    /**
+     * Copies the selected tiles
+     *
+     * @return a MapSelection with the selected tiles
+     */
+    public MapSelection copySelectedTiles() {
+        MapSelection mapSelection = new MapSelection();;
+        for (int x = 0; x <= getWidth(); x ++)  {
+            for (int y = 0; y <= getHeight(); y ++)  {
+                MapTile tile = getTileAt(x,y);
+                if (tile != null && tile.isSelected()) {
+                    MapTile newTile = MapTile.MapTileFactory.copy(tile);
+                    newTile.setSelected(true);
+                    mapSelection.addSelectedTile(new MapPosition(x,y), newTile);
+                }
+            }
+        }
+        return mapSelection;
+    }
+
+    /**
+     * Cuts the selected tiles
+     *
+     * @return a MapSelection with the selected tiles
+     */
+    public MapSelection cutSelectedTiles() {
+        MapSelection mapSelection = new MapSelection();
+
+        for (int x = 0; x <= getWidth(); x++) {
+            for (int y = 0; y <= getHeight(); y++) {
+                MapTile tile = getTileAt(x, y);
+                if (tile != null && tile.isSelected()) {
+                    mapSelection.addSelectedTile(new MapPosition(x, y), MapTile.MapTileFactory.copy(tile));
+                    setTileAt(x, y, MapTile.MapTileFactory.createNew(0, 0, 0, 0));
+                }
+            }
+        }
+        return mapSelection;
+    }
+
+    /**
+     * Pastes the tiles from the MapSelection
+     *
+     * @param startX starting x coordinate
+     * @param startY starting y coordinate
+     * @param mapSelection tiles to paste
+     */
+    public void pasteTiles(final int startX, final int startY, final MapSelection mapSelection) {
+        for (MapPosition position : mapSelection.getTiles().keySet()) {
+            int newX = startX + (position.getX() - mapSelection.getOffsetX());
+            int newY = startY + (position.getY() - mapSelection.getOffsetY());
+
+            if (contains(newX, newY)) {
+                MapTile oldTile = getTileAt(newX ,newY);
+                MapTile newTile = MapTile.MapTileFactory.copy(mapSelection.getTiles().get(position));
+                setTileAt(newX, newY, newTile);
+                if (oldTile != null) {
+                     newTile.setSelected(oldTile.isSelected());
+                }
+
+            }
+        }
+    }
 }
+
