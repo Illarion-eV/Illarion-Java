@@ -20,25 +20,55 @@ package illarion.mapedit.tools.panel.components;
 
 import illarion.mapedit.data.MapItem;
 import illarion.mapedit.events.ItemInspectorSelectedEvent;
+import illarion.mapedit.events.ItemRemoveEvent;
+import illarion.mapedit.resource.loaders.ImageLoader;
+import illarion.mapedit.tools.ToolManager;
 import illarion.mapedit.tools.panel.cellrenderer.MapItemCellRenderer;
 import org.bushe.swing.event.EventBus;
+import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import javax.annotation.Nonnull;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Collection;
 
 /**
  * @author Fredrik K
  */
-public class ItemInspectorList extends JScrollPane {
-
+public class ItemInspectorList extends JPanel {
+    private final JScrollPane scroll;
     @Nonnull
     private JList<MapItem> dataList;
 
     public ItemInspectorList() {
-        super(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        super(new BorderLayout());
+
+        scroll = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+        add(scroll, BorderLayout.CENTER);
+
+        final ResizableIcon iconRemove =  ImageLoader.getResizableIcon("edit_remove") ;
+        iconRemove.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
+
+        final JButton removeDataButton = new JButton();
+        removeDataButton.setIcon(iconRemove);
+        removeDataButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                EventBus.publish(new ItemRemoveEvent(dataList.getSelectedIndex()));
+            }
+        });
+
+        final JToolBar dataActions = new JToolBar();
+        dataActions.setFloatable(false);
+        dataActions.add(removeDataButton);
+
+        add(dataActions, BorderLayout.PAGE_END);
     }
 
     /**
@@ -64,6 +94,6 @@ public class ItemInspectorList extends JScrollPane {
             }
         });
 
-        setViewportView(dataList);
+        scroll.setViewportView(dataList);
     }
 }

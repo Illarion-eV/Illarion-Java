@@ -22,6 +22,7 @@ import illarion.common.types.Location;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * This class represents a whole map, including name, path, dimensions, and data.
@@ -89,12 +90,26 @@ public class Map {
         mapTileData = new MapTile[w * h];
     }
 
+    @Nullable
+    public List<MapItem> getItemsOnActiveTile() {
+        List<MapItem> items = null;
+        final MapTile tile = getTileAt(activeX,activeY);
+        if (tile != null) {
+            items = tile.getMapItems();
+        }
+        return items;
+    }
+
     public boolean isActiveTile(final int x, final int y) {
         return (activeX == x) && (activeY == y);
     }
 
     public void removeActiveTile() {
         setActiveTile(Integer.MIN_VALUE, Integer.MIN_VALUE);
+    }
+
+    public void removeItemOnActiveTile(final int index) {
+        getTileAt(activeX,activeY).removeMapItem(index);
     }
 
     public void setActiveTile(final int x, final int y) {

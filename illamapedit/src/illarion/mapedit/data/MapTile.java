@@ -160,6 +160,10 @@ public class MapTile {
         return shapeID;
     }
 
+    public void removeMapItem(final int index) {
+        mapItems.remove(index);
+    }
+
     /**
      * Sets the warp point of this tile.
      *

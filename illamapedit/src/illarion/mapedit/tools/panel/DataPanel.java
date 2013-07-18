@@ -19,10 +19,7 @@
 package illarion.mapedit.tools.panel;
 
 import illarion.mapedit.data.MapItem;
-import illarion.mapedit.events.ItemDataAddedEvent;
-import illarion.mapedit.events.ItemDataRemovedEvent;
-import illarion.mapedit.events.ItemInspectorSelectedEvent;
-import illarion.mapedit.events.ItemItemDataChangedEvent;
+import illarion.mapedit.events.*;
 import illarion.mapedit.tools.panel.components.ItemDataTable;
 import illarion.mapedit.tools.panel.components.ItemInspectorList;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -31,7 +28,8 @@ import org.bushe.swing.event.annotation.EventSubscriber;
 import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
-import java.util.Collection;
+import java.util.*;
+import java.util.List;
 
 /**
  * @author Fredrik K
@@ -49,7 +47,7 @@ public class DataPanel extends JPanel {
     }
 
     public void setItems(final Collection<MapItem> items) {
-         itemPanel.setDataList(items);
+        itemPanel.setDataList(items);
         dataPanel.clearDataList();
     }
 
@@ -71,5 +69,14 @@ public class DataPanel extends JPanel {
     @EventSubscriber
     public void onItemDataAdded(@Nonnull final ItemDataAddedEvent e) {
         itemPanel.getSelectedItem().getItemData().add(e.getData());
+    }
+
+    @EventSubscriber
+    public void onItemRemove(@Nonnull final ItemRemovedEvent e) {
+        List<MapItem> items = new ArrayList<MapItem>();
+        if (e.getItems() != null) {
+            items = e.getItems();
+        }
+        setItems(items);
     }
 }
