@@ -30,10 +30,10 @@ import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.swing.*;
-import java.util.List;
 
 /**
  * @author Tim
+ * @author Fredrik K
  */
 public class ItemBrushTool extends AbstractTool {
 
@@ -47,20 +47,20 @@ public class ItemBrushTool extends AbstractTool {
 @Override
     public void clickedAt(final int x, final int y, @Nonnull final Map map) {
         final ItemImg item = getManager().getSelectedItem();
+        if (item == null) {
+            return;
+        }
+
         final int radius = panel.getRadius();
-        if (item != null) {
-            for (int i = (x - radius) + 1; i <= ((x + radius) - 1); i++) {
-                for (int j = (y - radius) + 1; j <= ((y + radius) - 1); j++) {
-                    final MapTile tile = map.getTileAt(i, j);
-                    if (tile != null) {
-                        final List<MapItem> items = tile.getMapItems();
-                        final MapItem itm = new MapItem(item.getItemId(), 0);
-                        if (!items.contains(itm)) {
-                            getHistory().addEntry(new ItemPlacedAction(i, j, itm, map));
-                            items.add(itm);
-                        }
-                    }
+        for (int i = (x - radius) + 1; i <= ((x + radius) - 1); i++) {
+            for (int j = (y - radius) + 1; j <= ((y + radius) - 1); j++) {
+                final MapTile tile = map.getTileAt(i, j);
+                if (tile == null) {
+                    continue;
                 }
+                final MapItem itm = new MapItem(item.getItemId(), 0);
+                getHistory().addEntry(new ItemPlacedAction(i, j, itm, map));
+                tile.getMapItems().add(itm);
             }
         }
     }
