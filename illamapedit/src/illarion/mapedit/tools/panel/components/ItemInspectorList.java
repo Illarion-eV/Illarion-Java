@@ -21,6 +21,7 @@ package illarion.mapedit.tools.panel.components;
 import illarion.mapedit.data.MapItem;
 import illarion.mapedit.events.ItemInspectorSelectedEvent;
 import illarion.mapedit.events.ItemRemoveEvent;
+import illarion.mapedit.events.ItemReplaceEvent;
 import illarion.mapedit.resource.loaders.ImageLoader;
 import illarion.mapedit.tools.ToolManager;
 import illarion.mapedit.tools.panel.cellrenderer.MapItemCellRenderer;
@@ -54,21 +55,53 @@ public class ItemInspectorList extends JPanel {
 
         final ResizableIcon iconRemove =  ImageLoader.getResizableIcon("edit_remove") ;
         iconRemove.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
+        final ResizableIcon iconUp =  ImageLoader.getResizableIcon("1uparrow") ;
+        iconUp.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
+        final ResizableIcon iconDown =  ImageLoader.getResizableIcon("1downarrow") ;
+        iconDown.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
 
-        final JButton removeDataButton = new JButton();
-        removeDataButton.setIcon(iconRemove);
-        removeDataButton.addActionListener(new ActionListener() {
+        final JButton removeItemButton = new JButton();
+        removeItemButton.setIcon(iconRemove);
+        removeItemButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                EventBus.publish(new ItemRemoveEvent(dataList.getSelectedIndex()));
+                if (dataList.getSelectedIndex() > -1) {
+                    EventBus.publish(new ItemRemoveEvent(dataList.getSelectedIndex()));
+                }
             }
         });
 
-        final JToolBar dataActions = new JToolBar();
-        dataActions.setFloatable(false);
-        dataActions.add(removeDataButton);
+        final JButton itemUpButton = new JButton();
+        itemUpButton.setIcon(iconUp);
+        itemUpButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                final int index = dataList.getSelectedIndex();
+                if (index > 0) {
+                    EventBus.publish(new ItemReplaceEvent(index, index - 1));
+                }
+            }
+        });
 
-        add(dataActions, BorderLayout.PAGE_END);
+        final JButton itemDownButton = new JButton();
+        itemDownButton.setIcon(iconDown);
+        itemDownButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                final int index = dataList.getSelectedIndex();
+                if ((index > -1) && (index < (dataList.getModel().getSize() - 1))) {
+                    EventBus.publish(new ItemReplaceEvent(index, index + 1));
+                }
+            }
+        });
+
+        final JToolBar itemActions = new JToolBar();
+        itemActions.setFloatable(false);
+        itemActions.add(removeItemButton);
+        itemActions.addSeparator();
+        itemActions.add(itemUpButton);
+        itemActions.add(itemDownButton);
+        add(itemActions, BorderLayout.PAGE_END);
     }
 
     /**

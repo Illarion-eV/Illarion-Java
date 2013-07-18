@@ -109,7 +109,20 @@ public class Map {
     }
 
     public void removeItemOnActiveTile(final int index) {
-        getTileAt(activeX,activeY).removeMapItem(index);
+        MapTile tile = getTileAt(activeX,activeY);
+        if (tile != null) {
+            tile.removeMapItem(index);
+        }
+    }
+
+    public void replaceItemOnActiveTile(final int index, final int newIndex) {
+        MapTile tile = getTileAt(activeX,activeY);
+        if (tile != null) {
+            List<MapItem> items = tile.getMapItems();
+            MapItem item = items.get(index);
+            items.set(index, items.get(newIndex));
+            items.set(newIndex, item);
+        }
     }
 
     public void setActiveTile(final int x, final int y) {

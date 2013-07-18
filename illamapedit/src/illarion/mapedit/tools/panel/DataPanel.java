@@ -72,7 +72,7 @@ public class DataPanel extends JPanel {
     }
 
     @EventSubscriber
-    public void onItemRemove(@Nonnull final ItemRemovedEvent e) {
+    public void onItemsUpdated(@Nonnull final ItemsUpdatedEvent e) {
         List<MapItem> items = new ArrayList<MapItem>();
         if (e.getItems() != null) {
             items = e.getItems();

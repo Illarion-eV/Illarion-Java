@@ -305,7 +305,16 @@ public class GuiController extends WindowAdapter {
         if (getSelected() != null) {
             getSelected().removeItemOnActiveTile(e.getIndex());
             EventBus.publish(new RepaintRequestEvent());
-            EventBus.publish(new ItemRemovedEvent(getSelected().getItemsOnActiveTile()));
+            EventBus.publish(new ItemsUpdatedEvent(getSelected().getItemsOnActiveTile()));
+        }
+    }
+
+    @EventSubscriber
+    public void onItemReplace(@Nonnull final ItemReplaceEvent e) {
+        if (getSelected() != null) {
+            getSelected().replaceItemOnActiveTile(e.getIndex(), e.getNewIndex());
+            EventBus.publish(new RepaintRequestEvent());
+            EventBus.publish(new ItemsUpdatedEvent(getSelected().getItemsOnActiveTile()));
         }
     }
 }

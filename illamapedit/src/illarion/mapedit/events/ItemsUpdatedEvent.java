@@ -26,10 +26,10 @@ import java.util.List;
 /**
  * @author Fredrik K
  */
-public class ItemRemovedEvent {
+public class ItemsUpdatedEvent {
     private final List<MapItem> items;
 
-    public ItemRemovedEvent(@Nullable final List<MapItem> items) {
+    public ItemsUpdatedEvent(@Nullable final List<MapItem> items) {
         this.items = items;
     }
 
