@@ -30,7 +30,7 @@ import java.awt.*;
  *
  * @author Fredrik K
  */
-public class SelectionPanel  extends JPanel {
+public class SelectionPanel extends JPanel {
     @Nonnull
     protected JCheckBox delCheckBox;
     @Nonnull

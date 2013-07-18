@@ -54,7 +54,7 @@ public class ItemBrushTool extends AbstractTool {
                     final MapTile tile = map.getTileAt(i, j);
                     if (tile != null) {
                         final List<MapItem> items = tile.getMapItems();
-                        final MapItem itm = new MapItem(item.getItemId(), "", 0);
+                        final MapItem itm = new MapItem(item.getItemId(), 0);
                         if (!items.contains(itm)) {
                             getHistory().addEntry(new ItemPlacedAction(i, j, itm, map));
                             items.add(itm);

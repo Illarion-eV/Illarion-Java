@@ -292,4 +292,11 @@ public class GuiController extends WindowAdapter {
             setSaved(false);
         }
     }
+
+    @EventSubscriber
+    public void onSelectTool(@Nonnull final ToolSelectedEvent e) {
+        if (getSelected() != null) {
+            getSelected().removeActiveTile();
+        }
+    }
 }

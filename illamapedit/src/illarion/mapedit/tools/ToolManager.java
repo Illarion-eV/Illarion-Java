@@ -53,7 +53,7 @@ public final class ToolManager implements Disposable {
     private AbstractTool actualTool;
     private TileImg selectedTile;
     private ItemImg selectedItem;
-    private boolean doPaste = false;
+    private boolean doPaste;
 
     public ToolManager(final GuiController controller, final RendererManager renderer) {
         this.controller = controller;
@@ -67,6 +67,7 @@ public final class ToolManager implements Disposable {
             tool.registerManager(this);
         }
         actualTool = tool;
+        EventBus.publish(new RepaintRequestEvent());
     }
 
     TileImg getSelectedTile() {
@@ -75,10 +76,6 @@ public final class ToolManager implements Disposable {
 
     ItemImg getSelectedItem() {
         return selectedItem;
-    }
-
-    RendererManager getRenderer() {
-        return renderer;
     }
 
     @Override
@@ -90,14 +87,15 @@ public final class ToolManager implements Disposable {
         return controller;
     }
 
-
     @EventSubscriber
     public void clickedAt(@Nonnull final MapClickedEvent e) {
-        if (e.getButton() != MouseButton.LeftButton) return;
+        if (e.getButton() != MouseButton.LeftButton) {
+            return;
+        }
         if (doPaste) {
             EventBus.publish(new PasteEvent(e.getX(), e.getY()));
             doPaste = false;
-        } else if ((actualTool != null)) {
+        } else if (actualTool != null) {
             actualTool.clickedAt(e.getX(), e.getY(), e.getMap());
             EventBus.publish(new RepaintRequestEvent());
             controller.setSaved(false);
@@ -106,7 +104,7 @@ public final class ToolManager implements Disposable {
 
     @EventSubscriber
     public void onMapDragged(@Nonnull final MapDraggedEvent e) {
-        if ((actualTool != null) && e.getButton() == MouseButton.LeftButton) {
+        if ((actualTool != null) && (e.getButton() == MouseButton.LeftButton)) {
             actualTool.clickedAt(e.getX(), e.getY(), e.getMap());
             EventBus.publish(new RepaintRequestEvent());
             controller.setSaved(false);
