@@ -87,7 +87,7 @@ public class MainFrame extends JRibbonFrame {
         add(mapPanel, BorderLayout.CENTER);
         add(settingsPanel, BorderLayout.EAST);
         final RibbonTask task = new RibbonTask(Lang.getMsg("gui.mainframe.ribbon"),
-                new ViewBand(getRendererManager()), new ZoomBand(), new MapFileBand(config),
+                new ClipboardBand(), new ViewBand(getRendererManager()), new ZoomBand(), new MapFileBand(config),
                 new ToolBand());
 
         final JXStatusBar status = new JXStatusBar();
@@ -109,7 +109,6 @@ public class MainFrame extends JRibbonFrame {
 
         getRibbon().addTask(task);
         setApplicationIcon(ImageLoader.getResizableIcon("mapedit64"));
-        //new ToolSettingsPanel();
     }
 
     public static MainFrame getInstance() {
