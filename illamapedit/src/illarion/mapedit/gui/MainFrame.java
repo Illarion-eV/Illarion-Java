@@ -109,6 +109,8 @@ public class MainFrame extends JRibbonFrame {
 
         getRibbon().addTask(task);
         setApplicationIcon(ImageLoader.getResizableIcon("mapedit64"));
+
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventPostProcessor(new MapKeyEventPostProcessor());
     }
 
     public static MainFrame getInstance() {
