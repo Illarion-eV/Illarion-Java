@@ -23,12 +23,9 @@ import illarion.mapedit.events.ClipboardCopyEvent;
 import illarion.mapedit.events.ClipboardCutEvent;
 import illarion.mapedit.events.ClipboardPasteEvent;
 import illarion.mapedit.events.DidPasteEvent;
-import illarion.mapedit.gui.actions.BandClickAction;
-import illarion.mapedit.resource.loaders.ImageLoader;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
-import org.pushingpixels.flamingo.api.common.AbstractCommandButton;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.common.JCommandToggleButton;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
@@ -37,8 +34,6 @@ import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
 import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
 
 import javax.annotation.Nonnull;
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -57,9 +52,9 @@ public class ClipboardBand extends JRibbonBand {
     public ClipboardBand() {
         super(Lang.getMsg("gui.clipboardband.Name"), null);
         AnnotationProcessor.process(this);
-        final JCommandButton copy = getCommandButton("gui.clipboardband.Copy","editcopy", KeyEvent.VK_C, "Copy");
-        paste = getToggleButton("gui.clipboardband.Paste","editpaste", KeyEvent.VK_V, "Paste");
-        final JCommandButton cut = getCommandButton("gui.clipboardband.Cut","editcut", KeyEvent.VK_X, "Cut");
+        final JCommandButton copy = MainFrame.getCommandButton("gui.clipboardband.Copy","editcopy", KeyEvent.VK_C, "Copy");
+        paste = MainFrame.getToggleButton("gui.clipboardband.Paste","editpaste", KeyEvent.VK_V, "Paste");
+        final JCommandButton cut = MainFrame.getCommandButton("gui.clipboardband.Cut","editcut", KeyEvent.VK_X, "Cut");
 
         final ActionListener copyListener = new ActionListener() {
             @Override
@@ -93,29 +88,6 @@ public class ClipboardBand extends JRibbonBand {
         policies.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
         policies.add(new CoreRibbonResizePolicies.High2Mid(getControlPanel()));
         setResizePolicies(policies);
-    }
-
-    private JCommandToggleButton getToggleButton(final String text, final String icon, final int key,                                            final String action ) {
-        final JCommandToggleButton commandButton = new JCommandToggleButton(Lang.getMsg(text),
-                ImageLoader.getResizableIcon(icon));
-        setAction(commandButton, key, action);
-
-        return commandButton;
-    }
-
-    private void setAction(final AbstractCommandButton commandButton, final int key, final String action) {
-        final InputMap input = commandButton.getInputMap(WHEN_IN_FOCUSED_WINDOW);
-        final KeyStroke enter = KeyStroke.getKeyStroke(key, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
-        input.put(enter, action);
-        commandButton.getActionMap().put(action, new BandClickAction(commandButton));
-    }
-
-    private JCommandButton getCommandButton(final String text, final String icon, final int key,                                            final String action ) {
-        final JCommandButton commandButton = new JCommandButton(Lang.getMsg(text),
-                ImageLoader.getResizableIcon(icon));
-
-        setAction(commandButton, key, action);
-        return commandButton;
     }
 
     @EventSubscriber

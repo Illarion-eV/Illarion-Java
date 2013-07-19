@@ -19,6 +19,11 @@
 package illarion.mapedit.data;
 
 import illarion.common.types.Location;
+import illarion.mapedit.events.HistoryPasteCutEvent;
+import illarion.mapedit.history.CopyPasteAction;
+import illarion.mapedit.history.GroupAction;
+import illarion.mapedit.history.TileIDChangedAction;
+import org.bushe.swing.event.EventBus;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -109,17 +114,17 @@ public class Map {
     }
 
     public void removeItemOnActiveTile(final int index) {
-        MapTile tile = getTileAt(activeX,activeY);
+        final MapTile tile = getTileAt(activeX,activeY);
         if (tile != null) {
             tile.removeMapItem(index);
         }
     }
 
     public void replaceItemOnActiveTile(final int index, final int newIndex) {
-        MapTile tile = getTileAt(activeX,activeY);
+        final MapTile tile = getTileAt(activeX,activeY);
         if (tile != null) {
-            List<MapItem> items = tile.getMapItems();
-            MapItem item = items.get(index);
+            final List<MapItem> items = tile.getMapItems();
+            final MapItem item = items.get(index);
             items.set(index, items.get(newIndex));
             items.set(newIndex, item);
         }
@@ -329,15 +334,21 @@ public class Map {
      */
     public MapSelection cutSelectedTiles() {
         final MapSelection mapSelection = new MapSelection();
-
+        final GroupAction action = new GroupAction();
         for (int x = 0; x <= getWidth(); x++) {
             for (int y = 0; y <= getHeight(); y++) {
                 final MapTile tile = getTileAt(x, y);
                 if ((tile != null) && tile.isSelected()) {
                     mapSelection.addSelectedTile(new MapPosition(x, y), MapTile.MapTileFactory.copy(tile));
-                    setTileAt(x, y, MapTile.MapTileFactory.createNew(0, 0, 0, 0));
+                    MapTile tileNew = MapTile.MapTileFactory.createNew(0, 0, 0, 0);
+                    action.addAction(new CopyPasteAction(x, y, tileNew, tile, this));
+                    setTileAt(x, y, tileNew);
                 }
             }
+        }
+
+        if (!action.isEmpty()) {
+            EventBus.publish(new HistoryPasteCutEvent(action));
         }
         return mapSelection;
     }
@@ -350,6 +361,7 @@ public class Map {
      * @param mapSelection tiles to paste
      */
     public void pasteTiles(final int startX, final int startY, final MapSelection mapSelection) {
+        final GroupAction action = new GroupAction();
         for (final MapPosition position : mapSelection.getTiles().keySet()) {
             final int newX = startX + (position.getX() - mapSelection.getOffsetX());
             final int newY = startY + (position.getY() - mapSelection.getOffsetY());
@@ -357,12 +369,16 @@ public class Map {
             if (contains(newX, newY)) {
                 final MapTile oldTile = getTileAt(newX ,newY);
                 final MapTile newTile = MapTile.MapTileFactory.copy(mapSelection.getTiles().get(position));
+                action.addAction(new CopyPasteAction(newX, newY, oldTile, newTile, this));
                 setTileAt(newX, newY, newTile);
                 if (oldTile != null) {
                      newTile.setSelected(oldTile.isSelected());
                 }
 
             }
+        }
+        if (!action.isEmpty()) {
+            EventBus.publish(new HistoryPasteCutEvent(action));
         }
     }
 }
