@@ -22,6 +22,7 @@ import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapItem;
 import illarion.mapedit.data.MapTile;
+import illarion.mapedit.history.GroupAction;
 import illarion.mapedit.history.ItemPlacedAction;
 import illarion.mapedit.resource.ItemImg;
 import illarion.mapedit.tools.panel.ItemBrushPanel;
@@ -36,7 +37,6 @@ import javax.swing.*;
  * @author Fredrik K
  */
 public class ItemBrushTool extends AbstractTool {
-
     @Nonnull
     private final ItemBrushPanel panel;
 
@@ -44,25 +44,35 @@ public class ItemBrushTool extends AbstractTool {
         panel = new ItemBrushPanel();
     }
 
-@Override
+    @Override
     public void clickedAt(final int x, final int y, @Nonnull final Map map) {
+        final ItemPlacedAction newAction = addItem(x, y, map);
+        if (newAction != null) {
+            getHistory().addEntry(newAction);
+        }
+    }
+
+    @Override
+    public void paintSelected(final int x, final int y, final Map map, final GroupAction action) {
+        final ItemPlacedAction newAction = addItem(x, y, map);
+        if (newAction != null) {
+            action.addAction(newAction);
+        }
+    }
+
+    @Nullable
+    private ItemPlacedAction addItem(final int x, final int y, @Nonnull final Map map) {
         final ItemImg item = getManager().getSelectedItem();
         if (item == null) {
-            return;
+            return null;
         }
-
-        final int radius = panel.getRadius();
-        for (int i = (x - radius) + 1; i <= ((x + radius) - 1); i++) {
-            for (int j = (y - radius) + 1; j <= ((y + radius) - 1); j++) {
-                final MapTile tile = map.getTileAt(i, j);
-                if (tile == null) {
-                    continue;
-                }
-                final MapItem itm = new MapItem(item.getItemId(), 0);
-                getHistory().addEntry(new ItemPlacedAction(i, j, itm, map));
-                tile.getMapItems().add(itm);
-            }
+        final MapTile tile = map.getTileAt(x, y);
+        if (tile == null) {
+            return null;
         }
+        final MapItem mapItem = new MapItem(item.getItemId(), 0);
+        tile.getMapItems().add(mapItem);
+        return new ItemPlacedAction(x, y, mapItem, map);
     }
 
     @Override
@@ -80,5 +90,10 @@ public class ItemBrushTool extends AbstractTool {
     @Override
     public JPanel getSettingsPanel() {
         return panel;
+    }
+
+    @Override
+    public boolean isFillSelected() {
+        return panel.isFillSelected();
     }
 }

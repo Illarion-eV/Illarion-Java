@@ -27,32 +27,26 @@ import java.awt.*;
 /**
  * @author Fredrik K
  */
-public class ItemEraserPanel extends JPanel {
+public class TileEraserPanel extends JPanel {
     @Nonnull
-    private final JCheckBox clearCheckBox;
-    @Nonnull
-    private final JCheckBox fillCheckBox;
+    private final JCheckBox fillCheckbox;
 
-    public ItemEraserPanel() {
-        setLayout(new BorderLayout());
+    /**
+     * Default constructor
+     */
+    public TileEraserPanel() {
+        super(new BorderLayout());
 
-        final JPanel northPanel = new JPanel(new GridLayout(0, 2));
-        clearCheckBox = new JCheckBox();
-        fillCheckBox = new JCheckBox();
+        final JPanel brushSizePanel = new JPanel(new GridLayout(0, 2));
+        final JLabel fillLabel = new JLabel(Lang.getMsg("tools.Fill"));
+        fillCheckbox = new JCheckBox();
+        brushSizePanel.add(fillLabel);
+        brushSizePanel.add(fillCheckbox);
 
-        northPanel.add(new JLabel(Lang.getMsg("tools.ItemEraser.Clear")));
-        northPanel.add(clearCheckBox);
-        northPanel.add(new JLabel(Lang.getMsg("tools.Fill")));
-        northPanel.add(fillCheckBox);
-
-        add(northPanel,BorderLayout.NORTH);
+        add(brushSizePanel, BorderLayout.NORTH);
     }
 
     public boolean isFillSelected() {
-        return fillCheckBox.isSelected();
-    }
-
-    public boolean shouldClear() {
-        return clearCheckBox.isSelected();
+        return fillCheckbox.isSelected();
     }
 }

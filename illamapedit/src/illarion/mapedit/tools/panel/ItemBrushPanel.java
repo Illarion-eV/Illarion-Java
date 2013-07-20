@@ -19,7 +19,6 @@
 package illarion.mapedit.tools.panel;
 
 import illarion.mapedit.Lang;
-import illarion.mapedit.tools.ToolManager;
 import illarion.mapedit.tools.panel.components.ItemTree;
 
 import javax.annotation.Nonnull;
@@ -28,27 +27,27 @@ import java.awt.*;
 
 /**
  * @author Tim
+ * @author Fredrik K
  */
 public class ItemBrushPanel extends JPanel {
-
     @Nonnull
-    private final JSpinner radiusSpinner;
+    private final JCheckBox fillCheckbox;
 
     public ItemBrushPanel() {
         super(new BorderLayout());
 
         add(new ItemTree(), BorderLayout.CENTER);
 
-        final JPanel brushSizePanel = new JPanel(new BorderLayout(5, 0));
-        final JLabel radiusLabel = new JLabel(Lang.getMsg("tools.ItemBrushTool.Radius"));
-        radiusSpinner = new JSpinner(new SpinnerNumberModel(1, 1, ToolManager.TOOL_RADIUS, 1));
-        brushSizePanel.add(radiusLabel, BorderLayout.WEST);
-        brushSizePanel.add(radiusSpinner, BorderLayout.CENTER);
+        final JPanel brushSizePanel = new JPanel(new GridLayout(0, 2));
+        final JLabel radiusLabel = new JLabel(Lang.getMsg("tools.Fill"));
+        fillCheckbox = new JCheckBox();
+        brushSizePanel.add(radiusLabel);
+        brushSizePanel.add(fillCheckbox);
 
         add(brushSizePanel, BorderLayout.SOUTH);
     }
 
-    public int getRadius() {
-        return (Integer) radiusSpinner.getValue();
+    public boolean isFillSelected() {
+        return fillCheckbox.isSelected();
     }
 }

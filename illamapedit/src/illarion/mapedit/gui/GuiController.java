@@ -286,7 +286,7 @@ public class GuiController extends WindowAdapter {
     @EventSubscriber
     public void onPasteClipboard(@Nonnull final PasteEvent e) {
         EventBus.publish(new DidPasteEvent());
-        if (getSelected() != null && clipboard != null) {
+        if ((getSelected() != null) && (clipboard != null)) {
             getSelected().pasteTiles(e.getX(),e.getY(),clipboard);
             EventBus.publish(new RepaintRequestEvent());
             setSaved(false);

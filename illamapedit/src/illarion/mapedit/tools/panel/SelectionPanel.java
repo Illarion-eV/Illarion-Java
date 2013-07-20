@@ -48,7 +48,7 @@ public class SelectionPanel extends JPanel {
 
         northPanel.add(new JLabel(Lang.getMsg("tools.SelectionTool.Delete")));
         northPanel.add(delCheckBox);
-        northPanel.add(new JLabel(Lang.getMsg("tools.TileBrushTool.Radius")));
+        northPanel.add(new JLabel(Lang.getMsg("tools.SelectionTool.Radius")));
         northPanel.add(radiusSpinner);
 
         add(northPanel, BorderLayout.NORTH);

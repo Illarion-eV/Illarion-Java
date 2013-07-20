@@ -39,6 +39,8 @@ public class WarpPanel extends JPanel {
     public final JSpinner zSpinner;
     @Nonnull
     public final JCheckBox delCheckBox;
+    @Nonnull
+    public final JCheckBox fillCheckBox;
 
     public WarpPanel() {
         super(new BorderLayout());
@@ -48,6 +50,7 @@ public class WarpPanel extends JPanel {
         zSpinner = new JSpinner(new SpinnerNumberModel(0, -1000000, 1000000, 1));
 
         delCheckBox = new JCheckBox();
+        fillCheckBox = new JCheckBox();
 
         delCheckBox.addActionListener(new ActionListener() {
             @Override
@@ -66,6 +69,8 @@ public class WarpPanel extends JPanel {
         panel.add(zSpinner);
         panel.add(new JLabel(Lang.getMsg("tools.WarpTool.Delete")));
         panel.add(delCheckBox);
+        panel.add(new JLabel(Lang.getMsg("tools.Fill")));
+        panel.add(fillCheckBox);
         add(panel, BorderLayout.NORTH);
     }
 
@@ -83,5 +88,9 @@ public class WarpPanel extends JPanel {
 
     public boolean isDelete() {
         return delCheckBox.isSelected();
+    }
+
+    public boolean isFillSelected() {
+        return fillCheckBox.isSelected();
     }
 }

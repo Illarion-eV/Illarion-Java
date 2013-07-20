@@ -82,7 +82,6 @@ public class MainFrame extends JRibbonFrame {
         final JCommandButton undoBtn = getCommandButton("gui.history.undo","undo", KeyEvent.VK_Z, "Undo");
         final JCommandButton redoBtn = getCommandButton("gui.history.redo", "redo", KeyEvent.VK_Z, "Redo", true);
 
-
         saveBtn.addActionListener(new ActionEventPublisher(new MapSaveEvent()));
         undoBtn.addActionListener(new ActionEventPublisher(new HistoryEvent(true)));
         redoBtn.addActionListener(new ActionEventPublisher(new HistoryEvent(false)));
@@ -122,7 +121,6 @@ public class MainFrame extends JRibbonFrame {
 
     public static MainFrame getInstance() {
         return instance;
-
     }
 
     public void exit() {

@@ -169,7 +169,7 @@ public class MapTile {
      *
      * @param mapWarpPoint the new warp, may be {@code null}.
      */
-    public void setMapWarpPoint(final MapWarpPoint mapWarpPoint) {
+    public void setMapWarpPoint(@Nullable final MapWarpPoint mapWarpPoint) {
         this.mapWarpPoint = mapWarpPoint;
     }
 

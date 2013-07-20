@@ -20,7 +20,9 @@ package illarion.mapedit.tools;
 
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
+import illarion.mapedit.data.MapTile;
 import illarion.mapedit.data.MapWarpPoint;
+import illarion.mapedit.history.GroupAction;
 import illarion.mapedit.history.WarpPlacedAction;
 import illarion.mapedit.tools.panel.WarpPanel;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
@@ -33,19 +35,37 @@ import javax.swing.*;
  * @author Tim
  */
 public class WarpTool extends AbstractTool {
-
     private final WarpPanel panel = new WarpPanel();
 
     @Override
     public void clickedAt(final int x, final int y, @Nonnull final Map map) {
-        final MapWarpPoint point;
-        if (panel.isDelete()) {
-            point = null;
-        } else {
+        final WarpPlacedAction newAction = addWarp(x, y, map);
+        if (newAction != null) {
+            getHistory().addEntry(newAction);
+        }
+    }
+
+    @Override
+    public void paintSelected(final int x, final int y, final Map map, final GroupAction action) {
+        final WarpPlacedAction newAction = addWarp(x, y, map);
+        if (newAction != null) {
+            action.addAction(newAction);
+        }
+    }
+
+    @Nullable
+    public WarpPlacedAction addWarp(final int x, final int y, final Map map) {
+        final MapTile tile = map.getTileAt(x,y);
+        if (tile == null) {
+            return null;
+        }
+
+        MapWarpPoint point = null;
+        if (!panel.isDelete()) {
             point = new MapWarpPoint(panel.getTargetX(), panel.getTargetY(), panel.getTargetZ());
         }
-        getHistory().addEntry(new WarpPlacedAction(x, y, map.getTileAt(x, y).getMapWarpPoint(), point, map));
-        map.getTileAt(x, y).setMapWarpPoint(point);
+        tile.setMapWarpPoint(point);
+        return new WarpPlacedAction(x, y, tile.getMapWarpPoint(), point, map);
     }
 
     @Override
@@ -63,5 +83,10 @@ public class WarpTool extends AbstractTool {
     @Override
     public JPanel getSettingsPanel() {
         return panel;
+    }
+
+    @Override
+    public boolean isFillSelected() {
+        return panel.isFillSelected();
     }
 }

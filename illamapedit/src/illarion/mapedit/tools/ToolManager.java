@@ -95,7 +95,10 @@ public final class ToolManager implements Disposable {
         if (doPaste) {
             EventBus.publish(new PasteEvent(e.getX(), e.getY()));
             doPaste = false;
-        } else if (actualTool != null) {
+        } else if ((actualTool != null) && actualTool.isFillSelected() && e.getMap().getTileAt(e.getX(), e.getY()).isSelected()) {
+            actualTool.fillSelected(e.getMap());
+            EventBus.publish(new RepaintRequestEvent());
+        } else if (actualTool != null && !actualTool.isFillSelected()) {
             actualTool.clickedAt(e.getX(), e.getY(), e.getMap());
             EventBus.publish(new RepaintRequestEvent());
             controller.setSaved(false);

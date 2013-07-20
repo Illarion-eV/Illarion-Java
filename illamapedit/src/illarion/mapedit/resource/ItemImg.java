@@ -99,7 +99,6 @@ public class ItemImg {
         System.arraycopy(imgs, 0, this.imgs, 0, imgs.length);
     }
 
-
     @Nonnull
     public Image[] getImgs() {
         return imgs;
