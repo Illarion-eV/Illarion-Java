@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Mapeditor.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Mapeditor is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,39 +16,25 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.history;
-
-import illarion.mapedit.data.Map;
-import illarion.mapedit.data.MapWarpPoint;
-
-import javax.annotation.Nullable;
+package illarion.mapedit.events;
 
 /**
- * @author Tim
+ * @author Fredrik K
  */
-public class WarpPlacedAction extends HistoryAction {
-
+public class MapScrollEvent {
     private final int x;
     private final int y;
-    private final MapWarpPoint oldWP;
-    private final MapWarpPoint newWP;
 
-    public WarpPlacedAction(final int x, final int y, final MapWarpPoint oldWP,
-                            @Nullable final MapWarpPoint newWP, final Map map) {
-        super(map);
+    public MapScrollEvent(final int x, final int y) {
         this.x = x;
         this.y = y;
-        this.oldWP = oldWP;
-        this.newWP = newWP;
     }
 
-    @Override
-    void redo() {
-        map.getTileAt(x, y).setMapWarpPoint(newWP);
+    public int getX() {
+        return x;
     }
 
-    @Override
-    void undo() {
-        map.getTileAt(x, y).setMapWarpPoint(oldWP);
+    public int getY() {
+        return y;
     }
 }

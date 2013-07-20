@@ -160,12 +160,16 @@ public class MapTile {
         return shapeID;
     }
 
+    public void removeMapItem(final int index) {
+        mapItems.remove(index);
+    }
+
     /**
      * Sets the warp point of this tile.
      *
      * @param mapWarpPoint the new warp, may be {@code null}.
      */
-    public void setMapWarpPoint(final MapWarpPoint mapWarpPoint) {
+    public void setMapWarpPoint(@Nullable final MapWarpPoint mapWarpPoint) {
         this.mapWarpPoint = mapWarpPoint;
     }
 

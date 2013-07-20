@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Mapeditor.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Mapeditor is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,10 +21,8 @@ package illarion.mapedit.tools;
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapTile;
-import illarion.mapedit.data.MapWarpPoint;
 import illarion.mapedit.history.GroupAction;
-import illarion.mapedit.history.WarpPlacedAction;
-import illarion.mapedit.tools.panel.WarpPanel;
+import illarion.mapedit.tools.panel.DataPanel;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import javax.annotation.Nonnull;
@@ -32,45 +30,29 @@ import javax.annotation.Nullable;
 import javax.swing.*;
 
 /**
- * @author Tim
+ * @author Fredrik K
  */
-public class WarpTool extends AbstractTool {
-    private final WarpPanel panel = new WarpPanel();
+public class DataTool extends AbstractTool {
+    @Nonnull
+    protected DataPanel panel;
 
-    @Override
-    public void clickedAt(final int x, final int y, @Nonnull final Map map) {
-        final WarpPlacedAction newAction = addWarp(x, y, map);
-        if (newAction != null) {
-            getHistory().addEntry(newAction);
-        }
+    public DataTool() {
+        panel = new DataPanel();
     }
 
     @Override
-    public void paintSelected(final int x, final int y, final Map map, final GroupAction action) {
-        final WarpPlacedAction newAction = addWarp(x, y, map);
-        if (newAction != null) {
-            action.addAction(newAction);
-        }
-    }
-
-    @Nullable
-    public WarpPlacedAction addWarp(final int x, final int y, final Map map) {
+    public void clickedAt(final int x, final int y, final Map map) {
         final MapTile tile = map.getTileAt(x,y);
-        if (tile == null) {
-            return null;
-        }
 
-        MapWarpPoint point = null;
-        if (!panel.isDelete()) {
-            point = new MapWarpPoint(panel.getTargetX(), panel.getTargetY(), panel.getTargetZ());
+        if (tile != null) {
+            panel.setItems(tile.getMapItems());
+            map.setActiveTile(x,y);
         }
-        tile.setMapWarpPoint(point);
-        return new WarpPlacedAction(x, y, tile.getMapWarpPoint(), point, map);
     }
 
     @Override
     public String getLocalizedName() {
-        return Lang.getMsg("tools.WarpTool");
+        return Lang.getMsg("tools.DataTool");
     }
 
     @Nullable
@@ -79,7 +61,6 @@ public class WarpTool extends AbstractTool {
         return null;
     }
 
-    @Nonnull
     @Override
     public JPanel getSettingsPanel() {
         return panel;
@@ -87,6 +68,10 @@ public class WarpTool extends AbstractTool {
 
     @Override
     public boolean isFillSelected() {
-        return panel.isFillSelected();
+        return false;
+    }
+
+    @Override
+    public void paintSelected(final int x, final int y, final Map map, final GroupAction action) {
     }
 }

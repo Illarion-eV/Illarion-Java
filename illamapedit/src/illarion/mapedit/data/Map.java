@@ -19,9 +19,15 @@
 package illarion.mapedit.data;
 
 import illarion.common.types.Location;
+import illarion.mapedit.events.HistoryPasteCutEvent;
+import illarion.mapedit.history.CopyPasteAction;
+import illarion.mapedit.history.GroupAction;
+import illarion.mapedit.history.TileIDChangedAction;
+import org.bushe.swing.event.EventBus;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * This class represents a whole map, including name, path, dimensions, and data.
@@ -63,6 +69,8 @@ public class Map {
      */
     @Nonnull
     private final MapTile[] mapTileData;
+    private int activeX = Integer.MIN_VALUE;
+    private int activeY = Integer.MIN_VALUE;
 
     /**
      * Creates a new map
@@ -85,6 +93,46 @@ public class Map {
         this.y = y;
         this.z = z;
         mapTileData = new MapTile[w * h];
+    }
+
+    @Nullable
+    public List<MapItem> getItemsOnActiveTile() {
+        List<MapItem> items = null;
+        final MapTile tile = getTileAt(activeX,activeY);
+        if (tile != null) {
+            items = tile.getMapItems();
+        }
+        return items;
+    }
+
+    public boolean isActiveTile(final int x, final int y) {
+        return (activeX == x) && (activeY == y);
+    }
+
+    public void removeActiveTile() {
+        setActiveTile(Integer.MIN_VALUE, Integer.MIN_VALUE);
+    }
+
+    public void removeItemOnActiveTile(final int index) {
+        final MapTile tile = getTileAt(activeX,activeY);
+        if (tile != null) {
+            tile.removeMapItem(index);
+        }
+    }
+
+    public void replaceItemOnActiveTile(final int index, final int newIndex) {
+        final MapTile tile = getTileAt(activeX,activeY);
+        if (tile != null) {
+            final List<MapItem> items = tile.getMapItems();
+            final MapItem item = items.get(index);
+            items.set(index, items.get(newIndex));
+            items.set(newIndex, item);
+        }
+    }
+
+    public void setActiveTile(final int x, final int y) {
+        activeX = x;
+        activeY = y;
     }
 
     /**
@@ -141,8 +189,10 @@ public class Map {
         if (mapTileData[i] != null) {
             return mapTileData[i];
         }
-        setTileAt(x, y, MapTile.MapTileFactory.createNew(0, 0, 0, 0));
-        return getTileAt(x, y);
+
+        final MapTile tile = MapTile.MapTileFactory.createNew(0, 0, 0, 0);
+        setTileAt(x, y, tile);
+        return tile;
 
     }
 
@@ -236,7 +286,7 @@ public class Map {
      * @return {@code true} if x and y is a selected tile
      */
     public boolean isSelected(final int x, final int y) {
-        MapTile tile = getTileAt(x, y);
+        final MapTile tile = getTileAt(x, y);
         if (tile != null) {
             return tile.isSelected();
         }
@@ -251,7 +301,7 @@ public class Map {
      * @param selected the selected state the tile should have
      */
     public void setSelected(final int x, final int y, final boolean selected) {
-        MapTile tile = getTileAt(x,y);
+        final MapTile tile = getTileAt(x,y);
         if (tile != null) {
             tile.setSelected(selected);
         }
@@ -263,12 +313,12 @@ public class Map {
      * @return a MapSelection with the selected tiles
      */
     public MapSelection copySelectedTiles() {
-        MapSelection mapSelection = new MapSelection();;
+        final MapSelection mapSelection = new MapSelection();
         for (int x = 0; x <= getWidth(); x ++)  {
             for (int y = 0; y <= getHeight(); y ++)  {
-                MapTile tile = getTileAt(x,y);
-                if (tile != null && tile.isSelected()) {
-                    MapTile newTile = MapTile.MapTileFactory.copy(tile);
+                final MapTile tile = getTileAt(x,y);
+                if ((tile != null) && tile.isSelected()) {
+                    final MapTile newTile = MapTile.MapTileFactory.copy(tile);
                     newTile.setSelected(true);
                     mapSelection.addSelectedTile(new MapPosition(x,y), newTile);
                 }
@@ -283,16 +333,22 @@ public class Map {
      * @return a MapSelection with the selected tiles
      */
     public MapSelection cutSelectedTiles() {
-        MapSelection mapSelection = new MapSelection();
-
+        final MapSelection mapSelection = new MapSelection();
+        final GroupAction action = new GroupAction();
         for (int x = 0; x <= getWidth(); x++) {
             for (int y = 0; y <= getHeight(); y++) {
-                MapTile tile = getTileAt(x, y);
-                if (tile != null && tile.isSelected()) {
+                final MapTile tile = getTileAt(x, y);
+                if ((tile != null) && tile.isSelected()) {
                     mapSelection.addSelectedTile(new MapPosition(x, y), MapTile.MapTileFactory.copy(tile));
-                    setTileAt(x, y, MapTile.MapTileFactory.createNew(0, 0, 0, 0));
+                    MapTile tileNew = MapTile.MapTileFactory.createNew(0, 0, 0, 0);
+                    action.addAction(new CopyPasteAction(x, y, tileNew, tile, this));
+                    setTileAt(x, y, tileNew);
                 }
             }
+        }
+
+        if (!action.isEmpty()) {
+            EventBus.publish(new HistoryPasteCutEvent(action));
         }
         return mapSelection;
     }
@@ -305,19 +361,24 @@ public class Map {
      * @param mapSelection tiles to paste
      */
     public void pasteTiles(final int startX, final int startY, final MapSelection mapSelection) {
-        for (MapPosition position : mapSelection.getTiles().keySet()) {
-            int newX = startX + (position.getX() - mapSelection.getOffsetX());
-            int newY = startY + (position.getY() - mapSelection.getOffsetY());
+        final GroupAction action = new GroupAction();
+        for (final MapPosition position : mapSelection.getTiles().keySet()) {
+            final int newX = startX + (position.getX() - mapSelection.getOffsetX());
+            final int newY = startY + (position.getY() - mapSelection.getOffsetY());
 
             if (contains(newX, newY)) {
-                MapTile oldTile = getTileAt(newX ,newY);
-                MapTile newTile = MapTile.MapTileFactory.copy(mapSelection.getTiles().get(position));
+                final MapTile oldTile = getTileAt(newX ,newY);
+                final MapTile newTile = MapTile.MapTileFactory.copy(mapSelection.getTiles().get(position));
+                action.addAction(new CopyPasteAction(newX, newY, oldTile, newTile, this));
                 setTileAt(newX, newY, newTile);
                 if (oldTile != null) {
                      newTile.setSelected(oldTile.isSelected());
                 }
 
             }
+        }
+        if (!action.isEmpty()) {
+            EventBus.publish(new HistoryPasteCutEvent(action));
         }
     }
 }

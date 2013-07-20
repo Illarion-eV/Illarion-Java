@@ -23,7 +23,6 @@ import illarion.mapedit.events.ClipboardCopyEvent;
 import illarion.mapedit.events.ClipboardCutEvent;
 import illarion.mapedit.events.ClipboardPasteEvent;
 import illarion.mapedit.events.DidPasteEvent;
-import illarion.mapedit.resource.loaders.ImageLoader;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -37,6 +36,7 @@ import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
 import javax.annotation.Nonnull;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,12 +52,9 @@ public class ClipboardBand extends JRibbonBand {
     public ClipboardBand() {
         super(Lang.getMsg("gui.clipboardband.Name"), null);
         AnnotationProcessor.process(this);
-        final JCommandButton copy = new JCommandButton(Lang.getMsg("gui.clipboardband.Copy"),
-                ImageLoader.getResizableIcon("editcopy"));
-        paste = new JCommandToggleButton(Lang.getMsg("gui.clipboardband.Paste"),
-                ImageLoader.getResizableIcon("editpaste"));
-        final JCommandButton cut = new JCommandButton(Lang.getMsg("gui.clipboardband.Cut"),
-                ImageLoader.getResizableIcon("editcut"));
+        final JCommandButton copy = MainFrame.getCommandButton("gui.clipboardband.Copy","editcopy", KeyEvent.VK_C, "Copy");
+        paste = MainFrame.getToggleButton("gui.clipboardband.Paste","editpaste", KeyEvent.VK_V, "Paste");
+        final JCommandButton cut = MainFrame.getCommandButton("gui.clipboardband.Cut","editcut", KeyEvent.VK_X, "Cut");
 
         final ActionListener copyListener = new ActionListener() {
             @Override

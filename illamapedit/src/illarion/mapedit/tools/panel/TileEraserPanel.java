@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Mapeditor.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Mapeditor is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,34 +19,31 @@
 package illarion.mapedit.tools.panel;
 
 import illarion.mapedit.Lang;
-import illarion.mapedit.tools.panel.components.TileList;
 
 import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 
 /**
- * @author Tim
+ * @author Fredrik K
  */
-public class TileBrushPanel extends JPanel {
+public class TileEraserPanel extends JPanel {
     @Nonnull
     private final JCheckBox fillCheckbox;
 
     /**
      * Default constructor
      */
-    public TileBrushPanel() {
+    public TileEraserPanel() {
         super(new BorderLayout());
 
-        add(new TileList(), BorderLayout.CENTER);
-
         final JPanel brushSizePanel = new JPanel(new GridLayout(0, 2));
-        final JLabel radiusLabel = new JLabel(Lang.getMsg("tools.Fill"));
+        final JLabel fillLabel = new JLabel(Lang.getMsg("tools.Fill"));
         fillCheckbox = new JCheckBox();
-        brushSizePanel.add(radiusLabel);
+        brushSizePanel.add(fillLabel);
         brushSizePanel.add(fillCheckbox);
 
-        add(brushSizePanel, BorderLayout.SOUTH);
+        add(brushSizePanel, BorderLayout.NORTH);
     }
 
     public boolean isFillSelected() {
