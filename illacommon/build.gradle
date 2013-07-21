@@ -50,9 +50,9 @@ ext.buildDate = null
 compileJava.doLast {
     project.buildDate = new Date();
     jar.manifest {
-        attributes    \
-               'Implementation-Version': project.ext.fullVersion,    \
-               'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ')
+        attributes     \
+                'Implementation-Version': project.ext.fullVersion,     \
+                'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ')
     }
 }
 
@@ -62,11 +62,11 @@ jar {
         gitversion()
 
         manifest {
-            attributes    \
-               'Implementation-Title': 'Illarion Common Library',    \
-               'Implementation-Vendor': 'Illarion e.V.',    \
-               'Built-By': System.getProperty('user.name'),    \
-               'Built-JDK': System.getProperty('java.version')
+            attributes     \
+                'Implementation-Title': 'Illarion Common Library',     \
+                'Implementation-Vendor': 'Illarion e.V.',     \
+                'Built-By': System.getProperty('user.name'),     \
+                'Built-JDK': System.getProperty('java.version')
         }
     }
 }
@@ -89,5 +89,14 @@ publishing {
         maven {
             url "file://$buildDir/repo"
         }
+    }
+    generatePomFileForMavenJavaPublication {
+        onlyIf { return project.buildDate != null }
+    }
+    publishMavenJavaPublicationToMavenRepository {
+        onlyIf { return project.buildDate != null }
+    }
+    publishMavenJavaPublicationToMavenLocal {
+        onlyIf { return project.buildDate != null }
     }
 }
