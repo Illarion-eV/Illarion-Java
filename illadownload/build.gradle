@@ -36,15 +36,13 @@ ext.buildDate = null
 compileJava.doLast {
     project.buildDate = new Date();
     fatJar.manifest {
-        attributes   \
-              'Implementation-Version': project.ext.fullVersion,   \
-              'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ')
+        attributes    \
+               'Implementation-Version': project.ext.fullVersion,    \
+               'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ')
     }
 }
 
 build.dependsOn 'fatJar'
-build.dependsOn 'proguard'
-build.dependsOn 'postprocessProguard'
 
 tasks.fatJarPrepareFiles.onlyIf { return project.buildDate != null }
 tasks.fatJar.onlyIf { return project.buildDate != null }
@@ -53,15 +51,19 @@ fatJar {
         gitVersion
 
         manifest {
-            attributes   \
-              'Implementation-Title': 'Illarion Download Utility',   \
-              'Implementation-Version': project.ext.fullVersion,   \
-              'Implementation-Vendor': 'Illarion e.V.',   \
-              'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),   \
-              'Built-By': System.getProperty('user.name'),   \
-              'Built-JDK': System.getProperty('java.version'),   \
-              'Main-Class': 'illarion.download.install.Installation'
+            attributes    \
+               'Implementation-Title': 'Illarion Download Utility',    \
+               'Implementation-Version': project.ext.fullVersion,    \
+               'Implementation-Vendor': 'Illarion e.V.',    \
+               'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),    \
+               'Built-By': System.getProperty('user.name'),    \
+               'Built-JDK': System.getProperty('java.version'),    \
+               'Main-Class': 'illarion.download.install.Installation'
         }
+    }
+    doLast {
+        proguard()
+        postprocessProguard()
     }
 }
 

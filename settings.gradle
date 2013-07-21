@@ -27,38 +27,38 @@ include "illamapedit"
 include "nifty-controls-illarion"
 include "nifty-style-illarion"
 
-rootProject.name = "Illarion Java Applications"
+rootProject.name = "illarion"
 rootProject.children.each {
     switch (it.name) {
         case "illabuild":
             it.name = "build";
             break;
         case "illaclient":
-            it.name = "Illarion Client";
+            it.name = "client";
             break;
         case "illacommon":
             it.name = "common";
             break;
         case "illadownload":
-            it.name = "Illarion Download Utility";
+            it.name = "download";
             break;
         case "illaeasynpc":
-            it.name = "Illarion easyNPC Editor";
+            it.name = "easynpc";
             break;
         case "illaeasyquest":
-            it.name = "Illarion easyQuest Editor";
+            it.name = "easyquest";
             break;
         case "illagameengine":
-            it.name = "Illarion Game Engine";
+            it.name = "engine";
             break;
         case "illamapedit":
-            it.name = "Illarion Mapeditor";
+            it.name = "mapeditor";
             break;
         case "nifty-controls-illarion":
-            it.name = "Illarion Nifty-GUI Controls";
+            it.name = "nifty-controls";
             break;
         case "nifty-style-illarion":
-            it.name = "Illarion Nifty-GUI Style";
+            it.name = "nifty-style";
             break;
     }
 }

@@ -21,8 +21,8 @@ task wrapper(type: Wrapper) {
 }
 
 allprojects {
-    def sourceCompatibility = JavaVersion.VERSION_1_6
-    def targetCompatibility = JavaVersion.VERSION_1_6
+    project.sourceCompatibility = JavaVersion.VERSION_1_6
+    project.targetCompatibility = JavaVersion.VERSION_1_6
 
     task gitVersion {
         def gitVersion = 'unknown'
@@ -56,6 +56,8 @@ buildscript {
 }
 
 subprojects {
+    project.group = 'org.illarion'
+
     repositories {
         mavenCentral()
         maven {
