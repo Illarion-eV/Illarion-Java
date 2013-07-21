@@ -18,7 +18,6 @@
  */
 package illarion.mapedit.data;
 
-import com.sun.deploy.util.StringUtils;
 import javolution.lang.Immutable;
 import javolution.text.TextBuilder;
 
@@ -150,7 +149,7 @@ public class MapItem implements Immutable {
         builder.append(quality);
 
         if ((itemData != null) && !itemData.isEmpty()) {
-            builder.append(';').append(StringUtils.join(itemData, ";"));
+            builder.append(';').append(join(itemData, ";"));
         }
 
         try {
@@ -158,5 +157,19 @@ public class MapItem implements Immutable {
         } finally {
             TextBuilder.recycle(builder);
         }
+    }
+
+    public static String join(List<String> itemData, String joinWith) {
+        String retVal = "";
+        boolean firstRun = true;
+        for (String s : itemData) {
+            if (firstRun) {
+                firstRun = false;
+            } else {
+                retVal += joinWith;
+            }
+            retVal += s;
+        }
+        return retVal;
     }
 }

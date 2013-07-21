@@ -43,7 +43,7 @@ import java.util.Collection;
 public class ItemInspectorList extends JPanel {
     private final JScrollPane scroll;
     @Nonnull
-    private JList<MapItem> dataList;
+    private JList dataList;
 
     public ItemInspectorList() {
         super(new BorderLayout());
@@ -109,7 +109,7 @@ public class ItemInspectorList extends JPanel {
      * @return the selected MapItem
      */
     public MapItem getSelectedItem() {
-        return dataList.getSelectedValue();
+        return (MapItem) dataList.getSelectedValue();
     }
 
     /**
@@ -117,13 +117,13 @@ public class ItemInspectorList extends JPanel {
      * @param itemList A collection of items to show
      */
     public void setDataList(@Nonnull final Collection<MapItem> itemList) {
-        dataList = new JList<MapItem>(itemList.toArray(new MapItem[itemList.size()]));
+        dataList = new JList(itemList.toArray(new MapItem[itemList.size()]));
         dataList.setCellRenderer(new MapItemCellRenderer());
         dataList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         dataList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(final ListSelectionEvent e) {
-                EventBus.publish(new ItemInspectorSelectedEvent(dataList.getSelectedValue()));
+                EventBus.publish(new ItemInspectorSelectedEvent((MapItem) dataList.getSelectedValue()));
             }
         });
 
