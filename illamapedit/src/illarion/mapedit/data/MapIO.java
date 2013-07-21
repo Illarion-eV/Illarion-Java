@@ -20,7 +20,6 @@ package illarion.mapedit.data;
 
 import illarion.mapedit.crash.exceptions.FormatCorruptedException;
 import illarion.mapedit.data.formats.Decoder;
-import illarion.mapedit.data.formats.Version1Decoder;
 import illarion.mapedit.data.formats.Version2Decoder;
 import org.apache.log4j.Logger;
 
@@ -51,7 +50,6 @@ public class MapIO {
     private static final java.util.Map<String, Decoder> DECODERS = new HashMap<String, Decoder>();
 
     static {
-        DECODERS.put("1", new Version1Decoder());
         DECODERS.put("2", new Version2Decoder());
     }
 

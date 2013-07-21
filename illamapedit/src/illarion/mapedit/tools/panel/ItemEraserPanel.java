@@ -19,51 +19,40 @@
 package illarion.mapedit.tools.panel;
 
 import illarion.mapedit.Lang;
-import illarion.mapedit.tools.ToolManager;
 
 import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 
 /**
- * Panel for settings for the selection tool
- *
  * @author Fredrik K
  */
-public class SelectionPanel extends JPanel {
+public class ItemEraserPanel extends JPanel {
     @Nonnull
-    protected JCheckBox delCheckBox;
+    private final JCheckBox clearCheckBox;
     @Nonnull
-    private final JSpinner radiusSpinner;
+    private final JCheckBox fillCheckBox;
 
-    /**
-     * Default constructor
-     */
-    public SelectionPanel() {
+    public ItemEraserPanel() {
         setLayout(new BorderLayout());
 
         final JPanel northPanel = new JPanel(new GridLayout(0, 2));
-        delCheckBox = new JCheckBox();
-        radiusSpinner = new JSpinner(new SpinnerNumberModel(1, 1, ToolManager.TOOL_RADIUS, 1));
+        clearCheckBox = new JCheckBox();
+        fillCheckBox = new JCheckBox();
 
-        northPanel.add(new JLabel(Lang.getMsg("tools.SelectionTool.Delete")));
-        northPanel.add(delCheckBox);
-        northPanel.add(new JLabel(Lang.getMsg("tools.SelectionTool.Radius")));
-        northPanel.add(radiusSpinner);
+        northPanel.add(new JLabel(Lang.getMsg("tools.ItemEraser.Clear")));
+        northPanel.add(clearCheckBox);
+        northPanel.add(new JLabel(Lang.getMsg("tools.Fill")));
+        northPanel.add(fillCheckBox);
 
-        add(northPanel, BorderLayout.NORTH);
+        add(northPanel,BorderLayout.NORTH);
     }
 
-    public int getRadius() {
-        return (Integer) radiusSpinner.getValue();
+    public boolean isFillSelected() {
+        return fillCheckBox.isSelected();
     }
 
-    /**
-     * Check if the Deselect checkbox is selected
-     *
-     * @return {@code true} if deselect is checked
-     */
-    public boolean isDeselectChecked() {
-        return delCheckBox.isSelected();
+    public boolean shouldClear() {
+        return clearCheckBox.isSelected();
     }
 }

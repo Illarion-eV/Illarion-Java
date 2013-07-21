@@ -54,9 +54,16 @@ public class SelectedTileRenderer extends AbstractMapRenderer {
 
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < height; ++y) {
-                if (map.isSelected(x, y)) {
-                    final int mapX = x + map.getX();
-                    final int mapY = y + map.getY();
+                final int mapX = x + map.getX();
+                final int mapY = y + map.getY();
+                if (map.isActiveTile(x, y)) {
+                    g.setColor(Color.YELLOW);
+                    drawLine(mapX, mapY, mapX, mapY + 1, z, g);
+                    drawLine(mapX + 1, mapY, mapX + 1, mapY + 1, z, g);
+                    drawLine(mapX, mapY, mapX + 1, mapY, z, g);
+                    drawLine(mapX, mapY + 1, mapX + 1, mapY + 1, z, g);
+                    g.setColor(Color.ORANGE);
+                } else if (map.isSelected(x, y)) {
                     if (!map.isSelected(x-1, y)) {
                         drawLine(mapX, mapY, mapX, mapY + 1, z, g);
                     }
@@ -76,7 +83,7 @@ public class SelectedTileRenderer extends AbstractMapRenderer {
         g.setTransform(transform);
     }
 
-    private void drawLine(int fromX, int fromY, int toX, int toY, int z, @Nonnull final Graphics2D g) {
+    private void drawLine(final int fromX, final int fromY, final int toX, final int toY, final int z, @Nonnull final Graphics2D g) {
         g.drawLine(
                 SwingLocation.displayCoordinateX(fromX, fromY, z),
                 SwingLocation.displayCoordinateY(fromX, fromY, z),

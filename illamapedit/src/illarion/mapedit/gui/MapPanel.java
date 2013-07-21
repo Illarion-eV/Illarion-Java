@@ -74,8 +74,8 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
         final Graphics2D g = (Graphics2D) gt;
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, getWidth(), getHeight());
-        for (Map m : controller.getMaps()) {
-            rendererManager.render(m, getVisibleRect(), g);
+        for (final Map map : controller.getMaps()) {
+            rendererManager.render(map, getVisibleRect(), g);
         }
 
         dirty.x = 0;
@@ -148,7 +148,7 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
     @Override
     public void mouseClicked(@Nonnull final MouseEvent e) {
         final Map selected = controller.getSelected();
-        if ((toolManager == null) || (selected == null)) {
+        if (selected == null) {
             return;
         }
 

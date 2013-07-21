@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Mapeditor.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Mapeditor is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,37 +18,37 @@
  */
 package illarion.mapedit.history;
 
+import illarion.common.types.Location;
 import illarion.mapedit.data.Map;
-import illarion.mapedit.data.MapWarpPoint;
-
-import javax.annotation.Nullable;
+import illarion.mapedit.data.MapTile;
+import illarion.mapedit.processing.MapTransitions;
 
 /**
- * @author Tim
+ * @author Fredrik K
  */
-public class WarpPlacedAction extends HistoryAction {
-
+public class CopyPasteAction extends HistoryAction {
+    private final MapTile newTile;
+    private final MapTile oldTile;
     private final int x;
     private final int y;
-    private final MapWarpPoint oldWP;
-    private final MapWarpPoint newWP;
 
-    public WarpPlacedAction(final int x, final int y, final MapWarpPoint oldWP,
-                            @Nullable final MapWarpPoint newWP, final Map map) {
+    public CopyPasteAction(final int x, final int y, final MapTile oldTile, final MapTile newTile, final Map map) {
         super(map);
         this.x = x;
         this.y = y;
-        this.oldWP = oldWP;
-        this.newWP = newWP;
+        this.oldTile = oldTile;
+        this.newTile = newTile;
     }
 
     @Override
     void redo() {
-        map.getTileAt(x, y).setMapWarpPoint(newWP);
+        map.setTileAt(x, y, MapTile.MapTileFactory.copy(newTile));
+        MapTransitions.getInstance().checkTileAndSurround(map, new Location(x, y, 0));
     }
 
     @Override
     void undo() {
-        map.getTileAt(x, y).setMapWarpPoint(oldWP);
+        map.setTileAt(x, y, MapTile.MapTileFactory.copy(newTile));
+        MapTransitions.getInstance().checkTileAndSurround(map, new Location(x, y, 0));
     }
 }

@@ -286,10 +286,35 @@ public class GuiController extends WindowAdapter {
     @EventSubscriber
     public void onPasteClipboard(@Nonnull final PasteEvent e) {
         EventBus.publish(new DidPasteEvent());
-        if (getSelected() != null && clipboard != null) {
+        if ((getSelected() != null) && (clipboard != null)) {
             getSelected().pasteTiles(e.getX(),e.getY(),clipboard);
             EventBus.publish(new RepaintRequestEvent());
             setSaved(false);
+        }
+    }
+
+    @EventSubscriber
+    public void onSelectTool(@Nonnull final ToolSelectedEvent e) {
+        if (getSelected() != null) {
+            getSelected().removeActiveTile();
+        }
+    }
+
+    @EventSubscriber
+    public void onItemRemove(@Nonnull final ItemRemoveEvent e) {
+        if (getSelected() != null) {
+            getSelected().removeItemOnActiveTile(e.getIndex());
+            EventBus.publish(new RepaintRequestEvent());
+            EventBus.publish(new ItemsUpdatedEvent(getSelected().getItemsOnActiveTile()));
+        }
+    }
+
+    @EventSubscriber
+    public void onItemReplace(@Nonnull final ItemReplaceEvent e) {
+        if (getSelected() != null) {
+            getSelected().replaceItemOnActiveTile(e.getIndex(), e.getNewIndex());
+            EventBus.publish(new RepaintRequestEvent());
+            EventBus.publish(new ItemsUpdatedEvent(getSelected().getItemsOnActiveTile()));
         }
     }
 }

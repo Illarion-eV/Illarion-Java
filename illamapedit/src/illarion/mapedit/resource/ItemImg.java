@@ -60,6 +60,16 @@ public class ItemImg {
         return frameCount;
     }
 
+    /**
+     * Get the surface level of the item. So the offset how much a item that lies on this item has to move up to
+     * appear to lie on this item.
+     *
+     * @return the amount of pixels the next item offset has to move up
+     */
+    public int getHeight() {
+        return info.getLevel();
+    }
+
     public int getAnimationSpeed() {
         return animationSpeed;
     }
@@ -85,9 +95,9 @@ public class ItemImg {
 
         this.info = info;
         this.imgs = new Image[imgs.length];
+
         System.arraycopy(imgs, 0, this.imgs, 0, imgs.length);
     }
-
 
     @Nonnull
     public Image[] getImgs() {

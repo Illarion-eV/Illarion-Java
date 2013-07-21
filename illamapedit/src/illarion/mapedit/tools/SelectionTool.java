@@ -20,6 +20,7 @@ package illarion.mapedit.tools;
 
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
+import illarion.mapedit.history.GroupAction;
 import illarion.mapedit.tools.panel.SelectionPanel;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
@@ -67,5 +68,14 @@ public class SelectionTool extends AbstractTool {
     @Override
     public JPanel getSettingsPanel() {
         return panel;
+    }
+
+    @Override
+    public boolean isFillSelected() {
+        return false;
+    }
+
+    @Override
+    public void paintSelected(final int x, final int y, final Map map, final GroupAction action) {
     }
 }

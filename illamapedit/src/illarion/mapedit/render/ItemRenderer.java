@@ -92,7 +92,7 @@ public class ItemRenderer extends AbstractMapRenderer {
         final int ydisp = SwingLocation.displayCoordinateY(x + map.getX(), y + map.getY(), z);
         if (viewport.contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
                 (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
-
+            int height = 0;
             final AffineTransform tr = g.getTransform();
             for (final MapItem item : items) {
 
@@ -102,11 +102,13 @@ public class ItemRenderer extends AbstractMapRenderer {
 
                     g.translate(getTileWidth(), getTileHeight());
                     g.translate(xdisp, ydisp);
+                    g.translate(0, -height);
                     g.translate(img.getOffsetX(), -img.getOffsetY());
                     g.translate(-paintImg.getWidth(null) / 2, -paintImg.getHeight(null));
 
                     g.drawImage(img.getImgs()[0], 0, 0, null);
                     g.setTransform(tr);
+                    height += img.getHeight();
                 }
             }
         }
