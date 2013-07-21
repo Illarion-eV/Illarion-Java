@@ -30,7 +30,7 @@ import java.awt.*;
 /**
  * @author Fredrik K
  */
-public class MapItemCellRenderer extends JPanel implements ListCellRenderer<MapItem> {
+public class MapItemCellRenderer extends JPanel implements ListCellRenderer {
     private static final Color COLOR_SELECTED = new Color(-6100481);
     private static final Color COLOR_UNSELECTED = new Color(-1246977);
 
@@ -57,15 +57,16 @@ public class MapItemCellRenderer extends JPanel implements ListCellRenderer<MapI
     }
 
     @Override
-    public Component getListCellRendererComponent(final JList<? extends MapItem> list, final MapItem value, final int index, final boolean isSelected, final boolean cellHasFocus) {
+    public Component getListCellRendererComponent(final JList list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus) {
         if (isSelected) {
             adjustColors(COLOR_SELECTED, this, itemId, name);
         } else {
             adjustColors(COLOR_UNSELECTED, this, itemId, name);
         }
-        final String idText = String.valueOf(value.getId());
+        MapItem item = ((MapItem) value);
+        final String idText = String.valueOf(item.getId());
         itemId.setText(idText + String.format("%" + (10 - idText.length()) + 's', ""));
-        final ItemImg itm = ItemLoader.getInstance().getTileFromId(value.getId());
+        final ItemImg itm = ItemLoader.getInstance().getTileFromId(item.getId());
         if (itm != null) {
             name.setText(itm.getResourceName());
         }
