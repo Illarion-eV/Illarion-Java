@@ -23,6 +23,8 @@ import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapTile;
 import illarion.mapedit.processing.MapTransitions;
 
+import javax.annotation.Nullable;
+
 /**
  * @author Fredrik K
  */
@@ -32,7 +34,7 @@ public class CopyPasteAction extends HistoryAction {
     private final int x;
     private final int y;
 
-    public CopyPasteAction(final int x, final int y, final MapTile oldTile, final MapTile newTile, final Map map) {
+    public CopyPasteAction(final int x, final int y, @Nullable final MapTile oldTile, final MapTile newTile, final Map map) {
         super(map);
         this.x = x;
         this.y = y;
@@ -48,7 +50,7 @@ public class CopyPasteAction extends HistoryAction {
 
     @Override
     void undo() {
-        map.setTileAt(x, y, MapTile.MapTileFactory.copy(newTile));
+        map.setTileAt(x, y, MapTile.MapTileFactory.copy(oldTile));
         MapTransitions.getInstance().checkTileAndSurround(map, new Location(x, y, 0));
     }
 }

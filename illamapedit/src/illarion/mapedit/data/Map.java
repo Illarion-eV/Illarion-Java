@@ -22,7 +22,7 @@ import illarion.common.types.Location;
 import illarion.mapedit.events.HistoryPasteCutEvent;
 import illarion.mapedit.history.CopyPasteAction;
 import illarion.mapedit.history.GroupAction;
-import illarion.mapedit.history.TileIDChangedAction;
+import illarion.mapedit.history.ItemPlacedAction;
 import org.bushe.swing.event.EventBus;
 
 import javax.annotation.Nonnull;
@@ -115,11 +115,16 @@ public class Map {
         setActiveTile(Integer.MIN_VALUE, Integer.MIN_VALUE);
     }
 
-    public void removeItemOnActiveTile(final int index) {
+    @Nullable
+    public ItemPlacedAction removeItemOnActiveTile(final int index) {
+        ItemPlacedAction action = null;
         final MapTile tile = getTileAt(activeX,activeY);
         if (tile != null) {
+
+            action = new ItemPlacedAction(activeX, activeY, tile.getMapItemAt(index), null, this);
             tile.removeMapItem(index);
         }
+        return action;
     }
 
     public void replaceItemOnActiveTile(final int index, final int newIndex) {
@@ -288,6 +293,7 @@ public class Map {
     public int hashCode() {
         return name.hashCode();
     }
+
     /**
      * Checks if the is selected
      *
@@ -350,8 +356,8 @@ public class Map {
                 final MapTile tile = getTileAt(x, y);
                 if ((tile != null) && tile.isSelected()) {
                     mapSelection.addSelectedTile(new MapPosition(x, y), MapTile.MapTileFactory.copy(tile));
-                    MapTile tileNew = MapTile.MapTileFactory.createNew(0, 0, 0, 0);
-                    action.addAction(new CopyPasteAction(x, y, tileNew, tile, this));
+                    final MapTile tileNew = MapTile.MapTileFactory.createNew(0, 0, 0, 0);
+                    action.addAction(new CopyPasteAction(x, y, tile, tileNew, this));
                     setTileAt(x, y, tileNew);
                 }
             }

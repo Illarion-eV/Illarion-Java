@@ -128,6 +128,10 @@ public class MapTile {
         return id;
     }
 
+    public MapItem getMapItemAt(final int index) {
+        return mapItems.get(index);
+    }
+
     /**
      * Returns the music id.
      *

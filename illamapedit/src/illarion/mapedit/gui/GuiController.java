@@ -32,6 +32,7 @@ import illarion.mapedit.events.menu.MapOpenEvent;
 import illarion.mapedit.events.menu.MapSaveEvent;
 import illarion.mapedit.events.menu.MapSelectedEvent;
 import illarion.mapedit.history.HistoryManager;
+import illarion.mapedit.history.ItemPlacedAction;
 import illarion.mapedit.render.RendererManager;
 import illarion.mapedit.resource.loaders.ImageLoader;
 import illarion.mapedit.util.SwingLocation;
@@ -251,9 +252,11 @@ public class GuiController extends WindowAdapter {
                 mapsToOpen = new Map[1];
                 mapsToOpen[0] = MapIO.loadMap(e.getPath(), e.getName());
             }
-            for (final Map map : mapsToOpen) {
-                if (!maps.contains(map)) {
-                    addMap(map);
+            if (mapsToOpen != null) {
+                for (final Map map : mapsToOpen) {
+                    if (!maps.contains(map)) {
+                        addMap(map);
+                    }
                 }
             }
         } catch (FormatCorruptedException ex) {
@@ -319,7 +322,11 @@ public class GuiController extends WindowAdapter {
     @EventSubscriber
     public void onItemRemove(@Nonnull final ItemRemoveEvent e) {
         if (getSelected() != null) {
-            getSelected().removeItemOnActiveTile(e.getIndex());
+            final ItemPlacedAction historyAction = getSelected().removeItemOnActiveTile(e.getIndex());
+            if (historyAction != null) {
+                historyManager.addEntry(historyAction);
+                setSaved(false);
+            }
             EventBus.publish(new RepaintRequestEvent());
             EventBus.publish(new ItemsUpdatedEvent(getSelected().getItemsOnActiveTile()));
         }
