@@ -71,6 +71,7 @@ public class Map {
     private final MapTile[] mapTileData;
     private int activeX = Integer.MIN_VALUE;
     private int activeY = Integer.MIN_VALUE;
+    private boolean visible;
 
     /**
      * Creates a new map
@@ -93,6 +94,7 @@ public class Map {
         this.y = y;
         this.z = z;
         mapTileData = new MapTile[w * h];
+        visible = true;
     }
 
     @Nullable
@@ -159,6 +161,14 @@ public class Map {
     public void addItemAt(final int x, final int y, final MapItem mapItem) {
         final int i = (y * width) + x;
         mapTileData[i].getMapItems().add(mapItem);
+    }
+
+    public void setVisible(final boolean visible) {
+        this.visible = visible;
+    }
+
+    public boolean isVisible() {
+        return visible;
     }
 
     /**
@@ -351,6 +361,11 @@ public class Map {
             EventBus.publish(new HistoryPasteCutEvent(action));
         }
         return mapSelection;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 
     /**

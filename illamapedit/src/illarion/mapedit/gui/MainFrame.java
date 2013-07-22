@@ -61,12 +61,14 @@ public class MainFrame extends JRibbonFrame {
     private final MapPanel mapPanel;
     @Nonnull
     private final ToolSettingsPanel settingsPanel;
+    private OpenMapPanel filePanel;
     private final Config config;
 
     public MainFrame(final GuiController controller, final Config config) {
         this.config = config;
         mapPanel = new MapPanel(controller);
         settingsPanel = new ToolSettingsPanel();
+        filePanel = new OpenMapPanel();
         instance = this;
         helpDialog = new HelpDialog(this);
     }
@@ -90,10 +92,14 @@ public class MainFrame extends JRibbonFrame {
         getRibbon().addTaskbarComponent(undoBtn);
         getRibbon().addTaskbarComponent(redoBtn);
 
+        filePanel.init(config);
         add(mapPanel, BorderLayout.CENTER);
         add(settingsPanel, BorderLayout.EAST);
+        add(filePanel, BorderLayout.LINE_START);
+
+
         final RibbonTask task = new RibbonTask(Lang.getMsg("gui.mainframe.ribbon"),
-                new ClipboardBand(), new ViewBand(getRendererManager()), new ZoomBand(), new MapFileBand(config),
+                new ClipboardBand(), new ViewBand(getRendererManager()), new ZoomBand(), /*new MapFileBand(config), */
                 new ToolBand());
 
         final JXStatusBar status = new JXStatusBar();

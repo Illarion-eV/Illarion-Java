@@ -146,19 +146,30 @@ public class GuiController extends WindowAdapter {
         EventBus.publish(new RepaintRequestEvent());
     }
 
-    public void removeMap(@Nullable final Map map) {
-        if (maps.contains(map) && (map != null)) {
-            maps.remove(map);
-            if (selected == map) {
-                if (maps.isEmpty()) {
-                    selected = null;
-                } else {
-                    selected = maps.get(0);
-                }
+    private void removeMap(final int index) {
+        if (index < maps.size()) {
+            final Map map = maps.remove(index);
+            setSelectedMap(map);
+        }
+    }
+
+    private void setSelectedMap(final Map map) {
+        if (selected == map) {
+            if (maps.isEmpty()) {
+                selected = null;
+            } else {
+                selected = maps.get(0);
             }
         }
         EventBus.publish(new UpdateMapListEvent(maps, maps.indexOf(selected)));
         EventBus.publish(new RepaintRequestEvent());
+    }
+
+    public void removeMap(@Nullable final Map map) {
+        if (maps.contains(map) && (map != null)) {
+            maps.remove(map);
+            setSelectedMap(map);
+        }
     }
 
     @Nonnull
@@ -233,16 +244,16 @@ public class GuiController extends WindowAdapter {
     @EventSubscriber
     public void onMapOpen(@Nonnull final MapOpenEvent e) {
         try {
-            final Map[] map;
+            final Map[] mapsToOpen;
             if (e.getPath() == null) {
-                map = MapDialogs.showOpenMapDialog(mainFrame);
+                mapsToOpen = MapDialogs.showOpenMapDialog(mainFrame);
             } else {
-                map = new Map[1];
-                map[0] = MapIO.loadMap(e.getPath(), e.getName());
+                mapsToOpen = new Map[1];
+                mapsToOpen[0] = MapIO.loadMap(e.getPath(), e.getName());
             }
-            for (final Map m : map) {
-                if (!maps.contains(m)) {
-                    addMap(m);
+            for (final Map map : mapsToOpen) {
+                if (!maps.contains(map)) {
+                    addMap(map);
                 }
             }
         } catch (FormatCorruptedException ex) {
@@ -265,6 +276,11 @@ public class GuiController extends WindowAdapter {
     @EventTopicSubscriber(topic = GlobalActionEvents.CLOSE_MAP)
     public void onMapClosed(final String topic, final ActionEvent event) {
         removeMap(selected);
+    }
+
+    @EventSubscriber
+    public void onMapCloseAtIndex(@Nonnull final CloseMapEvent e) {
+        removeMap(e.getIndex());
     }
 
     @EventSubscriber
