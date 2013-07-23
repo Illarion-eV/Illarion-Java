@@ -19,10 +19,10 @@
 package illarion.mapedit;
 
 import illarion.common.bug.CrashReporter;
-import illarion.common.config.ConfigSystem;
 import illarion.common.util.*;
 import illarion.mapedit.crash.DefaultCrashHandler;
 import illarion.mapedit.crash.exceptions.UnhandlableException;
+import illarion.mapedit.gui.MapEditorConfig;
 import illarion.mapedit.gui.GuiController;
 import illarion.mapedit.gui.MainFrame;
 import illarion.mapedit.gui.SplashScreen;
@@ -31,9 +31,7 @@ import illarion.mapedit.resource.loaders.*;
 import org.apache.log4j.*;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
-import javax.annotation.Nonnull;
 import javax.swing.*;
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -61,27 +59,13 @@ public final class MapEditor {
     private static final Logger LOGGER = Logger.getRootLogger();
 
     /**
-     * The configuration of the map editor that is used to get the proper
-     * locations of the maps.
-     */
-    @Nonnull
-    private final ConfigSystem config;
-
-    /**
      * Constructor of the map editor that loads up all required data.
      */
     @SuppressWarnings("nls")
     public MapEditor() {
-
-        final String userDir = checkFolder();
-
-        config = new ConfigSystem(userDir + File.separator + "MapEdit.xcfgz");
-        config.setDefault("mapLastOpenDir", new File(System.getProperty("user.home")));
-
         final Crypto crypt = new Crypto();
         crypt.loadPublicKey();
         TableLoader.setCrypto(crypt);
-
     }
 
     /**
@@ -101,20 +85,7 @@ public final class MapEditor {
         MainFrame.getInstance().exit();
         StoppableStorage.getInstance().shutdown();
         CrashReporter.getInstance().waitForReport();
-        saveConfiguration();
-    }
-
-    /**
-     * Get the configuration file of the map editor.
-     *
-     * @return the configuration of the map editor
-     */
-    @Nonnull
-    public static ConfigSystem getConfig() {
-        if (instance == null) {
-            instance = new MapEditor();
-        }
-        return instance.config;
+        MapEditorConfig.getInstance().save();
     }
 
     /**
@@ -124,28 +95,22 @@ public final class MapEditor {
      */
     public static void main(final String[] args) {
         initLogging();
-        initConfig();
+        MapEditorConfig.getInstance().init();
         initExceptionHandler();
 
-        initEventBus();
         SplashScreen.getInstance().setVisible(true);
-        JRibbonFrame.setDefaultLookAndFeelDecorated(true);
-        JDialog.setDefaultLookAndFeelDecorated(true);
-        loadResources();
-        final GuiController controller = new GuiController(getConfig());
-        controller.initialize();
+
+        JRibbonFrame.setDefaultLookAndFeelDecorated(MapEditorConfig.getInstance().isUseWindowDecoration());
+        JDialog.setDefaultLookAndFeelDecorated(MapEditorConfig.getInstance().isUseWindowDecoration());
         instance = new MapEditor();
+
+        loadResources();
+        final GuiController controller = new GuiController();
+        controller.initialize();
 
         Scheduler.getInstance().start();
 
         controller.start();
-    }
-
-
-    private static void initConfig() {
-        final ConfigSystem c = getConfig();
-        c.setDefault("errorReport", 0);
-
     }
 
     private static void loadResources() {
@@ -174,7 +139,7 @@ public final class MapEditor {
     }
 
     private static void initExceptionHandler() {
-        CrashReporter.getInstance().setConfig(getConfig());
+        CrashReporter.getInstance().setConfig(MapEditorConfig.getInstance().getInternalCfg());
         CrashReporter.getInstance().setDisplay(CrashReporter.DISPLAY_SWING);
         CrashReporter.getInstance().setMessageSource(Lang.getInstance());
         Thread.setDefaultUncaughtExceptionHandler(DefaultCrashHandler.getInstance());
@@ -185,45 +150,6 @@ public final class MapEditor {
                 Thread.currentThread().setUncaughtExceptionHandler(DefaultCrashHandler.getInstance());
             }
         });
-    }
-
-    private static void initEventBus() {
-        /*try {
-            EventServiceLocator.setEventService(EventServiceLocator.SERVICE_NAME_SWING_EVENT_SERVICE, new SwingEventService());
-        } catch (EventServiceExistsException e) {
-            LOGGER.warn("Can't setup the event bus correctly.", e);
-        }*/
-    }
-
-    /**
-     * Save the current state of the configuration to the filesystem if needed.
-     */
-    public static void saveConfiguration() {
-        //TODO: Fix not saved
-        getConfig().save();
-    }
-
-    /**
-     * This function determines the user data directory and requests the folder
-     * to store the client data in case it is needed. It also performs checks to
-     * see if the folder is valid.
-     *
-     * @return a string with the path to the folder or null in case no folder is
-     *         set
-     */
-    @SuppressWarnings("nls")
-    private static String checkFolder() {
-        if (!DirectoryManager.getInstance().hasUserDirectory()) {
-            SplashScreen.getInstance().setVisible(false);
-            JOptionPane.showMessageDialog(null,
-                    "Installation ist fehlerhaft. Bitte neu ausführen.\n\n"
-                            + "Installation is corrupted, please run it again.",
-                    "Error", JOptionPane.ERROR_MESSAGE);
-            System.exit(-1);
-        }
-
-        return DirectoryManager.getInstance().getUserDirectory()
-                .getAbsolutePath();
     }
 
     /**

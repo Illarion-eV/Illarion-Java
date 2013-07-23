@@ -128,6 +128,10 @@ public class MapTile {
         return id;
     }
 
+    public MapItem getMapItemAt(final int index) {
+        return mapItems.get(index);
+    }
+
     /**
      * Returns the music id.
      *
@@ -158,6 +162,17 @@ public class MapTile {
 
     public int getShapeID() {
         return shapeID;
+    }
+
+    public boolean isMapItemsDataEmpty() {
+        boolean empty = true;
+        int index = 0;
+
+        while (empty && index < mapItems.size()) {
+            empty = mapItems.get(index).getItemData().isEmpty();
+            index++;
+        }
+        return empty;
     }
 
     public void removeMapItem(final int index) {

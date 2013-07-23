@@ -18,7 +18,6 @@
  */
 package illarion.mapedit.gui;
 
-import illarion.common.config.Config;
 import illarion.mapedit.Lang;
 import illarion.mapedit.MapEditor;
 import illarion.mapedit.crash.exceptions.FormatCorruptedException;
@@ -26,12 +25,14 @@ import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapIO;
 import illarion.mapedit.data.MapSelection;
 import illarion.mapedit.events.*;
+import illarion.mapedit.events.map.MapPositionEvent;
 import illarion.mapedit.events.map.RepaintRequestEvent;
 import illarion.mapedit.events.menu.MapNewEvent;
 import illarion.mapedit.events.menu.MapOpenEvent;
 import illarion.mapedit.events.menu.MapSaveEvent;
 import illarion.mapedit.events.menu.MapSelectedEvent;
 import illarion.mapedit.history.HistoryManager;
+import illarion.mapedit.history.ItemPlacedAction;
 import illarion.mapedit.render.RendererManager;
 import illarion.mapedit.resource.loaders.ImageLoader;
 import illarion.mapedit.util.SwingLocation;
@@ -82,10 +83,10 @@ public class GuiController extends WindowAdapter {
     @Nullable
     private MapSelection clipboard;
 
-    public GuiController(final Config config) {
+    public GuiController() {
         AnnotationProcessor.process(this);
         splashScreen = SplashScreen.getInstance();
-        mainFrame = new MainFrame(this, config);
+        mainFrame = new MainFrame(this);
         historyManager = new HistoryManager();
         maps = new FastList<Map>(1);
         notSaved = false;
@@ -116,7 +117,7 @@ public class GuiController extends WindowAdapter {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                SubstanceLookAndFeel.setSkin("org.pushingpixels.substance.api.skin.OfficeSilver2007Skin");
+                SubstanceLookAndFeel.setSkin(MapEditorConfig.getInstance().getLookAndFeel());
                 mainFrame.initialize(GuiController.this);
                 mainFrame.setLocationRelativeTo(null);
                 mainFrame.setVisible(true);
@@ -146,19 +147,30 @@ public class GuiController extends WindowAdapter {
         EventBus.publish(new RepaintRequestEvent());
     }
 
-    public void removeMap(@Nullable final Map map) {
-        if (maps.contains(map) && (map != null)) {
-            maps.remove(map);
-            if (selected == map) {
-                if (maps.isEmpty()) {
-                    selected = null;
-                } else {
-                    selected = maps.get(0);
-                }
+    private void removeMap(final int index) {
+        if (index < maps.size()) {
+            final Map map = maps.remove(index);
+            setSelectedMap(map);
+        }
+    }
+
+    private void setSelectedMap(final Map map) {
+        if (selected == map) {
+            if (maps.isEmpty()) {
+                selected = null;
+            } else {
+                selected = maps.get(0);
             }
         }
         EventBus.publish(new UpdateMapListEvent(maps, maps.indexOf(selected)));
         EventBus.publish(new RepaintRequestEvent());
+    }
+
+    public void removeMap(@Nullable final Map map) {
+        if (maps.contains(map) && (map != null)) {
+            maps.remove(map);
+            setSelectedMap(map);
+        }
     }
 
     @Nonnull
@@ -233,16 +245,18 @@ public class GuiController extends WindowAdapter {
     @EventSubscriber
     public void onMapOpen(@Nonnull final MapOpenEvent e) {
         try {
-            final Map[] map;
+            final Map[] mapsToOpen;
             if (e.getPath() == null) {
-                map = MapDialogs.showOpenMapDialog(mainFrame);
+                mapsToOpen = MapDialogs.showOpenMapDialog(mainFrame);
             } else {
-                map = new Map[1];
-                map[0] = MapIO.loadMap(e.getPath(), e.getName());
+                mapsToOpen = new Map[1];
+                mapsToOpen[0] = MapIO.loadMap(e.getPath(), e.getName());
             }
-            for (final Map m : map) {
-                if (!maps.contains(m)) {
-                    addMap(m);
+            if (mapsToOpen != null) {
+                for (final Map map : mapsToOpen) {
+                    if (!maps.contains(map)) {
+                        addMap(map);
+                    }
                 }
             }
         } catch (FormatCorruptedException ex) {
@@ -265,6 +279,11 @@ public class GuiController extends WindowAdapter {
     @EventTopicSubscriber(topic = GlobalActionEvents.CLOSE_MAP)
     public void onMapClosed(final String topic, final ActionEvent event) {
         removeMap(selected);
+    }
+
+    @EventSubscriber
+    public void onMapCloseAtIndex(@Nonnull final CloseMapEvent e) {
+        removeMap(e.getIndex());
     }
 
     @EventSubscriber
@@ -303,7 +322,11 @@ public class GuiController extends WindowAdapter {
     @EventSubscriber
     public void onItemRemove(@Nonnull final ItemRemoveEvent e) {
         if (getSelected() != null) {
-            getSelected().removeItemOnActiveTile(e.getIndex());
+            final ItemPlacedAction historyAction = getSelected().removeItemOnActiveTile(e.getIndex());
+            if (historyAction != null) {
+                historyManager.addEntry(historyAction);
+                setSaved(false);
+            }
             EventBus.publish(new RepaintRequestEvent());
             EventBus.publish(new ItemsUpdatedEvent(getSelected().getItemsOnActiveTile()));
         }
@@ -315,6 +338,14 @@ public class GuiController extends WindowAdapter {
             getSelected().replaceItemOnActiveTile(e.getIndex(), e.getNewIndex());
             EventBus.publish(new RepaintRequestEvent());
             EventBus.publish(new ItemsUpdatedEvent(getSelected().getItemsOnActiveTile()));
+        }
+    }
+
+    @EventSubscriber
+    public void onMapPosition(MapPositionEvent e) {
+        if (getSelected() != null) {
+            getSelected().setMapPosition(e.getMapX(), e.getMapY());
+            EventBus.publish(new RepaintRequestEvent());
         }
     }
 }

@@ -18,7 +18,6 @@
  */
 package illarion.mapedit.gui;
 
-import illarion.common.config.Config;
 import illarion.mapedit.Lang;
 import illarion.mapedit.MapEditor;
 import illarion.mapedit.events.HistoryEvent;
@@ -61,12 +60,12 @@ public class MainFrame extends JRibbonFrame {
     private final MapPanel mapPanel;
     @Nonnull
     private final ToolSettingsPanel settingsPanel;
-    private final Config config;
+    private OpenMapPanel filePanel;
 
-    public MainFrame(final GuiController controller, final Config config) {
-        this.config = config;
+    public MainFrame(final GuiController controller) {
         mapPanel = new MapPanel(controller);
         settingsPanel = new ToolSettingsPanel();
+        filePanel = new OpenMapPanel();
         instance = this;
         helpDialog = new HelpDialog(this);
     }
@@ -90,11 +89,13 @@ public class MainFrame extends JRibbonFrame {
         getRibbon().addTaskbarComponent(undoBtn);
         getRibbon().addTaskbarComponent(redoBtn);
 
+        filePanel.init();
         add(mapPanel, BorderLayout.CENTER);
         add(settingsPanel, BorderLayout.EAST);
+        add(filePanel, BorderLayout.LINE_START);
+
         final RibbonTask task = new RibbonTask(Lang.getMsg("gui.mainframe.ribbon"),
-                new ClipboardBand(), new ViewBand(getRendererManager()), new ZoomBand(), new MapFileBand(config),
-                new ToolBand());
+                new ClipboardBand(), new ViewBand(getRendererManager()), new ZoomBand(), new ToolBand());
 
         final JXStatusBar status = new JXStatusBar();
         status.setResizeHandleEnabled(true);
@@ -125,8 +126,7 @@ public class MainFrame extends JRibbonFrame {
 
     public void exit() {
         dispose();
-        config.set("windowSizeW", getSize().width);
-        config.set("windowSizeH", getSize().height);
+        MapEditorConfig.getInstance().setWindowSize(getSize());
     }
 
     public RendererManager getRendererManager() {
@@ -134,13 +134,12 @@ public class MainFrame extends JRibbonFrame {
     }
 
     @Nonnull
-    private Dimension getSavedDimension() {
-        final int w = config.getInteger("windowSizeW");
-        final int h = config.getInteger("windowSizeH");
-        if ((w != 0) && (h != 0)) {
-            return new Dimension(w, h);
+    private static Dimension getSavedDimension() {
+        final Dimension windowSize = MapEditorConfig.getInstance().getWindowSize();
+        if ((windowSize.getHeight() == 0) || (windowSize.getWidth() == 0)) {
+            return WINDOW_SIZE;
         }
-        return WINDOW_SIZE;
+        return windowSize;
     }
 
     public static JCommandToggleButton getToggleButton(final String text, final String icon, final int key,

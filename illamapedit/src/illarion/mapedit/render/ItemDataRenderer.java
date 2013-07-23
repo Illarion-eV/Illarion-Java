@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Mapeditor.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Mapeditor is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,34 +20,31 @@ package illarion.mapedit.render;
 
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
+import illarion.mapedit.data.MapTile;
 import illarion.mapedit.resource.loaders.ImageLoader;
 import illarion.mapedit.util.SwingLocation;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
-import javax.annotation.Nonnull;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 /**
- * @author Tim
+ * @author Fredrik K
  */
-public class MusicRenderer extends AbstractMapRenderer {
-    private static final int XOFFSET = 30;
-    private static final int YOFFSET = 20;
+public class ItemDataRenderer extends AbstractMapRenderer {
+    private static final int XOFFSET = 9;
+    private static final int YOFFSET = 11;
 
     private final Image image;
 
-    /**
-     * Creates a new map renderer
-     */
-    public MusicRenderer(final RendererManager manager) {
+    public ItemDataRenderer(final RendererManager manager) {
         super(manager);
-        image = resizeImage((BufferedImage) ImageLoader.getImage("sound"), 16, 16);
+        image = resizeImage((BufferedImage) ImageLoader.getImage("info"), 16, 16);
     }
 
     @Override
-    public void renderMap(@Nonnull final Map map, @Nonnull final Rectangle viewport, final int level, @Nonnull final Graphics2D g) {
+    public void renderMap(final Map map, final Rectangle viewport, final int level, final Graphics2D g) {
         final int width = map.getWidth();
         final int height = map.getHeight();
         final int z = map.getZ() - level;
@@ -55,18 +52,15 @@ public class MusicRenderer extends AbstractMapRenderer {
 
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < height; ++y) {
-                final int id = map.getTileAt(x, y).getMusicID();
-                if (id == 0) {
+                final MapTile tile = map.getTileAt(x, y);
+                if ((tile == null) || tile.isMapItemsDataEmpty()) {
                     continue;
                 }
-                final int xdisp = SwingLocation.displayCoordinateX(x + map.getX(), y + map.getY(), z);
-                final int ydisp = SwingLocation.displayCoordinateY(x + map.getX(), y + map.getY(), z);
-                if (viewport.contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
-                        (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
-
-                    g.drawImage(image, xdisp + (int) (XOFFSET * getZoom()), ydisp + (int) (YOFFSET * getZoom()), null);
-                    g.setColor(Color.RED);
-                    g.drawString(Integer.toString(id), xdisp + (int) (XOFFSET * getZoom()), ydisp + (int) (YOFFSET * getZoom()));
+                final int xDisplay = SwingLocation.displayCoordinateX(x + map.getX(), y + map.getY(), z);
+                final int yDisplay = SwingLocation.displayCoordinateY(x + map.getX(), y + map.getY(), z);
+                if (viewport.contains((xDisplay * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
+                        (yDisplay * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
+                    g.drawImage(image, xDisplay + (int) (XOFFSET * getZoom()), yDisplay + (int) (YOFFSET * getZoom()), null);
                 }
             }
         }
@@ -80,12 +74,12 @@ public class MusicRenderer extends AbstractMapRenderer {
 
     @Override
     public String getLocalizedName() {
-        return Lang.getMsg("renderer.Sound");
+        return  Lang.getMsg("renderer.ItemData");
     }
 
     @Override
     public ResizableIcon getRendererIcon() {
-        return ImageLoader.getResizableIcon("sound");
+        return ImageLoader.getResizableIcon("info");
     }
 
     @Override

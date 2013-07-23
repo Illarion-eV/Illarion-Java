@@ -34,6 +34,8 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeSelectionModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -67,8 +69,21 @@ public class ItemTree extends JScrollPane {
                 gr.add(i);
                 groups.add(gr);
             }
+            Collections.sort(groups, new Comparator<ItemGroup>() {
+                @Override
+                public int compare(final ItemGroup group1, final ItemGroup group2) {
+                    String g1 = group1.getName();
+                    if (g1 == null) {
+                        g1 = "";
+                    }
+                    String g2 = group2.getName();
+                    if (g2 == null) {
+                        g2 = "";
+                    }
+                    return g1.compareToIgnoreCase(g2);
+                }
+            });
         }
-
 
         @Nonnull
         @Override
