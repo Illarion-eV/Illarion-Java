@@ -71,7 +71,8 @@ public class ImageLoader implements Resource {
             "1uparrow.png",
             "1downarrow.png",
             "render.png",
-            "configure.png"
+            "configure.png",
+            "info.png"
     };
 
     private ImageLoader() {

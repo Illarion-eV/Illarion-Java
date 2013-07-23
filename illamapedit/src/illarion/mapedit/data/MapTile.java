@@ -164,6 +164,17 @@ public class MapTile {
         return shapeID;
     }
 
+    public boolean isMapItemsDataEmpty() {
+        boolean empty = true;
+        int index = 0;
+
+        while (empty && index < mapItems.size()) {
+            empty = mapItems.get(index).getItemData().isEmpty();
+            index++;
+        }
+        return empty;
+    }
+
     public void removeMapItem(final int index) {
         mapItems.remove(index);
     }
