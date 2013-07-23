@@ -19,6 +19,7 @@
 package illarion.mapedit;
 
 import illarion.common.util.MessageSource;
+import illarion.mapedit.gui.MapEditorConfig;
 import javolution.text.TextBuilder;
 import org.apache.log4j.Logger;
 
@@ -74,19 +75,11 @@ public final class Lang implements MessageSource {
     private final ResourceBundle messages;
 
     /**
-     * Constructor of the game. Triggers the messages to load.
+     * Constructor of Lang. Triggers the messages to load.
      */
     private Lang() {
-        locale = Locale.getDefault();
-        if (locale.getLanguage().equalsIgnoreCase(Locale.GERMAN.getLanguage())) {
-            locale = Locale.GERMAN;
-        } else {
-            locale = Locale.ENGLISH;
-        }
-
-        messages =
-                ResourceBundle.getBundle(MESSAGE_BUNDLE, locale,
-                        Lang.class.getClassLoader());
+        locale = MapEditorConfig.getInstance().getLanguage();
+        messages = ResourceBundle.getBundle(MESSAGE_BUNDLE, locale, Lang.class.getClassLoader());
     }
 
     /**

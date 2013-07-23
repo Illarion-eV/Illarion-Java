@@ -18,7 +18,6 @@
  */
 package illarion.mapedit.gui;
 
-import illarion.common.config.Config;
 import illarion.mapedit.Lang;
 import illarion.mapedit.MapEditor;
 import illarion.mapedit.crash.exceptions.FormatCorruptedException;
@@ -83,10 +82,10 @@ public class GuiController extends WindowAdapter {
     @Nullable
     private MapSelection clipboard;
 
-    public GuiController(final Config config) {
+    public GuiController() {
         AnnotationProcessor.process(this);
         splashScreen = SplashScreen.getInstance();
-        mainFrame = new MainFrame(this, config);
+        mainFrame = new MainFrame(this);
         historyManager = new HistoryManager();
         maps = new FastList<Map>(1);
         notSaved = false;
@@ -117,7 +116,7 @@ public class GuiController extends WindowAdapter {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                SubstanceLookAndFeel.setSkin("org.pushingpixels.substance.api.skin.OfficeSilver2007Skin");
+                SubstanceLookAndFeel.setSkin(MapEditorConfig.getInstance().getLookAndFeel());
                 mainFrame.initialize(GuiController.this);
                 mainFrame.setLocationRelativeTo(null);
                 mainFrame.setVisible(true);

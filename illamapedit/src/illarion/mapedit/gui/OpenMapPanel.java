@@ -18,7 +18,6 @@
  */
 package illarion.mapedit.gui;
 
-import illarion.common.config.Config;
 import illarion.mapedit.data.MapIO;
 import illarion.mapedit.events.CloseMapEvent;
 import illarion.mapedit.events.GlobalActionEvents;
@@ -83,8 +82,8 @@ public class OpenMapPanel extends JPanel {
         fileList = new JList();
     }
 
-    private void initMaps(@Nonnull final Config config) {
-        final File dir = config.getFile("mapLastOpenDir");
+    private void initMaps() {
+        final File dir = MapEditorConfig.getInstance().getMapFolder();
 
         final String[] maps = dir.list(FILTER_TILES);
         if (maps != null) {
@@ -140,7 +139,7 @@ public class OpenMapPanel extends JPanel {
         });
     }
 
-    public void init(@Nonnull final Config config) {
+    public void init() {
         panel.setPreferredSize(new Dimension(180, 0));
         panel.add(new JList(new String[]{"apa", "bepa"}));
 
@@ -166,7 +165,7 @@ public class OpenMapPanel extends JPanel {
         itemActions.add(openButton);
         add(itemActions, BorderLayout.LINE_START);
         add(panel, BorderLayout.CENTER);
-        initMaps(config);
+        initMaps();
         initOpenMaps();
         showActiveComponents();
     }
