@@ -55,6 +55,7 @@ public class MapEditorConfig {
     private static final String USE_WINDOW_DECO = "useWindowDeco";
     private static final String USED_LOOK_AND_FEEL = "usedLookAndFeel";
     private static final String USED_LANGUAGE = "usedLanguage";
+    private static final String SHOW_MAP_POSITION = "showMapPosition";
 
     @Nullable
     private ConfigSystem configSystem;
@@ -97,6 +98,8 @@ public class MapEditorConfig {
 
         generalPage.addEntry(new ConfigDialog.Entry("gui.config.language", new SelectEntry(USED_LANGUAGE,
                 SelectEntry.STORE_VALUE, LANGUAGES)));
+
+        generalPage.addEntry(new ConfigDialog.Entry("gui.config.showMapPostion", new CheckEntry(SHOW_MAP_POSITION)));
 
         dialog.addPage(generalPage);
 
@@ -149,6 +152,14 @@ public class MapEditorConfig {
             locale = Locale.ENGLISH;
         }
         return locale;
+    }
+
+    public boolean isShowPosition() {
+        if (configSystem == null) {
+            LOGGER.error("Configuration system not initialized yet.");
+            return true;
+        }
+        return configSystem.getBoolean(SHOW_MAP_POSITION);
     }
 
     @EventTopicSubscriber(topic = USED_LOOK_AND_FEEL)

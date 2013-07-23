@@ -25,6 +25,7 @@ import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapIO;
 import illarion.mapedit.data.MapSelection;
 import illarion.mapedit.events.*;
+import illarion.mapedit.events.map.MapPositionEvent;
 import illarion.mapedit.events.map.RepaintRequestEvent;
 import illarion.mapedit.events.menu.MapNewEvent;
 import illarion.mapedit.events.menu.MapOpenEvent;
@@ -337,6 +338,14 @@ public class GuiController extends WindowAdapter {
             getSelected().replaceItemOnActiveTile(e.getIndex(), e.getNewIndex());
             EventBus.publish(new RepaintRequestEvent());
             EventBus.publish(new ItemsUpdatedEvent(getSelected().getItemsOnActiveTile()));
+        }
+    }
+
+    @EventSubscriber
+    public void onMapPosition(MapPositionEvent e) {
+        if (getSelected() != null) {
+            getSelected().setMapPosition(e.getMapX(), e.getMapY());
+            EventBus.publish(new RepaintRequestEvent());
         }
     }
 }

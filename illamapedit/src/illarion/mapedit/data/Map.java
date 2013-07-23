@@ -71,6 +71,8 @@ public class Map {
     private final MapTile[] mapTileData;
     private int activeX = Integer.MIN_VALUE;
     private int activeY = Integer.MIN_VALUE;
+    private int positionX;
+    private int positionY;
     private boolean visible;
 
     /**
@@ -111,6 +113,10 @@ public class Map {
         return (activeX == x) && (activeY == y);
     }
 
+    public boolean isPositionAtTile(final int x, final int y) {
+        return (positionX == x) && (positionY == y);
+    }
+
     public void removeActiveTile() {
         setActiveTile(Integer.MIN_VALUE, Integer.MIN_VALUE);
     }
@@ -140,6 +146,11 @@ public class Map {
     public void setActiveTile(final int x, final int y) {
         activeX = x;
         activeY = y;
+    }
+
+    public void setMapPosition(final int mapX, final int mapY) {
+        positionX = mapX;
+        positionY = mapY;
     }
 
     /**
