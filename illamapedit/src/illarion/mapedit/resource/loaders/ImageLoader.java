@@ -69,7 +69,10 @@ public class ImageLoader implements Resource {
             "edit_add.png",
             "edit_remove.png",
             "1uparrow.png",
-            "1downarrow.png"
+            "1downarrow.png",
+            "render.png",
+            "configure.png",
+            "info.png"
     };
 
     private ImageLoader() {

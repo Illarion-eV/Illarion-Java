@@ -20,6 +20,7 @@ package illarion.mapedit.render;
 
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
+import illarion.mapedit.gui.MapEditorConfig;
 import illarion.mapedit.resource.loaders.ImageLoader;
 import illarion.mapedit.util.SwingLocation;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
@@ -58,6 +59,13 @@ public class SelectedTileRenderer extends AbstractMapRenderer {
                 final int mapY = y + map.getY();
                 if (map.isActiveTile(x, y)) {
                     g.setColor(Color.YELLOW);
+                    drawLine(mapX, mapY, mapX, mapY + 1, z, g);
+                    drawLine(mapX + 1, mapY, mapX + 1, mapY + 1, z, g);
+                    drawLine(mapX, mapY, mapX + 1, mapY, z, g);
+                    drawLine(mapX, mapY + 1, mapX + 1, mapY + 1, z, g);
+                    g.setColor(Color.ORANGE);
+                } else if (MapEditorConfig.getInstance().isShowPosition() && map.isPositionAtTile(x, y)) {
+                    g.setColor(Color.CYAN);
                     drawLine(mapX, mapY, mapX, mapY + 1, z, g);
                     drawLine(mapX + 1, mapY, mapX + 1, mapY + 1, z, g);
                     drawLine(mapX, mapY, mapX + 1, mapY, z, g);

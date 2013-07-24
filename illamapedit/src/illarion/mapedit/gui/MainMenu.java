@@ -27,6 +27,7 @@ import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenu;
+import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntryFooter;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntryPrimary;
 
 import java.awt.event.ActionEvent;
@@ -75,6 +76,18 @@ public class MainMenu extends RibbonApplicationMenu {
                             }
                         }, JCommandButton.CommandButtonKind.ACTION_ONLY
                 );
+
+        final RibbonApplicationMenuEntryFooter settings =
+                new RibbonApplicationMenuEntryFooter(
+                        ImageLoader.getResizableIcon("configure"),
+                        Lang.getMsg("gui.mainmenu.MapEditorConfig"),
+                        new ActionListener() {
+                            @Override
+                            public void actionPerformed(final ActionEvent e) {
+                                MapEditorConfig.getInstance().createDialog().show();
+                            }
+                        });
+        addFooterEntry(settings);
 
         addMenuEntry(menuOpenMap);
         addMenuEntry(menuNewMap);

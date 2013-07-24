@@ -18,7 +18,6 @@
  */
 package illarion.mapedit.gui;
 
-import illarion.common.config.Config;
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.MapIO;
 import illarion.mapedit.events.GlobalActionEvents;
@@ -60,12 +59,12 @@ public class MapFileBand extends JRibbonBand {
     @Nonnull
     private final MapComboBoxModel model;
 
-    public MapFileBand(@Nonnull final Config config) {
+    public MapFileBand() {
         super(Lang.getMsg("gui.maps"), null);
 
         AnnotationProcessor.process(this);
 
-        final File dir = config.getFile("mapLastOpenDir");
+        final File dir = MapEditorConfig.getInstance().getMapFolder();
 
         final String[] maps = dir.list(FILTER_TILES);
         final JList list;
