@@ -50,7 +50,8 @@ public class SelectedTileRenderer extends AbstractMapRenderer {
     }
 
     @Override
-    public void renderMap(@Nonnull final Map map, final Rectangle viewport, final int level, @Nonnull final Graphics2D g) {
+    public void renderMap(@Nonnull final Map map, final Rectangle viewport, final int level,
+                          @Nonnull final Graphics2D g) {
         final int width = map.getWidth();
         final int height = map.getHeight();
         final int z = map.getZ() - level;
@@ -99,7 +100,8 @@ public class SelectedTileRenderer extends AbstractMapRenderer {
         g.setTransform(transform);
     }
 
-    private void drawLine(final int fromX, final int fromY, final int toX, final int toY, final int z, @Nonnull final Graphics2D g) {
+    private void drawLine(final int fromX, final int fromY, final int toX, final int toY, final int z,
+                          @Nonnull final Graphics2D g) {
         g.drawLine(
                 SwingLocation.displayCoordinateX(fromX, fromY, z),
                 SwingLocation.displayCoordinateY(fromX, fromY, z),

@@ -110,7 +110,6 @@ public class Version2Decoder implements Decoder {
         }
     }
 
-
     @Override
     public void decodeTileLine(final String line, final int i) throws FormatCorruptedException {
 //        <dx>;<dy>;<tileID>;<musicID>
@@ -136,6 +135,29 @@ public class Version2Decoder implements Decoder {
             tile = MapTile.MapTileFactory.createNew(tid, 0, 0, tmid);
         }
         map.setTileAt(tx, ty, tile);
+    }
+
+    @Override
+    public void decodeAnnoLine(final String line, final int i) throws FormatCorruptedException {
+        final String[] sections = DELIMITER.split(line);
+        if (sections.length != 4) {
+            throw new FormatCorruptedException(path + ".annot.txt", line, i,
+                    "<sx>;<sy>;<type>;<annotation>");
+        }
+        final int sx = Integer.parseInt(sections[0]);
+        final int sy = Integer.parseInt(sections[1]);
+        final int index = Integer.parseInt(sections[2]);
+        final String annotation = sections[3];
+
+        if (map != null) {
+            final MapTile tile = map.getTileAt(sx,sy);
+            if ((tile != null) && (index == 0)) {
+                tile.setAnnotation(annotation);
+            }
+            if ((tile != null) && (index > 0)) {
+                tile.getMapItems().get(index - 1).setAnnotation(annotation);
+            }
+        }
     }
 
     @Override

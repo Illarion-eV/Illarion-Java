@@ -100,6 +100,11 @@ public class Map {
     }
 
     @Nullable
+    public MapTile getActiveTile() {
+        return getTileAt(activeX,activeY);
+    }
+
+    @Nullable
     public List<MapItem> getItemsOnActiveTile() {
         List<MapItem> items = null;
         final MapTile tile = getTileAt(activeX,activeY);

@@ -72,7 +72,8 @@ public class ImageLoader implements Resource {
             "1downarrow.png",
             "render.png",
             "configure.png",
-            "info.png"
+            "info.png",
+            "annotation.png"
     };
 
     private ImageLoader() {

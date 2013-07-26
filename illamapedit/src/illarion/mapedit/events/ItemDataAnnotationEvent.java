@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Mapeditor.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Mapeditor is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,26 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.data.formats;
-
-import illarion.mapedit.crash.exceptions.FormatCorruptedException;
-import illarion.mapedit.data.Map;
+package illarion.mapedit.events;
 
 /**
- * @author Tim
+ * @author Fredrik K
  */
-public interface Decoder {
+public class ItemDataAnnotationEvent {
+    private final String text;
 
+    public ItemDataAnnotationEvent(final String text) {
+        this.text = text;
+    }
 
-    void newMap(String name, String path);
-
-    void decodeAnnoLine(String line, int i) throws FormatCorruptedException;
-
-    void decodeItemLine(String line, int i) throws FormatCorruptedException;
-
-    void decodeTileLine(String line, int i) throws FormatCorruptedException;
-
-    void decodeWarpLine(String line, int i) throws FormatCorruptedException;
-
-    Map getDecodedMap();
+    public String getText() {
+        return text;
+    }
 }
