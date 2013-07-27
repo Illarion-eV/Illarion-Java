@@ -176,7 +176,7 @@ public class Map {
      */
     public void addItemAt(final int x, final int y, final MapItem mapItem) {
         final int i = (y * width) + x;
-        mapTileData[i].getMapItems().add(mapItem);
+        mapTileData[i].addMapItem(mapItem);
     }
 
     public void setVisible(final boolean visible) {

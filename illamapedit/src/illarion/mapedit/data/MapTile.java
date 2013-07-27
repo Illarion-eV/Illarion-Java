@@ -95,8 +95,7 @@ public class MapTile {
     /**
      * The items on top of this tile
      */
-    @Nonnull
-    private final List<MapItem> mapItems;
+    private List<MapItem> mapItems;
     /**
      * The warp point on this tile, may be {@code null}.
      */
@@ -113,8 +112,8 @@ public class MapTile {
         this.shapeID = shapeID;
         this.musicID = musicID;
         this.mapWarpPoint = mapWarpPoint;
-        this.mapItems = new FastList<MapItem>();
         if (mapItems != null) {
+            this.mapItems = new FastList<MapItem>();
             this.mapItems.addAll(mapItems);
         }
     }
@@ -144,9 +143,28 @@ public class MapTile {
     /**
      * @return The list of items on this tile.
      */
-    @Nonnull
+    @Nullable
     public List<MapItem> getMapItems() {
         return mapItems;
+    }
+
+    public void addMapItem(final MapItem item) {
+        if (mapItems == null) {
+            mapItems = new FastList<MapItem>();
+        }
+        mapItems.add(item);
+    }
+
+    public void removeMapItem(final MapItem item) {
+        if (mapItems != null) {
+            mapItems.add(item);
+        }
+    }
+
+    public void removeMapItem(final int index) {
+        if (mapItems != null) {
+            mapItems.remove(index);
+        }
     }
 
     /**
@@ -165,18 +183,17 @@ public class MapTile {
     }
 
     public boolean isMapItemsDataEmpty() {
+        if (mapItems == null) {
+            return true;
+        }
         boolean empty = true;
         int index = 0;
 
-        while (empty && index < mapItems.size()) {
-            empty = mapItems.get(index).getItemData().isEmpty();
+        while (empty && (index < mapItems.size())) {
+            empty = mapItems.get(index).isItemDataNullOrEmpty();
             index++;
         }
         return empty;
-    }
-
-    public void removeMapItem(final int index) {
-        mapItems.remove(index);
     }
 
     /**

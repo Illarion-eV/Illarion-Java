@@ -58,17 +58,17 @@ public class DataPanel extends JPanel {
 
     @EventSubscriber
     public void onItemDataChanged(@Nonnull final ItemItemDataChangedEvent e) {
-        itemPanel.getSelectedItem().getItemData().set(e.getRow(),e.getData());
+        itemPanel.getSelectedItem().addItemData(e.getRow(),e.getData());
     }
 
     @EventSubscriber
     public void onItemDataRemoved(@Nonnull final ItemDataRemovedEvent e) {
-        itemPanel.getSelectedItem().getItemData().remove(e.getIndex());
+        itemPanel.getSelectedItem().removeItemData(e.getIndex());
     }
 
     @EventSubscriber
     public void onItemDataAdded(@Nonnull final ItemDataAddedEvent e) {
-        itemPanel.getSelectedItem().getItemData().add(e.getData());
+        itemPanel.getSelectedItem().addItemData(e.getData());
     }
 
     @EventSubscriber
