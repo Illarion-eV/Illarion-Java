@@ -18,11 +18,13 @@
  */
 package illarion.mapedit.render;
 
+import illarion.common.config.ConfigChangedEvent;
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.gui.MapEditorConfig;
 import illarion.mapedit.resource.loaders.ImageLoader;
 import illarion.mapedit.util.SwingLocation;
+import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import javax.annotation.Nonnull;
@@ -123,5 +125,12 @@ public class SelectedTileRenderer extends AbstractMapRenderer {
     @Override
     public boolean isDefaultOn() {
         return true;
+    }
+
+    @EventTopicSubscriber(topic = MapEditorConfig.SHOW_MAP_POSITION)
+    public void onConfigChanged(@Nonnull final String topic, final ConfigChangedEvent event) {
+        if (topic.equals(MapEditorConfig.SHOW_MAP_POSITION)) {
+            showPosition = MapEditorConfig.getInstance().isShowPosition();
+        }
     }
 }
