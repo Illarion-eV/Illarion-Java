@@ -71,7 +71,7 @@ public class ItemEraserTool extends AbstractTool {
             return null;
         }
         final List<MapItem> items = tile.getMapItems();
-        if (items.isEmpty()) {
+        if (items == null || items.isEmpty()) {
             return null;
         }
         final HistoryAction action;

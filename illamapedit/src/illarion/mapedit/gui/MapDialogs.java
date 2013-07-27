@@ -149,7 +149,7 @@ public class MapDialogs {
 
         Map[] loadedMaps = new Map[list.getSelectedIndices().length];
         for (int i = 0; i < list.getSelectedIndices().length; i++) {
-            loadedMaps[i] = MapIO.loadMap(dir.getPath(), (String) list.getSelectedValues()[i]);
+            loadedMaps[i] = MapIO.loadMapThread(dir.getPath(), (String) list.getSelectedValues()[i]);
         }
         return loadedMaps;
     }

@@ -52,20 +52,20 @@ public class ItemPlacedAction extends HistoryAction {
     @Override
     public void redo() {
         if (old != null) {
-            map.getTileAt(x, y).getMapItems().remove(old);
+            map.getTileAt(x, y).removeMapItem(old);
         }
         if (newt != null) {
-            map.getTileAt(x, y).getMapItems().add(newt);
+            map.getTileAt(x, y).addMapItem(newt);
         }
     }
 
     @Override
     public void undo() {
         if (newt != null) {
-            map.getTileAt(x, y).getMapItems().remove(newt);
+            map.getTileAt(x, y).removeMapItem(newt);
         }
         if (old != null) {
-            map.getTileAt(x, y).getMapItems().add(old);
+            map.getTileAt(x, y).addMapItem(old);
         }
     }
 }
