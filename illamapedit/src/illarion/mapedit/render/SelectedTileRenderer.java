@@ -36,11 +36,15 @@ import java.awt.geom.AffineTransform;
  */
 public class SelectedTileRenderer extends AbstractMapRenderer {
 
+    private boolean showPosition;
+
     /**
      * Creates a new SelectedTileRenderer
      */
     public SelectedTileRenderer(final RendererManager manager) {
         super(manager);
+        showPosition = MapEditorConfig.getInstance().isShowPosition();
+
     }
 
     @Override
@@ -64,25 +68,27 @@ public class SelectedTileRenderer extends AbstractMapRenderer {
                     drawLine(mapX, mapY, mapX + 1, mapY, z, g);
                     drawLine(mapX, mapY + 1, mapX + 1, mapY + 1, z, g);
                     g.setColor(Color.ORANGE);
-                } else if (MapEditorConfig.getInstance().isShowPosition() && map.isPositionAtTile(x, y)) {
-                    g.setColor(Color.CYAN);
-                    drawLine(mapX, mapY, mapX, mapY + 1, z, g);
-                    drawLine(mapX + 1, mapY, mapX + 1, mapY + 1, z, g);
-                    drawLine(mapX, mapY, mapX + 1, mapY, z, g);
-                    drawLine(mapX, mapY + 1, mapX + 1, mapY + 1, z, g);
-                    g.setColor(Color.ORANGE);
-                } else if (map.isSelected(x, y)) {
-                    if (!map.isSelected(x-1, y)) {
+                } else {
+                    if (showPosition && map.isPositionAtTile(x, y)) {
+                        g.setColor(Color.CYAN);
                         drawLine(mapX, mapY, mapX, mapY + 1, z, g);
-                    }
-                    if (!map.isSelected(x+1, y)) {
                         drawLine(mapX + 1, mapY, mapX + 1, mapY + 1, z, g);
-                    }
-                    if (!map.isSelected(x, y-1)) {
                         drawLine(mapX, mapY, mapX + 1, mapY, z, g);
-                    }
-                    if (!map.isSelected(x, y+1)) {
                         drawLine(mapX, mapY + 1, mapX + 1, mapY + 1, z, g);
+                        g.setColor(Color.ORANGE);
+                    } else if (map.isSelected(x, y)) {
+                        if (!map.isSelected(x-1, y)) {
+                            drawLine(mapX, mapY, mapX, mapY + 1, z, g);
+                        }
+                        if (!map.isSelected(x+1, y)) {
+                            drawLine(mapX + 1, mapY, mapX + 1, mapY + 1, z, g);
+                        }
+                        if (!map.isSelected(x, y-1)) {
+                            drawLine(mapX, mapY, mapX + 1, mapY, z, g);
+                        }
+                        if (!map.isSelected(x, y+1)) {
+                            drawLine(mapX, mapY + 1, mapX + 1, mapY + 1, z, g);
+                        }
                     }
                 }
             }

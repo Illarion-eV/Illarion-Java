@@ -149,8 +149,8 @@ public class Map {
     }
 
     public void setMapPosition(final int mapX, final int mapY) {
-        positionX = mapX;
-        positionY = mapY;
+        positionX = mapX - x;
+        positionY = mapY - y;
     }
 
     /**
