@@ -22,6 +22,7 @@ import illarion.mapedit.Lang;
 import illarion.mapedit.MapEditor;
 import illarion.mapedit.events.HistoryEvent;
 import illarion.mapedit.events.map.MapPositionEvent;
+import illarion.mapedit.events.menu.MapLoadErrorEvent;
 import illarion.mapedit.events.menu.MapSaveEvent;
 import illarion.mapedit.events.menu.ShowHelpDialogEvent;
 import illarion.mapedit.events.util.ActionEventPublisher;
@@ -30,6 +31,7 @@ import illarion.mapedit.render.RendererManager;
 import illarion.mapedit.resource.loaders.ImageLoader;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXStatusBar;
 import org.pushingpixels.flamingo.api.common.AbstractCommandButton;
@@ -63,6 +65,7 @@ public class MainFrame extends JRibbonFrame {
     private OpenMapPanel filePanel;
 
     public MainFrame(final GuiController controller) {
+        AnnotationProcessor.process(this);
         mapPanel = new MapPanel(controller);
         settingsPanel = new ToolSettingsPanel();
         filePanel = new OpenMapPanel();
@@ -181,5 +184,18 @@ public class MainFrame extends JRibbonFrame {
 
         setAction(commandButton, key, action, shift);
         return commandButton;
+    }
+
+    @org.bushe.swing.event.annotation.EventSubscriber
+    public void onMapLoadError(@Nonnull MapLoadErrorEvent e) {
+        showMessageDialog(e.getMessage());
+    }
+
+    public static void showMessageDialog(final String message) {
+        JOptionPane.showMessageDialog(getInstance(),
+                message,
+                Lang.getMsg("gui.error"),
+                JOptionPane.ERROR_MESSAGE,
+                ImageLoader.getImageIcon("messagebox_critical"));
     }
 }

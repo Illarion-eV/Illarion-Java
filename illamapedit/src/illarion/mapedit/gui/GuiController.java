@@ -27,14 +27,10 @@ import illarion.mapedit.data.MapSelection;
 import illarion.mapedit.events.*;
 import illarion.mapedit.events.map.MapPositionEvent;
 import illarion.mapedit.events.map.RepaintRequestEvent;
-import illarion.mapedit.events.menu.MapNewEvent;
-import illarion.mapedit.events.menu.MapOpenEvent;
-import illarion.mapedit.events.menu.MapSaveEvent;
-import illarion.mapedit.events.menu.MapSelectedEvent;
+import illarion.mapedit.events.menu.*;
 import illarion.mapedit.history.HistoryManager;
 import illarion.mapedit.history.ItemPlacedAction;
 import illarion.mapedit.render.RendererManager;
-import illarion.mapedit.resource.loaders.ImageLoader;
 import illarion.mapedit.util.SwingLocation;
 import javolution.util.FastList;
 import org.apache.log4j.Logger;
@@ -182,7 +178,6 @@ public class GuiController extends WindowAdapter {
         notSaved = !saved;
     }
 
-
     @Override
     public void windowClosing(final WindowEvent e) {
         if (notSaved) {
@@ -243,37 +238,38 @@ public class GuiController extends WindowAdapter {
     }
 
     @EventSubscriber
+    public void onMapLoaded(@Nonnull final MapLoadedEvent e) {
+        if (!maps.contains(e.getMap())) {
+            addMap(e.getMap());
+        }
+    }
+
+    @EventSubscriber
     public void onMapOpen(@Nonnull final MapOpenEvent e) {
-        try {
-            final Map[] mapsToOpen;
+
             if (e.getPath() == null) {
-                mapsToOpen = MapDialogs.showOpenMapDialog(mainFrame);
-            } else {
-                mapsToOpen = new Map[1];
-                mapsToOpen[0] = MapIO.loadMap(e.getPath(), e.getName());
-            }
-            if (mapsToOpen != null) {
-                for (final Map map : mapsToOpen) {
-                    if (!maps.contains(map)) {
-                        addMap(map);
+                try {
+                final Map[] mapsToOpen = MapDialogs.showOpenMapDialog(mainFrame);
+
+                if (mapsToOpen != null) {
+                    for (final Map map : mapsToOpen) {
+                        if (!maps.contains(map)) {
+                            addMap(map);
+                        }
                     }
                 }
+                } catch (FormatCorruptedException ex) {
+                    LOGGER.warn("Format wrong.", ex);
+                    EventBus.publish(new MapLoadErrorEvent(ex.getMessage()));
+                } catch (IOException ex) {
+                    LOGGER.warn("Can't load map", ex);
+                    EventBus.publish(new MapLoadErrorEvent(Lang.getMsg("gui.error.LoadMap")));
+                }
+            } else {
+                MapIO.loadMap(e.getPath(), e.getName());
             }
-        } catch (FormatCorruptedException ex) {
-            LOGGER.warn("Format wrong.", ex);
-            JOptionPane.showMessageDialog(MainFrame.getInstance(),
-                    ex.getMessage(),
-                    Lang.getMsg("gui.error"),
-                    JOptionPane.ERROR_MESSAGE,
-                    ImageLoader.getImageIcon("messagebox_critical"));
-        } catch (IOException ex) {
-            LOGGER.warn("Can't load map", ex);
-            JOptionPane.showMessageDialog(MainFrame.getInstance(),
-                    Lang.getMsg("gui.error.LoadMap"),
-                    Lang.getMsg("gui.error"),
-                    JOptionPane.ERROR_MESSAGE,
-                    ImageLoader.getImageIcon("messagebox_critical"));
-        }
+
+
     }
 
     @EventTopicSubscriber(topic = GlobalActionEvents.CLOSE_MAP)

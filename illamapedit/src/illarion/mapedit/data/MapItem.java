@@ -51,7 +51,7 @@ public class MapItem implements Immutable {
     /**
      * The data of this item.
      */
-    private final List<String> itemData;
+    private List<String> itemData = null;
     /**
      * The quality of this item.
      */
@@ -66,7 +66,9 @@ public class MapItem implements Immutable {
      */
     public MapItem(final int itemId, final List<String> itemData, final int quality) {
         this.itemId = itemId;
-        this.itemData = new ArrayList<String>(itemData);
+        if ((itemData != null) && !itemData.isEmpty()) {
+            this.itemData = new ArrayList<String>(itemData);
+        }
         this.quality = quality;
     }
 
@@ -116,6 +118,30 @@ public class MapItem implements Immutable {
      */
     public List<String> getItemData() {
         return itemData;
+    }
+
+    public boolean isItemDataNullOrEmpty() {
+        return itemData == null || itemData.isEmpty();
+    }
+
+    public void addItemData(String data) {
+        if (itemData == null) {
+            itemData = new ArrayList<String>();
+        }
+        itemData.add(data);
+    }
+
+    public void addItemData(int index, String data) {
+        if (itemData == null) {
+            itemData = new ArrayList<String>();
+        }
+        itemData.set(index, data);
+    }
+
+    public void removeItemData(int index) {
+        if (itemData != null) {
+            itemData.remove(index);
+        }
     }
 
     @Override
