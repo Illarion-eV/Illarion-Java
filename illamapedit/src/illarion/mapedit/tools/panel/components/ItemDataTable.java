@@ -19,9 +19,12 @@
 package illarion.mapedit.tools.panel.components;
 
 import illarion.mapedit.Lang;
+import illarion.mapedit.data.MapItem;
+import illarion.mapedit.events.ItemDataAnnotationEvent;
 import illarion.mapedit.resource.loaders.ImageLoader;
 import illarion.mapedit.tools.ToolManager;
 import illarion.mapedit.tools.panel.components.models.ItemDataTableModel;
+import org.bushe.swing.event.EventBus;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import javax.swing.*;
@@ -29,7 +32,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * @author Fredrik K
@@ -38,9 +40,13 @@ public class ItemDataTable extends JPanel {
     private static final int PREFERRED_KEY_WIDTH = 15;
     private final ItemDataTableModel dataTableModel;
     private final JTable dataTable;
+    private final AnnotationLabel annotation;
 
     public ItemDataTable() {
         super(new BorderLayout());
+        annotation = new AnnotationLabel();
+        add(annotation, BorderLayout.NORTH);
+
         final JScrollPane scroll = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
@@ -57,6 +63,9 @@ public class ItemDataTable extends JPanel {
 
         final ResizableIcon iconRemove =  ImageLoader.getResizableIcon("edit_remove") ;
         iconRemove.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
+
+        final ResizableIcon iconAnnotation =  ImageLoader.getResizableIcon("annotation") ;
+        iconAnnotation.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
 
         final JButton addDataButton = new JButton();
         addDataButton.setIcon(iconAdd);
@@ -76,12 +85,37 @@ public class ItemDataTable extends JPanel {
             }
         });
 
+        final JButton annotationButton = new JButton();
+        annotationButton.setIcon(iconAnnotation);
+        annotationButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                addAnnotation();
+            }
+        });
+
         final JToolBar dataActions = new JToolBar();
         dataActions.setFloatable(false);
         dataActions.add(addDataButton);
         dataActions.add(removeDataButton);
+        dataActions.addSeparator();
+        dataActions.add(annotationButton);
 
         add(dataActions, BorderLayout.PAGE_END);
+    }
+
+    private void addAnnotation() {
+        final JTextField annotationField = new JTextField(20);
+        annotationField.setText(annotation.getAnnotation());
+        final JPanel panel = new JPanel();
+        panel.add(new JLabel(Lang.getMsg("tools.DataTool.Annotation")));
+        panel.add(annotationField);
+
+        final int result = JOptionPane.showConfirmDialog(null, panel,
+                Lang.getMsg("tools.DataTool.Annotation_header"), JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            EventBus.publish(new ItemDataAnnotationEvent(annotationField.getText()));
+        }
     }
 
     private void addData() {
@@ -106,10 +140,16 @@ public class ItemDataTable extends JPanel {
     public void clearDataList() {
         dataTableModel.clearData();
         dataTableModel.fireTableDataChanged();
+        setAnnotation("");
     }
 
-    public void setDataList(final Collection<String> dataList) {
-        dataTableModel.setData(dataList);
+    public void setDataList(final MapItem item) {
+        dataTableModel.setData(item.getItemData());
         dataTableModel.fireTableDataChanged();
+        setAnnotation(item.getAnnotation());
+    }
+
+    public void setAnnotation(final String text) {
+        annotation.setAnnotation(text);
     }
 }

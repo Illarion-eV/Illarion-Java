@@ -18,6 +18,7 @@
  */
 package illarion.mapedit.gui;
 
+import illarion.common.config.ConfigChangedEvent;
 import illarion.mapedit.data.MapIO;
 import illarion.mapedit.events.CloseMapEvent;
 import illarion.mapedit.events.GlobalActionEvents;
@@ -30,6 +31,7 @@ import illarion.mapedit.resource.loaders.ImageLoader;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
+import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import javax.annotation.Nonnull;
@@ -83,15 +85,7 @@ public class OpenMapPanel extends JPanel {
     }
 
     private void initMaps() {
-        final File dir = MapEditorConfig.getInstance().getMapFolder();
-
-        final String[] maps = dir.list(FILTER_TILES);
-        if (maps != null) {
-            for (int i = 0; i < maps.length; ++i) {
-                maps[i] = maps[i].substring(0, maps[i].length() - MapIO.EXT_TILE.length());
-            }
-            fileList.setListData(maps);
-        }
+        final File dir = loadFileList();
         fileList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(@Nonnull final ListSelectionEvent e) {
@@ -101,6 +95,19 @@ public class OpenMapPanel extends JPanel {
                 }
             }
         });
+    }
+
+    private File loadFileList() {
+        final File dir = MapEditorConfig.getInstance().getMapFolder();
+
+        final String[] maps = dir.list(FILTER_TILES);
+        if (maps != null) {
+            for (int i = 0; i < maps.length; ++i) {
+                maps[i] = maps[i].substring(0, maps[i].length() - MapIO.EXT_TILE.length());
+            }
+            fileList.setListData(maps);
+        }
+        return dir;
     }
 
     private void initOpenMaps() {
@@ -187,5 +194,11 @@ public class OpenMapPanel extends JPanel {
     public void onUpdateMapList(@Nonnull final UpdateMapListEvent e) {
         openTableModel.setTableData(e.getMaps());
         EventBus.publish(new MapSelectedEvent(e.getSelectedIndex()));
+    }
+
+    @EventTopicSubscriber(topic = MapEditorConfig.MAPEDIT_FOLDER)
+    public void onConfigChanged(final String topic, @Nonnull final ConfigChangedEvent event) {
+        fileList.removeAll();
+        loadFileList();
     }
 }

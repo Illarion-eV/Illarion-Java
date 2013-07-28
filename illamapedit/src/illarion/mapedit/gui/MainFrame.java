@@ -18,6 +18,7 @@
  */
 package illarion.mapedit.gui;
 
+import illarion.common.config.ConfigChangedEvent;
 import illarion.mapedit.Lang;
 import illarion.mapedit.MapEditor;
 import illarion.mapedit.events.HistoryEvent;
@@ -32,6 +33,7 @@ import illarion.mapedit.resource.loaders.ImageLoader;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXStatusBar;
 import org.pushingpixels.flamingo.api.common.AbstractCommandButton;
@@ -197,5 +199,21 @@ public class MainFrame extends JRibbonFrame {
                 Lang.getMsg("gui.error"),
                 JOptionPane.ERROR_MESSAGE,
                 ImageLoader.getImageIcon("messagebox_critical"));
+    }
+
+    @EventTopicSubscriber(topic = MapEditorConfig.USED_LANGUAGE)
+    public void onConfigLanguageChanged(final String topic, @Nonnull final ConfigChangedEvent event) {
+        final JOptionPane optionPane = new JOptionPane(Lang.getMsg("gui.LocaleChanged"), JOptionPane.INFORMATION_MESSAGE);
+        final JDialog dialog = optionPane.createDialog(getInstance(), Lang.getMsg("gui.info"));
+        dialog.setAlwaysOnTop(true);
+        dialog.setVisible(true);
+    }
+
+    @EventTopicSubscriber(topic = MapEditorConfig.USE_WINDOW_DECO)
+    public void onConfigWindowDecoChanged(final String topic, @Nonnull final ConfigChangedEvent event) {
+        final JOptionPane optionPane = new JOptionPane(Lang.getMsg("gui.LocaleChanged"), JOptionPane.INFORMATION_MESSAGE);
+        final JDialog dialog = optionPane.createDialog(getInstance(), Lang.getMsg("gui.info"));
+        dialog.setAlwaysOnTop(true);
+        dialog.setVisible(true);
     }
 }
