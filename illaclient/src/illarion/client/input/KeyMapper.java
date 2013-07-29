@@ -18,11 +18,15 @@
  */
 package illarion.client.input;
 
+import illarion.client.IllaClient;
 import illarion.client.net.client.CloseShowcaseCmd;
 import illarion.client.net.client.PickUpAllItemsCmd;
 import illarion.client.world.World;
 import illarion.client.world.items.InventorySlot;
+import illarion.common.config.ConfigChangedEvent;
 import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.illarion.engine.input.Key;
 
 import javax.annotation.Nonnull;
@@ -49,6 +53,8 @@ public final class KeyMapper {
         inputMap.put(Key.CursorDown, "WalkSouthWest");
         inputMap.put(Key.CursorRight, "WalkSouthEast");
 
+        applyWasdWalkSettings();
+
         inputMap.put(Key.NumPad1, "WalkWest");
         inputMap.put(Key.NumPad2, "WalkSouthWest");
         inputMap.put(Key.NumPad3, "WalkSouth");
@@ -62,6 +68,29 @@ public final class KeyMapper {
         inputMap.put(Key.PageDown, "WalkSouth");
         inputMap.put(Key.End, "WalkWest");
         inputMap.put(Key.Home, "WalkNorth");
+
+        AnnotationProcessor.process(this);
+    }
+
+    private void applyWasdWalkSettings() {
+        if (IllaClient.getCfg().getBoolean("wasdWalk")) {
+            inputMap.put(Key.W, "WalkNorthEast");
+            inputMap.put(Key.A, "WalkNorthWest");
+            inputMap.put(Key.S, "WalkSouthWest");
+            inputMap.put(Key.D, "WalkSouthEast");
+        } else {
+            inputMap.remove(Key.W);
+            inputMap.remove(Key.A);
+            inputMap.remove(Key.S);
+            inputMap.remove(Key.D);
+        }
+    }
+
+    @EventTopicSubscriber(topic = "waskWalk")
+    public void onWasdSettingsChanged(@Nonnull final String configKey, @Nonnull final ConfigChangedEvent event) {
+        if ("wasdWalk".equals(configKey)) {
+            applyWasdWalkSettings();
+        }
     }
 
     public void handleKeyInput(@Nonnull final Key key) {
