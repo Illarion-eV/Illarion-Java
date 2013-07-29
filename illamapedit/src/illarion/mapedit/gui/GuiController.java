@@ -21,9 +21,7 @@ package illarion.mapedit.gui;
 import illarion.mapedit.Lang;
 import illarion.mapedit.MapEditor;
 import illarion.mapedit.crash.exceptions.FormatCorruptedException;
-import illarion.mapedit.data.Map;
-import illarion.mapedit.data.MapIO;
-import illarion.mapedit.data.MapSelection;
+import illarion.mapedit.data.*;
 import illarion.mapedit.events.*;
 import illarion.mapedit.events.map.MapPositionEvent;
 import illarion.mapedit.events.map.RepaintRequestEvent;
@@ -61,13 +59,15 @@ public class GuiController extends WindowAdapter {
     @Nonnull
     private final MainFrame mainFrame;
 
-    private final SplashScreen splashScreen;
-
     @Nonnull
     private final List<Map> maps;
 
     @Nonnull
     private final HistoryManager historyManager;
+
+    @Nonnull
+    private final AnnotationChecker annotationChecker;
+
 
     @Nullable
     private Map selected;
@@ -81,11 +81,16 @@ public class GuiController extends WindowAdapter {
 
     public GuiController() {
         AnnotationProcessor.process(this);
-        splashScreen = SplashScreen.getInstance();
         mainFrame = new MainFrame(this);
         historyManager = new HistoryManager();
+        annotationChecker = new AnnotationChecker();
         maps = new FastList<Map>(1);
         notSaved = false;
+    }
+
+    @Nonnull
+    public AnnotationChecker getAnnotationChecker() {
+        return annotationChecker;
     }
 
     public void start() {
@@ -117,7 +122,7 @@ public class GuiController extends WindowAdapter {
                 mainFrame.initialize(GuiController.this);
                 mainFrame.setLocationRelativeTo(null);
                 mainFrame.setVisible(true);
-                splashScreen.setVisible(false);
+                SplashScreen.getInstance().setVisible(false);
             }
         });
 
@@ -291,7 +296,7 @@ public class GuiController extends WindowAdapter {
 
     @EventSubscriber
     public void onCutClipboard(@Nonnull final ClipboardCutEvent e) {
-        if (getSelected() != null) {
+        if ((getSelected() != null) && !annotationChecker.isAnnotatedFill(getSelected())) {
             clipboard = getSelected().cutSelectedTiles();
             EventBus.publish(new RepaintRequestEvent());
             setSaved(false);
@@ -301,8 +306,9 @@ public class GuiController extends WindowAdapter {
     @EventSubscriber
     public void onPasteClipboard(@Nonnull final PasteEvent e) {
         EventBus.publish(new DidPasteEvent());
-        if ((getSelected() != null) && (clipboard != null)) {
-            getSelected().pasteTiles(e.getX(),e.getY(),clipboard);
+        if ((getSelected() != null) && (clipboard != null) && !annotationChecker.isAnnotated(e.getX(),e.getY(),
+                getSelected(), clipboard)) {
+            getSelected().pasteTiles(e.getX(), e.getY(), clipboard);
             EventBus.publish(new RepaintRequestEvent());
             setSaved(false);
         }
@@ -338,9 +344,21 @@ public class GuiController extends WindowAdapter {
     }
 
     @EventSubscriber
-    public void onMapPosition(MapPositionEvent e) {
+    public void onMapPosition(final MapPositionEvent e) {
         if (getSelected() != null) {
             getSelected().setMapPosition(e.getMapX(), e.getMapY());
+            EventBus.publish(new RepaintRequestEvent());
+        }
+    }
+
+    @EventSubscriber
+    public void onItemDataAnnotation(@Nonnull final TileAnnotationEvent e) {
+        if (getSelected() == null) {
+            return;
+        }
+        final MapTile tile = getSelected().getActiveTile();
+        if (tile != null) {
+            tile.setAnnotation(e.getText());
             EventBus.publish(new RepaintRequestEvent());
         }
     }

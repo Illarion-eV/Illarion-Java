@@ -50,12 +50,14 @@ public class MapEditorConfig {
     private static final String DEFAULT_LOOK_AND_FEEL = "org.pushingpixels.substance.api.skin.OfficeSilver2007Skin";
     private static final String[] LANGUAGES = {"English", "German", ""};
     private static final MapEditorConfig INSTANCE = new MapEditorConfig();
+    private static final int ENGLISH = 0;
+    private static final int GERMAN = 1;
 
-    private static final String MAPEDIT_FOLDER = "mapeditFolder";
-    private static final String USE_WINDOW_DECO = "useWindowDeco";
+    public static final String MAPEDIT_FOLDER = "mapeditFolder";
+    public static final String USE_WINDOW_DECO = "useWindowDeco";
     private static final String USED_LOOK_AND_FEEL = "usedLookAndFeel";
-    private static final String USED_LANGUAGE = "usedLanguage";
-    private static final String SHOW_MAP_POSITION = "showMapPosition";
+    public static final String USED_LANGUAGE = "usedLanguage";
+    public static final String SHOW_MAP_POSITION = "showMapPosition";
 
     @Nullable
     private ConfigSystem configSystem;
@@ -135,10 +137,10 @@ public class MapEditorConfig {
             return getDefaultLanguage();
         }
         final String language = configSystem.getString(USED_LANGUAGE);
-        if ((language != null) && language.equals(LANGUAGES[0])) {
+        if ((language != null) && language.equals(LANGUAGES[ENGLISH])) {
             return Locale.ENGLISH;
         }
-        if ((language != null) && language.equals(LANGUAGES[1])) {
+        if ((language != null) && language.equals(LANGUAGES[GERMAN])) {
             return Locale.GERMAN;
         }
         return getDefaultLanguage();
@@ -152,6 +154,17 @@ public class MapEditorConfig {
             locale = Locale.ENGLISH;
         }
         return locale;
+    }
+
+    private static String getDefaultLanguageString() {
+        final Locale locale = Locale.getDefault();
+        if (locale.getLanguage().equalsIgnoreCase(Locale.GERMAN.getLanguage())) {
+            return LANGUAGES[GERMAN];
+        }
+        if (locale.getLanguage().equalsIgnoreCase(Locale.ENGLISH.getLanguage())) {
+            return LANGUAGES[ENGLISH];
+        }
+        return "";
     }
 
     public boolean isShowPosition() {
@@ -196,6 +209,10 @@ public class MapEditorConfig {
         configSystem = new ConfigSystem(userDir + File.separator + "MapEdit.xcfgz");
 
         configSystem.setDefault(MAPEDIT_FOLDER, new File(System.getProperty("user.home")));
+        configSystem.setDefault(USE_WINDOW_DECO, true);
+        configSystem.setDefault(USED_LOOK_AND_FEEL, DEFAULT_LOOK_AND_FEEL);
+        configSystem.setDefault(USED_LANGUAGE, getDefaultLanguageString());
+        configSystem.setDefault(SHOW_MAP_POSITION, false);
 
     }
 

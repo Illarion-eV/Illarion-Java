@@ -21,8 +21,11 @@ package illarion.mapedit.tools;
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapTile;
+import illarion.mapedit.events.TileAnnotationEvent;
 import illarion.mapedit.history.GroupAction;
 import illarion.mapedit.tools.panel.DataPanel;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventSubscriber;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import javax.annotation.Nonnull;
@@ -37,6 +40,8 @@ public class DataTool extends AbstractTool {
     protected DataPanel panel;
 
     public DataTool() {
+        AnnotationProcessor.process(this);
+
         panel = new DataPanel();
     }
 
@@ -45,7 +50,7 @@ public class DataTool extends AbstractTool {
         final MapTile tile = map.getTileAt(x,y);
 
         if (tile != null) {
-            panel.setItems(tile.getMapItems());
+            panel.setItems(tile.getMapItems(), tile.getAnnotation());
             map.setActiveTile(x,y);
         }
     }
@@ -72,6 +77,16 @@ public class DataTool extends AbstractTool {
     }
 
     @Override
+    public boolean isWarnAnnotated() {
+        return false;
+    }
+
+    @Override
     public void paintSelected(final int x, final int y, final Map map, final GroupAction action) {
+    }
+
+    @EventSubscriber
+    public void onItemDataAnnotation(@Nonnull final TileAnnotationEvent e) {
+        panel.setAnnotation(e.getText());
     }
 }

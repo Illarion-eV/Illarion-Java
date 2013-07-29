@@ -74,6 +74,7 @@ public class TileBrushTool extends AbstractTool {
             action = new TileIDChangedAction(x, y, oldTile, newTile, map);
             map.setTileAt(x, y, newTile);
             newTile.setSelected(oldTile.isSelected());
+            newTile.setAnnotation(null);
             MapTransitions.getInstance().checkTileAndSurround(map, new Location(x, y, 0));
         }
         return action;
@@ -99,5 +100,10 @@ public class TileBrushTool extends AbstractTool {
     @Override
     public boolean isFillSelected() {
         return panel.isFillSelected();
+    }
+
+    @Override
+    public boolean isWarnAnnotated() {
+        return true;
     }
 }

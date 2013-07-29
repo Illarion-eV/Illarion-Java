@@ -76,6 +76,11 @@ public class SelectionTool extends AbstractTool {
     }
 
     @Override
+    public boolean isWarnAnnotated() {
+        return false;
+    }
+
+    @Override
     public void paintSelected(final int x, final int y, final Map map, final GroupAction action) {
     }
 }

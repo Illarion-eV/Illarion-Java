@@ -100,6 +100,11 @@ public class Map {
     }
 
     @Nullable
+    public MapTile getActiveTile() {
+        return getTileAt(activeX,activeY);
+    }
+
+    @Nullable
     public List<MapItem> getItemsOnActiveTile() {
         List<MapItem> items = null;
         final MapTile tile = getTileAt(activeX,activeY);
@@ -149,8 +154,8 @@ public class Map {
     }
 
     public void setMapPosition(final int mapX, final int mapY) {
-        positionX = mapX;
-        positionY = mapY;
+        positionX = mapX - x;
+        positionY = mapY - y;
     }
 
     /**

@@ -18,11 +18,13 @@
  */
 package illarion.mapedit.render;
 
+import illarion.common.config.ConfigChangedEvent;
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.gui.MapEditorConfig;
 import illarion.mapedit.resource.loaders.ImageLoader;
 import illarion.mapedit.util.SwingLocation;
+import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import javax.annotation.Nonnull;
@@ -36,15 +38,20 @@ import java.awt.geom.AffineTransform;
  */
 public class SelectedTileRenderer extends AbstractMapRenderer {
 
+    private boolean showPosition;
+
     /**
      * Creates a new SelectedTileRenderer
      */
     public SelectedTileRenderer(final RendererManager manager) {
         super(manager);
+        showPosition = MapEditorConfig.getInstance().isShowPosition();
+
     }
 
     @Override
-    public void renderMap(@Nonnull final Map map, final Rectangle viewport, final int level, @Nonnull final Graphics2D g) {
+    public void renderMap(@Nonnull final Map map, final Rectangle viewport, final int level,
+                          @Nonnull final Graphics2D g) {
         final int width = map.getWidth();
         final int height = map.getHeight();
         final int z = map.getZ() - level;
@@ -64,25 +71,27 @@ public class SelectedTileRenderer extends AbstractMapRenderer {
                     drawLine(mapX, mapY, mapX + 1, mapY, z, g);
                     drawLine(mapX, mapY + 1, mapX + 1, mapY + 1, z, g);
                     g.setColor(Color.ORANGE);
-                } else if (MapEditorConfig.getInstance().isShowPosition() && map.isPositionAtTile(x, y)) {
-                    g.setColor(Color.CYAN);
-                    drawLine(mapX, mapY, mapX, mapY + 1, z, g);
-                    drawLine(mapX + 1, mapY, mapX + 1, mapY + 1, z, g);
-                    drawLine(mapX, mapY, mapX + 1, mapY, z, g);
-                    drawLine(mapX, mapY + 1, mapX + 1, mapY + 1, z, g);
-                    g.setColor(Color.ORANGE);
-                } else if (map.isSelected(x, y)) {
-                    if (!map.isSelected(x-1, y)) {
+                } else {
+                    if (showPosition && map.isPositionAtTile(x, y)) {
+                        g.setColor(Color.CYAN);
                         drawLine(mapX, mapY, mapX, mapY + 1, z, g);
-                    }
-                    if (!map.isSelected(x+1, y)) {
                         drawLine(mapX + 1, mapY, mapX + 1, mapY + 1, z, g);
-                    }
-                    if (!map.isSelected(x, y-1)) {
                         drawLine(mapX, mapY, mapX + 1, mapY, z, g);
-                    }
-                    if (!map.isSelected(x, y+1)) {
                         drawLine(mapX, mapY + 1, mapX + 1, mapY + 1, z, g);
+                        g.setColor(Color.ORANGE);
+                    } else if (map.isSelected(x, y)) {
+                        if (!map.isSelected(x-1, y)) {
+                            drawLine(mapX, mapY, mapX, mapY + 1, z, g);
+                        }
+                        if (!map.isSelected(x+1, y)) {
+                            drawLine(mapX + 1, mapY, mapX + 1, mapY + 1, z, g);
+                        }
+                        if (!map.isSelected(x, y-1)) {
+                            drawLine(mapX, mapY, mapX + 1, mapY, z, g);
+                        }
+                        if (!map.isSelected(x, y+1)) {
+                            drawLine(mapX, mapY + 1, mapX + 1, mapY + 1, z, g);
+                        }
                     }
                 }
             }
@@ -91,7 +100,8 @@ public class SelectedTileRenderer extends AbstractMapRenderer {
         g.setTransform(transform);
     }
 
-    private void drawLine(final int fromX, final int fromY, final int toX, final int toY, final int z, @Nonnull final Graphics2D g) {
+    private void drawLine(final int fromX, final int fromY, final int toX, final int toY, final int z,
+                          @Nonnull final Graphics2D g) {
         g.drawLine(
                 SwingLocation.displayCoordinateX(fromX, fromY, z),
                 SwingLocation.displayCoordinateY(fromX, fromY, z),
@@ -117,5 +127,12 @@ public class SelectedTileRenderer extends AbstractMapRenderer {
     @Override
     public boolean isDefaultOn() {
         return true;
+    }
+
+    @EventTopicSubscriber(topic = MapEditorConfig.SHOW_MAP_POSITION)
+    public void onConfigChanged(@Nonnull final String topic, final ConfigChangedEvent event) {
+        if (topic.equals(MapEditorConfig.SHOW_MAP_POSITION)) {
+            showPosition = MapEditorConfig.getInstance().isShowPosition();
+        }
     }
 }
