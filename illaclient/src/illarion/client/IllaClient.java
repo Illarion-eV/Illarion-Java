@@ -533,6 +533,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("clientVersion", Servers.customserver.getClientVersion());
         cfg.setDefault("serverAccountLogin", true);
         cfg.setDefault("wasdWalk", true);
+        cfg.setDefault("disableChatAfterSending", true);
 
         @Nonnull final Toolkit awtDefaultToolkit = Toolkit.getDefaultToolkit();
         @Nullable final Object doubleClick = awtDefaultToolkit.getDesktopProperty("awt.multiClickInterval");

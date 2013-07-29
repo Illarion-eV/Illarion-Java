@@ -44,6 +44,8 @@ public final class OptionScreenController implements ScreenController {
     //private CheckBox showCharId;
     private CheckBox runAutoAvoid;
     private CheckBox wasdWalk;
+    private CheckBox disableChatAfterSending;
+
     private DropDown<String> sendCrashReports;
 
     private DropDown<String> resolutions;
@@ -76,6 +78,7 @@ public final class OptionScreenController implements ScreenController {
 
         runAutoAvoid = tabRoot.findNiftyControl("runAutoAvoid", CheckBox.class);
         wasdWalk = tabRoot.findNiftyControl("wasdWalk", CheckBox.class);
+        disableChatAfterSending = tabRoot.findNiftyControl("disableChatAfterSending", CheckBox.class);
 
         //noinspection unchecked
         sendCrashReports = tabRoot.findNiftyControl("sendCrashReports", DropDown.class);
@@ -95,7 +98,7 @@ public final class OptionScreenController implements ScreenController {
         musicOn = tabRoot.findNiftyControl("musicOn", CheckBox.class);
         musicVolume = tabRoot.findNiftyControl("musicVolume", Slider.class);
 
-        final Element serverTab = tabRoot.findElementByName("#serverTab");
+        final Element serverTab = tabRoot.findElementById("#serverTab");
         if (serverTab == null) {
             return;
         }
@@ -116,6 +119,8 @@ public final class OptionScreenController implements ScreenController {
         //showCharId.setChecked(IllaClient.getCfg().getBoolean(People.CFG_SHOWID_KEY));
         runAutoAvoid.setChecked(IllaClient.getCfg().getBoolean("runAutoAvoid"));
         wasdWalk.setChecked(IllaClient.getCfg().getBoolean("wasdWalk"));
+        disableChatAfterSending.setChecked(IllaClient.getCfg().getBoolean("disableChatAfterSending"));
+
         sendCrashReports.selectItemByIndex(IllaClient.getCfg().getInteger(CrashReporter.CFG_KEY));
         resolutions.selectItem(IllaClient.getCfg().getString(IllaClient.CFG_RESOLUTION));
         fullscreen.setChecked(IllaClient.getCfg().getBoolean(IllaClient.CFG_FULLSCREEN));
@@ -144,6 +149,8 @@ public final class OptionScreenController implements ScreenController {
         //configSystem.set(People.CFG_SHOWID_KEY, showCharId.isChecked());
         configSystem.set("runAutoAvoid", runAutoAvoid.isChecked());
         configSystem.set("wasdWalk", wasdWalk.isChecked());
+        configSystem.set("disableChatAfterSending", disableChatAfterSending.isChecked());
+
         configSystem.set(CrashReporter.CFG_KEY, sendCrashReports.getSelectedIndex());
         configSystem.set(IllaClient.CFG_RESOLUTION, resolutions.getSelection());
         configSystem.set(IllaClient.CFG_FULLSCREEN, fullscreen.isChecked());
