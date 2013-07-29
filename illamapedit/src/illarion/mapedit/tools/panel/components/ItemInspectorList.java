@@ -18,10 +18,12 @@
  */
 package illarion.mapedit.tools.panel.components;
 
+import illarion.mapedit.Lang;
 import illarion.mapedit.data.MapItem;
 import illarion.mapedit.events.ItemInspectorSelectedEvent;
 import illarion.mapedit.events.ItemRemoveEvent;
 import illarion.mapedit.events.ItemReplaceEvent;
+import illarion.mapedit.events.TileAnnotationEvent;
 import illarion.mapedit.resource.loaders.ImageLoader;
 import illarion.mapedit.tools.ToolManager;
 import illarion.mapedit.tools.panel.cellrenderer.MapItemCellRenderer;
@@ -41,12 +43,15 @@ import java.util.Collection;
  * @author Fredrik K
  */
 public class ItemInspectorList extends JPanel {
+    private final AnnotationLabel annotation;
     private final JScrollPane scroll;
     @Nonnull
     private JList dataList;
 
     public ItemInspectorList() {
         super(new BorderLayout());
+        annotation = new AnnotationLabel();
+        add(annotation, BorderLayout.NORTH);
 
         scroll = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -59,6 +64,8 @@ public class ItemInspectorList extends JPanel {
         iconUp.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
         final ResizableIcon iconDown =  ImageLoader.getResizableIcon("1downarrow") ;
         iconDown.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
+        final ResizableIcon iconAnnotation =  ImageLoader.getResizableIcon("annotation") ;
+        iconAnnotation.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
 
         final JButton removeItemButton = new JButton();
         removeItemButton.setIcon(iconRemove);
@@ -95,12 +102,24 @@ public class ItemInspectorList extends JPanel {
             }
         });
 
+        final JButton annotationButton = new JButton();
+        annotationButton.setIcon(iconAnnotation);
+        annotationButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                addAnnotation();
+            }
+        });
+
+
         final JToolBar itemActions = new JToolBar();
         itemActions.setFloatable(false);
         itemActions.add(removeItemButton);
         itemActions.addSeparator();
         itemActions.add(itemUpButton);
         itemActions.add(itemDownButton);
+        itemActions.addSeparator();
+        itemActions.add(annotationButton);
         add(itemActions, BorderLayout.PAGE_END);
     }
 
@@ -110,6 +129,25 @@ public class ItemInspectorList extends JPanel {
      */
     public MapItem getSelectedItem() {
         return (MapItem) dataList.getSelectedValue();
+    }
+
+    private void addAnnotation() {
+        final JTextField annotationField = new JTextField(20);
+        annotationField.setText(annotation.getAnnotation());
+
+        final JPanel panel = new JPanel();
+        panel.add(new JLabel(Lang.getMsg("tools.DataTool.Annotation")));
+        panel.add(annotationField);
+
+        final int result = JOptionPane.showConfirmDialog(null, panel,
+                Lang.getMsg("tools.DataTool.Annotation_header"), JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            EventBus.publish(new TileAnnotationEvent(annotationField.getText()));
+        }
+    }
+
+    public void setAnnotation(final String text) {
+        annotation.setAnnotation(text);
     }
 
     /**

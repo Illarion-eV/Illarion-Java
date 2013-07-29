@@ -44,13 +44,15 @@ public class CopyPasteAction extends HistoryAction {
 
     @Override
     void redo() {
-        map.setTileAt(x, y, MapTile.MapTileFactory.copy(newTile));
+        map.setTileAt(x, y, MapTile.MapTileFactory.copyAll(newTile));
         MapTransitions.getInstance().checkTileAndSurround(map, new Location(x, y, 0));
+        map.getTileAt(x,y).setAnnotation(newTile.getAnnotation());
     }
 
     @Override
     void undo() {
-        map.setTileAt(x, y, MapTile.MapTileFactory.copy(oldTile));
+        map.setTileAt(x, y, MapTile.MapTileFactory.copyAll(oldTile));
         MapTransitions.getInstance().checkTileAndSurround(map, new Location(x, y, 0));
+        map.getTileAt(x,y).setAnnotation(oldTile.getAnnotation());
     }
 }

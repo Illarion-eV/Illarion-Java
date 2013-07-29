@@ -51,6 +51,7 @@ public class ViewBand extends JRibbonBand {
         newRenderButton(manager, new MusicRenderer(manager));
         newRenderButton(manager, new WarpRenderer(manager));
         newRenderButton(manager, new ItemDataRenderer(manager));
+        newRenderButton(manager, new AnnotationRenderer(manager));
 
         final List<RibbonBandResizePolicy> resize = new FastList<RibbonBandResizePolicy>();
         resize.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));

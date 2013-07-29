@@ -59,6 +59,16 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
         return TILE_POLYGON;
     }
 
+    protected boolean isInViewport(final Shape viewport, final int xDisplay, final int yDisplay) {
+        final float viewX = calculateZoom(xDisplay, getTranslateX(), getTileWidth());
+        final float viewY = calculateZoom(yDisplay, getTranslateY(), getTileHeight());
+        return viewport.contains(viewX, viewY);
+    }
+
+    protected float calculateZoom(final int display, final int translate, final float size) {
+        return (display * getZoom()) + translate + (size * getZoom());
+    }
+
     /**
      * @return the x translation of the map.
      */

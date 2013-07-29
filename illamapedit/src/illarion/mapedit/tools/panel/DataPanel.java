@@ -20,8 +20,10 @@ package illarion.mapedit.tools.panel;
 
 import illarion.mapedit.data.MapItem;
 import illarion.mapedit.events.*;
+import illarion.mapedit.events.map.RepaintRequestEvent;
 import illarion.mapedit.tools.panel.components.ItemDataTable;
 import illarion.mapedit.tools.panel.components.ItemInspectorList;
+import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 
@@ -46,19 +48,33 @@ public class DataPanel extends JPanel {
         add(dataPanel);
     }
 
+    public void setAnnotation(final String text) {
+        itemPanel.setAnnotation(text);
+    }
+
+    public void setItems(final Collection<MapItem> items, final String annotation) {
+        itemPanel.setAnnotation(annotation);
+        setItems(items);
+    }
+
     public void setItems(final Collection<MapItem> items) {
-        itemPanel.setDataList(items);
+        Collection<MapItem> mapItems = new ArrayList<MapItem>();
+        if (items != null) {
+            mapItems = items;
+        }
+        itemPanel.setDataList(mapItems);
         dataPanel.clearDataList();
     }
 
     @EventSubscriber
     public void onItemInspectorSelected(@Nonnull final ItemInspectorSelectedEvent e) {
-        dataPanel.setDataList(e.getItem().getItemData());
+        dataPanel.setAnnotation(e.getItem().getAnnotation());
+        dataPanel.setDataList(e.getItem());
     }
 
     @EventSubscriber
     public void onItemDataChanged(@Nonnull final ItemItemDataChangedEvent e) {
-        itemPanel.getSelectedItem().addItemData(e.getRow(),e.getData());
+        itemPanel.getSelectedItem().addItemData(e.getRow(), e.getData());
     }
 
     @EventSubscriber
@@ -78,5 +94,11 @@ public class DataPanel extends JPanel {
             items = e.getItems();
         }
         setItems(items);
+    }
+
+    @EventSubscriber
+    public void onItemDataAnnotation(@Nonnull final ItemDataAnnotationEvent e) {
+        itemPanel.getSelectedItem().setAnnotation(e.getText());
+        EventBus.publish(new RepaintRequestEvent());
     }
 }

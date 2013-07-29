@@ -93,4 +93,9 @@ public class TileEraserTool extends AbstractTool {
     public boolean isFillSelected() {
         return panel.isFillSelected();
     }
+
+    @Override
+    public boolean isWarnAnnotated() {
+        return true;
+    }
 }

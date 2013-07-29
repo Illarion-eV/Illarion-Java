@@ -56,6 +56,7 @@ public class MapItem implements Immutable {
      * The quality of this item.
      */
     private final int quality;
+    private String annotation;
 
     /**
      * Creates a new Item
@@ -64,7 +65,7 @@ public class MapItem implements Immutable {
      * @param itemData The data of this item.
      * @param quality  The quality of this item.
      */
-    public MapItem(final int itemId, final List<String> itemData, final int quality) {
+    public MapItem(final int itemId, @Nullable final List<String> itemData, final int quality) {
         this.itemId = itemId;
         if ((itemData != null) && !itemData.isEmpty()) {
             this.itemData = new ArrayList<String>(itemData);
@@ -79,7 +80,7 @@ public class MapItem implements Immutable {
      */
     public MapItem(@Nonnull final MapItem old) {
         itemId = old.itemId;
-        itemData = old.itemData;
+        itemData = new ArrayList<String>(old.itemData);
         quality = old.quality;
     }
 
@@ -91,6 +92,10 @@ public class MapItem implements Immutable {
      */
     public MapItem(final int itemId, final int quality) {
         this(itemId, new ArrayList<String>(),quality);
+    }
+
+    public String getAnnotation() {
+        return annotation;
     }
 
     /**
@@ -156,9 +161,17 @@ public class MapItem implements Immutable {
         return false;
     }
 
+    public boolean hasAnnotation() {
+        return (annotation != null) && !annotation.isEmpty();
+    }
+
     @Override
     public int hashCode() {
         return itemId;
+    }
+
+    public void setAnnotation(final String annotation) {
+        this.annotation = annotation;
     }
 
     /**

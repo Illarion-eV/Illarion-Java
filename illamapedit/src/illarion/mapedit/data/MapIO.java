@@ -49,6 +49,7 @@ public class MapIO {
     public static final String EXT_WARP = ".warps.txt";
     public static final String EXT_ITEM = ".items.txt";
     public static final String EXT_TILE = ".tiles.txt";
+    public static final String EXT_ANNO = ".annot.txt";
     private static final char NEWLINE = '\n';
     private static final String VERSION_PATTERN = "V: \\d+";
     private static final java.util.Map<String, Decoder> DECODERS = new HashMap<String, Decoder>();
@@ -91,9 +92,13 @@ public class MapIO {
         final File tileFile = new File(path, name + EXT_TILE);
         final File itemFile = new File(path, name + EXT_ITEM);
         final File warpFile = new File(path, name + EXT_WARP);
+        final File annoFile = new File(path, name + EXT_ANNO);
+        final boolean annotationFileExist = checkFile(annoFile);
+
         final BufferedReader tileInput = new BufferedReader(new InputStreamReader(new FileInputStream(tileFile)));
         final BufferedReader itemInput = new BufferedReader(new InputStreamReader(new FileInputStream(itemFile)));
         final BufferedReader warpInput = new BufferedReader(new InputStreamReader(new FileInputStream(warpFile)));
+
         final String version;
         final String versionLine = tileInput.readLine();
         final Decoder decoder;
@@ -123,6 +128,12 @@ public class MapIO {
             for (int i = 0; ((s = warpInput.readLine()) != null) && !s.isEmpty(); i++) {
                 decoder.decodeWarpLine(s, i);
             }
+            if (annotationFileExist) {
+                final BufferedReader annoInput = new BufferedReader(new InputStreamReader(new FileInputStream(annoFile)));
+                for (int i = 0; ((s = annoInput.readLine()) != null) && !s.isEmpty(); i++) {
+                    decoder.decodeAnnoLine(s, i);
+                }
+            }
         } catch (FormatCorruptedException e) {
             throw e;
         } catch (Exception e) {
@@ -150,23 +161,25 @@ public class MapIO {
     /**
      * Loads the map, with specified the map name and path.
      *
-     * @param map
-     * @param name
-     * @param path
+     * @param map the Map
+     * @param name map name
+     * @param path path to map files
      * @throws IOException
      */
     public static void saveMap(@Nonnull final Map map, final String name, final String path) throws IOException {
         final File tileFile = new File(path, name + EXT_TILE);
         final File itemFile = new File(path, name + EXT_ITEM);
         final File warpFile = new File(path, name + EXT_WARP);
+        final File annoFile = new File(path, name + EXT_ANNO);
 
-        if (!checkFile(tileFile) || !checkFile(itemFile) || !checkFile(warpFile)) {
+        if (!checkFile(tileFile) || !checkFile(itemFile) || !checkFile(warpFile) || !checkFile(annoFile)) {
             throw new IOException("Files are folders or can't be created.");
         }
 
         final BufferedWriter tileOutput = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tileFile)));
         final BufferedWriter itemOutput = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(itemFile)));
         final BufferedWriter warpOutput = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(warpFile)));
+        final BufferedWriter annoOutput = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(annoFile)));
 
         tileOutput.write(String.format("%s %d%s", HEADER_V, 2, NEWLINE));
         tileOutput.write(String.format("%s %d%s", HEADER_L, map.getZ(), NEWLINE));
@@ -181,26 +194,31 @@ public class MapIO {
                 //        <dx>;<dy>;<tileID>;<musicID>
                 writeLine(tileOutput, String.format("%d;%d;%s", x, y, tile));
 
-                if (tile != null) {
+                if (tile == null) {
+                    continue;
+                }
+                if (tile.hasAnnotation()) {
+                    writeLine(annoOutput, String.format("%d;%d;0;%s", x, y, tile.getAnnotation()));
+                }
 
-                    final List<MapItem> items = tile.getMapItems();
-                    if (items != null) {
-                        for (final MapItem item : items) {
-                            //        <dx>;<dy>;<item ID>;<quality>[;<data value>[;...]]
-                            writeLine(itemOutput, String.format("%d;%d;%s", x, y, item));
-
-                        }
+                final List<MapItem> items = tile.getMapItems();
+                for (int i = 0; i< items.size(); i++) {
+                    //        <dx>;<dy>;<item ID>;<quality>[;<data value>[;...]]
+                    writeLine(itemOutput, String.format("%d;%d;%s", x, y, items.get(i)));
+                    if (items.get(i).hasAnnotation()) {
+                        writeLine(annoOutput, String.format("%d;%d;%d;%s", x, y, i + 1, items.get(i).getAnnotation()));
                     }
-                    final MapWarpPoint warp = tile.getMapWarpPoint();
-                    if (warp != null) {
-                        writeLine(warpOutput, String.format("%d;%d;%s", x, y, warp));
-                    }
+                }
+                final MapWarpPoint warp = tile.getMapWarpPoint();
+                if (warp != null) {
+                    writeLine(warpOutput, String.format("%d;%d;%s", x, y, warp));
                 }
             }
         }
         tileOutput.close();
         itemOutput.close();
         warpOutput.close();
+        annoOutput.close();
     }
 
     private static boolean checkFile(@Nonnull final File file) {

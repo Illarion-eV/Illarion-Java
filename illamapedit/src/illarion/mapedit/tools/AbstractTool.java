@@ -29,8 +29,6 @@ import javax.annotation.Nonnull;
 import javax.swing.*;
 
 /**
- * TODO: Implement random tile tool
- * TODO: Implement random item tool
  *
  * @author Tim
  */
@@ -57,6 +55,8 @@ public abstract class AbstractTool {
     public abstract JPanel getSettingsPanel();
 
     public abstract boolean isFillSelected();
+
+    public abstract boolean isWarnAnnotated();
 
     public abstract void paintSelected(int x, int y, Map map, final GroupAction action);
 
