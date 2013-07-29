@@ -36,13 +36,26 @@ dependencies {
 
 ext.buildDate = null
 compileJava.doLast {
-    project.buildDate = new Date();
-    jar.manifest {
-        attributes      \
+    if (project.buildDate == null) {
+        project.buildDate = new Date();
+        jar.manifest {
+            attributes      \
                  'Implementation-Version': project.ext.fullVersion,      \
                  'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ')
+        }
     }
 }
+compileGroovy.doLast {
+    if (project.buildDate == null) {
+        project.buildDate = new Date();
+        jar.manifest {
+            attributes      \
+                 'Implementation-Version': project.ext.fullVersion,      \
+                 'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ')
+        }
+    }
+}
+
 
 tasks.jar.onlyIf { return project.buildDate != null }
 jar {
@@ -80,9 +93,6 @@ publishing {
         maven {
             url "file://$buildDir/repo"
         }
-    }
-    generatePomFileForMavenJavaPublication {
-        onlyIf { return project.buildDate != null }
     }
     publishMavenJavaPublicationToMavenRepository {
         onlyIf { return project.buildDate != null }

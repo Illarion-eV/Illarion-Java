@@ -17,6 +17,7 @@
  * along with the Illarion Nifty-GUI Controls.  If not, see <http://www.gnu.org/licenses/>.
  */
 apply plugin: 'java'
+apply plugin: 'maven-publish'
 
 sourceSets {
     main {
@@ -67,5 +68,32 @@ jar {
               'Built-By': System.getProperty('user.name'),   \
               'Built-JDK': System.getProperty('java.version')
         }
+    }
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+    repositories {
+        maven {
+            url "file://$buildDir/repo"
+        }
+    }
+    publishMavenJavaPublicationToMavenRepository {
+        onlyIf { return project.buildDate != null }
+    }
+    publishMavenJavaPublicationToMavenLocal {
+        onlyIf { return project.buildDate != null }
     }
 }

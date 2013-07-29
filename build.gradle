@@ -27,7 +27,7 @@ allprojects {
     task gitVersion {
         def gitVersion = 'unknown'
         try {
-            def proc = 'git describe --tags head'.execute()
+            def proc = 'git describe --tags head'.execute(null, project.rootDir)
             gitVersion = proc.in.readLines().get(0)
         } catch (ignored) {
         }

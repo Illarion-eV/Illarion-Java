@@ -90,9 +90,6 @@ publishing {
             url "file://$buildDir/repo"
         }
     }
-    generatePomFileForMavenJavaPublication {
-        onlyIf { return project.buildDate != null }
-    }
     publishMavenJavaPublicationToMavenRepository {
         onlyIf { return project.buildDate != null }
     }
