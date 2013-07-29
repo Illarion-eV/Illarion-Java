@@ -20,6 +20,7 @@ package illarion.mapedit.render;
 
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
+import illarion.mapedit.data.MapTile;
 import illarion.mapedit.data.MapWarpPoint;
 import illarion.mapedit.util.SwingLocation;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
@@ -53,24 +54,27 @@ public class WarpRenderer extends AbstractMapRenderer {
 
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < height; ++y) {
-                final MapWarpPoint wp = map.getTileAt(x, y).getMapWarpPoint();
-                if (wp == null) {
-                    continue;
-                }
-                final int xdisp = SwingLocation.displayCoordinateX(x + map.getX(), y + map.getY(), z);
-                final int ydisp = SwingLocation.displayCoordinateY(x + map.getX(), y + map.getY(), z);
-                if (viewport.contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
-                        (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
+                final MapTile tile =  map.getTileAt(x, y);
+                if (tile != null) {
+                    final MapWarpPoint wp = tile.getMapWarpPoint();
+                    if (wp == null) {
+                        continue;
+                    }
+                    final int xdisp = SwingLocation.displayCoordinateX(x + map.getX(), y + map.getY(), z);
+                    final int ydisp = SwingLocation.displayCoordinateY(x + map.getX(), y + map.getY(), z);
+                    if (viewport.contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
+                            (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
 
-                    g.setColor(Color.RED);
-                    g.drawString("Warp", xdisp + (int) (XOFFSET * getZoom()), ydisp + (int) (YOFFSET * getZoom()));
-                    g.drawString("X: " + wp.getXTarget(),
-                            xdisp + (int) (XOFFSET * getZoom()), ydisp + (int) ((YOFFSET + 10) * getZoom()));
-                    g.drawString("Y: " + wp.getYTarget(),
-                            xdisp + (int) (XOFFSET * getZoom()), ydisp + (int) ((YOFFSET + 20) * getZoom()));
-                    g.drawString("Z: " + wp.getZTarget(),
-                            xdisp + (int) (XOFFSET * getZoom()), ydisp + (int) ((YOFFSET + 30) * getZoom()));
+                        g.setColor(Color.RED);
+                        g.drawString("Warp", xdisp + (int) (XOFFSET * getZoom()), ydisp + (int) (YOFFSET * getZoom()));
+                        g.drawString("X: " + wp.getXTarget(),
+                                xdisp + (int) (XOFFSET * getZoom()), ydisp + (int) ((YOFFSET + 10) * getZoom()));
+                        g.drawString("Y: " + wp.getYTarget(),
+                                xdisp + (int) (XOFFSET * getZoom()), ydisp + (int) ((YOFFSET + 20) * getZoom()));
+                        g.drawString("Z: " + wp.getZTarget(),
+                                xdisp + (int) (XOFFSET * getZoom()), ydisp + (int) ((YOFFSET + 30) * getZoom()));
 
+                    }
                 }
             }
         }
@@ -79,7 +83,7 @@ public class WarpRenderer extends AbstractMapRenderer {
 
     @Override
     protected int getRenderPriority() {
-        return 6;
+        return 7;
     }
 
     @Override

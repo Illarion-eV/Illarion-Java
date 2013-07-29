@@ -19,6 +19,8 @@
 package illarion.mapedit.tools;
 
 import illarion.mapedit.data.Map;
+import illarion.mapedit.data.MapTile;
+import illarion.mapedit.history.GroupAction;
 import illarion.mapedit.history.HistoryManager;
 import org.apache.log4j.Logger;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
@@ -54,11 +56,29 @@ public abstract class AbstractTool {
 
     public abstract JPanel getSettingsPanel();
 
+    public abstract boolean isFillSelected();
+
+    public abstract void paintSelected(int x, int y, Map map, final GroupAction action);
+
     public final void registerManager(@Nonnull final ToolManager toolManager) {
         manager = toolManager;
         history = toolManager.getHistory();
     }
 
+    public void fillSelected(final Map map) {
+        final GroupAction action = new GroupAction();
+        for (int x = 0; x < map.getHeight(); x++) {
+            for (int y = 0; y < map.getWidth(); y++) {
+                final MapTile tile = map.getTileAt(x,y);
+                if ((tile != null) && tile.isSelected()) {
+                    paintSelected(x, y, map, action);
+                }
+            }
+        }
+        if (!action.isEmpty()) {
+            getHistory().addEntry(action);
+        }
+    }
 
     protected final ToolManager getManager() {
         return manager;

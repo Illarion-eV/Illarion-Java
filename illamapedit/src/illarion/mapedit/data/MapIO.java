@@ -18,11 +18,14 @@
  */
 package illarion.mapedit.data;
 
+import illarion.mapedit.Lang;
 import illarion.mapedit.crash.exceptions.FormatCorruptedException;
 import illarion.mapedit.data.formats.Decoder;
-import illarion.mapedit.data.formats.Version1Decoder;
 import illarion.mapedit.data.formats.Version2Decoder;
+import illarion.mapedit.events.menu.MapLoadErrorEvent;
+import illarion.mapedit.events.menu.MapLoadedEvent;
 import org.apache.log4j.Logger;
+import org.bushe.swing.event.EventBus;
 
 import javax.annotation.Nonnull;
 import java.io.*;
@@ -51,7 +54,6 @@ public class MapIO {
     private static final java.util.Map<String, Decoder> DECODERS = new HashMap<String, Decoder>();
 
     static {
-        DECODERS.put("1", new Version1Decoder());
         DECODERS.put("2", new Version2Decoder());
     }
 
@@ -64,10 +66,26 @@ public class MapIO {
      *
      * @param path the path
      * @param name the map name
-     * @return the map
-     * @throws IOException if an error occurs
      */
-    public static Map loadMap(final String path, final String name) throws IOException {
+    public static void loadMap(final String path, final String name) {
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    EventBus.publish(new MapLoadedEvent(loadMapThread(path,name)));
+                } catch (FormatCorruptedException ex) {
+                    LOGGER.warn("Format wrong.", ex);
+                    EventBus.publish(new MapLoadErrorEvent(ex.getMessage()));
+                } catch (IOException ex) {
+                    LOGGER.warn("Can't load map", ex);
+                    EventBus.publish(new MapLoadErrorEvent(Lang.getMsg("gui.error.LoadMap")));
+                }
+            }
+        }).start();
+    }
+
+    public static Map loadMapThread(final String path, final String name) throws IOException {
         LOGGER.debug("Load map " + name + "  at " + path);
 //        Open the streams for all 3 files, containing the map data
         final File tileFile = new File(path, name + EXT_TILE);
@@ -163,16 +181,20 @@ public class MapIO {
                 //        <dx>;<dy>;<tileID>;<musicID>
                 writeLine(tileOutput, String.format("%d;%d;%s", x, y, tile));
 
-                final List<MapItem> items = tile.getMapItems();
-                if (items != null) {
-                    for (final MapItem item : items) {
-                        //        <dx>;<dy>;<item ID>;<quality>[;<data value>[;...]]
-                        writeLine(itemOutput, String.format("%d;%d;%s", x, y, item));
+                if (tile != null) {
+
+                    final List<MapItem> items = tile.getMapItems();
+                    if (items != null) {
+                        for (final MapItem item : items) {
+                            //        <dx>;<dy>;<item ID>;<quality>[;<data value>[;...]]
+                            writeLine(itemOutput, String.format("%d;%d;%s", x, y, item));
+
+                        }
                     }
-                }
-                final MapWarpPoint warp = tile.getMapWarpPoint();
-                if (warp != null) {
-                    writeLine(warpOutput, String.format("%d;%d;%s", x, y, warp));
+                    final MapWarpPoint warp = tile.getMapWarpPoint();
+                    if (warp != null) {
+                        writeLine(warpOutput, String.format("%d;%d;%s", x, y, warp));
+                    }
                 }
             }
         }

@@ -18,9 +18,7 @@
  */
 package illarion.mapedit.tools;
 
-import illarion.mapedit.events.ItemSelectedEvent;
-import illarion.mapedit.events.TileSelectedEvent;
-import illarion.mapedit.events.ToolSelectedEvent;
+import illarion.mapedit.events.*;
 import illarion.mapedit.events.map.MapClickedEvent;
 import illarion.mapedit.events.map.MapDragFinishedEvent;
 import illarion.mapedit.events.map.MapDraggedEvent;
@@ -55,6 +53,7 @@ public final class ToolManager implements Disposable {
     private AbstractTool actualTool;
     private TileImg selectedTile;
     private ItemImg selectedItem;
+    private boolean doPaste;
 
     public ToolManager(final GuiController controller, final RendererManager renderer) {
         this.controller = controller;
@@ -68,6 +67,7 @@ public final class ToolManager implements Disposable {
             tool.registerManager(this);
         }
         actualTool = tool;
+        EventBus.publish(new RepaintRequestEvent());
     }
 
     TileImg getSelectedTile() {
@@ -76,10 +76,6 @@ public final class ToolManager implements Disposable {
 
     ItemImg getSelectedItem() {
         return selectedItem;
-    }
-
-    RendererManager getRenderer() {
-        return renderer;
     }
 
     @Override
@@ -91,10 +87,18 @@ public final class ToolManager implements Disposable {
         return controller;
     }
 
-
     @EventSubscriber
     public void clickedAt(@Nonnull final MapClickedEvent e) {
-        if ((actualTool != null) && (e.getButton() == MouseButton.LeftButton)) {
+        if (e.getButton() != MouseButton.LeftButton) {
+            return;
+        }
+        if (doPaste) {
+            EventBus.publish(new PasteEvent(e.getX(), e.getY()));
+            doPaste = false;
+        } else if ((actualTool != null) && actualTool.isFillSelected() && e.getMap().getTileAt(e.getX(), e.getY()).isSelected()) {
+            actualTool.fillSelected(e.getMap());
+            EventBus.publish(new RepaintRequestEvent());
+        } else if (actualTool != null && !actualTool.isFillSelected()) {
             actualTool.clickedAt(e.getX(), e.getY(), e.getMap());
             EventBus.publish(new RepaintRequestEvent());
             controller.setSaved(false);
@@ -103,7 +107,7 @@ public final class ToolManager implements Disposable {
 
     @EventSubscriber
     public void onMapDragged(@Nonnull final MapDraggedEvent e) {
-        if ((actualTool != null) && e.getButton() == MouseButton.LeftButton) {
+        if ((actualTool != null) && (e.getButton() == MouseButton.LeftButton)) {
             actualTool.clickedAt(e.getX(), e.getY(), e.getMap());
             EventBus.publish(new RepaintRequestEvent());
             controller.setSaved(false);
@@ -134,5 +138,10 @@ public final class ToolManager implements Disposable {
     @Nonnull
     public HistoryManager getHistory() {
         return controller.getHistoryManager();
+    }
+
+    @EventSubscriber
+    public void onPasteClipboard(@Nonnull final ClipboardPasteEvent e) {
+        doPaste = true;
     }
 }

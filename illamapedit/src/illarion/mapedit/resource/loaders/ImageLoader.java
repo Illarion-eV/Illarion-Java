@@ -66,6 +66,13 @@ public class ImageLoader implements Resource {
             "close.png",
             "help.png",
             "player_play.png",
+            "edit_add.png",
+            "edit_remove.png",
+            "1uparrow.png",
+            "1downarrow.png",
+            "render.png",
+            "configure.png",
+            "info.png"
     };
 
     private ImageLoader() {

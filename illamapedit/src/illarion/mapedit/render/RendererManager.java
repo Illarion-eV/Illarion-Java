@@ -19,6 +19,7 @@
 package illarion.mapedit.render;
 
 import illarion.mapedit.data.Map;
+import illarion.mapedit.events.MapScrollEvent;
 import illarion.mapedit.events.map.RepaintRequestEvent;
 import illarion.mapedit.events.map.ZoomEvent;
 import illarion.mapedit.util.Vector2i;
@@ -222,5 +223,11 @@ public class RendererManager {
         } else {
             changeZoom(e.getValue(), e.getPos());
         }
+    }
+
+    @EventSubscriber
+    public void onScroll(@Nonnull final MapScrollEvent e) {
+        changeTranslation(e.getX(), e.getY());
+        EventBus.publish(new RepaintRequestEvent());
     }
 }

@@ -84,7 +84,7 @@ public class ItemRenderer extends AbstractMapRenderer {
     private void render(final int x, final int y, @Nonnull final Rectangle viewport, @Nonnull final Map map, final int level, @Nonnull final Graphics2D g) {
         final int z = map.getZ() - level;
         final List<MapItem> items = map.getTileAt(x, y).getMapItems();
-        if (items.isEmpty()) {
+        if (items == null || items.isEmpty()) {
             return;
         }
 
@@ -92,7 +92,7 @@ public class ItemRenderer extends AbstractMapRenderer {
         final int ydisp = SwingLocation.displayCoordinateY(x + map.getX(), y + map.getY(), z);
         if (viewport.contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
                 (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
-
+            int height = 0;
             final AffineTransform tr = g.getTransform();
             for (final MapItem item : items) {
 
@@ -102,11 +102,13 @@ public class ItemRenderer extends AbstractMapRenderer {
 
                     g.translate(getTileWidth(), getTileHeight());
                     g.translate(xdisp, ydisp);
+                    g.translate(0, -height);
                     g.translate(img.getOffsetX(), -img.getOffsetY());
                     g.translate(-paintImg.getWidth(null) / 2, -paintImg.getHeight(null));
 
                     g.drawImage(img.getImgs()[0], 0, 0, null);
                     g.setTransform(tr);
+                    height += img.getHeight();
                 }
             }
         }
@@ -114,7 +116,7 @@ public class ItemRenderer extends AbstractMapRenderer {
 
     @Override
     protected int getRenderPriority() {
-        return 5;
+        return 6;
     }
 
     @Override

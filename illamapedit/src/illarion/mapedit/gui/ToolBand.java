@@ -53,6 +53,8 @@ public class ToolBand extends JRibbonBand {
         tools.add(new TileEraserTool());
         tools.add(new ItemEraserTool());
         tools.add(new WarpTool());
+        tools.add(new SelectionTool());
+        tools.add(new DataTool());
 
         for (final AbstractTool tool : tools) {
             final JCommandToggleButton button =new ToolMenuButton(tool);

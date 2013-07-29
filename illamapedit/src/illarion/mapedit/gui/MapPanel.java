@@ -34,6 +34,10 @@ import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * The map panel is the area, on which the map is rendered.
@@ -74,8 +78,18 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
         final Graphics2D g = (Graphics2D) gt;
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, getWidth(), getHeight());
-        for (Map m : controller.getMaps()) {
-            rendererManager.render(m, getVisibleRect(), g);
+        List<Map> maps = new ArrayList<Map>(controller.getMaps());
+
+        Collections.sort(maps, new Comparator<Map>() {
+
+            public int compare(Map map1, Map map2) {
+                return map1.getZ() - map2.getZ();
+            }
+        });
+        for (final Map map : maps) {
+            if (map.isVisible()) {
+                rendererManager.render(map, getVisibleRect(), g);
+            }
         }
 
         dirty.x = 0;
@@ -148,7 +162,7 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
     @Override
     public void mouseClicked(@Nonnull final MouseEvent e) {
         final Map selected = controller.getSelected();
-        if ((toolManager == null) || (selected == null)) {
+        if (selected == null) {
             return;
         }
 

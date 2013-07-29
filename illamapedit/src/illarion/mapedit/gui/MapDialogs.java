@@ -18,9 +18,7 @@
  */
 package illarion.mapedit.gui;
 
-import illarion.common.config.Config;
 import illarion.mapedit.Lang;
-import illarion.mapedit.MapEditor;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapIO;
 
@@ -48,7 +46,6 @@ public class MapDialogs {
     };
     @Nullable
     private static File saveDir;
-    private static final Config config = MapEditor.getConfig();
 
     private MapDialogs() {
 
@@ -72,7 +69,7 @@ public class MapDialogs {
         btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                final JFileChooser ch = new JFileChooser(MapEditor.getConfig().getFile("mapLastOpenDir"));
+                final JFileChooser ch = new JFileChooser(MapEditorConfig.getInstance().getMapFolder());
                 ch.setDialogType(JFileChooser.OPEN_DIALOG);
                 ch.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
@@ -113,8 +110,8 @@ public class MapDialogs {
     @Nullable
     public static Map[] showOpenMapDialog(final JFrame owner) throws IOException {
         final JFileChooser ch = new JFileChooser();
-        if (config.getFile("mapLastOpenDir") != null) {
-            ch.setCurrentDirectory(config.getFile("mapLastOpenDir"));
+        if (MapEditorConfig.getInstance().getMapFolder() != null) {
+            ch.setCurrentDirectory(MapEditorConfig.getInstance().getMapFolder());
         }
         ch.setDialogType(JFileChooser.OPEN_DIALOG);
         ch.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -122,7 +119,7 @@ public class MapDialogs {
             return null;
         }
         final File dir = ch.getSelectedFile();
-        config.set("mapLastOpenDir", dir);
+        MapEditorConfig.getInstance().setMapFolder(dir);
         final String[] maps = dir.list(FILTER_TILES);
         for (int i = 0; i < maps.length; ++i) {
             maps[i] = maps[i].substring(0, maps[i].length() - MapIO.EXT_TILE.length());
@@ -152,7 +149,7 @@ public class MapDialogs {
 
         Map[] loadedMaps = new Map[list.getSelectedIndices().length];
         for (int i = 0; i < list.getSelectedIndices().length; i++) {
-            loadedMaps[i] = MapIO.loadMap(dir.getPath(), (String) list.getSelectedValues()[i]);
+            loadedMaps[i] = MapIO.loadMapThread(dir.getPath(), (String) list.getSelectedValues()[i]);
         }
         return loadedMaps;
     }

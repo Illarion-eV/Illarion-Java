@@ -19,6 +19,7 @@
 package illarion.mapedit.history;
 
 import illarion.mapedit.events.HistoryEvent;
+import illarion.mapedit.events.HistoryPasteCutEvent;
 import illarion.mapedit.events.map.RepaintRequestEvent;
 import javolution.util.FastList;
 import org.apache.log4j.Logger;
@@ -120,5 +121,10 @@ public class HistoryManager {
             redo();
         }
         EventBus.publish(new RepaintRequestEvent());
+    }
+
+    @EventSubscriber
+    public void onHistoryCutPasteEvent(@Nonnull final HistoryPasteCutEvent e) {
+        addEntry(e.getAction());
     }
 }

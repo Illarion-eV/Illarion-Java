@@ -75,7 +75,7 @@ public class GridRenderer extends AbstractMapRenderer {
 
     @Override
     protected int getRenderPriority() {
-        return 6;
+        return 4;
     }
 
     @Override

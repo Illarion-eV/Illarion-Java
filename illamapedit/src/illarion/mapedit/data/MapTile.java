@@ -64,7 +64,7 @@ public class MapTile {
             return new MapTile(baseID, overlayID, shapeID, old.musicID, old.mapItems, old.mapWarpPoint);
         }
 
-        @Nullable
+        @Nonnull
         public static MapTile createNew(final int id, final int overlayID, final int shapeID, final int musicID) {
             return new MapTile(id, overlayID, shapeID, musicID, null, null);
         }
@@ -95,60 +95,28 @@ public class MapTile {
     /**
      * The items on top of this tile
      */
-    @Nonnull
-    private final List<MapItem> mapItems;
+    private List<MapItem> mapItems;
     /**
      * The warp point on this tile, may be {@code null}.
      */
     private MapWarpPoint mapWarpPoint;
-
+    /**
+     * If the tile is selected
+     */
+    private boolean selected;
 
     public MapTile(final int baseId, final int overlayID, final int shapeID, final int musicID,
-                   @Nullable final Collection<MapItem> mapItems, final MapWarpPoint mapWarpPoint) {
+                   @Nullable final Collection<MapItem> mapItems, @Nullable final MapWarpPoint mapWarpPoint) {
         id = baseId;
         this.overlayID = overlayID;
         this.shapeID = shapeID;
         this.musicID = musicID;
         this.mapWarpPoint = mapWarpPoint;
-        this.mapItems = new FastList<MapItem>();
         if (mapItems != null) {
+            this.mapItems = new FastList<MapItem>();
             this.mapItems.addAll(mapItems);
         }
     }
-
-    /**
-     * Creates a new tile with the coordinates, the id and the music id.
-     *
-     * @param id
-     * @param musicID
-     */
-    /*public MapTile(final int id, final int overlayID, final int shapeID, final int musicID) {
-        this(id, overlayID, shapeID, musicID, null, null);
-    }*/
-
-    /**
-     * Creates a copy of the other tile.
-     *
-     * @param old
-     */
-    /*public MapTile(final MapTile old) {
-        this(old.id, old.overlayID, old.shapeID, old.musicID, old.mapItems, old.mapWarpPoint);
-    }*/
-    /*public MapTile(final int id, final MapTile old) {
-        this((Overlay.shapeID(id) == 0) ? id : Overlay.baseID(id),
-                (Overlay.shapeID(id) == 0) ? 0 : Overlay.overlayID(id),
-                Overlay.shapeID(id),
-                old.musicID,
-                old.mapItems,
-                old.mapWarpPoint);
-    }*/
-    /*public MapTile(final int overlayID, final int shapeID, MapTile old) {
-        this(old.id, overlayID, shapeID, old.musicID, old.mapItems, old.mapWarpPoint);
-    }*/
-
-    /*public MapTile(final int baseID, final int overlayID, final int shapeID, MapTile old) {
-        this(baseID, overlayID, shapeID, old.musicID, old.mapItems, old.mapWarpPoint);
-    }*/
 
     /**
      * Returns the tile id.
@@ -157,6 +125,10 @@ public class MapTile {
      */
     public int getId() {
         return id;
+    }
+
+    public MapItem getMapItemAt(final int index) {
+        return mapItems.get(index);
     }
 
     /**
@@ -171,9 +143,28 @@ public class MapTile {
     /**
      * @return The list of items on this tile.
      */
-    @Nonnull
+    @Nullable
     public List<MapItem> getMapItems() {
         return mapItems;
+    }
+
+    public void addMapItem(final MapItem item) {
+        if (mapItems == null) {
+            mapItems = new FastList<MapItem>();
+        }
+        mapItems.add(item);
+    }
+
+    public void removeMapItem(final MapItem item) {
+        if (mapItems != null) {
+            mapItems.add(item);
+        }
+    }
+
+    public void removeMapItem(final int index) {
+        if (mapItems != null) {
+            mapItems.remove(index);
+        }
     }
 
     /**
@@ -191,13 +182,43 @@ public class MapTile {
         return shapeID;
     }
 
+    public boolean isMapItemsDataEmpty() {
+        if (mapItems == null) {
+            return true;
+        }
+        boolean empty = true;
+        int index = 0;
+
+        while (empty && (index < mapItems.size())) {
+            empty = mapItems.get(index).isItemDataNullOrEmpty();
+            index++;
+        }
+        return empty;
+    }
+
     /**
      * Sets the warp point of this tile.
      *
      * @param mapWarpPoint the new warp, may be {@code null}.
      */
-    public void setMapWarpPoint(final MapWarpPoint mapWarpPoint) {
+    public void setMapWarpPoint(@Nullable final MapWarpPoint mapWarpPoint) {
         this.mapWarpPoint = mapWarpPoint;
+    }
+
+    /**
+     * Check if the tile is selected
+     * @return True if the tile is selected
+     */
+    public boolean isSelected() {
+        return selected;
+    }
+
+    /**
+     * Set the selected state if the tile
+     * @param selected true if tile is selected otherwise false.
+     */
+    public void setSelected(final boolean selected) {
+        this.selected = selected;
     }
 
     /**
