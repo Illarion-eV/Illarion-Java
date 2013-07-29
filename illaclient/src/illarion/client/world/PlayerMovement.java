@@ -21,7 +21,6 @@ package illarion.client.world;
 import illarion.client.IllaClient;
 import illarion.client.graphics.AnimatedMove;
 import illarion.client.graphics.MoveAnimation;
-import illarion.client.input.InputReceiver;
 import illarion.client.net.client.MoveCmd;
 import illarion.client.net.client.TurnCmd;
 import illarion.client.util.Path;
@@ -31,9 +30,9 @@ import illarion.client.util.Pathfinder;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
 import illarion.common.util.FastMath;
+import illarion.common.util.Timer;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
-import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.illarion.engine.input.Input;
 import org.illarion.engine.input.Key;
 
@@ -198,6 +197,10 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     @Nonnull
     private final Input input;
 
+    @Nonnull
+    private final Timer delayedMoveTrigger;
+
+
     /**
      * Default constructor.
      *
@@ -208,44 +211,84 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         parentPlayer = parent;
         this.input = input;
         AnnotationProcessor.process(this);
+
+        delayedMoveTrigger = new Timer(100, new Runnable() {
+            @Override
+            public void run() {
+                if (moveToDirectionActive) {
+                    requestMove(getCurrentMoveToDirection(), moveToDirectionMode);
+                }
+                delayedMoveTrigger.stop();
+            }
+        });
     }
 
-    /**
-     * This is the event handler that takes care of processing input event.
-     *
-     * @param topic the event topic, should be {@link InputReceiver#EB_TOPIC}
-     * @param data  the event data
-     */
-    @EventTopicSubscriber(topic = InputReceiver.EB_TOPIC)
-    public void onInputEventReceived(@Nonnull final String topic, @Nonnull final String data) {
-        final CharMovementMode moveMode;
-        if (input.isAnyKeyDown(Key.LeftCtrl, Key.RightCtrl)) {
-            moveMode = CharMovementMode.Run;
-        } else if (input.isKeyDown(Key.LeftAlt)) {
-            moveMode = CharMovementMode.None;
-        } else {
-            moveMode = CharMovementMode.Walk;
+    private boolean moveToDirectionActive;
+    private final boolean[] activeDirections = new boolean[8];
+    private CharMovementMode moveToDirectionMode = CharMovementMode.Walk;
+
+    public void setMovingToDirectionMode(final CharMovementMode mode) {
+        moveToDirectionMode = mode;
+    }
+
+    public void startMovingToDirection(final int direction) {
+        if (activeDirections[direction]) {
+            return;
         }
-        if (InputReceiver.EB_TOPIC.equals(topic)) {
-            //noinspection IfStatementWithTooManyBranches
-            if ("WalkNorth".equals(data)) {
-                requestMove(Location.DIR_NORTH, moveMode);
-            } else if ("WalkNorthEast".equals(data)) {
-                requestMove(Location.DIR_NORTHEAST, moveMode);
-            } else if ("WalkEast".equals(data)) {
-                requestMove(Location.DIR_EAST, moveMode);
-            } else if ("WalkSouthEast".equals(data)) {
-                requestMove(Location.DIR_SOUTHEAST, moveMode);
-            } else if ("WalkSouth".equals(data)) {
-                requestMove(Location.DIR_SOUTH, moveMode);
-            } else if ("WalkSouthWest".equals(data)) {
-                requestMove(Location.DIR_SOUTHWEST, moveMode);
-            } else if ("WalkWest".equals(data)) {
-                requestMove(Location.DIR_WEST, moveMode);
-            } else if ("WalkNorthWest".equals(data)) {
-                requestMove(Location.DIR_NORTHWEST, moveMode);
+
+        activeDirections[direction] = true;
+
+        delayedMoveTrigger.stop();
+        if (moveToDirectionActive) {
+            requestMove(getCurrentMoveToDirection(), moveToDirectionMode);
+        } else {
+            moveToDirectionActive = true;
+            stopWalkTowards();
+            delayedMoveTrigger.start();
+        }
+    }
+
+    public void stopMovingToDirection(final int direction) {
+        if (!activeDirections[direction]) {
+            return;
+        }
+
+        activeDirections[direction] = false;
+
+        boolean newWalkingState = false;
+        for (final boolean walkState : activeDirections) {
+            if (walkState) {
+                newWalkingState = true;
+                break;
             }
         }
+        moveToDirectionActive = newWalkingState;
+    }
+
+    private int getCurrentMoveToDirection() {
+        int currentDirection = 0;
+        boolean noDirectionSet = true;
+        boolean secondDirectionSet = false;
+
+        for (int i = 0; i < activeDirections.length; i++) {
+            if (activeDirections[i]) {
+                if (noDirectionSet) {
+                    noDirectionSet = false;
+                    currentDirection = i;
+                } else if (secondDirectionSet) {
+                    return Location.DIR_ZERO;
+                } else {
+                    secondDirectionSet = true;
+                    if ((i - currentDirection) < 4) {
+                        currentDirection += (i - currentDirection) / 2;
+                    } else {
+                        currentDirection += ((i + 8) - currentDirection) / 2;
+                    }
+                    currentDirection %= 8;
+                }
+            }
+        }
+        return currentDirection;
     }
 
     /**
@@ -622,7 +665,9 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
             positionDirty = false;
         } else if ((moveAnimation.timeRemaining() <= MOVEMENT_OVERLAP_TIME) && (lastAllowedMove == Location.DIR_ZERO)
                 && (lastMoveRequest == Location.DIR_ZERO)) {
-            if (walkTowards) {
+            if (moveToDirectionActive) {
+                requestMove(getCurrentMoveToDirection(), moveToDirectionMode);
+            } else if (walkTowards) {
                 requestMove(walkTowardsDir, walkTowardsMode, true, true);
             } else {
                 autoStep();
