@@ -217,10 +217,12 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
             public void run() {
                 if (moveToDirectionActive) {
                     requestMove(getCurrentMoveToDirection(), moveToDirectionMode);
+                } else {
+                    LOGGER.info("Delayed, invalid move trigger received.");
                 }
-                delayedMoveTrigger.stop();
             }
         });
+        delayedMoveTrigger.setRepeats(false);
     }
 
     private boolean moveToDirectionActive;
@@ -657,11 +659,6 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     @Override
     public void setPosition(final int posX, final int posY, final int posZ) {
         if (positionDirty && (moveAnimation.animationProgress() > POSITION_UPDATE_PROCESS)) {
-            // update mini-map and world-map position
-            final Location targetLoc = parentPlayer.getLocation();
-
-            // process obstructed tiles
-            // Game.getMap().checkObstructions();
             positionDirty = false;
         } else if ((moveAnimation.timeRemaining() <= MOVEMENT_OVERLAP_TIME) && (lastAllowedMove == Location.DIR_ZERO)
                 && (lastMoveRequest == Location.DIR_ZERO)) {
@@ -738,7 +735,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * This is called in case the animation got finished. This is needed so the next animation can be started correctly
      * in case it was requested.
      *
-     * @param finished <code>true</code> in case the animation is really done, false in case it got canceled
+     * @param finished {@code true} in case the animation is really done, false in case it got canceled
      */
     @Override
     public void animationFinished(final boolean finished) {
@@ -800,8 +797,6 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * movement. Once this is called {@link #isMouseMovementActive()} will return {@code false}.
      */
     public void stopWalkTowards() {
-        // GUI.getInstance().getMouseCursor()
-        // .setCursor(MarkerFactory.CRSR_NORMAL);
         walkTowards = false;
         mouseMovementActive = false;
     }
