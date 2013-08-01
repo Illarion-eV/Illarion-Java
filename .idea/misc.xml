@@ -30,6 +30,7 @@
     <option name="make" value="true" />
     <option name="effort" value="max" />
     <option name="priority" value="Medium" />
+    <option name="excludeFilter" value="" />
   </component>
   <component name="IdProvider" IDEtalkID="A58D5F5593E149B628FBDAE247EF8DBF" />
   <component name="JavadocGenerationManager">

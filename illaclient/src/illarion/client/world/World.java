@@ -67,7 +67,7 @@ public final class World {
             }
             if (INSTANCE.map != null) {
                 //noinspection ConstantConditions
-                INSTANCE.map.getMinimap().saveMap();
+                INSTANCE.map.getMinimap().saveAllMaps();
             }
 
             INSTANCE.chatHandler = null;

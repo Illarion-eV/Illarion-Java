@@ -95,12 +95,6 @@ class SlickWorldMap implements WorldMap, WorldMapDataProviderCallback {
     private Graphics offScreenGraphics;
 
     /**
-     * This is the location of the last tile that was requested from the provider.
-     */
-    @Nonnull
-    private final Location lastRequestedLocation;
-
-    /**
      * This color instance is used for the drawing operations.
      */
     @Nonnull
@@ -128,7 +122,6 @@ class SlickWorldMap implements WorldMap, WorldMapDataProviderCallback {
         }
         mapOrigin = new Location();
         playerLocation = new Location();
-        lastRequestedLocation = new Location();
         tempDrawingColor = new Color(Color.black);
         dirtyTiles = new LinkedList<Rectangle>();
     }
@@ -151,16 +144,16 @@ class SlickWorldMap implements WorldMap, WorldMapDataProviderCallback {
     }
 
     @Override
-    public void setTile(final int tileId, final int overlayId, final boolean blocked) {
+    public void setTile(@Nonnull final Location loc, final int tileId, final int overlayId, final boolean blocked) {
         if (offScreenGraphics == null) {
             throw new IllegalStateException("Callback called while no callback was requested");
         }
-        if (lastRequestedLocation.getScZ() != mapOrigin.getScZ()) {
+        if (loc.getScZ() != mapOrigin.getScZ()) {
             return;
         }
 
-        final int texPosX = lastRequestedLocation.getScX() - mapOrigin.getScX();
-        final int texPosY = lastRequestedLocation.getScY() - mapOrigin.getScY();
+        final int texPosX = loc.getScX() - mapOrigin.getScX();
+        final int texPosY = loc.getScY() - mapOrigin.getScY();
 
         if ((texPosX < 0) || (texPosX >= WORLD_MAP_WIDTH) || (texPosY < 0) || (texPosY >= WORLD_MAP_HEIGHT)) {
             return;
@@ -243,13 +236,14 @@ class SlickWorldMap implements WorldMap, WorldMapDataProviderCallback {
                 Rectangle dirtyArea = dirtyTiles.poll();
                 int updatedArea = 0;
                 int updateCount = 0;
+                final Location tempLocation = new Location();
                 while (dirtyArea != null) {
                     updatedArea += dirtyArea.getArea();
                     updateCount++;
                     for (int x = dirtyArea.getLeft(); x < dirtyArea.getRight(); x++) {
                         for (int y = dirtyArea.getBottom(); y < dirtyArea.getTop(); y++) {
-                            lastRequestedLocation.setSC(x, y, mapOrigin.getScZ());
-                            provider.requestTile(lastRequestedLocation, this);
+                            tempLocation.setSC(x, y, mapOrigin.getScZ());
+                            provider.requestTile(tempLocation, this);
                         }
                     }
                     if (updatedArea >= MAX_UPDATE_AREA) {
