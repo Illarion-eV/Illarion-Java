@@ -131,7 +131,7 @@ public final class KeyMapper {
 
             case NumPad9:
             case PageUp:
-                World.getPlayer().getMovementHandler().stopMovingToDirection(Location.DIR_WEST);
+                World.getPlayer().getMovementHandler().stopMovingToDirection(Location.DIR_EAST);
                 break;
 
             case LeftCtrl:
@@ -236,7 +236,7 @@ public final class KeyMapper {
 
             case NumPad9:
             case PageUp:
-                World.getPlayer().getMovementHandler().startMovingToDirection(Location.DIR_WEST);
+                World.getPlayer().getMovementHandler().startMovingToDirection(Location.DIR_EAST);
                 break;
 
             case LeftCtrl:
