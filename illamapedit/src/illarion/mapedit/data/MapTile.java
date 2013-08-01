@@ -192,7 +192,7 @@ public class MapTile {
 
     public void removeMapItem(final MapItem item) {
         if (mapItems != null) {
-            mapItems.add(item);
+            mapItems.remove(item);
         }
     }
 

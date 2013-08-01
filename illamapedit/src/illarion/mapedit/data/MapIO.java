@@ -202,17 +202,20 @@ public class MapIO {
                 }
 
                 final List<MapItem> items = tile.getMapItems();
-                for (int i = 0; i< items.size(); i++) {
-                    //        <dx>;<dy>;<item ID>;<quality>[;<data value>[;...]]
-                    writeLine(itemOutput, String.format("%d;%d;%s", x, y, items.get(i)));
-                    if (items.get(i).hasAnnotation()) {
-                        writeLine(annoOutput, String.format("%d;%d;%d;%s", x, y, i + 1, items.get(i).getAnnotation()));
+                if (items != null) {
+                    for (int i = 0; i< items.size(); i++) {
+                        //        <dx>;<dy>;<item ID>;<quality>[;<data value>[;...]]
+                        writeLine(itemOutput, String.format("%d;%d;%s", x, y, items.get(i)));
+                        if (items.get(i).hasAnnotation()) {
+                            writeLine(annoOutput, String.format("%d;%d;%d;%s", x, y, i + 1, items.get(i).getAnnotation()));
+                        }
                     }
                 }
                 final MapWarpPoint warp = tile.getMapWarpPoint();
                 if (warp != null) {
                     writeLine(warpOutput, String.format("%d;%d;%s", x, y, warp));
                 }
+
             }
         }
         tileOutput.close();
