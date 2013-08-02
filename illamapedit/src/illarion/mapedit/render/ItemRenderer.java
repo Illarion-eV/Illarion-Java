@@ -84,7 +84,7 @@ public class ItemRenderer extends AbstractMapRenderer {
     private void render(final int x, final int y, @Nonnull final Rectangle viewport, @Nonnull final Map map, final int level, @Nonnull final Graphics2D g) {
         final int z = map.getZ() - level;
         final List<MapItem> items = map.getTileAt(x, y).getMapItems();
-        if (items == null || items.isEmpty()) {
+        if ((items == null) || items.isEmpty()) {
             return;
         }
 
