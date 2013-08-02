@@ -40,7 +40,9 @@ public class WarpPanel extends JPanel {
     @Nonnull
     public final JCheckBox delCheckBox;
     @Nonnull
-    public final JCheckBox fillCheckBox;
+    private final JRadioButton fillSelectedCheckbox;
+    @Nonnull
+    private final JRadioButton fillAreaCheckbox;
 
     public WarpPanel() {
         super(new BorderLayout());
@@ -50,7 +52,12 @@ public class WarpPanel extends JPanel {
         zSpinner = new JSpinner(new SpinnerNumberModel(0, -1000000, 1000000, 1));
 
         delCheckBox = new JCheckBox();
-        fillCheckBox = new JCheckBox();
+        fillSelectedCheckbox = new JRadioButton();
+        fillAreaCheckbox = new JRadioButton();
+        fillAreaCheckbox.setSelected(true);
+        final ButtonGroup group = new ButtonGroup();
+        group.add(fillAreaCheckbox);
+        group.add(fillSelectedCheckbox);
 
         delCheckBox.addActionListener(new ActionListener() {
             @Override
@@ -69,8 +76,10 @@ public class WarpPanel extends JPanel {
         panel.add(zSpinner);
         panel.add(new JLabel(Lang.getMsg("tools.WarpTool.Delete")));
         panel.add(delCheckBox);
-        panel.add(new JLabel(Lang.getMsg("tools.Fill")));
-        panel.add(fillCheckBox);
+        panel.add(new JLabel(Lang.getMsg("tools.FillSelected")));
+        panel.add(fillSelectedCheckbox);
+        panel.add(new JLabel(Lang.getMsg("tools.FillArea")));
+        panel.add(fillAreaCheckbox);
         add(panel, BorderLayout.NORTH);
     }
 
@@ -91,6 +100,10 @@ public class WarpPanel extends JPanel {
     }
 
     public boolean isFillSelected() {
-        return fillCheckBox.isSelected();
+        return fillSelectedCheckbox.isSelected();
+    }
+
+    public boolean isFillArea() {
+        return fillAreaCheckbox.isSelected();
     }
 }

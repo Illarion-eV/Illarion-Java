@@ -122,15 +122,24 @@ public final class ToolManager implements Disposable {
     @EventSubscriber
     public void onMapDragged(@Nonnull final MapDraggedEvent e) {
         if ((actualTool != null) && (e.getButton() == MouseButton.LeftButton)) {
-            actualTool.clickedAt(e.getX(), e.getY(), e.getMap());
-            EventBus.publish(new RepaintRequestEvent());
-            controller.setSaved(false);
+            if (actualTool.isFillAreaAction()) {
+                e.getMap().setFillingArea(e.getX(), e.getY(), e.getStartX(), e.getStartY());
+            } else {
+                actualTool.clickedAt(e.getX(), e.getY(), e.getMap());
+                EventBus.publish(new RepaintRequestEvent());
+                controller.setSaved(false);
+            }
         }
     }
 
     @EventSubscriber
     public void onMapDragFinished(final MapDragFinishedEvent e) {
-
+        if ((actualTool != null) && !actualTool.isFillSelected()) {
+            e.getMap().setFillDragging(false);
+            actualTool.fillArea(e.getStartX(), e.getStartY(), e.getEndX(), e.getEndY(), e.getMap());
+            EventBus.publish(new RepaintRequestEvent());
+            controller.setSaved(false);
+        }
     }
 
     @EventSubscriber

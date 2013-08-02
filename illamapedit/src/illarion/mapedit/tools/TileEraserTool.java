@@ -60,7 +60,7 @@ public class TileEraserTool extends AbstractTool {
 
     @Nullable
     private static TileIDChangedAction eraseTile(final int x, final int y, final Map map) {
-        final MapTile oldTile = map.getTileAt(x,y);
+        final MapTile oldTile = map.getTileAt(x, y);
         if (oldTile == null) {
             return null;
         }
@@ -87,6 +87,11 @@ public class TileEraserTool extends AbstractTool {
     @Override
     public JPanel getSettingsPanel() {
         return panel;
+    }
+
+    @Override
+    public boolean isFillAreaAction() {
+        return panel.isFillArea();
     }
 
     @Override

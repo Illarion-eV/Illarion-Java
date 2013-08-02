@@ -31,7 +31,9 @@ import java.awt.*;
  */
 public class ItemBrushPanel extends JPanel {
     @Nonnull
-    private final JCheckBox fillCheckbox;
+    private final JRadioButton fillSelectedCheckbox;
+    @Nonnull
+    private final JRadioButton fillAreaCheckbox;
 
     public ItemBrushPanel() {
         super(new BorderLayout());
@@ -39,15 +41,26 @@ public class ItemBrushPanel extends JPanel {
         add(new ItemTree(), BorderLayout.CENTER);
 
         final JPanel brushSizePanel = new JPanel(new GridLayout(0, 2));
-        final JLabel radiusLabel = new JLabel(Lang.getMsg("tools.Fill"));
-        fillCheckbox = new JCheckBox();
-        brushSizePanel.add(radiusLabel);
-        brushSizePanel.add(fillCheckbox);
+        fillSelectedCheckbox = new JRadioButton();
+        fillAreaCheckbox = new JRadioButton();
+        fillAreaCheckbox.setSelected(true);
+        final ButtonGroup group = new ButtonGroup();
+        group.add(fillAreaCheckbox);
+        group.add(fillSelectedCheckbox);
+
+        brushSizePanel.add(new JLabel(Lang.getMsg("tools.FillSelected")));
+        brushSizePanel.add(fillSelectedCheckbox);
+        brushSizePanel.add(new JLabel(Lang.getMsg("tools.FillArea")));
+        brushSizePanel.add(fillAreaCheckbox);
 
         add(brushSizePanel, BorderLayout.SOUTH);
     }
 
     public boolean isFillSelected() {
-        return fillCheckbox.isSelected();
+        return fillSelectedCheckbox.isSelected();
+    }
+
+    public boolean isFillArea() {
+        return fillAreaCheckbox.isSelected();
     }
 }

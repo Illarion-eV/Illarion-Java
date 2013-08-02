@@ -55,7 +55,7 @@ public class WarpTool extends AbstractTool {
 
     @Nullable
     public WarpPlacedAction addWarp(final int x, final int y, final Map map) {
-        final MapTile tile = map.getTileAt(x,y);
+        final MapTile tile = map.getTileAt(x, y);
         if (tile == null) {
             return null;
         }
@@ -83,6 +83,11 @@ public class WarpTool extends AbstractTool {
     @Override
     public JPanel getSettingsPanel() {
         return panel;
+    }
+
+    @Override
+    public boolean isFillAreaAction() {
+        return panel.isFillArea();
     }
 
     @Override

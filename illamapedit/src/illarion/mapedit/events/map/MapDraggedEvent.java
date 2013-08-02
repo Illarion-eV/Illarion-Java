@@ -28,33 +28,33 @@ public class MapDraggedEvent {
 
     private final int x;
     private final int y;
-    private final int offsetX;
-    private final int offsetY;
+    private final int startX;
+    private final int startY;
     private final MouseButton button;
     private final Map map;
 
 
-    public MapDraggedEvent(final int x, final int y, final int offsetX, final int offsetY, final MouseButton button,
+    public MapDraggedEvent(final int x, final int y, final int startX, final int startY, final MouseButton button,
                            final Map map
     ) {
         this.x = x;
         this.y = y;
-        this.offsetX = offsetX;
-        this.offsetY = offsetY;
+        this.startX = startX;
+        this.startY = startY;
         this.button = button;
         this.map = map;
     }
 
-    public int getOffsetX() {
-        return offsetX;
-    }
-
-    public int getOffsetY() {
-        return offsetY;
-    }
-
     public MouseButton getButton() {
         return button;
+    }
+
+    public int getStartX() {
+        return startX;
+    }
+
+    public int getStartY() {
+        return startY;
     }
 
     public int getX() {

@@ -41,7 +41,7 @@ public class ItemPlacedAction extends HistoryAction {
         this.newt = newt;
     }
 
-    public ItemPlacedAction(final int x, final int y, final MapItem old, @Nullable final MapItem newt, final Map map) {
+    public ItemPlacedAction(final int x, final int y, @Nullable final MapItem old, @Nullable final MapItem newt, final Map map) {
         super(map);
         this.x = x;
         this.y = y;

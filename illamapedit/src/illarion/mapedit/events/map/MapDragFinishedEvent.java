@@ -18,6 +18,8 @@
  */
 package illarion.mapedit.events.map;
 
+import illarion.mapedit.data.Map;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -28,12 +30,14 @@ public class MapDragFinishedEvent {
     private final int startY;
     private final int endX;
     private final int endY;
+    private final Map map;
 
-    public MapDragFinishedEvent(final int startX, final int startY, final int endX, final int endY) {
+    public MapDragFinishedEvent(final int startX, final int startY, final int endX, final int endY, final Map map) {
         this.startX = startX;
         this.startY = startY;
         this.endX = endX;
         this.endY = endY;
+        this.map = map;
     }
 
     public int getEndY() {
@@ -42,6 +46,10 @@ public class MapDragFinishedEvent {
 
     public int getEndX() {
         return endX;
+    }
+
+    public Map getMap() {
+        return map;
     }
 
     public int getStartY() {

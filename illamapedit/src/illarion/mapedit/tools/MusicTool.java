@@ -91,6 +91,11 @@ public class MusicTool extends AbstractTool {
     }
 
     @Override
+    public boolean isFillAreaAction() {
+        return panel.isFillArea();
+    }
+
+    @Override
     public boolean isFillSelected() {
         return panel.isFillSelected();
     }

@@ -72,6 +72,11 @@ public class DataTool extends AbstractTool {
     }
 
     @Override
+    public boolean isFillAreaAction() {
+        return false;
+    }
+
+    @Override
     public boolean isFillSelected() {
         return false;
     }

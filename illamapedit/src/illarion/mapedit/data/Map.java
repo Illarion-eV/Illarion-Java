@@ -71,9 +71,14 @@ public class Map {
     private final MapTile[] mapTileData;
     private int activeX = Integer.MIN_VALUE;
     private int activeY = Integer.MIN_VALUE;
+    private boolean isFillDragging;
     private int positionX;
     private int positionY;
     private boolean visible;
+    private int fillStartX;
+    private int fillStartY;
+    private int fillX;
+    private int fillY;
 
     /**
      * Creates a new map
@@ -118,6 +123,10 @@ public class Map {
         return (activeX == x) && (activeY == y);
     }
 
+    public boolean isFillDragging() {
+        return isFillDragging;
+    }
+
     public boolean isPositionAtTile(final int x, final int y) {
         return (positionX == x) && (positionY == y);
     }
@@ -142,15 +151,26 @@ public class Map {
         final MapTile tile = getTileAt(activeX,activeY);
         if (tile != null) {
             final List<MapItem> items = tile.getMapItems();
-            final MapItem item = items.get(index);
-            items.set(index, items.get(newIndex));
-            items.set(newIndex, item);
+            final MapItem item;
+            if (items != null) {
+                item = items.get(index);
+                items.set(index, items.get(newIndex));
+                items.set(newIndex, item);
+            }
         }
     }
 
     public void setActiveTile(final int x, final int y) {
         activeX = x;
         activeY = y;
+    }
+
+    public void setFillingArea(final int x, final int y, final int startX, final int startY) {
+        fillX = x;
+        fillY = y;
+        fillStartX = startX;
+        fillStartY = startY;
+        isFillDragging = true;
     }
 
     public void setMapPosition(final int mapX, final int mapY) {
@@ -279,6 +299,26 @@ public class Map {
      */
     public String getName() {
         return name;
+    }
+
+    public int getFillStartX() {
+        return fillStartX;
+    }
+
+    public int getFillStartY() {
+        return fillStartY;
+    }
+
+    public int getFillX() {
+        return fillX;
+    }
+
+    public int getFillY() {
+        return fillY;
+    }
+
+    public void setFillDragging(final boolean dragging) {
+        isFillDragging = dragging;
     }
 
     /**
