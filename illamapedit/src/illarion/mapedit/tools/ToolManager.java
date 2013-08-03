@@ -18,6 +18,7 @@
  */
 package illarion.mapedit.tools;
 
+import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapTile;
 import illarion.mapedit.events.*;
 import illarion.mapedit.events.map.MapClickedEvent;
@@ -58,6 +59,15 @@ public final class ToolManager implements Disposable {
         this.controller = controller;
         AnnotationProcessor.process(this);
         setTool(new TileBrushTool());
+    }
+
+    @Nullable
+    public MapTile getActiveTile() {
+        final Map currentMap = controller.getSelected();
+        if (currentMap == null) {
+            return null;
+        }
+        return currentMap.getActiveTile();
     }
 
     public void setTool(@Nullable final AbstractTool tool) {

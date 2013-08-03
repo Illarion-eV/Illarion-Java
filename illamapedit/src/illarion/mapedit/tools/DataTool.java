@@ -22,6 +22,7 @@ import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapTile;
 import illarion.mapedit.events.TileAnnotationEvent;
+import illarion.mapedit.events.ToolSelectedEvent;
 import illarion.mapedit.history.GroupAction;
 import illarion.mapedit.tools.panel.DataPanel;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -50,6 +51,7 @@ public class DataTool extends AbstractTool {
         final MapTile tile = map.getTileAt(x,y);
 
         if (tile != null) {
+            panel.setVisible(true);
             panel.setItems(tile.getMapItems(), tile.getAnnotation());
             map.setActiveTile(x,y);
         }
@@ -93,5 +95,18 @@ public class DataTool extends AbstractTool {
     @EventSubscriber
     public void onItemDataAnnotation(@Nonnull final TileAnnotationEvent e) {
         panel.setAnnotation(e.getText());
+    }
+
+    @EventSubscriber
+    public void onSelectTool(@Nonnull final ToolSelectedEvent e) {
+        if (equals(e.getTool())) {
+            final MapTile tile = getManager().getActiveTile();
+            if (tile == null) {
+                panel.setVisible(false);
+            } else {
+                panel.setItems(tile.getMapItems(), tile.getAnnotation());
+                panel.setVisible(true);
+            }
+        }
     }
 }
