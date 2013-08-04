@@ -64,10 +64,8 @@ public class TileEraserTool extends AbstractTool {
         if (oldTile == null) {
             return null;
         }
-
         final MapTile newTile = MapTile.MapTileFactory.createNew(0, 0, 0, 0);
         map.setTileAt(x,y,newTile);
-        newTile.setSelected(oldTile.isSelected());
 
         return new TileIDChangedAction(x, y, oldTile, newTile, map);
     }

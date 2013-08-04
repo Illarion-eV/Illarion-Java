@@ -101,7 +101,6 @@ public class GuiController extends WindowAdapter {
         startGui();
     }
 
-
     @Nonnull
     public List<Map> getMaps() {
         return maps;
@@ -251,9 +250,8 @@ public class GuiController extends WindowAdapter {
 
     @EventSubscriber
     public void onMapOpen(@Nonnull final MapOpenEvent e) {
-
-            if (e.getPath() == null) {
-                try {
+        if (e.getPath() == null) {
+            try {
                 final Map[] mapsToOpen = MapDialogs.showOpenMapDialog(mainFrame);
 
                 if (mapsToOpen != null) {
@@ -263,18 +261,16 @@ public class GuiController extends WindowAdapter {
                         }
                     }
                 }
-                } catch (FormatCorruptedException ex) {
-                    LOGGER.warn("Format wrong.", ex);
-                    EventBus.publish(new MapLoadErrorEvent(ex.getMessage()));
-                } catch (IOException ex) {
-                    LOGGER.warn("Can't load map", ex);
-                    EventBus.publish(new MapLoadErrorEvent(Lang.getMsg("gui.error.LoadMap")));
-                }
-            } else {
-                MapIO.loadMap(e.getPath(), e.getName());
+            } catch (FormatCorruptedException ex) {
+                LOGGER.warn("Format wrong.", ex);
+                EventBus.publish(new MapLoadErrorEvent(ex.getMessage()));
+            } catch (IOException ex) {
+                LOGGER.warn("Can't load map", ex);
+                EventBus.publish(new MapLoadErrorEvent(Lang.getMsg("gui.error.LoadMap")));
             }
-
-
+        } else {
+            MapIO.loadMap(e.getPath(), e.getName());
+        }
     }
 
     @EventTopicSubscriber(topic = GlobalActionEvents.CLOSE_MAP)

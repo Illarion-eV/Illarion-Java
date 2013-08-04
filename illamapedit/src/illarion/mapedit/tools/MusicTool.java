@@ -68,7 +68,6 @@ public class MusicTool extends AbstractTool {
             return null;
         }
         MapTile newTile = MapTile.MapTileFactory.setMusicId(musicID, tile);
-        newTile.setSelected(tile.isSelected());
         map.setTileAt(x, y, newTile);
         return new MusicIDChangedAction(x, y, tile.getMusicID(), musicID, map);
     }

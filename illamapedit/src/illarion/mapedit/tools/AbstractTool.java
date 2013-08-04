@@ -19,6 +19,7 @@
 package illarion.mapedit.tools;
 
 import illarion.mapedit.data.Map;
+import illarion.mapedit.data.MapPosition;
 import illarion.mapedit.data.MapTile;
 import illarion.mapedit.history.GroupAction;
 import illarion.mapedit.history.HistoryManager;
@@ -69,12 +70,10 @@ public abstract class AbstractTool {
 
     public void fillSelected(final Map map) {
         final GroupAction action = new GroupAction();
-        for (int x = 0; x < map.getHeight(); x++) {
-            for (int y = 0; y < map.getWidth(); y++) {
-                final MapTile tile = map.getTileAt(x,y);
-                if ((tile != null) && tile.isSelected()) {
-                    paintSelected(x, y, map, action);
-                }
+        for (final MapPosition pos : map.getSelectedTiles()) {
+            final MapTile tile = map.getTileAt(pos.getX(), pos.getY());
+            if (tile != null) {
+                paintSelected(pos.getX(), pos.getY(), map, action);
             }
         }
         if (!action.isEmpty()) {

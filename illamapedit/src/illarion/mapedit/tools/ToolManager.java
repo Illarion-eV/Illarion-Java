@@ -126,10 +126,7 @@ public final class ToolManager implements Disposable {
     }
 
     private boolean isFillAction(final MapClickedEvent e) {
-        Boolean isFill = (actualTool != null) && actualTool.isFillSelected();
-        final MapTile tile = e.getMap().getTileAt(e.getX(), e.getY());
-        isFill &= (tile != null) && tile.isSelected();
-        return isFill;
+        return (actualTool != null) && actualTool.isFillSelected() && e.getMap().isSelected(e.getX(), e.getY());
     }
 
     @EventSubscriber
