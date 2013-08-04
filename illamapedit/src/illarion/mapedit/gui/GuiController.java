@@ -315,13 +315,6 @@ public class GuiController extends WindowAdapter {
     }
 
     @EventSubscriber
-    public void onSelectTool(@Nonnull final ToolSelectedEvent e) {
-        if (getSelected() != null) {
-            getSelected().removeActiveTile();
-        }
-    }
-
-    @EventSubscriber
     public void onItemRemove(@Nonnull final ItemRemoveEvent e) {
         if (getSelected() != null) {
             final ItemPlacedAction historyAction = getSelected().removeItemOnActiveTile(e.getIndex());

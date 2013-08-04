@@ -105,9 +105,12 @@ public final class ToolManager implements Disposable {
         } else if ((actualTool != null) && isFillAction(e)) {
             actualTool.fillSelected(e.getMap());
             EventBus.publish(new RepaintRequestEvent());
+            e.getMap().setActiveTile(e.getX(),e.getY());
+            controller.setSaved(false);
         } else if ((actualTool != null) && !actualTool.isFillSelected()) {
             actualTool.clickedAt(e.getX(), e.getY(), e.getMap());
             EventBus.publish(new RepaintRequestEvent());
+            e.getMap().setActiveTile(e.getX(),e.getY());
             controller.setSaved(false);
         }
     }
@@ -136,7 +139,8 @@ public final class ToolManager implements Disposable {
                 e.getMap().setFillingArea(e.getX(), e.getY(), e.getStartX(), e.getStartY());
             } else {
                 actualTool.clickedAt(e.getX(), e.getY(), e.getMap());
-                EventBus.publish(new RepaintRequestEvent());
+                EventBus.publish(new RepaintRequestEvent());EventBus.publish(new RepaintRequestEvent());
+                e.getMap().setActiveTile(e.getX(),e.getY());
                 controller.setSaved(false);
             }
         }
@@ -147,7 +151,8 @@ public final class ToolManager implements Disposable {
         if ((actualTool != null) && !actualTool.isFillSelected()) {
             e.getMap().setFillDragging(false);
             actualTool.fillArea(e.getStartX(), e.getStartY(), e.getEndX(), e.getEndY(), e.getMap());
-            EventBus.publish(new RepaintRequestEvent());
+            EventBus.publish(new RepaintRequestEvent());EventBus.publish(new RepaintRequestEvent());
+            e.getMap().setActiveTile(e.getEndX(),e.getEndY());
             controller.setSaved(false);
         }
     }
