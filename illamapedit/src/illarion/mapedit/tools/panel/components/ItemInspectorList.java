@@ -47,6 +47,9 @@ public class ItemInspectorList extends JPanel {
     private final JScrollPane scroll;
     @Nonnull
     private JList dataList;
+    private final JButton removeItemButton;
+    private final JButton itemUpButton;
+    private final JButton itemDownButton;
 
     public ItemInspectorList() {
         super(new BorderLayout());
@@ -67,8 +70,9 @@ public class ItemInspectorList extends JPanel {
         final ResizableIcon iconAnnotation =  ImageLoader.getResizableIcon("annotation") ;
         iconAnnotation.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
 
-        final JButton removeItemButton = new JButton();
+        removeItemButton = new JButton();
         removeItemButton.setIcon(iconRemove);
+        removeItemButton.setEnabled(false);
         removeItemButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
@@ -78,8 +82,9 @@ public class ItemInspectorList extends JPanel {
             }
         });
 
-        final JButton itemUpButton = new JButton();
+        itemUpButton = new JButton();
         itemUpButton.setIcon(iconUp);
+        itemUpButton.setEnabled(false);
         itemUpButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
@@ -90,8 +95,9 @@ public class ItemInspectorList extends JPanel {
             }
         });
 
-        final JButton itemDownButton = new JButton();
+        itemDownButton = new JButton();
         itemDownButton.setIcon(iconDown);
+        itemDownButton.setEnabled(false);
         itemDownButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
@@ -165,6 +171,9 @@ public class ItemInspectorList extends JPanel {
             }
         });
 
+        removeItemButton.setEnabled(itemList.size() > 0);
+        itemUpButton.setEnabled(itemList.size() > 1);
+        itemDownButton.setEnabled(itemList.size() > 1);
         scroll.setViewportView(dataList);
     }
 }

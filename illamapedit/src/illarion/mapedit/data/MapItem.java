@@ -121,6 +121,7 @@ public class MapItem implements Immutable {
      *
      * @return the data-value.
      */
+    @Nullable
     public List<String> getItemData() {
         return itemData;
     }

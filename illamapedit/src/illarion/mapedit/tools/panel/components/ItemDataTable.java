@@ -41,6 +41,9 @@ public class ItemDataTable extends JPanel {
     private final ItemDataTableModel dataTableModel;
     private final JTable dataTable;
     private final AnnotationLabel annotation;
+    private final JButton addDataButton;
+    private final JButton removeDataButton;
+    private final JButton annotationButton;
 
     public ItemDataTable() {
         super(new BorderLayout());
@@ -67,7 +70,7 @@ public class ItemDataTable extends JPanel {
         final ResizableIcon iconAnnotation =  ImageLoader.getResizableIcon("annotation") ;
         iconAnnotation.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
 
-        final JButton addDataButton = new JButton();
+        addDataButton = new JButton();
         addDataButton.setIcon(iconAdd);
         addDataButton.addActionListener(new ActionListener() {
             @Override
@@ -76,16 +79,17 @@ public class ItemDataTable extends JPanel {
             }
         });
 
-        final JButton removeDataButton = new JButton();
+        removeDataButton = new JButton();
         removeDataButton.setIcon(iconRemove);
         removeDataButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                 dataTableModel.removeRow(dataTable.getSelectedRow());
+                dataTableModel.removeRow(dataTable.getSelectedRow());
+                removeDataButton.setEnabled(dataTableModel.getRowCount() > 0);
             }
         });
 
-        final JButton annotationButton = new JButton();
+        annotationButton = new JButton();
         annotationButton.setIcon(iconAnnotation);
         annotationButton.addActionListener(new ActionListener() {
             @Override
@@ -134,6 +138,7 @@ public class ItemDataTable extends JPanel {
         if (result == JOptionPane.OK_OPTION) {
             dataTableModel.addData(keyField.getText() + '=' + valueField.getText());
             dataTableModel.fireTableDataChanged();
+            removeDataButton.setEnabled(dataTableModel.getRowCount() > 0);
         }
     }
 
@@ -141,12 +146,20 @@ public class ItemDataTable extends JPanel {
         dataTableModel.clearData();
         dataTableModel.fireTableDataChanged();
         setAnnotation("");
+        addDataButton.setEnabled(false);
+        removeDataButton.setEnabled(false);
+        annotationButton.setEnabled(false);
     }
 
     public void setDataList(final MapItem item) {
-        dataTableModel.setData(item.getItemData());
-        dataTableModel.fireTableDataChanged();
+        if (item.getItemData() != null) {
+            dataTableModel.setData(item.getItemData());
+            dataTableModel.fireTableDataChanged();
+        }
         setAnnotation(item.getAnnotation());
+        addDataButton.setEnabled(true);
+        removeDataButton.setEnabled(dataTableModel.getRowCount() > 0);
+        annotationButton.setEnabled(true);
     }
 
     public void setAnnotation(final String text) {
