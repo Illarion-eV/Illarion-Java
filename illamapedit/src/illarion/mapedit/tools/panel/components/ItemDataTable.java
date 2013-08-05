@@ -38,6 +38,23 @@ import java.util.ArrayList;
  */
 public class ItemDataTable extends JPanel {
     private static final int PREFERRED_KEY_WIDTH = 15;
+    private static final String[] DATA_KEYS = {
+            "",
+            "nameDe",
+            "nameEn",
+            "descriptionDe",
+            "descriptionEn",
+            "rareness",
+            "craftedBy",
+            "magicalDiamond",
+            "magicalEmerald",
+            "magicalRuby",
+            "magicalSapphire",
+            "magicalAmethyst",
+            "magicalObsidian",
+            "magicalTopaz"
+    };
+
     private final ItemDataTableModel dataTableModel;
     private final JTable dataTable;
     private final AnnotationLabel annotation;
@@ -123,7 +140,8 @@ public class ItemDataTable extends JPanel {
     }
 
     private void addData() {
-        final JTextField keyField = new JTextField(5);
+        final JComboBox keyField = new JComboBox(DATA_KEYS);
+        keyField.setEditable(true);
         final JTextField valueField = new JTextField(5);
 
         final JPanel keyValuePanel = new JPanel();
@@ -136,7 +154,7 @@ public class ItemDataTable extends JPanel {
         final int result = JOptionPane.showConfirmDialog(null, keyValuePanel,
                 Lang.getMsg("tools.DataTool.Dialog_header"), JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
-            dataTableModel.addData(keyField.getText() + '=' + valueField.getText());
+            dataTableModel.addData(String.format("%s=%s", keyField.getSelectedItem(), valueField.getText()));
             dataTableModel.fireTableDataChanged();
             removeDataButton.setEnabled(dataTableModel.getRowCount() > 0);
         }
