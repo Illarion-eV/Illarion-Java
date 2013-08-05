@@ -28,6 +28,7 @@ import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
@@ -37,12 +38,15 @@ import java.util.List;
  * @author Fredrik K
  */
 public class DataPanel extends JPanel {
-    private final ItemInspectorList itemPanel = new ItemInspectorList();
-    private final ItemDataTable dataPanel = new ItemDataTable();
+    private final ItemInspectorList itemPanel;
+    private final ItemDataTable dataPanel;
 
     public DataPanel() {
         super(new GridLayout(2, 1)) ;
         AnnotationProcessor.process(this);
+
+        itemPanel = new ItemInspectorList();
+        dataPanel = new ItemDataTable();
 
         add(itemPanel);
         add(dataPanel);
@@ -52,12 +56,12 @@ public class DataPanel extends JPanel {
         itemPanel.setAnnotation(text);
     }
 
-    public void setItems(final Collection<MapItem> items, final String annotation) {
+    public void setItems(@Nullable final Collection<MapItem> items, final String annotation) {
         itemPanel.setAnnotation(annotation);
         setItems(items);
     }
 
-    public void setItems(final Collection<MapItem> items) {
+    public void setItems(@Nullable final Collection<MapItem> items) {
         Collection<MapItem> mapItems = new ArrayList<MapItem>();
         if (items != null) {
             mapItems = items;

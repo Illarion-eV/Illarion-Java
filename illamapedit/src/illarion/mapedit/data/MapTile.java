@@ -127,10 +127,6 @@ public class MapTile {
      * The warp point on this tile, may be {@code null}.
      */
     private MapWarpPoint mapWarpPoint;
-    /**
-     * If the tile is selected
-     */
-    private boolean selected;
 
     public MapTile(final int baseId, final int overlayID, final int shapeID, final int musicID,
                    @Nullable final Collection<MapItem> mapItems, @Nullable final MapWarpPoint mapWarpPoint) {
@@ -258,22 +254,6 @@ public class MapTile {
      */
     public void setMapWarpPoint(@Nullable final MapWarpPoint mapWarpPoint) {
         this.mapWarpPoint = mapWarpPoint;
-    }
-
-    /**
-     * Check if the tile is selected
-     * @return True if the tile is selected
-     */
-    public boolean isSelected() {
-        return selected;
-    }
-
-    /**
-     * Set the selected state if the tile
-     * @param selected true if tile is selected otherwise false.
-     */
-    public void setSelected(final boolean selected) {
-        this.selected = selected;
     }
 
     /**

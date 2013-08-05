@@ -68,7 +68,6 @@ public class MusicTool extends AbstractTool {
             return null;
         }
         MapTile newTile = MapTile.MapTileFactory.setMusicId(musicID, tile);
-        newTile.setSelected(tile.isSelected());
         map.setTileAt(x, y, newTile);
         return new MusicIDChangedAction(x, y, tile.getMusicID(), musicID, map);
     }
@@ -88,6 +87,11 @@ public class MusicTool extends AbstractTool {
     @Override
     public JPanel getSettingsPanel() {
         return panel;
+    }
+
+    @Override
+    public boolean isFillAreaAction() {
+        return panel.isFillArea();
     }
 
     @Override

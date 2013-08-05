@@ -51,7 +51,7 @@ public class MapItem implements Immutable {
     /**
      * The data of this item.
      */
-    private List<String> itemData = null;
+    private List<String> itemData;
     /**
      * The quality of this item.
      */
@@ -121,29 +121,30 @@ public class MapItem implements Immutable {
      *
      * @return the data-value.
      */
+    @Nullable
     public List<String> getItemData() {
         return itemData;
     }
 
     public boolean isItemDataNullOrEmpty() {
-        return itemData == null || itemData.isEmpty();
+        return (itemData == null) || itemData.isEmpty();
     }
 
-    public void addItemData(String data) {
+    public void addItemData(final String data) {
         if (itemData == null) {
             itemData = new ArrayList<String>();
         }
         itemData.add(data);
     }
 
-    public void addItemData(int index, String data) {
+    public void addItemData(final int index, final String data) {
         if (itemData == null) {
             itemData = new ArrayList<String>();
         }
         itemData.set(index, data);
     }
 
-    public void removeItemData(int index) {
+    public void removeItemData(final int index) {
         if (itemData != null) {
             itemData.remove(index);
         }
@@ -198,10 +199,10 @@ public class MapItem implements Immutable {
         }
     }
 
-    public static String join(List<String> itemData, String joinWith) {
+    public static String join(final List<String> itemData, final String joinWith) {
         String retVal = "";
         boolean firstRun = true;
-        for (String s : itemData) {
+        for (final String s : itemData) {
             if (firstRun) {
                 firstRun = false;
             } else {

@@ -29,7 +29,9 @@ import java.awt.*;
  */
 public class TileEraserPanel extends JPanel {
     @Nonnull
-    private final JCheckBox fillCheckbox;
+    private final JRadioButton fillSelectedCheckbox;
+    @Nonnull
+    private final JRadioButton fillAreaCheckbox;
 
     /**
      * Default constructor
@@ -38,15 +40,26 @@ public class TileEraserPanel extends JPanel {
         super(new BorderLayout());
 
         final JPanel brushSizePanel = new JPanel(new GridLayout(0, 2));
-        final JLabel fillLabel = new JLabel(Lang.getMsg("tools.Fill"));
-        fillCheckbox = new JCheckBox();
-        brushSizePanel.add(fillLabel);
-        brushSizePanel.add(fillCheckbox);
+        fillSelectedCheckbox = new JRadioButton();
+        fillAreaCheckbox = new JRadioButton();
+        fillAreaCheckbox.setSelected(true);
+        final ButtonGroup group = new ButtonGroup();
+        group.add(fillAreaCheckbox);
+        group.add(fillSelectedCheckbox);
+
+        brushSizePanel.add(new JLabel(Lang.getMsg("tools.FillSelected")));
+        brushSizePanel.add(fillSelectedCheckbox);
+        brushSizePanel.add(new JLabel(Lang.getMsg("tools.FillArea")));
+        brushSizePanel.add(fillAreaCheckbox);
 
         add(brushSizePanel, BorderLayout.NORTH);
     }
 
+    public boolean isFillArea() {
+        return fillAreaCheckbox.isSelected();
+    }
+
     public boolean isFillSelected() {
-        return fillCheckbox.isSelected();
+        return fillSelectedCheckbox.isSelected();
     }
 }

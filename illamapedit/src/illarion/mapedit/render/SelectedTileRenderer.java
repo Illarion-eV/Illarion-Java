@@ -71,30 +71,42 @@ public class SelectedTileRenderer extends AbstractMapRenderer {
                     drawLine(mapX, mapY, mapX + 1, mapY, z, g);
                     drawLine(mapX, mapY + 1, mapX + 1, mapY + 1, z, g);
                     g.setColor(Color.ORANGE);
-                } else {
-                    if (showPosition && map.isPositionAtTile(x, y)) {
-                        g.setColor(Color.CYAN);
+                } else if (showPosition && map.isPositionAtTile(x, y)) {
+                    g.setColor(Color.CYAN);
+                    drawLine(mapX, mapY, mapX, mapY + 1, z, g);
+                    drawLine(mapX + 1, mapY, mapX + 1, mapY + 1, z, g);
+                    drawLine(mapX, mapY, mapX + 1, mapY, z, g);
+                    drawLine(mapX, mapY + 1, mapX + 1, mapY + 1, z, g);
+                    g.setColor(Color.ORANGE);
+                } else if (map.isSelected(x, y)) {
+                    if (!map.isSelected(x-1, y)) {
                         drawLine(mapX, mapY, mapX, mapY + 1, z, g);
+                    }
+                    if (!map.isSelected(x+1, y)) {
                         drawLine(mapX + 1, mapY, mapX + 1, mapY + 1, z, g);
+                    }
+                    if (!map.isSelected(x, y-1)) {
                         drawLine(mapX, mapY, mapX + 1, mapY, z, g);
+                    }
+                    if (!map.isSelected(x, y+1)) {
                         drawLine(mapX, mapY + 1, mapX + 1, mapY + 1, z, g);
-                        g.setColor(Color.ORANGE);
-                    } else if (map.isSelected(x, y)) {
-                        if (!map.isSelected(x-1, y)) {
-                            drawLine(mapX, mapY, mapX, mapY + 1, z, g);
-                        }
-                        if (!map.isSelected(x+1, y)) {
-                            drawLine(mapX + 1, mapY, mapX + 1, mapY + 1, z, g);
-                        }
-                        if (!map.isSelected(x, y-1)) {
-                            drawLine(mapX, mapY, mapX + 1, mapY, z, g);
-                        }
-                        if (!map.isSelected(x, y+1)) {
-                            drawLine(mapX, mapY + 1, mapX + 1, mapY + 1, z, g);
-                        }
                     }
                 }
             }
+        }
+
+        if (map.isFillDragging()) {
+            final int startX = Math.min(map.getFillX(),map.getFillStartX());
+            final int startY = Math.min(map.getFillY(),map.getFillStartY());
+            final int endX = Math.max(map.getFillX(),map.getFillStartX()) + 1;
+            final int endY = Math.max(map.getFillY(),map.getFillStartY()) + 1;
+
+            g.setColor(Color.RED);
+            drawLine(startX, startY, startX, endY, z, g);
+            drawLine(endX, startY, endX, endY, z, g);
+            drawLine(startX, startY, endX, startY, z, g);
+            drawLine(startX, endY, endX, endY, z, g);
+            g.setColor(Color.ORANGE);
         }
 
         g.setTransform(transform);

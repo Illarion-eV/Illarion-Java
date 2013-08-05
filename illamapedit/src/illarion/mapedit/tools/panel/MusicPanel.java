@@ -38,7 +38,9 @@ public class MusicPanel extends JPanel {
     @Nonnull
     private final JCheckBox delCheckBox;
     @Nonnull
-    private final JCheckBox fillCheckbox;
+    private final JRadioButton fillSelectedCheckbox;
+    @Nonnull
+    private final JRadioButton fillAreaCheckbox;
     @Nonnull
     private final SongTable songTable;
 
@@ -54,7 +56,12 @@ public class MusicPanel extends JPanel {
         final JPanel northPanel = new JPanel(new GridLayout(0, 2));
 
         delCheckBox = new JCheckBox();
-        fillCheckbox = new JCheckBox();
+        fillSelectedCheckbox = new JRadioButton();
+        fillAreaCheckbox = new JRadioButton();
+        fillAreaCheckbox.setSelected(true);
+        final ButtonGroup group = new ButtonGroup();
+        group.add(fillAreaCheckbox);
+        group.add(fillSelectedCheckbox);
         final ResizableIcon icon =  ImageLoader.getResizableIcon("player_play") ;
         icon.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
         final JButton playButton = new JButton(icon);
@@ -66,8 +73,10 @@ public class MusicPanel extends JPanel {
             }
         });
 
-        northPanel.add(new JLabel(Lang.getMsg("tools.Fill")));
-        northPanel.add(fillCheckbox);
+        northPanel.add(new JLabel(Lang.getMsg("tools.FillSelected")));
+        northPanel.add(fillSelectedCheckbox);
+        northPanel.add(new JLabel(Lang.getMsg("tools.FillArea")));
+        northPanel.add(fillAreaCheckbox);
         northPanel.add(new JLabel(Lang.getMsg("tools.MusicTool.Delete")));
         northPanel.add(delCheckBox);
         northPanel.add(new JLabel(Lang.getMsg("tools.MusicTool.Listen")));
@@ -90,6 +99,10 @@ public class MusicPanel extends JPanel {
     }
 
     public boolean isFillSelected() {
-       return fillCheckbox.isSelected();
+       return fillSelectedCheckbox.isSelected();
+    }
+
+    public boolean isFillArea() {
+        return fillAreaCheckbox.isSelected();
     }
 }

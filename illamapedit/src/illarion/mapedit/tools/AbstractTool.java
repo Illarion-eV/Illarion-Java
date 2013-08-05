@@ -19,6 +19,7 @@
 package illarion.mapedit.tools;
 
 import illarion.mapedit.data.Map;
+import illarion.mapedit.data.MapPosition;
 import illarion.mapedit.data.MapTile;
 import illarion.mapedit.history.GroupAction;
 import illarion.mapedit.history.HistoryManager;
@@ -54,11 +55,13 @@ public abstract class AbstractTool {
 
     public abstract JPanel getSettingsPanel();
 
+    public abstract boolean isFillAreaAction();
+
     public abstract boolean isFillSelected();
 
     public abstract boolean isWarnAnnotated();
 
-    public abstract void paintSelected(int x, int y, Map map, final GroupAction action);
+    public abstract void paintSelected(int x, int y, Map map, GroupAction action);
 
     public final void registerManager(@Nonnull final ToolManager toolManager) {
         manager = toolManager;
@@ -67,18 +70,33 @@ public abstract class AbstractTool {
 
     public void fillSelected(final Map map) {
         final GroupAction action = new GroupAction();
-        for (int x = 0; x < map.getHeight(); x++) {
-            for (int y = 0; y < map.getWidth(); y++) {
-                final MapTile tile = map.getTileAt(x,y);
-                if ((tile != null) && tile.isSelected()) {
-                    paintSelected(x, y, map, action);
-                }
+        for (final MapPosition pos : map.getSelectedTiles()) {
+            final MapTile tile = map.getTileAt(pos.getX(), pos.getY());
+            if (tile != null) {
+                paintSelected(pos.getX(), pos.getY(), map, action);
             }
         }
         if (!action.isEmpty()) {
             getHistory().addEntry(action);
         }
     }
+
+    public void fillArea(final int startX, final int startY, final int endX, final int endY, final Map map) {
+        final int fromX = Math.min(startX, endX);
+        final int toX = Math.max(startX, endX);
+        final int fromY = Math.min(startY, endY);
+        final int toY = Math.max(startY, endY);
+        final GroupAction action = new GroupAction();
+        for (int x = fromX; x <= toX; x++) {
+            for (int y = fromY; y <= toY; y++) {
+                paintSelected(x, y, map, action);
+            }
+        }
+        if (!action.isEmpty()) {
+            getHistory().addEntry(action);
+        }
+    }
+
 
     protected final ToolManager getManager() {
         return manager;

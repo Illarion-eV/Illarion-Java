@@ -33,12 +33,10 @@ public class AnnotationChecker {
 
     public boolean isAnnotatedFill(final Map map) {
         final List<String[]> annotatedTiles = new ArrayList<String[]>();
-        for (int x = 0; x < map.getHeight(); x++) {
-            for (int y = 0; y < map.getWidth(); y++) {
-                final MapTile tile = map.getTileAt(x,y);
-                if ((tile != null) && tile.isSelected()) {
-                    annotatedTiles.addAll(getAnnotatedObject(x, y, tile));
-                }
+        for (final MapPosition pos : map.getSelectedTiles()) {
+            final MapTile tile = map.getTileAt(pos.getX(),pos.getY());
+            if (tile != null) {
+                annotatedTiles.addAll(getAnnotatedObject(pos.getX(),pos.getY(), tile));
             }
         }
         if (annotatedTiles.isEmpty()) {
