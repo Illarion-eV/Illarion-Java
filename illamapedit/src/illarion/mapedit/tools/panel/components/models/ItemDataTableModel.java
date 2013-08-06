@@ -23,6 +23,7 @@ import illarion.mapedit.events.ItemDataRemovedEvent;
 import illarion.mapedit.events.ItemItemDataChangedEvent;
 import org.bushe.swing.event.EventBus;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
@@ -129,7 +130,7 @@ public class ItemDataTableModel extends AbstractTableModel {
      * Clears the list and adds the new data
      * @param dataList List with key=value data as strings
      */
-    public void setData(final Collection<String> dataList) {
+    public void setData(@Nonnull final Collection<String> dataList) {
         data.clear();
         data.addAll(dataList);
     }

@@ -44,6 +44,10 @@ public class ItemImg {
         return itemId;
     }
 
+    public boolean isObstacle() {
+        return !info.isObstacle();
+    }
+
     public String getResourceName() {
         return resourceName;
     }

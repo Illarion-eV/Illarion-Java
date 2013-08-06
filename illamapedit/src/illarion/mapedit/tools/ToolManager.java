@@ -18,6 +18,7 @@
  */
 package illarion.mapedit.tools;
 
+import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapTile;
 import illarion.mapedit.events.*;
 import illarion.mapedit.events.map.MapClickedEvent;
@@ -60,6 +61,15 @@ public final class ToolManager implements Disposable {
         setTool(new TileBrushTool());
     }
 
+    @Nullable
+    public MapTile getActiveTile() {
+        final Map currentMap = controller.getSelected();
+        if (currentMap == null) {
+            return null;
+        }
+        return currentMap.getActiveTile();
+    }
+
     public void setTool(@Nullable final AbstractTool tool) {
         if (tool != null) {
             tool.registerManager(this);
@@ -95,9 +105,12 @@ public final class ToolManager implements Disposable {
         } else if ((actualTool != null) && isFillAction(e)) {
             actualTool.fillSelected(e.getMap());
             EventBus.publish(new RepaintRequestEvent());
+            e.getMap().setActiveTile(e.getX(),e.getY());
+            controller.setSaved(false);
         } else if ((actualTool != null) && !actualTool.isFillSelected()) {
             actualTool.clickedAt(e.getX(), e.getY(), e.getMap());
             EventBus.publish(new RepaintRequestEvent());
+            e.getMap().setActiveTile(e.getX(),e.getY());
             controller.setSaved(false);
         }
     }
@@ -113,24 +126,32 @@ public final class ToolManager implements Disposable {
     }
 
     private boolean isFillAction(final MapClickedEvent e) {
-        Boolean isFill = (actualTool != null) && actualTool.isFillSelected();
-        final MapTile tile = e.getMap().getTileAt(e.getX(), e.getY());
-        isFill &= (tile != null) && tile.isSelected();
-        return isFill;
+        return (actualTool != null) && actualTool.isFillSelected() && e.getMap().isSelected(e.getX(), e.getY());
     }
 
     @EventSubscriber
     public void onMapDragged(@Nonnull final MapDraggedEvent e) {
         if ((actualTool != null) && (e.getButton() == MouseButton.LeftButton)) {
-            actualTool.clickedAt(e.getX(), e.getY(), e.getMap());
-            EventBus.publish(new RepaintRequestEvent());
-            controller.setSaved(false);
+            if (actualTool.isFillAreaAction()) {
+                e.getMap().setFillingArea(e.getX(), e.getY(), e.getStartX(), e.getStartY());
+            } else {
+                actualTool.clickedAt(e.getX(), e.getY(), e.getMap());
+                EventBus.publish(new RepaintRequestEvent());EventBus.publish(new RepaintRequestEvent());
+                e.getMap().setActiveTile(e.getX(),e.getY());
+                controller.setSaved(false);
+            }
         }
     }
 
     @EventSubscriber
     public void onMapDragFinished(final MapDragFinishedEvent e) {
-
+        if ((actualTool != null) && !actualTool.isFillSelected()) {
+            e.getMap().setFillDragging(false);
+            actualTool.fillArea(e.getStartX(), e.getStartY(), e.getEndX(), e.getEndY(), e.getMap());
+            EventBus.publish(new RepaintRequestEvent());EventBus.publish(new RepaintRequestEvent());
+            e.getMap().setActiveTile(e.getEndX(),e.getEndY());
+            controller.setSaved(false);
+        }
     }
 
     @EventSubscriber

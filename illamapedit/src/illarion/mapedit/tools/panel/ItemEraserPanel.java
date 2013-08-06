@@ -31,25 +31,39 @@ public class ItemEraserPanel extends JPanel {
     @Nonnull
     private final JCheckBox clearCheckBox;
     @Nonnull
-    private final JCheckBox fillCheckBox;
+    private final JRadioButton fillSelectedCheckbox;
+    @Nonnull
+    private final JRadioButton fillAreaCheckbox;
 
     public ItemEraserPanel() {
         setLayout(new BorderLayout());
 
         final JPanel northPanel = new JPanel(new GridLayout(0, 2));
         clearCheckBox = new JCheckBox();
-        fillCheckBox = new JCheckBox();
+        fillSelectedCheckbox = new JRadioButton();
+        fillAreaCheckbox = new JRadioButton();
+        fillAreaCheckbox.setSelected(true);
+        final ButtonGroup group = new ButtonGroup();
+        group.add(fillAreaCheckbox);
+        group.add(fillSelectedCheckbox);
 
         northPanel.add(new JLabel(Lang.getMsg("tools.ItemEraser.Clear")));
         northPanel.add(clearCheckBox);
-        northPanel.add(new JLabel(Lang.getMsg("tools.Fill")));
-        northPanel.add(fillCheckBox);
+
+        northPanel.add(new JLabel(Lang.getMsg("tools.FillSelected")));
+        northPanel.add(fillSelectedCheckbox);
+        northPanel.add(new JLabel(Lang.getMsg("tools.FillArea")));
+        northPanel.add(fillAreaCheckbox);
 
         add(northPanel,BorderLayout.NORTH);
     }
 
+    public boolean isFillArea() {
+        return fillAreaCheckbox.isSelected();
+    }
+
     public boolean isFillSelected() {
-        return fillCheckBox.isSelected();
+        return fillSelectedCheckbox.isSelected();
     }
 
     public boolean shouldClear() {

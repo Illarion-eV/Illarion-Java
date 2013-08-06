@@ -71,6 +71,11 @@ public class SelectionTool extends AbstractTool {
     }
 
     @Override
+    public boolean isFillAreaAction() {
+        return true;
+    }
+
+    @Override
     public boolean isFillSelected() {
         return false;
     }
@@ -82,5 +87,8 @@ public class SelectionTool extends AbstractTool {
 
     @Override
     public void paintSelected(final int x, final int y, final Map map, final GroupAction action) {
+        if (map.contains(x, y)) {
+            map.setSelected(x, y, !panel.isDeselectChecked());
+        }
     }
 }

@@ -73,7 +73,6 @@ public class TileBrushTool extends AbstractTool {
             final MapTile newTile = MapTile.MapTileFactory.setId(tile.getId(), oldTile);
             action = new TileIDChangedAction(x, y, oldTile, newTile, map);
             map.setTileAt(x, y, newTile);
-            newTile.setSelected(oldTile.isSelected());
             newTile.setAnnotation(null);
             MapTransitions.getInstance().checkTileAndSurround(map, new Location(x, y, 0));
         }
@@ -95,6 +94,11 @@ public class TileBrushTool extends AbstractTool {
     @Override
     public JPanel getSettingsPanel() {
         return panel;
+    }
+
+    @Override
+    public boolean isFillAreaAction() {
+        return panel.isFillArea();
     }
 
     @Override

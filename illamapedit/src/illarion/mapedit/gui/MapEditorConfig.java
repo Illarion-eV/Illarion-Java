@@ -58,6 +58,8 @@ public class MapEditorConfig {
     private static final String USED_LOOK_AND_FEEL = "usedLookAndFeel";
     public static final String USED_LANGUAGE = "usedLanguage";
     public static final String SHOW_MAP_POSITION = "showMapPosition";
+    public static final String WINDOW_HEIGHT = "windowSizeH";
+    public static final String WINDOW_WIDTH = "windowSizeW";
 
     @Nullable
     private ConfigSystem configSystem;
@@ -178,8 +180,10 @@ public class MapEditorConfig {
     @EventTopicSubscriber(topic = USED_LOOK_AND_FEEL)
     public void onConfigChanged(@Nonnull final String topic, final ConfigChangedEvent event) {
         if (topic.equals(USED_LOOK_AND_FEEL)) {
-            SubstanceLookAndFeel.setSkin(getLookAndFeel());
-            SwingUtilities.updateComponentTreeUI(MainFrame.getInstance());
+            if (MainFrame.getInstance() != null) {
+                SubstanceLookAndFeel.setSkin(getLookAndFeel());
+                SwingUtilities.updateComponentTreeUI(MainFrame.getInstance());
+            }
         }
     }
 
@@ -213,7 +217,8 @@ public class MapEditorConfig {
         configSystem.setDefault(USED_LOOK_AND_FEEL, DEFAULT_LOOK_AND_FEEL);
         configSystem.setDefault(USED_LANGUAGE, getDefaultLanguageString());
         configSystem.setDefault(SHOW_MAP_POSITION, false);
-
+        configSystem.setDefault(WINDOW_HEIGHT, 700);
+        configSystem.setDefault(WINDOW_WIDTH, 1000);
     }
 
     /**
@@ -248,8 +253,8 @@ public class MapEditorConfig {
             LOGGER.error("Configuration system not initialized yet.");
             return;
         }
-            configSystem.set("windowSizeW", windowSize.width);
-            configSystem.set("windowSizeH", windowSize.height);
+            configSystem.set(WINDOW_WIDTH, windowSize.width);
+            configSystem.set(WINDOW_HEIGHT, windowSize.height);
     }
 
     /**
