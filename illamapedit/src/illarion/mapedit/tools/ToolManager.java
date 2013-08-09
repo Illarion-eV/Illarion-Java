@@ -54,6 +54,8 @@ public final class ToolManager implements Disposable {
     private TileImg selectedTile;
     private ItemImg selectedItem;
     private boolean doPaste;
+    private int currentX = Integer.MIN_VALUE;
+    private int currentY = Integer.MIN_VALUE;
 
     public ToolManager(final GuiController controller) {
         this.controller = controller;
@@ -134,9 +136,11 @@ public final class ToolManager implements Disposable {
         if ((actualTool != null) && (e.getButton() == MouseButton.LeftButton)) {
             if (actualTool.isFillAreaAction()) {
                 e.getMap().setFillingArea(e.getX(), e.getY(), e.getStartX(), e.getStartY());
-            } else {
+            } else if (currentX != e.getX() || currentY != e.getY()){
+                currentX = e.getX();
+                currentY = e.getY();
                 actualTool.clickedAt(e.getX(), e.getY(), e.getMap());
-                EventBus.publish(new RepaintRequestEvent());EventBus.publish(new RepaintRequestEvent());
+                EventBus.publish(new RepaintRequestEvent());
                 e.getMap().setActiveTile(e.getX(),e.getY());
                 controller.setSaved(false);
             }
@@ -146,9 +150,11 @@ public final class ToolManager implements Disposable {
     @EventSubscriber
     public void onMapDragFinished(final MapDragFinishedEvent e) {
         if ((actualTool != null) && !actualTool.isFillSelected()) {
+            currentX = Integer.MIN_VALUE;
+            currentY = Integer.MIN_VALUE;
             e.getMap().setFillDragging(false);
             actualTool.fillArea(e.getStartX(), e.getStartY(), e.getEndX(), e.getEndY(), e.getMap());
-            EventBus.publish(new RepaintRequestEvent());EventBus.publish(new RepaintRequestEvent());
+            EventBus.publish(new RepaintRequestEvent());
             e.getMap().setActiveTile(e.getEndX(),e.getEndY());
             controller.setSaved(false);
         }
