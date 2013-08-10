@@ -61,7 +61,7 @@ public class ObstacleRenderer extends AbstractMapRenderer {
                     continue;
                 }
                 final List<MapItem> items = tile.getMapItems();
-                if (items == null) {
+                if (items == null || items.isEmpty()) {
                     continue;
                 }
                 boolean obstacle = false;
