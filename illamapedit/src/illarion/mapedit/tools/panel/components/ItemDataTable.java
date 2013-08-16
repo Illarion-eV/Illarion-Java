@@ -170,10 +170,11 @@ public class ItemDataTable extends JPanel {
     }
 
     public void setDataList(final MapItem item) {
+        dataTableModel.clearData();
         if (item.getItemData() != null) {
             dataTableModel.setData(item.getItemData());
-            dataTableModel.fireTableDataChanged();
         }
+        dataTableModel.fireTableDataChanged();
         setAnnotation(item.getAnnotation());
         addDataButton.setEnabled(true);
         removeDataButton.setEnabled(dataTableModel.getRowCount() > 0);
