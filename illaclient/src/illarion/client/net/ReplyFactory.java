@@ -93,6 +93,7 @@ public final class ReplyFactory {
         register(PutItemMsg.class);
         register(QuestMsg.class);
         register(QuestDeleteMsg.class);
+        register(QuestAvailabilityMsg.class);
         register(RemoveCharMsg.class);
         register(RemoveItemMsg.class);
         register(SayMsg.class);
