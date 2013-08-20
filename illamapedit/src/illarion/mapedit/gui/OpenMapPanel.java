@@ -25,6 +25,7 @@ import illarion.mapedit.events.GlobalActionEvents;
 import illarion.mapedit.events.UpdateMapListEvent;
 import illarion.mapedit.events.menu.MapOpenEvent;
 import illarion.mapedit.events.menu.MapSelectedEvent;
+import illarion.mapedit.events.menu.SetFolderEvent;
 import illarion.mapedit.gui.util.OpenMapTableCellEditor;
 import illarion.mapedit.gui.util.OpenMapTableModel;
 import illarion.mapedit.resource.loaders.ImageLoader;
@@ -85,7 +86,7 @@ public class OpenMapPanel extends JPanel {
     }
 
     private void initMaps() {
-        final File dir = loadFileList();
+        final File dir = loadFileList(MapEditorConfig.getInstance().getMapFolder());
         fileList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(@Nonnull final ListSelectionEvent e) {
@@ -97,8 +98,8 @@ public class OpenMapPanel extends JPanel {
         });
     }
 
-    private File loadFileList() {
-        final File dir = MapEditorConfig.getInstance().getMapFolder();
+    private File loadFileList(final File dir) {
+        fileList.removeAll();
 
         final String[] maps = dir.list(FILTER_TILES);
         if (maps != null) {
@@ -148,7 +149,6 @@ public class OpenMapPanel extends JPanel {
 
     public void init() {
         panel.setPreferredSize(new Dimension(180, 0));
-        panel.add(new JList(new String[]{"apa", "bepa"}));
 
         renderButton.setSelected(true);
         renderButton.addActionListener(new ActionListener() {
@@ -198,7 +198,11 @@ public class OpenMapPanel extends JPanel {
 
     @EventTopicSubscriber(topic = MapEditorConfig.MAPEDIT_FOLDER)
     public void onConfigChanged(final String topic, @Nonnull final ConfigChangedEvent event) {
-        fileList.removeAll();
-        loadFileList();
+        loadFileList(MapEditorConfig.getInstance().getMapFolder());
+    }
+
+    @EventSubscriber
+    public void onFolderList(@Nonnull final SetFolderEvent e) {
+        loadFileList(e.getFile());
     }
 }
