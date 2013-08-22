@@ -30,7 +30,6 @@ public class MapOpenEvent {
     private final String name;
 
     public MapOpenEvent(@Nonnull final String path, final String name) {
-
         this.path = path;
         this.name = name;
     }
@@ -41,6 +40,11 @@ public class MapOpenEvent {
     }
 
     public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
         return name;
     }
 }

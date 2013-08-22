@@ -19,13 +19,12 @@
 package illarion.mapedit.gui;
 
 import illarion.common.config.ConfigChangedEvent;
-import illarion.mapedit.data.MapIO;
 import illarion.mapedit.events.CloseMapEvent;
 import illarion.mapedit.events.GlobalActionEvents;
 import illarion.mapedit.events.UpdateMapListEvent;
-import illarion.mapedit.events.menu.MapOpenEvent;
 import illarion.mapedit.events.menu.MapSelectedEvent;
 import illarion.mapedit.events.menu.SetFolderEvent;
+import illarion.mapedit.gui.util.FileTree;
 import illarion.mapedit.gui.util.OpenMapTableCellEditor;
 import illarion.mapedit.gui.util.OpenMapTableModel;
 import illarion.mapedit.resource.loaders.ImageLoader;
@@ -42,19 +41,11 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FilenameFilter;
 
 /**
  * @author Fredrik K
  */
 public class OpenMapPanel extends JPanel {
-    private static final FilenameFilter FILTER_TILES = new FilenameFilter() {
-        @Override
-        public boolean accept(final File dir, @Nonnull final String name) {
-            return name.endsWith(MapIO.EXT_TILE);
-        }
-    };
     private static final int ICON_SIZE = 24;
     private static final int PREFERRED_BUTTON_CELL_WIDTH = 10;
     private static final int PREFERRED_MAP_CELL_WIDTH = 150;
@@ -62,9 +53,9 @@ public class OpenMapPanel extends JPanel {
     private final JPanel panel;
     private final JToggleButton openButton;
     private final JToggleButton renderButton;
-    private final JList fileList;
     private JTable openTable;
     private OpenMapTableModel openTableModel;
+    private final FileTree tree;
 
     public OpenMapPanel() {
         super(new BorderLayout());
@@ -82,33 +73,11 @@ public class OpenMapPanel extends JPanel {
         renderButton = new JToggleButton();
         renderButton.setIcon(iconRender);
 
-        fileList = new JList();
+        tree = new FileTree();
     }
 
     private void initMaps() {
-        final File dir = loadFileList(MapEditorConfig.getInstance().getMapFolder());
-        fileList.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(@Nonnull final ListSelectionEvent e) {
-                if (e.getValueIsAdjusting() && (fileList.getSelectedValue() != null)) {
-                    EventBus.publish(new MapOpenEvent(dir.getPath(), (String) fileList.getSelectedValue()));
-                    fileList.clearSelection();
-                }
-            }
-        });
-    }
-
-    private File loadFileList(final File dir) {
-        fileList.removeAll();
-
-        final String[] maps = dir.list(FILTER_TILES);
-        if (maps != null) {
-            for (int i = 0; i < maps.length; ++i) {
-                maps[i] = maps[i].substring(0, maps[i].length() - MapIO.EXT_TILE.length());
-            }
-            fileList.setListData(maps);
-        }
-        return dir;
+        tree.setDirectory(MapEditorConfig.getInstance().getMapFolder());
     }
 
     private void initOpenMaps() {
@@ -183,7 +152,7 @@ public class OpenMapPanel extends JPanel {
             panel.add(new JScrollPane(openTable));
         }
         if (openButton.isSelected()) {
-            panel.add(new JScrollPane(fileList));
+            panel.add(new JScrollPane(tree));
         }
         panel.setVisible(panel.getComponentCount() > 0);
         panel.revalidate();
@@ -198,11 +167,11 @@ public class OpenMapPanel extends JPanel {
 
     @EventTopicSubscriber(topic = MapEditorConfig.MAPEDIT_FOLDER)
     public void onConfigChanged(final String topic, @Nonnull final ConfigChangedEvent event) {
-        loadFileList(MapEditorConfig.getInstance().getMapFolder());
+        tree.setDirectory(MapEditorConfig.getInstance().getMapFolder());
     }
 
     @EventSubscriber
     public void onFolderList(@Nonnull final SetFolderEvent e) {
-        loadFileList(e.getFile());
+        tree.setDirectory(e.getFile());
     }
 }
