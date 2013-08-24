@@ -20,7 +20,6 @@ package illarion.mapedit.gui;
 
 import illarion.mapedit.Lang;
 import illarion.mapedit.MapEditor;
-import illarion.mapedit.crash.exceptions.FormatCorruptedException;
 import illarion.mapedit.data.*;
 import illarion.mapedit.events.*;
 import illarion.mapedit.events.map.MapPositionEvent;
@@ -250,27 +249,7 @@ public class GuiController extends WindowAdapter {
 
     @EventSubscriber
     public void onMapOpen(@Nonnull final MapOpenEvent e) {
-        if (e.getPath() == null) {
-            try {
-                final Map[] mapsToOpen = MapDialogs.showOpenMapDialog(mainFrame);
-
-                if (mapsToOpen != null) {
-                    for (final Map map : mapsToOpen) {
-                        if (!maps.contains(map)) {
-                            addMap(map);
-                        }
-                    }
-                }
-            } catch (FormatCorruptedException ex) {
-                LOGGER.warn("Format wrong.", ex);
-                EventBus.publish(new MapLoadErrorEvent(ex.getMessage()));
-            } catch (IOException ex) {
-                LOGGER.warn("Can't load map", ex);
-                EventBus.publish(new MapLoadErrorEvent(Lang.getMsg("gui.error.LoadMap")));
-            }
-        } else {
-            MapIO.loadMap(e.getPath(), e.getName());
-        }
+        MapIO.loadMap(e.getPath(), e.getName());
     }
 
     @EventTopicSubscriber(topic = GlobalActionEvents.CLOSE_MAP)
