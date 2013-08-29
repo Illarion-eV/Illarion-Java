@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Common Library.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Common Library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,8 +100,7 @@ public final class Credits {
 
         CreditsPerson.create("Andreas", "Vilarion", "Grob", projectManager, chiefServer, gameplay, client, website,
                 easyNPC, easyQuest, server, qualityAssurance);
-        CreditsPerson.create("Lennart", "Estralis", "Stutz", chiefContent, gameplay, content, gameMaster,
-                qualityAssurance);
+        CreditsPerson.create("Lennart", "Estralis", "Stutz", chiefContent, gameplay, content, qualityAssurance);
         CreditsPerson.create("Martin", "Nitram", "Karing", chiefClient, gameplay, client, website, easyNPC,
                 easyQuest, mapEditor, server, qualityAssurance);
         CreditsPerson.create("Martin", "Polak", chiefGraphics, gameplay, client, graphics, website, easyNPC,
@@ -126,7 +125,7 @@ public final class Credits {
         CreditsPerson.create("Alex", "Flux", "Rose", content);
         CreditsPerson.create("Llama", content);
         CreditsPerson.create("Dominic", "Dyluck", "W.", content);
-        CreditsPerson.create("Martin", "Skamato", "Großmann", content, communityManager, qualityAssurance);
+        CreditsPerson.create("Martin", "Skamato", "Großmann", content, qualityAssurance, gameMaster);
         CreditsPerson.create("Tiim", client, mapEditor);
         CreditsPerson.create("Fredrik K", mapEditor);
         CreditsPerson.create("Smjert", client);
@@ -135,11 +134,14 @@ public final class Credits {
         CreditsPerson.create("Drakon Gerwulf", graphics);
         CreditsPerson.create("Karl", "Salameh", graphics);
         CreditsPerson.create("Matt", "Raelith", "Hollier", website);
-        CreditsPerson.create("Zak", gameMaster);
-        CreditsPerson.create("Face", gameMaster);
+        CreditsPerson.create("Onyxx", gameMaster);
+        CreditsPerson.create("Revan", gameMaster);
+        CreditsPerson.create("Semtex", gameMaster);
+        CreditsPerson.create("Teflon", gameMaster);
         CreditsPerson.create("Arien Edhel", gameMaster);
         CreditsPerson.create("Djironnyma", communityManager);
         CreditsPerson.create("Athian", communityManager);
+        CreditsPerson.create("Slightly", communityManager);
         CreditsPerson.create("Jaime", "Quinasa", "Hughes", qualityAssurance);
         CreditsPerson.create("H.-Robert", "Damien", "Matthes", qualityAssurance);
         CreditsPerson.create("Rakaya", qualityAssurance);
@@ -150,7 +152,7 @@ public final class Credits {
         CreditsPerson.create("Slightly", qualityAssurance);
         CreditsPerson.create("PurpleMonkeys", qualityAssurance);
         CreditsPerson.create("GolfLima", qualityAssurance);
-        CreditsPerson.create("Leomar", qualityAssurance);
+        CreditsPerson.create("Silverwing", qualityAssurance, gameMaster);
         CreditsPerson.create("Victor", "Vigalf", "Becker", qualityAssurance);
         CreditsPerson.create("Cindy", "Elynah", "Ludwig", qualityAssurance);
         CreditsPerson.create("", "Mesha", "", maps);
