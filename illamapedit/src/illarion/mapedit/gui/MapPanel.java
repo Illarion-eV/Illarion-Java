@@ -34,6 +34,10 @@ import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * The map panel is the area, on which the map is rendered.
@@ -59,14 +63,13 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
     public MapPanel(final GuiController controller) {
         this.controller = controller;
         rendererManager = new RendererManager();
-        toolManager = new ToolManager(controller, rendererManager);
+        toolManager = new ToolManager(controller);
         dirty = new Rectangle(getWidth(), getHeight());
         addMouseWheelListener(this);
         addMouseMotionListener(this);
         addMouseListener(this);
         addComponentListener(this);
         AnnotationProcessor.process(this);
-
     }
 
     @Override
@@ -74,8 +77,19 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
         final Graphics2D g = (Graphics2D) gt;
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, getWidth(), getHeight());
-        for (Map m : controller.getMaps()) {
-            rendererManager.render(m, getVisibleRect(), g);
+        final List<Map> maps = new ArrayList<Map>(controller.getMaps());
+
+        Collections.sort(maps, new Comparator<Map>() {
+
+            @Override
+            public int compare(final Map map1, final Map map2) {
+                return map1.getZ() - map2.getZ();
+            }
+        });
+        for (final Map map : maps) {
+            if (map.isVisible()) {
+                rendererManager.render(map, getVisibleRect(), g);
+            }
         }
 
         dirty.x = 0;
@@ -110,13 +124,12 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
         } else {
             isDragging = true;
             if (btn == MouseButton.LeftButton) {
-                final int x = SwingLocation.mapCoordinateX(clickX, clickY, rendererManager.getTranslationX(),
-                        rendererManager.getTranslationY(), rendererManager.getZoom()) - selected.getX();
-                final int y = SwingLocation.mapCoordinateY(clickX, clickY, rendererManager.getTranslationX(),
-                        rendererManager.getTranslationY(), rendererManager.getZoom()) - selected.getY();
+                final int x = getMapCoordinateX(clickX, clickY, 0);
+                final int y = getMapCoordinateY(clickX, clickY, 0);
+                final int startX = getMapCoordinateX(downClickX, downClickY, 0);
+                final int startY = getMapCoordinateY(downClickX, downClickY, 0);
                 if (selected.contains(x, y)) {
-                    EventBus.publish(new MapDraggedEvent(x, y, e.getX(), e.getY(), btn,
-                            selected));
+                    EventBus.publish(new MapDraggedEvent(x, y, startX, startY, btn, selected));
                 }
             }
         }
@@ -130,10 +143,9 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
         if (selectedMap == null) {
             return;
         }
-        final int mapX = SwingLocation.mapCoordinateX(e.getX(), e.getY(), rendererManager.getTranslationX(),
-                rendererManager.getTranslationY(), rendererManager.getZoom());
-        final int mapY = SwingLocation.mapCoordinateY(e.getX(), e.getY(), rendererManager.getTranslationX(),
-                rendererManager.getTranslationY(), rendererManager.getZoom());
+
+        final int mapX = getMapCoordinateX(e.getX(), e.getY(), selectedMap.getX());
+        final int mapY = getMapCoordinateY(e.getX(), e.getY(), selectedMap.getY());
         final int worldX = selectedMap.getX() + mapX;
         final int worldY = selectedMap.getY() + mapY;
         final int worldZ = selectedMap.getZ();
@@ -148,19 +160,14 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
     @Override
     public void mouseClicked(@Nonnull final MouseEvent e) {
         final Map selected = controller.getSelected();
-        if ((toolManager == null) || (selected == null)) {
+        if (selected == null) {
             return;
         }
 
-        final int x = SwingLocation.mapCoordinateX(e.getX(), e.getY(), rendererManager.getTranslationX(),
-                rendererManager.getTranslationY(), rendererManager.getZoom()) - selected.getX();
-        final int y = SwingLocation.mapCoordinateY(e.getX(), e.getY(), rendererManager.getTranslationX(),
-                rendererManager.getTranslationY(), rendererManager.getZoom()) - selected.getY();
-
+        final int x = getMapCoordinateX(e.getX(), e.getY(), selected.getX());
+        final int y = getMapCoordinateY(e.getX(), e.getY(), selected.getY());
         if (selected.contains(x, y)) {
-            EventBus.publish(new MapClickedEvent(x, y,
-                    MouseButton.fromAwt(e.getModifiers()),
-                    selected));
+            EventBus.publish(new MapClickedEvent(x, y, MouseButton.fromAwt(e.getModifiers()), selected));
         }
     }
 
@@ -177,19 +184,28 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
     @Override
     public void mouseReleased(@Nonnull final MouseEvent e) {
         if (isDragging) {
-            final int x1 = SwingLocation.mapCoordinateX(downClickX, downClickY, rendererManager.getTranslationX(),
-                    rendererManager.getTranslationY(), rendererManager.getZoom());
-            final int y1 = SwingLocation.mapCoordinateY(downClickX, downClickY, rendererManager.getTranslationX(),
-                    rendererManager.getTranslationY(), rendererManager.getZoom());
-            final int x2 = SwingLocation.mapCoordinateX(e.getX(), e.getY(), rendererManager.getTranslationX(),
-                    rendererManager.getTranslationY(), rendererManager.getZoom());
-            final int y2 = SwingLocation.mapCoordinateY(e.getX(), e.getY(), rendererManager.getTranslationX(),
-                    rendererManager.getTranslationY(), rendererManager.getZoom());
-            if ((x1 != x2) && (y1 != y2)) {
-                EventBus.publish(new MapDragFinishedEvent(x1, y1, x2, y2));
+            final Map selected = controller.getSelected();
+            if (selected != null) {
+                final int x1 = getMapCoordinateX(downClickX, downClickY, selected.getX());
+                final int y1 = getMapCoordinateY(downClickX, downClickY, selected.getY());
+                final int x2 = getMapCoordinateX(e.getX(), e.getY(), selected.getX());
+                final int y2 = getMapCoordinateY(e.getX(), e.getY(), selected.getY());
+                if ((x1 != x2) || (y1 != y2)) {
+                    EventBus.publish(new MapDragFinishedEvent(x1, y1, x2, y2, selected));
+                }
             }
         }
         isDragging = false;
+    }
+
+    private int getMapCoordinateX(final int x, final int y, final int offset) {
+        return SwingLocation.mapCoordinateX(x, y, rendererManager.getTranslationX(),
+                rendererManager.getTranslationY(), rendererManager.getZoom()) - offset;
+    }
+
+    private int getMapCoordinateY(final int x, final int y, final int offset) {
+        return SwingLocation.mapCoordinateY(x, y, rendererManager.getTranslationX(),
+                rendererManager.getTranslationY(), rendererManager.getZoom()) - offset;
     }
 
     @Override

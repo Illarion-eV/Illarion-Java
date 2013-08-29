@@ -16,6 +16,8 @@
     <option name="snInfluenceFormat" value="0" />
     <option name="snCheckCPP" value="true" />
     <option name="snCheckC" value="true" />
+    <option name="pathToUserRulesConfiguration" value="" />
+    <option name="pathToJarWithRules" value="" />
   </component>
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
@@ -30,6 +32,7 @@
     <option name="make" value="true" />
     <option name="effort" value="max" />
     <option name="priority" value="Medium" />
+    <option name="excludeFilter" value="" />
   </component>
   <component name="IdProvider" IDEtalkID="A58D5F5593E149B628FBDAE247EF8DBF" />
   <component name="JavadocGenerationManager">
@@ -84,8 +87,7 @@
   </component>
   <component name="RegexUtilComponent" text="1900-01-01 2007/08/13 1900.01.01 1900 01 01 1900-01.01 1900 13 01 1900 02 31" flags="0" regex="(19|20)\d\d([- /.])(0[1-9]|1[012])\2(0[1-9]|[12][0-9]|3[01])" mode="0" />
   <component name="SuppressionsComponent">
-    <option name="suppCommentEnabled" value="false" />
-    <option name="suppComment" value="SUPPRESS CODING RULES" />
+    <option name="suppComments" value="[]" />
   </component>
 </project>
 

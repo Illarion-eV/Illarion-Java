@@ -18,6 +18,8 @@
  */
 package org.illarion.engine.graphic;
 
+import illarion.common.types.Location;
+
 /**
  * This interface defines a callback the world map data provider is using to report the requested map data.
  *
@@ -27,9 +29,10 @@ public interface WorldMapDataProviderCallback {
     /**
      * Set the data of the tile that was requested.
      *
+     * @param loc       the location of the tile that is updated
      * @param tileId    the map ID of the tile (this is not the tile ID)
      * @param overlayId the map ID of the overlay (this is not the tile ID)
      * @param blocked   {@code true} in case the player can't step onto this tile
      */
-    void setTile(int tileId, int overlayId, boolean blocked);
+    void setTile(Location loc, int tileId, int overlayId, boolean blocked);
 }

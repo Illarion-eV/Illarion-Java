@@ -20,12 +20,14 @@ package illarion.common.types;
 
 import illarion.common.graphics.Layers;
 import illarion.common.graphics.MapConstants;
+import illarion.common.net.NetCommReader;
 import illarion.common.util.FastMath;
 import javolution.text.TextBuilder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
+import java.io.IOException;
 import java.io.Serializable;
 
 /**
@@ -229,6 +231,20 @@ public class Location implements Serializable {
         this();
         set(org);
         moveSC(direction);
+    }
+
+    /**
+     * Read the location from the network interface.
+     *
+     * @param reader the reader for the network interface
+     * @throws IOException in case reading the location fails
+     */
+    public Location(@Nonnull final NetCommReader reader) throws IOException {
+        this();
+        final int x = reader.readShort();
+        final int y = reader.readShort();
+        final int z = reader.readShort();
+        setSC(x, y, z);
     }
 
     /**

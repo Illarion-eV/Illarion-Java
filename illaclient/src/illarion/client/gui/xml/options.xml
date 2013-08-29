@@ -41,6 +41,16 @@
                             <panel width="*"/>
                             <control name="checkbox" id="runAutoAvoid"/>
                         </panel>
+                        <panel width="100%" childLayout="horizontal">
+                            <control name="label" text="${options-bundle.wasdWalk}"/>
+                            <panel width="*"/>
+                            <control name="checkbox" id="wasdWalk"/>
+                        </panel>
+                        <panel width="100%" childLayout="horizontal">
+                            <control name="label" text="${options-bundle.disableChatAfterSending}"/>
+                            <panel width="*"/>
+                            <control name="checkbox" id="disableChatAfterSending"/>
+                        </panel>
                         <!--
                         <panel width="100%" childLayout="horizontal">
                             <control name="label" text="${options-bundle.charNameDisplay}"/>

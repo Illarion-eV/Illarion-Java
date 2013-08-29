@@ -31,9 +31,6 @@ import javax.annotation.Nullable;
 import javax.swing.*;
 
 /**
- * TODO: Bigger brush
- * TODO: Play music
- * TODO: Load ids from table
  *
  * @author Tim
  */
@@ -49,22 +46,30 @@ public class MusicTool extends AbstractTool {
 
     @Override
     public void clickedAt(final int x, final int y, @Nonnull final Map map) {
-        final int musicID = panel.getMusicID();
-        final int radius = panel.getRadius();
-        final GroupAction action = new GroupAction();
-        for (int i = (x - radius) + 1; i <= ((x + radius) - 1); i++) {
-            for (int j = (y - radius) + 1; j <= ((y + radius) - 1); j++) {
-                final MapTile tile = map.getTileAt(i, j);
-                if ((tile != null) && (tile.getMusicID() != musicID)) {
-                    action.addAction(new MusicIDChangedAction(i, j, tile.getMusicID(), musicID, map));
-                    map.setTileAt(i, j, MapTile.MapTileFactory.setMusicId(musicID, tile));
+        final MusicIDChangedAction newAction = addMusic(x, y, map);
+        if (newAction != null) {
+            getHistory().addEntry(newAction);
+        }
+    }
 
-                }
-            }
+    @Override
+    public void paintSelected(final int x, final int y, final Map map, final GroupAction action) {
+        final MusicIDChangedAction newAction = addMusic(x, y, map);
+        if (newAction != null) {
+            action.addAction(newAction);
         }
-        if (!action.isEmpty()) {
-            getHistory().addEntry(action);
+    }
+
+    @Nullable
+    public MusicIDChangedAction addMusic(final int x, final int y, final Map map) {
+        final MapTile tile = map.getTileAt(x, y);
+        final int musicID = panel.getMusicID();
+        if ((tile == null) || (tile.getMusicID() == musicID)) {
+            return null;
         }
+        MapTile newTile = MapTile.MapTileFactory.setMusicId(musicID, tile);
+        map.setTileAt(x, y, newTile);
+        return new MusicIDChangedAction(x, y, tile.getMusicID(), musicID, map);
     }
 
     @Override
@@ -82,5 +87,20 @@ public class MusicTool extends AbstractTool {
     @Override
     public JPanel getSettingsPanel() {
         return panel;
+    }
+
+    @Override
+    public boolean isFillAreaAction() {
+        return panel.isFillArea();
+    }
+
+    @Override
+    public boolean isFillSelected() {
+        return panel.isFillSelected();
+    }
+
+    @Override
+    public boolean isWarnAnnotated() {
+        return true;
     }
 }

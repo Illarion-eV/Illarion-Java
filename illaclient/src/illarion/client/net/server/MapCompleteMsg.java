@@ -62,7 +62,7 @@ public final class MapCompleteMsg extends AbstractReply {
         World.getMapDisplay().setActive(true);
         World.getLights().refresh();
         World.getMap().checkInside();
-        World.getMap().getMinimap().performFullUpdate();
+        World.getMap().getMiniMap().performFullUpdate();
 
         EventBus.publish(new LoginFinishedEvent());
         return true;

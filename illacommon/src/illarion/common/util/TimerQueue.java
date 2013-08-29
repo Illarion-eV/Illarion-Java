@@ -46,8 +46,7 @@ public final class TimerQueue
     private Timer lastTimer;
 
     /**
-     * The running flag. This is set to <code>true</code> in case the thread that updates this queue is set in place
-     * and
+     * The running flag. This is set to {@code true} in case the thread that updates this queue is set in place and
      * running.
      */
     private boolean running;
@@ -77,11 +76,10 @@ public final class TimerQueue
      */
     @Override
     public void run() {
-        long timeToWait;
 
         try {
             while (running) {
-                timeToWait = postExpiredTimers();
+                final long timeToWait = postExpiredTimers();
                 synchronized (this) {
                     try {
                         wait(timeToWait);
@@ -108,8 +106,6 @@ public final class TimerQueue
      * @param expirationTime the time stamp of the next time this timer is supposed to be called
      */
     void addTimer(@Nonnull final Timer timer, final long expirationTime) {
-        Timer previousTimer;
-        Timer nextTimer;
 
         synchronized (this) {
             // If the Timer is already in the queue, then ignore the add.
@@ -117,8 +113,8 @@ public final class TimerQueue
                 return;
             }
 
-            previousTimer = null;
-            nextTimer = firstTimer;
+            Timer previousTimer = null;
+            Timer nextTimer = firstTimer;
 
             while (nextTimer != null) {
                 if (nextTimer.getExpirationTime() > expirationTime) {
@@ -150,7 +146,7 @@ public final class TimerQueue
      * Check if a timer is in the queue.
      *
      * @param timer the timer to check
-     * @return <code>true</code> in case the timer is in this timer queue
+     * @return {@code true} in case the timer is in this timer queue
      */
     boolean containsTimer(@Nonnull final Timer timer) {
         return timer.equals(firstTimer) || timer.equals(lastTimer) || (timer.getNextTimer() != null);
@@ -162,15 +158,14 @@ public final class TimerQueue
      * @return the time in milliseconds to wait until the next call is needed
      */
     long postExpiredTimers() {
-        Timer timer;
-        long currentTime;
         long timeToWait;
 
         do {
+            final Timer timer;
             synchronized (this) {
                 timer = firstTimer;
                 try {
-                    this.wait(1);
+                    wait(1);
                 } catch (@Nonnull final InterruptedException e) {
                     // nothing to do
                 }
@@ -180,7 +175,7 @@ public final class TimerQueue
                 return 0;
             }
 
-            currentTime = System.currentTimeMillis();
+            final long currentTime = System.currentTimeMillis();
             timeToWait = timer.getExpirationTime() - currentTime;
 
             if (timeToWait <= 0) {
@@ -202,23 +197,20 @@ public final class TimerQueue
     }
 
     /**
-     * Remove a timer from the queue. AFter this the timer is not invoked anymore.
+     * Remove a timer from the queue. After this the timer is not invoked anymore.
      *
      * @param timer the timer to remove from the list
      */
     void removeTimer(@Nonnull final Timer timer) {
-        Timer previousTimer;
-        Timer nextTimer;
-        boolean found;
 
         synchronized (this) {
             if (!containsTimer(timer)) {
                 return;
             }
 
-            previousTimer = null;
-            nextTimer = firstTimer;
-            found = false;
+            Timer previousTimer = null;
+            Timer nextTimer = firstTimer;
+            boolean found = false;
 
             while (nextTimer != null) {
                 if (nextTimer == timer) {
@@ -249,11 +241,13 @@ public final class TimerQueue
 
     /**
      * Start the thread that manages this queue and all the timers stored in it.
+     *
+     * @throws IllegalStateException in case the timer queue was already started
      */
     @SuppressWarnings("nls")
     private synchronized void start() {
         if (running) {
-            throw new RuntimeException("Can't start a TimerQueue " + "that is already running");
+            throw new IllegalStateException("Can't start a TimerQueue that is already running");
         }
 
         final Thread timerThread = new Thread(null, this, "TimerQueue");

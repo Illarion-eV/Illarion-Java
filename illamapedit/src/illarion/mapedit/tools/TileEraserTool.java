@@ -21,7 +21,9 @@ package illarion.mapedit.tools;
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapTile;
+import illarion.mapedit.history.GroupAction;
 import illarion.mapedit.history.TileIDChangedAction;
+import illarion.mapedit.tools.panel.TileEraserPanel;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import javax.annotation.Nonnull;
@@ -30,14 +32,42 @@ import javax.swing.*;
 
 /**
  * @author Tim
+ * @author Fredrik K
  */
 public class TileEraserTool extends AbstractTool {
+    @Nonnull
+    private final TileEraserPanel panel;
+
+    public TileEraserTool() {
+        panel = new TileEraserPanel();
+    }
 
     @Override
     public void clickedAt(final int x, final int y, @Nonnull final Map map) {
-        final MapTile nt = MapTile.MapTileFactory.createNew(0, 0, 0, 0);
-        getHistory().addEntry(new TileIDChangedAction(x, y, map.getTileAt(x, y), nt, map));
-        map.setTileAt(x, y, nt);
+        final TileIDChangedAction newAction = eraseTile(x, y, map);
+        if (newAction != null) {
+            getHistory().addEntry(newAction);
+        }
+    }
+
+    @Override
+    public void paintSelected(final int x, final int y, final Map map, final GroupAction action) {
+        final TileIDChangedAction newAction = eraseTile(x, y, map);
+        if (newAction != null) {
+            action.addAction(newAction);
+        }
+    }
+
+    @Nullable
+    private static TileIDChangedAction eraseTile(final int x, final int y, final Map map) {
+        final MapTile oldTile = map.getTileAt(x, y);
+        if (oldTile == null) {
+            return null;
+        }
+        final MapTile newTile = MapTile.MapTileFactory.createNew(0, 0, 0, 0);
+        map.setTileAt(x,y,newTile);
+
+        return new TileIDChangedAction(x, y, oldTile, newTile, map);
     }
 
     @Override
@@ -54,6 +84,21 @@ public class TileEraserTool extends AbstractTool {
     @Nullable
     @Override
     public JPanel getSettingsPanel() {
-        return null;
+        return panel;
+    }
+
+    @Override
+    public boolean isFillAreaAction() {
+        return panel.isFillArea();
+    }
+
+    @Override
+    public boolean isFillSelected() {
+        return panel.isFillSelected();
+    }
+
+    @Override
+    public boolean isWarnAnnotated() {
+        return true;
     }
 }

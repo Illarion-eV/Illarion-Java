@@ -27,14 +27,14 @@ import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 import javax.annotation.Nonnull;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 
 /**
  * @author Tim
  */
 public class MusicRenderer extends AbstractMapRenderer {
-
-    private static final int XOFFSET = 20;
-    private static final int YOFFSET = 10;
+    private static final int XOFFSET = 30;
+    private static final int YOFFSET = 20;
 
     private final Image image;
 
@@ -43,7 +43,7 @@ public class MusicRenderer extends AbstractMapRenderer {
      */
     public MusicRenderer(final RendererManager manager) {
         super(manager);
-        image = ImageLoader.getImage("sound");
+        image = resizeImage((BufferedImage) ImageLoader.getImage("sound"), 16, 16);
     }
 
     @Override
@@ -52,7 +52,6 @@ public class MusicRenderer extends AbstractMapRenderer {
         final int height = map.getHeight();
         final int z = map.getZ() - level;
         final AffineTransform transform = g.getTransform();
-
 
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < height; ++y) {
@@ -76,7 +75,7 @@ public class MusicRenderer extends AbstractMapRenderer {
 
     @Override
     protected int getRenderPriority() {
-        return 7;
+        return 8;
     }
 
     @Override

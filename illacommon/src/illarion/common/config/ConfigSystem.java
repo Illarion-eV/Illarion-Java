@@ -50,7 +50,6 @@ import java.util.zip.GZIPOutputStream;
  * </p>
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
- * @serial exclude
  */
 public class ConfigSystem implements Config {
     /**
@@ -75,7 +74,7 @@ public class ConfigSystem implements Config {
     private final XMLBinding binding;
 
     /**
-     * This flag is set to <code>true</code> in case any changes where applied
+     * This flag is set to {@code true} in case any changes where applied
      * to the configuration. Only in case those changes got applied the
      * configuration file needs to be saved at all.
      */
@@ -97,6 +96,7 @@ public class ConfigSystem implements Config {
      * configuration.
      */
     @Nullable
+    @Deprecated
     private FastTable<ConfigChangeListener> configListeners;
 
     /**
@@ -104,6 +104,7 @@ public class ConfigSystem implements Config {
      * system.
      */
     @Nullable
+    @Deprecated
     private FastMap<String, FastTable<ConfigChangeListener>> keyConfigListeners;
 
     /**
@@ -161,6 +162,7 @@ public class ConfigSystem implements Config {
      *                 changes
      */
     @Override
+    @Deprecated
     public void addListener(@Nonnull final ConfigChangeListener listener) {
         lock.writeLock().lock();
         try {
@@ -188,6 +190,7 @@ public class ConfigSystem implements Config {
      *                 changes
      */
     @Override
+    @Deprecated
     public void addListener(final String key,
                             @Nonnull final ConfigChangeListener listener) {
         lock.writeLock().lock();
@@ -218,7 +221,7 @@ public class ConfigSystem implements Config {
      *
      * @param key the key of that value
      * @return the value that was read from the configuration or
-     *         <code>false</code> in case no value is set
+     *         {@code false} in case no value is set
      */
     @Override
     public boolean getBoolean(final String key) {
@@ -266,7 +269,7 @@ public class ConfigSystem implements Config {
      *
      * @param key the key of the value
      * @return the value that was read from the configuration file or
-     *         <code>0</code> in case there is no value set for this key
+     *         {@code 0} in case there is no value set for this key
      */
     @Override
     public double getDouble(final String key) {
@@ -290,7 +293,7 @@ public class ConfigSystem implements Config {
      *
      * @param key the key of the value
      * @return the value that was read from the configuration file or
-     *         <code>null</code> in case there is no value set for this key
+     *         {@code null} in case there is no value set for this key
      */
     @Nullable
     @Override
@@ -315,7 +318,7 @@ public class ConfigSystem implements Config {
      *
      * @param key the key of the value
      * @return the value that was read from the configuration file or
-     *         <code>0</code> in case there is no value set for this key
+     *         {@code 0} in case there is no value set for this key
      */
     @Override
     public float getFloat(final String key) {
@@ -339,7 +342,7 @@ public class ConfigSystem implements Config {
      *
      * @param key the key of the value
      * @return the value that was read from the configuration file or
-     *         <code>0</code> in case there is no value set for this key
+     *         {@code 0} in case there is no value set for this key
      */
     @Override
     public int getInteger(final String key) {
@@ -363,7 +366,7 @@ public class ConfigSystem implements Config {
      *
      * @param key the key of the value
      * @return the value that was read from the configuration file or
-     *         <code>0</code> in case there is no value set for this key
+     *         {@code 0} in case there is no value set for this key
      */
     @Override
     public long getLong(final String key) {
@@ -387,7 +390,7 @@ public class ConfigSystem implements Config {
      *
      * @param key the key of that value
      * @return the value that was read from the configuration or
-     *         <code>null</code> in case no value is set
+     *         {@code null} in case no value is set
      */
     @Nullable
     public Object getObject(final String key) {
@@ -413,7 +416,7 @@ public class ConfigSystem implements Config {
      *
      * @param key the key of the value
      * @return the value that was read from the configuration file or
-     *         <code>0</code> in case there is no value set for this key
+     *         {@code 0} in case there is no value set for this key
      */
     @Override
     public short getShort(final String key) {
@@ -437,7 +440,7 @@ public class ConfigSystem implements Config {
      *
      * @param key the key of the value
      * @return the value that was read from the configuration file or
-     *         <code>null</code> in case there is no value set for this key
+     *         {@code null} in case there is no value set for this key
      */
     @Nullable
     @Override
@@ -476,6 +479,7 @@ public class ConfigSystem implements Config {
      * @param listener the listener to remove
      */
     @Override
+    @Deprecated
     public void removeListener(@Nonnull final ConfigChangeListener listener) {
         lock.writeLock().lock();
         try {
@@ -505,6 +509,7 @@ public class ConfigSystem implements Config {
      * @param listener the listener to remove
      */
     @Override
+    @Deprecated
     public void removeListener(final String key,
                                @Nonnull final ConfigChangeListener listener) {
         lock.writeLock().lock();
@@ -534,7 +539,6 @@ public class ConfigSystem implements Config {
                 }
             } else {
                 LOGGER.warn("Removed Listener not added: " + listener.toString());
-                return;
             }
         } finally {
             lock.writeLock().unlock();
@@ -736,7 +740,7 @@ public class ConfigSystem implements Config {
      * @param value the value that is stored along with the key
      */
     public void setDefault(final String key, final boolean value) {
-        if (!configEntries.containsKey(key)) {
+        if (!(configEntries.get(key) instanceof Boolean)) {
             set(key, value);
         }
     }
@@ -753,7 +757,7 @@ public class ConfigSystem implements Config {
      * @param value the value that is stored along with the key
      */
     public void setDefault(final String key, final byte value) {
-        if (!configEntries.containsKey(key)) {
+        if (!(configEntries.get(key) instanceof Byte)) {
             set(key, value);
         }
     }
@@ -770,7 +774,7 @@ public class ConfigSystem implements Config {
      * @param value the value that is stored along with the key
      */
     public void setDefault(final String key, final double value) {
-        if (!configEntries.containsKey(key)) {
+        if (!(configEntries.get(key) instanceof Double)) {
             set(key, value);
         }
     }
@@ -787,7 +791,7 @@ public class ConfigSystem implements Config {
      * @param value the value that is stored along with the key
      */
     public void setDefault(final String key, @Nonnull final File value) {
-        if (!configEntries.containsKey(key)) {
+        if (!(configEntries.get(key) instanceof String)) {
             set(key, value);
         }
     }
@@ -804,7 +808,7 @@ public class ConfigSystem implements Config {
      * @param value the value that is stored along with the key
      */
     public void setDefault(final String key, final float value) {
-        if (!configEntries.containsKey(key)) {
+        if (!(configEntries.get(key) instanceof Float)) {
             set(key, value);
         }
     }
@@ -821,7 +825,7 @@ public class ConfigSystem implements Config {
      * @param value the value that is stored along with the key
      */
     public void setDefault(final String key, final int value) {
-        if (!configEntries.containsKey(key)) {
+        if (!(configEntries.get(key) instanceof Integer)) {
             set(key, value);
         }
     }
@@ -838,7 +842,7 @@ public class ConfigSystem implements Config {
      * @param value the value that is stored along with the key
      */
     public void setDefault(final String key, final long value) {
-        if (!configEntries.containsKey(key)) {
+        if (!(configEntries.get(key) instanceof Long)) {
             set(key, value);
         }
     }
@@ -855,7 +859,7 @@ public class ConfigSystem implements Config {
      * @param value the value that is stored along with the key
      */
     public void setDefault(final String key, final short value) {
-        if (!configEntries.containsKey(key)) {
+        if (!(configEntries.get(key) instanceof Short)) {
             set(key, value);
         }
     }
@@ -872,7 +876,7 @@ public class ConfigSystem implements Config {
      * @param value the value that is stored along with the key
      */
     public void setDefault(final String key, final String value) {
-        if (!configEntries.containsKey(key)) {
+        if (!(configEntries.get(key) instanceof String)) {
             set(key, value);
         }
     }
@@ -892,8 +896,8 @@ public class ConfigSystem implements Config {
             return;
         }
 
-        XMLObjectReader xmlReader = null;
         lock.writeLock().lock();
+        XMLObjectReader xmlReader = null;
         try {
             xmlReader =
                     XMLObjectReader.newInstance(new GZIPInputStream(
@@ -914,16 +918,12 @@ public class ConfigSystem implements Config {
             }
         } catch (@Nonnull final FileNotFoundException e) {
             LOGGER.warn("Configuration not loaded: config file disappeared.");
-            return;
         } catch (@Nonnull final ClassCastException e) {
             LOGGER.error("Configuration not loaded: illegal config data.");
-            return;
         } catch (@Nonnull final XMLStreamException e) {
             LOGGER.error("Configuration not loaded: config file invalid.");
-            return;
         } catch (@Nonnull final IOException e) {
             LOGGER.error("Configuration not loaded: error accessing the file system.");
-            return;
         } finally {
             if (xmlReader != null) {
                 try {
@@ -932,7 +932,6 @@ public class ConfigSystem implements Config {
                     LOGGER.error("Error while closing the config file reader",
                             e);
                 }
-                xmlReader = null;
             }
             lock.writeLock().unlock();
         }

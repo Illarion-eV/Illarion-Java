@@ -286,7 +286,7 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
         miniMapPanel = screen.findElementById("miniMapPanel");
 
         miniMapPanel.findElementById("miniMapImage").getRenderer(ImageRenderer.class).setImage(
-                new NiftyImage(nifty.getRenderEngine(), World.getMap().getMinimap().getMiniMap()));
+                new NiftyImage(nifty.getRenderEngine(), World.getMap().getMiniMap().getMiniMap()));
     }
 
     @Override

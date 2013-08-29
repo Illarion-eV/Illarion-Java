@@ -26,7 +26,10 @@ import illarion.mapedit.data.Map;
  */
 public interface Decoder {
 
+
     void newMap(String name, String path);
+
+    void decodeAnnoLine(String line, int i) throws FormatCorruptedException;
 
     void decodeItemLine(String line, int i) throws FormatCorruptedException;
 

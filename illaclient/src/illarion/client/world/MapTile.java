@@ -18,10 +18,7 @@
  */
 package illarion.client.world;
 
-import illarion.client.graphics.AlphaChangeListener;
-import illarion.client.graphics.Effect;
-import illarion.client.graphics.Item;
-import illarion.client.graphics.Tile;
+import illarion.client.graphics.*;
 import illarion.client.net.server.TileUpdate;
 import illarion.client.world.interactive.InteractiveMapTile;
 import illarion.common.graphics.Layers;
@@ -72,6 +69,11 @@ public final class MapTile implements AlphaChangeListener {
      * Index of the tile with the highest elevation in the item array.
      */
     private int elevationIndex;
+
+    /**
+     * This value contains the value the quest marker is elevated by.
+     */
+    private int questMarkerElevation;
 
     /**
      * List of items on the tile.
@@ -177,6 +179,10 @@ public final class MapTile implements AlphaChangeListener {
         } finally {
             itemsLock.readLock().unlock();
         }
+    }
+
+    public int getQuestMarkerElevation() {
+        return questMarkerElevation;
     }
 
     public void setObstructingTile(@Nonnull final MapTile tile) {
@@ -518,6 +524,8 @@ public final class MapTile implements AlphaChangeListener {
      * needed.
      */
     private void itemChanged() {
+        updateQuestMarkerElevation();
+
         // invalidate LOS data
         losDirty = true;
         // report a change of shadow
@@ -527,13 +535,36 @@ public final class MapTile implements AlphaChangeListener {
     }
 
     /**
+     * Update the elevation of the quest markers. This needs to be called when ever the items or the character on
+     * this tile change.
+     */
+    public void updateQuestMarkerElevation() {
+        final Char character = World.getPeople().getCharacterAt(tileLocation);
+        @Nullable final Avatar avatar;
+        if ((character == null) || !character.isVisible()) {
+            avatar = null;
+        } else {
+            avatar = character.getAvatar();
+        }
+
+        questMarkerElevation = elevation;
+        if (avatar == null) {
+            final Item topItem = getTopItem();
+            if (topItem != null) {
+                questMarkerElevation += Math.round(topItem.getTemplate().getSprite().getHeight() * topItem.getScale());
+            }
+        } else {
+            questMarkerElevation += Math.round(avatar.getTemplate().getSprite().getHeight() * avatar.getScale());
+        }
+    }
+
+    /**
      * Determine whether the top item is a light source and needs to be registered. Also removes previous or changed
      * light sources.
      */
     private void checkLight() {
-        int newLightValue = 0;
-
         itemsLock.readLock().lock();
+        int newLightValue = 0;
         try {
             if (items != null) {
                 for (final Item item : items) {

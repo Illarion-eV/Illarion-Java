@@ -135,7 +135,7 @@ public final class InputReceiver implements InputListener {
     /**
      * The key mapper stores the keep-action assignments of the client.
      */
-    private final KeyMapper keyMapper = new KeyMapper();
+    private final KeyMapper keyMapper;
 
     /**
      * The instance of the button multi-click helper that is used in this instance of the input receiver.
@@ -166,6 +166,7 @@ public final class InputReceiver implements InputListener {
     public InputReceiver(final Input input) {
         this.input = input;
         enabled = false;
+        keyMapper = new KeyMapper(input);
     }
 
     /**
@@ -180,13 +181,15 @@ public final class InputReceiver implements InputListener {
     @Override
     public void keyDown(@Nonnull final Key key) {
         if (enabled) {
-            keyMapper.handleKeyInput(key);
+            keyMapper.handleKeyPressedInput(key);
         }
     }
 
     @Override
     public void keyUp(@Nonnull final Key key) {
-        // nothing
+        if (enabled) {
+            keyMapper.handleKeyReleasedInput(key);
+        }
     }
 
     @Override

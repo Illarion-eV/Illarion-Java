@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.procedure.TLongObjectProcedure;
 import gnu.trove.procedure.TObjectProcedure;
 import illarion.client.crash.MapProcessorCrashHandler;
+import illarion.client.graphics.QuestMarker;
 import illarion.client.net.server.TileUpdate;
 import illarion.client.world.interactive.InteractiveMap;
 import illarion.common.graphics.ItemInfo;
@@ -38,6 +39,9 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -176,7 +180,7 @@ public final class GameMap implements LightingMap, Stoppable {
      * The handler for the overview map.
      */
     @Nonnull
-    private final GameMiniMap minimap;
+    private final GameMiniMap miniMap;
 
     /**
      * The map processor of this game map instance. This one handles the clipping and the render optimization of the
@@ -205,6 +209,12 @@ public final class GameMap implements LightingMap, Stoppable {
     private final TLongObjectHashMap<MapTile> tiles;
 
     /**
+     * This is the list of active quest markers.
+     */
+    @Nonnull
+    private final Map<Location, QuestMarker> activeQuestMarkers;
+
+    /**
      * Default constructor of the map handler.
      */
     public GameMap(@Nonnull final Engine engine) throws EngineException {
@@ -212,12 +222,54 @@ public final class GameMap implements LightingMap, Stoppable {
         tiles.setAutoCompactionFactor(MAP_COMPACTION_FACTOR);
         interactive = new InteractiveMap(this);
 
+        activeQuestMarkers = new HashMap<Location, QuestMarker>();
+
         mapLock = new ReentrantReadWriteLock();
 
-        minimap = new GameMiniMap(engine);
+        miniMap = new GameMiniMap(engine);
         restartMapProcessor();
 
         StoppableStorage.getInstance().add(this);
+    }
+
+    public void applyQuestMarkerLocations(@Nonnull final Collection<Location> available,
+                                          @Nonnull final Collection<Location> availableSoon) {
+        final Collection<Location> currentMarkers = new HashSet<Location>(activeQuestMarkers.keySet());
+
+        for (int i = 0; i < 2; i++) {
+            final QuestMarker.QuestMarkerAvailability availability;
+            final Collection<Location> collection;
+            switch (i) {
+                case 0:
+                    availability = QuestMarker.QuestMarkerAvailability.Available;
+                    collection = available;
+                    break;
+                case 1:
+                    availability = QuestMarker.QuestMarkerAvailability.AvailableSoon;
+                    collection = availableSoon;
+                    break;
+                default:
+                    continue;
+            }
+            for (@Nonnull final Location markerLocation : collection) {
+                if (currentMarkers.contains(markerLocation)) {
+                    activeQuestMarkers.get(markerLocation).setAvailability(availability);
+                    currentMarkers.remove(markerLocation);
+                } else {
+                    final MapTile tile = getMapAt(markerLocation);
+                    if (tile != null) {
+                        final QuestMarker newMarker = new QuestMarker(QuestMarker.QuestMarkerType.Start, tile);
+                        newMarker.setAvailability(availability);
+                        activeQuestMarkers.put(markerLocation, newMarker);
+                        newMarker.show();
+                    }
+                }
+            }
+        }
+
+        for (@Nonnull final Location markerLocation : currentMarkers) {
+            activeQuestMarkers.remove(markerLocation).hide();
+        }
     }
 
     /**
@@ -277,8 +329,7 @@ public final class GameMap implements LightingMap, Stoppable {
     }
 
     /**
-     * Clear the entire map. That will cause that all tiles are recycled and
-     * send back into the recycle factory.
+     * Clear the entire map. This will cause all the tiles and items to be removed. It does not touch the characters.
      */
     public void clear() {
         mapLock.writeLock().lock();
@@ -288,7 +339,15 @@ public final class GameMap implements LightingMap, Stoppable {
         } finally {
             mapLock.writeLock().unlock();
         }
-        World.getLights().clear();
+    }
+
+    /**
+     * Check if the map is currently empty.
+     *
+     * @return {@code true} in case the map is empty
+     */
+    public boolean isEmpty() {
+        return tiles.isEmpty();
     }
 
     /**
@@ -370,8 +429,8 @@ public final class GameMap implements LightingMap, Stoppable {
      * @return the object that handles the overview map
      */
     @Nonnull
-    public GameMiniMap getMinimap() {
-        return minimap;
+    public GameMiniMap getMiniMap() {
+        return miniMap;
     }
 
     /**
@@ -559,6 +618,37 @@ public final class GameMap implements LightingMap, Stoppable {
     }
 
     /**
+     * This function sends all tiles to the map processor and causes it to check the tiles again.
+     */
+    public void updateAllTiles() {
+        if (processor != null) {
+            mapLock.readLock().lock();
+            try {
+                tiles.forEachValue(new TObjectProcedure<MapTile>() {
+                    @Override
+                    public boolean execute(final MapTile object) {
+                        updateTile(object);
+                        return true;
+                    }
+                });
+            } finally {
+                mapLock.readLock().unlock();
+            }
+        }
+    }
+
+    public void updateTiles(@Nonnull final Collection<TileUpdate> updateDataList) {
+        mapLock.writeLock().lock();
+        try {
+            for (@Nonnull final TileUpdate updateData : updateDataList) {
+                updateTile(updateData);
+            }
+        } finally {
+            mapLock.writeLock().unlock();
+        }
+    }
+
+    /**
      * Perform a update of a single map tile regarding the update information. This can add a new tile,
      * update a old one or delete one tile.
      *
@@ -594,15 +684,10 @@ public final class GameMap implements LightingMap, Stoppable {
             if (newTile) {
                 mapLock.writeLock().lock();
                 try {
-                    try {
-                        tiles.put(locKey, tile);
-                    } finally {
-                        mapLock.readLock().lock();
-                        mapLock.writeLock().unlock();
-                    }
+                    tiles.put(locKey, tile);
                     GameMapProcessor2.processTile(tile);
                 } finally {
-                    mapLock.readLock().unlock();
+                    mapLock.writeLock().unlock();
                 }
             }
             World.getLights().notifyChange(updateData.getLocation());
@@ -618,5 +703,6 @@ public final class GameMap implements LightingMap, Stoppable {
                 World.getMusicBox().updatePlayerLocation();
             }
         }
+        miniMap.update(updateData);
     }
 }
