@@ -19,9 +19,10 @@
 package illarion.mapedit.gui;
 
 import illarion.mapedit.Lang;
+import illarion.mapedit.events.menu.MapLoadErrorEvent;
 import illarion.mapedit.events.menu.MapNewEvent;
-import illarion.mapedit.events.menu.MapOpenEvent;
 import illarion.mapedit.events.menu.MapSaveEvent;
+import illarion.mapedit.events.menu.SetFolderEvent;
 import illarion.mapedit.resource.loaders.ImageLoader;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
@@ -32,6 +33,8 @@ import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntryPrimary;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * This class represents the main menu.
@@ -51,7 +54,16 @@ public class MainMenu extends RibbonApplicationMenu {
                         new ActionListener() {
                             @Override
                             public void actionPerformed(final ActionEvent e) {
-                                EventBus.publish(new MapOpenEvent());
+                                File file = null;
+                                try {
+                                    file = MapDialogs.showSetFolderDialog();
+                                } catch (IOException ex) {
+                                    LOGGER.warn("Can't set folder", ex);
+                                    EventBus.publish(new MapLoadErrorEvent(Lang.getMsg("gui.error.LoadMap")));
+                                }
+                                if (file != null) {
+                                    EventBus.publish(new SetFolderEvent(file));
+                                }
                             }
                         }, JCommandButton.CommandButtonKind.ACTION_ONLY);
         final RibbonApplicationMenuEntryPrimary menuNewMap =

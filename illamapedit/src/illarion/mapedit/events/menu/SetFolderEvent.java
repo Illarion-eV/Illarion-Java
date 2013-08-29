@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Mapeditor.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Mapeditor is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,33 +18,20 @@
  */
 package illarion.mapedit.events.menu;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.File;
 
 /**
- * @author Tim
+ * @author Fredrik K
  */
-public class MapOpenEvent {
+public class SetFolderEvent {
+    private File file;
 
-    @Nonnull
-    private final String path;
-    private final String name;
-
-    public MapOpenEvent(@Nonnull final String path, final String name) {
-        this.path = path;
-        this.name = name;
+    public SetFolderEvent(@Nullable final File file) {
+        this.file = file;
     }
 
-    @Nonnull
-    public String getPath() {
-        return path;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String toString() {
-        return name;
+    public File getFile() {
+        return file;
     }
 }
