@@ -77,7 +77,7 @@ public class PlayingState implements GameState {
 
     @Override
     public void render(@Nonnull final GameContainer container) {
-        World.getMap().getMinimap().render(container);
+        World.getMap().getMiniMap().render(container);
         World.getMapDisplay().render(container);
     }
 

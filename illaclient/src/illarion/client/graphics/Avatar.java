@@ -27,6 +27,7 @@ import illarion.client.resources.data.AvatarTemplate;
 import illarion.client.util.Lang;
 import illarion.client.world.Char;
 import illarion.client.world.World;
+import illarion.common.graphics.Layers;
 import org.apache.log4j.Logger;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
@@ -428,6 +429,10 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
     public void setScale(final float newScale) {
         super.setScale(newScale);
         clothRender.setScale(newScale);
+    }
+
+    public void setScreenPos(final int posX, final int posY, final int layerZ) {
+        setScreenPos(posX, posY, layerZ, Layers.CHARS);
     }
 
     @Override

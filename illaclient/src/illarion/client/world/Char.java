@@ -493,6 +493,11 @@ public final class Char implements AnimatedMove {
         if (oldAvatar != null) {
             oldAvatar.markAsRemoved();
         }
+
+        final MapTile tile = World.getMap().getMapAt(charLocation);
+        if (tile != null) {
+            tile.updateQuestMarkerElevation();
+        }
     }
 
     /**
@@ -579,7 +584,7 @@ public final class Char implements AnimatedMove {
             return;
         }
         if (avatar != null) {
-            avatar.setScreenPos(charLocation.getDcX() + dX, (charLocation.getDcY() + dY) - fix, charLocation.getDcZ() + dZ, Layers.CHARS);
+            avatar.setScreenPos(charLocation.getDcX() + dX, (charLocation.getDcY() + dY) - fix, charLocation.getDcZ() + dZ);
         }
     }
 
@@ -881,46 +886,54 @@ public final class Char implements AnimatedMove {
 
         // determine general visibility by players
         setVisible(World.getPlayer().canSee(this));
-        if (!visible || (avatar == null)) {
-            return;
-        }
+        if (visible && (avatar != null)) {
+            // calculate movement direction
+            final int dir = tempLoc.getDirection(charLocation);
 
-        // calculate movement direction
-        final int dir = tempLoc.getDirection(charLocation);
-
-        // turn only when animating, not when pushed
-        if ((mode != CharMovementMode.Push) && (dir != Location.DIR_ZERO)) {
-            setDirection(dir);
-        }
-
-        // find target elevation
-        final int fromElevation = elevation;
-        elevation = World.getMap().getElevationAt(charLocation);
-
-        int range = 1;
-        if (mode == CharMovementMode.Run) {
-            range = 2;
-        }
-
-        // start animations only if reasonable distance
-        if ((charLocation.getDistance(tempLoc) <= range) && (speed > 0) && (dir != Location.DIR_ZERO) && (mode != CharMovementMode.Push)) {
-            if (mode == CharMovementMode.Walk) {
-                startAnimation(CharAnimations.WALK, speed);
-            } else if (mode == CharMovementMode.Run) {
-                startAnimation(CharAnimations.RUN, speed);
+            // turn only when animating, not when pushed
+            if ((mode != CharMovementMode.Push) && (dir != Location.DIR_ZERO)) {
+                setDirection(dir);
             }
-            move.start(tempLoc.getDcX() - charLocation.getDcX(), tempLoc.getDcY() - fromElevation - charLocation.getDcY(), 0, 0,
-                    -elevation, 0, speed);
-        } else {
-            // reset last animation result
-            dX = 0;
-            dY = 0;
-            dZ = 0;
-            updatePosition(elevation);
-        }
-        updateLight(LIGHT_SOFT);
 
-        EventBus.publish(new CharMoveEvent(characterId, charLocation));
+            // find target elevation
+            final int fromElevation = elevation;
+            elevation = World.getMap().getElevationAt(charLocation);
+
+            int range = 1;
+            if (mode == CharMovementMode.Run) {
+                range = 2;
+            }
+
+            // start animations only if reasonable distance
+            if ((charLocation.getDistance(tempLoc) <= range) && (speed > 0) && (dir != Location.DIR_ZERO) && (mode != CharMovementMode.Push)) {
+                if (mode == CharMovementMode.Walk) {
+                    startAnimation(CharAnimations.WALK, speed);
+                } else if (mode == CharMovementMode.Run) {
+                    startAnimation(CharAnimations.RUN, speed);
+                }
+                move.start(tempLoc.getDcX() - charLocation.getDcX(), tempLoc.getDcY() - fromElevation - charLocation.getDcY(), 0, 0,
+                        -elevation, 0, speed);
+            } else {
+                // reset last animation result
+                dX = 0;
+                dY = 0;
+                dZ = 0;
+                updatePosition(elevation);
+            }
+            updateLight(LIGHT_SOFT);
+
+            EventBus.publish(new CharMoveEvent(characterId, charLocation));
+        }
+
+        final MapTile oldTile = World.getMap().getMapAt(tempLoc);
+        if (oldTile != null) {
+            oldTile.updateQuestMarkerElevation();
+        }
+
+        final MapTile newTile = World.getMap().getMapAt(charLocation);
+        if (newTile != null) {
+            newTile.updateQuestMarkerElevation();
+        }
     }
 
     /**

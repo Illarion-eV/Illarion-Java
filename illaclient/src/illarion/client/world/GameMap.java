@@ -22,6 +22,7 @@ import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.procedure.TLongObjectProcedure;
 import gnu.trove.procedure.TObjectProcedure;
 import illarion.client.crash.MapProcessorCrashHandler;
+import illarion.client.graphics.QuestMarker;
 import illarion.client.net.server.TileUpdate;
 import illarion.client.world.interactive.InteractiveMap;
 import illarion.common.graphics.ItemInfo;
@@ -37,7 +38,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
-import java.util.Collection;
+import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -176,7 +177,7 @@ public final class GameMap implements LightingMap, Stoppable {
      * The handler for the overview map.
      */
     @Nonnull
-    private final GameMiniMap minimap;
+    private final GameMiniMap miniMap;
 
     /**
      * The map processor of this game map instance. This one handles the clipping and the render optimization of the
@@ -205,6 +206,12 @@ public final class GameMap implements LightingMap, Stoppable {
     private final TLongObjectHashMap<MapTile> tiles;
 
     /**
+     * This is the list of active quest markers.
+     */
+    @Nonnull
+    private final Map<Location, QuestMarker> activeQuestMarkers;
+
+    /**
      * Default constructor of the map handler.
      */
     public GameMap(@Nonnull final Engine engine) throws EngineException {
@@ -212,12 +219,54 @@ public final class GameMap implements LightingMap, Stoppable {
         tiles.setAutoCompactionFactor(MAP_COMPACTION_FACTOR);
         interactive = new InteractiveMap(this);
 
+        activeQuestMarkers = new HashMap<Location, QuestMarker>();
+
         mapLock = new ReentrantReadWriteLock();
 
-        minimap = new GameMiniMap(engine);
+        miniMap = new GameMiniMap(engine);
         restartMapProcessor();
 
         StoppableStorage.getInstance().add(this);
+    }
+
+    public void applyQuestMarkerLocations(@Nonnull final Collection<Location> available,
+                                          @Nonnull final Collection<Location> availableSoon) {
+        final Collection<Location> currentMarkers = new HashSet<Location>(activeQuestMarkers.keySet());
+
+        for (int i = 0; i < 2; i++) {
+            final QuestMarker.QuestMarkerAvailability availability;
+            final Collection<Location> collection;
+            switch (i) {
+                case 0:
+                    availability = QuestMarker.QuestMarkerAvailability.Available;
+                    collection = available;
+                    break;
+                case 1:
+                    availability = QuestMarker.QuestMarkerAvailability.AvailableSoon;
+                    collection = availableSoon;
+                    break;
+                default:
+                    continue;
+            }
+            for (@Nonnull final Location markerLocation : collection) {
+                if (currentMarkers.contains(markerLocation)) {
+                    activeQuestMarkers.get(markerLocation).setAvailability(availability);
+                    currentMarkers.remove(markerLocation);
+                } else {
+                    final MapTile tile = getMapAt(markerLocation);
+                    if (tile != null) {
+                        final QuestMarker newMarker = new QuestMarker(tile);
+                        newMarker.setAvailability(availability);
+                        activeQuestMarkers.put(markerLocation, newMarker);
+                        newMarker.show();
+                    }
+                }
+            }
+        }
+
+        for (@Nonnull final Location markerLocation : currentMarkers) {
+            activeQuestMarkers.remove(markerLocation).hide();
+        }
     }
 
     /**
@@ -377,8 +426,8 @@ public final class GameMap implements LightingMap, Stoppable {
      * @return the object that handles the overview map
      */
     @Nonnull
-    public GameMiniMap getMinimap() {
-        return minimap;
+    public GameMiniMap getMiniMap() {
+        return miniMap;
     }
 
     /**
@@ -651,6 +700,6 @@ public final class GameMap implements LightingMap, Stoppable {
                 World.getMusicBox().updatePlayerLocation();
             }
         }
-        minimap.update(updateData);
+        miniMap.update(updateData);
     }
 }

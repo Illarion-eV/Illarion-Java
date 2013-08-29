@@ -43,6 +43,11 @@ public final class Layers {
     public static final int EFFECTS = 321;
 
     /**
+     * The overlay layer. All elements belonging to this are rendered last on a tile.
+     */
+    public static final int OVERLAYS = 322;
+
+    /**
      * The item layer. Means all object in the game are rendered with this layer.
      */
     public static final int ITEM = 302;

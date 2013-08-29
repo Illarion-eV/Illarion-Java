@@ -44,6 +44,12 @@ public final class MiscImageFactory extends AbstractTemplateFactory<MiscImageTem
     public static final int MINI_MAP_POINT = 2;
 
     /**
+     * The ID of the quest marker graphic that is rendered on the game map to mark where the player is able to start
+     * a quest.
+     */
+    public static final int QUEST_MARKER_QUESTIONMARK = 3;
+
+    /**
      * The singleton instance.
      */
     private static final MiscImageFactory INSTANCE = new MiscImageFactory();

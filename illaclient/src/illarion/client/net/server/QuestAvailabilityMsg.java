@@ -20,11 +20,15 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
+import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.Location;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * This is the server message that handles the server messages about the available quests in range of the player.
@@ -66,7 +70,10 @@ public class QuestAvailabilityMsg extends AbstractReply {
 
     @Override
     public boolean executeUpdate() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        final Collection<Location> available = (availableQuests == null) ? Collections.<Location>emptyList() : Arrays.asList(availableQuests);
+        final Collection<Location> availableSoon = (availableSoonQuests == null) ? Collections.<Location>emptyList() : Arrays.asList(availableSoonQuests);
+        World.getMap().applyQuestMarkerLocations(available, availableSoon);
+        return true;
     }
 
     @Override

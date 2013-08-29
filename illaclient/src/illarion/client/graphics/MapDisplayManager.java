@@ -223,7 +223,7 @@ public final class MapDisplayManager
      * @param av
      */
     public void glueAvatarToOrigin(@Nonnull final Avatar av) {
-        av.setScreenPos(origin.getDcX() - dX, (origin.getDcY() - dY) + dL, origin.getDcZ(), Layers.CHARS);
+        av.setScreenPos(origin.getDcX() - dX, (origin.getDcY() - dY) + dL, origin.getDcZ());
     }
 
     public boolean isActive() {
@@ -363,7 +363,7 @@ public final class MapDisplayManager
         dY = 0;
         dL = -elevation;
 
-        World.getMap().getMinimap().setPlayerLocation(location);
+        World.getMap().getMiniMap().setPlayerLocation(location);
     }
 
     /**
