@@ -16,13 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.gui;
+package illarion.mapedit.gui.menubands;
 
 import illarion.mapedit.Lang;
 import illarion.mapedit.events.ClipboardCopyEvent;
 import illarion.mapedit.events.ClipboardCutEvent;
 import illarion.mapedit.events.ClipboardPasteEvent;
 import illarion.mapedit.events.DidPasteEvent;
+import illarion.mapedit.gui.MainFrame;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -52,7 +53,7 @@ public class ClipboardBand extends JRibbonBand {
     public ClipboardBand() {
         super(Lang.getMsg("gui.clipboardband.Name"), null);
         AnnotationProcessor.process(this);
-        final JCommandButton copy = MainFrame.getCommandButton("gui.clipboardband.Copy","editcopy", KeyEvent.VK_C, "Copy");
+        final JCommandButton copy = MainFrame.getCommandButton("gui.clipboardband.Copy", "editcopy", KeyEvent.VK_C, "Copy");
         paste = MainFrame.getToggleButton("gui.clipboardband.Paste","editpaste", KeyEvent.VK_V, "Paste");
         final JCommandButton cut = MainFrame.getCommandButton("gui.clipboardband.Cut","editcut", KeyEvent.VK_X, "Cut");
 

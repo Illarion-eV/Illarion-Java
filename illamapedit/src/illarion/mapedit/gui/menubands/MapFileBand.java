@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.mapedit.gui;
+package illarion.mapedit.gui.menubands;
 
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.MapIO;
@@ -24,6 +24,7 @@ import illarion.mapedit.events.GlobalActionEvents;
 import illarion.mapedit.events.UpdateMapListEvent;
 import illarion.mapedit.events.menu.MapOpenEvent;
 import illarion.mapedit.events.menu.MapSelectedEvent;
+import illarion.mapedit.gui.MapEditorConfig;
 import illarion.mapedit.gui.util.MapComboBoxModel;
 import illarion.mapedit.resource.loaders.ImageLoader;
 import javolution.util.FastList;
