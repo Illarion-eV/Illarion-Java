@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +85,11 @@ public final class MiscImageLoader extends AbstractResourceLoader<MiscImageTempl
 
         final Sprite questMarker1 = sf.createSprite(getTextures(tm, GUI_PATH, "question_mark", 1), 0, 0,
                 SpriteFactory.CENTER, SpriteFactory.BOTTOM, false);
-        tf.storeResource(new MiscImageTemplate(MiscImageFactory.QUEST_MARKER_QUESTIONMARK, questMarker1, 1));
+        tf.storeResource(new MiscImageTemplate(MiscImageFactory.QUEST_MARKER_QUESTION_MARK, questMarker1, 1));
+
+        final Sprite questMarker2 = sf.createSprite(getTextures(tm, GUI_PATH, "exclamation_mark", 1), 0, 0,
+                SpriteFactory.CENTER, SpriteFactory.BOTTOM, false);
+        tf.storeResource(new MiscImageTemplate(MiscImageFactory.QUEST_MARKER_EXCLAMATION_MARK, questMarker2, 1));
 
         factory.loadingFinished();
 

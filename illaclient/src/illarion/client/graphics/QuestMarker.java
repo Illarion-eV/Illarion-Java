@@ -1,10 +1,26 @@
+/*
+ * This file is part of the Illarion Client.
+ *
+ * Copyright © 2013 - Illarion e.V.
+ *
+ * The Illarion Client is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Client is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package illarion.client.graphics;
 
 import illarion.client.resources.MiscImageFactory;
 import illarion.client.resources.data.MiscImageTemplate;
-import illarion.client.world.Char;
 import illarion.client.world.MapTile;
-import illarion.client.world.World;
 import illarion.common.graphics.Layers;
 import illarion.common.types.Location;
 import org.illarion.engine.GameContainer;
@@ -12,7 +28,6 @@ import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.ImmutableColor;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -26,6 +41,12 @@ public class QuestMarker extends AbstractEntity<MiscImageTemplate> {
         Available,
         AvailableSoon
     }
+
+    public enum QuestMarkerType {
+        Start,
+        Target
+    }
+
     /**
      * The tile this marker is displayed on.
      */
@@ -57,16 +78,33 @@ public class QuestMarker extends AbstractEntity<MiscImageTemplate> {
     /**
      * Create a new quest marker with the default image and with the reference to the tile its displayed on.
      *
+     * @param type       the type of quest marker that is supposed to be created
      * @param parentTile the parent tile
      */
-    public QuestMarker(@Nonnull final MapTile parentTile) {
-        this(MiscImageFactory.getInstance().getTemplate(MiscImageFactory.QUEST_MARKER_QUESTIONMARK), parentTile);
+    public QuestMarker(@Nonnull final QuestMarkerType type, @Nonnull final MapTile parentTile) {
+        this(getTemplateForType(type), parentTile);
+    }
+
+    @Nonnull
+    private static MiscImageTemplate getTemplateForType(@Nonnull final QuestMarkerType type) {
+        final int templateId;
+        switch (type) {
+            case Start:
+                templateId = MiscImageFactory.QUEST_MARKER_EXCLAMATION_MARK;
+                break;
+            case Target:
+                templateId = MiscImageFactory.QUEST_MARKER_QUESTION_MARK;
+                break;
+            default:
+                throw new IllegalArgumentException("type has illegal value");
+        }
+        return MiscImageFactory.getInstance().getTemplate(templateId);
     }
 
     /**
      * Create a new quest marker with the required image and with the reference to the tile its displayed on.
      *
-     * @param template the image template
+     * @param template   the image template
      * @param parentTile the parent tile
      */
     public QuestMarker(@Nonnull final MiscImageTemplate template, @Nonnull final MapTile parentTile) {

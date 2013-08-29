@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -255,7 +258,7 @@ public final class GameMap implements LightingMap, Stoppable {
                 } else {
                     final MapTile tile = getMapAt(markerLocation);
                     if (tile != null) {
-                        final QuestMarker newMarker = new QuestMarker(tile);
+                        final QuestMarker newMarker = new QuestMarker(QuestMarker.QuestMarkerType.Start, tile);
                         newMarker.setAvailability(availability);
                         activeQuestMarkers.put(markerLocation, newMarker);
                         newMarker.show();
