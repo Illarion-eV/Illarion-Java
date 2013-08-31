@@ -199,6 +199,10 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
     public boolean isEventProcessed(@Nonnull final GameContainer container, final int delta,
                                     @Nonnull final SceneEvent event) {
         if (event instanceof PointOnMapEvent) {
+            if (!isVisible()) {
+                return false;
+            }
+
             final PointOnMapEvent pointEvent = (PointOnMapEvent) event;
             if (isMouseInInteractionRect(pointEvent.getX(), pointEvent.getY())) {
                 return true;
