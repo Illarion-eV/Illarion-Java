@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,6 @@ import illarion.client.world.events.CharMoveEvent;
 import illarion.client.world.events.CharVisibilityEvent;
 import illarion.client.world.interactive.InteractiveChar;
 import illarion.common.graphics.CharAnimations;
-import illarion.common.graphics.Layers;
 import illarion.common.types.CharacterId;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
@@ -972,6 +971,11 @@ public final class Char implements AnimatedMove {
                 updateLight(LIGHT_SET);
                 if (avatar != null) {
                     avatar.setAlphaTarget(VISIBILITY_ALPHA_MOD * visibility);
+                }
+
+                final MapTile tile = World.getMap().getMapAt(charLocation);
+                if (tile != null) {
+                    tile.updateQuestMarkerElevation();
                 }
             } else if (avatar != null) {
                 avatar.setAlphaTarget(0);
