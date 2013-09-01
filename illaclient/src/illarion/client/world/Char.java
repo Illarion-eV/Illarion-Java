@@ -972,13 +972,13 @@ public final class Char implements AnimatedMove {
                 if (avatar != null) {
                     avatar.setAlphaTarget(VISIBILITY_ALPHA_MOD * visibility);
                 }
-
-                final MapTile tile = World.getMap().getMapAt(charLocation);
-                if (tile != null) {
-                    tile.updateQuestMarkerElevation();
-                }
             } else if (avatar != null) {
                 avatar.setAlphaTarget(0);
+            }
+
+            final MapTile tile = World.getMap().getMapAt(charLocation);
+            if (tile != null) {
+                tile.updateQuestMarkerElevation();
             }
 
             EventBus.publish(new CharVisibilityEvent(characterId, visibility));
