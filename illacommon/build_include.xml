@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   ~ This file is part of the Illarion Common Library.
   ~
-  ~ Copyright © 2012 - Illarion e.V.
+  ~ Copyright © 2013 - Illarion e.V.
   ~
   ~ The Illarion Common Library is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -197,7 +197,7 @@
 
     <!-- Mantis Connect 1.1.1 -->
     <patternset id="mantisconnect.pattern">
-        <include name="mantisconnect-client-api-1.1.1.1.jar"/>
+        <include name="mantisconnect-client-api-1.1.2.0.jar"/>
     </patternset>
     <fileset id="mantisconnect" dir="${common}/lib/mantisconnect">
         <patternset refid="mantisconnect.pattern"/>
