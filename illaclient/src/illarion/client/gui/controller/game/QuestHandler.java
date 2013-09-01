@@ -304,9 +304,9 @@ public final class QuestHandler implements QuestGui, ScreenController {
     @NiftyEventSubscriber(id = "questLog#questList")
     public void onSelectedQuestChanged(@Nonnull final String topic,
                                        @Nonnull final ListBoxSelectionChangedEvent<QuestEntry> event) {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
+        getDescriptionArea().hide(new EndNotify() {
             @Override
-            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+            public void perform() {
                 updateDisplayedQuest();
             }
         });
@@ -375,6 +375,8 @@ public final class QuestHandler implements QuestGui, ScreenController {
             miniMapGui.addPointer(newPointer);
             activePointers.add(newPointer);
         }
+
+        descriptionArea.show();
     }
 
     /**
@@ -383,7 +385,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
      * @return the element of the description area
      */
     private Element getDescriptionArea() {
-        return questWindow.getElement().findElementByName("#questDescription");
+        return questWindow.getElement().findElementById("#questDescription");
     }
 
     /**
