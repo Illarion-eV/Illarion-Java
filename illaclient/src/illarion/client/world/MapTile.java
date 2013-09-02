@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ import illarion.common.types.Location;
 import org.apache.log4j.Logger;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.LightSource;
+import org.illarion.engine.graphic.Sprite;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -550,8 +551,14 @@ public final class MapTile implements AlphaChangeListener {
         questMarkerElevation = elevation;
         if (avatar == null) {
             final Item topItem = getTopItem();
+            if (elevationIndex == 0) {
+                questMarkerElevation = 0;
+            }
             if (topItem != null) {
-                questMarkerElevation += Math.round(topItem.getTemplate().getSprite().getHeight() * topItem.getScale());
+                final Sprite topItemSprite = topItem.getTemplate().getSprite();
+
+                questMarkerElevation += Math.round((topItemSprite.getOffsetY() + topItemSprite.getHeight())
+                        * topItem.getScale());
             }
         } else {
             questMarkerElevation += Math.round(avatar.getTemplate().getSprite().getHeight() * avatar.getScale());
@@ -988,6 +995,7 @@ public final class MapTile implements AlphaChangeListener {
                 itemsLock.readLock().unlock();
             }
         }
+        itemChanged();
     }
 
     /**

@@ -114,23 +114,47 @@ public class QuestMarker extends AbstractEntity<MiscImageTemplate> {
         setBaseColor(null);
         setFadingCorridorEffectEnabled(false);
         availability = QuestMarkerAvailability.AvailableSoon;
+    }
 
-        updateScreenPosition();
+    @Override
+    public int getAlpha() {
+        final Tile parentTileGraphic = parentTile.getTile();
+        if (parentTileGraphic == null) {
+            return 0;
+        }
+        return parentTileGraphic.getAlpha();
+    }
+
+    @Override
+    public void show() {
+        appliedOffset = parentTile.getQuestMarkerElevation();
+        final Location loc = parentTile.getLocation();
+        setScreenPos(loc.getDcX(), loc.getDcY() - appliedOffset, loc.getDcZ(), Layers.OVERLAYS);
+
+        super.show();
     }
 
     /**
      * This function is used to update the location of the quest marker on the display.
      */
-    private void updateScreenPosition() {
-        appliedOffset = parentTile.getQuestMarkerElevation();
+    private void updateScreenPosition(final int delta) {
+        appliedOffset = AnimationUtility.approach(appliedOffset, parentTile.getQuestMarkerElevation(), 0, 300, delta);
         final Location loc = parentTile.getLocation();
-        setScreenPos(loc.getDcX(), loc.getDcY() - appliedOffset, loc.getDcZ(), Layers.OVERLAYS);
+        setScreenPos(loc.getDcX(), loc.getDcY(), loc.getDcZ());
+    }
+
+    public void setScreenPos(final int dispX, final int dispY, final int zLayer) {
+        setScreenPos(dispX, dispY, zLayer, Layers.OVERLAYS);
+    }
+
+    public void setScreenPos(final int dispX, final int dispY, final int zLayer, final int typeLayer) {
+        super.setScreenPos(dispX, dispY - appliedOffset, zLayer, typeLayer);
     }
 
     @Override
     public void update(@Nonnull final GameContainer container, final int delta) {
         if (appliedOffset != parentTile.getQuestMarkerElevation()) {
-            updateScreenPosition();
+            updateScreenPosition(delta);
         }
         super.update(container, delta);
     }
