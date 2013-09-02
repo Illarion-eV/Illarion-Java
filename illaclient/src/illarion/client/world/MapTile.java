@@ -936,7 +936,7 @@ public final class MapTile implements AlphaChangeListener {
         // get a new tile to display
         if (id >= 0) {
             // create a tile, possibly with variants
-            tile = Tile.create(id, tileLocation, this);
+            tile = new Tile(id, this);
 
             tile.addAlphaChangeListener(this);
             tile.setScreenPos(tileLocation, Layers.TILE);

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ import org.illarion.engine.EngineException;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.*;
 import org.illarion.engine.graphic.effects.HighlightEffect;
+import org.illarion.engine.graphic.effects.TextureEffect;
 import org.illarion.engine.input.Input;
 
 import javax.annotation.Nonnull;
@@ -289,11 +290,15 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
             } else {
                 highlightEffect.setHighlightColor(COLOR_HIGHLIGHT_STRONG);
             }
-            g.drawSprite(template.getSprite(), renderLocX, renderLocY, renderLight, currentFrame, scale, 0.f,
-                    highlightEffect);
+            renderSprite(g, renderLocX, renderLocY, renderLight, highlightEffect);
         } else {
-            g.drawSprite(template.getSprite(), renderLocX, renderLocY, renderLight, currentFrame, scale, 0.f);
+            renderSprite(g, renderLocX, renderLocY, renderLight);
         }
+    }
+
+    protected void renderSprite(@Nonnull final Graphics g, final int x, final int y, @Nonnull final Color light,
+                                @Nonnull final TextureEffect... effects) {
+        g.drawSprite(template.getSprite(), x, y, light, getCurrentFrame(), getScale(), 0.f, effects);
     }
 
     private static final Color COLOR_HIGHLIGHT_STRONG = new ImmutableColor(1.f, 1.f, 1.f, 0.25f);
