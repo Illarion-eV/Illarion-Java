@@ -305,13 +305,16 @@ public final class GameMap implements LightingMap, Stoppable {
                         newMarker.setAvailability(availability);
                         activeQuestStartMarkers.put(markerLocation, newMarker);
                         newMarker.show();
+                        System.out.println("Added new quest marker to " + markerLocation);
+                    } else {
+                        System.out.println("Can't add quest marker to " + markerLocation);
                     }
                 }
             }
         }
 
         for (@Nonnull final Location markerLocation : currentMarkers) {
-            activeQuestStartMarkers.remove(markerLocation).hide();
+            activeQuestStartMarkers.remove(markerLocation).markAsRemoved();
         }
     }
 
@@ -563,6 +566,11 @@ public final class GameMap implements LightingMap, Stoppable {
             if (marker != null) {
                 marker.markAsRemoved();
                 inactiveQuestTargetLocations.add(removedTile.getLocation());
+            }
+
+            @Nullable final QuestMarker startMarker = activeQuestStartMarkers.remove(removedTile.getLocation());
+            if (startMarker != null) {
+                startMarker.markAsRemoved();
             }
 
             removedTile.markAsRemoved();
