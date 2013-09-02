@@ -357,6 +357,7 @@ public final class GameMap implements LightingMap, Stoppable {
         if (processor != null) {
             processor.start();
         }
+        GameMapProcessor2.checkInside();
     }
 
     /**

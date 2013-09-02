@@ -101,6 +101,10 @@ public final class MapGroup {
         return false;
     }
 
+    public boolean isRootGroup() {
+        return parent == null;
+    }
+
     /**
      * Set the hidden flag of this map group.
      *

@@ -255,6 +255,10 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
             return;
         }
 
+        if (delayedMoveTrigger.isRunning()) {
+            delayedMoveTrigger.stop();
+            requestMove(getCurrentMoveToDirection(), moveToDirectionMode);
+        }
         activeDirections[direction] = false;
 
         boolean newWalkingState = false;
