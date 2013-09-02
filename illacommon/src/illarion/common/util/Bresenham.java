@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Common Library.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Common Library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -174,12 +174,10 @@ public final class Bresenham {
     @SuppressWarnings("nls")
     public void calculate(@Nullable final Location loc0, @Nullable final Location loc1) {
         if (loc0 == null) {
-            throw new IllegalArgumentException(
-                    "Start location (loc0) must not be null.");
+            throw new IllegalArgumentException("Start location (loc0) must not be null.");
         }
         if (loc1 == null) {
-            throw new IllegalArgumentException(
-                    "Start location (loc1) must not be null.");
+            throw new IllegalArgumentException("Start location (loc1) must not be null.");
         }
         calculate(loc0.getScX(), loc0.getScY(), loc1.getScX(), loc1.getScY());
     }
@@ -264,8 +262,7 @@ public final class Bresenham {
     @SuppressWarnings("nls")
     private void addPoint(final int px, final int py) {
         if (length > (MAX_LINE_LENGTH - 1)) {
-            throw new IllegalStateException(
-                    "Bresenham line is getting too long.");
+            throw new IllegalStateException("Bresenham line is getting too long.");
         }
         x[length] = px;
         y[length] = py;
