@@ -195,7 +195,7 @@
         <patternset refid="javolution.pattern"/>
     </fileset>
 
-    <!-- Mantis Connect 1.1.1 -->
+    <!-- Mantis Connect 1.1.2.0 -->
     <patternset id="mantisconnect.pattern">
         <include name="mantisconnect-client-api-1.1.2.0.jar"/>
     </patternset>
