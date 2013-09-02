@@ -72,7 +72,7 @@ public class QuestAvailabilityMsg extends AbstractReply {
     public boolean executeUpdate() {
         final Collection<Location> available = (availableQuests == null) ? Collections.<Location>emptyList() : Arrays.asList(availableQuests);
         final Collection<Location> availableSoon = (availableSoonQuests == null) ? Collections.<Location>emptyList() : Arrays.asList(availableSoonQuests);
-        World.getMap().applyQuestMarkerLocations(available, availableSoon);
+        World.getMap().applyQuestStartLocations(available, availableSoon);
         return true;
     }
 

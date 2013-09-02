@@ -38,10 +38,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -209,10 +206,22 @@ public final class GameMap implements LightingMap, Stoppable {
     private final TLongObjectHashMap<MapTile> tiles;
 
     /**
-     * This is the list of active quest markers.
+     * This is the list of active quest markers that show where a quest starts.
      */
     @Nonnull
-    private final Map<Location, QuestMarker> activeQuestMarkers;
+    private final Map<Location, QuestMarker> activeQuestStartMarkers;
+
+    /**
+     * This is the list of active quest markers that show the target of a quest.
+     */
+    @Nonnull
+    private final Map<Location, QuestMarker> activeQuestTargetMarkers;
+
+    /**
+     * This is the list of quest markers that show the target of the quest, that are not visible on the map yet.
+     */
+    @Nonnull
+    private final Set<Location> inactiveQuestTargetLocations;
 
     /**
      * Default constructor of the map handler.
@@ -222,7 +231,9 @@ public final class GameMap implements LightingMap, Stoppable {
         tiles.setAutoCompactionFactor(MAP_COMPACTION_FACTOR);
         interactive = new InteractiveMap(this);
 
-        activeQuestMarkers = new HashMap<Location, QuestMarker>();
+        activeQuestStartMarkers = new HashMap<Location, QuestMarker>();
+        activeQuestTargetMarkers = new HashMap<Location, QuestMarker>();
+        inactiveQuestTargetLocations = new HashSet<Location>();
 
         mapLock = new ReentrantReadWriteLock();
 
@@ -232,13 +243,45 @@ public final class GameMap implements LightingMap, Stoppable {
         StoppableStorage.getInstance().add(this);
     }
 
-    public void applyQuestMarkerLocations(@Nonnull final Collection<Location> available,
-                                          @Nonnull final Collection<Location> availableSoon) {
-        final Collection<Location> currentMarkers = new HashSet<Location>(activeQuestMarkers.keySet());
+    public void applyQuestTargetLocations(@Nonnull final Iterable<Location> targets) {
+        final Collection<Location> currentMarkers = new HashSet<Location>(activeQuestTargetMarkers.keySet());
+
+        inactiveQuestTargetLocations.clear();
+
+        for (@Nonnull final Location markerLocation : targets) {
+            if (currentMarkers.contains(markerLocation)) {
+                currentMarkers.remove(markerLocation);
+            } else {
+                final MapTile tile = getMapAt(markerLocation);
+                if (tile != null) {
+                    final QuestMarker newMarker = new QuestMarker(QuestMarker.QuestMarkerType.Target, tile);
+                    newMarker.setAvailability(QuestMarker.QuestMarkerAvailability.Available);
+                    activeQuestTargetMarkers.put(markerLocation, newMarker);
+                    newMarker.show();
+                } else {
+                    inactiveQuestTargetLocations.add(markerLocation);
+                }
+            }
+        }
+
+        for (@Nonnull final Location markerLocation : currentMarkers) {
+            activeQuestTargetMarkers.remove(markerLocation).hide();
+        }
+    }
+
+    /**
+     * Apply the new quest source locations.
+     *
+     * @param available     the list of available quests
+     * @param availableSoon the list of quests that will become available soon
+     */
+    public void applyQuestStartLocations(@Nonnull final Iterable<Location> available,
+                                         @Nonnull final Iterable<Location> availableSoon) {
+        final Collection<Location> currentMarkers = new HashSet<Location>(activeQuestStartMarkers.keySet());
 
         for (int i = 0; i < 2; i++) {
             final QuestMarker.QuestMarkerAvailability availability;
-            final Collection<Location> collection;
+            final Iterable<Location> collection;
             switch (i) {
                 case 0:
                     availability = QuestMarker.QuestMarkerAvailability.Available;
@@ -253,14 +296,14 @@ public final class GameMap implements LightingMap, Stoppable {
             }
             for (@Nonnull final Location markerLocation : collection) {
                 if (currentMarkers.contains(markerLocation)) {
-                    activeQuestMarkers.get(markerLocation).setAvailability(availability);
+                    activeQuestStartMarkers.get(markerLocation).setAvailability(availability);
                     currentMarkers.remove(markerLocation);
                 } else {
                     final MapTile tile = getMapAt(markerLocation);
                     if (tile != null) {
                         final QuestMarker newMarker = new QuestMarker(QuestMarker.QuestMarkerType.Start, tile);
                         newMarker.setAvailability(availability);
-                        activeQuestMarkers.put(markerLocation, newMarker);
+                        activeQuestStartMarkers.put(markerLocation, newMarker);
                         newMarker.show();
                     }
                 }
@@ -268,7 +311,7 @@ public final class GameMap implements LightingMap, Stoppable {
         }
 
         for (@Nonnull final Location markerLocation : currentMarkers) {
-            activeQuestMarkers.remove(markerLocation).hide();
+            activeQuestStartMarkers.remove(markerLocation).hide();
         }
     }
 
@@ -339,6 +382,11 @@ public final class GameMap implements LightingMap, Stoppable {
         } finally {
             mapLock.writeLock().unlock();
         }
+        for (@Nonnull final Map.Entry<Location, QuestMarker> markers : activeQuestTargetMarkers.entrySet()) {
+            markers.getValue().markAsRemoved();
+            inactiveQuestTargetLocations.add(markers.getKey());
+        }
+        activeQuestTargetMarkers.clear();
     }
 
     /**
@@ -511,6 +559,12 @@ public final class GameMap implements LightingMap, Stoppable {
         }
 
         if (removedTile != null) {
+            @Nullable final QuestMarker marker = activeQuestTargetMarkers.remove(removedTile.getLocation());
+            if (marker != null) {
+                marker.markAsRemoved();
+                inactiveQuestTargetLocations.add(removedTile.getLocation());
+            }
+
             removedTile.markAsRemoved();
         }
     }
@@ -658,19 +712,11 @@ public final class GameMap implements LightingMap, Stoppable {
     @SuppressWarnings("nls")
     public void updateTile(@Nonnull final TileUpdate updateData) {
         final long locKey = updateData.getLocation().getKey();
-        MapTile tile = getMapAt(locKey);
 
         if (updateData.getTileId() == MapTile.ID_NONE) {
-            if (tile != null) {
-                mapLock.writeLock().lock();
-                try {
-                    tiles.remove(locKey);
-                } finally {
-                    mapLock.writeLock().unlock();
-                }
-                tile.markAsRemoved();
-            }
+            removeTile(locKey);
         } else {
+            MapTile tile = getMapAt(locKey);
             final boolean newTile = tile == null;
 
             // create a tile for this location if none was found
@@ -687,6 +733,14 @@ public final class GameMap implements LightingMap, Stoppable {
                 try {
                     tiles.put(locKey, tile);
                     GameMapProcessor2.processTile(tile);
+                    if (inactiveQuestTargetLocations.contains(updateData.getLocation())) {
+                        inactiveQuestTargetLocations.remove(updateData.getLocation());
+
+                        final QuestMarker newMarker = new QuestMarker(QuestMarker.QuestMarkerType.Target, tile);
+                        newMarker.setAvailability(QuestMarker.QuestMarkerAvailability.Available);
+                        activeQuestTargetMarkers.put(updateData.getLocation(), newMarker);
+                        newMarker.show();
+                    }
                 } finally {
                     mapLock.writeLock().unlock();
                 }

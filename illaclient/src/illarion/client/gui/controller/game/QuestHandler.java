@@ -45,6 +45,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -368,13 +369,16 @@ public final class QuestHandler implements QuestGui, ScreenController {
             finishedLabel.build(nifty, screen, descriptionArea);
         }
 
+        final Collection<Location> locationList = new ArrayList<Location>(selectedEntry.getTargetLocationCount());
         for (int i = 0; i < selectedEntry.getTargetLocationCount(); i++) {
             final Location target = selectedEntry.getTargetLocation(i);
+            locationList.add(target);
             final MiniMapGui.Pointer newPointer = miniMapGui.createPointer();
             newPointer.setTarget(target);
             miniMapGui.addPointer(newPointer);
             activePointers.add(newPointer);
         }
+        World.getMap().applyQuestTargetLocations(locationList);
 
         descriptionArea.show();
     }
