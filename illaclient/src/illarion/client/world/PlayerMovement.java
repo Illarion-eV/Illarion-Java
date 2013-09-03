@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -234,6 +234,9 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     }
 
     public void startMovingToDirection(final int direction) {
+        if ((direction < 0) || (direction >= activeDirections.length)) {
+            throw new IllegalArgumentException("Illegal direction: " + direction);
+        }
         if (activeDirections[direction]) {
             return;
         }
@@ -251,6 +254,9 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     }
 
     public void stopMovingToDirection(final int direction) {
+        if ((direction < 0) || (direction >= activeDirections.length)) {
+            throw new IllegalArgumentException("Illegal direction: " + direction);
+        }
         if (!activeDirections[direction]) {
             return;
         }
@@ -307,7 +313,9 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * @param mode      the mode of the move that shall be performed
      */
     public void requestMove(final int direction, @Nonnull final CharMovementMode mode) {
-        requestMove(direction, mode, true, false);
+        if (direction != Location.DIR_ZERO) {
+            requestMove(direction, mode, true, false);
+        }
     }
 
     @Override
