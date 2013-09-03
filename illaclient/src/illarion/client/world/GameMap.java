@@ -23,6 +23,7 @@ import gnu.trove.procedure.TLongObjectProcedure;
 import gnu.trove.procedure.TObjectProcedure;
 import illarion.client.crash.MapProcessorCrashHandler;
 import illarion.client.graphics.QuestMarker;
+import illarion.client.gui.MiniMapGui;
 import illarion.client.net.server.TileUpdate;
 import illarion.client.world.interactive.InteractiveMap;
 import illarion.common.graphics.ItemInfo;
@@ -143,6 +144,35 @@ public final class GameMap implements LightingMap, Stoppable {
         }
     }
 
+    private static final class QuestMarkerCarrier {
+        @Nonnull
+        private final QuestMarker mapMarker;
+
+        @Nonnull
+        private final MiniMapGui.Pointer guiMarker;
+
+        private QuestMarkerCarrier(@Nonnull final QuestMarker mapMarker, @Nonnull final MiniMapGui.Pointer guiMarker) {
+            this.mapMarker = mapMarker;
+            this.guiMarker = guiMarker;
+        }
+
+        @Nonnull
+        private MiniMapGui.Pointer getGuiMarker() {
+            return guiMarker;
+        }
+
+
+        @Nonnull
+        private QuestMarker getMapMarker() {
+            return mapMarker;
+        }
+
+        void removeMarker() {
+            World.getGameGui().getMiniMapGui().releasePointer(guiMarker);
+            mapMarker.markAsRemoved();
+        }
+    }
+
     /**
      * The lock that is hold in case the light is currently rendered. If that is done right now the map must not be
      * rendered.
@@ -209,19 +239,19 @@ public final class GameMap implements LightingMap, Stoppable {
      * This is the list of active quest markers that show where a quest starts.
      */
     @Nonnull
-    private final Map<Location, QuestMarker> activeQuestStartMarkers;
+    private final Map<Location, QuestMarkerCarrier> activeQuestStartMarkers;
 
     /**
      * This is the list of active quest markers that show the target of a quest.
      */
     @Nonnull
-    private final Map<Location, QuestMarker> activeQuestTargetMarkers;
+    private final Map<Location, QuestMarkerCarrier> activeQuestTargetMarkers;
 
     /**
      * This is the list of quest markers that show the target of the quest, that are not visible on the map yet.
      */
     @Nonnull
-    private final Set<Location> inactiveQuestTargetLocations;
+    private final Map<Location, MiniMapGui.Pointer> inactiveQuestTargetLocations;
 
     /**
      * Default constructor of the map handler.
@@ -231,9 +261,9 @@ public final class GameMap implements LightingMap, Stoppable {
         tiles.setAutoCompactionFactor(MAP_COMPACTION_FACTOR);
         interactive = new InteractiveMap(this);
 
-        activeQuestStartMarkers = new HashMap<Location, QuestMarker>();
-        activeQuestTargetMarkers = new HashMap<Location, QuestMarker>();
-        inactiveQuestTargetLocations = new HashSet<Location>();
+        activeQuestStartMarkers = new HashMap<Location, QuestMarkerCarrier>();
+        activeQuestTargetMarkers = new HashMap<Location, QuestMarkerCarrier>();
+        inactiveQuestTargetLocations = new HashMap<Location, MiniMapGui.Pointer>();
 
         mapLock = new ReentrantReadWriteLock();
 
@@ -253,19 +283,22 @@ public final class GameMap implements LightingMap, Stoppable {
                 currentMarkers.remove(markerLocation);
             } else {
                 final MapTile tile = getMapAt(markerLocation);
+                final MiniMapGui.Pointer targetPointer = World.getGameGui().getMiniMapGui().createTargetPointer();
+                targetPointer.setTarget(markerLocation);
                 if (tile != null) {
                     final QuestMarker newMarker = new QuestMarker(QuestMarker.QuestMarkerType.Target, tile);
                     newMarker.setAvailability(QuestMarker.QuestMarkerAvailability.Available);
-                    activeQuestTargetMarkers.put(markerLocation, newMarker);
+                    activeQuestTargetMarkers.put(markerLocation, new QuestMarkerCarrier(newMarker, targetPointer));
                     newMarker.show();
                 } else {
-                    inactiveQuestTargetLocations.add(markerLocation);
+                    inactiveQuestTargetLocations.put(markerLocation, targetPointer);
                 }
+                World.getGameGui().getMiniMapGui().addPointer(targetPointer);
             }
         }
 
         for (@Nonnull final Location markerLocation : currentMarkers) {
-            activeQuestTargetMarkers.remove(markerLocation).hide();
+            activeQuestTargetMarkers.remove(markerLocation).removeMarker();
         }
     }
 
@@ -296,22 +329,38 @@ public final class GameMap implements LightingMap, Stoppable {
             }
             for (@Nonnull final Location markerLocation : collection) {
                 if (currentMarkers.contains(markerLocation)) {
-                    activeQuestStartMarkers.get(markerLocation).setAvailability(availability);
+                    final QuestMarkerCarrier carrier = activeQuestStartMarkers.get(markerLocation);
+                    final QuestMarker mapMarker = carrier.getMapMarker();
+                    if (mapMarker.getAvailability() != availability) {
+                        final MiniMapGui gui = World.getGameGui().getMiniMapGui();
+                        gui.releasePointer(carrier.getGuiMarker());
+                        mapMarker.setAvailability(availability);
+
+                        final MiniMapGui.Pointer pointer = gui.createStartPointer(availability == QuestMarker.QuestMarkerAvailability.Available);
+                        pointer.setTarget(markerLocation);
+                        activeQuestStartMarkers.put(markerLocation, new QuestMarkerCarrier(mapMarker, pointer));
+                        gui.addPointer(pointer);
+                    }
                     currentMarkers.remove(markerLocation);
                 } else {
                     final MapTile tile = getMapAt(markerLocation);
                     if (tile != null) {
+                        final MiniMapGui gui = World.getGameGui().getMiniMapGui();
                         final QuestMarker newMarker = new QuestMarker(QuestMarker.QuestMarkerType.Start, tile);
                         newMarker.setAvailability(availability);
-                        activeQuestStartMarkers.put(markerLocation, newMarker);
+
+                        final MiniMapGui.Pointer pointer = gui.createStartPointer(availability == QuestMarker.QuestMarkerAvailability.Available);
+                        pointer.setTarget(markerLocation);
+                        activeQuestStartMarkers.put(markerLocation, new QuestMarkerCarrier(newMarker, pointer));
                         newMarker.show();
+                        gui.addPointer(pointer);
                     }
                 }
             }
         }
 
         for (@Nonnull final Location markerLocation : currentMarkers) {
-            activeQuestStartMarkers.remove(markerLocation).markAsRemoved();
+            activeQuestStartMarkers.remove(markerLocation).removeMarker();
         }
     }
 
@@ -382,14 +431,14 @@ public final class GameMap implements LightingMap, Stoppable {
         } finally {
             mapLock.writeLock().unlock();
         }
-        for (@Nonnull final Map.Entry<Location, QuestMarker> markers : activeQuestTargetMarkers.entrySet()) {
-            markers.getValue().markAsRemoved();
-            inactiveQuestTargetLocations.add(markers.getKey());
+        for (@Nonnull final Map.Entry<Location, QuestMarkerCarrier> markers : activeQuestTargetMarkers.entrySet()) {
+            markers.getValue().getMapMarker().markAsRemoved();
+            inactiveQuestTargetLocations.put(markers.getKey(), markers.getValue().getGuiMarker());
         }
         activeQuestTargetMarkers.clear();
 
-        for (@Nonnull final Map.Entry<Location, QuestMarker> markers : activeQuestStartMarkers.entrySet()) {
-            markers.getValue().markAsRemoved();
+        for (@Nonnull final Map.Entry<Location, QuestMarkerCarrier> markers : activeQuestStartMarkers.entrySet()) {
+            markers.getValue().removeMarker();
         }
         activeQuestStartMarkers.clear();
     }
@@ -564,15 +613,15 @@ public final class GameMap implements LightingMap, Stoppable {
         }
 
         if (removedTile != null) {
-            @Nullable final QuestMarker marker = activeQuestTargetMarkers.remove(removedTile.getLocation());
+            @Nullable final QuestMarkerCarrier marker = activeQuestTargetMarkers.remove(removedTile.getLocation());
             if (marker != null) {
-                marker.markAsRemoved();
-                inactiveQuestTargetLocations.add(removedTile.getLocation());
+                marker.getMapMarker().markAsRemoved();
+                inactiveQuestTargetLocations.put(removedTile.getLocation(), marker.getGuiMarker());
             }
 
-            @Nullable final QuestMarker startMarker = activeQuestStartMarkers.remove(removedTile.getLocation());
+            @Nullable final QuestMarkerCarrier startMarker = activeQuestStartMarkers.remove(removedTile.getLocation());
             if (startMarker != null) {
-                startMarker.markAsRemoved();
+                startMarker.removeMarker();
             }
 
             removedTile.markAsRemoved();
@@ -743,12 +792,13 @@ public final class GameMap implements LightingMap, Stoppable {
                 try {
                     tiles.put(locKey, tile);
                     GameMapProcessor2.processTile(tile);
-                    if (inactiveQuestTargetLocations.contains(updateData.getLocation())) {
-                        inactiveQuestTargetLocations.remove(updateData.getLocation());
+                    if (inactiveQuestTargetLocations.containsKey(updateData.getLocation())) {
+                        final MiniMapGui.Pointer pointer = inactiveQuestTargetLocations.remove(updateData.getLocation());
 
                         final QuestMarker newMarker = new QuestMarker(QuestMarker.QuestMarkerType.Target, tile);
                         newMarker.setAvailability(QuestMarker.QuestMarkerAvailability.Available);
-                        activeQuestTargetMarkers.put(updateData.getLocation(), newMarker);
+                        activeQuestTargetMarkers.put(updateData.getLocation(),
+                                new QuestMarkerCarrier(newMarker, pointer));
                         newMarker.show();
                     }
                 } finally {
