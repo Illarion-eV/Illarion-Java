@@ -50,6 +50,16 @@
                             <panel width="*"/>
                             <control name="checkbox" id="disableChatAfterSending"/>
                         </panel>
+                        <panel width="100%" childLayout="horizontal">
+                            <control name="label" text="${options-bundle.showQuestsOnGameMap}"/>
+                            <panel width="*"/>
+                            <control name="checkbox" id="showQuestsOnGameMap"/>
+                        </panel>
+                        <panel width="100%" childLayout="horizontal">
+                            <control name="label" text="${options-bundle.showQuestsOnMiniMap}"/>
+                            <panel width="*"/>
+                            <control name="checkbox" id="showQuestsOnMiniMap"/>
+                        </panel>
                         <!--
                         <panel width="100%" childLayout="horizontal">
                             <control name="label" text="${options-bundle.charNameDisplay}"/>

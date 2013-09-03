@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,8 @@ public final class OptionScreenController implements ScreenController {
     private CheckBox runAutoAvoid;
     private CheckBox wasdWalk;
     private CheckBox disableChatAfterSending;
+    private CheckBox showQuestsOnGameMap;
+    private CheckBox showQuestsOnMiniMap;
 
     private DropDown<String> sendCrashReports;
 
@@ -68,7 +70,7 @@ public final class OptionScreenController implements ScreenController {
         this.nifty = nifty;
         this.screen = screen;
 
-        final Element tabRoot = screen.findElementByName("tabRoot");
+        final Element tabRoot = screen.findElementById("tabRoot");
 
         //charNameLength = screen.findNiftyControl("charNameLength", DropDown.class);
         //charNameLength.addItem("${options-bundle.charNameDisplay.short}");
@@ -79,6 +81,8 @@ public final class OptionScreenController implements ScreenController {
         runAutoAvoid = tabRoot.findNiftyControl("runAutoAvoid", CheckBox.class);
         wasdWalk = tabRoot.findNiftyControl("wasdWalk", CheckBox.class);
         disableChatAfterSending = tabRoot.findNiftyControl("disableChatAfterSending", CheckBox.class);
+        showQuestsOnGameMap = tabRoot.findNiftyControl("showQuestsOnGameMap", CheckBox.class);
+        showQuestsOnMiniMap = tabRoot.findNiftyControl("showQuestsOnMiniMap", CheckBox.class);
 
         //noinspection unchecked
         sendCrashReports = tabRoot.findNiftyControl("sendCrashReports", DropDown.class);
@@ -120,6 +124,8 @@ public final class OptionScreenController implements ScreenController {
         runAutoAvoid.setChecked(IllaClient.getCfg().getBoolean("runAutoAvoid"));
         wasdWalk.setChecked(IllaClient.getCfg().getBoolean("wasdWalk"));
         disableChatAfterSending.setChecked(IllaClient.getCfg().getBoolean("disableChatAfterSending"));
+        showQuestsOnGameMap.setChecked(IllaClient.getCfg().getBoolean("showQuestsOnGameMap"));
+        showQuestsOnMiniMap.setChecked(IllaClient.getCfg().getBoolean("showQuestsOnMiniMap"));
 
         sendCrashReports.selectItemByIndex(IllaClient.getCfg().getInteger(CrashReporter.CFG_KEY));
         resolutions.selectItem(IllaClient.getCfg().getString(IllaClient.CFG_RESOLUTION));
@@ -150,6 +156,8 @@ public final class OptionScreenController implements ScreenController {
         configSystem.set("runAutoAvoid", runAutoAvoid.isChecked());
         configSystem.set("wasdWalk", wasdWalk.isChecked());
         configSystem.set("disableChatAfterSending", disableChatAfterSending.isChecked());
+        configSystem.set("showQuestsOnGameMap", showQuestsOnGameMap.isChecked());
+        configSystem.set("showQuestsOnMiniMap", showQuestsOnMiniMap.isChecked());
 
         configSystem.set(CrashReporter.CFG_KEY, sendCrashReports.getSelectedIndex());
         configSystem.set(IllaClient.CFG_RESOLUTION, resolutions.getSelection());
