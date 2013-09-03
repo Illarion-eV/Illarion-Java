@@ -50,16 +50,35 @@ import javax.annotation.Nullable;
  */
 @SuppressWarnings("ClassNamingConvention")
 public class Tile extends AbstractEntity<TileTemplate> implements Resource {
+    /**
+     * The animation that is applied to this tile or {@code null} in case there is none.
+     */
     @Nullable
     private final FrameAnimation animation;
 
+    /**
+     * The template of the overlay that is rendered on top of the tile or {@code null} in case just the plain tile is
+     * rendered.
+     */
     @Nullable
     private OverlayTemplate overlay;
 
+    /**
+     * The shape of the overlay that is rendered on the tile.
+     */
     private int overlayShape;
 
+    /**
+     * The parent map tile reference.
+     */
     @Nonnull
     private final MapTile parentTile;
+
+    /**
+     * The instance of the logging class for this class.
+     */
+    @SuppressWarnings("UnusedDeclaration")
+    private static final Logger LOGGER = Logger.getLogger(Tile.class);
 
     public Tile(final int tileId, @Nonnull final MapTile parentTile) {
         this(TileFactory.getInstance().getTemplate(TileInfo.getBaseID(tileId)), tileId, parentTile);
@@ -147,12 +166,6 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
         super.update(container, delta);
     }
 
-    /**
-     * The instance of the logging class for this class.
-     */
-    @SuppressWarnings("UnusedDeclaration")
-    private static final Logger LOGGER = Logger.getLogger(Tile.class);
-
     @Override
     public boolean isEventProcessed(@Nonnull final GameContainer container, final int delta,
                                     @Nonnull final SceneEvent event) {
@@ -183,16 +196,6 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
             return true;
         }
         return false;
-    }
-
-    /**
-     * Determine the graphical variant from the x/y coordinates
-     *
-     * @param x the x coordinate used to get the variant
-     * @param y the y coordinate used to get the variant
-     */
-    protected final void setVariant(final int x, final int y) {
-        setFrame(MapVariance.getTileFrameVariance(x, y, getTemplate().getFrames()));
     }
 
     /**
