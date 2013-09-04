@@ -83,7 +83,7 @@ public final class MantisConnect
         if (classpath == null) {
             final Collection<File> cp = new ArrayList<File>();
             final String dir = LibraryDirectory.getInstance().getDirectory();
-            cp.add(new File(dir, "mantisconnect-client-api-1.1.1.1.jar")); //$NON-NLS-1$
+            cp.add(new File(dir, "mantisconnect-client-api-1.1.2.0.jar")); //$NON-NLS-1$
 
             classpath = cp;
         }
