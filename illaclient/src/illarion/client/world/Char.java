@@ -381,9 +381,8 @@ public final class Char implements AnimatedMove {
     private int elevationAfterAnimation;
 
     public void updateElevation(final int newElevation) {
-        if (animationInProgress) {
-            elevationAfterAnimation = newElevation;
-        } else {
+        elevationAfterAnimation = newElevation;
+        if (!animationInProgress) {
             updatePosition(newElevation);
         }
     }

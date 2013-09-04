@@ -759,7 +759,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         positionDirty = true;
         final Char playerCharacter = parentPlayer.getCharacter();
         playerCharacter.getLocation().set(parentPlayer.getLocation());
-        playerCharacter.updatePosition(0);
+        //playerCharacter.updatePosition(0);
         World.getPeople().checkVisibility();
         World.getMap().checkInside();
 

@@ -521,9 +521,8 @@ public final class MapTile implements AlphaChangeListener {
                 if (charOnTile != null) {
                     if (World.getPlayer().isPlayer(charOnTile.getCharId())) {
                         World.getMapDisplay().updateElevation();
-                    } else {
-                        charOnTile.updateElevation(elevation);
                     }
+                    charOnTile.updateElevation(elevation);
                 }
             }
         }
