@@ -743,6 +743,11 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         parentPlayer.updateLocation(target);
     }
 
+    @Override
+    public void animationStarted() {
+        // nothing to do
+    }
+
     /**
      * This is called in case the animation got finished. This is needed so the next animation can be started correctly
      * in case it was requested.

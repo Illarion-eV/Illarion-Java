@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,6 @@ import illarion.client.IllaClient;
 import illarion.client.input.CurrentMouseLocationEvent;
 import illarion.client.world.World;
 import illarion.client.world.characters.CharacterAttribute;
-import illarion.common.graphics.Layers;
-import illarion.common.graphics.MapConstants;
 import illarion.common.types.Location;
 import org.apache.log4j.Logger;
 import org.illarion.engine.Engine;
@@ -43,8 +41,7 @@ import javax.annotation.Nonnull;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-public final class MapDisplayManager
-        implements AnimatedMove {
+public final class MapDisplayManager implements AnimatedMove {
 
     /**
      * Offset of the tiles due the perspective of the map view.
@@ -52,10 +49,6 @@ public final class MapDisplayManager
     public static final int TILE_PERSPECTIVE_OFFSET = 3;
 
     private boolean active;
-
-    // scrolling offset
-    @Nonnull
-    private final MoveAnimation ani;
 
     @Nonnull
     private final FadingCorridor corridor;
@@ -65,9 +58,6 @@ public final class MapDisplayManager
     private int dY;
 
     private int elevation;
-
-    @Nonnull
-    private final MoveAnimation levelAni;
 
     @Nonnull
     private final Location origin;
@@ -82,7 +72,6 @@ public final class MapDisplayManager
 
     public MapDisplayManager(@Nonnull final Engine engine) {
         active = false;
-        ani = new MoveAnimation(this);
 
         corridor = FadingCorridor.getInstance();
         origin = new Location();
@@ -91,18 +80,6 @@ public final class MapDisplayManager
 
         dX = 0;
         dY = 0;
-
-        levelAni = new MoveAnimation(new AnimatedMove() {
-            @Override
-            public void animationFinished(final boolean ok) {
-                // nothing to do here
-            }
-
-            @Override
-            public void setPosition(final int x, final int y, final int z) {
-                dL = y;
-            }
-        });
         elevation = 0;
         dL = 0;
     }
@@ -117,68 +94,17 @@ public final class MapDisplayManager
         return gameScene;
     }
 
-    /**
-     * Animate the movement of the game map
-     *
-     * @param dir
-     * @param speed
-     * @param run
-     */
-    public void animate(final int dir, final int speed, final boolean run) {
-        // remember move dir and
-        int mod = 1;
-        if (run) {
-            mod = 2;
+    public void updateElevation() {
+        if (!moveAnimationInProgress) {
+            setLocation(World.getPlayer().getLocation());
         }
-        switch (dir) {
-            case Location.DIR_NORTH:
-                // animate map
-                ani.start(0, 0, MapConstants.STEP_X * mod, -MapConstants.STEP_Y * mod, speed);
-                break;
-            case Location.DIR_NORTHEAST:
-                // animate map
-                ani.start(0, 0, 0, -MapConstants.TILE_H * mod, speed);
-                break;
-            case Location.DIR_EAST:
-                // animate map
-                ani.start(0, 0, -MapConstants.STEP_X * mod, -MapConstants.STEP_Y * mod, speed);
-                break;
-            case Location.DIR_SOUTHEAST:
-                // animate map
-                ani.start(0, 0, -MapConstants.TILE_W * mod, 0, speed);
-                break;
-            case Location.DIR_SOUTH:
-                // animate map
-                ani.start(0, 0, -MapConstants.STEP_X * mod, MapConstants.STEP_Y * mod, speed);
-                break;
-            case Location.DIR_SOUTHWEST:
-                // animate map
-                ani.start(0, 0, 0, MapConstants.TILE_H * mod, speed);
-                break;
-            case Location.DIR_WEST:
-                // animate map
-                ani.start(0, 0, MapConstants.STEP_X * mod, MapConstants.STEP_Y * mod, speed);
-                break;
-            case Location.DIR_NORTHWEST:
-                // animate map
-                ani.start(0, 0, MapConstants.TILE_W, 0, speed);
-                break;
-            default:
-                animationFinished(false);
+    }
 
-        }
-        // start separate Elevation animation
-        final int fromElevation = elevation;
-        elevation = World.getMap().getElevationAt(World.getPlayer().getLocation());
-        if (elevation != fromElevation) {
-            levelAni.start(0, -fromElevation, 0, -elevation, speed);
-        }
+    private boolean moveAnimationInProgress;
 
-        // adjust Z-order after update
-        final Avatar playerAvatar = World.getPlayer().getCharacter().getAvatar();
-        if (playerAvatar != null) {
-            gameScene.updateElementLocation(playerAvatar);
-        }
+    @Override
+    public void animationStarted() {
+        moveAnimationInProgress = true;
     }
 
     /**
@@ -188,6 +114,7 @@ public final class MapDisplayManager
      */
     @Override
     public void animationFinished(final boolean ok) {
+        moveAnimationInProgress = false;
         // move graphical player position to new location
         setLocation(World.getPlayer().getLocation());
 
@@ -356,8 +283,6 @@ public final class MapDisplayManager
      */
     public void setLocation(@Nonnull final Location location) {
         origin.set(location);
-        ani.stop();
-        levelAni.stop();
         elevation = World.getMap().getElevationAt(origin);
         dX = 0;
         dY = 0;

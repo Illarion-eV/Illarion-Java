@@ -226,6 +226,11 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
         // nothing needs to be done by default
     }
 
+    @Override
+    public void animationStarted() {
+        // nothing to do
+    }
+
     /**
      * Set a new base color of the entity.
      *

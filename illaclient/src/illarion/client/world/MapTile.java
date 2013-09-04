@@ -513,9 +513,18 @@ public final class MapTile implements AlphaChangeListener {
         final int level = item.getTemplate().getItemInfo().getLevel();
         if (level > 0) {
             // Set elevation only for first suitable item
-            if ((elevation == 0) || (elevationIndex == index)) {
+            if (((elevation == 0) || (elevationIndex == index)) && (elevation != level)) {
                 elevation = level;
                 elevationIndex = index;
+
+                final Char charOnTile = World.getPeople().getCharacterAt(tileLocation);
+                if (charOnTile != null) {
+                    if (World.getPlayer().isPlayer(charOnTile.getCharId())) {
+                        World.getMapDisplay().updateElevation();
+                    } else {
+                        charOnTile.updateElevation(elevation);
+                    }
+                }
             }
         }
     }
