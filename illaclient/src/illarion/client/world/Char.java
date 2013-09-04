@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,6 @@ import illarion.client.world.events.CharMoveEvent;
 import illarion.client.world.events.CharVisibilityEvent;
 import illarion.client.world.interactive.InteractiveChar;
 import illarion.common.graphics.CharAnimations;
-import illarion.common.graphics.Layers;
 import illarion.common.types.CharacterId;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
@@ -376,6 +375,29 @@ public final class Char implements AnimatedMove {
     }
 
     /**
+     * This variable is used to update the elevation after the current animation is done. That might be needed to
+     * ensure that the character is properly displayed.
+     */
+    private int elevationAfterAnimation;
+
+    public void updateElevation(final int newElevation) {
+        elevationAfterAnimation = newElevation;
+        if (!animationInProgress) {
+            updatePosition(newElevation);
+        }
+    }
+
+    /**
+     * This flag is used to store if there is currently a animation in progress.
+     */
+    private boolean animationInProgress;
+
+    @Override
+    public void animationStarted() {
+        animationInProgress = true;
+    }
+
+    /**
      * Stop the walking animation of the character.
      *
      * @param ok not in use
@@ -385,7 +407,9 @@ public final class Char implements AnimatedMove {
         dX = 0;
         dY = 0;
         dZ = 0;
+        elevation = elevationAfterAnimation;
         updatePosition(elevation);
+        animationInProgress = false;
     }
 
     /**
@@ -463,7 +487,9 @@ public final class Char implements AnimatedMove {
             newAvatar.changeBaseColor(DEAD_COLOR);
         }
 
-        updatePosition(newAvatar, 0);
+        elevation = World.getMap().getElevationAt(charLocation);
+        elevationAfterAnimation = elevation;
+        updatePosition(newAvatar, elevation);
         updateLight(newAvatar, LIGHT_SET);
 
         final Integer healthPoints = attributes.get(CharacterAttribute.HitPoints);
@@ -898,6 +924,7 @@ public final class Char implements AnimatedMove {
             // find target elevation
             final int fromElevation = elevation;
             elevation = World.getMap().getElevationAt(charLocation);
+            elevationAfterAnimation = elevation;
 
             int range = 1;
             if (mode == CharMovementMode.Run) {
@@ -975,6 +1002,11 @@ public final class Char implements AnimatedMove {
                 }
             } else if (avatar != null) {
                 avatar.setAlphaTarget(0);
+            }
+
+            final MapTile tile = World.getMap().getMapAt(charLocation);
+            if (tile != null) {
+                tile.updateQuestMarkerElevation();
             }
 
             EventBus.publish(new CharVisibilityEvent(characterId, visibility));

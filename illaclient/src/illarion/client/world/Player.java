@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -485,7 +485,11 @@ public final class Player {
             // calculate intervening fields.
             // note that the order of fields may be inverted
             final Bresenham line = Bresenham.getInstance();
-            line.calculate(playerLocation, targetLoc);
+            try {
+                line.calculate(playerLocation, targetLoc);
+            } catch (@Nonnull final IllegalStateException ex) {
+                return 0;
+            }
             // examine line without start and end point
             final int length = line.getLength() - 1;
             final GameMap map = World.getMap();

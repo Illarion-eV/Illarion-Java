@@ -21,7 +21,7 @@ package illarion.build.pack200;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
@@ -67,17 +67,14 @@ public final class PackingEngine {
      * process archives.
      */
     public PackingEngine() {
-        props = new Hashtable<String, String>();
+        props = new HashMap<String, String>();
 
         setProperty(Pack200.Packer.KEEP_FILE_ORDER, Pack200.Packer.FALSE);
         setProperty(Pack200.Packer.MODIFICATION_TIME, Pack200.Packer.LATEST);
         setProperty(Pack200.Packer.EFFORT, Integer.toString(9));
         setProperty(Pack200.Packer.DEFLATE_HINT, Pack200.Packer.KEEP);
         setProperty(Pack200.Unpacker.DEFLATE_HINT, Pack200.Unpacker.KEEP);
-        setProperty(
-                Pack200.Packer.CODE_ATTRIBUTE_PFX
-                        .concat(CODE_ATTRIB_LOCAL_VAR_TABLE),
-                Pack200.Packer.STRIP);
+        setProperty(Pack200.Packer.CODE_ATTRIBUTE_PFX + CODE_ATTRIB_LOCAL_VAR_TABLE, Pack200.Packer.STRIP);
     }
 
     /**
@@ -91,7 +88,7 @@ public final class PackingEngine {
         if (destination != null) {
             dir = destination;
         }
-        final String baseName = jarFile.getName().concat(FILE_EXTENSION);
+        final String baseName = jarFile.getName() + FILE_EXTENSION;
         final File targetFile = new File(dir, baseName);
 
         if (targetFile.exists() && !targetFile.delete()) {

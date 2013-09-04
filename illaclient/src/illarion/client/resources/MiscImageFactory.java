@@ -44,6 +44,11 @@ public final class MiscImageFactory extends AbstractTemplateFactory<MiscImageTem
     public static final int MINI_MAP_POINT = 2;
 
     /**
+     * The ID of te exclamation mark that is displayed on the mini map for the starting points of quests.
+     */
+    public static final int MINI_MAP_EXCLAMATION = 6;
+
+    /**
      * The ID of the quest marker graphic that is rendered on the game map to mark where the player finds the next
      * target of a quest.
      */

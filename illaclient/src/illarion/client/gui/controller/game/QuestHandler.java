@@ -31,7 +31,6 @@ import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.IllaClient;
 import illarion.client.graphics.FontLoader;
-import illarion.client.gui.MiniMapGui;
 import illarion.client.gui.QuestGui;
 import illarion.client.net.server.events.LoginFinishedEvent;
 import illarion.client.util.UpdateTask;
@@ -45,6 +44,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -237,17 +237,10 @@ public final class QuestHandler implements QuestGui, ScreenController {
     private boolean loginDone;
 
     /**
-     * The list of pointers that are active with the current quest.
-     */
-    @Nonnull
-    private final List<GameMiniMapHandler.Pointer> activePointers;
-
-    /**
      * Default constructor.
      */
     public QuestHandler() {
         hiddenList = new ArrayList<QuestEntry>();
-        activePointers = new ArrayList<MiniMapGui.Pointer>();
     }
 
     /**
@@ -304,9 +297,9 @@ public final class QuestHandler implements QuestGui, ScreenController {
     @NiftyEventSubscriber(id = "questLog#questList")
     public void onSelectedQuestChanged(@Nonnull final String topic,
                                        @Nonnull final ListBoxSelectionChangedEvent<QuestEntry> event) {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
+        getDescriptionArea().hide(new EndNotify() {
             @Override
-            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+            public void perform() {
                 updateDisplayedQuest();
             }
         });
@@ -320,13 +313,6 @@ public final class QuestHandler implements QuestGui, ScreenController {
         for (final Element oldChildren : descriptionArea.getElements()) {
             oldChildren.markForRemoval();
         }
-
-        final MiniMapGui miniMapGui = World.getGameGui().getMiniMapGui();
-        for (@Nonnull final GameMiniMapHandler.Pointer pointer : activePointers) {
-            miniMapGui.removePointer(pointer);
-            miniMapGui.releasePointer(pointer);
-        }
-        activePointers.clear();
 
         final QuestEntry selectedEntry = getSelectedQuest();
         if (selectedEntry == null) {
@@ -368,13 +354,14 @@ public final class QuestHandler implements QuestGui, ScreenController {
             finishedLabel.build(nifty, screen, descriptionArea);
         }
 
+        final Collection<Location> locationList = new ArrayList<Location>(selectedEntry.getTargetLocationCount());
         for (int i = 0; i < selectedEntry.getTargetLocationCount(); i++) {
             final Location target = selectedEntry.getTargetLocation(i);
-            final MiniMapGui.Pointer newPointer = miniMapGui.createPointer();
-            newPointer.setTarget(target);
-            miniMapGui.addPointer(newPointer);
-            activePointers.add(newPointer);
+            locationList.add(target);
         }
+        World.getMap().applyQuestTargetLocations(locationList);
+
+        descriptionArea.show();
     }
 
     /**
@@ -383,7 +370,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
      * @return the element of the description area
      */
     private Element getDescriptionArea() {
-        return questWindow.getElement().findElementByName("#questDescription");
+        return questWindow.getElement().findElementById("#questDescription");
     }
 
     /**
@@ -634,7 +621,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
      */
     private void pulseQuestButton() {
         if (loginDone && (screen != null)) {
-            @Nullable final Element questBtn = screen.findElementByName("openQuestBtn");
+            @Nullable final Element questBtn = screen.findElementById("openQuestBtn");
             if (questBtn != null) {
                 questBtn.startEffect(EffectEventId.onCustom, null, "pulse");
             }
