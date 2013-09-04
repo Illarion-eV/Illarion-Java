@@ -69,6 +69,11 @@ public class QuestAvailabilityMsg extends AbstractReply {
     }
 
     @Override
+    public boolean processNow() {
+        return World.getGameGui().isReady();
+    }
+
+    @Override
     public boolean executeUpdate() {
         final Collection<Location> available = (availableQuests == null) ? Collections.<Location>emptyList() : Arrays.asList(availableQuests);
         final Collection<Location> availableSoon = (availableSoonQuests == null) ? Collections.<Location>emptyList() : Arrays.asList(availableSoonQuests);
