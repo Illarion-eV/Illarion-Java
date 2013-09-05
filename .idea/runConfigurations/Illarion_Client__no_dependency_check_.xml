@@ -2,7 +2,7 @@
   <configuration default="false" name="Illarion Client (no dependency check)" type="Application" factoryName="Application">
     <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
     <option name="MAIN_CLASS_NAME" value="illarion.client.IllaClient" />
-    <option name="VM_PARAMETERS" value="-Djava.library.path=$PROJECT_DIR$/illacommon/native/win64 -Djava.net.preferIPv4Stack=true" />
+    <option name="VM_PARAMETERS" value="-Djava.library.path=$PROJECT_DIR$/illacommon/native/win32 -Djava.net.preferIPv4Stack=true" />
     <option name="PROGRAM_PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="file://$MODULE_DIR$" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
