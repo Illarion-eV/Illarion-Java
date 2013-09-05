@@ -565,11 +565,10 @@ public final class MapTile implements AlphaChangeListener {
             if (topItem != null) {
                 final Sprite topItemSprite = topItem.getTemplate().getSprite();
 
-                questMarkerElevation += Math.round((topItemSprite.getOffsetY() + topItemSprite.getHeight())
-                        * topItem.getScale());
+                questMarkerElevation += Math.round((topItemSprite.getOffsetY() + topItemSprite.getHeight()));
             }
         } else {
-            questMarkerElevation += Math.round(avatar.getTemplate().getSprite().getHeight() * avatar.getScale());
+            questMarkerElevation = Math.round(avatar.getTemplate().getSprite().getHeight());
         }
     }
 
