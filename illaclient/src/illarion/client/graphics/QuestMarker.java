@@ -127,9 +127,8 @@ public class QuestMarker extends AbstractEntity<MiscImageTemplate> {
 
     @Override
     public void show() {
-        appliedOffset = parentTile.getQuestMarkerElevation();
         final Location loc = parentTile.getLocation();
-        setScreenPos(loc.getDcX(), loc.getDcY() - appliedOffset, loc.getDcZ(), Layers.OVERLAYS);
+        setScreenPos(loc.getDcX(), loc.getDcY(), loc.getDcZ(), Layers.OVERLAYS);
 
         super.show();
     }
