@@ -235,40 +235,39 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
      */
     private void internalUpdateSkill(@Nonnull final Skill skill, final int value) {
         @Nullable final Element skillPanel = skillWindow.getElement().findElementByName("#skill" + skill.getId());
-
+        int SkillHeight = 18;
         if (skillPanel == null) {
             return;
         }
 
         boolean skillChanged = false;
         if (value == 0) {
-            skillPanel.setConstraintHeight(SizeValue.px(0));
-        } else {
-            @Nullable final Element skillPanelWindowContent = skillPanel.getParent();
-            if (skillPanelWindowContent != null) {
-                @Nullable final Element skillPanelWindow = skillPanelWindowContent.getParent();
-                if (skillPanelWindow != null) {
-                    skillPanelWindow.setConstraintHeight(null);
-                }
-                skillPanelWindowContent.setConstraintHeight(null);
-                skillPanelWindowContent.setMarginBottom(SizeValue.px(5));
-                skillPanelWindowContent.findElementByName("#headline").setConstraintHeight(SizeValue.px(24));
-            }
-
-            skillPanel.setConstraintHeight(SizeValue.px(18));
-
-            final Element valueLabel = skillPanel.findElementByName("#value");
-            final TextRenderer valueTextRenderer = valueLabel.getRenderer(TextRenderer.class);
-
-            final String newValue = Integer.toString(value);
-            skillChanged = !valueTextRenderer.getOriginalText().equals(newValue);
-            valueTextRenderer.setText(newValue);
-            valueLabel.setConstraintHeight(SizeValue.px(18));
-
-            final Element nameLabel = skillPanel.findElementByName("#name");
-            nameLabel.setConstraintHeight(SizeValue.px(18));
-            nameLabel.setMarginLeft(SizeValue.px(5));
+            SkillHeight = 0;
         }
+        @Nullable final Element skillPanelWindowContent = skillPanel.getParent();
+        if (skillPanelWindowContent != null) {
+            @Nullable final Element skillPanelWindow = skillPanelWindowContent.getParent();
+            if (skillPanelWindow != null) {
+                skillPanelWindow.setConstraintHeight(null);
+            }
+            skillPanelWindowContent.setConstraintHeight(null);
+            skillPanelWindowContent.setMarginBottom(SizeValue.px(5));
+            skillPanelWindowContent.findElementByName("#headline").setConstraintHeight(SizeValue.px(24));
+        }
+
+        skillPanel.setConstraintHeight(SizeValue.px(SkillHeight));
+
+        final Element valueLabel = skillPanel.findElementByName("#value");
+        final TextRenderer valueTextRenderer = valueLabel.getRenderer(TextRenderer.class);
+
+        final String newValue = Integer.toString(value);
+        skillChanged = !valueTextRenderer.getOriginalText().equals(newValue);
+        valueTextRenderer.setText(newValue);
+        valueLabel.setConstraintHeight(SizeValue.px(SkillHeight));
+
+        final Element nameLabel = skillPanel.findElementByName("#name");
+        nameLabel.setConstraintHeight(SizeValue.px(SkillHeight));
+        nameLabel.setMarginLeft(SizeValue.px(5));
 
         if (loginDone && skillChanged) {
             screen.findElementByName("openSkillsBtn").startEffect(EffectEventId.onCustom, null, "pulse");
@@ -281,6 +280,11 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
         }
 
         layoutDirty = true;
+
+        if (skillWindow.getElement().isVisible()) {
+            toggleSkillWindow();
+            toggleSkillWindow();
+        }
     }
 
     private static final Logger LOGGER = Logger.getLogger(SkillsHandler.class);
