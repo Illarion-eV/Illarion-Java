@@ -251,6 +251,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
     @EventSubscriber
     public void onLoginDoneReceived(final LoginFinishedEvent data) {
         loginDone = true;
+        updateAllQuests();
     }
 
     @Override
@@ -305,6 +306,31 @@ public final class QuestHandler implements QuestGui, ScreenController {
         });
     }
 
+
+    private void updateAllQuests() {
+        final List<QuestEntry> selectedEntries = getQuestList().getItems();
+        for (QuestEntry selectedEntry: selectedEntries)
+        {
+            final Collection<Location> locationList = new ArrayList<Location>(selectedEntry.getTargetLocationCount());
+            for (int i = 0; i < selectedEntry.getTargetLocationCount(); i++) {
+                final Location target = selectedEntry.getTargetLocation(i);
+                locationList.add(target);
+            }
+            World.getMap().applyQuestTargetLocations(locationList);
+        }
+    }
+
+    private void updateQuest(QuestEntry Quest) {
+        final Collection<Location> locationList = new ArrayList<Location>(Quest.getTargetLocationCount());
+        for (int i = 0; i < Quest.getTargetLocationCount(); i++) {
+            final Location target = Quest.getTargetLocation(i);
+            locationList.add(target);
+        }
+        World.getMap().removeQuestMarkers(locationList);
+        World.getMap().applyQuestTargetLocations(locationList);
+    }
+
+
     /**
      * Update the quest that is currently displayed in the dialog.
      */
@@ -354,12 +380,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
             finishedLabel.build(nifty, screen, descriptionArea);
         }
 
-        final Collection<Location> locationList = new ArrayList<Location>(selectedEntry.getTargetLocationCount());
-        for (int i = 0; i < selectedEntry.getTargetLocationCount(); i++) {
-            final Location target = selectedEntry.getTargetLocation(i);
-            locationList.add(target);
-        }
-        World.getMap().applyQuestTargetLocations(locationList);
+        updateQuest(selectedEntry);
 
         descriptionArea.show();
     }
@@ -440,8 +461,8 @@ public final class QuestHandler implements QuestGui, ScreenController {
                 return;
             }
         }
-
         guiList.insertItem(entry, currentStart);
+        updateQuest(entry);
     }
 
     /**
@@ -557,6 +578,14 @@ public final class QuestHandler implements QuestGui, ScreenController {
     private void setQuestInternal(final int questId, @Nonnull final String name, @Nonnull final String description,
                                   final boolean finished, @Nonnull final Location... locations) {
         final QuestEntry oldEntry = findQuest(questId);
+        if (finished && oldEntry != null) {
+            final Collection<Location> locationList = new ArrayList<Location>(oldEntry.getTargetLocationCount());
+            for (int i = 0; i < oldEntry.getTargetLocationCount(); i++) {
+                final Location target = oldEntry.getTargetLocation(i);
+                locationList.add(target);
+            }
+            World.getMap().removeQuestMarkers(locationList);
+        }
         if (oldEntry == null) {
             final QuestEntry newEntry = new QuestEntry(questId, name, description, finished, locations);
             if (!finished || showFinishedQuests) {

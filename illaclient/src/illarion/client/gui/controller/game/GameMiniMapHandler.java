@@ -105,8 +105,11 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
                 new NiftyImage(nifty.getRenderEngine(), World.getMap().getMiniMap().getMiniMap()));
     }
 
-    @Override
     public Pointer createTargetPointer() {
+        return createTargetPointer(true);
+    }
+
+    public Pointer createTargetPointer(boolean isCurrentQuest) {
         if (arrowPointerBuffer.isEmpty()) {
             final ImageBuilder builder = new ImageBuilder();
             builder.visible(false);
@@ -114,6 +117,7 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
             builder.valign(ElementBuilder.VAlign.Center);
             final Element image = builder.build(nifty, screen, miniMapPanel);
             final MiniMapArrowPointer pointer = new MiniMapArrowPointer(image);
+            pointer.setCurrentQuest(isCurrentQuest);
             image.getRenderer(ImageRenderer.class).setImage(new NiftyImage(nifty.getRenderEngine(), pointer));
             image.setConstraintHeight(SizeValue.px(pointer.getHeight()));
             image.setConstraintWidth(SizeValue.px(pointer.getWidth()));

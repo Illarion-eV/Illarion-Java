@@ -111,6 +111,11 @@ final class MiniMapStartPointer implements IgeRenderImage, MiniMapGui.Pointer {
         }
     }
 
+    @Override
+    public void setCurrentQuest(boolean currentQuest) {
+
+    }
+
     /**
      * This functions returns if this pointer is on the mini map right now or outside of it.
      *

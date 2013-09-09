@@ -65,6 +65,11 @@ final class MiniMapArrowPointer implements IgeRenderImage, MiniMapGui.Pointer {
     private int currentDeltaY;
 
     /**
+     * Change color depending on value
+     */
+    boolean isCurrentQuest;
+
+    /**
      * Create a new arrow pointer.
      */
     MiniMapArrowPointer(@Nonnull final Element parentElement) {
@@ -72,6 +77,11 @@ final class MiniMapArrowPointer implements IgeRenderImage, MiniMapGui.Pointer {
         pointSprite = MiscImageFactory.getInstance().getTemplate(MiscImageFactory.MINI_MAP_POINT).getSprite();
         targetLocation = new Location();
         this.parentElement = parentElement;
+    }
+
+    @Override
+    public void setCurrentQuest(final boolean currentQuest) {
+        isCurrentQuest = currentQuest;
     }
 
     @Override
@@ -112,6 +122,9 @@ final class MiniMapArrowPointer implements IgeRenderImage, MiniMapGui.Pointer {
         final int fixedX = x + Math.round((w - scaledWidth) * ((float) centerX / (float) w));
         final int fixedY = y + Math.round((h - scaledHeight) * ((float) centerY / (float) h));
 
+        Color pointerColor =  POINTER_COLOR;
+        if (isCurrentQuest) pointerColor =  ACTIVEPOINTER_COLOR;
+
         if (isOnMapArea()) {
             final int offsetX = (FastMath.sqrt(FastMath.sqr(currentDeltaX) / 2) * -FastMath.sign(currentDeltaX)) +
                     (FastMath.sqrt(FastMath.sqr(currentDeltaY) / 2) * -FastMath.sign(currentDeltaY));
@@ -120,7 +133,7 @@ final class MiniMapArrowPointer implements IgeRenderImage, MiniMapGui.Pointer {
 
             g.drawTexture(pointSprite.getFrame(0), fixedX - offsetX, fixedY - offsetY,
                     scaledWidth, scaledHeight, srcX, srcY, srcW, srcH, centerX - fixedX, centerY - fixedY,
-                    0.f, POINTER_COLOR);
+                    0.f, pointerColor);
         } else {
             final float angle = (float) currentAngle / 10.f;
 
@@ -136,7 +149,7 @@ final class MiniMapArrowPointer implements IgeRenderImage, MiniMapGui.Pointer {
 
             g.drawTexture(arrowSprite.getFrame(0), fixedX + rotationOffsetX, fixedY - rotationOffsetY,
                     scaledWidth, scaledHeight, srcX, srcY, srcW, srcH, centerX - fixedX, centerY - fixedY,
-                    angle, POINTER_COLOR);
+                    angle, pointerColor);
         }
     }
 
