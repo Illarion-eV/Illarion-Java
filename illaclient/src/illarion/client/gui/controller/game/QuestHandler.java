@@ -251,6 +251,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
     @EventSubscriber
     public void onLoginDoneReceived(final LoginFinishedEvent data) {
         loginDone = true;
+        updateAllQuests();
     }
 
     @Override
@@ -303,6 +304,20 @@ public final class QuestHandler implements QuestGui, ScreenController {
                 updateDisplayedQuest();
             }
         });
+    }
+
+
+    private void updateAllQuests() {
+        final List<QuestEntry> selectedEntries = getQuestList().getItems();
+        for (QuestEntry selectedEntry: selectedEntries)
+        {
+            final Collection<Location> locationList = new ArrayList<Location>(selectedEntry.getTargetLocationCount());
+            for (int i = 0; i < selectedEntry.getTargetLocationCount(); i++) {
+                final Location target = selectedEntry.getTargetLocation(i);
+                locationList.add(target);
+            }
+            World.getMap().applyQuestTargetLocations(locationList);
+        }
     }
 
     /**

@@ -45,7 +45,16 @@ public interface MiniMapGui {
          * The color that is supposed to be applied to the pointers.
          */
         Color POINTER_COLOR = new ImmutableColor(255, 166, 102, 255);
+        Color ACTIVEPOINTER_COLOR = new ImmutableColor(255, 0, 0, 255);
+
+        /**
+         * Set this quest marker as a current quest marker
+         *
+         * @param currentQuest
+         */
+        void setCurrentQuest(final boolean currentQuest);
     }
+
 
     /**
      * Create a new pointer instance.

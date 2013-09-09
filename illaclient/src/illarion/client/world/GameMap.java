@@ -174,6 +174,11 @@ public final class GameMap implements LightingMap, Stoppable {
             return mapMarker;
         }
 
+        void setActiveQuest(boolean activeQuest) {
+            if (guiMarker != null)
+                guiMarker.setCurrentQuest(activeQuest);
+        }
+
         void removeMarker() {
             if (guiMarker != null) {
                 World.getGameGui().getMiniMapGui().releasePointer(guiMarker);
@@ -313,7 +318,7 @@ public final class GameMap implements LightingMap, Stoppable {
 
         for (@Nonnull final Location markerLocation : targets) {
             if (currentMarkers.contains(markerLocation)) {
-                currentMarkers.remove(markerLocation);
+               currentMarkers.remove(markerLocation);
             } else {
                 final MapTile tile = getMapAt(markerLocation);
                 @Nullable final MiniMapGui.Pointer targetPointer;
@@ -334,12 +339,13 @@ public final class GameMap implements LightingMap, Stoppable {
                 }
             }
         }
-
         for (@Nonnull final Location markerLocation : currentMarkers) {
+
             final QuestMarkerCarrier activeCarrier = activeQuestTargetMarkers.remove(markerLocation);
             if (activeCarrier != null) {
-                activeCarrier.removeMarker();
+                activeCarrier.setActiveQuest(false);
             }
+
             final QuestMarkerCarrier inactiveCarrier = inactiveQuestTargetLocations.remove(markerLocation);
             if (inactiveCarrier != null) {
                 inactiveCarrier.removeMarker();
