@@ -179,6 +179,13 @@ public final class GameMap implements LightingMap, Stoppable {
                 guiMarker.setCurrentQuest(activeQuest);
         }
 
+        boolean isRemoved() {
+            if (mapMarker != null) {
+                return mapMarker.isMarkedAsRemoved();
+            }
+            return true;
+        }
+
         void removeMarker() {
             if (guiMarker != null) {
                 World.getGameGui().getMiniMapGui().releasePointer(guiMarker);
@@ -313,18 +320,20 @@ public final class GameMap implements LightingMap, Stoppable {
     }
 
     public void applyQuestTargetLocations(@Nonnull final Iterable<Location> targets) {
-        final Collection<Location> currentMarkers = new HashSet<Location>(activeQuestTargetMarkers.keySet());
-        currentMarkers.addAll(inactiveQuestTargetLocations.keySet());
+        //removeAllQuestMarkers();
+        final Collection<Location> oldMarkers = new HashSet<Location>(activeQuestTargetMarkers.keySet());
+        oldMarkers.addAll(inactiveQuestTargetLocations.keySet());
 
         for (@Nonnull final Location markerLocation : targets) {
-            if (currentMarkers.contains(markerLocation)) {
-               currentMarkers.remove(markerLocation);
+            if (oldMarkers.contains(markerLocation)) {
+               oldMarkers.remove(markerLocation);
             } else {
                 final MapTile tile = getMapAt(markerLocation);
                 @Nullable final MiniMapGui.Pointer targetPointer;
                 if (showQuestsOnMiniMap) {
                     targetPointer = World.getGameGui().getMiniMapGui().createTargetPointer();
                     targetPointer.setTarget(markerLocation);
+                    targetPointer.setCurrentQuest(true);
                     World.getGameGui().getMiniMapGui().addPointer(targetPointer);
                 } else {
                     targetPointer = null;
@@ -339,11 +348,35 @@ public final class GameMap implements LightingMap, Stoppable {
                 }
             }
         }
-        for (@Nonnull final Location markerLocation : currentMarkers) {
+        for (@Nonnull final Location markerLocation : oldMarkers) {
+
+            final QuestMarkerCarrier activeCarrier = activeQuestTargetMarkers.get(markerLocation);
+            if (activeCarrier != null) {
+                activeCarrier.setActiveQuest(false);
+                //activeCarrier.removeMarker();
+            }
+
+            final QuestMarkerCarrier inactiveCarrier = inactiveQuestTargetLocations.remove(markerLocation);
+            if (inactiveCarrier != null) {
+                inactiveCarrier.removeMarker();
+            }
+        }
+    }
+
+    public void removeQuestMarkers(@Nonnull final Iterable<Location> targets) {
+        final Collection<Location> currentMarkers = new HashSet<Location>(activeQuestTargetMarkers.keySet());
+        currentMarkers.addAll(inactiveQuestTargetLocations.keySet());
+        currentMarkers.addAll(activeQuestStartMarkers.keySet());
+
+        for (@Nonnull final Location markerLocation : targets) {
+            final QuestMarkerCarrier activeStartCarrier = activeQuestStartMarkers.remove(markerLocation);
+            if (activeStartCarrier != null) {
+                activeStartCarrier.removeMarker();
+            }
 
             final QuestMarkerCarrier activeCarrier = activeQuestTargetMarkers.remove(markerLocation);
             if (activeCarrier != null) {
-                activeCarrier.setActiveQuest(false);
+                activeCarrier.removeMarker();
             }
 
             final QuestMarkerCarrier inactiveCarrier = inactiveQuestTargetLocations.remove(markerLocation);
