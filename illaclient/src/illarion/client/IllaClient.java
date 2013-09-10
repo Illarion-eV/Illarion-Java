@@ -533,6 +533,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("clientVersion", Servers.customserver.getClientVersion());
         cfg.setDefault("serverAccountLogin", true);
         cfg.setDefault("wasdWalk", true);
+        cfg.setDefault("classicWalk", false);
         cfg.setDefault("disableChatAfterSending", true);
         cfg.setDefault("showQuestsOnGameMap", true);
         cfg.setDefault("showQuestsOnMiniMap", true);
