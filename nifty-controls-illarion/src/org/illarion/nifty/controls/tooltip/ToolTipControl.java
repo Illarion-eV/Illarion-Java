@@ -75,7 +75,7 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
             applyTextToLabel(typeLabel, type);
             largeToolTip = true;
 
-            if (!isNullOrEmpty(level) && !level.equals("0")) {
+            if (!isNullOrEmpty(level)) {
                 levelTitle.setColor(levelColor);
                 applyTextToLabel(levelLabel, " " + level);
                 levelLabel.setColor(levelColor);
