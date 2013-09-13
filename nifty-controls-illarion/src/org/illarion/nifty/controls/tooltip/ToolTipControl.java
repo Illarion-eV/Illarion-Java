@@ -53,6 +53,8 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
 
         boolean largeToolTip = false;
 
+        //nifty.setDebugOptionPanelColors(true);
+
         final String description = controlDefinitionAttributes.get("description");
         if (!isNullOrEmpty(description)) {
             final Label descriptionLabel = element.findNiftyControl("#description", Label.class);
@@ -61,6 +63,29 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
             largeToolTip = true;
         } else {
             removeElement(element.findElementByName("#description"));
+        }
+
+        final String type = controlDefinitionAttributes.get("itemtype");
+        final String level = controlDefinitionAttributes.get("level");
+        final Color levelColor = controlDefinitionAttributes.getAsColor("levelColor");
+        if (!isNullOrEmpty(type)) {
+            final Label typeLabel = element.findNiftyControl("#itemtype", Label.class);
+            final Label levelTitle = element.findNiftyControl("#levelTitle", Label.class);
+            final Label levelLabel = element.findNiftyControl("#levelLabel", Label.class);
+            applyTextToLabel(typeLabel, type);
+            largeToolTip = true;
+
+            if (!isNullOrEmpty(level) && !level.equals("0")) {
+                levelTitle.setColor(levelColor);
+                applyTextToLabel(levelLabel, " " + level);
+                levelLabel.setColor(levelColor);
+            } else {
+                removeElement(element.findElementByName("#levelTitle"));
+                removeElement(element.findElementByName("#levelLabel"));
+            }
+
+        } else {
+            removeElement(element.findElementByName("#typeLevelLine"));
         }
 
         final String producer = controlDefinitionAttributes.get("producer");
