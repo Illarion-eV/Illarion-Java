@@ -122,7 +122,7 @@ public final class MusicBox implements Stoppable {
         if ((setting == null) || "soundVolume".equals(setting)) {
             final float soundVolume = cfg.getFloat("soundVolume") / Player.MAX_CLIENT_VOL;
             if (IllaClient.getCfg().getBoolean("soundOn")) {
-                engine.getSounds().setMusicVolume(soundVolume);
+                engine.getSounds().setSoundVolume(soundVolume);
             }
         }
     }
