@@ -164,7 +164,13 @@ public final class OptionScreenController implements ScreenController {
         configSystem.set("showQuestsOnMiniMap", showQuestsOnMiniMap.isChecked());
 
         configSystem.set(CrashReporter.CFG_KEY, sendCrashReports.getSelectedIndex());
-        configSystem.set(IllaClient.CFG_RESOLUTION, resolutions.getSelection());
+
+        String resolutionSelection = resolutions.getSelection();
+
+        if (resolutionSelection != null)  {
+            configSystem.set(IllaClient.CFG_RESOLUTION, resolutionSelection);
+        }
+
         configSystem.set(IllaClient.CFG_FULLSCREEN, fullscreen.isChecked());
         configSystem.set("showFps", showFps.isChecked());
 
