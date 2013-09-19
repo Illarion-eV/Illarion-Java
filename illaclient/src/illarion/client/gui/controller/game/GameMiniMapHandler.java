@@ -29,6 +29,7 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.gui.MiniMapGui;
+import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
 import org.illarion.engine.GameContainer;
 
@@ -152,29 +153,41 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
     public void releasePointer(@Nonnull final Pointer pointer) {
         if (pointer instanceof MiniMapArrowPointer) {
             final MiniMapArrowPointer arrowPointer = (MiniMapArrowPointer) pointer;
-            activeArrowPointers.remove(arrowPointer);
             if (arrowPointer.getParentElement().isVisible()) {
                 arrowPointer.getParentElement().hide(new EndNotify() {
                     @Override
                     public void perform() {
+                        activeArrowPointers.remove(arrowPointer);
                         arrowPointerBuffer.offer(arrowPointer);
                     }
                 });
             } else {
-                arrowPointerBuffer.offer(arrowPointer);
+                World.getUpdateTaskManager().addTask(new UpdateTask() {
+                    @Override
+                    public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+                        activeArrowPointers.remove(arrowPointer);
+                        arrowPointerBuffer.offer(arrowPointer);
+                    }
+                });
             }
-        }  else if (pointer instanceof MiniMapStartPointer) {
+        } else if (pointer instanceof MiniMapStartPointer) {
             final MiniMapStartPointer startPointer = (MiniMapStartPointer) pointer;
-            activeStartPointers.remove(startPointer);
             if (startPointer.getParentElement().isVisible()) {
                 startPointer.getParentElement().hide(new EndNotify() {
                     @Override
                     public void perform() {
+                        activeStartPointers.remove(startPointer);
                         startPointerBuffer.offer(startPointer);
                     }
                 });
             } else {
-                startPointerBuffer.offer(startPointer);
+                World.getUpdateTaskManager().addTask(new UpdateTask() {
+                    @Override
+                    public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+                        activeStartPointers.remove(startPointer);
+                        startPointerBuffer.offer(startPointer);
+                    }
+                });
             }
         }
     }
@@ -208,12 +221,24 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
     public void removePointer(@Nonnull final Pointer pointer) {
         if (pointer instanceof MiniMapArrowPointer) {
             final MiniMapArrowPointer arrowPointer = (MiniMapArrowPointer) pointer;
-            activeArrowPointers.remove(arrowPointer);
             arrowPointer.getParentElement().hide();
+
+            World.getUpdateTaskManager().addTask(new UpdateTask() {
+                @Override
+                public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+                    activeStartPointers.remove(arrowPointer);
+                }
+            });
         }  else if (pointer instanceof MiniMapStartPointer) {
             final MiniMapStartPointer startPointer = (MiniMapStartPointer) pointer;
-            activeStartPointers.remove(startPointer);
             startPointer.getParentElement().hide();
+
+            World.getUpdateTaskManager().addTask(new UpdateTask() {
+                @Override
+                public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+                    activeStartPointers.remove(activeStartPointers);
+                }
+            });
         }
     }
 
