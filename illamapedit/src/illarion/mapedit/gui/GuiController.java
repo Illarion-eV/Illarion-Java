@@ -226,16 +226,20 @@ public class GuiController extends WindowAdapter {
 
     @EventSubscriber
     public void onMapSelected(@Nonnull final MapSelectedEvent e) {
-        selected = maps.get(e.getIndex());
-        final int x = SwingLocation.displayCoordinateX(selected.getX(), selected.getY(), 0);
-        final int y = SwingLocation.displayCoordinateY(selected.getX(), selected.getY(), 0);
-        final RendererManager manager = mainFrame.getRendererManager();
-        manager.setZoom(1f);
-        manager.setSelectedLevel(selected.getZ());
-        manager.setTranslationX(-x);
-        manager.setTranslationY(-y);
-        manager.setDefaultTranslationX(-x);
-        manager.setDefaultTranslationY(-y);
+        if ((e.getIndex() < 0) || (e.getIndex() >= maps.size())) {
+            selected = null;
+        } else {
+            selected = maps.get(e.getIndex());
+            final int x = SwingLocation.displayCoordinateX(selected.getX(), selected.getY(), 0);
+            final int y = SwingLocation.displayCoordinateY(selected.getX(), selected.getY(), 0);
+            final RendererManager manager = mainFrame.getRendererManager();
+            manager.setZoom(1f);
+            manager.setSelectedLevel(selected.getZ());
+            manager.setTranslationX(-x);
+            manager.setTranslationY(-y);
+            manager.setDefaultTranslationX(-x);
+            manager.setDefaultTranslationY(-y);
+        }
 
         EventBus.publish(new RepaintRequestEvent());
     }

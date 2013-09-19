@@ -172,8 +172,14 @@ public class FileTree extends JTree {
     }
 
     public void setDirectory(final File file) {
-        if (isMapFile(file)) {
-            setModel(new DefaultTreeModel(scan(file)));
+        if (file.isDirectory()) {
+            setModel(null);
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    setModel(new DefaultTreeModel(scan(file)));
+                }
+            });
         }
     }
 
