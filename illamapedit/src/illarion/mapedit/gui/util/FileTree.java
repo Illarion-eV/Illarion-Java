@@ -31,6 +31,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.FileFilter;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -127,15 +128,19 @@ public class FileTree extends JTree {
 
     private static MutableTreeNode getDirectoryTreeNode(final File node) {
         final DefaultMutableTreeNode ret = new DefaultMutableTreeNode(node.getName());
-        final File[] files = node.listFiles();
+        final File[] files = node.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(final File file) {
+                return isMapFile(file);
+            }
+        });
+
         if (files == null) {
             return ret;
         }
         sortFiles(files);
         for (final File child : files) {
-            if (isMapFile(child)) {
-                ret.add(scan(child));
-            }
+            ret.add(scan(child));
         }
         return ret;
     }
