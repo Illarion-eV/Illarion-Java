@@ -33,7 +33,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_CLOSE_DIALOG)
-public final class CloseDialogMsg extends AbstractReply {
+public final class CloseDialogMsg extends AbstractGuiMsg {
     /**
      * The ID of the dialog that is supposed to be closed.
      */

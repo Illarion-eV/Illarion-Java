@@ -38,7 +38,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_DIALOG_CRAFTING)
-public final class DialogCraftingMsg extends AbstractReply {
+public final class DialogCraftingMsg extends AbstractGuiMsg {
     /**
      * The title that is supposed to be displayed in the dialog.
      */

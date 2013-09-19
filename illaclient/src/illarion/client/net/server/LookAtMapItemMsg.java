@@ -34,7 +34,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_LOOKAT_MAPITEM)
-public final class LookAtMapItemMsg extends AbstractReply {
+public final class LookAtMapItemMsg extends AbstractGuiMsg {
     /**
      * The location of the tile on the server map.
      */

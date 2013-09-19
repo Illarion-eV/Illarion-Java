@@ -36,7 +36,7 @@ import java.util.Collections;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_QUEST_AVAILABILITY)
-public class QuestAvailabilityMsg extends AbstractReply {
+public class QuestAvailabilityMsg extends AbstractGuiMsg {
     /**
      * This array contains the available quests in range of the character.
      */
@@ -66,11 +66,6 @@ public class QuestAvailabilityMsg extends AbstractReply {
                 availableSoonQuests[i] = new Location(reader);
             }
         }
-    }
-
-    @Override
-    public boolean processNow() {
-        return World.getGameGui().isReady();
     }
 
     @Override

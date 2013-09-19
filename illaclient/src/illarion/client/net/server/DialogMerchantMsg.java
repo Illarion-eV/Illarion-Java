@@ -39,7 +39,7 @@ import java.util.List;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_DIALOG_MERCHANT)
-public final class DialogMerchantMsg extends AbstractReply {
+public final class DialogMerchantMsg extends AbstractGuiMsg {
     /**
      * The title of the dialog window.
      */

@@ -33,8 +33,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_DIALOG_MSG)
-public final class DialogMessageMsg
-        extends AbstractReply {
+public final class DialogMessageMsg extends AbstractGuiMsg {
     /**
      * The title of the dialog window.
      */

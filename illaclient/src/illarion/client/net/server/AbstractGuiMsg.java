@@ -18,40 +18,17 @@
  */
 package illarion.client.net.server;
 
-import illarion.client.net.CommandList;
-import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
-import illarion.common.net.NetCommReader;
-
-import javax.annotation.Nonnull;
-import java.io.IOException;
 
 /**
- * This is the server message that causes a quest to be deleted from the quest log.
+ * This class in general is used for messages that access for manipulate the GUI. All messages with this class as
+ * super class are delayed until the GUI is ready for operation.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@ReplyMessage(replyId = CommandList.MSG_QUEST_DELETE)
-public final class QuestDeleteMsg extends AbstractGuiMsg {
-    /**
-     * The ID of the quest.
-     */
-    private int questId;
-
+public abstract class AbstractGuiMsg extends AbstractReply {
     @Override
-    @Nonnull
-    public String toString() {
-        return toString("ID: " + questId);
-    }
-
-    @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
-        questId = reader.readUShort();
-    }
-
-    @Override
-    public boolean executeUpdate() {
-        World.getGameGui().getQuestGui().removeQuest(questId);
-        return true;
+    public boolean processNow() {
+        return World.getGameGui().isReady();
     }
 }

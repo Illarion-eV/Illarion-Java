@@ -35,8 +35,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_DIALOG_SELECTION)
-public final class DialogSelectionMsg
-        extends AbstractReply {
+public final class DialogSelectionMsg extends AbstractGuiMsg {
     /**
      * The title of the dialog window.
      */

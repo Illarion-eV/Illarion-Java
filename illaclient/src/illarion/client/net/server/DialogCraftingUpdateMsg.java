@@ -36,8 +36,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_DIALOG_CRAFTING_UPDATE)
-public final class DialogCraftingUpdateMsg
-        extends AbstractReply {
+public final class DialogCraftingUpdateMsg extends AbstractGuiMsg {
     /**
      * This is the value of {@link #type} in case the update means that the crafting operation was started.
      */

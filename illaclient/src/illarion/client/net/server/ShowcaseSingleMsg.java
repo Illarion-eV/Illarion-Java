@@ -36,7 +36,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_SHOWCASE_SINGLE)
-public final class ShowcaseSingleMsg extends AbstractReply {
+public final class ShowcaseSingleMsg extends AbstractGuiMsg {
     private int containerId;
     private int containerSlot;
     @Nullable
