@@ -145,13 +145,15 @@ public class FileTree extends JTree {
 
             @Override
             public int compare(final File o1, final File o2) {
-                if (o1.isDirectory()) {
-                    return -1;
+                if (o1.isDirectory() ^ o2.isDirectory()) {
+                    if (o1.isDirectory()) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                } else {
+                    return o1.getName().compareToIgnoreCase(o2.getName());
                 }
-                if (o2.isDirectory()) {
-                    return 1;
-                }
-                return o1.getName().compareToIgnoreCase(o2.getName());
             }
         });
     }
