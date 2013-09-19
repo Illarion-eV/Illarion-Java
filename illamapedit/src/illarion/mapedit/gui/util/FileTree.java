@@ -109,6 +109,7 @@ public class FileTree extends JTree {
         setShowsRootHandles(true);
         setEditable(false);
         getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        setModel(null);
 
         addMouseListener(new FileTreeMouseAdapter());
     }
@@ -174,12 +175,20 @@ public class FileTree extends JTree {
     public void setDirectory(final File file) {
         if (file.isDirectory()) {
             setModel(null);
-            SwingUtilities.invokeLater(new Runnable() {
+            new SwingWorker<MutableTreeNode, Object>() {
                 @Override
-                public void run() {
-                    setModel(new DefaultTreeModel(scan(file)));
+                @Nullable
+                protected MutableTreeNode doInBackground() {
+                    return scan(file);
                 }
-            });
+                @Override
+                protected void done() {
+                    try {
+                        setModel(new DefaultTreeModel(get()));
+                    } catch (Exception ignore) {
+                    }
+                }
+            }.execute();
         }
     }
 
