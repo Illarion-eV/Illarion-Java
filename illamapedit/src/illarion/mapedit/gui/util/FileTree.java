@@ -117,6 +117,7 @@ public class FileTree extends JTree {
         return node.isDirectory() || node.getName().endsWith(MapIO.EXT_TILE);
     }
 
+    @Nullable
     private static MutableTreeNode scan(final File node) {
         if (node.isDirectory()) {
             return getDirectoryTreeNode(node);
@@ -126,8 +127,8 @@ public class FileTree extends JTree {
         return new DefaultMutableTreeNode(leaf);
     }
 
+    @Nullable
     private static MutableTreeNode getDirectoryTreeNode(final File node) {
-        final DefaultMutableTreeNode ret = new DefaultMutableTreeNode(node.getName());
         final File[] files = node.listFiles(new FileFilter() {
             @Override
             public boolean accept(final File file) {
@@ -136,18 +137,25 @@ public class FileTree extends JTree {
         });
 
         if (files == null) {
-            return ret;
+            return null;
         }
         sortFiles(files);
+
+        final DefaultMutableTreeNode ret = new DefaultMutableTreeNode(node.getName());
         for (final File child : files) {
-            ret.add(scan(child));
+            final MutableTreeNode childNode = scan(child);
+            if (childNode != null) {
+                ret.add(childNode);
+            }
+        }
+        if (ret.getChildCount() == 0) {
+            return null;
         }
         return ret;
     }
 
     private static void sortFiles(final File[] files) {
         Arrays.sort(files, new Comparator<File>() {
-
             @Override
             public int compare(final File o1, final File o2) {
                 if (o1.isDirectory() ^ o2.isDirectory()) {
