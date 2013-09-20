@@ -480,14 +480,14 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
 
         final Label imageAmount = getContent().findNiftyControl("#selectedItemAmount", Label.class);
         if (ItemCount.isGreaterOne(selectedEntry.getBuildStackSize())) {
-            imageAmount.getElement().hide();
-        } else {
             final Element imageAmountElement = imageAmount.getElement();
             final TextRenderer textRenderer = imageAmountElement.getRenderer(TextRenderer.class);
             textRenderer.setText(Integer.toString(selectedEntry.getBuildStackSize().getValue()));
             imageAmountElement.setConstraintWidth(SizeValue.px(textRenderer.getTextWidth()));
             imageAmountElement.setConstraintHorizontalAlign(HorizontalAlign.right);
             imageAmountElement.show();
+        } else {
+            imageAmount.getElement().hide();
         }
 
         final Element title = getContent().findElementById("#selectedItemName");
