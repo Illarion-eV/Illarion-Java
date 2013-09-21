@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Nifty-GUI Controls.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Nifty-GUI Controls is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,7 +99,7 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
 
         parent.layoutElements();
 
-        final Element closeButton = getElement().findElementByName("#button");
+        final Element closeButton = getElement().findElementById("#button");
         niftyInstance.subscribe(currentScreen, closeButton.getId(), ButtonClickedEvent.class, closeButtonEventHandler);
     }
 
