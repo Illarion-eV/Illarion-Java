@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  */
 package illarion.client.net.client;
 
-import illarion.client.net.CommandList;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.ItemCount;
 
@@ -31,11 +30,11 @@ import javax.annotation.concurrent.Immutable;
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
 @Immutable
-public final class SellInventoryItemCmd extends AbstractCommand {
+public final class SellInventoryItemCmd extends AbstractTradeItemCmd {
     /**
-     * The ID of the trading dialog to sell to.
+     * The sub command ID for this command.
      */
-    private final int dialogId;
+    private static final int SUB_CMD_ID = 1;
 
     /**
      * The inventory slot to sell the item from.
@@ -56,17 +55,15 @@ public final class SellInventoryItemCmd extends AbstractCommand {
      * @param count         the amount of items to be sold
      */
     public SellInventoryItemCmd(final int dialogId, final int inventorySlot, @Nonnull final ItemCount count) {
-        super(CommandList.CMD_TRADE_ITEM);
+        super(dialogId, SUB_CMD_ID);
 
-        this.dialogId = dialogId;
         slot = inventorySlot;
         amount = count;
     }
 
     @Override
     public void encode(@Nonnull final NetCommWriter writer) {
-        writer.writeInt(dialogId);
-        writer.writeByte((byte) 1);
+        super.encode(writer);
         writer.writeUByte((short) 0);
         writer.writeUShort(slot);
         amount.encode(writer);
@@ -75,6 +72,6 @@ public final class SellInventoryItemCmd extends AbstractCommand {
     @Nonnull
     @Override
     public String toString() {
-        return toString("dialog ID: " + dialogId + " Slot: " + slot + ' ' + amount);
+        return toString(super.toString() + " Slot: " + slot + ' ' + amount);
     }
 }

@@ -18,59 +18,49 @@
  */
 package illarion.client.net.client;
 
+import illarion.client.net.CommandList;
 import illarion.common.net.NetCommWriter;
-import illarion.common.types.ItemCount;
 
 import javax.annotation.Nonnull;
-import javax.annotation.concurrent.Immutable;
 
 /**
- * This command is used to buy a item from a trader.
+ * This abstract command is shared by all commands that refer to a trading dialog.
  *
- * @author Martin Karing &gt;nitram@illarion.org&lt;
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@Immutable
-public final class BuyTradingItem extends AbstractTradeItemCmd {
+public abstract class AbstractTradeItemCmd extends AbstractCommand {
     /**
-     * The index of the item that is supposed to be bought.
+     * The ID of the referenced trading dialog
      */
-    private final short index;
+    private final int dialogId;
 
     /**
-     * The amount of items to buy.
+     * The ID of the sub-command.
      */
-    @Nonnull
-    private final ItemCount amount;
-
-    /**
-     * The sub command ID for this command.
-     */
-    private static final int SUB_CMD_ID = 2;
+    private final byte subCommandId;
 
     /**
      * Default constructor for the trade item command.
      *
-     * @param dialogId the ID of the dialog to buy the item from
-     * @param index    the index of the item to buy
-     * @param count    the amount of items to buy
+     * @param dialogId     the ID of the dialog to buy the item from
+     * @param subCommandId the ID of the sub command
      */
-    public BuyTradingItem(final int dialogId, final int index, @Nonnull final ItemCount count) {
-        super(dialogId, SUB_CMD_ID);
+    public AbstractTradeItemCmd(final int dialogId, final int subCommandId) {
+        super(CommandList.CMD_TRADE_ITEM);
 
-        this.index = (short) index;
-        amount = count;
+        this.dialogId = dialogId;
+        this.subCommandId = (byte) subCommandId;
     }
 
     @Override
     public void encode(@Nonnull final NetCommWriter writer) {
-        super.encode(writer);
-        writer.writeUByte(index);
-        amount.encode(writer);
+        writer.writeInt(dialogId);
+        writer.writeByte(subCommandId);
     }
 
     @Nonnull
     @Override
     public String toString() {
-        return toString(super.toString() + " Index: " + index + ' ' + amount);
+        return "dialog ID: " + dialogId;
     }
 }

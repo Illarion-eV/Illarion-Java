@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  */
 package illarion.client.net.client;
 
-import illarion.client.net.CommandList;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.ItemCount;
 
@@ -31,11 +30,11 @@ import javax.annotation.concurrent.Immutable;
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
 @Immutable
-public final class SellContainerItemCmd extends AbstractCommand {
+public final class SellContainerItemCmd extends AbstractTradeItemCmd {
     /**
-     * The ID of the trading dialog to sell to.
+     * The sub command ID for this command.
      */
-    private final int dialogId;
+    private static final int SUB_CMD_ID = 1;
 
     /**
      * The ID of the container to sell the item from.
@@ -63,9 +62,8 @@ public final class SellContainerItemCmd extends AbstractCommand {
      */
     public SellContainerItemCmd(final int dialogId, final int container, final int slot,
                                 @Nonnull final ItemCount count) {
-        super(CommandList.CMD_TRADE_ITEM);
+        super(dialogId, SUB_CMD_ID);
 
-        this.dialogId = dialogId;
         this.container = (short) (container + 1);
         this.slot = slot;
         amount = count;
@@ -73,8 +71,7 @@ public final class SellContainerItemCmd extends AbstractCommand {
 
     @Override
     public void encode(@Nonnull final NetCommWriter writer) {
-        writer.writeInt(dialogId);
-        writer.writeByte((byte) 1);
+        super.encode(writer);
         writer.writeUByte(container);
         writer.writeUShort(slot);
         amount.encode(writer);
@@ -83,6 +80,6 @@ public final class SellContainerItemCmd extends AbstractCommand {
     @Nonnull
     @Override
     public String toString() {
-        return toString("dialog ID: " + dialogId + " Item: " + container + '/' + slot + ' ' + amount);
+        return toString(super.toString() + " Item: " + container + '/' + slot + ' ' + amount);
     }
 }

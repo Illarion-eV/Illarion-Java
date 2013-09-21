@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,6 @@
  */
 package illarion.client.net.client;
 
-import illarion.client.net.CommandList;
-import illarion.common.net.NetCommWriter;
-
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
@@ -30,11 +27,11 @@ import javax.annotation.concurrent.Immutable;
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
 @Immutable
-public final class CloseDialogTradingCmd extends AbstractCommand {
+public final class CloseDialogTradingCmd extends AbstractTradeItemCmd {
     /**
-     * The ID of the dialog to close. This ID is send by the server once the dialog is opened.
+     * The sub command ID for this command.
      */
-    private final int dialogId;
+    private static final int SUB_CMD_ID = 0;
 
     /**
      * Default constructor for the close crafting dialog command.
@@ -42,20 +39,12 @@ public final class CloseDialogTradingCmd extends AbstractCommand {
      * @param dialogId the ID of the dialog to close
      */
     public CloseDialogTradingCmd(final int dialogId) {
-        super(CommandList.CMD_TRADE_ITEM);
-
-        this.dialogId = dialogId;
-    }
-
-    @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
-        writer.writeInt(dialogId);
-        writer.writeByte((byte) 0);
+        super(dialogId, SUB_CMD_ID);
     }
 
     @Nonnull
     @Override
     public String toString() {
-        return toString("Dialog ID: " + dialogId);
+        return toString(super.toString());
     }
 }
