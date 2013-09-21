@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,7 +162,7 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
                     }
                 });
             } else {
-                World.getUpdateTaskManager().addTask(new UpdateTask() {
+                World.getUpdateTaskManager().addTaskForLater(new UpdateTask() {
                     @Override
                     public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
                         activeArrowPointers.remove(arrowPointer);
@@ -181,7 +181,7 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
                     }
                 });
             } else {
-                World.getUpdateTaskManager().addTask(new UpdateTask() {
+                World.getUpdateTaskManager().addTaskForLater(new UpdateTask() {
                     @Override
                     public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
                         activeStartPointers.remove(startPointer);
@@ -229,7 +229,7 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
                     activeStartPointers.remove(arrowPointer);
                 }
             });
-        }  else if (pointer instanceof MiniMapStartPointer) {
+        } else if (pointer instanceof MiniMapStartPointer) {
             final MiniMapStartPointer startPointer = (MiniMapStartPointer) pointer;
             startPointer.getParentElement().hide();
 

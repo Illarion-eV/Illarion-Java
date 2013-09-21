@@ -92,7 +92,8 @@ public final class UpdateTaskManager {
     }
 
     /**
-     * Add a task to the list of tasks executed during the next update.
+     * Add a task to the list of tasks executed during the update loop. In case the update loop is currently
+     * executed from the calling thread, the task is executed instantly.
      *
      * @param task the task to execute
      */
@@ -102,5 +103,14 @@ public final class UpdateTaskManager {
         } else {
             taskQueue.offer(task);
         }
+    }
+
+    /**
+     * Add a task to the list of tasks executed during the next update.
+     *
+     * @param task the task to execute
+     */
+    public void addTaskForLater(@Nonnull final UpdateTask task) {
+        taskQueue.offer(task);
     }
 }
