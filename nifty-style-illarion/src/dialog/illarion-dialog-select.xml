@@ -2,7 +2,7 @@
 <!--
   ~ This file is part of the Illarion Nifty-GUI Style.
   ~
-  ~ Copyright © 2012 - Illarion e.V.
+  ~ Copyright © 2013 - Illarion e.V.
   ~
   ~ The Illarion Nifty-GUI Style is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
         <attributes/>
     </style>
 
-    <style id="illarion-dialog-select-line">
+    <style id="illarion-dialog-select-line" base="nifty-listbox-item">
         <attributes height="46px" width="100%" padding="1px" visibleToMouse="true"/>
         <effect>
             <onHover name="colorBar" color="#264d1cff" neverStopRendering="true" timeType="infinite"/>

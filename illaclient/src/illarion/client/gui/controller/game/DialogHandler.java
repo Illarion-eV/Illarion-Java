@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright Â© 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -301,12 +301,13 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
     }
 
     private void showSelectDialog(@Nonnull final DialogSelectionReceivedEvent event) {
-        final Element parentArea = screen.findElementByName("windows");
+        final Element parentArea = screen.findElementById("windows");
         final DialogSelectBuilder builder = new DialogSelectBuilder(
                 "selectDialog" + Integer.toString(event.getId()), event.getTitle());
         builder.dialogId(event.getId());
         builder.message(event.getMessage());
         builder.width(builder.pixels(750));
+        builder.itemCount(Math.min(6, event.getOptionCount()));
         builders.add(new DialogHandler.BuildWrapper(builder, parentArea, new DialogHandler.PostBuildTask() {
             @Override
             public void run(@Nonnull final Element createdElement) {
