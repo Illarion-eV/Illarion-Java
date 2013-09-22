@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Nifty-GUI Controls.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Nifty-GUI Controls is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ import javax.annotation.Nonnull;
 public final class SelectItemViewConverter implements ListBox.ListBoxViewConverter<SelectListEntry> {
     @Override
     public void display(@Nonnull final Element listBoxItem, @Nonnull final SelectListEntry item) {
-        final Element itemImage = listBoxItem.findElementByName("#imageDisplay");
+        final Element itemImage = listBoxItem.findElementById("#imageDisplay");
         final Element itemImageContainer = itemImage.getParent();
         final NiftyImage itemPicture = item.getItemImage();
         if (itemPicture == null) {
@@ -71,10 +71,11 @@ public final class SelectItemViewConverter implements ListBox.ListBoxViewConvert
             itemImage.setConstraintWidth(SizeValue.px(imageWidth));
         }
 
-        final Element title = listBoxItem.findElementByName("#itemTitle");
+        final Element title = listBoxItem.findElementById("#itemTitle");
         title.getRenderer(TextRenderer.class).setText(item.getName());
 
         listBoxItem.layoutElements();
+        //noinspection deprecation
         listBoxItem.getNiftyControl(DialogSelectEntryControl.class).setIndex(item.getIndex());
     }
 

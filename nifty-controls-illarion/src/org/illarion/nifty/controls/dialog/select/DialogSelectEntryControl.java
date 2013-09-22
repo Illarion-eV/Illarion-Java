@@ -19,7 +19,6 @@
 package org.illarion.nifty.controls.dialog.select;
 
 import de.lessvoid.nifty.Nifty;
-import de.lessvoid.nifty.controls.ListBox;
 import de.lessvoid.nifty.controls.listbox.ListBoxItemController;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
@@ -50,7 +49,6 @@ public final class DialogSelectEntryControl extends ListBoxItemController<Select
     };
 
     private int index;
-    private ListBox<SelectListEntry> listBox;
     private DialogSelectControl selectDialogControl;
     private boolean selectable;
 
@@ -62,7 +60,6 @@ public final class DialogSelectEntryControl extends ListBoxItemController<Select
         selectable = Boolean.parseBoolean(controlDefinitionAttributes.get("selectable"));
 
         if (selectable) {
-            listBox = (ListBox<SelectListEntry>) getParent(element, 4).getNiftyControl(ListBox.class);
             selectDialogControl = getParent(element, 8).getNiftyControl(DialogSelectControl.class);
         }
     }

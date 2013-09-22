@@ -26,6 +26,7 @@ import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
+import illarion.client.graphics.FontLoader;
 import illarion.client.gui.DialogCraftingGui;
 import illarion.client.gui.DialogInputGui;
 import illarion.client.gui.DialogMessageGui;
@@ -41,6 +42,7 @@ import illarion.client.world.World;
 import illarion.client.world.events.CloseDialogEvent;
 import illarion.client.world.items.CraftingItem;
 import illarion.client.world.items.MerchantList;
+import illarion.client.world.items.SelectionItem;
 import illarion.common.types.ItemCount;
 import illarion.common.types.Rectangle;
 import org.apache.log4j.Logger;
@@ -48,6 +50,7 @@ import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.engine.GameContainer;
+import org.illarion.engine.graphic.Font;
 import org.illarion.engine.input.Button;
 import org.illarion.engine.input.Input;
 import org.illarion.engine.input.Key;
@@ -306,7 +309,29 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
                 "selectDialog" + Integer.toString(event.getId()), event.getTitle());
         builder.dialogId(event.getId());
         builder.message(event.getMessage());
-        builder.width(builder.pixels(750));
+
+        int selectedWidth = 0;
+        boolean useImages = false;
+        final Font textFont = FontLoader.getInstance().getFont(FontLoader.TEXT_FONT);
+        for (int i = 0; i < event.getOptionCount(); i++) {
+            final SelectionItem item = event.getOption(i);
+            useImages = useImages || (item.getId() > 0);
+            selectedWidth = Math.max(selectedWidth, textFont.getWidth(item.getName()));
+        }
+        if (useImages) {
+            selectedWidth += 79; // width of the image container area
+        }
+        selectedWidth += 2;  // padding of entry
+        selectedWidth += 26; // padding of list box and window
+        if (event.getOptionCount() > 6) {
+            selectedWidth += 16; // space for the scroll bar
+        }
+        selectedWidth += 10; // padding to make it look good (some space on the right side of the text entries)
+        selectedWidth += 20; // magical additional width of unknown origin (determined by testing)
+
+        selectedWidth = Math.max(selectedWidth, 270); // width required to display the buttons properly
+
+        builder.width(builder.pixels(selectedWidth));
         builder.itemCount(Math.min(6, event.getOptionCount()));
         builders.add(new DialogHandler.BuildWrapper(builder, parentArea, new DialogHandler.PostBuildTask() {
             @Override
