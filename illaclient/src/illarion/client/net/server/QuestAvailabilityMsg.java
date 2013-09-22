@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 
 /**
  * This is the server message that handles the server messages about the available quests in range of the player.
@@ -70,8 +71,21 @@ public class QuestAvailabilityMsg extends AbstractGuiMsg {
 
     @Override
     public boolean executeUpdate() {
-        final Collection<Location> available = (availableQuests == null) ? Collections.<Location>emptyList() : Arrays.asList(availableQuests);
-        final Collection<Location> availableSoon = (availableSoonQuests == null) ? Collections.<Location>emptyList() : Arrays.asList(availableSoonQuests);
+        final Collection<Location> available;
+        if (availableQuests == null) {
+            available = Collections.emptyList();
+        } else {
+            available = new HashSet<Location>(Arrays.asList(availableQuests));
+        }
+
+        final Collection<Location> availableSoon;
+        if (availableSoonQuests == null) {
+            availableSoon = Collections.emptyList();
+        } else {
+            availableSoon = new HashSet<Location>(Arrays.asList(availableSoonQuests));
+        }
+        availableSoon.removeAll(available);
+
         World.getMap().applyQuestStartLocations(available, availableSoon);
         return true;
     }
