@@ -38,6 +38,8 @@ import illarion.client.gui.util.NiftyMerchantItem;
 import illarion.client.gui.util.NiftySelectItem;
 import illarion.client.net.client.*;
 import illarion.client.net.server.events.*;
+import illarion.client.util.GlobalExecutorService;
+import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
 import illarion.client.world.events.CloseDialogEvent;
 import illarion.client.world.items.CraftingItem;
@@ -125,8 +127,6 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
     private final Queue<DialogHandler.BuildWrapper> builders;
     @Nonnull
     private final Queue<CloseDialogEvent> closers;
-    @Nonnull
-    private final Queue<Runnable> updater;
     private Nifty nifty;
     private Screen screen;
     private final NumberSelectPopupHandler numberSelect;
@@ -140,7 +140,6 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
         this.tooltipHandler = tooltipHandler;
         builders = new ConcurrentLinkedQueue<DialogHandler.BuildWrapper>();
         closers = new ConcurrentLinkedQueue<CloseDialogEvent>();
-        updater = new ConcurrentLinkedQueue<Runnable>();
         numberSelect = numberSelectPopupHandler;
     }
 
@@ -151,14 +150,19 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
 
     @EventSubscriber
     public void handleCraftingDialogEvent(@Nonnull final DialogCraftingReceivedEvent event) {
-        showCraftingDialog(event);
+        GlobalExecutorService.getService().submit(new Runnable() {
+            @Override
+            public void run() {
+                showCraftingDialog(event);
+            }
+        });
     }
 
     private void showCraftingDialog(@Nonnull final DialogCraftingReceivedEvent event) {
         if ((event.getRequestId() == craftingDialog.getDialogId()) && openCraftDialog) {
-            updater.add(new Runnable() {
+            World.getUpdateTaskManager().addTask(new UpdateTask() {
                 @Override
-                public void run() {
+                public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
                     final CraftingItemEntry selectedItem = craftingDialog.getSelectedCraftingItem();
 
                     final int selectedIndex;
@@ -178,9 +182,9 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
             });
         } else {
             closeCraftingDialog(craftingDialog.getDialogId());
-            updater.add(new Runnable() {
+            World.getUpdateTaskManager().addTask(new UpdateTask() {
                 @Override
-                public void run() {
+                public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
                     craftingDialog.setDialogId(event.getRequestId());
                     craftingDialog.clearItemList();
                     addCraftingItemsToDialog(event, craftingDialog);
@@ -261,9 +265,9 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
     }
 
     private void showMerchantDialog(@Nonnull final DialogMerchantReceivedEvent event) {
-        updater.add(new Runnable() {
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
-            public void run() {
+            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
                 merchantDialog.clearItems();
                 merchantDialog.setDialogId(event.getId());
                 merchantDialog.setTitle(event.getTitle());
@@ -300,7 +304,12 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
 
     @EventSubscriber
     public void handleSelectDialogEvent(@Nonnull final DialogSelectionReceivedEvent event) {
-        showSelectDialog(event);
+        GlobalExecutorService.getService().submit(new Runnable() {
+            @Override
+            public void run() {
+                showSelectDialog(event);
+            }
+        });
     }
 
     private void showSelectDialog(@Nonnull final DialogSelectionReceivedEvent event) {
@@ -514,15 +523,6 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
             }
 
             closeDialog(closeEvent);
-        }
-
-        while (true) {
-            final Runnable task = updater.poll();
-            if (task == null) {
-                break;
-            }
-
-            task.run();
         }
     }
 
