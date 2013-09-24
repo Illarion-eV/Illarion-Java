@@ -23,7 +23,7 @@ archivesBaseName = 'illarion_client'
 dependencies {
     compile project(':common')
     compile project(':engine')
-    compile project(':engine-libgdx')
+    runtime project(':engine-libgdx')
     compile project(':nifty-controls')
     runtime project(':nifty-style')
     compile group: 'javolution', name: 'javolution', version: '5.5.1'
