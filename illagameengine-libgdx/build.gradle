@@ -30,11 +30,12 @@ sourceSets {
     }
 }
 
-archivesBaseName = 'illarion_engine'
+archivesBaseName = 'illarion_engine_libgdx'
 dependencies {
-    compile project(':common')
+    compile project(':engine')
     compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.1'
-    compile group: 'lessvoid', name: 'nifty', version: '1.4.0-SNAPSHOT'
+    compile group: 'com.badlogic.gdx', name: 'gdx', version: '0.9.9-SNAPSHOT'
+    compile group: 'com.badlogic.gdx', name: 'gdx-backend-lwjgl', version: '0.9.9-SNAPSHOT'
 }
 
 ext.buildDate = null
@@ -54,7 +55,7 @@ jar {
 
         manifest {
             attributes   \
-              'Implementation-Title': 'Illarion Game Engine',   \
+              'Implementation-Title': 'Illarion Game Engine - libGDX Backend',   \
               'Implementation-Version': project.ext.fullVersion,   \
               'Implementation-Vendor': 'Illarion e.V.',   \
               'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),   \

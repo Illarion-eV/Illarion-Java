@@ -57,17 +57,15 @@ compileJava.doLast {
 }
 
 tasks.jar.onlyIf { return project.buildDate != null }
-jar {
-    doFirst {
-        gitversion()
+jar.doFirst {
+    gitVersion
 
-        manifest {
-            attributes     \
-                'Implementation-Title': 'Illarion Common Library',     \
-                'Implementation-Vendor': 'Illarion e.V.',     \
-                'Built-By': System.getProperty('user.name'),     \
-                'Built-JDK': System.getProperty('java.version')
-        }
+    manifest {
+        attributes     \
+            'Implementation-Title': 'Illarion Common Library',     \
+            'Implementation-Vendor': 'Illarion e.V.',     \
+            'Built-By': System.getProperty('user.name'),     \
+            'Built-JDK': System.getProperty('java.version')
     }
 }
 

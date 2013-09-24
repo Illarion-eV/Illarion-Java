@@ -23,6 +23,8 @@ include "illadownload"
 include "illaeasynpc"
 include "illaeasyquest"
 include "illagameengine"
+include "illagameengine-libgdx"
+include "illagameengine-slick"
 include "illamapedit"
 include "nifty-controls-illarion"
 include "nifty-style-illarion"
@@ -50,6 +52,12 @@ rootProject.children.each {
             break;
         case "illagameengine":
             it.name = "engine";
+            break;
+        case "illagameengine-libgdx":
+            it.name = "engine-libgdx";
+            break;
+        case "illagameengine-slick":
+            it.name = "engine-slick";
             break;
         case "illamapedit":
             it.name = "mapeditor";
