@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Common Library.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Common Library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -399,37 +399,37 @@ public final class CrashReporter {
 
             @Nonnull final IIssueHeader[] headers = mantisSession.getProjectIssueHeaders(selectedProject.getId());
             for (@Nonnull final IIssueHeader header : headers) {
-                if (!header.getCategory().equals(CATEGORY)) {
+                if (!CATEGORY.equals(header.getCategory())) {
                     continue;
                 }
 
-                if (!header.getSummary().equals(summery)) {
+                if (!saveString(header.getSummary()).equals(summery)) {
                     continue;
                 }
 
                 @Nonnull final IIssue checkedIssue = mantisSession.getIssue(header.getId());
 
-                if (!checkedIssue.getDescription().endsWith(exceptionDescription)) {
+                if (!saveString(checkedIssue.getDescription()).endsWith(exceptionDescription)) {
                     continue;
                 }
 
                 similarIssue = checkedIssue;
 
-                if (!checkedIssue.getVersion().equals(application.getApplicationRootVersion())) {
+                if (!saveString(checkedIssue.getVersion()).equals(application.getApplicationRootVersion())) {
                     continue;
                 }
 
-                if (!checkedIssue.getOs().equals(System.getProperty("os.name"))) {
+                if (!saveString(checkedIssue.getOs()).equals(System.getProperty("os.name"))) {
                     continue;
                 }
 
-                if (!checkedIssue.getOsBuild().equals(System.getProperty("os.version"))) {
+                if (!saveString(checkedIssue.getOsBuild()).equals(System.getProperty("os.version"))) {
                     continue;
                 }
 
                 possibleDuplicateIssue = checkedIssue;
 
-                if (!checkedIssue.getDescription().equals(description)) {
+                if (!saveString(checkedIssue.getDescription()).equals(description)) {
                     continue;
                 }
 
@@ -438,7 +438,7 @@ public final class CrashReporter {
             }
 
             if (duplicateIssue != null) {
-                final INote note = mantisSession.newNote("Same problem problem occurred again.");
+                final INote note = mantisSession.newNote("Same problem occurred again.");
                 mantisSession.addNote(duplicateIssue.getId(), note);
             } else if (possibleDuplicateIssue != null) {
                 final INote note = mantisSession.newNote("A problem that is by all means very similar occurred:\n" +
@@ -469,6 +469,14 @@ public final class CrashReporter {
         } catch (MCException e) {
             LOGGER.error("Failed to send error reporting data.", e);
         }
+    }
+
+    @Nonnull
+    private static String saveString(@Nullable final String input) {
+        if (input == null) {
+            return "";
+        }
+        return input;
     }
 
     /**

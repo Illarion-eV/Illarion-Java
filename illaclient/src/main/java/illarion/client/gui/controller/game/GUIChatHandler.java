@@ -36,6 +36,7 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.Color;
 import de.lessvoid.nifty.tools.SizeValue;
+import illarion.client.IllaClient;
 import illarion.client.graphics.Avatar;
 import illarion.client.graphics.Camera;
 import illarion.client.graphics.FontLoader;
@@ -278,7 +279,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
             return;
         }
 
-        final Element chatScroll = screen.findElementByName("chatPanel");
+        final Element chatScroll = screen.findElementById("chatPanel");
 
         if (chatScroll.getConstraintHeight().equals(CHAT_COLLAPSED_HEIGHT)) {
             chatScroll.setConstraintHeight(CHAT_EXPANDED_HEIGHT);
@@ -302,7 +303,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
 
         chatMsg.getElement().addInputHandler(this);
 
-        chatLayer = screen.findElementByName("chatLayer");
+        chatLayer = screen.findElementById("chatLayer");
     }
 
     /**
@@ -319,6 +320,10 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
                 } else {
                     sendText(chatMsg.getDisplayedText());
                     chatMsg.setText("");
+                    if (IllaClient.getCfg().getBoolean("disableChatAfterSending")) {
+                        assert screen != null;
+                        screen.getFocusHandler().setKeyFocus(null);
+                    }
                 }
             } else {
                 chatMsg.setFocus();
@@ -455,7 +460,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         if (chatLog == null) {
             return;
         }
-        final Element contentPane = chatLog.getElement().findElementByName("chatLog");
+        final Element contentPane = chatLog.getElement().findElementById("chatLog");
 
         final LabelBuilder label = new LabelBuilder();
         label.font("chatFont");

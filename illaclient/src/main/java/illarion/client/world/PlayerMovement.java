@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@ package illarion.client.world;
 import illarion.client.IllaClient;
 import illarion.client.graphics.AnimatedMove;
 import illarion.client.graphics.MoveAnimation;
-import illarion.client.input.InputReceiver;
 import illarion.client.net.client.MoveCmd;
 import illarion.client.net.client.TurnCmd;
 import illarion.client.util.Path;
@@ -31,9 +30,9 @@ import illarion.client.util.Pathfinder;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
 import illarion.common.util.FastMath;
+import illarion.common.util.Timer;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
-import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.illarion.engine.input.Input;
 import org.illarion.engine.input.Key;
 
@@ -198,6 +197,10 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     @Nonnull
     private final Input input;
 
+    @Nonnull
+    private final Timer delayedMoveTrigger;
+
+
     /**
      * Default constructor.
      *
@@ -208,44 +211,96 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         parentPlayer = parent;
         this.input = input;
         AnnotationProcessor.process(this);
+
+        delayedMoveTrigger = new Timer(100, new Runnable() {
+            @Override
+            public void run() {
+                if (moveToDirectionActive) {
+                    requestMove(getCurrentMoveToDirection(), moveToDirectionMode);
+                } else {
+                    LOGGER.info("Delayed, invalid move trigger received.");
+                }
+            }
+        });
+        delayedMoveTrigger.setRepeats(false);
     }
 
-    /**
-     * This is the event handler that takes care of processing input event.
-     *
-     * @param topic the event topic, should be {@link InputReceiver#EB_TOPIC}
-     * @param data  the event data
-     */
-    @EventTopicSubscriber(topic = InputReceiver.EB_TOPIC)
-    public void onInputEventReceived(@Nonnull final String topic, @Nonnull final String data) {
-        final CharMovementMode moveMode;
-        if (input.isAnyKeyDown(Key.LeftCtrl, Key.RightCtrl)) {
-            moveMode = CharMovementMode.Run;
-        } else if (input.isKeyDown(Key.LeftAlt)) {
-            moveMode = CharMovementMode.None;
-        } else {
-            moveMode = CharMovementMode.Walk;
+    private boolean moveToDirectionActive;
+    private final boolean[] activeDirections = new boolean[8];
+    private CharMovementMode moveToDirectionMode = CharMovementMode.Walk;
+
+    public void setMovingToDirectionMode(final CharMovementMode mode) {
+        moveToDirectionMode = mode;
+    }
+
+    public void startMovingToDirection(final int direction) {
+        if ((direction < 0) || (direction >= activeDirections.length)) {
+            throw new IllegalArgumentException("Illegal direction: " + direction);
         }
-        if (InputReceiver.EB_TOPIC.equals(topic)) {
-            //noinspection IfStatementWithTooManyBranches
-            if ("WalkNorth".equals(data)) {
-                requestMove(Location.DIR_NORTH, moveMode);
-            } else if ("WalkNorthEast".equals(data)) {
-                requestMove(Location.DIR_NORTHEAST, moveMode);
-            } else if ("WalkEast".equals(data)) {
-                requestMove(Location.DIR_EAST, moveMode);
-            } else if ("WalkSouthEast".equals(data)) {
-                requestMove(Location.DIR_SOUTHEAST, moveMode);
-            } else if ("WalkSouth".equals(data)) {
-                requestMove(Location.DIR_SOUTH, moveMode);
-            } else if ("WalkSouthWest".equals(data)) {
-                requestMove(Location.DIR_SOUTHWEST, moveMode);
-            } else if ("WalkWest".equals(data)) {
-                requestMove(Location.DIR_WEST, moveMode);
-            } else if ("WalkNorthWest".equals(data)) {
-                requestMove(Location.DIR_NORTHWEST, moveMode);
+        if (activeDirections[direction]) {
+            return;
+        }
+
+        activeDirections[direction] = true;
+
+        delayedMoveTrigger.stop();
+        if (moveToDirectionActive) {
+            requestMove(getCurrentMoveToDirection(), moveToDirectionMode);
+        } else {
+            moveToDirectionActive = true;
+            stopWalkTowards();
+            delayedMoveTrigger.start();
+        }
+    }
+
+    public void stopMovingToDirection(final int direction) {
+        if ((direction < 0) || (direction >= activeDirections.length)) {
+            throw new IllegalArgumentException("Illegal direction: " + direction);
+        }
+        if (!activeDirections[direction]) {
+            return;
+        }
+
+        if (delayedMoveTrigger.isRunning()) {
+            delayedMoveTrigger.stop();
+            requestMove(getCurrentMoveToDirection(), moveToDirectionMode);
+        }
+        activeDirections[direction] = false;
+
+        boolean newWalkingState = false;
+        for (final boolean walkState : activeDirections) {
+            if (walkState) {
+                newWalkingState = true;
+                break;
             }
         }
+        moveToDirectionActive = newWalkingState;
+    }
+
+    private int getCurrentMoveToDirection() {
+        int currentDirection = 0;
+        boolean noDirectionSet = true;
+        boolean secondDirectionSet = false;
+
+        for (int i = 0; i < activeDirections.length; i++) {
+            if (activeDirections[i]) {
+                if (noDirectionSet) {
+                    noDirectionSet = false;
+                    currentDirection = i;
+                } else if (secondDirectionSet) {
+                    return Location.DIR_ZERO;
+                } else {
+                    secondDirectionSet = true;
+                    if ((i - currentDirection) < 4) {
+                        currentDirection += (i - currentDirection) / 2;
+                    } else {
+                        currentDirection += ((i + 8) - currentDirection) / 2;
+                    }
+                    currentDirection %= 8;
+                }
+            }
+        }
+        return currentDirection;
     }
 
     /**
@@ -258,7 +313,9 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * @param mode      the mode of the move that shall be performed
      */
     public void requestMove(final int direction, @Nonnull final CharMovementMode mode) {
-        requestMove(direction, mode, true, false);
+        if (direction != Location.DIR_ZERO) {
+            requestMove(direction, mode, true, false);
+        }
     }
 
     @Override
@@ -614,15 +671,12 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     @Override
     public void setPosition(final int posX, final int posY, final int posZ) {
         if (positionDirty && (moveAnimation.animationProgress() > POSITION_UPDATE_PROCESS)) {
-            // update mini-map and world-map position
-            final Location targetLoc = parentPlayer.getLocation();
-
-            // process obstructed tiles
-            // Game.getMap().checkObstructions();
             positionDirty = false;
         } else if ((moveAnimation.timeRemaining() <= MOVEMENT_OVERLAP_TIME) && (lastAllowedMove == Location.DIR_ZERO)
                 && (lastMoveRequest == Location.DIR_ZERO)) {
-            if (walkTowards) {
+            if (moveToDirectionActive) {
+                requestMove(getCurrentMoveToDirection(), moveToDirectionMode);
+            } else if (walkTowards) {
                 requestMove(walkTowardsDir, walkTowardsMode, true, true);
             } else {
                 autoStep();
@@ -689,18 +743,23 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         parentPlayer.updateLocation(target);
     }
 
+    @Override
+    public void animationStarted() {
+        // nothing to do
+    }
+
     /**
      * This is called in case the animation got finished. This is needed so the next animation can be started correctly
      * in case it was requested.
      *
-     * @param finished <code>true</code> in case the animation is really done, false in case it got canceled
+     * @param finished {@code true} in case the animation is really done, false in case it got canceled
      */
     @Override
     public void animationFinished(final boolean finished) {
         positionDirty = true;
         final Char playerCharacter = parentPlayer.getCharacter();
         playerCharacter.getLocation().set(parentPlayer.getLocation());
-        playerCharacter.updatePosition(0);
+        //playerCharacter.updatePosition(0);
         World.getPeople().checkVisibility();
         World.getMap().checkInside();
 
@@ -755,8 +814,6 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * movement. Once this is called {@link #isMouseMovementActive()} will return {@code false}.
      */
     public void stopWalkTowards() {
-        // GUI.getInstance().getMouseCursor()
-        // .setCursor(MarkerFactory.CRSR_NORMAL);
         walkTowards = false;
         mouseMovementActive = false;
     }

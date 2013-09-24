@@ -32,7 +32,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_BOOK)
-public final class BookMsg extends AbstractReply {
+public final class BookMsg extends AbstractGuiMsg {
     /**
      * The book id that was sent.
      */

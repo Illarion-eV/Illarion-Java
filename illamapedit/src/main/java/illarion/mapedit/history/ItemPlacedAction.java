@@ -21,6 +21,8 @@ package illarion.mapedit.history;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapItem;
 
+import javax.annotation.Nullable;
+
 /**
  * @author Tim
  */
@@ -39,7 +41,7 @@ public class ItemPlacedAction extends HistoryAction {
         this.newt = newt;
     }
 
-    public ItemPlacedAction(final int x, final int y, final MapItem old, final MapItem newt, final Map map) {
+    public ItemPlacedAction(final int x, final int y, @Nullable final MapItem old, @Nullable final MapItem newt, final Map map) {
         super(map);
         this.x = x;
         this.y = y;
@@ -50,20 +52,20 @@ public class ItemPlacedAction extends HistoryAction {
     @Override
     public void redo() {
         if (old != null) {
-            map.getTileAt(x, y).getMapItems().remove(old);
+            map.getTileAt(x, y).removeMapItem(old);
         }
         if (newt != null) {
-            map.getTileAt(x, y).getMapItems().add(newt);
+            map.getTileAt(x, y).addMapItem(newt);
         }
     }
 
     @Override
     public void undo() {
         if (newt != null) {
-            map.getTileAt(x, y).getMapItems().remove(newt);
+            map.getTileAt(x, y).removeMapItem(newt);
         }
         if (old != null) {
-            map.getTileAt(x, y).getMapItems().add(old);
+            map.getTileAt(x, y).addMapItem(old);
         }
     }
 }

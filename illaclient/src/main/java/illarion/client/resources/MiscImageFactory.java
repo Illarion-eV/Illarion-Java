@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +42,23 @@ public final class MiscImageFactory extends AbstractTemplateFactory<MiscImageTem
      * The ID of the point that is displayed on the mini map in case the target is on the mini map area.
      */
     public static final int MINI_MAP_POINT = 2;
+
+    /**
+     * The ID of te exclamation mark that is displayed on the mini map for the starting points of quests.
+     */
+    public static final int MINI_MAP_EXCLAMATION = 6;
+
+    /**
+     * The ID of the quest marker graphic that is rendered on the game map to mark where the player finds the next
+     * target of a quest.
+     */
+    public static final int QUEST_MARKER_QUESTION_MARK = 3;
+
+    /**
+     * The ID of the quest marker graphic that is rendered on the game map to mark where the player is able to find a
+     * new quest.
+     */
+    public static final int QUEST_MARKER_EXCLAMATION_MARK = 4;
 
     /**
      * The singleton instance.

@@ -32,18 +32,23 @@
         <panel childLayout="vertical" visibleToMouse="true" style="#background">
             <control name="label" id="#title" style="#title"/>
             <control name="label" id="#description" style="#description"/>
+            <panel childLayout="horizontal" style="#typeLevelLine" id="#typeLevelLine">
+                <control name="label" id="#itemtype" style="#itemtype"/>
+                <control name="label" id="#levelTitle" style="#levelTitle" text="${illarion-tooltip-bundle.level}"/>
+                <control name="label" id="#levelLabel" style="#levelLabel"/>
+            </panel>
             <panel childLayout="horizontal" style="#createByLine" id="#createByLine">
                 <control name="label" style="#createdByTitle" text="${illarion-tooltip-bundle.createdBy}"/>
                 <control name="label" id="#createdByLabel" style="#createdByLabel"/>
             </panel>
             <panel childLayout="horizontal" style="#worthLine" id="#worthLine">
                 <control name="label" style="#worthLabel" text="${illarion-tooltip-bundle.worth}"/>
-                <image id="#worthGoldImage" style="#worthGoldImage"/>
                 <control name="label" id="#worthGoldCount" style="#worthGoldCount"/>
-                <image id="#worthSilverImage" style="#worthSilverImage"/>
+                <image id="#worthGoldImage" style="#worthGoldImage"/>
                 <control name="label" id="#worthSilverCount" style="#worthSilverCount"/>
-                <image id="#worthCopperImage" style="#worthCopperImage"/>
+                <image id="#worthSilverImage" style="#worthSilverImage"/>
                 <control name="label" id="#worthCopperCount" style="#worthCopperCount"/>
+                <image id="#worthCopperImage" style="#worthCopperImage"/>
             </panel>
             <panel childLayout="horizontal" style="#weightLine" id="#weightLine">
                 <control name="label" style="#weightTitle" text="${illarion-tooltip-bundle.weight}"/>

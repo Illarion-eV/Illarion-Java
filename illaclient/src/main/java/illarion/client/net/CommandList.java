@@ -406,6 +406,11 @@ public final class CommandList {
     public static final int MSG_QUEST_DELETE = 0x41;
 
     /**
+     * Server message that contains the location of all quests that are in range.
+     */
+    public static final int MSG_QUEST_AVAILABILITY = 0x42;
+
+    /**
      * Server message to remove a character from the screen.
      */
     public static final int MSG_REMOVE_CHAR = 0xE2;

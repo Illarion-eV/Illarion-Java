@@ -55,12 +55,6 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
     private final GdxTexture worldMapTexture;
 
     /**
-     * The location that was last requested from the data provider.
-     */
-    @Nonnull
-    private final Location lastRequestedLocation;
-
-    /**
      * The pixel data of the world map.
      */
     @Nonnull
@@ -88,7 +82,6 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
         this.provider = provider;
         mapOrigin = new Location();
         playerLocation = new Location();
-        lastRequestedLocation = new Location();
 
         worldMapPixels = new Pixmap(WORLD_MAP_WIDTH, WORLD_MAP_HEIGHT, Pixmap.Format.RGB888);
         worldMapTexture = new GdxTexture(new TextureRegion(new Texture(worldMapPixels)));
@@ -114,13 +107,13 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
     }
 
     @Override
-    public void setTile(final int tileId, final int overlayId, final boolean blocked) {
-        if (lastRequestedLocation.getScZ() != mapOrigin.getScZ()) {
+    public void setTile(@Nonnull final Location loc, final int tileId, final int overlayId, final boolean blocked) {
+        if (loc.getScZ() != mapOrigin.getScZ()) {
             return;
         }
 
-        final int texPosX = lastRequestedLocation.getScX() - mapOrigin.getScX();
-        final int texPosY = lastRequestedLocation.getScY() - mapOrigin.getScY();
+        final int texPosX = loc.getScX() - mapOrigin.getScX();
+        final int texPosY = loc.getScY() - mapOrigin.getScY();
 
         if ((texPosX < 0) || (texPosX >= WORLD_MAP_WIDTH) || (texPosY < 0) || (texPosY >= WORLD_MAP_HEIGHT)) {
             return;
@@ -148,19 +141,41 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
         }
     }
 
+    private boolean currentlyFetchingTiles;
+    private boolean cancelFetchingTiles;
+
     @Override
     public void setTileChanged(@Nonnull final Location location) {
-        lastRequestedLocation.set(location);
-        provider.requestTile(lastRequestedLocation, this);
+        if (cancelFetchingTiles) {
+            return;
+        }
+        if (location.getScZ() != mapOrigin.getScZ()) {
+            return;
+        }
+        currentlyFetchingTiles = true;
+        provider.requestTile(location, this);
+        currentlyFetchingTiles = false;
+        synchronized (this) {
+            notifyAll();
+        }
     }
 
     @Override
     public void setMapChanged() {
+        currentlyFetchingTiles = true;
+        final Location tempLocation = new Location();
         for (int x = 0; x < WorldMap.WORLD_MAP_WIDTH; x++) {
             for (int y = 0; y < WorldMap.WORLD_MAP_HEIGHT; y++) {
-                lastRequestedLocation.setSC(x + mapOrigin.getScX(), y + mapOrigin.getScY(), mapOrigin.getScZ());
-                provider.requestTile(lastRequestedLocation, this);
+                if (cancelFetchingTiles) {
+                    break;
+                }
+                tempLocation.setSC(x + mapOrigin.getScX(), y + mapOrigin.getScY(), mapOrigin.getScZ());
+                provider.requestTile(tempLocation, this);
             }
+        }
+        currentlyFetchingTiles = false;
+        synchronized (this) {
+            notifyAll();
         }
     }
 
@@ -177,6 +192,18 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
 
     @Override
     public void clear() {
+        cancelFetchingTiles = true;
+        if (currentlyFetchingTiles) {
+            synchronized (this) {
+                while (currentlyFetchingTiles) {
+                    try {
+                        wait();
+                    } catch (@Nonnull final InterruptedException ignored) {
+                    }
+                }
+            }
+        }
+        cancelFetchingTiles = false;
         synchronized (worldMapPixels) {
             worldMapPixels.setColor(Color.BLACK);
             worldMapPixels.fill();

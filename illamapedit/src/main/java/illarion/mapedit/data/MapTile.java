@@ -25,11 +25,12 @@ import javolution.util.FastList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 /**
- * This object represents a tile with a coordinate, an id and a music id.
+ * This object represents a tile with a coordinate, an tileId and a music tileId.
  *
  * @author Tim
  */
@@ -43,7 +44,7 @@ public class MapTile {
 
         @Nonnull
         public static MapTile setMusicId(final int musicID, @Nonnull final MapTile old) {
-            return new MapTile(old.id, old.overlayID, old.shapeID, musicID, old.mapItems, old.mapWarpPoint);
+            return new MapTile(old.tileId, old.overlayID, old.shapeID, musicID, old.mapItems, old.mapWarpPoint);
         }
 
         @Nonnull
@@ -51,118 +52,120 @@ public class MapTile {
             final int baseId = (TileInfo.hasOverlay(id)) ? id : TileInfo.getBaseID(id);
             final int overlayId = (TileInfo.hasOverlay(id)) ? 0 : TileInfo.getOverlayID(id);
             final int shapeId = TileInfo.getShapeId(id);
-            return new MapTile(baseId, overlayId, shapeId, old.musicID, old.mapItems, old.mapWarpPoint);
+            final MapTile tile = new MapTile(baseId, overlayId, shapeId, old.musicID, old.mapItems, old.mapWarpPoint);
+            tile.setAnnotation(old.getAnnotation());
+            return tile;
         }
 
         @Nonnull
         public static MapTile setOverlay(final int overlayID, final int shapeID, @Nonnull final MapTile old) {
-            return new MapTile(old.id, overlayID, shapeID, old.musicID, old.mapItems, old.mapWarpPoint);
+            return new MapTile(old.tileId, overlayID, shapeID, old.musicID, old.mapItems, old.mapWarpPoint);
         }
 
         @Nonnull
-        public static MapTile setOverlay(final int baseID, final int overlayID, final int shapeID, @Nonnull MapTile old) {
+        public static MapTile setOverlay(final int baseID, final int overlayID, final int shapeID, @Nonnull final MapTile old) {
             return new MapTile(baseID, overlayID, shapeID, old.musicID, old.mapItems, old.mapWarpPoint);
         }
 
-        @Nullable
+        @Nonnull
         public static MapTile createNew(final int id, final int overlayID, final int shapeID, final int musicID) {
             return new MapTile(id, overlayID, shapeID, musicID, null, null);
         }
 
         @Nonnull
         public static MapTile copy(@Nonnull final MapTile old) {
-            return new MapTile(old.id, old.overlayID, old.shapeID, old.musicID, old.mapItems, old.mapWarpPoint);
+            final List<MapItem> items = new FastList<MapItem>();
+            if (old.mapItems != null) {
+                for (final MapItem item : old.mapItems) {
+                    items.add(new MapItem(item.getId(), new ArrayList<String>(), MapItem.QUALITY_NONE));
+                }
+            }
+            return new MapTile(old.tileId, old.overlayID, old.shapeID, old.musicID, items, old.mapWarpPoint);
+        }
+
+        @Nonnull
+        public static MapTile copyAll(@Nonnull final MapTile old) {
+            final List<MapItem> items = new FastList<MapItem>();
+            if (old.mapItems != null) {
+                for (final MapItem item : old.mapItems) {
+                    List<String> itemData = null;
+                    if (item.getItemData() != null) {
+                        itemData = item.getItemData();
+                    }
+                    final MapItem newItem = new MapItem(item.getId(), itemData, item.getQuality());
+                    newItem.setAnnotation(item.getAnnotation());
+                    items.add(newItem);
+                }
+            }
+            return new MapTile(old.tileId, old.overlayID, old.shapeID, old.musicID, items, old.mapWarpPoint);
         }
     }
 
-
     /**
-     * The tile id.
+     * The tile tileId.
      */
-    private final int id;
+    private final int tileId;
     /**
      * The ID of the overlay.
      */
     private final int overlayID;
     /**
-     * The id of the shape
+     * The tileId of the shape
      */
     private final int shapeID;
     /**
-     * The music id.
+     * The music tileId.
      */
     private final int musicID;
     /**
      * The items on top of this tile
      */
-    @Nonnull
-    private final List<MapItem> mapItems;
+    @Nullable
+    private List<MapItem> mapItems;
+    private String annotation;
     /**
      * The warp point on this tile, may be {@code null}.
      */
     private MapWarpPoint mapWarpPoint;
 
-
     public MapTile(final int baseId, final int overlayID, final int shapeID, final int musicID,
-                   @Nullable final Collection<MapItem> mapItems, final MapWarpPoint mapWarpPoint) {
-        id = baseId;
+                   @Nullable final Collection<MapItem> mapItems, @Nullable final MapWarpPoint mapWarpPoint) {
+        tileId = baseId;
         this.overlayID = overlayID;
         this.shapeID = shapeID;
         this.musicID = musicID;
         this.mapWarpPoint = mapWarpPoint;
-        this.mapItems = new FastList<MapItem>();
         if (mapItems != null) {
+            this.mapItems = new FastList<MapItem>();
             this.mapItems.addAll(mapItems);
         }
     }
 
-    /**
-     * Creates a new tile with the coordinates, the id and the music id.
-     *
-     * @param id
-     * @param musicID
-     */
-    /*public MapTile(final int id, final int overlayID, final int shapeID, final int musicID) {
-        this(id, overlayID, shapeID, musicID, null, null);
-    }*/
-
-    /**
-     * Creates a copy of the other tile.
-     *
-     * @param old
-     */
-    /*public MapTile(final MapTile old) {
-        this(old.id, old.overlayID, old.shapeID, old.musicID, old.mapItems, old.mapWarpPoint);
-    }*/
-    /*public MapTile(final int id, final MapTile old) {
-        this((Overlay.shapeID(id) == 0) ? id : Overlay.baseID(id),
-                (Overlay.shapeID(id) == 0) ? 0 : Overlay.overlayID(id),
-                Overlay.shapeID(id),
-                old.musicID,
-                old.mapItems,
-                old.mapWarpPoint);
-    }*/
-    /*public MapTile(final int overlayID, final int shapeID, MapTile old) {
-        this(old.id, overlayID, shapeID, old.musicID, old.mapItems, old.mapWarpPoint);
-    }*/
-
-    /*public MapTile(final int baseID, final int overlayID, final int shapeID, MapTile old) {
-        this(baseID, overlayID, shapeID, old.musicID, old.mapItems, old.mapWarpPoint);
-    }*/
-
-    /**
-     * Returns the tile id.
-     *
-     * @return id
-     */
-    public int getId() {
-        return id;
+    public String getAnnotation() {
+        return annotation;
     }
 
     /**
-     * Returns the music id.
+     * Returns the tile tileId.
      *
-     * @return music id
+     * @return tileId
+     */
+    public int getId() {
+        return tileId;
+    }
+
+    @Nullable
+    public MapItem getMapItemAt(final int index) {
+        if (mapItems == null) {
+            return null;
+        }
+        return mapItems.get(index);
+    }
+
+    /**
+     * Returns the music tileId.
+     *
+     * @return music tileId
      */
     public int getMusicID() {
         return musicID;
@@ -171,9 +174,28 @@ public class MapTile {
     /**
      * @return The list of items on this tile.
      */
-    @Nonnull
+    @Nullable
     public List<MapItem> getMapItems() {
         return mapItems;
+    }
+
+    public void addMapItem(final MapItem item) {
+        if (mapItems == null) {
+            mapItems = new FastList<MapItem>();
+        }
+        mapItems.add(item);
+    }
+
+    public void removeMapItem(final MapItem item) {
+        if (mapItems != null) {
+            mapItems.remove(item);
+        }
+    }
+
+    public void removeMapItem(final int index) {
+        if (mapItems != null) {
+            mapItems.remove(index);
+        }
     }
 
     /**
@@ -191,12 +213,46 @@ public class MapTile {
         return shapeID;
     }
 
+    public boolean hasAnnotation() {
+        return (annotation != null) && !annotation.isEmpty();
+    }
+
+    public boolean hasItemAnnotation() {
+        boolean hasAnnotation = false;
+        if ((mapItems != null) && !mapItems.isEmpty()) {
+            int index = 0;
+            while (!hasAnnotation && (mapItems.size() > index)) {
+                hasAnnotation = mapItems.get(index).hasAnnotation();
+                index++;
+            }
+        }
+        return hasAnnotation;
+    }
+
+    public boolean isMapItemsDataEmpty() {
+        if (mapItems == null) {
+            return true;
+        }
+        boolean empty = true;
+        int index = 0;
+
+        while (empty && (index < mapItems.size())) {
+            empty = mapItems.get(index).isItemDataNullOrEmpty();
+            index++;
+        }
+        return empty;
+    }
+
+    public void setAnnotation(@Nullable final String annotation) {
+        this.annotation = annotation;
+    }
+
     /**
      * Sets the warp point of this tile.
      *
      * @param mapWarpPoint the new warp, may be {@code null}.
      */
-    public void setMapWarpPoint(final MapWarpPoint mapWarpPoint) {
+    public void setMapWarpPoint(@Nullable final MapWarpPoint mapWarpPoint) {
         this.mapWarpPoint = mapWarpPoint;
     }
 
@@ -212,9 +268,9 @@ public class MapTile {
         final TextBuilder builder = TextBuilder.newInstance();
 
         if (shapeID == 0) {
-            builder.append(id);
+            builder.append(tileId);
         } else {
-            builder.append(Overlay.generateTileId(id, overlayID, shapeID));
+            builder.append(Overlay.generateTileId(tileId, overlayID, shapeID));
         }
         builder.append(';');
         builder.append(musicID);

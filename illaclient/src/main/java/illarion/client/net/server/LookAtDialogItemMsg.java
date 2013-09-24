@@ -34,7 +34,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_LOOKAT_DIALOG_ITEM)
-public final class LookAtDialogItemMsg extends AbstractReply {
+public final class LookAtDialogItemMsg extends AbstractGuiMsg {
     private int dialogId;
     private int type;
     private int slotId;

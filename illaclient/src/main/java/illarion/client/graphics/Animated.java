@@ -22,8 +22,14 @@ package illarion.client.graphics;
  * Interface for a general animation target for the animation handler.
  *
  * @author Nop
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 interface Animated {
+    /**
+     * This function is called once the animation is started.
+     */
+    void animationStarted();
+
     /**
      * This function is called to report that the animation is finished or not.
      *

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Nifty-GUI Controls.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Nifty-GUI Controls is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ import javax.annotation.Nonnull;
 public final class MerchantItemListViewConverter implements ListBox.ListBoxViewConverter<MerchantListEntry> {
     @Override
     public void display(@Nonnull final Element listBoxItem, @Nonnull final MerchantListEntry item) {
-        final Element itemImage = listBoxItem.findElementByName("#imageDisplay");
+        final Element itemImage = listBoxItem.findElementById("#imageDisplay");
         final NiftyImage itemPicture = item.getItemImage();
         itemImage.getRenderer(ImageRenderer.class).setImage(itemPicture);
 
@@ -58,7 +58,7 @@ public final class MerchantItemListViewConverter implements ListBox.ListBoxViewC
         itemImage.setConstraintHeight(new SizeValue(Integer.toString(imageHeight) + "px"));
         itemImage.setConstraintWidth(new SizeValue(Integer.toString(imageWidth) + "px"));
 
-        final Element title = listBoxItem.findElementByName("#itemTitle");
+        final Element title = listBoxItem.findElementById("#itemTitle");
         title.getRenderer(TextRenderer.class).setText(item.getName());
 
         final Money money = item.getPrice();
@@ -66,14 +66,14 @@ public final class MerchantItemListViewConverter implements ListBox.ListBoxViewC
         final int silver = money.getSilver();
         final int copper = money.getCopper();
 
-        applyMoneyValues(gold, listBoxItem.findElementByName("#moneyGoldCount"),
-                listBoxItem.findElementByName("#moneyGoldImage"));
-        applyMoneyValues(silver, listBoxItem.findElementByName("#moneySilverCount"),
-                listBoxItem.findElementByName("#moneySilverImage"));
-        applyMoneyValues(copper, listBoxItem.findElementByName("#moneyCopperCount"),
-                listBoxItem.findElementByName("#moneyCopperImage"));
+        applyMoneyValues(gold, listBoxItem.findElementById("#moneyGoldCount"),
+                listBoxItem.findElementById("#moneyGoldImage"));
+        applyMoneyValues(silver, listBoxItem.findElementById("#moneySilverCount"),
+                listBoxItem.findElementById("#moneySilverImage"));
+        applyMoneyValues(copper, listBoxItem.findElementById("#moneyCopperCount"),
+                listBoxItem.findElementById("#moneyCopperImage"));
 
-        final Element bundleSizeDisplay = listBoxItem.findElementByName("#bundleSizeDisplay");
+        final Element bundleSizeDisplay = listBoxItem.findElementById("#bundleSizeDisplay");
         if (ItemCount.isGreaterOne(item.getBundleSize())) {
             bundleSizeDisplay.setVisible(true);
             bundleSizeDisplay.getRenderer(TextRenderer.class).setText(Integer.toString(item.getBundleSize().getValue()));

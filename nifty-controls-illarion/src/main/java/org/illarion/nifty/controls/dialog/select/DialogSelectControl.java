@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Nifty-GUI Controls.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Nifty-GUI Controls is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ import org.illarion.nifty.controls.DialogSelectSelectEvent;
 import org.illarion.nifty.controls.SelectListEntry;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -70,6 +71,12 @@ public final class DialogSelectControl extends WindowControl implements DialogSe
     @Nonnull
     private final EventTopicSubscriber<ButtonClickedEvent> closeButtonEventHandler;
 
+    /**
+     * The event handler that handles clicks on the select button.
+     */
+    @Nonnull
+    private final EventTopicSubscriber<ButtonClickedEvent> selectButtonEventHandler;
+
     public DialogSelectControl() {
         closeButtonEventHandler = new EventTopicSubscriber<ButtonClickedEvent>() {
             @Override
@@ -78,6 +85,16 @@ public final class DialogSelectControl extends WindowControl implements DialogSe
                     return;
                 }
                 closeWindow();
+            }
+        };
+
+        selectButtonEventHandler = new EventTopicSubscriber<ButtonClickedEvent>() {
+            @Override
+            public void onEvent(final String topic, final ButtonClickedEvent data) {
+                if (alreadyClosed) {
+                    return;
+                }
+                selectItem(getSelectedIndex());
             }
         };
     }
@@ -109,8 +126,11 @@ public final class DialogSelectControl extends WindowControl implements DialogSe
 
         parent.layoutElements();
 
-        final Element closeButton = getElement().findElementByName("#button");
+        final Element closeButton = getElement().findElementById("#cancelButton");
         niftyInstance.subscribe(currentScreen, closeButton.getId(), ButtonClickedEvent.class, closeButtonEventHandler);
+
+        final Element selectButton = getElement().findElementById("#selectButton");
+        niftyInstance.subscribe(currentScreen, selectButton.getId(), ButtonClickedEvent.class, selectButtonEventHandler);
     }
 
     @Override
@@ -120,12 +140,20 @@ public final class DialogSelectControl extends WindowControl implements DialogSe
 
     @Override
     public SelectListEntry getSelectedItem() {
-        return getList().getFocusItem();
+        final List<SelectListEntry> selectedItems = getList().getSelection();
+        if (selectedItems.isEmpty()) {
+            return null;
+        }
+        return selectedItems.get(0);
     }
 
     @Override
     public int getSelectedIndex() {
-        return getList().getFocusItemIndex();
+        final List<Integer> selectedIndices = getList().getSelectedIndices();
+        if (selectedIndices.isEmpty()) {
+            return -1;
+        }
+        return selectedIndices.get(0);
     }
 
     @Override
@@ -134,12 +162,11 @@ public final class DialogSelectControl extends WindowControl implements DialogSe
     }
 
     public void selectItem(final int index) {
+        if (index == -1) {
+            return;
+        }
         final ListBox<SelectListEntry> list = getList();
         niftyInstance.publishEvent(getId(), new DialogSelectSelectEvent(dialogId, list.getItems().get(index), index));
-    }
-
-    public void selectItem(@Nonnull final SelectListEntry item) {
-        selectItem(item.getIndex());
     }
 
     @SuppressWarnings("unchecked")
@@ -149,6 +176,7 @@ public final class DialogSelectControl extends WindowControl implements DialogSe
 
     @Override
     public void closeWindow() {
+        alreadyClosed = true;
         super.closeWindow();
         niftyInstance.publishEvent(getId(), new DialogSelectCancelEvent(dialogId));
     }

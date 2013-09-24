@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Nifty-GUI Controls.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Nifty-GUI Controls is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ public final class DialogSelectBuilder extends ControlBuilder {
         set("title", title);
         set("closeable", "true");
         set("hideOnClose", "false");
+        itemCount(6);
 
         alignCenter();
         valignCenter();
@@ -58,5 +59,9 @@ public final class DialogSelectBuilder extends ControlBuilder {
      */
     public void message(final String text) {
         set("message", text);
+    }
+
+    public void itemCount(final int count) {
+        set("itemCount", Integer.toString(count));
     }
 }

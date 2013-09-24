@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  */
 package illarion.client.net.client;
 
-import illarion.client.net.CommandList;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.ItemCount;
 
@@ -31,12 +30,7 @@ import javax.annotation.concurrent.Immutable;
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
 @Immutable
-public final class BuyTradingItem extends AbstractCommand {
-    /**
-     * The ID of the dialog to buy the item from.
-     */
-    private final int dialogId;
-
+public final class BuyTradingItem extends AbstractTradeItemCmd {
     /**
      * The index of the item that is supposed to be bought.
      */
@@ -49,6 +43,11 @@ public final class BuyTradingItem extends AbstractCommand {
     private final ItemCount amount;
 
     /**
+     * The sub command ID for this command.
+     */
+    private static final int SUB_CMD_ID = 2;
+
+    /**
      * Default constructor for the trade item command.
      *
      * @param dialogId the ID of the dialog to buy the item from
@@ -56,17 +55,15 @@ public final class BuyTradingItem extends AbstractCommand {
      * @param count    the amount of items to buy
      */
     public BuyTradingItem(final int dialogId, final int index, @Nonnull final ItemCount count) {
-        super(CommandList.CMD_TRADE_ITEM);
+        super(dialogId, SUB_CMD_ID);
 
-        this.dialogId = dialogId;
         this.index = (short) index;
         amount = count;
     }
 
     @Override
     public void encode(@Nonnull final NetCommWriter writer) {
-        writer.writeInt(dialogId);
-        writer.writeByte((byte) 2);
+        super.encode(writer);
         writer.writeUByte(index);
         amount.encode(writer);
     }
@@ -74,6 +71,6 @@ public final class BuyTradingItem extends AbstractCommand {
     @Nonnull
     @Override
     public String toString() {
-        return toString("dialog ID: " + dialogId + " Index: " + index + ' ' + amount);
+        return toString(super.toString() + " Index: " + index + ' ' + amount);
     }
 }

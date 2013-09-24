@@ -35,12 +35,11 @@ import javax.swing.*;
 
 /**
  * @author Tim
+ * @author Fredrik K
  */
 public class TileBrushTool extends AbstractTool {
-
     @Nonnull
     private final TileBrushPanel panel;
-
 
     public TileBrushTool() {
         panel = new TileBrushPanel();
@@ -48,28 +47,36 @@ public class TileBrushTool extends AbstractTool {
 
     @Override
     public void clickedAt(final int x, final int y, @Nonnull final Map map) {
+        TileIDChangedAction newAction = addTile(x,y,map);
+        if (newAction != null) {
+            getHistory().addEntry(newAction);
+        }
+    }
+
+    @Override
+    public void paintSelected(final int x, final int y, final Map map, final GroupAction action) {
+        TileIDChangedAction newAction = addTile(x,y,map);
+        if (newAction != null) {
+            action.addAction(newAction);
+        }
+    }
+
+    @Nullable
+    private TileIDChangedAction addTile(final int x, final int y, final Map map) {
         final TileImg tile = getManager().getSelectedTile();
         if (tile == null) {
-            return;
+            return null;
         }
-        final int radius = panel.getRadius();
-        final GroupAction action = new GroupAction();
-        for (int i = (x - radius) + 1; i <= ((x + radius) - 1); i++) {
-            for (int j = (y - radius) + 1; j <= ((y + radius) - 1); j++) {
-                if (!map.contains(i, j)) {
-                    continue;
-                }
-                if (map.getTileAt(i, j).getId() != tile.getId()) {
-                    final MapTile newTile = MapTile.MapTileFactory.setId(tile.getId(), map.getTileAt(i, j));
-                    action.addAction(new TileIDChangedAction(i, j, map.getTileAt(i, j), newTile, map));
-                    map.setTileAt(i, j, newTile);
-                    MapTransitions.getInstance().checkTileAndSurround(map, new Location(i, j, 0));
-                }
-            }
+        final MapTile oldTile = map.getTileAt(x, y);
+        TileIDChangedAction action = null;
+        if ((oldTile != null) && (oldTile.getId() != tile.getId())) {
+            final MapTile newTile = MapTile.MapTileFactory.setId(tile.getId(), oldTile);
+            action = new TileIDChangedAction(x, y, oldTile, newTile, map);
+            map.setTileAt(x, y, newTile);
+            newTile.setAnnotation(null);
+            MapTransitions.getInstance().checkTileAndSurround(map, new Location(x, y, 0));
         }
-        if (!action.isEmpty()) {
-            getHistory().addEntry(action);
-        }
+        return action;
     }
 
     @Override
@@ -87,5 +94,20 @@ public class TileBrushTool extends AbstractTool {
     @Override
     public JPanel getSettingsPanel() {
         return panel;
+    }
+
+    @Override
+    public boolean isFillAreaAction() {
+        return panel.isFillArea();
+    }
+
+    @Override
+    public boolean isFillSelected() {
+        return panel.isFillSelected();
+    }
+
+    @Override
+    public boolean isWarnAnnotated() {
+        return true;
     }
 }

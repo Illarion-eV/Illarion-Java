@@ -19,6 +19,8 @@
 package illarion.client.gui;
 
 import illarion.common.types.Location;
+import org.illarion.engine.graphic.Color;
+import org.illarion.engine.graphic.ImmutableColor;
 
 import javax.annotation.Nonnull;
 
@@ -38,14 +40,35 @@ public interface MiniMapGui {
          * @param loc the location this pointer is supposed to point to
          */
         void setTarget(@Nonnull Location loc);
+
+        /**
+         * The color that is supposed to be applied to the pointers.
+         */
+        Color POINTER_COLOR = new ImmutableColor(255, 166, 102, 255);
+        Color ACTIVEPOINTER_COLOR = new ImmutableColor(255, 0, 0, 255);
+
+        /**
+         * Set this quest marker as a current quest marker
+         *
+         * @param currentQuest
+         */
+        void setCurrentQuest(final boolean currentQuest);
     }
+
 
     /**
      * Create a new pointer instance.
      *
      * @return the new pointer
      */
-    Pointer createPointer();
+    Pointer createTargetPointer();
+
+    /**
+     * Create a pointer that points to the start of a quest.
+     *
+     * @return the quest start pointer
+     */
+    Pointer createStartPointer(boolean available);
 
     /**
      * Cleanup this pointer. Once this is called the instance is not usable anymore

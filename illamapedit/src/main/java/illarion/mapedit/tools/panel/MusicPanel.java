@@ -35,11 +35,12 @@ import java.awt.event.ActionListener;
  * @author Fredrik K
  */
 public class MusicPanel extends JPanel {
-
     @Nonnull
     private final JCheckBox delCheckBox;
     @Nonnull
-    private final JSpinner radiusSpinner;
+    private final JRadioButton fillSelectedCheckbox;
+    @Nonnull
+    private final JRadioButton fillAreaCheckbox;
     @Nonnull
     private final SongTable songTable;
 
@@ -54,8 +55,13 @@ public class MusicPanel extends JPanel {
 
         final JPanel northPanel = new JPanel(new GridLayout(0, 2));
 
-        radiusSpinner = new JSpinner(new SpinnerNumberModel(1, 1, ToolManager.TOOL_RADIUS, 1));
         delCheckBox = new JCheckBox();
+        fillSelectedCheckbox = new JRadioButton();
+        fillAreaCheckbox = new JRadioButton();
+        fillAreaCheckbox.setSelected(true);
+        final ButtonGroup group = new ButtonGroup();
+        group.add(fillAreaCheckbox);
+        group.add(fillSelectedCheckbox);
         final ResizableIcon icon =  ImageLoader.getResizableIcon("player_play") ;
         icon.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
         final JButton playButton = new JButton(icon);
@@ -67,8 +73,10 @@ public class MusicPanel extends JPanel {
             }
         });
 
-        northPanel.add(new JLabel(Lang.getMsg("tools.MusicTool.Radius")));
-        northPanel.add(radiusSpinner);
+        northPanel.add(new JLabel(Lang.getMsg("tools.FillSelected")));
+        northPanel.add(fillSelectedCheckbox);
+        northPanel.add(new JLabel(Lang.getMsg("tools.FillArea")));
+        northPanel.add(fillAreaCheckbox);
         northPanel.add(new JLabel(Lang.getMsg("tools.MusicTool.Delete")));
         northPanel.add(delCheckBox);
         northPanel.add(new JLabel(Lang.getMsg("tools.MusicTool.Listen")));
@@ -90,11 +98,11 @@ public class MusicPanel extends JPanel {
         return musicID;
     }
 
-    /**
-     * Get the radius for painting
-     * @return the chosen radius.
-     */
-    public int getRadius() {
-        return (Integer) radiusSpinner.getValue();
+    public boolean isFillSelected() {
+       return fillSelectedCheckbox.isSelected();
+    }
+
+    public boolean isFillArea() {
+        return fillAreaCheckbox.isSelected();
     }
 }

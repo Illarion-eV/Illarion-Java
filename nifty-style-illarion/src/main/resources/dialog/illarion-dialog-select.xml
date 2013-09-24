@@ -2,7 +2,7 @@
 <!--
   ~ This file is part of the Illarion Nifty-GUI Style.
   ~
-  ~ Copyright © 2012 - Illarion e.V.
+  ~ Copyright © 2013 - Illarion e.V.
   ~
   ~ The Illarion Nifty-GUI Style is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -18,11 +18,23 @@
   ~ along with the Illarion Nifty-GUI Style.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <nifty-styles>
+    <useStyles filename="label/nifty-label.xml"/>
+    <useStyles filename="listbox/nifty-listbox-style.xml"/>
+    <useStyles filename="window/nifty-window.xml"/>
+
     <style id="illarion-dialog-select">
         <attributes/>
     </style>
 
-    <style id="illarion-dialog-select-line">
+    <style id="illarion-dialog-select#buttons">
+        <attributes width="100%" padding="5px"/>
+    </style>
+
+    <style id="illarion-dialog-select#message" base="nifty-label">
+        <attributes padding="5px" width="100%"/>
+    </style>
+
+    <style id="illarion-dialog-select-line" base="nifty-listbox-item">
         <attributes height="46px" width="100%" padding="1px" visibleToMouse="true"/>
         <effect>
             <onHover name="colorBar" color="#264d1cff" neverStopRendering="true" timeType="infinite"/>

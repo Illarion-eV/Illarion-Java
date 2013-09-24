@@ -34,7 +34,7 @@ import java.io.IOException;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_LOOKAT_SHOWCASE)
-public final class LookAtShowcaseMsg extends AbstractReply {
+public final class LookAtShowcaseMsg extends AbstractGuiMsg {
     /**
      * Showcase this message is related to.
      */

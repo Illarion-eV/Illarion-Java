@@ -32,7 +32,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_QUEST_DELETE)
-public final class QuestDeleteMsg extends AbstractReply {
+public final class QuestDeleteMsg extends AbstractGuiMsg {
     /**
      * The ID of the quest.
      */
@@ -53,10 +53,5 @@ public final class QuestDeleteMsg extends AbstractReply {
     public boolean executeUpdate() {
         World.getGameGui().getQuestGui().removeQuest(questId);
         return true;
-    }
-
-    @Override
-    public boolean processNow() {
-        return World.getGameGui().isReady();
     }
 }

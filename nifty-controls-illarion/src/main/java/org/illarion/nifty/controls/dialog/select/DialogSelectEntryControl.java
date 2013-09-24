@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Nifty-GUI Controls.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Nifty-GUI Controls is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,10 +19,8 @@
 package org.illarion.nifty.controls.dialog.select;
 
 import de.lessvoid.nifty.Nifty;
-import de.lessvoid.nifty.controls.AbstractController;
-import de.lessvoid.nifty.controls.ListBox;
+import de.lessvoid.nifty.controls.listbox.ListBoxItemController;
 import de.lessvoid.nifty.elements.Element;
-import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.xml.xpp3.Attributes;
 import illarion.common.gui.AbstractMultiActionHelper;
@@ -36,8 +34,9 @@ import java.util.Properties;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@SuppressWarnings("deprecation")
 @Deprecated
-public final class DialogSelectEntryControl extends AbstractController {
+public final class DialogSelectEntryControl extends ListBoxItemController<SelectListEntry> {
     @Nonnull
     private AbstractMultiActionHelper doubleClickHelper = new AbstractMultiActionHelper((Integer) java.awt.Toolkit
             .getDefaultToolkit().getDesktopProperty("awt.multiClickInterval"), 2) {
@@ -50,7 +49,6 @@ public final class DialogSelectEntryControl extends AbstractController {
     };
 
     private int index;
-    private ListBox<SelectListEntry> listBox;
     private DialogSelectControl selectDialogControl;
     private boolean selectable;
 
@@ -58,10 +56,10 @@ public final class DialogSelectEntryControl extends AbstractController {
     @Override
     public void bind(final Nifty nifty, final Screen screen, final Element element, final Properties parameter,
                      @Nonnull final Attributes controlDefinitionAttributes) {
+        super.bind(nifty, screen, element, parameter, controlDefinitionAttributes);
         selectable = Boolean.parseBoolean(controlDefinitionAttributes.get("selectable"));
 
         if (selectable) {
-            listBox = (ListBox<SelectListEntry>) getParent(element, 4).getNiftyControl(ListBox.class);
             selectDialogControl = getParent(element, 8).getNiftyControl(DialogSelectControl.class);
         }
     }
@@ -76,25 +74,18 @@ public final class DialogSelectEntryControl extends AbstractController {
 
     @Override
     public void onStartScreen() {
+        super.onStartScreen();
         doubleClickHelper.reset();
-    }
-
-    @Override
-    public boolean inputEvent(final NiftyInputEvent inputEvent) {
-        return false;
     }
 
     public void setIndex(final int value) {
         index = value;
     }
 
-    /**
-     * This function is called in case someone clicks on the control entry.
-     *
-     * @param x the x coordinate of the mouse
-     * @param y the y coordinate of the mouse
-     */
-    public void onClick(final int x, final int y) {
+
+    @Override
+    public void listBoxItemClicked() {
+        super.listBoxItemClicked();
         if (selectable) {
             doubleClickHelper.pulse();
         }

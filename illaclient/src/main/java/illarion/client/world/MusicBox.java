@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ package illarion.client.world;
 
 import illarion.client.IllaClient;
 import illarion.client.resources.SongFactory;
+import illarion.common.config.Config;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.util.Stoppable;
 import illarion.common.util.StoppableStorage;
@@ -30,6 +31,7 @@ import org.illarion.engine.Engine;
 import org.illarion.engine.sound.Music;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
 /**
@@ -89,42 +91,45 @@ public final class MusicBox implements Stoppable {
         StoppableStorage.getInstance().add(this);
 
         AnnotationProcessor.process(this);
+        updateSettings(null, IllaClient.getCfg());
     }
 
-    @EventTopicPatternSubscriber(topicPattern = "music((On)|(Volume))")
-    public void onUpdateMusicConfig(@Nonnull final String topic, @Nonnull final ConfigChangedEvent data) {
-        if ("musicOn".equals(topic)) {
-            final boolean musicEnabled = IllaClient.getCfg().getBoolean("musicOn");
+    private void updateSettings(@Nullable final String setting, @Nonnull final Config cfg) {
+        if ((setting == null) || "musicOn".equals(setting)) {
+            final boolean musicEnabled = cfg.getBoolean("musicOn");
             if (musicEnabled) {
-                final float musicVolume = IllaClient.getCfg().getFloat("musicVolume") / Player.MAX_CLIENT_VOL;
+                final float musicVolume = cfg.getFloat("musicVolume") / Player.MAX_CLIENT_VOL;
                 engine.getSounds().setMusicVolume(musicVolume);
             } else {
                 engine.getSounds().setMusicVolume(0.f);
             }
-        } else if ("musicVolume".equals(topic)) {
-            final float musicVolume = IllaClient.getCfg().getFloat("musicVolume") / Player.MAX_CLIENT_VOL;
+        }
+        if ((setting == null) || "musicVolume".equals(setting)) {
+            final float musicVolume = cfg.getFloat("musicVolume") / Player.MAX_CLIENT_VOL;
             if (IllaClient.getCfg().getBoolean("musicOn")) {
                 engine.getSounds().setMusicVolume(musicVolume);
             }
         }
-    }
-
-    @EventTopicPatternSubscriber(topicPattern = "sound((On)|(Volume))")
-    public void onUpdateSoundConfig(@Nonnull final String topic, @Nonnull final ConfigChangedEvent data) {
-        if ("soundOn".equals(topic)) {
-            final boolean soundEnabled = IllaClient.getCfg().getBoolean("soundOn");
+        if ((setting == null) || "soundOn".equals(setting)) {
+            final boolean soundEnabled = cfg.getBoolean("soundOn");
             if (soundEnabled) {
-                final float soundVolume = IllaClient.getCfg().getFloat("soundVolume") / Player.MAX_CLIENT_VOL;
+                final float soundVolume = cfg.getFloat("soundVolume") / Player.MAX_CLIENT_VOL;
                 engine.getSounds().setSoundVolume(soundVolume);
             } else {
                 engine.getSounds().setSoundVolume(0.f);
             }
-        } else if ("soundVolume".equals(topic)) {
-            final float soundVolume = IllaClient.getCfg().getFloat("soundVolume") / Player.MAX_CLIENT_VOL;
+        }
+        if ((setting == null) || "soundVolume".equals(setting)) {
+            final float soundVolume = cfg.getFloat("soundVolume") / Player.MAX_CLIENT_VOL;
             if (IllaClient.getCfg().getBoolean("soundOn")) {
-                engine.getSounds().setMusicVolume(soundVolume);
+                engine.getSounds().setSoundVolume(soundVolume);
             }
         }
+    }
+
+    @EventTopicPatternSubscriber(topicPattern = "((music)|(sound))((On)|(Volume))")
+    public void onUpdateSoundMusicConfig(@Nonnull final String topic, @Nonnull final ConfigChangedEvent data) {
+        updateSettings(topic, data.getConfig());
     }
 
     /**

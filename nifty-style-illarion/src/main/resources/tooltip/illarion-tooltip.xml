@@ -31,11 +31,27 @@
     </style>
 
     <style id="illarion-tooltip#description">
-        <attributes width="250px" font="smallFont" textHAlign="left" marginBottom="10px" color="#e0e000ff"/>
+        <attributes width="250px" font="smallFont" textHAlign="left" marginBottom="15px" color="#e0e000ff"/>
+    </style>
+
+    <style id="illarion-tooltip#typeLevelLine">
+        <attributes width="250px" marginBottom="5px"/>
+    </style>
+
+    <style id="illarion-tooltip#itemtype" base="nifty-label">
+        <attributes font="textFont" textHAlign="left"/>
+    </style>
+
+    <style id="illarion-tooltip#levelTitle" base="nifty-label">
+        <attributes font="textFont" width="*" textHAlign="right"/>
+    </style>
+
+    <style id="illarion-tooltip#levelLabel" base="nifty-label">
+        <attributes font="textFont" textHAlign="left"/>
     </style>
 
     <style id="illarion-tooltip#createByLine">
-        <attributes width="250px" marginBottom="20px"/>
+        <attributes width="250px" marginBottom="5px"/>
     </style>
 
     <style id="illarion-tooltip#createdByTitle" base="nifty-label">
@@ -67,31 +83,31 @@
     </style>
 
     <style id="illarion-tooltip#worthGoldCount" base="nifty-label">
-        <attributes font="textFont" height="16px" textHAlign="left" textVAlign="center" marginRight="5px"/>
+        <attributes font="textFont" height="16px" textHAlign="left" textVAlign="center" marginRight="2px"/>
     </style>
 
     <style id="illarion-tooltip#worthGoldImage">
-        <attributes filename="data/gui/coin_3_g.png" height="16px" width="16px" marginRight="2px"/>
+        <attributes filename="data/gui/coin_3_g.png" height="16px" width="16px" marginRight="5px"/>
     </style>
 
     <style id="illarion-tooltip#worthSilverCount" base="nifty-label">
-        <attributes font="textFont" height="16px" textHAlign="left" textVAlign="center" marginRight="5px"/>
+        <attributes font="textFont" height="16px" textHAlign="left" textVAlign="center" marginRight="2px"/>
     </style>
 
     <style id="illarion-tooltip#worthSilverImage">
-        <attributes filename="data/gui/coin_3_s.png" height="16px" width="16px" marginRight="2px"/>
+        <attributes filename="data/gui/coin_3_s.png" height="16px" width="16px" marginRight="5px"/>
     </style>
 
     <style id="illarion-tooltip#worthCopperCount" base="nifty-label">
-        <attributes font="textFont" height="16px" textHAlign="left" textVAlign="center" marginRight="5px"/>
+        <attributes font="textFont" height="16px" textHAlign="left" textVAlign="center" marginRight="2px"/>
     </style>
 
     <style id="illarion-tooltip#worthCopperImage">
-        <attributes filename="data/gui/coin_3_c.png" height="16px" width="16px" marginRight="2px"/>
+        <attributes filename="data/gui/coin_3_c.png" height="16px" width="16px" marginRight="5px"/>
     </style>
 
     <style id="illarion-tooltip#qualityLine">
-        <attributes width="250px"/>
+        <attributes width="250px" marginBottom="5px"/>
     </style>
 
     <style id="illarion-tooltip#qualityTitle" base="nifty-label">

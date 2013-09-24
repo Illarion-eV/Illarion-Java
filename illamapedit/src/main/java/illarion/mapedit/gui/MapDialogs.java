@@ -18,20 +18,14 @@
  */
 package illarion.mapedit.gui;
 
-import illarion.common.config.Config;
 import illarion.mapedit.Lang;
-import illarion.mapedit.MapEditor;
 import illarion.mapedit.data.Map;
-import illarion.mapedit.data.MapIO;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 
 /**
@@ -40,15 +34,9 @@ import java.io.IOException;
 public class MapDialogs {
     private static final int UNSIGNED_MAX = 100000;
     private static final int SIGNED_MAX = 10000;
-    private static final FilenameFilter FILTER_TILES = new FilenameFilter() {
-        @Override
-        public boolean accept(final File dir, @Nonnull final String name) {
-            return name.endsWith(MapIO.EXT_TILE);
-        }
-    };
+
     @Nullable
     private static File saveDir;
-    private static final Config config = MapEditor.getConfig();
 
     private MapDialogs() {
 
@@ -72,7 +60,7 @@ public class MapDialogs {
         btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                final JFileChooser ch = new JFileChooser(MapEditor.getConfig().getFile("mapLastOpenDir"));
+                final JFileChooser ch = new JFileChooser(MapEditorConfig.getInstance().getMapFolder());
                 ch.setDialogType(JFileChooser.OPEN_DIALOG);
                 ch.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
@@ -111,50 +99,17 @@ public class MapDialogs {
     }
 
     @Nullable
-    public static Map[] showOpenMapDialog(final JFrame owner) throws IOException {
-        final JFileChooser ch = new JFileChooser();
-        if (config.getFile("mapLastOpenDir") != null) {
-            ch.setCurrentDirectory(config.getFile("mapLastOpenDir"));
+    public static File showSetFolderDialog() throws IOException {
+        final JFileChooser fileChooser = new JFileChooser();
+        if (MapEditorConfig.getInstance().getMapFolder() != null) {
+            fileChooser.setCurrentDirectory(MapEditorConfig.getInstance().getMapFolder());
         }
-        ch.setDialogType(JFileChooser.OPEN_DIALOG);
-        ch.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        if (ch.showOpenDialog(MainFrame.getInstance()) != JFileChooser.APPROVE_OPTION) {
+        fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        if (fileChooser.showOpenDialog(MainFrame.getInstance()) != JFileChooser.APPROVE_OPTION) {
             return null;
         }
-        final File dir = ch.getSelectedFile();
-        config.set("mapLastOpenDir", dir);
-        final String[] maps = dir.list(FILTER_TILES);
-        for (int i = 0; i < maps.length; ++i) {
-            maps[i] = maps[i].substring(0, maps[i].length() - MapIO.EXT_TILE.length());
-        }
-        final JDialog dialog = new JDialog(owner, Lang.getMsg("gui.chooser"));
-        dialog.setModal(true);
-        dialog.setLocationRelativeTo(null);
-        dialog.setLayout(new BorderLayout());
-
-        final JList list = new JList(maps);
-        final JButton btn = new JButton(Lang.getMsg("gui.chooser.Ok"));
-
-        btn.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                if (list.getSelectedValue() != null) {
-                    dialog.setVisible(false);
-                }
-            }
-        });
-
-        dialog.add(new JScrollPane(list), BorderLayout.CENTER);
-        dialog.add(btn, BorderLayout.SOUTH);
-        dialog.pack();
-        dialog.setVisible(true);
-        dialog.dispose();
-
-        Map[] loadedMaps = new Map[list.getSelectedIndices().length];
-        for (int i = 0; i < list.getSelectedIndices().length; i++) {
-            loadedMaps[i] = MapIO.loadMap(dir.getPath(), (String) list.getSelectedValues()[i]);
-        }
-        return loadedMaps;
+        return fileChooser.getSelectedFile();
     }
 
     public static boolean isShowSaveDialog() {

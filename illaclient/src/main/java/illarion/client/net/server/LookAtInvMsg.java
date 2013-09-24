@@ -34,7 +34,7 @@ import java.io.IOException;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_LOOKAT_INV)
-public final class LookAtInvMsg extends AbstractReply {
+public final class LookAtInvMsg extends AbstractGuiMsg {
     /**
      * Inventory slot that message is related to.
      */

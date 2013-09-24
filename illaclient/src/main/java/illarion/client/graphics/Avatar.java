@@ -27,6 +27,7 @@ import illarion.client.resources.data.AvatarTemplate;
 import illarion.client.util.Lang;
 import illarion.client.world.Char;
 import illarion.client.world.World;
+import illarion.common.graphics.Layers;
 import org.apache.log4j.Logger;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
@@ -80,6 +81,10 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
     @Nonnull
     private final AvatarMarker attackMark;
 
+    @Nonnull
+    private final AvatarMarker attackAvailableMark;
+
+
     /**
      * The text tag is the small text box shown above the avatar that contains
      * the name of the avatar.
@@ -106,6 +111,8 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
      */
     private boolean attackMarkerVisible;
 
+    private boolean showAttackAvailable;
+
     /**
      * Stores if the name shall be rendered or not. It is checked at every
      * update if this flag is valid or not.
@@ -122,6 +129,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
     private Avatar(@Nonnull final AvatarTemplate template, @Nonnull final Char parentChar) {
         super(template);
         attackMark = new AvatarMarker(MiscImageFactory.ATTACK_MARKER, this);
+        attackAvailableMark = new AvatarMarker(MiscImageFactory.ATTACK_MARKER, this);
 
         clothRender = new AvatarClothRenderer(template.getDirection(), template.getFrames());
         clothRender.setLight(getLight());
@@ -279,6 +287,10 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
             attackMark.render(g);
         }
 
+        if (showAttackAvailable) {
+            attackAvailableMark.render(g);
+        }
+
         // draw the avatar, naked!! :O
         super.render(g);
 
@@ -353,6 +365,8 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         super.setLight(light);
         clothRender.setLight(light);
         attackMark.setLight(light);
+        attackAvailableMark.setLight(light);
+        attackAvailableMark.setBaseColor(Color.BLACK);
         animateLight = false;
     }
 
@@ -367,6 +381,8 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         targetLight = light;
         clothRender.setLight(light);
         attackMark.setLight(light);
+        attackAvailableMark.setLight(light);
+        attackAvailableMark.setBaseColor(Color.BLACK);
         animateLight = true;
     }
 
@@ -430,12 +446,17 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         clothRender.setScale(newScale);
     }
 
+    public void setScreenPos(final int posX, final int posY, final int layerZ) {
+        setScreenPos(posX, posY, layerZ, Layers.CHARS);
+    }
+
     @Override
     public void setScreenPos(final int posX, final int posY, final int layerZ,
                              final int groupLayer) {
         super.setScreenPos(posX, posY, layerZ, groupLayer);
         clothRender.setScreenLocation(posX, posY, layerZ, groupLayer);
         attackMark.setScreenPos(posX, posY, layerZ, groupLayer);
+        attackAvailableMark.setScreenPos(posX, posY, layerZ, groupLayer);
     }
 
     @Override
@@ -455,6 +476,14 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
 
         renderName = (isMouseInInteractionRect(input) || input.isKeyDown(Key.RightAlt)) && (getAlpha() >
                 HIDE_NAME_ALPHA);
+
+        if (isMouseInInteractionRect(input) &&  World.getPlayer().getCombatHandler().canBeAttacked(parentChar)) {
+            showAttackAvailable = true;
+            attackAvailableMark.setAlpha(getAlpha());
+            attackAvailableMark.update(container, delta);
+        } else {
+            showAttackAvailable = false;
+        }
 
         if (renderName) {
             avatarTextTag.setDisplayLocation(getDisplayX(), getDisplayY());

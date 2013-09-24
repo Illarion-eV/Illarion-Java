@@ -36,7 +36,7 @@ import java.io.IOException;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_SKILL)
-public final class SkillMsg extends AbstractReply {
+public final class SkillMsg extends AbstractGuiMsg {
     /**
      * The logger instance of this class.
      */

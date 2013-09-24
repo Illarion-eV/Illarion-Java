@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +76,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     public static final Servers DEFAULT_SERVER;
 
     static {
-        String server = System.getProperty("illarion.server");
+        final String server = System.getProperty("illarion.server");
         if ("testserver".equals(server)) {
             DEFAULT_SERVER = Servers.testserver;
         } else if ("devserver".equals(server)) {
@@ -532,6 +532,11 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("serverPort", Servers.customserver.getServerPort());
         cfg.setDefault("clientVersion", Servers.customserver.getClientVersion());
         cfg.setDefault("serverAccountLogin", true);
+        cfg.setDefault("wasdWalk", true);
+        cfg.setDefault("classicWalk", false);
+        cfg.setDefault("disableChatAfterSending", true);
+        cfg.setDefault("showQuestsOnGameMap", true);
+        cfg.setDefault("showQuestsOnMiniMap", true);
 
         @Nonnull final Toolkit awtDefaultToolkit = Toolkit.getDefaultToolkit();
         @Nullable final Object doubleClick = awtDefaultToolkit.getDesktopProperty("awt.multiClickInterval");

@@ -18,16 +18,15 @@
  */
 package illarion.mapedit.tools;
 
-import illarion.mapedit.events.ItemSelectedEvent;
-import illarion.mapedit.events.TileSelectedEvent;
-import illarion.mapedit.events.ToolSelectedEvent;
+import illarion.mapedit.data.Map;
+import illarion.mapedit.data.MapTile;
+import illarion.mapedit.events.*;
 import illarion.mapedit.events.map.MapClickedEvent;
 import illarion.mapedit.events.map.MapDragFinishedEvent;
 import illarion.mapedit.events.map.MapDraggedEvent;
 import illarion.mapedit.events.map.RepaintRequestEvent;
 import illarion.mapedit.gui.GuiController;
 import illarion.mapedit.history.HistoryManager;
-import illarion.mapedit.render.RendererManager;
 import illarion.mapedit.resource.ItemImg;
 import illarion.mapedit.resource.TileImg;
 import illarion.mapedit.util.Disposable;
@@ -49,18 +48,28 @@ public final class ToolManager implements Disposable {
     public static final int ICON_SIZE = 16;
 
     private final GuiController controller;
-    private final RendererManager renderer;
 
     @Nullable
     private AbstractTool actualTool;
     private TileImg selectedTile;
     private ItemImg selectedItem;
+    private boolean doPaste;
+    private int currentX = Integer.MIN_VALUE;
+    private int currentY = Integer.MIN_VALUE;
 
-    public ToolManager(final GuiController controller, final RendererManager renderer) {
+    public ToolManager(final GuiController controller) {
         this.controller = controller;
-        this.renderer = renderer;
         AnnotationProcessor.process(this);
         setTool(new TileBrushTool());
+    }
+
+    @Nullable
+    public MapTile getActiveTile() {
+        final Map currentMap = controller.getSelected();
+        if (currentMap == null) {
+            return null;
+        }
+        return currentMap.getActiveTile();
     }
 
     public void setTool(@Nullable final AbstractTool tool) {
@@ -68,6 +77,7 @@ public final class ToolManager implements Disposable {
             tool.registerManager(this);
         }
         actualTool = tool;
+        EventBus.publish(new RepaintRequestEvent());
     }
 
     TileImg getSelectedTile() {
@@ -78,41 +88,76 @@ public final class ToolManager implements Disposable {
         return selectedItem;
     }
 
-    RendererManager getRenderer() {
-        return renderer;
-    }
-
     @Override
     public void dispose() {
         AnnotationProcessor.unprocess(this);
     }
 
-    public GuiController getController() {
-        return controller;
-    }
-
-
     @EventSubscriber
     public void clickedAt(@Nonnull final MapClickedEvent e) {
-        if ((actualTool != null) && (e.getButton() == MouseButton.LeftButton)) {
+        if (e.getButton() != MouseButton.LeftButton) {
+            return;
+        }
+        if (isAnnotated(e)) {
+            return;
+        }
+        if (doPaste) {
+            EventBus.publish(new PasteEvent(e.getX(), e.getY()));
+            doPaste = false;
+        } else if ((actualTool != null) && isFillAction(e)) {
+            actualTool.fillSelected(e.getMap());
+            EventBus.publish(new RepaintRequestEvent());
+            e.getMap().setActiveTile(e.getX(),e.getY());
+            controller.setSaved(false);
+        } else if ((actualTool != null) && !actualTool.isFillSelected()) {
             actualTool.clickedAt(e.getX(), e.getY(), e.getMap());
             EventBus.publish(new RepaintRequestEvent());
+            e.getMap().setActiveTile(e.getX(),e.getY());
             controller.setSaved(false);
         }
     }
 
+    private boolean isAnnotated(@Nonnull final MapClickedEvent e) {
+        if ((actualTool == null) || !actualTool.isWarnAnnotated()) {
+            return false;
+        }
+        if (isFillAction(e)) {
+            return controller.getAnnotationChecker().isAnnotatedFill(e.getMap());
+        }
+        return controller.getAnnotationChecker().isAnnotated(e.getX(), e.getY(), e.getMap());
+    }
+
+    private boolean isFillAction(final MapClickedEvent e) {
+        return (actualTool != null) && actualTool.isFillSelected() && e.getMap().isSelected(e.getX(), e.getY());
+    }
+
     @EventSubscriber
     public void onMapDragged(@Nonnull final MapDraggedEvent e) {
-        if ((actualTool != null) && e.getButton() == MouseButton.LeftButton) {
-            actualTool.clickedAt(e.getX(), e.getY(), e.getMap());
-            EventBus.publish(new RepaintRequestEvent());
-            controller.setSaved(false);
+        if ((actualTool != null) && (e.getButton() == MouseButton.LeftButton)) {
+            if (actualTool.isFillAreaAction()) {
+                e.getMap().setFillingArea(e.getX(), e.getY(), e.getStartX(), e.getStartY());
+            } else if (currentX != e.getX() || currentY != e.getY()){
+                currentX = e.getX();
+                currentY = e.getY();
+                actualTool.clickedAt(e.getX(), e.getY(), e.getMap());
+                EventBus.publish(new RepaintRequestEvent());
+                e.getMap().setActiveTile(e.getX(),e.getY());
+                controller.setSaved(false);
+            }
         }
     }
 
     @EventSubscriber
     public void onMapDragFinished(final MapDragFinishedEvent e) {
-
+        if ((actualTool != null) && !actualTool.isFillSelected()) {
+            currentX = Integer.MIN_VALUE;
+            currentY = Integer.MIN_VALUE;
+            e.getMap().setFillDragging(false);
+            actualTool.fillArea(e.getStartX(), e.getStartY(), e.getEndX(), e.getEndY(), e.getMap());
+            EventBus.publish(new RepaintRequestEvent());
+            e.getMap().setActiveTile(e.getEndX(),e.getEndY());
+            controller.setSaved(false);
+        }
     }
 
     @EventSubscriber
@@ -134,5 +179,10 @@ public final class ToolManager implements Disposable {
     @Nonnull
     public HistoryManager getHistory() {
         return controller.getHistoryManager();
+    }
+
+    @EventSubscriber
+    public void onPasteClipboard(@Nonnull final ClipboardPasteEvent e) {
+        doPaste = true;
     }
 }

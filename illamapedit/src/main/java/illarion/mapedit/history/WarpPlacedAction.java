@@ -21,6 +21,8 @@ package illarion.mapedit.history;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapWarpPoint;
 
+import javax.annotation.Nullable;
+
 /**
  * @author Tim
  */
@@ -32,7 +34,7 @@ public class WarpPlacedAction extends HistoryAction {
     private final MapWarpPoint newWP;
 
     public WarpPlacedAction(final int x, final int y, final MapWarpPoint oldWP,
-                            final MapWarpPoint newWP, final Map map) {
+                            @Nullable final MapWarpPoint newWP, final Map map) {
         super(map);
         this.x = x;
         this.y = y;

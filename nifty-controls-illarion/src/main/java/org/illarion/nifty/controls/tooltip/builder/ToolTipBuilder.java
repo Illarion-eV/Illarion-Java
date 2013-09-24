@@ -57,6 +57,22 @@ public class ToolTipBuilder extends ControlBuilder {
         set("producer", value);
     }
 
+    public void type(final String value) {
+        set("itemtype", value);
+    }
+
+    public void level(final int value) {
+        set("level", Integer.toString(value));
+    }
+
+    public void levelColor(@Nonnull final Color value) {
+        levelColor(value.getColorString());
+    }
+
+    public void levelColor(final String value) {
+        set("levelColor", value);
+    }
+
     public void weight(final String value) {
         set("weight", value);
     }

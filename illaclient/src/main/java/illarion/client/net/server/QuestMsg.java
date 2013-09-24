@@ -33,7 +33,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_QUEST)
-public final class QuestMsg extends AbstractReply {
+public final class QuestMsg extends AbstractGuiMsg {
     /**
      * The ID of the quest.
      */
@@ -69,11 +69,6 @@ public final class QuestMsg extends AbstractReply {
         for (int i = 0; i < targetLocations.length; i++) {
             targetLocations[i] = decodeLocation(reader);
         }
-    }
-
-    @Override
-    public boolean processNow() {
-        return World.getGameGui().isReady();
     }
 
     @Override

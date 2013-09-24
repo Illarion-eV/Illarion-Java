@@ -44,6 +44,10 @@ public final class Tooltip {
     private final String description;
     @Nonnull
     private final String craftedBy;
+    @Nonnull
+    private final String type;
+    private final int level;
+    private final boolean usable;
     private final int weight;
     @Nonnull
     private final Money worth;
@@ -72,6 +76,9 @@ public final class Tooltip {
         rareness = reader.readUByte();
         description = reader.readString();
         craftedBy = reader.readString();
+        type = reader.readString();
+        level = reader.readUByte();
+        usable = reader.readUByte() == 1;
         weight = reader.readUShort();
         worth = new Money(reader.readUInt());
         qualityText = reader.readString();
@@ -104,6 +111,19 @@ public final class Tooltip {
     @Nonnull
     public String getCraftedBy() {
         return craftedBy;
+    }
+
+    @Nonnull
+    public String getType() {
+        return type;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public boolean isUsable() {
+        return usable;
     }
 
     public int getWeight() {

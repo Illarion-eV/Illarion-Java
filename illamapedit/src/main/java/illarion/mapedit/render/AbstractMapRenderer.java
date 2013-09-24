@@ -24,6 +24,7 @@ import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /**
  * This is the base class off all classes that want to draw on the map.
@@ -56,6 +57,16 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
     @Nonnull
     protected Shape getTilePolygon() {
         return TILE_POLYGON;
+    }
+
+    protected boolean isInViewport(final Shape viewport, final int xDisplay, final int yDisplay) {
+        final float viewX = calculateZoom(xDisplay, getTranslateX(), getTileWidth());
+        final float viewY = calculateZoom(yDisplay, getTranslateY(), getTileHeight());
+        return viewport.contains(viewX, viewY);
+    }
+
+    protected float calculateZoom(final int display, final int translate, final float size) {
+        return (display * getZoom()) + translate + (size * getZoom());
     }
 
     /**
@@ -138,5 +149,14 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
 
     public RibbonElementPriority getPriority() {
         return RibbonElementPriority.MEDIUM;
+    }
+
+    protected static Image resizeImage(final BufferedImage originalImage, final Integer width, final Integer height) {
+        final BufferedImage resizeImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        final Graphics2D g = resizeImage.createGraphics();
+        g.drawImage(originalImage, 0, 0, width, height, null);
+        g.dispose();
+
+        return resizeImage;
     }
 }

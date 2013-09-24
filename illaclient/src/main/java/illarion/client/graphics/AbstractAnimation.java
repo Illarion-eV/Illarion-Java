@@ -78,7 +78,7 @@ abstract class AbstractAnimation {
      * The constructor for a new animation. It does not start the animation
      * right away it rather prepares the animation and takes the first animation
      * target. In case there are more animation targets needed use
-     * {@link #addTarget(AnimatedFrame, boolean)}.
+     * {@link #addTarget(Animated, boolean)}.
      *
      * @param firstTarget the first animation target, so the first object that
      *                    is actually animated
@@ -117,8 +117,8 @@ abstract class AbstractAnimation {
      * animation itself.
      *
      * @param delta the time since the last update of this animation
-     * @return <code>true</code> in case the animation is in process,
-     *         <code>false</code> if its done
+     * @return {@code true} in case the animation is in process,
+     *         {@code false} if its done
      */
     public abstract boolean animate(int delta);
 
@@ -196,8 +196,14 @@ abstract class AbstractAnimation {
      * @param finished true in case the animation finished, false if not
      */
     protected final void animationFinished(final boolean finished) {
-        for (Animated target : targets) {
+        for (@Nonnull final Animated target : targets) {
             target.animationFinished(finished);
+        }
+    }
+
+    protected final void animationStarted() {
+        for (@Nonnull final Animated target : targets) {
+            target.animationStarted();
         }
     }
 
@@ -257,6 +263,7 @@ abstract class AbstractAnimation {
         if (!running) {
             running = true;
             World.getAnimationManager().register(this);
+            animationStarted();
         }
     }
 
@@ -272,6 +279,6 @@ abstract class AbstractAnimation {
     protected final boolean updateCurrentTime(final int delta) {
         currentTime += delta;
 
-        return (currentTime > duration);
+        return currentTime > duration;
     }
 }

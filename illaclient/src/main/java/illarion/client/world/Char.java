@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,6 @@ import illarion.client.world.events.CharMoveEvent;
 import illarion.client.world.events.CharVisibilityEvent;
 import illarion.client.world.interactive.InteractiveChar;
 import illarion.common.graphics.CharAnimations;
-import illarion.common.graphics.Layers;
 import illarion.common.types.CharacterId;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
@@ -376,6 +375,29 @@ public final class Char implements AnimatedMove {
     }
 
     /**
+     * This variable is used to update the elevation after the current animation is done. That might be needed to
+     * ensure that the character is properly displayed.
+     */
+    private int elevationAfterAnimation;
+
+    public void updateElevation(final int newElevation) {
+        elevationAfterAnimation = newElevation;
+        if (!animationInProgress) {
+            updatePosition(newElevation);
+        }
+    }
+
+    /**
+     * This flag is used to store if there is currently a animation in progress.
+     */
+    private boolean animationInProgress;
+
+    @Override
+    public void animationStarted() {
+        animationInProgress = true;
+    }
+
+    /**
      * Stop the walking animation of the character.
      *
      * @param ok not in use
@@ -385,7 +407,9 @@ public final class Char implements AnimatedMove {
         dX = 0;
         dY = 0;
         dZ = 0;
+        elevation = elevationAfterAnimation;
         updatePosition(elevation);
+        animationInProgress = false;
     }
 
     /**
@@ -463,7 +487,9 @@ public final class Char implements AnimatedMove {
             newAvatar.changeBaseColor(DEAD_COLOR);
         }
 
-        updatePosition(newAvatar, 0);
+        elevation = World.getMap().getElevationAt(charLocation);
+        elevationAfterAnimation = elevation;
+        updatePosition(newAvatar, elevation);
         updateLight(newAvatar, LIGHT_SET);
 
         final Integer healthPoints = attributes.get(CharacterAttribute.HitPoints);
@@ -492,6 +518,11 @@ public final class Char implements AnimatedMove {
         avatar = newAvatar;
         if (oldAvatar != null) {
             oldAvatar.markAsRemoved();
+        }
+
+        final MapTile tile = World.getMap().getMapAt(charLocation);
+        if (tile != null) {
+            tile.updateQuestMarkerElevation();
         }
     }
 
@@ -579,7 +610,7 @@ public final class Char implements AnimatedMove {
             return;
         }
         if (avatar != null) {
-            avatar.setScreenPos(charLocation.getDcX() + dX, (charLocation.getDcY() + dY) - fix, charLocation.getDcZ() + dZ, Layers.CHARS);
+            avatar.setScreenPos(charLocation.getDcX() + dX, (charLocation.getDcY() + dY) - fix, charLocation.getDcZ() + dZ);
         }
     }
 
@@ -881,46 +912,55 @@ public final class Char implements AnimatedMove {
 
         // determine general visibility by players
         setVisible(World.getPlayer().canSee(this));
-        if (!visible || (avatar == null)) {
-            return;
-        }
+        if (visible && (avatar != null)) {
+            // calculate movement direction
+            final int dir = tempLoc.getDirection(charLocation);
 
-        // calculate movement direction
-        final int dir = tempLoc.getDirection(charLocation);
-
-        // turn only when animating, not when pushed
-        if ((mode != CharMovementMode.Push) && (dir != Location.DIR_ZERO)) {
-            setDirection(dir);
-        }
-
-        // find target elevation
-        final int fromElevation = elevation;
-        elevation = World.getMap().getElevationAt(charLocation);
-
-        int range = 1;
-        if (mode == CharMovementMode.Run) {
-            range = 2;
-        }
-
-        // start animations only if reasonable distance
-        if ((charLocation.getDistance(tempLoc) <= range) && (speed > 0) && (dir != Location.DIR_ZERO) && (mode != CharMovementMode.Push)) {
-            if (mode == CharMovementMode.Walk) {
-                startAnimation(CharAnimations.WALK, speed);
-            } else if (mode == CharMovementMode.Run) {
-                startAnimation(CharAnimations.RUN, speed);
+            // turn only when animating, not when pushed
+            if ((mode != CharMovementMode.Push) && (dir != Location.DIR_ZERO)) {
+                setDirection(dir);
             }
-            move.start(tempLoc.getDcX() - charLocation.getDcX(), tempLoc.getDcY() - fromElevation - charLocation.getDcY(), 0, 0,
-                    -elevation, 0, speed);
-        } else {
-            // reset last animation result
-            dX = 0;
-            dY = 0;
-            dZ = 0;
-            updatePosition(elevation);
-        }
-        updateLight(LIGHT_SOFT);
 
-        EventBus.publish(new CharMoveEvent(characterId, charLocation));
+            // find target elevation
+            final int fromElevation = elevation;
+            elevation = World.getMap().getElevationAt(charLocation);
+            elevationAfterAnimation = elevation;
+
+            int range = 1;
+            if (mode == CharMovementMode.Run) {
+                range = 2;
+            }
+
+            // start animations only if reasonable distance
+            if ((charLocation.getDistance(tempLoc) <= range) && (speed > 0) && (dir != Location.DIR_ZERO) && (mode != CharMovementMode.Push)) {
+                if (mode == CharMovementMode.Walk) {
+                    startAnimation(CharAnimations.WALK, speed);
+                } else if (mode == CharMovementMode.Run) {
+                    startAnimation(CharAnimations.RUN, speed);
+                }
+                move.start(tempLoc.getDcX() - charLocation.getDcX(), tempLoc.getDcY() - fromElevation - charLocation.getDcY(), 0, 0,
+                        -elevation, 0, speed);
+            } else {
+                // reset last animation result
+                dX = 0;
+                dY = 0;
+                dZ = 0;
+                updatePosition(elevation);
+            }
+            updateLight(LIGHT_SOFT);
+
+            EventBus.publish(new CharMoveEvent(characterId, charLocation));
+        }
+
+        final MapTile oldTile = World.getMap().getMapAt(tempLoc);
+        if (oldTile != null) {
+            oldTile.updateQuestMarkerElevation();
+        }
+
+        final MapTile newTile = World.getMap().getMapAt(charLocation);
+        if (newTile != null) {
+            newTile.updateQuestMarkerElevation();
+        }
     }
 
     /**
@@ -962,6 +1002,11 @@ public final class Char implements AnimatedMove {
                 }
             } else if (avatar != null) {
                 avatar.setAlphaTarget(0);
+            }
+
+            final MapTile tile = World.getMap().getMapAt(charLocation);
+            if (tile != null) {
+                tile.updateQuestMarkerElevation();
             }
 
             EventBus.publish(new CharVisibilityEvent(characterId, visibility));

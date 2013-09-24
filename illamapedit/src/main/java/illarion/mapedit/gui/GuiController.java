@@ -18,22 +18,16 @@
  */
 package illarion.mapedit.gui;
 
-import illarion.common.config.Config;
 import illarion.mapedit.Lang;
 import illarion.mapedit.MapEditor;
-import illarion.mapedit.crash.exceptions.FormatCorruptedException;
-import illarion.mapedit.data.Map;
-import illarion.mapedit.data.MapIO;
-import illarion.mapedit.events.GlobalActionEvents;
-import illarion.mapedit.events.UpdateMapListEvent;
+import illarion.mapedit.data.*;
+import illarion.mapedit.events.*;
+import illarion.mapedit.events.map.MapPositionEvent;
 import illarion.mapedit.events.map.RepaintRequestEvent;
-import illarion.mapedit.events.menu.MapNewEvent;
-import illarion.mapedit.events.menu.MapOpenEvent;
-import illarion.mapedit.events.menu.MapSaveEvent;
-import illarion.mapedit.events.menu.MapSelectedEvent;
+import illarion.mapedit.events.menu.*;
 import illarion.mapedit.history.HistoryManager;
+import illarion.mapedit.history.ItemPlacedAction;
 import illarion.mapedit.render.RendererManager;
-import illarion.mapedit.resource.loaders.ImageLoader;
 import illarion.mapedit.util.SwingLocation;
 import javolution.util.FastList;
 import org.apache.log4j.Logger;
@@ -64,13 +58,15 @@ public class GuiController extends WindowAdapter {
     @Nonnull
     private final MainFrame mainFrame;
 
-    private final SplashScreen splashScreen;
-
     @Nonnull
     private final List<Map> maps;
 
     @Nonnull
     private final HistoryManager historyManager;
+
+    @Nonnull
+    private final AnnotationChecker annotationChecker;
+
 
     @Nullable
     private Map selected;
@@ -79,13 +75,21 @@ public class GuiController extends WindowAdapter {
 
     private boolean notSaved;
 
-    public GuiController(final Config config) {
+    @Nullable
+    private MapSelection clipboard;
+
+    public GuiController() {
         AnnotationProcessor.process(this);
-        splashScreen = SplashScreen.getInstance();
-        mainFrame = new MainFrame(this, config);
+        mainFrame = new MainFrame(this);
         historyManager = new HistoryManager();
+        annotationChecker = new AnnotationChecker();
         maps = new FastList<Map>(1);
         notSaved = false;
+    }
+
+    @Nonnull
+    public AnnotationChecker getAnnotationChecker() {
+        return annotationChecker;
     }
 
     public void start() {
@@ -95,7 +99,6 @@ public class GuiController extends WindowAdapter {
         started = true;
         startGui();
     }
-
 
     @Nonnull
     public List<Map> getMaps() {
@@ -113,11 +116,11 @@ public class GuiController extends WindowAdapter {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                SubstanceLookAndFeel.setSkin("org.pushingpixels.substance.api.skin.OfficeSilver2007Skin");
+                SubstanceLookAndFeel.setSkin(MapEditorConfig.getInstance().getLookAndFeel());
                 mainFrame.initialize(GuiController.this);
                 mainFrame.setLocationRelativeTo(null);
                 mainFrame.setVisible(true);
-                splashScreen.setVisible(false);
+                SplashScreen.getInstance().setVisible(false);
             }
         });
 
@@ -143,19 +146,30 @@ public class GuiController extends WindowAdapter {
         EventBus.publish(new RepaintRequestEvent());
     }
 
-    public void removeMap(@Nullable final Map map) {
-        if (maps.contains(map) && (map != null)) {
-            maps.remove(map);
-            if (selected == map) {
-                if (maps.isEmpty()) {
-                    selected = null;
-                } else {
-                    selected = maps.get(0);
-                }
+    private void removeMap(final int index) {
+        if (index < maps.size()) {
+            final Map map = maps.remove(index);
+            setSelectedMap(map);
+        }
+    }
+
+    private void setSelectedMap(final Map map) {
+        if (selected == map) {
+            if (maps.isEmpty()) {
+                selected = null;
+            } else {
+                selected = maps.get(0);
             }
         }
         EventBus.publish(new UpdateMapListEvent(maps, maps.indexOf(selected)));
         EventBus.publish(new RepaintRequestEvent());
+    }
+
+    public void removeMap(@Nullable final Map map) {
+        if (maps.contains(map) && (map != null)) {
+            maps.remove(map);
+            setSelectedMap(map);
+        }
     }
 
     @Nonnull
@@ -166,7 +180,6 @@ public class GuiController extends WindowAdapter {
     public void setSaved(final boolean saved) {
         notSaved = !saved;
     }
-
 
     @Override
     public void windowClosing(final WindowEvent e) {
@@ -213,54 +226,112 @@ public class GuiController extends WindowAdapter {
 
     @EventSubscriber
     public void onMapSelected(@Nonnull final MapSelectedEvent e) {
-        selected = maps.get(e.getIndex());
-        final int x = SwingLocation.displayCoordinateX(selected.getX(), selected.getY(), 0);
-        final int y = SwingLocation.displayCoordinateY(selected.getX(), selected.getY(), 0);
-        final RendererManager manager = mainFrame.getRendererManager();
-        manager.setZoom(1f);
-        manager.setSelectedLevel(selected.getZ());
-        manager.setTranslationX(-x);
-        manager.setTranslationY(-y);
-        manager.setDefaultTranslationX(-x);
-        manager.setDefaultTranslationY(-y);
+        if ((e.getIndex() < 0) || (e.getIndex() >= maps.size())) {
+            selected = null;
+        } else {
+            selected = maps.get(e.getIndex());
+            final int x = SwingLocation.displayCoordinateX(selected.getX(), selected.getY(), 0);
+            final int y = SwingLocation.displayCoordinateY(selected.getX(), selected.getY(), 0);
+            final RendererManager manager = mainFrame.getRendererManager();
+            manager.setZoom(1f);
+            manager.setSelectedLevel(selected.getZ());
+            manager.setTranslationX(-x);
+            manager.setTranslationY(-y);
+            manager.setDefaultTranslationX(-x);
+            manager.setDefaultTranslationY(-y);
+        }
 
         EventBus.publish(new RepaintRequestEvent());
     }
 
     @EventSubscriber
-    public void onMapOpen(@Nonnull final MapOpenEvent e) {
-        try {
-            final Map[] map;
-            if (e.getPath() == null) {
-                map = MapDialogs.showOpenMapDialog(mainFrame);
-            } else {
-                map = new Map[1];
-                map[0] = MapIO.loadMap(e.getPath(), e.getName());
-            }
-            for (final Map m : map) {
-                if (!maps.contains(m)) {
-                    addMap(m);
-                }
-            }
-        } catch (FormatCorruptedException ex) {
-            LOGGER.warn("Format wrong.", ex);
-            JOptionPane.showMessageDialog(MainFrame.getInstance(),
-                    ex.getMessage(),
-                    Lang.getMsg("gui.error"),
-                    JOptionPane.ERROR_MESSAGE,
-                    ImageLoader.getImageIcon("messagebox_critical"));
-        } catch (IOException ex) {
-            LOGGER.warn("Can't load map", ex);
-            JOptionPane.showMessageDialog(MainFrame.getInstance(),
-                    Lang.getMsg("gui.error.LoadMap"),
-                    Lang.getMsg("gui.error"),
-                    JOptionPane.ERROR_MESSAGE,
-                    ImageLoader.getImageIcon("messagebox_critical"));
+    public void onMapLoaded(@Nonnull final MapLoadedEvent e) {
+        if (!maps.contains(e.getMap())) {
+            addMap(e.getMap());
         }
+    }
+
+    @EventSubscriber
+    public void onMapOpen(@Nonnull final MapOpenEvent e) {
+        MapIO.loadMap(e.getPath(), e.getName());
     }
 
     @EventTopicSubscriber(topic = GlobalActionEvents.CLOSE_MAP)
     public void onMapClosed(final String topic, final ActionEvent event) {
         removeMap(selected);
+    }
+
+    @EventSubscriber
+    public void onMapCloseAtIndex(@Nonnull final CloseMapEvent e) {
+        removeMap(e.getIndex());
+    }
+
+    @EventSubscriber
+    public void onCopyClipboard(@Nonnull final ClipboardCopyEvent e) {
+        if (getSelected() != null) {
+            clipboard = getSelected().copySelectedTiles();
+        }
+    }
+
+    @EventSubscriber
+    public void onCutClipboard(@Nonnull final ClipboardCutEvent e) {
+        if ((getSelected() != null) && !annotationChecker.isAnnotatedFill(getSelected())) {
+            clipboard = getSelected().cutSelectedTiles();
+            EventBus.publish(new RepaintRequestEvent());
+            setSaved(false);
+        }
+    }
+
+    @EventSubscriber
+    public void onPasteClipboard(@Nonnull final PasteEvent e) {
+        EventBus.publish(new DidPasteEvent());
+        if ((getSelected() != null) && (clipboard != null) && !annotationChecker.isAnnotated(e.getX(),e.getY(),
+                getSelected(), clipboard)) {
+            getSelected().pasteTiles(e.getX(), e.getY(), clipboard);
+            EventBus.publish(new RepaintRequestEvent());
+            setSaved(false);
+        }
+    }
+
+    @EventSubscriber
+    public void onItemRemove(@Nonnull final ItemRemoveEvent e) {
+        if (getSelected() != null) {
+            final ItemPlacedAction historyAction = getSelected().removeItemOnActiveTile(e.getIndex());
+            if (historyAction != null) {
+                historyManager.addEntry(historyAction);
+                setSaved(false);
+            }
+            EventBus.publish(new RepaintRequestEvent());
+            EventBus.publish(new ItemsUpdatedEvent(getSelected().getItemsOnActiveTile()));
+        }
+    }
+
+    @EventSubscriber
+    public void onItemReplace(@Nonnull final ItemReplaceEvent e) {
+        if (getSelected() != null) {
+            getSelected().replaceItemOnActiveTile(e.getIndex(), e.getNewIndex());
+            EventBus.publish(new RepaintRequestEvent());
+            EventBus.publish(new ItemsUpdatedEvent(getSelected().getItemsOnActiveTile()));
+        }
+    }
+
+    @EventSubscriber
+    public void onMapPosition(final MapPositionEvent e) {
+        if (getSelected() != null) {
+            getSelected().setMapPosition(e.getMapX(), e.getMapY());
+            EventBus.publish(new RepaintRequestEvent());
+        }
+    }
+
+    @EventSubscriber
+    public void onItemDataAnnotation(@Nonnull final TileAnnotationEvent e) {
+        if (getSelected() == null) {
+            return;
+        }
+        final MapTile tile = getSelected().getActiveTile();
+        if (tile != null) {
+            tile.setAnnotation(e.getText());
+            EventBus.publish(new RepaintRequestEvent());
+        }
     }
 }

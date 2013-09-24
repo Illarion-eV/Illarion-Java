@@ -19,7 +19,6 @@
 package illarion.mapedit.tools.panel;
 
 import illarion.mapedit.Lang;
-import illarion.mapedit.tools.ToolManager;
 import illarion.mapedit.tools.panel.components.TileList;
 
 import javax.annotation.Nonnull;
@@ -31,7 +30,9 @@ import java.awt.*;
  */
 public class TileBrushPanel extends JPanel {
     @Nonnull
-    private final JSpinner radiusSpinner;
+    private final JRadioButton fillSelectedCheckbox;
+    @Nonnull
+    private final JRadioButton fillAreaCheckbox;
 
     /**
      * Default constructor
@@ -41,22 +42,28 @@ public class TileBrushPanel extends JPanel {
 
         add(new TileList(), BorderLayout.CENTER);
 
-        final JPanel brushSizePanel = new JPanel(new BorderLayout(5, 0));
-        final JLabel radiusLabel = new JLabel(Lang.getMsg("tools.TileBrushTool.Radius"));
-        radiusSpinner = new JSpinner(new SpinnerNumberModel(1, 1, ToolManager.TOOL_RADIUS, 1));
-        brushSizePanel.add(radiusLabel, BorderLayout.WEST);
-        brushSizePanel.add(radiusSpinner, BorderLayout.CENTER);
+        final JPanel brushSizePanel = new JPanel(new GridLayout(0, 2));
+
+        fillSelectedCheckbox = new JRadioButton();
+        fillAreaCheckbox = new JRadioButton();
+        fillAreaCheckbox.setSelected(true);
+        final ButtonGroup group = new ButtonGroup();
+        group.add(fillAreaCheckbox);
+        group.add(fillSelectedCheckbox);
+
+        brushSizePanel.add(new JLabel(Lang.getMsg("tools.FillSelected")));
+        brushSizePanel.add(fillSelectedCheckbox);
+        brushSizePanel.add(new JLabel(Lang.getMsg("tools.FillArea")));
+        brushSizePanel.add(fillAreaCheckbox);
 
         add(brushSizePanel, BorderLayout.SOUTH);
     }
 
-    /**
-     * Get the radius of the brush
-     *
-     * @return radius
-     */
-    public int getRadius() {
-        return (Integer) radiusSpinner.getValue();
+    public boolean isFillSelected() {
+        return fillSelectedCheckbox.isSelected();
     }
 
+    public boolean isFillArea() {
+        return fillAreaCheckbox.isSelected();
+    }
 }

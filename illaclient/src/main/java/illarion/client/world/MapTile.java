@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion Client.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2013 - Illarion e.V.
  *
  * The Illarion Client is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,7 @@
  */
 package illarion.client.world;
 
-import illarion.client.graphics.AlphaChangeListener;
-import illarion.client.graphics.Effect;
-import illarion.client.graphics.Item;
-import illarion.client.graphics.Tile;
+import illarion.client.graphics.*;
 import illarion.client.net.server.TileUpdate;
 import illarion.client.world.interactive.InteractiveMapTile;
 import illarion.common.graphics.Layers;
@@ -31,6 +28,7 @@ import illarion.common.types.Location;
 import org.apache.log4j.Logger;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.LightSource;
+import org.illarion.engine.graphic.Sprite;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -72,6 +70,11 @@ public final class MapTile implements AlphaChangeListener {
      * Index of the tile with the highest elevation in the item array.
      */
     private int elevationIndex;
+
+    /**
+     * This value contains the value the quest marker is elevated by.
+     */
+    private int questMarkerElevation;
 
     /**
      * List of items on the tile.
@@ -177,6 +180,10 @@ public final class MapTile implements AlphaChangeListener {
         } finally {
             itemsLock.readLock().unlock();
         }
+    }
+
+    public int getQuestMarkerElevation() {
+        return questMarkerElevation;
     }
 
     public void setObstructingTile(@Nonnull final MapTile tile) {
@@ -506,9 +513,17 @@ public final class MapTile implements AlphaChangeListener {
         final int level = item.getTemplate().getItemInfo().getLevel();
         if (level > 0) {
             // Set elevation only for first suitable item
-            if ((elevation == 0) || (elevationIndex == index)) {
+            if (((elevation == 0) || (elevationIndex == index)) && (elevation != level)) {
                 elevation = level;
                 elevationIndex = index;
+
+                final Char charOnTile = World.getPeople().getCharacterAt(tileLocation);
+                if (charOnTile != null) {
+                    if (World.getPlayer().isPlayer(charOnTile.getCharId())) {
+                        World.getMapDisplay().updateElevation();
+                    }
+                    charOnTile.updateElevation(elevation);
+                }
             }
         }
     }
@@ -518,6 +533,8 @@ public final class MapTile implements AlphaChangeListener {
      * needed.
      */
     private void itemChanged() {
+        updateQuestMarkerElevation();
+
         // invalidate LOS data
         losDirty = true;
         // report a change of shadow
@@ -527,13 +544,42 @@ public final class MapTile implements AlphaChangeListener {
     }
 
     /**
+     * Update the elevation of the quest markers. This needs to be called when ever the items or the character on
+     * this tile change.
+     */
+    public void updateQuestMarkerElevation() {
+        final Char character = World.getPeople().getCharacterAt(tileLocation);
+        @Nullable final Avatar avatar;
+        if ((character == null) || !character.isVisible()) {
+            avatar = null;
+        } else {
+            avatar = character.getAvatar();
+        }
+
+        questMarkerElevation = elevation;
+        if (avatar == null) {
+            final Item topItem = getTopItem();
+            if (elevationIndex == 0) {
+                questMarkerElevation = 0;
+            }
+            if (topItem != null) {
+                final Sprite topItemSprite = topItem.getTemplate().getSprite();
+
+                questMarkerElevation += Math.round((topItemSprite.getOffsetY() + topItemSprite.getHeight())
+                        * topItem.getScale());
+            }
+        } else {
+            questMarkerElevation += Math.round(avatar.getTemplate().getSprite().getHeight() * avatar.getScale());
+        }
+    }
+
+    /**
      * Determine whether the top item is a light source and needs to be registered. Also removes previous or changed
      * light sources.
      */
     private void checkLight() {
-        int newLightValue = 0;
-
         itemsLock.readLock().lock();
+        int newLightValue = 0;
         try {
             if (items != null) {
                 for (final Item item : items) {
@@ -898,7 +944,7 @@ public final class MapTile implements AlphaChangeListener {
         // get a new tile to display
         if (id >= 0) {
             // create a tile, possibly with variants
-            tile = Tile.create(id, tileLocation, this);
+            tile = new Tile(id, this);
 
             tile.addAlphaChangeListener(this);
             tile.setScreenPos(tileLocation, Layers.TILE);
@@ -957,6 +1003,7 @@ public final class MapTile implements AlphaChangeListener {
                 itemsLock.readLock().unlock();
             }
         }
+        itemChanged();
     }
 
     /**

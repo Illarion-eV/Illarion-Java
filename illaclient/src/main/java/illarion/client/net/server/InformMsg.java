@@ -38,7 +38,7 @@ import java.io.IOException;
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
 @ReplyMessage(replyId = CommandList.MSG_INFORM)
-public final class InformMsg extends AbstractReply {
+public final class InformMsg extends AbstractGuiMsg {
     /**
      * The logger that is used for the log output of this class.
      */

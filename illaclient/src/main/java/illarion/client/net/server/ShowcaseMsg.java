@@ -38,7 +38,7 @@ import java.io.IOException;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_SHOWCASE)
-public final class ShowcaseMsg extends AbstractReply {
+public final class ShowcaseMsg extends AbstractGuiMsg {
     @Nullable
     private OpenContainerEvent event;
 

@@ -23,11 +23,14 @@ import javolution.text.TextBuilder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a single item, with a position, an id, a quality, and data.
  *
  * @author Tim
+ * @author Fredrik K
  */
 public class MapItem implements Immutable {
     /**
@@ -40,10 +43,6 @@ public class MapItem implements Immutable {
      * time of serialisation
      */
     public static final int QUALITY_DEFAULT = 333;
-    /**
-     * Represents no data.
-     */
-    public static final int DATA_NONE = 0;
 
     /**
      * The item id.
@@ -52,11 +51,12 @@ public class MapItem implements Immutable {
     /**
      * The data of this item.
      */
-    private final String itemData;
+    private List<String> itemData;
     /**
      * The quality of this item.
      */
     private final int quality;
+    private String annotation;
 
     /**
      * Creates a new Item
@@ -65,9 +65,11 @@ public class MapItem implements Immutable {
      * @param itemData The data of this item.
      * @param quality  The quality of this item.
      */
-    public MapItem(final int itemId, final String itemData, final int quality) {
+    public MapItem(final int itemId, @Nullable final List<String> itemData, final int quality) {
         this.itemId = itemId;
-        this.itemData = itemData;
+        if ((itemData != null) && !itemData.isEmpty()) {
+            this.itemData = new ArrayList<String>(itemData);
+        }
         this.quality = quality;
     }
 
@@ -78,10 +80,23 @@ public class MapItem implements Immutable {
      */
     public MapItem(@Nonnull final MapItem old) {
         itemId = old.itemId;
-        itemData = old.itemData;
+        itemData = new ArrayList<String>(old.itemData);
         quality = old.quality;
     }
 
+    /**
+     * Creates a new Item
+     *
+     * @param itemId   The item id.
+     * @param quality  The quality of this item.
+     */
+    public MapItem(final int itemId, final int quality) {
+        this(itemId, new ArrayList<String>(),quality);
+    }
+
+    public String getAnnotation() {
+        return annotation;
+    }
 
     /**
      * Returns the id of the item.
@@ -106,8 +121,33 @@ public class MapItem implements Immutable {
      *
      * @return the data-value.
      */
-    public String getItemData() {
+    @Nullable
+    public List<String> getItemData() {
         return itemData;
+    }
+
+    public boolean isItemDataNullOrEmpty() {
+        return (itemData == null) || itemData.isEmpty();
+    }
+
+    public void addItemData(final String data) {
+        if (itemData == null) {
+            itemData = new ArrayList<String>();
+        }
+        itemData.add(data);
+    }
+
+    public void addItemData(final int index, final String data) {
+        if (itemData == null) {
+            itemData = new ArrayList<String>();
+        }
+        itemData.set(index, data);
+    }
+
+    public void removeItemData(final int index) {
+        if (itemData != null) {
+            itemData.remove(index);
+        }
     }
 
     @Override
@@ -122,9 +162,17 @@ public class MapItem implements Immutable {
         return false;
     }
 
+    public boolean hasAnnotation() {
+        return (annotation != null) && !annotation.isEmpty();
+    }
+
     @Override
     public int hashCode() {
         return itemId;
+    }
+
+    public void setAnnotation(final String annotation) {
+        this.annotation = annotation;
     }
 
     /**
@@ -136,11 +184,12 @@ public class MapItem implements Immutable {
     @Nonnull
     @Override
     public String toString() {
-        TextBuilder builder = TextBuilder.newInstance();
+        final TextBuilder builder = TextBuilder.newInstance();
         builder.append(itemId).append(';');
         builder.append(quality);
+
         if ((itemData != null) && !itemData.isEmpty()) {
-            builder.append(';').append(itemData);
+            builder.append(';').append(join(itemData, ";"));
         }
 
         try {
@@ -148,5 +197,19 @@ public class MapItem implements Immutable {
         } finally {
             TextBuilder.recycle(builder);
         }
+    }
+
+    public static String join(final List<String> itemData, final String joinWith) {
+        String retVal = "";
+        boolean firstRun = true;
+        for (final String s : itemData) {
+            if (firstRun) {
+                firstRun = false;
+            } else {
+                retVal += joinWith;
+            }
+            retVal += s;
+        }
+        return retVal;
     }
 }
