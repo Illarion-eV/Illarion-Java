@@ -22,6 +22,7 @@ import illarion.client.graphics.AvatarClothManager;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.net.server.events.AttributeUpdateReceivedEvent;
+import illarion.client.util.Lang;
 import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.client.world.characters.CharacterAttribute;
@@ -203,7 +204,13 @@ public final class AppearanceMsg extends AbstractReply {
         }
 
         character.setScale(size / SCALE_MOD);
-        character.setName(name);
+
+        if (name.isEmpty()) {
+            character.setName(Lang.getMsg("chat.someone"));
+        } else {
+            character.setName(name);
+        }
+
         character.setAppearance(appearance);
         character.resetLight();
         character.setWearingItem(AvatarClothManager.GROUP_HAIR, hairID);
