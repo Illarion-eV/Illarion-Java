@@ -73,6 +73,11 @@ public final class AppearanceMsg extends AbstractReply {
     private String name;
 
     /**
+     * The custom given name of the character.
+     */
+    private String customName;
+
+    /**
      * The ID of the beard of the character.
      */
     private short beardID;
@@ -158,6 +163,7 @@ public final class AppearanceMsg extends AbstractReply {
     public void decode(@Nonnull final NetCommReader reader) throws IOException {
         charId = new CharacterId(reader);
         name = reader.readString();
+        customName = reader.readString();
 
         final int race = reader.readUShort();
         final boolean male = reader.readUByte() == 0;
