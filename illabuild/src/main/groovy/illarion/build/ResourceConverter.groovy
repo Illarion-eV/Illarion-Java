@@ -14,19 +14,21 @@
  * You should have received a copy of the GNU General Public License along with the Illarion Build Utility. If not,
  * see <http://www.gnu.org/licenses/>.
  */
-package illarion.build;
+package illarion.build
 
+import groovy.xml.MarkupBuilder;
 import illarion.build.imagepacker.ImagePacker;
 import illarion.common.data.Book;
 import illarion.common.util.Crypto;
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
-import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginConvention
-import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.StopExecutionException;
 import org.gradle.api.tasks.TaskAction
-import org.gradle.plugins.javascript.base.JavaScriptBasePlugin;
 import org.gradle.tooling.BuildException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -46,12 +48,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
-import java.nio.channels.WritableByteChannel
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
-import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 
 /**
@@ -63,11 +61,6 @@ import java.util.zip.ZipEntry;
  */
 public class ResourceConverter extends DefaultTask {
     /**
-     * The identifier of the texture format.
-     */
-    private static final String TEXTURE_FORMAT = "png";
-
-    /**
      * The file names of the book files that were found but not handled yet.
      */
     @Nonnull
@@ -77,12 +70,7 @@ public class ResourceConverter extends DefaultTask {
      * Crypto instance used to crypt the table files.
      */
     @Nonnull
-    private final Crypto crypto;
-
-    /**
-     * The file lists that are supposed to be converted.
-     */
-    def FileCollection sourceFiles;
+    private final def crypto = new Crypto();
 
     /**
      * The file names of the misc files that were found but not handled yet.
@@ -93,6 +81,7 @@ public class ResourceConverter extends DefaultTask {
     /**
      * The file that contains the private key to use
      */
+    @InputFile
     def File privateKey;
 
     /**
@@ -102,15 +91,10 @@ public class ResourceConverter extends DefaultTask {
     private final def tableFiles = [] as List<File>;
 
     /**
-     * The jar source file that will be processed.
+     * The base name for the texture atlas files
      */
-    def File targetFile;
-
-    /**
-     * The root directory that is assumed for all received files. This portion of the path will be removed from the
-     * path entry that are stored in the file lists.
-     */
-    def File rootDirectory;
+    @Input
+    def String atlasName;
 
     /**
      * The file names of texture files that were found in the list and were not handled yet.
@@ -119,30 +103,19 @@ public class ResourceConverter extends DefaultTask {
     private final def textureFiles = [] as List<File>;
 
     /**
-     * The file names of texture files that shall be get included into a texture pack and rather get a texture alone.
-     */
-    @Nonnull
-    private final def textureNoPackFiles = [] as List<File>;
-
-    /**
-     * Constructor of the Texture converter. Sets up all needed variables for the proper conversion to the OpenGL
-     * texture format.
-     */
-    public ResourceConverter() {
-        crypto = new Crypto();
-    }
-
-    /**
      * This is the task action that causes the converter to be executed.
      */
     @SuppressWarnings("GroovyUnusedDeclaration")
     @TaskAction
     def processResources() {
-        def extensionData = project.extensions.findByType(ConvertPlugin)
-        project.convention.getPlugin(JavaPluginConvention).getSourceSets().each {
+        def extensionData = project.extensions.findByName("converter") as ConverterExtension
+        atlasName = extensionData.atlasNameExtension
+        privateKey = extensionData.privateKey
+
+        project.convention.getPlugin(JavaPluginConvention).sourceSets.each {
             def resourceSet = it.resources
             resourceSet.each {file -> analyseAndOrderFile(file)}
-            convert(it.resources.srcDirs, it.getOutput().resourcesDir)
+            convert(resourceSet.srcDirs, it.output.resourcesDir)
         }
     }
 
@@ -157,11 +130,7 @@ public class ResourceConverter extends DefaultTask {
         if (fileName.contains("notouch_") || fileName.contains("mouse_cursors")) {
             miscFiles.add(file)
         } else if (fileName.endsWith(".png")) { //$NON-NLS-1$
-            if (fileName.contains("nopack_")) { //$NON-NLS-1$
-                textureNoPackFiles.add(file)
-            } else {
-                textureFiles.add(file)
-            }
+            textureFiles.add(file)
         } else if (fileName.endsWith(".tbl")) { //$NON-NLS-1$
             tableFiles.add(file)
         } else if (fileName.endsWith(".book.xml")) { //$NON-NLS-1$
@@ -189,52 +158,10 @@ public class ResourceConverter extends DefaultTask {
         logger.info("Misc files done.")
 
         convertBookFiles(targetDirectory)
-        System.out.println("Bookfiles done")
+        logger.info("Bookfiles done")
 
-        JarOutputStream outJar = null
-        try {
-            // build the filelists
-            buildFileList()
-            logger.info("File list done")
-            logger.info("Misc: " + miscFiles.size())
-            logger.info("Table: " + tableFiles.size())
-            logger.info("Texture: " + textureFiles.size())
-            logger.info("Book: " + bookFiles.size())
-
-            // open the output filestream
-            targetFile.parentFile.mkdirs();
-            outJar = new JarOutputStream(new FileOutputStream(targetFile))
-            outJar.setLevel(3)
-            outJar.setMethod(ZipEntry.DEFLATED)
-
-            // write the texture files
-            writeTextureFiles(outJar)
-            System.out.println("texturefiles done")
-
-            // write the texture files that do not get packed
-            writeTextureNoPackFiles(outJar)
-            System.out.println("not packed texturefiles done")
-
-        } catch (@Nonnull final FileNotFoundException e) {
-            logger.error("ERROR: File ${targetFile.getAbsolutePath()} was not found, stopping converter", e)
-            logger.error(e.message)
-        } catch (@Nonnull final IOException e) {
-            logger.error("ERROR: File ${targetFile.getAbsolutePath()} was not readable, stopping converter", e)
-            logger.error(e.message)
-
-        } finally {
-            closeSilently(outJar)
-        }
-    }
-
-    /**
-     * Check if the settings of this task are good to be executed.
-     */
-    @SuppressWarnings("nls")
-    private void validate() {
-        if (targetFile == null) {
-            throw new BuildException("a target file is needed", null);
-        }
+        convertTextureFiles(targetDirectory, rootDirs)
+        logger.info("Textures done")
     }
 
     /**
@@ -265,13 +192,13 @@ public class ResourceConverter extends DefaultTask {
                 }
             }
         }
-        bookFiles.clear();
+        bookFiles.clear()
     }
 
     private static void closeSilently(@Nullable final Closeable closeable) {
         if (closeable != null) {
             try {
-                closeable.close();
+                closeable.close()
             } catch (@Nonnull final IOException ignored) {
                 // nothing to do
             }
@@ -329,128 +256,54 @@ public class ResourceConverter extends DefaultTask {
         tableFiles.each {file ->
             file.withInputStream {is ->
                 new File(targetDirectory, file.name.replace(".tbl", ".dat")).withOutputStream {os ->
-                    crypto.encrypt(is, os);
+                    crypto.encrypt(is, os)
                 }
             }
         }
-        tableFiles.clear();
+        tableFiles.clear()
     }
 
-    private static int packTextures(@Nonnull final JarOutputStream outJar, final String folder, @Nonnull final ImagePacker packer,
-                                    @Nullable final String filename) {
-        int atlasFiles = 0;
-        while (!packer.isEverythingDone()) {
-            try {
-                final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                final DocumentBuilder builder = factory.newDocumentBuilder();
-                final Document document = builder.newDocument();
-                final Node rootNode = document.createElement("sprites");
-                document.appendChild(rootNode);
+    private void convertTextureFiles(final File targetDirectory, final Set<File> rootDirs) {
+        if (textureFiles.empty) {
+            return
+        }
 
-                BufferedImage result;
-                if ((result = packer.packImages(document, rootNode)) == null) {
-                    break;
-                }
+        final ImagePacker packer = new ImagePacker(rootDirs)
+        packer.addImages(textureFiles)
+        packer.printTypeCounts()
+        textureFiles.clear()
 
-                final String usedFileName;
-                if (filename == null) {
-                    usedFileName = folder + "atlas-" + atlasFiles;
-                } else {
-                    usedFileName = folder + filename;
-                }
+        def atlasFiles = 0
+        def atlasMarkupWriter = new StringWriter()
+        def atlasMarkup = new MarkupBuilder(atlasMarkupWriter)
+        while (!packer.everythingDone) {
+            def fileName = "${atlasName}-atlas-${atlasFiles++}.png"
 
-                outJar.putNextEntry(new JarEntry(usedFileName + "." + TEXTURE_FORMAT));
-                ImageIO.write(result, TEXTURE_FORMAT, outJar);
-                outJar.closeEntry();
 
-                outJar.putNextEntry(new JarEntry(usedFileName + ".xml"));
-                // Prepare the DOM document for writing
-                final Source source = new DOMSource(document);
-                final Result xmlResult = new StreamResult(outJar);
+            def spriteMarkupWriter = new StringWriter()
+            def spriteMarkup = new MarkupBuilder(spriteMarkupWriter)
+            def resultImage = packer.packImages(spriteMarkup)
 
-                // Write the DOM document to the file
-                final Transformer xformer = TransformerFactory.newInstance().newTransformer();
-                xformer.transform(source, xmlResult);
-                outJar.closeEntry();
+            if (resultImage == null) {
+                break
+            }
 
-                atlasFiles++;
-            } catch (@Nonnull final Exception e) {
-                throw new BuildException("Error while packing textures", e);
+            ImageIO.write(resultImage, "png", new File(targetDirectory, fileName));
+
+            atlasMarkup.atlas (file: fileName) {
+                spriteMarkupWriter.toString()
             }
         }
 
-        return atlasFiles;
-    }
-
-    /**
-     * Pack the textures files together, convert them for OpenGL and store them in the the new archive file.
-     *
-     * @param outJar the target archive the encrypted table files are written t
-     */
-    @SuppressWarnings("nls")
-    private void convertTextureFiles(final Set<File> rootDirs, final File targetDirectory) {
-        if (textureFiles.isEmpty()) {
-            return;
-        }
-
-        final ImagePacker packer = new ImagePacker();
-        final String folder = "data/" + targetFile.getParentFile().getName() + '/';
-
-        for (final File fileEntry : textureFiles) {
-            packer.addImage(fileEntry);
-        }
-        textureFiles.clear();
-
-        packer.printTypeCounts();
-
-        final int atlasFiles = packTextures(outJar, folder, packer, null);
-
-        final DataOutputStream stream;
+        def xmlWriter;
         try {
-            outJar.putNextEntry(new JarEntry(folder + "atlas.count"));
-            stream = new DataOutputStream(outJar);
-            stream.writeInt(atlasFiles);
-            stream.flush();
-        } catch (@Nonnull final Exception e) {
-            throw new BuildException("Error while building textures", e);
-        } finally {
-            try {
-                outJar.closeEntry();
-                outJar.flush();
-            } catch (@Nonnull final IOException ignored) {
+            xmlWriter = new BufferedWriter(new FileWriter(new File(targetDirectory, "${atlasName}-atlas.xml")))
+            new MarkupBuilder(xmlWriter).atlasList {
+                atlasMarkupWriter.toString()
             }
+        } finally {
+            xmlWriter?.flush()
+            xmlWriter?.close()
         }
-    }
-
-    /**
-     * Convert the texture files for OpenGL and store them in the the new archive file.
-     *
-     * @param outJar the target archive the encrypted table files are written to
-     * @throws BuildException In case anything goes wrong
-     */
-    @SuppressWarnings("nls")
-    private void writeTextureNoPackFiles(@Nonnull final JarOutputStream outJar) {
-        if (textureNoPackFiles.isEmpty()) {
-            return;
-        }
-
-        final ImagePacker packer = new ImagePacker();
-
-        final String folder = "data/" + targetFile.getParentFile().getName() + '/';
-
-        for (final File fileEntry : textureNoPackFiles) {
-            packer.addImage(fileEntry);
-
-            String filename = stripDirectory(targetFile.getParentFile(), fileEntry);
-            filename = filename.replace("notouch_", "");
-            filename = filename.substring(0, filename.lastIndexOf('.'));
-
-            packTextures(outJar, folder, packer, filename);
-        }
-        textureNoPackFiles.clear();
-    }
-
-    private static String stripDirectory(@Nonnull final File dir, @Nonnull final File file) {
-        return file.getAbsolutePath().replace(dir.getAbsolutePath(), "");
     }
 }

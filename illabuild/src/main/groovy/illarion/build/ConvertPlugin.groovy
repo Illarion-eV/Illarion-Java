@@ -14,10 +14,9 @@ class ConvertPlugin implements Plugin<Project> {
         if (!project.plugins.hasPlugin('java')) {
             project.apply plugin: 'java'
         }
+
         project.extensions.create("converter", ConverterExtension)
 
-        project.tasks.replace("processResources", ResourceConverter) << {
-
-        }
+        project.tasks.replace("processResources", ResourceConverter)
     }
 }

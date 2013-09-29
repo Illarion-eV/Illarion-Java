@@ -23,32 +23,33 @@ package illarion.build.imagepacker;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface TextureElement {
+abstract class TextureElement {
     /**
-     * Get the height of this texture element.
-     *
-     * @return the height of the texture element
+     * The height of the texture element
      */
-    int getHeight();
+    def int height
 
     /**
-     * Get the width of this texture element.
-     *
-     * @return the width of the texture element
+     * The width of the texture element
      */
-    int getWidth();
+    def int width
 
     /**
      * The X coordinate of the origin of this texture element.
-     *
-     * @return the x coordinate of this texture element
      */
-    int getX();
+    def int x
 
     /**
      * The Y coordinate of the origin of this texture element.
-     *
-     * @return the y coordinate of this texture element
      */
-    int getY();
+    def int y
+
+    TextureElement() {}
+
+    TextureElement(final int x, final int y, final int height, final int width) {
+        this.x = x;
+        this.y = y;
+        this.height = height;
+        this.width = width;
+    }
 }
