@@ -17,7 +17,7 @@
  * along with the Illarion Java Applications.  If not, see <http://www.gnu.org/licenses/>.
  */
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.6'
+    gradleVersion = '1.8'
 }
 
 allprojects {
@@ -27,12 +27,12 @@ allprojects {
     task gitVersion {
         def gitVersion = 'unknown'
         try {
-            def proc = 'git describe --tags head'.execute(null, project.rootDir)
+            def proc = 'git describe --tags head'.execute(null as String[], project.rootDir)
             gitVersion = proc.in.readLines().get(0)
         } catch (ignored) {
         }
 
-        def mainVersion = ''
+        def String mainVersion
         def indexOfSeparator = gitVersion.indexOf('-')
         if (indexOfSeparator == -1) {
             mainVersion = gitVersion
