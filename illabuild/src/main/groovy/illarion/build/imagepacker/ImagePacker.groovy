@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory
 
 import javax.annotation.Nonnull
 import javax.annotation.Nullable
+import java.awt.Transparency
 import java.awt.color.ColorSpace
 import java.awt.image.*
 import java.lang.ref.SoftReference
@@ -152,21 +153,20 @@ public final class ImagePacker implements Comparator<TextureElement> {
      */
     private final List<Sprite> usedImages = new LinkedList<Sprite>()
 
-    private final def Set<File> srcDirs;
+    private final def File srcDir;
 
     /**
      * Constructor for a image packer. Sets up all needed lists to handle the
      * packing of the images
      */
     @SuppressWarnings("unchecked")
-    public ImagePacker(final Set<File> srcDirs) {
+    public ImagePacker(final File srcDir) {
         images = new List[4]
-        images[TYPE_RGB] = new ArrayList<Sprite>()
-        images[TYPE_RGBA] = new ArrayList<Sprite>()
-        images[TYPE_GREY] = new ArrayList<Sprite>()
-        images[TYPE_GREY_ALPHA] = new ArrayList<Sprite>()
+        for (i in 0..<images.size()) {
+            images[i] = new ArrayList<Sprite>()
+        }
 
-        this.srcDirs = srcDirs;
+        this.srcDir = srcDir;
     }
 
     static {
@@ -177,19 +177,6 @@ public final class ImagePacker implements Comparator<TextureElement> {
         COLOR_MODES[TYPE_RGB] = new ComponentColorModel(csRgb, false, false, OPAQUE, TYPE_BYTE)
         COLOR_MODES[TYPE_GREY] = new ComponentColorModel(csGray, false, false, OPAQUE, TYPE_BYTE)
         COLOR_MODES[TYPE_GREY_ALPHA] = new ComponentColorModel(csGray, true, false, TRANSLUCENT, TYPE_BYTE)
-    }
-
-    /**
-     * Add a image to the image packer. This function will not analyse the image
-     * right away, it will rather schedule it for analysing it in future.
-     *
-     * @param files the files to add
-     */
-    public void addImages(final File... files) {
-        def defer = { c -> getExecService().submit(c as Callable)}
-        files.each {file ->
-            defer{processAddImage(file)}
-        }
     }
 
     /**
@@ -207,7 +194,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
 
     @Override
     public int compare(@Nonnull final TextureElement o1, @Nonnull final TextureElement o2) {
-        return FastMath.sign(o2.getHeight() - o1.getHeight())
+        return FastMath.sign(o2.height - o1.height)
     }
 
     /**
@@ -237,7 +224,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
 
         def targetType = -1
         for (type in [TYPE_RGBA, TYPE_RGB, TYPE_GREY_ALPHA, TYPE_GREY]) {
-            if (!images[type]?.empty) {
+            if (images[type] != null && !images[type].empty) {
                 targetType = type;
                 break;
             }
@@ -248,27 +235,26 @@ public final class ImagePacker implements Comparator<TextureElement> {
             return null;
         }
 
-        if (sortNeeded[targetType]) {
-            Collections.sort(images[targetType], this)
-            sortNeeded[targetType] = false
-        }
+        def currType = targetType
 
-        int currType = targetType
+        logger.info("Selected Texture Type ${typeToName(currType)} with ${images[currType].size()} remaining images.")
 
-        logger.info("Selected Texture Type: ${typeToName(currType)}")
-
-        final def firstImage = images[currType].get(0)
-        final def dimensions = getOptimalDimensions(firstImage.getWidth(), firstImage.getHeight(), targetType)
+        final def dimensions = getOptimalDimensions(imageMinWidth[currType], imageMinHeight[currType], targetType)
         final def width = dimensions[0]
         final def height = dimensions[1]
 
+        logger.info("Selected atlas dimensions are ${width}px width and ${height}px height for " +
+                "${pixelCount[currType]} remaining pixels.")
+
+        spacesWidth.clear()
+        spacesHeight.clear()
         spacesWidth.add(new Space(0, 0, height, width))
 
         final def glColorModel = COLOR_MODES[targetType]
         final def raster = getRaster(width, height, glColorModel.numComponents)
         final def result = new BufferedImage(glColorModel, raster, false, null)
 
-        final def imageByteData = ((DataBufferByte) raster.dataBuffer).data
+        final def imageByteData = ((DataBufferByte) result.raster.dataBuffer).data
 
         Arrays.fill(imageByteData, (byte) 0)
 
@@ -277,6 +263,8 @@ public final class ImagePacker implements Comparator<TextureElement> {
 
         while (true) {
             final def curImages = images[currType]
+
+            logger.info("Processing images of type ${typeToName(currType)} with ${images[currType].size()} remaining images.")
 
             def imageCnt = 0
 
@@ -301,38 +289,43 @@ public final class ImagePacker implements Comparator<TextureElement> {
 
                     for (s in 0..<spaces.size()) {
                         final def currentSpace = spaces.get(s)
-                        if (currentSpace.isFittingInside(currentImage)) {
-                            imageUnused = false
-                            currentImage.setPosition(currentSpace.x, currentSpace.y)
-                            usedImages.add(currentImage)
-                            pixelCount[currType] -= currentImage.pixelCount
-                            transferPixel(currentImage.image, currentImage.width, currentImage.height,
-                                    currType, imageByteData,
-                                    currentImage.x, currentImage.y, width, height, targetType)
-
-                            currentImage.releaseData()
-
-                            if ((currentSpace.width - currentImage.width) > 0) {
-                                final def spaceX = currentSpace.x + currentImage.width
-                                final def spaceY = currentSpace.y
-                                final def spaceHeight = currentImage.height
-                                final def spaceWidth = currentSpace.width - currentImage.width
-
-                                spacesWidth.add(new Space(spaceX, spaceY, spaceHeight, spaceWidth))
-                                reorderSpaces(spacesWidth)
-                            }
-                            if ((currentSpace.height - currentImage.height) > 0) {
-                                final int spaceX = currentSpace.x
-                                final int spaceY = currentSpace.y + currentImage.height
-                                final int spaceHeight = currentSpace.height - currentImage.height
-                                final int spaceWidth = currentSpace.width
-
-                                spacesHeight.add(new Space(spaceX, spaceY, spaceHeight, spaceWidth))
-                                reorderSpaces(spacesHeight)
-                            }
-                            spaces.remove(currentSpace)
-                            break
+                        if (!currentSpace.isFittingInside(currentImage)) {
+                            continue
                         }
+
+                        imageUnused = false
+                        currentImage.setPosition(currentSpace.x, currentSpace.y)
+                        usedImages.add(currentImage)
+                        pixelCount[currType] -= currentImage.pixelCount
+                        transferPixel(currentImage.image, currentImage.width, currentImage.height,
+                                currType, imageByteData,
+                                currentImage.x, currentImage.y, width, height, targetType)
+
+                        currentImage.releaseData()
+
+                        if ((currentSpace.width - currentImage.width) > 0) {
+                            final def spaceX = currentSpace.x + currentImage.width
+                            final def spaceY = currentSpace.y
+                            final def spaceHeight = currentImage.height
+                            final def spaceWidth = currentSpace.width - currentImage.width
+
+                            spacesWidth.add(new Space(spaceX, spaceY, spaceHeight, spaceWidth))
+                            reorderSpaces(spacesWidth)
+                        }
+                        if ((currentSpace.height - currentImage.height) > 0) {
+                            final int spaceX = currentSpace.x
+                            final int spaceY = currentSpace.y + currentImage.height
+                            final int spaceHeight = currentSpace.height - currentImage.height
+                            final int spaceWidth = currentSpace.width
+
+                            spacesHeight.add(new Space(spaceX, spaceY, spaceHeight, spaceWidth))
+                            reorderSpaces(spacesHeight)
+                        }
+                        spaces.remove(currentSpace)
+                        break
+                    }
+                    if (!imageUnused) {
+                        break
                     }
                 }
 
@@ -345,15 +338,19 @@ public final class ImagePacker implements Comparator<TextureElement> {
             imageMinHeight[currType] = minHeight
             imageMinWidth[currType] = minWidth
 
+            logger.info("Transferred ${usedImages.size()} of type ${typeToName(currType)} to the texture atlas.")
+
             images[currType].removeAll(usedImages)
 
             usedImages.each {image ->
                 String imageName = image.name;
-                for (srcDir in srcDirs) {
-                    if (imageName.startsWith(srcDir.absolutePath)) {
-                        imageName = imageName.replace(srcDir.absolutePath, "");
-                        break;
-                    }
+
+                if (imageName.startsWith(srcDir.absolutePath)) {
+                    imageName = imageName.replace(srcDir.absolutePath, "")
+                }
+                imageName = imageName.replace('\\', '/')
+                if (imageName.startsWith("/")) {
+                    imageName = imageName.substring(1)
                 }
                 defBuilder.sprite(name: imageName,
                         x: image.x, y: image.y,
@@ -392,13 +389,9 @@ public final class ImagePacker implements Comparator<TextureElement> {
             }
         }
 
-        long wastedPixel = 0
-        [spacesHeight, spacesWidth].each {spaceList -> spaceList.each {space -> wastedPixel+=space.size}}
-
         result.flush()
 
-        logger.info("Texture Map ${imageCountDumb} of type ${typeToName(targetType)} done")
-        logger.info("Remaining Images: ${images[currType].size()}")
+        logger.info("Texture Map ${imageCountDumb++} of type ${typeToName(targetType)} done")
 
         spacesWidth.clear()
         spacesHeight.clear()
@@ -447,14 +440,13 @@ public final class ImagePacker implements Comparator<TextureElement> {
      * @param components the samples per pixel of the raster
      * @return the raster, either a new one or a buffered one
      */
-    private WritableRaster getRaster(final int width, final int height,
-                                     final int components) {
+    private WritableRaster getRaster(final int width, final int height, final int components) {
         if (!rasterBuffer.empty) {
             rasterBuffer.retainAll {it.get() == null}
             for (rasterRef in rasterBuffer) {
                 def raster = rasterRef.get()
                 if (raster != null) {
-                    if ([raster.height, raster.width, raster.numBands] == [height, width, components]) {
+                    if ((raster.height == height) && (raster.width == width) && (raster.numBands == components)) {
                         return raster
                     }
                 }
@@ -463,6 +455,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
 
         def raster = Raster.createInterleavedRaster(TYPE_BYTE, width, height, components, null)
         rasterBuffer.add(new SoftReference(raster))
+        logger.info("Created new raster of size ${width} x ${height} with ${components} components.")
         return raster
     }
 
@@ -474,18 +467,16 @@ public final class ImagePacker implements Comparator<TextureElement> {
      * @param sourceImage  the byte data of the source image
      * @param sourceWidth  the width of the source image
      * @param sourceHeight the height of the source image
-     * @param sourceType   the type of the source image, based on that type the
-     *                     bits per pixel are set up
+     * @param sourceType   the type of the source image, based on that type the bits per pixel are set up
      * @param targetImage  the byte data of the target image
      * @param targetX      the x location of the source image on the target image
      * @param targetY      the y location of the source image on the target image
      * @param targetWidth  the width of the target image
      * @param targetHeight the height of the target image
-     * @param targetType   the type of the target image, based on that type the
-     *                     bits per pixel are set up
+     * @param targetType   the type of the target image, based on that type the bits per pixel are set up
      */
     @SuppressWarnings("nls")
-    private static void transferPixel(@Nonnull final ByteBuffer sourceImage,
+    private void transferPixel(@Nonnull final ByteBuffer sourceImage,
                                       final int sourceWidth, final int sourceHeight, final int sourceType,
                                       @Nonnull final byte[] targetImage, final int targetX, final int targetY,
                                       final int targetWidth, final int targetHeight, final int targetType) {
@@ -532,20 +523,15 @@ public final class ImagePacker implements Comparator<TextureElement> {
                 throw new IllegalArgumentException("Illegal source type: ${sourceType}")
         }
 
-        if ((sourceBitsPerPixel > targetBitsPerPixel)
-                || ((sourceType == TYPE_RGB) && (targetType == TYPE_GREY_ALPHA))) {
+        if (sourceBitsPerPixel > targetBitsPerPixel) {
             throw new IllegalArgumentException("Incompatible image types")
         }
 
-
         for (x in 0..<sourceWidth) {
             for (y in 0..<sourceHeight) {
-                final int locTarget =
-                        ((x + targetX) * targetBitsPerPixel)
-                                + ((y + targetY) * targetWidth * targetBitsPerPixel)
-                final int locSource =
-                        (x * sourceBitsPerPixel)
-                                + (y * sourceWidth * sourceBitsPerPixel)
+                final int locTarget = ((x + targetX) * targetBitsPerPixel) + ((y + targetY) * targetWidth *
+                        targetBitsPerPixel)
+                final int locSource = (x * sourceBitsPerPixel) + (y * sourceWidth * sourceBitsPerPixel)
 
                 if (targetType == TYPE_RGBA) {
                     if (sourceType == TYPE_RGBA) {
@@ -558,9 +544,11 @@ public final class ImagePacker implements Comparator<TextureElement> {
                     } else if (sourceType == TYPE_GREY_ALPHA) {
                         Arrays.fill(targetImage, locTarget, locTarget + 3, sourceImage.get(locSource))
                         targetImage[locTarget + 3] = sourceImage.get(locSource + 1)
-                    } else {
+                    } else if (sourceType == TYPE_GREY) {
                         Arrays.fill(targetImage, locTarget, locTarget + 3, sourceImage.get(locSource))
                         targetImage[locTarget + 3] = -1
+                    } else {
+                        logger.error("Illegal source type (${sourceType}) or target type (${targetType})")
                     }
                 } else if (targetType == TYPE_RGB) {
                     if (sourceType == TYPE_RGB) {
@@ -568,6 +556,8 @@ public final class ImagePacker implements Comparator<TextureElement> {
                         sourceImage.get(targetImage, locTarget, 3)
                     } else if (sourceType == TYPE_GREY) {
                         Arrays.fill(targetImage, locTarget, locTarget + 3, sourceImage.get(locSource))
+                    } else {
+                        logger.error("Illegal source type (${sourceType}) or target type (${targetType})")
                     }
                 } else if (targetType == TYPE_GREY_ALPHA) {
                     if (sourceType == TYPE_GREY_ALPHA) {
@@ -576,10 +566,14 @@ public final class ImagePacker implements Comparator<TextureElement> {
                     } else if (sourceType == TYPE_GREY) {
                         targetImage[locTarget] = sourceImage.get(locSource)
                         targetImage[locTarget + 1] = -1
+                    } else {
+                        logger.error("Illegal source type (${sourceType}) or target type (${targetType})")
                     }
                 } else {
                     if (sourceType == TYPE_GREY) {
                         targetImage[locTarget] = sourceImage.get(locSource)
+                    } else {
+                        logger.error("Illegal source type (${sourceType}) or target type (${targetType})")
                     }
                 }
             }
@@ -630,7 +624,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
                 } catch (ignored) {}
             }
             if (imageCount > 0) {
-                logger.warn("${imageCount} images loaded.")
+                logger.info("${imageCount} images loaded.")
                 imageCount = 0
             }
         }
@@ -675,7 +669,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
                 imageMinHeight[spriteType] = Math.min(sprite.height, imageMinHeight[spriteType])
                 imageCount++
                 if ((imageCount % 1000) == 0) {
-                    logger.warn("${imageCount} images loaded.")
+                    logger.info("${imageCount} images loaded.")
                 }
             }
         } catch (ex) {

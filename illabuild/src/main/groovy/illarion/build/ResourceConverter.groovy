@@ -22,35 +22,24 @@ import illarion.common.data.Book;
 import illarion.common.util.Crypto;
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
-import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.internal.ConventionTask
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.StopExecutionException;
 import org.gradle.api.tasks.TaskAction
-import org.gradle.tooling.BuildException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import org.w3c.dom.Document
 import org.xml.sax.SAXException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.imageio.ImageIO;
-import javax.xml.parsers.DocumentBuilder;
+import javax.imageio.ImageIO
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarOutputStream;
-import java.util.zip.ZipEntry;
+import javax.xml.parsers.ParserConfigurationException
+import java.io.*
 
 /**
  * This converter mainly converts the PNG image files into a format optimized for OpenGL, in order to improve the speed
@@ -70,7 +59,7 @@ public class ResourceConverter extends DefaultTask {
      * Crypto instance used to crypt the table files.
      */
     @Nonnull
-    private final def crypto = new Crypto();
+    final def crypto = new Crypto();
 
     /**
      * The file names of the misc files that were found but not handled yet.
@@ -96,6 +85,14 @@ public class ResourceConverter extends DefaultTask {
     @Input
     def String atlasName;
 
+    @InputFiles
+    def FileCollection resources;
+
+    def File resourceDirectory
+
+    @OutputDirectory
+    def File outputDirectory;
+
     /**
      * The file names of texture files that were found in the list and were not handled yet.
      */
@@ -108,15 +105,10 @@ public class ResourceConverter extends DefaultTask {
     @SuppressWarnings("GroovyUnusedDeclaration")
     @TaskAction
     def processResources() {
-        def extensionData = project.extensions.findByName("converter") as ConverterExtension
-        atlasName = extensionData.atlasNameExtension
-        privateKey = extensionData.privateKey
-
-        project.convention.getPlugin(JavaPluginConvention).sourceSets.each {
-            def resourceSet = it.resources
-            resourceSet.each {file -> analyseAndOrderFile(file)}
-            convert(resourceSet.srcDirs, it.output.resourcesDir)
+        getResources().each { file ->
+            analyseAndOrderFile(file)
         }
+        convert(getResourceDirectory(), getOutputDirectory())
     }
 
     /**
@@ -125,7 +117,10 @@ public class ResourceConverter extends DefaultTask {
      * @param file the file
      */
     void analyseAndOrderFile(File file) {
-        final def fileName = file.name
+        if (!file.file) {
+            return;
+        }
+        final def fileName = file.absolutePath
 
         if (fileName.contains("notouch_") || fileName.contains("mouse_cursors")) {
             miscFiles.add(file)
@@ -148,7 +143,8 @@ public class ResourceConverter extends DefaultTask {
      * @throws SAXException
      */
     @SuppressWarnings("nls")
-    def void convert(Set<File> rootDirs, File targetDirectory) {
+    def void convert(File rootDir, File targetDirectory) {
+        delete(targetDirectory)
         targetDirectory.mkdirs()
 
         convertTableFiles(targetDirectory)
@@ -160,8 +156,19 @@ public class ResourceConverter extends DefaultTask {
         convertBookFiles(targetDirectory)
         logger.info("Bookfiles done")
 
-        convertTextureFiles(targetDirectory, rootDirs)
+        convertTextureFiles(targetDirectory, rootDir)
         logger.info("Textures done")
+    }
+
+    private static void delete(final File file) {
+        if (file == null || !file.exists()) {
+            return
+        }
+        if (file.file) {
+            file.delete();
+        } else if (file.directory) {
+            file.listFiles().each { delete(it) }
+        }
     }
 
     /**
@@ -184,7 +191,7 @@ public class ResourceConverter extends DefaultTask {
             final Document document = docBuilderFactory.newDocumentBuilder().parse(file)
             final Book book = new Book(document)
 
-            logger.debug("Book ${file.name} read with ${book.getEnglishBook().getPageCount()} pages")
+            logger.info("Book ${file.name} read with ${book.englishBook.pageCount} pages")
 
             file.withInputStream {is ->
                 new File(targetDirectory, file.name).withOutputStream {os ->
@@ -193,16 +200,6 @@ public class ResourceConverter extends DefaultTask {
             }
         }
         bookFiles.clear()
-    }
-
-    private static void closeSilently(@Nullable final Closeable closeable) {
-        if (closeable != null) {
-            try {
-                closeable.close()
-            } catch (@Nonnull final IOException ignored) {
-                // nothing to do
-            }
-        }
     }
 
     /**
@@ -239,9 +236,9 @@ public class ResourceConverter extends DefaultTask {
             return
         }
 
-        if (privateKey != null) {
+        if (getPrivateKey() != null) {
             try {
-                crypto.loadPrivateKey(new FileInputStream(privateKey))
+                crypto.loadPrivateKey(new FileInputStream(getPrivateKey()))
             } catch (@Nonnull final FileNotFoundException ignored) {
                 // did not work
             }
@@ -263,22 +260,22 @@ public class ResourceConverter extends DefaultTask {
         tableFiles.clear()
     }
 
-    private void convertTextureFiles(final File targetDirectory, final Set<File> rootDirs) {
+    private void convertTextureFiles(final File targetDirectory, final File rootDir) {
         if (textureFiles.empty) {
             return
         }
 
-        final ImagePacker packer = new ImagePacker(rootDirs)
+        final ImagePacker packer = new ImagePacker(rootDir)
         packer.addImages(textureFiles)
         packer.printTypeCounts()
         textureFiles.clear()
 
+        def baseName = "${getAtlasName()}-atlas"
         def atlasFiles = 0
         def atlasMarkupWriter = new StringWriter()
         def atlasMarkup = new MarkupBuilder(atlasMarkupWriter)
         while (!packer.everythingDone) {
-            def fileName = "${atlasName}-atlas-${atlasFiles++}.png"
-
+            def fileName = "${baseName}-${atlasFiles++}.png"
 
             def spriteMarkupWriter = new StringWriter()
             def spriteMarkup = new MarkupBuilder(spriteMarkupWriter)
@@ -291,15 +288,15 @@ public class ResourceConverter extends DefaultTask {
             ImageIO.write(resultImage, "png", new File(targetDirectory, fileName));
 
             atlasMarkup.atlas (file: fileName) {
-                spriteMarkupWriter.toString()
+                mkp.yieldUnescaped(spriteMarkupWriter.toString())
             }
         }
 
         def xmlWriter;
         try {
-            xmlWriter = new BufferedWriter(new FileWriter(new File(targetDirectory, "${atlasName}-atlas.xml")))
+            xmlWriter = new BufferedWriter(new FileWriter(new File(targetDirectory, "${baseName}.xml")))
             new MarkupBuilder(xmlWriter).atlasList {
-                atlasMarkupWriter.toString()
+                mkp.yieldUnescaped(atlasMarkupWriter.toString())
             }
         } finally {
             xmlWriter?.flush()

@@ -41,4 +41,29 @@ class SpaceTest {
         def space = new Space(1, 2, 3, 4);
         Assert.assertEquals("Calculation of the size failed.", space.size, 12)
     }
+
+    @Test
+    void fitInsideTest() {
+        def spaces = [new Space(0, 0, 1, 1), new Space(0, 0, 1, 2), new Space(0, 0, 2, 1), new Space(0, 0, 2, 2)]
+
+        Assert.assertTrue(spaces[0].isFittingInside(spaces[0]))
+        Assert.assertFalse(spaces[0].isFittingInside(spaces[1]))
+        Assert.assertFalse(spaces[0].isFittingInside(spaces[2]))
+        Assert.assertFalse(spaces[0].isFittingInside(spaces[3]))
+
+        Assert.assertTrue(spaces[1].isFittingInside(spaces[0]))
+        Assert.assertTrue(spaces[1].isFittingInside(spaces[1]))
+        Assert.assertFalse(spaces[1].isFittingInside(spaces[2]))
+        Assert.assertFalse(spaces[1].isFittingInside(spaces[3]))
+
+        Assert.assertTrue(spaces[2].isFittingInside(spaces[0]))
+        Assert.assertFalse(spaces[2].isFittingInside(spaces[1]))
+        Assert.assertTrue(spaces[2].isFittingInside(spaces[2]))
+        Assert.assertFalse(spaces[2].isFittingInside(spaces[3]))
+
+        Assert.assertTrue(spaces[3].isFittingInside(spaces[0]))
+        Assert.assertTrue(spaces[3].isFittingInside(spaces[1]))
+        Assert.assertTrue(spaces[3].isFittingInside(spaces[2]))
+        Assert.assertTrue(spaces[3].isFittingInside(spaces[3]))
+    }
 }

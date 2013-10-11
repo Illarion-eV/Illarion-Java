@@ -20,6 +20,7 @@ package illarion.build.imagepacker
 
 import de.matthiasmann.twl.utils.PNGDecoder
 import de.matthiasmann.twl.utils.PNGDecoder.Format
+import org.slf4j.LoggerFactory
 
 import javax.annotation.Nonnull
 import javax.annotation.Nullable
@@ -40,6 +41,11 @@ final class Sprite extends TextureElement {
     @Nullable
     private PNGDecoder decoder
 
+    @Nullable
+    private InputStream decoderStream;
+
+    private static final def LOGGER = LoggerFactory.getLogger(ImagePacker.class)
+
     /**
      * The name of the sprite
      */
@@ -59,34 +65,53 @@ final class Sprite extends TextureElement {
      * @throws FileNotFoundException
      */
     public Sprite(@Nonnull final File fileEntry) throws IOException {
-        def PNGDecoder decoder = null
-        try {
-            decoder = fileEntry.withInputStream {is -> new PNGDecoder(is)} as PNGDecoder
-        } catch (ignored) {}
+        file = fileEntry
+        name = stripFileExtension(fileEntry.absolutePath)
 
+        setupData()
+
+        if (decoder == null) {
+            throw new IOException("Failed to read the image")
+        }
+
+        height = decoder.height
+        width = decoder.width
+
+        type = detectImageType()
+        releaseData()
+    }
+
+    private void setupData() throws IOException {
         if (decoder != null) {
-            height = decoder.getHeight()
-            width = decoder.getWidth()
-        } else {
-            BufferedImage image = ImageIO.read(fileEntry)
-            height = image.getHeight()
-            width = image.getWidth()
+            return
+        }
+
+        try {
+            decoderStream = new BufferedInputStream(new FileInputStream(file))
+            decoder = new PNGDecoder(decoderStream)
+        } catch (ignored) {
+            decoderStream?.close()
+            decoderStream = null;
+            decoder = null;
+        }
+
+        if (decoder == null) {
+            BufferedImage image = ImageIO.read(file)
+            def height = image.height
+            def width = image.width
 
             BufferedImage tempImage = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR)
-            tempImage.getGraphics().drawImage(image, 0, 0, null)
+            tempImage.graphics.drawImage(image, 0, 0, null)
 
             def outStream = new ByteArrayOutputStream(1024)
             ImageIO.write(tempImage, "PNG", outStream)
             try {
-                decoder = new PNGDecoder(new ByteArrayInputStream(outStream.toByteArray()))
+                decoderStream = new ByteArrayInputStream(outStream.toByteArray())
+                decoder = new PNGDecoder(decoderStream)
             } catch (IOException e) {
                 throw e
             }
         }
-        this.decoder = decoder
-        detectImageType()
-        name = stripFileExtension(fileEntry.absolutePath)
-        file = fileEntry
     }
 
     /**
@@ -139,29 +164,20 @@ final class Sprite extends TextureElement {
         if (imageData != null) {
             return imageData
         }
-        
-        if (decoder == null) {
-            try {
-                file.withInputStream {is -> decoder = new PNGDecoder(is)}
-            } catch (ignored) {}
-        }
+
+        setupData()
 
         if (decoder == null) {
-            imageData = ByteBuffer.allocateDirect(height * width * 2)
-            while (imageData.hasRemaining()) {
-                imageData.put((byte) 0)
-            }
-            imageData.flip()
-        } else {
-            final Format format = decoder.decideTextureFormat(Format.LUMINANCE)
-            imageData = ByteBuffer.allocateDirect(format.getNumComponents() * width * height)
-            try {
-                decoder.decode(imageData, width * format.getNumComponents(), format)
-            } catch (ignored) {}
-
-            decoder = null
+            throw new IOException("Failed to read the image")
         }
 
+        final Format format = decoder.decideTextureFormat(Format.LUMINANCE)
+        imageData = ByteBuffer.allocateDirect(format.numComponents * width * height)
+        try {
+            decoder.decode(imageData, width * format.numComponents, format)
+        } catch (e) {
+            LOGGER.error("Decoding the image failed!", e)
+        }
         return imageData
     }
 
@@ -198,6 +214,7 @@ final class Sprite extends TextureElement {
      */
     private int detectImageType() {
         if (decoder == null) {
+            LOGGER.warn("Detecting the image type while there is no decoder set will lead to illegal results.")
             return ImagePacker.TYPE_GREY_ALPHA
         }
         final Format format = decoder.decideTextureFormat(Format.LUMINANCE)
@@ -219,6 +236,8 @@ final class Sprite extends TextureElement {
      */
     public void releaseData() {
         imageData = null
+        decoderStream?.close()
+        decoderStream = null
         decoder = null
     }
 
