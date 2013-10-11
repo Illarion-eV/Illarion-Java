@@ -22,6 +22,7 @@ import illarion.client.graphics.AvatarClothManager;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.net.server.events.AttributeUpdateReceivedEvent;
+import illarion.client.util.Lang;
 import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.client.world.characters.CharacterAttribute;
@@ -71,6 +72,11 @@ public final class AppearanceMsg extends AbstractReply {
      * The name of the character.
      */
     private String name;
+
+    /**
+     * The custom given name of the character.
+     */
+    private String customName;
 
     /**
      * The ID of the beard of the character.
@@ -158,6 +164,7 @@ public final class AppearanceMsg extends AbstractReply {
     public void decode(@Nonnull final NetCommReader reader) throws IOException {
         charId = new CharacterId(reader);
         name = reader.readString();
+        customName = reader.readString();
 
         final int race = reader.readUShort();
         final boolean male = reader.readUByte() == 0;
@@ -197,7 +204,13 @@ public final class AppearanceMsg extends AbstractReply {
         }
 
         character.setScale(size / SCALE_MOD);
-        character.setName(name);
+
+        if (name.isEmpty()) {
+            character.setName(Lang.getMsg("chat.someone"));
+        } else {
+            character.setName(name);
+        }
+
         character.setAppearance(appearance);
         character.resetLight();
         character.setWearingItem(AvatarClothManager.GROUP_HAIR, hairID);

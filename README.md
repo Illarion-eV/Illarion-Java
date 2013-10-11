@@ -1,7 +1,7 @@
 Illarion Java Applications
 ==========================
 
-[![Build Status](http://illarion.org:8080/job/Illarion%20Applications/badge/icon)](http://illarion.org:8080/job/Illarion%20Applications/)
+[![Build Status](https://illarion.org:8080/job/Illarion%20Applications/badge/icon)](https://illarion.org:8080/job/Illarion%20Applications/)
 
 Objectives
 ----------
