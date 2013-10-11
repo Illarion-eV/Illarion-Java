@@ -21,6 +21,8 @@ apply plugin: 'java'
 archivesBaseName = 'illarion_mapedit'
 
 dependencies {
+    gitVersion
+
     compile project(':common')
     compile group: 'javolution', name: 'javolution', version: '5.5.1'
     compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.1'
@@ -30,6 +32,10 @@ dependencies {
     compile group: 'com.github.insubstantial', name: 'substance', version: '7.2.1'
     compile group: 'com.github.insubstantial', name: 'substance-flamingo', version: '7.2.1'
     compile group: 'org.swinglabs', name: 'swingx', version: '1.6.1'
+    runtime group: 'org.illarion', name: 'rsc_items', version: project.version
+    runtime group: 'org.illarion', name: 'rsc_music', version: project.version
+    runtime group: 'org.illarion', name: 'rsc_tables', version: project.version
+    runtime group: 'org.illarion', name: 'rsc_tiles', version: project.version
 }
 
 ext.buildDate = null
