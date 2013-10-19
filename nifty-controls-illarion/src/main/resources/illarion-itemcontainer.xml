@@ -18,7 +18,7 @@
   -->
 <nifty-controls>
     <controlDefinition name="itemcontainer" visibleToMouse="true"
-                       controller="org.illarion.org.illarion.engine.nifty.controls.itemcontainer.ItemContainerControl">
+                       controller="org.illarion.nifty.controls.itemcontainer.ItemContainerControl">
         <control name="window" title="Container" id="#window" visibleToMouse="true">
             <panel childLayout="vertical" visibleToMouse="true" id="#contentPanel"/>
         </control>

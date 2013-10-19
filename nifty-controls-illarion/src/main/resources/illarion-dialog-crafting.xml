@@ -20,7 +20,7 @@
     <resourceBundle id="illarion-dialog-crafting-bundle" filename="illarion-dialog-crafting"/>
 
     <controlDefinition name="dialog-crafting" visibleToMouse="true" style="illarion-dialog-crafting"
-                       controller="org.illarion.org.illarion.engine.nifty.controls.dialog.crafting.DialogCraftingControl">
+                       controller="org.illarion.nifty.controls.dialog.crafting.DialogCraftingControl">
         <control name="window" id="#window" title="${illarion-dialog-crafting-bundle.title}"
                  visibleToMouse="true">
             <panel style="illarion-dialog-crafting-content" visibleToMouse="true">
@@ -40,7 +40,7 @@
                 <control name="progress" id="#progress" marginBottom="5px">
                     <effect>
                         <onCustom customKey="automaticProgress" name="DoubleEffect"
-                                  targetClass="org.illarion.org.illarion.engine.nifty.controls.Progress"
+                                  targetClass="org.illarion.nifty.controls.Progress"
                                   targetMethod="setProgress"/>
                     </effect>
                 </control>

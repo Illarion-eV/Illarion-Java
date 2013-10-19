@@ -23,7 +23,7 @@
     <resourceBundle id="illarion-tooltip-bundle" filename="illarion-tooltip"/>
 
     <controlDefinition name="tooltip"
-                       controller="org.illarion.org.illarion.engine.nifty.controls.tooltip.ToolTipControl"
+                       controller="org.illarion.nifty.controls.tooltip.ToolTipControl"
                        style="illarion-tooltip" visibleToMouse="false">
         <effect>
             <onShow name="fade" start="#00" end="#ff" length="300"/>

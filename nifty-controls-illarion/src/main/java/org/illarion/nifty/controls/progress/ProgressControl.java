@@ -53,7 +53,7 @@ public final class ProgressControl extends AbstractController implements Progres
         bind(element);
 
         minImageWidth = Integer.parseInt(parameter.getProperty("minImageWidth", "0"));
-        final Element fill = getElement().findElementByName("#fill");
+        final Element fill = getElement().findElementById("#fill");
         originalImageMode = fill.getRenderer(ImageRenderer.class).getImage().getImageMode();
         unscaledImageMode = ImageModeFactory.getSharedInstance().createImageMode("fullimage", "direct");
         currentOriginalMode = true;
@@ -68,7 +68,7 @@ public final class ProgressControl extends AbstractController implements Progres
     @Override
     public void layoutCallback() {
         final int oldWidth = maxWidth;
-        maxWidth = getElement().findElementByName("#fillArea").getWidth();
+        maxWidth = getElement().findElementById("#fillArea").getWidth();
         if (maxWidth != oldWidth) {
             setProgress(currentProgress, true);
         }
@@ -87,8 +87,8 @@ public final class ProgressControl extends AbstractController implements Progres
      *               value are equal
      */
     private void setProgress(final double value, final boolean forced) {
-        final Element wrapper = getElement().findElementByName("#fillWrapper");
-        final Element fill = getElement().findElementByName("#fill");
+        final Element wrapper = getElement().findElementById("#fillWrapper");
+        final Element fill = getElement().findElementById("#fill");
 
         final double usedValue;
         if (value < 0.f) {
