@@ -134,8 +134,6 @@ public class TextureAtlasListXmlLoadingTask<T> implements Runnable, TextureAtlas
                         if (currentAtlasName != null) {
                             final FutureTask<T> preLoadTask = new FutureTask<T>(
                                     new TextureAtlasPreLoadTask<T>(textureManager, currentAtlasName));
-
-                            LOGGER.warn("Atlas " + currentAtlasName + " scheduled for loading.");
                             if (taskExecutor == null) {
                                 preLoadTask.run();
                             } else {

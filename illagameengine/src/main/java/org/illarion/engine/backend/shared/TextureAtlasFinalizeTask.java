@@ -101,7 +101,6 @@ public class TextureAtlasFinalizeTask<T> implements Runnable, TextureAtlasTask {
                     textureManager.addTexture(data.spriteName, spriteTexture);
                 }
             }
-            LOGGER.warn("Texture Atlas " + atlasName + " finished.");
             monitor.setProgress(monitor.getProgress() + progressToAdd);
         } catch (@Nonnull final InterruptedException e) {
             LOGGER.error("Loading thread got interrupted.", e);

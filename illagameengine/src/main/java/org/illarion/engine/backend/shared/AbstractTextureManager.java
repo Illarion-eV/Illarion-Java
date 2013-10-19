@@ -127,7 +127,6 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
         // Loading starts here. Firing up the executor.
         loadingExecutor = Executors.newCachedThreadPool();
         final int directoryCount = rootDirectories.size();
-        LOGGER.warn("Loading " + directoryCount + " directories.");
         for (int i = 0; i < directoryCount; i++) {
             if (directoriesLoaded.get(i)) {
                 continue;
