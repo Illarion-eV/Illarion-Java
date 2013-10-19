@@ -54,7 +54,7 @@ public abstract class AbstractTextureLoader<A extends TextureAtlas<I>, I> {
      * The file name of the default image.
      */
     @SuppressWarnings("nls")
-    private static final String DEFAULT_IMAGE = "data/gui/_default_";
+    private static final String DEFAULT_IMAGE = "gui/_default_";
 
     /**
      * The logger that provides the logging output of this class.
@@ -64,27 +64,27 @@ public abstract class AbstractTextureLoader<A extends TextureAtlas<I>, I> {
     /**
      * The directory where the GUI graphics are stored in the resources.
      */
-    protected static final String GUI_DIR = "data/gui/";
+    protected static final String GUI_DIR = "gui/";
 
     /**
      * The directory where the character graphics are stored in the resources.
      */
-    protected static final String CHARS_DIR = "data/chars/";
+    protected static final String CHARS_DIR = "chars/";
 
     /**
      * The directory where the item graphics are stored in the resources.
      */
-    protected static final String ITEMS_DIR = "data/items/";
+    protected static final String ITEMS_DIR = "items/";
 
     /**
      * The directory where the tile graphics are stored in the resources.
      */
-    protected static final String TILES_DIR = "data/tiles/";
+    protected static final String TILES_DIR = "tiles/";
 
     /**
      * The directory where the effect graphics are stored in the resources.
      */
-    protected static final String EFFECTS_DIR = "data/effects/";
+    protected static final String EFFECTS_DIR = "effects/";
 
     /**
      * The index of the last atlas that was load. One array entry for each root directory.

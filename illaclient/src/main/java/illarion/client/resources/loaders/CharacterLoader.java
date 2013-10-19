@@ -82,7 +82,7 @@ public final class CharacterLoader extends AbstractResourceLoader<AvatarTemplate
      * The resource path to the avatar graphics. All graphics need to be located at this path within the JAR-resource
      * files.
      */
-    private static final String CHAR_PATH = "data/chars/";
+    private static final String CHAR_PATH = "chars/";
 
     @Override
     public boolean processRecord(final int line, @Nonnull final TableLoaderCharacters loader) {

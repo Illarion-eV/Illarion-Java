@@ -22,13 +22,13 @@
     <!-- style for the tab background panel -->
     <!-- ++++++++++++++++++++++++++++++++++ -->
     <style id="illarion-tab#panel">
-        <attributes backgroundImage="data/gui/button/button.png"
+        <attributes backgroundImage="gui/button/button.png"
                     imageMode="sprite-resize:100,23,0,10,80,10,11,10,80,10,1,10,80,10,0" paddingLeft="7px"
                     paddingRight="7px" width="100px" height="23px" childLayout="center" visibleToMouse="true"/>
         <effect>
-            <onHover name="imageOverlay" filename="data/gui/button/button.png"
+            <onHover name="imageOverlay" filename="gui/button/button.png"
                      imageMode="sprite-resize:100,23,1,10,80,10,11,10,80,10,1,10,80,10,0" post="true"/>
-            <onFocus name="imageOverlay" filename="data/gui/button/button.png"
+            <onFocus name="imageOverlay" filename="gui/button/button.png"
                      imageMode="sprite-resize:100,23,2,10,80,10,11,10,80,10,1,10,80,10,0" post="true"/>
             <onEnabled name="renderQuad" startColor="#2228" endColor="#2220" post="true" length="150"/>
             <onDisabled name="renderQuad" startColor="#2220" endColor="#2228" post="true" length="150"/>

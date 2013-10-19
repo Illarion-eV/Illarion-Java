@@ -79,7 +79,7 @@ public final class ClothLoader extends AbstractResourceLoader<AvatarClothTemplat
      * The resource path to the avatar graphics. All graphics need to be located at this path within the JAR-resource
      * files.
      */
-    private static final String CLOTH_PATH = "data/chars/";
+    private static final String CLOTH_PATH = "chars/";
 
     /**
      * Handle one record from the table that is loaded by this function. This

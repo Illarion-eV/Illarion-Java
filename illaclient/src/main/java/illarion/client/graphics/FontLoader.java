@@ -110,18 +110,18 @@ public final class FontLoader {
      */
     public static final String CONSOLE_FONT = "consoleFont";
 
-    private static final String FONT_IMAGE_DIR = "data/gui/";
+    private static final String FONT_IMAGE_DIR = "gui/";
 
     /**
      * This function loads all fonts that where yet not loaded.
      */
     public void prepareAllFonts(@Nonnull final Assets assets) throws IOException {
         fontManager = assets.getFontManager();
-        fontManager.createFont(MENU_FONT, "data/fonts/BlackChancery.ttf", 24.f, Font.PLAIN, "data/gui/menuFont.fnt", FONT_IMAGE_DIR);
-        fontManager.createFont(SMALL_FONT, "data/fonts/Ubuntu.ttf", 14.f, Font.BOLD, "data/gui/smallFont.fnt", FONT_IMAGE_DIR);
-        fontManager.createFont(TEXT_FONT, "data/fonts/Ubuntu.ttf", 16.f, Font.PLAIN, "data/gui/textFont.fnt", FONT_IMAGE_DIR);
-        fontManager.createFont(CHAT_FONT, "data/fonts/LiberationSansNarrow-Bold.ttf", 16.f, Font.PLAIN, "data/gui/chatFont.fnt", FONT_IMAGE_DIR);
-        fontManager.createFont(CONSOLE_FONT, "data/fonts/Inconsolata.ttf", 14.f, Font.PLAIN, "data/gui/consoleFont.fnt", FONT_IMAGE_DIR);
+        fontManager.createFont(MENU_FONT, "fonts/BlackChancery.ttf", 24.f, Font.PLAIN, "gui/menuFont.fnt", FONT_IMAGE_DIR);
+        fontManager.createFont(SMALL_FONT, "fonts/Ubuntu.ttf", 14.f, Font.BOLD, "gui/smallFont.fnt", FONT_IMAGE_DIR);
+        fontManager.createFont(TEXT_FONT, "fonts/Ubuntu.ttf", 16.f, Font.PLAIN, "gui/textFont.fnt", FONT_IMAGE_DIR);
+        fontManager.createFont(CHAT_FONT, "fonts/LiberationSansNarrow-Bold.ttf", 16.f, Font.PLAIN, "gui/chatFont.fnt", FONT_IMAGE_DIR);
+        fontManager.createFont(CONSOLE_FONT, "fonts/Inconsolata.ttf", 14.f, Font.PLAIN, "gui/consoleFont.fnt", FONT_IMAGE_DIR);
 
         fontManager.setDefaultFont(TEXT_FONT);
     }

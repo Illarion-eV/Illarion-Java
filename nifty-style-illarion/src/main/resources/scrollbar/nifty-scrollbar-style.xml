@@ -24,23 +24,23 @@
     </style>
 
     <style id="nifty-vertical-scrollbar#up">
-        <attributes filename="data/gui/scrollbar/scrollbarup.png" width="16px" height="11px"/>
+        <attributes filename="gui/scrollbar/scrollbarup.png" width="16px" height="11px"/>
         <effect>
             <onClick name="focus" targetElement="#parent"/>
-            <onClick name="imageOverlay" filename="data/gui/scrollbar/scrollbarup_pressed.png"/>
+            <onClick name="imageOverlay" filename="gui/scrollbar/scrollbarup_pressed.png"/>
         </effect>
     </style>
 
     <style id="nifty-vertical-scrollbar#down">
-        <attributes filename="data/gui/scrollbar/scrollbardown.png" width="16px" height="11px"/>
+        <attributes filename="gui/scrollbar/scrollbardown.png" width="16px" height="11px"/>
         <effect>
             <onClick name="focus" targetElement="#parent"/>
-            <onClick name="imageOverlay" filename="data/gui/scrollbar/scrollbardown_pressed.png"/>
+            <onClick name="imageOverlay" filename="gui/scrollbar/scrollbardown_pressed.png"/>
         </effect>
     </style>
 
     <style id="nifty-vertical-scrollbar#background">
-        <attributes filename="data/gui/scrollbar/scrollbarbgvert.png" width="16px" height="*"
+        <attributes filename="gui/scrollbar/scrollbarbgvert.png" width="16px" height="*"
                     imageMode="resize:0,16,0,4,0,16,0,1,0,16,0,4" childLayout="absolute"/>
         <effect>
             <onClick name="focus" targetElement="#parent"/>
@@ -48,7 +48,7 @@
     </style>
 
     <style id="nifty-vertical-scrollbar#position">
-        <attributes filename="data/gui/scrollbar/scrollbarvert.png" width="12px" height="46px" x="2px" y="0px"
+        <attributes filename="gui/scrollbar/scrollbarvert.png" width="12px" height="46px" x="2px" y="0px"
                     imageMode="resize:0,12,0,23,0,12,0,1,0,12,0,23"/>
         <effect>
             <onClick name="focus" targetElement="#parent#parent"/>
@@ -61,23 +61,23 @@
     </style>
 
     <style id="nifty-horizontal-scrollbar#left">
-        <attributes filename="data/gui/scrollbar/scrollbarleft.png" height="16px" width="11px"/>
+        <attributes filename="gui/scrollbar/scrollbarleft.png" height="16px" width="11px"/>
         <effect>
             <onClick name="focus" targetElement="#parent"/>
-            <onClick name="imageOverlay" filename="data/gui/scrollbar/scrollbarleft_pressed.png" post="true"/>
+            <onClick name="imageOverlay" filename="gui/scrollbar/scrollbarleft_pressed.png" post="true"/>
         </effect>
     </style>
 
     <style id="nifty-horizontal-scrollbar#right">
-        <attributes filename="data/gui/scrollbar/scrollbarright.png" height="16px" width="11px"/>
+        <attributes filename="gui/scrollbar/scrollbarright.png" height="16px" width="11px"/>
         <effect>
             <onClick name="focus" targetElement="#parent"/>
-            <onClick name="imageOverlay" filename="data/gui/scrollbar/scrollbarright_pressed.png" post="true"/>
+            <onClick name="imageOverlay" filename="gui/scrollbar/scrollbarright_pressed.png" post="true"/>
         </effect>
     </style>
 
     <style id="nifty-horizontal-scrollbar#background">
-        <attributes filename="data/gui/scrollbar/scrollbarbghor.png" height="16px" width="*"
+        <attributes filename="gui/scrollbar/scrollbarbghor.png" height="16px" width="*"
                     imageMode="resize:4,1,4,0,4,1,4,16,4,1,4,0" childLayout="absolute"/>
         <effect>
             <onClick name="focus" targetElement="#parent"/>
@@ -85,7 +85,7 @@
     </style>
 
     <style id="nifty-horizontal-scrollbar#position">
-        <attributes filename="data/gui/scrollbar/scrollbarhor.png" height="12px" width="47px" x="0px" y="2px"
+        <attributes filename="gui/scrollbar/scrollbarhor.png" height="12px" width="47px" x="0px" y="2px"
                     imageMode="resize:23,1,23,0,23,1,23,12,23,1,23,0"/>
         <effect>
             <onClick name="focus" targetElement="#parent#parent"/>

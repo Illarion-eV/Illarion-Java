@@ -28,7 +28,7 @@
                 <effect>
                     <onStartScreen name="fade" startDelay="0" length="500" start="#0" end="#F"/>
                 </effect>
-                <image filename="data/gui/illarion_title.png" imageMode="normal" align="center"/>
+                <image filename="gui/illarion_title.png" imageMode="normal" align="center"/>
             </panel>
         </layer>
     </screen>

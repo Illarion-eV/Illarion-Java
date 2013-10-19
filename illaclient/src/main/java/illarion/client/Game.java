@@ -110,11 +110,11 @@ public final class Game implements GameListener {
     @Override
     public void create(@Nonnull final GameContainer container) {
         final TextureManager texManager = container.getEngine().getAssets().getTextureManager();
-        texManager.addTextureDirectory("data/gui/");
-        texManager.addTextureDirectory("data/chars/");
-        texManager.addTextureDirectory("data/items/");
-        texManager.addTextureDirectory("data/tiles/");
-        texManager.addTextureDirectory("data/effects/");
+        texManager.addTextureDirectory("gui");
+        texManager.addTextureDirectory("chars");
+        texManager.addTextureDirectory("items");
+        texManager.addTextureDirectory("tiles");
+        texManager.addTextureDirectory("effects");
 
         try {
             FontLoader.getInstance().prepareAllFonts(container.getEngine().getAssets());
@@ -123,7 +123,7 @@ public final class Game implements GameListener {
         }
 
         final InputReceiver inputReceiver = new InputReceiver(container.getEngine().getInput());
-        nifty = new Nifty(new IgeRenderDevice(container, "data/gui/"), new IgeSoundDevice(container.getEngine()),
+        nifty = new Nifty(new IgeRenderDevice(container, "gui/"), new IgeSoundDevice(container.getEngine()),
                 new IgeInputSystem(container.getEngine().getInput(), inputReceiver), new AccurateTimeProvider());
         nifty.setLocale(Lang.getInstance().getLocale());
         container.getEngine().getInput().addForwardingListener(new ForwardingListener() {

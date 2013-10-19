@@ -59,10 +59,10 @@
 
     <!-- the actual cursor -->
     <style id="nifty-textfield#cursor">
-        <attributes filename="data/gui/textfield/cursor-empty.png"/>
+        <attributes filename="gui/textfield/cursor-empty.png"/>
         <effect>
             <onCustom name="imageOverlayPulsate" period="250" timeType="infinite" pulsateType="rectangle"
-                      filename="data/gui/textfield/cursor.png" post="true"/>
+                      filename="gui/textfield/cursor.png" post="true"/>
         </effect>
     </style>
 

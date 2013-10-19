@@ -44,11 +44,4 @@ class GdxSpriteFactory implements SpriteFactory {
         }
         return new GdxSprite(gdxTextures, offsetX, offsetY, centerX, centerY, mirror);
     }
-
-    @Nonnull
-    @Override
-    public Sprite createSprite(@Nonnull final Texture texture, final int offsetX, final int offsetY,
-                               final float centerX, final float centerY, final boolean mirror) {
-        return createSprite(new Texture[]{texture}, offsetX, offsetY, centerX, centerY, mirror);
-    }
 }

@@ -38,10 +38,9 @@ final class TextureLoadingTask implements LoadingTask {
     private final Engine usedEngine;
 
     /**
-     * The progress monitor that tracks the progress of the texture loading.
+     * This flag is turned {@code true} once the loading is started for the first time.
      */
-    @Nonnull
-    private final ProgressMonitor monitor;
+    private boolean loadingStarted;
 
     /**
      * Create a new texture loading task.
@@ -50,17 +49,14 @@ final class TextureLoadingTask implements LoadingTask {
      */
     TextureLoadingTask(@Nonnull final Engine engine) {
         usedEngine = engine;
-        //noinspection MagicNumber
-        monitor = new ProgressMonitor(4.f);
     }
 
 
     @Override
     public void load() {
-        if (isLoadingDone()) {
-            monitor.setProgress(1.f);
-        } else {
-            monitor.setProgress(usedEngine.getAssets().getTextureManager().loadRemaining());
+        if (!loadingStarted) {
+            usedEngine.getAssets().getTextureManager().startLoading();
+            loadingStarted = true;
         }
     }
 
@@ -72,6 +68,6 @@ final class TextureLoadingTask implements LoadingTask {
     @Nonnull
     @Override
     public ProgressMonitor getProgressMonitor() {
-        return monitor;
+        return usedEngine.getAssets().getTextureManager().getProgress();
     }
 }

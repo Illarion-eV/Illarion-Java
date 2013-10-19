@@ -69,7 +69,7 @@ public final class SoundFactory implements ResourceFactory<IdWrapper<String>> {
     /**
      * The path where the sounds are located.
      */
-    private static final String SOUND_PATH = "data/sounds/";
+    private static final String SOUND_PATH = "sounds/";
 
     /**
      * Private constructor to ensure that no instances but the singleton instance are created.

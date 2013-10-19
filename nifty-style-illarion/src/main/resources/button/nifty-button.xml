@@ -20,13 +20,13 @@
 <nifty-styles>
     <!-- Style for the blue button -->
     <style id="nifty-button-blue#panel">
-        <attributes backgroundImage="data/gui/button/buttonblue.png" imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9"
+        <attributes backgroundImage="gui/button/buttonblue.png" imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9"
                     paddingLeft="6px" paddingRight="6px" width="100px" height="23px" childLayout="center"
                     visibleToMouse="true"/>
         <effect>
-            <onHover name="imageOverlay" filename="data/gui/button/buttonblue_hover.png"
+            <onHover name="imageOverlay" filename="gui/button/buttonblue_hover.png"
                      imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9" post="true"/>
-            <onClick name="imageOverlay" filename="data/gui/button/buttonblue_pressed.png"
+            <onClick name="imageOverlay" filename="gui/button/buttonblue_pressed.png"
                      imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9" post="true"/>
         </effect>
     </style>
@@ -40,13 +40,13 @@
 
     <!-- Style for the red button -->
     <style id="nifty-button-red#panel">
-        <attributes backgroundImage="data/gui/button/buttonred.png" imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9"
+        <attributes backgroundImage="gui/button/buttonred.png" imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9"
                     paddingLeft="6px" paddingRight="6px" width="100px" height="23px" childLayout="center"
                     visibleToMouse="true"/>
         <effect>
-            <onHover name="imageOverlay" filename="data/gui/button/buttonred_hover.png"
+            <onHover name="imageOverlay" filename="gui/button/buttonred_hover.png"
                      imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9" post="true"/>
-            <onClick name="imageOverlay" filename="data/gui/button/buttonred_pressed.png"
+            <onClick name="imageOverlay" filename="gui/button/buttonred_pressed.png"
                      imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9" post="true"/>
         </effect>
     </style>
@@ -60,13 +60,13 @@
 
     <!-- Style for the gray button -->
     <style id="nifty-button-gray#panel">
-        <attributes backgroundImage="data/gui/button/buttongray.png" imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9"
+        <attributes backgroundImage="gui/button/buttongray.png" imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9"
                     paddingLeft="6px" paddingRight="6px" width="100px" height="23px" childLayout="center"
                     visibleToMouse="true"/>
         <effect>
-            <onHover name="imageOverlay" filename="data/gui/button/buttongray_hover.png"
+            <onHover name="imageOverlay" filename="gui/button/buttongray_hover.png"
                      imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9" post="true"/>
-            <onClick name="imageOverlay" filename="data/gui/button/buttongray_pressed.png"
+            <onClick name="imageOverlay" filename="gui/button/buttongray_pressed.png"
                      imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9" post="true"/>
         </effect>
     </style>
@@ -80,13 +80,13 @@
 
     <!-- Style for the green button -->
     <style id="nifty-button-green#panel">
-        <attributes backgroundImage="data/gui/button/buttongreen.png" imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9"
+        <attributes backgroundImage="gui/button/buttongreen.png" imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9"
                     paddingLeft="6px" paddingRight="6px" width="100px" height="23px" childLayout="center"
                     visibleToMouse="true"/>
         <effect>
-            <onHover name="imageOverlay" filename="data/gui/button/buttongreen_hover.png"
+            <onHover name="imageOverlay" filename="gui/button/buttongreen_hover.png"
                      imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9" post="true"/>
-            <onClick name="imageOverlay" filename="data/gui/button/buttongreen_pressed.png"
+            <onClick name="imageOverlay" filename="gui/button/buttongreen_pressed.png"
                      imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9" post="true"/>
         </effect>
     </style>
@@ -100,11 +100,11 @@
 
     <!-- Style for the small close button -->
     <style id="nifty-button-close#panel">
-        <attributes backgroundImage="data/gui/button/buttonclose.png" width="13px" height="14px" childLayout="center"
+        <attributes backgroundImage="gui/button/buttonclose.png" width="13px" height="14px" childLayout="center"
                     visibleToMouse="true" align="center" valign="center"/>
         <effect>
-            <onHover name="imageOverlay" filename="data/gui/button/buttonclose_hover.png" post="true"/>
-            <onClick name="imageOverlay" filename="data/gui/button/buttonclose_pressed.png" post="true"/>
+            <onHover name="imageOverlay" filename="gui/button/buttonclose_hover.png" post="true"/>
+            <onClick name="imageOverlay" filename="gui/button/buttonclose_pressed.png" post="true"/>
         </effect>
     </style>
 
@@ -114,7 +114,7 @@
 
     <!-- Style for the inventory button -->
     <style id="nifty-button-inventory#panel">
-        <attributes backgroundImage="data/gui/button/inventory.png" width="24px" height="24px" childLayout="center"
+        <attributes backgroundImage="gui/button/inventory.png" width="24px" height="24px" childLayout="center"
                     visibleToMouse="true" align="center" valign="center"/>
     </style>
 
@@ -124,7 +124,7 @@
 
     <!-- Style for the skills button -->
     <style id="nifty-button-skills#panel">
-        <attributes backgroundImage="data/gui/button/skills.png" width="24px" height="24px" childLayout="center"
+        <attributes backgroundImage="gui/button/skills.png" width="24px" height="24px" childLayout="center"
                     visibleToMouse="true" align="center" valign="center"/>
     </style>
 
@@ -134,7 +134,7 @@
 
     <!-- Style for the text log button -->
     <style id="nifty-button-text-log#panel">
-        <attributes backgroundImage="data/gui/button/textlog.png" width="24px" height="24px" childLayout="center"
+        <attributes backgroundImage="gui/button/textlog.png" width="24px" height="24px" childLayout="center"
                     visibleToMouse="true" align="center" valign="center"/>
     </style>
 
@@ -144,7 +144,7 @@
 
     <!-- Style for the quest log button -->
     <style id="nifty-button-quest-log#panel">
-        <attributes backgroundImage="data/gui/button/questlog.png" width="24px" height="24px" childLayout="center"
+        <attributes backgroundImage="gui/button/questlog.png" width="24px" height="24px" childLayout="center"
                     visibleToMouse="true" align="center" valign="center"/>
     </style>
 

@@ -27,7 +27,7 @@
         <layer id="layerprogress" backgroundColor="#0000" childLayout="center">
             <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#0000"
                    childLayout="vertical">
-                <image filename="data/gui/illarion_title.png" imageMode="normal" align="center"/>
+                <image filename="gui/illarion_title.png" imageMode="normal" align="center"/>
                 <panel height="30px"/>
                 <control name="progress" id="loading" align="center" valign="center" width="400px" height="28px"/>
             </panel>

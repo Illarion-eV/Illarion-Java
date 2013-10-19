@@ -87,7 +87,7 @@
     </style>
 
     <style id="illarion-tooltip#worthGoldImage">
-        <attributes filename="data/gui/coin_3_g.png" height="16px" width="16px" marginRight="5px"/>
+        <attributes filename="gui/coin_3_g.png" height="16px" width="16px" marginRight="5px"/>
     </style>
 
     <style id="illarion-tooltip#worthSilverCount" base="nifty-label">
@@ -95,7 +95,7 @@
     </style>
 
     <style id="illarion-tooltip#worthSilverImage">
-        <attributes filename="data/gui/coin_3_s.png" height="16px" width="16px" marginRight="5px"/>
+        <attributes filename="gui/coin_3_s.png" height="16px" width="16px" marginRight="5px"/>
     </style>
 
     <style id="illarion-tooltip#worthCopperCount" base="nifty-label">
@@ -103,7 +103,7 @@
     </style>
 
     <style id="illarion-tooltip#worthCopperImage">
-        <attributes filename="data/gui/coin_3_c.png" height="16px" width="16px" marginRight="5px"/>
+        <attributes filename="gui/coin_3_c.png" height="16px" width="16px" marginRight="5px"/>
     </style>
 
     <style id="illarion-tooltip#qualityLine">

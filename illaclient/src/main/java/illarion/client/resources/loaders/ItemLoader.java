@@ -50,14 +50,14 @@ public final class ItemLoader extends AbstractResourceLoader<ItemTemplate> imple
      * files.
      */
     @SuppressWarnings("nls")
-    private static final String ITEM_PATH = "data/items/";
+    private static final String ITEM_PATH = "items/";
 
     /**
      * The resource path to the GUI graphics. All graphics need to be located at this path within the JAR-resource
      * files.
      */
     @SuppressWarnings("nls")
-    private static final String GUI_PATH = "data/gui/";
+    private static final String GUI_PATH = "gui/";
 
     /**
      * The assets of the game engine that are required to load the data needed for the items.

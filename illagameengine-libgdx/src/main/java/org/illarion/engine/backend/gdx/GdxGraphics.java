@@ -160,7 +160,7 @@ class GdxGraphics implements Graphics {
         setBlendingMode(BlendingMode.AlphaBlend);
 
         if (blankBackground == null) {
-            blankBackground = engine.getAssets().getTextureManager().getTexture("data/gui/", "blank.png");
+            blankBackground = engine.getAssets().getTextureManager().getTexture("gui/", "blank.png");
         }
     }
 

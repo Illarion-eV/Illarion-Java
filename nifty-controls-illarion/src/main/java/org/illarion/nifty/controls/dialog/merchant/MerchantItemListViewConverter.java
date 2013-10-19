@@ -35,6 +35,7 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@SuppressWarnings("UnusedDeclaration")
 public final class MerchantItemListViewConverter implements ListBox.ListBoxViewConverter<MerchantListEntry> {
     @Override
     public void display(@Nonnull final Element listBoxItem, @Nonnull final MerchantListEntry item) {

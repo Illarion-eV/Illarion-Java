@@ -78,7 +78,7 @@ public final class OverlayLoader extends AbstractResourceLoader<OverlayTemplate>
         return factory;
     }
 
-    public static final String OVERLAY_PATH = "data/tiles/";
+    public static final String OVERLAY_PATH = "tiles/";
 
     public static final int OVERLAY_VARIATIONS = 28;
 

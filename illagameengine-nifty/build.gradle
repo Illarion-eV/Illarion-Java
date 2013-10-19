@@ -19,10 +19,12 @@
 apply plugin: 'java'
 apply plugin: 'maven-publish'
 
-archivesBaseName = 'illarion_engine'
+archivesBaseName = 'illarion_engine_nifty'
 dependencies {
     compile project(':common')
+    compile project(':engine')
     compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.1'
+    compile group: 'lessvoid', name: 'nifty', version: '1.4.0-SNAPSHOT'
 }
 
 ext.buildDate = null
@@ -42,7 +44,7 @@ jar {
 
         manifest {
             attributes   \
-              'Implementation-Title': 'Illarion Game Engine',   \
+              'Implementation-Title': 'Illarion Game Engine - Nifty-GUI Implementation',   \
               'Implementation-Version': project.ext.fullVersion,   \
               'Implementation-Vendor': 'Illarion e.V.',   \
               'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),   \

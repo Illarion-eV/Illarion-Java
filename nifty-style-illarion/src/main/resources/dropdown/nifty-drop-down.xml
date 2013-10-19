@@ -21,12 +21,12 @@
     <!-- Style for the green drop down -->
     <style id="nifty-drop-down-green#panel">
         <attributes childLayout="horizontal" height="20px" focusable="true" visibleToMouse="true"
-                    backgroundImage="data/gui/dropdown/dropdown.png"
+                    backgroundImage="gui/dropdown/dropdown.png"
                     imageMode="resize:29,1,49,9,29,1,49,2,29,1,49,9"/>
         <effect>
-            <onHover name="imageOverlay" filename="data/gui/dropdown/dropdown_hover.png"
+            <onHover name="imageOverlay" filename="gui/dropdown/dropdown_hover.png"
                      imageMode="resize:29,1,49,9,29,1,49,2,29,1,49,9" post="true"/>
-            <onClick name="imageOverlay" filename="data/gui/dropdown/dropdown_pressed.png"
+            <onClick name="imageOverlay" filename="gui/dropdown/dropdown_pressed.png"
                      imageMode="resize:29,1,49,9,29,1,49,2,29,1,49,9" post="true"/>
         </effect>
     </style>
@@ -45,7 +45,7 @@
     </style>
 
     <style id="nifty-drop-down-green#icon">
-        <attributes filename="data/gui/dropdown/dropdown_arrow.png" valign="center" halign="center" height="9px"
+        <attributes filename="gui/dropdown/dropdown_arrow.png" valign="center" halign="center" height="9px"
                     width="14px" visibleToMouse="false"/>
         <effect>
             <onClick name="focus" targetElement="#parent"/>
@@ -54,7 +54,7 @@
     </style>
 
     <style id="nifty-drop-down-green#list-panel">
-        <attributes childLayout="vertical" width="*" backgroundImage="data/gui/dropdown/dropdownbox.png"
+        <attributes childLayout="vertical" width="*" backgroundImage="gui/dropdown/dropdownbox.png"
                     imageMode="resize:4,1,4,0,4,1,4,1,4,1,4,13"/>
         <effect>
             <onStartScreen name="clip" length="150" inherit="true" post="false"/>
@@ -71,7 +71,7 @@
         <attributes textHAlign="left" textVAlign="center" width="100%"/>
         <effect>
             <onHover name="focus"/>
-            <onHover name="imageOverlay" filename="data/gui/dropdown/dropdownbox_hover.png"
+            <onHover name="imageOverlay" filename="gui/dropdown/dropdownbox_hover.png"
                      imageMode="resize:0,1,0,3,0,1,0,1,0,1,0,3" post="false"/>
         </effect>
     </style>

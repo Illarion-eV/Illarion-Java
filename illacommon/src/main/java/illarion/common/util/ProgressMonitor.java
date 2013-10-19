@@ -40,7 +40,7 @@ public final class ProgressMonitor {
      * The weight is compared to the siblings of this monitor. A monitor with a weight of two has twice the effect to
      * the resulting progress of the monitor compared to a monitor with a weight of one.
      */
-    private final float weight;
+    private float weight;
 
     /**
      * The list of children of this monitor.
@@ -105,6 +105,15 @@ public final class ProgressMonitor {
     }
 
     /**
+     * Set the weight of this monitor to a new value.
+     *
+     * @param weight the new weight of the monitor
+     */
+    public void setWeight(final float weight) {
+        this.weight = weight;
+    }
+
+    /**
      * Get the progress of this monitor. This either returns the progress of this monitor or the total weighted
      * progress of all the children progress monitors.
      *
@@ -116,7 +125,7 @@ public final class ProgressMonitor {
         }
         float totalProgress = 0.f;
         float totalWeight = 0.f;
-        for (@Nonnull ProgressMonitor childMonitor : children) {
+        for (@Nonnull final ProgressMonitor childMonitor : children) {
             totalProgress += childMonitor.getProgress() * childMonitor.weight;
             totalWeight += childMonitor.weight;
         }

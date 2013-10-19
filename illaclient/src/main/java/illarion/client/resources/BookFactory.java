@@ -130,7 +130,7 @@ public final class BookFactory implements ResourceFactory<IdWrapper<String>> {
         }
 
         final StringBuilder builder = new StringBuilder();
-        builder.append("data/books/");
+        builder.append("books/");
         builder.append(baseName);
         builder.append(".book.xml");
 

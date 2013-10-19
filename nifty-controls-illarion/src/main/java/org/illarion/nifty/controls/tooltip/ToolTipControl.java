@@ -251,7 +251,7 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
         }
 
         final NiftyImage gemImage = nifty.createImage(
-                "data/gui/items/" + images + Integer.toString(gemLevel - 1) + ".png", false);
+                "gui/items/" + images + Integer.toString(gemLevel - 1) + ".png", false);
         image.getRenderer(ImageRenderer.class).setImage(gemImage);
         image.setConstraintHeight(SizeValue.px(gemImage.getHeight()));
         image.setConstraintWidth(SizeValue.px(gemImage.getWidth()));

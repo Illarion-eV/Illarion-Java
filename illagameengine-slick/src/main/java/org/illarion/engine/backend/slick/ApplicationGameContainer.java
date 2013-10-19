@@ -117,7 +117,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
 
     @Nonnull
     @Override
-    public Engine getEngine() {
+    public SlickEngine getEngine() {
         return engine;
     }
 

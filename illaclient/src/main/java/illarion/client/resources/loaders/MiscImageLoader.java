@@ -37,7 +37,7 @@ public final class MiscImageLoader extends AbstractResourceLoader<MiscImageTempl
     /**
      * The path inside the resources where the GUI images are stored.
      */
-    private static final String GUI_PATH = "data/gui/";
+    private static final String GUI_PATH = "gui/";
 
     /**
      * The assets of the game engine that are required to load the data needed for the misc images.

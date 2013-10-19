@@ -24,7 +24,7 @@
     </style>
 
     <style id="illarion-progress#background">
-        <attributes backgroundImage="data/gui/progressbar/progressbar-outer.png"
+        <attributes backgroundImage="gui/progressbar/progressbar-outer.png"
                     imageMode="resize:8,2,8,9,8,2,8,2,8,2,8,9" padding="2px,3px"/>
     </style>
 
@@ -37,7 +37,7 @@
     </style>
 
     <style id="illarion-progress#fill">
-        <attributes filename="data/gui/progressbar/progressbar-inner.png" width="6px"
+        <attributes filename="gui/progressbar/progressbar-inner.png" width="6px"
                     height="100%" imageMode="resize:2,2,2,2,2,2,2,12,2,2,2,2"/>
     </style>
 
@@ -47,7 +47,7 @@
     </style>
 
     <style id="illarion-health-bar#background">
-        <attributes backgroundImage="data/gui/progressbar/HP_e.png"
+        <attributes backgroundImage="gui/progressbar/HP_e.png"
                     imageMode="resize:8,1,8,5,8,1,8,2,8,1,8,5" padding="1px,3px"/>
     </style>
 
@@ -60,7 +60,7 @@
     </style>
 
     <style id="illarion-health-bar#fill">
-        <attributes filename="data/gui/progressbar/HP.png" width="11px"
+        <attributes filename="gui/progressbar/HP.png" width="11px"
                     height="100%" imageMode="resize:5,1,5,4,5,1,5,2,5,1,5,4"/>
     </style>
 
@@ -70,7 +70,7 @@
     </style>
 
     <style id="illarion-mana-bar#background">
-        <attributes backgroundImage="data/gui/progressbar/MP_e.png"
+        <attributes backgroundImage="gui/progressbar/MP_e.png"
                     imageMode="resize:8,1,8,5,8,1,8,2,8,1,8,5" padding="1px,3px"/>
     </style>
 
@@ -83,7 +83,7 @@
     </style>
 
     <style id="illarion-mana-bar#fill">
-        <attributes filename="data/gui/progressbar/MP.png" width="11px"
+        <attributes filename="gui/progressbar/MP.png" width="11px"
                     height="100%" imageMode="resize:5,1,5,4,5,1,5,2,5,1,5,4"/>
     </style>
 
@@ -93,7 +93,7 @@
     </style>
 
     <style id="illarion-food-bar#background">
-        <attributes backgroundImage="data/gui/progressbar/FP_e.png"
+        <attributes backgroundImage="gui/progressbar/FP_e.png"
                     imageMode="resize:8,1,8,5,8,1,8,2,8,1,8,5" padding="1px,3px"/>
     </style>
 
@@ -106,7 +106,7 @@
     </style>
 
     <style id="illarion-food-bar#fill">
-        <attributes filename="data/gui/progressbar/FP.png" width="11px"
+        <attributes filename="gui/progressbar/FP.png" width="11px"
                     height="100%" imageMode="resize:5,1,5,4,5,1,5,2,5,1,5,4"/>
     </style>
 </nifty-styles>

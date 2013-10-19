@@ -18,6 +18,7 @@
  */
 package org.illarion.engine.assets;
 
+import illarion.common.util.ProgressMonitor;
 import org.illarion.engine.graphic.Texture;
 
 import javax.annotation.Nonnull;
@@ -59,12 +60,20 @@ public interface TextureManager {
     Texture getTexture(@Nonnull String name);
 
     /**
-     * This function loads the remaining texture atlas files within the set directories.
-     *
-     * @return the progress of the load, {@code 0.f} in case nothing was load yet,
-     *         {@code 1.f} once the loading progress is done
+     * Calling this function starts the automatic loading of all texture atlas files in all the texture directories
+     * that are currently set for the texture manager.
+     * <p />
+     * In case the loading is already finished, this function does nothing.
      */
-    float loadRemaining();
+    void startLoading();
+
+    /**
+     * Get the progress monitor that reports the loading progress of the texture manager.
+     *
+     * @return the progress monitor
+     */
+    @Nonnull
+    ProgressMonitor getProgress();
 
     /**
      * Check if the loading of the atlas textures is done now.

@@ -26,6 +26,7 @@ dependencies {
     compile project(':common')
     compile project(':engine')
     runtime project(':engine-libgdx')
+    compile project(':engine-nifty')
     compile project(':nifty-controls')
     runtime project(':nifty-style')
     compile group: 'javolution', name: 'javolution', version: '5.5.1'

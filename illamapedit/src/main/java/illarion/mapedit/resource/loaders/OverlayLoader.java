@@ -36,7 +36,7 @@ public class OverlayLoader implements TableLoaderSink<TableLoaderOverlay>, Resou
 
     private static final OverlayLoader INSTANCE = new OverlayLoader();
     private static final int SHAPE_COUNT = 28;
-    private static final String DIR_IMG_TILES = "data/tiles/";
+    private static final String DIR_IMG_TILES = "tiles/";
 
     private final TIntObjectHashMap<Overlay> overlays = new TIntObjectHashMap<Overlay>();
 

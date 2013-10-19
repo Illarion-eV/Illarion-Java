@@ -19,6 +19,7 @@
 package org.illarion.engine.backend.gdx;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.GdxRuntimeException;
@@ -32,12 +33,21 @@ import javax.annotation.Nullable;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class GdxTextureManager extends AbstractTextureManager {
+class GdxTextureManager extends AbstractTextureManager<Pixmap> {
+    @Override
+    protected Pixmap loadTextureData(@Nonnull final String textureName) {
+        try {
+            return new Pixmap(Gdx.files.internal(textureName));
+        } catch (@Nonnull final Exception ignored) {
+            return null;
+        }
+    }
+
     @Nullable
     @Override
-    protected GdxTexture loadTexture(@Nonnull final String resource) {
+    protected GdxTexture loadTexture(@Nonnull final String resource, final Pixmap preLoadData) {
         try {
-            final Texture tex = new Texture(Gdx.files.internal(resource), false);
+            final Texture tex = new Texture(preLoadData, false);
             tex.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
             final TextureRegion region = new TextureRegion(tex);
             region.flip(false, false);

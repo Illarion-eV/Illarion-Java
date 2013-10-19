@@ -33,7 +33,7 @@ public class Song implements Comparable<Song> {
     /**
      * Path to where songs are stored.
      */
-    private static final String SONG_DIR = "data/music/";
+    private static final String SONG_DIR = "music/";
 
     private final int clipID;
     private final String fileName;

@@ -194,12 +194,26 @@ public class ResourceConverter extends DefaultTask {
             logger.info("Book ${file.name} read with ${book.englishBook.pageCount} pages")
 
             file.withInputStream {is ->
-                new File(targetDirectory, file.name).withOutputStream {os ->
+                getTargetFile(targetDirectory, file).withOutputStream {os ->
                     os << is
                 }
             }
         }
         bookFiles.clear()
+    }
+
+    def getTargetFile(File targetDirectory, File sourceFile, Closure<String> additionalReplace = null) {
+        def resourceDir = getResourceDirectory().absolutePath
+        def filePath = sourceFile.absolutePath.replace(resourceDir, "")
+        if (additionalReplace != null) {
+            filePath = additionalReplace.call(filePath)
+        }
+        final def targetFile = new File(targetDirectory, filePath)
+        targetFile.mkdirs()
+        if (targetFile.directory) {
+            targetFile.deleteDir()
+        }
+        return targetFile
     }
 
     /**
@@ -216,7 +230,7 @@ public class ResourceConverter extends DefaultTask {
 
         miscFiles.each {file ->
             file.withInputStream {is ->
-                new File(targetDirectory, file.name.replace("notouch_", "")).withOutputStream {os ->
+                getTargetFile(targetDirectory, file, {it.replace("notouch_", "")}).withOutputStream {os ->
                     os << is
                 }
             }
@@ -252,7 +266,7 @@ public class ResourceConverter extends DefaultTask {
 
         tableFiles.each {file ->
             file.withInputStream {is ->
-                new File(targetDirectory, file.name.replace(".tbl", ".dat")).withOutputStream {os ->
+                getTargetFile(targetDirectory, file, {it.replace(".tbl", ".dat")}).withOutputStream {os ->
                     crypto.encrypt(is, os)
                 }
             }
@@ -295,7 +309,7 @@ public class ResourceConverter extends DefaultTask {
         def xmlWriter;
         try {
             xmlWriter = new BufferedWriter(new FileWriter(new File(targetDirectory, "${baseName}.xml")))
-            new MarkupBuilder(xmlWriter).atlasList {
+            new MarkupBuilder(xmlWriter).atlasList (atlasCount: atlasFiles) {
                 mkp.yieldUnescaped(atlasMarkupWriter.toString())
             }
         } finally {

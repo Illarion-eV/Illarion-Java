@@ -40,7 +40,7 @@ class ListenerGame implements Game {
     private final GameListener listener;
 
     @Nonnull
-    private final org.illarion.engine.GameContainer engineContainer;
+    private final ApplicationGameContainer engineContainer;
 
     /**
      * The last recorded height value of the game container.
@@ -58,7 +58,7 @@ class ListenerGame implements Game {
      * @param gameListener the game listener that receives the updates
      */
     ListenerGame(@Nonnull final GameListener gameListener,
-                 @Nonnull final org.illarion.engine.GameContainer engineContainer) {
+                 @Nonnull final ApplicationGameContainer engineContainer) {
         listener = gameListener;
         this.engineContainer = engineContainer;
     }
@@ -69,7 +69,7 @@ class ListenerGame implements Game {
             throw new SlickException("Shader not supported.");
         }
         listener.create(engineContainer);
-        ((SlickEngine) engineContainer.getEngine()).getInput().setInput(gameContainer.getInput());
+        engineContainer.getEngine().getInput().setInput(gameContainer.getInput());
         lastHeight = gameContainer.getHeight();
         lastWidth = gameContainer.getWidth();
     }
@@ -83,12 +83,13 @@ class ListenerGame implements Game {
             lastHeight = currentHeight;
             lastWidth = currentWidth;
         }
+        engineContainer.getEngine().getAssets().getTextureManager().update();
         listener.update(engineContainer, delta);
     }
 
     @Override
     public void render(final GameContainer gameContainer, final Graphics graphics) throws SlickException {
-        final SlickGraphics slickGraphics = (SlickGraphics) engineContainer.getEngine().getGraphics();
+        final SlickGraphics slickGraphics = engineContainer.getEngine().getGraphics();
         slickGraphics.setSlickGraphicsImpl(graphics);
         listener.render(engineContainer);
         slickGraphics.clearSlickGraphicsImpl();

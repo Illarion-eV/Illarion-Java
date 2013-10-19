@@ -89,7 +89,7 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
 
         final int slotHeight = controlDefinitionAttributes.getAsInteger("slotHeight", SLOT_DEFAULT_SIZE);
         final int slotWidth = controlDefinitionAttributes.getAsInteger("slotWidth", SLOT_DEFAULT_SIZE);
-        final String slotBackground = "data/gui/containerslot.png";
+        final String slotBackground = "gui/containerslot.png";
 
         final Element contentPanel = getContent().findElementByName("#contentPanel");
         PanelBuilder currentPanelBuilder = null;

@@ -70,8 +70,9 @@ class ListenerApplication implements ApplicationListener {
     public void render() {
         listener.update(container, Math.round(Gdx.graphics.getDeltaTime() * 1000.f));
 
-        final GdxGraphics graphics = ((GdxEngine) container.getEngine()).getGraphics();
+        final GdxGraphics graphics = container.getEngine().getGraphics();
         graphics.beginFrame();
+        container.getEngine().getAssets().getTextureManager().update();
         listener.render(container);
         graphics.endFrame();
 

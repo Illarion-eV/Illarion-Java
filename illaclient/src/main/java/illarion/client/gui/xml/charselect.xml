@@ -30,7 +30,7 @@
             </effect>
             <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#0000"
                    childLayout="vertical" visibleToMouse="true">
-                <image filename="data/gui/illarion_title.png" imageMode="normal" align="center"/>
+                <image filename="gui/illarion_title.png" imageMode="normal" align="center"/>
                 <control name="label" id="statusText" text=""/>
                 <panel height="30px"/>
                 <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#0000"

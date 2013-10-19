@@ -18,7 +18,7 @@
   ~ along with the Illarion Nifty-GUI Style.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <nifty-styles>
-    <registerMouseCursor id="textFieldCursor" filename="data/gui/textfield/mouse_cursors/mouse-cursor-textfield.png"
+    <registerMouseCursor id="textFieldCursor" filename="gui/textfield/mouse_cursors/mouse-cursor-textfield.png"
                          hotspotX="3" hotspotY="12"/>
 
     <!-- console panel style -->
@@ -73,7 +73,7 @@
         <attributes filename="textfield/console_cursor_empty"/>
         <effect>
             <onActive name="imageOverlayPulsate" period="250" timeType="infinite" pulsateType="rectangle"
-                      filename="data/gui/textfield/console_cursor.png" post="true"/>
+                      filename="gui/textfield/console_cursor.png" post="true"/>
         </effect>
     </style>
 

@@ -18,13 +18,15 @@
  */
 package illarion.common.util;
 
+import org.apache.log4j.Logger;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.crypto.*;
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
 import java.io.*;
 import java.security.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Class to handle the encryption of the files that are stored by the client.
@@ -33,37 +35,32 @@ import java.util.logging.Logger;
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@SuppressWarnings({"ClassNamingConvention", "SpellCheckingInspection"})
 public final class Crypto {
-    /**
-     * The method that is used for encrypting the files.
-     */
-    @SuppressWarnings("nls")
-    private static final String CRYPTMODE = "DES/ECB/PKCS5Padding";
-
-    /**
-     * String for the transformation name "DES"
-     */
-    private static final String DES = "DES"; //$NON-NLS-1$
-
     /**
      * The error and debug logger of the client.
      */
-    private static final Logger LOGGER = Logger.getLogger(Crypto.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Crypto.class);
 
     /**
      * The filename of the private key.
      */
-    private static final String PRIVATE_KEY = "private.key"; //$NON-NLS-1$
+    private static final String PRIVATE_KEY = "private.key";
 
     /**
      * The filename of the public key.
      */
-    private static final String PUBLIC_KEY = "public.key"; //$NON-NLS-1$
+    private static final String PUBLIC_KEY = "public.key";
 
     /**
      * String for the transformation name "RSA"
      */
-    private static final String RSA = "RSA"; //$NON-NLS-1$
+    private static final String KEY_ALGORITHM = "RSA";
+
+    /**
+     * The size of the buffer used to transfer the data during encryption and decryption.
+     */
+    private static final int TRANSFER_BUFFER_SIZE = 4096;
 
     /**
      * The private key instance that was loaded into the this class.
@@ -83,54 +80,45 @@ public final class Crypto {
      *
      * @param src the crypt source file
      * @param dst the decrypted file
-     * @return true if all went well, false if something went wrong
      */
     @SuppressWarnings("nls")
-    public boolean decrypt(final InputStream src, @Nonnull final OutputStream dst) {
-        try {
-            final DataInputStream in = new DataInputStream(src);
-            final int length = in.readInt();
-            final byte[] wrappedKey = new byte[length];
-            int readPos = 0;
-            while (readPos < length) {
-                readPos += in.read(wrappedKey, readPos, length - readPos);
-            }
-
-            // unwrap with RSA key
-            Cipher cipher = Cipher.getInstance(RSA);
-            cipher.init(Cipher.UNWRAP_MODE, publicKey);
-            final Key key = cipher.unwrap(wrappedKey, DES, Cipher.SECRET_KEY);
-
-            // decode data
-            cipher = Cipher.getInstance(CRYPTMODE);
-            cipher.init(Cipher.DECRYPT_MODE, key);
-
-            pumpData(in, dst, cipher);
-        } catch (@Nonnull final Exception e) {
-            LOGGER.log(Level.SEVERE, "Decryping the resource failed.", e);
-            return false;
+    public void decrypt(@Nonnull final InputStream src, @Nonnull final OutputStream dst) throws CryptoException {
+        if (!hasPublicKey()) {
+            throw new IllegalStateException("No keys loaded");
         }
-        return true;
+
+        try {
+            @Nonnull final Cipher cipher = Cipher.getInstance(KEY_ALGORITHM);
+            cipher.init(Cipher.DECRYPT_MODE, publicKey);
+
+            final CipherInputStream cIn = new CipherInputStream(src, cipher);
+
+            transferBytes(cIn, dst);
+        } catch (@Nonnull final Exception e) {
+            throw new CryptoException(e);
+        }
     }
 
     /**
-     * Decrypt a input stream using the public key used by this class.
+     * Transfer all bytes from a input stream to a output stream.
      *
-     * @param src the input stream
-     * @return the input stream that supplies the descripted data
+     * @param in the source input stream
+     * @param out the target output stream
+     * @throws IOException in case reading from the source stream or writing to the target stream fails
      */
-    @Nonnull
-    @SuppressWarnings("nls")
-    public InputStream decryptedStream(final InputStream src) {
-        Cipher cipher = null;
+    private static void transferBytes(@Nonnull final InputStream in, @Nonnull final OutputStream out)
+            throws IOException {
         try {
-            cipher = Cipher.getInstance(RSA);
-            cipher.init(Cipher.DECRYPT_MODE, publicKey);
-        } catch (@Nonnull final Exception e) {
-            LOGGER.log(Level.SEVERE, "Creating Cipher failed.", e);
+            final byte[] buffer = new byte[TRANSFER_BUFFER_SIZE];
+            int n = in.read(buffer);
+            while(n > -1) {
+                out.write(buffer, 0, n);
+                n = in.read(buffer);
+            }
+            out.flush();
+        } catch (@Nonnull final OutOfMemoryError e) {
+            throw new IOException(e);
         }
-
-        return new CipherInputStream(src, cipher);
     }
 
     /**
@@ -140,119 +128,66 @@ public final class Crypto {
      *
      * @param src data to encrypt
      * @param dst target stream for encryption
-     * @throws GeneralSecurityException  in case something went wrong with the
-     *                                   encryption
-     * @throws NoSuchPaddingException    in case there is something wrong with the
-     *                                   selected decryption method
-     * @throws InvalidKeyException       in case the private key is invalid
-     * @throws IllegalBlockSizeException in case the streams are corrupted
-     * @throws IOException               in case something failed at reading or writing the
-     *                                   data
      */
     @SuppressWarnings("nls")
-    public void encrypt(@Nonnull final InputStream src, final OutputStream dst)
-            throws GeneralSecurityException, NoSuchPaddingException,
-            InvalidKeyException, IllegalBlockSizeException, IOException {
-        if (privateKey == null) {
+    public void encrypt(@Nonnull final InputStream src, final OutputStream dst) throws CryptoException {
+        if (!hasPrivateKey()) {
             throw new IllegalStateException("No keys loaded");
         }
 
-        // generate a random DES key
-        final KeyGenerator keygen = KeyGenerator.getInstance(DES);
-        final SecureRandom random = new SecureRandom();
-        keygen.init(random);
-        final SecretKey key = keygen.generateKey();
-
-        // wrap with RSA public key
-        Cipher cipher = Cipher.getInstance(RSA);
-        cipher.init(Cipher.WRAP_MODE, privateKey);
-        final byte[] wrappedKey = cipher.wrap(key);
-        final DataOutputStream out = new DataOutputStream(dst);
-        out.writeInt(wrappedKey.length);
-        out.write(wrappedKey);
-
-        // encrypt data
-        cipher = Cipher.getInstance(CRYPTMODE);
-        cipher.init(Cipher.ENCRYPT_MODE, key);
-        pumpData(src, out, cipher);
-    }
-
-    /**
-     * Encrypt a stream using the public key used by this class.
-     *
-     * @param src the output stream
-     * @return the output stream that takes the unencrypted data and forwards it
-     *         to the output stream set with the parameter
-     */
-    @Nonnull
-    @SuppressWarnings("nls")
-    public OutputStream encryptedStream(final OutputStream src) {
-        Cipher cipher = null;
         try {
-            cipher = Cipher.getInstance(RSA);
-            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-        } catch (@Nonnull final Exception e) {
-            LOGGER.log(Level.SEVERE, "Creating Cipher failed.", e);
-        }
+            // wrap with RSA public key
+            @Nonnull final Cipher cipher = Cipher.getInstance(KEY_ALGORITHM);
+            cipher.init(Cipher.ENCRYPT_MODE, privateKey);
 
-        return new CipherOutputStream(src, cipher);
+            final CipherOutputStream cOut = new CipherOutputStream(dst, cipher);
+
+            transferBytes(src, cOut);
+        } catch (@Nonnull final Exception e) {
+            throw new CryptoException(e);
+        }
     }
 
     /**
      * Check if this class has a private key that can be used to encrypt data.
      *
-     * @return <code>true</code> in case there is a private key loaded
+     * @return {@code true} in case there is a private key loaded
      */
     public boolean hasPrivateKey() {
-        return (privateKey != null);
+        return privateKey != null;
     }
 
     /**
      * Check if this class has a public key that can be used to decrypt data.
      *
-     * @return <code>true</code> in case there is a public key loaded
+     * @return {@code true} in case there is a public key loaded
      */
     public boolean hasPublicKey() {
-        return (publicKey != null);
+        return publicKey != null;
+    }
+
+    /**
+     * Get a file from the resources embedded in the classpath.
+     *
+     * @param name the name of the file
+     * @return the stream to read the file or {@code null} in case the file was not found
+     */
+    @Nullable
+    private static InputStream getResourceAsStream(@Nonnull final String name) {
+        return Thread.currentThread().getContextClassLoader().getResourceAsStream(name);
     }
 
     /**
      * Load the private key from any source available.
      */
-    @SuppressWarnings("nls")
     public void loadPrivateKey() {
-        try {
-            final File keyFile = new File(PRIVATE_KEY);
-            if (keyFile.exists() && keyFile.isFile() && keyFile.canRead()
-                    && loadPrivateKeyImpl(new FileInputStream(keyFile))) {
-                return;
-            }
-        } catch (@Nonnull final FileNotFoundException e) {
-            // the file was not found -> ignore
-        }
+        privateKey = loadKeyImpl(PRIVATE_KEY);
 
-        if (loadPrivateKeyImpl(Crypto.class.getClassLoader()
-                .getResourceAsStream(PRIVATE_KEY))) {
+        if (hasPrivateKey()) {
             return;
         }
 
-        try {
-            final String keyValue =
-                    System.getProperty("illarion.common.crypto.private");
-            if ((keyValue != null)
-                    && loadPrivateKeyImpl(new FileInputStream(new File(keyValue)))) {
-                return;
-            }
-        } catch (@Nonnull final FileNotFoundException e) {
-            // the file was not found -> ignore
-        }
-
-
-        if (loadPrivateKeyImpl(Crypto.class.getClassLoader()
-                .getResourceAsStream(System.getProperty("illarion.common.crypto.private")))) {
-            return;
-        }
-        LOGGER.log(Level.SEVERE, "Loading the private key failed.");
+        LOGGER.error("Loading the private key failed.");
     }
 
     /**
@@ -260,48 +195,27 @@ public final class Crypto {
      *
      * @param in the input stream the load the private key from
      */
-    @SuppressWarnings("nls")
     public void loadPrivateKey(final InputStream in) {
-        if (!loadPrivateKeyImpl(in)) {
-            LOGGER.log(Level.SEVERE, "Loading the private key failed.");
+        privateKey = loadKeyImpl(in);
+
+        if (hasPrivateKey()) {
+            return;
         }
+
+        LOGGER.error("Loading the private key failed.");
     }
 
     /**
      * Load the public key from any source available.
      */
-    @SuppressWarnings("nls")
     public void loadPublicKey() {
-        try {
-            final File keyFile = new File(PUBLIC_KEY);
-            if (keyFile.exists() && keyFile.isFile() && keyFile.canRead()
-                    && loadPrivateKeyImpl(new FileInputStream(keyFile))) {
-                return;
-            }
-        } catch (@Nonnull final FileNotFoundException e) {
-            // the file was not found -> ignore
-        }
+        publicKey = loadKeyImpl(PUBLIC_KEY);
 
-        if (loadPublicKeyImpl(Crypto.class.getClassLoader()
-                .getResourceAsStream(PUBLIC_KEY))) {
+        if (hasPublicKey()) {
             return;
         }
 
-        try {
-            final String keyValue =
-                    System.getProperty("illarion.common.crypto.public");
-            if (keyValue != null) {
-                if (loadPublicKeyImpl(Crypto.class.getClassLoader().getResourceAsStream(keyValue))) {
-                    return;
-                } else if (loadPublicKeyImpl(new FileInputStream(new File(keyValue)))) {
-                    return;
-                }
-            }
-        } catch (@Nonnull final FileNotFoundException e) {
-            // the file was not found -> ignore
-        }
-
-        LOGGER.log(Level.SEVERE, "Loading the public key failed.");
+        LOGGER.error("Loading the public key failed.");
     }
 
     /**
@@ -309,35 +223,47 @@ public final class Crypto {
      *
      * @param in the input stream the load the public key from
      */
-    @SuppressWarnings("nls")
     public void loadPublicKey(final InputStream in) {
-        if (!loadPublicKeyImpl(in)) {
-            LOGGER.log(Level.SEVERE, "Loading the public key failed.");
+        publicKey = loadKeyImpl(in);
+
+        if (hasPublicKey()) {
+            return;
         }
+
+        LOGGER.error("Loading the public key failed.");
     }
 
     /**
-     * Load the key from a input stream.
+     * Load a key from a string reference. This function will be check both the file system and the class path for
+     * this file.
      *
-     * @param in the input stream the load the private key from
-     * @return <code>true</code> in case the key was loaded successfully
+     * @param keyFile the reference to the key file
+     * @param <T>     the type of the key that is expected
+     * @return        the loaded key or {@code null} in case the key was not found
      */
     @Nullable
-    private static Key loadKeyImpl(@Nullable final InputStream in) {
-        if (in != null) {
-            ObjectInputStream keyIn = null;
+    private static <T extends Key> T loadKeyImpl(@Nonnull final String keyFile) {
+        final T resourceKey = loadKeyImpl(getResourceAsStream(keyFile));
+        if (resourceKey != null) {
+            return resourceKey;
+        }
+
+        final File fileRef = new File(keyFile);
+        if (fileRef.exists() && fileRef.isFile() && fileRef.canRead()) {
+            InputStream keyIn = null;
             try {
-                keyIn = new ObjectInputStream(in);
-                return (Key) keyIn.readObject();
-            } catch (@Nonnull final Exception e) {
+                keyIn = new BufferedInputStream(new FileInputStream(keyFile));
+                final T fileKey = loadKeyImpl(keyIn);
+                if (fileKey != null) {
+                    return fileKey;
+                }
+            } catch (@Nonnull final Exception ignored) {
                 // loading the key failed
             } finally {
-                try {
-                    if (keyIn != null) {
+                if (keyIn != null) {
+                    try {
                         keyIn.close();
-                    }
-                } catch (@Nonnull final IOException e) {
-                    // loading the key failed
+                    } catch (@Nonnull final IOException ignored) {}
                 }
             }
         }
@@ -345,79 +271,23 @@ public final class Crypto {
     }
 
     /**
-     * Load the private key from a input stream.
+     * Load the key from a input stream.
      *
      * @param in the input stream the load the private key from
-     * @return <code>true</code> in case the key was loaded successfully
+     * @return {@code true} in case the key was loaded successfully
      */
-    private boolean loadPrivateKeyImpl(final InputStream in) {
-        final Key loadKey = loadKeyImpl(in);
-        if (loadKey == null) {
-            return false;
-        }
-        try {
-            privateKey = (PrivateKey) loadKey;
-        } catch (@Nonnull final Exception e) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Load the public key from a input stream.
-     *
-     * @param in the input stream the load the public key from
-     * @return <code>true</code> in case the key was loaded successfully
-     */
-    private boolean loadPublicKeyImpl(final InputStream in) {
-        final Key loadKey = loadKeyImpl(in);
-        if (loadKey == null) {
-            return false;
-        }
-        try {
-            publicKey = (PublicKey) loadKey;
-        } catch (@Nonnull final Exception e) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Uses a cipher to transform the bytes in an input stream and sends the
-     * transformed bytes to an output stream.
-     *
-     * @param in     the input stream
-     * @param out    the output stream
-     * @param cipher the cipher that transforms the bytes
-     * @throws IOException              in case reading or writing the data failed
-     * @throws GeneralSecurityException in case something is wrong with the
-     *                                  cipher
-     */
-    private static void pumpData(@Nonnull final InputStream in, @Nonnull final OutputStream out,
-                                 @Nonnull final Cipher cipher) throws IOException, GeneralSecurityException {
-        final int blockSize = cipher.getBlockSize();
-        final int outputSize = cipher.getOutputSize(blockSize);
-        final byte[] inBytes = new byte[blockSize];
-        byte[] outBytes = new byte[outputSize];
-
-        int inLength = 0;
-        boolean more = true;
-        while (more) {
-            inLength = in.read(inBytes);
-            if (inLength == blockSize) {
-                final int outLength =
-                        cipher.update(inBytes, 0, blockSize, outBytes);
-                out.write(outBytes, 0, outLength);
-            } else {
-                more = false;
+    @Nullable
+    private static <T extends Key> T loadKeyImpl(@Nullable final InputStream in) {
+        if (in != null) {
+            try {
+                final ObjectInputStream keyIn = new ObjectInputStream(in);
+                final Object keyObject = keyIn.readObject();
+                //noinspection unchecked
+                return (T) keyObject;
+            } catch (@Nonnull final Exception ignored) {
+                // loading the key failed
             }
         }
-        if (inLength > 0) {
-            outBytes = cipher.doFinal(inBytes, 0, inLength);
-        } else {
-            outBytes = cipher.doFinal();
-        }
-        out.write(outBytes);
-        out.flush();
+        return null;
     }
 }

@@ -48,7 +48,7 @@ public final class EffectLoader extends AbstractResourceLoader<EffectTemplate> i
      * files.
      */
     @SuppressWarnings("nls")
-    private static final String EFFECTS_PATH = "data/effects/";
+    private static final String EFFECTS_PATH = "effects/";
 
     /**
      * The assets of the game engine that are required to load the data needed for the effects.

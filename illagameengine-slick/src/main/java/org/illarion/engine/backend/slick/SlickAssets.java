@@ -19,8 +19,6 @@
 package org.illarion.engine.backend.slick;
 
 import org.illarion.engine.assets.*;
-import org.illarion.engine.graphic.Scene;
-import org.illarion.engine.graphic.WorldMap;
 import org.illarion.engine.graphic.WorldMapDataProvider;
 import org.newdawn.slick.GameContainer;
 
@@ -91,49 +89,49 @@ class SlickAssets implements Assets {
 
     @Nonnull
     @Override
-    public TextureManager getTextureManager() {
+    public SlickTextureManager getTextureManager() {
         return textureManager;
     }
 
     @Nonnull
     @Override
-    public FontManager getFontManager() {
+    public SlickFontManager getFontManager() {
         return fontManager;
     }
 
     @Nonnull
     @Override
-    public CursorManager getCursorManager() {
+    public SlickCursorManager getCursorManager() {
         return cursorManager;
     }
 
     @Nonnull
     @Override
-    public SoundsManager getSoundsManager() {
+    public SlickSoundsManager getSoundsManager() {
         return soundsManager;
     }
 
     @Nonnull
     @Override
-    public SpriteFactory getSpriteFactory() {
+    public SlickSpriteFactory getSpriteFactory() {
         return spriteFactory;
     }
 
     @Nonnull
     @Override
-    public Scene createNewScene() {
+    public SlickScene createNewScene() {
         return new SlickScene(container);
     }
 
     @Nonnull
     @Override
-    public WorldMap createWorldMap(@Nonnull final WorldMapDataProvider provider) throws SlickEngineException {
+    public SlickWorldMap createWorldMap(@Nonnull final WorldMapDataProvider provider) throws SlickEngineException {
         return new SlickWorldMap(provider);
     }
 
     @Nonnull
     @Override
-    public EffectManager getEffectManager() {
+    public SlickEffectManager getEffectManager() {
         return effectManager;
     }
 }

@@ -56,7 +56,7 @@
     </style>
 
     <style id="illarion-dialog-merchant-line#moneyGoldImage">
-        <attributes filename="data/gui/coin_3_g.png" height="16px" width="16px" marginRight="2px"/>
+        <attributes filename="gui/coin_3_g.png" height="16px" width="16px" marginRight="2px"/>
     </style>
 
     <style id="illarion-dialog-merchant-line#moneyGoldCount" base="nifty-label">
@@ -64,7 +64,7 @@
     </style>
 
     <style id="illarion-dialog-merchant-line#moneySilverImage">
-        <attributes filename="data/gui/coin_3_s.png" height="16px" width="16px" marginRight="2px"/>
+        <attributes filename="gui/coin_3_s.png" height="16px" width="16px" marginRight="2px"/>
     </style>
 
     <style id="illarion-dialog-merchant-line#moneySilverCount" base="nifty-label">
@@ -72,7 +72,7 @@
     </style>
 
     <style id="illarion-dialog-merchant-line#moneyCopperImage">
-        <attributes filename="data/gui/coin_3_c.png" height="16px" width="16px" marginRight="2px"/>
+        <attributes filename="gui/coin_3_c.png" height="16px" width="16px" marginRight="2px"/>
     </style>
 
     <style id="illarion-dialog-merchant-line#moneyCopperCount" base="nifty-label">

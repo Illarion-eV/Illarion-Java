@@ -68,19 +68,4 @@ public interface SpriteFactory {
     @Nonnull
     Sprite createSprite(@Nonnull Texture[] textures, int offsetX, int offsetY, float centerX, float centerY,
                         boolean mirror);
-
-    /**
-     * Create a new sprite.
-     *
-     * @param texture the texture assigned to this sprite
-     * @param offsetX the x offset that is applied to the texture
-     * @param offsetY the y offset that is applied to the texture
-     * @param centerX the x offset of the center (between {@code 0.f} and {@code 1.f}
-     * @param centerY the y offset of the center (between {@code 0.f} and {@code 1.f}
-     * @param mirror  {@code true} in case the textures are supposed to be rendered mirrored
-     * @return the created sprite
-     */
-    @Nonnull
-    Sprite createSprite(@Nonnull Texture texture, int offsetX, int offsetY, float centerX, float centerY,
-                        boolean mirror);
 }

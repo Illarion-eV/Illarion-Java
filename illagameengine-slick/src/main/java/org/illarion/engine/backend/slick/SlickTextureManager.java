@@ -20,26 +20,52 @@ package org.illarion.engine.backend.slick;
 
 import org.illarion.engine.backend.shared.AbstractTextureManager;
 import org.illarion.engine.graphic.Texture;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.opengl.ImageData;
+import org.newdawn.slick.opengl.ImageIOImageData;
+import org.newdawn.slick.opengl.LoadableImageData;
+import org.newdawn.slick.opengl.PNGImageData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * The texture manager that takes care for loading and providing the texture data for the Slick 2D backend.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class SlickTextureManager extends AbstractTextureManager {
+class SlickTextureManager extends AbstractTextureManager<ImageData> {
     @Nullable
     @Override
-    protected Texture loadTexture(@Nonnull final String resource) {
+    protected ImageData loadTextureData(@Nonnull final String textureName) {
+        final LoadableImageData imageData = new PNGImageData();
+
+        @Nullable InputStream in = null;
         try {
-            return new SlickTexture(resource);
-        } catch (@Nonnull final SlickException ignored) {
+            in = new BufferedInputStream(Thread.currentThread().getContextClassLoader().getResourceAsStream
+                    (textureName));
+            imageData.loadImage(in);
+        } catch (@Nonnull final IOException e) {
             return null;
-        } catch (@Nonnull final RuntimeException ignored) {
-            return null;
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (@Nonnull final IOException ignored) {
+                }
+            }
         }
+        return imageData;
+    }
+
+    @Nullable
+    @Override
+    protected Texture loadTexture(@Nonnull final String resource, final ImageData preLoadData) {
+        return new SlickTexture(new Image(preLoadData));
     }
 }

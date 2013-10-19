@@ -41,7 +41,7 @@ public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
      */
     private static final Logger LOGGER = Logger.getLogger(TileLoader.class);
     private static final TileLoader INSTANCE = new TileLoader();
-    private static final String DIR_IMG_TILES = "data/tiles/";
+    private static final String DIR_IMG_TILES = "tiles/";
 
     private final TIntObjectHashMap<TileImg> tiles = new TIntObjectHashMap<TileImg>();
 

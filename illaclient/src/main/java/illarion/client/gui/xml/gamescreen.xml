@@ -58,7 +58,7 @@
                                  focusable="false" marginRight="10px">
                             <effect>
                                 <onCustom name="imageOverlayPulsate" customKey="pulse" startDelay="0" length="10000"
-                                          filename="data/gui/button/skills_highlight.png" post="true"/>
+                                          filename="gui/button/skills_highlight.png" post="true"/>
                             </effect>
                         </control>
                         <control name="button" id="openInventoryBtn" style="nifty-button-inventory" valign="bottom"
@@ -67,7 +67,7 @@
                                  focusable="false">
                             <effect>
                                 <onCustom name="imageOverlayPulsate" customKey="pulse" startDelay="0" length="10000"
-                                          filename="data/gui/button/questlog_highlight.png" post="true"/>
+                                          filename="gui/button/questlog_highlight.png" post="true"/>
                             </effect>
                         </control>
                     </panel>
@@ -81,7 +81,7 @@
             </panel>
             <panel align="right" valign="top" width="189px" height="190px" childLayout="center" id="miniMapPanel">
                 <image id="miniMapImage" width="162px" height="162px"/>
-                <image width="189px" height="190px" filename="data/gui/minimap.png"/>
+                <image width="189px" height="190px" filename="gui/minimap.png"/>
             </panel>
         </layer>
         <layer id="chatLayer" childLayout="absolute"/>
@@ -106,7 +106,7 @@
                      visible="false" width="270px" height="520px" hideOnClose="true" visibleToMouse="true">
                 <panel childLayout="vertical">
                     <panel height="448px" width="227px" childLayout="absolute"
-                           backgroundImage="data/gui/inventory.png" visibleToMouse="true" halign="center"
+                           backgroundImage="gui/inventory.png" visibleToMouse="true" halign="center"
                            valign="center">
                         <control id="invslot_chest" name="inventoryslot" height="84px" width="46px" x="91px" y="59px"/>
                         <control id="invslot_head" name="inventoryslot" height="40px" width="46px" x="91px" y="4px"/>

@@ -79,7 +79,7 @@ public final class TileLoader extends AbstractResourceLoader<TileTemplate> imple
         return factory;
     }
 
-    private static final String TILE_PATH = "data/tiles/";
+    private static final String TILE_PATH = "tiles/";
 
     /**
      * Handle a single line of the resource table.

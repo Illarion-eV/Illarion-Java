@@ -317,15 +317,15 @@ public class InventorySlotControl extends AbstractController implements Inventor
         switch (level) {
             case Copper:
                 merchantOverlay.getRenderer(ImageRenderer.class).setImage(
-                        nifty.createImage("data/gui/coin_1_c.png", false));
+                        nifty.createImage("gui/coin_1_c.png", false));
                 break;
             case Silver:
                 merchantOverlay.getRenderer(ImageRenderer.class).setImage(
-                        nifty.createImage("data/gui/coin_1_s.png", false));
+                        nifty.createImage("gui/coin_1_s.png", false));
                 break;
             case Gold:
                 merchantOverlay.getRenderer(ImageRenderer.class).setImage(
-                        nifty.createImage("data/gui/coin_1_g.png", false));
+                        nifty.createImage("gui/coin_1_g.png", false));
                 break;
         }
         merchantOverlay.showWithoutEffects();

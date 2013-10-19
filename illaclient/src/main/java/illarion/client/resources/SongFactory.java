@@ -46,7 +46,7 @@ public final class SongFactory implements ResourceFactory<IdWrapper<String>> {
     /**
      * The root path to the music track files.
      */
-    private static final String SONG_DIR = "data/music/";
+    private static final String SONG_DIR = "music/";
 
     /**
      * Get the singleton instance of the sound factory.

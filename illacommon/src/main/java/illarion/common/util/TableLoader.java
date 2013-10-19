@@ -35,12 +35,6 @@ import java.util.ArrayList;
  */
 public class TableLoader {
     /**
-     * The base directory the tables that are loaded.
-     */
-    @SuppressWarnings("nls")
-    public static final String DATA_DIR = "data/";
-
-    /**
      * The crypto instance that is used by the table loader to decrypt the
      * tables that are read and parsed.
      */
@@ -152,7 +146,7 @@ public class TableLoader {
 
     /**
      * Load a table from the jar file resources. The table needs to be in the
-     * {@link #DATA_DIR} and its file name ending is <code>.dat</code>. The file
+     * resources and its file name ending is <code>.dat</code>. The file
      * is taken as encrypted and is decrypted using
      * {@link illarion.common.util.Crypto}.
      * <p/>
@@ -176,7 +170,7 @@ public class TableLoader {
         // read table via class loader
         final InputStream rsc =
                 getClass().getClassLoader().getResourceAsStream(
-                        DATA_DIR + table + ".dat");
+                        table + ".dat");
         if (rsc == null) {
             throw new NoResourceException("Missing table " + table);
         }
@@ -192,13 +186,16 @@ public class TableLoader {
             loadTable(decryptedStream, ndsc, callback);
         } catch (@Nonnull final IOException e) {
             LOGGER.error("Error reading table " + table, e);
-            throw new NoResourceException("Error reading table " + table);
+            throw new NoResourceException("Error reading table " + table, e);
+        } catch (@Nonnull final CryptoException e) {
+            LOGGER.error("Error decrypting table " + table, e);
+            throw new NoResourceException("Error reading table " + table, e);
         }
     }
 
     /**
      * Load a table from the jar file resources. The table needs to be in the
-     * {@link #DATA_DIR} and its file name ending is <code>.dat</code>. The
+     * resources and its file name ending is <code>.dat</code>. The
      * table is loaded as a NDSC table that was created by the config tool and
      * its delimiter is <code>,</code>. Also the file is taken as encrypted and
      * is decrypted using {@link illarion.common.util.Crypto}.

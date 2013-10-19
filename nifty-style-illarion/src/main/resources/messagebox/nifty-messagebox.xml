@@ -23,7 +23,7 @@
     </style>
 
     <style id="nifty-standard-messagebox-style">
-        <attributes align="center" valign="center" padding="15px" backgroundImage="data/gui/panel/nifty-panel-hint.png"
+        <attributes align="center" valign="center" padding="15px" backgroundImage="gui/panel/nifty-panel-hint.png"
                     imageMode="resize:8,210,8,8,8,210,8,209,8,210,8,8"/>
     </style>
 </nifty-styles>

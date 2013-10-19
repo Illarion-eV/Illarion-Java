@@ -41,7 +41,7 @@ public class ItemLoader implements TableLoaderSink<TableLoaderItems>, Resource {
     private static final Logger LOGGER = Logger.getLogger(ItemLoader.class);
     private static final int DB_INDEX_NAME = 2;
     private static final ItemLoader INSTANCE = new ItemLoader();
-    private static final String DIR_IMG_ITEMS = "data/items/";
+    private static final String DIR_IMG_ITEMS = "items/";
     private final TIntObjectHashMap<ItemImg> items = new TIntObjectHashMap<ItemImg>();
 
     private ItemLoader() {
