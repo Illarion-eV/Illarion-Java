@@ -88,12 +88,29 @@ public final class Crypto {
         }
 
         try {
+            transferBytes(getDecryptedStream(src), dst);
+        } catch (@Nonnull final Exception e) {
+            throw new CryptoException(e);
+        }
+    }
+
+    /**
+     * Get a stream that delivers the decrypted data.
+     *
+     * @param src the stream that delivers the encryted data
+     * @return the stream that provides the decrypted data
+     * @throws CryptoException
+     */
+    public InputStream getDecryptedStream(@Nonnull final InputStream src) throws CryptoException {
+        if (!hasPublicKey()) {
+            throw new IllegalStateException("No keys loaded");
+        }
+
+        try {
             @Nonnull final Cipher cipher = Cipher.getInstance(KEY_ALGORITHM);
             cipher.init(Cipher.DECRYPT_MODE, publicKey);
 
-            final CipherInputStream cIn = new CipherInputStream(src, cipher);
-
-            transferBytes(cIn, dst);
+            return new CipherInputStream(src, cipher);
         } catch (@Nonnull final Exception e) {
             throw new CryptoException(e);
         }

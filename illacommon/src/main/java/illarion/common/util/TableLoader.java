@@ -168,21 +168,13 @@ public class TableLoader {
         this(tableDelim);
 
         // read table via class loader
-        final InputStream rsc =
-                getClass().getClassLoader().getResourceAsStream(
-                        table + ".dat");
+        final InputStream rsc = Thread.currentThread().getContextClassLoader().getResourceAsStream(table + ".dat");
         if (rsc == null) {
             throw new NoResourceException("Missing table " + table);
         }
         try {
-            // decode data
-            final ByteArrayOutputStream dst = new ByteArrayOutputStream(1000);
-            crypto.decrypt(rsc, dst);
-            rsc.close();
-
             // load data
-            final InputStream decryptedStream =
-                    new ByteArrayInputStream(dst.toByteArray());
+            final InputStream decryptedStream = crypto.getDecryptedStream(rsc);
             loadTable(decryptedStream, ndsc, callback);
         } catch (@Nonnull final IOException e) {
             LOGGER.error("Error reading table " + table, e);
