@@ -77,6 +77,7 @@ public final class ReplyFactory {
         register(IntroduceMsg.class);
         register(InventoryMsg.class);
         register(ItemUpdateMsg.class);
+        register(KeepAliveMsg.class);
         register(LocationMsg.class);
         register(LookAtCharMsg.class);
         register(LookAtDialogItemMsg.class);

@@ -19,6 +19,7 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
+import illarion.client.util.ConnectionPerformanceClock;
 import illarion.common.net.NetCommWriter;
 
 import javax.annotation.Nonnull;
@@ -42,6 +43,7 @@ public final class KeepAliveCmd extends AbstractCommand {
 
     @Override
     public void encode(@Nonnull final NetCommWriter writer) {
+        ConnectionPerformanceClock.notifyNetCommEncode();
     }
 
     @Nonnull

@@ -21,6 +21,7 @@ import de.lessvoid.nifty.spi.time.impl.AccurateTimeProvider;
 import illarion.client.graphics.FontLoader;
 import illarion.client.input.InputReceiver;
 import illarion.client.states.*;
+import illarion.client.util.ConnectionPerformanceClock;
 import illarion.client.util.Lang;
 import illarion.common.config.ConfigChangedEvent;
 import org.apache.log4j.Logger;
@@ -87,6 +88,7 @@ public final class Game implements GameListener {
         gameStates = new GameState[4];
         AnnotationProcessor.process(this);
         showFPS = IllaClient.getCfg().getBoolean("showFps");
+        showPing = IllaClient.getCfg().getBoolean("showPing");
     }
 
     public void enterState(final int stateId) {
@@ -222,17 +224,30 @@ public final class Game implements GameListener {
         }
         nifty.render(false);
 
-        if (showFPS) {
+        if (showFPS || showPing) {
             final Font fpsFont = container.getEngine().getAssets().getFontManager().getFont(FontLoader.CONSOLE_FONT);
+            int renderLine = 10;
             if (fpsFont != null) {
-                int renderLine = 10;
-                container.getEngine().getGraphics().drawText(fpsFont, "FPS: " + container.getFPS(), Color.WHITE, 10,
-                        renderLine);
-                renderLine += fpsFont.getLineHeight();
+                if (showFPS) {
+                    container.getEngine().getGraphics().drawText(fpsFont, "FPS: " + container.getFPS(), Color.WHITE, 10,
+                            renderLine);
+                    renderLine += fpsFont.getLineHeight();
 
-                if (SHOW_RENDER_DIAGNOSTIC) {
-                    for (final CharSequence line : container.getDiagnosticLines()) {
-                        container.getEngine().getGraphics().drawText(fpsFont, line, Color.WHITE, 10, renderLine);
+                    if (SHOW_RENDER_DIAGNOSTIC) {
+                        for (final CharSequence line : container.getDiagnosticLines()) {
+                            container.getEngine().getGraphics().drawText(fpsFont, line, Color.WHITE, 10, renderLine);
+                            renderLine += fpsFont.getLineHeight();
+                        }
+                    }
+                }
+
+                if (showPing) {
+                    final long serverPing = ConnectionPerformanceClock.getServerPing();
+                    final long netCommPing = ConnectionPerformanceClock.getNetCommPing();
+                    if (serverPing > -1) {
+                        container.getEngine().getGraphics().drawText(fpsFont,
+                                "Ping: " + serverPing + '+' + Math.max(0, netCommPing - serverPing) + " ms",
+                                Color.WHITE, 10, renderLine);
                         renderLine += fpsFont.getLineHeight();
                     }
                 }
@@ -243,10 +258,16 @@ public final class Game implements GameListener {
     private static final boolean SHOW_RENDER_DIAGNOSTIC = IllaClient.DEFAULT_SERVER != Servers.realserver;
 
     private boolean showFPS;
+    private boolean showPing;
 
     @EventTopicSubscriber(topic = "showFps")
     public void onFpsConfigChanged(@Nonnull final String topic, @Nonnull final ConfigChangedEvent event) {
         showFPS = event.getConfig().getBoolean(event.getKey());
+    }
+
+    @EventTopicSubscriber(topic = "showPing")
+    public void onPingConfigChanged(@Nonnull final String topic, @Nonnull final ConfigChangedEvent event) {
+        showPing = event.getConfig().getBoolean(event.getKey());
     }
 
     @Override

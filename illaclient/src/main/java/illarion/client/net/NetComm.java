@@ -25,6 +25,7 @@ import illarion.client.crash.NetCommCrashHandler;
 import illarion.client.net.client.AbstractCommand;
 import illarion.client.net.client.KeepAliveCmd;
 import illarion.client.net.server.AbstractReply;
+import illarion.client.util.ConnectionPerformanceClock;
 import illarion.client.world.World;
 import illarion.common.util.Timer;
 import javolution.text.TextBuilder;
@@ -84,7 +85,7 @@ public final class NetComm {
      * The delay in ms between two keep alive commands that are send to ensure the server that the client is still
      * working and the connection is stable. Now set to 10 seconds.
      */
-    private static final int KEEP_ALIVE_DELAY = 10 * 1000;
+    private static final int KEEP_ALIVE_DELAY = 500;
 
     /**
      * The instance of the logger that is used to write out the data.
@@ -258,7 +259,10 @@ public final class NetComm {
                     new Timer(INITIAL_DELAY, KEEP_ALIVE_DELAY, new Runnable() {
                         @Override
                         public void run() {
-                            World.getNet().sendCommand(keepAliveCmd);
+                            if (ConnectionPerformanceClock.isReadyForNewPing()) {
+                                ConnectionPerformanceClock.notifySendToNetComm();
+                                World.getNet().sendCommand(keepAliveCmd);
+                            }
                         }
                     });
             keepAliveTimer.setRepeats(true);

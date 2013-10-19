@@ -54,6 +54,7 @@ public final class OptionScreenController implements ScreenController {
     private DropDown<String> resolutions;
     private CheckBox fullscreen;
     private CheckBox showFps;
+    private CheckBox showPing;
 
     private CheckBox soundOn;
     private Slider soundVolume;
@@ -98,6 +99,7 @@ public final class OptionScreenController implements ScreenController {
 
         fullscreen = tabRoot.findNiftyControl("fullscreen", CheckBox.class);
         showFps = tabRoot.findNiftyControl("showFps", CheckBox.class);
+        showPing = tabRoot.findNiftyControl("showPing", CheckBox.class);
 
         soundOn = tabRoot.findNiftyControl("soundOn", CheckBox.class);
         soundVolume = tabRoot.findNiftyControl("soundVolume", Slider.class);
@@ -134,6 +136,7 @@ public final class OptionScreenController implements ScreenController {
         resolutions.selectItem(IllaClient.getCfg().getString(IllaClient.CFG_RESOLUTION));
         fullscreen.setChecked(IllaClient.getCfg().getBoolean(IllaClient.CFG_FULLSCREEN));
         showFps.setChecked(IllaClient.getCfg().getBoolean("showFps"));
+        showPing.setChecked(IllaClient.getCfg().getBoolean("showPing"));
 
         soundOn.setChecked(IllaClient.getCfg().getBoolean("soundOn"));
         soundVolume.setValue(IllaClient.getCfg().getFloat("soundVolume"));
@@ -173,6 +176,7 @@ public final class OptionScreenController implements ScreenController {
 
         configSystem.set(IllaClient.CFG_FULLSCREEN, fullscreen.isChecked());
         configSystem.set("showFps", showFps.isChecked());
+        configSystem.set("showPing", showPing.isChecked());
 
         configSystem.set("soundOn", soundOn.isChecked());
         configSystem.set("soundVolume", soundVolume.getValue());

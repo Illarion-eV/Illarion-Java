@@ -82,6 +82,11 @@
                             <panel width="*"/>
                             <control name="dropDown" id="sendCrashReports" width="220px"/>
                         </panel>
+                        <panel width="100%" childLayout="horizontal">
+                            <control name="label" text="${options-bundle.showPing}"/>
+                            <panel width="*"/>
+                            <control name="checkbox" id="showPing"/>
+                        </panel>
                     </control>
                     <control id="#graphicsTab" caption="Graphics" name="tab" childLayout="vertical">
                         <panel width="100%" childLayout="horizontal">

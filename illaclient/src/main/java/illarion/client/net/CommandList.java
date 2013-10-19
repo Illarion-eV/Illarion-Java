@@ -225,6 +225,11 @@ public final class CommandList {
     public static final int CMD_WHISPER = 0xF3;
 
     /**
+     * This is the message send by the server in response to the keep alive message.
+     */
+    public static final int MSG_KEEP_ALIVE = 0x00;
+
+    /**
      * Server message that contains the appearance data of a character.
      */
     public static final int MSG_APPEARANCE = 0xE1;
