@@ -48,11 +48,6 @@ final class ResourceTableLoading implements LoadingTask {
     private final List<AbstractResourceLoader<? extends Resource>> taskList;
 
     /**
-     * This is set {@code true} once the loading was triggered.
-     */
-    private boolean loadingTriggered;
-
-    /**
      * Create a new resource table loading task and enlist all the sub-tasks.
      *
      * @param gameEngine the engine of the game
@@ -95,14 +90,6 @@ final class ResourceTableLoading implements LoadingTask {
                 e.printStackTrace(System.err);
             }
         }
-        //if (loadingTriggered) {
-        //    return;
-        //}
-        //loadingTriggered = true;
-
-        //for (final AbstractResourceLoader<? extends Resource> loader : taskList) {
-        //    GlobalExecutorService.getService().submit(loader);
-        //}
     }
 
     @Override

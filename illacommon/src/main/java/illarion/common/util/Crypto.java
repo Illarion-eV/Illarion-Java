@@ -22,9 +22,7 @@ import org.apache.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
-import javax.crypto.CipherOutputStream;
+import javax.crypto.*;
 import java.io.*;
 import java.security.*;
 
@@ -107,8 +105,21 @@ public final class Crypto {
         }
 
         try {
-            @Nonnull final Cipher cipher = Cipher.getInstance(KEY_ALGORITHM);
-            cipher.init(Cipher.DECRYPT_MODE, publicKey);
+            final DataInputStream dIn = new DataInputStream(src);
+            final int keyLength = dIn.readInt();
+            final byte[] wrappedKey = new byte[keyLength];
+
+            int n = 0;
+            while (n < keyLength) {
+                n += dIn.read(wrappedKey, n, keyLength - n);
+            }
+
+            @Nonnull final Cipher wrappingCipher = Cipher.getInstance(KEY_ALGORITHM);
+            wrappingCipher.init(Cipher.UNWRAP_MODE, publicKey);
+            final Key encryptionKey = wrappingCipher.unwrap(wrappedKey, "DES", Cipher.SECRET_KEY);
+
+            @Nonnull final Cipher cipher = Cipher.getInstance("DES");
+            cipher.init(Cipher.DECRYPT_MODE, encryptionKey);
 
             return new CipherInputStream(src, cipher);
         } catch (@Nonnull final Exception e) {
@@ -152,14 +163,55 @@ public final class Crypto {
             throw new IllegalStateException("No keys loaded");
         }
 
+        OutputStream cOutStream = null;
         try {
+            cOutStream = getEncryptedStream(new NonClosingOutputStream(dst));
+            transferBytes(src, cOutStream);
+        } catch (@Nonnull final Exception e) {
+            throw new CryptoException(e);
+        } finally {
+            if (cOutStream != null) {
+                try {
+                    cOutStream.close();
+                    dst.flush();
+                } catch (@Nonnull final IOException ignored) {}
+            }
+        }
+    }
+
+    /**
+     * Get a stream that takes unencrypted data and forwards it encrypted.
+     *
+     * @param dst the stream that is supposed to recieve the encrypted data
+     * @return the system that will receive the unencrypted data
+     * @throws CryptoException
+     */
+    public OutputStream getEncryptedStream(@Nonnull final OutputStream dst) throws CryptoException {
+        if (!hasPrivateKey()) {
+            throw new IllegalStateException("No keys loaded");
+        }
+
+        try {
+            // generate a random DES key
+            final KeyGenerator keygen = KeyGenerator.getInstance("DES");
+            final SecureRandom random = new SecureRandom();
+            keygen.init(random);
+            final SecretKey key = keygen.generateKey();
+
             // wrap with RSA public key
-            @Nonnull final Cipher cipher = Cipher.getInstance(KEY_ALGORITHM);
-            cipher.init(Cipher.ENCRYPT_MODE, privateKey);
+            @Nonnull final Cipher wrappingCipher = Cipher.getInstance(KEY_ALGORITHM);
+            wrappingCipher.init(Cipher.WRAP_MODE, privateKey);
 
-            final CipherOutputStream cOut = new CipherOutputStream(dst, cipher);
+            final byte[] wrappedKey = wrappingCipher.wrap(key);
+            final DataOutputStream out = new DataOutputStream(dst);
+            out.writeInt(wrappedKey.length);
+            out.write(wrappedKey);
 
-            transferBytes(src, cOut);
+            // encrypt data
+            @Nonnull final Cipher cipher = Cipher.getInstance("DES");
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+
+            return new CipherOutputStream(out, cipher);
         } catch (@Nonnull final Exception e) {
             throw new CryptoException(e);
         }

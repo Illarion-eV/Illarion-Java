@@ -182,6 +182,10 @@ public class TableLoader {
         } catch (@Nonnull final CryptoException e) {
             LOGGER.error("Error decrypting table " + table, e);
             throw new NoResourceException("Error reading table " + table, e);
+        } finally {
+            try {
+                rsc.close();
+            } catch (@Nonnull final IOException ignored) {}
         }
     }
 
