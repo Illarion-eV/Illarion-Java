@@ -28,10 +28,15 @@ allprojects {
 
     task gitVersion {
         def gitVersion = 'unknown'
-        try {
-            def proc = 'git describe --tags head'.execute(null as String[], project.rootDir)
-            gitVersion = proc.in.readLines().get(0)
-        } catch (ignored) {
+        def File rootDir = project.rootDir
+        for (def gitCmd in ['git', 'git.cmd']) {
+            try {
+                def proc = (gitCmd + ' describe --tags head').execute([], rootDir)
+                gitVersion = proc.in.readLines().get(0)
+                proc.destroy()
+                break
+            } catch (ignored) {
+            }
         }
 
         def String mainVersion
