@@ -27,10 +27,7 @@ import org.xmlpull.mxp1.MXParserFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 /**
  * This is the shared code of the texture manager that is used by all backend implementations in a similar way.
@@ -77,7 +74,7 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
      * This executor takes care for the tasks required to load the textures properly.
      */
     @Nullable
-    private Executor loadingExecutor;
+    private ExecutorService loadingExecutor;
 
     /**
      * This is a list of loading tasks. Once all entries in this list are cleared, the loading is considered done.
@@ -342,6 +339,9 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
             dirMonitor.setProgress(1.f);
         }
 
+        if (loadingExecutor != null) {
+            loadingExecutor.shutdown();
+        }
         loadingExecutor = null;
         loadingTasks = null;
         return true;
