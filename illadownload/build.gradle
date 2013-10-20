@@ -32,20 +32,8 @@ dependencies {
     compile group: 'org.swinglabs', name: 'swingx', version: '1.6.1'
 }
 
-ext.buildDate = null
-compileJava.doLast {
-    project.buildDate = new Date();
-    fatJar.manifest {
-        attributes    \
-               'Implementation-Version': project.ext.fullVersion,    \
-               'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ')
-    }
-}
-
 build.dependsOn 'fatJar'
 
-tasks.fatJarPrepareFiles.onlyIf { return project.buildDate != null }
-tasks.fatJar.onlyIf { return project.buildDate != null }
 fatJar {
     doFirst {
         gitVersion

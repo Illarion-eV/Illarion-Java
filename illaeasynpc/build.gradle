@@ -17,8 +17,11 @@
  * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'maven-publish'
 
 archivesBaseName = 'illarion_easynpc'
+mainClassName = 'illarion.easynpc.gui.MainFrame'
 
 dependencies {
     compile project(':common')
@@ -32,17 +35,6 @@ dependencies {
     compile group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '2.0.7'
 }
 
-ext.buildDate = null
-compileJava.doLast {
-    project.buildDate = new Date();
-    jar.manifest {
-        attributes   \
-              'Implementation-Version': project.ext.fullVersion,   \
-              'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ')
-    }
-}
-
-tasks.jar.onlyIf { return project.buildDate != null }
 jar {
     doFirst {
         gitVersion
@@ -58,7 +50,25 @@ jar {
               'Main-Class': 'illarion.easynpc.gui.MainFrame'
         }
     }
-    doLast {
-        configurations.runtime.collect { value -> println(value.name) }
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+    repositories {
+        maven {
+            url "file://$buildDir/repo"
+        }
     }
 }

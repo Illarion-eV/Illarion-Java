@@ -38,17 +38,6 @@ dependencies {
     compile group: 'com.badlogic.gdx', name: 'gdx-backend-lwjgl', version: '0.9.9-SNAPSHOT'
 }
 
-ext.buildDate = null
-compileJava.doLast {
-    project.buildDate = new Date();
-    jar.manifest {
-        attributes   \
-              'Implementation-Version': project.ext.fullVersion,   \
-              'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ')
-    }
-}
-
-tasks.jar.onlyIf { return project.buildDate != null }
 jar {
     doFirst {
         gitVersion
@@ -83,11 +72,5 @@ publishing {
         maven {
             url "file://$buildDir/repo"
         }
-    }
-    publishMavenJavaPublicationToMavenRepository {
-        onlyIf { return project.buildDate != null }
-    }
-    publishMavenJavaPublicationToMavenLocal {
-        onlyIf { return project.buildDate != null }
     }
 }

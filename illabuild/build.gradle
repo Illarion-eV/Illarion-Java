@@ -36,30 +36,6 @@ dependencies {
     testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
 }
 
-ext.buildDate = null
-compileJava.doLast {
-    if (project.buildDate == null) {
-        project.buildDate = new Date();
-        jar.manifest {
-            attributes      \
-                 'Implementation-Version': project.ext.fullVersion,      \
-                 'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ')
-        }
-    }
-}
-compileGroovy.doLast {
-    if (project.buildDate == null) {
-        project.buildDate = new Date();
-        jar.manifest {
-            attributes      \
-                 'Implementation-Version': project.ext.fullVersion,      \
-                 'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ')
-        }
-    }
-}
-
-
-tasks.jar.onlyIf { return project.buildDate != null }
 jar {
     doFirst {
         gitVersion
@@ -94,11 +70,5 @@ publishing {
         maven {
             url "file://$buildDir/repo"
         }
-    }
-    publishMavenJavaPublicationToMavenRepository {
-        onlyIf { return project.buildDate != null }
-    }
-    publishMavenJavaPublicationToMavenLocal {
-        onlyIf { return project.buildDate != null }
     }
 }

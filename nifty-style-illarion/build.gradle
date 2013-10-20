@@ -17,20 +17,10 @@
  * along with the Illarion Nifty-GUI Style.  If not, see <http://www.gnu.org/licenses/>.
  */
 apply plugin: 'java'
+apply plugin: 'maven-publish'
 
 archivesBaseName = 'nifty-style-illarion'
 
-ext.buildDate = null
-compileJava.doLast {
-    project.buildDate = new Date();
-    jar.manifest {
-        attributes   \
-              'Implementation-Version': project.ext.fullVersion,   \
-              'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ')
-    }
-}
-
-tasks.jar.onlyIf { return project.buildDate != null }
 jar {
     doFirst {
         gitVersion
@@ -43,6 +33,27 @@ jar {
               'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),   \
               'Built-By': System.getProperty('user.name'),   \
               'Built-JDK': System.getProperty('java.version')
+        }
+    }
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+    repositories {
+        maven {
+            url "file://$buildDir/repo"
         }
     }
 }
