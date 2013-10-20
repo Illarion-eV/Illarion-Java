@@ -16,8 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Java Applications.  If not, see <http://www.gnu.org/licenses/>.
  */
-apply plugin: 'idea'
-
 task wrapper(type: Wrapper) {
     gradleVersion = '1.8'
 }
@@ -75,57 +73,6 @@ subprojects {
         }
         maven {
             url 'http://libgdx.badlogicgames.com/nightlies/maven'
-        }
-    }
-}
-
-idea {
-    project {
-        ipr {
-            beforeMerged { project->
-                project.ipr {
-                    withXml {
-                        def Node node = it.asNode()
-                        if (node.name() == 'component' && node.attribute('name') == 'ProjectRunConfigurationManager') {
-                            for (def child : node.children()) {
-                                if (child instanceof Node) {
-                                    def childNode = child as Node;
-                                    node.remove(childNode);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            whenMerged { project->
-                project.ipr {
-                    withXml {
-                        def Node node = it.asNode()
-                        if (node.name() == 'project') {
-                            def foundConfigurationManager = false;
-                            for (def child : node.children()) {
-                                if (child instanceof Node) {
-                                    def childNode = child as Node;
-                                    if (childNode.name() == 'component' && childNode.attribute('name') == 'ProjectRunConfigurationManager') {
-                                        foundConfigurationManager = true;
-                                        break;
-                                    }
-                                }
-                            }
-
-                            if (!foundConfigurationManager) {
-                                node.appendNode('component', [name: 'ProjectRunConfigurationManager'])
-                            }
-                        } else if (node.name() == 'component' && node.attribute('name') == 'ProjectRunConfigurationManager') {
-                            def illaClient = node.appendNode('configuration', [name: 'Illarion Client', type: 'Application', factoryName: 'Application', singleton: true, default: false])
-                            illaClient.appendNode('option', [name: 'MAIN_CLASS_NAME', value: 'illarion.client.IllaClient'])
-                            illaClient.appendNode('option', [name: 'WORKING_DIRECTORY', value: 'file://$PROJECT_DIR$'])
-                            illaClient.appendNode('module', [name: 'client'])
-                        }
-                    }
-                }
-            }
         }
     }
 }
