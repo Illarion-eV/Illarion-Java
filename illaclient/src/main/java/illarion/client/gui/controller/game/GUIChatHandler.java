@@ -429,9 +429,9 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
 
         final Element contentPane = chatLog.getElement().findElementByName("chatLog");
 
-        final int entryCount = contentPane.getElements().size();
+        final int entryCount = contentPane.getChildren().size();
         for (int i = 0; i < (entryCount - 200); i++) {
-            final Element elementToRemove = contentPane.getElements().get(i);
+            final Element elementToRemove = contentPane.getChildren().get(i);
             if (i == (entryCount - 201)) {
                 elementToRemove.markForRemoval(new EndNotify() {
                     @Override

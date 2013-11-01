@@ -76,7 +76,7 @@ public final class CreditsMultiScreenController implements ScreenController, Key
             titleLabel.setText(list.getNameEnglish());
         }
 
-        for (final Element element : namesPanel.getElements()) {
+        for (final Element element : namesPanel.getChildren()) {
             element.markForRemoval();
         }
 

@@ -542,7 +542,7 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
             }
         }
 
-        for (final Element child : parentArea.getElements()) {
+        for (final Element child : parentArea.getChildren()) {
             final Matcher matcher = dialogNamePattern.matcher(child.getId());
 
             if (!matcher.find()) {

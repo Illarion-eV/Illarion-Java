@@ -336,7 +336,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
      */
     private void updateDisplayedQuest() {
         final Element descriptionArea = getDescriptionArea();
-        for (final Element oldChildren : descriptionArea.getElements()) {
+        for (final Element oldChildren : descriptionArea.getChildren()) {
             oldChildren.markForRemoval();
         }
 

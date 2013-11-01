@@ -82,7 +82,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
     private UpdateTask cleanToolTips = new UpdateTask() {
         @Override
         public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
-            for (final Element element : toolTipLayer.getElements()) {
+            for (final Element element : toolTipLayer.getChildren()) {
                 element.hide(new EndNotify() {
                     @Override
                     public void perform() {
@@ -156,7 +156,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
     }
 
     public boolean isTooltipActive() {
-        return !toolTipLayer.getElements().isEmpty();
+        return !toolTipLayer.getChildren().isEmpty();
     }
 
     private long count = Long.MIN_VALUE;

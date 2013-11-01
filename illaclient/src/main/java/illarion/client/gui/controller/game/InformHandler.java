@@ -137,7 +137,7 @@ public final class InformHandler implements InformGui, ScreenController {
         public void perform() {
             target.layoutElements();
 
-            if (target.getElements().isEmpty()) {
+            if (target.getChildren().isEmpty()) {
                 target.hide();
             }
         }

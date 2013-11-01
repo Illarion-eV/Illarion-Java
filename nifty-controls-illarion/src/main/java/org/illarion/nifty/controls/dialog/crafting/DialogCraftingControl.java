@@ -508,7 +508,8 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
 
             assert currentPanel != null;
             final Element currentImage = getIngredientImage(ingredientsPanel.getId(), currentPanel, i % 10);
-            applyImage(currentImage.getElements().get(0), selectedEntry.getIngredientImage(i), INGREDIENT_IMAGE_SIZE);
+            applyImage(currentImage.getChildren().get(0), selectedEntry.getIngredientImage(i),
+                    INGREDIENT_IMAGE_SIZE);
             showIngredientAmount(currentImage, selectedEntry.getIngredientAmount(i));
         }
 
@@ -525,7 +526,7 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
     }
 
     private boolean deleteIngredientPanel(@Nonnull final Element ingredientsPanel, final int index) {
-        final List<Element> elements = ingredientsPanel.getElements();
+        final List<Element> elements = ingredientsPanel.getChildren();
         if ((elements.size() - 1) >= index) {
             niftyInstance.removeElement(currentScreen, elements.get(index));
             return true;
@@ -535,7 +536,7 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
 
     @Nonnull
     private Element getIngredientPanel(@Nonnull final Element ingredientsPanel, final int index) {
-        final List<Element> elements = ingredientsPanel.getElements();
+        final List<Element> elements = ingredientsPanel.getChildren();
         if ((elements.size() - 1) >= index) {
             return elements.get(index);
         }
@@ -561,7 +562,7 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
 
     @Nonnull
     private Element getIngredientImage(final String parentId, @Nonnull final Element parentPanel, final int index) {
-        final List<Element> elements = parentPanel.getElements();
+        final List<Element> elements = parentPanel.getChildren();
         if ((elements.size() - 1) >= index) {
             return elements.get(index);
         }
@@ -592,7 +593,7 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
     }
 
     private void showIngredientAmount(@Nonnull final Element ingredientElement, @Nonnull final ItemCount count) {
-        final List<Element> elements = ingredientElement.getElements();
+        final List<Element> elements = ingredientElement.getChildren();
         if ((elements.size() > 2) || (elements.size() < 1)) {
             throw new InvalidParameterException("Something is wrong, parent element appears to be wrong.");
         }

@@ -298,7 +298,7 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
         if ((target.getConstraintHeight() != null) && "0px".equals(target.getConstraintHeight().toString())) {
             target.setVisible(false);
         } else {
-            for (final Element child : target.getElements()) {
+            for (final Element child : target.getChildren()) {
                 updateVisibilityOfElement(child);
             }
         }

@@ -97,7 +97,7 @@ public final class BookHandler implements BookGui, ScreenController, UpdatableHa
             return;
         }
 
-        for (final Element child : bookTextContent.getElements()) {
+        for (final Element child : bookTextContent.getChildren()) {
             child.markForRemoval();
         }
 
