@@ -33,7 +33,7 @@ sourceSets {
 archivesBaseName = 'illarion_engine_slick'
 dependencies {
 	compile project(':engine')
-    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.1'
+    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.+'
     compile group: 'org.newdawn', name: 'slick', version: '264'
     compile group: 'org.lwjgl.lwjgl', name: 'lwjgl', version: '2.8.5'
     compile group: 'org.lwjgl.lwjgl', name: 'lwjgl_util', version: '2.8.5'

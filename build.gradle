@@ -21,9 +21,6 @@ task wrapper(type: Wrapper) {
 }
 
 allprojects { project ->
-    project.sourceCompatibility = JavaVersion.VERSION_1_6
-    project.targetCompatibility = JavaVersion.VERSION_1_6
-
     if (project.hasProperty('targetRepo')) {
         project.ext.mavenRepo = "file://$targetRepo"
     } else {
@@ -35,8 +32,9 @@ allprojects { project ->
         def File rootDir = project.rootDir
         for (def gitCmd in ['git', 'git.cmd']) {
             try {
-                def proc = (gitCmd + ' describe --tags head').execute([], rootDir)
-                gitVersion = proc.in.readLines().get(0)
+                def proc = "$gitCmd describe --tags HEAD".execute(null as List, rootDir)
+                proc.waitFor()
+                gitVersion = proc.in.text
                 proc.destroy()
                 break
             } catch (e) {
@@ -69,6 +67,11 @@ buildscript {
 
 subprojects {
     project.group = 'org.illarion'
+
+    plugins.withType(JavaPlugin) {
+        project.sourceCompatibility = JavaVersion.VERSION_1_6
+        project.targetCompatibility = JavaVersion.VERSION_1_6
+    }
 
     repositories {
         mavenCentral()

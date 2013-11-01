@@ -23,7 +23,7 @@ archivesBaseName = 'nifty-controls-illarion'
 
 dependencies {
     compile project(':common')
-    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.1'
+    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.+'
     compile group: 'lessvoid', name: 'nifty', version: '1.4.0-SNAPSHOT'
     compile group: 'lessvoid', name: 'nifty-default-controls', version: '1.4.0-SNAPSHOT'
 }
