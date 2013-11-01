@@ -16,22 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Download Utility.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.download.util;
+package illarion.download.launcher;
 
 import org.apache.log4j.Logger;
 
 import javax.annotation.Nonnull;
 
 /**
- * This small utility class is used to detect the operating system and the
- * architecture of the current system and offer that information to the rest of
- * the application.
+ * This small utility class is used to detect the operating system and the architecture of the current system and
+ * offer that information to the rest of the application.
  *
  * @author Martin Karing
- * @version 1.00
- * @since 1.00
  */
-public final class OSDetection {
+final class OSDetection {
     /**
      * The internal constant for 32bit machines.
      */

@@ -16,64 +16,31 @@
  * You should have received a copy of the GNU General Public License
  * along with the Illarion Download Utility.  If not, see <http://www.gnu.org/licenses/>.
  */
-package illarion.download.tasks.launch;
+package illarion.download.launcher;
 
+import illarion.common.config.Config;
 import illarion.common.util.DirectoryManager;
-import illarion.download.install.resources.Resource;
-import illarion.download.install.resources.ResourceManager;
-import illarion.download.util.OSDetection;
+import illarion.common.util.Timer;
 import org.apache.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
- * The use of this class is to start a independent JVM that runs the chosen
- * application. This class requires calls that are system dependent.
+ * The use of this class is to start a independent JVM that runs the chosen application. This class requires calls
+ * that are system dependent.
  *
  * @author Martin Karing
- * @version 1.00
- * @since 1.00
  */
-public final class Launcher implements ActionListener {
+public final class JavaLauncher {
     /**
      * This instance of the logger takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(Launcher.class);
-    /**
-     * This set contains all arguments that need to be passed to the program once it was launched.
-     */
-    @Nonnull
-    private final Set<String> arguments;
-
-    /**
-     * The list of files that need to be added to the class path.
-     */
-    @Nonnull
-    private final Set<File> classPath;
-
-    /**
-     * This variable contains the resource to launch.
-     */
-    @Nullable
-    private final Resource resource;
-
-    /**
-     * This set contains all arguments that are passed to the virtual machine.
-     */
-    @Nonnull
-    private final Set<String> vmArguments;
-
-    @Nonnull
-    private final Timer launchTimer;
+    private static final Logger LOGGER = Logger.getLogger(JavaLauncher.class);
 
     private boolean cancelExecution;
 
@@ -89,49 +56,35 @@ public final class Launcher implements ActionListener {
     private String errorData;
 
     /**
-     * The constructor that launches the resource that is selected in the resource manager.
+     * The configuration that is required to setup the launcher properly.
      */
-    public Launcher() {
-        this(ResourceManager.getInstance().getMainResource());
-    }
+    @Nonnull
+    private final Config cfg;
+
+    @Nonnull
+    private final Timer launchTimer;
 
     /**
-     * The constructor and the possibility to select the resource that is supposed to be launched with this.
-     *
-     * @param resToLaunch the resource that is expected to be launched
+     * Construct a new launcher and set the classpath and the class to launch.
      */
     @SuppressWarnings("nls")
-    public Launcher(@Nullable final Resource resToLaunch) {
-        if (resToLaunch == null) {
-            throw new IllegalArgumentException("resToLaunch must not be NULL.");
-        }
-        if (!resToLaunch.isStartable()) {
-            throw new IllegalArgumentException("resToLaunch has to be startable.");
-        }
-        resource = resToLaunch;
+    public JavaLauncher(@Nonnull final Config cfg) {
+        this.cfg = cfg;
 
-        classPath = new HashSet<File>();
-        arguments = new HashSet<String>();
-        vmArguments = new HashSet<String>();
-
-        launchTimer = new Timer(10000, this);
-        launchTimer.stop();
-    }
-
-    /**
-     * Invoked when an action occurs.
-     */
-    @Override
-    public void actionPerformed(final ActionEvent e) {
-        cancelExecution = true;
-        launchTimer.stop();
-        if (outputReader != null) {
-            try {
-                outputReader.close();
-            } catch (IOException e1) {
-                // nothing
+        launchTimer = new Timer(10000, new Runnable() {
+            @Override
+            public void run() {
+                cancelExecution = true;
+                if (outputReader != null) {
+                    try {
+                        outputReader.close();
+                    } catch (IOException ignored) {
+                    }
+                }
             }
-        }
+        });
+        launchTimer.stop();
+        launchTimer.setRepeats(false);
     }
 
     /**
@@ -140,10 +93,9 @@ public final class Launcher implements ActionListener {
      * @return {@code true} in case launching the application was successful
      */
     @SuppressWarnings("nls")
-    public boolean launch() {
-        collectLaunchData(resource);
+    public boolean launch(@Nonnull final Collection<File> classpath, @Nonnull final String startupClass) {
 
-        final String classPathString = buildClassPathString();
+        final String classPathString = buildClassPathString(classpath);
 
         final StringBuilder builder = new StringBuilder();
         final List<String> callList = new ArrayList<String>();
@@ -156,9 +108,11 @@ public final class Launcher implements ActionListener {
         callList.add("-cp");
         callList.add(classPathString);
 
-        callList.addAll(vmArguments);
-        callList.add(resource.getLaunchClass());
-        callList.addAll(arguments);
+        if (cfg.getBoolean("snapshots")) {
+            callList.add("-Dillarion.server=devserver");
+        }
+
+        callList.add(startupClass);
 
         printCallList(callList);
 
@@ -178,43 +132,18 @@ public final class Launcher implements ActionListener {
     }
 
     /**
-     * This function is used to collect the data needed to launch the application properly. The first call of this
-     * function needs to be done with the main resource as this resource is the root of the dependency tree.
-     *
-     * @param currentRes the currently handled resource
-     */
-    private void collectLaunchData(@Nonnull final Resource currentRes) {
-        if (currentRes.getClassPath() != null) {
-            classPath.addAll(currentRes.getClassPath());
-        }
-        if (currentRes.getProgramArgument() != null) {
-            arguments.addAll(currentRes.getProgramArgument());
-        }
-        if (currentRes.getVMArguments() != null) {
-            vmArguments.addAll(currentRes.getVMArguments());
-        }
-        vmArguments.add("-Djava.net.preferIPv4Stack=true");
-
-        if (currentRes.getDependencies() != null) {
-            for (final Resource nextRes : currentRes.getDependencies()) {
-                collectLaunchData(nextRes);
-            }
-        }
-    }
-
-    /**
      * Build the class path string that contain a list of files pointing to each file needed to include to this
      * application.
      *
      * @return the string that represents the class path
      */
     @Nonnull
-    private String buildClassPathString() {
-        if (classPath.isEmpty()) {
-            return ""; //$NON-NLS-1$
+    private String buildClassPathString(@Nonnull final Collection<File> classpath) {
+        if (classpath.isEmpty()) {
+            return "";
         }
         final StringBuilder builder = new StringBuilder();
-        for (final File classPathFile : classPath) {
+        for (final File classPathFile : classpath) {
             builder.append(escapePath(classPathFile.getAbsolutePath()));
             builder.append(File.pathSeparatorChar);
         }
