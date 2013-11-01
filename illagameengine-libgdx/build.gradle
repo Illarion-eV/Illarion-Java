@@ -33,7 +33,7 @@ sourceSets {
 archivesBaseName = 'illarion_engine_libgdx'
 dependencies {
     compile project(':engine')
-    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.+'
+    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.2'
     compile group: 'com.badlogic.gdx', name: 'gdx', version: '0.9.9-SNAPSHOT'
     compile group: 'com.badlogic.gdx', name: 'gdx-backend-lwjgl', version: '0.9.9-SNAPSHOT'
 }

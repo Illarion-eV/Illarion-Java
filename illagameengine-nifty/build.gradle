@@ -23,7 +23,7 @@ archivesBaseName = 'illarion_engine_nifty'
 dependencies {
     compile project(':common')
     compile project(':engine')
-    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.+'
+    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.2'
     compile group: 'lessvoid', name: 'nifty', version: '1.4.0-SNAPSHOT'
 }
 
