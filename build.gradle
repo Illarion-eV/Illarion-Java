@@ -20,11 +20,17 @@ task wrapper(type: Wrapper) {
     gradleVersion = '1.8'
 }
 
-allprojects {
+allprojects { project ->
     project.sourceCompatibility = JavaVersion.VERSION_1_6
     project.targetCompatibility = JavaVersion.VERSION_1_6
 
-    task gitVersion {
+    if (project.hasProperty('targetRepo')) {
+        project.ext.mavenRepo = "file://$targetRepo"
+    } else {
+        project.ext.mavenRepo = "file://${project.buildDir}/repo"
+    }
+
+    task gitVersion { task ->
         def gitVersion = 'unknown'
         def File rootDir = project.rootDir
         for (def gitCmd in ['git', 'git.cmd']) {
@@ -45,8 +51,8 @@ allprojects {
             mainVersion = gitVersion.substring(0, indexOfSeparator) + '-SNAPSHOT'
         }
 
-        project.version = mainVersion
-        project.ext.fullVersion = gitVersion
+        task.project.version = mainVersion
+        task.project.ext.fullVersion = gitVersion
     }
 }
 

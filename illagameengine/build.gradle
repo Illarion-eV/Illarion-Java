@@ -57,7 +57,7 @@ publishing {
     }
     repositories {
         maven {
-            url "file://$buildDir/repo"
+            url project.ext.mavenRepo
         }
     }
 }
