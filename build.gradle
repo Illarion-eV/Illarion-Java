@@ -39,7 +39,8 @@ allprojects { project ->
                 gitVersion = proc.in.readLines().get(0)
                 proc.destroy()
                 break
-            } catch (ignored) {
+            } catch (e) {
+                logger.error('Failed to get version from Git', e)
             }
         }
 
