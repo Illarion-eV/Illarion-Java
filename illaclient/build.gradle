@@ -66,6 +66,10 @@ jar {
     }
 }
 
+run {
+    jvmArgs.add '-Dillarion.server=devserver'
+}
+
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava
 }
