@@ -99,7 +99,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
         parentNifty = nifty;
         parentScreen = screen;
 
-        toolTipLayer = screen.findElementByName("tooltipLayer");
+        toolTipLayer = screen.findElementById("tooltipLayer");
     }
 
     @Override

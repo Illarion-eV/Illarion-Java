@@ -943,6 +943,7 @@ public class ConfigSystem implements Config {
      *
      * @param key the key that was changed
      */
+    @SuppressWarnings("deprecation")
     private void reportChangedKey(final String key) {
         changed = true;
 

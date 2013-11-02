@@ -431,10 +431,10 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
         activeNifty = nifty;
         activeScreen = screen;
 
-        inventoryWindow = screen.findElementByName("inventory");
+        inventoryWindow = screen.findElementById("inventory");
 
         for (int i = 0; i < Inventory.SLOT_COUNT; i++) {
-            invSlots[i] = inventoryWindow.findElementByName(slots[i]);
+            invSlots[i] = inventoryWindow.findElementById(slots[i]);
         }
 
         inventoryWindow.setConstraintX(new SizeValue(IllaClient.getCfg().getString("inventoryPosX")));

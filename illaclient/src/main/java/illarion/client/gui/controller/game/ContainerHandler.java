@@ -539,7 +539,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
         builder.slotDim(35, 35);
         builder.containerId(itemContainer.getContainerId());
 
-        final Element container = builder.build(activeNifty, activeScreen, activeScreen.findElementByName("windows"));
+        final Element container = builder.build(activeNifty, activeScreen, activeScreen.findElementById("windows"));
         final org.illarion.nifty.controls.ItemContainer conControl = container.getNiftyControl(org.illarion.nifty.controls.ItemContainer.class);
 
         itemContainerMap.put(itemContainer.getContainerId(), conControl);

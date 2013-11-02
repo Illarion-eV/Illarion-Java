@@ -52,9 +52,9 @@ public final class CreditsMultiScreenController implements ScreenController, Key
         this.nifty = nifty;
         this.screen = screen;
 
-        displayParent = screen.findElementByName("nameDisplay");
+        displayParent = screen.findElementById("nameDisplay");
         titleLabel = displayParent.findNiftyControl("title", Label.class);
-        namesPanel = displayParent.findElementByName("names");
+        namesPanel = displayParent.findElementById("names");
     }
 
     @Override

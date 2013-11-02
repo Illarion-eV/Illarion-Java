@@ -234,7 +234,7 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
      * @param value the new value of the skill
      */
     private void internalUpdateSkill(@Nonnull final Skill skill, final int value) {
-        @Nullable final Element skillPanel = skillWindow.getElement().findElementByName("#skill" + skill.getId());
+        @Nullable final Element skillPanel = skillWindow.getElement().findElementById("#skill" + skill.getId());
         int SkillHeight = 18;
         if (skillPanel == null) {
             return;
@@ -252,12 +252,12 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
             }
             skillPanelWindowContent.setConstraintHeight(null);
             skillPanelWindowContent.setMarginBottom(SizeValue.px(5));
-            skillPanelWindowContent.findElementByName("#headline").setConstraintHeight(SizeValue.px(24));
+            skillPanelWindowContent.findElementById("#headline").setConstraintHeight(SizeValue.px(24));
         }
 
         skillPanel.setConstraintHeight(SizeValue.px(SkillHeight));
 
-        final Element valueLabel = skillPanel.findElementByName("#value");
+        final Element valueLabel = skillPanel.findElementById("#value");
         final TextRenderer valueTextRenderer = valueLabel.getRenderer(TextRenderer.class);
 
         final String newValue = Integer.toString(value);
@@ -265,12 +265,12 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
         valueTextRenderer.setText(newValue);
         valueLabel.setConstraintHeight(SizeValue.px(SkillHeight));
 
-        final Element nameLabel = skillPanel.findElementByName("#name");
+        final Element nameLabel = skillPanel.findElementById("#name");
         nameLabel.setConstraintHeight(SizeValue.px(SkillHeight));
         nameLabel.setMarginLeft(SizeValue.px(5));
 
         if (loginDone && skillChanged) {
-            screen.findElementByName("openSkillsBtn").startEffect(EffectEventId.onCustom, null, "pulse");
+            screen.findElementById("openSkillsBtn").startEffect(EffectEventId.onCustom, null, "pulse");
             final MapTile playerTile = World.getMap().getMapAt(World.getPlayer().getLocation());
             if (playerTile == null) {
                 LOGGER.error("Tile below the player is NULL?!");
@@ -290,7 +290,7 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
     private static final Logger LOGGER = Logger.getLogger(SkillsHandler.class);
 
     private void updateVisibility() {
-        final Element content = skillWindow.getElement().findElementByName("#textContent");
+        final Element content = skillWindow.getElement().findElementById("#textContent");
         updateVisibilityOfElement(content);
     }
 

@@ -287,7 +287,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         if (lastErrorCode > 0) {
             final Label errorText = popupError.findNiftyControl("#errorText", Label.class);
             errorText.setText(getErrorText(lastErrorCode));
-            nifty.showPopup(screen, popupError.getId(), popupError.findElementByName("#closeButton"));
+            nifty.showPopup(screen, popupError.getId(), popupError.findElementById("#closeButton"));
             popupIsVisible = true;
         } else {
             @Nullable final Screen charSelectScreen = nifty.getScreen("charSelect");

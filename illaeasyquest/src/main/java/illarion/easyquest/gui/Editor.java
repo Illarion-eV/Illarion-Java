@@ -247,7 +247,7 @@ public final class Editor extends mxGraphComponent {
         final Graph graph = new Graph();
         setup(graph);
         if (!quest.isEmpty()) {
-            final Document document = mxUtils.parseXml(quest);
+            final Document document = mxXmlUtils.parseXml(quest);
             final mxCodec codec = new mxCodec(document);
             codec.decode(document.getDocumentElement(), graph.getModel());
         }
@@ -264,7 +264,7 @@ public final class Editor extends mxGraphComponent {
         }
 
         final mxCodec codec = new mxCodec();
-        return mxUtils.getXml(codec.encode(getGraph().getModel()));
+        return mxXmlUtils.getXml(codec.encode(getGraph().getModel()));
     }
 
     @Nonnull

@@ -183,10 +183,10 @@ public final class InformHandler implements InformGui, ScreenController {
         parentNifty = nifty;
         parentScreen = screen;
 
-        broadcastParentPanel = screen.findElementByName("broadcastMsgPanel");
-        serverParentPanel = screen.findElementByName("serverMsgPanel");
-        textToParentPanel = screen.findElementByName("textToMsgPanel");
-        scriptParentPanel = screen.findElementByName("scriptMessagePanel");
+        broadcastParentPanel = screen.findElementById("broadcastMsgPanel");
+        serverParentPanel = screen.findElementById("serverMsgPanel");
+        textToParentPanel = screen.findElementById("textToMsgPanel");
+        scriptParentPanel = screen.findElementById("scriptMessagePanel");
     }
 
     @Override

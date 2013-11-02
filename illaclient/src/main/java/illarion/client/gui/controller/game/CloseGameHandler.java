@@ -89,9 +89,9 @@ public final class CloseGameHandler implements ScreenController, UpdatableHandle
     public void update(final GameContainer container, final int delta) {
         if (showDialog && !dialogActive) {
             parentNifty.showPopup(parentScreen, popup.getId(), null);
-            parentNifty.subscribe(parentScreen, popup.findElementByName("#closeYesButton").getId(),
+            parentNifty.subscribe(parentScreen, popup.findElementById("#closeYesButton").getId(),
                     ButtonClickedEvent.class, this);
-            parentNifty.subscribe(parentScreen, popup.findElementByName("#closeNoButton").getId(),
+            parentNifty.subscribe(parentScreen, popup.findElementById("#closeNoButton").getId(),
                     ButtonClickedEvent.class, this);
             dialogActive = true;
             showDialog = false;

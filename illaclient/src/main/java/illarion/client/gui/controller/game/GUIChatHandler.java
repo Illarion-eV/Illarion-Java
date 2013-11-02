@@ -427,7 +427,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
 
         dirty = false;
 
-        final Element contentPane = chatLog.getElement().findElementByName("chatLog");
+        final Element contentPane = chatLog.getElement().findElementById("chatLog");
 
         final int entryCount = contentPane.getChildren().size();
         for (int i = 0; i < (entryCount - 200); i++) {

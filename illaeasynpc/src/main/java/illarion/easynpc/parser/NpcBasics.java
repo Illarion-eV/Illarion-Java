@@ -490,9 +490,7 @@ public final class NpcBasics implements NpcType {
             final int y = Integer.parseInt(matcher.group(3));
             final int z = Integer.parseInt(matcher.group(4));
 
-            final Location loc = Location.getInstance();
-            loc.setSC(x, y, z);
-            npc.setNpcPos(loc);
+            npc.setNpcPos(new Location(x, y, z));
             return;
         }
 

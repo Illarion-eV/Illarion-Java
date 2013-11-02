@@ -473,7 +473,7 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
     @Override
     public void showInputDialog(final int id, final String title, final String description, final int maxCharacters,
                                 final boolean multipleLines) {
-        final Element parentArea = screen.findElementByName("windows");
+        final Element parentArea = screen.findElementById("windows");
         final DialogInputBuilder builder = new DialogInputBuilder("inputDialog" + Integer.toString(id), title);
         builder.description(description);
         builder.buttonLeft("OK");
@@ -490,7 +490,7 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
 
     @Override
     public void showMessageDialog(final int id, final String title, final String message) {
-        final Element parentArea = screen.findElementByName("windows");
+        final Element parentArea = screen.findElementById("windows");
         final DialogMessageBuilder builder = new DialogMessageBuilder("msgDialog" + Integer.toString(id), title);
         builder.text(message);
         builder.button("OK");
@@ -527,7 +527,7 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
     }
 
     private void closeDialog(@Nonnull final CloseDialogEvent event) {
-        final Element parentArea = screen.findElementByName("windows");
+        final Element parentArea = screen.findElementById("windows");
 
         if (event.isClosingDialogType(CloseDialogEvent.DialogType.Merchant)) {
             if (event.getDialogId() == merchantDialog.getDialogId()) {

@@ -51,7 +51,7 @@ public final class CreditsSinglesScreenController implements ScreenController, K
     public void bind(final Nifty nifty, @Nonnull final Screen screen) {
         this.nifty = nifty;
 
-        displayParent = screen.findElementByName("nameDisplay");
+        displayParent = screen.findElementById("nameDisplay");
         titleLabel = displayParent.findNiftyControl("title", Label.class);
         nameLabel = displayParent.findNiftyControl("name", Label.class);
     }

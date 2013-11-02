@@ -135,7 +135,7 @@ public final class NumberSelectPopupHandler implements ScreenController {
         cancelActivePopup();
 
         activePopup = parentNifty.createPopup("numberSelect");
-        parentNifty.showPopup(parentScreen, activePopup.getId(), activePopup.findElementByName("#numberInput"));
+        parentNifty.showPopup(parentScreen, activePopup.getId(), activePopup.findElementById("#numberInput"));
         activeCallback = callback;
         maxNumber = maxValue;
         minNumber = minValue;

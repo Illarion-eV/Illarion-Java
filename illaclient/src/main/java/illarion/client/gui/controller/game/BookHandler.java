@@ -62,7 +62,7 @@ public final class BookHandler implements BookGui, ScreenController, UpdatableHa
         this.screen = screen;
 
         bookDisplay = screen.findNiftyControl("book", Window.class);
-        bookTextContent = bookDisplay.getElement().findElementByName("#textContent");
+        bookTextContent = bookDisplay.getElement().findElementById("#textContent");
         bookScrollArea = bookDisplay.getElement().findNiftyControl("#scrollArea", ScrollPanel.class);
         pageNumberLabel = bookDisplay.getElement().findNiftyControl("#pageNumber", Label.class);
 
@@ -162,14 +162,14 @@ public final class BookHandler implements BookGui, ScreenController, UpdatableHa
 
         bookDisplay.getElement().show();
 
-        final Element nextButton = bookDisplay.getElement().findElementByName("book#buttonNext");
+        final Element nextButton = bookDisplay.getElement().findElementById("book#buttonNext");
         if ((showPage + 1) < getTotalPageCount()) {
             nextButton.show();
         } else {
             nextButton.hide();
         }
 
-        final Element backButton = bookDisplay.getElement().findElementByName("book#buttonBack");
+        final Element backButton = bookDisplay.getElement().findElementById("book#buttonBack");
         if (showPage > 0) {
             backButton.show();
         } else {

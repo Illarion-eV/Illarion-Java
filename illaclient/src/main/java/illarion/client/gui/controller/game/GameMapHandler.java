@@ -340,9 +340,9 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
     public void bind(final Nifty nifty, @Nonnull final Screen screen) {
         activeNifty = nifty;
         activeScreen = screen;
-        gamePanel = screen.findElementByName("gamePanel");
-        draggedGraphic = gamePanel.findElementByName("mapDragObject");
-        draggedImage = draggedGraphic.findElementByName("mapDragImage");
+        gamePanel = screen.findElementById("gamePanel");
+        draggedGraphic = gamePanel.findElementById("mapDragObject");
+        draggedImage = draggedGraphic.findElementById("mapDragImage");
         endOfDragOp = new GameMapDragEndOperation(draggedGraphic, gamePanel);
     }
 

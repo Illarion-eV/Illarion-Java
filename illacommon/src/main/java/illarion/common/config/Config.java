@@ -161,6 +161,7 @@ public interface Config {
      *
      * @param listener the listener to remove
      */
+    @Deprecated
     void removeListener(ConfigChangeListener listener);
 
     /**
@@ -170,6 +171,7 @@ public interface Config {
      * @param key      the key the listener is supposed to be removed from
      * @param listener the listener to remove
      */
+    @Deprecated
     void removeListener(String key, ConfigChangeListener listener);
 
     /**
