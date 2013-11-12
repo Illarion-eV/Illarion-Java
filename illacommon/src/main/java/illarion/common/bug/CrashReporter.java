@@ -166,7 +166,7 @@ public final class CrashReporter {
         final Calendar cal = Calendar.getInstance();
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         final String dateStr = sdf.format(cal.getTime());
-        final File target = new File(DirectoryManager.getInstance().getUserDirectory(), "crash_" + dateStr + ".dump");
+        final File target = new File(DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User), "crash_" + dateStr + ".dump");
 
         ObjectOutputStream oOut = null;
         try {
@@ -220,7 +220,7 @@ public final class CrashReporter {
         if ("NoClassDefFoundError".equals(crash.getExceptionName())) {
             try {
                 //noinspection ResultOfMethodCallIgnored
-                new File(DirectoryManager.getInstance().getDataDirectory(), "corrupted").createNewFile();
+                new File(DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.Data), "corrupted").createNewFile();
             } catch (@Nonnull final IOException e) {
                 LOGGER.error("Failed to mark data as corrupted.");
             }

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="illarion.download.gui.controller.ApplicationController"
+        fx:id="rootPane">
+    <children>
+        <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                    AnchorPane.topAnchor="0.0">
+            <bottom>
+                <AnchorPane fx:id="footer" />
+            </bottom>
+            <center>
+                <AnchorPane fx:id="content" />
+            </center>
+            <top>
+                <BorderPane>
+                    <right>
+                        <HBox>
+                            <children>
+                                <Button mnemonicParsing="false" text="%account" onAction="#gotoAccount" />
+                                <Button mnemonicParsing="false" text="%options" />
+                                <Button alignment="TOP_LEFT" contentDisplay="GRAPHIC_ONLY" maxHeight="24.0"
+                                        maxWidth="24.0" minHeight="24.0" minWidth="24.0" mnemonicParsing="false"
+                                        onAction="#minimize">
+                                    <graphic>
+                                        <Polygon fill="BLACK" scaleX="4.0" scaleY="4.0" translateY="15.0">
+                                            <points>
+                                                <Double fx:value="0.5" /><Double fx:value="0.0" />
+                                                <Double fx:value="3.5" /><Double fx:value="0.0" />
+                                                <Double fx:value="3.5" /><Double fx:value="1.0" />
+                                                <Double fx:value="0.5" /><Double fx:value="1.0" />
+                                            </points>
+                                        </Polygon>
+                                    </graphic>
+                                </Button>
+                                <Button alignment="TOP_LEFT" contentDisplay="GRAPHIC_ONLY" maxHeight="24.0"
+                                        maxWidth="24.0" minHeight="24.0" minWidth="24.0" mnemonicParsing="false"
+                                        styleClass="closeButton" onAction="#close">
+                                    <graphic>
+                                        <Polygon fill="#330000" scaleX="4.0" scaleY="4.0" translateY="8.0"
+                                                 stroke="#660000" strokeType="INSIDE" strokeWidth="1">
+                                            <points>
+                                                <Double fx:value="0.0" /><Double fx:value="1.0" />
+                                                <Double fx:value="1.0" /><Double fx:value="0.0" />
+                                                <Double fx:value="2.0" /><Double fx:value="1.0" />
+                                                <Double fx:value="3.0" /><Double fx:value="0.0" />
+                                                <Double fx:value="4.0" /><Double fx:value="1.0" />
+                                                <Double fx:value="3.0" /><Double fx:value="2.0" />
+                                                <Double fx:value="4.0" /><Double fx:value="3.0" />
+                                                <Double fx:value="3.0" /><Double fx:value="4.0" />
+                                                <Double fx:value="2.0" /><Double fx:value="3.0" />
+                                                <Double fx:value="1.0" /><Double fx:value="4.0" />
+                                                <Double fx:value="0.0" /><Double fx:value="3.0" />
+                                                <Double fx:value="1.0" /><Double fx:value="2.0" />
+                                            </points>
+                                        </Polygon>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </HBox>
+                    </right>
+                </BorderPane>
+            </top>
+            <left/>
+        </BorderPane>
+    </children>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+</AnchorPane>

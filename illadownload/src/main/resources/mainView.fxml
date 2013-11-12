@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml/">
+    <children>
+        <BorderPane fx:id="content">
+            <left>
+                <VBox alignment="BOTTOM_CENTER" spacing="10.0">
+                    <children>
+                        <AnchorPane>
+                            <children>
+                                <Button alignment="TOP_LEFT" mnemonicParsing="false" text="%launchEasyNpc"
+                                        textAlignment="CENTER" AnchorPane.bottomAnchor="0.0"
+                                        AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                                        AnchorPane.topAnchor="0.0" />
+                            </children>
+                        </AnchorPane>
+                        <AnchorPane>
+                            <children>
+                                <Button mnemonicParsing="false" text="%launchEasyQuest" textAlignment="CENTER"
+                                        AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                        AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                            </children>
+                        </AnchorPane>
+                        <AnchorPane>
+                            <children>
+                                <Button mnemonicParsing="false" text="%launchMapEdit" textAlignment="CENTER"
+                                        AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                        AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                            </children>
+                        </AnchorPane>
+                    </children>
+                    <BorderPane.margin>
+                        <Insets bottom="20.0" />
+                    </BorderPane.margin>
+                </VBox>
+            </left>
+        </BorderPane>
+        <BorderPane fx:id="footer">
+            <right>
+                <AnchorPane>
+                    <children>
+                        <Button mnemonicParsing="false" text="%launchClient" textAlignment="CENTER"
+                                AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                    </children>
+                    <BorderPane.margin>
+                        <Insets left="20.0" />
+                    </BorderPane.margin>
+                </AnchorPane>
+            </right>
+            <center>
+                <VBox spacing="5.0">
+                    <children>
+                        <AnchorPane>
+                            <children>
+                                <ProgressBar prefHeight="30.0" progress="0.0" AnchorPane.bottomAnchor="0.0"
+                                             AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                                             AnchorPane.topAnchor="0.0" />
+                            </children>
+                        </AnchorPane>
+                        <AnchorPane>
+                            <children>
+                                <Label text="Updates werden heruntergeladen." textAlignment="LEFT"
+                                       textOverrun="ELLIPSIS" AnchorPane.bottomAnchor="0.0"
+                                       AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                                       AnchorPane.topAnchor="0.0" />
+                            </children>
+                        </AnchorPane>
+                    </children>
+                </VBox>
+            </center>
+        </BorderPane>
+    </children>
+</AnchorPane>

@@ -180,7 +180,7 @@ public final class Player {
      */
     @SuppressWarnings("nls")
     public Player(@Nonnull final Engine engine, @Nonnull final String charName) {
-        path = new File(DirectoryManager.getInstance().getUserDirectory(), charName);
+        path = new File(DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User), charName);
         chatLog = new ChatLog(path);
 
         character = new Char();

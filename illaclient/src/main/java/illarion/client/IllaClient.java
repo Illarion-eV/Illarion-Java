@@ -55,7 +55,6 @@ import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
-import java.util.Timer;
 
 /**
  * Main Class of the Illarion Client, this loads up the whole game and runs the main loop of the Illarion Client.
@@ -328,7 +327,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      * @return the full path to a file
      */
     public static String getFile(final String name) {
-        return new File(DirectoryManager.getInstance().getUserDirectory(), name).getAbsolutePath();
+        return new File(DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User), name).getAbsolutePath();
     }
 
     /**
@@ -427,13 +426,13 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      */
     @SuppressWarnings("nls")
     private static String checkFolder() {
-        if (!DirectoryManager.getInstance().hasUserDirectory()) {
+        if (!DirectoryManager.getInstance().isDirectorySet(DirectoryManager.Directory.User)) {
             JOptionPane.showMessageDialog(null, "Installation ist fehlerhaft. Bitte neu ausführen.\n\n" +
                     "Installation is corrupted, please run it again.", "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(-1);
         }
 
-        final File userDirectory = DirectoryManager.getInstance().getUserDirectory();
+        final File userDirectory = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
         assert userDirectory != null;
         return userDirectory.getAbsolutePath();
     }

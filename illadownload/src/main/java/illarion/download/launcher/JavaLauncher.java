@@ -192,7 +192,7 @@ public final class JavaLauncher {
     private boolean launchCallList(final List<String> callList) {
         try {
             final ProcessBuilder pBuilder = new ProcessBuilder(callList);
-            pBuilder.directory(DirectoryManager.getInstance().getUserDirectory());
+            pBuilder.directory(DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User));
             pBuilder.redirectErrorStream(true);
             final Process proc = pBuilder.start();
             proc.getOutputStream().close();

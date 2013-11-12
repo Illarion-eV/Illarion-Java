@@ -230,7 +230,7 @@ public class MapEditorConfig {
      *         set
      */
     private static String checkFolder() {
-        if (!DirectoryManager.getInstance().hasUserDirectory()) {
+        if (!DirectoryManager.getInstance().isDirectorySet(DirectoryManager.Directory.User)) {
             SplashScreen.getInstance().setVisible(false);
             JOptionPane.showMessageDialog(null,
                     "Installation ist fehlerhaft. Bitte neu ausführen.\n\n"
@@ -239,7 +239,7 @@ public class MapEditorConfig {
             System.exit(-1);
         }
 
-        final File userDir = DirectoryManager.getInstance().getUserDirectory();
+        final File userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
         assert userDir != null;
         return userDir.getAbsolutePath();
     }

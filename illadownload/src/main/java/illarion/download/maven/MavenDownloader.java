@@ -165,7 +165,7 @@ public class MavenDownloader {
                 cfg.getBoolean("snapshots")));
         repositories.add(setupRepository("libgdx", "http://libgdx.badlogicgames.com/nightlies/maven", true));
 
-        LocalRepository localRepo = new LocalRepository(DirectoryManager.getInstance().getDataDirectory());
+        LocalRepository localRepo = new LocalRepository(DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.Data));
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
     }
 

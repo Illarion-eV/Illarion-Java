@@ -13,7 +13,7 @@ import java.util.Collection;
  */
 public class Download {
     public static void main(final String[] args) {
-        final ConfigSystem cfg = new ConfigSystem(new File(DirectoryManager.getInstance().getUserDirectory(),
+        final ConfigSystem cfg = new ConfigSystem(new File(DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User),
                 "download.xcfgz"));
         cfg.setDefault("snapshots", true);
 

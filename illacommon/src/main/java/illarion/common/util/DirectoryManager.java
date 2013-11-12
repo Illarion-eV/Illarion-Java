@@ -21,19 +21,54 @@ package illarion.common.util;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;
+import java.security.CodeSource;
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
- * This class is used to manage the global directory manager that takes care for
- * the directories the manager needs to use.
+ * This class is used to manage the global directory manager that takes care for the directories the applications need
+ * to use.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class DirectoryManager {
     /**
-     * This header is used to identify the application directory in the folder
-     * configuration file.
+     * The enumeration of directories that are managed by this manager.
      */
-    private static final String APP_HEADER = "App:"; //$NON-NLS-1$
+    public enum Directory {
+        /**
+         * The user directory that stores the user related data like log files, character data and settings.
+         */
+        User("User:", "usr"),
+
+        /**
+         * The data directory that stores the application binary data required to launch the applications.
+         */
+        Data("App:", "bin");
+
+        /**
+         * The header of this directory identifier.
+         */
+        private final String header;
+
+        /**
+         * The default name for the directory.
+         */
+        private final String defaultDir;
+
+        private Directory(@Nonnull final String header, @Nonnull final String defaultDir) {
+            this.header = header;
+            this.defaultDir = defaultDir;
+        }
+
+        protected String getHeader() {
+            return header;
+        }
+
+        public String getDefaultDir() {
+            return defaultDir;
+        }
+    }
 
     /**
      * The singleton instance of this class.
@@ -41,16 +76,16 @@ public final class DirectoryManager {
     private static final DirectoryManager INSTANCE = new DirectoryManager();
 
     /**
-     * This header is used to identify the user directory in the folder
-     * configuration file.
+     * The assignment of the directory identifiers and the actual directory.
      */
-    private static final String USER_HEADER = "User:"; //$NON-NLS-1$
+    @Nonnull
+    private final Map<Directory, File> directories;
 
     /**
-     * The directory that stores the application data (so the *.jar files)
+     * The relative flags of each directory.
      */
-    @Nullable
-    private File dataDirectory;
+    @Nonnull
+    private final Map<Directory, Boolean> relativeDirectory;
 
     /**
      * This flag is set <code>true</code> in case the directories got changed
@@ -59,20 +94,72 @@ public final class DirectoryManager {
     private boolean dirty;
 
     /**
-     * The directory that stores the user data.
+     * This variable stores the result of the test if relative directory references are possible at all.
+     */
+    private boolean relativeDirectoryPossible;
+
+    /**
+     * The detected working directory.
      */
     @Nullable
-    private File userDirectory;
+    private File workingDirectory;
 
     /**
      * Private constructor to ensure that only the singleton instance exists.
      */
     @SuppressWarnings("nls")
     private DirectoryManager() {
-        final String userPath =
-                System.getProperty("user.home") + File.separator + ".illarion";
+        directories = new EnumMap<Directory, File>(Directory.class);
+        relativeDirectory = new EnumMap<Directory, Boolean>(Directory.class);
 
-        final File settingsFile = new File(userPath);
+        testRelativeDirectorySupport();
+
+        fetchRelativeDirectories();
+        fetchAbsoluteDirectories();
+    }
+
+    /**
+     * Detect if its possible to use a relative directory reference. And if its possible also locate the working
+     * directory or rather the location of the executed JAR file.
+     */
+    private void testRelativeDirectorySupport() {
+        if (EnvironmentDetect.isWebstart()) {
+            relativeDirectoryPossible = false;
+        } else {
+            final File workingDir;
+            final CodeSource codeSource = DirectoryManager.class.getProtectionDomain().getCodeSource();
+            if (codeSource != null) {
+                workingDir = new File(codeSource.getLocation().getPath());
+            } else {
+                workingDir = new File("");
+            }
+
+            relativeDirectoryPossible = testDirectory(workingDir);
+            if (relativeDirectoryPossible) {
+                workingDirectory = workingDir;
+            }
+        }
+    }
+
+    /**
+     * Check if it is possible to set a directory to be relative to the executed JAR file.
+     *
+     * @return {@code true} in case a relative directory is possible
+     */
+    public boolean isRelativeDirectoryPossible() {
+        return relativeDirectoryPossible;
+    }
+
+    /**
+     * Fetch the directories that are set to be located relative to the launched file. This only works in case the
+     * application was not launched as applet and not launched as webstart application.
+     */
+    private void fetchRelativeDirectories() {
+        if (!hasMissingDirectory() || !isRelativeDirectoryPossible()) {
+            return;
+        }
+
+        final File settingsFile = new File(workingDirectory, ".illarion");
 
         if (!settingsFile.exists() || !settingsFile.isFile()) {
             return;
@@ -80,42 +167,77 @@ public final class DirectoryManager {
 
         BufferedReader inFile = null;
         try {
-            File testDir = null;
             inFile = new BufferedReader(new FileReader(settingsFile));
             String line = inFile.readLine();
 
             while (line != null) {
-                if (line.startsWith(USER_HEADER)) {
-                    testDir = new File(line.substring(USER_HEADER.length()));
-                    if (testDirectory(testDir)) {
-                        userDirectory = testDir;
-                    }
-                } else if (line.startsWith(APP_HEADER)) {
-                    testDir = new File(line.substring(APP_HEADER.length()));
-                    if (testDirectory(testDir)) {
-                        dataDirectory = testDir;
-                    }
-                } else {
-                    if (userDirectory == null) {
-                        testDir = new File(line);
+                for (final Directory dir : Directory.values()) {
+                    if (line.startsWith(dir.getHeader())) {
+                        final File testDir = new File(dir.getDefaultDir());
                         if (testDirectory(testDir)) {
-                            userDirectory = testDir;
+                            directories.put(dir, testDir);
+                            relativeDirectory.put(dir, Boolean.TRUE);
                         }
                     }
                 }
                 line = inFile.readLine();
             }
-        } catch (@Nonnull final FileNotFoundException e) {
-            return;
-        } catch (@Nonnull final IOException e) {
-            return;
+        } catch (@Nonnull final FileNotFoundException ignored) {
+        } catch (@Nonnull final IOException ignored) {
         } finally {
-            try {
-                if (inFile != null) {
-                    inFile.close();
+            closeSilently(inFile);
+        }
+    }
+
+    /**
+     * Fetch the directories that are set to be located on a absolute location on the file system. The settings
+     * depend on the logged in user.
+     */
+    private void fetchAbsoluteDirectories() {
+        if (!hasMissingDirectory()) {
+            return;
+        }
+
+        final File settingsFile = new File(System.getProperty("user.home"), ".illarion");
+
+        if (!settingsFile.exists() || !settingsFile.isFile()) {
+            return;
+        }
+
+        BufferedReader inFile = null;
+        try {
+            inFile = new BufferedReader(new FileReader(settingsFile));
+            String line = inFile.readLine();
+
+            while (line != null) {
+                for (final Directory dir : Directory.values()) {
+                    if (line.startsWith(dir.getHeader())) {
+                        final File testDir = new File(line.substring(dir.getHeader().length()));
+                        if (testDirectory(testDir)) {
+                            directories.put(dir, testDir);
+                            relativeDirectory.put(dir, Boolean.FALSE);
+                        }
+                    }
                 }
-            } catch (@Nonnull final IOException e) {
-                return;
+                line = inFile.readLine();
+            }
+        } catch (@Nonnull final FileNotFoundException ignored) {
+        } catch (@Nonnull final IOException ignored) {
+        } finally {
+            closeSilently(inFile);
+        }
+    }
+
+    /**
+     * Close a closeable object in any case. This function silently catches all possible problems.
+     *
+     * @param closeable the closeable to close, if this si {@code null} the function does nothing
+     */
+    private static void closeSilently(@Nullable final Closeable closeable) {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            } catch (@Nonnull final IOException ignored) {
             }
         }
     }
@@ -131,136 +253,206 @@ public final class DirectoryManager {
     }
 
     /**
-     * Get the directory that is used to store the application data for the
-     * Illarion Java applications.
+     * Get the location of the specified directory in the local file system.
      *
-     * @return the directory or <code>null</code> in case there is no directory
-     *         set
+     * @param dir the directory
+     * @return the location of the directory in the local file system or {@code null} in case the directory is not set
      */
     @Nullable
-    public File getDataDirectory() {
-        return dataDirectory;
+    public File getDirectory(@Nonnull final Directory dir) {
+        return directories.get(dir);
     }
 
     /**
-     * Get the directory for the user data.
+     * Check if a directory has a absolute location in the file system or is placed relative to the executed JAR file.
      *
-     * @return the directory for the user data or <code>null</code> in case its
-     *         not set
+     * @param dir the directory
+     * @return {@code true} if the directory is set as relative directory
      */
-    @Nullable
-    public File getUserDirectory() {
-        return userDirectory;
+    public boolean isDirectoryRelative(@Nonnull final Directory dir) {
+        if (isRelativeDirectoryPossible()) {
+            final Boolean relative = relativeDirectory.get(dir);
+            if (relative == null) {
+                return false;
+            }
+            return relative;
+        }
+        return false;
     }
 
     /**
-     * Check if a application data directory is set.
+     * Check if the reference to the local file system is set for a directory.
      *
-     * @return <code>true</code> in case the application data directory is set
+     * @param dir the directory to check
+     * @return {@code true} if the directory is set
      */
-    public boolean hasDataDirectory() {
-        return (dataDirectory != null);
+    public boolean isDirectorySet(@Nonnull final Directory dir) {
+        return directories.get(dir) != null;
     }
 
     /**
-     * Check if a user directory is set.
+     * Check if one of the required directories are missing.
      *
-     * @return <code>true</code> in case a user directory is set
+     * @return {@code true} in case one of the directories is not set
      */
-    public boolean hasUserDirectory() {
-        return (userDirectory != null);
+    public boolean hasMissingDirectory() {
+        for (@Nonnull final Directory dir : Directory.values()) {
+            if (!isDirectorySet(dir)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Store the directories that are set to be absolute.
+     *
+     * @throws IOException in case saving the directory fails for any reason
+     */
+    private void saveAbsolute() throws IOException {
+        final File settingsFile = new File(System.getProperty("user.home"), ".illarion");
+
+        if (settingsFile.exists()) {
+            if (!settingsFile.delete()) {
+                throw new IOException("Failed to remove old settings file.");
+            }
+        }
+
+        boolean foundAbsoluteDirectory = false;
+        for (@Nonnull final Directory dir : Directory.values()) {
+            if (isDirectorySet(dir) && !isDirectoryRelative(dir)) {
+                foundAbsoluteDirectory = true;
+                break;
+            }
+        }
+
+        if (foundAbsoluteDirectory) {
+            BufferedWriter writer = null;
+            try {
+                writer = new BufferedWriter(new FileWriter(settingsFile));
+
+                for (@Nonnull final Directory dir : Directory.values()) {
+                    if (isDirectorySet(dir) && !isDirectoryRelative(dir)) {
+                        writer.write(dir.getHeader());
+                        //null condition checked by isDirectorySet
+                        //noinspection ConstantConditions
+                        writer.write(getDirectory(dir).getAbsolutePath());
+                        writer.newLine();
+                    }
+                }
+                writer.flush();
+            } finally {
+                closeSilently(writer);
+            }
+        }
+    }
+
+    /**
+     * Save the directories that have a relative local.
+     *
+     * @throws IOException in case anything goes wrong at saving this settings
+     */
+    private void saveRelative() throws IOException {
+        if (!isRelativeDirectoryPossible()) {
+            return;
+        }
+        final File settingsFile = new File(workingDirectory, ".illarion");
+
+        if (settingsFile.exists()) {
+            if (!settingsFile.delete()) {
+                throw new IOException("Failed to remove old settings file.");
+            }
+        }
+
+        boolean foundRelativeDirectory = false;
+        for (@Nonnull final Directory dir : Directory.values()) {
+            if (isDirectoryRelative(dir)) {
+                foundRelativeDirectory = true;
+                break;
+            }
+        }
+
+        if (foundRelativeDirectory) {
+            BufferedWriter writer = null;
+            try {
+                writer = new BufferedWriter(new FileWriter(settingsFile));
+
+                for (@Nonnull final Directory dir : Directory.values()) {
+                    if (isDirectoryRelative(dir)) {
+                        writer.write(dir.getHeader());
+                        writer.newLine();
+                    }
+                }
+                writer.flush();
+            } finally {
+                closeSilently(writer);
+            }
+        }
     }
 
     /**
      * Save the directory settings to the hard disk.
      *
-     * @return <code>true</code> in case the saving operation went well
+     * @return {@code true} in case the saving operation went well
      */
     @SuppressWarnings("nls")
     public boolean save() {
         if (!dirty) {
             return true;
         }
-        final String userPath =
-                System.getProperty("user.home") + File.separator + ".illarion";
 
-        final File settingsFile = new File(userPath);
-
-        if (settingsFile.exists()) {
-            if (!settingsFile.isFile() || !settingsFile.canWrite()) {
-                return false;
-            } else if (!settingsFile.delete()) {
-                return false;
-            }
-        }
-
-        BufferedWriter writer = null;
         try {
-            writer = new BufferedWriter(new FileWriter(settingsFile));
-            if (userDirectory != null) {
-                writer.write(userDirectory.getAbsolutePath());
-                writer.write("\n");
-                writer.write(USER_HEADER);
-                writer.write(userDirectory.getAbsolutePath());
-                writer.write("\n");
-            }
-            if (dataDirectory != null) {
-                writer.write(APP_HEADER);
-                writer.write(dataDirectory.getAbsolutePath());
-            }
-
-            writer.flush();
-        } catch (@Nonnull final IOException e) {
+            saveRelative();
+            saveAbsolute();
+        } catch (@Nonnull final Exception e) {
             return false;
-        } finally {
-            try {
-                if (writer != null) {
-                    writer.close();
-                }
-            } catch (@Nonnull final IOException e) {
-                return false;
-            }
         }
+
         dirty = false;
 
         return true;
     }
 
     /**
-     * Set a application directory. This causes the directory manager to check
-     * if the directory is valid or not. In case its not the directory won't be
-     * set.
+     * Set the file system reference of a directory.
      *
-     * @param dir the directory that is supposed to be the new application data
-     *            directory
+     * @param dir the directory
+     * @param location the local of the directory in the local file system
      */
-    public void setDataDirectory(@Nonnull final File dir) {
-        if (testDirectory(dir) && !dir.equals(dataDirectory)) {
-            dataDirectory = dir;
+    public void setDirectory(@Nonnull final Directory dir, @Nonnull final File location) {
+        if (testDirectory(location) && !location.equals(getDirectory(dir))) {
+            directories.put(dir, location);
+            relativeDirectory.put(dir, Boolean.FALSE);
             dirty = true;
         }
     }
 
     /**
-     * Set a user directory. This causes the directory manager to check if the
-     * directory is valid or not. In case its not the directory won't be set.
+     * Set a directory to be stored relative to the executed JAR file.
      *
-     * @param dir the directory that is supposed to be the new user directory
+     * @param dir the directory to handle relative
      */
-    public void setUserDirectory(@Nonnull final File dir) {
-        if (testDirectory(dir) && !dir.equals(userDirectory)) {
-            userDirectory = dir;
-            dirty = true;
+    public void setDirectoryRelative(@Nonnull final Directory dir) {
+        if (!isRelativeDirectoryPossible()) {
+            throw new IllegalStateException(
+                    "Can't set directories relative while relative directories are not possible.");
+        }
+        if (!isDirectoryRelative(dir)) {
+            final File testDir = new File(dir.getDefaultDir());
+            if (testDirectory(testDir)) {
+                directories.put(dir, testDir);
+                relativeDirectory.put(dir, Boolean.TRUE);
+                dirty = true;
+            }
         }
     }
 
     /**
-     * This function is used to test if a file objects points to any existing
-     * directory. Also the function will test if this directory is usable for
-     * all required operations.
+     * This function is used to test if a file objects points to any existing directory. Also the function will test
+     * if this directory is usable for all required operations.
      *
      * @param dir the object to test
-     * @return <code>true<code> in case the object points to a existing directory
+     * @return {@code true} in case the object points to a existing directory
      */
     private static boolean testDirectory(@Nullable final File dir) {
         if (dir == null) {

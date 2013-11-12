@@ -119,7 +119,7 @@ public final class Config implements ConfigChangeListener {
      */
     @SuppressWarnings("nls")
     private static String checkFolder() {
-        if (!DirectoryManager.getInstance().hasUserDirectory()) {
+        if (!DirectoryManager.getInstance().isDirectorySet(DirectoryManager.Directory.User)) {
             JOptionPane.showMessageDialog(null,
                     "Installation ist fehlerhaft. Bitte neu ausführen.\n\n"
                             + "Installation is corrupted, please run it again.",
@@ -127,8 +127,7 @@ public final class Config implements ConfigChangeListener {
             System.exit(-1);
         }
 
-        return DirectoryManager.getInstance().getUserDirectory()
-                .getAbsolutePath();
+        return DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User).getAbsolutePath();
     }
 
     /**

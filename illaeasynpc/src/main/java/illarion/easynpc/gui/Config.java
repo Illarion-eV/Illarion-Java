@@ -221,13 +221,13 @@ public final class Config {
     @SuppressWarnings("nls")
     @Nonnull
     private static String checkFolder() {
-        if (!DirectoryManager.getInstance().hasUserDirectory()) {
+        if (!DirectoryManager.getInstance().isDirectorySet(DirectoryManager.Directory.User)) {
             JOptionPane.showMessageDialog(null, "Installation ist fehlerhaft. Bitte neu ausführen.\n\n"
                     + "Installation is corrupted, please run it again.", "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(-1);
         }
 
-        final File userDir = DirectoryManager.getInstance().getUserDirectory();
+        final File userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
         assert userDir != null;
         return userDir.getAbsolutePath();
     }
