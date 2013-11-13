@@ -22,44 +22,13 @@
                     <right>
                         <HBox>
                             <children>
-                                <Button mnemonicParsing="false" text="%account" onAction="#gotoAccount" />
-                                <Button mnemonicParsing="false" text="%options" />
-                                <Button alignment="TOP_LEFT" contentDisplay="GRAPHIC_ONLY" maxHeight="24.0"
-                                        maxWidth="24.0" minHeight="24.0" minWidth="24.0" mnemonicParsing="false"
-                                        onAction="#minimize">
-                                    <graphic>
-                                        <Polygon fill="BLACK" scaleX="4.0" scaleY="4.0" translateY="15.0">
-                                            <points>
-                                                <Double fx:value="0.5" /><Double fx:value="0.0" />
-                                                <Double fx:value="3.5" /><Double fx:value="0.0" />
-                                                <Double fx:value="3.5" /><Double fx:value="1.0" />
-                                                <Double fx:value="0.5" /><Double fx:value="1.0" />
-                                            </points>
-                                        </Polygon>
-                                    </graphic>
+                                <Button alignment="TOP_LEFT" contentDisplay="GRAPHIC_ONLY" maxHeight="14.0"
+                                        maxWidth="13.0" minHeight="14.0" minWidth="13.0" mnemonicParsing="false"
+                                        styleClass="button-minimize" onAction="#minimize">
                                 </Button>
-                                <Button alignment="TOP_LEFT" contentDisplay="GRAPHIC_ONLY" maxHeight="24.0"
-                                        maxWidth="24.0" minHeight="24.0" minWidth="24.0" mnemonicParsing="false"
-                                        styleClass="closeButton" onAction="#close">
-                                    <graphic>
-                                        <Polygon fill="#330000" scaleX="4.0" scaleY="4.0" translateY="8.0"
-                                                 stroke="#660000" strokeType="INSIDE" strokeWidth="1">
-                                            <points>
-                                                <Double fx:value="0.0" /><Double fx:value="1.0" />
-                                                <Double fx:value="1.0" /><Double fx:value="0.0" />
-                                                <Double fx:value="2.0" /><Double fx:value="1.0" />
-                                                <Double fx:value="3.0" /><Double fx:value="0.0" />
-                                                <Double fx:value="4.0" /><Double fx:value="1.0" />
-                                                <Double fx:value="3.0" /><Double fx:value="2.0" />
-                                                <Double fx:value="4.0" /><Double fx:value="3.0" />
-                                                <Double fx:value="3.0" /><Double fx:value="4.0" />
-                                                <Double fx:value="2.0" /><Double fx:value="3.0" />
-                                                <Double fx:value="1.0" /><Double fx:value="4.0" />
-                                                <Double fx:value="0.0" /><Double fx:value="3.0" />
-                                                <Double fx:value="1.0" /><Double fx:value="2.0" />
-                                            </points>
-                                        </Polygon>
-                                    </graphic>
+                                <Button alignment="TOP_LEFT" contentDisplay="GRAPHIC_ONLY" maxHeight="14.0"
+                                        maxWidth="13.0" minHeight="14.0" minWidth="13.0" mnemonicParsing="false"
+                                        styleClass="button-close" onAction="#close">
                                 </Button>
                             </children>
                         </HBox>

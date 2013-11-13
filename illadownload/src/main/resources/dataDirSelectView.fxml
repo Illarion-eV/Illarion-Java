@@ -21,7 +21,6 @@
                                      fx:id="optionAbsolute" />
                         <VBox fillWidth="true">
                             <children>
-                                <Label text="%descriptionAbsolute" wrapText="true" />
                                 <BorderPane>
                                     <center>
                                         <TextField fx:id="selectedDirectory" />
@@ -36,14 +35,6 @@
                             </padding>
                         </VBox>
                         <RadioButton text="%optionRelative" toggleGroup="$storageMethodSelect" fx:id="optionRelative" />
-                        <VBox fillWidth="true">
-                            <children>
-                                <Label text="%descriptionRelative" wrapText="true" />
-                            </children>
-                            <padding>
-                                <Insets left="20" />
-                            </padding>
-                        </VBox>
                     </children>
                     <padding>
                         <Insets top="20" />

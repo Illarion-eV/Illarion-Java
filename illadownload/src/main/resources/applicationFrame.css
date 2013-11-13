@@ -1,0 +1,100 @@
+#rootPane {
+    -fx-background-color: transparent;
+    -fx-border-image-source: url("gui/panel/panel-window-dark.png");
+    -fx-border-image-slice: 59 23 48 23 fill;
+    -fx-border-image-width: 59 23 48 23;
+    -fx-padding: -54 0 -38 0;
+}
+
+.label {
+    -fx-text-fill: white;
+}
+
+.button-gray {
+    -fx-alignment: center;
+    -fx-text-fill: white;
+    -fx-background-color: transparent;
+    -fx-border-image-source: url("gui/button/buttongray.png");
+    -fx-border-image-slice: 8 fill;
+    -fx-border-image-width: 8;
+    -fx-padding: -8 0 -8 0
+}
+
+.button-gray:hover {
+    -fx-border-image-source: url("gui/button/buttongray_hover.png");
+}
+
+.button-gray:pressed {
+    -fx-border-image-source: url("gui/button/buttongray_pressed.png");
+}
+
+.button-green {
+    -fx-alignment: center;
+    -fx-text-fill: white;
+    -fx-background-color: transparent;
+    -fx-border-image-source: url("gui/button/buttongreen.png");
+    -fx-border-image-slice: 8 fill;
+    -fx-border-image-width: 8;
+}
+
+.button-green:hover {
+    -fx-border-image-source: url("gui/button/buttongreen_hover.png");
+}
+
+.button-green:pressed {
+    -fx-border-image-source: url("gui/button/buttongreen_pressed.png");
+}
+
+.progress-bar {
+    -fx-background-color: transparent;
+    -fx-border-image-source: url("gui/progressbar/progressbar-outer.png");
+    -fx-border-image-slice: 9 8 9 8 fill;
+    -fx-border-image-width: 9 8 9 8;
+    -fx-padding: -7 -4 -7 -4;
+}
+
+.progress-bar .bar {
+    -fx-border-image-source: url("gui/progressbar/progressbar-inner.png");
+    -fx-border-image-slice: 2 fill;
+    -fx-border-image-width: 2;
+}
+
+.progress-bar .track {
+    -fx-background-color: black;
+}
+
+.button-close {
+    -fx-alignment: center;
+    -fx-background-color: transparent;
+    -fx-graphic: url("gui/button/buttonclose.png");
+}
+
+.button-close:hover {
+    -fx-graphic: url("gui/button/buttonclose_hover.png");
+}
+
+.button-close:pressed {
+    -fx-graphic: url("gui/button/buttonclose_pressed.png");
+}
+
+.button-minimize {
+    -fx-alignment: center;
+    -fx-background-color: transparent;
+    -fx-graphic: url("gui/button/buttonminimize.png");
+}
+
+.button-minimize:hover {
+    -fx-graphic: url("gui/button/buttonminimize_hover.png");
+}
+
+.button-minimize:pressed {
+    -fx-graphic: url("gui/button/buttonminimize_pressed.png");
+}
+
+#logo {
+    -fx-image: url("gui/illarion_title.png");;
+}
+
+.radio-button {
+    -fx-text-fill: white;
+}

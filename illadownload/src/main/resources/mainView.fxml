@@ -5,38 +5,94 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
+<?import javafx.scene.image.ImageView?>
 
 <AnchorPane xmlns:fx="http://javafx.com/fxml/">
     <children>
         <BorderPane fx:id="content">
+            <center>
+                <VBox prefHeight="206.0" prefWidth="404.0" spacing="10.0">
+                    <children>
+                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="TRANSPARENT" height="90.0"
+                                   stroke="WHITE" strokeType="INSIDE" width="390.0" />
+                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="TRANSPARENT" height="90.0"
+                                   stroke="WHITE" strokeType="INSIDE" width="390.0" />
+                    </children>
+                    <padding>
+                        <Insets left="20.0" right="10.0" />
+                    </padding>
+                    <BorderPane.margin>
+                        <Insets top="-30.0" />
+                    </BorderPane.margin>
+                </VBox>
+            </center>
+            <top>
+                <BorderPane minHeight="111.0" prefHeight="139.0" prefWidth="554.0">
+                    <center>
+                        <VBox alignment="CENTER" padding="$x1" spacing="10.0">
+                            <children>
+                                <AnchorPane>
+                                    <children>
+                                        <Button maxHeight="30.0" minHeight="30.0" mnemonicParsing="false"
+                                                prefHeight="30.0" styleClass="button-gray" text="%account"
+                                                textAlignment="CENTER" AnchorPane.bottomAnchor="0.0"
+                                                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                                                AnchorPane.topAnchor="0.0" />
+                                    </children>
+                                    <VBox.margin>
+                                        <Insets fx:id="x1" />
+                                    </VBox.margin>
+                                </AnchorPane>
+                                <AnchorPane>
+                                    <children>
+                                        <Button maxHeight="30.0" minHeight="30.0" mnemonicParsing="false"
+                                                prefHeight="30.0" styleClass="button-gray" text="%options"
+                                                textAlignment="CENTER" AnchorPane.bottomAnchor="0.0"
+                                                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                                                AnchorPane.topAnchor="0.0" />
+                                    </children>
+                                </AnchorPane>
+                            </children>
+                            <BorderPane.margin>
+                                <Insets bottom="35.0" left="50.0" right="50.0" />
+                            </BorderPane.margin>
+                        </VBox>
+                    </center>
+                    <left>
+                        <ImageView id="logo" />
+                    </left>
+                </BorderPane>
+            </top>
             <left>
-                <VBox alignment="BOTTOM_CENTER" spacing="10.0">
+                <VBox alignment="BOTTOM_CENTER" spacing="10.0" prefWidth="130.0" >
                     <children>
                         <AnchorPane>
                             <children>
                                 <Button alignment="TOP_LEFT" mnemonicParsing="false" text="%launchEasyNpc"
                                         textAlignment="CENTER" AnchorPane.bottomAnchor="0.0"
                                         AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                        AnchorPane.topAnchor="0.0" />
+                                        AnchorPane.topAnchor="0.0" styleClass="button-gray" prefHeight="40.0" />
                             </children>
                         </AnchorPane>
                         <AnchorPane>
                             <children>
                                 <Button mnemonicParsing="false" text="%launchEasyQuest" textAlignment="CENTER"
                                         AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                                        AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                        AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
+                                        styleClass="button-gray" prefHeight="40.0" />
                             </children>
                         </AnchorPane>
                         <AnchorPane>
                             <children>
                                 <Button mnemonicParsing="false" text="%launchMapEdit" textAlignment="CENTER"
                                         AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                                        AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                        AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
+                                        styleClass="button-gray" prefHeight="40.0" />
                             </children>
                         </AnchorPane>
                     </children>
                     <BorderPane.margin>
-                        <Insets bottom="20.0" />
+                        <Insets bottom="30.0" />
                     </BorderPane.margin>
                 </VBox>
             </left>
@@ -47,7 +103,8 @@
                     <children>
                         <Button mnemonicParsing="false" text="%launchClient" textAlignment="CENTER"
                                 AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                                AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
+                                styleClass="button-green" />
                     </children>
                     <BorderPane.margin>
                         <Insets left="20.0" />
@@ -59,7 +116,7 @@
                     <children>
                         <AnchorPane>
                             <children>
-                                <ProgressBar prefHeight="30.0" progress="0.0" AnchorPane.bottomAnchor="0.0"
+                                <ProgressBar prefHeight="30.0" progress="0.7" AnchorPane.bottomAnchor="0.0"
                                              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                                              AnchorPane.topAnchor="0.0" />
                             </children>
