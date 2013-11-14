@@ -18,7 +18,7 @@ public class GuiApplication extends Application {
         stage.initStyle(StageStyle.TRANSPARENT);
         final GuiModel model = new GuiModel(stage, getHostServices());
 
-        stage.setScene(new Scene(new MainView(model), 600, 400));
+        stage.setScene(new Scene(new MainView(model), 620, 410));
         stage.getScene().setFill(Color.TRANSPARENT);
         stage.show();
 

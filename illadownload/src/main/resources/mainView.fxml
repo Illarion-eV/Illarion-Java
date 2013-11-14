@@ -11,58 +11,41 @@
     <children>
         <BorderPane fx:id="content">
             <center>
-                <VBox prefHeight="206.0" prefWidth="404.0" spacing="10.0">
+                <VBox prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
                     <children>
-                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="TRANSPARENT" height="90.0"
-                                   stroke="WHITE" strokeType="INSIDE" width="390.0" />
-                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="TRANSPARENT" height="90.0"
-                                   stroke="WHITE" strokeType="INSIDE" width="390.0" />
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                            <children>
+                                <TitledPane animated="false" collapsible="false" text="%news"
+                                            AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                            AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <content>
+                                        <AnchorPane id="Content" minHeight="0.0" minWidth="0.0"
+                                                    prefHeight="180.0" prefWidth="200.0" />
+                                    </content>
+                                </TitledPane>
+                            </children>
+                        </AnchorPane>
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                            <children>
+                                <TitledPane animated="false" collapsible="false" text="%quests"
+                                            AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                            AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <content>
+                                        <AnchorPane id="Content" minHeight="0.0" minWidth="0.0"
+                                                    prefHeight="180.0" prefWidth="200.0" />
+                                    </content>
+                                </TitledPane>
+                            </children>
+                        </AnchorPane>
                     </children>
                     <padding>
-                        <Insets left="20.0" right="10.0" />
+                        <Insets left="20.0" />
                     </padding>
                     <BorderPane.margin>
                         <Insets top="-30.0" />
                     </BorderPane.margin>
                 </VBox>
             </center>
-            <top>
-                <BorderPane minHeight="111.0" prefHeight="139.0" prefWidth="554.0">
-                    <center>
-                        <VBox alignment="CENTER" padding="$x1" spacing="10.0">
-                            <children>
-                                <AnchorPane>
-                                    <children>
-                                        <Button maxHeight="30.0" minHeight="30.0" mnemonicParsing="false"
-                                                prefHeight="30.0" styleClass="button-gray" text="%account"
-                                                textAlignment="CENTER" AnchorPane.bottomAnchor="0.0"
-                                                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                                AnchorPane.topAnchor="0.0" />
-                                    </children>
-                                    <VBox.margin>
-                                        <Insets fx:id="x1" />
-                                    </VBox.margin>
-                                </AnchorPane>
-                                <AnchorPane>
-                                    <children>
-                                        <Button maxHeight="30.0" minHeight="30.0" mnemonicParsing="false"
-                                                prefHeight="30.0" styleClass="button-gray" text="%options"
-                                                textAlignment="CENTER" AnchorPane.bottomAnchor="0.0"
-                                                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                                AnchorPane.topAnchor="0.0" />
-                                    </children>
-                                </AnchorPane>
-                            </children>
-                            <BorderPane.margin>
-                                <Insets bottom="35.0" left="50.0" right="50.0" />
-                            </BorderPane.margin>
-                        </VBox>
-                    </center>
-                    <left>
-                        <ImageView id="logo" />
-                    </left>
-                </BorderPane>
-            </top>
             <left>
                 <VBox alignment="BOTTOM_CENTER" spacing="10.0" prefWidth="130.0" >
                     <children>
@@ -92,10 +75,53 @@
                         </AnchorPane>
                     </children>
                     <BorderPane.margin>
-                        <Insets bottom="30.0" />
+                        <Insets fx:id="x2" />
                     </BorderPane.margin>
                 </VBox>
             </left>
+            <padding>
+                <Insets bottom="20.0" />
+            </padding>
+            <top>
+                <BorderPane minHeight="111.0" prefHeight="139.0" prefWidth="554.0">
+                    <center>
+                        <VBox alignment="CENTER" maxWidth="130.0" padding="$x1" prefWidth="130.0" spacing="10.0">
+                            <children>
+                                <AnchorPane>
+                                    <children>
+                                        <Button maxHeight="30.0" minHeight="30.0" mnemonicParsing="false"
+                                                prefHeight="30.0" styleClass="button-gray" text="%account"
+                                                textAlignment="CENTER" AnchorPane.bottomAnchor="0.0"
+                                                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                                                AnchorPane.topAnchor="0.0" />
+                                    </children>
+                                    <VBox.margin>
+                                        <Insets fx:id="x1" />
+                                    </VBox.margin>
+                                </AnchorPane>
+                                <AnchorPane>
+                                    <children>
+                                        <Button maxHeight="30.0" minHeight="30.0" mnemonicParsing="false"
+                                                prefHeight="30.0" styleClass="button-gray" text="%options"
+                                                textAlignment="CENTER" AnchorPane.bottomAnchor="0.0"
+                                                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                                                AnchorPane.topAnchor="0.0" />
+                                    </children>
+                                </AnchorPane>
+                            </children>
+                            <BorderPane.margin>
+                                <Insets bottom="35.0" />
+                            </BorderPane.margin>
+                        </VBox>
+                    </center>
+                    <left>
+                        <ImageView id="logo" />
+                    </left>
+                    <padding>
+                        <Insets top="15.0" />
+                    </padding>
+                </BorderPane>
+            </top>
         </BorderPane>
         <BorderPane fx:id="footer">
             <right>

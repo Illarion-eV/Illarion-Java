@@ -17,6 +17,9 @@
             <center>
                 <AnchorPane fx:id="content" />
             </center>
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" />
+            </padding>
             <top>
                 <BorderPane>
                     <right>
@@ -31,6 +34,9 @@
                                         styleClass="button-close" onAction="#close">
                                 </Button>
                             </children>
+                            <padding>
+                                <Insets right="-16.0" />
+                            </padding>
                         </HBox>
                     </right>
                 </BorderPane>
