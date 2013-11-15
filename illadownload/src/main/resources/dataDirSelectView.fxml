@@ -26,7 +26,7 @@
                                         <TextField fx:id="selectedDirectory" />
                                     </center>
                                     <right>
-                                        <Button onAction="#browse" text="%browse" />
+                                        <Button onAction="#browse" text="%browse" styleClass="button-gray" />
                                     </right>
                                 </BorderPane>
                             </children>
@@ -42,10 +42,10 @@
                 </VBox>
             </children>
         </VBox>
-        <HBox fx:id="footer" fillHeight="true">
-            <children>
-                <Button alignment="CENTER_RIGHT" text="%continue" onAction="#nextStep" />
-            </children>
-        </HBox>
+        <BorderPane fx:id="footer">
+            <right>
+                <Button alignment="CENTER_RIGHT" text="%continue" onAction="#nextStep" styleClass="button-green" />
+            </right>
+        </BorderPane>
     </children>
 </AnchorPane>
