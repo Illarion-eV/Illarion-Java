@@ -17,8 +17,8 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class GuiApplication extends Application {
-    private static final double SCENE_WIDTH = 600.0;
-    private static final double SCENE_HEIGHT = 400.0;
+    private static final double SCENE_WIDTH = 620.0;
+    private static final double SCENE_HEIGHT = 410.0;
 
     @Nullable
     private Stage stage;
