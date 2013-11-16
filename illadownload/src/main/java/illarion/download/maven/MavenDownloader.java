@@ -98,6 +98,7 @@ public class MavenDownloader {
         Artifact artifact = new DefaultArtifact(groupId, artifactId, "jar", "[1,]");
 
         try {
+            long time = System.currentTimeMillis();
             final VersionRangeResult result = system.resolveVersionRange(session, new VersionRangeRequest(artifact,
                     repositories, RUNTIME));
             Version selectedVersion = null;
@@ -111,6 +112,7 @@ public class MavenDownloader {
             if (selectedVersion != null) {
                 artifact = new DefaultArtifact(groupId, artifactId, "jar", selectedVersion.toString());
             }
+            System.out.println("Finding target version took " + (System.currentTimeMillis() - time) + "ms");
         } catch (VersionRangeResolutionException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
@@ -146,7 +148,7 @@ public class MavenDownloader {
 
             final List<FutureArtifactRequest> requests = builder.getRequests();
 
-            final ExecutorService executorService = Executors.newFixedThreadPool(4);
+            final ExecutorService executorService = Executors.newCachedThreadPool();
             final List<Future<ArtifactResult>> results = executorService.invokeAll(requests);
             executorService.shutdown();
             executorService.awaitTermination(1, TimeUnit.HOURS);

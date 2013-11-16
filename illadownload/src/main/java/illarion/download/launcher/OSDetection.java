@@ -28,7 +28,7 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing
  */
-final class OSDetection {
+public final class OSDetection {
     /**
      * The internal constant for 32bit machines.
      */

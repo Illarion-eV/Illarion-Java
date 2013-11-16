@@ -1,5 +1,6 @@
 package illarion.download.maven;
 
+import illarion.download.launcher.OSDetection;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.RequestTrace;
@@ -50,6 +51,18 @@ final class ArtifactRequestBuilder implements DependencyVisitor
     public boolean visitEnter(final DependencyNode node) {
         if (node.getDependency() != null) {
             final Artifact nodeArtifact = node.getDependency().getArtifact();
+            final String classifier = nodeArtifact.getClassifier();
+            if (classifier.contains("native")) {
+                if (classifier.contains("win") && !OSDetection.isWindows()) {
+                    return true;
+                }
+                if (classifier.contains("linux") && !OSDetection.isLinux()) {
+                    return true;
+                }
+                if ((classifier.contains("mac") || classifier.contains("osx")) && !OSDetection.isMacOSX()) {
+                    return true;
+                }
+            }
             boolean noMatch = true;
             for (int i = 0; i < requests.size(); i++) {
                 final ArtifactRequest testRequest = requests.get(i).getRequest();
