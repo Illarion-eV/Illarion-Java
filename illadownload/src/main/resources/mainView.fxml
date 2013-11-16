@@ -7,7 +7,7 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.image.ImageView?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml/">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/" fx:controller="illarion.download.gui.controller.MainViewController">
     <children>
         <BorderPane fx:id="content">
             <center>
@@ -19,7 +19,7 @@
                                             AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                                             AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                     <content>
-                                        <AnchorPane id="Content" minHeight="0.0" minWidth="0.0"
+                                        <AnchorPane fx:id="newsPane" minHeight="0.0" minWidth="0.0"
                                                     prefHeight="180.0" prefWidth="200.0" />
                                     </content>
                                 </TitledPane>
@@ -31,7 +31,7 @@
                                             AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                                             AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                     <content>
-                                        <AnchorPane id="Content" minHeight="0.0" minWidth="0.0"
+                                        <AnchorPane fx:id="questsPane" minHeight="0.0" minWidth="0.0"
                                                     prefHeight="180.0" prefWidth="200.0" />
                                     </content>
                                 </TitledPane>
@@ -93,7 +93,7 @@
                                                 prefHeight="30.0" styleClass="button-gray" text="%account"
                                                 textAlignment="CENTER" AnchorPane.bottomAnchor="0.0"
                                                 AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                                AnchorPane.topAnchor="0.0" />
+                                                AnchorPane.topAnchor="0.0" onAction="#goToAccount" />
                                     </children>
                                     <VBox.margin>
                                         <Insets fx:id="x1" />

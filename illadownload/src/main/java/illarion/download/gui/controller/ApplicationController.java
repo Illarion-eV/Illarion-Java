@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class ApplicationController implements Controller {
+public class ApplicationController extends AbstractController {
     @FXML
     public AnchorPane footer;
 
@@ -22,8 +22,6 @@ public class ApplicationController implements Controller {
 
     @FXML
     public AnchorPane rootPane;
-
-    private GuiModel model;
 
     private double initialX;
     private double initialY;
@@ -43,8 +41,8 @@ public class ApplicationController implements Controller {
             @Override
             public void handle(MouseEvent me) {
                 if (me.getButton() != MouseButton.MIDDLE) {
-                    model.getStage().setX(me.getScreenX() - initialX);
-                    model.getStage().setY(me.getScreenY() - initialY);
+                    getModel().getStage().setX(me.getScreenX() - initialX);
+                    getModel().getStage().setY(me.getScreenY() - initialY);
                 }
             }
         });
@@ -52,21 +50,11 @@ public class ApplicationController implements Controller {
 
     @FXML
     public void close(@Nonnull final ActionEvent event) {
-       model.getStage().close();
+        getModel().getStage().close();
     }
 
     @FXML
     public void minimize(@Nonnull final ActionEvent event) {
-        model.getStage().setIconified(true);
-    }
-
-    @FXML
-    public void gotoAccount(@Nonnull final ActionEvent actionEvent) {
-        model.getHostServices().showDocument("http://illarion.org/community/account/index.php");
-    }
-
-    @Override
-    public void setModel(@Nonnull final GuiModel model) {
-        this.model = model;
+        getModel().getStage().setIconified(true);
     }
 }

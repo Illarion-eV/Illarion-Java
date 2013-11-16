@@ -16,7 +16,7 @@ import java.io.IOException;
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public abstract class AbstractDirSelectionController implements Controller {
+public abstract class AbstractDirSelectionController extends AbstractController {
 
     @FXML
     public TextField selectedDirectory;
@@ -26,8 +26,6 @@ public abstract class AbstractDirSelectionController implements Controller {
 
     @FXML
     public RadioButton optionRelative;
-
-    private GuiModel model;
 
     @Nonnull
     private final DirectoryManager.Directory dir;
@@ -67,15 +65,10 @@ public abstract class AbstractDirSelectionController implements Controller {
             directoryChooser.setInitialDirectory(directoryChooser.getInitialDirectory().getParentFile());
         }
 
-        final File selectedDirectory = directoryChooser.showDialog(model.getStage());
+        final File selectedDirectory = directoryChooser.showDialog(getModel().getStage());
 
         this.selectedDirectory.setText(selectedDirectory.getAbsolutePath());
         optionAbsolute.setSelected(true);
-    }
-
-    @Override
-    public void setModel(@Nonnull GuiModel model) {
-        this.model = model;
     }
 
     public void nextStep(@Nonnull final ActionEvent actionEvent) {
@@ -87,7 +80,7 @@ public abstract class AbstractDirSelectionController implements Controller {
             dm.setDirectory(dir, targetDir);
         }
         try {
-            model.getStoryboard().nextScene();
+            getModel().getStoryboard().nextScene();
         } catch (@Nonnull final IOException e) {
             // nothing
         }
