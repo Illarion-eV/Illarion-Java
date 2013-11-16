@@ -11,7 +11,7 @@ import java.util.concurrent.Callable;
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class FutureArtifactRequest implements Callable<ArtifactResult> {
+class FutureArtifactRequest implements Callable<ArtifactResult> {
     @Nonnull
     private final ArtifactRequest request;
     @Nonnull

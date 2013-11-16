@@ -6,12 +6,11 @@ import org.apache.maven.model.building.DefaultModelBuilderFactory;
 import org.apache.maven.model.building.ModelBuilder;
 import org.apache.maven.repository.internal.*;
 import org.eclipse.aether.DefaultRepositorySystemSession;
+import org.eclipse.aether.RepositoryException;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
-import org.eclipse.aether.collection.CollectRequest;
-import org.eclipse.aether.collection.CollectResult;
-import org.eclipse.aether.collection.DependencyCollectionException;
+import org.eclipse.aether.collection.*;
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyFilter;
@@ -29,6 +28,7 @@ import org.eclipse.aether.util.filter.DependencyFilterUtils;
 import org.eclipse.aether.util.graph.selector.ScopeDependencySelector;
 import org.eclipse.aether.util.graph.visitor.FilteringDependencyVisitor;
 import org.eclipse.aether.util.graph.visitor.TreeDependencyVisitor;
+import org.eclipse.aether.version.Version;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -95,7 +95,27 @@ public class MavenDownloader {
 
     @Nullable
     public Collection<File> downloadArtifact(@Nonnull final String groupId, @Nonnull final String artifactId) {
-        final Artifact artifact = new DefaultArtifact(groupId + ':' + artifactId + ":jar:[1,]");
+        Artifact artifact = new DefaultArtifact(groupId, artifactId, "jar", "[1,]");
+
+        try {
+            final VersionRangeResult result = system.resolveVersionRange(session, new VersionRangeRequest(artifact,
+                    repositories, RUNTIME));
+            Version selectedVersion = null;
+            final boolean allowSnapshot = cfg.getBoolean("snapshots");
+            for (final Version version : result.getVersions()) {
+                if (allowSnapshot || !version.toString().contains("SNAPSHOT")) {
+                    selectedVersion = version;
+                }
+            }
+
+            if (selectedVersion != null) {
+                artifact = new DefaultArtifact(groupId, artifactId, "jar", selectedVersion.toString());
+            }
+        } catch (VersionRangeResolutionException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+
         final Dependency dependency = new Dependency(artifact, RUNTIME, false);
 
         final List<String> usedScopes = Arrays.asList(COMPILE, RUNTIME, SYSTEM);
