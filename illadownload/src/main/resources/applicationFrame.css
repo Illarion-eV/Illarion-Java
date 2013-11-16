@@ -113,7 +113,7 @@
     -fx-border-image-source: url("gui/listview/listview.png");
     -fx-border-image-slice: 12 4 12 4 fill;
     -fx-border-image-width: 12 4 12 4;
-    -fx-padding: -12 -4 -12 -4;
+    -fx-padding: -8 0 -8 0;
 }
 
 .radio-button {
