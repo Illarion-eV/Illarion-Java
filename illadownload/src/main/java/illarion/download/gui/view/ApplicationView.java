@@ -17,10 +17,7 @@ class ApplicationView extends AnchorPane {
         final Parent root = Util.loadFXML("applicationFrame.fxml", model, Util.loadResourceBundle("applicationFrame"));
         getStylesheets().add("applicationFrame.css");
         getChildren().add(root);
-        setBottomAnchor(root, 0.0);
-        setTopAnchor(root, 0.0);
-        setLeftAnchor(root, 0.0);
-        setRightAnchor(root, 0.0);
+        maximizeOnAnchorPane(root);
     }
 
     protected final Pane getContentPane() {
@@ -40,9 +37,9 @@ class ApplicationView extends AnchorPane {
     }
 
     private static void maximizeOnAnchorPane(@Nonnull final Node node) {
-        AnchorPane.setRightAnchor(node, 0.0);
-        AnchorPane.setLeftAnchor(node, 0.0);
-        AnchorPane.setTopAnchor(node, 0.0);
-        AnchorPane.setBottomAnchor(node, 0.0);
+        setRightAnchor(node, 0.0);
+        setLeftAnchor(node, 0.0);
+        setTopAnchor(node, 0.0);
+        setBottomAnchor(node, 0.0);
     }
 }

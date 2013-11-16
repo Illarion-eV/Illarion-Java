@@ -8,7 +8,7 @@
 <?scenebuilder-stylesheet applicationFrame.css?>
 
 <AnchorPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="illarion.download.gui.controller.DataDirSelectionController">
+            fx:controller="illarion.download.gui.controller.UserDirSelectionController">
   <children>
     <VBox fx:id="content" fillWidth="true">
       <fx:define>

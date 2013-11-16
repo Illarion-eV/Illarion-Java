@@ -16,7 +16,7 @@ import java.io.IOException;
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class DataDirSelectionController implements Controller {
+public class UserDirSelectionController implements Controller {
 
     @FXML
     public TextField selectedDirectory;
@@ -33,7 +33,7 @@ public class DataDirSelectionController implements Controller {
     private GuiModel model;
 
     public void initialize() {
-        final DirectoryManager.Directory dir = DirectoryManager.Directory.Data;
+        final DirectoryManager.Directory dir = DirectoryManager.Directory.User;
         final DirectoryManager dm = DirectoryManager.getInstance();
         if (dm.isDirectorySet(dir)) {
             //noinspection ConstantConditions
@@ -53,7 +53,7 @@ public class DataDirSelectionController implements Controller {
     public void browse(@Nonnull final ActionEvent actionEvent) {
         final DirectoryChooser directoryChooser = new DirectoryChooser();
 
-        final DirectoryManager.Directory dir = DirectoryManager.Directory.Data;
+        final DirectoryManager.Directory dir = DirectoryManager.Directory.User;
         final DirectoryManager dm = DirectoryManager.getInstance();
         if (dm.isDirectorySet(dir)) {
             directoryChooser.setInitialDirectory(dm.getDirectory(dir));
