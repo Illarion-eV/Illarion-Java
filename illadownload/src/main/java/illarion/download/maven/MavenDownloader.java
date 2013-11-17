@@ -2,6 +2,7 @@ package illarion.download.maven;
 
 import illarion.common.config.Config;
 import illarion.common.util.DirectoryManager;
+import illarion.common.util.ProgressMonitor;
 import org.apache.maven.model.building.DefaultModelBuilderFactory;
 import org.apache.maven.model.building.ModelBuilder;
 import org.apache.maven.repository.internal.*;
@@ -57,12 +58,6 @@ public class MavenDownloader {
     private final List<RemoteRepository> repositories;
 
     /**
-     * The configuration that is required to setup the downloader properly.
-     */
-    @Nonnull
-    private final Config cfg;
-
-    /**
      * The service locator used to link in the required services.
      */
     @Nonnull
@@ -74,14 +69,16 @@ public class MavenDownloader {
     @Nonnull
     private final DefaultRepositorySystemSession session;
 
+    private final boolean snapshot;
+
     /**
-     * Create a new instance of the downloader along with the reference to the configuration utility that is used to
-     * apply the settings to the downloader.
+     * Create a new instance of the downloader along with the information if its supposed to download snapshot
+     * versions of the main application.
      *
-     * @param cfg
+     * @param snapshot {@code true} in case the downloader is supposed to use snapshot versions of the main application
      */
-    public MavenDownloader(@Nonnull final Config cfg) {
-        this.cfg = cfg;
+    public MavenDownloader(final boolean snapshot) {
+        this.snapshot = snapshot;
 
         serviceLocator = new DefaultServiceLocator();
         setupServiceLocator();
@@ -89,22 +86,46 @@ public class MavenDownloader {
         system = serviceLocator.getService(RepositorySystem.class);
         session = new DefaultRepositorySystemSession();
 
+        session.setTransferListener(new MavenTransferListener());
+
         repositories = new ArrayList<RemoteRepository>();
         setupRepositories();
     }
 
+    /**
+     * Download the artifacts in a background worker thread. This function only launches a new thread that performs
+     * the download operation. It will not block the execution until its done.
+     *
+     * @param groupId the group id of the artifact to download
+     * @param artifactId the artifact id of the artifact to download
+     * @param callback the callback implementation to report to
+     */
+    public void downloadArtifactNonBlocking(@Nonnull final String groupId, @Nonnull final String artifactId,
+                                            @Nonnull final MavenDownloaderCallback callback) {
+        final Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                downloadArtifact(groupId, artifactId, callback);
+            }
+        }, "Download Artifacts Thread");
+        thread.setDaemon(true);
+        thread.run();
+    }
+
     @Nullable
-    public Collection<File> downloadArtifact(@Nonnull final String groupId, @Nonnull final String artifactId) {
+    public Collection<File> downloadArtifact(@Nonnull final String groupId, @Nonnull final String artifactId,
+                                             @Nullable final MavenDownloaderCallback callback) {
         Artifact artifact = new DefaultArtifact(groupId, artifactId, "jar", "[1,]");
 
         try {
-            long time = System.currentTimeMillis();
+            if (callback != null) {
+                callback.reportNewState(MavenDownloaderCallback.State.SearchingNewVersion, null);
+            }
             final VersionRangeResult result = system.resolveVersionRange(session, new VersionRangeRequest(artifact,
                     repositories, RUNTIME));
             Version selectedVersion = null;
-            final boolean allowSnapshot = cfg.getBoolean("snapshots");
             for (final Version version : result.getVersions()) {
-                if (allowSnapshot || !version.toString().contains("SNAPSHOT")) {
+                if (snapshot || !version.toString().contains("SNAPSHOT")) {
                     selectedVersion = version;
                 }
             }
@@ -112,12 +133,13 @@ public class MavenDownloader {
             if (selectedVersion != null) {
                 artifact = new DefaultArtifact(groupId, artifactId, "jar", selectedVersion.toString());
             }
-            System.out.println("Finding target version took " + (System.currentTimeMillis() - time) + "ms");
         } catch (VersionRangeResolutionException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
-
+        if (callback != null) {
+            callback.reportNewState(MavenDownloaderCallback.State.ResolvingDependencies, null);
+        }
         final Dependency dependency = new Dependency(artifact, RUNTIME, false);
 
         final List<String> usedScopes = Arrays.asList(COMPILE, RUNTIME, SYSTEM);
@@ -132,32 +154,41 @@ public class MavenDownloader {
         collectRequest.setRepositories(repositories);
 
         try {
-            long time = System.currentTimeMillis();
             final CollectResult collectResult = system.collectDependencies(session, collectRequest);
-
-            System.out.println("Collecting dependencies took " + (System.currentTimeMillis() - time) + "ms");
-            time = System.currentTimeMillis();
 
             final ArtifactRequestBuilder builder = new ArtifactRequestBuilder(null, system, session);
             DependencyVisitor visitor = new FilteringDependencyVisitor(builder, filter);
             visitor = new TreeDependencyVisitor(visitor);
             collectResult.getRoot().accept(visitor);
 
-            System.out.println("Cleaning dependencies took " + (System.currentTimeMillis() - time) + "ms");
-            time = System.currentTimeMillis();
-
             final List<FutureArtifactRequest> requests = builder.getRequests();
+
+            if (callback != null) {
+                final ProgressMonitor progressMonitor = new ProgressMonitor();
+                for (@Nonnull final FutureArtifactRequest request : requests) {
+                    progressMonitor.addChild(request.getProgressMonitor());
+                }
+                callback.reportNewState(MavenDownloaderCallback.State.ResolvingArtifacts, progressMonitor);
+            }
 
             final ExecutorService executorService = Executors.newCachedThreadPool();
             final List<Future<ArtifactResult>> results = executorService.invokeAll(requests);
             executorService.shutdown();
             executorService.awaitTermination(1, TimeUnit.HOURS);
 
-            System.out.println("Resolving artifacts took " + (System.currentTimeMillis() - time) + "ms");
-
             final List<File> result = new ArrayList<File>();
             for (@Nonnull final Future<ArtifactResult> artifactResult : results) {
                 result.add(artifactResult.get().getArtifact().getFile());
+            }
+
+            if (result.isEmpty()) {
+                if (callback != null) {
+                    callback.resolvingDone(null);
+                }
+                return null;
+            }
+            if (callback != null) {
+                callback.resolvingDone(result);
             }
             return result;
         } catch (DependencyCollectionException e) {
@@ -170,21 +201,11 @@ public class MavenDownloader {
         return null;
     }
 
-    private void resolveArtifact(@Nonnull final DependencyNode node) throws ArtifactResolutionException {
-        if (node.getArtifact().getFile() == null) {
-            final ArtifactRequest artifactRequest = new ArtifactRequest(node);
-            final ArtifactResult artifactResult = system.resolveArtifact(session, artifactRequest);
-
-            System.out.println( artifactResult.getArtifact() + " resolved to " + artifactResult.getArtifact().getFile() );
-        }
-    }
-
     private void setupRepositories() {
         repositories.add(setupRepository("central", "http://repo1.maven.org/maven2/", true));
         repositories.add(
                 setupRepository("nifty-gui", "http://nifty-gui.sourceforge.net/nifty-maven-repo", true));
-        repositories.add(setupRepository("illarion", "http://illarion.org/media/java/maven",
-                cfg.getBoolean("snapshots")));
+        repositories.add(setupRepository("illarion", "http://illarion.org/media/java/maven", snapshot));
         repositories.add(setupRepository("libgdx", "http://libgdx.badlogicgames.com/nightlies/maven", true));
 
         LocalRepository localRepo = new LocalRepository(DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.Data));

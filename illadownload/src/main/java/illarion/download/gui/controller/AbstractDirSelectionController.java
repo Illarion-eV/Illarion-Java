@@ -12,6 +12,8 @@ import javafx.stage.DirectoryChooser;
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
@@ -34,7 +36,8 @@ public abstract class AbstractDirSelectionController extends AbstractController 
         dir = directory;
     }
 
-    public void initialize() {
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
         final DirectoryManager dm = DirectoryManager.getInstance();
         if (dm.isDirectorySet(dir)) {
             //noinspection ConstantConditions

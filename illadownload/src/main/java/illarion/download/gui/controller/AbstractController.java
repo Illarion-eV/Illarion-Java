@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @SuppressWarnings("NullableProblems")
-public class AbstractController implements Controller {
+public abstract class AbstractController implements Controller {
     /**
      * The stored reference to the GUI model.
      */

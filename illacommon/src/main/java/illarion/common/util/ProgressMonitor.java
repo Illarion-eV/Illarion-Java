@@ -29,7 +29,8 @@ import java.util.List;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class ProgressMonitor {
+public final class ProgressMonitor implements ProgressMonitorCallback {
+
     /**
      * The progress of this monitor. This value does not apply in case there are any children applied to this class.
      */
@@ -47,6 +48,23 @@ public final class ProgressMonitor {
      */
     @Nullable
     private List<ProgressMonitor> children;
+
+    /**
+     * The callback that is required to receive the updates of the monitor in case there is any.
+     */
+    @Nullable
+    private ProgressMonitorCallback callback;
+
+    /**
+     * This is set {@code true} while a callback is in progress. This is used to avoid too many active callbacks.
+     */
+    private boolean activeCallback;
+
+    /**
+     * This is set {@code true} in case another callback was requested while there was a active one. If causes the
+     * callback to be repeated.
+     */
+    private boolean repeatCallback;
 
     /**
      * Create a new progress monitor with a custom weight value.
@@ -72,6 +90,29 @@ public final class ProgressMonitor {
         this(1.f);
     }
 
+    @Override
+    public void updatedProgress(@Nonnull final ProgressMonitor monitor) {
+        reportProgressChange();
+    }
+
+    /**
+     * Set the callback that is supposed to receive update information from the progress monitor.
+     *
+     * @param callback the callback target or {@code null} in case no more callbacks are required
+     */
+    public void setCallback(@Nullable final ProgressMonitorCallback callback) {
+        this.callback = callback;
+        if (children != null) {
+            for (final ProgressMonitor child : children) {
+                if (callback == null) {
+                    child.setCallback(null);
+                } else {
+                    child.setCallback(this);
+                }
+            }
+        }
+    }
+
     /**
      * Add a children to this progress tracker.
      *
@@ -82,6 +123,10 @@ public final class ProgressMonitor {
             children = new ArrayList<ProgressMonitor>();
         }
         children.add(childMonitor);
+        final ProgressMonitorCallback targetCallback = callback;
+        if (targetCallback != null) {
+            childMonitor.setCallback(targetCallback);
+        }
     }
 
     /**
@@ -95,12 +140,40 @@ public final class ProgressMonitor {
         if (children != null) {
             throw new IllegalStateException("Setting the progress of a monitor with children is not allowed.");
         }
+        final float oldValue = this.progress;
         if (progress > 1.f) {
             this.progress = 1.f;
         } else if (progress < 0.f) {
             this.progress = 0.f;
         } else {
             this.progress = progress;
+        }
+        if (oldValue != this.progress) {
+            reportProgressChange();
+        }
+    }
+
+    private void reportProgressChange() {
+        if (activeCallback) {
+            repeatCallback = true;
+            return;
+        }
+
+        final ProgressMonitorCallback targetCallback = callback;
+        if (targetCallback != null) {
+            boolean firstRun = true;
+            while (firstRun || repeatCallback) {
+                firstRun = false;
+                repeatCallback = false;
+                activeCallback = true;
+                try {
+                    targetCallback.updatedProgress(this);
+                } catch (@Nonnull final Exception e) {
+                    // nothing
+                } finally {
+                    activeCallback = false;
+                }
+            }
         }
     }
 

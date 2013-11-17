@@ -9,6 +9,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 
 import javax.annotation.Nonnull;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
@@ -26,7 +28,8 @@ public class ApplicationController extends AbstractController {
     private double initialX;
     private double initialY;
 
-    public void initialize() {
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
         rootPane.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent me) {

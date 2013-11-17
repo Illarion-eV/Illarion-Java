@@ -51,6 +51,10 @@
     -fx-border-image-slice: 9 8 9 8 fill;
     -fx-border-image-width: 9 8 9 8;
     -fx-padding: -7 -4 -7 -4;
+    -fx-indeterminate-bar-length: 100;
+    -fx-indeterminate-bar-escape: false;
+    -fx-indeterminate-bar-flip: true;
+    -fx-indeterminate-bar-animation-time: 2;
 }
 
 .progress-bar .bar {

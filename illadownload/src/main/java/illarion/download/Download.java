@@ -13,16 +13,12 @@ import java.util.Collection;
  */
 public class Download {
     public static void main(final String[] args) {
-        final ConfigSystem cfg = new ConfigSystem(new File(DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User),
-                "download.xcfgz"));
-        cfg.setDefault("snapshots", true);
+        final MavenDownloader downloader = new MavenDownloader(true);
 
-        final MavenDownloader downloader = new MavenDownloader(cfg);
-
-        final Collection<File> classpath = downloader.downloadArtifact("org.illarion", "client");
+        final Collection<File> classpath = downloader.downloadArtifact("org.illarion", "client", null);
 
         if (classpath != null) {
-            final JavaLauncher launcher = new JavaLauncher(cfg);
+            final JavaLauncher launcher = new JavaLauncher(true);
             launcher.launch(classpath, "illarion.client.IllaClient");
         }
     }

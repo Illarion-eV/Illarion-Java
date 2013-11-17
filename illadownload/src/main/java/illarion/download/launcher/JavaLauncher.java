@@ -55,11 +55,7 @@ public final class JavaLauncher {
      */
     private String errorData;
 
-    /**
-     * The configuration that is required to setup the launcher properly.
-     */
-    @Nonnull
-    private final Config cfg;
+    private final boolean snapshot;
 
     @Nonnull
     private final Timer launchTimer;
@@ -68,8 +64,8 @@ public final class JavaLauncher {
      * Construct a new launcher and set the classpath and the class to launch.
      */
     @SuppressWarnings("nls")
-    public JavaLauncher(@Nonnull final Config cfg) {
-        this.cfg = cfg;
+    public JavaLauncher(final boolean snapshot) {
+        this.snapshot = snapshot;
 
         launchTimer = new Timer(10000, new Runnable() {
             @Override
@@ -108,7 +104,7 @@ public final class JavaLauncher {
         callList.add("-cp");
         callList.add(classPathString);
 
-        if (cfg.getBoolean("snapshots")) {
+        if (snapshot) {
             callList.add("-Dillarion.server=devserver");
         }
 

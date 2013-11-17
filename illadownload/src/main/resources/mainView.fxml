@@ -130,7 +130,7 @@
                         <Button mnemonicParsing="false" text="%launchClient" textAlignment="CENTER"
                                 AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                                 AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
-                                styleClass="button-green" />
+                                styleClass="button-green" onAction="#launchClient" />
                     </children>
                     <BorderPane.margin>
                         <Insets left="20.0" />
@@ -142,14 +142,14 @@
                     <children>
                         <AnchorPane>
                             <children>
-                                <ProgressBar prefHeight="30.0" progress="0.7" AnchorPane.bottomAnchor="0.0"
+                                <ProgressBar prefHeight="30.0" progress="0.0" AnchorPane.bottomAnchor="0.0"
                                              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                             AnchorPane.topAnchor="0.0" />
+                                             AnchorPane.topAnchor="0.0" fx:id="progress" />
                             </children>
                         </AnchorPane>
                         <AnchorPane>
                             <children>
-                                <Label text="Updates werden heruntergeladen." textAlignment="LEFT"
+                                <Label fx:id="progressDescription" textAlignment="LEFT"
                                        textOverrun="ELLIPSIS" AnchorPane.bottomAnchor="0.0"
                                        AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                                        AnchorPane.topAnchor="0.0" />
