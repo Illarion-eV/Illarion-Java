@@ -68,8 +68,18 @@ public class MainViewController extends AbstractController implements MavenDownl
         new Thread(new Runnable() {
             @Override
             public void run() {
+                try {
                 final MavenDownloader downloader = new MavenDownloader(true);
                 downloader.downloadArtifact("org.illarion", "client", MainViewController.this);
+                } catch (@Nonnull final Exception e) {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressValue.set(0.0);
+                            progressDescriptionText.set(e.getLocalizedMessage());
+                        }
+                    });
+                }
             }
         }).start();
     }
@@ -124,7 +134,12 @@ public class MainViewController extends AbstractController implements MavenDownl
             });
             final JavaLauncher launcher = new JavaLauncher(true);
             if (launcher.launch(classpath, launchClass)) {
-                getModel().getStage().close();
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        getModel().getStage().close();
+                    }
+                });
             } else {
                 Platform.runLater(new Runnable() {
                     @Override
@@ -133,7 +148,6 @@ public class MainViewController extends AbstractController implements MavenDownl
                         progressDescriptionText.set(launcher.getErrorData());
                     }
                 });
-
             }
         }
     }

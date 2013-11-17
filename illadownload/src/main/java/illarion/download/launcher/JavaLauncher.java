@@ -101,7 +101,7 @@ public final class JavaLauncher {
         builder.append(File.separatorChar).append("java");
         callList.add(escapePath(builder.toString()));
 
-        callList.add("-cp");
+        callList.add("-classpath");
         callList.add(classPathString);
 
         if (snapshot) {
@@ -142,11 +142,11 @@ public final class JavaLauncher {
         }
         final StringBuilder builder = new StringBuilder();
         for (final File classPathFile : classpath) {
-            builder.append(escapePath(classPathFile.getAbsolutePath()));
+            builder.append(classPathFile.getAbsolutePath());
             builder.append(File.pathSeparatorChar);
         }
         builder.setLength(builder.length() - 1);
-        return builder.toString();
+        return escapePath(builder.toString());
     }
 
     /**
@@ -158,9 +158,12 @@ public final class JavaLauncher {
      */
     private static String escapePath(@Nonnull final String orgPath) {
         if (OSDetection.isWindows()) {
-            return '"' + orgPath + '"'; //$NON-NLS-1$ //$NON-NLS-2$
+            if (orgPath.contains(" ")) {
+                return '"' + orgPath + '"';
+            }
+            return orgPath;
         }
-        return orgPath.replace(" ", "\\ "); //$NON-NLS-1$ //$NON-NLS-2$
+        return orgPath.replace(" ", "\\ ");
     }
 
     /**
