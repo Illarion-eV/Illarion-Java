@@ -119,8 +119,10 @@ public final class JavaLauncher {
             printCallList(callList);
             if (!launchCallList(callList)) {
                 LOGGER.fatal("Error while launching application\n" + firstError);
-                LOGGER.fatal("Error while launching application\n" + errorData);
-                errorData = firstError + '\n' + errorData;
+                if (!firstError.equals(errorData)) {
+                    LOGGER.fatal("Error while launching application\n" + errorData);
+                    errorData = firstError + '\n' + errorData;
+                }
                 return false;
             }
         }

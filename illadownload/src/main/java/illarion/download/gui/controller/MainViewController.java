@@ -123,7 +123,18 @@ public class MainViewController extends AbstractController implements MavenDownl
                 }
             });
             final JavaLauncher launcher = new JavaLauncher(true);
-            launcher.launch(classpath, launchClass);
+            if (launcher.launch(classpath, launchClass)) {
+                getModel().getStage().close();
+            } else {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressValue.set(1.0);
+                        progressDescriptionText.set(launcher.getErrorData());
+                    }
+                });
+
+            }
         }
     }
 
