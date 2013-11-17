@@ -43,13 +43,13 @@ jar {
         gitVersion
 
         manifest {
-            attributes   \
-              'Implementation-Title': 'Illarion Game Engine - libGDX Backend',   \
-              'Implementation-Version': project.ext.fullVersion,   \
-              'Implementation-Vendor': 'Illarion e.V.',   \
-              'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),   \
-              'Built-By': System.getProperty('user.name'),   \
-              'Built-JDK': System.getProperty('java.version')
+            attributes     \
+                'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),    \
+                'Built-By': System.getProperty('user.name'),     \
+                'Built-JDK': System.getProperty('java.version'),     \
+                'Implementation-Title': 'Illarion Game Engine - libGDX Backend',     \
+                'Implementation-Vendor': 'Illarion e.V.',    \
+                'Implementation-Version': project.ext.fullVersion
         }
     }
 }

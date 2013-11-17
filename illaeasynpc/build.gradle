@@ -40,14 +40,15 @@ jar {
         gitVersion
 
         manifest {
-            attributes   \
-              'Implementation-Title': 'Illarion easyNPC Editor',   \
-              'Implementation-Version': project.ext.fullVersion,   \
-              'Implementation-Vendor': 'Illarion e.V.',   \
-              'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),   \
-              'Built-By': System.getProperty('user.name'),   \
-              'Built-JDK': System.getProperty('java.version'),   \
-              'Main-Class': 'illarion.easynpc.gui.MainFrame'
+
+            attributes     \
+                'Main-Class': 'illarion.easynpc.gui.MainFrame',    \
+                'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),    \
+                'Built-By': System.getProperty('user.name'),     \
+                'Built-JDK': System.getProperty('java.version'),     \
+                'Implementation-Title': 'Illarion easyNPC Editor',     \
+                'Implementation-Vendor': 'Illarion e.V.',    \
+                'Implementation-Version': project.ext.fullVersion
         }
     }
 }

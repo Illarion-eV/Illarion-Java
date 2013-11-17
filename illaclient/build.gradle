@@ -53,13 +53,13 @@ jar {
 
         manifest {
             attributes    \
-               'Implementation-Title': 'Illarion Client',    \
-               'Implementation-Version': project.ext.fullVersion,    \
-               'Implementation-Vendor': 'Illarion e.V.',    \
+               'Main-Class': 'illarion.client.IllaClient',    \
                'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),    \
                'Built-By': System.getProperty('user.name'),    \
                'Built-JDK': System.getProperty('java.version'),    \
-               'Main-Class': 'illarion.client.IllaClient'
+               'Implementation-Title': 'Illarion Client',    \
+               'Implementation-Vendor': 'Illarion e.V.',    \
+               'Implementation-Version': project.ext.fullVersion
         }
     }
 }
