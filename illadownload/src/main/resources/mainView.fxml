@@ -54,7 +54,8 @@
                                 <Button alignment="TOP_LEFT" mnemonicParsing="false" text="%launchEasyNpc"
                                         textAlignment="CENTER" AnchorPane.bottomAnchor="0.0"
                                         AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                        AnchorPane.topAnchor="0.0" styleClass="button-gray" prefHeight="40.0" />
+                                        AnchorPane.topAnchor="0.0" styleClass="button-gray" prefHeight="40.0"
+                                        onAction="#startEasyNpc" fx:id="launchEasyNpcButton"/>
                             </children>
                         </AnchorPane>
                         <AnchorPane>
@@ -62,7 +63,8 @@
                                 <Button mnemonicParsing="false" text="%launchEasyQuest" textAlignment="CENTER"
                                         AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                                         AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
-                                        styleClass="button-gray" prefHeight="40.0" />
+                                        styleClass="button-gray" prefHeight="40.0" onAction="#startEasyQuest"
+                                        fx:id="launchEasyQuestButton" />
                             </children>
                         </AnchorPane>
                         <AnchorPane>
@@ -70,7 +72,8 @@
                                 <Button mnemonicParsing="false" text="%launchMapEdit" textAlignment="CENTER"
                                         AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                                         AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
-                                        styleClass="button-gray" prefHeight="40.0" />
+                                        styleClass="button-gray" prefHeight="40.0" onAction="#startMapEdit"
+                                        fx:id="launchMapEditButton"/>
                             </children>
                         </AnchorPane>
                     </children>
@@ -129,8 +132,8 @@
                     <children>
                         <Button mnemonicParsing="false" text="%launchClient" textAlignment="CENTER"
                                 AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                                AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
-                                styleClass="button-green" onAction="#launchClient" />
+                                AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" prefWidth="100"
+                                styleClass="button-green" onAction="#launchClient" fx:id="launchClientButton" />
                     </children>
                     <BorderPane.margin>
                         <Insets left="20.0" />

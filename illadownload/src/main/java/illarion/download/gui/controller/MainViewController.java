@@ -6,18 +6,11 @@ import illarion.download.launcher.JavaLauncher;
 import illarion.download.maven.MavenDownloader;
 import illarion.download.maven.MavenDownloaderCallback;
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableStringValue;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ProgressIndicatorBuilder;
 import javafx.scene.layout.AnchorPane;
 
 import javax.annotation.Nonnull;
@@ -39,20 +32,22 @@ public class MainViewController extends AbstractController implements MavenDownl
     public ProgressBar progress;
     @FXML
     public Label progressDescription;
+    @FXML
+    public Button launchEasyNpcButton;
+    @FXML
+    public Button launchEasyQuestButton;
+    @FXML
+    public Button launchMapEditButton;
+    @FXML
+    public Button launchClientButton;
 
     private ResourceBundle resourceBundle;
-
-    private SimpleStringProperty progressDescriptionText = new SimpleStringProperty();
-    private SimpleDoubleProperty progressValue = new SimpleDoubleProperty();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.resourceBundle = resourceBundle;
-        progress.progressProperty().bindBidirectional(progressValue);
-        progressDescription.textProperty().bindBidirectional(progressDescriptionText);
-
-        progressValue.set(0.0);
-        progressDescriptionText.set(resourceBundle.getString("selectStartApp"));
+        progress.setProgress(0.0);
+        progressDescription.setText(resourceBundle.getString("selectStartApp"));
     }
 
     @Nullable
@@ -63,20 +58,70 @@ public class MainViewController extends AbstractController implements MavenDownl
         getModel().getHostServices().showDocument("http://illarion.org/community/account/index.php");
     }
 
+    public void startEasyNpc(@Nonnull final ActionEvent actionEvent) {
+        updateLaunchButtons(false, false, true, false, false);
+        launch("org.illarion", "easynpc", "illarion.easynpc.gui.MainFrame");
+    }
+
+    public void startEasyQuest(@Nonnull final ActionEvent actionEvent) {
+        updateLaunchButtons(false, false, false, true, false);
+        launch("org.illarion", "easyquest", "illarion.easyquest.gui.MainFrame");
+    }
+
+    public void startMapEdit(@Nonnull final ActionEvent actionEvent) {
+        updateLaunchButtons(false, false, false, false, true);
+        launch("org.illarion", "mapeditor", "illarion.mapedit.MapEditor");
+    }
+
     public void launchClient(@Nonnull final ActionEvent actionEvent) {
-        launchClass = "illarion.client.IllaClient";
+        updateLaunchButtons(false, true, false, false, false);
+        launch("org.illarion", "client", "illarion.client.IllaClient");
+    }
+
+    private void updateLaunchButtons(final boolean enabled, final boolean client, final boolean easyNpc,
+                                     final boolean easyQuest, final boolean mapEdit) {
+        if (Platform.isFxApplicationThread()) {
+            launchClientButton.setDisable(!enabled);
+            launchMapEditButton.setDisable(!enabled);
+            launchEasyQuestButton.setDisable(!enabled);
+            launchEasyNpcButton.setDisable(!enabled);
+            if (enabled) {
+                launchClientButton.setText(resourceBundle.getString("launchClient"));
+                launchMapEditButton.setText(resourceBundle.getString("launchMapEdit"));
+                launchEasyQuestButton.setText(resourceBundle.getString("launchEasyQuest"));
+                launchEasyNpcButton.setText(resourceBundle.getString("launchEasyNpc"));
+            } else {
+                launchClientButton.setText(resourceBundle.getString(client ? "starting" : "launchClient"));
+                launchMapEditButton.setText(resourceBundle.getString(mapEdit ? "starting" : "launchMapEdit"));
+                launchEasyQuestButton.setText(resourceBundle.getString(easyQuest ? "starting" : "launchEasyQuest"));
+                launchEasyNpcButton.setText(resourceBundle.getString(easyNpc ? "starting" : "launchEasyNpc"));
+            }
+        } else {
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    updateLaunchButtons(enabled, client, easyNpc, easyQuest, mapEdit);
+                }
+            });
+        }
+    }
+
+    private void launch(@Nonnull final String groupId, @Nonnull final String artifactId,
+                        @Nonnull final String launchClass) {
+        this.launchClass = launchClass;
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                final MavenDownloader downloader = new MavenDownloader(true);
-                downloader.downloadArtifact("org.illarion", "client", MainViewController.this);
+                    final MavenDownloader downloader = new MavenDownloader(true);
+                    downloader.downloadArtifact(groupId,artifactId, MainViewController.this);
                 } catch (@Nonnull final Exception e) {
+                    cancelLaunch();
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            progressValue.set(0.0);
-                            progressDescriptionText.set(e.getLocalizedMessage());
+                            progress.setProgress(0.0);
+                            progressDescription.setText(e.getLocalizedMessage());
                         }
                     });
                 }
@@ -89,20 +134,20 @@ public class MainViewController extends AbstractController implements MavenDownl
         if (Platform.isFxApplicationThread()) {
             switch (state) {
                 case SearchingNewVersion:
-                    progressDescriptionText.set(resourceBundle.getString("searchingNewVersion"));
+                    progressDescription.setText(resourceBundle.getString("searchingNewVersion"));
                     break;
                 case ResolvingDependencies:
-                    progressDescriptionText.set(resourceBundle.getString("resolvingDependencies"));
+                    progressDescription.setText(resourceBundle.getString("resolvingDependencies"));
                     break;
                 case ResolvingArtifacts:
-                    progressDescriptionText.set(resourceBundle.getString("resolvingArtifacts"));
+                    progressDescription.setText(resourceBundle.getString("resolvingArtifacts"));
                     break;
             }
             if (progress == null) {
-                progressValue.set(-1.0);
+                this.progress.setProgress(-1.0);
             } else {
                 progress.setCallback(this);
-                progressValue.set(progress.getProgress());
+                this.progress.setProgress(progress.getProgress());
             }
         } else {
             Platform.runLater(new Runnable() {
@@ -117,19 +162,21 @@ public class MainViewController extends AbstractController implements MavenDownl
     @Override
     public void resolvingDone(@Nullable final Collection<File> classpath) {
         if (classpath == null || launchClass == null) {
+            cancelLaunch();
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    progressValue.set(1.0);
-                    progressDescriptionText.set(resourceBundle.getString("errorClasspathNull"));
+                    progress.setProgress(1.0);
+                    progressDescription.setText(resourceBundle.getString("errorClasspathNull"));
                 }
             });
         } else {
+            cancelLaunch();
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    progressValue.set(1.0);
-                    progressDescriptionText.set(resourceBundle.getString("launchApplication"));
+                    progress.setProgress(1.0);
+                    progressDescription.setText(resourceBundle.getString("launchApplication"));
                 }
             });
             final JavaLauncher launcher = new JavaLauncher(true);
@@ -141,11 +188,12 @@ public class MainViewController extends AbstractController implements MavenDownl
                     }
                 });
             } else {
+                cancelLaunch();
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        progressValue.set(1.0);
-                        progressDescriptionText.set(launcher.getErrorData());
+                        progress.setProgress(1.0);
+                        progressDescription.setText(launcher.getErrorData());
                     }
                 });
             }
@@ -154,6 +202,10 @@ public class MainViewController extends AbstractController implements MavenDownl
 
     @Override
     public void updatedProgress(@Nonnull final ProgressMonitor monitor) {
-        progressValue.set(monitor.getProgress());
+        progress.setProgress(monitor.getProgress());
+    }
+
+    private void cancelLaunch() {
+        updateLaunchButtons(true, false, false, false, false);
     }
 }
