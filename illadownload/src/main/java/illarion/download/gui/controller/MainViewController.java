@@ -171,7 +171,6 @@ public class MainViewController extends AbstractController implements MavenDownl
                 }
             });
         } else {
-            cancelLaunch();
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
@@ -187,6 +186,7 @@ public class MainViewController extends AbstractController implements MavenDownl
                         getModel().getStage().close();
                     }
                 });
+                cancelLaunch();
             } else {
                 cancelLaunch();
                 Platform.runLater(new Runnable() {

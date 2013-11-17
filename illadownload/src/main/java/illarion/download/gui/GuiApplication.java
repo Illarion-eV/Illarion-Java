@@ -8,6 +8,7 @@ import illarion.download.gui.view.UserDirSelectView;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -40,6 +41,8 @@ public class GuiApplication extends Application implements Storyboard {
         model = new GuiModel(stage, getHostServices(), this);
 
         this.stage = stage;
+
+        stage.getIcons().add(new Image("illarion_download256.png"));
 
         nextScene();
         stage.setResizable(false);
