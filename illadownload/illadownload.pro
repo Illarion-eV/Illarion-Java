@@ -49,6 +49,10 @@
     java.lang.String getConversionPattern();
 }
 
+-keepclassmembernames class * {
+    @javafx.fxml.FXML *;
+}
+
 -keepclasseswithmembers class * {
     int getMnemonic();
     javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent);

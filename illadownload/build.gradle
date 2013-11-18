@@ -17,9 +17,16 @@
  * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 apply plugin: 'java'
-apply plugin: 'fatjar'
+apply plugin: 'application'
+apply plugin: 'maven-publish'
+apply from: '../javafx.plugin'
 
 archivesBaseName = 'illarion_download'
+mainClassName = 'illarion.download.gui.GuiApplication'
+
+if (project.hasProperty('targetDistDir')) {
+    project.distDir = project.targetDistDir
+}
 
 dependencies {
     compile project(':common')
@@ -29,49 +36,89 @@ dependencies {
     compile group: 'org.eclipse.aether', name: 'aether-transport-http', version: '0.9.0.M3'
     compile group: 'org.eclipse.aether', name: 'aether-connector-basic', version: '0.9.0.M3'
     compile group: 'org.apache.maven', name: 'maven-aether-provider', version: '3.1.1'
-
 }
 
-build.dependsOn 'fatJar'
-
-fatJar {
+jar {
     doFirst {
         gitVersion
 
         manifest {
-            attributes    \
-               'Implementation-Title': 'Illarion Download Utility',    \
-               'Implementation-Version': project.ext.fullVersion,    \
-               'Implementation-Vendor': 'Illarion e.V.',    \
-               'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),    \
-               'Built-By': System.getProperty('user.name'),    \
-               'Built-JDK': System.getProperty('java.version'),    \
-               'Main-Class': 'illarion.download.install.Installation'
+
+            attributes     \
+                'Main-Class': 'illarion.download.gui.GuiApplication',    \
+                'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),    \
+                'Built-By': System.getProperty('user.name'),     \
+                'Built-JDK': System.getProperty('java.version'),     \
+                'Implementation-Title': 'Illarion Launcher',     \
+                'Implementation-Vendor': 'Illarion e.V.',    \
+                'Implementation-Version': project.ext.fullVersion
         }
     }
-    doLast {
-        proguard
-        postprocessProguard
+}
+
+javafx {
+    appID 'IllaLauncher'
+    appName 'Illarion Launcher'
+    mainClass project.mainClassName
+
+    embedLauncher = false
+
+    category = 'Games'
+    copyright = 'Copyright (c) 2013 Illarion e.V.'
+    description = 'This is the downloader and launcher of Illarion.'
+    licenseType = 'AGPLv3'
+    vendor = 'Illarion e.V.'
+    installSystemWide = true
+    menu = true
+    shortcut = true
+
+    if (project.hasProperty('keyFile')) {
+        apply from: project.keyFile
+        releaseKey {
+            alias = project.ext.storealias
+            keyStore = project.ext.keystore
+            storePass = project.ext.storepass
+            storeType = project.ext.storetype
+        }
+        signingMode 'release'
     }
-}
+    packaging 'none'
 
-task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'fatJar') {
-    logging.captureStandardOutput LogLevel.INFO
-    configuration 'illadownload.pro'
-}
-
-task deleteOldFatJar(type: Delete, dependsOn: 'proguard') {
-    delete 'build/libs/' + archivesBaseName + '-' + project.version + '.jar'
-}
-
-task setupProguardOutput(type: Copy, dependsOn: 'deleteOldFatJar') {
-    from 'build/libs/proguard_result.jar'
-    into 'build/libs/'
-    rename { filename ->
-        filename.replace('proguard_result', archivesBaseName + '-' + project.version)
+    profiles {
+        windows {
+            javaRuntime = '<NO RUNTIME>'
+        }
+        macosx {
+            javaRuntime = '<NO RUNTIME>'
+        }
+        linux {
+            javaRuntime = '<NO RUNTIME>'
+        }
     }
+
+    width = 620
+    height = 410
+    embedJNLP = false
+    codebase = 'http://illarion.org/media/java/launcher'
 }
 
-task postprocessProguard(type: Delete, dependsOn: 'setupProguardOutput') {
-    delete 'build/libs/proguard_result.jar'
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+    repositories {
+        maven {
+            url project.ext.mavenRepo
+        }
+    }
 }

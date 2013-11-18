@@ -58,21 +58,25 @@ public class MainViewController extends AbstractController implements MavenDownl
         getModel().getHostServices().showDocument("http://illarion.org/community/account/index.php");
     }
 
+    @FXML
     public void startEasyNpc(@Nonnull final ActionEvent actionEvent) {
         updateLaunchButtons(false, false, true, false, false);
         launch("org.illarion", "easynpc", "illarion.easynpc.gui.MainFrame");
     }
 
+    @FXML
     public void startEasyQuest(@Nonnull final ActionEvent actionEvent) {
         updateLaunchButtons(false, false, false, true, false);
         launch("org.illarion", "easyquest", "illarion.easyquest.gui.MainFrame");
     }
 
+    @FXML
     public void startMapEdit(@Nonnull final ActionEvent actionEvent) {
         updateLaunchButtons(false, false, false, false, true);
         launch("org.illarion", "mapeditor", "illarion.mapedit.MapEditor");
     }
 
+    @FXML
     public void launchClient(@Nonnull final ActionEvent actionEvent) {
         updateLaunchButtons(false, true, false, false, false);
         launch("org.illarion", "client", "illarion.client.IllaClient");
