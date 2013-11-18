@@ -69,8 +69,8 @@ subprojects {
     project.group = 'org.illarion'
 
     plugins.withType(JavaPlugin) {
-        project.sourceCompatibility = JavaVersion.VERSION_1_6
-        project.targetCompatibility = JavaVersion.VERSION_1_6
+        project.sourceCompatibility = JavaVersion.VERSION_1_7
+        project.targetCompatibility = JavaVersion.VERSION_1_7
     }
 
     repositories {
