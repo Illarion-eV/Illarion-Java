@@ -20,6 +20,7 @@ package org.illarion.nifty.controls.progress;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.AbstractController;
+import de.lessvoid.nifty.controls.Parameters;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.ImageRenderer;
 import de.lessvoid.nifty.input.NiftyInputEvent;
@@ -27,11 +28,9 @@ import de.lessvoid.nifty.render.image.ImageMode;
 import de.lessvoid.nifty.render.image.ImageModeFactory;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
-import de.lessvoid.xml.xpp3.Attributes;
 import org.illarion.nifty.controls.Progress;
 
 import javax.annotation.Nonnull;
-import java.util.Properties;
 
 /**
  * The control of the progress bar.
@@ -48,11 +47,13 @@ public final class ProgressControl extends AbstractController implements Progres
     private double currentProgress;
 
     @Override
-    public void bind(final Nifty nifty, final Screen screen, final Element element, @Nonnull final Properties parameter,
-                     final Attributes controlDefinitionAttributes) {
+    public void bind(@Nonnull final Nifty nifty,
+                     @Nonnull final Screen screen,
+                     @Nonnull final Element element,
+                     @Nonnull final Parameters parameter) {
         bind(element);
 
-        minImageWidth = Integer.parseInt(parameter.getProperty("minImageWidth", "0"));
+        minImageWidth = Integer.parseInt(parameter.getWithDefault("minImageWidth", "0"));
         final Element fill = getElement().findElementById("#fill");
         originalImageMode = fill.getRenderer(ImageRenderer.class).getImage().getImageMode();
         unscaledImageMode = ImageModeFactory.getSharedInstance().createImageMode("fullimage", "direct");

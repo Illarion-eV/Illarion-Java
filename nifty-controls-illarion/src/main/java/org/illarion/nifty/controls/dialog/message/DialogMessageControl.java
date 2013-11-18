@@ -23,18 +23,17 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.Button;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.controls.Label;
+import de.lessvoid.nifty.controls.Parameters;
 import de.lessvoid.nifty.controls.window.WindowControl;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
-import de.lessvoid.xml.xpp3.Attributes;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.illarion.nifty.controls.DialogMessage;
 import org.illarion.nifty.controls.DialogMessageConfirmedEvent;
 
 import javax.annotation.Nonnull;
-import java.util.Properties;
 
 /**
  * This is the main control class for message dialogs.
@@ -76,16 +75,18 @@ public class DialogMessageControl
     private String buttonLabel;
 
     @Override
-    public void bind(final Nifty nifty, final Screen screen, final Element element, final Properties parameter,
-                     @Nonnull final Attributes controlDefinitionAttributes) {
-        super.bind(nifty, screen, element, parameter, controlDefinitionAttributes);
+    public void bind(@Nonnull final Nifty nifty,
+                     @Nonnull final Screen screen,
+                     @Nonnull final Element element,
+                     @Nonnull final Parameters parameter) {
+        super.bind(nifty, screen, element, parameter);
         niftyInstance = nifty;
         currentScreen = screen;
 
-        dialogId = Integer.parseInt(controlDefinitionAttributes.get("dialogId"));
+        dialogId = Integer.parseInt(parameter.get("dialogId"));
 
-        message = controlDefinitionAttributes.get("text");
-        buttonLabel = controlDefinitionAttributes.get("button");
+        message = parameter.get("text");
+        buttonLabel = parameter.get("button");
 
         alreadyClosed = false;
     }

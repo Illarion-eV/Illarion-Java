@@ -21,12 +21,12 @@ package org.illarion.nifty.controls.itemcontainer;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.builder.ControlBuilder;
 import de.lessvoid.nifty.builder.PanelBuilder;
+import de.lessvoid.nifty.controls.Parameters;
 import de.lessvoid.nifty.controls.window.WindowControl;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
-import de.lessvoid.xml.xpp3.Attributes;
 import org.illarion.nifty.controls.InventorySlot;
 import org.illarion.nifty.controls.ItemContainer;
 import org.illarion.nifty.controls.ItemContainerCloseEvent;
@@ -34,7 +34,6 @@ import org.illarion.nifty.controls.inventoryslot.builder.InventorySlotBuilder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Properties;
 
 /**
  * This is the control class for the item containers. It takes care for the proper initialization of the container.
@@ -55,11 +54,6 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
      */
     private InventorySlot[] slots;
 
-    /**
-     * The amount of slots in one rows.
-     */
-    private int columns;
-
     private int containerId;
 
     private Nifty niftyInstance;
@@ -71,27 +65,30 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
     }
 
     @Override
-    public void bind(final Nifty nifty, final Screen screen, final Element element, final Properties parameter, @Nonnull final Attributes controlDefinitionAttributes) {
-        super.bind(nifty, screen, element, parameter, controlDefinitionAttributes);
+    public void bind(@Nonnull final Nifty nifty,
+                     @Nonnull final Screen screen,
+                     @Nonnull final Element element,
+                     @Nonnull final Parameters parameter) {
+        super.bind(nifty, screen, element, parameter);
 
         niftyInstance = nifty;
 
         final int slotCount;
-        if (controlDefinitionAttributes.isSet("slots")) {
-            slotCount = controlDefinitionAttributes.getAsInteger("slots");
+        if (parameter.isSet("slots")) {
+            slotCount = parameter.getAsInteger("slots");
         } else {
             throw new IllegalStateException("Amount of slots not set!!");
         }
 
-        columns = (int) Math.ceil(Math.sqrt(slotCount));
+        final int columns = (int) Math.ceil(Math.sqrt(slotCount));
 
-        containerId = controlDefinitionAttributes.getAsInteger("containerId");
+        containerId = parameter.getAsInteger("containerId");
 
-        final int slotHeight = controlDefinitionAttributes.getAsInteger("slotHeight", SLOT_DEFAULT_SIZE);
-        final int slotWidth = controlDefinitionAttributes.getAsInteger("slotWidth", SLOT_DEFAULT_SIZE);
+        final int slotHeight = parameter.getAsInteger("slotHeight", SLOT_DEFAULT_SIZE);
+        final int slotWidth = parameter.getAsInteger("slotWidth", SLOT_DEFAULT_SIZE);
         final String slotBackground = "gui/containerslot.png";
 
-        final Element contentPanel = getContent().findElementByName("#contentPanel");
+        final Element contentPanel = getContent().findElementById("#contentPanel");
         PanelBuilder currentPanelBuilder = null;
 
         for (int i = 0; i < slotCount; i++) {

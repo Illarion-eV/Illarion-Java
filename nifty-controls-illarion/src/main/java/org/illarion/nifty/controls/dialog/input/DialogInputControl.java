@@ -20,22 +20,17 @@ package org.illarion.nifty.controls.dialog.input;
 
 import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
-import de.lessvoid.nifty.controls.Button;
-import de.lessvoid.nifty.controls.ButtonClickedEvent;
-import de.lessvoid.nifty.controls.Label;
-import de.lessvoid.nifty.controls.TextField;
+import de.lessvoid.nifty.controls.*;
 import de.lessvoid.nifty.controls.window.WindowControl;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
-import de.lessvoid.xml.xpp3.Attributes;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.illarion.nifty.controls.DialogInput;
 import org.illarion.nifty.controls.DialogInputConfirmedEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Properties;
 
 /**
  * This is the main control class for input dialogs.
@@ -92,19 +87,21 @@ public class DialogInputControl
     private String description;
 
     @Override
-    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen, @Nonnull final Element element,
-                     @Nonnull final Properties parameter, @Nonnull final Attributes controlDefinitionAttributes) {
-        super.bind(nifty, screen, element, parameter, controlDefinitionAttributes);
+    public void bind(@Nonnull final Nifty nifty,
+                     @Nonnull final Screen screen,
+                     @Nonnull final Element element,
+                     @Nonnull final Parameters parameter) {
+        super.bind(nifty, screen, element, parameter);
         niftyInstance = nifty;
         currentScreen = screen;
 
-        dialogId = Integer.parseInt(controlDefinitionAttributes.get("dialogId"));
+        dialogId = Integer.parseInt(parameter.get("dialogId"));
 
-        buttonLabelLeft = controlDefinitionAttributes.get("buttonLeft");
-        buttonLabelRight = controlDefinitionAttributes.get("buttonRight");
-        maxLength = controlDefinitionAttributes.getAsInteger("maxLength", 65535);
+        buttonLabelLeft = parameter.get("buttonLeft");
+        buttonLabelRight = parameter.get("buttonRight");
+        maxLength = parameter.getAsInteger("maxLength", 65535);
 
-        description = controlDefinitionAttributes.getWithDefault("description", "");
+        description = parameter.getWithDefault("description", "");
 
         alreadyClosed = false;
     }

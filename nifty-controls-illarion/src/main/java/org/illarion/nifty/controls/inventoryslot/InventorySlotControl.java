@@ -27,14 +27,12 @@ import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
-import de.lessvoid.xml.xpp3.Attributes;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.illarion.nifty.controls.InventorySlot;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Properties;
 
 /**
  * The control class of the inventory slot.
@@ -109,8 +107,10 @@ public class InventorySlotControl extends AbstractController implements Inventor
      * {@inheritDoc}
      */
     @Override
-    public void bind(@Nonnull final Nifty nifty, final Screen screen, @Nonnull final Element element, final Properties parameter,
-                     @Nonnull final Attributes controlDefinitionAttributes) {
+    public void bind(@Nonnull final Nifty nifty,
+                     @Nonnull final Screen screen,
+                     @Nonnull final Element element,
+                     @Nonnull final Parameters parameter) {
         bind(element);
 
         this.screen = screen;
@@ -138,7 +138,7 @@ public class InventorySlotControl extends AbstractController implements Inventor
             }
         };
 
-        final String background = controlDefinitionAttributes.get("background");
+        final String background = parameter.get("background");
 
         if (background != null) {
             setBackgroundImage(nifty.createImage(background, false));

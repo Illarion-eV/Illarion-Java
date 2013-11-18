@@ -21,11 +21,11 @@ package org.illarion.nifty.controls.dialog.merchant;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.controls.ListBox;
+import de.lessvoid.nifty.controls.Parameters;
 import de.lessvoid.nifty.controls.window.WindowControl;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
-import de.lessvoid.xml.xpp3.Attributes;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.illarion.nifty.controls.DialogMerchant;
 import org.illarion.nifty.controls.DialogMerchantBuyEvent;
@@ -34,7 +34,6 @@ import org.illarion.nifty.controls.MerchantListEntry;
 
 import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * This is the control class of the merchant dialogs. Not meant to direct usage.
@@ -75,13 +74,15 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
     }
 
     @Override
-    public void bind(final Nifty nifty, final Screen screen, final Element element, final Properties parameter,
-                     @Nonnull final Attributes controlDefinitionAttributes) {
-        super.bind(nifty, screen, element, parameter, controlDefinitionAttributes);
+    public void bind(@Nonnull final Nifty nifty,
+                     @Nonnull final Screen screen,
+                     @Nonnull final Element element,
+                     @Nonnull final Parameters parameter) {
+        super.bind(nifty, screen, element, parameter);
         niftyInstance = nifty;
         currentScreen = screen;
 
-        dialogId = Integer.parseInt(controlDefinitionAttributes.getWithDefault("dialogId", "-1"));
+        dialogId = Integer.parseInt(parameter.getWithDefault("dialogId", "-1"));
     }
 
     @Override

@@ -22,11 +22,11 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.controls.ListBox;
+import de.lessvoid.nifty.controls.Parameters;
 import de.lessvoid.nifty.controls.window.WindowControl;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
-import de.lessvoid.xml.xpp3.Attributes;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.illarion.nifty.controls.DialogSelect;
 import org.illarion.nifty.controls.DialogSelectCancelEvent;
@@ -35,7 +35,6 @@ import org.illarion.nifty.controls.SelectListEntry;
 
 import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * This is the control class of the select dialogs. Not meant to direct usage.
@@ -100,15 +99,16 @@ public final class DialogSelectControl extends WindowControl implements DialogSe
     }
 
     @Override
-    public void bind(final Nifty nifty, final Screen screen, @Nonnull final Element element, final Properties parameter,
-                     @Nonnull final Attributes controlDefinitionAttributes) {
-        super.bind(nifty, screen, element, parameter, controlDefinitionAttributes);
+    public void bind(@Nonnull final Nifty nifty,
+                     @Nonnull final Screen screen,
+                     @Nonnull final Element element,
+                     @Nonnull final Parameters parameter) {
+        super.bind(nifty, screen, element, parameter);
         niftyInstance = nifty;
         currentScreen = screen;
 
-        dialogId = Integer.parseInt(controlDefinitionAttributes.get("dialogId"));
-        element.findNiftyControl("#message", Label.class).setText(
-                controlDefinitionAttributes.getWithDefault("message", ""));
+        dialogId = Integer.parseInt(parameter.get("dialogId"));
+        element.findNiftyControl("#message", Label.class).setText(parameter.getWithDefault("message", ""));
     }
 
     @Override

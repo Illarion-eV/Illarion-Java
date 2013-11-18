@@ -21,15 +21,14 @@ package org.illarion.nifty.controls.dialog.merchant;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.AbstractController;
 import de.lessvoid.nifty.controls.ListBox;
+import de.lessvoid.nifty.controls.Parameters;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.screen.Screen;
-import de.lessvoid.xml.xpp3.Attributes;
 import illarion.common.gui.AbstractMultiActionHelper;
 import org.illarion.nifty.controls.MerchantListEntry;
 
 import javax.annotation.Nonnull;
-import java.util.Properties;
 
 /**
  * This control is used to monitor the different entries of the merchant dialog.
@@ -56,9 +55,11 @@ public final class DialogMerchantEntryControl extends AbstractController {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void bind(final Nifty nifty, final Screen screen, final Element element, final Properties parameter,
-                     @Nonnull final Attributes controlDefinitionAttributes) {
-        selectable = Boolean.parseBoolean(controlDefinitionAttributes.get("selectable"));
+    public void bind(@Nonnull final Nifty nifty,
+                     @Nonnull final Screen screen,
+                     @Nonnull final Element element,
+                     @Nonnull final Parameters parameter) {
+        selectable = Boolean.parseBoolean(parameter.get("selectable"));
 
         if (selectable) {
             listBox = (ListBox<MerchantListEntry>) getParent(element, 4).getNiftyControl(ListBox.class);
