@@ -82,7 +82,7 @@ subprojects {
             url 'http://nifty-gui.sourceforge.net/nifty-maven-repo'
         }
         maven {
-            url 'http://libgdx.badlogicgames.com/nightlies/maven'
+            url 'http://oss.sonatype.org/content/repositories/releases/'
         }
     }
 }

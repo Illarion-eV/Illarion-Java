@@ -463,7 +463,10 @@ class GdxGraphics implements Graphics {
         clippingRect.set(x, y, width, height);
 
         final com.badlogic.gdx.math.Rectangle scissor = Pools.obtain(com.badlogic.gdx.math.Rectangle.class);
-        ScissorStack.calculateScissors(camera, spriteBatch.getTransformMatrix(), clippingRect, scissor);
+        ScissorStack.calculateScissors(camera,
+                0, 0, gdxGraphics.getWidth(), gdxGraphics.getHeight(),
+                spriteBatch.getTransformMatrix(), clippingRect,
+                scissor);
         Pools.free(clippingRect);
 
         if (ScissorStack.pushScissors(scissor)) {

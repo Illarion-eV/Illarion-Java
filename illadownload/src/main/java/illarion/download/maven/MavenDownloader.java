@@ -206,7 +206,8 @@ public class MavenDownloader {
         repositories.add(
                 setupRepository("nifty-gui", "http://nifty-gui.sourceforge.net/nifty-maven-repo", true));
         repositories.add(setupRepository("illarion", "http://illarion.org/media/java/maven", snapshot));
-        repositories.add(setupRepository("libgdx", "http://libgdx.badlogicgames.com/nightlies/maven", true));
+        repositories.add(setupRepository("oss-sonatype", "http://oss.sonatype.org/content/repositories/releases/",
+                true));
 
         LocalRepository localRepo = new LocalRepository(DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.Data));
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
