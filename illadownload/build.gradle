@@ -52,9 +52,9 @@ jar {
     }
 }
 
-publish {
-    doFirst {
-        jfxDeploy
+if (project.hasProperty('targetDistDir')) {
+    publish.dependsOn {
+        publishDownloader
     }
 }
 
@@ -108,16 +108,10 @@ task sourceJar(type: Jar) {
     from sourceSets.main.allJava
 }
 
-task copyDistribution(type: Copy) {
-    from project.distsDir
-    into project.targetDistDir
-}
-
-jfxDeploy {
-    doLast {
-        if (project.hasProperty('targetDistDir')) {
-            copyDistribution
-        }
+if (project.hasProperty('targetDistDir')) {
+    task publishDownloader(type: Copy, dependsOn: 'jfxDeploy') {
+        from project.distsDir
+        into file(project.targetDistDir)
     }
 }
 
