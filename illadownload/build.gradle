@@ -56,6 +56,12 @@ jar {
     }
 }
 
+publish {
+    doFirst {
+        jfxDeploy
+    }
+}
+
 javafx {
     appID 'IllaLauncher'
     appName 'Illarion Launcher'
