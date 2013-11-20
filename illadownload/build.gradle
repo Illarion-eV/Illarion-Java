@@ -121,10 +121,6 @@ jfxDeploy {
     }
 }
 
-if (project.hasProperty('targetDistDir')) {
-    project.distsDir = project.targetDistDir
-}
-
 publishing {
     publications {
         mavenJava(MavenPublication) {
