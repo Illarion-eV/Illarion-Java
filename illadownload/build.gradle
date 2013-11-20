@@ -24,10 +24,6 @@ apply from: '../javafx.plugin'
 archivesBaseName = 'illarion_download'
 mainClassName = 'illarion.download.gui.GuiApplication'
 
-if (project.hasProperty('targetDistDir')) {
-    project.distsDir = project.targetDistDir
-}
-
 dependencies {
     compile project(':common')
     compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.2'
@@ -110,6 +106,23 @@ javafx {
 
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava
+}
+
+task copyDistribution(type: Copy) {
+    from project.distsDir
+    into project.targetDistDir
+}
+
+jfxDeploy {
+    doLast {
+        if (project.hasProperty('targetDistDir')) {
+            copyDistribution
+        }
+    }
+}
+
+if (project.hasProperty('targetDistDir')) {
+    project.distsDir = project.targetDistDir
 }
 
 publishing {
