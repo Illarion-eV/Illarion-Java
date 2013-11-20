@@ -25,7 +25,7 @@ archivesBaseName = 'illarion_download'
 mainClassName = 'illarion.download.gui.GuiApplication'
 
 if (project.hasProperty('targetDistDir')) {
-    project.distDir = project.targetDistDir
+    project.distsDir = project.targetDistDir
 }
 
 dependencies {
