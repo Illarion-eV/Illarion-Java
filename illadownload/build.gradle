@@ -84,7 +84,7 @@ javafx {
         }
         signingMode 'release'
     }
-    packaging 'all'
+    packaging 'none'
 
     profiles {
         windows {
