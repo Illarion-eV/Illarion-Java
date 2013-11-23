@@ -126,13 +126,7 @@ public final class DirectoryManager {
         if (EnvironmentDetect.isWebstart()) {
             relativeDirectoryPossible = false;
         } else {
-            final File workingDir;
-            final CodeSource codeSource = DirectoryManager.class.getProtectionDomain().getCodeSource();
-            if (codeSource != null) {
-                workingDir = new File(codeSource.getLocation().getPath());
-            } else {
-                workingDir = new File("");
-            }
+            final File workingDir = new File("");
 
             relativeDirectoryPossible = testDirectory(workingDir);
             if (relativeDirectoryPossible) {

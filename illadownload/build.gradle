@@ -63,7 +63,7 @@ javafx {
     appName 'Illarion Launcher'
     mainClass project.mainClassName
 
-    embedLauncher = false
+    embedLauncher = true
 
     category = 'Games'
     copyright = 'Copyright (c) 2013 Illarion e.V.'
@@ -84,7 +84,7 @@ javafx {
         }
         signingMode 'release'
     }
-    packaging 'none'
+    packaging 'all'
 
     profiles {
         windows {
@@ -100,12 +100,10 @@ javafx {
 
     width = 620
     height = 410
-    embedJNLP = false
+    embedJNLP = true
     codebase = 'http://illarion.org/media/java/launcher'
-}
 
-task sourceJar(type: Jar) {
-    from sourceSets.main.allJava
+    verbose = true
 }
 
 if (project.hasProperty('targetDistDir')) {
@@ -119,10 +117,6 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
-
-            artifact sourceJar {
-                classifier "sources"
-            }
         }
     }
     repositories {
