@@ -17,7 +17,7 @@
  * along with the Illarion Java Applications.  If not, see <http://www.gnu.org/licenses/>.
  */
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.8'
+    gradleVersion = '1.9'
 }
 
 allprojects { project ->
