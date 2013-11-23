@@ -120,6 +120,23 @@
     -fx-padding: -8 0 -8 0;
 }
 
+.text-field {
+    -fx-text-fill: #ffff;
+    -fx-background-color: #444f;
+    -fx-background-radius: 0;
+    -fx-background-insets: 1;
+    -fx-border-insets: -1;
+    
+}
+
+.text-field:hover {
+    -fx-border-color: #305B2CFF;
+}
+
+.text-field:focused {
+    -fx-background-color: #305B2CFF;
+}
+
 .radio-button {
     -fx-text-fill: white;
 }
