@@ -126,7 +126,6 @@
     -fx-background-radius: 0;
     -fx-background-insets: 1;
     -fx-border-insets: -1;
-    
 }
 
 .text-field:hover {
@@ -139,4 +138,23 @@
 
 .radio-button {
     -fx-text-fill: white;
+}
+
+.radio-button .radio {
+    -fx-background-color: #444f;
+    -fx-background-insets: 1;
+    -fx-border-radius: 1em;
+    -fx-border-insets: -1;
+}
+
+.radio-button .radio .dot {
+    -fx-background-color: transparent;
+}
+
+.radio-button:hover .radio {
+    -fx-border-color: #305B2CFF;
+}
+
+.radio-button:selected .radio .dot {
+    -fx-background-color: #ffff;
 }
