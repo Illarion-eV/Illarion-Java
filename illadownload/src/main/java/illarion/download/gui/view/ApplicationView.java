@@ -8,6 +8,7 @@ import javafx.scene.layout.Pane;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.net.URL;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
@@ -15,7 +16,13 @@ import java.io.IOException;
 class ApplicationView extends AnchorPane {
     public ApplicationView(@Nonnull final GuiModel model) throws IOException {
         final Parent root = Util.loadFXML("applicationFrame.fxml", model, Util.loadResourceBundle("applicationFrame"));
-        getStylesheets().add("applicationFrame.css");
+
+        final URL stylesheet = Thread.currentThread().getContextClassLoader().getResource("applicationFrame.css");
+        if (stylesheet != null) {
+            getStylesheets().add(stylesheet.toExternalForm());
+        } else {
+            System.out.println("Failed to locate stylesheet: applicationFrame.css");
+        }
         getChildren().add(root);
         maximizeOnAnchorPane(root);
     }
