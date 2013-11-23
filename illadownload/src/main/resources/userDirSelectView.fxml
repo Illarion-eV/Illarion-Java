@@ -15,7 +15,11 @@
                 <ToggleGroup fx:id="storageMethodSelect" />
             </fx:define>
             <children>
-                <Label style="-fx-font-size: 20pt" text="%title" />
+                <Label style="-fx-font-size: 20pt" text="%title">
+                    <VBox.margin>
+                        <Insets bottom="10.0" />
+                    </VBox.margin>
+                </Label>
                 <Label text="%descriptionGeneral" wrapText="true" />
                 <Label text="%descriptionAbsoluteRelative" wrapText="true" />
                 <VBox alignment="BOTTOM_LEFT" fillWidth="true" VBox.vgrow="ALWAYS">
