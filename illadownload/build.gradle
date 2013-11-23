@@ -63,6 +63,7 @@ if (project.hasProperty('targetDistDir')) {
 }
 
 javafx {
+    id 'IllaLauncher'
     appID 'IllaLauncher'
     appName 'Illarion Launcher'
     mainClass project.mainClassName
@@ -74,7 +75,7 @@ javafx {
     description = 'This is the downloader and launcher of Illarion.'
     licenseType = 'AGPLv3'
     vendor = 'Illarion e.V.'
-    installSystemWide = true
+    installSystemWide = false
     menu = true
     shortcut = true
 
