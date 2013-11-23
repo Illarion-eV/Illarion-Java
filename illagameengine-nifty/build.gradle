@@ -33,6 +33,9 @@ jar {
 
         manifest {
             attributes     \
+                'Permissions': 'all-permissions',    \
+                'Codebase': 'illarion.org',    \
+                'Trusted-Library': true,    \
                 'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),    \
                 'Built-By': System.getProperty('user.name'),     \
                 'Built-JDK': System.getProperty('java.version'),     \
