@@ -60,7 +60,7 @@
 .progress-bar .bar {
     -fx-border-image-source: url("gui/progressbar/progressbar-inner.png");
     -fx-border-image-slice: 2 fill;
-    -fx-border-image-width: 2;
+    -fx-border-image-width: 0;
 }
 
 .progress-bar .track {
