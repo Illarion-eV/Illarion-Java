@@ -19,12 +19,9 @@
 package illarion.client.util;
 
 import gnu.trove.map.hash.TLongObjectHashMap;
-import gnu.trove.procedure.TObjectProcedure;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.types.Location;
-import illarion.common.util.Reusable;
-import javolution.context.ObjectFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -36,73 +33,13 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-public final class PathNode
-        implements Comparable<PathNode>, Reusable {
-    /**
-     * This procedure is used to recycle all references in the cache.
-     *
-     * @author Martin Karing &lt;nitram@illarion.org&gt;
-     */
-    private static final class CleanCacheProcedure
-            implements TObjectProcedure<PathNode> {
-        /**
-         * Public constructor so the parent class is able to create a instance.
-         */
-        CleanCacheProcedure() {
-            // nothing to do
-        }
-
-        @Override
-        public boolean execute(@Nonnull final PathNode node) {
-            node.reset();
-            node.recycle();
-            return true;
-        }
-
-    }
-
-    /**
-     * The factory that is used to create and buffer the instances of the path nodes.
-     *
-     * @author Martin Karing &lt;nitram@illarion.org&gt;
-     */
-    private static final class PathNodeFactory
-            extends ObjectFactory<PathNode> {
-        /**
-         * Public constructor to allow the parent class to create proper instances.
-         */
-        PathNodeFactory() {
-            // nothing to do
-        }
-
-        /**
-         * Create a new path node.
-         *
-         * @return the new path node instance
-         */
-        @Nonnull
-        @Override
-        protected PathNode create() {
-            return new PathNode();
-        }
-    }
-
+public final class PathNode implements Comparable<PathNode> {
     /**
      * The cache for the path nodes that were loaded already. It needed to store them so the pathfinder can access
      * values calculated before.
      */
     @Nonnull
     private static final TLongObjectHashMap<PathNode> CACHE = new TLongObjectHashMap<PathNode>();
-
-    /**
-     * The instance of the CleanCacheProcedure instance that is used to clean up the path nodes.
-     */
-    private static final TObjectProcedure<PathNode> CLEAN_HELPER = new CleanCacheProcedure();
-
-    /**
-     * The factory used to create and buffer the instances of this path nodes.
-     */
-    private static final PathNodeFactory FACTORY = new PathNodeFactory();
 
     /**
      * Is the tile blocked or not.
@@ -164,7 +101,6 @@ public final class PathNode
      * Delete all nodes in the cache. Needed for a fresh start, like a new path finding.
      */
     public static void clearCache() {
-        CACHE.forEachValue(CLEAN_HELPER);
         CACHE.clear();
     }
 
@@ -179,7 +115,7 @@ public final class PathNode
         final long key = loc.getKey();
         PathNode node = CACHE.get(key);
         if (node == null) {
-            node = FACTORY.object();
+            node = new PathNode();
             node.setPosition(loc);
 
             CACHE.put(key, node);
@@ -319,24 +255,6 @@ public final class PathNode
      */
     public boolean isBlocked() {
         return blocked;
-    }
-
-    @Override
-    public void recycle() {
-        reset();
-        FACTORY.recycle(this);
-    }
-
-    @Override
-    public void reset() {
-        tile = null;
-        parent = null;
-        cost = 0;
-        depth = 0;
-        blocked = false;
-        open = false;
-        close = false;
-        heuristic = 0;
     }
 
     /**

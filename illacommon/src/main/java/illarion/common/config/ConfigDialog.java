@@ -20,14 +20,12 @@ package illarion.common.config;
 
 import illarion.common.config.entries.ConfigEntry;
 import illarion.common.util.MessageSource;
-import javolution.lang.Reflection;
-import javolution.lang.Reflection.Constructor;
-import javolution.text.TextBuilder;
 import javolution.util.FastTable;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -49,24 +47,14 @@ public final class ConfigDialog {
         /**
          * The configuration entry that is displayed next to the title.
          */
-        @Nullable
+        @Nonnull
         private ConfigEntry entry;
 
         /**
          * The title of the entry.
          */
-        @Nullable
+        @Nonnull
         private String title;
-
-        /**
-         * Create a new entry without values. This entry is not valid to be used
-         * in that state. Its absolutely needed to set the values with setTitle
-         * and setEntry.
-         */
-        public Entry() {
-            title = null;
-            entry = null;
-        }
 
         /**
          * Create a new entry with preset values.
@@ -76,7 +64,7 @@ public final class ConfigDialog {
          * @param configEntry the configuration entry that defines what value is
          *                    controlled how
          */
-        public Entry(@Nullable final String entryTitle, @Nullable final ConfigEntry configEntry) {
+        public Entry(@Nonnull final String entryTitle, @Nonnull final ConfigEntry configEntry) {
             title = entryTitle;
             entry = configEntry;
         }
@@ -87,7 +75,7 @@ public final class ConfigDialog {
          *
          * @return the configuration entry of this entry
          */
-        @Nullable
+        @Nonnull
         public ConfigEntry getConfigEntry() {
             return entry;
         }
@@ -97,7 +85,7 @@ public final class ConfigDialog {
          *
          * @return The title of this entry
          */
-        @Nullable
+        @Nonnull
         public String getTitle() {
             return title;
         }
@@ -107,7 +95,7 @@ public final class ConfigDialog {
          *
          * @param configEntry the entry that is displayed
          */
-        public void setEntry(@Nullable final ConfigEntry configEntry) {
+        public void setEntry(@Nonnull final ConfigEntry configEntry) {
             entry = configEntry;
         }
 
@@ -116,7 +104,7 @@ public final class ConfigDialog {
          *
          * @param entryTitle the title of the entry
          */
-        public void setTitle(@Nullable final String entryTitle) {
+        public void setTitle(@Nonnull final String entryTitle) {
             title = entryTitle;
         }
     }
@@ -128,44 +116,28 @@ public final class ConfigDialog {
      *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
-    public static final class Page {
+    public static final class Page implements Iterable<Entry> {
         /**
          * The list of entries that is stored on this page.
          */
+        @Nonnull
         private final List<Entry> lines;
 
         /**
          * The title of this page. This text is displayed in the tab for this
          * page.
          */
+        @Nonnull
         private String title;
-
-        /**
-         * Initialize the page without any entries or a title.
-         */
-        public Page() {
-            lines = FastTable.newInstance();
-        }
 
         /**
          * Initialize the page with a title but without any entries.
          *
          * @param pageTitle the title of the page that is displayed in the tab
          */
-        public Page(final String pageTitle) {
-            this();
+        public Page(@Nonnull final String pageTitle) {
+            lines = new FastTable<Entry>();
             title = pageTitle;
-        }
-
-        /**
-         * Initialize the page with a title and a set of entries.
-         *
-         * @param pageTitle the title of the page that is displayed in the tab
-         * @param entries   the entries that are added to the page
-         */
-        public Page(final String pageTitle, final Entry... entries) {
-            this(pageTitle);
-            Collections.addAll(lines, entries);
         }
 
         /**
@@ -173,7 +145,7 @@ public final class ConfigDialog {
          *
          * @param entry the entry that is supposed to be added to this page
          */
-        public void addEntry(final Entry entry) {
+        public void addEntry(@Nonnull final Entry entry) {
             lines.add(entry);
         }
 
@@ -182,9 +154,10 @@ public final class ConfigDialog {
          *
          * @param index the index of the entry requested
          * @return the entry at the specified index
-         * @throws IndexOutOfBoundsException if the index is lesser then zero or
-         *                                   larger or equal to {@link #getEntryCount()}
+         * @throws IndexOutOfBoundsException if the index is lesser then zero or larger or equal to
+         * {@link #getEntryCount()}
          */
+        @Nonnull
         public Entry getEntry(final int index) {
             return lines.get(index);
         }
@@ -204,6 +177,7 @@ public final class ConfigDialog {
          *
          * @return the title of this page
          */
+        @Nonnull
         public String getTitle() {
             return title;
         }
@@ -213,51 +187,46 @@ public final class ConfigDialog {
          *
          * @param pageTitle the title of this page
          */
-        public void setTitle(final String pageTitle) {
+        public void setTitle(@Nonnull final String pageTitle) {
             title = pageTitle;
         }
+
+        @Override
+        public Iterator<Entry> iterator() {
+            return lines.iterator();
+        }
     }
-
-
-    /**
-     * This constant set as display system means that the configuration dialog
-     * is displayed using Swing.
-     */
-    public static final int DISPLAY_SWING = 1;
 
     /**
      * The logger instance that takes care for the logging output of this class.
      */
+    @Nonnull
     private static final Logger LOGGER = Logger.getLogger(ConfigDialog.class);
 
     /**
      * The configuration that is used as data source for the entries. Also this
      * configuration is used to save the values set in the dialog.
      */
+    @Nullable
     private Config cfg;
-
-    /**
-     * The display system used in this configuration dialog. Allowed values are
-     * {@link #DISPLAY_SWING}.
-     */
-    private int displaySystem;
 
     /**
      * The message source that is used.
      */
+    @Nullable
     private MessageSource messages;
 
     /**
      * The list of pages displayed in this configuration dialog.
      */
+    @Nonnull
     private final List<Page> pages;
 
     /**
      * Initialize a configuration dialog. This prepares all required values.
      */
     public ConfigDialog() {
-        pages = FastTable.newInstance();
-        displaySystem = DISPLAY_SWING;
+        pages = new FastTable<Page>();
     }
 
     /**
@@ -268,6 +237,11 @@ public final class ConfigDialog {
      */
     public void addPage(final Page page) {
         pages.add(page);
+        if (cfg != null) {
+            for (@Nonnull final Entry entry : page) {
+                entry.getConfigEntry().setConfig(cfg);
+            }
+        }
     }
 
     /**
@@ -298,18 +272,15 @@ public final class ConfigDialog {
      *
      * @param config the configuration
      */
-    public void setConfig(final Config config) {
+    public void setConfig(@Nullable final Config config) {
         cfg = config;
-    }
-
-    /**
-     * Set the display system used to display the configuration dialog.
-     *
-     * @param newDisplay the constant of the display system
-     * @see #DISPLAY_SWING
-     */
-    public void setDisplaySystem(final int newDisplay) {
-        displaySystem = newDisplay;
+        if (config != null) {
+            for (@Nonnull final Page page : pages) {
+                for (@Nonnull final Entry entry : page) {
+                    entry.getConfigEntry().setConfig(config);
+                }
+            }
+        }
     }
 
     /**
@@ -317,46 +288,12 @@ public final class ConfigDialog {
      *
      * @param msgs the message source of this configuration dialog
      */
-    public void setMessageSource(final MessageSource msgs) {
+    public void setMessageSource(@Nonnull final MessageSource msgs) {
         messages = msgs;
     }
 
-    /**
-     * Display the configuration dialog. This method blocks the execution until
-     * the dialog is closed again. In case the user hits the save button it will
-     * also save the values to the configuration before the method returns.
-     */
-    @SuppressWarnings("nls")
-    public void show() {
-        for (int page = 0; page < pages.size(); page++) {
-            final Page currentPage = pages.get(page);
-            for (int entry = 0; entry < currentPage.getEntryCount(); entry++) {
-                currentPage.getEntry(entry).getConfigEntry().setConfig(cfg);
-            }
-        }
-
-        Constructor constructor = null;
-        final TextBuilder builder = TextBuilder.newInstance();
-        builder.append("illarion.common.config.gui.ConfigDialog");
-        switch (displaySystem) {
-            case DISPLAY_SWING:
-                builder.append("Swing");
-                break;
-            default:
-                LOGGER.error("Invalid display system selected");
-        }
-        builder.append('(');
-        builder.append(ConfigDialog.class.getName());
-        builder.append(',');
-        builder.append(MessageSource.class.getName());
-        builder.append(')');
-        constructor =
-                Reflection.getInstance().getConstructor(builder.toString());
-
-        TextBuilder.recycle(builder);
-
-        if (constructor != null) {
-            constructor.newInstance(this, messages);
-        }
+    @Nullable
+    public MessageSource getMessageSource() {
+        return messages;
     }
 }

@@ -27,7 +27,9 @@ import javolution.util.FastTable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * This class contains a parsed NPC structure. A detailed and analyzed version of a easyNPC script that is easily
@@ -131,7 +133,7 @@ public final class ParsedNpc {
     /**
      * A list of errors occurred while parsing this NPC.
      */
-    private FastTable<ParsedNpc.Error> errors;
+    private List<Error> errors;
 
     /**
      * Flag that stores if the error messages are sorted correctly or not.
@@ -146,7 +148,7 @@ public final class ParsedNpc {
     /**
      * The list of languages the NPC is able to speak.
      */
-    private FastTable<CharacterLanguage> languages;
+    private Collection<CharacterLanguage> languages;
 
     /**
      * The German version of the message displayed in case a character looks at
@@ -162,7 +164,7 @@ public final class ParsedNpc {
     /**
      * The additional data the NPC contains.
      */
-    private FastTable<ParsedData> npcData;
+    private List<ParsedData> npcData;
 
     /**
      * The direction the NPC is looking at.
@@ -227,7 +229,7 @@ public final class ParsedNpc {
      */
     public void addAuthor(final String author) {
         if (authors == null) {
-            authors = FastTable.newInstance();
+            authors = new FastTable<String>();
         }
         authors.add(author);
     }
@@ -241,7 +243,7 @@ public final class ParsedNpc {
      */
     public void addError(final EasyNpcScript.Line line, final String message) {
         if (errors == null) {
-            errors = FastTable.newInstance();
+            errors = new FastTable<Error>();
         }
         errors.add(new ParsedNpc.Error(line, message));
         errorOrderDirty = true;
@@ -254,7 +256,7 @@ public final class ParsedNpc {
      */
     public void addLanguage(final CharacterLanguage lang) {
         if (languages == null) {
-            languages = FastTable.newInstance();
+            languages = new FastTable<CharacterLanguage>();
         }
         if (!languages.contains(lang)) {
             languages.add(lang);
@@ -268,7 +270,7 @@ public final class ParsedNpc {
      */
     public void addNpcData(final ParsedData data) {
         if (npcData == null) {
-            npcData = FastTable.newInstance();
+            npcData = new FastTable<ParsedData>();
         }
         npcData.add(data);
     }
@@ -482,7 +484,7 @@ public final class ParsedNpc {
     @Nonnull
     public CharacterLanguage[] getLanguages() {
         if (languages == null) {
-            languages = FastTable.newInstance();
+            languages = new FastTable<CharacterLanguage>();
         }
         if (languages.isEmpty()) {
             languages.add(CharacterLanguage.common);

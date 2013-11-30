@@ -90,7 +90,7 @@ public final class Timer {
     public Timer(final int initDelay, final int betweenDelay, @Nullable final Runnable listener) {
         delay = betweenDelay;
         initialDelay = initDelay;
-        listeners = FastTable.newInstance();
+        listeners = new FastTable<Runnable>();
 
         if (listener != null) {
             addListener(listener);

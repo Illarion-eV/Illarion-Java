@@ -39,6 +39,7 @@ import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 
@@ -94,7 +95,6 @@ public class MapEditorConfig {
         final ConfigDialog dialog = new ConfigDialog();
         dialog.setConfig(configSystem);
         dialog.setMessageSource(Lang.getInstance());
-        dialog.setDisplaySystem(ConfigDialog.DISPLAY_SWING);
 
         final ConfigDialog.Page generalPage = new ConfigDialog.Page("gui.config.generalTab");
         generalPage.addEntry(new ConfigDialog.Entry("gui.config.MapeditFolderLabel", new DirectoryEntry(MAPEDIT_FOLDER,
@@ -110,8 +110,8 @@ public class MapEditorConfig {
         final ConfigDialog.Page lookAndFeelPage = new ConfigDialog.Page("gui.config.lookAndFeelTab");
         lookAndFeelPage.addEntry(new ConfigDialog.Entry("gui.config.useWindowDecoLabel", new CheckEntry(USE_WINDOW_DECO)));
 
-        final FastTable<String> themeObject = FastTable.newInstance();
-        final FastTable<String> themeLabel = FastTable.newInstance();
+        final Collection<String> themeObject = new FastTable<String>();
+        final Collection<String> themeLabel = new FastTable<String>();
 
         for (final Map.Entry<String, SkinInfo> skin : SubstanceLookAndFeel.getAllSkins().entrySet()) {
             themeObject.add(skin.getValue().getClassName());
@@ -122,9 +122,6 @@ public class MapEditorConfig {
                 SelectEntry.STORE_VALUE, themeObject.toArray(), themeLabel.toArray(new String[themeLabel.size()]))));
 
         dialog.addPage(lookAndFeelPage);
-        FastTable.recycle(themeObject);
-
-        FastTable.recycle(themeLabel);
 
         return dialog;
     }

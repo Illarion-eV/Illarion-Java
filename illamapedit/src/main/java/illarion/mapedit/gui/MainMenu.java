@@ -18,6 +18,8 @@
  */
 package illarion.mapedit.gui;
 
+import illarion.common.config.ConfigDialog;
+import illarion.common.config.gui.ConfigDialogSwing;
 import illarion.mapedit.Lang;
 import illarion.mapedit.events.menu.MapLoadErrorEvent;
 import illarion.mapedit.events.menu.MapNewEvent;
@@ -96,7 +98,8 @@ public class MainMenu extends RibbonApplicationMenu {
                         new ActionListener() {
                             @Override
                             public void actionPerformed(final ActionEvent e) {
-                                MapEditorConfig.getInstance().createDialog().show();
+                                final ConfigDialog dialog = MapEditorConfig.getInstance().createDialog();
+                                new ConfigDialogSwing(dialog);
                             }
                         });
         addFooterEntry(settings);

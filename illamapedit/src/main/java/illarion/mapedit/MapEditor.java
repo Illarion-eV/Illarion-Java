@@ -22,9 +22,9 @@ import illarion.common.bug.CrashReporter;
 import illarion.common.util.*;
 import illarion.mapedit.crash.DefaultCrashHandler;
 import illarion.mapedit.crash.exceptions.UnhandlableException;
-import illarion.mapedit.gui.MapEditorConfig;
 import illarion.mapedit.gui.GuiController;
 import illarion.mapedit.gui.MainFrame;
+import illarion.mapedit.gui.MapEditorConfig;
 import illarion.mapedit.gui.SplashScreen;
 import illarion.mapedit.resource.ResourceManager;
 import illarion.mapedit.resource.loaders.*;
@@ -140,7 +140,6 @@ public final class MapEditor {
 
     private static void initExceptionHandler() {
         CrashReporter.getInstance().setConfig(MapEditorConfig.getInstance().getInternalCfg());
-        CrashReporter.getInstance().setDisplay(CrashReporter.DISPLAY_SWING);
         CrashReporter.getInstance().setMessageSource(Lang.getInstance());
         Thread.setDefaultUncaughtExceptionHandler(DefaultCrashHandler.getInstance());
         Thread.currentThread().setUncaughtExceptionHandler(DefaultCrashHandler.getInstance());

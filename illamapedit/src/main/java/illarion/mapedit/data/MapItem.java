@@ -18,7 +18,6 @@
  */
 package illarion.mapedit.data;
 
-import javolution.lang.Immutable;
 import javolution.text.TextBuilder;
 
 import javax.annotation.Nonnull;
@@ -32,7 +31,7 @@ import java.util.List;
  * @author Tim
  * @author Fredrik K
  */
-public class MapItem implements Immutable {
+public class MapItem {
     /**
      * Represents a not existing qualtity
      */
@@ -184,7 +183,7 @@ public class MapItem implements Immutable {
     @Nonnull
     @Override
     public String toString() {
-        final TextBuilder builder = TextBuilder.newInstance();
+        final TextBuilder builder = new TextBuilder();
         builder.append(itemId).append(';');
         builder.append(quality);
 
@@ -192,11 +191,7 @@ public class MapItem implements Immutable {
             builder.append(';').append(join(itemData, ";"));
         }
 
-        try {
-            return builder.toString();
-        } finally {
-            TextBuilder.recycle(builder);
-        }
+        return builder.toString();
     }
 
     public static String join(final List<String> itemData, final String joinWith) {

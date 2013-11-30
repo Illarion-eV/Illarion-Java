@@ -21,7 +21,7 @@ package illarion.mapedit.data;
 import illarion.common.graphics.TileInfo;
 import illarion.mapedit.resource.Overlay;
 import javolution.text.TextBuilder;
-import javolution.util.FastList;
+import javolution.util.FastTable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -74,7 +74,7 @@ public class MapTile {
 
         @Nonnull
         public static MapTile copy(@Nonnull final MapTile old) {
-            final List<MapItem> items = new FastList<MapItem>();
+            final List<MapItem> items = new FastTable<MapItem>();
             if (old.mapItems != null) {
                 for (final MapItem item : old.mapItems) {
                     items.add(new MapItem(item.getId(), new ArrayList<String>(), MapItem.QUALITY_NONE));
@@ -85,7 +85,7 @@ public class MapTile {
 
         @Nonnull
         public static MapTile copyAll(@Nonnull final MapTile old) {
-            final List<MapItem> items = new FastList<MapItem>();
+            final List<MapItem> items = new FastTable<MapItem>();
             if (old.mapItems != null) {
                 for (final MapItem item : old.mapItems) {
                     List<String> itemData = null;
@@ -136,7 +136,7 @@ public class MapTile {
         this.musicID = musicID;
         this.mapWarpPoint = mapWarpPoint;
         if (mapItems != null) {
-            this.mapItems = new FastList<MapItem>();
+            this.mapItems = new FastTable<MapItem>();
             this.mapItems.addAll(mapItems);
         }
     }
@@ -181,7 +181,7 @@ public class MapTile {
 
     public void addMapItem(final MapItem item) {
         if (mapItems == null) {
-            mapItems = new FastList<MapItem>();
+            mapItems = new FastTable<MapItem>();
         }
         mapItems.add(item);
     }
@@ -265,7 +265,7 @@ public class MapTile {
     @Nonnull
     @Override
     public String toString() {
-        final TextBuilder builder = TextBuilder.newInstance();
+        final TextBuilder builder = new TextBuilder();
 
         if (shapeID == 0) {
             builder.append(tileId);
@@ -275,10 +275,6 @@ public class MapTile {
         builder.append(';');
         builder.append(musicID);
 
-        try {
-            return builder.toString();
-        } finally {
-            TextBuilder.recycle(builder);
-        }
+        return builder.toString();
     }
 }

@@ -19,8 +19,6 @@
 package illarion.common.bug;
 
 import illarion.common.util.AppIdent;
-import javolution.lang.Immutable;
-import javolution.text.TextBuilder;
 
 import javax.annotation.Nonnull;
 import java.io.Externalizable;
@@ -35,7 +33,7 @@ import java.io.ObjectOutput;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class CrashData implements Immutable, Externalizable {
+public final class CrashData implements Externalizable {
     /**
      * Serialization UID.
      */
@@ -103,7 +101,7 @@ public final class CrashData implements Immutable, Externalizable {
         applicationIdentifier = appIdent;
         threadName = crashThread.getName();
 
-        final TextBuilder builder = TextBuilder.newInstance();
+        final StringBuilder builder = new StringBuilder();
 
         Throwable current = crashException;
         while (current != null) {
@@ -128,15 +126,8 @@ public final class CrashData implements Immutable, Externalizable {
         }
 
         exception = builder.toString();
-        TextBuilder.recycle(builder);
         description = problemDescription;
         exceptionName = crashException.getClass().getSimpleName();
-    }
-
-    /**
-     * Constructor for deserialization.
-     */
-    public CrashData() {
     }
 
     /**
@@ -147,16 +138,14 @@ public final class CrashData implements Immutable, Externalizable {
     @Nonnull
     @SuppressWarnings("nls")
     static String getOSName() {
-        final TextBuilder builder = TextBuilder.newInstance();
+        final StringBuilder builder = new StringBuilder();
         builder.append(System.getProperty("os.name"));
         builder.append(' ');
         builder.append(System.getProperty("os.version"));
         builder.append(' ');
         builder.append(System.getProperty("os.arch"));
 
-        final String result = builder.toString();
-        TextBuilder.recycle(builder);
-        return result;
+        return builder.toString();
     }
 
     /**

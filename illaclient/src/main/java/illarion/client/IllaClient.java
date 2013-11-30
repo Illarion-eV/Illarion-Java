@@ -55,6 +55,7 @@ import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
+import java.util.Timer;
 
 /**
  * Main Class of the Illarion Client, this loads up the whole game and runs the main loop of the Illarion Client.
@@ -371,7 +372,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
 
         // Setup the crash reporter so the client is able to crash properly.
         CrashReporter.getInstance().setMessageSource(Lang.getInstance());
-        CrashReporter.getInstance().setDisplay(CrashReporter.DISPLAY_SWING);
 
         // in case the server is now known, update the files if needed and
         // launch the client.

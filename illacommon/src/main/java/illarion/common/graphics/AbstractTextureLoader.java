@@ -18,9 +18,8 @@
  */
 package illarion.common.graphics;
 
-import javolution.text.TextBuilder;
-import javolution.util.FastComparator;
 import javolution.util.FastMap;
+import javolution.util.function.Equalities;
 import org.apache.log4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -404,8 +403,7 @@ public abstract class AbstractTextureLoader<A extends TextureAtlas<I>, I> {
 
         final Map<String, A> sheets = loadedSheets[resourceDirIndex];
         if (sheets == null) {
-            final FastMap<String, A> newSheet = new FastMap<String, A>();
-            newSheet.setKeyComparator(FastComparator.STRING);
+            final FastMap<String, A> newSheet = new FastMap<String, A>(Equalities.LEXICAL_FAST);
             loadedSheets[resourceDirIndex] = newSheet;
             return newSheet;
         }
@@ -455,17 +453,7 @@ public abstract class AbstractTextureLoader<A extends TextureAtlas<I>, I> {
      */
     @Nonnull
     private String buildSheetName(final int resourceDirIndex, @Nonnull final String resource) {
-        TextBuilder builder = null;
-        try {
-            builder = TextBuilder.newInstance();
-            builder.append(getRootDirectory(resourceDirIndex));
-            builder.append(resource);
-            return builder.toString();
-        } finally {
-            if (builder != null) {
-                TextBuilder.recycle(builder);
-            }
-        }
+        return getRootDirectory(resourceDirIndex) + resource;
     }
 
     /**
@@ -586,17 +574,7 @@ public abstract class AbstractTextureLoader<A extends TextureAtlas<I>, I> {
      */
     @Nonnull
     private static String createAtlasResourceName(final int index) {
-        TextBuilder builder = null;
-        try {
-            builder = TextBuilder.newInstance();
-            builder.append(ATLAS_BASE_NAME);
-            builder.append(index);
-            return builder.toString();
-        } finally {
-            if (builder != null) {
-                TextBuilder.recycle(builder);
-            }
-        }
+        return ATLAS_BASE_NAME + index;
     }
 
     /**

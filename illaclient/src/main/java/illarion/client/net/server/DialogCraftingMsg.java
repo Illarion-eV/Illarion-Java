@@ -119,13 +119,9 @@ public final class DialogCraftingMsg extends AbstractGuiMsg {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        final TextBuilder builder = TextBuilder.newInstance();
-        try {
-            builder.append("title: ").append(title);
-            builder.append(" id: ").append(requestId);
-            return toString(builder.toString());
-        } finally {
-            TextBuilder.recycle(builder);
-        }
+        final TextBuilder builder = new TextBuilder();
+        builder.append("title: ").append(title);
+        builder.append(" id: ").append(requestId);
+        return toString(builder.toString());
     }
 }

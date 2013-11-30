@@ -96,15 +96,11 @@ public final class DialogInputMsg extends AbstractGuiMsg {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        final TextBuilder builder = TextBuilder.newInstance();
-        try {
-            builder.append("title: ").append(title);
-            builder.append(" id: ").append(requestId);
-            builder.append(" maximal characters: ").append(maxCharacters);
-            builder.append(" support multiline: ").append(multiLine);
-            return toString(builder.toString());
-        } finally {
-            TextBuilder.recycle(builder);
-        }
+        final TextBuilder builder = new TextBuilder();
+        builder.append("title: ").append(title);
+        builder.append(" id: ").append(requestId);
+        builder.append(" maximal characters: ").append(maxCharacters);
+        builder.append(" support multiline: ").append(multiLine);
+        return toString(builder.toString());
     }
 }

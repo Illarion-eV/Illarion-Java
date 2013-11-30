@@ -19,8 +19,8 @@
 package illarion.mapedit.graphics;
 
 import illarion.common.graphics.TextureAtlas;
-import javolution.util.FastComparator;
 import javolution.util.FastMap;
+import javolution.util.function.Equalities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -48,10 +48,7 @@ public final class TextureAtlasAwt implements TextureAtlas<BufferedImage> {
      * @param textureDef the XML document that contains the locations of the sub-images on the large image
      */
     public TextureAtlasAwt(@Nonnull final BufferedImage image, @Nonnull final Document textureDef) {
-        final FastMap<String, BufferedImage> textureMap = new FastMap<String, BufferedImage>();
-        textureMap.setKeyComparator(FastComparator.STRING);
-        textureMap.setValueComparator(FastComparator.DEFAULT);
-        textures = textureMap;
+        textures = new FastMap<String, BufferedImage>(Equalities.LEXICAL_FAST, Equalities.STANDARD);
 
         final NodeList list = textureDef.getElementsByTagName("sprite");
         for (int i = 0; i < list.getLength(); i++) {

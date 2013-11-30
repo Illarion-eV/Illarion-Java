@@ -19,15 +19,16 @@
 package illarion.easyquest.quest;
 
 import illarion.easyquest.Lang;
-import javolution.util.FastComparator;
 import javolution.util.FastMap;
 import javolution.util.FastTable;
+import javolution.util.function.Equalities;
 
 import javax.annotation.Nonnull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -44,10 +45,7 @@ public class TriggerTemplates {
     }
 
     public TriggerTemplates() {
-        final FastMap<String, TriggerTemplate> localTypeMap =
-                new FastMap<String, TriggerTemplate>();
-        localTypeMap.setKeyComparator(FastComparator.STRING);
-        typeMap = localTypeMap;
+        typeMap = new FastMap<String, TriggerTemplate>(Equalities.LEXICAL_FAST, Equalities.STANDARD);
 
         load();
     }
@@ -89,7 +87,7 @@ public class TriggerTemplates {
 
     private void load() {
         List<String> templateFiles = loadFileList();
-        FastTable<TriggerTemplate> templateList = FastTable.newInstance();
+        Collection<TriggerTemplate> templateList = new FastTable<TriggerTemplate>();
 
         if (templateFiles.isEmpty()) {
             System.out.println("Trigger directory does not exist!");
@@ -191,7 +189,6 @@ public class TriggerTemplates {
         }
 
         templates = templateList.toArray(new TriggerTemplate[templateList.size()]);
-        FastTable.recycle(templateList);
     }
 
     public int size() {

@@ -21,7 +21,6 @@ package illarion.easynpc.parsed;
 import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
-import javolution.lang.Immutable;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -33,7 +32,7 @@ import java.io.Writer;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class ParsedEmptyLine implements ParsedData, Immutable {
+public final class ParsedEmptyLine implements ParsedData {
     /**
      * Empty lines do not effect the query.
      */

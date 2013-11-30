@@ -107,15 +107,11 @@ public final class DialogMerchantMsg extends AbstractGuiMsg {
     @Nonnull
     @Override
     public String toString() {
-        final TextBuilder builder = TextBuilder.newInstance();
-        try {
-            builder.append("title: \"").append(title).append("\", ");
-            builder.append("items: \"").append(items.size()).append("\", ");
-            builder.append("dialog ID: ").append(dialogId);
+        final TextBuilder builder = new TextBuilder();
+        builder.append("title: \"").append(title).append("\", ");
+        builder.append("items: \"").append(items.size()).append("\", ");
+        builder.append("dialog ID: ").append(dialogId);
 
-            return toString(builder.toString());
-        } finally {
-            TextBuilder.recycle(builder);
-        }
+        return toString(builder.toString());
     }
 }

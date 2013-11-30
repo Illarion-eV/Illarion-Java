@@ -23,7 +23,7 @@ import illarion.mapedit.events.MapScrollEvent;
 import illarion.mapedit.events.map.RepaintRequestEvent;
 import illarion.mapedit.events.map.ZoomEvent;
 import illarion.mapedit.util.Vector2i;
-import javolution.util.FastList;
+import javolution.util.FastTable;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -62,7 +62,7 @@ public class RendererManager {
 
 
     public RendererManager() {
-        renderers = new FastList<AbstractMapRenderer>();
+        renderers = new FastTable<AbstractMapRenderer>();
         AnnotationProcessor.process(this);
     }
 

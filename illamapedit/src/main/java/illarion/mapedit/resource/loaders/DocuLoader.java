@@ -20,7 +20,7 @@ package illarion.mapedit.resource.loaders;
 
 import illarion.mapedit.Lang;
 import illarion.mapedit.resource.Resource;
-import javolution.util.FastList;
+import javolution.util.FastTable;
 import org.apache.log4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -46,7 +46,7 @@ public class DocuLoader implements Resource, TreeModel {
 
     public static class Folder extends File {
 
-        private final List<File> files = new FastList<File>();
+        private final List<File> files = new FastTable<File>();
 
         private Folder(final String name, final String path) {
             super(name, path);
@@ -185,7 +185,7 @@ public class DocuLoader implements Resource, TreeModel {
             return new String[0];
         }
         final BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        final List<String> stringList = new FastList<String>();
+        final List<String> stringList = new FastTable<String>();
         String s;
         while ((s = reader.readLine()) != null) {
             stringList.add(s);

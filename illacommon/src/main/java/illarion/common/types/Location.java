@@ -22,7 +22,6 @@ import illarion.common.graphics.Layers;
 import illarion.common.graphics.MapConstants;
 import illarion.common.net.NetCommReader;
 import illarion.common.util.FastMath;
-import javolution.text.TextBuilder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -829,16 +828,14 @@ public class Location implements Serializable {
         if (dirtySC) {
             toServerCoordinates();
         }
-        final TextBuilder builder = TextBuilder.newInstance();
+        final StringBuilder builder = new StringBuilder();
         builder.append("Location: ");
         builder.append(scX);
         builder.append(',');
         builder.append(scY);
         builder.append(',');
         builder.append(scZ);
-        final String retString = builder.toString();
-        TextBuilder.recycle(builder);
-        return retString;
+        return builder.toString();
     }
 
     /**

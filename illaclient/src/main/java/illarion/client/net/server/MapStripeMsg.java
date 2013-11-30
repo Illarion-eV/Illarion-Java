@@ -24,11 +24,9 @@ import illarion.client.world.GameMap;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.Location;
-import javolution.util.FastList;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,8 +37,7 @@ import java.util.List;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_MAP_STRIPE)
-public final class MapStripeMsg
-        extends AbstractReply {
+public final class MapStripeMsg extends AbstractReply {
     /**
      * Constant if the map stripe goes from top to bottom.
      */

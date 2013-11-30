@@ -27,7 +27,7 @@ import illarion.mapedit.events.menu.MapOpenEvent;
 import illarion.mapedit.events.menu.MapSelectedEvent;
 import illarion.mapedit.gui.util.MapComboBoxModel;
 import illarion.mapedit.resource.loaders.ImageLoader;
-import javolution.util.FastList;
+import javolution.util.FastTable;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventBusAction;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -109,7 +109,7 @@ public class MapFileBand extends JRibbonBand {
         addRibbonComponent(new JRibbonComponent(mapSelector));
         addRibbonComponent(new JRibbonComponent(close));
 
-        final List<RibbonBandResizePolicy> resize = new FastList<RibbonBandResizePolicy>();
+        final List<RibbonBandResizePolicy> resize = new FastTable<RibbonBandResizePolicy>();
         resize.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
 
 

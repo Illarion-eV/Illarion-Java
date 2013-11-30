@@ -18,9 +18,9 @@
  */
 package illarion.common.config;
 
-import javolution.util.FastComparator;
 import javolution.util.FastMap;
 import javolution.util.FastTable;
+import javolution.util.function.Equalities;
 import javolution.xml.XMLBinding;
 import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
@@ -31,6 +31,7 @@ import org.bushe.swing.event.EventBus;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -97,7 +98,7 @@ public class ConfigSystem implements Config {
      */
     @Nullable
     @Deprecated
-    private FastTable<ConfigChangeListener> configListeners;
+    private Collection<ConfigChangeListener> configListeners;
 
     /**
      * In this map the listeners that monitor a single key of the configuration
@@ -105,7 +106,7 @@ public class ConfigSystem implements Config {
      */
     @Nullable
     @Deprecated
-    private FastMap<String, FastTable<ConfigChangeListener>> keyConfigListeners;
+    private Map<String, Collection<ConfigChangeListener>> keyConfigListeners;
 
     /**
      * This lock is used to synchronize the access to the configuration system
@@ -125,10 +126,7 @@ public class ConfigSystem implements Config {
     public ConfigSystem(final File source) {
         configFile = source;
 
-        final FastMap<String, Object> map = new FastMap<String, Object>();
-        map.setKeyComparator(FastComparator.STRING);
-
-        configEntries = map;
+        configEntries = new FastMap<String, Object>(Equalities.LEXICAL_FAST);
         binding = new XMLBinding();
         binding.setClassAttribute("type"); //$NON-NLS-1$
         binding.setAlias(Byte.class, "byte");
@@ -167,7 +165,7 @@ public class ConfigSystem implements Config {
         lock.writeLock().lock();
         try {
             if (configListeners == null) {
-                configListeners = FastTable.newInstance();
+                configListeners = new FastTable<ConfigChangeListener>();
             } else if (configListeners.contains(listener)) {
                 LOGGER.warn("Listener double added: " + listener.toString());
                 return;
@@ -196,13 +194,12 @@ public class ConfigSystem implements Config {
         lock.writeLock().lock();
         try {
             if (keyConfigListeners == null) {
-                keyConfigListeners = FastMap.newInstance();
+                keyConfigListeners = new FastMap<String, Collection<ConfigChangeListener>>();
             }
 
-            FastTable<ConfigChangeListener> usedTable =
-                    keyConfigListeners.get(key);
+            Collection<ConfigChangeListener> usedTable = keyConfigListeners.get(key);
             if (usedTable == null) {
-                usedTable = FastTable.newInstance();
+                usedTable = new FastTable<ConfigChangeListener>();
                 keyConfigListeners.put(key, usedTable);
             } else if (usedTable.contains(listener)) {
                 LOGGER.warn("Listener double added: " + listener.toString());
@@ -490,7 +487,6 @@ public class ConfigSystem implements Config {
 
             if (configListeners.remove(listener)) {
                 if (configListeners.isEmpty()) {
-                    FastTable.recycle(configListeners);
                     configListeners = null;
                 }
             } else {
@@ -519,8 +515,7 @@ public class ConfigSystem implements Config {
                 return;
             }
 
-            final FastTable<ConfigChangeListener> usedTable =
-                    keyConfigListeners.get(key);
+            final Collection<ConfigChangeListener> usedTable = keyConfigListeners.get(key);
 
             if (usedTable == null) {
                 LOGGER.warn("Removed Listener not added: " + listener.toString());
@@ -529,11 +524,9 @@ public class ConfigSystem implements Config {
 
             if (usedTable.remove(listener)) {
                 if (usedTable.isEmpty()) {
-                    FastTable.recycle(usedTable);
                     keyConfigListeners.remove(key);
 
                     if (keyConfigListeners.isEmpty()) {
-                        FastMap.recycle(keyConfigListeners);
                         keyConfigListeners = null;
                     }
                 }
@@ -913,9 +906,6 @@ public class ConfigSystem implements Config {
             configEntries.putAll(loadedMap);
 
             loadedMap.clear();
-            if (loadedMap instanceof FastMap) {
-                FastMap.recycle((FastMap<String, Object>) loadedMap);
-            }
         } catch (@Nonnull final FileNotFoundException e) {
             LOGGER.warn("Configuration not loaded: config file disappeared.");
         } catch (@Nonnull final ClassCastException e) {
@@ -950,19 +940,16 @@ public class ConfigSystem implements Config {
         EventBus.publish(key, new ConfigChangedEvent(this, key));
 
         if (configListeners != null) {
-            final int count = configListeners.size();
-            for (int i = 0; i < count; i++) {
-                configListeners.get(i).configChanged(this, key);
+            for (@Nonnull final ConfigChangeListener listener : configListeners) {
+                listener.configChanged(this, key);
             }
         }
 
         if (keyConfigListeners != null) {
-            final FastTable<ConfigChangeListener> list =
-                    keyConfigListeners.get(key);
+            final Collection<ConfigChangeListener> list = keyConfigListeners.get(key);
             if (list != null) {
-                final int count = list.size();
-                for (int i = 0; i < count; i++) {
-                    list.get(i).configChanged(this, key);
+                for (@Nonnull final ConfigChangeListener listener : list) {
+                    listener.configChanged(this, key);
                 }
             }
         }

@@ -23,12 +23,13 @@ import illarion.easynpc.parsed.talk.TalkConsequence;
 import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
-import javolution.util.FastList;
+import javolution.util.FastTable;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -112,7 +113,7 @@ public final class ParsedTalk implements ParsedData {
     @Nonnull
     @Override
     public String[] getRequiredModules() {
-        final FastList<String> moduleList = FastList.newInstance();
+        final Collection<String> moduleList = new FastTable<String>();
 
         final int conditionCount = conditions.size();
         for (int i = 0; i < conditionCount; ++i) {
@@ -135,7 +136,6 @@ public final class ParsedTalk implements ParsedData {
 
         String[] result = new String[moduleList.size()];
         result = moduleList.toArray(result);
-        FastList.recycle(moduleList);
         return result;
     }
 

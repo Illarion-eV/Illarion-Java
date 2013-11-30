@@ -20,7 +20,6 @@ package illarion.easynpc.parsed.talk.conditions;
 
 import illarion.easynpc.parsed.talk.TalkCondition;
 import illarion.easynpc.writer.LuaWriter;
-import javolution.lang.Immutable;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -31,7 +30,7 @@ import java.io.Writer;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class ConditionAdmin implements Immutable, TalkCondition {
+public final class ConditionAdmin implements TalkCondition {
     /**
      * The LUA code needed for this consequence to work.
      */

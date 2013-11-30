@@ -23,7 +23,7 @@ import illarion.mapedit.resource.ItemImg;
 import illarion.mapedit.resource.loaders.ItemGroupLoader;
 import illarion.mapedit.resource.loaders.ItemLoader;
 import illarion.mapedit.tools.panel.cellrenderer.ItemTreeCellRenderer;
-import javolution.util.FastList;
+import javolution.util.FastTable;
 import org.bushe.swing.event.EventBus;
 
 import javax.annotation.Nonnull;
@@ -51,7 +51,7 @@ public class ItemTree extends JScrollPane {
 
         private ItemGroupModel(@Nonnull final ItemImg[] items) {
             final ItemGroupLoader gl = ItemGroupLoader.getInstance();
-            groups = new FastList<ItemGroup>();
+            groups = new FastTable<ItemGroup>();
 
             for (final ItemImg i : items) {
                 boolean existedGroup = false;
@@ -156,7 +156,7 @@ public class ItemTree extends JScrollPane {
 
         private ItemGroup(final int id, final String name) {
             this.id = id;
-            items = new FastList<ItemImg>();
+            items = new FastTable<ItemImg>();
             this.name = name;
         }
 

@@ -18,7 +18,7 @@
  */
 package illarion.mapedit.history;
 
-import javolution.util.FastList;
+import javolution.util.FastTable;
 
 import javax.annotation.Nonnull;
 
@@ -27,11 +27,11 @@ import javax.annotation.Nonnull;
  */
 public class GroupAction extends HistoryAction {
     @Nonnull
-    private final FastList<HistoryAction> actions;
+    private final FastTable<HistoryAction> actions;
 
     public GroupAction() {
         super(null);
-        actions = new FastList<HistoryAction>();
+        actions = new FastTable<HistoryAction>();
     }
 
     public void addAction(final HistoryAction action) {

@@ -43,6 +43,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Properties;
 
@@ -268,7 +269,6 @@ public final class Config {
         final ConfigDialog dialog = new ConfigDialog();
         dialog.setConfig(cfg);
         dialog.setMessageSource(Lang.getInstance());
-        dialog.setDisplaySystem(ConfigDialog.DISPLAY_SWING);
 
         ConfigDialog.Page page;
         page = new ConfigDialog.Page("illarion.easynpc.gui.config.generalTab");
@@ -298,8 +298,8 @@ public final class Config {
                 "illarion.easynpc.gui.config.useWindowDecoLabel", new CheckEntry(
                 USE_WINDOW_DECO)));
 
-        FastTable<String> themeObject = FastTable.newInstance();
-        FastTable<String> themeLabel = FastTable.newInstance();
+        Collection<String> themeObject = new FastTable<String>();
+        Collection<String> themeLabel = new FastTable<String>();
 
         for (final Entry<String, SkinInfo> skin : SubstanceLookAndFeel
                 .getAllSkins().entrySet()) {
@@ -312,11 +312,6 @@ public final class Config {
                 USED_LOOK_AND_FEEL, SelectEntry.STORE_VALUE, themeObject
                 .toArray(), themeLabel.toArray(new String[themeLabel
                 .size()]))));
-        FastTable.recycle(themeObject);
-        themeObject = null;
-
-        FastTable.recycle(themeLabel);
-        themeLabel = null;
 
         page.addEntry(new ConfigDialog.Entry(
                 "illarion.easynpc.gui.config.useSyntaxLabel", new CheckEntry(

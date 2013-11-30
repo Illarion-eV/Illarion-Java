@@ -21,7 +21,6 @@ package illarion.mapedit.gui;
 import illarion.mapedit.Lang;
 import illarion.mapedit.events.map.RepaintRequestEvent;
 import illarion.mapedit.render.*;
-import javolution.util.FastList;
 import org.bushe.swing.event.EventBus;
 import org.pushingpixels.flamingo.api.common.JCommandToggleButton;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
@@ -31,7 +30,7 @@ import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
 import javax.annotation.Nonnull;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
+import java.util.Arrays;
 
 /**
  * @author Tim
@@ -54,12 +53,10 @@ public class ViewBand extends JRibbonBand {
         newRenderButton(manager, musicRenderer);
         newRenderButton(manager, warpRenderer);
 
-        final List<RibbonBandResizePolicy> resize = new FastList<RibbonBandResizePolicy>();
-        resize.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
-        resize.add(new CoreRibbonResizePolicies.Mid2Low(getControlPanel()));
-        resize.add(new CoreRibbonResizePolicies.High2Low(getControlPanel()));
-
-        setResizePolicies(resize);
+        setResizePolicies(Arrays.<RibbonBandResizePolicy>asList(
+                new CoreRibbonResizePolicies.Mirror(getControlPanel()),
+                new CoreRibbonResizePolicies.Mid2Low(getControlPanel()),
+                new CoreRibbonResizePolicies.High2Low(getControlPanel())));
     }
 
     private void newRenderButton(final RendererManager manager, final AbstractMapRenderer renderer) {

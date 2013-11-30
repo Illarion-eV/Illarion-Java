@@ -21,11 +21,8 @@ package illarion.common.config.gui;
 import illarion.common.config.ConfigDialog;
 import illarion.common.config.entries.ConfigEntry;
 import illarion.common.config.gui.entries.SaveableEntry;
+import illarion.common.config.gui.entries.swing.*;
 import illarion.common.util.MessageSource;
-import javolution.lang.Reflection;
-import javolution.lang.Reflection.Constructor;
-import javolution.lang.Reflection.Method;
-import javolution.text.TextBuilder;
 import javolution.util.FastTable;
 import org.apache.log4j.Logger;
 
@@ -122,8 +119,8 @@ public final class ConfigDialogSwing extends JDialog {
         @Override
         public void actionPerformed(final ActionEvent e) {
             final int count = todoList.size();
-            for (int i = 0; i < count; i++) {
-                todoList.get(i).save();
+            for (SaveableEntry aTodoList : todoList) {
+                aTodoList.save();
             }
             parentDialog.setVisible(false);
             parentDialog.dispose();
@@ -131,23 +128,9 @@ public final class ConfigDialogSwing extends JDialog {
     }
 
     /**
-     * This is the list of possible entries that are checked to be added to the
-     * configuration dialog.
-     */
-    @SuppressWarnings("nls")
-    private static final String[] KNOWN_ENTRIES = new String[]{
-            "illarion.common.config.gui.entries.swing.CheckEntrySwing",
-            "illarion.common.config.gui.entries.swing.TextEntrySwing",
-            "illarion.common.config.gui.entries.swing.SelectEntrySwing",
-            "illarion.common.config.gui.entries.swing.NumberEntrySwing",
-            "illarion.common.config.gui.entries.swing.FileEntrySwing",
-            "illarion.common.config.gui.entries.swing.DirectoryEntrySwing"};
-
-    /**
      * The logger instance that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger
-            .getLogger(ConfigDialogSwing.class);
+    private static final Logger LOGGER = Logger.getLogger(ConfigDialogSwing.class);
 
     /**
      * The serialization UID of this dialog.
@@ -159,13 +142,13 @@ public final class ConfigDialogSwing extends JDialog {
      * dialog.
      *
      * @param dialog the configuration dialog that is needed to be displayed
-     * @param msgs   the source for the messages to be displayed
      */
     @SuppressWarnings("nls")
-    public ConfigDialogSwing(@Nonnull final ConfigDialog dialog,
-                             @Nonnull final MessageSource msgs) {
-        super((JDialog) null, msgs
+    public ConfigDialogSwing(@Nonnull final ConfigDialog dialog) {
+        super((JDialog) null, dialog.getMessageSource()
                 .getMessage("illarion.common.config.gui.Title"), true);
+
+        final MessageSource msgs = dialog.getMessageSource();
 
         final FastTable<SaveableEntry> contentList =
                 new FastTable<SaveableEntry>();
@@ -231,65 +214,31 @@ public final class ConfigDialogSwing extends JDialog {
                 con.insets.left = 5;
                 con.weightx = 0.5;
 
-                for (final String currentClass : KNOWN_ENTRIES) {
-                    final TextBuilder builder = TextBuilder.newInstance();
-                    builder.append(currentClass);
-                    builder.append(".isUsableEntry");
-                    builder.append('(');
-                    builder.append(ConfigEntry.class.getName());
-                    builder.append(')');
-                    final Method testMethod =
-                            Reflection.getInstance().getMethod(builder.toString());
-                    if (testMethod == null) {
-                        LOGGER.error("Configuration entry class not found: "
-                                + currentClass);
-                        break;
-                    }
-                    if (Boolean.TRUE.equals(testMethod.invoke(null,
-                            entry.getConfigEntry()))) {
-                        int parameters = 1;
-                        builder.setLength(0);
-                        builder.append(currentClass);
-                        builder.append('(');
-                        builder.append(ConfigEntry.class.getName());
-                        builder.append(')');
-                        Constructor constructor =
-                                Reflection.getInstance().getConstructor(
-                                        builder.toString());
-
-                        if (constructor == null) {
-                            parameters = 2;
-                            builder.setLength(builder.length() - 1);
-                            builder.append(',');
-                            builder.append(MessageSource.class.getName());
-                            builder.append(')');
-                            constructor =
-                                    Reflection.getInstance().getConstructor(
-                                            builder.toString());
-                        }
-
-                        TextBuilder.recycle(builder);
-                        if (constructor == null) {
-                            LOGGER.error("Required constructor not found: "
-                                    + currentClass);
-                            break;
-                        }
-                        Object object;
-                        if (parameters == 1) {
-                            object =
-                                    constructor
-                                            .newInstance(entry.getConfigEntry());
-                        } else {
-                            object =
-                                    constructor.newInstance(
-                                            entry.getConfigEntry(), msgs);
-                        }
-
-                        currentPanel.add((JComponent) object, con);
-                        contentList.add((SaveableEntry) object);
-                        break;
-                    }
-                    TextBuilder.recycle(builder);
+                final ConfigEntry configEntry = entry.getConfigEntry();
+                if (CheckEntrySwing.isUsableEntry(configEntry)) {
+                    final CheckEntrySwing swingEntry = new CheckEntrySwing(configEntry);
+                    currentPanel.add(swingEntry, con);
+                    contentList.add(swingEntry);
+                } else if (DirectoryEntrySwing.isUsableEntry(configEntry)) {
+                    final DirectoryEntrySwing swingEntry = new DirectoryEntrySwing(configEntry, msgs);
+                    currentPanel.add(swingEntry, con);
+                    contentList.add(swingEntry);
+                } else if (FileEntrySwing.isUsableEntry(configEntry)) {
+                    final FileEntrySwing swingEntry = new FileEntrySwing(configEntry, msgs);
+                    currentPanel.add(swingEntry, con);
+                    contentList.add(swingEntry);
+                } else if (NumberEntrySwing.isUsableEntry(configEntry)) {
+                    final NumberEntrySwing swingEntry = new NumberEntrySwing(configEntry);
+                    currentPanel.add(swingEntry, con);
+                    contentList.add(swingEntry);
+                } else if (SelectEntrySwing.isUsableEntry(configEntry)) {
+                    final SelectEntrySwing swingEntry = new SelectEntrySwing(configEntry);
+                    currentPanel.add(swingEntry, con);
+                    contentList.add(swingEntry);
+                } else if (TextEntrySwing.isUsableEntry(configEntry)) {
+                    final TextEntrySwing swingEntry = new TextEntrySwing(configEntry);
+                    currentPanel.add(swingEntry, con);
+                    contentList.add(swingEntry);
                 }
             }
 

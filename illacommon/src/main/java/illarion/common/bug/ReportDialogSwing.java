@@ -19,7 +19,6 @@
 package illarion.common.bug;
 
 import illarion.common.util.MessageSource;
-import javolution.text.TextBuilder;
 
 import javax.swing.*;
 import java.awt.*;
@@ -150,7 +149,7 @@ public final class ReportDialogSwing implements ReportDialog {
         introText.setFocusable(false);
         mainPanel.add(introText, BorderLayout.NORTH);
 
-        final TextBuilder builder = TextBuilder.newInstance();
+        final StringBuilder builder = new StringBuilder();
         builder.append(messages
                 .getMessage("illarion.common.bug.details.Intro"));
         builder.append(NL).append(NL);
@@ -184,7 +183,6 @@ public final class ReportDialogSwing implements ReportDialog {
         builder.append(crashData.getStackBacktrace());
 
         final JTextArea detailsText = new JTextArea(builder.toString());
-        TextBuilder.recycle(builder);
         detailsText.setEditable(false);
         detailsText.setCursor(null);
         detailsText.setOpaque(false);

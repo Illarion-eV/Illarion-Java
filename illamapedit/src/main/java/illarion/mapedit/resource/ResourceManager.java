@@ -18,11 +18,12 @@
  */
 package illarion.mapedit.resource;
 
-import javolution.util.FastList;
+import javolution.util.FastTable;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * This class manages all resources, represented by the interface {@link Resource}
@@ -38,7 +39,7 @@ public class ResourceManager {
      * The list of resources.
      */
     @Nonnull
-    private final FastList<Resource> res;
+    private final List<Resource> res;
     /**
      * The actual loading index.
      */
@@ -48,7 +49,7 @@ public class ResourceManager {
      * A private constructor to prevent multiple instances.
      */
     private ResourceManager() {
-        res = new FastList<Resource>();
+        res = new FastTable<Resource>();
         index = 0;
     }
 

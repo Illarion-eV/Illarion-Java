@@ -22,8 +22,6 @@ import illarion.common.config.Config;
 import illarion.common.util.AppIdent;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.MessageSource;
-import javolution.lang.Reflection;
-import javolution.lang.Reflection.Constructor;
 import org.apache.log4j.Logger;
 import org.mantisbt.connect.IMCSession;
 import org.mantisbt.connect.MCException;
@@ -53,12 +51,6 @@ public final class CrashReporter {
     public static final String CFG_KEY = "errorReport"; //$NON-NLS-1$
 
     /**
-     * This constant is used as display value in case the crash reporter is
-     * supposed to display the crash window as SWING window.
-     */
-    public static final int DISPLAY_SWING = 2;
-
-    /**
      * This constant is used as mode value in case the crash reporter is
      * supposed to send the crash reports every time.
      */
@@ -76,12 +68,6 @@ public final class CrashReporter {
      * supposed to discard the crash report.
      */
     public static final int MODE_NEVER = 2;
-
-    /**
-     * The character set used to encode the data for the Illarion server.
-     */
-    @SuppressWarnings("nls")
-    private static final String CHARSET = "UTF-8";
 
     /**
      * This URL is the URL of the server that is supposed to receive the crash
@@ -123,11 +109,6 @@ public final class CrashReporter {
     private ReportDialog dialog = null;
 
     /**
-     * This value stores the currently set display system.
-     */
-    private int display;
-
-    /**
      * This is the source of the messages that are displayed in the crash report
      * dialog.
      */
@@ -139,12 +120,17 @@ public final class CrashReporter {
     private int mode;
 
     /**
+     * This is the factory that is used to create report dialogs.
+     */
+    @Nullable
+    private ReportDialogFactory dialogFactory;
+
+    /**
      * Private constructor of the crash reporter that prepares all the required
      * data.
      */
     private CrashReporter() {
         mode = MODE_ASK;
-        display = DISPLAY_SWING;
     }
 
     /**
@@ -155,6 +141,15 @@ public final class CrashReporter {
     @Nonnull
     public static CrashReporter getInstance() {
         return INSTANCE;
+    }
+
+    /**
+     * Set the instance of the factory that is used to create a report dialog.
+     *
+     * @param dialogFactory the dialog factory
+     */
+    public void setDialogFactory(@Nullable final ReportDialogFactory dialogFactory) {
+        this.dialogFactory = dialogFactory;
     }
 
     public void dumpCrash(@Nonnull final CrashData crash) {
@@ -237,17 +232,10 @@ public final class CrashReporter {
             case MODE_ASK:
             default:
                 synchronized (this) {
-                    Constructor constr = null;
-                    if (display == DISPLAY_SWING) {
-                        constr =
-                                Reflection.getInstance().getConstructor(
-                                        "illarion.common.bug.ReportDialogSwing()");
-                    }
-
-                    if (constr == null) {
+                    if (dialogFactory == null) {
                         return;
                     }
-                    dialog = (ReportDialog) constr.newInstance();
+                    dialog = dialogFactory.createDialog();
                 }
 
                 dialog.setCrashData(crash);
@@ -295,24 +283,6 @@ public final class CrashReporter {
         if (config != null) {
             setMode(config.getInteger(CFG_KEY));
         }
-    }
-
-    /**
-     * Set the display mode that is supposed to be used by the crash reporter.
-     * Best select the mode so it fits best to the rest of your GUI. The legal
-     * values is {@link #DISPLAY_SWING}.
-     *
-     * @param newDisplay the new display value
-     * @throws IllegalArgumentException in case a invalid display mode is chosen
-     */
-    @SuppressWarnings("nls")
-    public void setDisplay(final int newDisplay) {
-        if (newDisplay != DISPLAY_SWING) {
-            throw new IllegalArgumentException("Illegal display value: "
-                    + Integer.toString(newDisplay));
-        }
-
-        display = newDisplay;
     }
 
     /**

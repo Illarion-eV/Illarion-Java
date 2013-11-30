@@ -59,14 +59,10 @@ public final class InformMsg extends AbstractGuiMsg {
     @Nonnull
     @Override
     public String toString() {
-        final TextBuilder builder = TextBuilder.newInstance();
-        try {
-            builder.append("Type: ").append(informType);
-            builder.append(" Text: ").append(informText);
-            return toString(builder.toString());
-        } finally {
-            TextBuilder.recycle(builder);
-        }
+        final TextBuilder builder = new TextBuilder();
+        builder.append("Type: ").append(informType);
+        builder.append(" Text: ").append(informText);
+        return toString(builder.toString());
     }
 
     @Override
@@ -111,17 +107,10 @@ public final class InformMsg extends AbstractGuiMsg {
                 break;
 
             default:
-                TextBuilder builder = null;
-                try {
-                    builder = TextBuilder.newInstance();
-                    builder.append("Received inform with unknown type: ").append(informType);
-                    builder.append("(").append(informText).append(")");
-                    LOGGER.warn(builder.toString());
-                } finally {
-                    if (builder != null) {
-                        TextBuilder.recycle(builder);
-                    }
-                }
+                TextBuilder builder = new TextBuilder();
+                builder.append("Received inform with unknown type: ").append(informType);
+                builder.append("(").append(informText).append(")");
+                LOGGER.warn(builder.toString());
         }
         return true;
     }

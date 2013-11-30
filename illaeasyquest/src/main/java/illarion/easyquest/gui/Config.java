@@ -147,7 +147,6 @@ public final class Config implements ConfigChangeListener {
         final ConfigDialog dialog = new ConfigDialog();
         dialog.setConfig(cfg);
         dialog.setMessageSource(Lang.getInstance());
-        dialog.setDisplaySystem(ConfigDialog.DISPLAY_SWING);
 
         ConfigDialog.Page page;
         page = new ConfigDialog.Page("illarion.easyquest.gui.config.generalTab");

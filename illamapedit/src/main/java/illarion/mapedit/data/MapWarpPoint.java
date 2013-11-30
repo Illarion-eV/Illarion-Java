@@ -18,7 +18,6 @@
  */
 package illarion.mapedit.data;
 
-import javolution.lang.Immutable;
 import javolution.text.TextBuilder;
 
 import javax.annotation.Nonnull;
@@ -28,7 +27,7 @@ import javax.annotation.Nonnull;
  *
  * @author Tim
  */
-public class MapWarpPoint implements Immutable {
+public class MapWarpPoint {
 
     /**
      * The x coordinate of the target point.
@@ -105,16 +104,12 @@ public class MapWarpPoint implements Immutable {
     @Nonnull
     @Override
     public String toString() {
-        TextBuilder builder = TextBuilder.newInstance();
+        final TextBuilder builder = new TextBuilder();
 
         builder.append(xTarget).append(';');
         builder.append(yTarget).append(';');
         builder.append(zTarget);
 
-        try {
-            return builder.toString();
-        } finally {
-            TextBuilder.recycle(builder);
-        }
+        return builder.toString();
     }
 }

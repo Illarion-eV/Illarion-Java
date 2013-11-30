@@ -18,15 +18,13 @@
  */
 package illarion.common.graphics;
 
-import javolution.lang.Immutable;
-
 /**
  * This class is used to store some general information about a tile.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-public final class TileInfo implements Immutable {
+public final class TileInfo {
     /**
      * The mask value used to fetch the base tile ID.
      */

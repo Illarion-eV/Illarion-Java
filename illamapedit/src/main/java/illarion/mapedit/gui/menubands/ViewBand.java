@@ -21,7 +21,7 @@ package illarion.mapedit.gui.menubands;
 import illarion.mapedit.Lang;
 import illarion.mapedit.events.map.RepaintRequestEvent;
 import illarion.mapedit.render.*;
-import javolution.util.FastList;
+import javolution.util.FastTable;
 import org.bushe.swing.event.EventBus;
 import org.pushingpixels.flamingo.api.common.JCommandToggleButton;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
@@ -54,7 +54,7 @@ public class ViewBand extends JRibbonBand {
         newRenderButton(manager, new AnnotationRenderer(manager));
         newRenderButton(manager, new ObstacleRenderer(manager));
 
-        final List<RibbonBandResizePolicy> resize = new FastList<RibbonBandResizePolicy>();
+        final List<RibbonBandResizePolicy> resize = new FastTable<RibbonBandResizePolicy>();
         resize.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
         resize.add(new CoreRibbonResizePolicies.Mid2Low(getControlPanel()));
         resize.add(new CoreRibbonResizePolicies.High2Low(getControlPanel()));

@@ -81,13 +81,10 @@ public final class DialogSelectionMsg extends AbstractGuiMsg {
     @Nonnull
     @Override
     public String toString() {
-        final TextBuilder builder = TextBuilder.newInstance();
+        final TextBuilder builder = new TextBuilder();
         builder.append("title: \"").append(title).append("\", ");
         builder.append("items: \"").append(items.length).append("\", ");
         builder.append("dialog ID: ").append(dialogId);
-
-        final String result = builder.toString();
-        TextBuilder.recycle(builder);
-        return toString(result);
+        return toString(builder.toString());
     }
 }

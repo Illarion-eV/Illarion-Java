@@ -106,13 +106,11 @@ public final class Lang implements MessageSource {
      *         key was not found in the storage
      */
     public static String getMsg(@Nonnull final Class<?> clazz, final String key) {
-        final TextBuilder builder = TextBuilder.newInstance();
+        final TextBuilder builder = new TextBuilder();
         builder.append(clazz.getName());
         builder.append('.');
         builder.append(key);
-        final String result = getMsg(builder.toString());
-        TextBuilder.recycle(builder);
-        return result;
+        return getMsg(builder.toString());
     }
 
     /**

@@ -29,7 +29,7 @@ import illarion.mapedit.history.HistoryManager;
 import illarion.mapedit.history.ItemPlacedAction;
 import illarion.mapedit.render.RendererManager;
 import illarion.mapedit.util.SwingLocation;
-import javolution.util.FastList;
+import javolution.util.FastTable;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -83,7 +83,7 @@ public class GuiController extends WindowAdapter {
         mainFrame = new MainFrame(this);
         historyManager = new HistoryManager();
         annotationChecker = new AnnotationChecker();
-        maps = new FastList<Map>(1);
+        maps = new FastTable<Map>();
         notSaved = false;
     }
 

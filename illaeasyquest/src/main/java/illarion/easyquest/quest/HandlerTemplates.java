@@ -19,15 +19,16 @@
 package illarion.easyquest.quest;
 
 import illarion.easyquest.Lang;
-import javolution.util.FastComparator;
 import javolution.util.FastMap;
 import javolution.util.FastTable;
+import javolution.util.function.Equalities;
 
 import javax.annotation.Nonnull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -53,10 +54,7 @@ public class HandlerTemplates {
     }
 
     public HandlerTemplates() {
-        final FastMap<String, HandlerTemplate> localTypeMap =
-                new FastMap<String, HandlerTemplate>();
-        localTypeMap.setKeyComparator(FastComparator.STRING);
-        typeMap = localTypeMap;
+        typeMap = new FastMap<String, HandlerTemplate>(Equalities.LEXICAL_FAST, Equalities.STANDARD);
 
         load();
     }
@@ -96,7 +94,7 @@ public class HandlerTemplates {
 
     private void load() {
         List<String> templateFiles = loadFileList();
-        FastTable<HandlerTemplate> templateList = FastTable.newInstance();
+        Collection<HandlerTemplate> templateList = new FastTable<HandlerTemplate>();
 
         if (templateFiles.isEmpty()) {
             System.out.println("Handler directory does not exist!");
@@ -162,7 +160,6 @@ public class HandlerTemplates {
 
         templates = templateList.toArray(new HandlerTemplate[templateList.size()]);
         publicTemplates = templates.clone();
-        FastTable.recycle(templateList);
     }
 
     public int size() {

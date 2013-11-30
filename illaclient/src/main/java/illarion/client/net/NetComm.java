@@ -177,8 +177,8 @@ public final class NetComm {
      * @param buffer The buffer that contains the values that shall be written
      */
     static void dump(final String prefix, @Nonnull final ByteBuffer buffer) {
-        final TextBuilder builder = TextBuilder.newInstance();
-        final TextBuilder builderText = TextBuilder.newInstance();
+        final TextBuilder builder = new TextBuilder();
+        final TextBuilder builderText = new TextBuilder();
 
         builder.append(prefix);
         builder.append(' ');
@@ -204,8 +204,6 @@ public final class NetComm {
         builder.append('>');
 
         LOGGER.debug(builder.toString());
-        TextBuilder.recycle(builder);
-        TextBuilder.recycle(builderText);
     }
 
     /**

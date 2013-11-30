@@ -18,6 +18,8 @@
  */
 package illarion.easyquest.gui;
 
+import illarion.common.config.ConfigDialog;
+import illarion.common.config.gui.ConfigDialogSwing;
 import illarion.easyquest.Lang;
 import org.pushingpixels.flamingo.api.common.JCommandButton.CommandButtonKind;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenu;
@@ -167,7 +169,8 @@ final class MainMenu extends RibbonApplicationMenu {
                         new ActionListener() {
                             @Override
                             public void actionPerformed(final ActionEvent e) {
-                                Config.getInstance().createDialog().show();
+                                final ConfigDialog dialog = Config.getInstance().createDialog();
+                                new ConfigDialogSwing(dialog);
                             }
                         });
         addFooterEntry(settings);

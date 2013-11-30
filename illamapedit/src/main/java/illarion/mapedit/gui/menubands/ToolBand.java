@@ -21,7 +21,7 @@ package illarion.mapedit.gui.menubands;
 import illarion.mapedit.Lang;
 import illarion.mapedit.gui.util.ToolMenuButton;
 import illarion.mapedit.tools.*;
-import javolution.util.FastList;
+import javolution.util.FastTable;
 import org.pushingpixels.flamingo.api.common.CommandToggleButtonGroup;
 import org.pushingpixels.flamingo.api.common.JCommandToggleButton;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
@@ -29,8 +29,8 @@ import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
 import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
 import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @author Tim
@@ -44,7 +44,7 @@ public class ToolBand extends JRibbonBand {
     public ToolBand() {
         super(Lang.getMsg("gui.toolband.Name"), null);
 
-        final Collection<AbstractTool> tools = new FastList<AbstractTool>();
+        final Collection<AbstractTool> tools = new FastTable<AbstractTool>();
         final CommandToggleButtonGroup group = new CommandToggleButtonGroup();
 
         tools.add(new TileBrushTool());
@@ -62,9 +62,7 @@ public class ToolBand extends JRibbonBand {
             group.add(button);
         }
 
-        final List<RibbonBandResizePolicy> resize = new FastList<RibbonBandResizePolicy>();
-        resize.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
-
-        setResizePolicies(resize);
+        setResizePolicies(Arrays.<RibbonBandResizePolicy>asList(
+                new CoreRibbonResizePolicies.Mirror(getControlPanel())));
     }
 }

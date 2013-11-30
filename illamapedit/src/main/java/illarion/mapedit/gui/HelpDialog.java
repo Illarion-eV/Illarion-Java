@@ -98,7 +98,7 @@ public class HelpDialog extends JDialog implements HyperlinkListener, TreeSelect
         if (path[path.length - 1] instanceof DocuLoader.Folder) {
             return;
         }
-        final TextBuilder b = TextBuilder.newInstance();
+        final TextBuilder b = new TextBuilder();
         try {
             for (final Object o : path) {
                 final DocuLoader.File file = (DocuLoader.File) o;
@@ -113,8 +113,6 @@ public class HelpDialog extends JDialog implements HyperlinkListener, TreeSelect
         } catch (IOException e1) {
             html.setContentType("text/plain");
             html.setText(Lang.getMsg("gui.docu.IOError") + '\n' + b.toString());
-        } finally {
-            TextBuilder.recycle(b);
         }
     }
 

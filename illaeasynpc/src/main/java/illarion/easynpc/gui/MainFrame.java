@@ -346,7 +346,6 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
 
         CrashReporter.getInstance().setConfig(
                 Config.getInstance().getInternalCfg());
-        CrashReporter.getInstance().setDisplay(CrashReporter.DISPLAY_SWING);
         CrashReporter.getInstance().setMessageSource(Lang.getInstance());
         AWTCrashHandler.init();
 

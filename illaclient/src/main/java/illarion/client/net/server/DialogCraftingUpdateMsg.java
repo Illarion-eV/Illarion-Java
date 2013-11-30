@@ -120,28 +120,24 @@ public final class DialogCraftingUpdateMsg extends AbstractGuiMsg {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        final TextBuilder builder = TextBuilder.newInstance();
-        try {
-            switch (type) {
-                case START:
-                    builder.append("START");
-                    builder.append(", required time: ");
-                    builder.append((float) requiredTime / 10.f);
-                    builder.append("s");
-                    break;
-                case COMPLETE:
-                    builder.append("COMPLETED");
-                    break;
-                case ABORTED:
-                    builder.append("ABORTED");
-                    break;
-                default:
-                    builder.append("UNKNOWN");
-            }
-            builder.append(", id: ").append(requestId);
-            return toString(builder.toString());
-        } finally {
-            TextBuilder.recycle(builder);
+        final TextBuilder builder = new TextBuilder();
+        switch (type) {
+            case START:
+                builder.append("START");
+                builder.append(", required time: ");
+                builder.append((float) requiredTime / 10.f);
+                builder.append("s");
+                break;
+            case COMPLETE:
+                builder.append("COMPLETED");
+                break;
+            case ABORTED:
+                builder.append("ABORTED");
+                break;
+            default:
+                builder.append("UNKNOWN");
         }
+        builder.append(", id: ").append(requestId);
+        return toString(builder.toString());
     }
 }
