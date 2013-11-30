@@ -112,6 +112,14 @@ javafx {
 }
 
 if (project.hasProperty('targetDistDir')) {
+    task clearDistDir(type: Delete) {
+        delete project.distsDir
+    }
+    jfxDeploy {
+        doFirst {
+            clearDistDir
+        }
+    }
     task publishDownloader(type: Copy, dependsOn: 'jfxDeploy') {
         from project.distsDir
         into file(project.targetDistDir)
