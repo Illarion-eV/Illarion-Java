@@ -14,7 +14,7 @@
     -fx-alignment: center;
     -fx-text-fill: white;
     -fx-background-color: transparent;
-    -fx-border-image-source: url("./button/buttongray.png");
+    -fx-border-image-source: url("/illarion/download/gui/view/button/buttongray.png");
     -fx-border-image-slice: 8 fill;
     -fx-border-image-width: 8;
     -fx-padding: -8 0 -8 0
