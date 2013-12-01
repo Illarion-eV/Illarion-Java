@@ -1,4 +1,4 @@
-#rootPane {
+.application {
     -fx-background-color: transparent;
     -fx-border-image-source: url("panel/panel-window-dark.png");
     -fx-border-image-slice: 59 23 48 23 fill;
@@ -105,7 +105,7 @@
 
 .titled-pane .title {
     -fx-background-color: transparent;
-    -fx-alignment: CENTER;
+    -fx-alignment: center;
 }
 
 .titled-pane .title .text {
@@ -121,19 +121,19 @@
 }
 
 .text-field {
-    -fx-text-fill: #ffff;
-    -fx-background-color: #444f;
+    -fx-text-fill: white;
+    -fx-background-color: #444444;
     -fx-background-radius: 0;
     -fx-background-insets: 1;
     -fx-border-insets: -1;
 }
 
 .text-field:hover {
-    -fx-border-color: #305B2CFF;
+    -fx-border-color: #305b2c;
 }
 
 .text-field:focused {
-    -fx-background-color: #305B2CFF;
+    -fx-background-color: #305b2c;
 }
 
 .radio-button {
@@ -141,7 +141,7 @@
 }
 
 .radio-button .radio {
-    -fx-background-color: #444f;
+    -fx-background-color: #444444;
     -fx-background-insets: 1;
     -fx-border-radius: 1em;
     -fx-border-insets: -1;
@@ -152,11 +152,11 @@
 }
 
 .radio-button:hover .radio {
-    -fx-border-color: #305B2CFF;
+    -fx-border-color: #305b2c;
 }
 
 .radio-button:selected .radio .dot {
-    -fx-background-color: WHITE;
+    -fx-background-color: white;
 }
 
 .combo-box-base {
@@ -208,14 +208,14 @@
 
 .combo-box-popup .list-view .list-cell {
     -fx-padding: 0 -25 0 5;
-    -fx-background-color: #000c;
+    -fx-background-color: #000000cc;
     -fx-text-fill: white;
 }
 
 .combo-box-popup .list-view .list-cell:hover {
-    -fx-background-color: #264d1cff;
+    -fx-background-color: #264d1c;
 }
 
 .combo-box-popup .list-view .list-cell:selected {
-    -fx-background-color: #051901ff;
+    -fx-background-color: #051901;
 }

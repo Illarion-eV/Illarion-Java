@@ -14,7 +14,21 @@ import java.io.IOException;
  */
 class ApplicationView extends AnchorPane {
     public ApplicationView(@Nonnull final GuiModel model) throws IOException {
+        boolean isApplet;
+        try {
+            isApplet =  model.getHostServices().getWebContext() != null;
+        } catch (Exception e) {
+            isApplet = false;
+        }
+
         final Parent root = Util.loadFXML("applicationFrame.fxml", model, Util.loadResourceBundle("applicationFrame"));
+
+        if (isApplet) {
+            root.getStyleClass().add("applet");
+            root.lookup("#header").setVisible(false);
+        } else {
+            root.getStyleClass().add("application");
+        }
 
         final String stylesheet = Util.getCssReference("applicationFrame");
         if (stylesheet != null) {

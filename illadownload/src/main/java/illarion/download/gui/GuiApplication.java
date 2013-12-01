@@ -59,8 +59,7 @@ public class GuiApplication extends Application implements Storyboard {
     }
 
     public static void main(final String[] args) {
-
-        launch();
+        launch(args);
     }
 
     @Override

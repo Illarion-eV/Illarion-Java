@@ -1,6 +1,5 @@
 package illarion.download.gui.controller;
 
-import illarion.download.gui.model.GuiModel;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -30,25 +29,27 @@ public class ApplicationController extends AbstractController {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        rootPane.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent me) {
-                if (me.getButton() != MouseButton.MIDDLE) {
-                    initialX = me.getSceneX();
-                    initialY = me.getSceneY();
+        if (getModel().getHostServices().getWebContext() == null) {
+            rootPane.setOnMousePressed(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent me) {
+                    if (me.getButton() != MouseButton.MIDDLE) {
+                        initialX = me.getSceneX();
+                        initialY = me.getSceneY();
+                    }
                 }
-            }
-        });
+            });
 
-        rootPane.setOnMouseDragged(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent me) {
-                if (me.getButton() != MouseButton.MIDDLE) {
-                    getModel().getStage().setX(me.getScreenX() - initialX);
-                    getModel().getStage().setY(me.getScreenY() - initialY);
+            rootPane.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent me) {
+                    if (me.getButton() != MouseButton.MIDDLE) {
+                        getModel().getStage().setX(me.getScreenX() - initialX);
+                        getModel().getStage().setY(me.getScreenY() - initialY);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     @FXML
