@@ -4,7 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.*?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="illarion.download.gui.controller.ApplicationController"
-        fx:id="rootPane">
+        fx:id="rootPane" stylesheets="/illarion/download/gui/view/applicationFrame.css">
     <children>
         <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                     AnchorPane.topAnchor="0.0">
