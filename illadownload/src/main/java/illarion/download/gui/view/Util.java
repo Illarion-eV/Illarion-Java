@@ -3,9 +3,9 @@ package illarion.download.gui.view;
 import illarion.download.gui.controller.Controller;
 import illarion.download.gui.model.GuiModel;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
@@ -51,5 +51,19 @@ class Util {
             bundle = ResourceBundle.getBundle(name, Locale.ENGLISH);
         }
         return bundle;
+    }
+
+    @Nullable
+    public static String getCssReference(@Nonnull final String baseName) {
+        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        @Nullable final URL bss = classLoader.getResource(baseName + ".bss");
+        if (bss != null) {
+            return bss.toExternalForm();
+        }
+        @Nullable final URL css = classLoader.getResource(baseName + ".css");
+        if (css != null) {
+            return css.toExternalForm();
+        }
+        return null;
     }
 }

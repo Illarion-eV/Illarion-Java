@@ -23,7 +23,7 @@ public interface Storyboard {
     /**
      * Show the options.
      */
-    void showOptions();
+    void showOptions() throws IOException;
 
     /**
      * Show the normal storyboard.

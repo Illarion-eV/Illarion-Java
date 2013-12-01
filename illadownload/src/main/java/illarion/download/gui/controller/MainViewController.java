@@ -16,6 +16,7 @@ import javafx.scene.layout.AnchorPane;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.ResourceBundle;
@@ -211,5 +212,12 @@ public class MainViewController extends AbstractController implements MavenDownl
 
     private void cancelLaunch() {
         updateLaunchButtons(true, false, false, false, false);
+    }
+
+    public void showOptions(@Nonnull final ActionEvent actionEvent) {
+        try {
+            getModel().getStoryboard().showOptions();
+        } catch (@Nonnull final IOException ignored) {
+        }
     }
 }

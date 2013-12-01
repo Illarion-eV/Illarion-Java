@@ -2,6 +2,7 @@ package illarion.download.gui;
 
 import illarion.common.util.DirectoryManager;
 import illarion.download.gui.model.GuiModel;
+import illarion.download.gui.view.ChannelSelectView;
 import illarion.download.gui.view.DataDirSelectView;
 import illarion.download.gui.view.MainView;
 import illarion.download.gui.view.UserDirSelectView;
@@ -93,8 +94,9 @@ public class GuiApplication extends Application implements Storyboard {
     }
 
     @Override
-    public void showOptions() {
+    public void showOptions() throws IOException {
         showOptions = true;
+        setScene(new ChannelSelectView(model));
     }
 
     @Override

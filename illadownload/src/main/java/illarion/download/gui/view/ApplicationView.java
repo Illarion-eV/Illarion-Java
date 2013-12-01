@@ -8,7 +8,6 @@ import javafx.scene.layout.Pane;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.net.URL;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
@@ -17,11 +16,11 @@ class ApplicationView extends AnchorPane {
     public ApplicationView(@Nonnull final GuiModel model) throws IOException {
         final Parent root = Util.loadFXML("applicationFrame.fxml", model, Util.loadResourceBundle("applicationFrame"));
 
-        final URL stylesheet = Thread.currentThread().getContextClassLoader().getResource("applicationFrame.css");
+        final String stylesheet = Util.getCssReference("applicationFrame");
         if (stylesheet != null) {
-            getStylesheets().add(stylesheet.toExternalForm());
+            getStylesheets().add(stylesheet);
         } else {
-            System.out.println("Failed to locate stylesheet: applicationFrame.css");
+            System.out.println("Failed to locate stylesheet: applicationFrame");
         }
         getChildren().add(root);
         maximizeOnAnchorPane(root);
