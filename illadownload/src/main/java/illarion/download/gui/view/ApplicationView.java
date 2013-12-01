@@ -8,34 +8,50 @@ import javafx.scene.layout.Pane;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 class ApplicationView extends AnchorPane {
     public ApplicationView(@Nonnull final GuiModel model) throws IOException {
-        boolean isApplet;
+        boolean isAppletTemp;
         try {
-            isApplet =  model.getHostServices().getWebContext() != null;
+            isAppletTemp =  model.getHostServices().getWebContext() != null;
         } catch (Exception e) {
-            isApplet = false;
+            isAppletTemp = false;
         }
 
-        final Parent root = Util.loadFXML("applicationFrame.fxml", model, Util.loadResourceBundle("applicationFrame"));
+        final boolean isApplet = isAppletTemp;
 
-        if (isApplet) {
-            root.getStyleClass().add("applet");
-            root.lookup("#header").setVisible(false);
-        } else {
-            root.getStyleClass().add("application");
-        }
+        final Parent root = AccessController.doPrivileged(new PrivilegedAction<Parent>() {
+            @Override
+            public Parent run() {
+                final Parent root;
+                try {
+                    root = Util.loadFXML("applicationFrame.fxml", model, Util.loadResourceBundle("applicationFrame"));
+                } catch (IOException e) {
+                    return null;
+                }
 
-        final String stylesheet = Util.getCssReference("applicationFrame");
-        if (stylesheet != null) {
-            getStylesheets().add(stylesheet);
-        } else {
-            System.out.println("Failed to locate stylesheet: applicationFrame");
-        }
+                final String stylesheet = Util.getCssReference("applicationFrame");
+                if (stylesheet != null) {
+                    getStylesheets().add(stylesheet);
+                } else {
+                    System.out.println("Failed to locate stylesheet: applicationFrame");
+                }
+
+                if (isApplet) {
+                    root.getStyleClass().add("applet");
+                    root.lookup("#header").setVisible(false);
+                } else {
+                    root.getStyleClass().add("application");
+                }
+
+                return root;
+            }
+        });
         getChildren().add(root);
         maximizeOnAnchorPane(root);
     }
