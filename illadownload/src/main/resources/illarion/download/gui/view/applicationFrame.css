@@ -1,6 +1,6 @@
 .application {
     -fx-background-color: transparent;
-    -fx-border-image-source: url("panel/panel-window-dark.png");
+    -fx-border-image-source: url("./panel/panel-window-dark.png");
     -fx-border-image-slice: 59 23 48 23 fill;
     -fx-border-image-width: 59 23 48 23;
     -fx-padding: -54 0 -38 0;
@@ -14,40 +14,40 @@
     -fx-alignment: center;
     -fx-text-fill: white;
     -fx-background-color: transparent;
-    -fx-border-image-source: url("button/buttongray.png");
+    -fx-border-image-source: url("./button/buttongray.png");
     -fx-border-image-slice: 8 fill;
     -fx-border-image-width: 8;
     -fx-padding: -8 0 -8 0
 }
 
 .button-gray:hover {
-    -fx-border-image-source: url("button/buttongray_hover.png");
+    -fx-border-image-source: url("./button/buttongray_hover.png");
 }
 
 .button-gray:pressed {
-    -fx-border-image-source: url("button/buttongray_pressed.png");
+    -fx-border-image-source: url("./button/buttongray_pressed.png");
 }
 
 .button-green {
     -fx-alignment: center;
     -fx-text-fill: white;
     -fx-background-color: transparent;
-    -fx-border-image-source: url("button/buttongreen.png");
+    -fx-border-image-source: url("./button/buttongreen.png");
     -fx-border-image-slice: 8 fill;
     -fx-border-image-width: 8;
 }
 
 .button-green:hover {
-    -fx-border-image-source: url("button/buttongreen_hover.png");
+    -fx-border-image-source: url("./button/buttongreen_hover.png");
 }
 
 .button-green:pressed {
-    -fx-border-image-source: url("button/buttongreen_pressed.png");
+    -fx-border-image-source: url("./button/buttongreen_pressed.png");
 }
 
 .progress-bar {
     -fx-background-color: transparent;
-    -fx-border-image-source: url("progressbar/progressbar-outer.png");
+    -fx-border-image-source: url("./progressbar/progressbar-outer.png");
     -fx-border-image-slice: 9 8 9 8 fill;
     -fx-border-image-width: 9 8 9 8;
     -fx-padding: -7 -4 -7 -4;
@@ -58,7 +58,7 @@
 }
 
 .progress-bar .bar {
-    -fx-border-image-source: url("progressbar/progressbar-inner.png");
+    -fx-border-image-source: url("./progressbar/progressbar-inner.png");
     -fx-border-image-slice: 2 fill;
     -fx-border-image-width: 0;
 }
@@ -70,33 +70,33 @@
 .button-close {
     -fx-alignment: center;
     -fx-background-color: transparent;
-    -fx-graphic: url("button/buttonclose.png");
+    -fx-graphic: url("./button/buttonclose.png");
 }
 
 .button-close:hover {
-    -fx-graphic: url("button/buttonclose_hover.png");
+    -fx-graphic: url("./button/buttonclose_hover.png");
 }
 
 .button-close:pressed {
-    -fx-graphic: url("button/buttonclose_pressed.png");
+    -fx-graphic: url("./button/buttonclose_pressed.png");
 }
 
 .button-minimize {
     -fx-alignment: center;
     -fx-background-color: transparent;
-    -fx-graphic: url("button/buttonminimize.png");
+    -fx-graphic: url("./button/buttonminimize.png");
 }
 
 .button-minimize:hover {
-    -fx-graphic: url("button/buttonminimize_hover.png");
+    -fx-graphic: url("./button/buttonminimize_hover.png");
 }
 
 .button-minimize:pressed {
-    -fx-graphic: url("button/buttonminimize_pressed.png");
+    -fx-graphic: url("./button/buttonminimize_pressed.png");
 }
 
 #logo {
-    -fx-image: url("title.png");;
+    -fx-image: url("./title.png");;
 }
 
 .titled-pane {
@@ -114,7 +114,7 @@
 
 .titled-pane .content {
     -fx-background-color: transparent;
-    -fx-border-image-source: url("listview/listview.png");
+    -fx-border-image-source: url("./listview/listview.png");
     -fx-border-image-slice: 12 4 12 4 fill;
     -fx-border-image-width: 12 4 12 4;
     -fx-padding: -8 0 -8 0;
@@ -160,7 +160,7 @@
 }
 
 .combo-box-base {
-    -fx-border-image-source: url("dropdown/dropdown.png");
+    -fx-border-image-source: url("./dropdown/dropdown.png");
     -fx-border-image-slice: 9 49 9 29 fill;
     -fx-border-image-width: 9 49 9 29;
     -fx-padding: -9 -44 -9 -24;
@@ -170,11 +170,11 @@
 }
 
 .combo-box-base:hover {
-    -fx-border-image-source: url("dropdown/dropdown_hover.png");
+    -fx-border-image-source: url("./dropdown/dropdown_hover.png");
 }
 
 .combo-box-base:pressed {
-    -fx-border-image-source: url("dropdown/dropdown_pressed.png");
+    -fx-border-image-source: url("./dropdown/dropdown_pressed.png");
 }
 
 .combo-box-base .arrow-button {
@@ -185,7 +185,7 @@
 
 .combo-box-base .arrow-button .arrow {
     -fx-background-color: transparent;
-    -fx-background-image: url("dropdown/dropdown_arrow.png");
+    -fx-background-image: url("./dropdown/dropdown_arrow.png");
     -fx-background-size: 9, 14;
 }
 
@@ -199,7 +199,7 @@
 }
 
 .combo-box-popup .list-view {
-    -fx-border-image-source: url("dropdown/dropdownbox.png");
+    -fx-border-image-source: url("./dropdown/dropdownbox.png");
     -fx-border-image-slice: 0 49 13 29 fill;
     -fx-border-image-width: -2 49 13 29;
     -fx-padding: 0 -39 -9 -20;
