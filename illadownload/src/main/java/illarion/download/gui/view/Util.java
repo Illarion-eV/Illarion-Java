@@ -26,7 +26,7 @@ class Util {
     @Nonnull
     public static <T>  T loadFXML(@Nonnull final String file, @Nonnull final GuiModel model,
                                   @Nonnull final ResourceBundle bundle) throws IOException {
-        final URL resource = Thread.currentThread().getContextClassLoader().getResource(file);
+        final URL resource = Util.class.getResource(file);
         if (resource == null) {
             throw new FileNotFoundException("Failed to locate the resource: " + file);
         }
@@ -44,23 +44,23 @@ class Util {
     }
 
     public static ResourceBundle loadResourceBundle(@Nonnull final String name) {
+        final String dir = "illarion/download/gui/view/";
         final ResourceBundle bundle;
         if (Locale.getDefault().getLanguage().equals(Locale.GERMAN.getLanguage())) {
-            bundle = ResourceBundle.getBundle(name, Locale.GERMAN);
+            bundle = ResourceBundle.getBundle(dir + name, Locale.GERMAN, Util.class.getClassLoader());
         } else {
-            bundle = ResourceBundle.getBundle(name, Locale.ENGLISH);
+            bundle = ResourceBundle.getBundle(dir + name, Locale.ENGLISH, Util.class.getClassLoader());
         }
         return bundle;
     }
 
     @Nullable
     public static String getCssReference(@Nonnull final String baseName) {
-        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        @Nullable final URL bss = classLoader.getResource(baseName + ".bss");
+        @Nullable final URL bss = Util.class.getResource(baseName + ".bss");
         if (bss != null) {
             return bss.toExternalForm();
         }
-        @Nullable final URL css = classLoader.getResource(baseName + ".css");
+        @Nullable final URL css = Util.class.getResource(baseName + ".css");
         if (css != null) {
             return css.toExternalForm();
         }
