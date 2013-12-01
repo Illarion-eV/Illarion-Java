@@ -38,11 +38,6 @@ public class GuiApplication extends Application implements Storyboard {
 
     @Override
     public void start(Stage stage) throws Exception {
-        final Image testImage = new Image("/illarion/download/gui/view/button/buttonclose.png");
-        if (testImage.isError()) {
-            System.err.println("Failed to load image for some reason!");
-        }
-
         stage.initStyle(StageStyle.TRANSPARENT);
         model = new GuiModel(stage, getHostServices(), this);
 
