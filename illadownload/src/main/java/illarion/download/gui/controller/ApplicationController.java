@@ -1,5 +1,6 @@
 package illarion.download.gui.controller;
 
+import illarion.download.gui.model.GuiModel;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -29,6 +30,10 @@ public class ApplicationController extends AbstractController {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+    }
+
+    public void setModel(@Nonnull final GuiModel model) {
+        super.setModel(model);
         if (getModel().getHostServices().getWebContext() == null) {
             rootPane.setOnMousePressed(new EventHandler<MouseEvent>() {
                 @Override
