@@ -53,12 +53,13 @@ public class GuiApplication extends Application implements Storyboard {
         if (stage == null) {
             return;
         }
-        stage.setScene(new Scene(sceneContent, SCENE_WIDTH, SCENE_HEIGHT));
-        stage.getScene().setFill(null);
 
+        final Scene scene = new Scene(sceneContent, SCENE_WIDTH, SCENE_HEIGHT);
+        scene.setFill(null);
         if (sceneContent instanceof SceneUpdater) {
-            ((SceneUpdater) sceneContent).updateScene(stage.getScene());
+            ((SceneUpdater) sceneContent).updateScene(scene);
         }
+        stage.setScene(scene);
     }
 
     public static void main(final String[] args) {
