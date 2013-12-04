@@ -3,6 +3,7 @@ package illarion.download.gui.view;
 import illarion.download.gui.model.GuiModel;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
@@ -12,7 +13,7 @@ import java.io.IOException;
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class ApplicationView extends AnchorPane {
+class ApplicationView extends AnchorPane implements SceneUpdater {
     public ApplicationView(@Nonnull final GuiModel model) throws IOException {
         boolean isApplet;
         try {
@@ -30,12 +31,6 @@ class ApplicationView extends AnchorPane {
             root.getStyleClass().add("application");
         }
 
-        /*final String stylesheet = Util.getCssReference("applicationFrame");
-        if (stylesheet != null) {
-            getStylesheets().add(stylesheet);
-        } else {
-            System.out.println("Failed to locate stylesheet: applicationFrame");
-        }*/
         getChildren().add(root);
         maximizeOnAnchorPane(root);
     }
@@ -61,5 +56,15 @@ class ApplicationView extends AnchorPane {
         setLeftAnchor(node, 0.0);
         setTopAnchor(node, 0.0);
         setBottomAnchor(node, 0.0);
+    }
+
+    @Override
+    public void updateScene(@Nonnull final Scene scene) {
+        final String stylesheet = Util.getCssReference("applicationFrame");
+        if (stylesheet != null) {
+            scene.getStylesheets().add(stylesheet);
+        } else {
+            System.out.println("Failed to locate stylesheet: applicationFrame");
+        }
     }
 }

@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 <?scenebuilder-preview-i18n-resource dataDirSelectView_de.properties?>
 <?scenebuilder-stylesheet applicationFrame.css?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml"
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"
             fx:controller="illarion.download.gui.controller.UserDirSelectionController">
     <children>
         <VBox fx:id="content" fillWidth="true">

@@ -71,7 +71,7 @@ subprojects {
     plugins.withType(JavaPlugin) {
         project.sourceCompatibility = JavaVersion.VERSION_1_7
         project.targetCompatibility = JavaVersion.VERSION_1_7
-        project.tasks.withType(Compile) {
+        project.tasks.withType(JavaCompile) {
             options.encoding = 'UTF-8'
         }
     }

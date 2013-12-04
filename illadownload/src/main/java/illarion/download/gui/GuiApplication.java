@@ -2,10 +2,7 @@ package illarion.download.gui;
 
 import illarion.common.util.DirectoryManager;
 import illarion.download.gui.model.GuiModel;
-import illarion.download.gui.view.ChannelSelectView;
-import illarion.download.gui.view.DataDirSelectView;
-import illarion.download.gui.view.MainView;
-import illarion.download.gui.view.UserDirSelectView;
+import illarion.download.gui.view.*;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -38,10 +35,12 @@ public class GuiApplication extends Application implements Storyboard {
 
     @Override
     public void start(Stage stage) throws Exception {
+
         stage.initStyle(StageStyle.TRANSPARENT);
         model = new GuiModel(stage, getHostServices(), this);
 
         this.stage = stage;
+
 
         stage.getIcons().add(new Image("illarion_download256.png"));
 
@@ -56,6 +55,10 @@ public class GuiApplication extends Application implements Storyboard {
         }
         stage.setScene(new Scene(sceneContent, SCENE_WIDTH, SCENE_HEIGHT));
         stage.getScene().setFill(null);
+
+        if (sceneContent instanceof SceneUpdater) {
+            ((SceneUpdater) sceneContent).updateScene(stage.getScene());
+        }
     }
 
     public static void main(final String[] args) {
