@@ -11,7 +11,7 @@
   <children>
     <BorderPane fx:id="footer">
       <right>
-        <Button alignment="CENTER_RIGHT" styleClass="button-green" text="%continue" />
+        <Button alignment="CENTER_RIGHT" styleClass="button-green" text="%continue" onAction="#nextStep" />
       </right>
     </BorderPane>
     <BorderPane fx:id="content" prefHeight="200.0" prefWidth="200.0">

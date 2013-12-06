@@ -1,5 +1,6 @@
 package illarion.download.gui;
 
+import illarion.common.config.ConfigSystem;
 import illarion.common.util.DirectoryManager;
 import illarion.download.gui.model.GuiModel;
 import illarion.download.gui.view.*;
@@ -12,6 +13,7 @@ import javafx.stage.StageStyle;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -33,9 +35,11 @@ public class GuiApplication extends Application implements Storyboard {
     @Nullable
     private Stage stage;
 
+    @Nullable
+    private ConfigSystem cfg;
+
     @Override
     public void start(Stage stage) throws Exception {
-
         stage.initStyle(StageStyle.TRANSPARENT);
         model = new GuiModel(stage, getHostServices(), this);
 
@@ -62,6 +66,21 @@ public class GuiApplication extends Application implements Storyboard {
         stage.setScene(scene);
     }
 
+    private void loadConfig() {
+        if (cfg == null) {
+            final DirectoryManager dm = DirectoryManager.getInstance();
+            if (dm.isDirectorySet(DirectoryManager.Directory.User)) {
+                cfg = new ConfigSystem(new File(dm.getDirectory(DirectoryManager.Directory.User), "download.xcfgz"));
+                cfg.setDefault("channelClient", 0);
+                cfg.setDefault("channelEasyNpc", 0);
+                cfg.setDefault("channelEasyQuest", 0);
+                cfg.setDefault("channelMapEditor", 0);
+
+                model.setConfig(cfg);
+            }
+        }
+    }
+
     public static void main(final String[] args) {
         launch(args);
     }
@@ -73,6 +92,8 @@ public class GuiApplication extends Application implements Storyboard {
 
     @Override
     public void nextScene() throws IOException {
+        loadConfig();
+
         if (hasNextScene()) {
             while (true) {
                 currentScene++;

@@ -61,7 +61,7 @@ buildscript {
     }
     dependencies {
         classpath group: 'eu.appsatori', name: 'gradle-fatjar-plugin', version: '0.2-rc1'
-        classpath group: 'net.sf.proguard', name: 'proguard-gradle', version: '4+'
+        classpath group: 'net.sf.proguard', name: 'proguard-gradle', version: '4.10'
     }
 }
 

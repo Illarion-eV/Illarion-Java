@@ -1,5 +1,6 @@
 package illarion.download.gui.controller;
 
+import illarion.common.config.Config;
 import illarion.common.util.ProgressMonitor;
 import illarion.common.util.ProgressMonitorCallback;
 import illarion.download.launcher.JavaLauncher;
@@ -53,6 +54,7 @@ public class MainViewController extends AbstractController implements MavenDownl
 
     @Nullable
     private String launchClass;
+    private boolean useSnapshots;
 
     @FXML
     public void goToAccount(@Nonnull final ActionEvent actionEvent) {
@@ -62,25 +64,25 @@ public class MainViewController extends AbstractController implements MavenDownl
     @FXML
     public void startEasyNpc(@Nonnull final ActionEvent actionEvent) {
         updateLaunchButtons(false, false, true, false, false);
-        launch("org.illarion", "easynpc", "illarion.easynpc.gui.MainFrame");
+        launch("org.illarion", "easynpc", "illarion.easynpc.gui.MainFrame", "channelEasyNpc");
     }
 
     @FXML
     public void startEasyQuest(@Nonnull final ActionEvent actionEvent) {
         updateLaunchButtons(false, false, false, true, false);
-        launch("org.illarion", "easyquest", "illarion.easyquest.gui.MainFrame");
+        launch("org.illarion", "easyquest", "illarion.easyquest.gui.MainFrame", "channelEasyQuest");
     }
 
     @FXML
     public void startMapEdit(@Nonnull final ActionEvent actionEvent) {
         updateLaunchButtons(false, false, false, false, true);
-        launch("org.illarion", "mapeditor", "illarion.mapedit.MapEditor");
+        launch("org.illarion", "mapeditor", "illarion.mapedit.MapEditor", "channelMapEditor");
     }
 
     @FXML
     public void launchClient(@Nonnull final ActionEvent actionEvent) {
         updateLaunchButtons(false, true, false, false, false);
-        launch("org.illarion", "client", "illarion.client.IllaClient");
+        launch("org.illarion", "client", "illarion.client.IllaClient", "channelClient");
     }
 
     private void updateLaunchButtons(final boolean enabled, final boolean client, final boolean easyNpc,
@@ -112,13 +114,19 @@ public class MainViewController extends AbstractController implements MavenDownl
     }
 
     private void launch(@Nonnull final String groupId, @Nonnull final String artifactId,
-                        @Nonnull final String launchClass) {
+                        @Nonnull final String launchClass, @Nonnull final String configKey) {
+        final Config cfg = getModel().getConfig();
+        if (cfg == null) {
+            throw new IllegalStateException("Can't show options without the config system");
+        }
+
         this.launchClass = launchClass;
+        this.useSnapshots = cfg.getInteger(configKey) == 1;
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    final MavenDownloader downloader = new MavenDownloader(true);
+                    final MavenDownloader downloader = new MavenDownloader(useSnapshots);
                     downloader.downloadArtifact(groupId,artifactId, MainViewController.this);
                 } catch (@Nonnull final Exception e) {
                     cancelLaunch();
@@ -183,7 +191,7 @@ public class MainViewController extends AbstractController implements MavenDownl
                     progressDescription.setText(resourceBundle.getString("launchApplication"));
                 }
             });
-            final JavaLauncher launcher = new JavaLauncher(true);
+            final JavaLauncher launcher = new JavaLauncher(useSnapshots);
             if (launcher.launch(classpath, launchClass)) {
                 Platform.runLater(new Runnable() {
                     @Override
@@ -214,6 +222,7 @@ public class MainViewController extends AbstractController implements MavenDownl
         updateLaunchButtons(true, false, false, false, false);
     }
 
+    @FXML
     public void showOptions(@Nonnull final ActionEvent actionEvent) {
         try {
             getModel().getStoryboard().showOptions();

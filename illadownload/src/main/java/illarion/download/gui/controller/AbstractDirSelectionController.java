@@ -1,12 +1,10 @@
 package illarion.download.gui.controller;
 
 import illarion.common.util.DirectoryManager;
-import illarion.download.gui.model.GuiModel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
 import javafx.stage.DirectoryChooser;
 
 import javax.annotation.Nonnull;
@@ -74,6 +72,7 @@ public abstract class AbstractDirSelectionController extends AbstractController 
         optionAbsolute.setSelected(true);
     }
 
+    @FXML
     public void nextStep(@Nonnull final ActionEvent actionEvent) {
         final DirectoryManager dm = DirectoryManager.getInstance();
         if (optionRelative.isSelected() && dm.isRelativeDirectoryPossible()) {

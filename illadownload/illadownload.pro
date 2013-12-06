@@ -1,8 +1,6 @@
--injars  build/libs
--outjars build/libs/proguard_result.jar
-
 -libraryjars <java.home>/lib/jce.jar
 -libraryjars <java.home>/lib/rt.jar
+-libraryjars <java.home>/lib/jfxrt.jar
 
 # Optimization settings
 -optimizationpasses 2000
@@ -78,5 +76,11 @@
 -dontwarn org.apache.commons.**
 -dontwarn org.apache.tools.ant.**
 -dontwarn org.apache.axis.**
--dontwarn org.apache.axis.**
 -dontwarn org.mantisbt.connect.ant.**
+-dontwarn org.apache.maven.repository.internal.**
+-dontwarn org.eclipse.aether.impl.**
+-dontwarn org.eclipse.aether.internal.impl.**
+-dontwarn org.eclipse.aether.connector.**
+-dontwarn org.eclipse.aether.transport.**
+-dontwarn org.osgi.service.**
+-dontwarn org.slf4j.**
