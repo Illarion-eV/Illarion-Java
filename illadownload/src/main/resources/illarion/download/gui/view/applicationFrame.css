@@ -1,4 +1,4 @@
-.application {
+#rootPane {
     -fx-background-color: transparent;
     -fx-border-image-source: url("panel/panel-window-dark.png");
     -fx-border-image-slice: 59 23 48 23 fill;

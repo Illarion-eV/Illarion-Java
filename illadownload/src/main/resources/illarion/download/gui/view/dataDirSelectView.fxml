@@ -54,7 +54,7 @@
         </VBox>
         <BorderPane fx:id="footer">
             <right>
-                <Button alignment="CENTER_RIGHT" onAction="#nextStep" styleClass="button-green" text="%continue" />
+                <Button alignment="CENTER_RIGHT" onAction="#nextStep" styleClass="button-green" text="%continue" prefHeight="25.0" prefWidth="80.0" />
             </right>
         </BorderPane>
     </children>
