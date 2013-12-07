@@ -50,6 +50,7 @@ class SlickMusic implements Music {
      *
      * @return the internal slick music instance
      */
+    @Nonnull
     public org.newdawn.slick.Music getInternalMusic() {
         return slickMusic;
     }

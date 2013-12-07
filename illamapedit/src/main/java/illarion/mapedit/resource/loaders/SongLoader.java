@@ -65,7 +65,7 @@ public class SongLoader implements TableLoaderSink<TableLoader>, Resource {
     }
 
     @Override
-    public boolean processRecord(final int line, final TableLoader loader) {
+    public boolean processRecord(final int line, @Nonnull final TableLoader loader) {
         final int clipID = loader.getInt(TB_ID);
         final String filename = loader.getString(TB_NAME);
         Song song = new Song(clipID, filename);

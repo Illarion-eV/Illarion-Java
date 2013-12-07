@@ -21,6 +21,8 @@ package illarion.mapedit.data.formats;
 import illarion.mapedit.crash.exceptions.FormatCorruptedException;
 import illarion.mapedit.data.Map;
 
+import javax.annotation.Nullable;
+
 /**
  * @author Tim
  */
@@ -37,5 +39,6 @@ public interface Decoder {
 
     void decodeWarpLine(String line, int i) throws FormatCorruptedException;
 
+    @Nullable
     Map getDecodedMap();
 }

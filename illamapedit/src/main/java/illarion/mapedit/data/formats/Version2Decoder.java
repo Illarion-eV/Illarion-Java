@@ -25,6 +25,7 @@ import illarion.mapedit.data.MapItem;
 import illarion.mapedit.data.MapTile;
 import illarion.mapedit.data.MapWarpPoint;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -79,6 +80,7 @@ public class Version2Decoder implements Decoder {
         createNewItem(matches);
     }
 
+    @Nonnull
     private List<String> getItemMatches(final String line) {
         final Matcher regexMatcher = PATTERN_DATA.matcher(line);
         final List<String> matches = new LinkedList<String>();
@@ -91,7 +93,7 @@ public class Version2Decoder implements Decoder {
         return matches;
     }
 
-    private void createNewItem(final List<String> matches) {
+    private void createNewItem(@Nonnull final List<String> matches) {
         final int itemX = Integer.parseInt(matches.get(0));
         final int itemY = Integer.parseInt(matches.get(1));
         final int itemId = Integer.parseInt(matches.get(2));

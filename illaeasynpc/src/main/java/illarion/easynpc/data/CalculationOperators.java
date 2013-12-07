@@ -18,6 +18,7 @@
  */
 package illarion.easynpc.data;
 
+import javax.annotation.Nonnull;
 import java.util.regex.Pattern;
 
 /**
@@ -64,7 +65,7 @@ public enum CalculationOperators {
      * @param lua    the LUA representation of this operator
      * @param regexp the RegExp pattern to identify this operator
      */
-    private CalculationOperators(final String lua, final String regexp) {
+    private CalculationOperators(final String lua, @Nonnull final String regexp) {
         luaOp = lua;
         regexpOp = Pattern.compile(regexp);
     }

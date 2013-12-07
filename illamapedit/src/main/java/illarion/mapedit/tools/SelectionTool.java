@@ -86,7 +86,7 @@ public class SelectionTool extends AbstractTool {
     }
 
     @Override
-    public void paintSelected(final int x, final int y, final Map map, final GroupAction action) {
+    public void paintSelected(final int x, final int y, @Nonnull final Map map, final GroupAction action) {
         if (map.contains(x, y)) {
             map.setSelected(x, y, !panel.isDeselectChecked());
         }

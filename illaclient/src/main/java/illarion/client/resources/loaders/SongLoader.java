@@ -43,6 +43,7 @@ public final class SongLoader extends AbstractResourceLoader<IdWrapper<String>> 
     /**
      * Trigger the loading sequence for this loader.
      */
+    @Nonnull
     @Override
     public ResourceFactory<IdWrapper<String>> call() {
         if (!hasTargetFactory()) {

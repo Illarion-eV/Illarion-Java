@@ -54,7 +54,7 @@ public class TileBrushTool extends AbstractTool {
     }
 
     @Override
-    public void paintSelected(final int x, final int y, final Map map, final GroupAction action) {
+    public void paintSelected(final int x, final int y, @Nonnull final Map map, @Nonnull final GroupAction action) {
         TileIDChangedAction newAction = addTile(x,y,map);
         if (newAction != null) {
             action.addAction(newAction);
@@ -62,7 +62,7 @@ public class TileBrushTool extends AbstractTool {
     }
 
     @Nullable
-    private TileIDChangedAction addTile(final int x, final int y, final Map map) {
+    private TileIDChangedAction addTile(final int x, final int y, @Nonnull final Map map) {
         final TileImg tile = getManager().getSelectedTile();
         if (tile == null) {
             return null;

@@ -59,6 +59,7 @@ public interface Sprite {
      *                 in case this is {@code null} there will be a new instance created and returned
      * @return the rectangle of the covered area
      */
+    @Nonnull
     Rectangle getDisplayArea(int x, int y, double scale, double rotation, @Nullable Rectangle storage);
 
     /**

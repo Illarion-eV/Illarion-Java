@@ -23,6 +23,7 @@ import illarion.mapedit.tools.AbstractTool;
 import org.bushe.swing.event.EventBus;
 import org.pushingpixels.flamingo.api.common.JCommandToggleButton;
 
+import javax.annotation.Nonnull;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -35,7 +36,7 @@ public class ToolMenuButton extends JCommandToggleButton {
      *
      * @param tool Command menu button for tool.
      */
-    public ToolMenuButton(final AbstractTool tool) {
+    public ToolMenuButton(@Nonnull final AbstractTool tool) {
         super(tool.getLocalizedName(), tool.getToolIcon());
 
         addActionListener(new ActionListener() {

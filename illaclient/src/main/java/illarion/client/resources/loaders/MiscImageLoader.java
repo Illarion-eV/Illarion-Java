@@ -57,6 +57,7 @@ public final class MiscImageLoader extends AbstractResourceLoader<MiscImageTempl
     /**
      * Trigger the loading sequence for this loader.
      */
+    @Nonnull
     @Override
     public ResourceFactory<MiscImageTemplate> call() {
         if (!hasTargetFactory()) {

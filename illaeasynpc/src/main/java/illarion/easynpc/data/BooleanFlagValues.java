@@ -64,7 +64,7 @@ public enum BooleanFlagValues {
      * @param easy  the easyNPC representation of this flag
      * @param lua   the LUa representation of this flag
      */
-    private BooleanFlagValues(final String regex, final String easy,
+    private BooleanFlagValues(@Nonnull final String regex, final String easy,
                               final String lua) {
         findPattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         luaString = lua;

@@ -53,7 +53,7 @@ public class MusicTool extends AbstractTool {
     }
 
     @Override
-    public void paintSelected(final int x, final int y, final Map map, final GroupAction action) {
+    public void paintSelected(final int x, final int y, @Nonnull final Map map, @Nonnull final GroupAction action) {
         final MusicIDChangedAction newAction = addMusic(x, y, map);
         if (newAction != null) {
             action.addAction(newAction);
@@ -61,7 +61,7 @@ public class MusicTool extends AbstractTool {
     }
 
     @Nullable
-    public MusicIDChangedAction addMusic(final int x, final int y, final Map map) {
+    public MusicIDChangedAction addMusic(final int x, final int y, @Nonnull final Map map) {
         final MapTile tile = map.getTileAt(x, y);
         final int musicID = panel.getMusicID();
         if ((tile == null) || (tile.getMusicID() == musicID)) {

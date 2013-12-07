@@ -55,12 +55,12 @@ class IgeRenderFont implements RenderFont {
     }
 
     @Override
-    public int getWidth(final String text) {
+    public int getWidth(@Nonnull final String text) {
         return font.getWidth(text);
     }
 
     @Override
-    public int getWidth(final String text, final float size) {
+    public int getWidth(@Nonnull final String text, final float size) {
         return (int) Math.ceil(font.getWidth(text) * size);
     }
 

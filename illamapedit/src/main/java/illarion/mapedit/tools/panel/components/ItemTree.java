@@ -71,7 +71,7 @@ public class ItemTree extends JScrollPane {
             }
             Collections.sort(groups, new Comparator<ItemGroup>() {
                 @Override
-                public int compare(final ItemGroup group1, final ItemGroup group2) {
+                public int compare(@Nonnull final ItemGroup group1, @Nonnull final ItemGroup group2) {
                     String g1 = group1.getName();
                     if (g1 == null) {
                         g1 = "";

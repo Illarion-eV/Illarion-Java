@@ -511,6 +511,7 @@ public final class Config {
      *
      * @return the list of file paths
      */
+    @Nonnull
     public String[] getOldFiles() {
         if (cfg == null) {
             LOGGER.error("Configuration system not initialized yet.");
@@ -645,7 +646,7 @@ public final class Config {
      *
      * @param newFolder the folder where to store the easyNPC scripts
      */
-    public void setEasyNpcFolder(final String newFolder) {
+    public void setEasyNpcFolder(@Nonnull final String newFolder) {
         if (cfg == null) {
             LOGGER.error("Configuration system not initialized yet.");
             return;

@@ -85,7 +85,7 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
     }
 
     @Override
-    public int compare(final SceneElement o1, final SceneElement o2) {
+    public int compare(@Nonnull final SceneElement o1, @Nonnull final SceneElement o2) {
         return FastMath.sign(o2.getOrder() - o1.getOrder());
     }
 

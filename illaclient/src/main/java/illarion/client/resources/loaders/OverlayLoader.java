@@ -61,6 +61,7 @@ public final class OverlayLoader extends AbstractResourceLoader<OverlayTemplate>
     /**
      * Trigger the loading sequence for this loader.
      */
+    @Nonnull
     @Override
     public ResourceFactory<OverlayTemplate> call() {
         if (!hasTargetFactory()) {

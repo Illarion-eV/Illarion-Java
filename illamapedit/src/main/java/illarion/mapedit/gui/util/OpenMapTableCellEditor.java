@@ -18,6 +18,7 @@
  */
 package illarion.mapedit.gui.util;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -47,7 +48,7 @@ public class OpenMapTableCellEditor extends AbstractCellEditor implements TableC
     }
 
     @Override
-    public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected,
+    public Component getTableCellRendererComponent(@Nonnull final JTable table, final Object value, final boolean isSelected,
                                                    final boolean hasFocus, final int row, final int column) {
         if (isSelected) {
             button.setForeground(table.getSelectionForeground());

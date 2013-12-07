@@ -82,7 +82,7 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
         Collections.sort(maps, new Comparator<Map>() {
 
             @Override
-            public int compare(final Map map1, final Map map2) {
+            public int compare(@Nonnull final Map map1, @Nonnull final Map map2) {
                 return map1.getZ() - map2.getZ();
             }
         });

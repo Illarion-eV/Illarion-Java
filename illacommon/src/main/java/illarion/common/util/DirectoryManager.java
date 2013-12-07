@@ -21,7 +21,6 @@ package illarion.common.util;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;
-import java.security.CodeSource;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -49,11 +48,13 @@ public final class DirectoryManager {
         /**
          * The header of this directory identifier.
          */
+        @Nonnull
         private final String header;
 
         /**
          * The default name for the directory.
          */
+        @Nonnull
         private final String defaultDir;
 
         private Directory(@Nonnull final String header, @Nonnull final String defaultDir) {
@@ -61,10 +62,12 @@ public final class DirectoryManager {
             this.defaultDir = defaultDir;
         }
 
+        @Nonnull
         protected String getHeader() {
             return header;
         }
 
+        @Nonnull
         public String getDefaultDir() {
             return defaultDir;
         }

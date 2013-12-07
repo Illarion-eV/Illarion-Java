@@ -23,6 +23,7 @@ import illarion.mapedit.resource.Song;
 import illarion.mapedit.resource.loaders.SongLoader;
 import illarion.mapedit.tools.panel.components.models.SongTableModel;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 
 /**
@@ -30,7 +31,9 @@ import javax.swing.*;
  */
 public class SongTable extends JScrollPane {
 
+    @Nonnull
     private final JTable songTable;
+    @Nonnull
     private final SongTableModel songTableModel;
 
     /**

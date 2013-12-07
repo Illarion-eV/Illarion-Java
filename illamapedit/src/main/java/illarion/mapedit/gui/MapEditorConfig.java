@@ -88,6 +88,7 @@ public class MapEditorConfig {
      *
      * @return the dialog
      */
+    @Nonnull
     public ConfigDialog createDialog() {
         if (configSystem == null) {
             throw new IllegalStateException("Configuration system not initialized yet.");
@@ -226,6 +227,7 @@ public class MapEditorConfig {
      * @return a string with the path to the folder or null in case no folder is
      *         set
      */
+    @Nonnull
     private static String checkFolder() {
         if (!DirectoryManager.getInstance().isDirectorySet(DirectoryManager.Directory.User)) {
             SplashScreen.getInstance().setVisible(false);
@@ -245,7 +247,7 @@ public class MapEditorConfig {
      * Set the size of the window
      * @param windowSize size of the window
      */
-    public void setWindowSize(final Dimension windowSize) {
+    public void setWindowSize(@Nonnull final Dimension windowSize) {
         if (configSystem == null) {
             LOGGER.error("Configuration system not initialized yet.");
             return;
@@ -259,6 +261,7 @@ public class MapEditorConfig {
      *
      * @return last saved size of the window
      */
+    @Nonnull
     public Dimension getWindowSize() {
         if (configSystem == null) {
             LOGGER.error("Configuration system not initialized yet.");
@@ -293,6 +296,7 @@ public class MapEditorConfig {
      *
      * @return the folder to store the maps
      */
+    @Nullable
     public File getMapFolder() {
         if (configSystem == null) {
             LOGGER.error("Configuration system not initialized yet.");
@@ -310,7 +314,7 @@ public class MapEditorConfig {
      *
      * @param newFolder the folder where to store the maps
      */
-    public void setMapFolder(final File newFolder) {
+    public void setMapFolder(@Nonnull final File newFolder) {
         if (configSystem == null) {
             LOGGER.error("Configuration system not initialized yet.");
             return;

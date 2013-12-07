@@ -74,7 +74,7 @@ public final class GameMap implements LightingMap, Stoppable {
          * @return {@code true} always
          */
         @Override
-        public boolean execute(final MapTile tile) {
+        public boolean execute(@Nonnull final MapTile tile) {
             tile.markAsRemoved();
             return true;
         }
@@ -847,7 +847,7 @@ public final class GameMap implements LightingMap, Stoppable {
             try {
                 tiles.forEachValue(new TObjectProcedure<MapTile>() {
                     @Override
-                    public boolean execute(final MapTile object) {
+                    public boolean execute(@Nonnull final MapTile object) {
                         updateTile(object);
                         return true;
                     }

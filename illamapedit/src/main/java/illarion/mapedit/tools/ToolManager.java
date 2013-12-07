@@ -127,7 +127,7 @@ public final class ToolManager implements Disposable {
         return controller.getAnnotationChecker().isAnnotated(e.getX(), e.getY(), e.getMap());
     }
 
-    private boolean isFillAction(final MapClickedEvent e) {
+    private boolean isFillAction(@Nonnull final MapClickedEvent e) {
         return (actualTool != null) && actualTool.isFillSelected() && e.getMap().isSelected(e.getX(), e.getY());
     }
 
@@ -148,7 +148,7 @@ public final class ToolManager implements Disposable {
     }
 
     @EventSubscriber
-    public void onMapDragFinished(final MapDragFinishedEvent e) {
+    public void onMapDragFinished(@Nonnull final MapDragFinishedEvent e) {
         if ((actualTool != null) && !actualTool.isFillSelected()) {
             currentX = Integer.MIN_VALUE;
             currentY = Integer.MIN_VALUE;

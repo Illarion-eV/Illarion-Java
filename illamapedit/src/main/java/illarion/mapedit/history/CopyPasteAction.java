@@ -30,6 +30,7 @@ import javax.annotation.Nullable;
  */
 public class CopyPasteAction extends HistoryAction {
     private final MapTile newTile;
+    @Nullable
     private final MapTile oldTile;
     private final int x;
     private final int y;

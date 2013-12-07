@@ -36,11 +36,13 @@ public abstract class AbstractSoundsManager implements SoundsManager {
     /**
      * The map of sounds that were already load.
      */
+    @Nonnull
     private final Map<String, Sound> loadedSounds;
 
     /**
      * The map of music tracks that were already load.
      */
+    @Nonnull
     private final Map<String, Music> loadedMusic;
 
     /**

@@ -50,6 +50,7 @@ public class MapItem {
     /**
      * The data of this item.
      */
+    @Nullable
     private List<String> itemData;
     /**
      * The quality of this item.
@@ -194,7 +195,7 @@ public class MapItem {
         return builder.toString();
     }
 
-    public static String join(final List<String> itemData, final String joinWith) {
+    public static String join(@Nonnull final List<String> itemData, final String joinWith) {
         String retVal = "";
         boolean firstRun = true;
         for (final String s : itemData) {

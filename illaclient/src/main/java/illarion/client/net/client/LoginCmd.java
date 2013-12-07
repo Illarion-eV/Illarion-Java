@@ -56,7 +56,7 @@ public final class LoginCmd extends AbstractCommand {
      * @param password the password used to login
      * @param version  the version of the client to report to the server
      */
-    public LoginCmd(final String charName, final String password, final int version) {
+    public LoginCmd(final String charName, @Nonnull final String password, final int version) {
         super(CommandList.CMD_LOGIN);
         this.charName = charName;
 

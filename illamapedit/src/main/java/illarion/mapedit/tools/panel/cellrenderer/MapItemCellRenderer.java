@@ -34,7 +34,9 @@ public class MapItemCellRenderer extends JPanel implements ListCellRenderer {
     private static final Color COLOR_SELECTED = new Color(-6100481);
     private static final Color COLOR_UNSELECTED = new Color(-1246977);
 
+    @Nonnull
     private final JLabel itemId;
+    @Nonnull
     private final JLabel name;
 
     public MapItemCellRenderer() {
@@ -56,6 +58,7 @@ public class MapItemCellRenderer extends JPanel implements ListCellRenderer {
         }
     }
 
+    @Nonnull
     @Override
     public Component getListCellRendererComponent(final JList list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus) {
         if (isSelected) {

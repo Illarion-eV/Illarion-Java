@@ -67,7 +67,7 @@ public class Overlay extends AbstractEntity<OverlayTemplate> implements Resource
      * @return the newly created overlay or {@code null} in case the creation of the overlay failed
      */
     @Nullable
-    public static Overlay create(final int id, final int shape, final Tile parentTile) {
+    public static Overlay create(final int id, final int shape, @Nonnull final Tile parentTile) {
         try {
             final OverlayTemplate template = OverlayFactory.getInstance().getTemplate(id);
             return new Overlay(template, shape - 1, parentTile);

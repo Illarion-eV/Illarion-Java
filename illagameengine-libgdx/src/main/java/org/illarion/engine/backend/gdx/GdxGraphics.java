@@ -119,6 +119,7 @@ class GdxGraphics implements Graphics {
     /**
      * The blending mode that was applied last.
      */
+    @Nullable
     private BlendingMode lastBlendingMode;
 
     /**

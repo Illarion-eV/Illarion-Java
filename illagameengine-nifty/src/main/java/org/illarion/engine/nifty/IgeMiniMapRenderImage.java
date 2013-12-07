@@ -37,6 +37,7 @@ public class IgeMiniMapRenderImage implements IgeRenderImage {
     /**
      * The world map that supplies the data to this render image.
      */
+    @Nonnull
     private final WorldMap map;
 
     /**
@@ -47,6 +48,7 @@ public class IgeMiniMapRenderImage implements IgeRenderImage {
     /**
      * The effect that is applied ot make the mini map round.
      */
+    @Nonnull
     private final MiniMapEffect effect;
 
     /**

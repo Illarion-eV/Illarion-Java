@@ -23,6 +23,7 @@ import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.util.ConnectionPerformanceClock;
 import illarion.common.net.NetCommReader;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
@@ -43,6 +44,7 @@ public class KeepAliveMsg extends AbstractReply {
         return true;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return toString("");

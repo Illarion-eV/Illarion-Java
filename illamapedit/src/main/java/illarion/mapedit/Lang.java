@@ -189,7 +189,7 @@ public final class Lang implements MessageSource {
         @Nullable
         @Override
         public ResourceBundle newBundle(final String baseName, final Locale locale, final String format,
-                                        final ClassLoader loader, final boolean reload) throws IOException {
+                                        @Nonnull final ClassLoader loader, final boolean reload) throws IOException {
             final String bundleName = toBundleName(baseName, locale);
             final String resourceName = toResourceName(bundleName, "properties");
             InputStream stream = null;

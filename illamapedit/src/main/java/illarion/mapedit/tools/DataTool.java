@@ -47,7 +47,7 @@ public class DataTool extends AbstractTool {
     }
 
     @Override
-    public void clickedAt(final int x, final int y, final Map map) {
+    public void clickedAt(final int x, final int y, @Nonnull final Map map) {
         final MapTile tile = map.getTileAt(x,y);
 
         if (tile != null) {
@@ -68,6 +68,7 @@ public class DataTool extends AbstractTool {
         return null;
     }
 
+    @Nonnull
     @Override
     public JPanel getSettingsPanel() {
         return panel;

@@ -52,11 +52,13 @@ public final class Timer {
     /**
      * The list of runnable targets that are executed once this timer is executed.
      */
+    @Nonnull
     private final List<Runnable> listeners;
 
     /**
      * This is the next timer in the list. This variable is used to implement a linked list the timers are stored with.
      */
+    @Nullable
     private Timer nextTimer;
 
     /**
@@ -244,6 +246,7 @@ public final class Timer {
      *
      * @return the next timer
      */
+    @Nullable
     Timer getNextTimer() {
         return nextTimer;
     }

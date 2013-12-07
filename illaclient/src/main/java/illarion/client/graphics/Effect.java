@@ -54,7 +54,7 @@ public final class Effect extends AbstractEntity<EffectTemplate> implements Reso
      *
      * @param template the template used to create a new item
      */
-    public Effect(final EffectTemplate template) {
+    public Effect(@Nonnull final EffectTemplate template) {
         super(template);
 
         if (template.getFrames() > 0) {
@@ -72,6 +72,7 @@ public final class Effect extends AbstractEntity<EffectTemplate> implements Reso
      * @param effectID the id of the effect that is needed
      * @return the instance of Effect that shall be used
      */
+    @Nonnull
     public static Effect create(final int effectID) {
         return new Effect(EffectFactory.getInstance().getTemplate(effectID));
     }

@@ -20,6 +20,8 @@ package illarion.mapedit.data;
 
 import illarion.mapedit.Lang;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
@@ -31,7 +33,7 @@ import java.util.List;
  */
 public class AnnotationChecker {
 
-    public boolean isAnnotatedFill(final Map map) {
+    public boolean isAnnotatedFill(@Nonnull final Map map) {
         final List<String[]> annotatedTiles = new ArrayList<String[]>();
         for (final MapPosition pos : map.getSelectedTiles()) {
             final MapTile tile = map.getTileAt(pos.getX(),pos.getY());
@@ -46,7 +48,7 @@ public class AnnotationChecker {
         return shouldEditAnyway(annotatedTiles);
     }
 
-    public boolean isAnnotated(final int x, final int y,final Map map, final MapSelection mapSelection) {
+    public boolean isAnnotated(final int x, final int y, @Nonnull final Map map, @Nonnull final MapSelection mapSelection) {
         final List<String[]> annotatedTiles = new ArrayList<String[]>();
         for (final MapPosition position : mapSelection.getTiles().keySet()) {
             final int newX = x + (position.getX() - mapSelection.getOffsetX());
@@ -65,7 +67,7 @@ public class AnnotationChecker {
         return shouldEditAnyway(annotatedTiles);
     }
 
-    public boolean isAnnotated(final int mapX, final int mapY, final Map map) {
+    public boolean isAnnotated(final int mapX, final int mapY, @Nullable final Map map) {
         if (map == null) {
             return false;
         }
@@ -81,7 +83,8 @@ public class AnnotationChecker {
         return shouldEditAnyway(annotatedTiles);
     }
 
-    private static List<String[]> getAnnotatedObject(final int x, final int y, final MapTile tile) {
+    @Nonnull
+    private static List<String[]> getAnnotatedObject(final int x, final int y, @Nonnull final MapTile tile) {
         final List<String[]> annotatedObject = new ArrayList<String[]>();
         if(tile.hasAnnotation()) {
             final String[] annoArray = {x+"", y+"", "", tile.getAnnotation()};
@@ -100,7 +103,7 @@ public class AnnotationChecker {
         return annotatedObject;
     }
 
-    private static boolean shouldEditAnyway(final List<String[]> annotatedTiles) {
+    private static boolean shouldEditAnyway(@Nonnull final List<String[]> annotatedTiles) {
         final String[] columnNames = { "X", "Y", "Item data", "Annotation" };
 
         final String[][] dataValues = annotatedTiles.toArray(new String[annotatedTiles.size()][columnNames.length]);
@@ -118,6 +121,7 @@ public class AnnotationChecker {
     }
 
     private static class HoverCellRenderer extends DefaultTableCellRenderer {
+        @Nonnull
         @Override
         public Component getTableCellRendererComponent(final JTable table, final Object value,
                                                        final boolean isSelected, final boolean hasFocus,

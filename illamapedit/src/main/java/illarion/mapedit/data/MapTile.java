@@ -122,10 +122,12 @@ public class MapTile {
      */
     @Nullable
     private List<MapItem> mapItems;
+    @Nullable
     private String annotation;
     /**
      * The warp point on this tile, may be {@code null}.
      */
+    @Nullable
     private MapWarpPoint mapWarpPoint;
 
     public MapTile(final int baseId, final int overlayID, final int shapeID, final int musicID,
@@ -141,6 +143,7 @@ public class MapTile {
         }
     }
 
+    @Nullable
     public String getAnnotation() {
         return annotation;
     }
@@ -201,6 +204,7 @@ public class MapTile {
     /**
      * @return The warp point on this tile, may be {@code null}.
      */
+    @Nullable
     public MapWarpPoint getMapWarpPoint() {
         return mapWarpPoint;
     }

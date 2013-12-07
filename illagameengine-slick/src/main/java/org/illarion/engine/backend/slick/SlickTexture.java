@@ -34,6 +34,7 @@ class SlickTexture implements Texture {
     /**
      * The image that is actually rendered as this picture.
      */
+    @Nonnull
     private final Image backingImage;
 
     /**

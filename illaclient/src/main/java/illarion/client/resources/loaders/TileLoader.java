@@ -62,6 +62,7 @@ public final class TileLoader extends AbstractResourceLoader<TileTemplate> imple
     /**
      * Trigger the loading sequence for this loader.
      */
+    @Nonnull
     @Override
     public ResourceFactory<TileTemplate> call() {
         if (!hasTargetFactory()) {

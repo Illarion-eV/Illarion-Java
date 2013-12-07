@@ -101,12 +101,12 @@ public class TileRenderer extends AbstractMapRenderer {
         g.setTransform(transform);
     }
 
-    private void renderTile(final int xDisp, final int yDisp, final Graphics2D graphics, @Nonnull final Image image) {
+    private void renderTile(final int xDisp, final int yDisp, @Nonnull final Graphics2D graphics, @Nonnull final Image image) {
         graphics.translate(xDisp, yDisp);
         graphics.drawImage(image, 0, 0, null);
     }
 
-    private void renderOverlay(final Graphics2D graphics, final MapTile mapTile) {
+    private void renderOverlay(@Nonnull final Graphics2D graphics, @Nonnull final MapTile mapTile) {
         final Overlay o = OverlayLoader.getInstance().getOverlayFromId(mapTile.getOverlayID());
         if (o != null) {
             final Image imageOverlay = o.getImgs()[mapTile.getShapeID() - 1];
@@ -158,6 +158,7 @@ public class TileRenderer extends AbstractMapRenderer {
         renderEmpty = renderEmptyTiles;
     }
 
+    @Nonnull
     public RibbonElementPriority getEmptyTilePriority() {
         return RibbonElementPriority.TOP;
     }

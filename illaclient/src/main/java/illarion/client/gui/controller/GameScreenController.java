@@ -36,20 +36,30 @@ public final class GameScreenController implements GameGui, ScreenController {
     @Nonnull
     private final Collection<UpdatableHandler> childUpdateControllers;
 
+    @Nonnull
     private final BookHandler bookHandler;
+    @Nonnull
     private final DialogHandler dialogHandler;
+    @Nonnull
     private final SkillsHandler skillsHandler;
+    @Nonnull
     private final InformHandler informHandler;
+    @Nonnull
     private final GUIChatHandler chatHandler;
+    @Nonnull
     private final GUIInventoryHandler inventoryHandler;
+    @Nonnull
     private final ContainerHandler containerHandler;
+    @Nonnull
     private final GameMapHandler gameMapHandler;
+    @Nonnull
     private final QuestHandler questHandler;
+    @Nonnull
     private final GameMiniMapHandler gameMiniMapHandler;
 
     private boolean ready;
 
-    public GameScreenController(final Input input) {
+    public GameScreenController(@Nonnull final Input input) {
         final NumberSelectPopupHandler numberPopupHandler = new NumberSelectPopupHandler();
         final TooltipHandler tooltipHandler = new TooltipHandler();
 

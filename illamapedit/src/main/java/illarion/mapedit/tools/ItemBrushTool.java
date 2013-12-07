@@ -53,7 +53,7 @@ public class ItemBrushTool extends AbstractTool {
     }
 
     @Override
-    public void paintSelected(final int x, final int y, final Map map, final GroupAction action) {
+    public void paintSelected(final int x, final int y, @Nonnull final Map map, @Nonnull final GroupAction action) {
         final ItemPlacedAction newAction = addItem(x, y, map);
         if (newAction != null) {
             action.addAction(newAction);

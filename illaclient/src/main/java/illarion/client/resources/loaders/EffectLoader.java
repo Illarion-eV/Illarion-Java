@@ -68,6 +68,7 @@ public final class EffectLoader extends AbstractResourceLoader<EffectTemplate> i
     /**
      * Trigger the loading sequence for this loader.
      */
+    @Nonnull
     @Override
     public ResourceFactory<EffectTemplate> call() {
         if (!hasTargetFactory()) {

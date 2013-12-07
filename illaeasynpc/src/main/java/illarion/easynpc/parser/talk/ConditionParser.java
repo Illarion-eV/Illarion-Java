@@ -20,6 +20,8 @@ package illarion.easynpc.parser.talk;
 
 import illarion.easynpc.parsed.talk.TalkCondition;
 
+import javax.annotation.Nullable;
+
 /**
  * This interface is a talking condition. It covers all possible methods
  * required to have this object acting as a proper condition.
@@ -32,5 +34,6 @@ public abstract class ConditionParser extends Parser {
      *
      * @return the condition filled with the data of this line
      */
+    @Nullable
     public abstract TalkCondition extract();
 }

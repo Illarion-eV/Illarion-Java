@@ -18,6 +18,7 @@
  */
 package illarion.common.util;
 
+import javax.annotation.Nonnull;
 import java.io.FilterOutputStream;
 import java.io.OutputStream;
 
@@ -29,7 +30,7 @@ import java.io.OutputStream;
  */
 public class NonClosingOutputStream extends FilterOutputStream {
 
-    public NonClosingOutputStream(final OutputStream out) {
+    public NonClosingOutputStream(@Nonnull final OutputStream out) {
         super(out);
     }
 

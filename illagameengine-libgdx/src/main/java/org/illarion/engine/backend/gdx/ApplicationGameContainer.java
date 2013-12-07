@@ -87,6 +87,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     /**
      * The graphic resolution that applied in full screen mode.
      */
+    @Nullable
     private GraphicResolution fullScreenResolution;
 
     /**
@@ -121,6 +122,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         config.fullscreen = fullScreen;
     }
 
+    @Nullable
     private GraphicResolution getFittingFullScreenResolution(final int width, final int height) {
         final GraphicResolution[] resolutions = getFullScreenResolutions();
         int freq = 0;

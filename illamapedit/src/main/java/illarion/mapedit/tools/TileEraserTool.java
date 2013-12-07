@@ -51,7 +51,7 @@ public class TileEraserTool extends AbstractTool {
     }
 
     @Override
-    public void paintSelected(final int x, final int y, final Map map, final GroupAction action) {
+    public void paintSelected(final int x, final int y, @Nonnull final Map map, @Nonnull final GroupAction action) {
         final TileIDChangedAction newAction = eraseTile(x, y, map);
         if (newAction != null) {
             action.addAction(newAction);
@@ -59,7 +59,7 @@ public class TileEraserTool extends AbstractTool {
     }
 
     @Nullable
-    private static TileIDChangedAction eraseTile(final int x, final int y, final Map map) {
+    private static TileIDChangedAction eraseTile(final int x, final int y, @Nonnull final Map map) {
         final MapTile oldTile = map.getTileAt(x, y);
         if (oldTile == null) {
             return null;

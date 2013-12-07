@@ -383,6 +383,7 @@ public final class GameMiniMap implements WorldMapDataProvider {
         /* Save all the old data to the file system and weaken the storage of each map. */
         for (@Nonnull final Location loc : oldActive) {
             updateList.add(new Callable<Void>() {
+                @Nullable
                 @Override
                 public Void call() {
                     saveMap(loc);
@@ -395,6 +396,7 @@ public final class GameMiniMap implements WorldMapDataProvider {
         /* Reactivate or load all the maps that are newly inside the player range. */
         for (@Nonnull final Location loc : newActive) {
             updateList.add(new Callable<Void>() {
+                @Nullable
                 @Override
                 public Void call() {
                     strengthenOrLoadMap(loc);
@@ -467,6 +469,7 @@ public final class GameMiniMap implements WorldMapDataProvider {
         }
     }
 
+    @Nonnull
     private static Location getOriginLocation(@Nonnull final Location playerLoc) {
         final int newMapLevel = playerLoc.getScZ();
 

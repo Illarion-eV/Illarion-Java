@@ -31,14 +31,17 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
  * @author Fredrik K
  */
 public class DataPanel extends JPanel {
+    @Nonnull
     private final ItemInspectorList itemPanel;
+    @Nonnull
     private final ItemDataTable dataPanel;
 
     public DataPanel() {

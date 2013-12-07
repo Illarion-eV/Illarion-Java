@@ -134,7 +134,7 @@ public final class PathNode implements Comparable<PathNode> {
      * @see Comparable#compareTo(Object)
      */
     @Override
-    public int compareTo(final PathNode o) {
+    public int compareTo(@Nonnull final PathNode o) {
         final int ownf = heuristic + cost;
         final int otherf = o.heuristic + o.cost;
 

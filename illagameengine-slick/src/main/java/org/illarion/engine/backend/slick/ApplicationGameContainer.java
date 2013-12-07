@@ -19,7 +19,10 @@
 package org.illarion.engine.backend.slick;
 
 import org.apache.log4j.Logger;
-import org.illarion.engine.*;
+import org.illarion.engine.DesktopGameContainer;
+import org.illarion.engine.EngineException;
+import org.illarion.engine.GameListener;
+import org.illarion.engine.MouseCursor;
 import org.illarion.engine.graphic.GraphicResolution;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Cursor;
@@ -88,7 +91,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
      * @param fullScreen   {@code true} in case this application is supposed to show up as full screen application
      * @throws SlickEngineException This exception is thrown in case creating the container failed badly
      */
-    public ApplicationGameContainer(final GameListener gameListener, final int width,
+    public ApplicationGameContainer(@Nonnull final GameListener gameListener, final int width,
                                     final int height, final boolean fullScreen) throws SlickEngineException {
         try {
             slickContainer = new AppGameContainer(new ListenerGame(gameListener, this), width, height, fullScreen);

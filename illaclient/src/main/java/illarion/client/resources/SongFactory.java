@@ -134,7 +134,7 @@ public final class SongFactory implements ResourceFactory<IdWrapper<String>> {
         final List<String> result = new ArrayList<String>();
         songs.forEachValue(new TObjectProcedure<List<String>>() {
             @Override
-            public boolean execute(final List<String> object) {
+            public boolean execute(@Nonnull final List<String> object) {
                 result.addAll(object);
                 return true;
             }

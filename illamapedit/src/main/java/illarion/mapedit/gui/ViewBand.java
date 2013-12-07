@@ -59,7 +59,7 @@ public class ViewBand extends JRibbonBand {
                 new CoreRibbonResizePolicies.High2Low(getControlPanel())));
     }
 
-    private void newRenderButton(final RendererManager manager, final AbstractMapRenderer renderer) {
+    private void newRenderButton(@Nonnull final RendererManager manager, @Nonnull final AbstractMapRenderer renderer) {
         final JCommandToggleButton btn = new JCommandToggleButton(
                 renderer.getLocalizedName(), renderer.getRendererIcon()
         );
@@ -80,7 +80,7 @@ public class ViewBand extends JRibbonBand {
         addCommandButton(btn, renderer.getPriority());
     }
 
-    private void renderEmptyTilesButton(final TileRenderer renderer)   {
+    private void renderEmptyTilesButton(@Nonnull final TileRenderer renderer)   {
         final JCommandToggleButton btn = new JCommandToggleButton(
                 renderer.getEmptyTileLocalizedName(), renderer.getEmptyTileRendererIcon()
         );

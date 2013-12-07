@@ -24,6 +24,7 @@ import illarion.common.bug.CrashData;
 import illarion.common.bug.CrashReporter;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.lang.Thread.UncaughtExceptionHandler;
 
 /**
@@ -67,7 +68,7 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
      */
     @Override
     @SuppressWarnings("nls")
-    public final void uncaughtException(final Thread t, final Throwable e) {
+    public final void uncaughtException(@Nonnull final Thread t, @Nonnull final Throwable e) {
         LOGGER.error("Fetched uncaught exception: " + getCrashMessage(), e);
         if (currentlyCrashing) {
             return;
@@ -106,6 +107,7 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
      *
      * @return the error message for this problem
      */
+    @Nonnull
     protected abstract String getCrashMessage();
 
     /**
@@ -123,7 +125,7 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
      * @param t the thread that crashed
      * @param e the reason of the crash
      */
-    private void reportError(final Thread t, final Throwable e) {
+    private void reportError(@Nonnull final Thread t, @Nonnull final Throwable e) {
         CrashReporter.getInstance().reportCrash(new CrashData(IllaClient.APPLICATION, getCrashMessage(), t, e));
     }
 }

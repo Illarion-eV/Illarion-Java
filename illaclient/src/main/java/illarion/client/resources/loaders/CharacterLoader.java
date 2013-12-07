@@ -60,6 +60,7 @@ public final class CharacterLoader extends AbstractResourceLoader<AvatarTemplate
         this.assets = assets;
     }
 
+    @Nonnull
     @Override
     public ResourceFactory<AvatarTemplate> call() {
         if (!hasTargetFactory()) {

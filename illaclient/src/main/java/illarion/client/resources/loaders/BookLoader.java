@@ -31,6 +31,7 @@ import javax.annotation.Nonnull;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class BookLoader extends AbstractResourceLoader<IdWrapper<String>> implements TableLoaderSink<TableLoaderBooks> {
+    @Nonnull
     @Override
     public ResourceFactory<IdWrapper<String>> call() {
         if (!hasTargetFactory()) {

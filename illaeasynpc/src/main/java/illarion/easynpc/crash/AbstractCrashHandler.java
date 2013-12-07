@@ -106,6 +106,7 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
      *
      * @return the error message for this problem
      */
+    @Nonnull
     protected abstract String getCrashMessage();
 
     /**

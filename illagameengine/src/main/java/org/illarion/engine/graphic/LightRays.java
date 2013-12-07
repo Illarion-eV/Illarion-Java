@@ -72,7 +72,7 @@ final class LightRays {
      *
      * @param light the lightsource that shall be mapped with the pre
      */
-    public void apply(final LightSource light) {
+    public void apply(@Nonnull final LightSource light) {
         root.apply(light, 1.0f);
     }
 

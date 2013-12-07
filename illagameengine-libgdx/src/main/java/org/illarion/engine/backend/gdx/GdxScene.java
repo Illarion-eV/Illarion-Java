@@ -62,6 +62,7 @@ class GdxScene extends AbstractScene<GdxSceneEffect> {
     /**
      * The camera that is used to render the scene.
      */
+    @Nonnull
     private final OrthographicCamera camera;
 
     /**

@@ -43,12 +43,17 @@ import java.util.Collection;
  * @author Fredrik K
  */
 public class ItemInspectorList extends JPanel {
+    @Nonnull
     private final AnnotationLabel annotation;
+    @Nonnull
     private final JScrollPane scroll;
     @Nonnull
     private JList dataList;
+    @Nonnull
     private final JButton removeItemButton;
+    @Nonnull
     private final JButton itemUpButton;
+    @Nonnull
     private final JButton itemDownButton;
 
     public ItemInspectorList() {
@@ -133,6 +138,7 @@ public class ItemInspectorList extends JPanel {
      * Get the selected item in the list
      * @return the selected MapItem
      */
+    @Nonnull
     public MapItem getSelectedItem() {
         return (MapItem) dataList.getSelectedValue();
     }

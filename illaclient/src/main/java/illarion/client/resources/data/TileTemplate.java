@@ -23,6 +23,7 @@ import illarion.common.graphics.TileInfo;
 import org.illarion.engine.graphic.Sprite;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -37,11 +38,13 @@ public class TileTemplate extends AbstractAnimatedEntityTemplate {
     /**
      * The general information about this tile.
      */
+    @Nonnull
     private final TileInfo tileInfo;
 
     /**
      * All tiles of one type share a single animation.
      */
+    @Nonnull
     private final FrameAnimation sharedAnimation;
 
     /**
@@ -61,10 +64,12 @@ public class TileTemplate extends AbstractAnimatedEntityTemplate {
         sharedAnimation.setup(frames, 0, speed, FrameAnimation.LOOPED);
     }
 
+    @Nonnull
     public TileInfo getTileInfo() {
         return tileInfo;
     }
 
+    @Nullable
     public FrameAnimation getSharedAnimation() {
         return sharedAnimation;
     }

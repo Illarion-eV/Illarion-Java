@@ -162,6 +162,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         /**
          * The text of the entry.
          */
+        @Nonnull
         private final String text;
 
         /**

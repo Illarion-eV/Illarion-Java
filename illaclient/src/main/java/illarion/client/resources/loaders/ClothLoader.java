@@ -58,6 +58,7 @@ public final class ClothLoader extends AbstractResourceLoader<AvatarClothTemplat
         this.assets = assets;
     }
 
+    @Nonnull
     @Override
     public ResourceFactory<AvatarClothTemplate> call() {
         if (!hasTargetFactory()) {

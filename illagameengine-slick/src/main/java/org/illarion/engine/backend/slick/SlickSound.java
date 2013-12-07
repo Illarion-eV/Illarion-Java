@@ -50,6 +50,7 @@ class SlickSound implements Sound {
      *
      * @return the slick sound instance
      */
+    @Nonnull
     public org.newdawn.slick.Sound getInternalSound() {
         return slickSound;
     }

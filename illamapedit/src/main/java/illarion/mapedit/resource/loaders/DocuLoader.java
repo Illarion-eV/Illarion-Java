@@ -171,6 +171,7 @@ public class DocuLoader implements Resource, TreeModel {
         }
     }
 
+    @Nonnull
     private static String getFileName(@Nonnull final String file) {
         final int i = file.lastIndexOf('/') + 1;
         return file.substring(i, file.lastIndexOf(".html"));
@@ -193,6 +194,7 @@ public class DocuLoader implements Resource, TreeModel {
         return stringList.toArray(new String[stringList.size()]);
     }
 
+    @Nonnull
     public static String getFolderName(@Nonnull final String f) {
         final String folder;
 

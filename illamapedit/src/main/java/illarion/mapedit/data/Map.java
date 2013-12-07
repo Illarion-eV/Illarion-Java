@@ -80,6 +80,7 @@ public class Map {
     private int fillStartY;
     private int fillX;
     private int fillY;
+    @Nonnull
     private final SelectionManager selectionManager;
 
     /**
@@ -407,7 +408,7 @@ public class Map {
      * @param startY starting y coordinate
      * @param mapSelection tiles to paste
      */
-    public void pasteTiles(final int startX, final int startY, final MapSelection mapSelection) {
+    public void pasteTiles(final int startX, final int startY, @Nonnull final MapSelection mapSelection) {
         final GroupAction action = new GroupAction();
         for (final MapPosition position : mapSelection.getTiles().keySet()) {
             final int newX = startX + (position.getX() - mapSelection.getOffsetX());

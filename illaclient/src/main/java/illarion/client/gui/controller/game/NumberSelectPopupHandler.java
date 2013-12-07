@@ -114,7 +114,7 @@ public final class NumberSelectPopupHandler implements ScreenController {
      * @param callback the callback that is called in case the user interacts with the popup
      */
     public void requestNewPopup(final int minValue, final int maxValue,
-                                final NumberSelectPopupHandler.Callback callback) {
+                                @Nonnull final NumberSelectPopupHandler.Callback callback) {
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
             public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {

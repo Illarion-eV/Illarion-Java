@@ -221,7 +221,7 @@ public final class LightTracer extends Thread implements Stoppable {
      *
      * @param loc the location the change occurred at
      */
-    public void notifyChange(final Location loc) {
+    public void notifyChange(@Nonnull final Location loc) {
         boolean changedSomething = false;
 
         synchronized (lightsListsLock) {

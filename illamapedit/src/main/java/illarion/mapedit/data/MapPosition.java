@@ -18,6 +18,8 @@
  */
 package illarion.mapedit.data;
 
+import javax.annotation.Nullable;
+
 /**
  * @author Fredrik K
  */
@@ -39,7 +41,7 @@ public class MapPosition {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(@Nullable final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 

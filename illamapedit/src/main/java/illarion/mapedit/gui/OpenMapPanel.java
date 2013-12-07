@@ -50,11 +50,15 @@ public class OpenMapPanel extends JPanel {
     private static final int PREFERRED_BUTTON_CELL_WIDTH = 10;
     private static final int PREFERRED_MAP_CELL_WIDTH = 150;
     private static final int PREFERRED_RENDER_CELL_WIDTH = 20;
+    @Nonnull
     private final JPanel panel;
+    @Nonnull
     private final JToggleButton openButton;
+    @Nonnull
     private final JToggleButton renderButton;
     private JTable openTable;
     private OpenMapTableModel openTableModel;
+    @Nonnull
     private final FileTree tree;
 
     public OpenMapPanel() {
@@ -104,7 +108,7 @@ public class OpenMapPanel extends JPanel {
         final ListSelectionModel selectionModel = openTable.getSelectionModel();
         selectionModel.addListSelectionListener(new ListSelectionListener() {
             @Override
-            public void valueChanged(final ListSelectionEvent e) {
+            public void valueChanged(@Nonnull final ListSelectionEvent e) {
                 if (e.getValueIsAdjusting()) {
                     return;
                 }

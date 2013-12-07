@@ -166,7 +166,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
      * Handle a input event that was published.
      */
     @EventSubscriber(eventClass = ClickOnMapEvent.class)
-    public void handleClickEvent(final SceneEvent event) {
+    public void handleClickEvent(@Nonnull final SceneEvent event) {
         World.getMapDisplay().getGameScene().publishEvent(event);
     }
 
@@ -174,7 +174,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
      * Handle a input event that was published.
      */
     @EventSubscriber(eventClass = DoubleClickOnMapEvent.class)
-    public void handleDoubleClick(final SceneEvent event) {
+    public void handleDoubleClick(@Nonnull final SceneEvent event) {
         World.getMapDisplay().getGameScene().publishEvent(event);
     }
 
@@ -276,7 +276,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
     }
 
     @EventSubscriber(eventClass = MoveOnMapEvent.class)
-    public void handleMouseMove(final SceneEvent event) {
+    public void handleMouseMove(@Nonnull final SceneEvent event) {
         if (World.getInteractionManager().isDragging()) {
             return;
         }
@@ -288,7 +288,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
     }
 
     @EventSubscriber(eventClass = PointOnMapEvent.class)
-    public void handlePointAt(final SceneEvent event) {
+    public void handlePointAt(@Nonnull final SceneEvent event) {
         if (World.getInteractionManager().isDragging()) {
             return;
         }

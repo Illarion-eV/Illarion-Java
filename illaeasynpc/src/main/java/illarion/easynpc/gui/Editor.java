@@ -195,6 +195,7 @@ public final class Editor extends RTextScrollPane {
         return errorNpc;
     }
 
+    @Nonnull
     public String getFileName() {
         if (loadScriptFile == null) {
             return "New Script";

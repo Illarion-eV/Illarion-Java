@@ -68,7 +68,7 @@ public final class FontLoader {
      * @return the font itself
      */
     @Nonnull
-    public org.illarion.engine.graphic.Font getFont(final String cfgName) {
+    public org.illarion.engine.graphic.Font getFont(@Nonnull final String cfgName) {
         if (fontManager == null) {
             throw new IllegalStateException("Fonts not loaded yet");
         }

@@ -26,6 +26,7 @@ final class ArtifactRequestBuilder implements DependencyVisitor
     @Nullable
     private final RequestTrace trace;
 
+    @Nonnull
     private final VersionScheme versionScheme;
 
     private List<FutureArtifactRequest> requests;

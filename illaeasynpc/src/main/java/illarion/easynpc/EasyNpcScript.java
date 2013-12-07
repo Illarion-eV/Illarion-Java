@@ -174,7 +174,7 @@ public final class EasyNpcScript {
      * @throws IOException thrown in case anything goes wrong while reading this
      *                     file.
      */
-    public EasyNpcScript(final File sourceFile) throws IOException {
+    public EasyNpcScript(@Nonnull final File sourceFile) throws IOException {
         this();
 
         readFromInputStream(sourceFile);
@@ -232,7 +232,7 @@ public final class EasyNpcScript {
      * @param sourceFile the file that is read
      * @throws IOException error thrown in case reading failed
      */
-    public void readFromInputStream(final File sourceFile) throws IOException {
+    public void readFromInputStream(@Nonnull final File sourceFile) throws IOException {
         if (!sourceFile.exists() || !sourceFile.isFile() || !sourceFile.canRead()) {
             throw new FileNotFoundException(sourceFile.getAbsolutePath());
         }
@@ -291,7 +291,7 @@ public final class EasyNpcScript {
      *                   script
      * @throws IOException thrown in case there is a problem while writing
      */
-    public void writeNPCScript(final File targetFile) throws IOException {
+    public void writeNPCScript(@Nonnull final File targetFile) throws IOException {
         final BufferedWriter writer =
                 new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
                         targetFile), "UTF-8"));

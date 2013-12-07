@@ -39,6 +39,7 @@ public abstract class AbstractSprite<T extends Texture> implements Sprite {
     /**
      * The textures assigned to this sprite.
      */
+    @Nonnull
     private final T[] textures;
 
     /**
@@ -161,6 +162,7 @@ public abstract class AbstractSprite<T extends Texture> implements Sprite {
         return mirror;
     }
 
+    @Nonnull
     @Override
     public Rectangle getDisplayArea(final int x, final int y, final double scale, final double rotation,
                                     @Nullable final Rectangle storage) {

@@ -22,6 +22,7 @@ import illarion.mapedit.data.Map;
 import illarion.mapedit.events.map.RepaintRequestEvent;
 import org.bushe.swing.event.EventBus;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import java.util.List;
  */
 public class OpenMapTableModel extends AbstractTableModel {
     private final String[] columnNames = { "", "Map", "" };
+    @Nonnull
     private final List<Map> maps;
 
     public OpenMapTableModel() {
@@ -74,6 +76,7 @@ public class OpenMapTableModel extends AbstractTableModel {
         return "";
     }
 
+    @Nonnull
     @Override
     public Class getColumnClass(final int column) {
         if (column == 0) {
@@ -85,7 +88,7 @@ public class OpenMapTableModel extends AbstractTableModel {
         return String.class;
     }
 
-    public void setTableData(final Collection<Map> maps) {
+    public void setTableData(@Nonnull final Collection<Map> maps) {
         this.maps.clear();
         this.maps.addAll(maps);
         fireTableDataChanged();

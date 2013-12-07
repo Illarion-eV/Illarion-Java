@@ -46,7 +46,7 @@ public class MainViewController extends AbstractController implements MavenDownl
     private ResourceBundle resourceBundle;
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    public void initialize(URL url, @Nonnull ResourceBundle resourceBundle) {
         this.resourceBundle = resourceBundle;
         progress.setProgress(0.0);
         progressDescription.setText(resourceBundle.getString("selectStartApp"));

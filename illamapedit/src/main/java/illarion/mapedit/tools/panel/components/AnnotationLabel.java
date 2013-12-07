@@ -1,5 +1,6 @@
 package illarion.mapedit.tools.panel.components;
 
+import javax.annotation.Nullable;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
@@ -15,7 +16,7 @@ public class AnnotationLabel extends JLabel {
         setVisible(false);
     }
 
-    public void setAnnotation(final String text) {
+    public void setAnnotation(@Nullable final String text) {
         if ((text != null) && !text.isEmpty()) {
             setText(text);
             setVisible(true);

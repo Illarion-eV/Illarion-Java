@@ -26,6 +26,7 @@ import illarion.easynpc.parser.talk.TalkingLine;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.regex.Pattern;
 
 /**
@@ -63,6 +64,7 @@ public final class NpcTalk implements NpcType {
         return false;
     }
 
+    @Nullable
     @SuppressWarnings("nls")
     @Override
     public DocuEntry getChild(final int index) {

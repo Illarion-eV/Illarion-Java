@@ -168,7 +168,7 @@ public final class Utils {
         editor.saved();
     }
 
-    private static void saveEasyQuestImpl(final String quest,
+    private static void saveEasyQuestImpl(@Nonnull final String quest,
                                           @Nonnull final File targetFile) {
         final File backupFile =
                 new File(targetFile.getAbsolutePath() + ".bak"); //$NON-NLS-1$

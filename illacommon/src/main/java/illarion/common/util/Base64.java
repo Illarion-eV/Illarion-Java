@@ -232,7 +232,7 @@ public final class Base64 {
      *                                      is not supported.
      */
     @Nonnull
-    public static String decode(@Nonnull final String string, final String enc)
+    public static String decode(@Nonnull final String string, @Nonnull final String enc)
             throws UnsupportedEncodingException {
         return new String(decode(string.getBytes(enc)), enc);
     }
@@ -252,8 +252,8 @@ public final class Base64 {
      *                                      is not supported.
      */
     @Nonnull
-    public static String decode(@Nonnull final String string, final String encIn,
-                                final String encOut) throws UnsupportedEncodingException {
+    public static String decode(@Nonnull final String string, @Nonnull final String encIn,
+                                @Nonnull final String encOut) throws UnsupportedEncodingException {
         return new String(decode(string.getBytes(encIn)), encOut);
     }
 
@@ -306,7 +306,7 @@ public final class Base64 {
      * @throws UnsupportedEncodingException if the character encoding specified
      *                                      is not supported.
      */
-    public static byte[] decodeToBytes(@Nonnull final String string, final String enc)
+    public static byte[] decodeToBytes(@Nonnull final String string, @Nonnull final String enc)
             throws UnsupportedEncodingException {
         return decode(string.getBytes(enc));
     }
@@ -351,7 +351,7 @@ public final class Base64 {
      *                                      is not supported.
      * @throws IOException                  if an IO error occurs.
      */
-    public static void decodeToStream(@Nonnull final String string, final String enc,
+    public static void decodeToStream(@Nonnull final String string, @Nonnull final String enc,
                                       @Nonnull final OutputStream out) throws UnsupportedEncodingException,
             IOException {
         decode(new ByteArrayInputStream(string.getBytes(enc)), out);
@@ -381,7 +381,7 @@ public final class Base64 {
      *                                      is not supported.
      */
     @Nonnull
-    public static String decodeToString(@Nonnull final byte[] bytes, final String enc)
+    public static String decodeToString(@Nonnull final byte[] bytes, @Nonnull final String enc)
             throws UnsupportedEncodingException {
         return new String(decode(bytes), enc);
     }
@@ -414,7 +414,7 @@ public final class Base64 {
      *                                      is not supported.
      */
     @Nonnull
-    public static String decodeToString(@Nonnull final InputStream in, final String enc)
+    public static String decodeToString(@Nonnull final InputStream in, @Nonnull final String enc)
             throws IOException {
         return new String(decodeToBytes(in), enc);
     }
@@ -443,7 +443,7 @@ public final class Base64 {
      *                                      is not supported.
      */
     @Nonnull
-    public static String decodeToString(@Nonnull final String string, final String enc)
+    public static String decodeToString(@Nonnull final String string, @Nonnull final String enc)
             throws UnsupportedEncodingException {
         return new String(decode(string.getBytes(enc)), enc);
     }
@@ -464,7 +464,7 @@ public final class Base64 {
      */
     @Nonnull
     public static String decodeToString(@Nonnull final String string,
-                                        final String encIn, final String encOut)
+                                        @Nonnull final String encIn, @Nonnull final String encOut)
             throws UnsupportedEncodingException {
         return new String(decode(string.getBytes(encIn)), encOut);
     }
@@ -626,7 +626,7 @@ public final class Base64 {
      *                                      is not supported.
      */
     @Nonnull
-    public static String encode(@Nonnull final String string, final String enc)
+    public static String encode(@Nonnull final String string, @Nonnull final String enc)
             throws UnsupportedEncodingException {
         return new String(encode(string.getBytes(enc)), enc);
     }
@@ -811,7 +811,7 @@ public final class Base64 {
      * @throws UnsupportedEncodingException if the character encoding specified
      *                                      is not supported.
      */
-    public static boolean isBase64(@Nonnull final String string, final String enc)
+    public static boolean isBase64(@Nonnull final String string, @Nonnull final String enc)
             throws UnsupportedEncodingException {
         return isBase64(string.getBytes(enc));
     }

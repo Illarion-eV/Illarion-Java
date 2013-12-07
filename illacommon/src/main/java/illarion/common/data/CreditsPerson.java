@@ -36,6 +36,7 @@ public final class CreditsPerson implements Comparable<CreditsPerson> {
     /**
      * The string used to compare the name with others.
      */
+    @Nonnull
     private final String compareName;
 
     /**

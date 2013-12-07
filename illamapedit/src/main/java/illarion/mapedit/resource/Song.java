@@ -22,6 +22,7 @@ package illarion.mapedit.resource;
 import illarion.mapedit.util.OggPlayer;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
 
@@ -97,7 +98,7 @@ public class Song implements Comparable<Song> {
     }
 
     @Override
-    public int compareTo(final Song o) {
+    public int compareTo(@Nonnull final Song o) {
         return clipID - o.getClipID();
     }
 }

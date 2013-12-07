@@ -27,6 +27,7 @@ import java.util.List;
  * @author Fredrik K
  */
 public class ItemsUpdatedEvent {
+    @Nullable
     private final List<MapItem> items;
 
     public ItemsUpdatedEvent(@Nullable final List<MapItem> items) {

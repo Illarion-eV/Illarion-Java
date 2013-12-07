@@ -27,6 +27,7 @@ import illarion.mapedit.tools.panel.components.models.ItemDataTableModel;
 import org.bushe.swing.event.EventBus;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -55,11 +56,17 @@ public class ItemDataTable extends JPanel {
             "magicalTopaz"
     };
 
+    @Nonnull
     private final ItemDataTableModel dataTableModel;
+    @Nonnull
     private final JTable dataTable;
+    @Nonnull
     private final AnnotationLabel annotation;
+    @Nonnull
     private final JButton addDataButton;
+    @Nonnull
     private final JButton removeDataButton;
+    @Nonnull
     private final JButton annotationButton;
 
     public ItemDataTable() {
@@ -169,7 +176,7 @@ public class ItemDataTable extends JPanel {
         annotationButton.setEnabled(false);
     }
 
-    public void setDataList(final MapItem item) {
+    public void setDataList(@Nonnull final MapItem item) {
         dataTableModel.clearData();
         if (item.getItemData() != null) {
             dataTableModel.setData(item.getItemData());

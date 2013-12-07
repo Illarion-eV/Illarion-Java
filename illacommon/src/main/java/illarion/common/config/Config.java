@@ -18,6 +18,7 @@
  */
 package illarion.common.config;
 
+import javax.annotation.Nullable;
 import java.io.File;
 
 /**
@@ -88,6 +89,7 @@ public interface Config {
      * @return the value that was read from the configuration file or
      *         <code>null</code> in case there is no value set for this key
      */
+    @Nullable
     File getFile(String key);
 
     /**
@@ -138,6 +140,7 @@ public interface Config {
      * @return the value that was read from the configuration file or
      *         <code>null</code> in case there is no value set for this key
      */
+    @Nullable
     String getString(String key);
 
     /**

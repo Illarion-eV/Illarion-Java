@@ -34,6 +34,7 @@ public final class UpdateTaskManager {
     /**
      * The task queue.
      */
+    @Nonnull
     private final Queue<UpdateTask> taskQueue;
 
     /**

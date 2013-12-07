@@ -21,6 +21,8 @@ package illarion.client.gui;
 import illarion.client.resources.data.ItemTemplate;
 import org.illarion.engine.nifty.IgeTextureRenderImage;
 
+import javax.annotation.Nonnull;
+
 /**
  * This implementation of a slick render image is used to show a image that is usually used in the game graphics,
  * inside the elements of the GUI.
@@ -33,7 +35,7 @@ public class EntitySlickRenderImage extends IgeTextureRenderImage {
      *
      * @param entity the entity the image refers to
      */
-    public EntitySlickRenderImage(final ItemTemplate entity) {
+    public EntitySlickRenderImage(@Nonnull final ItemTemplate entity) {
         super(entity.getGuiTexture());
     }
 }

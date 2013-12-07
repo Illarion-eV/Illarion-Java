@@ -347,7 +347,7 @@ public final class World {
      *
      * @param engine the game engine
      */
-    public static synchronized void initGui(final Engine engine) {
+    public static synchronized void initGui(@Nonnull final Engine engine) {
         INSTANCE.gameGui = new GameScreenController(engine.getInput());
     }
 }

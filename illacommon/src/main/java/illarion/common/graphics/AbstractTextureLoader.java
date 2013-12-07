@@ -153,7 +153,7 @@ public abstract class AbstractTextureLoader<A extends TextureAtlas<I>, I> {
      * @throws NullPointerException     in case the argument is {@code null}
      * @throws IllegalArgumentException in case the directory searched is not listed as root directory
      */
-    private Map<String, A> getSheetMapForDir(final String resourceDir) {
+    private Map<String, A> getSheetMapForDir(@Nonnull final String resourceDir) {
         return getSheetMapForDir(getDirectoryIndex(resourceDir));
     }
 
@@ -184,7 +184,7 @@ public abstract class AbstractTextureLoader<A extends TextureAtlas<I>, I> {
      * @throws IllegalArgumentException in case the directory searched is not listed as root directory
      */
     @Nullable
-    protected final A getLoadedTextureAtlas(final String resourceDir, final String resource) {
+    protected final A getLoadedTextureAtlas(@Nonnull final String resourceDir, final String resource) {
         return getLoadedTextureAtlas(getDirectoryIndex(resourceDir), resource);
     }
 
@@ -196,7 +196,7 @@ public abstract class AbstractTextureLoader<A extends TextureAtlas<I>, I> {
      * @throws NullPointerException     in case the parameter is {@code null}
      * @throws IllegalArgumentException In case the directory selected is not listed as root directory in this loader
      */
-    protected int getAtlasCount(final String directory) {
+    protected int getAtlasCount(@Nonnull final String directory) {
         return getAtlasCount(getDirectoryIndex(directory));
     }
 
@@ -208,7 +208,7 @@ public abstract class AbstractTextureLoader<A extends TextureAtlas<I>, I> {
      * @throws NullPointerException     in case the parameter is {@code null}
      * @throws IllegalArgumentException In case the directory selected is not listed as root directory in this loader
      */
-    protected int getAtlasLoadedCount(final String directory) {
+    protected int getAtlasLoadedCount(@Nonnull final String directory) {
         return getAtlasLoadedCount(getDirectoryIndex(directory));
     }
 
@@ -259,7 +259,7 @@ public abstract class AbstractTextureLoader<A extends TextureAtlas<I>, I> {
      * @throws IllegalArgumentException in case the directory searched is not listed as root directory
      */
     @Nullable
-    public final I getTexture(final String resourceDir, final String resource) {
+    public final I getTexture(@Nonnull final String resourceDir, @Nonnull final String resource) {
         return getTexture(getDirectoryIndex(resourceDir), resource);
     }
 
@@ -290,7 +290,7 @@ public abstract class AbstractTextureLoader<A extends TextureAtlas<I>, I> {
      *                                   texture root directories set
      */
     @Nullable
-    public final I getTexture(final int resourceDirIndex, final String resource) {
+    public final I getTexture(final int resourceDirIndex, @Nonnull final String resource) {
         return getTexture(resourceDirIndex, resource, DEFAULT_IMAGE);
     }
 
@@ -306,7 +306,7 @@ public abstract class AbstractTextureLoader<A extends TextureAtlas<I>, I> {
      *                                   texture root directories set
      */
     @Nullable
-    public final I getTexture(final int resourceDirIndex, final String resource, @Nullable final String defaultResource) {
+    public final I getTexture(final int resourceDirIndex, @Nonnull final String resource, @Nullable final String defaultResource) {
         if ((resourceDirIndex < 0) || (resourceDirIndex >= loadedSheets.length)) {
             throw new IndexOutOfBoundsException("Directory index is not within valid range");
         }
@@ -422,7 +422,7 @@ public abstract class AbstractTextureLoader<A extends TextureAtlas<I>, I> {
      * @throws NullPointerException      in case the {@code resource} parameter is {@code null}
      */
     @Nullable
-    private A loadTextureSheet(final int resourceDirIndex, final String resource) {
+    private A loadTextureSheet(final int resourceDirIndex, @Nonnull final String resource) {
         final String sheetName = buildSheetName(resourceDirIndex, resource);
 
         final URL image = Thread.currentThread().getContextClassLoader().getResource(sheetName + ".png");

@@ -30,7 +30,9 @@ public class ItemPlacedAction extends HistoryAction {
 
     private final int x;
     private final int y;
+    @Nullable
     private final MapItem old;
+    @Nullable
     private final MapItem newt;
 
     public ItemPlacedAction(final int x, final int y, final MapItem newt, final Map map) {

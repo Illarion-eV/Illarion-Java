@@ -31,6 +31,7 @@ public final class LoadScreenController
 
     private Progress progress;
 
+    @Nonnull
     private final Game game;
 
     public LoadScreenController(@Nonnull final Game game) {

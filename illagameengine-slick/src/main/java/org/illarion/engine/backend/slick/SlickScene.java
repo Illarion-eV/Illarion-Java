@@ -76,6 +76,7 @@ class SlickScene extends AbstractScene<SlickSceneEffect> {
      * @return the image that can be used now
      * @throws SlickException in case requesting the image fails
      */
+    @Nullable
     private Image getNextProcessImage(final int width, final int height) throws SlickException {
         if (lastImage == 1) {
             processImage0 = validateImage(width, height, processImage0);
@@ -96,6 +97,7 @@ class SlickScene extends AbstractScene<SlickSceneEffect> {
      * @return the image fitting the requirements
      * @throws SlickException in case creating the image fails
      */
+    @Nullable
     private static Image validateImage(final int width, final int height, @Nullable final Image original) throws SlickException {
         if (original == null) {
             return Image.createOffscreenImage(width, height, SGL.GL_LINEAR);

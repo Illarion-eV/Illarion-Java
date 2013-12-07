@@ -38,6 +38,7 @@ public class OggPlayer extends Thread implements Stoppable {
     private volatile boolean running;
     private AudioInputStream audioInputStream;
     private AudioInputStream audioStream;
+    @Nullable
     private SourceDataLine line;
     private static OggPlayer player;
     private AudioFormat decodedFormat;
@@ -79,6 +80,7 @@ public class OggPlayer extends Thread implements Stoppable {
         }
     }
 
+    @Nullable
     private SourceDataLine getLine() throws LineUnavailableException
     {
         SourceDataLine res = null;

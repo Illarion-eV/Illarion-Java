@@ -23,6 +23,7 @@ import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -59,7 +60,7 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
         return TILE_POLYGON;
     }
 
-    protected boolean isInViewport(final Shape viewport, final int xDisplay, final int yDisplay) {
+    protected boolean isInViewport(@Nonnull final Shape viewport, final int xDisplay, final int yDisplay) {
         final float viewX = calculateZoom(xDisplay, getTranslateX(), getTileWidth());
         final float viewY = calculateZoom(yDisplay, getTranslateY(), getTileHeight());
         return viewport.contains(viewX, viewY);
@@ -124,6 +125,7 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
 
     public abstract String getLocalizedName();
 
+    @Nullable
     public abstract ResizableIcon getRendererIcon();
 
     /**
@@ -147,10 +149,12 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
 
     public abstract boolean isDefaultOn();
 
+    @Nonnull
     public RibbonElementPriority getPriority() {
         return RibbonElementPriority.MEDIUM;
     }
 
+    @Nonnull
     protected static Image resizeImage(final BufferedImage originalImage, final Integer width, final Integer height) {
         final BufferedImage resizeImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D g = resizeImage.createGraphics();

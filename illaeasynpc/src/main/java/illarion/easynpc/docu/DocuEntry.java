@@ -18,6 +18,8 @@
  */
 package illarion.easynpc.docu;
 
+import javax.annotation.Nullable;
+
 /**
  * This entry is used to store a generic entry in the documentation. The
  * documentation framework uses this entries to fetch all needed informations in
@@ -53,6 +55,7 @@ public interface DocuEntry {
      *
      * @return the example to this documentation entry
      */
+    @Nullable
     String getExample();
 
     /**
@@ -60,6 +63,7 @@ public interface DocuEntry {
      *
      * @return the syntax of this entry
      */
+    @Nullable
     String getSyntax();
 
     /**

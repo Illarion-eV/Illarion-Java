@@ -60,7 +60,7 @@ public abstract class AbstractTemplateFactory<T extends ResourceTemplate> implem
     }
 
     @Override
-    public void storeResource(final T resource) {
+    public void storeResource(@Nonnull final T resource) {
         storage.put(resource.getTemplateId(), resource);
     }
 

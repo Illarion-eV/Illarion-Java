@@ -57,6 +57,7 @@ public class ItemTemplate extends AbstractAnimatedEntityTemplate {
     /**
      * The color that is used in case his item refers to a paperdolling item.
      */
+    @Nullable
     private final Color paperdollingColor;
 
     /**

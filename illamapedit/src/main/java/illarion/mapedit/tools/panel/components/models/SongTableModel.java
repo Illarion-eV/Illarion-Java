@@ -20,10 +20,12 @@ package illarion.mapedit.tools.panel.components.models;
 
 import illarion.mapedit.resource.Song;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.swing.table.AbstractTableModel;
 
 public class SongTableModel extends AbstractTableModel {
+    @Nonnull
     private String[] columnNames = { "ID", "File" };
 
     private Song[] songs;

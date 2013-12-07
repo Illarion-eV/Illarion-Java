@@ -107,7 +107,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
          * @param finished    {@code true} in case the quest is finished
          * @param locations   the valid target locations of this quest
          */
-        void updateData(final String name, final String description, final boolean finished, final Location... locations) {
+        void updateData(final String name, final String description, final boolean finished, @Nonnull final Location... locations) {
             this.name = name;
             this.description = description;
             this.finished = finished;
@@ -116,7 +116,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
         }
 
         @Override
-        public int compareTo(final QuestEntry o) {
+        public int compareTo(@Nonnull final QuestEntry o) {
             if (o.finished && !finished) {
                 return -1;
             }
@@ -214,6 +214,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
     /**
      * This is the list of quests that are currently not shown in the GUI.
      */
+    @Nonnull
     private final List<QuestEntry> hiddenList;
 
     /**
@@ -320,7 +321,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
         }
     }
 
-    private void updateQuest(QuestEntry Quest) {
+    private void updateQuest(@Nonnull QuestEntry Quest) {
         final Collection<Location> locationList = new ArrayList<Location>(Quest.getTargetLocationCount());
         for (int i = 0; i < Quest.getTargetLocationCount(); i++) {
             final Location target = Quest.getTargetLocation(i);
@@ -441,7 +442,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
      *
      * @param entry the entry to add
      */
-    private void insertToGuiList(final QuestEntry entry) {
+    private void insertToGuiList(@Nonnull final QuestEntry entry) {
         final ListBox<QuestEntry> guiList = getQuestList();
         final List<QuestEntry> questEntries = guiList.getItems();
         int currentStart = 0;
@@ -470,13 +471,14 @@ public final class QuestHandler implements QuestGui, ScreenController {
      *
      * @return the quest list
      */
+    @Nonnull
     private ListBox<QuestEntry> getQuestList() {
         //noinspection unchecked
         return (ListBox<QuestEntry>) questWindow.getElement().findNiftyControl("#questList", ListBox.class);
     }
 
     @Override
-    public void bind(final Nifty nifty, final Screen screen) {
+    public void bind(final Nifty nifty, @Nonnull final Screen screen) {
         this.nifty = nifty;
         this.screen = screen;
 

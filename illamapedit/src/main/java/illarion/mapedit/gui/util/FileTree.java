@@ -24,6 +24,7 @@ import illarion.mapedit.resource.loaders.ImageLoader;
 import org.bushe.swing.event.EventBus;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.swing.*;
 import javax.swing.tree.*;
@@ -43,7 +44,7 @@ public class FileTree extends JTree {
 
     private class FileTreeMouseAdapter extends MouseAdapter {
         @Override
-        public void mousePressed(final MouseEvent e) {
+        public void mousePressed(@Nonnull final MouseEvent e) {
             final int selRow = getClosestRowForLocation(e.getX(), e.getY());
             if(selRow == -1) {
                 return;
@@ -114,12 +115,12 @@ public class FileTree extends JTree {
         addMouseListener(new FileTreeMouseAdapter());
     }
 
-    public static boolean isMapFile(final File node) {
+    public static boolean isMapFile(@Nonnull final File node) {
         return node.isDirectory() || node.getName().endsWith(MapIO.EXT_TILE);
     }
 
     @Nullable
-    private static MutableTreeNode scan(final File node) {
+    private static MutableTreeNode scan(@Nonnull final File node) {
         if (node.isDirectory()) {
             return getDirectoryTreeNode(node);
         }
@@ -129,10 +130,10 @@ public class FileTree extends JTree {
     }
 
     @Nullable
-    private static MutableTreeNode getDirectoryTreeNode(final File node) {
+    private static MutableTreeNode getDirectoryTreeNode(@Nonnull final File node) {
         final File[] files = node.listFiles(new FileFilter() {
             @Override
-            public boolean accept(final File file) {
+            public boolean accept(@Nonnull final File file) {
                 return isMapFile(file);
             }
         });
@@ -158,7 +159,7 @@ public class FileTree extends JTree {
     private static void sortFiles(final File[] files) {
         Arrays.sort(files, new Comparator<File>() {
             @Override
-            public int compare(final File o1, final File o2) {
+            public int compare(@Nonnull final File o1, @Nonnull final File o2) {
                 if (o1.isDirectory() ^ o2.isDirectory()) {
                     if (o1.isDirectory()) {
                         return -1;
@@ -172,7 +173,7 @@ public class FileTree extends JTree {
         });
     }
 
-    public void setDirectory(final File file) {
+    public void setDirectory(@Nonnull final File file) {
         if (file.isDirectory()) {
             setModel(null);
             new SwingWorker<MutableTreeNode, Object>() {
@@ -193,7 +194,7 @@ public class FileTree extends JTree {
     }
 
     @Override
-    protected void paintComponent(final Graphics g) {
+    protected void paintComponent(@Nonnull final Graphics g) {
         g.setColor(getBackground());
         g.fillRect(0, 0, getWidth(), getHeight());
 

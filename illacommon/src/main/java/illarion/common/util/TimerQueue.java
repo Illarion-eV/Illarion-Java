@@ -37,6 +37,7 @@ public final class TimerQueue
     /**
      * The list of timers handled by this queue.
      */
+    @Nullable
     private Timer firstTimer;
 
     /**

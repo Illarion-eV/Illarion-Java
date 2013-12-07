@@ -37,7 +37,7 @@ public class ApplicationController extends AbstractController {
         if (getModel().getHostServices().getWebContext() == null) {
             rootPane.setOnMousePressed(new EventHandler<MouseEvent>() {
                 @Override
-                public void handle(MouseEvent me) {
+                public void handle(@Nonnull MouseEvent me) {
                     if (me.getButton() != MouseButton.MIDDLE) {
                         initialX = me.getSceneX();
                         initialY = me.getSceneY();
@@ -47,7 +47,7 @@ public class ApplicationController extends AbstractController {
 
             rootPane.setOnMouseDragged(new EventHandler<MouseEvent>() {
                 @Override
-                public void handle(MouseEvent me) {
+                public void handle(@Nonnull MouseEvent me) {
                     if (me.getButton() != MouseButton.MIDDLE) {
                         getModel().getStage().setX(me.getScreenX() - initialX);
                         getModel().getStage().setY(me.getScreenY() - initialY);

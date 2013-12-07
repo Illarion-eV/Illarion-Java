@@ -74,6 +74,7 @@ public final class ItemLoader extends AbstractResourceLoader<ItemTemplate> imple
         this.assets = assets;
     }
 
+    @Nonnull
     @Override
     public ResourceFactory<ItemTemplate> call() {
         if (!hasTargetFactory()) {

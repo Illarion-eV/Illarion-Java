@@ -21,6 +21,7 @@ package illarion.client.world;
 import illarion.client.graphics.MapDisplayManager;
 import illarion.common.types.Location;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +45,7 @@ public class GameMapProcessor2 {
      * @param tile the tile to process
      */
     @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
-    public static void processTile(final MapTile tile) {
+    public static void processTile(@Nonnull final MapTile tile) {
         final Location playerLocation = World.getPlayer().getLocation();
 
         final MapTile tileAbove = getFirstTileAbove(tile.getLocation(), playerLocation.getScZ() + 2, true);
@@ -115,7 +116,7 @@ public class GameMapProcessor2 {
     }
 
     @Nullable
-    private static MapTile getFirstTileBelow(final Location startLocation, final int zLimit,
+    private static MapTile getFirstTileBelow(@Nonnull final Location startLocation, final int zLimit,
                                              final boolean perceptiveOffset) {
         if (startLocation.getScZ() <= zLimit) {
             return null;
@@ -139,6 +140,7 @@ public class GameMapProcessor2 {
         return null;
     }
 
+    @Nonnull
     private static List<MapTile> getAllTilesAbove(final Location startLocation, final int zLimit,
                                                   final boolean perceptiveOffset) {
         final List<MapTile> tileList = new ArrayList<MapTile>();
@@ -155,7 +157,7 @@ public class GameMapProcessor2 {
     }
 
     @Nullable
-    private static MapTile getFirstTileAbove(final Location startLocation, final int zLimit,
+    private static MapTile getFirstTileAbove(@Nonnull final Location startLocation, final int zLimit,
                                              final boolean perceptiveOffset) {
         if (startLocation.getScZ() >= zLimit) {
             return null;
@@ -179,7 +181,8 @@ public class GameMapProcessor2 {
         return null;
     }
 
-    private static List<MapGroup> getSurroundingMapGroups(final Location startLocation) {
+    @Nonnull
+    private static List<MapGroup> getSurroundingMapGroups(@Nonnull final Location startLocation) {
         final List<MapGroup> groupList = new ArrayList<MapGroup>();
 
         for (int x = -1; x <= 1; x++) {

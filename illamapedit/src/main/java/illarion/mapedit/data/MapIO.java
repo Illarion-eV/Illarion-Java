@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.*;
 import java.util.HashMap;
 import java.util.List;
@@ -86,6 +87,7 @@ public class MapIO {
         }).start();
     }
 
+    @Nullable
     public static Map loadMapThread(final String path, final String name) throws IOException {
         LOGGER.debug("Load map " + name + "  at " + path);
 //        Open the streams for all 3 files, containing the map data
@@ -251,7 +253,7 @@ public class MapIO {
         }
     }
 
-    private static void writeLine(@Nonnull final BufferedWriter writer, String str) throws IOException {
+    private static void writeLine(@Nonnull final BufferedWriter writer, @Nonnull String str) throws IOException {
         writer.write(str);
         writer.write(NEWLINE);
     }

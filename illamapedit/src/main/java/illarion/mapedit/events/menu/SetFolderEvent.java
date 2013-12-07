@@ -25,12 +25,14 @@ import java.io.File;
  * @author Fredrik K
  */
 public class SetFolderEvent {
+    @Nullable
     private File file;
 
     public SetFolderEvent(@Nullable final File file) {
         this.file = file;
     }
 
+    @Nullable
     public File getFile() {
         return file;
     }

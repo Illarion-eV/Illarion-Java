@@ -27,6 +27,7 @@ import org.apache.log4j.Logger;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 
 /**
@@ -51,8 +52,10 @@ public abstract class AbstractTool {
 
     public abstract String getLocalizedName();
 
+    @Nullable
     public abstract ResizableIcon getToolIcon();
 
+    @Nullable
     public abstract JPanel getSettingsPanel();
 
     public abstract boolean isFillAreaAction();
@@ -68,7 +71,7 @@ public abstract class AbstractTool {
         history = toolManager.getHistory();
     }
 
-    public void fillSelected(final Map map) {
+    public void fillSelected(@Nonnull final Map map) {
         final GroupAction action = new GroupAction();
         for (final MapPosition pos : map.getSelectedTiles()) {
             final MapTile tile = map.getTileAt(pos.getX(), pos.getY());

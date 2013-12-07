@@ -39,6 +39,7 @@ import java.util.List;
  * @author Fredrik K
  */
 public class ItemEraserTool extends AbstractTool {
+    @Nonnull
     private final ItemEraserPanel panel;
 
     public ItemEraserTool() {
@@ -54,7 +55,7 @@ public class ItemEraserTool extends AbstractTool {
     }
 
     @Override
-    public void paintSelected(final int x, final int y, final Map map, final GroupAction action) {
+    public void paintSelected(final int x, final int y, @Nonnull final Map map, @Nonnull final GroupAction action) {
         final HistoryAction newAction = removeItem(x, y, map);
         if (newAction != null) {
             action.addAction(newAction);
@@ -62,7 +63,7 @@ public class ItemEraserTool extends AbstractTool {
     }
 
     @Nullable
-    private HistoryAction removeItem(final int x, final int y, final Map map) {
+    private HistoryAction removeItem(final int x, final int y, @Nonnull final Map map) {
         if (!map.contains(x, y)) {
             return null;
         }
@@ -83,12 +84,14 @@ public class ItemEraserTool extends AbstractTool {
         return action;
     }
 
-    private static HistoryAction removeTopItem(final int x, final int y, final Map map, final List<MapItem> items) {
+    @Nullable
+    private static HistoryAction removeTopItem(final int x, final int y, final Map map, @Nonnull final List<MapItem> items) {
         final MapItem item = items.remove(items.size()-1);
         return new ItemPlacedAction(x, y, item, null, map);
     }
 
-    private static HistoryAction clearItems(final int x, final int y, @Nonnull final Map map, final Collection<MapItem> items) {
+    @Nonnull
+    private static HistoryAction clearItems(final int x, final int y, @Nonnull final Map map, @Nonnull final Collection<MapItem> items) {
         final GroupAction action = new GroupAction();
         for (final MapItem item : items) {
             action.addAction(new ItemPlacedAction(x, y, item, null, map));

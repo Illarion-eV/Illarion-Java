@@ -60,6 +60,7 @@ class GdxTexture implements Texture {
         return backingTexture.getRegionWidth();
     }
 
+    @Nonnull
     public TextureRegion getTextureRegion() {
         return backingTexture;
     }

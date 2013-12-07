@@ -1138,7 +1138,7 @@ public final class Char implements AnimatedMove {
      * @param slot  the slot that shall be changed
      * @param color the color this part shall be displayed in
      */
-    public void setClothColor(final int slot, final Color color) {
+    public void setClothColor(final int slot, @Nonnull final Color color) {
         if (removedCharacter) {
             LOGGER.warn("Trying to change the cloth color of a removed character.");
             return;

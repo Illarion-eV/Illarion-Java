@@ -20,6 +20,8 @@ package illarion.easynpc.parser.talk;
 
 import illarion.easynpc.parsed.talk.TalkConsequence;
 
+import javax.annotation.Nullable;
+
 /**
  * This interface it used by all parsers that aim to parse consequences out of a
  * talking line.
@@ -32,5 +34,6 @@ public abstract class ConsequenceParser extends Parser {
      *
      * @return the consequence filled with the data of this line
      */
+    @Nullable
     public abstract TalkConsequence extract();
 }

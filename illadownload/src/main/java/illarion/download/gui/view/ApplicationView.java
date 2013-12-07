@@ -35,10 +35,12 @@ class ApplicationView extends AnchorPane implements SceneUpdater {
         maximizeOnAnchorPane(root);
     }
 
+    @Nonnull
     protected final Pane getContentPane() {
         return (Pane) lookup("#content");
     }
 
+    @Nonnull
     protected final Pane getFooterPane() {
         return (Pane) lookup("#footer");
     }

@@ -64,7 +64,7 @@ class ListenerGame implements Game {
     }
 
     @Override
-    public void init(final GameContainer gameContainer) throws SlickException {
+    public void init(@Nonnull final GameContainer gameContainer) throws SlickException {
         if (!ShaderProgram.isSupported()) {
             throw new SlickException("Shader not supported.");
         }

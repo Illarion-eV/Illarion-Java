@@ -50,6 +50,7 @@ public class QuestMarker extends AbstractEntity<MiscImageTemplate> {
     /**
      * The tile this marker is displayed on.
      */
+    @Nonnull
     private final MapTile parentTile;
 
     /**

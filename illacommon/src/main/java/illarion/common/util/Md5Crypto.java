@@ -48,10 +48,12 @@ public class Md5Crypto {
     }
 
 
+    @Nonnull
     public String crypt(@Nonnull final String message, @Nonnull final String salt) {
         return crypt(message, salt, "$1$");
     }
 
+    @Nonnull
     public String crypt(@Nonnull final String message, @Nonnull final String salt, @Nonnull final String magic) {
         String cleanedSalt;
 
@@ -156,6 +158,7 @@ public class Md5Crypto {
      * @param size the size of the resulting text in characters
      * @return the generated text
      */
+    @Nonnull
     private static String to64(long v, int size) {
         final StringBuilder result = new StringBuilder(size);
 

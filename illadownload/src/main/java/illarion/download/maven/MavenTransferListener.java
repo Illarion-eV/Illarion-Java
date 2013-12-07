@@ -6,6 +6,7 @@ import org.eclipse.aether.transfer.TransferCancelledException;
 import org.eclipse.aether.transfer.TransferEvent;
 import org.eclipse.aether.transfer.TransferListener;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -21,7 +22,7 @@ public class MavenTransferListener implements TransferListener {
     }
 
     @Override
-    public void transferProgressed(TransferEvent event) throws TransferCancelledException {
+    public void transferProgressed(@Nonnull TransferEvent event) throws TransferCancelledException {
         @Nullable RequestTrace trace = event.getResource().getTrace();
         while (true) {
             if (trace == null) {

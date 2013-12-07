@@ -28,7 +28,7 @@ public class ChannelSelectionController extends AbstractController {
     public ComboBox<String> targetMapEditor;
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    public void initialize(URL url, @Nonnull ResourceBundle resourceBundle) {
         final ObservableList<String> targets = FXCollections.observableArrayList(
                 resourceBundle.getString("optionRelease"),
                 resourceBundle.getString("optionSnapshot")

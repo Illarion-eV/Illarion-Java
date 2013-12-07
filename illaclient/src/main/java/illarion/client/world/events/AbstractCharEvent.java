@@ -21,6 +21,8 @@ package illarion.client.world.events;
 import illarion.client.world.World;
 import illarion.common.types.CharacterId;
 
+import javax.annotation.Nonnull;
+
 /**
  * This class is the abstract event that is extended by all events that are related to a single character.
  *
@@ -55,6 +57,7 @@ public abstract class AbstractCharEvent {
      *
      * @return a string that describes the actual event
      */
+    @Nonnull
     public abstract String getEvent();
 
     /**

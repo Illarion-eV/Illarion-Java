@@ -135,6 +135,7 @@ public final class InputReceiver implements InputListener {
     /**
      * The key mapper stores the keep-action assignments of the client.
      */
+    @Nonnull
     private final KeyMapper keyMapper;
 
     /**

@@ -36,6 +36,7 @@ public abstract class AbstractCursorManager implements CursorManager {
     /**
      * This map stores the cursors that were already load.
      */
+    @Nonnull
     private final Map<String, MouseCursor> loadedCursors;
 
     /**

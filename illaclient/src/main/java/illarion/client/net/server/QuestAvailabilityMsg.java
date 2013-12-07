@@ -24,6 +24,7 @@ import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.Location;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Arrays;
@@ -51,7 +52,7 @@ public class QuestAvailabilityMsg extends AbstractGuiMsg {
     private Location[] availableSoonQuests;
 
     @Override
-    public void decode(final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull final NetCommReader reader) throws IOException {
         final int availableQuestCount = reader.readUShort();
         if (availableQuestCount > 0) {
             availableQuests = new Location[availableQuestCount];
@@ -90,6 +91,7 @@ public class QuestAvailabilityMsg extends AbstractGuiMsg {
         return true;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return toString("Available quests: " + ((availableQuests == null) ? '0' : availableQuests.length) +

@@ -40,13 +40,14 @@ public class ItemDataTableModel extends AbstractTableModel {
     private static final Pattern PATTERN_DATA = Pattern.compile("(?:\\\\.|[^=\\\\]++)*");
 
     private final String[] columnNames = { "Key", "Value" };
+    @Nonnull
     private final List<String> data;
 
     /**
      * Default constructor
      * @param data List with key=value data as strings
      */
-    public ItemDataTableModel(final List<String> data) {
+    public ItemDataTableModel(@Nonnull final List<String> data) {
         this.data = new ArrayList<String>(data);
     }
 
@@ -88,6 +89,7 @@ public class ItemDataTableModel extends AbstractTableModel {
         return dataKeyVal[col];
     }
 
+    @Nonnull
     private static String[] split(final CharSequence line) {
         final Matcher regexMatcher = PATTERN_DATA.matcher(line);
         final List<String> matches = new LinkedList<String>();

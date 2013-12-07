@@ -31,12 +31,14 @@ import java.util.Set;
  * @author Fredrik K
  */
 public class SelectionManager {
+    @Nonnull
     private final Set<MapPosition> selection;
 
     public SelectionManager() {
         selection = new HashSet<MapPosition>();
     }
 
+    @Nonnull
     public MapSelection copy(@Nonnull final Map map) {
         final MapSelection mapSelection = new MapSelection();
         for (final MapPosition pos : selection) {
@@ -48,6 +50,7 @@ public class SelectionManager {
         return mapSelection;
     }
 
+    @Nonnull
     public MapSelection cut(@Nonnull final Map map) {
         final MapSelection mapSelection = new MapSelection();
         final GroupAction action = new GroupAction();
@@ -69,6 +72,7 @@ public class SelectionManager {
         return mapSelection;
     }
 
+    @Nonnull
     public Set<MapPosition> getSelection() {
         return selection;
     }

@@ -46,7 +46,7 @@ public class WarpTool extends AbstractTool {
     }
 
     @Override
-    public void paintSelected(final int x, final int y, final Map map, final GroupAction action) {
+    public void paintSelected(final int x, final int y, @Nonnull final Map map, @Nonnull final GroupAction action) {
         final WarpPlacedAction newAction = addWarp(x, y, map);
         if (newAction != null) {
             action.addAction(newAction);
@@ -54,7 +54,7 @@ public class WarpTool extends AbstractTool {
     }
 
     @Nullable
-    public WarpPlacedAction addWarp(final int x, final int y, final Map map) {
+    public WarpPlacedAction addWarp(final int x, final int y, @Nonnull final Map map) {
         final MapTile tile = map.getTileAt(x, y);
         if (tile == null) {
             return null;

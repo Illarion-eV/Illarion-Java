@@ -42,7 +42,7 @@ public class NiftyCraftingItem extends CraftingItem implements CraftingItemEntry
     @Nonnull
     private final NiftyImage[] ingredientImages;
 
-    public NiftyCraftingItem(@Nonnull final Nifty nifty, final int index, final CraftingItem org) {
+    public NiftyCraftingItem(@Nonnull final Nifty nifty, final int index, @Nonnull final CraftingItem org) {
         super(org);
 
         craftImage = new NiftyImage(nifty.getRenderEngine(),

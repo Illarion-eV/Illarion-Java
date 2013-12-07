@@ -94,7 +94,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      * @param template   the template used to create the new item
      * @param parentTile the tile this item is located on
      */
-    public Item(final ItemTemplate template, @Nonnull final MapTile parentTile) {
+    public Item(@Nonnull final ItemTemplate template, @Nonnull final MapTile parentTile) {
         super(template);
 
         // an animated item
@@ -135,6 +135,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      * @param parent    the tile this item is located on
      * @return the new item
      */
+    @Nonnull
     public static Item create(@Nonnull final ItemId itemID, final int locColumn,
                               final int locRow, @Nonnull final MapTile parent) {
         final ItemTemplate template = ItemFactory.getInstance().getTemplate(itemID.getValue());
@@ -154,6 +155,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      * @param parent the tile this item is located on
      * @return the new item
      */
+    @Nonnull
     public static Item create(@Nonnull final ItemId itemID, @Nonnull final Location loc,
                               @Nonnull final MapTile parent) {
         return create(itemID, loc.getCol(), loc.getRow(), parent);

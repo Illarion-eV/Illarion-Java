@@ -202,7 +202,7 @@ class SlickSounds implements MusicListener, Sounds {
     }
 
     @Override
-    public void musicEnded(final org.newdawn.slick.Music music) {
+    public void musicEnded(@Nonnull final org.newdawn.slick.Music music) {
         music.removeListener(this);
         if (nextMusic != null) {
             startMusic(nextMusic, nextFadeInTime);

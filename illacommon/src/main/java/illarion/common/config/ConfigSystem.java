@@ -131,7 +131,7 @@ public class ConfigSystem implements Config {
      *
      * @param source The configuration file that is supposed to be load
      */
-    public ConfigSystem(final String source) {
+    public ConfigSystem(@Nonnull final String source) {
         this(new File(source));
     }
 
@@ -553,10 +553,12 @@ public class ConfigSystem implements Config {
             }
         }),
         FileEntry("file", File.class, new ConfigTypeConverter() {
+            @Nonnull
             @Override
             public String getString(@Nonnull final Object object) {
                 return ((File) object).getPath();
             }
+            @Nonnull
             @Override
             public File getObject(@Nonnull final String string) {
                 return new File(string);
@@ -587,6 +589,7 @@ public class ConfigSystem implements Config {
             }
         }),
         StringEntry("string", String.class, new AbstractConfigTypeConverter() {
+            @Nonnull
             @Override
             public String getObject(@Nonnull final String string) {
                 return string;

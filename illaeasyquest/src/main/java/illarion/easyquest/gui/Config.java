@@ -117,6 +117,7 @@ public final class Config implements ConfigChangeListener {
      * @return a string with the path to the folder or null in case no folder is
      *         set
      */
+    @Nonnull
     @SuppressWarnings("nls")
     private static String checkFolder() {
         if (!DirectoryManager.getInstance().isDirectorySet(DirectoryManager.Directory.User)) {
@@ -241,6 +242,7 @@ public final class Config implements ConfigChangeListener {
      *
      * @return the list of file paths
      */
+    @Nonnull
     public String[] getOldFiles() {
         return cfg.getString(openFiles).split(File.pathSeparator);
     }
@@ -274,7 +276,7 @@ public final class Config implements ConfigChangeListener {
         cfg.save();
     }
 
-    public void setEasyQuestFolder(final String newFolder) {
+    public void setEasyQuestFolder(@Nonnull final String newFolder) {
         cfg.set(easyQuestFolder, new File(newFolder));
     }
 

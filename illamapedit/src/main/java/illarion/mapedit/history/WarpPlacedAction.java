@@ -31,6 +31,7 @@ public class WarpPlacedAction extends HistoryAction {
     private final int x;
     private final int y;
     private final MapWarpPoint oldWP;
+    @Nullable
     private final MapWarpPoint newWP;
 
     public WarpPlacedAction(final int x, final int y, final MapWarpPoint oldWP,

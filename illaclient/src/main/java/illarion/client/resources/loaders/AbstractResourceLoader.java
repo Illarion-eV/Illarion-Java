@@ -141,6 +141,7 @@ public abstract class AbstractResourceLoader<T extends Resource> implements Call
      * @param frames         the amount of frames
      * @return a array with the length equal to the frames that contains the load textures
      */
+    @Nonnull
     protected static Texture[] getTextures(@Nonnull final TextureManager textureManager, @Nonnull final String path,
                                            @Nonnull final String name, final int frames) {
         final Texture[] resultTextures = new Texture[frames];

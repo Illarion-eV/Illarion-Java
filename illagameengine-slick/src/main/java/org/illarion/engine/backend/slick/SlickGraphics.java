@@ -51,21 +51,25 @@ class SlickGraphics implements Graphics {
         /**
          * The color on the bottom left corner of the shape.
          */
+        @Nonnull
         private final org.newdawn.slick.Color bottomLeft;
 
         /**
          * The color on the bottom right corner of the shape.
          */
+        @Nonnull
         private final org.newdawn.slick.Color bottomRight;
 
         /**
          * The color on the top left corner of the shape.
          */
+        @Nonnull
         private final org.newdawn.slick.Color topLeft;
 
         /**
          * The color on the top right corner of the shape.
          */
+        @Nonnull
         private final org.newdawn.slick.Color topRight;
 
         /**
@@ -79,8 +83,9 @@ class SlickGraphics implements Graphics {
             topRight = new org.newdawn.slick.Color(org.newdawn.slick.Color.white);
         }
 
+        @Nonnull
         @Override
-        public org.newdawn.slick.Color colorAt(final Shape shape, final float v, final float v2) {
+        public org.newdawn.slick.Color colorAt(@Nonnull final Shape shape, final float v, final float v2) {
             final boolean isMaxX = Math.abs(x - shape.getMaxX()) < 0.0f;
             final boolean isMaxY = Math.abs(y - shape.getMaxY()) < 0.0f;
 
@@ -91,6 +96,7 @@ class SlickGraphics implements Graphics {
             return isMaxY ? bottomRight : bottomLeft;
         }
 
+        @Nonnull
         @Override
         public Vector2f getOffsetAt(final Shape shape, final float v, final float v2) {
             return NULL_VECTOR;

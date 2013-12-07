@@ -327,7 +327,8 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      * @param name the name of the file that shall be append to the folder
      * @return the full path to a file
      */
-    public static String getFile(final String name) {
+    @Nonnull
+    public static String getFile(@Nonnull final String name) {
         return new File(DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User), name).getAbsolutePath();
     }
 
@@ -424,6 +425,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      *
      * @return a string with the path to the folder or null in case no folder is set
      */
+    @Nonnull
     @SuppressWarnings("nls")
     private static String checkFolder() {
         if (!DirectoryManager.getInstance().isDirectorySet(DirectoryManager.Directory.User)) {

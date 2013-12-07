@@ -182,9 +182,10 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
     /**
      * The template of this instance.
      */
+    @Nonnull
     private final T template;
 
-    protected AbstractEntity(final T template) {
+    protected AbstractEntity(@Nonnull final T template) {
         this.template = template;
         baseColor = template.getDefaultColor();
         if (baseColor == null) {

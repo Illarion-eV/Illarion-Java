@@ -191,6 +191,7 @@ public final class ConfigDialog {
             title = pageTitle;
         }
 
+        @Nonnull
         @Override
         public Iterator<Entry> iterator() {
             return lines.iterator();
@@ -235,7 +236,7 @@ public final class ConfigDialog {
      *
      * @param page the page to add to this dialog
      */
-    public void addPage(final Page page) {
+    public void addPage(@Nonnull final Page page) {
         pages.add(page);
         if (cfg != null) {
             for (@Nonnull final Entry entry : page) {

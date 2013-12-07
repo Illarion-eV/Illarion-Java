@@ -316,7 +316,7 @@ public class GuiController extends WindowAdapter {
     }
 
     @EventSubscriber
-    public void onMapPosition(final MapPositionEvent e) {
+    public void onMapPosition(@Nonnull final MapPositionEvent e) {
         if (getSelected() != null) {
             getSelected().setMapPosition(e.getMapX(), e.getMapY());
             EventBus.publish(new RepaintRequestEvent());

@@ -77,6 +77,7 @@ public final class Game implements GameListener {
     @Nullable
     private Nifty nifty;
 
+    @Nonnull
     private final GameState[] gameStates;
     private int activeListener = STATE_NONE;
     private int targetListener = STATE_NONE;

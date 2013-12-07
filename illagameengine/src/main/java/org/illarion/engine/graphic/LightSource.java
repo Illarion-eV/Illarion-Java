@@ -132,7 +132,7 @@ public final class LightSource {
      */
     @Nonnull
     @SuppressWarnings("nls")
-    public static LightSource createLight(final Location loc,
+    public static LightSource createLight(@Nonnull final Location loc,
                                           final int encoding) {
         final int size = ((encoding / 10000) % 10) - 1;
         if (size < 0) {

@@ -43,7 +43,7 @@ public class GuiApplication extends Application implements Storyboard {
     private static final Logger LOGGER = Logger.getLogger(GuiApplication.class);
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(@Nonnull Stage stage) throws Exception {
         new PropertyConfigurator().doConfigure(GuiApplication.class.getResource("/logging.properties"),
                 LOGGER.getLoggerRepository());
         stage.initStyle(StageStyle.TRANSPARENT);

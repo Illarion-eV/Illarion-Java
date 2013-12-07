@@ -24,7 +24,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.crypto.*;
 import java.io.*;
-import java.security.*;
+import java.security.Key;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.SecureRandom;
 
 /**
  * Class to handle the encryption of the files that are stored by the client.
@@ -99,6 +102,7 @@ public final class Crypto {
      * @return the stream that provides the decrypted data
      * @throws CryptoException
      */
+    @Nonnull
     public InputStream getDecryptedStream(@Nonnull final InputStream src) throws CryptoException {
         if (!hasPublicKey()) {
             throw new IllegalStateException("No keys loaded");
@@ -158,7 +162,7 @@ public final class Crypto {
      * @param dst target stream for encryption
      */
     @SuppressWarnings("nls")
-    public void encrypt(@Nonnull final InputStream src, final OutputStream dst) throws CryptoException {
+    public void encrypt(@Nonnull final InputStream src, @Nonnull final OutputStream dst) throws CryptoException {
         if (!hasPrivateKey()) {
             throw new IllegalStateException("No keys loaded");
         }
@@ -186,6 +190,7 @@ public final class Crypto {
      * @return the system that will receive the unencrypted data
      * @throws CryptoException
      */
+    @Nonnull
     public OutputStream getEncryptedStream(@Nonnull final OutputStream dst) throws CryptoException {
         if (!hasPrivateKey()) {
             throw new IllegalStateException("No keys loaded");

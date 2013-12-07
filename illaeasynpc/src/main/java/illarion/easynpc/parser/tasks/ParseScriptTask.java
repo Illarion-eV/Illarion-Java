@@ -24,6 +24,7 @@ import illarion.easynpc.Parser;
 import illarion.easynpc.parser.events.ParserFinishedEvent;
 import org.bushe.swing.event.EventBus;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.Callable;
 
 /**
@@ -46,6 +47,7 @@ public class ParseScriptTask implements Callable<ParsedNpc> {
         script = easyNpcScript;
     }
 
+    @Nonnull
     @Override
     public ParsedNpc call() throws Exception {
         final ParsedNpc resultNPC = Parser.getInstance().parse(script);

@@ -139,6 +139,7 @@ public class MainFrame extends JRibbonFrame {
         MapEditorConfig.getInstance().setWindowSize(getSize());
     }
 
+    @Nonnull
     public RendererManager getRendererManager() {
         return mapPanel.getRenderManager();
     }
@@ -152,11 +153,13 @@ public class MainFrame extends JRibbonFrame {
         return windowSize;
     }
 
+    @Nonnull
     public static JCommandToggleButton getToggleButton(final String text, final String icon, final int key,
                                                 final String action) {
         return getToggleButton(text, icon, key, action, false);
     }
 
+    @Nonnull
     public static JCommandToggleButton getToggleButton(final String text, final String icon, final int key,
                                                 final String action, final boolean shift) {
         final JCommandToggleButton commandButton = new JCommandToggleButton(Lang.getMsg(text),
@@ -166,7 +169,7 @@ public class MainFrame extends JRibbonFrame {
         return commandButton;
     }
 
-    private static void setAction(final AbstractCommandButton commandButton, final int key,
+    private static void setAction(@Nonnull final AbstractCommandButton commandButton, final int key,
                                   final String action, final boolean shift) {
         final InputMap input = commandButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         int mask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
@@ -179,11 +182,13 @@ public class MainFrame extends JRibbonFrame {
         commandButton.getActionMap().put(action, new BandClickAction(commandButton));
     }
 
+    @Nonnull
     public static JCommandButton getCommandButton(final String text, final String icon, final int key,
                                                 final String action) {
         return getCommandButton(text, icon, key, action, false);
     }
 
+    @Nonnull
     public static JCommandButton getCommandButton(final String text, final String icon, final int key,
                                                   final String action, final boolean shift) {
         final JCommandButton commandButton = new JCommandButton(Lang.getMsg(text),
