@@ -57,10 +57,14 @@ jar {
     }
 }
 
+task publishDownloaderBundle() {}
+
 if (project.hasProperty('targetDistDir')) {
     publish.dependsOn {
-        proguard
         publishDownloader
+    }
+    publishDownloaderBundle.dependsOn {
+        publishBundle
     }
 }
 
@@ -128,15 +132,22 @@ if (project.hasProperty('targetDistDir')) {
         from project.distsDir
         into file(project.targetDistDir)
     }
+    task publishBundle(type: Copy, dependsOn: 'proguard') {
+        from new File(project.buildDir, "downloader.jar")
+        into file(project.targetDistDir)
+    }
 }
 
 task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jfxJar') {
-    injars new File(project.buildDir, "libs/" + project.archivesBaseName + '-' + project.version + ".jar").absolutePath
+    final def mainFile = new File(project.buildDir, "libs/${project.archivesBaseName}-${project.version}.jar")
+            .absolutePath
+    injars([filter:'!**.css'], mainFile)
     configurations.runtime.each { File file ->
         if (file.absolutePath.startsWith(System.getProperty('java.home'))) {
             libraryjars file.absolutePath
         } else {
-            def filter = "!META-INF/**,!about.html,!LICENSE,!OSGI-OPT/**,!**/packageinfo"
+            def filter = "!META-INF/*,!META-INF/plexus/*,!META-INF/sisu/*,!META-INF/maven/**,!about.html,!LICENSE," +
+                    "!OSGI-OPT/**,!**/packageinfo,!**.java,!xmlns/**"
             if (file.absolutePath.contains("xpp3")) {
                 filter += ",!javax/xml/namespace/QName.class"
             }
@@ -152,7 +163,7 @@ task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jfxJar') {
     libraryjars files("${System.getProperty('java.home')}/lib/jce.jar")
     libraryjars files("${System.getProperty('java.home')}/lib/rt.jar")
 
-    outjars new File(project.buildDir, "proguard_result.jar").absolutePath
+    outjars new File(project.buildDir, "downloader.jar").absolutePath
 
     /* Forcing all class files to contain the same codebase level. */
     target "1.7"
@@ -201,6 +212,7 @@ task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jfxJar') {
     keep "class illarion.download.gui.controller.*"
     keep "class org.apache.commons.logging.impl.LogFactoryImpl"
     keep "class org.apache.commons.logging.impl.SimpleLog"
+    keep "class org.xmlpull.mxp1.MXParserFactory"
 
     keepclasseswithmembers "class org.apache.log4j.PatternLayout {" +
         "void setConversionPattern(java.lang.String);" +
