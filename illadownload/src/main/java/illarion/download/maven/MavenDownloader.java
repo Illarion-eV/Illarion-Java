@@ -1,27 +1,30 @@
 package illarion.download.maven;
 
-import illarion.common.config.Config;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.ProgressMonitor;
+import org.apache.log4j.Logger;
 import org.apache.maven.model.building.DefaultModelBuilderFactory;
 import org.apache.maven.model.building.ModelBuilder;
 import org.apache.maven.repository.internal.*;
 import org.eclipse.aether.DefaultRepositorySystemSession;
-import org.eclipse.aether.RepositoryException;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
-import org.eclipse.aether.collection.*;
+import org.eclipse.aether.collection.CollectRequest;
+import org.eclipse.aether.collection.CollectResult;
+import org.eclipse.aether.collection.DependencyCollectionException;
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyFilter;
-import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.graph.DependencyVisitor;
 import org.eclipse.aether.impl.*;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RepositoryPolicy;
-import org.eclipse.aether.resolution.*;
+import org.eclipse.aether.resolution.ArtifactResult;
+import org.eclipse.aether.resolution.VersionRangeRequest;
+import org.eclipse.aether.resolution.VersionRangeResolutionException;
+import org.eclipse.aether.resolution.VersionRangeResult;
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
 import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
@@ -40,12 +43,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.*;
 
-import static org.eclipse.aether.repository.RepositoryPolicy.CHECKSUM_POLICY_FAIL;
-import static org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_ALWAYS;
-import static org.eclipse.aether.repository.RepositoryPolicy.UPDATE_POLICY_NEVER;
-import static org.eclipse.aether.util.artifact.JavaScopes.COMPILE;
-import static org.eclipse.aether.util.artifact.JavaScopes.RUNTIME;
-import static org.eclipse.aether.util.artifact.JavaScopes.SYSTEM;
+import static org.eclipse.aether.repository.RepositoryPolicy.*;
+import static org.eclipse.aether.util.artifact.JavaScopes.*;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
@@ -63,13 +62,29 @@ public class MavenDownloader {
     @Nonnull
     private final DefaultServiceLocator serviceLocator;
 
+    /**
+     * The repository system that is used by this downloader. This stores the repositories that are queried for the
+     * artifacts and the location of the local repository.
+     */
     @Nonnull
     private final RepositorySystem system;
 
+    /**
+     * The maven session that stores the current temporary states of the maven resolver.
+     */
     @Nonnull
     private final DefaultRepositorySystemSession session;
 
+    /**
+     * In case this is set {@code true} the downloader will accept snapshot versions of the root artifacts.
+     */
     private final boolean snapshot;
+
+    /**
+     * The logger that takes care for the logging output of this class.
+     */
+    @Nonnull
+    private static final Logger LOGGER = Logger.getLogger(MavenDownloader.class);
 
     /**
      * Create a new instance of the downloader along with the information if its supposed to download snapshot
@@ -93,25 +108,13 @@ public class MavenDownloader {
     }
 
     /**
-     * Download the artifacts in a background worker thread. This function only launches a new thread that performs
-     * the download operation. It will not block the execution until its done.
+     * Download the artifacts. This will check if the files are present and download all missing files.
      *
      * @param groupId the group id of the artifact to download
      * @param artifactId the artifact id of the artifact to download
      * @param callback the callback implementation to report to
+     * @return the files that have to be in the classpath to run the application
      */
-    public void downloadArtifactNonBlocking(@Nonnull final String groupId, @Nonnull final String artifactId,
-                                            @Nonnull final MavenDownloaderCallback callback) {
-        final Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                downloadArtifact(groupId, artifactId, callback);
-            }
-        }, "Download Artifacts Thread");
-        thread.setDaemon(true);
-        thread.run();
-    }
-
     @Nullable
     public Collection<File> downloadArtifact(@Nonnull final String groupId, @Nonnull final String artifactId,
                                              @Nullable final MavenDownloaderCallback callback) {
@@ -124,7 +127,9 @@ public class MavenDownloader {
             final VersionRangeResult result = system.resolveVersionRange(session, new VersionRangeRequest(artifact,
                     repositories, RUNTIME));
             Version selectedVersion = null;
+            Version lastLocatedVersion = null;
             for (final Version version : result.getVersions()) {
+                lastLocatedVersion = version;
                 if (snapshot || !version.toString().contains("SNAPSHOT")) {
                     selectedVersion = version;
                 }
@@ -132,6 +137,8 @@ public class MavenDownloader {
 
             if (selectedVersion != null) {
                 artifact = new DefaultArtifact(groupId, artifactId, "jar", selectedVersion.toString());
+            } else if (lastLocatedVersion != null) {
+                artifact = new DefaultArtifact(groupId, artifactId, "jar", lastLocatedVersion.toString());
             }
         } catch (VersionRangeResolutionException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -191,12 +198,11 @@ public class MavenDownloader {
                 callback.resolvingDone(result);
             }
             return result;
-        } catch (DependencyCollectionException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (InterruptedException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (ExecutionException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (DependencyCollectionException | InterruptedException | ExecutionException e) {
+            LOGGER.error("Failed to download.");
+        }
+        if (callback != null) {
+            callback.resolvingDone(null);
         }
         return null;
     }
