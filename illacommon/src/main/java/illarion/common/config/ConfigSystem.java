@@ -18,20 +18,19 @@
  */
 package illarion.common.config;
 
-import javolution.util.FastMap;
-import javolution.util.FastTable;
-import javolution.util.function.Equalities;
-import javolution.xml.XMLBinding;
-import javolution.xml.XMLObjectReader;
-import javolution.xml.XMLObjectWriter;
-import javolution.xml.stream.XMLStreamException;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
+import org.xmlpull.v1.XmlSerializer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -39,15 +38,13 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 /**
- * This is the main class for the configuration system. It contains the storage
- * for the configuration values and allows to apply changes to those values.
+ * This is the main class for the configuration system. It contains the storage for the configuration values and
+ * allows to apply changes to those values.
  * <p>
- * This class is fully thread save as the access is synchronized using a
- * read/write lock. So reading access will work mostly without synchronization.
- * How ever in case there are any changes done to the configuration or the
- * configuration is saved or load the other parts of the application can't
- * access the data of this configuration and are blocked until its save to read
- * again.
+ * This class is fully thread save as the access is synchronized using a read/write lock. So reading access will work
+ * mostly without synchronization. How ever in case there are any changes done to the configuration or the
+ * configuration is saved or load the other parts of the application can't access the data of this configuration and
+ * are blocked until its save to read again.
  * </p>
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
@@ -67,12 +64,6 @@ public class ConfigSystem implements Config {
      * The name of the root node in the XML file.
      */
     private static final String ROOT_NAME = "config"; //$NON-NLS-1$
-
-    /**
-     * The XML binding used to save and load the xml configuration files.
-     */
-    @Nonnull
-    private final XMLBinding binding;
 
     /**
      * This flag is set to {@code true} in case any changes where applied
@@ -126,15 +117,7 @@ public class ConfigSystem implements Config {
     public ConfigSystem(final File source) {
         configFile = source;
 
-        configEntries = new FastMap<String, Object>(Equalities.LEXICAL_FAST);
-        binding = new XMLBinding();
-        binding.setClassAttribute("type"); //$NON-NLS-1$
-        binding.setAlias(Byte.class, "byte");
-        binding.setAlias(Short.class, "short");
-        binding.setAlias(Integer.class, "int");
-        binding.setAlias(Long.class, "long");
-        binding.setAlias(String.class, "string");
-        binding.setAlias(FastMap.class, "fastmap");
+        configEntries = new HashMap<>();
 
         lock = new ReentrantReadWriteLock();
 
@@ -165,7 +148,7 @@ public class ConfigSystem implements Config {
         lock.writeLock().lock();
         try {
             if (configListeners == null) {
-                configListeners = new FastTable<ConfigChangeListener>();
+                configListeners = new ArrayList<>();
             } else if (configListeners.contains(listener)) {
                 LOGGER.warn("Listener double added: " + listener.toString());
                 return;
@@ -194,12 +177,12 @@ public class ConfigSystem implements Config {
         lock.writeLock().lock();
         try {
             if (keyConfigListeners == null) {
-                keyConfigListeners = new FastMap<String, Collection<ConfigChangeListener>>();
+                keyConfigListeners = new HashMap<>();
             }
 
             Collection<ConfigChangeListener> usedTable = keyConfigListeners.get(key);
             if (usedTable == null) {
-                usedTable = new FastTable<ConfigChangeListener>();
+                usedTable = new ArrayList<>();
                 keyConfigListeners.put(key, usedTable);
             } else if (usedTable.contains(listener)) {
                 LOGGER.warn("Listener double added: " + listener.toString());
@@ -538,10 +521,106 @@ public class ConfigSystem implements Config {
         }
     }
 
+    private interface ConfigTypeConverter {
+        String getString(@Nonnull Object object);
+        Object getObject(@Nonnull String string);
+    }
+
+    private abstract static class AbstractConfigTypeConverter implements ConfigTypeConverter {
+        @Override
+        public final String getString(@Nonnull final Object object) {
+            return object.toString();
+        }
+    }
+
+    private enum ConfigTypes {
+        BooleanEntry("bool", Boolean.class, new AbstractConfigTypeConverter() {
+            @Override
+            public Boolean getObject(@Nonnull final String string) {
+                return Boolean.valueOf(string);
+            }
+        }),
+        ByteEntry("byte", Byte.class, new AbstractConfigTypeConverter() {
+            @Override
+            public Byte getObject(@Nonnull final String string) {
+                return Byte.valueOf(string);
+            }
+        }),
+        DoubleEntry("double", Double.class, new AbstractConfigTypeConverter() {
+            @Override
+            public Double getObject(@Nonnull final String string) {
+                return Double.valueOf(string);
+            }
+        }),
+        FileEntry("file", File.class, new ConfigTypeConverter() {
+            @Override
+            public String getString(@Nonnull final Object object) {
+                return ((File) object).getPath();
+            }
+            @Override
+            public File getObject(@Nonnull final String string) {
+                return new File(string);
+            }
+        }),
+        FloatEntry("float", Float.class, new AbstractConfigTypeConverter() {
+            @Override
+            public Float getObject(@Nonnull final String string) {
+                return Float.valueOf(string);
+            }
+        }),
+        IntegerEntry("int", Integer.class, new AbstractConfigTypeConverter() {
+            @Override
+            public Integer getObject(@Nonnull final String string) {
+                return Integer.valueOf(string);
+            }
+        }),
+        LongEntry("long", Long.class, new AbstractConfigTypeConverter() {
+            @Override
+            public Long getObject(@Nonnull final String string) {
+                return Long.valueOf(string);
+            }
+        }),
+        ShortEntry("short", Short.class, new AbstractConfigTypeConverter() {
+            @Override
+            public Short getObject(@Nonnull final String string) {
+                return Short.valueOf(string);
+            }
+        }),
+        StringEntry("string", String.class, new AbstractConfigTypeConverter() {
+            @Override
+            public String getObject(@Nonnull final String string) {
+                return string;
+            }
+        });
+
+
+        private String typeName;
+        private Class<?> typeClass;
+        private ConfigTypeConverter converter;
+
+        ConfigTypes(@Nonnull final String typeName, @Nonnull final Class<?> typeClass,
+                    @Nonnull final ConfigTypeConverter converter) {
+            this.typeClass = typeClass;
+            this.typeName = typeName;
+            this.converter = converter;
+        }
+
+        public String getTypeName() {
+            return typeName;
+        }
+
+        public Class<?> getTypeClass() {
+            return typeClass;
+        }
+
+        public ConfigTypeConverter getConverter() {
+            return converter;
+        }
+    }
+
     /**
-     * Calling this function causes the configuration system to save its values.
-     * This only saves the configuration to the file system. The data is still
-     * available in this class.
+     * Calling this function causes the configuration system to save its values. This only saves the configuration to
+     * the file system. The data is still available in this class.
      */
     @Override
     @SuppressWarnings("nls")
@@ -567,23 +646,52 @@ public class ConfigSystem implements Config {
         }
 
         lock.writeLock().lock();
-        XMLObjectWriter xmlWriter = null;
+        OutputStream stream = null;
         try {
-            xmlWriter = XMLObjectWriter.newInstance(new GZIPOutputStream(new FileOutputStream(configFile)), ENCODING);
-            xmlWriter.setBinding(binding);
-            xmlWriter.setIndentation("\t");
+            final XmlSerializer serializer = XmlPullParserFactory.newInstance().newSerializer();
+            stream = new GZIPOutputStream(new FileOutputStream(configFile));
+            serializer.setOutput(stream, ENCODING);
 
-            xmlWriter.write(configEntries, ROOT_NAME);
-            xmlWriter.flush();
-        } catch (@Nonnull final XMLStreamException e) {
-            LOGGER.error("Configuration not saved: config data invalid.");
+            serializer.startDocument(ENCODING, true);
+            serializer.startTag(null, ROOT_NAME);
+
+            for (Map.Entry<String, Object> entry : configEntries.entrySet()) {
+                final String key = entry.getKey();
+                final Class<?> valueClass = entry.getValue().getClass();
+                String value = null;
+                String type = null;
+                for (final ConfigTypes configType : ConfigTypes.values()) {
+                    if (configType.getTypeClass().equals(valueClass)) {
+                        type = configType.getTypeName();
+                        value = configType.getConverter().getString(entry.getValue());
+                        break;
+                    }
+                }
+
+                if (value == null || type == null) {
+                    continue;
+                }
+
+                serializer.startTag(null, "entry");
+                serializer.attribute(null, "key", key);
+                serializer.attribute(null, "type", type);
+                serializer.attribute(null, "value", value);
+                serializer.endTag(null, "entry");
+            }
+
+            serializer.endTag(null, ROOT_NAME);
+            serializer.endDocument();
+            serializer.flush();
+            stream.flush();
         } catch (@Nonnull final IOException e) {
             LOGGER.error("Configuration not saved: error accessing config file.");
+        } catch (@Nonnull final XmlPullParserException e) {
+            LOGGER.error("Configuration not saved: Error creating XML serializer");
         } finally {
-            if (xmlWriter != null) {
+            if (stream != null) {
                 try {
-                    xmlWriter.close();
-                } catch (@Nonnull final XMLStreamException e) {
+                    stream.close();
+                } catch (@Nonnull final IOException e) {
                     LOGGER.error("Error while closing the config file writer",
                             e);
                 }
@@ -890,37 +998,70 @@ public class ConfigSystem implements Config {
         }
 
         lock.writeLock().lock();
-        XMLObjectReader xmlReader = null;
+        InputStream stream = null;
         try {
-            xmlReader =
-                    XMLObjectReader.newInstance(new GZIPInputStream(
-                            new FileInputStream(configFile)), ENCODING);
-            xmlReader.setBinding(binding);
+            final XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
+            stream = new GZIPInputStream(new FileInputStream(configFile));
+            parser.setInput(stream, ENCODING);
 
-            final Map<String, Object> loadedMap = xmlReader.read(ROOT_NAME);
-            if (loadedMap == null) {
+            final Map<String, Object> loadedMap = new HashMap<>();
+
+            int currentTag = parser.nextToken();
+            while (currentTag != XmlPullParser.END_DOCUMENT) {
+                if (currentTag == XmlPullParser.START_TAG && parser.getName().equals("entry")) {
+                    String key = null;
+                    String type = null;
+                    String value = null;
+                    final int count = parser.getAttributeCount();
+                    for (int i = 0; i < count; i++) {
+                        final String name = parser.getAttributeName(i);
+                        switch (name) {
+                            case "key":
+                                key = parser.getAttributeValue(i);
+                                break;
+                            case "type":
+                                type = parser.getAttributeValue(i);
+                                break;
+                            case "value":
+                                value = parser.getAttributeValue(i);
+                                break;
+                        }
+                    }
+                    if ((key != null) && (type != null) && (value != null)) {
+                        Object realValue = null;
+                        for (final ConfigTypes configType : ConfigTypes.values()) {
+                            if (type.equals(configType.getTypeName())) {
+                                realValue = configType.getConverter().getObject(value);
+                                break;
+                            }
+                        }
+                        if (realValue != null) {
+                            loadedMap.put(key, realValue);
+                        }
+                    }
+                }
+                currentTag = parser.nextToken();
+            }
+
+            if (loadedMap.isEmpty()) {
                 LOGGER.warn("Configuration not loaded: no config data load");
                 return;
             }
 
             configEntries.putAll(loadedMap);
-
-            loadedMap.clear();
         } catch (@Nonnull final FileNotFoundException e) {
             LOGGER.warn("Configuration not loaded: config file disappeared.");
         } catch (@Nonnull final ClassCastException e) {
             LOGGER.error("Configuration not loaded: illegal config data.");
-        } catch (@Nonnull final XMLStreamException e) {
-            LOGGER.error("Configuration not loaded: config file invalid.");
         } catch (@Nonnull final IOException e) {
             LOGGER.error("Configuration not loaded: error accessing the file system.");
+        } catch (@Nonnull final XmlPullParserException e) {
+            LOGGER.error("Error while creating XML pull parser.", e);
         } finally {
-            if (xmlReader != null) {
+            if (stream != null) {
                 try {
-                    xmlReader.close();
-                } catch (@Nonnull final XMLStreamException e) {
-                    LOGGER.error("Error while closing the config file reader",
-                            e);
+                    stream.close();
+                } catch (@Nonnull final IOException ignored) {
                 }
             }
             lock.writeLock().unlock();
