@@ -11,7 +11,7 @@
   <children>
     <BorderPane fx:id="footer">
       <right>
-        <Button alignment="CENTER_RIGHT" styleClass="button-green" text="%continue" onAction="#nextStep" />
+        <Button alignment="CENTER_RIGHT" styleClass="button-green" text="%continue" onAction="#nextStep" prefHeight="25.0" prefWidth="80.0" />
       </right>
     </BorderPane>
     <BorderPane fx:id="content" prefHeight="200.0" prefWidth="200.0">
@@ -43,10 +43,10 @@
       <right>
         <GridPane>
           <children>
-            <ComboBox fx:id="targetClient" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.vgrow="NEVER" />
-            <ComboBox fx:id="targetEasyNpc" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="NEVER" />
-            <ComboBox fx:id="targetEasyQuest" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.vgrow="NEVER" />
-            <ComboBox fx:id="targetMapEditor" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" GridPane.vgrow="NEVER" />
+            <ComboBox fx:id="targetClient" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.vgrow="NEVER" />
+            <ComboBox fx:id="targetEasyNpc" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="NEVER" />
+            <ComboBox fx:id="targetEasyQuest" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.vgrow="NEVER" />
+            <ComboBox fx:id="targetMapEditor" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" GridPane.vgrow="NEVER" />
             <Label text="%labelClient" GridPane.columnIndex="0" GridPane.rowIndex="0" />
             <Label text="%labelEasyNPC" GridPane.columnIndex="0" GridPane.rowIndex="1" />
             <Label text="%labelEasyQuest" GridPane.columnIndex="0" GridPane.rowIndex="2" />
