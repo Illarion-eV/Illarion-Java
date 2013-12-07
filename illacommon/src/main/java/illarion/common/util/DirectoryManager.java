@@ -172,7 +172,7 @@ public final class DirectoryManager {
                     if (line.startsWith(dir.getHeader())) {
                         final File testDir = new File(dir.getDefaultDir());
                         if (testDirectory(testDir)) {
-                            if (dir != Directory.Data || createDataDirFile(testDir)) {
+                            if (createDataDirFile(testDir)) {
                                 directories.put(dir, testDir);
                                 relativeDirectory.put(dir, Boolean.TRUE);
                             }
@@ -212,7 +212,7 @@ public final class DirectoryManager {
                     if (line.startsWith(dir.getHeader())) {
                         final File testDir = new File(line.substring(dir.getHeader().length()));
                         if (testDirectory(testDir)) {
-                            if (dir != Directory.Data || createDataDirFile(testDir)) {
+                            if (createDataDirFile(testDir)) {
                                 directories.put(dir, testDir);
                                 relativeDirectory.put(dir, Boolean.FALSE);
                             }
@@ -449,7 +449,7 @@ public final class DirectoryManager {
     }
 
     private static boolean isNewDirectoryValid(@Nonnull final Directory dir, @Nonnull final File location) {
-        return testDirectory(location) && ((dir != Directory.Data) || (isValidDataDirectory(location) && createDataDirFile(location)));
+        return testDirectory(location) && isValidDataDirectory(location) && createDataDirFile(location);
     }
 
     private static boolean isValidDataDirectory(@Nullable final File dir) {
@@ -470,13 +470,13 @@ public final class DirectoryManager {
             return true;
         }
 
-        final File dataDirFile = new File(dir, "illarionDataDir");
+        final File dataDirFile = new File(dir, "illarionDir");
         return dataDirFile.exists();
     }
 
     private static boolean createDataDirFile(@Nullable final File dir) {
         if (dir != null) {
-            final File dataDirFile = new File(dir, "illarionDataDir");
+            final File dataDirFile = new File(dir, "illarionDir");
             if (dataDirFile.exists()) {
                 return true;
             }
