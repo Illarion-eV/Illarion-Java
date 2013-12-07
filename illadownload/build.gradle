@@ -72,6 +72,8 @@ startScripts.dependsOn {
     jfxJar
 }
 
+cssToBin.enabled = false
+
 javafx {
     id 'IllaLauncher'
     appID 'IllaLauncher'
