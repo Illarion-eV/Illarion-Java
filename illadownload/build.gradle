@@ -133,7 +133,7 @@ if (project.hasProperty('targetDistDir')) {
         into file(project.targetDistDir)
     }
     task publishBundle(type: Copy, dependsOn: 'proguard') {
-        from new File(project.buildDir, "downloader.jar")
+        from new File(project.buildDir, "downloader.jar").absolutePath
         into file(project.targetDistDir)
     }
 }
@@ -141,7 +141,7 @@ if (project.hasProperty('targetDistDir')) {
 task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jfxJar') {
     final def mainFile = new File(project.buildDir, "libs/${project.archivesBaseName}-${project.version}.jar")
             .absolutePath
-    injars([filter:'!**.css'], mainFile)
+    injars(mainFile)
     configurations.runtime.each { File file ->
         if (file.absolutePath.startsWith(System.getProperty('java.home'))) {
             libraryjars file.absolutePath
