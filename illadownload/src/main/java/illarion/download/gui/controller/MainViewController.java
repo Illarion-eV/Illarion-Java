@@ -42,6 +42,8 @@ public class MainViewController extends AbstractController implements MavenDownl
     public Button launchMapEditButton;
     @FXML
     public Button launchClientButton;
+    @FXML
+    public Button uninstallButton;
 
     private ResourceBundle resourceBundle;
 
@@ -92,6 +94,7 @@ public class MainViewController extends AbstractController implements MavenDownl
             launchMapEditButton.setDisable(!enabled);
             launchEasyQuestButton.setDisable(!enabled);
             launchEasyNpcButton.setDisable(!enabled);
+            uninstallButton.setDisable(!enabled);
             if (enabled) {
                 launchClientButton.setText(resourceBundle.getString("launchClient"));
                 launchMapEditButton.setText(resourceBundle.getString("launchMapEdit"));
@@ -228,5 +231,10 @@ public class MainViewController extends AbstractController implements MavenDownl
             getModel().getStoryboard().showOptions();
         } catch (@Nonnull final IOException ignored) {
         }
+    }
+
+    @FXML
+    public void uninstall(ActionEvent actionEvent) {
+
     }
 }

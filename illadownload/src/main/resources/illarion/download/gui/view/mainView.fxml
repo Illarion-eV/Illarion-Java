@@ -8,6 +8,46 @@
             fx:controller="illarion.download.gui.controller.MainViewController">
     <children>
         <BorderPane fx:id="content">
+            <top>
+                <BorderPane minHeight="111.0" prefHeight="139.0" prefWidth="554.0">
+                    <center>
+                        <VBox alignment="CENTER" maxWidth="130.0" padding="$x1" prefWidth="130.0" spacing="10.0">
+                            <children>
+                                <AnchorPane>
+                                    <children>
+                                        <Button maxHeight="30.0" minHeight="30.0" mnemonicParsing="false"
+                                                prefHeight="30.0" styleClass="button-gray" text="%account"
+                                                textAlignment="CENTER" AnchorPane.bottomAnchor="0.0"
+                                                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                                                AnchorPane.topAnchor="0.0" onAction="#goToAccount" />
+                                    </children>
+                                    <VBox.margin>
+                                        <Insets fx:id="x1" />
+                                    </VBox.margin>
+                                </AnchorPane>
+                                <AnchorPane>
+                                    <children>
+                                        <Button maxHeight="30.0" minHeight="30.0" mnemonicParsing="false"
+                                                prefHeight="30.0" styleClass="button-gray" text="%options"
+                                                textAlignment="CENTER" AnchorPane.bottomAnchor="0.0"
+                                                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                                                AnchorPane.topAnchor="0.0" onAction="#showOptions" />
+                                    </children>
+                                </AnchorPane>
+                            </children>
+                            <BorderPane.margin>
+                                <Insets bottom="35.0" />
+                            </BorderPane.margin>
+                        </VBox>
+                    </center>
+                    <left>
+                        <ImageView id="logo" mouseTransparent="true" />
+                    </left>
+                    <padding>
+                        <Insets top="15.0" />
+                    </padding>
+                </BorderPane>
+            </top>
             <center>
                 <VBox prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
                     <children>
@@ -52,7 +92,7 @@
                                 <Button alignment="TOP_LEFT" mnemonicParsing="false" text="%launchEasyNpc"
                                         textAlignment="CENTER" AnchorPane.bottomAnchor="0.0"
                                         AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                        AnchorPane.topAnchor="0.0" styleClass="button-gray" prefHeight="40.0"
+                                        AnchorPane.topAnchor="0.0" styleClass="button-gray" prefHeight="32.0"
                                         onAction="#startEasyNpc" fx:id="launchEasyNpcButton"/>
                             </children>
                         </AnchorPane>
@@ -61,7 +101,7 @@
                                 <Button mnemonicParsing="false" text="%launchEasyQuest" textAlignment="CENTER"
                                         AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                                         AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
-                                        styleClass="button-gray" prefHeight="40.0" onAction="#startEasyQuest"
+                                        styleClass="button-gray" prefHeight="32.0" onAction="#startEasyQuest"
                                         fx:id="launchEasyQuestButton" />
                             </children>
                         </AnchorPane>
@@ -70,8 +110,17 @@
                                 <Button mnemonicParsing="false" text="%launchMapEdit" textAlignment="CENTER"
                                         AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                                         AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
-                                        styleClass="button-gray" prefHeight="40.0" onAction="#startMapEdit"
+                                        styleClass="button-gray" prefHeight="32.0" onAction="#startMapEdit"
                                         fx:id="launchMapEditButton"/>
+                            </children>
+                        </AnchorPane>
+                        <AnchorPane>
+                            <children>
+                                <Button mnemonicParsing="false" text="%uninstall" textAlignment="CENTER"
+                                        AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                        AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
+                                        styleClass="button-red" prefHeight="23.0" onAction="#uninstall"
+                                        fx:id="uninstallButton"/>
                             </children>
                         </AnchorPane>
                     </children>
@@ -83,46 +132,6 @@
             <padding>
                 <Insets bottom="20.0" />
             </padding>
-            <top>
-                <BorderPane minHeight="111.0" prefHeight="139.0" prefWidth="554.0">
-                    <center>
-                        <VBox alignment="CENTER" maxWidth="130.0" padding="$x1" prefWidth="130.0" spacing="10.0">
-                            <children>
-                                <AnchorPane>
-                                    <children>
-                                        <Button maxHeight="30.0" minHeight="30.0" mnemonicParsing="false"
-                                                prefHeight="30.0" styleClass="button-gray" text="%account"
-                                                textAlignment="CENTER" AnchorPane.bottomAnchor="0.0"
-                                                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                                AnchorPane.topAnchor="0.0" onAction="#goToAccount" />
-                                    </children>
-                                    <VBox.margin>
-                                        <Insets fx:id="x1" />
-                                    </VBox.margin>
-                                </AnchorPane>
-                                <AnchorPane>
-                                    <children>
-                                        <Button maxHeight="30.0" minHeight="30.0" mnemonicParsing="false"
-                                                prefHeight="30.0" styleClass="button-gray" text="%options"
-                                                textAlignment="CENTER" AnchorPane.bottomAnchor="0.0"
-                                                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                                AnchorPane.topAnchor="0.0" onAction="#showOptions" />
-                                    </children>
-                                </AnchorPane>
-                            </children>
-                            <BorderPane.margin>
-                                <Insets bottom="35.0" />
-                            </BorderPane.margin>
-                        </VBox>
-                    </center>
-                    <left>
-                        <ImageView id="logo" />
-                    </left>
-                    <padding>
-                        <Insets top="15.0" />
-                    </padding>
-                </BorderPane>
-            </top>
         </BorderPane>
         <BorderPane fx:id="footer">
             <right>

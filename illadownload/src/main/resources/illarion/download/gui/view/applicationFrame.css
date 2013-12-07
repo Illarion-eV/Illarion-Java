@@ -35,6 +35,7 @@
     -fx-border-image-source: url("button/buttongreen.png");
     -fx-border-image-slice: 8 fill;
     -fx-border-image-width: 8;
+    -fx-padding: -8 0 -8 0
 }
 
 .button-green:hover {
@@ -43,6 +44,24 @@
 
 .button-green:pressed {
     -fx-border-image-source: url("button/buttongreen_pressed.png");
+}
+
+.button-red {
+    -fx-alignment: center;
+    -fx-text-fill: white;
+    -fx-background-color: transparent;
+    -fx-border-image-source: url("button/buttonred.png");
+    -fx-border-image-slice: 8 fill;
+    -fx-border-image-width: 8;
+    -fx-padding: -8 0 -8 0
+}
+
+.button-red:hover {
+    -fx-border-image-source: url("button/buttonred_hover.png");
+}
+
+.button-red:pressed {
+    -fx-border-image-source: url("button/buttonred_pressed.png");
 }
 
 .progress-bar {
