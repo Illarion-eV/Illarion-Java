@@ -8,6 +8,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -66,10 +67,11 @@ public abstract class AbstractDirSelectionController extends AbstractController 
             directoryChooser.setInitialDirectory(directoryChooser.getInitialDirectory().getParentFile());
         }
 
-        final File selectedDirectory = directoryChooser.showDialog(getModel().getStage());
-
-        this.selectedDirectory.setText(selectedDirectory.getAbsolutePath());
-        optionAbsolute.setSelected(true);
+        @Nullable final File selectedDirectory = directoryChooser.showDialog(getModel().getStage());
+        if (selectedDirectory != null) {
+            this.selectedDirectory.setText(selectedDirectory.getAbsolutePath());
+            optionAbsolute.setSelected(true);
+        }
     }
 
     @FXML
@@ -81,10 +83,15 @@ public abstract class AbstractDirSelectionController extends AbstractController 
             final File targetDir = new File(selectedDirectory.getText());
             dm.setDirectory(dir, targetDir);
         }
-        try {
-            getModel().getStoryboard().nextScene();
-        } catch (@Nonnull final IOException e) {
-            // nothing
+        if (dm.isDirectorySet(dir)) {
+            dm.save();
+            try {
+                getModel().getStoryboard().nextScene();
+            } catch (@Nonnull final IOException e) {
+                // nothing
+            }
+        } else {
+            selectedDirectory.setText("");
         }
     }
 }

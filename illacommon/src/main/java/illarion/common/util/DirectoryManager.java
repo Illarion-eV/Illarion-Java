@@ -112,8 +112,8 @@ public final class DirectoryManager {
      */
     @SuppressWarnings("nls")
     private DirectoryManager() {
-        directories = new EnumMap<Directory, File>(Directory.class);
-        relativeDirectory = new EnumMap<Directory, Boolean>(Directory.class);
+        directories = new EnumMap<>(Directory.class);
+        relativeDirectory = new EnumMap<>(Directory.class);
 
         testRelativeDirectorySupport();
 
@@ -129,7 +129,7 @@ public final class DirectoryManager {
         if (EnvironmentDetect.isWebstart()) {
             relativeDirectoryPossible = false;
         } else {
-            final File workingDir = new File("");
+            final File workingDir = new File(".");
 
             relativeDirectoryPossible = testDirectory(workingDir);
             if (relativeDirectoryPossible) {
@@ -172,14 +172,15 @@ public final class DirectoryManager {
                     if (line.startsWith(dir.getHeader())) {
                         final File testDir = new File(dir.getDefaultDir());
                         if (testDirectory(testDir)) {
-                            directories.put(dir, testDir);
-                            relativeDirectory.put(dir, Boolean.TRUE);
+                            if (dir != Directory.Data || createDataDirFile(testDir)) {
+                                directories.put(dir, testDir);
+                                relativeDirectory.put(dir, Boolean.TRUE);
+                            }
                         }
                     }
                 }
                 line = inFile.readLine();
             }
-        } catch (@Nonnull final FileNotFoundException ignored) {
         } catch (@Nonnull final IOException ignored) {
         } finally {
             closeSilently(inFile);
@@ -211,14 +212,15 @@ public final class DirectoryManager {
                     if (line.startsWith(dir.getHeader())) {
                         final File testDir = new File(line.substring(dir.getHeader().length()));
                         if (testDirectory(testDir)) {
-                            directories.put(dir, testDir);
-                            relativeDirectory.put(dir, Boolean.FALSE);
+                            if (dir != Directory.Data || createDataDirFile(testDir)) {
+                                directories.put(dir, testDir);
+                                relativeDirectory.put(dir, Boolean.FALSE);
+                            }
                         }
                     }
                 }
                 line = inFile.readLine();
             }
-        } catch (@Nonnull final FileNotFoundException ignored) {
         } catch (@Nonnull final IOException ignored) {
         } finally {
             closeSilently(inFile);
@@ -417,10 +419,12 @@ public final class DirectoryManager {
      * @param location the local of the directory in the local file system
      */
     public void setDirectory(@Nonnull final Directory dir, @Nonnull final File location) {
-        if (testDirectory(location) && !location.equals(getDirectory(dir))) {
-            directories.put(dir, location);
-            relativeDirectory.put(dir, Boolean.FALSE);
-            dirty = true;
+        if (!location.equals(getDirectory(dir))) {
+            if (isNewDirectoryValid(dir, location)) {
+                directories.put(dir, location);
+                relativeDirectory.put(dir, Boolean.FALSE);
+                dirty = true;
+            }
         }
     }
 
@@ -436,12 +440,52 @@ public final class DirectoryManager {
         }
         if (!isDirectoryRelative(dir)) {
             final File testDir = new File(dir.getDefaultDir());
-            if (testDirectory(testDir)) {
+            if (isNewDirectoryValid(dir, testDir)) {
                 directories.put(dir, testDir);
                 relativeDirectory.put(dir, Boolean.TRUE);
                 dirty = true;
             }
         }
+    }
+
+    private static boolean isNewDirectoryValid(@Nonnull final Directory dir, @Nonnull final File location) {
+        return testDirectory(location) && ((dir != Directory.Data) || (isValidDataDirectory(location) && createDataDirFile(location)));
+    }
+
+    private static boolean isValidDataDirectory(@Nullable final File dir) {
+        if (dir == null) {
+            return false;
+        }
+
+        if (!dir.isDirectory()) {
+            return false;
+        }
+
+        final File[] contents = dir.listFiles();
+        if (contents == null) {
+            return false;
+        }
+
+        if (contents.length == 0) {
+            return true;
+        }
+
+        final File dataDirFile = new File(dir, "illarionDataDir");
+        return dataDirFile.exists();
+    }
+
+    private static boolean createDataDirFile(@Nullable final File dir) {
+        if (dir != null) {
+            final File dataDirFile = new File(dir, "illarionDataDir");
+            if (dataDirFile.exists()) {
+                return true;
+            }
+            try {
+                return dataDirFile.createNewFile();
+            } catch (@Nonnull final IOException ignored) {
+            }
+        }
+        return false;
     }
 
     /**
