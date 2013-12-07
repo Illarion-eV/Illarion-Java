@@ -1,5 +1,6 @@
 /illacommon/src/main/resources/skills.xml
 /.gradle/
+/build
 */build
 /out
 *.log
