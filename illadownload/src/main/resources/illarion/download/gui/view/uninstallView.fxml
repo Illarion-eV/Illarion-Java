@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?scenebuilder-preview-i18n-resource uninstallView_de.properties?>
+<?scenebuilder-stylesheet applicationFrame.css?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"
+            fx:controller="illarion.download.gui.controller.uninstallController">
+  <children>
+      <BorderPane fx:id="footer">
+          <right>
+              <HBox prefHeight="-1.0" prefWidth="-1.0">
+                  <children>
+                      <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" styleClass="button-gray" text="%cancel" />
+                      <Button alignment="CENTER_RIGHT" maxWidth="-1.0" onAction="#uninstall" prefHeight="25.0" prefWidth="100.0" styleClass="button-red" text="%uninstall">
+                          <HBox.margin>
+                              <Insets left="10.0" />
+                          </HBox.margin>
+                      </Button>
+                  </children>
+              </HBox>
+          </right>
+      </BorderPane>
+      <BorderPane fx:id="content" prefHeight="200.0" prefWidth="200.0">
+          <center>
+              <VBox fillWidth="true">
+                  <fx:define>
+                      <ToggleGroup fx:id="storageMethodSelect" />
+                  </fx:define>
+                  <children>
+                      <Label text="%descriptionGeneral" textAlignment="LEFT" wrapText="true">
+                          <VBox.margin>
+                              <Insets bottom="10.0" />
+                          </VBox.margin>
+                      </Label>
+                      <Label text="%descriptionFeedback" textAlignment="LEFT" wrapText="true" />
+                      <HBox alignment="CENTER" maxHeight="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+                          <children>
+                              <RadioButton mnemonicParsing="false" selected="true" text="%optionKeepPlayer">
+                                  <HBox.margin>
+                                      <Insets right="20.0" />
+                                  </HBox.margin>
+                              </RadioButton>
+                              <RadioButton alignment="CENTER_LEFT" mnemonicParsing="false" text="%optionRemoveAll" />
+                          </children>
+                      </HBox>
+                  </children>
+                  <padding>
+                      <Insets />
+                  </padding>
+              </VBox>
+          </center>
+          <padding>
+              <Insets bottom="10.0" top="20.0" />
+          </padding>
+          <top>
+              <Label style="-fx-font-size: 20pt" text="%title">
+                  <BorderPane.margin>
+                      <Insets bottom="10.0" />
+                  </BorderPane.margin>
+              </Label>
+          </top>
+      </BorderPane>
+  </children>
+</AnchorPane>
