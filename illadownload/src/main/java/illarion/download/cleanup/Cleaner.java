@@ -1,9 +1,9 @@
 package illarion.download.cleanup;
 
 import illarion.common.util.DirectoryManager;
+import illarion.common.util.EnvironmentDetect;
 import illarion.common.util.ProgressMonitor;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -83,6 +83,28 @@ public class Cleaner {
         final List<File> filesToDelete = getRemovalTargets();
         deleteFiles(filesToDelete);
         executorService.shutdown();
+
+        if (selectedMode == Mode.RemoveBinaries || selectedMode == Mode.RemoveEverything) {
+            deleteDownloader();
+
+            final DirectoryManager dm = DirectoryManager.getInstance();
+            dm.unsetDirectory(DirectoryManager.Directory.Data);
+            if (selectedMode == Mode.RemoveEverything) {
+                dm.unsetDirectory(DirectoryManager.Directory.User);
+            }
+            dm.save();
+        }
+    }
+
+    private void deleteDownloader() {
+        if (EnvironmentDetect.isWebstart()) {
+            return;
+        }
+
+        final File file = new File(Cleaner.class.getProtectionDomain().getCodeSource().getLocation().getFile());
+        if (file.exists() && file.isFile() && file.getName().endsWith(".jar")) {
+            file.deleteOnExit();
+        }
     }
 
     private void deleteFiles(@Nonnull final List<File> files) {

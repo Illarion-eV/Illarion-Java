@@ -30,8 +30,6 @@ public class GuiApplication extends Application implements Storyboard {
     private static final int SCENE_SELECT_USER = 1;
     private static final int SCENE_MAIN = 2;
 
-    private boolean showOptions;
-
     private GuiModel model;
 
     @Nullable
@@ -125,23 +123,26 @@ public class GuiApplication extends Application implements Storyboard {
 
     @Override
     public void showOptions() throws IOException {
-        showOptions = true;
         setScene(new ChannelSelectView(model));
     }
 
     @Override
+    public void showUninstall() throws IOException {
+        setScene(new UninstallView(model));
+    }
+
+    @Override
     public void showNormal() throws IOException {
-        showOptions = false;
         switch (currentScene) {
             case SCENE_SELECT_DATA:
                 setScene(new DataDirSelectView(model));
-                return;
+                break;
             case SCENE_SELECT_USER:
                 setScene(new UserDirSelectView(model));
-                return;
+                break;
             case SCENE_MAIN:
                 setScene(new MainView(model));
-                return;
+                break;
         }
     }
 }

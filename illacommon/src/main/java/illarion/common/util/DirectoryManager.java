@@ -263,6 +263,17 @@ public final class DirectoryManager {
     }
 
     /**
+     * This function unsets a directory.
+     *
+     * @param dir the directory to unset
+     */
+    public void unsetDirectory(@Nonnull final Directory dir) {
+        directories.remove(dir);
+        relativeDirectory.remove(dir);
+        dirty = true;
+    }
+
+    /**
      * Check if a directory has a absolute location in the file system or is placed relative to the executed JAR file.
      *
      * @param dir the directory

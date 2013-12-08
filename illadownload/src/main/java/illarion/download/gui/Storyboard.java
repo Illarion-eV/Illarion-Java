@@ -26,6 +26,11 @@ public interface Storyboard {
     void showOptions() throws IOException;
 
     /**
+     * Show the uninstall dialog.
+     */
+    void showUninstall() throws IOException;
+
+    /**
      * Show the normal storyboard.
      */
     void showNormal() throws IOException;

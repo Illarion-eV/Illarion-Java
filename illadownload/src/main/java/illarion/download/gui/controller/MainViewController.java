@@ -3,6 +3,7 @@ package illarion.download.gui.controller;
 import illarion.common.config.Config;
 import illarion.common.util.ProgressMonitor;
 import illarion.common.util.ProgressMonitorCallback;
+import illarion.download.cleanup.Cleaner;
 import illarion.download.launcher.JavaLauncher;
 import illarion.download.maven.MavenDownloader;
 import illarion.download.maven.MavenDownloaderCallback;
@@ -202,7 +203,13 @@ public class MainViewController extends AbstractController implements MavenDownl
                         getModel().getStage().close();
                     }
                 });
-                cancelLaunch();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        final Cleaner cleaner = new Cleaner(Cleaner.Mode.Maintenance);
+                        cleaner.clean();
+                    }
+                }).run();
             } else {
                 cancelLaunch();
                 Platform.runLater(new Runnable() {
@@ -234,7 +241,10 @@ public class MainViewController extends AbstractController implements MavenDownl
     }
 
     @FXML
-    public void uninstall(ActionEvent actionEvent) {
-
+    public void uninstall(@Nonnull final ActionEvent actionEvent) {
+        try {
+            getModel().getStoryboard().showUninstall();
+        } catch (@Nonnull final IOException ignored) {
+        }
     }
 }
