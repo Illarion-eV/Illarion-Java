@@ -1,16 +1,15 @@
 package illarion.download.cleanup;
 
 import illarion.common.util.DirectoryManager;
+import illarion.common.util.ProgressMonitor;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
 
 /**
@@ -60,6 +59,9 @@ public class Cleaner {
     @Nullable
     private ExecutorService executorService;
 
+    @Nonnull
+    private final ProgressMonitor monitor;
+
     /**
      * Create the cleaner and set the mode that its supposed to operate in.
      *
@@ -67,16 +69,32 @@ public class Cleaner {
      */
     public Cleaner(@Nonnull final Mode mode) {
         selectedMode = mode;
+        monitor = new ProgressMonitor();
+    }
+
+    @Nonnull
+    public ProgressMonitor getProgressMonitor() {
+        return monitor;
     }
 
     public void clean() {
         executorService = Executors.newCachedThreadPool();
-        getRemovalTargets();
+        monitor.setProgress(0);
+        final List<File> filesToDelete = getRemovalTargets();
+        deleteFiles(filesToDelete);
         executorService.shutdown();
     }
 
-    public static void main(final String[] args) {
-        new Cleaner(Mode.Maintenance).clean();
+    private void deleteFiles(@Nonnull final List<File> files) {
+        final int count = files.size();
+        for (int i = 0; i < count; i++) {
+            final File fileToDelete = files.get(i);
+            if (!fileToDelete.delete()) {
+                fileToDelete.deleteOnExit();
+            }
+            monitor.setProgress((float) i / (float) count);
+        }
+        monitor.setProgress(1.f);
     }
 
     /**
@@ -106,11 +124,179 @@ public class Cleaner {
         if (dataDir != null) {
             if (selectedMode == Mode.RemoveEverything || selectedMode == Mode.RemoveBinaries) {
                 removalList.addAll(enlistRecursively(dataDir, null));
+            } else {
+                removalList.addAll(enlistArtifactsRecursively(dataDir));
             }
         }
 
         printFileList(removalList);
         return removalList;
+    }
+
+    private List<File> enlistArtifactsRecursively(@Nonnull final File rootDir) {
+        if (executorService == null) {
+            throw new IllegalStateException("Executor is not ready");
+        }
+
+        final List<File> artifactDirList = new LinkedList<>();
+        if (isArtifactComplete(rootDir, artifactDirList)) {
+            artifactDirList.add(rootDir);
+        }
+
+        final List<File> resultList = new LinkedList<>();
+        final List<Future<List<File>>> artifactScans = new LinkedList<>();
+
+        for (@Nonnull final File artifactDirectory : artifactDirList) {
+            artifactScans.add(executorService.submit(new Callable<List<File>>() {
+                @Override
+                public List<File> call() throws Exception {
+                    return enlistOldArtifacts(artifactDirectory);
+                }
+            }));
+        }
+
+        for (final Future<List<File>> artifactScan : artifactScans) {
+            try {
+                resultList.addAll(artifactScan.get());
+            } catch (InterruptedException | ExecutionException e) {
+                LOGGER.error("Failed to get results of directory scan.");
+            }
+        }
+
+        return resultList;
+    }
+
+    private final Comparator<File> versionComparator = new VersionComparator();
+
+    private List<File> enlistOldArtifacts(@Nonnull final File artifactDir) {
+        if (executorService == null) {
+            throw new IllegalStateException("Executor is not ready");
+        }
+
+        final List<File> resultList = new LinkedList<>();
+        final List<File> releaseList = new LinkedList<>();
+        final List<File> snapshotList = new LinkedList<>();
+
+        final File[] subDirs = artifactDir.listFiles();
+        if (subDirs == null) {
+            return resultList;
+        }
+
+        for (@Nonnull final File versionDir : subDirs) {
+            if (versionDir.isDirectory()) {
+                if (versionDir.getName().endsWith("SNAPSHOT")) {
+                    snapshotList.add(versionDir);
+                } else {
+                    releaseList.add(versionDir);
+                }
+            }
+        }
+
+        final List<Future<List<File>>> dirScans = new LinkedList<>();
+
+        final List<List<File>> versionLists = new ArrayList<>();
+        versionLists.add(releaseList);
+        versionLists.add(snapshotList);
+        for (@Nonnull final List<File> versionList : versionLists) {
+            Collections.sort(versionList, versionComparator);
+            while (versionList.size() > 1) {
+                final File dir = versionList.remove(0);
+                dirScans.add(executorService.submit(new Callable<List<File>>() {
+                    @Override
+                    public List<File> call() throws Exception {
+                        if (isArtifactComplete(dir, null)) {
+                            return enlistRecursively(dir, null);
+                        }
+                        return Collections.EMPTY_LIST;
+                    }
+                }));
+            }
+        }
+
+        if (snapshotList.size() == 1) {
+            dirScans.add(executorService.submit(new Callable<List<File>>() {
+                @Override
+                public List<File> call() throws Exception {
+                    return enlistOldSnapshots(snapshotList.get(0));
+                }
+            }));
+        }
+
+        for (final Future<List<File>> dirScan : dirScans) {
+            try {
+                resultList.addAll(dirScan.get());
+            } catch (InterruptedException | ExecutionException e) {
+                LOGGER.error("Failed to get results of directory scan.");
+            }
+        }
+
+        return resultList;
+    }
+
+    private List<File> enlistOldSnapshots(@Nonnull final File snapshotDir) {
+        final File[] snapshotJars = snapshotDir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".jar") && !name.contains("SNAPSHOT");
+            }
+        });
+        if (snapshotJars == null || snapshotJars.length < 2) {
+            //noinspection unchecked
+            return Collections.EMPTY_LIST;
+        }
+
+        Arrays.sort(snapshotJars);
+
+        final List<String> snapshotNames = new LinkedList<>();
+        for (int i = 0; i < snapshotJars.length - 1; i++) {
+            final File snapshot = snapshotJars[i];
+            snapshotNames.add(snapshot.getName().replace(".jar", ""));
+        }
+
+        final File[] snapshotFiles = snapshotDir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                for (@Nonnull final String baseName : snapshotNames) {
+                    if (name.startsWith(baseName)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+
+        if (snapshotFiles == null) {
+            //noinspection unchecked
+            return Collections.EMPTY_LIST;
+        }
+
+        return Arrays.asList(snapshotFiles);
+    }
+
+    private boolean isArtifactComplete(@Nonnull final File rootDir, @Nullable final List<File> artifactDirs) {
+        final File[] contentFiles = rootDir.listFiles();
+        if (contentFiles == null) {
+            return true;
+        }
+        boolean noDirectories = true;
+        boolean noJarFiles = true;
+
+        for (final File contentFile : contentFiles) {
+            if (contentFile.getName().endsWith(".jar")) {
+                noJarFiles = false;
+            }
+            if (contentFile.isDirectory()) {
+                noDirectories = false;
+                if (artifactDirs != null) {
+                    if (isArtifactComplete(contentFile, artifactDirs)) {
+                        artifactDirs.add(rootDir);
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return noDirectories && !noJarFiles;
     }
 
     private List<File> enlistRecursively(@Nonnull final File rootDir, @Nullable final FilenameFilter filter) {
@@ -158,8 +344,13 @@ public class Cleaner {
     }
 
     private static void printFileList(@Nonnull final List<File> files) {
+        long size = 0L;
         for (@Nonnull final File file : files) {
+            size += file.length();
             System.out.println(file.getAbsolutePath());
         }
+
+        System.out.println("Files to delete: " + files.size() + " (" + size + " Bytes)");
+
     }
 }
