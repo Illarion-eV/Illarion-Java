@@ -294,7 +294,7 @@ public final class EasyNpcScript {
     public void writeNPCScript(@Nonnull final File targetFile) throws IOException {
         final BufferedWriter writer =
                 new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
-                        targetFile), "UTF-8"));
+                        targetFile), "ISO-8859-1"));
 
         for (final EasyNpcScript.Line line : entries) {
             writer.write(line.getLine());
