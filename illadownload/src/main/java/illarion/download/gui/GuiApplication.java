@@ -76,9 +76,9 @@ public class GuiApplication extends Application implements Storyboard {
             if (dm.isDirectorySet(DirectoryManager.Directory.User)) {
                 cfg = new ConfigSystem(new File(dm.getDirectory(DirectoryManager.Directory.User), "download.xcfgz"));
                 cfg.setDefault("channelClient", 0);
-                cfg.setDefault("channelEasyNpc", 0);
-                cfg.setDefault("channelEasyQuest", 0);
-                cfg.setDefault("channelMapEditor", 0);
+                cfg.setDefault("channelEasyNpc", 1);
+                cfg.setDefault("channelEasyQuest", 1);
+                cfg.setDefault("channelMapEditor", 1);
 
                 model.setConfig(cfg);
             }
