@@ -263,6 +263,7 @@ public class MainViewController extends AbstractController implements MavenDownl
 
         for (@Nonnull final NewsQuestEntry entry : list) {
             final BorderPane line = new BorderPane();
+            line.getStyleClass().add("linkPane");
             line.setLeft(new Label(entry.title));
             line.setRight(new Label(entry.timeStamp));
 

@@ -6,6 +6,11 @@
     -fx-padding: -54 0 -38 0;
 }
 
+.linkPane:hover {
+    -fx-border-color: transparent transparent white transparent;
+    -fx-border-style: dashed;
+}
+
 .label {
     -fx-text-fill: white;
 }
