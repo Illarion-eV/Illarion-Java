@@ -9,19 +9,32 @@ import illarion.download.maven.MavenDownloader;
 import illarion.download.maven.MavenDownloaderCallback;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import org.apache.log4j.Logger;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collection;
-import java.util.ResourceBundle;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
@@ -48,16 +61,232 @@ public class MainViewController extends AbstractController implements MavenDownl
 
     private ResourceBundle resourceBundle;
 
+    private static final Logger LOGGER = Logger.getLogger(MainViewController.class);
+
     @Override
     public void initialize(URL url, @Nonnull ResourceBundle resourceBundle) {
         this.resourceBundle = resourceBundle;
         progress.setProgress(0.0);
         progressDescription.setText(resourceBundle.getString("selectStartApp"));
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    readNewsAndQuests();
+                } catch (@Nonnull final XmlPullParserException | IOException | ParseException e) {
+                    LOGGER.error("Failed reading news and quests.", e);
+                }
+            }
+        }).start();
     }
 
     @Nullable
     private String launchClass;
     private boolean useSnapshots;
+
+    private static class NewsQuestEntry {
+        public final String title;
+        public final String timeStamp;
+        public final URL linkTarget;
+
+        NewsQuestEntry(@Nonnull final String title, @Nonnull final String timeStamp, @Nonnull final URL linkTarget) {
+            this.title = title;
+            this.timeStamp = timeStamp;
+            this.linkTarget = linkTarget;
+        }
+    }
+
+    private void readNewsAndQuests() throws XmlPullParserException, IOException, ParseException {
+        final XmlPullParserFactory parserFactory = XmlPullParserFactory.newInstance();
+        parserFactory.setValidating(false);
+        parserFactory.setNamespaceAware(false);
+
+        final XmlPullParser parser = parserFactory.newPullParser();
+        final URL src = new URL("http://illarion.org/data/xml_launcher.php");
+        parser.setInput(new BufferedInputStream(src.openStream()), "UTF-8");
+
+        final Collection<NewsQuestEntry> newsList = new ArrayList<>();
+        final Collection<NewsQuestEntry> questList = new ArrayList<>();
+
+        int current = parser.nextTag();
+        while (current != XmlPullParser.START_TAG || !"launcher".equals(parser.getName())) {
+            current = parser.nextTag();
+        }
+        parseLauncherXml(parser, newsList, questList);
+
+        showNewsQuestInList(newsList, newsPane);
+        showNewsQuestInList(questList, questsPane);
+    }
+
+    private static void parseLauncherXml(@Nonnull final XmlPullParser parser,
+                                         @Nonnull final Collection<NewsQuestEntry> newsList,
+                                         @Nonnull final Collection<NewsQuestEntry> questList)
+            throws IOException, XmlPullParserException, ParseException {
+        while (true) {
+            int current = parser.nextToken();
+            switch (current) {
+                case XmlPullParser.END_DOCUMENT:
+                    return;
+                case XmlPullParser.END_TAG:
+                    if ("launcher".equals(parser.getName())) {
+                        return;
+                    }
+                    break;
+                case XmlPullParser.START_TAG:
+                    switch (parser.getName()) {
+                        case "news":
+                            parserNewsXml(parser, newsList);
+                            break;
+                        case "quests":
+                            parserQuestXml(parser, questList);
+                            break;
+                    }
+                    break;
+            }
+        }
+    }
+
+    private static void parserNewsXml(@Nonnull final XmlPullParser parser,
+                                      @Nonnull final Collection<NewsQuestEntry> newsList)
+            throws IOException, XmlPullParserException, ParseException {
+        final boolean useGerman = Locale.getDefault().getLanguage().equals(Locale.GERMAN.getLanguage());
+
+        String title = null;
+        String timestamp = null;
+        URL linkTarget = null;
+
+        final DateFormat parsingFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
+        final DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM);
+
+        while (true) {
+            int current = parser.nextTag();
+            switch (current) {
+                case XmlPullParser.END_DOCUMENT:
+                    return;
+                case XmlPullParser.END_TAG:
+                    switch (parser.getName()) {
+                        case "news":
+                            return;
+                        case "item":
+                            if (title != null && timestamp != null && linkTarget != null) {
+                                newsList.add(new NewsQuestEntry(title, timestamp, linkTarget));
+                            }
+                            break;
+                    }
+                    break;
+                case XmlPullParser.START_TAG:
+                    switch (parser.getName()) {
+                        case "id":
+                            parser.nextText();
+                            break;
+                        case "title":
+                            final boolean german = "de".equals(parser.getAttributeValue(null, "lang"));
+                            final String text = parser.nextText();
+                            if (german == useGerman) {
+                                title = text;
+                            }
+                            break;
+                        case "link":
+                            linkTarget = new URL(parser.nextText());
+                            break;
+                        case "date":
+                            final Date date = parsingFormat.parse(parser.nextText());
+                            timestamp = dateFormat.format(date);
+                            break;
+                    }
+                    break;
+            }
+        }
+    }
+
+    private static void parserQuestXml(@Nonnull final XmlPullParser parser,
+                                       @Nonnull final Collection<NewsQuestEntry> newsList)
+            throws IOException, XmlPullParserException, ParseException {
+        final boolean useGerman = Locale.getDefault().getLanguage().equals(Locale.GERMAN.getLanguage());
+
+        String title = null;
+        String timestamp = null;
+        URL linkTarget = null;
+
+        final DateFormat parsingFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
+        final DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
+
+        while (true) {
+            int current = parser.nextTag();
+            switch (current) {
+                case XmlPullParser.END_DOCUMENT:
+                    return;
+                case XmlPullParser.END_TAG:
+                    switch (parser.getName()) {
+                        case "quests":
+                            return;
+                        case "item":
+                            if (title != null && timestamp != null && linkTarget != null) {
+                                newsList.add(new NewsQuestEntry(title, timestamp, linkTarget));
+                            }
+                            break;
+                    }
+                    break;
+                case XmlPullParser.START_TAG:
+                    switch (parser.getName()) {
+                        case "id":
+                            parser.nextText();
+                            break;
+                        case "title":
+                            final boolean german = "de".equals(parser.getAttributeValue(null, "lang"));
+                            final String text = parser.nextText();
+                            if (german == useGerman) {
+                                title = text;
+                            }
+                            break;
+                        case "link":
+                            linkTarget = new URL(parser.nextText());
+                            break;
+                        case "date":
+                            final Date date = parsingFormat.parse(parser.nextText());
+                            timestamp = dateFormat.format(date);
+                            break;
+                    }
+                    break;
+            }
+        }
+    }
+
+    private void showNewsQuestInList(@Nonnull final Collection<NewsQuestEntry> list, @Nonnull final Pane display) {
+        final VBox storage = new VBox();
+        storage.setFillWidth(true);
+        AnchorPane.setBottomAnchor(storage, 0.0);
+        AnchorPane.setTopAnchor(storage, 0.0);
+        AnchorPane.setLeftAnchor(storage, 3.0);
+        AnchorPane.setRightAnchor(storage, 3.0);
+
+        for (@Nonnull final NewsQuestEntry entry : list) {
+            final BorderPane line = new BorderPane();
+            line.setLeft(new Label(entry.title));
+            line.setRight(new Label(entry.timeStamp));
+
+            line.setMouseTransparent(false);
+            line.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    if (mouseEvent.getButton() == MouseButton.PRIMARY &&
+                            mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED &&
+                            mouseEvent.getClickCount() == 2) {
+                        getModel().getHostServices().showDocument(entry.linkTarget.toExternalForm());
+                    }
+                }
+            });
+            storage.getChildren().add(line);
+        }
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                display.getChildren().add(storage);
+            }
+        });
+    }
 
     @FXML
     public void goToAccount(@Nonnull final ActionEvent actionEvent) {
