@@ -103,7 +103,7 @@ public class MavenDownloader {
 
         session.setTransferListener(new MavenTransferListener());
 
-        repositories = new ArrayList<RemoteRepository>();
+        repositories = new ArrayList<>();
         setupRepositories();
     }
 
@@ -119,7 +119,6 @@ public class MavenDownloader {
     public Collection<File> downloadArtifact(@Nonnull final String groupId, @Nonnull final String artifactId,
                                              @Nullable final MavenDownloaderCallback callback) {
         Artifact artifact = new DefaultArtifact(groupId, artifactId, "jar", "[1,]");
-
         try {
             if (callback != null) {
                 callback.reportNewState(MavenDownloaderCallback.State.SearchingNewVersion, null);
@@ -183,7 +182,7 @@ public class MavenDownloader {
             executorService.shutdown();
             executorService.awaitTermination(1, TimeUnit.HOURS);
 
-            final List<File> result = new ArrayList<File>();
+            final List<File> result = new ArrayList<>();
             for (@Nonnull final Future<ArtifactResult> artifactResult : results) {
                 result.add(artifactResult.get().getArtifact().getFile());
             }

@@ -3,6 +3,7 @@
 /build
 */build
 /out
+/classes
 *.log
 *.log.*
 .idea/
