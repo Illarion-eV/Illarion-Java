@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ This file is part of the Illarion Nifty-GUI Style.
+  ~
+  ~ Copyright © 2012 - Illarion e.V.
+  ~
+  ~ The Illarion Nifty-GUI Style is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ The Illarion Nifty-GUI Style is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with the Illarion Nifty-GUI Style.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<nifty-styles>
+    <style id="nifty-scrollpanel">
+        <attributes backgroundColor="#000000bf"/>
+    </style>
+    <style id="nifty-scrollpanel#scrollpanel">
+        <attributes padding="2px"
+                    backgroundImage="gui/blackborder.png" imageMode="resize:1,30,1,1,1,30,1,1,1,30,1,1"/>
+    </style>
+    <style id="nifty-scrollpanel#bottom-right">
+        <attributes width="16px" height="16px"/>
+    </style>
+</nifty-styles>

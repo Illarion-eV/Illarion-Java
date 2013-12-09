@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ This file is part of the Illarion Client.
+  ~
+  ~ Copyright © 2013 - Illarion e.V.
+  ~
+  ~ The Illarion Client is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ The Illarion Client is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
+    <useStyles filename="nifty-illarion-style.xml"/>
+    <useControls filename="nifty-default-controls.xml"/>
+
+    <resourceBundle id="charselect-bundle" filename="charselect"/>
+
+    <screen id="charSelect" controller="illarion.client.gui.controller.CharScreenController">
+        <layer id="layer2" childLayout="center">
+            <effect>
+                <onStartScreen name="fade" start="#00" end="#ff" inherit="true"/>
+            </effect>
+            <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#0000"
+                   childLayout="vertical" visibleToMouse="true">
+                <image filename="gui/illarion_title.png" imageMode="normal" align="center"/>
+                <control name="label" id="statusText" text=""/>
+                <panel height="30px"/>
+                <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#0000"
+                       childLayout="vertical" visibleToMouse="true">
+                    <panel childLayout="center" visibleToMouse="true" align="center">
+                        <control id="myListBox" name="listBox" vertical="optional" horizontal="optional"
+                                 displayItems="5" selection="Single" forceSelection="true"/>
+                    </panel>
+
+                    <panel height="30px"/>
+
+                    <panel childLayout="horizontal" visibleToMouse="true">
+                        <panel width="90px"/>
+                        <control id="playBtn" name="button" label="${charselect-bundle.play}" width="100" height="35">
+                            <interact onRelease="play()"/>
+                        </control>
+                        <panel width="20px"/>
+                        <control id="optionBtn" name="button" label="${charselect-bundle.logout}" width="100"
+                                 height="35">
+                            <interact onRelease="logout()"/>
+                        </control>
+                    </panel>
+                </panel>
+            </panel>
+        </layer>
+    </screen>
+    <popup id="languageChanged" childLayout="center">
+        <effect>
+            <onEndScreen name="fade" startDelay="3000" length="500" start="#F" end="#0"/>
+        </effect>
+        <panel style="nifty-panel-small" childLayout="center">
+            <control name="label" style="nifty-label" wrap="true" width="450px" id="#german"
+                     text="Die Sprache wurde geändert. Starten sie bitte den Client neu."/>
+            <control name="label" style="nifty-label" wrap="true" width="450px" id="#english"
+                     text="The language got changed. Please restart the client."/>
+        </panel>
+    </popup>
+</nifty>

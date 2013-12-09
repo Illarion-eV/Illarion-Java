@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ This file is part of the Illarion Nifty-GUI Style.
+  ~
+  ~ Copyright © 2012 - Illarion e.V.
+  ~
+  ~ The Illarion Nifty-GUI Style is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ The Illarion Nifty-GUI Style is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with the Illarion Nifty-GUI Style.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<nifty-styles>
+    <style id="illarion-tooltip">
+        <attributes/>
+    </style>
+
+    <style id="illarion-tooltip#background" base="nifty-panel-small">
+        <attributes/>
+    </style>
+
+    <style id="illarion-tooltip#title">
+        <attributes width="250px" font="menuFont" marginBottom="9px" textHAlign="center"/>
+    </style>
+
+    <style id="illarion-tooltip#description">
+        <attributes width="250px" font="smallFont" textHAlign="left" marginBottom="15px" color="#e0e000ff"/>
+    </style>
+
+    <style id="illarion-tooltip#typeLevelLine">
+        <attributes width="250px" marginBottom="5px"/>
+    </style>
+
+    <style id="illarion-tooltip#itemtype" base="nifty-label">
+        <attributes font="textFont" textHAlign="left"/>
+    </style>
+
+    <style id="illarion-tooltip#levelTitle" base="nifty-label">
+        <attributes font="textFont" width="*" textHAlign="right"/>
+    </style>
+
+    <style id="illarion-tooltip#levelLabel" base="nifty-label">
+        <attributes font="textFont" textHAlign="left"/>
+    </style>
+
+    <style id="illarion-tooltip#createByLine">
+        <attributes width="250px" marginBottom="5px"/>
+    </style>
+
+    <style id="illarion-tooltip#createdByTitle" base="nifty-label">
+        <attributes font="textFont" marginRight="5px" color="#00ff00ff"/>
+    </style>
+
+    <style id="illarion-tooltip#createdByLabel" base="nifty-label">
+        <attributes font="textFont" textHAlign="left" color="#00ff00ff"/>
+    </style>
+
+    <style id="illarion-tooltip#weightLine">
+        <attributes width="250px" marginBottom="5px"/>
+    </style>
+
+    <style id="illarion-tooltip#weightTitle" base="nifty-label">
+        <attributes font="textFont" marginRight="5px"/>
+    </style>
+
+    <style id="illarion-tooltip#weightLabel" base="nifty-label">
+        <attributes font="textFont"/>
+    </style>
+
+    <style id="illarion-tooltip#worthLine">
+        <attributes width="250px" marginBottom="5px"/>
+    </style>
+
+    <style id="illarion-tooltip#worthLabel" base="nifty-label">
+        <attributes font="textFont" marginRight="5px" height="16px" textVAlign="center"/>
+    </style>
+
+    <style id="illarion-tooltip#worthGoldCount" base="nifty-label">
+        <attributes font="textFont" height="16px" textHAlign="left" textVAlign="center" marginRight="2px"/>
+    </style>
+
+    <style id="illarion-tooltip#worthGoldImage">
+        <attributes filename="gui/coin_3_g.png" height="16px" width="16px" marginRight="5px"/>
+    </style>
+
+    <style id="illarion-tooltip#worthSilverCount" base="nifty-label">
+        <attributes font="textFont" height="16px" textHAlign="left" textVAlign="center" marginRight="2px"/>
+    </style>
+
+    <style id="illarion-tooltip#worthSilverImage">
+        <attributes filename="gui/coin_3_s.png" height="16px" width="16px" marginRight="5px"/>
+    </style>
+
+    <style id="illarion-tooltip#worthCopperCount" base="nifty-label">
+        <attributes font="textFont" height="16px" textHAlign="left" textVAlign="center" marginRight="2px"/>
+    </style>
+
+    <style id="illarion-tooltip#worthCopperImage">
+        <attributes filename="gui/coin_3_c.png" height="16px" width="16px" marginRight="5px"/>
+    </style>
+
+    <style id="illarion-tooltip#qualityLine">
+        <attributes width="250px" marginBottom="5px"/>
+    </style>
+
+    <style id="illarion-tooltip#qualityTitle" base="nifty-label">
+        <attributes font="textFont" marginRight="5px"/>
+    </style>
+
+    <style id="illarion-tooltip#qualityText" base="nifty-label">
+        <attributes font="textFont" textHAlign="left"/>
+    </style>
+
+    <style id="illarion-tooltip#durabilityLine">
+        <attributes width="250px" marginBottom="5px"/>
+    </style>
+
+    <style id="illarion-tooltip#durabilityTitle" base="nifty-label">
+        <attributes font="textFont" marginRight="5px"/>
+    </style>
+
+    <style id="illarion-tooltip#durabilityText" base="nifty-label">
+        <attributes font="textFont" textHAlign="left"/>
+    </style>
+
+    <style id="illarion-tooltip#gemsLine">
+        <attributes width="250px" align="left" valign="center"/>
+    </style>
+
+    <style id="illarion-tooltip#gemsImage">
+        <attributes marginRight="5px" marginLeft="5px" marginTop="5px" marginBottom="5px"/>
+    </style>
+
+    <style id="illarion-tooltip#diamondImage" base="illarion-tooltip#gemsImage"/>
+    <style id="illarion-tooltip#rubyImage" base="illarion-tooltip#gemsImage"/>
+    <style id="illarion-tooltip#emeraldImage" base="illarion-tooltip#gemsImage"/>
+    <style id="illarion-tooltip#obsidianImage" base="illarion-tooltip#gemsImage"/>
+    <style id="illarion-tooltip#sapphireImage" base="illarion-tooltip#gemsImage"/>
+    <style id="illarion-tooltip#amethystImage" base="illarion-tooltip#gemsImage"/>
+    <style id="illarion-tooltip#topazImage" base="illarion-tooltip#gemsImage"/>
+
+    <style id="illarion-tooltip#gemBonusLine">
+        <attributes width="250px" marginBottom="5px"/>
+    </style>
+
+    <style id="illarion-tooltip#gemBonusTitle" base="nifty-label">
+        <attributes font="textFont" marginRight="5px"/>
+    </style>
+
+    <style id="illarion-tooltip#gemBonusText" base="nifty-label">
+        <attributes font="textFont"/>
+    </style>
+
+    <style id="illarion-tooltip#gemBonusUnit" base="nifty-label">
+        <attributes font="textFont"/>
+    </style>
+</nifty-styles>

@@ -1,8 +1,0 @@
-after rotate edge, no edit possible
-show modified
-safety check on closing if modified
-add save all
-add save as
-always move loop with node
-have multiple graph levels
-mark edge as disconnected after moving

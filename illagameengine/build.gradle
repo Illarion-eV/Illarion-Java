@@ -1,0 +1,66 @@
+/*
+ * This file is part of the Illarion Nifty-GUI Controls.
+ *
+ * Copyright © 2013 - Illarion e.V.
+ *
+ * The Illarion Nifty-GUI Controls is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Nifty-GUI Controls is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Nifty-GUI Controls.  If not, see <http://www.gnu.org/licenses/>.
+ */
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+
+archivesBaseName = 'illarion_engine'
+dependencies {
+    compile project(':common')
+    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.2'
+}
+
+jar {
+    doFirst {
+        gitVersion
+
+        manifest {
+            attributes     \
+                'Permissions': 'all-permissions',    \
+                'Codebase': 'illarion.org',    \
+                'Trusted-Library': true,    \
+                'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),    \
+                'Built-By': System.getProperty('user.name'),     \
+                'Built-JDK': System.getProperty('java.version'),     \
+                'Implementation-Title': 'Illarion Game Engine',     \
+                'Implementation-Vendor': 'Illarion e.V.',    \
+                'Implementation-Version': project.ext.fullVersion
+        }
+    }
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+    repositories {
+        maven {
+            url project.ext.mavenRepo
+        }
+    }
+}
