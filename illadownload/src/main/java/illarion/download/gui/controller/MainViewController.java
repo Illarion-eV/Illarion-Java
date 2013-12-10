@@ -11,6 +11,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -266,6 +267,7 @@ public class MainViewController extends AbstractController implements MavenDownl
             line.getStyleClass().add("linkPane");
             line.setLeft(new Label(entry.title));
             line.setRight(new Label(entry.timeStamp));
+            line.setCursor(Cursor.HAND);
 
             line.setMouseTransparent(false);
             line.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -273,7 +275,7 @@ public class MainViewController extends AbstractController implements MavenDownl
                 public void handle(MouseEvent mouseEvent) {
                     if (mouseEvent.getButton() == MouseButton.PRIMARY &&
                             mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED &&
-                            mouseEvent.getClickCount() == 2) {
+                            mouseEvent.getClickCount() == 1) {
                         getModel().getHostServices().showDocument(entry.linkTarget.toExternalForm());
                     }
                 }
