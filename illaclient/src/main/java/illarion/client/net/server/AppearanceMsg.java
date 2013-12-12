@@ -21,7 +21,6 @@ package illarion.client.net.server;
 import illarion.client.graphics.AvatarClothManager;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.net.server.events.AttributeUpdateReceivedEvent;
 import illarion.client.util.Lang;
 import illarion.client.world.Char;
 import illarion.client.world.World;
@@ -31,7 +30,6 @@ import illarion.common.net.NetCommReader;
 import illarion.common.types.CharacterId;
 import illarion.common.types.ItemId;
 import org.apache.log4j.Logger;
-import org.bushe.swing.event.EventBus;
 import org.illarion.engine.graphic.Color;
 
 import javax.annotation.Nonnull;
@@ -45,7 +43,7 @@ import java.io.IOException;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_APPEARANCE)
-public final class AppearanceMsg extends AbstractReply {
+public final class AppearanceMsg extends AbstractGuiMsg {
     /**
      * The instance of the logger that is used to write out the data.
      */
@@ -239,12 +237,11 @@ public final class AppearanceMsg extends AbstractReply {
         TEMP_COLOR.setAlpha(Color.MAX_INT_VALUE);
         character.setClothColor(AvatarClothManager.GROUP_HAIR, TEMP_COLOR);
         character.setClothColor(AvatarClothManager.GROUP_BEARD, TEMP_COLOR);
+        character.setAttribute(CharacterAttribute.HitPoints, hitPoints);
         character.setAlive(!deadFlag);
         character.updateLight();
 
         character.setVisible(World.getPlayer().canSee(character));
-
-        EventBus.publish(new AttributeUpdateReceivedEvent(charId, CharacterAttribute.HitPoints, hitPoints));
         return true;
     }
 

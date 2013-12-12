@@ -22,7 +22,6 @@ import illarion.client.graphics.AnimatedMove;
 import illarion.client.graphics.Avatar;
 import illarion.client.graphics.AvatarClothManager;
 import illarion.client.graphics.MoveAnimation;
-import illarion.client.net.server.events.AttributeUpdateReceivedEvent;
 import illarion.client.resources.ItemFactory;
 import illarion.client.util.Lang;
 import illarion.client.world.characters.CharacterAttribute;
@@ -36,8 +35,6 @@ import illarion.common.types.Location;
 import illarion.common.util.FastMath;
 import org.apache.log4j.Logger;
 import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.annotation.AnnotationProcessor;
-import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.LightSource;
 
@@ -277,13 +274,11 @@ public final class Char implements AnimatedMove {
         charLocation = new Location();
         move = new MoveAnimation(this);
 
-        attributes = new EnumMap<CharacterAttribute, Integer>(CharacterAttribute.class);
+        attributes = new EnumMap<>(CharacterAttribute.class);
 
         scale = 0;
         animation = CharAnimations.STAND;
         avatarId = -1;
-
-        AnnotationProcessor.process(this);
     }
 
     static {
@@ -306,23 +301,28 @@ public final class Char implements AnimatedMove {
         return 0;
     }
 
-    @EventSubscriber
-    public void onAttributeUpdateReceived(@Nonnull final AttributeUpdateReceivedEvent event) {
-        if (!event.getTargetCharId().equals(getCharId())) {
-            return;
-        }
-
+    /**
+     * Set a attribute to a new value.
+     *
+     * @param attribute the attribute value to update
+     * @param value the new value of the attribute
+     */
+    public void setAttribute(@Nonnull final CharacterAttribute attribute, final int value) {
         if (removedCharacter) {
             return;
         }
 
-        attributes.put(event.getAttribute(), event.getValue());
+        attributes.put(attribute, value);
 
-        if (event.getAttribute() == CharacterAttribute.HitPoints) {
+        if (attribute == CharacterAttribute.HitPoints) {
             if (avatar != null) {
-                avatar.setHealthPoints(event.getValue());
+                avatar.setHealthPoints(value);
             }
-            setAlive(event.getValue() > 0);
+            setAlive(value > 0);
+        }
+
+        if (World.getPlayer().isPlayer(getCharId())) {
+            World.getGameGui().getPlayerStatusGui().setAttribute(attribute, value);
         }
     }
 
@@ -674,8 +674,6 @@ public final class Char implements AnimatedMove {
         move.stop();
         resetLight();
         releaseAvatar();
-
-        AnnotationProcessor.unprocess(this);
     }
 
     /**
@@ -814,7 +812,7 @@ public final class Char implements AnimatedMove {
             }
         }
         final InteractiveChar interactiveChar = new InteractiveChar(this);
-        interactiveCharRef = new SoftReference<InteractiveChar>(interactiveChar);
+        interactiveCharRef = new SoftReference<>(interactiveChar);
         return interactiveChar;
     }
 

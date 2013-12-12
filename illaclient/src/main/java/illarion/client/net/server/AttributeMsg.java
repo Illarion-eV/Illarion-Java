@@ -20,11 +20,11 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.net.server.events.AttributeUpdateReceivedEvent;
+import illarion.client.world.Char;
+import illarion.client.world.World;
 import illarion.client.world.characters.CharacterAttribute;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.CharacterId;
-import org.bushe.swing.event.EventBus;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.io.IOException;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_ATTRIBUTE)
-public final class AttributeMsg extends AbstractReply {
+public final class AttributeMsg extends AbstractGuiMsg {
     /**
      * The format string for the {@link #toString()}.
      */
@@ -84,7 +84,11 @@ public final class AttributeMsg extends AbstractReply {
     public boolean executeUpdate() {
         for (final CharacterAttribute charAttribute : CharacterAttribute.values()) {
             if (charAttribute.getServerName().equals(attribute)) {
-                EventBus.publish(new AttributeUpdateReceivedEvent(targetCharacter, charAttribute, value));
+                final Char character = World.getPeople().getCharacter(targetCharacter);
+                if (character != null) {
+                    character.setAttribute(charAttribute, value);
+                }
+                break;
             }
         }
         return true;

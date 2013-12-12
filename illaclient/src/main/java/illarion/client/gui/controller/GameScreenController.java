@@ -56,6 +56,8 @@ public final class GameScreenController implements GameGui, ScreenController {
     private final QuestHandler questHandler;
     @Nonnull
     private final GameMiniMapHandler gameMiniMapHandler;
+    @Nonnull
+    private final CharStatusHandler charStatusHandler;
 
     private boolean ready;
 
@@ -76,6 +78,7 @@ public final class GameScreenController implements GameGui, ScreenController {
         gameMapHandler = new GameMapHandler(input, numberPopupHandler, tooltipHandler);
         gameMiniMapHandler = new GameMiniMapHandler();
         questHandler = new QuestHandler();
+        charStatusHandler = new CharStatusHandler();
 
         addHandler(numberPopupHandler);
         addHandler(tooltipHandler);
@@ -85,7 +88,7 @@ public final class GameScreenController implements GameGui, ScreenController {
         addHandler(dialogHandler);
         addHandler(containerHandler);
         addHandler(new CloseGameHandler());
-        addHandler(new CharStatusHandler());
+        addHandler(charStatusHandler);
         addHandler(skillsHandler);
         addHandler(questHandler);
 
@@ -154,6 +157,12 @@ public final class GameScreenController implements GameGui, ScreenController {
     @Override
     public InventoryGui getInventoryGui() {
         return inventoryHandler;
+    }
+
+    @Nonnull
+    @Override
+    public PlayerStatusGui getPlayerStatusGui() {
+        return charStatusHandler;
     }
 
     @Nonnull

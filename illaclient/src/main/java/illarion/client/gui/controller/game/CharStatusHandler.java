@@ -22,10 +22,9 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.graphics.AnimationUtility;
-import illarion.client.net.server.events.AttributeUpdateReceivedEvent;
-import illarion.client.world.World;
+import illarion.client.gui.PlayerStatusGui;
+import illarion.client.world.characters.CharacterAttribute;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
-import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.engine.GameContainer;
 import org.illarion.nifty.controls.Progress;
 
@@ -36,7 +35,7 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class CharStatusHandler implements ScreenController, UpdatableHandler {
+public final class CharStatusHandler implements PlayerStatusGui, ScreenController, UpdatableHandler {
     /**
      * The progress bar that shows the hit points.
      */
@@ -89,28 +88,6 @@ public final class CharStatusHandler implements ScreenController, UpdatableHandl
         foodPointBar = screen.findNiftyControl("foodBar", Progress.class);
     }
 
-    /**
-     * This function receives the attribute update events.
-     *
-     * @param event the received event
-     */
-    @EventSubscriber
-    public void onAttributeMessageReceived(@Nonnull final AttributeUpdateReceivedEvent event) {
-        if (event.getTargetCharId().equals(World.getPlayer().getPlayerId())) {
-            switch (event.getAttribute()) {
-                case HitPoints:
-                    hitPoints = event.getValue();
-                    break;
-                case FoodPoints:
-                    foodPoints = event.getValue();
-                    break;
-                case ManaPoints:
-                    manaPoints = event.getValue();
-                    break;
-            }
-        }
-    }
-
     @Override
     public void onStartScreen() {
         AnnotationProcessor.process(this);
@@ -134,6 +111,21 @@ public final class CharStatusHandler implements ScreenController, UpdatableHandl
         if (foodPoints != currentFoodPoints) {
             currentFoodPoints = AnimationUtility.approach(currentFoodPoints, foodPoints, 0, 60000, delta);
             foodPointBar.setProgress((float) currentFoodPoints / 60000.f);
+        }
+    }
+
+    @Override
+    public void setAttribute(@Nonnull final CharacterAttribute attribute, final int value) {
+        switch (attribute) {
+            case HitPoints:
+                hitPoints = value;
+                break;
+            case FoodPoints:
+                foodPoints = value;
+                break;
+            case ManaPoints:
+                manaPoints = value;
+                break;
         }
     }
 }

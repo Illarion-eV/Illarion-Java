@@ -103,6 +103,14 @@ public interface GameGui {
     InventoryGui getInventoryGui();
 
     /**
+     * Get the GUI that shows the status of the player. So the hit points, food points and mana points.
+     *
+     * @return the player character GUI controller
+     */
+    @Nonnull
+    PlayerStatusGui getPlayerStatusGui();
+
+    /**
      * Get the GUI that control the display of the quests in the GUI.
      *
      * @return the quest GUI controller
