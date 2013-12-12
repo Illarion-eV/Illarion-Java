@@ -445,7 +445,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
             }
         }
 
-        contentPane.setConstraintHeight(null);
+        contentPane.setConstraintHeight(SizeValue.def());
         chatLog.getElement().layoutElements();
         chatLog.setAutoScroll(ScrollPanel.AutoScroll.BOTTOM);
         chatLog.setAutoScroll(ScrollPanel.AutoScroll.OFF);

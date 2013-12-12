@@ -46,9 +46,8 @@ task downloadSkills {
 
 }
 
-jar.doFirst {
-    gitVersion
-
+jar {
+    dependsOn { gitVersion }
     manifest {
         attributes     \
             'Permissions': 'all-permissions',    \
