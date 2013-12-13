@@ -83,11 +83,4 @@ public interface MiniMapGui {
      * @param pointer the pointer to be added
      */
     void addPointer(@Nonnull Pointer pointer);
-
-    /**
-     * Remove the pointer from the mini map.
-     *
-     * @param pointer the pointer to remove
-     */
-    void removePointer(@Nonnull Pointer pointer);
 }
