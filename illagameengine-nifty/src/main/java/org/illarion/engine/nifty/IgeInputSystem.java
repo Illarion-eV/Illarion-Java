@@ -134,7 +134,8 @@ public class IgeInputSystem implements InputSystem, InputListener {
             if (Character.isDefined(character)) {
                 final boolean shiftDown = input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
                 final boolean controlDown = input.isAnyKeyDown(Key.LeftCtrl, Key.RightCtrl);
-                final KeyboardInputEvent event = new KeyboardInputEvent(-1, character, true, shiftDown, controlDown);
+                final KeyboardInputEvent event = new KeyboardInputEvent(KeyboardInputEvent.KEY_NONE, character, true,
+                        shiftDown, controlDown);
                 if (!currentConsumer.processKeyboardEvent(event) && (stalledKeyDownKey != null)) {
                     listener.keyDown(stalledKeyDownKey);
                     listener.keyTyped(character);
@@ -327,9 +328,9 @@ public class IgeInputSystem implements InputSystem, InputListener {
             case RightShift:
                 return KeyboardInputEvent.KEY_RSHIFT;
             case LeftAlt:
-                return -1;
+                return KeyboardInputEvent.KEY_NONE;
             case RightAlt:
-                return -1;
+                return KeyboardInputEvent.KEY_NONE;
             case LeftCtrl:
                 return KeyboardInputEvent.KEY_LCONTROL;
             case RightCtrl:
@@ -409,7 +410,7 @@ public class IgeInputSystem implements InputSystem, InputListener {
             case Tab:
                 return KeyboardInputEvent.KEY_TAB;
         }
-        return -1;
+        return KeyboardInputEvent.KEY_NONE;
     }
 
     @Override
