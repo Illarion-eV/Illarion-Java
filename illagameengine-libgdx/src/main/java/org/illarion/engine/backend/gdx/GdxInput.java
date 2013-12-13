@@ -240,25 +240,25 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
                 return Key.Enter;
             case Input.Keys.BACKSPACE:
                 return Key.Backspace;
-            case Input.Keys.NUM_0:
+            case Input.Keys.NUMPAD_0:
                 return Key.NumPad0;
-            case Input.Keys.NUM_1:
+            case Input.Keys.NUMPAD_1:
                 return Key.NumPad1;
-            case Input.Keys.NUM_2:
+            case Input.Keys.NUMPAD_2:
                 return Key.NumPad2;
-            case Input.Keys.NUM_3:
+            case Input.Keys.NUMPAD_3:
                 return Key.NumPad3;
-            case Input.Keys.NUM_4:
+            case Input.Keys.NUMPAD_4:
                 return Key.NumPad4;
-            case Input.Keys.NUM_5:
+            case Input.Keys.NUMPAD_5:
                 return Key.NumPad5;
-            case Input.Keys.NUM_6:
+            case Input.Keys.NUMPAD_6:
                 return Key.NumPad6;
-            case Input.Keys.NUM_7:
+            case Input.Keys.NUMPAD_7:
                 return Key.NumPad7;
-            case Input.Keys.NUM_8:
+            case Input.Keys.NUMPAD_8:
                 return Key.NumPad8;
-            case Input.Keys.NUM_9:
+            case Input.Keys.NUMPAD_9:
                 return Key.NumPad9;
             case Input.Keys.NUM:
                 return Key.NumLock;
@@ -393,25 +393,25 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
             case Backspace:
                 return Input.Keys.BACKSPACE;
             case NumPad0:
-                return Input.Keys.NUM_0;
+                return Input.Keys.NUMPAD_0;
             case NumPad1:
-                return Input.Keys.NUM_1;
+                return Input.Keys.NUMPAD_1;
             case NumPad2:
-                return Input.Keys.NUM_2;
+                return Input.Keys.NUMPAD_2;
             case NumPad3:
-                return Input.Keys.NUM_3;
+                return Input.Keys.NUMPAD_3;
             case NumPad4:
-                return Input.Keys.NUM_4;
+                return Input.Keys.NUMPAD_4;
             case NumPad5:
-                return Input.Keys.NUM_5;
+                return Input.Keys.NUMPAD_5;
             case NumPad6:
-                return Input.Keys.NUM_6;
+                return Input.Keys.NUMPAD_6;
             case NumPad7:
-                return Input.Keys.NUM_7;
+                return Input.Keys.NUMPAD_7;
             case NumPad8:
-                return Input.Keys.NUM_8;
+                return Input.Keys.NUMPAD_8;
             case NumPad9:
-                return Input.Keys.NUM_9;
+                return Input.Keys.NUMPAD_9;
             case NumLock:
                 return Input.Keys.NUM;
             case Escape:
