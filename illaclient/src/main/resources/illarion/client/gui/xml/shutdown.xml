@@ -22,7 +22,7 @@
     <useControls filename="nifty-default-controls.xml"/>
 
     <screen id="clientEnd" controller="illarion.client.gui.controller.ClientEndScreenController"
-            inputMapping="de.lessvoid.org.illarion.engine.nifty.input.mapping.DefaultScreenMapping">
+            inputMapping="de.lessvoid.nifty.input.mapping.DefaultScreenMapping">
         <layer childLayout="center">
             <panel childLayout="center">
                 <effect>

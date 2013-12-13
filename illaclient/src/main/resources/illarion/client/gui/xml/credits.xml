@@ -22,7 +22,7 @@
     <useControls filename="nifty-default-controls.xml"/>
 
     <screen id="creditsStart" controller="illarion.client.gui.controller.CreditsStartScreenController"
-            inputMapping="de.lessvoid.org.illarion.engine.nifty.input.mapping.DefaultScreenMapping">
+            inputMapping="de.lessvoid.nifty.input.mapping.DefaultScreenMapping">
         <layer childLayout="center">
             <panel childLayout="center">
                 <effect>
@@ -35,7 +35,7 @@
     </screen>
 
     <screen id="creditsSingles" controller="illarion.client.gui.controller.CreditsSinglesScreenController"
-            inputMapping="de.lessvoid.org.illarion.engine.nifty.input.mapping.DefaultScreenMapping">
+            inputMapping="de.lessvoid.nifty.input.mapping.DefaultScreenMapping">
         <layer childLayout="center">
             <panel childLayout="vertical" id="nameDisplay" visible="false">
                 <effect>
@@ -49,7 +49,7 @@
     </screen>
 
     <screen id="creditsMulti" controller="illarion.client.gui.controller.CreditsMultiScreenController"
-            inputMapping="de.lessvoid.org.illarion.engine.nifty.input.mapping.DefaultScreenMapping">
+            inputMapping="de.lessvoid.nifty.input.mapping.DefaultScreenMapping">
         <layer childLayout="center">
             <panel childLayout="vertical" id="nameDisplay" visible="false" valign="center">
                 <effect>
@@ -63,7 +63,7 @@
     </screen>
 
     <screen id="creditsEnd" controller="illarion.client.gui.controller.CreditsEndScreenController"
-            inputMapping="de.lessvoid.org.illarion.engine.nifty.input.mapping.DefaultScreenMapping">
+            inputMapping="de.lessvoid.nifty.input.mapping.DefaultScreenMapping">
         <layer childLayout="center">
             <panel childLayout="center" height="100%" width="100%">
                 <effect>
