@@ -24,13 +24,16 @@ import de.lessvoid.nifty.controls.Parameters;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.ImageRenderer;
 import de.lessvoid.nifty.input.NiftyInputEvent;
+import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.render.image.ImageMode;
 import de.lessvoid.nifty.render.image.ImageModeFactory;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
+import org.apache.log4j.Logger;
 import org.illarion.nifty.controls.Progress;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * The control of the progress bar.
@@ -39,12 +42,21 @@ import javax.annotation.Nonnull;
  * @deprecated Use {@link Progress}
  */
 public final class ProgressControl extends AbstractController implements Progress {
+    private static final Logger LOGGER = Logger.getLogger(ProgressControl.class);
     private int minImageWidth;
     private int maxWidth;
+    @Nullable
     private ImageMode originalImageMode;
+    @Nullable
     private ImageMode unscaledImageMode;
     private boolean currentOriginalMode;
     private double currentProgress;
+    @Nullable
+    private Element fill;
+    @Nullable
+    private Element fillWrapper;
+    @Nullable
+    private Element fillArea;
 
     @Override
     public void bind(@Nonnull final Nifty nifty,
@@ -53,12 +65,72 @@ public final class ProgressControl extends AbstractController implements Progres
                      @Nonnull final Parameters parameter) {
         bind(element);
 
-        minImageWidth = Integer.parseInt(parameter.getWithDefault("minImageWidth", "0"));
-        final Element fill = getElement().findElementById("#fill");
-        originalImageMode = fill.getRenderer(ImageRenderer.class).getImage().getImageMode();
-        unscaledImageMode = ImageModeFactory.getSharedInstance().createImageMode("fullimage", "direct");
+        minImageWidth = parameter.getAsInteger("minImageWidth", 0);
         currentOriginalMode = true;
         currentProgress = 0.0;
+    }
+
+    @Override
+    public void init(@Nonnull final Parameters parameter) {
+        super.init(parameter);
+
+        NiftyImage fillImage = getFillImage();
+        if (fillImage != null) {
+            originalImageMode = fillImage.getImageMode();
+            unscaledImageMode = ImageModeFactory.getSharedInstance().createImageMode("fullimage", "direct");
+        } else {
+            LOGGER.error("Progress control does not seem to have a image. This progress control will not work.");
+        }
+        setProgress(currentProgress, true);
+    }
+
+    @Nullable
+    private Element getFillArea() {
+        if (fillArea != null) {
+            return fillArea;
+        }
+        Element element = getElement();
+        if (element != null) {
+            fillArea = element.findElementById("#fillArea");
+        }
+        return fillArea;
+    }
+
+    @Nullable
+    private Element getFillWrapper() {
+        if (fillWrapper != null) {
+            return fillWrapper;
+        }
+        Element fillArea = getFillArea();
+        if (fillArea != null) {
+            fillWrapper = fillArea.findElementById("#fillWrapper");
+        }
+        return fillWrapper;
+    }
+
+    @Nullable
+    private Element getFill() {
+        if (fill != null) {
+            return fill;
+        }
+        Element fillWrapper = getFillWrapper();
+        if (fillWrapper != null) {
+            fill = fillWrapper.findElementById("#fill");
+        }
+        return fill;
+    }
+
+    @Nullable
+    private NiftyImage getFillImage() {
+        Element fill = getFill();
+        if (fill == null) {
+            return null;
+        }
+        ImageRenderer renderer = fill.getRenderer(ImageRenderer.class);
+        if (renderer == null) {
+            return null;
+        }
+        return renderer.getImage();
     }
 
     @Override
@@ -68,15 +140,19 @@ public final class ProgressControl extends AbstractController implements Progres
 
     @Override
     public void layoutCallback() {
+        Element fillArea = getFillArea();
+        if (fillArea == null) {
+            return;
+        }
         final int oldWidth = maxWidth;
-        maxWidth = getElement().findElementById("#fillArea").getWidth();
+        maxWidth = fillArea.getWidth();
         if (maxWidth != oldWidth) {
             setProgress(currentProgress, true);
         }
     }
 
     @Override
-    public boolean inputEvent(final NiftyInputEvent inputEvent) {
+    public boolean inputEvent(@Nonnull final NiftyInputEvent inputEvent) {
         return false;
     }
 
@@ -88,9 +164,6 @@ public final class ProgressControl extends AbstractController implements Progres
      *               value are equal
      */
     private void setProgress(final double value, final boolean forced) {
-        final Element wrapper = getElement().findElementById("#fillWrapper");
-        final Element fill = getElement().findElementById("#fill");
-
         final double usedValue;
         if (value < 0.f) {
             usedValue = 0.f;
@@ -106,20 +179,39 @@ public final class ProgressControl extends AbstractController implements Progres
 
         currentProgress = usedValue;
 
+        if (unscaledImageMode == null || originalImageMode == null) {
+            return;
+        }
+        final Element wrapper = getFillWrapper();
+        final Element fill = getFill();
+
+        if (wrapper == null || fill == null) {
+            return;
+        }
+
         final int width = (int) Math.round(maxWidth * usedValue);
 
         fill.setConstraintWidth(SizeValue.px(width));
         wrapper.setConstraintWidth(SizeValue.px(width));
 
         if ((width < minImageWidth) && currentOriginalMode) {
-            fill.getRenderer(ImageRenderer.class).getImage().setImageMode(unscaledImageMode);
+            NiftyImage image = getFillImage();
+            if (image != null) {
+                image.setImageMode(unscaledImageMode);
+            }
             currentOriginalMode = false;
         } else if (!currentOriginalMode) {
-            fill.getRenderer(ImageRenderer.class).getImage().setImageMode(originalImageMode);
+            NiftyImage image = getFillImage();
+            if (image != null) {
+                image.setImageMode(originalImageMode);
+            }
             currentOriginalMode = true;
         }
 
-        getElement().layoutElements();
+        Element element = getElement();
+        if (element != null) {
+            element.layoutElements();
+        }
     }
 
     /**

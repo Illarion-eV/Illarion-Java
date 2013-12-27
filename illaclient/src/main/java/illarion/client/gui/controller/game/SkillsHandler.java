@@ -85,7 +85,7 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
 
         skillWindow.getElement().setConstraintX(new SizeValue(IllaClient.getCfg().getString("skillWindowPosX")));
         skillWindow.getElement().setConstraintY(new SizeValue(IllaClient.getCfg().getString("skillWindowPosY")));
-        skillWindow.getElement().getParent().layoutElements();
+        //skillWindow.getElement().getParent().layoutElements();
 
         createSkillEntries();
     }
@@ -245,15 +245,11 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
             SkillHeight = 0;
         }
         @Nullable final Element skillPanelWindowContent = skillPanel.getParent();
-        if (skillPanelWindowContent != null) {
-            @Nullable final Element skillPanelWindow = skillPanelWindowContent.getParent();
-            if (skillPanelWindow != null) {
-                skillPanelWindow.setConstraintHeight(null);
-            }
-            skillPanelWindowContent.setConstraintHeight(null);
-            skillPanelWindowContent.setMarginBottom(SizeValue.px(5));
-            skillPanelWindowContent.findElementById("#headline").setConstraintHeight(SizeValue.px(24));
-        }
+        @Nullable final Element skillPanelWindow = skillPanelWindowContent.getParent();
+        skillPanelWindow.setConstraintHeight(SizeValue.def());
+        skillPanelWindowContent.setConstraintHeight(SizeValue.def());
+        skillPanelWindowContent.setMarginBottom(SizeValue.px(5));
+        skillPanelWindowContent.findElementById("#headline").setConstraintHeight(SizeValue.px(24));
 
         skillPanel.setConstraintHeight(SizeValue.px(SkillHeight));
 
@@ -295,7 +291,7 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
     }
 
     private static void updateVisibilityOfElement(@Nonnull final Element target) {
-        if ((target.getConstraintHeight() != null) && "0px".equals(target.getConstraintHeight().toString())) {
+        if ("0px".equals(target.getConstraintHeight().toString())) {
             target.setVisible(false);
         } else {
             for (final Element child : target.getChildren()) {

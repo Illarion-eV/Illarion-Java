@@ -68,7 +68,7 @@ public final class BookHandler implements BookGui, ScreenController, UpdatableHa
 
         bookDisplay.getElement().setConstraintX(new SizeValue(IllaClient.getCfg().getString("bookDisplayPosX")));
         bookDisplay.getElement().setConstraintY(new SizeValue(IllaClient.getCfg().getString("bookDisplayPosY")));
-        bookDisplay.getElement().getParent().layoutElements();
+        //bookDisplay.getElement().getParent().layoutElements();
     }
 
     @Override

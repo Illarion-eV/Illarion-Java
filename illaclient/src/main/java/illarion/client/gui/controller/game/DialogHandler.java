@@ -340,7 +340,7 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
 
         selectedWidth = Math.max(selectedWidth, 270); // width required to display the buttons properly
 
-        builder.width(builder.pixels(selectedWidth));
+        builder.width(SizeValue.px(selectedWidth));
         builder.itemCount(Math.min(6, event.getOptionCount()));
         builders.add(new DialogHandler.BuildWrapper(builder, parentArea, new DialogHandler.PostBuildTask() {
             @Override

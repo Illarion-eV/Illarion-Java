@@ -106,8 +106,8 @@ public final class CharScreenController implements ScreenController, KeyInputHan
         nifty.setLocale(Lang.getInstance().getLocale());
         listBox = (ListBox<String>) screen.findNiftyControl("myListBox", ListBox.class);
         statusLabel = screen.findNiftyControl("statusText", Label.class);
-        statusLabel.setHeight(new SizeValue("20" + SizeValue.PIXEL));
-        statusLabel.setWidth(new SizeValue("180" + SizeValue.PIXEL));
+        statusLabel.setHeight(SizeValue.px(20));
+        statusLabel.setWidth(SizeValue.px(180));
 
         listBox.getElement().addInputHandler(this);
         popupLanguageChange = nifty.createPopup("languageChanged");

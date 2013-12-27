@@ -28,6 +28,7 @@ import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.Color;
+import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.gui.InformGui;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
@@ -244,7 +245,7 @@ public final class InformHandler implements InformGui, ScreenController {
 
         final PanelBuilder panelBuilder = new PanelBuilder();
         panelBuilder.childLayoutHorizontal();
-        panelBuilder.width(panelBuilder.percentage(75));
+        panelBuilder.width(SizeValue.percent(75));
         panelBuilder.alignCenter();
 
         final LabelBuilder labelBuilder = new LabelBuilder();
@@ -264,7 +265,7 @@ public final class InformHandler implements InformGui, ScreenController {
         labelBuilder.invisibleToMouse();
         labelBuilder.valignCenter();
         labelBuilder.alignCenter();
-        labelBuilder.width(labelBuilder.percentage(100));
+        labelBuilder.width(SizeValue.percent(100));
         labelBuilder.textHAlignCenter();
         labelBuilder.parameter("wrap", "true");
 

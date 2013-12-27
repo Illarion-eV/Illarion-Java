@@ -67,9 +67,7 @@ public class CreateDialogMerchantControl extends ControlAttributes {
      * @return the newly created input dialog
      */
     public DialogMerchant create(@Nonnull final Nifty nifty, final Screen screen, @Nonnull final Element parent) {
-        nifty.addControl(screen, parent, getStandardControl());
-        nifty.addControlsWithoutStartScreen();
-        return parent.findNiftyControl(attributes.get("id"), DialogMerchant.class);
+        return nifty.addControl(screen, parent, getStandardControl()).getNiftyControl(DialogMerchant.class);
     }
 
     /**
@@ -80,6 +78,6 @@ public class CreateDialogMerchantControl extends ControlAttributes {
     @Nonnull
     @Override
     public ElementType createType() {
-        return new ControlType(attributes);
+        return new ControlType(getAttributes());
     }
 }

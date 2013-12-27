@@ -67,9 +67,7 @@ public class CreateDialogInputControl extends ControlAttributes {
      * @return the newly created input dialog
      */
     public DialogInput create(@Nonnull final Nifty nifty, final Screen screen, @Nonnull final Element parent) {
-        nifty.addControl(screen, parent, getStandardControl());
-        nifty.addControlsWithoutStartScreen();
-        return parent.findNiftyControl(attributes.get("id"), DialogInput.class);
+        return nifty.addControl(screen, parent, getStandardControl()).getNiftyControl(DialogInput.class);
     }
 
     /**
@@ -80,6 +78,6 @@ public class CreateDialogInputControl extends ControlAttributes {
     @Nonnull
     @Override
     public ElementType createType() {
-        return new ControlType(attributes);
+        return new ControlType(getAttributes());
     }
 }

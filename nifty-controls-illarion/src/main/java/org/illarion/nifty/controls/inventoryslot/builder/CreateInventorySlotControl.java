@@ -63,10 +63,7 @@ public class CreateInventorySlotControl extends ControlAttributes {
      */
     public InventorySlot create(@Nonnull final Nifty nifty, final Screen screen,
                                 @Nonnull final Element parent) {
-        nifty.addControl(screen, parent, getStandardControl());
-        nifty.addControlsWithoutStartScreen();
-        return parent.findNiftyControl(attributes.get("id"),
-                InventorySlot.class);
+        return nifty.addControl(screen, parent, getStandardControl()).getNiftyControl(InventorySlot.class);
     }
 
     /**
@@ -77,6 +74,6 @@ public class CreateInventorySlotControl extends ControlAttributes {
     @Nonnull
     @Override
     public ElementType createType() {
-        return new ControlType(attributes);
+        return new ControlType(getAttributes());
     }
 }

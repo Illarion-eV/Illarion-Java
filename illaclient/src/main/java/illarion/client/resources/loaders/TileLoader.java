@@ -113,9 +113,9 @@ public final class TileLoader extends AbstractResourceLoader<TileTemplate> imple
 
         final Sprite tileSprite = assets.getSpriteFactory().createSprite(getTextures(assets.getTextureManager(),
                 TILE_PATH, name, frames), 0, 0, SpriteFactory.CENTER, SpriteFactory.CENTER, false);
-        final TileTemplate template = new TileTemplate(id, tileSprite, frames, speed, info);
 
         try {
+            final TileTemplate template = new TileTemplate(id, tileSprite, frames, speed, info);
             getTargetFactory().storeResource(template);
         } catch (@Nonnull final IllegalStateException ex) {
             LOGGER.error("Failed adding tile to internal factory. ID: " + id + " - Filename: " + name);

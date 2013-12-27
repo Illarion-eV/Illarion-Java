@@ -56,8 +56,8 @@ public final class MerchantItemListViewConverter implements ListBox.ListBoxViewC
             imageWidth = 76;
         }
 
-        itemImage.setConstraintHeight(new SizeValue(Integer.toString(imageHeight) + "px"));
-        itemImage.setConstraintWidth(new SizeValue(Integer.toString(imageWidth) + "px"));
+        itemImage.setConstraintHeight(SizeValue.px(imageHeight));
+        itemImage.setConstraintWidth(SizeValue.px(imageWidth));
 
         final Element title = listBoxItem.findElementById("#itemTitle");
         title.getRenderer(TextRenderer.class).setText(item.getName());

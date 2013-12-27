@@ -68,9 +68,7 @@ public class CreateDialogMessageControl
      * @return the newly created message dialog
      */
     public DialogMessage create(@Nonnull final Nifty nifty, final Screen screen, @Nonnull final Element parent) {
-        nifty.addControl(screen, parent, getStandardControl());
-        nifty.addControlsWithoutStartScreen();
-        return parent.findNiftyControl(attributes.get("id"), DialogMessage.class);
+        return nifty.addControl(screen, parent, getStandardControl()).getNiftyControl(DialogMessage.class);
     }
 
     /**
@@ -81,6 +79,6 @@ public class CreateDialogMessageControl
     @Nonnull
     @Override
     public ElementType createType() {
-        return new ControlType(attributes);
+        return new ControlType(getAttributes());
     }
 }

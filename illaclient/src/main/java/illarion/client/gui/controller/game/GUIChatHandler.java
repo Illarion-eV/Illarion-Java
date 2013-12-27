@@ -287,8 +287,8 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         } else {
             chatScroll.setConstraintHeight(CHAT_COLLAPSED_HEIGHT);
         }
-        chatScroll.getParent().setConstraintHeight(null);
-        chatScroll.getParent().getParent().setConstraintHeight(null);
+        chatScroll.getParent().setConstraintHeight(SizeValue.def());
+        chatScroll.getParent().getParent().setConstraintHeight(SizeValue.def());
         chatScroll.getParent().getParent().getParent().layoutElements();
         chatScroll.getNiftyControl(ScrollPanel.class).setAutoScroll(ScrollPanel.AutoScroll.BOTTOM);
         chatScroll.getNiftyControl(ScrollPanel.class).setAutoScroll(ScrollPanel.AutoScroll.OFF);

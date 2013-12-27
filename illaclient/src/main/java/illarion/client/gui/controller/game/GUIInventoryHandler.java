@@ -439,7 +439,7 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
 
         inventoryWindow.setConstraintX(new SizeValue(IllaClient.getCfg().getString("inventoryPosX")));
         inventoryWindow.setConstraintY(new SizeValue(IllaClient.getCfg().getString("inventoryPosY")));
-        inventoryWindow.getParent().layoutElements();
+        //inventoryWindow.getParent().layoutElements();
     }
 
     @Override

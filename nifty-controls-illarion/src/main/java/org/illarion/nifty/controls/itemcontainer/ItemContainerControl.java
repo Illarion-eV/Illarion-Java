@@ -101,8 +101,8 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
             if (currentPanelBuilder == null) {
                 currentPanelBuilder = new PanelBuilder();
                 currentPanelBuilder.childLayoutHorizontal();
-                currentPanelBuilder.width(currentPanelBuilder.pixels((slotWidth + 2) * columns));
-                currentPanelBuilder.height(currentPanelBuilder.pixels(slotHeight + 2));
+                currentPanelBuilder.width(SizeValue.px((slotWidth + 2) * columns));
+                currentPanelBuilder.height(SizeValue.px(slotHeight + 2));
             }
 
             currentPanelBuilder.control(buildSlot(contentPanel.getId(), i, slotHeight, slotWidth, slotBackground));
@@ -139,8 +139,8 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
     private static ControlBuilder buildSlot(final String prefix, final int index, final int height, final int width,
                                             @Nullable final String slotBackground) {
         final InventorySlotBuilder builder = new InventorySlotBuilder(prefix + "#slot" + index);
-        builder.height(builder.pixels(height));
-        builder.width(builder.pixels(width));
+        builder.height(SizeValue.px(height));
+        builder.width(SizeValue.px(width));
         builder.margin("1px");
 
         if (slotBackground != null) {
@@ -150,7 +150,7 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
     }
 
     @Override
-    public boolean inputEvent(final NiftyInputEvent inputEvent) {
+    public boolean inputEvent(@Nonnull final NiftyInputEvent inputEvent) {
         return true;
     }
 

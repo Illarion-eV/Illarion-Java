@@ -82,7 +82,7 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
         niftyInstance = nifty;
         currentScreen = screen;
 
-        dialogId = Integer.parseInt(parameter.getWithDefault("dialogId", "-1"));
+        dialogId = parameter.getAsInteger("dialogId", -1);
     }
 
     @Override
@@ -90,13 +90,16 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
         super.onStartScreen();
 
         final Element element = getElement();
+        if (element == null) {
+            return;
+        }
         final Element parent = element.getParent();
 
         final int x = (parent.getWidth() - element.getWidth()) / 2;
         final int y = (parent.getHeight() - element.getHeight()) / 2;
 
-        element.setConstraintX(new SizeValue(Integer.toString(x) + "px"));
-        element.setConstraintY(new SizeValue(Integer.toString(y) + "px"));
+        element.setConstraintX(SizeValue.px(x));
+        element.setConstraintY(SizeValue.px(y));
 
         parent.layoutElements();
 
