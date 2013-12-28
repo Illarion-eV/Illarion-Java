@@ -20,6 +20,8 @@ package org.illarion.nifty.controls.dialog.message.builder;
 
 import de.lessvoid.nifty.builder.ControlBuilder;
 
+import javax.annotation.Nonnull;
+
 /**
  * The builder of a message dialog.
  *
@@ -33,7 +35,7 @@ public class DialogMessageBuilder
      * @param id    the nifty-gui ID of the dialog
      * @param title the title of the dialog
      */
-    public DialogMessageBuilder(final String id, final String title) {
+    public DialogMessageBuilder(@Nonnull final String id, final String title) {
         super(id, CreateDialogMessageControl.NAME);
         set("title", title);
         set("closeable", "false");

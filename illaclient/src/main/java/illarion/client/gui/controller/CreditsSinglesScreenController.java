@@ -33,6 +33,7 @@ import illarion.common.data.CreditsList;
 import illarion.common.data.CreditsPerson;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -43,6 +44,7 @@ import java.util.List;
 public final class CreditsSinglesScreenController implements ScreenController, KeyInputHandler {
     private Nifty nifty;
 
+    @Nullable
     private Element displayParent;
     private Label titleLabel;
     private Label nameLabel;

@@ -58,6 +58,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     /**
      * The text field that contains the login name.
      */
+    @Nullable
     private TextField nameTxt;
 
     /**

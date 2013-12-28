@@ -49,7 +49,7 @@ final class ArtifactRequestBuilder implements DependencyVisitor
         return requests;
     }
 
-    public boolean visitEnter(final DependencyNode node) {
+    public boolean visitEnter(@Nonnull final DependencyNode node) {
         if (node.getDependency() != null) {
             final Artifact nodeArtifact = node.getDependency().getArtifact();
             final String classifier = nodeArtifact.getClassifier();

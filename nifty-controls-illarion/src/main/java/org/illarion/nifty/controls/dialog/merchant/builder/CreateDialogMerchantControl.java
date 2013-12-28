@@ -28,6 +28,7 @@ import de.lessvoid.nifty.screen.Screen;
 import org.illarion.nifty.controls.DialogMerchant;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * The control creator for the merchant dialog.
@@ -53,7 +54,7 @@ public class CreateDialogMerchantControl extends ControlAttributes {
      *
      * @param id the ID of the new control
      */
-    public CreateDialogMerchantControl(final String id) {
+    public CreateDialogMerchantControl(@Nonnull final String id) {
         setId(id);
         setName(NAME);
     }
@@ -66,7 +67,8 @@ public class CreateDialogMerchantControl extends ControlAttributes {
      * @param parent the parent element of this dialog
      * @return the newly created input dialog
      */
-    public DialogMerchant create(@Nonnull final Nifty nifty, final Screen screen, @Nonnull final Element parent) {
+    @Nullable
+    public DialogMerchant create(@Nonnull final Nifty nifty, @Nonnull final Screen screen, @Nonnull final Element parent) {
         return nifty.addControl(screen, parent, getStandardControl()).getNiftyControl(DialogMerchant.class);
     }
 

@@ -20,8 +20,10 @@ package org.illarion.nifty.controls.inventoryslot.builder;
 
 import de.lessvoid.nifty.builder.ControlBuilder;
 
+import javax.annotation.Nonnull;
+
 public class InventorySlotBuilder extends ControlBuilder {
-    public InventorySlotBuilder(final String id) {
+    public InventorySlotBuilder(@Nonnull final String id) {
         super(id, "inventoryslot");
     }
 

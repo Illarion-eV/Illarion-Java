@@ -83,6 +83,7 @@ public abstract class AbstractReply {
      *
      * @return String that contains the simple class name of this reply class instance
      */
+    @Nonnull
     @Override
     public abstract String toString();
 

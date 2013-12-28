@@ -224,7 +224,7 @@ public final class GameScreenController implements GameGui, ScreenController {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void bind(final Nifty nifty, final Screen screen) {
+    public void bind(@Nonnull final Nifty nifty, final Screen screen) {
         for (final ScreenController childController : childControllers) {
             childController.bind(nifty, screen);
         }

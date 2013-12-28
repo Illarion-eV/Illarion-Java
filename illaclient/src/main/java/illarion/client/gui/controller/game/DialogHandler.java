@@ -119,6 +119,7 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
      */
     private final Input input;
 
+    @Nullable
     private DialogMerchant merchantDialog;
     private DialogCrafting craftingDialog;
     private boolean openCraftDialog;

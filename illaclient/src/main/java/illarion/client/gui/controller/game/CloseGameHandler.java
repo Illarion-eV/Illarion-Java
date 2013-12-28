@@ -33,6 +33,7 @@ import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This handler takes action in case the user requests the application to quit. It will display a dialog and once it is
@@ -54,6 +55,7 @@ public final class CloseGameHandler implements ScreenController, UpdatableHandle
     /**
      * The popup that is supposed to be displayed in case closing the client is requested.
      */
+    @Nullable
     private Element popup;
 
     /**

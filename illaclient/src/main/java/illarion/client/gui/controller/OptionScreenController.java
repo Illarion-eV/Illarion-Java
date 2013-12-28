@@ -32,6 +32,7 @@ import org.illarion.engine.DesktopGameContainer;
 import org.illarion.engine.graphic.GraphicResolution;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +43,7 @@ public final class OptionScreenController implements ScreenController {
 
     //private DropDown<String> charNameLength;
     //private CheckBox showCharId;
+    @Nullable
     private CheckBox runAutoAvoid;
     private CheckBox wasdWalk;
     private CheckBox classicWalk;

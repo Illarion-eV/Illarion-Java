@@ -24,11 +24,14 @@ import de.lessvoid.nifty.controls.checkbox.builder.CheckboxBuilder;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 
+import javax.annotation.Nullable;
+
 /**
  * @author Stefano Bonicatti &lt;smjert@gmail.com&gt;
  */
 public class CheckBoxOption implements Option<Boolean, CheckBox> {
 
+    @Nullable
     private CheckBox control;
     private String key;
 

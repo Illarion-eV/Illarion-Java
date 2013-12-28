@@ -124,6 +124,7 @@ public class Cleaner {
      *
      * @return the files that should be removed
      */
+    @Nonnull
     private List<File> getRemovalTargets() {
         final DirectoryManager dm = DirectoryManager.getInstance();
 

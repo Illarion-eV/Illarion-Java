@@ -20,6 +20,8 @@ package org.illarion.nifty.controls.dialog.select.builder;
 
 import de.lessvoid.nifty.builder.ControlBuilder;
 
+import javax.annotation.Nonnull;
+
 /**
  * This is the builder used to create the merchant dialog.
  *
@@ -32,7 +34,7 @@ public final class DialogSelectBuilder extends ControlBuilder {
      * @param id    the nifty-gui ID of the dialog
      * @param title the title of the dialog
      */
-    public DialogSelectBuilder(final String id, final String title) {
+    public DialogSelectBuilder(@Nonnull final String id, final String title) {
         super(id, CreateDialogSelectControl.NAME);
         set("title", title);
         set("closeable", "true");

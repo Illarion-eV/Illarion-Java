@@ -34,6 +34,7 @@ import org.illarion.nifty.controls.DialogSelectSelectEvent;
 import org.illarion.nifty.controls.SelectListEntry;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -169,6 +170,7 @@ public final class DialogSelectControl extends WindowControl implements DialogSe
         niftyInstance.publishEvent(getId(), new DialogSelectSelectEvent(dialogId, list.getItems().get(index), index));
     }
 
+    @Nullable
     @SuppressWarnings("unchecked")
     private ListBox<SelectListEntry> getList() {
         return getElement().findNiftyControl("#list", ListBox.class);

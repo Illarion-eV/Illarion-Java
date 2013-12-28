@@ -27,6 +27,7 @@ import illarion.common.gui.AbstractMultiActionHelper;
 import org.illarion.nifty.controls.SelectListEntry;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This control is used to monitor the different entries of the merchant dialog.
@@ -48,6 +49,7 @@ public final class DialogSelectEntryControl extends ListBoxItemController<Select
     };
 
     private int index;
+    @Nullable
     private DialogSelectControl selectDialogControl;
     private boolean selectable;
 

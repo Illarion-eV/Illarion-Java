@@ -34,6 +34,7 @@ public interface DocuEntry {
      * @param index the index of the child requested
      * @return the requested child
      */
+    @Nullable
     DocuEntry getChild(int index);
 
     /**

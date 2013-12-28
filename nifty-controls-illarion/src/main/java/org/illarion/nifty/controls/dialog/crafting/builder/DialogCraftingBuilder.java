@@ -20,6 +20,8 @@ package org.illarion.nifty.controls.dialog.crafting.builder;
 
 import de.lessvoid.nifty.builder.ControlBuilder;
 
+import javax.annotation.Nonnull;
+
 /**
  * This is the builder used to create the merchant dialog.
  *
@@ -32,7 +34,7 @@ public final class DialogCraftingBuilder extends ControlBuilder {
      * @param id    the nifty-gui ID of the dialog
      * @param title the title of the dialog
      */
-    public DialogCraftingBuilder(final String id, final String title) {
+    public DialogCraftingBuilder(@Nonnull final String id, @Nonnull final String title) {
         super(id, "dialog-crafting");
         set("title", title);
         set("closeable", "true");

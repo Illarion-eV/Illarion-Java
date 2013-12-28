@@ -28,6 +28,7 @@ import de.lessvoid.nifty.screen.Screen;
 import org.illarion.nifty.controls.DialogMessage;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * The control creator for the message dialog.
@@ -54,7 +55,7 @@ public class CreateDialogMessageControl
      *
      * @param id the ID of the new control
      */
-    public CreateDialogMessageControl(final String id) {
+    public CreateDialogMessageControl(@Nonnull final String id) {
         setId(id);
         setName(NAME);
     }
@@ -67,7 +68,8 @@ public class CreateDialogMessageControl
      * @param parent the parent element of this dialog
      * @return the newly created message dialog
      */
-    public DialogMessage create(@Nonnull final Nifty nifty, final Screen screen, @Nonnull final Element parent) {
+    @Nullable
+    public DialogMessage create(@Nonnull final Nifty nifty, @Nonnull final Screen screen, @Nonnull final Element parent) {
         return nifty.addControl(screen, parent, getStandardControl()).getNiftyControl(DialogMessage.class);
     }
 

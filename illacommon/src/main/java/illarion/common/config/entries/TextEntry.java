@@ -20,6 +20,8 @@ package illarion.common.config.entries;
 
 import illarion.common.config.Config;
 
+import javax.annotation.Nullable;
+
 /**
  * This is a configuration entry that is used to a simple text entry in the
  * configuration.
@@ -51,6 +53,7 @@ public final class TextEntry implements ConfigEntry {
      *
      * @return the configuration stored for this text entry
      */
+    @Nullable
     public String getValue() {
         return cfg.getString(configEntry);
     }

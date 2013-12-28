@@ -69,6 +69,7 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
     /**
      * The window control that contains the skill information.
      */
+    @Nullable
     private Window skillWindow;
 
     /**

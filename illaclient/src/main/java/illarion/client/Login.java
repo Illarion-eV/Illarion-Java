@@ -81,6 +81,7 @@ public final class Login {
         }
     }
 
+    @Nullable
     private String loginName;
     private String password;
     private Integer server;

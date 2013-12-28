@@ -36,6 +36,7 @@ import org.apache.log4j.Logger;
 import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This handler is used to show and hide all the temporary inform messages on the screen. It provides the required
@@ -162,6 +163,7 @@ public final class InformHandler implements InformGui, ScreenController {
     /**
      * This is the panel that will be parent to all broadcast messages.
      */
+    @Nullable
     private Element broadcastParentPanel;
 
     /**

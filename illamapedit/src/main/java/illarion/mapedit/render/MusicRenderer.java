@@ -36,6 +36,7 @@ public class MusicRenderer extends AbstractMapRenderer {
     private static final int XOFFSET = 30;
     private static final int YOFFSET = 20;
 
+    @Nonnull
     private final Image image;
 
     /**

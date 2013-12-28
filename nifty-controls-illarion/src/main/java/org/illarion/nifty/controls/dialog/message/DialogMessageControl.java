@@ -34,6 +34,7 @@ import org.illarion.nifty.controls.DialogMessage;
 import org.illarion.nifty.controls.DialogMessageConfirmedEvent;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This is the main control class for message dialogs.
@@ -67,11 +68,13 @@ public class DialogMessageControl
     /**
      * The message that is displayed in this dialog.
      */
+    @Nullable
     private String message;
 
     /**
      * The label of the button that is displayed in this dialog.
      */
+    @Nullable
     private String buttonLabel;
 
     @Override

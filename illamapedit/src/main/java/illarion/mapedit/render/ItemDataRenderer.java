@@ -37,6 +37,7 @@ public class ItemDataRenderer extends AbstractMapRenderer {
     private static final int XOFFSET = 9;
     private static final int YOFFSET = 11;
 
+    @Nonnull
     private final Image image;
 
     public ItemDataRenderer(final RendererManager manager) {

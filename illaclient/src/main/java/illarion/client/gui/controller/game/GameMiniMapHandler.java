@@ -34,6 +34,7 @@ import illarion.client.world.World;
 import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -58,6 +59,7 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
     /**
      * The main element of the mini map.
      */
+    @Nullable
     private Element miniMapPanel;
 
     /**

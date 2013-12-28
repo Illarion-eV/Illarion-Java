@@ -1,5 +1,6 @@
 package illarion.download.cleanup;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.FilenameFilter;
 
@@ -8,7 +9,7 @@ import java.io.FilenameFilter;
  */
 class UserDirectoryFilenameFilter implements FilenameFilter {
     @Override
-    public boolean accept(File dir, String name) {
+    public boolean accept(File dir, @Nonnull String name) {
         // old map files
         if (name.startsWith("level") && name.endsWith(".map")) {
             return true;

@@ -28,6 +28,7 @@ import de.lessvoid.nifty.screen.Screen;
 import org.illarion.nifty.controls.InventorySlot;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class CreateInventorySlotControl extends ControlAttributes {
     /**
@@ -48,7 +49,7 @@ public class CreateInventorySlotControl extends ControlAttributes {
      *
      * @param id the ID of the new control
      */
-    public CreateInventorySlotControl(final String id) {
+    public CreateInventorySlotControl(@Nonnull final String id) {
         setId(id);
         setName(NAME);
     }
@@ -61,7 +62,8 @@ public class CreateInventorySlotControl extends ControlAttributes {
      * @param parent the parent element of this slot
      * @return the newly created inventory slot
      */
-    public InventorySlot create(@Nonnull final Nifty nifty, final Screen screen,
+    @Nullable
+    public InventorySlot create(@Nonnull final Nifty nifty, @Nonnull final Screen screen,
                                 @Nonnull final Element parent) {
         return nifty.addControl(screen, parent, getStandardControl()).getNiftyControl(InventorySlot.class);
     }

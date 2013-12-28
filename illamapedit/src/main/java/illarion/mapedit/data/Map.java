@@ -123,6 +123,7 @@ public class Map {
         return items;
     }
 
+    @Nonnull
     public Set<MapPosition> getSelectedTiles() {
         return selectionManager.getSelection();
     }

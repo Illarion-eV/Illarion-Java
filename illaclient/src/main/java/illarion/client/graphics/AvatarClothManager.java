@@ -127,7 +127,7 @@ public final class AvatarClothManager {
      * @param cloth the definition of the cloth itself
      */
     @SuppressWarnings("nls")
-    public void addCloth(final int group, final AvatarClothTemplate cloth) {
+    public void addCloth(final int group, @Nonnull final AvatarClothTemplate cloth) {
         if ((group < 0) || (group >= GROUP_COUNT)) {
             throw new IllegalArgumentException("Group needs to be between 0 and " + GROUP_COUNT);
         }

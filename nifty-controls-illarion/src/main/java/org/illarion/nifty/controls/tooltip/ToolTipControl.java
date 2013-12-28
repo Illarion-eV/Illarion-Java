@@ -266,7 +266,7 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
      * @param elementCount the element that contains the count of the money component
      * @param elementImage the element that contains the image of the money component
      */
-    private static void applyMoney(@Nonnull final Element element, final int money, final String elementCount,
+    private static void applyMoney(@Nonnull final Element element, final int money, @Nonnull final String elementCount,
                                    final String elementImage) {
         if (money > 0) {
             applyTextToLabel(element.findNiftyControl(elementCount, Label.class), Integer.toString(money));

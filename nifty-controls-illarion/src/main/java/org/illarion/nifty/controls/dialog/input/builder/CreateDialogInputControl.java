@@ -28,6 +28,7 @@ import de.lessvoid.nifty.screen.Screen;
 import org.illarion.nifty.controls.DialogInput;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * The control creator for the input dialog.
@@ -53,7 +54,7 @@ public class CreateDialogInputControl extends ControlAttributes {
      *
      * @param id the ID of the new control
      */
-    public CreateDialogInputControl(final String id) {
+    public CreateDialogInputControl(@Nonnull final String id) {
         setId(id);
         setName(NAME);
     }
@@ -66,7 +67,8 @@ public class CreateDialogInputControl extends ControlAttributes {
      * @param parent the parent element of this dialog
      * @return the newly created input dialog
      */
-    public DialogInput create(@Nonnull final Nifty nifty, final Screen screen, @Nonnull final Element parent) {
+    @Nullable
+    public DialogInput create(@Nonnull final Nifty nifty, @Nonnull final Screen screen, @Nonnull final Element parent) {
         return nifty.addControl(screen, parent, getStandardControl()).getNiftyControl(DialogInput.class);
     }
 

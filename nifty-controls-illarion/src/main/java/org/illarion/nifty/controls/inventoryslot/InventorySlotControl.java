@@ -47,36 +47,43 @@ public class InventorySlotControl extends AbstractController implements Inventor
     /**
      * The image that is dragged around.
      */
+    @Nullable
     private Element draggedImage;
 
     /**
      * The actual draggable control.
      */
+    @Nullable
     private Element draggable;
 
     /**
      * The element that shows the image of the object in the inventory slot.
      */
+    @Nullable
     private Element backgroundImage;
 
     /**
      * The label for the image in the background.
      */
+    @Nullable
     private Element backgroundImageLabel;
 
     /**
      * The image that is always displayed in the background.
      */
+    @Nullable
     private Element staticBackgroundImage;
 
     /**
      * The element items can get dropped into.
      */
+    @Nullable
     private Element droppable;
 
     /**
      * The merchant overlay icon.
      */
+    @Nullable
     private Element merchantOverlay;
 
     /**

@@ -20,8 +20,10 @@ package org.illarion.nifty.controls.itemcontainer.builder;
 
 import de.lessvoid.nifty.builder.ControlBuilder;
 
+import javax.annotation.Nonnull;
+
 public class ItemContainerBuilder extends ControlBuilder {
-    public ItemContainerBuilder(final String id, final String title) {
+    public ItemContainerBuilder(@Nonnull final String id, final String title) {
         super(id, "itemcontainer");
 
         set("title", title);

@@ -48,6 +48,7 @@ import java.util.List;
  */
 public class ClipboardBand extends JRibbonBand {
 
+    @Nonnull
     final JCommandToggleButton paste;
 
     public ClipboardBand() {

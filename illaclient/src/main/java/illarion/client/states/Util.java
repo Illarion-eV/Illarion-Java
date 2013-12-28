@@ -40,7 +40,7 @@ class Util {
      * @param nifty   the instance of Nifty the files are supposed to be applied to
      * @param xmlFile the XML file that is supposed to be load
      */
-    public static void loadXML(@Nonnull final Nifty nifty, final String xmlFile) {
+    public static void loadXML(@Nonnull final Nifty nifty, @Nonnull final String xmlFile) {
         try {
             nifty.validateXml(xmlFile);
         } catch (Exception e) {

@@ -185,6 +185,7 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
     private final Element[] invSlots;
     @Nonnull
     private final boolean[] slotLabelVisibility;
+    @Nullable
     private Element inventoryWindow;
     private Nifty activeNifty;
     private Screen activeScreen;

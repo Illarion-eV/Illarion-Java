@@ -34,6 +34,7 @@ import illarion.common.data.CreditsList;
 import illarion.common.data.CreditsPerson;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Iterator;
 
 /**
@@ -43,6 +44,7 @@ public final class CreditsMultiScreenController implements ScreenController, Key
     private Nifty nifty;
     private Screen screen;
 
+    @Nullable
     private Element displayParent;
     private Label titleLabel;
     private Element namesPanel;

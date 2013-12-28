@@ -75,7 +75,7 @@ class ListenerGame implements Game {
     }
 
     @Override
-    public void update(final GameContainer gameContainer, final int delta) throws SlickException {
+    public void update(@Nonnull final GameContainer gameContainer, final int delta) throws SlickException {
         final int currentHeight = gameContainer.getHeight();
         final int currentWidth = gameContainer.getWidth();
         if ((lastHeight != currentHeight) || (lastWidth != currentWidth)) {
@@ -88,7 +88,7 @@ class ListenerGame implements Game {
     }
 
     @Override
-    public void render(final GameContainer gameContainer, final Graphics graphics) throws SlickException {
+    public void render(final GameContainer gameContainer, @Nonnull final Graphics graphics) throws SlickException {
         final SlickGraphics slickGraphics = engineContainer.getEngine().getGraphics();
         slickGraphics.setSlickGraphicsImpl(graphics);
         listener.render(engineContainer);
@@ -100,6 +100,7 @@ class ListenerGame implements Game {
         return listener.isClosingGame();
     }
 
+    @Nonnull
     @Override
     public String getTitle() {
         return engineContainer.getTitle();

@@ -41,6 +41,7 @@ public class ObstacleRenderer extends AbstractMapRenderer {
     private static final int XOFFSET = 30;
     private static final int YOFFSET = -3;
 
+    @Nonnull
     private final Image image;
 
     public ObstacleRenderer(final RendererManager manager) {

@@ -20,6 +20,8 @@ package org.illarion.nifty.controls.dialog.input.builder;
 
 import de.lessvoid.nifty.builder.ControlBuilder;
 
+import javax.annotation.Nonnull;
+
 /**
  * The builder of a input dialog.
  *
@@ -32,7 +34,7 @@ public class DialogInputBuilder extends ControlBuilder {
      * @param id    the nifty-gui ID of the dialog
      * @param title the title of the dialog
      */
-    public DialogInputBuilder(final String id, final String title) {
+    public DialogInputBuilder(@Nonnull final String id, @Nonnull final String title) {
         super(id, CreateDialogInputControl.NAME);
         set("title", title);
         set("closeable", "false");
@@ -47,7 +49,7 @@ public class DialogInputBuilder extends ControlBuilder {
      *
      * @param text the text displayed in the left button of this dialog
      */
-    public void buttonLeft(final String text) {
+    public void buttonLeft(@Nonnull final String text) {
         set("buttonLeft", text);
     }
 
@@ -56,7 +58,7 @@ public class DialogInputBuilder extends ControlBuilder {
      *
      * @param text the text displayed in the right button of this dialog
      */
-    public void buttonRight(final String text) {
+    public void buttonRight(@Nonnull final String text) {
         set("buttonRight", text);
     }
 
@@ -83,7 +85,7 @@ public class DialogInputBuilder extends ControlBuilder {
      *
      * @param text the description text
      */
-    public void description(final String text) {
+    public void description(@Nonnull final String text) {
         set("description", text);
     }
 }

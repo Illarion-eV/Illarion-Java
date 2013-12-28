@@ -457,7 +457,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
      * @param text  the text to add
      * @param color the color of the text to add
      */
-    private void addChatLogText(final String text, final Color color) {
+    private void addChatLogText(@Nonnull final String text, final Color color) {
         if (chatLog == null) {
             return;
         }

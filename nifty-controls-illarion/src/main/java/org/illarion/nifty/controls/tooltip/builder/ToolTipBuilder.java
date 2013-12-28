@@ -33,11 +33,11 @@ public class ToolTipBuilder extends ControlBuilder {
         super("tooltip");
     }
 
-    public ToolTipBuilder(final String id) {
+    public ToolTipBuilder(@Nonnull final String id) {
         super(id, "tooltip");
     }
 
-    public void title(final String value) {
+    public void title(@Nonnull final String value) {
         set("title", value);
     }
 
@@ -45,19 +45,19 @@ public class ToolTipBuilder extends ControlBuilder {
         titleColor(value.getColorString());
     }
 
-    public void titleColor(final String value) {
+    public void titleColor(@Nonnull final String value) {
         set("titleColor", value);
     }
 
-    public void description(final String value) {
+    public void description(@Nonnull final String value) {
         set("description", value);
     }
 
-    public void producer(final String value) {
+    public void producer(@Nonnull final String value) {
         set("producer", value);
     }
 
-    public void type(final String value) {
+    public void type(@Nonnull final String value) {
         set("itemtype", value);
     }
 
@@ -69,11 +69,11 @@ public class ToolTipBuilder extends ControlBuilder {
         levelColor(value.getColorString());
     }
 
-    public void levelColor(final String value) {
+    public void levelColor(@Nonnull final String value) {
         set("levelColor", value);
     }
 
-    public void weight(final String value) {
+    public void weight(@Nonnull final String value) {
         set("weight", value);
     }
 
@@ -81,11 +81,11 @@ public class ToolTipBuilder extends ControlBuilder {
         set("worth", Long.toString(value));
     }
 
-    public void quality(final String value) {
+    public void quality(@Nonnull final String value) {
         set("quality", value);
     }
 
-    public void durability(final String value) {
+    public void durability(@Nonnull final String value) {
         set("durability", value);
     }
 
@@ -117,7 +117,7 @@ public class ToolTipBuilder extends ControlBuilder {
         set("topazLevel", Integer.toString(value));
     }
 
-    public void gemBonus(final String value) {
+    public void gemBonus(@Nonnull final String value) {
         set("gemBonus", value);
     }
 }

@@ -246,6 +246,7 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
         });
 
         getAmountTextField().setFormat(new TextFieldDisplayFormat() {
+            @Nonnull
             @Override
             public CharSequence getDisplaySequence(@Nonnull final CharSequence original, final int start, final int end) {
                 if (original.length() == 0) {
@@ -375,6 +376,7 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
      *
      * @return the amount textfield
      */
+    @Nullable
     public TextField getAmountTextField() {
         return getElement().findNiftyControl("#amountInput", TextField.class);
     }
@@ -587,7 +589,7 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
     }
 
     @Override
-    public boolean inputEvent(final NiftyInputEvent inputEvent) {
+    public boolean inputEvent(@Nonnull final NiftyInputEvent inputEvent) {
         super.inputEvent(inputEvent);
         return true;
     }

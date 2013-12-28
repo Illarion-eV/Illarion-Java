@@ -20,6 +20,8 @@ package org.illarion.nifty.controls.progress.builder;
 
 import de.lessvoid.nifty.builder.ControlBuilder;
 
+import javax.annotation.Nonnull;
+
 /**
  * Build the tooltip.
  *
@@ -30,7 +32,7 @@ public class ProgressBuilder extends ControlBuilder {
         super("progress");
     }
 
-    public ProgressBuilder(final String id) {
+    public ProgressBuilder(@Nonnull final String id) {
         super(id, "progress");
     }
 }

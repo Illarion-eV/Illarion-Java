@@ -29,6 +29,7 @@ import illarion.common.gui.AbstractMultiActionHelper;
 import org.illarion.nifty.controls.MerchantListEntry;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This control is used to monitor the different entries of the merchant dialog.
@@ -49,7 +50,9 @@ public final class DialogMerchantEntryControl extends AbstractController {
     };
 
     private int index;
+    @Nullable
     private ListBox<MerchantListEntry> listBox;
+    @Nullable
     private DialogMerchantControl merchantControl;
     private boolean selectable;
 

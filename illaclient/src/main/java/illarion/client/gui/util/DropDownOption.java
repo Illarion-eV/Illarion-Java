@@ -31,6 +31,7 @@ import javax.annotation.Nullable;
  */
 public class DropDownOption<T> implements Option<T, DropDown<DropDownItem<T>>> {
 
+    @Nullable
     private DropDown<DropDownItem<T>> control;
     private String key;
 

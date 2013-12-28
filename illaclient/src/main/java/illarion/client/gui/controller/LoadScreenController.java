@@ -25,10 +25,12 @@ import illarion.client.Game;
 import org.illarion.nifty.controls.Progress;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public final class LoadScreenController
         implements ScreenController {
 
+    @Nullable
     private Progress progress;
 
     @Nonnull

@@ -29,6 +29,7 @@ import org.illarion.engine.GameContainer;
 import org.illarion.nifty.controls.Progress;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This handler takes care for showing the hit points, mana points and food points of the character on the screen.
@@ -39,6 +40,7 @@ public final class CharStatusHandler implements PlayerStatusGui, ScreenControlle
     /**
      * The progress bar that shows the hit points.
      */
+    @Nullable
     private Progress hitPointBar;
 
     /**

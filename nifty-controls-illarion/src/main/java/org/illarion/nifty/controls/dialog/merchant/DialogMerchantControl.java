@@ -33,6 +33,7 @@ import org.illarion.nifty.controls.DialogMerchantCloseEvent;
 import org.illarion.nifty.controls.MerchantListEntry;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -166,11 +167,13 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
         getBuyList().clear();
     }
 
+    @Nullable
     @SuppressWarnings("unchecked")
     private ListBox<MerchantListEntry> getSellList() {
         return getElement().findNiftyControl("#sellList", ListBox.class);
     }
 
+    @Nullable
     @SuppressWarnings("unchecked")
     private ListBox<MerchantListEntry> getBuyList() {
         return getElement().findNiftyControl("#buyList", ListBox.class);

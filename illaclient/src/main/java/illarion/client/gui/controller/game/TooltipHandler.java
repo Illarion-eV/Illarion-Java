@@ -57,6 +57,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
     /**
      * The layer-element that contains all the tooltips.
      */
+    @Nullable
     private Element toolTipLayer;
 
     /**

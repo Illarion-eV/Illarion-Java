@@ -159,6 +159,7 @@ public final class NumberSelectPopupHandler implements ScreenController {
         });
 
         textField.setFormat(new TextFieldDisplayFormat() {
+            @Nonnull
             @Override
             public CharSequence getDisplaySequence(@Nonnull final CharSequence original, final int start, final int end) {
                 if (original.length() == 0) {

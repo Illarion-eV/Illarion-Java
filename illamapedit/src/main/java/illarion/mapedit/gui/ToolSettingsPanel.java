@@ -24,6 +24,7 @@ import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
@@ -33,6 +34,7 @@ import java.awt.*;
 public class ToolSettingsPanel extends JPanel {
     public static final Logger LOGGER = Logger.getLogger(ToolSettingsPanel.class);
     private static final int WIDTH = 200;
+    @Nullable
     private JComponent lastChild;
 
     public ToolSettingsPanel() {

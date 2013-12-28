@@ -80,6 +80,7 @@ public final class DirectoryEntry implements ConfigEntry {
      *
      * @return the configuration stored for this text entry
      */
+    @Nullable
     public File getValue() {
         return cfg.getFile(configEntry);
     }

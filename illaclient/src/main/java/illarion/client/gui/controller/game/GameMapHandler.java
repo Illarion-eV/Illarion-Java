@@ -127,6 +127,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
      * for
      * the original location of the dragged object.
      */
+    @Nullable
     private Element gamePanel;
 
     /**

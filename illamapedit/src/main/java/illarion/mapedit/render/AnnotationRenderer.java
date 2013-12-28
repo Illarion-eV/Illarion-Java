@@ -37,6 +37,7 @@ public class AnnotationRenderer extends AbstractMapRenderer {
     private static final int XOFFSET = 50;
     private static final int YOFFSET = 11;
 
+    @Nonnull
     private final Image image;
 
     public AnnotationRenderer(final RendererManager manager) {

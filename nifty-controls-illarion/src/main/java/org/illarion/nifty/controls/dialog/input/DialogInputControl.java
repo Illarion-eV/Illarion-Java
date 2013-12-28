@@ -203,6 +203,7 @@ public class DialogInputControl
      *
      * @return the text of the input area
      */
+    @Nonnull
     private String getInputText() {
         final TextField field = getContent().findNiftyControl("#input", TextField.class);
         if (field == null) {

@@ -87,6 +87,7 @@ public class MainViewController extends AbstractController implements MavenDownl
     private boolean useSnapshots;
 
     private static class NewsQuestEntry {
+        @Nonnull
         public final String title;
         public final String timeStamp;
         public final URL linkTarget;

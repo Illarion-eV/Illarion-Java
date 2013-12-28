@@ -41,6 +41,7 @@ public final class LoginCmd extends AbstractCommand {
     /**
      * The account password that is used. This contains the plain text password.
      */
+    @Nonnull
     private final String password;
 
     /**
