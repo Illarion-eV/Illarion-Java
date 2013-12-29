@@ -25,6 +25,7 @@ mainClassName = 'illarion.mapedit.MapEditor'
 
 dependencies {
     compile project(':common')
+    compile project(':engine')
     compile group: 'org.javolution', name: 'javolution-core-java', version: '6.0.0'
     compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.2'
     compile group: 'log4j', name: 'log4j', version: '1.2.17'
@@ -42,18 +43,18 @@ dependencies {
 jar {
     dependsOn { gitVersion }
     manifest {
-        attributes     \
-            'Main-Class': 'illarion.mapedit.MapEditor',   \
-            'Permissions': 'all-permissions',    \
-            'Codebase': 'illarion.org',    \
-            'Application-Name': 'Illarion Mapeditor',    \
-            'Application-Library-Allowable-Codebase': 'illarion.org',    \
-            'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),    \
-            'Built-By': System.getProperty('user.name'),     \
-            'Built-JDK': System.getProperty('java.version'),     \
-            'Implementation-Title': 'Illarion Mapeditor',     \
-            'Implementation-Vendor': 'Illarion e.V.',    \
-            'Implementation-Version': project.ext.fullVersion
+        attributes      \
+             'Main-Class': 'illarion.mapedit.MapEditor',    \
+             'Permissions': 'all-permissions',     \
+             'Codebase': 'illarion.org',     \
+             'Application-Name': 'Illarion Mapeditor',     \
+             'Application-Library-Allowable-Codebase': 'illarion.org',     \
+             'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),     \
+             'Built-By': System.getProperty('user.name'),      \
+             'Built-JDK': System.getProperty('java.version'),      \
+             'Implementation-Title': 'Illarion Mapeditor',      \
+             'Implementation-Vendor': 'Illarion e.V.',     \
+             'Implementation-Version': project.ext.fullVersion
     }
 }
 

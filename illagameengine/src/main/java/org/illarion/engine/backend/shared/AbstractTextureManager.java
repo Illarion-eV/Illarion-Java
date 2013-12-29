@@ -23,6 +23,8 @@ import org.apache.log4j.Logger;
 import org.illarion.engine.assets.TextureManager;
 import org.illarion.engine.graphic.Texture;
 import org.xmlpull.mxp1.MXParserFactory;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -120,7 +122,12 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
         updateTasks = new ConcurrentLinkedQueue<>();
 
         // Prepare the parser factory for processing the XML files
-        final MXParserFactory parserFactory = new MXParserFactory();
+        final XmlPullParserFactory parserFactory;
+        try {
+            parserFactory = XmlPullParserFactory.newInstance();
+        } catch (XmlPullParserException e) {
+            throw new IllegalStateException(e);
+        }
         parserFactory.setNamespaceAware(false);
         parserFactory.setValidating(false);
 

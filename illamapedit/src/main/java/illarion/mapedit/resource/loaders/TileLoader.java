@@ -25,6 +25,7 @@ import illarion.common.util.TableLoaderTiles;
 import illarion.mapedit.resource.Resource;
 import illarion.mapedit.resource.TileImg;
 import org.apache.log4j.Logger;
+import org.illarion.engine.assets.TextureManager;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -109,13 +110,16 @@ public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
     public Image[] getImages(final String name, final int frames) {
 
         final Image[] imgs = new Image[frames];
-        final TextureLoaderAwt tx = TextureLoaderAwt.getInstance();
+        TextureManager manager = TextureLoaderAwt.getInstance();
         if (frames > 1) {
             for (int i = 0; i < frames; ++i) {
-                imgs[i] = tx.getTexture(String.format("%s%s-%d", DIR_IMG_TILES, name, i));
+                TextureLoaderAwt.AwtTexture texture = (TextureLoaderAwt.AwtTexture) manager
+                        .getTexture(DIR_IMG_TILES, name + '-' + i);
+                imgs[i] = texture == null ? null : texture.getImage();
             }
         } else {
-            imgs[0] = tx.getTexture(DIR_IMG_TILES + name);
+            TextureLoaderAwt.AwtTexture texture = (TextureLoaderAwt.AwtTexture) manager.getTexture(DIR_IMG_TILES, name);
+            imgs[0] = texture == null ? null : texture.getImage();
         }
         return imgs;
     }

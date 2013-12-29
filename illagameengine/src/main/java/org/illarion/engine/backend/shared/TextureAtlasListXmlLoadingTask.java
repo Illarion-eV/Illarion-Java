@@ -20,9 +20,9 @@ package org.illarion.engine.backend.shared;
 
 import illarion.common.util.ProgressMonitor;
 import org.apache.log4j.Logger;
-import org.xmlpull.mxp1.MXParserFactory;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -47,7 +47,7 @@ public class TextureAtlasListXmlLoadingTask<T> implements Runnable, TextureAtlas
      * this task.
      */
     @Nonnull
-    private final MXParserFactory mxParserFactory;
+    private final XmlPullParserFactory parserFactory;
 
     /**
      * The name of the atlas. Its required to fetch the correct XML file.
@@ -83,19 +83,19 @@ public class TextureAtlasListXmlLoadingTask<T> implements Runnable, TextureAtlas
      * Create a new loading task. This task is meant to be executed concurrently. It will request the required
      * textures from the parent texture manager once the loading is progressed to this point.
      *
-     * @param mxParserFactory the parser factory
+     * @param parserFactory the parser factory
      * @param atlasName the name of the atlas files
      * @param textureManager the parent texture manager
      * @param progressMonitor the monitor of the loading progress
      * @param taskExecutor the executor that takes care for executing further tasks.
      */
     public TextureAtlasListXmlLoadingTask(
-            @Nonnull final MXParserFactory mxParserFactory,
+            @Nonnull final XmlPullParserFactory parserFactory,
             @Nonnull final String atlasName,
             @Nonnull final AbstractTextureManager<T> textureManager,
             @Nonnull final ProgressMonitor progressMonitor,
             @Nullable final Executor taskExecutor) {
-        this.mxParserFactory = mxParserFactory;
+        this.parserFactory = parserFactory;
         this.atlasName = atlasName;
         this.textureManager = textureManager;
         this.progressMonitor = progressMonitor;
@@ -113,7 +113,7 @@ public class TextureAtlasListXmlLoadingTask<T> implements Runnable, TextureAtlas
     public void run() {
         InputStream xmlStream = null;
         try {
-            final XmlPullParser parser = mxParserFactory.newPullParser();
+            final XmlPullParser parser = parserFactory.newPullParser();
 
             final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             xmlStream = classLoader.getResourceAsStream(atlasName + "-atlas.xml");

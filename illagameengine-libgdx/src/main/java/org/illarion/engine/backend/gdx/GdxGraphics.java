@@ -237,17 +237,23 @@ class GdxGraphics implements Graphics {
     }
 
     @Override
-    public void drawSprite(@Nonnull final Sprite sprite, final int posX, final int posY, @Nonnull final Color color,
-                           final int frame, final double scale, final double rotation,
-                           @Nonnull final TextureEffect... effects) {
+    public void drawSprite(
+            @Nonnull final Sprite sprite,
+            final int posX,
+            final int posY,
+            @Nonnull final Color color,
+            final int frame,
+            final double scale,
+            final double rotation,
+            @Nonnull final TextureEffect... effects) {
         if (sprite instanceof GdxSprite) {
             final GdxSprite gdxSprite = (GdxSprite) sprite;
 
             gdxSprite.getDisplayArea(posX, posY, scale, rotation, tempEngineRectangle);
-            final double centerTransX = (gdxSprite.getWidth() * gdxSprite.getCenterX()) +
-                    (gdxSprite.getOffsetX() * scale);
-            final double centerTransY = (gdxSprite.getHeight() * gdxSprite.getCenterY()) +
-                    (gdxSprite.getOffsetY() * scale);
+            final double centerTransX =
+                    (gdxSprite.getWidth() * gdxSprite.getCenterX()) + (gdxSprite.getOffsetX() * scale);
+            final double centerTransY =
+                    (gdxSprite.getHeight() * gdxSprite.getCenterY()) + (gdxSprite.getOffsetY() * scale);
 
             activateSpriteBatch();
             transferColor(color, tempColor1);
@@ -264,10 +270,9 @@ class GdxGraphics implements Graphics {
             spriteBatch.setColor(tempColor1);
             tempRegion.setRegion(gdxSprite.getFrame(frame).getTextureRegion());
             tempRegion.flip(gdxSprite.isMirrored(), true);
-            spriteBatch.draw(tempRegion, tempEngineRectangle.getX(), tempEngineRectangle.getY(),
-                    (float) centerTransX, (float) centerTransY,
-                    tempEngineRectangle.getWidth(), tempEngineRectangle.getHeight(),
-                    1.f, 1.f, (float) rotation);
+            spriteBatch.draw(tempRegion, tempEngineRectangle.getX(), tempEngineRectangle.getY(), (float) centerTransX,
+                             (float) centerTransY, tempEngineRectangle.getWidth(), tempEngineRectangle.getHeight(), 1.f,
+                             1.f, (float) rotation);
 
             if (usedEffect != null) {
                 usedEffect.disableEffect(spriteBatch);
@@ -293,8 +298,12 @@ class GdxGraphics implements Graphics {
     }
 
     @Override
-    public void drawText(@Nonnull final Font font, @Nonnull final CharSequence text, @Nonnull final Color color,
-                         final int x, final int y) {
+    public void drawText(
+            @Nonnull final Font font,
+            @Nonnull final CharSequence text,
+            @Nonnull final Color color,
+            final int x,
+            final int y) {
         drawText(font, text, color, x, y, 1.f, 1.f);
     }
 
@@ -310,8 +319,14 @@ class GdxGraphics implements Graphics {
     }
 
     @Override
-    public void drawText(@Nonnull final Font font, @Nonnull final CharSequence text, @Nonnull final Color color,
-                         final int x, final int y, final double scaleX, final double scaleY) {
+    public void drawText(
+            @Nonnull final Font font,
+            @Nonnull final CharSequence text,
+            @Nonnull final Color color,
+            final int x,
+            final int y,
+            final double scaleX,
+            final double scaleY) {
         if (font instanceof GdxFont) {
             activateSpriteBatch();
             transferColor(color, tempColor1);
@@ -338,9 +353,15 @@ class GdxGraphics implements Graphics {
     }
 
     @Override
-    public void drawRectangle(final int x, final int y, final int width, final int height,
-                              @Nonnull final Color topLeftColor, @Nonnull final Color topRightColor,
-                              @Nonnull final Color bottomLeftColor, @Nonnull final Color bottomRightColor) {
+    public void drawRectangle(
+            final int x,
+            final int y,
+            final int width,
+            final int height,
+            @Nonnull final Color topLeftColor,
+            @Nonnull final Color topRightColor,
+            @Nonnull final Color bottomLeftColor,
+            @Nonnull final Color bottomRightColor) {
         activateShapeRenderer();
         transferColor(topLeftColor, tempColor1);
         transferColor(topRightColor, tempColor2);
@@ -352,8 +373,14 @@ class GdxGraphics implements Graphics {
     }
 
     @Override
-    public void drawTexture(@Nonnull final Texture texture, final int x, final int y, final int width,
-                            final int height, @Nonnull final Color color, @Nonnull final TextureEffect... effects) {
+    public void drawTexture(
+            @Nonnull final Texture texture,
+            final int x,
+            final int y,
+            final int width,
+            final int height,
+            @Nonnull final Color color,
+            @Nonnull final TextureEffect... effects) {
         if ((width == 0) || (height == 0)) {
             return;
         }
@@ -384,10 +411,22 @@ class GdxGraphics implements Graphics {
     }
 
     @Override
-    public void drawTexture(@Nonnull final Texture texture, final int x, final int y, final int width,
-                            final int height, final int texX, final int texY, final int texWidth,
-                            final int texHeight, @Nonnull final Color color, @Nonnull final TextureEffect... effects) {
+    public void drawTexture(
+            @Nonnull final Texture texture,
+            final int x,
+            final int y,
+            final int width,
+            final int height,
+            final int texX,
+            final int texY,
+            final int texWidth,
+            final int texHeight,
+            @Nonnull final Color color,
+            @Nonnull final TextureEffect... effects) {
         if ((width == 0) || (height == 0)) {
+            return;
+        }
+        if (color.getAlpha() == 0 && effects.length == 0) {
             return;
         }
         if (texture instanceof GdxTexture) {
@@ -417,10 +456,21 @@ class GdxGraphics implements Graphics {
     }
 
     @Override
-    public void drawTexture(@Nonnull final Texture texture, final int x, final int y, final int width,
-                            final int height, final int texX, final int texY, final int texWidth,
-                            final int texHeight, final int centerX, final int centerY, final double rotate,
-                            @Nonnull final Color color, @Nonnull final TextureEffect... effects) {
+    public void drawTexture(
+            @Nonnull final Texture texture,
+            final int x,
+            final int y,
+            final int width,
+            final int height,
+            final int texX,
+            final int texY,
+            final int texWidth,
+            final int texHeight,
+            final int centerX,
+            final int centerY,
+            final double rotate,
+            @Nonnull final Color color,
+            @Nonnull final TextureEffect... effects) {
         if ((width == 0) || (height == 0)) {
             return;
         }
@@ -464,10 +514,8 @@ class GdxGraphics implements Graphics {
         clippingRect.set(x, y, width, height);
 
         final com.badlogic.gdx.math.Rectangle scissor = Pools.obtain(com.badlogic.gdx.math.Rectangle.class);
-        ScissorStack.calculateScissors(camera,
-                0, 0, gdxGraphics.getWidth(), gdxGraphics.getHeight(),
-                spriteBatch.getTransformMatrix(), clippingRect,
-                scissor);
+        ScissorStack.calculateScissors(camera, 0, 0, gdxGraphics.getWidth(), gdxGraphics.getHeight(),
+                                       spriteBatch.getTransformMatrix(), clippingRect, scissor);
         Pools.free(clippingRect);
 
         if (ScissorStack.pushScissors(scissor)) {

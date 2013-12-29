@@ -23,6 +23,7 @@ import illarion.common.util.TableLoaderOverlay;
 import illarion.common.util.TableLoaderSink;
 import illarion.mapedit.resource.Overlay;
 import illarion.mapedit.resource.Resource;
+import org.illarion.engine.assets.TextureManager;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -59,9 +60,13 @@ public class OverlayLoader implements TableLoaderSink<TableLoaderOverlay>, Resou
     @Override
     public boolean processRecord(final int line, @Nonnull final TableLoaderOverlay loader) {
         Image[] imgs = new Image[SHAPE_COUNT];
+
+        TextureManager manager = TextureLoaderAwt.getInstance();
+        String resourceName = loader.getOverlayFile();
         for (int i = 0; i < SHAPE_COUNT; i++) {
-            imgs[i] = TextureLoaderAwt.getInstance().
-                    getTexture(String.format("%s%s-%d.png", DIR_IMG_TILES, loader.getOverlayFile(), i));
+            TextureLoaderAwt.AwtTexture texture = (TextureLoaderAwt.AwtTexture) manager
+                    .getTexture(DIR_IMG_TILES, resourceName + '-' + i);
+            imgs[i] = texture == null ? null : texture.getImage();
         }
         overlays.put(loader.getTileId(),
                      new Overlay(loader.getTileId(), loader.getOverlayFile(), loader.getLayer(), imgs));

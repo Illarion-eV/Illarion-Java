@@ -25,6 +25,7 @@ import illarion.common.util.TableLoaderSink;
 import illarion.mapedit.resource.ItemImg;
 import illarion.mapedit.resource.Resource;
 import org.apache.log4j.Logger;
+import org.illarion.engine.assets.TextureManager;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -91,12 +92,16 @@ public class ItemLoader implements TableLoaderSink<TableLoaderItems>, Resource {
     @Nonnull
     private static Image[] getTextures(final String resourceName, final int frameCount) {
         final Image[] imgs = new Image[frameCount];
+        TextureManager manager = TextureLoaderAwt.getInstance();
         if (frameCount == 1) {
-            imgs[0] = TextureLoaderAwt.getInstance().getTexture(DIR_IMG_ITEMS + resourceName);
+            TextureLoaderAwt.AwtTexture texture = (TextureLoaderAwt.AwtTexture) manager
+                    .getTexture(DIR_IMG_ITEMS, resourceName);
+            imgs[0] = texture == null ? null : texture.getImage();
         } else {
             for (int i = 0; i < frameCount; i++) {
-                imgs[i] = TextureLoaderAwt.getInstance()
-                        .getTexture(String.format("%s%s-%d", DIR_IMG_ITEMS, resourceName, i));
+                TextureLoaderAwt.AwtTexture texture = (TextureLoaderAwt.AwtTexture) manager
+                        .getTexture(DIR_IMG_ITEMS, resourceName + '-' + i);
+                imgs[i] = texture == null ? null : texture.getImage();
             }
         }
         return imgs;
