@@ -66,7 +66,7 @@ public final class MapStripeMsg extends AbstractReply {
     /**
      * The list of tiles that are inside the update and all containing informations.
      */
-    private final List<TileUpdate> tiles = new LinkedList<TileUpdate>();
+    private final List<TileUpdate> tiles = new LinkedList<>();
 
     /**
      * Decode the map stripe data the receiver got and prepare it for the execution.
@@ -75,8 +75,7 @@ public final class MapStripeMsg extends AbstractReply {
      * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader)
-            throws IOException {
+    public void decode(@Nonnull final NetCommReader reader) throws IOException {
         loc = decodeLocation(reader);
 
         final Location workLoc = new Location();

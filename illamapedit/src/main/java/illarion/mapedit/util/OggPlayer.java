@@ -45,6 +45,7 @@ public class OggPlayer extends Thread implements Stoppable {
 
     /**
      * Start playing of a new sound file.
+     *
      * @param file name of file
      * @throws IOException
      * @throws UnsupportedAudioFileException
@@ -65,6 +66,7 @@ public class OggPlayer extends Thread implements Stoppable {
 
     /**
      * Load the audiostream
+     *
      * @param songURL URL to the Ogg file.
      * @throws IOException
      * @throws UnsupportedAudioFileException
@@ -74,15 +76,15 @@ public class OggPlayer extends Thread implements Stoppable {
         if (audioInputStream != null) {
             AudioFormat baseFormat = audioInputStream.getFormat();
             decodedFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, baseFormat.getSampleRate(), 16,
-                    baseFormat.getChannels(), baseFormat.getChannels() * 2, baseFormat.getSampleRate(), false);
+                                            baseFormat.getChannels(), baseFormat.getChannels() * 2,
+                                            baseFormat.getSampleRate(), false);
 
             audioStream = AudioSystem.getAudioInputStream(decodedFormat, audioInputStream);
         }
     }
 
     @Nullable
-    private SourceDataLine getLine() throws LineUnavailableException
-    {
+    private SourceDataLine getLine() throws LineUnavailableException {
         SourceDataLine res = null;
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, decodedFormat);
         res = (SourceDataLine) AudioSystem.getLine(info);
@@ -90,7 +92,7 @@ public class OggPlayer extends Thread implements Stoppable {
         return res;
     }
 
-    private void stopPlaying() throws IOException{
+    private void stopPlaying() throws IOException {
 
         line.drain();
         line.stop();
@@ -112,16 +114,15 @@ public class OggPlayer extends Thread implements Stoppable {
                 int nBytesRead = 0, nBytesWritten = 0;
                 while (nBytesRead != -1 && running) {
                     nBytesRead = audioStream.read(data, 0, data.length);
-                    if (nBytesRead != -1) nBytesWritten = line.write(data, 0, nBytesRead);
+                    if (nBytesRead != -1) {
+                        nBytesWritten = line.write(data, 0, nBytesRead);
+                    }
                 }
                 stopPlaying();
             }
-        } catch (LineUnavailableException e) {
-            LOGGER.error("Failed to read Ogg file.", e);
-        } catch (IOException e) {
+        } catch (LineUnavailableException | IOException e) {
             LOGGER.error("Failed to read Ogg file.", e);
         }
-
     }
 
     /**

@@ -65,7 +65,7 @@ public final class ItemInfo {
      * time so a minimal amount of instances is created.
      */
     @Nullable
-    private static Collection<ItemInfo> buffer = new ArrayList<ItemInfo>();
+    private static Collection<ItemInfo> buffer = new ArrayList<>();
 
     /**
      * The special item value in case the item is a container.
@@ -135,25 +135,32 @@ public final class ItemInfo {
     /**
      * Create a new instance of a ItemInfo object.
      *
-     * @param facing        The facing flag that contains the information from what direction the item accepts light.
-     *                      The possible values are {@link #FACE_ALL}, {@link #FACE_SW}, {@link #FACE_S},
-     *                      {@link #FACE_W}.
-     * @param itemMovable   the movable flag that stores if the item can be moved or not
-     * @param specialFlag   the special flag that indicates of the item is a normal item or a container,
-     *                      a book or a Jesus item.
-     * @param itemObstacle  the obstacle flag determines if the characters can walk over this item or not,
-     *                      more exactly it blocks the way for the automated pathfinder
+     * @param facing The facing flag that contains the information from what direction the item accepts light.
+     * The possible values are {@link #FACE_ALL}, {@link #FACE_SW}, {@link #FACE_S},
+     * {@link #FACE_W}.
+     * @param itemMovable the movable flag that stores if the item can be moved or not
+     * @param specialFlag the special flag that indicates of the item is a normal item or a container,
+     * a book or a Jesus item.
+     * @param itemObstacle the obstacle flag determines if the characters can walk over this item or not,
+     * more exactly it blocks the way for the automated pathfinder
      * @param varianceRange the variance of the item in since, if this variable stores a value larger then 0 the item
-     *                      is scaled up and down by the percent value handed over in this variable
-     * @param itemOpacity   the opacity of this object so the value in percent this item blocks the line of sight
-     * @param surfaceLevel  the offset of the surface level of the item relative to the origin of the item,
-     *                      this is used to add a additional offset to the item in case there are additional items upon
-     *                      this item, so it looks like the other line lies on this item
-     * @param lightSource   the encoded value of the light of this item, any value greater then 0 causes this item to
-     *                      be a light source emitting constantly light on the map
+     * is scaled up and down by the percent value handed over in this variable
+     * @param itemOpacity the opacity of this object so the value in percent this item blocks the line of sight
+     * @param surfaceLevel the offset of the surface level of the item relative to the origin of the item,
+     * this is used to add a additional offset to the item in case there are additional items upon
+     * this item, so it looks like the other line lies on this item
+     * @param lightSource the encoded value of the light of this item, any value greater then 0 causes this item to
+     * be a light source emitting constantly light on the map
      */
-    private ItemInfo(final int facing, final boolean itemMovable, final int specialFlag, final boolean itemObstacle,
-                     final float varianceRange, final int itemOpacity, final int surfaceLevel, final int lightSource) {
+    private ItemInfo(
+            final int facing,
+            final boolean itemMovable,
+            final int specialFlag,
+            final boolean itemObstacle,
+            final float varianceRange,
+            final int itemOpacity,
+            final int surfaceLevel,
+            final int lightSource) {
         face = facing;
         movable = itemMovable;
         special = specialFlag;
@@ -184,27 +191,34 @@ public final class ItemInfo {
      * kind with exactly the same values as the new one that is going to be created and returns this one rather then
      * a new one.
      *
-     * @param facing      The facing flag that contains the information from what direction the item accepts light.
-     *                    The possible values are {@link #FACE_ALL}, {@link #FACE_SW}, {@link #FACE_S},
-     *                    {@link #FACE_W}.
-     * @param movable     the movable flag that stores if the item can be moved or not
-     * @param special     the special flag that indicates of the item is a normal item or a container,
-     *                    a book or a Jesus item.
-     * @param obstacle    the obstacle flag determines if the characters can walk over this item or not,
-     *                    more exactly it blocks the way for the automated pathfinder
-     * @param variance    the variance of the item in since, if this variable stores a value larger then 0 the item
-     *                    is scaled up and down by the percent value handed over in this variable
-     * @param opacity     the opacity of this object so the value in percent this item blocks the line of sight
-     * @param level       the offset of the surface level of the item relative to the origin of the item,
-     *                    this is used to add a additional offset to the item in case there are additional items upon
-     *                    this item, so it looks like the other line lies on this item
+     * @param facing The facing flag that contains the information from what direction the item accepts light.
+     * The possible values are {@link #FACE_ALL}, {@link #FACE_SW}, {@link #FACE_S},
+     * {@link #FACE_W}.
+     * @param movable the movable flag that stores if the item can be moved or not
+     * @param special the special flag that indicates of the item is a normal item or a container,
+     * a book or a Jesus item.
+     * @param obstacle the obstacle flag determines if the characters can walk over this item or not,
+     * more exactly it blocks the way for the automated pathfinder
+     * @param variance the variance of the item in since, if this variable stores a value larger then 0 the item
+     * is scaled up and down by the percent value handed over in this variable
+     * @param opacity the opacity of this object so the value in percent this item blocks the line of sight
+     * @param level the offset of the surface level of the item relative to the origin of the item,
+     * this is used to add a additional offset to the item in case there are additional items upon
+     * this item, so it looks like the other line lies on this item
      * @param lightSource the encoded value of the light of this item, any value greater then 0 causes this item to
-     *                    be a light source emitting constantly light on the map
+     * be a light source emitting constantly light on the map
      * @return the ItemInfo object, either a newly created one, or one that was loaded from the buffer
      */
     @Nonnull
-    public static ItemInfo create(final int facing, final boolean movable, final int special, final boolean obstacle,
-                                  final int variance, final int opacity, final int level, final int lightSource) {
+    public static ItemInfo create(
+            final int facing,
+            final boolean movable,
+            final int special,
+            final boolean obstacle,
+            final int variance,
+            final int opacity,
+            final int level,
+            final int lightSource) {
         final float prepVariance = variance / VARIANCE_MOD;
         for (final ItemInfo testItemInfo : buffer) {
             if (testItemInfo.face != facing) {
@@ -234,9 +248,8 @@ public final class ItemInfo {
             return testItemInfo;
         }
 
-        final ItemInfo retInfo =
-                new ItemInfo(facing, movable, special, obstacle, prepVariance,
-                        opacity, level, lightSource);
+        final ItemInfo retInfo = new ItemInfo(facing, movable, special, obstacle, prepVariance, opacity, level,
+                                              lightSource);
         buffer.add(retInfo);
         return retInfo;
     }
@@ -277,7 +290,7 @@ public final class ItemInfo {
      * Get the opacity if the item so the value how the item blocks the line of sight.
      *
      * @return the percent value how much of the line of sight is blocked by
-     *         this item
+     * this item
      */
     public int getOpacity() {
         return opacity;
@@ -350,7 +363,7 @@ public final class ItemInfo {
      * Check if the item is obstacle.
      *
      * @return {@code true} if the item is obstacle and the pathfinder has
-     *         to search a way around it
+     * to search a way around it
      */
     public boolean isObstacle() {
         return obstacle;

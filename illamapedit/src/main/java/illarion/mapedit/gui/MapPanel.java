@@ -44,7 +44,8 @@ import java.util.List;
  *
  * @author Tim
  */
-public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionListener, MouseListener, ComponentListener {
+public class MapPanel extends JPanel
+        implements MouseWheelListener, MouseMotionListener, MouseListener, ComponentListener {
     private static final Logger LOGGER = Logger.getLogger(MapPanel.class);
     @Nonnull
     private final RendererManager rendererManager;
@@ -77,7 +78,7 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
         final Graphics2D g = (Graphics2D) gt;
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, getWidth(), getHeight());
-        final List<Map> maps = new ArrayList<Map>(controller.getMaps());
+        final List<Map> maps = new ArrayList<>(controller.getMaps());
 
         Collections.sort(maps, new Comparator<Map>() {
 
@@ -199,13 +200,13 @@ public class MapPanel extends JPanel implements MouseWheelListener, MouseMotionL
     }
 
     private int getMapCoordinateX(final int x, final int y, final int offset) {
-        return SwingLocation.mapCoordinateX(x, y, rendererManager.getTranslationX(),
-                rendererManager.getTranslationY(), rendererManager.getZoom()) - offset;
+        return SwingLocation.mapCoordinateX(x, y, rendererManager.getTranslationX(), rendererManager.getTranslationY(),
+                                            rendererManager.getZoom()) - offset;
     }
 
     private int getMapCoordinateY(final int x, final int y, final int offset) {
-        return SwingLocation.mapCoordinateY(x, y, rendererManager.getTranslationX(),
-                rendererManager.getTranslationY(), rendererManager.getZoom()) - offset;
+        return SwingLocation.mapCoordinateY(x, y, rendererManager.getTranslationX(), rendererManager.getTranslationY(),
+                                            rendererManager.getZoom()) - offset;
     }
 
     @Override

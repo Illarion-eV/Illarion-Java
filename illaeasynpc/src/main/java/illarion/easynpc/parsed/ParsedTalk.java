@@ -60,8 +60,8 @@ public final class ParsedTalk implements ParsedData {
      * The constructor that prepares this class to store all values properly.
      */
     public ParsedTalk() {
-        conditions = new ArrayList<TalkCondition>();
-        consequences = new ArrayList<TalkConsequence>();
+        conditions = new ArrayList<>();
+        consequences = new ArrayList<>();
     }
 
     /**
@@ -113,7 +113,7 @@ public final class ParsedTalk implements ParsedData {
     @Nonnull
     @Override
     public String[] getRequiredModules() {
-        final Collection<String> moduleList = new FastTable<String>();
+        final Collection<String> moduleList = new FastTable<>();
 
         final int conditionCount = conditions.size();
         for (int i = 0; i < conditionCount; ++i) {
@@ -144,8 +144,8 @@ public final class ParsedTalk implements ParsedData {
      */
     @SuppressWarnings("nls")
     @Override
-    public void writeEasyNpc(@Nonnull final Writer target,
-                             final EasyNpcWriter.WritingStage stage) throws IOException {
+    public void writeEasyNpc(
+            @Nonnull final Writer target, final EasyNpcWriter.WritingStage stage) throws IOException {
 
         if (stage == EasyNpcWriter.WritingStage.talking) {
             final int conditionCount = conditions.size();
@@ -174,8 +174,8 @@ public final class ParsedTalk implements ParsedData {
      * Write the LUA code needed for this talking line.
      */
     @Override
-    public void writeLua(@Nonnull final Writer target,
-                         final LuaWriter.WritingStage stage) throws IOException {
+    public void writeLua(
+            @Nonnull final Writer target, final LuaWriter.WritingStage stage) throws IOException {
 
         if (stage == LuaWriter.WritingStage.Talking) {
             target.write("if (true) then"); //$NON-NLS-1$

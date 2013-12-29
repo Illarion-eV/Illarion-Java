@@ -81,8 +81,8 @@ public final class People {
      * Default constructor. Sets up all needed base variables to init the class.
      */
     public People() {
-        removalList = new FastTable<Char>();
-        chars = new HashMap<CharacterId, Char>();
+        removalList = new FastTable<>();
+        chars = new HashMap<>();
         charsLock = new ReentrantReadWriteLock();
     }
 

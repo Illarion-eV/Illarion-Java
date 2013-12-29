@@ -74,7 +74,7 @@ public final class NpcEquipment implements NpcType {
          * The default constructor that prepares the key values.
          *
          * @param name the name that is part of the key value to identify the
-         *             header entry
+         * header entry
          */
         @SuppressWarnings("nls")
         public ChildDocuClass(final String name) {
@@ -88,8 +88,7 @@ public final class NpcEquipment implements NpcType {
         @SuppressWarnings("nls")
         @Override
         public DocuEntry getChild(final int index) {
-            throw new IllegalArgumentException(
-                    "There are no childs to request.");
+            throw new IllegalArgumentException("There are no childs to request.");
         }
 
         @Override
@@ -116,65 +115,63 @@ public final class NpcEquipment implements NpcType {
         public String getTitle() {
             return Lang.getMsg(NpcEquipment.class, docuTitle);
         }
-
     }
 
     /**
      * The pattern to find the item on the chest of the NPC.
      */
     @SuppressWarnings("nls")
-    private static final Pattern ITEM_CHEST = Pattern.compile(
-            "^\\s*(itemChest)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
+    private static final Pattern ITEM_CHEST = Pattern
+            .compile("^\\s*(itemChest)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
 
     /**
      * The pattern to find the item on the coat of the NPC.
      */
     @SuppressWarnings("nls")
-    private static final Pattern ITEM_COAT = Pattern.compile(
-            "^\\s*(itemCoat)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
+    private static final Pattern ITEM_COAT = Pattern
+            .compile("^\\s*(itemCoat)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
 
     /**
      * The pattern to find the item on the hands of the NPC.
      */
     @SuppressWarnings("nls")
-    private static final Pattern ITEM_HANDS = Pattern.compile(
-            "^\\s*(itemHands)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
+    private static final Pattern ITEM_HANDS = Pattern
+            .compile("^\\s*(itemHands)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
 
     /**
      * The pattern to find the item on the head of the NPC.
      */
     @SuppressWarnings("nls")
-    private static final Pattern ITEM_HEAD = Pattern.compile(
-            "^\\s*(itemHead)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
+    private static final Pattern ITEM_HEAD = Pattern
+            .compile("^\\s*(itemHead)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
 
     /**
      * The pattern to find the item on the main hand of the NPC.
      */
     @SuppressWarnings("nls")
-    private static final Pattern ITEM_MAIN_HAND = Pattern.compile(
-            "^\\s*(itemMainHand)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
+    private static final Pattern ITEM_MAIN_HAND = Pattern
+            .compile("^\\s*(itemMainHand)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
 
     /**
      * The pattern to find the item on the second hand of the NPC.
      */
     @SuppressWarnings("nls")
     private static final Pattern ITEM_SECOND_HAND = Pattern
-            .compile("^\\s*(itemSecondHand)\\s*=\\s*([0-9]{1,4})[\\s;]*",
-                    Pattern.MULTILINE);
+            .compile("^\\s*(itemSecondHand)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
 
     /**
      * The pattern to find the item on the shoes of the NPC.
      */
     @SuppressWarnings("nls")
-    private static final Pattern ITEM_SHOES = Pattern.compile(
-            "^\\s*(itemShoes)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
+    private static final Pattern ITEM_SHOES = Pattern
+            .compile("^\\s*(itemShoes)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
 
     /**
      * The pattern to find the item on the trousers of the NPC.
      */
     @SuppressWarnings("nls")
-    private static final Pattern ITEM_TROUSERS = Pattern.compile(
-            "^\\s*(itemTrousers)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
+    private static final Pattern ITEM_TROUSERS = Pattern
+            .compile("^\\s*(itemTrousers)\\s*=\\s*([0-9]{1,4})[\\s;]*", Pattern.MULTILINE);
 
     /**
      * The documentation entries for the children of this entry.
@@ -187,7 +184,7 @@ public final class NpcEquipment implements NpcType {
      */
     @SuppressWarnings("nls")
     public NpcEquipment() {
-        final List<DocuEntry> tempList = new ArrayList<DocuEntry>();
+        final List<DocuEntry> tempList = new ArrayList<>();
         tempList.add(new ChildDocuClass("Head"));
         tempList.add(new ChildDocuClass("Chest"));
         tempList.add(new ChildDocuClass("Coat"));
@@ -242,8 +239,7 @@ public final class NpcEquipment implements NpcType {
     @SuppressWarnings("nls")
     public DocuEntry getChild(final int index) {
         if ((index < 0) || (index >= docuChildren.length)) {
-            throw new IndexOutOfBoundsException(
-                    "Index does not match the amount of children.");
+            throw new IndexOutOfBoundsException("Index does not match the amount of children.");
         }
 
         return docuChildren[index];
@@ -376,8 +372,8 @@ public final class NpcEquipment implements NpcType {
      * is in all cases the same.
      *
      * @param matcher the matcher to extract the text
-     * @param line    the line that is currently handled
-     * @param npc     the NPC that is currently processed
+     * @param line the line that is currently handled
+     * @param npc the NPC that is currently processed
      * @return the item that was extracted or <code>null</code>
      */
     @Nullable
@@ -394,7 +390,7 @@ public final class NpcEquipment implements NpcType {
 
         if (item == null) {
             npc.addError(line, String.format(Lang.getMsg(getClass(), "item"), Integer.toString(itemId),
-                    matcher.group(0))); //$NON-NLS-1$
+                                             matcher.group(0))); //$NON-NLS-1$
         }
 
         return item;

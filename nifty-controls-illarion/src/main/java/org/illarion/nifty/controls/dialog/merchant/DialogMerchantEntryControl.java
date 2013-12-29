@@ -39,8 +39,8 @@ import javax.annotation.Nullable;
 @Deprecated
 public final class DialogMerchantEntryControl extends AbstractController {
     @Nonnull
-    private AbstractMultiActionHelper doubleClickHelper = new AbstractMultiActionHelper((Integer) java.awt.Toolkit
-            .getDefaultToolkit().getDesktopProperty("awt.multiClickInterval"), 2) {
+    private AbstractMultiActionHelper doubleClickHelper = new AbstractMultiActionHelper(
+            (Integer) java.awt.Toolkit.getDefaultToolkit().getDesktopProperty("awt.multiClickInterval"), 2) {
         @Override
         public void executeAction(final int count) {
             if (count == 2) {
@@ -58,10 +58,11 @@ public final class DialogMerchantEntryControl extends AbstractController {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void bind(@Nonnull final Nifty nifty,
-                     @Nonnull final Screen screen,
-                     @Nonnull final Element element,
-                     @Nonnull final Parameters parameter) {
+    public void bind(
+            @Nonnull final Nifty nifty,
+            @Nonnull final Screen screen,
+            @Nonnull final Element element,
+            @Nonnull final Parameters parameter) {
         selectable = Boolean.parseBoolean(parameter.get("selectable"));
 
         if (selectable) {
@@ -84,7 +85,7 @@ public final class DialogMerchantEntryControl extends AbstractController {
     }
 
     @Override
-    public boolean inputEvent(final NiftyInputEvent inputEvent) {
+    public boolean inputEvent(@Nonnull final NiftyInputEvent inputEvent) {
         return false;
     }
 

@@ -49,7 +49,7 @@ public final class KeyMapper {
     private final Input input;
 
     public KeyMapper(final Input input) {
-        inputMap = new EnumMap<Key, String>(Key.class);
+        inputMap = new EnumMap<>(Key.class);
 
         inputMap.put(Key.Escape, "CloseGame");
 
@@ -66,7 +66,6 @@ public final class KeyMapper {
     private void applyWasdWalkSettings() {
         useWasdWalking = IllaClient.getCfg().getBoolean("wasdWalk");
         useClassicWasdWalking = IllaClient.getCfg().getBoolean("classicWalk");
-
     }
 
     @EventTopicSubscriber(topic = "wasdWalk")
@@ -83,15 +82,15 @@ public final class KeyMapper {
         }
     }
 
-
     public void handleKeyReleasedInput(@Nonnull final Key key) {
         switch (key) {
             case CursorUp:
             case NumPad8:
-                if (useClassicWasdWalking)
+                if (useClassicWasdWalking) {
                     World.getPlayer().getMovementHandler().stopMovingToDirection(Location.DIR_NORTH);
-                else
+                } else {
                     World.getPlayer().getMovementHandler().stopMovingToDirection(Location.DIR_NORTHEAST);
+                }
                 break;
             case W:
                 if (useWasdWalking && !useClassicWasdWalking) {
@@ -104,10 +103,11 @@ public final class KeyMapper {
 
             case CursorLeft:
             case NumPad4:
-                if (useClassicWasdWalking)
+                if (useClassicWasdWalking) {
                     World.getPlayer().getMovementHandler().stopMovingToDirection(Location.DIR_WEST);
-                else
+                } else {
                     World.getPlayer().getMovementHandler().stopMovingToDirection(Location.DIR_NORTHWEST);
+                }
                 break;
             case A:
                 if (useWasdWalking && !useClassicWasdWalking) {
@@ -120,10 +120,11 @@ public final class KeyMapper {
 
             case CursorDown:
             case NumPad2:
-                if (useClassicWasdWalking)
+                if (useClassicWasdWalking) {
                     World.getPlayer().getMovementHandler().stopMovingToDirection(Location.DIR_SOUTH);
-                else
+                } else {
                     World.getPlayer().getMovementHandler().stopMovingToDirection(Location.DIR_SOUTHWEST);
+                }
                 break;
             case S:
                 if (useWasdWalking && !useClassicWasdWalking) {
@@ -136,10 +137,11 @@ public final class KeyMapper {
 
             case CursorRight:
             case NumPad6:
-                if (useClassicWasdWalking)
+                if (useClassicWasdWalking) {
                     World.getPlayer().getMovementHandler().stopMovingToDirection(Location.DIR_EAST);
-                else
+                } else {
                     World.getPlayer().getMovementHandler().stopMovingToDirection(Location.DIR_SOUTHEAST);
+                }
                 break;
             case D:
                 if (useWasdWalking && !useClassicWasdWalking) {
@@ -152,34 +154,38 @@ public final class KeyMapper {
 
             case NumPad1:
             case End:
-                if (useClassicWasdWalking)
+                if (useClassicWasdWalking) {
                     World.getPlayer().getMovementHandler().stopMovingToDirection(Location.DIR_SOUTHWEST);
-                else
+                } else {
                     World.getPlayer().getMovementHandler().stopMovingToDirection(Location.DIR_WEST);
+                }
                 break;
 
             case NumPad3:
             case PageDown:
-                if (useClassicWasdWalking)
+                if (useClassicWasdWalking) {
                     World.getPlayer().getMovementHandler().stopMovingToDirection(Location.DIR_SOUTHEAST);
-                else
+                } else {
                     World.getPlayer().getMovementHandler().stopMovingToDirection(Location.DIR_SOUTH);
+                }
                 break;
 
             case NumPad7:
             case Home:
-                if (useClassicWasdWalking)
+                if (useClassicWasdWalking) {
                     World.getPlayer().getMovementHandler().stopMovingToDirection(Location.DIR_NORTHWEST);
-                else
+                } else {
                     World.getPlayer().getMovementHandler().stopMovingToDirection(Location.DIR_NORTH);
+                }
                 break;
 
             case NumPad9:
             case PageUp:
-                if (useClassicWasdWalking)
+                if (useClassicWasdWalking) {
                     World.getPlayer().getMovementHandler().stopMovingToDirection(Location.DIR_NORTHEAST);
-                else
+                } else {
                     World.getPlayer().getMovementHandler().stopMovingToDirection(Location.DIR_EAST);
+                }
                 break;
 
             case LeftCtrl:
@@ -229,10 +235,11 @@ public final class KeyMapper {
 
             case CursorUp:
             case NumPad8:
-                if (useClassicWasdWalking)
+                if (useClassicWasdWalking) {
                     World.getPlayer().getMovementHandler().startMovingToDirection(Location.DIR_NORTH);
-                else
+                } else {
                     World.getPlayer().getMovementHandler().startMovingToDirection(Location.DIR_NORTHEAST);
+                }
                 break;
             case W:
                 if (useWasdWalking && !useClassicWasdWalking) {
@@ -245,10 +252,11 @@ public final class KeyMapper {
 
             case CursorLeft:
             case NumPad4:
-                if (useClassicWasdWalking)
+                if (useClassicWasdWalking) {
                     World.getPlayer().getMovementHandler().startMovingToDirection(Location.DIR_WEST);
-                else
+                } else {
                     World.getPlayer().getMovementHandler().startMovingToDirection(Location.DIR_NORTHWEST);
+                }
                 break;
             case A:
                 if (useWasdWalking && !useClassicWasdWalking) {
@@ -261,10 +269,11 @@ public final class KeyMapper {
 
             case CursorDown:
             case NumPad2:
-                if (useClassicWasdWalking)
+                if (useClassicWasdWalking) {
                     World.getPlayer().getMovementHandler().startMovingToDirection(Location.DIR_SOUTH);
-                else
+                } else {
                     World.getPlayer().getMovementHandler().startMovingToDirection(Location.DIR_SOUTHWEST);
+                }
                 break;
             case S:
                 if (useWasdWalking && !useClassicWasdWalking) {
@@ -277,10 +286,11 @@ public final class KeyMapper {
 
             case CursorRight:
             case NumPad6:
-                if (useClassicWasdWalking)
+                if (useClassicWasdWalking) {
                     World.getPlayer().getMovementHandler().startMovingToDirection(Location.DIR_EAST);
-                else
+                } else {
                     World.getPlayer().getMovementHandler().startMovingToDirection(Location.DIR_SOUTHEAST);
+                }
                 break;
             case D:
                 if (useWasdWalking && !useClassicWasdWalking) {
@@ -293,34 +303,38 @@ public final class KeyMapper {
 
             case NumPad1:
             case End:
-                if (useClassicWasdWalking)
+                if (useClassicWasdWalking) {
                     World.getPlayer().getMovementHandler().startMovingToDirection(Location.DIR_SOUTHWEST);
-                else
+                } else {
                     World.getPlayer().getMovementHandler().startMovingToDirection(Location.DIR_WEST);
+                }
                 break;
 
             case NumPad3:
             case PageDown:
-                if (useClassicWasdWalking)
+                if (useClassicWasdWalking) {
                     World.getPlayer().getMovementHandler().startMovingToDirection(Location.DIR_SOUTHEAST);
-                else
+                } else {
                     World.getPlayer().getMovementHandler().startMovingToDirection(Location.DIR_SOUTH);
+                }
                 break;
 
             case NumPad7:
             case Home:
-                if (useClassicWasdWalking)
+                if (useClassicWasdWalking) {
                     World.getPlayer().getMovementHandler().startMovingToDirection(Location.DIR_NORTHWEST);
-                else
+                } else {
                     World.getPlayer().getMovementHandler().startMovingToDirection(Location.DIR_NORTH);
+                }
                 break;
 
             case NumPad9:
             case PageUp:
-                if (useClassicWasdWalking)
+                if (useClassicWasdWalking) {
                     World.getPlayer().getMovementHandler().startMovingToDirection(Location.DIR_NORTHEAST);
-                else
+                } else {
                     World.getPlayer().getMovementHandler().startMovingToDirection(Location.DIR_EAST);
+                }
                 break;
 
             case LeftCtrl:

@@ -35,14 +35,14 @@ public class SelectionManager {
     private final Set<MapPosition> selection;
 
     public SelectionManager() {
-        selection = new HashSet<MapPosition>();
+        selection = new HashSet<>();
     }
 
     @Nonnull
     public MapSelection copy(@Nonnull final Map map) {
         final MapSelection mapSelection = new MapSelection();
         for (final MapPosition pos : selection) {
-            final MapTile tile = map.getTileAt(pos.getX(),pos.getY());
+            final MapTile tile = map.getTileAt(pos.getX(), pos.getY());
             if (tile != null) {
                 mapSelection.addSelectedTile(pos, MapTile.MapTileFactory.copy(tile));
             }

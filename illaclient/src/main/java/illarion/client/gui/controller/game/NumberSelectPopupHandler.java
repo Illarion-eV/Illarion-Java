@@ -96,7 +96,7 @@ public final class NumberSelectPopupHandler implements ScreenController {
     private int minNumber;
 
     @Override
-    public void bind(final Nifty nifty, final Screen screen) {
+    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
         parentNifty = nifty;
         parentScreen = screen;
     }
@@ -113,8 +113,10 @@ public final class NumberSelectPopupHandler implements ScreenController {
      * @param maxValue the maximal value that is allowed to be selected by this number select popup
      * @param callback the callback that is called in case the user interacts with the popup
      */
-    public void requestNewPopup(final int minValue, final int maxValue,
-                                @Nonnull final NumberSelectPopupHandler.Callback callback) {
+    public void requestNewPopup(
+            final int minValue,
+            final int maxValue,
+            @Nonnull final NumberSelectPopupHandler.Callback callback) {
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
             public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
@@ -130,8 +132,10 @@ public final class NumberSelectPopupHandler implements ScreenController {
      * @param maxValue the maximal value that is allowed to be selected by this number select popup
      * @param callback the callback that is called in case the user interacts with the popup
      */
-    private void internalCreateNewPopup(final int minValue, final int maxValue,
-                                        @Nonnull final NumberSelectPopupHandler.Callback callback) {
+    private void internalCreateNewPopup(
+            final int minValue,
+            final int maxValue,
+            @Nonnull final NumberSelectPopupHandler.Callback callback) {
         cancelActivePopup();
 
         activePopup = parentNifty.createPopup("numberSelect");
@@ -161,7 +165,10 @@ public final class NumberSelectPopupHandler implements ScreenController {
         textField.setFormat(new TextFieldDisplayFormat() {
             @Nonnull
             @Override
-            public CharSequence getDisplaySequence(@Nonnull final CharSequence original, final int start, final int end) {
+            public CharSequence getDisplaySequence(
+                    @Nonnull final CharSequence original,
+                    final int start,
+                    final int end) {
                 if (original.length() == 0) {
                     return Integer.toString(minValue);
                 }
@@ -171,7 +178,7 @@ public final class NumberSelectPopupHandler implements ScreenController {
 
         activePopup.addInputHandler(new KeyInputHandler() {
             @Override
-            public boolean keyEvent(final NiftyInputEvent inputEvent) {
+            public boolean keyEvent(@Nonnull final NiftyInputEvent inputEvent) {
                 if (!(inputEvent instanceof NiftyStandardInputEvent)) {
                     return false;
                 }

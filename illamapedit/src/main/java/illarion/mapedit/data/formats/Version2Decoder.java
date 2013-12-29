@@ -75,7 +75,7 @@ public class Version2Decoder implements Decoder {
         final List<String> matches = getItemMatches(line);
         if (matches.size() < 4) {
             throw new FormatCorruptedException(path + ".item.txt", line, i,
-                    "<dx>;<dy>;<item ID>;<quality>[;<data value>[;...]]");
+                                               "<dx>;<dy>;<item ID>;<quality>[;<data value>[;...]]");
         }
         createNewItem(matches);
     }
@@ -83,7 +83,7 @@ public class Version2Decoder implements Decoder {
     @Nonnull
     private List<String> getItemMatches(final String line) {
         final Matcher regexMatcher = PATTERN_DATA.matcher(line);
-        final List<String> matches = new LinkedList<String>();
+        final List<String> matches = new LinkedList<>();
         while (regexMatcher.find()) {
             final String match = regexMatcher.group();
             if (!match.isEmpty()) {
@@ -99,7 +99,7 @@ public class Version2Decoder implements Decoder {
         final int itemId = Integer.parseInt(matches.get(2));
         final int itemQuality = Integer.parseInt(matches.get(3));
 
-        final List<String> data = new ArrayList<String>();
+        final List<String> data = new ArrayList<>();
         if (matches.size() > 4) {
             for (int index = 4; index < matches.size(); index++) {
                 data.add(matches.get(index));
@@ -114,7 +114,7 @@ public class Version2Decoder implements Decoder {
 
     @Override
     public void decodeTileLine(final String line, final int i) throws FormatCorruptedException {
-//        <dx>;<dy>;<tileID>;<musicID>
+        //        <dx>;<dy>;<tileID>;<musicID>
 
         if (map == null) {
             decodeHeader(line);
@@ -122,8 +122,7 @@ public class Version2Decoder implements Decoder {
         }
         final String[] sections = DELIMITER.split(line);
         if (sections.length != 4) {
-            throw new FormatCorruptedException(path + ".tiles.txt", line, i,
-                    "<dx>;<dy>;<tileID>;<musicID>");
+            throw new FormatCorruptedException(path + ".tiles.txt", line, i, "<dx>;<dy>;<tileID>;<musicID>");
         }
         final int tx = Integer.parseInt(sections[0]);
         final int ty = Integer.parseInt(sections[1]);
@@ -131,8 +130,8 @@ public class Version2Decoder implements Decoder {
         final int tmid = Integer.parseInt(sections[3]);
         final MapTile tile;
         if (TileInfo.hasOverlay(tid)) {
-            tile = MapTile.MapTileFactory.createNew(TileInfo.getBaseID(tid), TileInfo.getOverlayID(tid),
-                    TileInfo.getShapeId(tid), tmid);
+            tile = MapTile.MapTileFactory
+                    .createNew(TileInfo.getBaseID(tid), TileInfo.getOverlayID(tid), TileInfo.getShapeId(tid), tmid);
         } else {
             tile = MapTile.MapTileFactory.createNew(tid, 0, 0, tmid);
         }
@@ -143,8 +142,7 @@ public class Version2Decoder implements Decoder {
     public void decodeAnnoLine(final String line, final int i) throws FormatCorruptedException {
         final String[] sections = DELIMITER.split(line);
         if (sections.length != 4) {
-            throw new FormatCorruptedException(path + ".annot.txt", line, i,
-                    "<sx>;<sy>;<type>;<annotation>");
+            throw new FormatCorruptedException(path + ".annot.txt", line, i, "<sx>;<sy>;<type>;<annotation>");
         }
         final int sx = Integer.parseInt(sections[0]);
         final int sy = Integer.parseInt(sections[1]);
@@ -152,7 +150,7 @@ public class Version2Decoder implements Decoder {
         final String annotation = sections[3];
 
         if (map != null) {
-            final MapTile tile = map.getTileAt(sx,sy);
+            final MapTile tile = map.getTileAt(sx, sy);
             if ((tile != null) && (index == 0)) {
                 tile.setAnnotation(annotation);
             }
@@ -167,8 +165,7 @@ public class Version2Decoder implements Decoder {
         // <sx>;<sy>;<tx>;<ty>;<tz>
         final String[] sections = DELIMITER.split(line);
         if (sections.length != 5) {
-            throw new FormatCorruptedException(path + ".warps.txt", line, i,
-                    "<sx>;<sy>;<tx>;<ty>;<tz>");
+            throw new FormatCorruptedException(path + ".warps.txt", line, i, "<sx>;<sy>;<tx>;<ty>;<tz>");
         }
         final int sx = Integer.parseInt(sections[0]);
         final int sy = Integer.parseInt(sections[1]);

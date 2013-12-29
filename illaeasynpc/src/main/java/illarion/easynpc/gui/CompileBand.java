@@ -51,25 +51,21 @@ final class CompileBand extends JRibbonBand {
     CompileBand() {
         super(Lang.getMsg(CompileBand.class, "title"), null);
 
-        final JCommandButton checkScriptButton =
-                new JCommandButton(Lang.getMsg(getClass(), "checkScript"),
-                        Utils.getResizableIconFromResource("agt_reload.png"));
-        final JCommandButton parseScriptButton =
-                new JCommandButton(Lang.getMsg(getClass(), "rebuildScript"),
-                        Utils.getResizableIconFromResource("rebuild.png"));
-        final JCommandToggleButton autoCheckScriptButton =
-                new JCommandToggleButton(Lang.getMsg(getClass(), "autoCheck"),
-                        Utils.getResizableIconFromResource("build.png"));
+        final JCommandButton checkScriptButton = new JCommandButton(Lang.getMsg(getClass(), "checkScript"),
+                                                                    Utils.getResizableIconFromResource(
+                                                                            "agt_reload.png"));
+        final JCommandButton parseScriptButton = new JCommandButton(Lang.getMsg(getClass(), "rebuildScript"),
+                                                                    Utils.getResizableIconFromResource("rebuild.png"));
+        final JCommandToggleButton autoCheckScriptButton = new JCommandToggleButton(
+                Lang.getMsg(getClass(), "autoCheck"), Utils.getResizableIconFromResource("build.png"));
 
-        checkScriptButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(
-                getClass(), "checkScriptButtonTooltipTitle"), Lang.getMsg(
-                getClass(), "checkScriptButtonTooltip")));
-        parseScriptButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(
-                getClass(), "parseScriptButtonTooltipTitle"), Lang.getMsg(
-                getClass(), "parseScriptButtonTooltip")));
-        autoCheckScriptButton.setActionRichTooltip(new RichTooltip(Lang
-                .getMsg(getClass(), "autoCheckButtonTooltipTitle"), Lang.getMsg(
-                getClass(), "autoCheckButtonTooltip")));
+        checkScriptButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(getClass(), "checkScriptButtonTooltipTitle"),
+                                                               Lang.getMsg(getClass(), "checkScriptButtonTooltip")));
+        parseScriptButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(getClass(), "parseScriptButtonTooltipTitle"),
+                                                               Lang.getMsg(getClass(), "parseScriptButtonTooltip")));
+        autoCheckScriptButton.setActionRichTooltip(
+                new RichTooltip(Lang.getMsg(getClass(), "autoCheckButtonTooltipTitle"),
+                                Lang.getMsg(getClass(), "autoCheckButtonTooltip")));
         if (Config.getInstance().getAutoBuild()) {
             autoCheckScriptButton.doActionClick();
         }
@@ -95,8 +91,7 @@ final class CompileBand extends JRibbonBand {
         addCommandButton(parseScriptButton, RibbonElementPriority.MEDIUM);
         addCommandButton(autoCheckScriptButton, RibbonElementPriority.MEDIUM);
 
-        final List<RibbonBandResizePolicy> policies =
-                new ArrayList<RibbonBandResizePolicy>();
+        final List<RibbonBandResizePolicy> policies = new ArrayList<>();
         policies.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
         policies.add(new CoreRibbonResizePolicies.Mid2Low(getControlPanel()));
         setResizePolicies(policies);

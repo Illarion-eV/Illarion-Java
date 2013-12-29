@@ -103,7 +103,7 @@ public final class GameMap implements LightingMap, Stoppable {
          *
          * @param tile the tile that gets its lights rendered now
          * @return {@code true} in case the tiles are getting processed, {@code false} of the helper was not properly
-         *         setup
+         * setup
          */
         @Override
         public boolean execute(@Nullable final MapTile tile) {
@@ -121,7 +121,7 @@ public final class GameMap implements LightingMap, Stoppable {
          * itself.
          *
          * @param newAmbientFactor the factor of influence of the ambient light color
-         * @param ambientLight     the ambient light color itself
+         * @param ambientLight the ambient light color itself
          */
         void setup(final float newAmbientFactor, @Nonnull final Color ambientLight) {
             factor = newAmbientFactor;
@@ -158,7 +158,9 @@ public final class GameMap implements LightingMap, Stoppable {
         @Nullable
         private final MiniMapGui.Pointer guiMarker;
 
-        private QuestMarkerCarrier(@Nullable final QuestMarker mapMarker, @Nullable final MiniMapGui.Pointer guiMarker) {
+        private QuestMarkerCarrier(
+                @Nullable final QuestMarker mapMarker,
+                @Nullable final MiniMapGui.Pointer guiMarker) {
             this.mapMarker = mapMarker;
             this.guiMarker = guiMarker;
         }
@@ -168,15 +170,15 @@ public final class GameMap implements LightingMap, Stoppable {
             return guiMarker;
         }
 
-
         @Nullable
         private QuestMarker getMapMarker() {
             return mapMarker;
         }
 
         void setActiveQuest(boolean activeQuest) {
-            if (guiMarker != null)
+            if (guiMarker != null) {
                 guiMarker.setCurrentQuest(activeQuest);
+            }
         }
 
         boolean isRemoved() {
@@ -290,13 +292,13 @@ public final class GameMap implements LightingMap, Stoppable {
      * Default constructor of the map handler.
      */
     public GameMap(@Nonnull final Engine engine) throws EngineException {
-        tiles = new TLongObjectHashMap<MapTile>(1000);
+        tiles = new TLongObjectHashMap<>(1000);
         tiles.setAutoCompactionFactor(MAP_COMPACTION_FACTOR);
         interactive = new InteractiveMap(this);
 
-        activeQuestStartMarkers = new HashMap<Location, QuestMarkerCarrier>();
-        activeQuestTargetMarkers = new HashMap<Location, QuestMarkerCarrier>();
-        inactiveQuestTargetLocations = new HashMap<Location, QuestMarkerCarrier>();
+        activeQuestStartMarkers = new HashMap<>();
+        activeQuestTargetMarkers = new HashMap<>();
+        inactiveQuestTargetLocations = new HashMap<>();
 
         mapLock = new ReentrantReadWriteLock();
 
@@ -321,12 +323,12 @@ public final class GameMap implements LightingMap, Stoppable {
 
     public void applyQuestTargetLocations(@Nonnull final Iterable<Location> targets) {
         //removeAllQuestMarkers();
-        final Collection<Location> oldMarkers = new HashSet<Location>(activeQuestTargetMarkers.keySet());
+        final Collection<Location> oldMarkers = new HashSet<>(activeQuestTargetMarkers.keySet());
         oldMarkers.addAll(inactiveQuestTargetLocations.keySet());
 
         for (@Nonnull final Location markerLocation : targets) {
             if (oldMarkers.contains(markerLocation)) {
-               oldMarkers.remove(markerLocation);
+                oldMarkers.remove(markerLocation);
             } else {
                 final MapTile tile = getMapAt(markerLocation);
                 @Nullable final MiniMapGui.Pointer targetPointer;
@@ -364,7 +366,7 @@ public final class GameMap implements LightingMap, Stoppable {
     }
 
     public void removeQuestMarkers(@Nonnull final Iterable<Location> targets) {
-        final Collection<Location> currentMarkers = new HashSet<Location>(activeQuestTargetMarkers.keySet());
+        final Collection<Location> currentMarkers = new HashSet<>(activeQuestTargetMarkers.keySet());
         currentMarkers.addAll(inactiveQuestTargetLocations.keySet());
         currentMarkers.addAll(activeQuestStartMarkers.keySet());
 
@@ -389,12 +391,13 @@ public final class GameMap implements LightingMap, Stoppable {
     /**
      * Apply the new quest source locations.
      *
-     * @param available     the list of available quests
+     * @param available the list of available quests
      * @param availableSoon the list of quests that will become available soon
      */
-    public void applyQuestStartLocations(@Nonnull final Iterable<Location> available,
-                                         @Nonnull final Iterable<Location> availableSoon) {
-        final Collection<Location> currentMarkers = new HashSet<Location>(activeQuestStartMarkers.keySet());
+    public void applyQuestStartLocations(
+            @Nonnull final Iterable<Location> available,
+            @Nonnull final Iterable<Location> availableSoon) {
+        final Collection<Location> currentMarkers = new HashSet<>(activeQuestStartMarkers.keySet());
 
         for (int i = 0; i < 2; i++) {
             final QuestMarker.QuestMarkerAvailability availability;
@@ -420,7 +423,8 @@ public final class GameMap implements LightingMap, Stoppable {
                         gui.releasePointer(carrier.getGuiMarker());
                         mapMarker.setAvailability(availability);
 
-                        final MiniMapGui.Pointer pointer = gui.createStartPointer(availability == QuestMarker.QuestMarkerAvailability.Available);
+                        final MiniMapGui.Pointer pointer = gui
+                                .createStartPointer(availability == QuestMarker.QuestMarkerAvailability.Available);
                         pointer.setTarget(markerLocation);
                         activeQuestStartMarkers.put(markerLocation, new QuestMarkerCarrier(mapMarker, pointer));
                         gui.addPointer(pointer);
@@ -441,7 +445,8 @@ public final class GameMap implements LightingMap, Stoppable {
 
                         final MiniMapGui.Pointer pointer;
                         if (showQuestsOnMiniMap) {
-                            pointer = gui.createStartPointer(availability == QuestMarker.QuestMarkerAvailability.Available);
+                            pointer = gui
+                                    .createStartPointer(availability == QuestMarker.QuestMarkerAvailability.Available);
                             pointer.setTarget(markerLocation);
                             gui.addPointer(pointer);
                         } else {
@@ -462,7 +467,7 @@ public final class GameMap implements LightingMap, Stoppable {
     /**
      * Determines whether a map location accepts the light from a specific direction.
      *
-     * @param loc    the location of the tile
+     * @param loc the location of the tile
      * @param deltaX the X-Delta of the light ray direction
      * @param deltaY the Y-Delta of the light ray direction
      * @return {@code true} if the position accepts the light, false if not
@@ -531,8 +536,8 @@ public final class GameMap implements LightingMap, Stoppable {
             if (questMarker != null) {
                 questMarker.markAsRemoved();
             }
-            inactiveQuestTargetLocations.put(markers.getKey(),
-                    new QuestMarkerCarrier(null, markers.getValue().getGuiMarker()));
+            inactiveQuestTargetLocations
+                    .put(markers.getKey(), new QuestMarkerCarrier(null, markers.getValue().getGuiMarker()));
         }
         activeQuestTargetMarkers.clear();
 
@@ -675,8 +680,8 @@ public final class GameMap implements LightingMap, Stoppable {
     /**
      * Fetch all tiles on specified levels of the map.
      *
-     * @param storage      the list that receives the references to the tiles on the specified levels
-     * @param lowestLevel  the lowest level of tiles to add to the storage
+     * @param storage the list that receives the references to the tiles on the specified levels
+     * @param lowestLevel the lowest level of tiles to add to the storage
      * @param highestLevel the highest level of tiles to add to the storage
      */
     public void getTiles(@Nonnull final Collection<MapTile> storage, final int lowestLevel, final int highestLevel) {
@@ -721,8 +726,8 @@ public final class GameMap implements LightingMap, Stoppable {
 
                 final MiniMapGui.Pointer guiMarker = marker.getGuiMarker();
                 if (guiMarker != null) {
-                    inactiveQuestTargetLocations.put(removedTile.getLocation(), new QuestMarkerCarrier(null,
-                            guiMarker));
+                    inactiveQuestTargetLocations
+                            .put(removedTile.getLocation(), new QuestMarkerCarrier(null, guiMarker));
                 }
             }
 
@@ -805,7 +810,7 @@ public final class GameMap implements LightingMap, Stoppable {
     /**
      * Set a light color on a tile.
      *
-     * @param loc   the location of the map tile on the server map
+     * @param loc the location of the map tile on the server map
      * @param color the color that shall be set for this tile
      * @see LightingMap#setLight(Location, Color)
      */
@@ -900,13 +905,13 @@ public final class GameMap implements LightingMap, Stoppable {
                     tiles.put(locKey, tile);
                     GameMapProcessor2.processTile(tile);
                     if (inactiveQuestTargetLocations.containsKey(updateData.getLocation())) {
-                        final MiniMapGui.Pointer pointer =
-                                inactiveQuestTargetLocations.remove(updateData.getLocation()).getGuiMarker();
+                        final MiniMapGui.Pointer pointer = inactiveQuestTargetLocations.remove(updateData.getLocation())
+                                .getGuiMarker();
 
                         final QuestMarker newMarker = new QuestMarker(QuestMarker.QuestMarkerType.Target, tile);
                         newMarker.setAvailability(QuestMarker.QuestMarkerAvailability.Available);
-                        activeQuestTargetMarkers.put(updateData.getLocation(),
-                                new QuestMarkerCarrier(newMarker, pointer));
+                        activeQuestTargetMarkers
+                                .put(updateData.getLocation(), new QuestMarkerCarrier(newMarker, pointer));
                         newMarker.show();
                     }
                 } finally {

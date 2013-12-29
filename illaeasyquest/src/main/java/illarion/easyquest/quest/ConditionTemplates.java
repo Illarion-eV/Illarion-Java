@@ -54,7 +54,7 @@ public class ConditionTemplates {
     }
 
     public ConditionTemplates() {
-        typeMap = new FastMap<String, ConditionTemplate>(Equalities.LEXICAL_FAST, Equalities.STANDARD);
+        typeMap = new FastMap<>(Equalities.LEXICAL_FAST, Equalities.STANDARD);
 
         load();
     }
@@ -66,12 +66,10 @@ public class ConditionTemplates {
 
     @Nonnull
     private static List<String> loadFileList() {
-        List<String> result = new FastTable<String>();
+        List<String> result = new FastTable<>();
         BufferedReader bRead = null;
         try {
-            bRead =
-                    new BufferedReader(new InputStreamReader(
-                            (getResource("template/condition/filelist"))));
+            bRead = new BufferedReader(new InputStreamReader((getResource("template/condition/filelist"))));
 
             String line = null;
             while ((line = bRead.readLine()) != null) {
@@ -94,7 +92,7 @@ public class ConditionTemplates {
 
     private void load() {
         Collection<String> templateFiles = loadFileList();
-        Collection<ConditionTemplate> templateList = new FastTable<ConditionTemplate>();
+        Collection<ConditionTemplate> templateList = new FastTable<>();
 
         if (templateFiles.isEmpty()) {
             System.out.println("Condition directory does not exist!");
@@ -103,15 +101,11 @@ public class ConditionTemplates {
             for (String rawFileName : templateFiles) {
                 String fileName = rawFileName.replace('\\', '/');
                 String line = null;
-                String uniqueName =
-                        fileName.substring(fileName.lastIndexOf('/') + 1,
-                                fileName.lastIndexOf('.'));
-                ConditionTemplate conditionTemplate =
-                        new ConditionTemplate(uniqueName);
+                String uniqueName = fileName.substring(fileName.lastIndexOf('/') + 1, fileName.lastIndexOf('.'));
+                ConditionTemplate conditionTemplate = new ConditionTemplate(uniqueName);
                 try {
-                    BufferedReader reader =
-                            new BufferedReader(new InputStreamReader(
-                                    getResource(fileName), "ISO-8859-1"));
+                    BufferedReader reader = new BufferedReader(
+                            new InputStreamReader(getResource(fileName), "ISO-8859-1"));
 
                     while ((line = reader.readLine()) != null) {
 
@@ -124,18 +118,14 @@ public class ConditionTemplates {
                             } else {
                                 conditionTemplate.setTitle(names[1]);
                             }
-                        } else if (line
-                                .matches("local\\s+[_A-Z0-9]+\\s*=\\s*[_A-Z0-9]+\\s*--.*\\w+.*--.*\\w+.*")) {
-                            String[] param =
-                                    line.split("^local\\s+|\\s*=\\s*|\\s*--\\s*");
+                        } else if (line.matches("local\\s+[_A-Z0-9]+\\s*=\\s*[_A-Z0-9]+\\s*--.*\\w+.*--.*\\w+.*")) {
+                            String[] param = line.split("^local\\s+|\\s*=\\s*|\\s*--\\s*");
                             if (isGerman) {
                                 conditionTemplate
-                                        .addParameter(new TemplateParameter(
-                                                param[1], param[2] + "RELATION", param[4]));
+                                        .addParameter(new TemplateParameter(param[1], param[2] + "RELATION", param[4]));
                             } else {
                                 conditionTemplate
-                                        .addParameter(new TemplateParameter(
-                                                param[1], param[2] + "RELATION", param[3]));
+                                        .addParameter(new TemplateParameter(param[1], param[2] + "RELATION", param[3]));
                             }
                         } else {
                             String oldCondition = conditionTemplate.getCondition();
@@ -151,8 +141,7 @@ public class ConditionTemplates {
                         templateList.add(conditionTemplate);
                         typeMap.put(uniqueName, conditionTemplate);
                     } else {
-                        System.out.println("Syntax error in template "
-                                + fileName);
+                        System.out.println("Syntax error in template " + fileName);
                     }
                 } catch (@Nonnull final IOException e1) {
                     System.out.println("Error loading template " + fileName);

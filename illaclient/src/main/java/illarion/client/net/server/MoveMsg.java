@@ -93,8 +93,7 @@ public final class MoveMsg extends AbstractReply {
      * @see illarion.client.net.server.AbstractReply#decode(NetCommReader)
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader)
-            throws IOException {
+    public void decode(@Nonnull final NetCommReader reader) throws IOException {
         charId = new CharacterId(reader);
         loc = decodeLocation(reader);
         mode = reader.readUByte();
@@ -165,13 +164,6 @@ public final class MoveMsg extends AbstractReply {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("ID: ");
-        builder.append(charId);
-        builder.append(" to: ");
-        builder.append(loc.toString());
-        builder.append(" mode: ");
-        builder.append(mode);
-        return toString(builder.toString());
+        return toString("ID: " + charId + " to: " + loc.toString() + " mode: " + mode);
     }
 }

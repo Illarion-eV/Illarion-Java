@@ -56,8 +56,7 @@ public final class ThreadDeadlockDetector {
     /**
      * The listeners that are notified in case a deadlocked thread is detected.
      */
-    private final Collection<Listener> listeners =
-            new CopyOnWriteArraySet<Listener>();
+    private final Collection<Listener> listeners = new CopyOnWriteArraySet<>();
 
     /**
      * The thread management bean.
@@ -68,8 +67,7 @@ public final class ThreadDeadlockDetector {
      * The timer that calls the dead lock detector from time to time.
      */
     @SuppressWarnings("nls")
-    private final Timer threadCheck =
-            new Timer("ThreadDeadlockDetector", true);
+    private final Timer threadCheck = new Timer("ThreadDeadlockDetector", true);
 
     /**
      * Create a new dead lock detector that checks for deadlocks using the

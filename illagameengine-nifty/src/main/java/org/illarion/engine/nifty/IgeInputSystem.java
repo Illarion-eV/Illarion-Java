@@ -70,7 +70,7 @@ public class IgeInputSystem implements InputSystem, InputListener {
     /**
      * Create a new input device and set the input implementation that provides the input data.
      *
-     * @param input    the input implementation
+     * @param input the input implementation
      * @param listener the listener that receives input data was was not processed by the Nifty-GUI
      */
     public IgeInputSystem(@Nonnull final Input input, @Nonnull final InputListener listener) {
@@ -91,7 +91,7 @@ public class IgeInputSystem implements InputSystem, InputListener {
             final boolean shiftDown = input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
             final boolean controlDown = input.isAnyKeyDown(Key.LeftCtrl, Key.RightCtrl);
             final KeyboardInputEvent event = new KeyboardInputEvent(keyCode, Character.MIN_VALUE, true, shiftDown,
-                    controlDown);
+                                                                    controlDown);
 
             if (!currentConsumer.processKeyboardEvent(event)) {
                 stalledKeyDownKey = key;
@@ -113,7 +113,7 @@ public class IgeInputSystem implements InputSystem, InputListener {
             final boolean shiftDown = input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
             final boolean controlDown = input.isAnyKeyDown(Key.LeftCtrl, Key.RightCtrl);
             final KeyboardInputEvent event = new KeyboardInputEvent(keyCode, Character.MIN_VALUE, false, shiftDown,
-                    controlDown);
+                                                                    controlDown);
 
             if (!currentConsumer.processKeyboardEvent(event)) {
                 listener.keyUp(key);
@@ -135,7 +135,7 @@ public class IgeInputSystem implements InputSystem, InputListener {
                 final boolean shiftDown = input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
                 final boolean controlDown = input.isAnyKeyDown(Key.LeftCtrl, Key.RightCtrl);
                 final KeyboardInputEvent event = new KeyboardInputEvent(KeyboardInputEvent.KEY_NONE, character, true,
-                        shiftDown, controlDown);
+                                                                        shiftDown, controlDown);
                 if (!currentConsumer.processKeyboardEvent(event) && (stalledKeyDownKey != null)) {
                     listener.keyDown(stalledKeyDownKey);
                     listener.keyTyped(character);
@@ -215,7 +215,12 @@ public class IgeInputSystem implements InputSystem, InputListener {
     }
 
     @Override
-    public void mouseDragged(@Nonnull final Button button, final int fromX, final int fromY, final int toX, final int toY) {
+    public void mouseDragged(
+            @Nonnull final Button button,
+            final int fromX,
+            final int fromY,
+            final int toX,
+            final int toY) {
         if (currentConsumer == null) {
             throw new IllegalStateException("Receiving input data while none was requested");
         }
@@ -414,7 +419,7 @@ public class IgeInputSystem implements InputSystem, InputListener {
     }
 
     @Override
-    public void setResourceLoader(final NiftyResourceLoader niftyResourceLoader) {
+    public void setResourceLoader(@Nonnull final NiftyResourceLoader niftyResourceLoader) {
         // not needed
     }
 

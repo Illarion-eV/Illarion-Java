@@ -42,5 +42,5 @@ public enum CharMovementMode {
     /**
      * This constant means that the character is being pushed.
      */
-    Push;
+    Push
 }

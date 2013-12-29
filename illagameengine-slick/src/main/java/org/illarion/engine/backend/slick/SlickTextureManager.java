@@ -21,16 +21,13 @@ package org.illarion.engine.backend.slick;
 import org.illarion.engine.backend.shared.AbstractTextureManager;
 import org.illarion.engine.graphic.Texture;
 import org.newdawn.slick.Image;
-import org.newdawn.slick.SlickException;
 import org.newdawn.slick.opengl.ImageData;
-import org.newdawn.slick.opengl.ImageIOImageData;
 import org.newdawn.slick.opengl.LoadableImageData;
 import org.newdawn.slick.opengl.PNGImageData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -47,8 +44,8 @@ class SlickTextureManager extends AbstractTextureManager<ImageData> {
 
         @Nullable InputStream in = null;
         try {
-            in = new BufferedInputStream(Thread.currentThread().getContextClassLoader().getResourceAsStream
-                    (textureName));
+            in = new BufferedInputStream(
+                    Thread.currentThread().getContextClassLoader().getResourceAsStream(textureName));
             imageData.loadImage(in);
         } catch (@Nonnull final IOException e) {
             return null;

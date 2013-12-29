@@ -123,7 +123,7 @@ class SlickWorldMap implements WorldMap, WorldMapDataProviderCallback {
         mapOrigin = new Location();
         playerLocation = new Location();
         tempDrawingColor = new Color(Color.black);
-        dirtyTiles = new LinkedList<Rectangle>();
+        dirtyTiles = new LinkedList<>();
     }
 
     /**
@@ -188,8 +188,8 @@ class SlickWorldMap implements WorldMap, WorldMapDataProviderCallback {
         clear();
         for (int x = 0; x < WORLD_MAP_WIDTH; x += MAX_UPDATE_SIZE) {
             for (int y = 0; y < WORLD_MAP_HEIGHT; y += MAX_UPDATE_SIZE) {
-                dirtyTiles.offer(new Rectangle(x + mapOrigin.getScX(), y + mapOrigin.getScY(),
-                        MAX_UPDATE_SIZE, MAX_UPDATE_SIZE));
+                dirtyTiles.offer(new Rectangle(x + mapOrigin.getScX(), y + mapOrigin.getScY(), MAX_UPDATE_SIZE,
+                                               MAX_UPDATE_SIZE));
             }
         }
     }

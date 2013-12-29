@@ -65,8 +65,8 @@ public final class GameScreenController implements GameGui, ScreenController {
         final NumberSelectPopupHandler numberPopupHandler = new NumberSelectPopupHandler();
         final TooltipHandler tooltipHandler = new TooltipHandler();
 
-        childControllers = new ArrayList<ScreenController>();
-        childUpdateControllers = new ArrayList<UpdatableHandler>();
+        childControllers = new ArrayList<>();
+        childUpdateControllers = new ArrayList<>();
 
         chatHandler = new GUIChatHandler();
         bookHandler = new BookHandler();
@@ -213,7 +213,7 @@ public final class GameScreenController implements GameGui, ScreenController {
      * functions changes to the actual representation of the GUI should be done.
      *
      * @param container the container that displays the game
-     * @param delta     the time since the last update call
+     * @param delta the time since the last update call
      */
     @Override
     public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {

@@ -45,12 +45,12 @@ public final class Items implements Comparable<Items> {
     private static final Items[] itemsList;
 
     static {
-        final ArrayList<Items> itemList = new ArrayList<Items>();
+        final ArrayList<Items> itemList = new ArrayList<>();
 
         new TableLoader("Items", new TableLoaderSink() {
             @Override
-            public boolean processRecord(final int line,
-                                         @Nonnull final TableLoader loader) {
+            public boolean processRecord(
+                    final int line, @Nonnull final TableLoader loader) {
                 final int itemId = loader.getInt(TB_ID);
                 itemList.add(new Items(itemId));
                 return true;

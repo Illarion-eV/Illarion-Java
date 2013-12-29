@@ -45,7 +45,7 @@ public final class ParsedHair implements ParsedData {
         /**
          * In case this ID is set the ID applied to the main hair.
          */
-        Hair;
+        Hair
     }
 
     /**
@@ -62,7 +62,7 @@ public final class ParsedHair implements ParsedData {
      * The constructor for this parsed hair data.
      *
      * @param type the type of the hair
-     * @param id   the ID of the hair
+     * @param id the ID of the hair
      */
     public ParsedHair(final ParsedHair.HairType type, final int id) {
         hairType = type;
@@ -115,8 +115,8 @@ public final class ParsedHair implements ParsedData {
      */
     @SuppressWarnings("nls")
     @Override
-    public void writeEasyNpc(@Nonnull final Writer target,
-                             final EasyNpcWriter.WritingStage stage) throws IOException {
+    public void writeEasyNpc(
+            @Nonnull final Writer target, final EasyNpcWriter.WritingStage stage) throws IOException {
         if (!effectsEasyNpcStage(stage)) {
             return;
         }
@@ -138,8 +138,8 @@ public final class ParsedHair implements ParsedData {
      * The LUA script is not effected by this data. This function does nothing at all in this case.
      */
     @Override
-    public void writeLua(final Writer target,
-                         final LuaWriter.WritingStage stage) throws IOException {
+    public void writeLua(
+            final Writer target, final LuaWriter.WritingStage stage) throws IOException {
         // nothing
     }
 }

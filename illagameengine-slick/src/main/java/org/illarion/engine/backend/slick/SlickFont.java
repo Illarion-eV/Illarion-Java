@@ -47,9 +47,7 @@ class SlickFont implements Font {
     SlickFont(@Nonnull final String fntFile, @Nonnull final SlickTexture imgFile) throws SlickEngineException {
         try {
             internalFont = new AngelCodeFont(fntFile, imgFile.getBackingImage());
-        } catch (@Nonnull final SlickException e) {
-            throw new SlickEngineException(e);
-        } catch (@Nonnull final RuntimeException e) {
+        } catch (@Nonnull final SlickException | RuntimeException e) {
             throw new SlickEngineException(e);
         }
     }

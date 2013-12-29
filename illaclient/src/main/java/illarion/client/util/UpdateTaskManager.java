@@ -63,14 +63,14 @@ public final class UpdateTaskManager {
      * The default constructor that prepares the internal structures.
      */
     public UpdateTaskManager() {
-        taskQueue = new ConcurrentLinkedQueue<UpdateTask>();
+        taskQueue = new ConcurrentLinkedQueue<>();
     }
 
     /**
      * This function is triggered during the update loop of the game and triggers the update tasks.
      *
      * @param container the game container
-     * @param delta     the time since the last update
+     * @param delta the time since the last update
      */
     public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
         currentContainer = container;

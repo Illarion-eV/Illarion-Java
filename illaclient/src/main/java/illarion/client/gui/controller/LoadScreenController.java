@@ -27,8 +27,7 @@ import org.illarion.nifty.controls.Progress;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public final class LoadScreenController
-        implements ScreenController {
+public final class LoadScreenController implements ScreenController {
 
     @Nullable
     private Progress progress;
@@ -41,7 +40,7 @@ public final class LoadScreenController
     }
 
     @Override
-    public void bind(final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
         progress = screen.findNiftyControl("loading", Progress.class);
     }
 

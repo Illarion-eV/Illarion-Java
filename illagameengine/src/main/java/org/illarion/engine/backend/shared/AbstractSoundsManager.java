@@ -49,8 +49,8 @@ public abstract class AbstractSoundsManager implements SoundsManager {
      * Create a new sound manager and setup the internal structures.
      */
     protected AbstractSoundsManager() {
-        loadedMusic = new HashMap<String, Music>();
-        loadedSounds = new HashMap<String, Sound>();
+        loadedMusic = new HashMap<>();
+        loadedSounds = new HashMap<>();
     }
 
     @Nullable

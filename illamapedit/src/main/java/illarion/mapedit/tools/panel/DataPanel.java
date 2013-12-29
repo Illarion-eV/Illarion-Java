@@ -45,7 +45,7 @@ public class DataPanel extends JPanel {
     private final ItemDataTable dataPanel;
 
     public DataPanel() {
-        super(new GridLayout(2, 1)) ;
+        super(new GridLayout(2, 1));
         AnnotationProcessor.process(this);
 
         itemPanel = new ItemInspectorList();
@@ -65,7 +65,7 @@ public class DataPanel extends JPanel {
     }
 
     public void setItems(@Nullable final Collection<MapItem> items) {
-        Collection<MapItem> mapItems = new ArrayList<MapItem>();
+        Collection<MapItem> mapItems = new ArrayList<>();
         if (items != null) {
             mapItems = items;
         }
@@ -96,7 +96,7 @@ public class DataPanel extends JPanel {
 
     @EventSubscriber
     public void onItemsUpdated(@Nonnull final ItemsUpdatedEvent e) {
-        List<MapItem> items = new ArrayList<MapItem>();
+        List<MapItem> items = new ArrayList<>();
         if (e.getItems() != null) {
             items = e.getItems();
         }

@@ -32,5 +32,5 @@ public enum NpcBaseState {
     /**
      * State saying that the NPC it currently not busy.
      */
-    idle;
+    idle
 }

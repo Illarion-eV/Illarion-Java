@@ -187,7 +187,7 @@ public final class MapTile implements AlphaChangeListener {
     }
 
     public void setObstructingTile(@Nonnull final MapTile tile) {
-        obstructingTileRef = new WeakReference<MapTile>(tile);
+        obstructingTileRef = new WeakReference<>(tile);
     }
 
     @Nullable
@@ -326,12 +326,12 @@ public final class MapTile implements AlphaChangeListener {
      * Update the item at the top position of the stack of items.
      *
      * @param oldItemId the ID of the item that is currently on the top position
-     * @param itemId    the new ID that shall be set on the item
-     * @param count     the new count value of the item in top position
+     * @param itemId the new ID that shall be set on the item
+     * @param count the new count value of the item in top position
      */
     @SuppressWarnings("nls")
-    public void changeTopItem(@Nonnull final ItemId oldItemId, @Nonnull final ItemId itemId,
-                              @Nonnull final ItemCount count) {
+    public void changeTopItem(
+            @Nonnull final ItemId oldItemId, @Nonnull final ItemId itemId, @Nonnull final ItemCount count) {
         if (removedTile) {
             LOGGER.warn("Changing top item of removed tile requested.");
             return;
@@ -351,7 +351,8 @@ public final class MapTile implements AlphaChangeListener {
             if (items.get(pos).getItemId().equals(oldItemId)) {
                 setItem(pos, itemId, count);
             } else {
-                LOGGER.warn("change top item mismatch. Expected " + oldItemId + " found " + items.get(pos).getItemId().getValue());
+                LOGGER.warn("change top item mismatch. Expected " + oldItemId + " found " +
+                                    items.get(pos).getItemId().getValue());
             }
         } finally {
             itemsLock.writeLock().unlock();
@@ -405,7 +406,7 @@ public final class MapTile implements AlphaChangeListener {
      * Add a single item to the item stack. The new item is placed at the last position and is shown on top this way.
      *
      * @param itemId the ID of the item that is created
-     * @param count  the count value of the item that is created
+     * @param count the count value of the item that is created
      */
     public void addItem(@Nonnull final ItemId itemId, @Nonnull final ItemCount count) {
         if (removedTile) {
@@ -434,8 +435,8 @@ public final class MapTile implements AlphaChangeListener {
     /**
      * Set a item at a special position of the item stack on this tile.
      *
-     * @param index     The index within the item list of this tile
-     * @param itemId    The new item ID of the item
+     * @param index The index within the item list of this tile
+     * @param itemId The new item ID of the item
      * @param itemCount The new count value of this item
      */
     @SuppressWarnings("nls")
@@ -463,7 +464,7 @@ public final class MapTile implements AlphaChangeListener {
                     }
                 }
             } else {
-                items = new ArrayList<Item>();
+                items = new ArrayList<>();
             }
             // add a new item
             if (item == null) {
@@ -494,9 +495,9 @@ public final class MapTile implements AlphaChangeListener {
     /**
      * Update a single item with new data.
      *
-     * @param item      the item that shall be updated
+     * @param item the item that shall be updated
      * @param itemCount the count value of the new item
-     * @param index     the index of the item within the stack of items on this tile
+     * @param index the index of the item within the stack of items on this tile
      */
     private void updateItem(@Nonnull final Item item, @Nonnull final ItemCount itemCount, final int index) {
         // set number
@@ -507,7 +508,8 @@ public final class MapTile implements AlphaChangeListener {
             objectOffset = elevation;
         }
         // position on tile with increasing z-order
-        item.setScreenPos(tileLocation.getDcX(), tileLocation.getDcY() - objectOffset, tileLocation.getDcZ() - index, Layers.ITEM);
+        item.setScreenPos(tileLocation.getDcX(), tileLocation.getDcY() - objectOffset, tileLocation.getDcZ() - index,
+                          Layers.ITEM);
 
         // set the elevation for items that can carry
         final int level = item.getTemplate().getItemInfo().getLevel();
@@ -565,8 +567,8 @@ public final class MapTile implements AlphaChangeListener {
             if (topItem != null) {
                 final Sprite topItemSprite = topItem.getTemplate().getSprite();
 
-                questMarkerElevation += Math.round((topItemSprite.getOffsetY() + topItemSprite.getHeight())
-                        * topItem.getScale());
+                questMarkerElevation += Math
+                        .round((topItemSprite.getOffsetY() + topItemSprite.getHeight()) * topItem.getScale());
             }
         } else {
             questMarkerElevation += Math.round(avatar.getTemplate().getSprite().getHeight() * avatar.getScale());
@@ -640,7 +642,6 @@ public final class MapTile implements AlphaChangeListener {
 
         final Item topItem = getTopItem();
         return (topItem != null) && topItem.getTemplate().getItemInfo().isMovable();
-
     }
 
     /**
@@ -725,7 +726,7 @@ public final class MapTile implements AlphaChangeListener {
         }
 
         final InteractiveMapTile interactiveMapTile = new InteractiveMapTile(this);
-        interactiveMapTileRef = new SoftReference<InteractiveMapTile>(interactiveMapTile);
+        interactiveMapTileRef = new SoftReference<>(interactiveMapTile);
         return interactiveMapTile;
     }
 
@@ -863,7 +864,7 @@ public final class MapTile implements AlphaChangeListener {
      * Render the light on this tile, using the ambient light of the weather and a factor how much the tile light
      * modifies the ambient light.
      *
-     * @param factor       the factor how much the ambient light is modified by the tile light
+     * @param factor the factor how much the ambient light is modified by the tile light
      * @param ambientLight the ambient light from the weather
      */
     public void renderLight(final float factor, @Nonnull final Color ambientLight) {
@@ -952,7 +953,6 @@ public final class MapTile implements AlphaChangeListener {
         }
     }
 
-
     @Nullable
     public Tile getTile() {
         return tile;
@@ -971,12 +971,12 @@ public final class MapTile implements AlphaChangeListener {
     /**
      * Update all items on the stack of this tile at once.
      *
-     * @param number    the new amount of items on this tile
-     * @param itemId    the list of item ids for the items on this tile
+     * @param number the new amount of items on this tile
+     * @param itemId the list of item ids for the items on this tile
      * @param itemCount the list of count values for the items on this tile
      */
-    private void updateItemList(final int number, @Nonnull final List<ItemId> itemId,
-                                @Nonnull final List<ItemCount> itemCount) {
+    private void updateItemList(
+            final int number, @Nonnull final List<ItemId> itemId, @Nonnull final List<ItemCount> itemCount) {
         boolean readLock = false;
         itemsLock.writeLock().lock();
         try {
@@ -1045,11 +1045,11 @@ public final class MapTile implements AlphaChangeListener {
      * new item data to the client.
      *
      * @param itemNumber Amount of items within the list of items
-     * @param itemId     List of the item IDs for all items that shall be created
-     * @param itemCount  List of count values for all items
+     * @param itemId List of the item IDs for all items that shall be created
+     * @param itemCount List of count values for all items
      */
-    public void updateItems(final int itemNumber, @Nonnull final List<ItemId> itemId,
-                            @Nonnull final List<ItemCount> itemCount) {
+    public void updateItems(
+            final int itemNumber, @Nonnull final List<ItemId> itemId, @Nonnull final List<ItemCount> itemCount) {
         if (removedTile) {
             LOGGER.warn("Update items of a removed tile requested.");
             return;

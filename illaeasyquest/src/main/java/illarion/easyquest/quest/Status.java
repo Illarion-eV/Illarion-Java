@@ -61,7 +61,7 @@ public class Status implements Serializable {
         return number;
     }
 
-    public void setHandlers(Handler[] handlers) {
+    public void setHandlers(@Nullable Handler[] handlers) {
         this.handlers = handlers;
     }
 
@@ -73,5 +73,4 @@ public class Status implements Serializable {
     public final String toString() {
         return getName();
     }
-
 }

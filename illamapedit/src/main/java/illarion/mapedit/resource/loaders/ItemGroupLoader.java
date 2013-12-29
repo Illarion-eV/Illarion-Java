@@ -33,7 +33,7 @@ import java.io.IOException;
 public class ItemGroupLoader implements TableLoaderSink<TableLoaderMapGroups>, Resource {
     private static final ItemGroupLoader INSTANCE = new ItemGroupLoader();
     private final boolean isGerman = Lang.getInstance().isGerman();
-    private final TIntObjectHashMap<String> groups = new TIntObjectHashMap<String>();
+    private final TIntObjectHashMap<String> groups = new TIntObjectHashMap<>();
 
     @Nonnull
     public static ItemGroupLoader getInstance() {
@@ -43,7 +43,6 @@ public class ItemGroupLoader implements TableLoaderSink<TableLoaderMapGroups>, R
     @Override
     public void load() throws IOException {
         new TableLoaderMapGroups(this);
-
     }
 
     @Nonnull
@@ -65,5 +64,4 @@ public class ItemGroupLoader implements TableLoaderSink<TableLoaderMapGroups>, R
     public String getGroupName(final int id) {
         return groups.get(id);
     }
-
 }

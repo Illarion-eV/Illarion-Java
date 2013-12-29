@@ -62,14 +62,12 @@ public final class SearchBand extends JRibbonBand {
 
         startGroup(Lang.getMsg(SearchBand.class, "fastSearchGroup"));
         final JTextField textBox = new JTextField();
-        textBox.setPreferredSize(new Dimension(150,
-                textBox.getPreferredSize().height));
+        textBox.setPreferredSize(new Dimension(150, textBox.getPreferredSize().height));
         final JRibbonComponent ribbonTextBox = new JRibbonComponent(textBox);
         addRibbonComponent(ribbonTextBox);
 
-        ribbonTextBox.setRichTooltip(new RichTooltip(Lang.getMsg(getClass(),
-                "fastSearchTooltipTitle"), Lang.getMsg(getClass(),
-                "fastSearchTooltip")));
+        ribbonTextBox.setRichTooltip(new RichTooltip(Lang.getMsg(getClass(), "fastSearchTooltipTitle"),
+                                                     Lang.getMsg(getClass(), "fastSearchTooltip")));
 
         textBox.addKeyListener(new KeyListener() {
             @Override
@@ -103,13 +101,10 @@ public final class SearchBand extends JRibbonBand {
 
         startGroup();
 
-        final JCommandButton findButton =
-                new JCommandButton(Lang.getMsg(SearchBand.class,
-                        "advancedSearchButton"),
-                        Utils.getResizableIconFromResource("find.png"));
-        findButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(
-                getClass(), "findButtonTooltipTitle"), Lang.getMsg(getClass(),
-                "findButtonTooltip")));
+        final JCommandButton findButton = new JCommandButton(Lang.getMsg(SearchBand.class, "advancedSearchButton"),
+                                                             Utils.getResizableIconFromResource("find.png"));
+        findButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(getClass(), "findButtonTooltipTitle"),
+                                                        Lang.getMsg(getClass(), "findButtonTooltip")));
         findButton.addActionListener(new ActionListener() {
             @Nullable
             private SearchDialog dialog = null;
@@ -125,8 +120,7 @@ public final class SearchBand extends JRibbonBand {
 
         addCommandButton(findButton, RibbonElementPriority.TOP);
 
-        final List<RibbonBandResizePolicy> policies =
-                new ArrayList<RibbonBandResizePolicy>();
+        final List<RibbonBandResizePolicy> policies = new ArrayList<>();
         policies.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
         policies.add(new CoreRibbonResizePolicies.Mid2Low(getControlPanel()));
         setResizePolicies(policies);

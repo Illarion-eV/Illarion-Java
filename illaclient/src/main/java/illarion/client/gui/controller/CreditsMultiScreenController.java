@@ -50,7 +50,7 @@ public final class CreditsMultiScreenController implements ScreenController, Key
     private Element namesPanel;
 
     @Override
-    public void bind(final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
         this.nifty = nifty;
         this.screen = screen;
 
@@ -105,7 +105,6 @@ public final class CreditsMultiScreenController implements ScreenController, Key
                 });
             }
         });
-
     }
 
     private void gotoNextScreen() {
@@ -118,7 +117,7 @@ public final class CreditsMultiScreenController implements ScreenController, Key
     }
 
     @Override
-    public boolean keyEvent(final NiftyInputEvent inputEvent) {
+    public boolean keyEvent(@Nonnull final NiftyInputEvent inputEvent) {
         if (inputEvent == NiftyStandardInputEvent.Escape) {
             nifty.gotoScreen("login");
             return true;

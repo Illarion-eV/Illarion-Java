@@ -45,7 +45,7 @@ public final class Pack200Helper {
     private static final Map<String, String> PROPS;
 
     static {
-        PROPS = new HashMap<String, String>();
+        PROPS = new HashMap<>();
         PROPS.put(Pack200.Packer.KEEP_FILE_ORDER, Pack200.Packer.FALSE);
         PROPS.put(Pack200.Packer.MODIFICATION_TIME, Pack200.Packer.LATEST);
         PROPS.put(Pack200.Packer.EFFORT, Integer.toString(7));

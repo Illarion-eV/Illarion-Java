@@ -64,9 +64,9 @@ public class TableLoader {
      * away at the reading operation.
      * <p/>
      *
-     * @param table    the file that is the source for this table loader
+     * @param table the file that is the source for this table loader
      * @param callback the call back class that is allowed to parse the values
-     *                 this table loader reads
+     * this table loader reads
      */
     @SuppressWarnings("nls")
     public <T extends TableLoader> TableLoader(@Nonnull final File table, @Nonnull final TableLoaderSink<T> callback) {
@@ -80,15 +80,15 @@ public class TableLoader {
      * away at the reading operation.
      * <p/>
      *
-     * @param table      the file that is the source for this table loader
-     * @param callback   the callback class that is allowed to parse the values
-     *                   this table loader reads
+     * @param table the file that is the source for this table loader
+     * @param callback the callback class that is allowed to parse the values
+     * this table loader reads
      * @param tableDelim the delimiter of the table, so the table columns are
-     *                   seperated by this string
+     * seperated by this string
      */
     @SuppressWarnings("nls")
-    public <T extends TableLoader> TableLoader(@Nonnull final File table, @Nonnull final TableLoaderSink<T> callback,
-                                               final String tableDelim) {
+    public <T extends TableLoader> TableLoader(
+            @Nonnull final File table, @Nonnull final TableLoaderSink<T> callback, final String tableDelim) {
         this(tableDelim);
 
         // ignore missing tables
@@ -124,17 +124,20 @@ public class TableLoader {
      * away at the reading operation.
      * <p/>
      *
-     * @param resource   the input stream the table loader shall read
-     * @param ndsc       true in case the table that shall be loaded is a NDSC table,
-     *                   false if its a simple CSV file
-     * @param callback   the call back class that is allowed to parse the values
-     *                   this table loader reads
+     * @param resource the input stream the table loader shall read
+     * @param ndsc true in case the table that shall be loaded is a NDSC table,
+     * false if its a simple CSV file
+     * @param callback the call back class that is allowed to parse the values
+     * this table loader reads
      * @param tableDelim the delimiter of the table, so the table columns are
-     *                   separated by this string
+     * separated by this string
      */
     @SuppressWarnings("nls")
-    public <T extends TableLoader> TableLoader(final InputStream resource, final boolean ndsc,
-                                               @Nonnull final TableLoaderSink<T> callback, final String tableDelim) {
+    public <T extends TableLoader> TableLoader(
+            final InputStream resource,
+            final boolean ndsc,
+            @Nonnull final TableLoaderSink<T> callback,
+            final String tableDelim) {
         this(tableDelim);
         try {
             loadTable(resource, ndsc, callback);
@@ -154,17 +157,20 @@ public class TableLoader {
      * away at the reading operation.
      * <p/>
      *
-     * @param table      the name of the table that shall be loaded
-     * @param ndsc       true in case the table that shall be loaded is a NDSC table,
-     *                   false if its a simple CSV file
-     * @param callback   the call back class that is allowed to parse the values
-     *                   this table loader reads
+     * @param table the name of the table that shall be loaded
+     * @param ndsc true in case the table that shall be loaded is a NDSC table,
+     * false if its a simple CSV file
+     * @param callback the call back class that is allowed to parse the values
+     * this table loader reads
      * @param tableDelim the delimiter of the table, so the table columns are
-     *                   separated by this string
+     * separated by this string
      */
     @SuppressWarnings("nls")
-    public <T extends TableLoader> TableLoader(final String table, final boolean ndsc,
-                                               @Nonnull final TableLoaderSink<T> callback, final String tableDelim) {
+    public <T extends TableLoader> TableLoader(
+            final String table,
+            final boolean ndsc,
+            @Nonnull final TableLoaderSink<T> callback,
+            final String tableDelim) {
         this(tableDelim);
 
         // read table via class loader
@@ -185,7 +191,8 @@ public class TableLoader {
         } finally {
             try {
                 rsc.close();
-            } catch (@Nonnull final IOException ignored) {}
+            } catch (@Nonnull final IOException ignored) {
+            }
         }
     }
 
@@ -200,9 +207,9 @@ public class TableLoader {
      * away at the reading operation.
      * <p/>
      *
-     * @param table    the name of the table that shall be loaded
+     * @param table the name of the table that shall be loaded
      * @param callback the call back class that is allowed to parse the values
-     *                 this table loader reads
+     * this table loader reads
      */
     @SuppressWarnings("nls")
     public <T extends TableLoader> TableLoader(final String table, @Nonnull final TableLoaderSink<T> callback) {
@@ -216,7 +223,7 @@ public class TableLoader {
      * @param newDelim the delimiter used by this table loader
      */
     private TableLoader(final String newDelim) {
-        tokens = new ArrayList<String>();
+        tokens = new ArrayList<>();
         delim = newDelim;
     }
 
@@ -227,7 +234,7 @@ public class TableLoader {
      * this crypto class.
      *
      * @param newCrypto the crypto instance that shall be used by all table
-     *                  loaders
+     * loaders
      */
     public static void setCrypto(final Crypto newCrypto) {
         crypto = newCrypto;
@@ -308,16 +315,16 @@ public class TableLoader {
      * away at the reading operation.
      * <p/>
      *
-     * @param rsc      the resource stream that provides the table data
-     * @param ndsc     true for NDSC table, that causes the first two tokes ignored
+     * @param rsc the resource stream that provides the table data
+     * @param ndsc true for NDSC table, that causes the first two tokes ignored
      * @param callback the callback class that is allowed to parse the values
-     *                 this table loader reads
+     * this table loader reads
      * @throws IOException in case there is something wrong with the ressource
-     *                     stream
+     * stream
      */
     @SuppressWarnings({"nls", "unchecked"})
-    private <T extends TableLoader> void loadTable(final InputStream rsc, final boolean ndsc,
-                                                   @Nonnull final TableLoaderSink<T> callback) throws IOException {
+    private <T extends TableLoader> void loadTable(
+            final InputStream rsc, final boolean ndsc, @Nonnull final TableLoaderSink<T> callback) throws IOException {
 
         final InputStreamReader inRead = new InputStreamReader(rsc);
         final BufferedReader in = new BufferedReader(inRead);
@@ -356,7 +363,7 @@ public class TableLoader {
      *
      * @param line the string line that shall be parsed for the tokens
      * @param ndsc true for ndsc tables. For ndsc tables the first two tokens
-     *             are ignored
+     * are ignored
      */
     private void parseTokens(@Nonnull final String line, final boolean ndsc) {
         int pos = 0;

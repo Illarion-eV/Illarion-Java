@@ -66,7 +66,7 @@ public final class OpenContainerEvent implements ServerEvent {
         /**
          * Constructor for a new item.
          *
-         * @param itemId    the item ID
+         * @param itemId the item ID
          * @param itemCount the stack count
          */
         public Item(final ItemId itemId, final ItemCount itemCount) {
@@ -113,10 +113,10 @@ public final class OpenContainerEvent implements ServerEvent {
      * Constructor of the container opened event.
      *
      * @param containerId the ID of the container
-     * @param slotCount   the amount of slots in the container
+     * @param slotCount the amount of slots in the container
      */
     public OpenContainerEvent(final int containerId, final int slotCount) {
-        itemMap = new TIntObjectHashMap<OpenContainerEvent.Item>(15);
+        itemMap = new TIntObjectHashMap<>(15);
         slots = slotCount;
         conId = containerId;
     }

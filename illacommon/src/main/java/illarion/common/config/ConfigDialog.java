@@ -59,10 +59,10 @@ public final class ConfigDialog {
         /**
          * Create a new entry with preset values.
          *
-         * @param entryTitle  the title of that entry that is displayed as name
-         *                    of this entry
+         * @param entryTitle the title of that entry that is displayed as name
+         * of this entry
          * @param configEntry the configuration entry that defines what value is
-         *                    controlled how
+         * controlled how
          */
         public Entry(@Nonnull final String entryTitle, @Nonnull final ConfigEntry configEntry) {
             title = entryTitle;
@@ -136,7 +136,7 @@ public final class ConfigDialog {
          * @param pageTitle the title of the page that is displayed in the tab
          */
         public Page(@Nonnull final String pageTitle) {
-            lines = new FastTable<Entry>();
+            lines = new FastTable<>();
             title = pageTitle;
         }
 
@@ -227,7 +227,7 @@ public final class ConfigDialog {
      * Initialize a configuration dialog. This prepares all required values.
      */
     public ConfigDialog() {
-        pages = new FastTable<Page>();
+        pages = new FastTable<>();
     }
 
     /**
@@ -251,7 +251,7 @@ public final class ConfigDialog {
      * @param index the index of the page requested
      * @return the page at the specified index
      * @throws IndexOutOfBoundsException in case the index is lesser then 0 or
-     *                                   greater or equal then {@link #getPageCount()}
+     * greater or equal then {@link #getPageCount()}
      */
     public Page getPage(final int index) {
         return pages.get(index);

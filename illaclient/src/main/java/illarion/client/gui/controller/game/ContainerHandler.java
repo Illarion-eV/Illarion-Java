@@ -162,7 +162,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
         /**
          * Set the data that is used for the click operations.
          *
-         * @param slot      the slot that is clicked
+         * @param slot the slot that is clicked
          * @param container the container that is clicked
          */
         public void setData(final int slot, final int container) {
@@ -249,11 +249,13 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      * Constructor of this handler.
      *
      * @param numberSelectPopupHandler the number select handler
-     * @param tooltip                  the tooltip handler
+     * @param tooltip the tooltip handler
      */
-    public ContainerHandler(final Input input, final NumberSelectPopupHandler numberSelectPopupHandler,
-                            final TooltipHandler tooltip) {
-        itemContainerMap = new TIntObjectHashMap<org.illarion.nifty.controls.ItemContainer>();
+    public ContainerHandler(
+            final Input input,
+            final NumberSelectPopupHandler numberSelectPopupHandler,
+            final TooltipHandler tooltip) {
+        itemContainerMap = new TIntObjectHashMap<>();
         numberSelect = numberSelectPopupHandler;
         tooltipHandler = tooltip;
         this.input = input;
@@ -295,7 +297,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      * This event is received in case a container is closed.
      *
      * @param topic the topic of the event
-     * @param data  the event data
+     * @param data the event data
      */
     @NiftyEventSubscriber(pattern = ".*container[0-9]+.*")
     public void onItemContainerClose(final String topic, @Nonnull final ItemContainerCloseEvent data) {
@@ -329,7 +331,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      * This event is received in case the dragging of a item is canceled.
      *
      * @param topic the topic of the event
-     * @param data  the event data
+     * @param data the event data
      */
     @NiftyEventSubscriber(pattern = ".*container[0-9]+.*slot[0-9]+.*")
     public void cancelDragging(final String topic, final DraggableDragCanceledEvent data) {
@@ -340,7 +342,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      * This event is received in case the user clicks into the container.
      *
      * @param topic the topic of the event
-     * @param data  the event data
+     * @param data the event data
      */
     @NiftyEventSubscriber(pattern = ".*container[0-9]+.*slot[0-9]+.*")
     public void clickInContainer(final String topic, final NiftyMousePrimaryClickedEvent data) {
@@ -393,7 +395,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      * This event is received in case the user drags the item away from its slot.
      *
      * @param topic the topic of the event
-     * @param data  the event data
+     * @param data the event data
      */
     @NiftyEventSubscriber(pattern = ".*container[0-9]+.*slot[0-9]+.*")
     public void dragFrom(final String topic, @Nonnull final DraggableDragStartedEvent data) {
@@ -402,14 +404,15 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
 
         final Element parentSlot = data.getSource().getElement().getParent();
         World.getInteractionManager().notifyDraggingContainer(containerId, slotId,
-                new ContainerHandler.EndOfDragOperation(parentSlot.getNiftyControl(InventorySlot.class)));
+                                                              new ContainerHandler.EndOfDragOperation(
+                                                                      parentSlot.getNiftyControl(InventorySlot.class)));
     }
 
     /**
      * This event is received in case the user drops the item away into a slot.
      *
      * @param topic the topic of the event
-     * @param data  the event data
+     * @param data the event data
      */
     @NiftyEventSubscriber(pattern = ".*container[0-9]+.*slot[0-9]+.*")
     public void dropIn(final String topic, final DroppableDroppedEvent data) {
@@ -534,13 +537,14 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      */
     private void createNewContainer(@Nonnull final ItemContainer itemContainer) {
         final ItemContainerBuilder builder = new ItemContainerBuilder("container" + itemContainer.getContainerId(),
-                "${gamescreen-bundle.bag}");
+                                                                      "${gamescreen-bundle.bag}");
         builder.slots(itemContainer.getSlotCount());
         builder.slotDim(35, 35);
         builder.containerId(itemContainer.getContainerId());
 
         final Element container = builder.build(activeNifty, activeScreen, activeScreen.findElementById("windows"));
-        final org.illarion.nifty.controls.ItemContainer conControl = container.getNiftyControl(org.illarion.nifty.controls.ItemContainer.class);
+        final org.illarion.nifty.controls.ItemContainer conControl = container
+                .getNiftyControl(org.illarion.nifty.controls.ItemContainer.class);
 
         itemContainerMap.put(itemContainer.getContainerId(), conControl);
     }
@@ -551,7 +555,9 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
     private void updateAllMerchantOverlays() {
         itemContainerMap.forEachEntry(new TIntObjectProcedure<org.illarion.nifty.controls.ItemContainer>() {
             @Override
-            public boolean execute(final int id, @Nonnull final org.illarion.nifty.controls.ItemContainer itemContainer) {
+            public boolean execute(
+                    final int id,
+                    @Nonnull final org.illarion.nifty.controls.ItemContainer itemContainer) {
                 final int slotCount = itemContainer.getSlotCount();
                 for (int i = 0; i < slotCount; i++) {
                     final InventorySlot conSlot = itemContainer.getSlot(i);
@@ -570,7 +576,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
     /**
      * Update the overlays of the merchants.
      *
-     * @param slot   the slot to update
+     * @param slot the slot to update
      * @param itemId the item ID in this slot
      */
     private void updateMerchantOverlay(@Nonnull final InventorySlot slot, @Nullable final ItemId itemId) {
@@ -606,8 +612,8 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      * @param itemContainer the item container that contains the new data of the container
      */
     private void updateContainer(@Nonnull final ItemContainer itemContainer) {
-        @Nullable final org.illarion.nifty.controls.ItemContainer conControl =
-                itemContainerMap.get(itemContainer.getContainerId());
+        @Nullable final org.illarion.nifty.controls.ItemContainer conControl = itemContainerMap
+                .get(itemContainer.getContainerId());
         if (conControl == null) {
             LOGGER.warn("Updating a container that does not exist.");
             return;
@@ -631,7 +637,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
                 final ItemTemplate displayedItem = ItemFactory.getInstance().getTemplate(itemId.getValue());
 
                 final NiftyImage niftyImage = new NiftyImage(activeNifty.getRenderEngine(),
-                        new EntitySlickRenderImage(displayedItem));
+                                                             new EntitySlickRenderImage(displayedItem));
 
                 conSlot.setImage(niftyImage);
                 conSlot.setLabelText(count.getShortText(Lang.getInstance().getLocale()));

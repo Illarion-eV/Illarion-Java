@@ -89,7 +89,7 @@ public final class Login {
     private List<Login.CharEntry> charList;
 
     private Login() {
-        charList = new ArrayList<Login.CharEntry>();
+        charList = new ArrayList<>();
     }
 
     private static final Login INSTANCE = new Login();
@@ -194,8 +194,8 @@ public final class Login {
     }
 
     public boolean isCharacterListRequired() {
-        return (IllaClient.DEFAULT_SERVER == Servers.realserver)
-                || IllaClient.getCfg().getBoolean("serverAccountLogin");
+        return (IllaClient.DEFAULT_SERVER == Servers.realserver) ||
+                IllaClient.getCfg().getBoolean("serverAccountLogin");
     }
 
     public void requestCharacterList(final Login.RequestCharListCallback resultCallback) {
@@ -354,8 +354,7 @@ public final class Login {
      */
     @SuppressWarnings("nls")
     private void restorePassword() {
-        final String encoded =
-                IllaClient.getCfg().getString("fingerprint");
+        final String encoded = IllaClient.getCfg().getString("fingerprint");
         if (encoded != null) {
             password = shufflePassword(encoded, true);
         }
@@ -382,8 +381,8 @@ public final class Login {
     /**
      * Shuffle the letters of the password around a bit.
      *
-     * @param pw     the encoded password or the decoded password that stall be
-     *               shuffled
+     * @param pw the encoded password or the decoded password that stall be
+     * shuffled
      * @param decode false for encoding the password, true for decoding.
      * @return the encoded or the decoded password
      */
@@ -394,16 +393,13 @@ public final class Login {
         try {
             final Charset usedCharset = Charset.forName("UTF-8");
             // creating the key
-            final DESKeySpec keySpec =
-                    new DESKeySpec(IllaClient.getFile("").getBytes(usedCharset));
-            final SecretKeyFactory keyFactory =
-                    SecretKeyFactory.getInstance("DES");
+            final DESKeySpec keySpec = new DESKeySpec(IllaClient.getFile("").getBytes(usedCharset));
+            final SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
             final SecretKey key = keyFactory.generateSecret(keySpec);
 
             final Cipher cipher = Cipher.getInstance("DES");
             if (decode) {
-                byte[] encrypedPwdBytes =
-                        Base64.decode(pw.getBytes(usedCharset));
+                byte[] encrypedPwdBytes = Base64.decode(pw.getBytes(usedCharset));
                 cipher.init(Cipher.DECRYPT_MODE, key);
                 encrypedPwdBytes = cipher.doFinal(encrypedPwdBytes);
                 return new String(encrypedPwdBytes, usedCharset);
@@ -411,8 +407,7 @@ public final class Login {
 
             final byte[] cleartext = pw.getBytes(usedCharset);
             cipher.init(Cipher.ENCRYPT_MODE, key);
-            return new String(Base64.encode(cipher.doFinal(cleartext)),
-                    usedCharset);
+            return new String(Base64.encode(cipher.doFinal(cleartext)), usedCharset);
         } catch (@Nonnull final GeneralSecurityException e) {
             if (decode) {
                 LOGGER.warn("Decoding the password failed");

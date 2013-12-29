@@ -83,7 +83,7 @@ public class StatusDialog extends JDialog {
         return name.getText();
     }
 
-    public void setName(String value) {
+    public void setName(@Nonnull String value) {
         name.setText(value);
     }
 
@@ -98,7 +98,7 @@ public class StatusDialog extends JDialog {
     @Nonnull
     public Handler[] getHandlers() {
         int count = (handlerPanels.getComponentCount() + 1) / 2;
-        List<Handler> handlers = new ArrayList<Handler>();
+        List<Handler> handlers = new ArrayList<>();
         for (int i = 0; i < count; ++i) {
             HandlerPanel hp = (HandlerPanel) handlerPanels.getComponent(2 * i);
             Handler h = hp.getHandler();

@@ -57,8 +57,7 @@ public final class Config {
      * The class path of the look and feel that is used by default.
      */
     @SuppressWarnings("nls")
-    public static final String DEFAULT_LOOK_AND_FEEL =
-            "org.pushingpixels.substance.api.skin.OfficeSilver2007Skin";
+    public static final String DEFAULT_LOOK_AND_FEEL = "org.pushingpixels.substance.api.skin.OfficeSilver2007Skin";
 
     /**
      * The amount of last opened files that shall be stored.
@@ -217,14 +216,14 @@ public final class Config {
      * see if the folder is valid.
      *
      * @return a string with the path to the folder or null in case no folder is
-     *         set
+     * set
      */
     @SuppressWarnings("nls")
     @Nonnull
     private static String checkFolder() {
         if (!DirectoryManager.getInstance().isDirectorySet(DirectoryManager.Directory.User)) {
-            JOptionPane.showMessageDialog(null, "Installation ist fehlerhaft. Bitte neu ausführen.\n\n"
-                    + "Installation is corrupted, please run it again.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Installation ist fehlerhaft. Bitte neu ausführen.\n\n" +
+                    "Installation is corrupted, please run it again.", "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(-1);
         }
 
@@ -272,50 +271,41 @@ public final class Config {
 
         ConfigDialog.Page page;
         page = new ConfigDialog.Page("illarion.easynpc.gui.config.generalTab");
-        page.addEntry(new ConfigDialog.Entry(
-                "illarion.easynpc.gui.config.easyNpcFolderLabel",
-                new DirectoryEntry(EASY_NPC_FOLDER, null)));
-        page.addEntry(new ConfigDialog.Entry(
-                "illarion.easynpc.gui.config.luaFolderLabel", new DirectoryEntry(
-                LUA_NPC_FOLDER, null)));
-        page.addEntry(new ConfigDialog.Entry(
-                "illarion.easynpc.gui.config.maxUndoLabel", new NumberEntry(
-                UNDO_COUNT_KEY, 0, 10000)));
-        page.addEntry(new ConfigDialog.Entry(
-                "illarion.easynpc.gui.config.errorReport", new SelectEntry(
-                CrashReporter.CFG_KEY,
-                SelectEntry.STORE_INDEX,
-                new Object[]{
-                        Lang.getMsg("illarion.easynpc.gui.config.errorAsk"),
-                        Lang.getMsg("illarion.easynpc.gui.config.errorAlways"),
-                        Lang.getMsg("illarion.easynpc.gui.config.errorNever")
-                })));
+        page.addEntry(new ConfigDialog.Entry("illarion.easynpc.gui.config.easyNpcFolderLabel",
+                                             new DirectoryEntry(EASY_NPC_FOLDER, null)));
+        page.addEntry(new ConfigDialog.Entry("illarion.easynpc.gui.config.luaFolderLabel",
+                                             new DirectoryEntry(LUA_NPC_FOLDER, null)));
+        page.addEntry(new ConfigDialog.Entry("illarion.easynpc.gui.config.maxUndoLabel",
+                                             new NumberEntry(UNDO_COUNT_KEY, 0, 10000)));
+        page.addEntry(new ConfigDialog.Entry("illarion.easynpc.gui.config.errorReport",
+                                             new SelectEntry(CrashReporter.CFG_KEY, SelectEntry.STORE_INDEX,
+                                                             new Object[]{Lang.getMsg(
+                                                                     "illarion.easynpc.gui.config.errorAsk"),
+                                                                          Lang.getMsg(
+                                                                                  "illarion.easynpc.gui.config.errorAlways"),
+                                                                          Lang.getMsg(
+                                                                                  "illarion.easynpc.gui.config.errorNever")})));
         dialog.addPage(page);
 
-        page =
-                new ConfigDialog.Page("illarion.easynpc.gui.config.lookAndFeelTab");
-        page.addEntry(new ConfigDialog.Entry(
-                "illarion.easynpc.gui.config.useWindowDecoLabel", new CheckEntry(
-                USE_WINDOW_DECO)));
+        page = new ConfigDialog.Page("illarion.easynpc.gui.config.lookAndFeelTab");
+        page.addEntry(new ConfigDialog.Entry("illarion.easynpc.gui.config.useWindowDecoLabel",
+                                             new CheckEntry(USE_WINDOW_DECO)));
 
-        Collection<String> themeObject = new FastTable<String>();
-        Collection<String> themeLabel = new FastTable<String>();
+        Collection<String> themeObject = new FastTable<>();
+        Collection<String> themeLabel = new FastTable<>();
 
-        for (final Entry<String, SkinInfo> skin : SubstanceLookAndFeel
-                .getAllSkins().entrySet()) {
+        for (final Entry<String, SkinInfo> skin : SubstanceLookAndFeel.getAllSkins().entrySet()) {
             themeObject.add(skin.getValue().getClassName());
             themeLabel.add(skin.getValue().getDisplayName());
         }
 
-        page.addEntry(new ConfigDialog.Entry(
-                "illarion.easynpc.gui.config.usedThemeLabel", new SelectEntry(
-                USED_LOOK_AND_FEEL, SelectEntry.STORE_VALUE, themeObject
-                .toArray(), themeLabel.toArray(new String[themeLabel
-                .size()]))));
+        page.addEntry(new ConfigDialog.Entry("illarion.easynpc.gui.config.usedThemeLabel",
+                                             new SelectEntry(USED_LOOK_AND_FEEL, SelectEntry.STORE_VALUE,
+                                                             themeObject.toArray(),
+                                                             themeLabel.toArray(new String[themeLabel.size()]))));
 
-        page.addEntry(new ConfigDialog.Entry(
-                "illarion.easynpc.gui.config.useSyntaxLabel", new CheckEntry(
-                USE_SYNTAX_HIGHLIGHT)));
+        page.addEntry(new ConfigDialog.Entry("illarion.easynpc.gui.config.useSyntaxLabel",
+                                             new CheckEntry(USE_SYNTAX_HIGHLIGHT)));
         dialog.addPage(page);
 
         return dialog;
@@ -380,8 +370,7 @@ public final class Config {
         final String[] cleanList = new String[LAST_OPEN_FILES_COUNT];
 
         int entryPos = 0;
-        for (int i = 0; (i < fetchedList.length)
-                && (i < LAST_OPEN_FILES_COUNT); i++) {
+        for (int i = 0; (i < fetchedList.length) && (i < LAST_OPEN_FILES_COUNT); i++) {
             final String workString = fetchedList[i];
             if (workString.length() < 5) {
                 continue;
@@ -431,9 +420,9 @@ public final class Config {
         if (cfg == null) {
             LOGGER.error("Configuration system not initialized yet.");
         }
-        if ((cfg == null) || (cfg.getInteger(LAST_WINDOW_X) <= 0) || (cfg.getInteger(LAST_WINDOW_Y) <= 0)
-                || (cfg.getInteger(LAST_WINDOW_W) <= 0) || (cfg.getInteger(LAST_WINDOW_H) <= 0)
-                || (cfg.getInteger(LAST_WINDOW_STATE) <= 0)) {
+        if ((cfg == null) || (cfg.getInteger(LAST_WINDOW_X) <= 0) || (cfg.getInteger(LAST_WINDOW_Y) <= 0) ||
+                (cfg.getInteger(LAST_WINDOW_W) <= 0) || (cfg.getInteger(LAST_WINDOW_H) <= 0) ||
+                (cfg.getInteger(LAST_WINDOW_STATE) <= 0)) {
             final Dimension screenSize = comp.getToolkit().getScreenSize();
             final int width = (screenSize.width * 8) / 10;
             final int height = (screenSize.height * 8) / 10;
@@ -449,11 +438,8 @@ public final class Config {
             newBounds.width = cfg.getInteger(LAST_WINDOW_W);
             newBounds.height = cfg.getInteger(LAST_WINDOW_H);
 
-            final Rectangle testBounds =
-                    new Rectangle(new Point(0, 0), comp.getToolkit()
-                            .getScreenSize());
-            final Rectangle intersectionBounds =
-                    newBounds.intersection(testBounds);
+            final Rectangle testBounds = new Rectangle(new Point(0, 0), comp.getToolkit().getScreenSize());
+            final Rectangle intersectionBounds = newBounds.intersection(testBounds);
 
             if (newBounds.equals(intersectionBounds)) {
                 comp.setBounds(newBounds);
@@ -572,7 +558,7 @@ public final class Config {
      * Get the flag if the editor is supposed to decorate the windows.
      *
      * @return <code>true</code> in case the editor is expected to decorate the
-     *         windows
+     * windows
      */
     public boolean getUseWindowDecoration() {
         if (cfg == null) {
@@ -594,8 +580,7 @@ public final class Config {
         cfg = new ConfigSystem(configFile);
 
         cfg.setDefault(LAST_FILES_KEY, "");
-        cfg.setDefault(EASY_NPC_FOLDER,
-                new File(System.getProperty("user.home")));
+        cfg.setDefault(EASY_NPC_FOLDER, new File(System.getProperty("user.home")));
         cfg.setDefault(LAST_FILES_KEY, "");
         cfg.setDefault(LAST_WINDOW_H, -1);
         cfg.setDefault(LAST_WINDOW_STATE, -1);
@@ -757,7 +742,7 @@ public final class Config {
      * Set the flag if the editor is expected to highlight the syntax.
      *
      * @param highlight <code>true</code> in case the editor is expected
-     *                  highlight the syntax.
+     * highlight the syntax.
      */
     public void setUseSyntaxHighlighting(final boolean highlight) {
         if (cfg == null) {
@@ -776,7 +761,7 @@ public final class Config {
      * Set the flag if the editor is expected to decorate the window or not.
      *
      * @param deco <code>true</code> in case the editor is expected to decorate
-     *             the window
+     * the window
      */
     public void setUseWindowDecoration(final boolean deco) {
         if (cfg == null) {
@@ -805,8 +790,9 @@ public final class Config {
             @Override
             public void run() {
                 requireRestart = false;
-                JOptionPane.showMessageDialog(MainFrame.getInstance(), "Some of the settings changed require a " +
-                        "restart to take effect.", "Restart needed", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(MainFrame.getInstance(),
+                                              "Some of the settings changed require a " + "restart to take effect.",
+                                              "Restart needed", JOptionPane.INFORMATION_MESSAGE);
             }
         });
     }

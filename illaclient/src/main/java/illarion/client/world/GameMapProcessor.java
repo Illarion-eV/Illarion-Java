@@ -79,7 +79,7 @@ public final class GameMapProcessor extends Thread {
         setDaemon(true);
         setPriority(MIN_PRIORITY);
         parent = parentMap;
-        unchecked = new LinkedBlockingDeque<Long>();
+        unchecked = new LinkedBlockingDeque<>();
         running = false;
     }
 
@@ -144,7 +144,7 @@ public final class GameMapProcessor extends Thread {
      * Do the clipping check of a tile.
      *
      * @param tile the tile that is checked
-     * @param key  the location key of the checked tile
+     * @param key the location key of the checked tile
      * @return {@code true} in case the tile was clipped away
      */
     private boolean checkClipping(@Nonnull final MapTile tile, final long key) {
@@ -170,28 +170,24 @@ public final class GameMapProcessor extends Thread {
 
         final MapDimensions mapDim = MapDimensions.getInstance();
 
-        if ((playerLoc.getCol() + mapDim.getClippingOffsetLeft()) > tileLoc
-                .getCol()) {
+        if ((playerLoc.getCol() + mapDim.getClippingOffsetLeft()) > tileLoc.getCol()) {
             parent.removeTile(key);
             return true;
         }
 
-        if ((playerLoc.getCol() + mapDim.getClippingOffsetRight()) < tileLoc
-                .getCol()) {
+        if ((playerLoc.getCol() + mapDim.getClippingOffsetRight()) < tileLoc.getCol()) {
             parent.removeTile(key);
             return true;
         }
 
         final int level = Math.abs(tileLoc.getScZ() - playerLoc.getScZ()) * 6;
 
-        if ((playerLoc.getRow() + mapDim.getClippingOffsetTop()) < (tileLoc
-                .getRow() - level)) {
+        if ((playerLoc.getRow() + mapDim.getClippingOffsetTop()) < (tileLoc.getRow() - level)) {
             parent.removeTile(key);
             return true;
         }
 
-        if ((playerLoc.getRow() + mapDim.getClippingOffsetBottom()) > (tileLoc
-                .getRow() + level)) {
+        if ((playerLoc.getRow() + mapDim.getClippingOffsetBottom()) > (tileLoc.getRow() + level)) {
             parent.removeTile(key);
             return true;
         }
@@ -212,7 +208,7 @@ public final class GameMapProcessor extends Thread {
      * Add all tiles in the visible perspective below one location to the list of unchecked tiles again.
      *
      * @param searchLoc the location the search starts add. This location is not added to the list of unchecked tiles
-     * @param limit     the limit the Z coordinate is not going below
+     * @param limit the limit the Z coordinate is not going below
      */
     private void addAllBelow(@Nonnull final Location searchLoc, final int limit) {
         int currX = searchLoc.getScX();
@@ -232,7 +228,7 @@ public final class GameMapProcessor extends Thread {
      * Add all tiles in the visible perspective above one location to the list of unchecked tiles again.
      *
      * @param searchLoc the location the search starts add. This location is not added to the list of unchecked tiles
-     * @param limit     the limit the Z coordinate is not going below
+     * @param limit the limit the Z coordinate is not going below
      */
     private void addAllAbove(@Nonnull final Location searchLoc, final int limit) {
         int currX = searchLoc.getScX();
@@ -271,8 +267,8 @@ public final class GameMapProcessor extends Thread {
                 if ((x == 0) && (y == 0)) {
                     continue;
                 }
-                final long foundKey = Location.getKey(searchLoc.getScX() + x, searchLoc.getScY() + y,
-                        searchLoc.getScZ());
+                final long foundKey = Location
+                        .getKey(searchLoc.getScX() + x, searchLoc.getScY() + y, searchLoc.getScZ());
                 addLocationToUnchecked(foundKey);
             }
         }

@@ -51,15 +51,14 @@ public class IgeSoundDevice implements SoundDevice {
         this.engine = engine;
     }
 
-
     @Override
-    public void setResourceLoader(final NiftyResourceLoader niftyResourceLoader) {
+    public void setResourceLoader(@Nonnull final NiftyResourceLoader niftyResourceLoader) {
         // nothing
     }
 
     @Nullable
     @Override
-    public SoundHandle loadSound(final SoundSystem soundSystem, @Nonnull final String filename) {
+    public SoundHandle loadSound(@Nonnull final SoundSystem soundSystem, @Nonnull final String filename) {
         final Sound sound = engine.getAssets().getSoundsManager().getSound(filename);
         if (sound == null) {
             return null;
@@ -69,7 +68,7 @@ public class IgeSoundDevice implements SoundDevice {
 
     @Nullable
     @Override
-    public SoundHandle loadMusic(final SoundSystem soundSystem, @Nonnull final String filename) {
+    public SoundHandle loadMusic(@Nonnull final SoundSystem soundSystem, @Nonnull final String filename) {
         final Music music = engine.getAssets().getSoundsManager().getMusic(filename);
         if (music == null) {
             return null;

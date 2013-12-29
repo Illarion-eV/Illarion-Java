@@ -62,7 +62,7 @@ public final class Skills {
      * instances of this class are created.
      */
     private Skills() {
-        skillMap = new HashMap<Integer, Skill>();
+        skillMap = new HashMap<>();
     }
 
     /**

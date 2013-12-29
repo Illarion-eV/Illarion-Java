@@ -90,14 +90,17 @@ public final class CrashData implements Externalizable {
     /**
      * The constructor that collects all data for such a crash data object.
      *
-     * @param appIdent           the application identifier
+     * @param appIdent the application identifier
      * @param problemDescription the human readable description of the error.
-     *                           This is not send to the server, its just displayed
-     * @param crashThread        the thread that crashed
-     * @param crashException     the exception that caused the crash
+     * This is not send to the server, its just displayed
+     * @param crashThread the thread that crashed
+     * @param crashException the exception that caused the crash
      */
-    public CrashData(@Nonnull final AppIdent appIdent, @Nonnull final String problemDescription,
-                     @Nonnull final Thread crashThread, @Nonnull final Throwable crashException) {
+    public CrashData(
+            @Nonnull final AppIdent appIdent,
+            @Nonnull final String problemDescription,
+            @Nonnull final Thread crashThread,
+            @Nonnull final Throwable crashException) {
         applicationIdentifier = appIdent;
         threadName = crashThread.getName();
 
@@ -138,14 +141,9 @@ public final class CrashData implements Externalizable {
     @Nonnull
     @SuppressWarnings("nls")
     static String getOSName() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(System.getProperty("os.name"));
-        builder.append(' ');
-        builder.append(System.getProperty("os.version"));
-        builder.append(' ');
-        builder.append(System.getProperty("os.arch"));
 
-        return builder.toString();
+        return System.getProperty("os.name") + ' ' + System.getProperty("os.version") + ' ' +
+                System.getProperty("os.arch");
     }
 
     /**
@@ -227,7 +225,7 @@ public final class CrashData implements Externalizable {
             exceptionName = (String) in.readObject();
         } else {
             throw new ClassNotFoundException("Class version invalid. Found: " + Long.toString(fileVersion) +
-                    " expected: 1 or 2");
+                                                     " expected: 1 or 2");
         }
     }
 }

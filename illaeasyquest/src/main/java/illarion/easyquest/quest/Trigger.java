@@ -56,7 +56,7 @@ public class Trigger implements Serializable {
         return objectId;
     }
 
-    public void setType(String type) {
+    public void setType(@Nullable String type) {
         this.type = type;
     }
 
@@ -65,7 +65,7 @@ public class Trigger implements Serializable {
         return type;
     }
 
-    public void setParameters(Object[] parameters) {
+    public void setParameters(@Nullable Object[] parameters) {
         this.parameters = parameters;
     }
 
@@ -74,7 +74,7 @@ public class Trigger implements Serializable {
         return parameters;
     }
 
-    public void setConditions(Condition[] conditions) {
+    public void setConditions(@Nullable Condition[] conditions) {
         this.conditions = conditions;
     }
 
@@ -86,5 +86,4 @@ public class Trigger implements Serializable {
     public final String toString() {
         return getName();
     }
-
 }

@@ -60,9 +60,8 @@ public class RendererManager {
     private int actualLevel;
     private Rectangle panelViewport;
 
-
     public RendererManager() {
-        renderers = new FastTable<AbstractMapRenderer>();
+        renderers = new FastTable<>();
         AnnotationProcessor.process(this);
     }
 
@@ -78,12 +77,10 @@ public class RendererManager {
     }
 
     public void render(final Map map, @Nonnull final Rectangle viewport, @Nonnull final Graphics2D g) {
-        final Rectangle renderViewport = new Rectangle(
-                (int) (viewport.x - (getTileWidth() * getZoom())),
-                (int) (viewport.y - (getTileHeight() * getZoom())),
-                (int) (viewport.width + (2 * getTileWidth() * getZoom())),
-                (int) (viewport.height + (2 * getTileHeight() * getZoom()))
-        );
+        final Rectangle renderViewport = new Rectangle((int) (viewport.x - (getTileWidth() * getZoom())),
+                                                       (int) (viewport.y - (getTileHeight() * getZoom())),
+                                                       (int) (viewport.width + (2 * getTileWidth() * getZoom())),
+                                                       (int) (viewport.height + (2 * getTileHeight() * getZoom())));
         final AffineTransform t = g.getTransform();
         g.translate(translationX, translationY);
         g.scale(getZoom(), getZoom());
@@ -200,7 +197,6 @@ public class RendererManager {
         }
         this.panelViewport.setRect(panelViewport.x, panelViewport.y, panelViewport.width, panelViewport.height);
     }
-
 
     public void setDefaultTranslationY(final int defaultTranslationY) {
         this.defaultTranslationY = defaultTranslationY;

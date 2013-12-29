@@ -124,8 +124,8 @@ public final class LightTracer extends Thread implements Stoppable {
         super("LightTracer Thread");
 
         mapSource = tracerMapSource;
-        dirtyLights = new ArrayList<LightSource>();
-        tidyLights = new ArrayList<LightSource>();
+        dirtyLights = new ArrayList<>();
+        tidyLights = new ArrayList<>();
         running = false;
     }
 
@@ -150,7 +150,7 @@ public final class LightTracer extends Thread implements Stoppable {
      * this light tracer if requested.
      *
      * @param light the light that shall be added to the light tracer and so to
-     *              the game screen
+     * the game screen
      */
     public void add(@Nonnull final LightSource light) {
         light.setMapSource(mapSource);
@@ -279,7 +279,7 @@ public final class LightTracer extends Thread implements Stoppable {
      *
      * @param light the light source that shall be removed
      * @return true in case the light got removed, false if this operation
-     *         failed
+     * failed
      */
     public boolean remove(final LightSource light) {
         synchronized (lightsListsLock) {
@@ -339,8 +339,7 @@ public final class LightTracer extends Thread implements Stoppable {
             boolean dirtyLight = false;
             synchronized (lightsListsLock) {
                 if (dirty) {
-                    if (!tidyLights.isEmpty()
-                            && ((tidyLights.size() - 1) > lastTinyIndex)) {
+                    if (!tidyLights.isEmpty() && ((tidyLights.size() - 1) > lastTinyIndex)) {
                         lastTinyIndex++;
                         light = tidyLights.get(lastTinyIndex);
                     } else if (!dirtyLights.isEmpty()) {
@@ -360,7 +359,6 @@ public final class LightTracer extends Thread implements Stoppable {
                     } catch (@Nonnull final InterruptedException e) {
                         LOGGER.debug("Light tracer woken up for unknown reasons", e);
                     }
-
                 }
             }
 

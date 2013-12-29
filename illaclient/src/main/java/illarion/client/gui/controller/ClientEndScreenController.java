@@ -25,6 +25,8 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.IllaClient;
 
+import javax.annotation.Nonnull;
+
 /**
  * The controller for the last screen that is displayed before the client goes down.
  *
@@ -47,7 +49,7 @@ public final class ClientEndScreenController implements ScreenController, KeyInp
     }
 
     @Override
-    public boolean keyEvent(final NiftyInputEvent inputEvent) {
+    public boolean keyEvent(@Nonnull final NiftyInputEvent inputEvent) {
         return false;
     }
 }

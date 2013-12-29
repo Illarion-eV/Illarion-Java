@@ -89,11 +89,12 @@ public class TextureAtlasListXmlLoadingTask<T> implements Runnable, TextureAtlas
      * @param progressMonitor the monitor of the loading progress
      * @param taskExecutor the executor that takes care for executing further tasks.
      */
-    public TextureAtlasListXmlLoadingTask(@Nonnull final MXParserFactory mxParserFactory,
-                                          @Nonnull final String atlasName,
-                                          @Nonnull final AbstractTextureManager<T> textureManager,
-                                          @Nonnull final ProgressMonitor progressMonitor,
-                                          @Nullable final Executor taskExecutor) {
+    public TextureAtlasListXmlLoadingTask(
+            @Nonnull final MXParserFactory mxParserFactory,
+            @Nonnull final String atlasName,
+            @Nonnull final AbstractTextureManager<T> textureManager,
+            @Nonnull final ProgressMonitor progressMonitor,
+            @Nullable final Executor taskExecutor) {
         this.mxParserFactory = mxParserFactory;
         this.atlasName = atlasName;
         this.textureManager = textureManager;
@@ -124,30 +125,36 @@ public class TextureAtlasListXmlLoadingTask<T> implements Runnable, TextureAtlas
             while (currentEvent != XmlPullParser.END_DOCUMENT) {
                 if (currentEvent == XmlPullParser.START_TAG) {
                     final String tagName = parser.getName();
-                    if ("atlasList".equals(tagName)) {
-                        expectedAtlasCount = getExpectedAtlasCount(parser, expectedAtlasCount);
-                        if (expectedAtlasCount > 0) {
-                            progressMonitor.setWeight(expectedAtlasCount);
-                        }
-                    } else if ("atlas".equals(tagName)) {
-                        @Nullable final String currentAtlasName = getAtlasTextureName(parser);
-                        if (currentAtlasName != null) {
-                            final FutureTask<T> preLoadTask = new FutureTask<T>(
-                                    new TextureAtlasPreLoadTask<T>(textureManager, currentAtlasName));
-                            if (taskExecutor == null) {
-                                preLoadTask.run();
-                            } else {
-                                taskExecutor.execute(preLoadTask);
+                    switch (tagName) {
+                        case "atlasList":
+                            expectedAtlasCount = getExpectedAtlasCount(parser, expectedAtlasCount);
+                            if (expectedAtlasCount > 0) {
+                                progressMonitor.setWeight(expectedAtlasCount);
                             }
+                            break;
+                        case "atlas":
+                            @Nullable final String currentAtlasName = getAtlasTextureName(parser);
+                            if (currentAtlasName != null) {
+                                final FutureTask<T> preLoadTask = new FutureTask<>(
+                                        new TextureAtlasPreLoadTask<>(textureManager, currentAtlasName));
+                                if (taskExecutor == null) {
+                                    preLoadTask.run();
+                                } else {
+                                    taskExecutor.execute(preLoadTask);
+                                }
 
-                            final float progressToAdd = (expectedAtlasCount == 0) ? 0.f : (1.f / expectedAtlasCount);
-                            currentTextureTask = new TextureAtlasFinalizeTask<T>(preLoadTask, currentAtlasName,
-                                    textureManager, progressMonitor, progressToAdd);
-                        }
-                    } else if ("sprite".equals(tagName)) {
-                        if (currentTextureTask != null) {
-                            transferSpriteData(parser, currentTextureTask);
-                        }
+                                final float progressToAdd = (expectedAtlasCount == 0) ? 0.f : (1.f /
+                                        expectedAtlasCount);
+                                currentTextureTask = new TextureAtlasFinalizeTask<>(preLoadTask, currentAtlasName,
+                                                                                    textureManager, progressMonitor,
+                                                                                    progressToAdd);
+                            }
+                            break;
+                        case "sprite":
+                            if (currentTextureTask != null) {
+                                transferSpriteData(parser, currentTextureTask);
+                            }
+                            break;
                     }
                 } else if (currentEvent == XmlPullParser.END_TAG) {
                     final String tagName = parser.getName();
@@ -209,8 +216,8 @@ public class TextureAtlasListXmlLoadingTask<T> implements Runnable, TextureAtlas
         return null;
     }
 
-    private void transferSpriteData(@Nonnull final XmlPullParser parser,
-                                    @Nonnull final TextureAtlasFinalizeTask<T> task) {
+    private void transferSpriteData(
+            @Nonnull final XmlPullParser parser, @Nonnull final TextureAtlasFinalizeTask<T> task) {
         @Nullable String name = null;
         int posX = -1;
         int posY = -1;
@@ -235,7 +242,7 @@ public class TextureAtlasListXmlLoadingTask<T> implements Runnable, TextureAtlas
                 }
             } catch (@Nonnull final NumberFormatException e) {
                 LOGGER.error("Error while parsing texture atlas sprite: " +
-                        attributeName + "=\"" + attributeValue + '"');
+                                     attributeName + "=\"" + attributeValue + '"');
             }
         }
 

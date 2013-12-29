@@ -34,11 +34,11 @@ import java.util.List;
 public class AnnotationChecker {
 
     public boolean isAnnotatedFill(@Nonnull final Map map) {
-        final List<String[]> annotatedTiles = new ArrayList<String[]>();
+        final List<String[]> annotatedTiles = new ArrayList<>();
         for (final MapPosition pos : map.getSelectedTiles()) {
-            final MapTile tile = map.getTileAt(pos.getX(),pos.getY());
+            final MapTile tile = map.getTileAt(pos.getX(), pos.getY());
             if (tile != null) {
-                annotatedTiles.addAll(getAnnotatedObject(pos.getX(),pos.getY(), tile));
+                annotatedTiles.addAll(getAnnotatedObject(pos.getX(), pos.getY(), tile));
             }
         }
         if (annotatedTiles.isEmpty()) {
@@ -48,13 +48,17 @@ public class AnnotationChecker {
         return shouldEditAnyway(annotatedTiles);
     }
 
-    public boolean isAnnotated(final int x, final int y, @Nonnull final Map map, @Nonnull final MapSelection mapSelection) {
-        final List<String[]> annotatedTiles = new ArrayList<String[]>();
+    public boolean isAnnotated(
+            final int x,
+            final int y,
+            @Nonnull final Map map,
+            @Nonnull final MapSelection mapSelection) {
+        final List<String[]> annotatedTiles = new ArrayList<>();
         for (final MapPosition position : mapSelection.getTiles().keySet()) {
             final int newX = x + (position.getX() - mapSelection.getOffsetX());
             final int newY = y + (position.getY() - mapSelection.getOffsetY());
             if (map.contains(newX, newY)) {
-                final MapTile tile = map.getTileAt(newX,newY);
+                final MapTile tile = map.getTileAt(newX, newY);
                 if (tile != null) {
                     annotatedTiles.addAll(getAnnotatedObject(newX, newY, tile));
                 }
@@ -71,7 +75,7 @@ public class AnnotationChecker {
         if (map == null) {
             return false;
         }
-        final List<String[]> annotatedTiles = new ArrayList<String[]>();
+        final List<String[]> annotatedTiles = new ArrayList<>();
         final MapTile tile = map.getTileAt(mapX, mapY);
         if (tile != null) {
             annotatedTiles.addAll(getAnnotatedObject(mapX, mapY, tile));
@@ -85,16 +89,16 @@ public class AnnotationChecker {
 
     @Nonnull
     private static List<String[]> getAnnotatedObject(final int x, final int y, @Nonnull final MapTile tile) {
-        final List<String[]> annotatedObject = new ArrayList<String[]>();
-        if(tile.hasAnnotation()) {
-            final String[] annoArray = {x+"", y+"", "", tile.getAnnotation()};
+        final List<String[]> annotatedObject = new ArrayList<>();
+        if (tile.hasAnnotation()) {
+            final String[] annoArray = {x + "", y + "", "", tile.getAnnotation()};
             annotatedObject.add(annoArray);
         }
         if (tile.getMapItems() != null) {
             for (final MapItem item : tile.getMapItems()) {
                 if (item.hasAnnotation()) {
                     final String[] annoItemArray = {x + "", y + "", MapItem.join(item.getItemData(), ", "),
-                            item.getAnnotation()};
+                                                    item.getAnnotation()};
                     annotatedObject.add(annoItemArray);
                 }
             }
@@ -104,7 +108,7 @@ public class AnnotationChecker {
     }
 
     private static boolean shouldEditAnyway(@Nonnull final List<String[]> annotatedTiles) {
-        final String[] columnNames = { "X", "Y", "Item data", "Annotation" };
+        final String[] columnNames = {"X", "Y", "Item data", "Annotation"};
 
         final String[][] dataValues = annotatedTiles.toArray(new String[annotatedTiles.size()][columnNames.length]);
         final JTable annotationFields = new JTable(dataValues, columnNames);
@@ -115,18 +119,24 @@ public class AnnotationChecker {
         final JPanel panel = new JPanel();
         panel.add(new JScrollPane(annotationFields));
 
-        final int result = JOptionPane.showConfirmDialog(null, panel,
-                Lang.getMsg("data.AnnotationChecker.Annotation_header"), JOptionPane.YES_NO_OPTION);
+        final int result = JOptionPane
+                .showConfirmDialog(null, panel, Lang.getMsg("data.AnnotationChecker.Annotation_header"),
+                                   JOptionPane.YES_NO_OPTION);
         return result != JOptionPane.YES_OPTION;
     }
 
     private static class HoverCellRenderer extends DefaultTableCellRenderer {
         @Nonnull
         @Override
-        public Component getTableCellRendererComponent(final JTable table, final Object value,
-                                                       final boolean isSelected, final boolean hasFocus,
-                                                       final int row, final int column) {
-            final JLabel cellLabel = (JLabel)super.getTableCellRendererComponent(table,value,isSelected,hasFocus,row, column);
+        public Component getTableCellRendererComponent(
+                final JTable table,
+                final Object value,
+                final boolean isSelected,
+                final boolean hasFocus,
+                final int row,
+                final int column) {
+            final JLabel cellLabel = (JLabel) super
+                    .getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             cellLabel.setToolTipText(cellLabel.getText());
             return cellLabel;
         }

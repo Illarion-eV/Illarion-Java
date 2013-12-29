@@ -18,7 +18,6 @@
  */
 package illarion.download.launcher;
 
-import illarion.common.config.Config;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.Timer;
 import org.apache.log4j.Logger;
@@ -94,7 +93,7 @@ public final class JavaLauncher {
         final String classPathString = buildClassPathString(classpath);
 
         final StringBuilder builder = new StringBuilder();
-        final List<String> callList = new ArrayList<String>();
+        final List<String> callList = new ArrayList<>();
 
         builder.append(System.getProperty("java.home"));
         builder.append(File.separatorChar).append("bin");

@@ -30,7 +30,10 @@ import org.mantisbt.connect.model.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -161,15 +164,14 @@ public final class CrashReporter {
         final Calendar cal = Calendar.getInstance();
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         final String dateStr = sdf.format(cal.getTime());
-        final File target = new File(DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User), "crash_" + dateStr + ".dump");
+        final File target = new File(DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User),
+                                     "crash_" + dateStr + ".dump");
 
         ObjectOutputStream oOut = null;
         try {
             oOut = new ObjectOutputStream(new FileOutputStream(target));
             oOut.writeObject(crash);
             oOut.flush();
-        } catch (@Nonnull final FileNotFoundException e) {
-            // ignored
         } catch (@Nonnull final IOException e) {
             // ignored
         } finally {
@@ -197,9 +199,9 @@ public final class CrashReporter {
      * Report a crash to the Illarion Server in case the application is supposed
      * to do so.
      *
-     * @param crash     the data about the crash
+     * @param crash the data about the crash
      * @param ownThread <code>true</code> in case the crash report is supposed
-     *                  to be started in a additional thread
+     * to be started in a additional thread
      */
     @SuppressWarnings("nls")
     public void reportCrash(@Nonnull final CrashData crash, final boolean ownThread) {
@@ -215,7 +217,8 @@ public final class CrashReporter {
         if ("NoClassDefFoundError".equals(crash.getExceptionName())) {
             try {
                 //noinspection ResultOfMethodCallIgnored
-                new File(DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.Data), "corrupted").createNewFile();
+                new File(DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.Data), "corrupted")
+                        .createNewFile();
             } catch (@Nonnull final IOException e) {
                 LOGGER.error("Failed to mark data as corrupted.");
             }
@@ -333,7 +336,7 @@ public final class CrashReporter {
 
         try {
             final IMCSession mantisSession = new MCSession(CRASH_SERVER, "Java Reporting System",
-                    "dA23MvKT1KDm4k0bQmMS");
+                                                           "dA23MvKT1KDm4k0bQmMS");
             final IProject[] projects = mantisSession.getAccessibleProjects();
             IProject bugReportProject = null;
             for (final IProject project : projects) {
@@ -412,8 +415,9 @@ public final class CrashReporter {
                 mantisSession.addNote(duplicateIssue.getId(), note);
             } else if (possibleDuplicateIssue != null) {
                 final INote note = mantisSession.newNote("A problem that is by all means very similar occurred:\n" +
-                        description + "\nOperating System: " + System.getProperty("os.name") + ' ' +
-                        System.getProperty("os.version"));
+                                                                 description + "\nOperating System: " +
+                                                                 System.getProperty("os.name") + ' ' +
+                                                                 System.getProperty("os.version"));
                 mantisSession.addNote(possibleDuplicateIssue.getId(), note);
             } else {
                 final IIssue issue = mantisSession.newIssue(selectedProject.getId());
@@ -432,8 +436,8 @@ public final class CrashReporter {
                 LOGGER.info("Added new Issue #" + id);
 
                 if (similarIssue != null) {
-                    mantisSession.addNote(id, mantisSession.newNote("Similar issue was found at #" +
-                            similarIssue.getId()));
+                    mantisSession
+                            .addNote(id, mantisSession.newNote("Similar issue was found at #" + similarIssue.getId()));
                 }
             }
         } catch (MCException e) {
@@ -458,8 +462,7 @@ public final class CrashReporter {
      * @throws IllegalArgumentException in case the invalid mode value is chosen
      */
     public void setMode(final int newMode) {
-        if ((newMode != MODE_ALWAYS) && (newMode != MODE_ASK)
-                && (newMode != MODE_NEVER)) {
+        if ((newMode != MODE_ALWAYS) && (newMode != MODE_ASK) && (newMode != MODE_NEVER)) {
             mode = MODE_ASK;
             return;
         }

@@ -35,7 +35,7 @@ public class ConditionTemplate implements Comparable<ConditionTemplate> {
         this.name = name;
         title = null;
         condition = null;
-        parameters = new ArrayList<TemplateParameter>();
+        parameters = new ArrayList<>();
     }
 
     public void setTitle(String title) {

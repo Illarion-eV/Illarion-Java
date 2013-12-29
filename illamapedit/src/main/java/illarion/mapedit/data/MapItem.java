@@ -61,14 +61,14 @@ public class MapItem {
     /**
      * Creates a new Item
      *
-     * @param itemId   The item id.
+     * @param itemId The item id.
      * @param itemData The data of this item.
-     * @param quality  The quality of this item.
+     * @param quality The quality of this item.
      */
     public MapItem(final int itemId, @Nullable final List<String> itemData, final int quality) {
         this.itemId = itemId;
         if ((itemData != null) && !itemData.isEmpty()) {
-            this.itemData = new ArrayList<String>(itemData);
+            this.itemData = new ArrayList<>(itemData);
         }
         this.quality = quality;
     }
@@ -80,18 +80,18 @@ public class MapItem {
      */
     public MapItem(@Nonnull final MapItem old) {
         itemId = old.itemId;
-        itemData = new ArrayList<String>(old.itemData);
+        itemData = new ArrayList<>(old.itemData);
         quality = old.quality;
     }
 
     /**
      * Creates a new Item
      *
-     * @param itemId   The item id.
-     * @param quality  The quality of this item.
+     * @param itemId The item id.
+     * @param quality The quality of this item.
      */
     public MapItem(final int itemId, final int quality) {
-        this(itemId, new ArrayList<String>(),quality);
+        this(itemId, new ArrayList<String>(), quality);
     }
 
     public String getAnnotation() {
@@ -132,14 +132,14 @@ public class MapItem {
 
     public void addItemData(final String data) {
         if (itemData == null) {
-            itemData = new ArrayList<String>();
+            itemData = new ArrayList<>();
         }
         itemData.add(data);
     }
 
     public void addItemData(final int index, final String data) {
         if (itemData == null) {
-            itemData = new ArrayList<String>();
+            itemData = new ArrayList<>();
         }
         itemData.set(index, data);
     }

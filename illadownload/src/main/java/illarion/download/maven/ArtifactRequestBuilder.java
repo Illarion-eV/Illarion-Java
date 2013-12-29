@@ -21,8 +21,7 @@ import java.util.List;
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-final class ArtifactRequestBuilder implements DependencyVisitor
-{
+final class ArtifactRequestBuilder implements DependencyVisitor {
     @Nullable
     private final RequestTrace trace;
 
@@ -35,11 +34,12 @@ final class ArtifactRequestBuilder implements DependencyVisitor
     @Nonnull
     private final RepositorySystemSession session;
 
-    public ArtifactRequestBuilder(@Nullable final RequestTrace trace,
-                                  @Nonnull final RepositorySystem system,
-                                  @Nonnull final RepositorySystemSession session) {
+    public ArtifactRequestBuilder(
+            @Nullable final RequestTrace trace,
+            @Nonnull final RepositorySystem system,
+            @Nonnull final RepositorySystemSession session) {
         this.trace = trace;
-        this.requests = new ArrayList<FutureArtifactRequest>();
+        this.requests = new ArrayList<>();
         versionScheme = new GenericVersionScheme();
         this.session = session;
         this.system = system;

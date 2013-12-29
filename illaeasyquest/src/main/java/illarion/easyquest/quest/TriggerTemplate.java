@@ -55,7 +55,7 @@ public class TriggerTemplate {
         hasPrior = false;
         hasPosterior = false;
         id = null;
-        parameters = new ArrayList<TemplateParameter>();
+        parameters = new ArrayList<>();
     }
 
     public void setTitle(String title) {
@@ -141,9 +141,8 @@ public class TriggerTemplate {
     }
 
     public boolean isComplete() {
-        return (title != null) && hasQuestNumber && hasPrior && hasPosterior
-                && (header != null) && (body != null) && (entryPoint != null)
-                && (category != null) && (id != null);
+        return (title != null) && hasQuestNumber && hasPrior && hasPosterior && (header != null) && (body != null) &&
+                (entryPoint != null) && (category != null) && (id != null);
     }
 
     @Nullable

@@ -79,7 +79,7 @@ public class IgeRenderDevice implements RenderDevice {
     /**
      * Create a new render device.
      *
-     * @param container      the container the GUI is displayed in
+     * @param container the container the GUI is displayed in
      * @param imageDirectory the directory the GUI is supposed to fetch its images from
      */
     public IgeRenderDevice(@Nonnull final GameContainer container, @Nonnull final String imageDirectory) {
@@ -91,7 +91,7 @@ public class IgeRenderDevice implements RenderDevice {
     }
 
     @Override
-    public void setResourceLoader(final NiftyResourceLoader niftyResourceLoader) {
+    public void setResourceLoader(@Nonnull final NiftyResourceLoader niftyResourceLoader) {
         // nothing to do
     }
 
@@ -160,8 +160,15 @@ public class IgeRenderDevice implements RenderDevice {
     }
 
     @Override
-    public void renderQuad(final int x, final int y, final int width, final int height, @Nonnull final Color topLeft,
-                           @Nonnull final Color topRight, @Nonnull final Color bottomRight, @Nonnull final Color bottomLeft) {
+    public void renderQuad(
+            final int x,
+            final int y,
+            final int width,
+            final int height,
+            @Nonnull final Color topLeft,
+            @Nonnull final Color topRight,
+            @Nonnull final Color bottomRight,
+            @Nonnull final Color bottomLeft) {
         transferColor(topLeft, tempColor1);
         transferColor(topRight, tempColor2);
         transferColor(bottomLeft, tempColor3);
@@ -171,28 +178,53 @@ public class IgeRenderDevice implements RenderDevice {
     }
 
     @Override
-    public void renderImage(final RenderImage image, final int x, final int y, final int width, final int height,
-                            @Nonnull final Color color, final float imageScale) {
+    public void renderImage(
+            @Nonnull final RenderImage image,
+            final int x,
+            final int y,
+            final int width,
+            final int height,
+            @Nonnull final Color color,
+            final float imageScale) {
         if (image instanceof IgeRenderImage) {
             transferColor(color, tempColor1);
-            ((IgeRenderImage) image).renderImage(container.getEngine().getGraphics(), x, y, width, height,
-                    tempColor1, imageScale);
+            ((IgeRenderImage) image)
+                    .renderImage(container.getEngine().getGraphics(), x, y, width, height, tempColor1, imageScale);
         }
     }
 
     @Override
-    public void renderImage(final RenderImage image, final int x, final int y, final int w, final int h,
-                            final int srcX, final int srcY, final int srcW, final int srcH, @Nonnull final Color color,
-                            final float scale, final int centerX, final int centerY) {
+    public void renderImage(
+            @Nonnull final RenderImage image,
+            final int x,
+            final int y,
+            final int w,
+            final int h,
+            final int srcX,
+            final int srcY,
+            final int srcW,
+            final int srcH,
+            @Nonnull final Color color,
+            final float scale,
+            final int centerX,
+            final int centerY) {
         if (image instanceof IgeRenderImage) {
             transferColor(color, tempColor1);
-            ((IgeRenderImage) image).renderImage(container.getEngine().getGraphics(), x, y, w, h, srcX, srcY, srcW,
-                    srcH, tempColor1, scale, centerX, centerY);
+            ((IgeRenderImage) image)
+                    .renderImage(container.getEngine().getGraphics(), x, y, w, h, srcX, srcY, srcW, srcH, tempColor1,
+                                 scale, centerX, centerY);
         }
     }
 
     @Override
-    public void renderFont(final RenderFont font, @Nonnull final String text, final int x, final int y, @Nonnull final Color fontColor, final float sizeX, final float sizeY) {
+    public void renderFont(
+            @Nonnull final RenderFont font,
+            @Nonnull final String text,
+            final int x,
+            final int y,
+            @Nonnull final Color fontColor,
+            final float sizeX,
+            final float sizeY) {
         if (font instanceof IgeRenderFont) {
             final Graphics g = container.getEngine().getGraphics();
             transferColor(fontColor, tempColor1);
@@ -206,8 +238,9 @@ public class IgeRenderDevice implements RenderDevice {
      * @param source the Nifty-GUI source color
      * @param target the game engine target color
      */
-    private static void transferColor(@Nonnull final Color source,
-                                      @Nonnull final org.illarion.engine.graphic.Color target) {
+    private static void transferColor(
+            @Nonnull final Color source,
+            @Nonnull final org.illarion.engine.graphic.Color target) {
         target.setRedf(source.getRed());
         target.setGreenf(source.getGreen());
         target.setBluef(source.getBlue());
@@ -226,7 +259,8 @@ public class IgeRenderDevice implements RenderDevice {
 
     @Nullable
     @Override
-    public MouseCursor createMouseCursor(@Nonnull final String filename, final int hotspotX, final int hotspotY) throws IOException {
+    public MouseCursor createMouseCursor(@Nonnull final String filename, final int hotspotX, final int hotspotY)
+            throws IOException {
         final CursorManager cursorManager = container.getEngine().getAssets().getCursorManager();
         final org.illarion.engine.MouseCursor cursor = cursorManager.getCursor(filename, hotspotX, hotspotY);
         if (cursor == null) {
@@ -236,7 +270,7 @@ public class IgeRenderDevice implements RenderDevice {
     }
 
     @Override
-    public void enableMouseCursor(final MouseCursor mouseCursor) {
+    public void enableMouseCursor(@Nonnull final MouseCursor mouseCursor) {
         if (mouseCursor instanceof IgeMouseCursor) {
             container.setMouseCursor(((IgeMouseCursor) mouseCursor).getCursor());
         }

@@ -54,9 +54,10 @@ public class ClipboardBand extends JRibbonBand {
     public ClipboardBand() {
         super(Lang.getMsg("gui.clipboardband.Name"), null);
         AnnotationProcessor.process(this);
-        final JCommandButton copy = MainFrame.getCommandButton("gui.clipboardband.Copy", "editcopy", KeyEvent.VK_C, "Copy");
-        paste = MainFrame.getToggleButton("gui.clipboardband.Paste","editpaste", KeyEvent.VK_V, "Paste");
-        final JCommandButton cut = MainFrame.getCommandButton("gui.clipboardband.Cut","editcut", KeyEvent.VK_X, "Cut");
+        final JCommandButton copy = MainFrame
+                .getCommandButton("gui.clipboardband.Copy", "editcopy", KeyEvent.VK_C, "Copy");
+        paste = MainFrame.getToggleButton("gui.clipboardband.Paste", "editpaste", KeyEvent.VK_V, "Paste");
+        final JCommandButton cut = MainFrame.getCommandButton("gui.clipboardband.Cut", "editcut", KeyEvent.VK_X, "Cut");
 
         final ActionListener copyListener = new ActionListener() {
             @Override
@@ -86,7 +87,7 @@ public class ClipboardBand extends JRibbonBand {
         addCommandButton(copy, RibbonElementPriority.MEDIUM);
         addCommandButton(cut, RibbonElementPriority.MEDIUM);
 
-        final List<RibbonBandResizePolicy> policies = new ArrayList<RibbonBandResizePolicy>();
+        final List<RibbonBandResizePolicy> policies = new ArrayList<>();
         policies.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
         policies.add(new CoreRibbonResizePolicies.High2Mid(getControlPanel()));
         setResizePolicies(policies);

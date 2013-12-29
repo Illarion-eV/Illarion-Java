@@ -54,7 +54,7 @@ public final class EasyNpcScript {
          * the line stored in it.
          *
          * @param number the line number
-         * @param text   the text of the line
+         * @param text the text of the line
          */
         protected Line(final int number, final String text) {
             lineNumber = number;
@@ -98,7 +98,7 @@ public final class EasyNpcScript {
     private static final String NEW_LINE = "\n";
 
     static {
-        final ArrayList<Charset> possibleEncodings = new ArrayList<Charset>();
+        final ArrayList<Charset> possibleEncodings = new ArrayList<>();
 
         String charsetName = "UTF-8";
         if (Charset.isSupported(charsetName)) {
@@ -131,8 +131,7 @@ public final class EasyNpcScript {
             possibleEncodings.add(Charset.defaultCharset());
         }
 
-        ENCODINGS =
-                possibleEncodings.toArray(new Charset[possibleEncodings.size()]);
+        ENCODINGS = possibleEncodings.toArray(new Charset[possibleEncodings.size()]);
     }
 
     /**
@@ -162,7 +161,7 @@ public final class EasyNpcScript {
      * new entries.
      */
     public EasyNpcScript() {
-        entries = new ArrayList<EasyNpcScript.Line>();
+        entries = new ArrayList<>();
     }
 
     /**
@@ -172,7 +171,7 @@ public final class EasyNpcScript {
      *
      * @param sourceFile the file that is read to get the easyNPC data
      * @throws IOException thrown in case anything goes wrong while reading this
-     *                     file.
+     * file.
      */
     public EasyNpcScript(@Nonnull final File sourceFile) throws IOException {
         this();
@@ -247,8 +246,7 @@ public final class EasyNpcScript {
             }
         }
 
-        for (final Entry<String, Charset> entry : Charset.availableCharsets()
-                .entrySet()) {
+        for (final Entry<String, Charset> entry : Charset.availableCharsets().entrySet()) {
             final Charset charset = entry.getValue();
             final CharsetDecoder decoder = charset.newDecoder();
             decoder.onMalformedInput(CodingErrorAction.REPORT);
@@ -288,13 +286,12 @@ public final class EasyNpcScript {
      * Write the content of this script in the proper format to the disk.
      *
      * @param targetFile the file that is supposed to store the new written
-     *                   script
+     * script
      * @throws IOException thrown in case there is a problem while writing
      */
     public void writeNPCScript(@Nonnull final File targetFile) throws IOException {
-        final BufferedWriter writer =
-                new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
-                        targetFile), "ISO-8859-1"));
+        final BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(new FileOutputStream(targetFile), "ISO-8859-1"));
 
         for (final EasyNpcScript.Line line : entries) {
             writer.write(line.getLine());
@@ -308,15 +305,15 @@ public final class EasyNpcScript {
      * Read the easyNPC script from a file.
      *
      * @param sourceFile the file to read
-     * @param decoder    the CharsetDecoder used to read the script
+     * @param decoder the CharsetDecoder used to read the script
      * @return <code>true</code> in case everything worked
      * @throws IOException thrown in case the reading operation failed
      */
-    private boolean readNPCScript(final File sourceFile,
-                                  @Nonnull final CharsetDecoder decoder) throws IOException {
+    private boolean readNPCScript(
+            final File sourceFile, @Nonnull final CharsetDecoder decoder) throws IOException {
         BufferedReader reader = null;
 
-        final List<String> lineList = new ArrayList<String>();
+        final List<String> lineList = new ArrayList<>();
 
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(sourceFile), decoder));
@@ -368,8 +365,7 @@ public final class EasyNpcScript {
             } else if (line.startsWith(LUA_COMMENT_LEAD)) {
                 if (currentlyCommentBlock) {
                     final EasyNpcScript.Line lastLine = entries.remove(entries.size() - 1);
-                    entries.add(new EasyNpcScript.Line(lastLine.getLineNumber(), lastLine
-                            .getLine() + NEW_LINE + line));
+                    entries.add(new EasyNpcScript.Line(lastLine.getLineNumber(), lastLine.getLine() + NEW_LINE + line));
                 } else {
                     entries.add(new EasyNpcScript.Line(lineNumber, line));
                 }

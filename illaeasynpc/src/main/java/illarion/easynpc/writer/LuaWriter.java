@@ -67,7 +67,7 @@ public final class LuaWriter {
          * Trading writing stage. All things related to the implementation of the trader functions should be written
          * here.
          */
-        Trading;
+        Trading
     }
 
     /**
@@ -85,15 +85,13 @@ public final class LuaWriter {
      * The code used to set the auto introduction mode.
      */
     @SuppressWarnings("nls")
-    private static final String addSetAutoIntro =
-            "mainNPC:setAutoIntroduceMode(%1$s);";
+    private static final String addSetAutoIntro = "mainNPC:setAutoIntroduceMode(%1$s);";
 
     /**
      * The comment separator line used in the comments.
      */
     @SuppressWarnings("nls")
-    private static final String commentSepLine =
-            "--------------------------------------------------------------------------------";
+    private static final String commentSepLine = "--------------------------------------------------------------------------------";
 
     /**
      * The singleton instance of this class.
@@ -111,31 +109,27 @@ public final class LuaWriter {
      * talking in the wrong language.
      */
     @SuppressWarnings("nls")
-    private static final String setConfusedMessageCode =
-            "mainNPC:setConfusedMessage(\"%1$s\", \"%2$s\");";
+    private static final String setConfusedMessageCode = "mainNPC:setConfusedMessage(\"%1$s\", \"%2$s\");";
 
     /**
      * The LUA code needed to set the default language of an NPC.
      */
     @SuppressWarnings("nls")
-    private static final String setDefaultLanguageCode =
-            "mainNPC:setDefaultLanguage(%1$s);";
+    private static final String setDefaultLanguageCode = "mainNPC:setDefaultLanguage(%1$s);";
 
     /**
      * The LUA code needed to set the message displayed when the player performs
      * a look at on the NPC.
      */
     @SuppressWarnings("nls")
-    private static final String setLookatMessageCode =
-            "mainNPC:setLookat(\"%1$s\", \"%2$s\");";
+    private static final String setLookatMessageCode = "mainNPC:setLookat(\"%1$s\", \"%2$s\");";
 
     /**
      * The LUA code needed to set the message displayed in case the player uses
      * the NPC.
      */
     @SuppressWarnings("nls")
-    private static final String setUseMessageCode =
-            "mainNPC:setUseMessage(\"%1$s\", \"%2$s\");";
+    private static final String setUseMessageCode = "mainNPC:setUseMessage(\"%1$s\", \"%2$s\");";
 
     /**
      * A flag used to check if the introduction part for the talkingNPC is
@@ -169,8 +163,7 @@ public final class LuaWriter {
      * @param target the writer that takes the written data
      * @throws IOException thrown in case a writing operation failed
      */
-    public void write(@Nonnull final ParsedNpc source, @Nonnull final Writer target)
-            throws IOException {
+    public void write(@Nonnull final ParsedNpc source, @Nonnull final Writer target) throws IOException {
 
         // first write the header with some basic information in the comment
         writeIntro(source, target, LuaWriter.WritingStage.Header);
@@ -297,7 +290,7 @@ public final class LuaWriter {
      * Check if there are any entries in this stage.
      *
      * @param source the NPC that is the data source
-     * @param stage  the stage to check
+     * @param stage the stage to check
      * @return <code>true</code> in case the NPC contains entries in this stage.
      */
     private static boolean checkStageExists(@Nonnull final ParsedNpc source, final LuaWriter.WritingStage stage) {
@@ -318,7 +311,7 @@ public final class LuaWriter {
      *
      * @param target the writer that receives the text written in this function
      * @throws IOException the exception thrown in case the writing functions
-     *                     fail
+     * fail
      */
     private static void introInitPart(@Nonnull final Writer target) throws IOException {
         target.write("function initNpc()"); //$NON-NLS-1$
@@ -356,12 +349,13 @@ public final class LuaWriter {
      *
      * @param source the parsed NPC that is the data source
      * @param target the writer that is the target
-     * @param stage  the current stage that is supposed to be processed
+     * @param stage the current stage that is supposed to be processed
      * @throws IOException thrown in case the writing operations fail
      */
     @SuppressWarnings("nls")
-    private void writeIntro(@Nonnull final ParsedNpc source, @Nonnull final Writer target,
-                            @Nonnull final LuaWriter.WritingStage stage) throws IOException {
+    private void writeIntro(
+            @Nonnull final ParsedNpc source, @Nonnull final Writer target, @Nonnull final LuaWriter.WritingStage stage)
+            throws IOException {
 
         switch (stage) {
             case Header:
@@ -369,24 +363,21 @@ public final class LuaWriter {
                 target.write(NL);
 
                 target.write(String.format("-- %1$-10s%2$-49s%3$15s --%n", "NPC Name:", source.getNpcName(),
-                        source.getAffiliation().name()));
+                                           source.getAffiliation().name()));
                 target.write(String.format("-- %1$-10s%2$-64s --%n", "NPC Job:", source.getJob()));
 
                 final String freeLine = String.format("-- %1$74s --%n", "");
                 target.write(freeLine);
 
-                final String positionString =
-                        Integer.toString(source.getNpcPos().getScX()) + ", "
-                                + Integer.toString(source.getNpcPos().getScY()) + ", "
-                                + Integer.toString(source.getNpcPos().getScZ());
-                target.write(String.format("-- %1$-37s%2$-37s --",
-                        "NPC Race: " + source.getNpcRace().name(),
-                        "NPC Position:  " + positionString));
+                final String positionString = Integer.toString(source.getNpcPos().getScX()) + ", " +
+                        Integer.toString(source.getNpcPos().getScY()) + ", " +
+                        Integer.toString(source.getNpcPos().getScZ());
+                target.write(String.format("-- %1$-37s%2$-37s --", "NPC Race: " + source.getNpcRace().name(),
+                                           "NPC Position:  " + positionString));
                 target.write(NL);
 
-                target.write(String.format("-- %1$-37s%2$-37s --",
-                        "NPC Sex:  " + source.getNpcSex().name(),
-                        "NPC Direction: " + source.getNpcDir().name()));
+                target.write(String.format("-- %1$-37s%2$-37s --", "NPC Sex:  " + source.getNpcSex().name(),
+                                           "NPC Direction: " + source.getNpcDir().name()));
                 target.write(NL);
 
                 target.write(freeLine);
@@ -394,18 +385,14 @@ public final class LuaWriter {
                 final String[] authors = source.getAuthors();
                 final String authorFormat = "-- %1$-10s%2$-64s --%n";
                 if (authors.length == 0) {
-                    target.write(String.format(authorFormat, "Author:",
-                            "not set"));
+                    target.write(String.format(authorFormat, "Author:", "not set"));
                 } else if (authors.length == 1) {
-                    target.write(String.format(authorFormat, "Author:",
-                            authors[0]));
+                    target.write(String.format(authorFormat, "Author:", authors[0]));
                 } else {
-                    target.write(String.format(authorFormat, "Authors:",
-                            authors[0]));
+                    target.write(String.format(authorFormat, "Authors:", authors[0]));
 
                     for (int i = 1; i < authors.length; ++i) {
-                        target.write(String.format(authorFormat, "",
-                                authors[i]));
+                        target.write(String.format(authorFormat, "", authors[i]));
                     }
                 }
 
@@ -443,7 +430,6 @@ public final class LuaWriter {
                 target.write(NL);
             case Clothes:
                 break;
-
         }
     }
 
@@ -494,13 +480,12 @@ public final class LuaWriter {
      * @param source the parsed NPC that supplies the needed data
      * @param target the writer that receives the written text
      * @throws IOException thrown in case there is a problem with writing the
-     *                     text
+     * text
      */
     private static void writeModuleHeader(@Nonnull final ParsedNpc source, @Nonnull final Writer target)
             throws IOException {
 
-        final String scriptName =
-                source.getNpcName().toLowerCase().replace(' ', '_');
+        final String scriptName = source.getNpcName().toLowerCase().replace(' ', '_');
         target.write("module(\"npc."); //$NON-NLS-1$
         target.write(scriptName);
         target.write("\", package.seeall)"); //$NON-NLS-1$
@@ -517,9 +502,8 @@ public final class LuaWriter {
      * @param target the target writer that receives the written text
      * @throws IOException thrown in case the writing operations fail
      */
-    private static void writeModules(@Nonnull final ParsedNpc source, @Nonnull final Writer target)
-            throws IOException {
-        final List<String> modules = new ArrayList<String>();
+    private static void writeModules(@Nonnull final ParsedNpc source, @Nonnull final Writer target) throws IOException {
+        final List<String> modules = new ArrayList<>();
 
         LuaWritable writeable = null;
         String[] partModules;
@@ -557,13 +541,11 @@ public final class LuaWriter {
             throws IOException {
         final CharacterLanguage[] languages = source.getLanguages();
         for (final CharacterLanguage lang : languages) {
-            target.write(String.format(addLanguageCode,
-                    Integer.toString(lang.getLangId())));
+            target.write(String.format(addLanguageCode, Integer.toString(lang.getLangId())));
             target.write(NL);
         }
 
-        target.write(String.format(setDefaultLanguageCode,
-                Integer.toString(source.getDefaultLanguage().getLangId())));
+        target.write(String.format(setDefaultLanguageCode, Integer.toString(source.getDefaultLanguage().getLangId())));
         target.write(NL);
     }
 
@@ -575,18 +557,15 @@ public final class LuaWriter {
      * @param target the writer that receives the written text
      * @throws IOException thrown in case the writing operations fail
      */
-    private static void writeNpcSpecialMessages(@Nonnull final ParsedNpc source,
-                                                @Nonnull final Writer target) throws IOException {
-        target.write(String.format(setLookatMessageCode,
-                source.getGermanLookat(), source.getEnglishLookat()));
+    private static void writeNpcSpecialMessages(
+            @Nonnull final ParsedNpc source, @Nonnull final Writer target) throws IOException {
+        target.write(String.format(setLookatMessageCode, source.getGermanLookat(), source.getEnglishLookat()));
         target.write(NL);
 
-        target.write(String.format(setUseMessageCode, source.getGermanUse(),
-                source.getEnglishUse()));
+        target.write(String.format(setUseMessageCode, source.getGermanUse(), source.getEnglishUse()));
         target.write(NL);
 
-        target.write(String.format(setConfusedMessageCode,
-                source.getGermanWrongLang(), source.getEnglishWrongLang()));
+        target.write(String.format(setConfusedMessageCode, source.getGermanWrongLang(), source.getEnglishWrongLang()));
         target.write(NL);
     }
 
@@ -595,11 +574,12 @@ public final class LuaWriter {
      *
      * @param source the parsed NPC that is the data source
      * @param target the writer that is the target
-     * @param stage  the current stage that is supposed to be processed
+     * @param stage the current stage that is supposed to be processed
      * @throws IOException thrown in case the writing operations fail
      */
-    private static void writeStage(@Nonnull final ParsedNpc source, final Writer target,
-                                   final LuaWriter.WritingStage stage) throws IOException {
+    private static void writeStage(
+            @Nonnull final ParsedNpc source, final Writer target, final LuaWriter.WritingStage stage)
+            throws IOException {
         final int count = source.getDataCount();
 
         LuaWritable writeable = null;

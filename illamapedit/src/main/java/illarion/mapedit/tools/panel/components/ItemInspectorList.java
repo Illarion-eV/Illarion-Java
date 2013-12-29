@@ -61,18 +61,17 @@ public class ItemInspectorList extends JPanel {
         annotation = new AnnotationLabel();
         add(annotation, BorderLayout.NORTH);
 
-        scroll = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scroll = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         add(scroll, BorderLayout.CENTER);
 
-        final ResizableIcon iconRemove =  ImageLoader.getResizableIcon("edit_remove") ;
+        final ResizableIcon iconRemove = ImageLoader.getResizableIcon("edit_remove");
         iconRemove.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
-        final ResizableIcon iconUp =  ImageLoader.getResizableIcon("1uparrow") ;
+        final ResizableIcon iconUp = ImageLoader.getResizableIcon("1uparrow");
         iconUp.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
-        final ResizableIcon iconDown =  ImageLoader.getResizableIcon("1downarrow") ;
+        final ResizableIcon iconDown = ImageLoader.getResizableIcon("1downarrow");
         iconDown.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
-        final ResizableIcon iconAnnotation =  ImageLoader.getResizableIcon("annotation") ;
+        final ResizableIcon iconAnnotation = ImageLoader.getResizableIcon("annotation");
         iconAnnotation.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
 
         removeItemButton = new JButton();
@@ -122,7 +121,6 @@ public class ItemInspectorList extends JPanel {
             }
         });
 
-
         final JToolBar itemActions = new JToolBar();
         itemActions.setFloatable(false);
         itemActions.add(removeItemButton);
@@ -136,6 +134,7 @@ public class ItemInspectorList extends JPanel {
 
     /**
      * Get the selected item in the list
+     *
      * @return the selected MapItem
      */
     @Nonnull
@@ -151,19 +150,20 @@ public class ItemInspectorList extends JPanel {
         panel.add(new JLabel(Lang.getMsg("tools.DataTool.Annotation")));
         panel.add(annotationField);
 
-        final int result = JOptionPane.showConfirmDialog(null, panel,
-                Lang.getMsg("tools.DataTool.Annotation_header"), JOptionPane.OK_CANCEL_OPTION);
+        final int result = JOptionPane.showConfirmDialog(null, panel, Lang.getMsg("tools.DataTool.Annotation_header"),
+                                                         JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
             EventBus.publish(new TileAnnotationEvent(annotationField.getText()));
         }
     }
 
-    public void setAnnotation(final String text) {
+    public void setAnnotation(@Nonnull final String text) {
         annotation.setAnnotation(text);
     }
 
     /**
      * Set items to show in the list
+     *
      * @param itemList A collection of items to show
      */
     public void setDataList(@Nonnull final Collection<MapItem> itemList) {

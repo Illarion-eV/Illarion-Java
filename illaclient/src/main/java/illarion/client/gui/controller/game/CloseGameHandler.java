@@ -41,7 +41,8 @@ import javax.annotation.Nullable;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class CloseGameHandler implements ScreenController, UpdatableHandler, EventTopicSubscriber<ButtonClickedEvent> {
+public final class CloseGameHandler
+        implements ScreenController, UpdatableHandler, EventTopicSubscriber<ButtonClickedEvent> {
     /**
      * The parent instance of Nifty-GUI.
      */
@@ -70,7 +71,7 @@ public final class CloseGameHandler implements ScreenController, UpdatableHandle
     private boolean dialogActive;
 
     @Override
-    public void bind(@Nonnull final Nifty nifty, final Screen screen) {
+    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
         parentNifty = nifty;
         parentScreen = screen;
 
@@ -91,10 +92,12 @@ public final class CloseGameHandler implements ScreenController, UpdatableHandle
     public void update(final GameContainer container, final int delta) {
         if (showDialog && !dialogActive) {
             parentNifty.showPopup(parentScreen, popup.getId(), null);
-            parentNifty.subscribe(parentScreen, popup.findElementById("#closeYesButton").getId(),
-                    ButtonClickedEvent.class, this);
-            parentNifty.subscribe(parentScreen, popup.findElementById("#closeNoButton").getId(),
-                    ButtonClickedEvent.class, this);
+            parentNifty
+                    .subscribe(parentScreen, popup.findElementById("#closeYesButton").getId(), ButtonClickedEvent.class,
+                               this);
+            parentNifty
+                    .subscribe(parentScreen, popup.findElementById("#closeNoButton").getId(), ButtonClickedEvent.class,
+                               this);
             dialogActive = true;
             showDialog = false;
         }

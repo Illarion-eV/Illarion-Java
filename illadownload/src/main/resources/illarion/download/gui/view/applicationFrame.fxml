@@ -4,45 +4,41 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.*?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"
-        fx:controller="illarion.download.gui.controller.ApplicationController"
-        fx:id="rootPane">
-    <children>
-        <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                    AnchorPane.topAnchor="0.0">
-            <bottom>
-                <AnchorPane fx:id="footer" />
-            </bottom>
-            <center>
-                <AnchorPane fx:id="content" />
-            </center>
-            <padding>
-                <Insets bottom="5.0" left="5.0" right="5.0" />
-            </padding>
-            <top>
-                <BorderPane fx:id="header">
-                    <right>
-                        <HBox>
-                            <children>
-                                <Button alignment="TOP_LEFT" contentDisplay="GRAPHIC_ONLY" maxHeight="14.0"
-                                        maxWidth="13.0" minHeight="14.0" minWidth="13.0" mnemonicParsing="false"
-                                        styleClass="button-minimize" onAction="#minimize">
-                                </Button>
-                                <Button alignment="TOP_LEFT" contentDisplay="GRAPHIC_ONLY" maxHeight="14.0"
-                                        maxWidth="13.0" minHeight="14.0" minWidth="13.0" mnemonicParsing="false"
-                                        styleClass="button-close" onAction="#close">
-                                </Button>
-                            </children>
-                            <padding>
-                                <Insets right="-16.0" />
-                            </padding>
-                        </HBox>
-                    </right>
-                </BorderPane>
-            </top>
-            <left/>
-        </BorderPane>
-    </children>
+            fx:controller="illarion.download.gui.controller.ApplicationController"
+            fx:id="rootPane">
     <padding>
-        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
     </padding>
+    <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                AnchorPane.topAnchor="0.0">
+        <bottom>
+            <AnchorPane fx:id="footer"/>
+        </bottom>
+        <center>
+            <AnchorPane fx:id="content"/>
+        </center>
+        <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0"/>
+        </padding>
+        <top>
+            <BorderPane fx:id="header">
+                <right>
+                    <HBox>
+                        <padding>
+                            <Insets right="-16.0"/>
+                        </padding>
+                        <Button alignment="TOP_LEFT" contentDisplay="GRAPHIC_ONLY" maxHeight="14.0"
+                                maxWidth="13.0" minHeight="14.0" minWidth="13.0" mnemonicParsing="false"
+                                styleClass="button-minimize" onAction="#minimize">
+                        </Button>
+                        <Button alignment="TOP_LEFT" contentDisplay="GRAPHIC_ONLY" maxHeight="14.0"
+                                maxWidth="13.0" minHeight="14.0" minWidth="13.0" mnemonicParsing="false"
+                                styleClass="button-close" onAction="#close">
+                        </Button>
+                    </HBox>
+                </right>
+            </BorderPane>
+        </top>
+        <left/>
+    </BorderPane>
 </AnchorPane>

@@ -51,15 +51,15 @@ public final class AnimationManager {
      * instance of this class is the singleton instance.
      */
     public AnimationManager() {
-        animations = new FastTable<AbstractAnimation>();
-        addAnimations = new FastTable<AbstractAnimation>();
+        animations = new FastTable<>();
+        addAnimations = new FastTable<>();
     }
 
     /**
      * Update all animations to the new state for the next rendering.
      *
      * @param delta the time since the last update of the animations. Its only
-     *              needed to update the animations right before a rendering run
+     * needed to update the animations right before a rendering run
      */
     public void animate(final int delta) {
         while (!addAnimations.isEmpty()) {

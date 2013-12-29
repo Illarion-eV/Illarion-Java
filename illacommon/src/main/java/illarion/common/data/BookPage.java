@@ -43,7 +43,7 @@ public final class BookPage implements Iterable<BookPageEntry> {
      * Create a new blank page.
      */
     private BookPage() {
-        entries = new ArrayList<BookPageEntry>();
+        entries = new ArrayList<>();
     }
 
     /**

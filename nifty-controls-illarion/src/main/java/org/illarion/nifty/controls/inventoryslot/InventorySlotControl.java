@@ -39,8 +39,8 @@ import javax.annotation.Nullable;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @deprecated Don't refer to this class in any application. Rather use the
- *             general interface of the inventory slot:
- *             {@link InventorySlot}
+ * general interface of the inventory slot:
+ * {@link InventorySlot}
  */
 @Deprecated
 public class InventorySlotControl extends AbstractController implements InventorySlot {
@@ -114,10 +114,11 @@ public class InventorySlotControl extends AbstractController implements Inventor
      * {@inheritDoc}
      */
     @Override
-    public void bind(@Nonnull final Nifty nifty,
-                     @Nonnull final Screen screen,
-                     @Nonnull final Element element,
-                     @Nonnull final Parameters parameter) {
+    public void bind(
+            @Nonnull final Nifty nifty,
+            @Nonnull final Screen screen,
+            @Nonnull final Element element,
+            @Nonnull final Parameters parameter) {
         bind(element);
 
         this.screen = screen;
@@ -323,16 +324,13 @@ public class InventorySlotControl extends AbstractController implements Inventor
     public void showMerchantOverlay(@Nonnull final InventorySlot.MerchantBuyLevel level) {
         switch (level) {
             case Copper:
-                merchantOverlay.getRenderer(ImageRenderer.class).setImage(
-                        nifty.createImage("gui/coin_1_c.png", false));
+                merchantOverlay.getRenderer(ImageRenderer.class).setImage(nifty.createImage("gui/coin_1_c.png", false));
                 break;
             case Silver:
-                merchantOverlay.getRenderer(ImageRenderer.class).setImage(
-                        nifty.createImage("gui/coin_1_s.png", false));
+                merchantOverlay.getRenderer(ImageRenderer.class).setImage(nifty.createImage("gui/coin_1_s.png", false));
                 break;
             case Gold:
-                merchantOverlay.getRenderer(ImageRenderer.class).setImage(
-                        nifty.createImage("gui/coin_1_g.png", false));
+                merchantOverlay.getRenderer(ImageRenderer.class).setImage(nifty.createImage("gui/coin_1_g.png", false));
                 break;
         }
         merchantOverlay.showWithoutEffects();
@@ -355,7 +353,7 @@ public class InventorySlotControl extends AbstractController implements Inventor
      * {@inheritDoc}
      */
     @Override
-    public boolean inputEvent(final NiftyInputEvent inputEvent) {
+    public boolean inputEvent(@Nonnull final NiftyInputEvent inputEvent) {
         return true;
     }
 }

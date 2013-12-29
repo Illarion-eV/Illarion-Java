@@ -77,8 +77,8 @@ public final class BookFactory implements ResourceFactory<IdWrapper<String>> {
      * Default constructor.
      */
     private BookFactory() {
-        fileMap = new HashMap<Integer, String>();
-        bookMap = new HashMap<Integer, Reference<Book>>();
+        fileMap = new HashMap<>();
+        bookMap = new HashMap<>();
     }
 
     @Override
@@ -99,8 +99,8 @@ public final class BookFactory implements ResourceFactory<IdWrapper<String>> {
     @Override
     public void storeResource(@Nonnull final IdWrapper<String> resource) {
         if (getBookUrl(resource.getObject()) == null) {
-            LOGGER.error("Book ID: " + Integer.toString(resource.getId()) + " not found. File "
-                    + resource.getObject() + ".book.xml is missing in the resources.");
+            LOGGER.error("Book ID: " + Integer.toString(resource.getId()) + " not found. File " + resource.getObject() +
+                                 ".book.xml is missing in the resources.");
         } else {
             fileMap.put(resource.getId(), resource.getObject());
         }
@@ -166,7 +166,7 @@ public final class BookFactory implements ResourceFactory<IdWrapper<String>> {
             try {
                 final Document document = docBuilderFactory.newDocumentBuilder().parse(bookUrl.openStream());
                 requestedBook = new Book(document);
-                bookMap.put(id, new SoftReference<Book>(requestedBook));
+                bookMap.put(id, new SoftReference<>(requestedBook));
             } catch (@Nonnull final ParserConfigurationException e) {
                 LOGGER.error("Setting up XML parser failed!", e);
             } catch (@Nonnull final SAXException e) {

@@ -53,7 +53,7 @@ final class ResourceTableLoading implements LoadingTask {
      * @param gameEngine the engine of the game
      */
     ResourceTableLoading(@Nonnull final Engine gameEngine) {
-        taskList = new ArrayList<AbstractResourceLoader<? extends Resource>>();
+        taskList = new ArrayList<>();
         progressMonitor = new ProgressMonitor();
 
         addTask(new TileLoader(gameEngine.getAssets()), TileFactory.getInstance());
@@ -69,12 +69,12 @@ final class ResourceTableLoading implements LoadingTask {
     /**
      * Add a task to the list of tasks and to the progress monitor.
      *
-     * @param loader  the loader of this task
+     * @param loader the loader of this task
      * @param factory the factory that is supposed to be filled
-     * @param <T>     the resource type that is load in this case
+     * @param <T> the resource type that is load in this case
      */
-    private <T extends Resource> void addTask(@Nonnull final AbstractResourceLoader<T> loader,
-                                              @Nonnull final ResourceFactory<T> factory) {
+    private <T extends Resource> void addTask(
+            @Nonnull final AbstractResourceLoader<T> loader, @Nonnull final ResourceFactory<T> factory) {
         loader.setTarget(factory);
         progressMonitor.addChild(loader.getProgressMonitor());
         taskList.add(loader);
@@ -108,5 +108,4 @@ final class ResourceTableLoading implements LoadingTask {
     public ProgressMonitor getProgressMonitor() {
         return progressMonitor;
     }
-
 }

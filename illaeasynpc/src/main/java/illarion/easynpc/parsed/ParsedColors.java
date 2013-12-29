@@ -45,7 +45,7 @@ public final class ParsedColors implements ParsedData {
         /**
          * If this value is set as color target, the color applies to the skin.
          */
-        Skin;
+        Skin
     }
 
     /**
@@ -72,9 +72,9 @@ public final class ParsedColors implements ParsedData {
      * Create a parsed color entry.
      *
      * @param target the target of the color
-     * @param red    the red share of the color. Valid values from 0 to 255
-     * @param green  the green share of the color. Valid values from 0 to 255
-     * @param blue   the blue share of the color. Valid values from 0 to 255
+     * @param red the red share of the color. Valid values from 0 to 255
+     * @param green the green share of the color. Valid values from 0 to 255
+     * @param blue the blue share of the color. Valid values from 0 to 255
      */
     public ParsedColors(final ParsedColors.ColorTarget target, final int red, final int green, final int blue) {
         colorTarget = target;
@@ -159,8 +159,8 @@ public final class ParsedColors implements ParsedData {
      * Since the color values are not written into the LUA script, this function does nothing at all.
      */
     @Override
-    public void writeLua(final Writer target,
-                         final LuaWriter.WritingStage stage) throws IOException {
+    public void writeLua(
+            final Writer target, final LuaWriter.WritingStage stage) throws IOException {
         // nothing to do
     }
 }

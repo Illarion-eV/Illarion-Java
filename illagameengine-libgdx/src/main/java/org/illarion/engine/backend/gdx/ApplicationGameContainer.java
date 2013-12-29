@@ -94,13 +94,14 @@ public class ApplicationGameContainer implements DesktopGameContainer {
      * Create a new desktop game that is drawn using libGDX.
      *
      * @param gameListener the game listener that receives the updates regarding the game
-     * @param width        the width of the game container
-     * @param height       the height of the game container
-     * @param fullScreen   the full screen flag of the container
+     * @param width the width of the game container
+     * @param height the height of the game container
+     * @param fullScreen the full screen flag of the container
      * @throws GdxEngineException in case the initialization goes wrong
      */
-    public ApplicationGameContainer(final GameListener gameListener, final int width, final int height,
-                                    final boolean fullScreen) throws GdxEngineException {
+    public ApplicationGameContainer(
+            final GameListener gameListener, final int width, final int height, final boolean fullScreen)
+            throws GdxEngineException {
         this.gameListener = gameListener;
         config = new LwjglApplicationConfiguration();
         config.forceExit = false;
@@ -130,14 +131,15 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         GraphicResolution targetDisplayMode = null;
         for (@Nonnull final GraphicResolution current : resolutions) {
             if ((current.getWidth() == width) && (current.getHeight() == height)) {
-                if ((targetDisplayMode == null) || ((current.getRefreshRate() >= freq)
-                        && (current.getBPP() > targetDisplayMode.getBPP()))) {
+                if ((targetDisplayMode == null) ||
+                        ((current.getRefreshRate() >= freq) && (current.getBPP() > targetDisplayMode.getBPP()))) {
                     targetDisplayMode = current;
                     freq = targetDisplayMode.getRefreshRate();
                 }
 
-                if ((current.getBPP() == LwjglApplicationConfiguration.getDesktopDisplayMode().bitsPerPixel)
-                        && (current.getRefreshRate() == LwjglApplicationConfiguration.getDesktopDisplayMode().refreshRate)) {
+                if ((current.getBPP() == LwjglApplicationConfiguration.getDesktopDisplayMode().bitsPerPixel) &&
+                        (current.getRefreshRate() ==
+                                LwjglApplicationConfiguration.getDesktopDisplayMode().refreshRate)) {
                     targetDisplayMode = current;
                     break;
                 }
@@ -269,7 +271,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     @Override
     public GraphicResolution[] getFullScreenResolutions() {
         if (graphicResolutions == null) {
-            final List<GraphicResolution> resultResolutions = new ArrayList<GraphicResolution>();
+            final List<GraphicResolution> resultResolutions = new ArrayList<>();
             final Graphics.DisplayMode[] displayModes;
             final boolean ignoreRefreshRate;
             if (gdxApplication == null) {
@@ -291,10 +293,9 @@ public class ApplicationGameContainer implements DesktopGameContainer {
                 } else {
                     if (mode.refreshRate >= 50) {
                         resultResolutions.add(new GraphicResolution(mode.width, mode.height, mode.bitsPerPixel,
-                                mode.refreshRate));
+                                                                    mode.refreshRate));
                     }
                 }
-
             }
             graphicResolutions = resultResolutions.toArray(new GraphicResolution[resultResolutions.size()]);
         }

@@ -33,12 +33,12 @@ import java.util.List;
  * @author Fredrik K
  */
 public class OpenMapTableModel extends AbstractTableModel {
-    private final String[] columnNames = { "", "Map", "" };
+    private final String[] columnNames = {"", "Map", ""};
     @Nonnull
     private final List<Map> maps;
 
     public OpenMapTableModel() {
-        maps = new ArrayList<Map>();
+        maps = new ArrayList<>();
     }
 
     @Override
@@ -48,7 +48,7 @@ public class OpenMapTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return  columnNames.length;
+        return columnNames.length;
     }
 
     @Override
@@ -71,7 +71,7 @@ public class OpenMapTableModel extends AbstractTableModel {
             return maps.get(row).isVisible();
         }
         if (column == 1) {
-             return maps.get(row);
+            return maps.get(row);
         }
         return "";
     }
@@ -80,7 +80,7 @@ public class OpenMapTableModel extends AbstractTableModel {
     @Override
     public Class getColumnClass(final int column) {
         if (column == 0) {
-            return  Boolean.class;
+            return Boolean.class;
         }
         if (column == 1) {
             return Map.class;

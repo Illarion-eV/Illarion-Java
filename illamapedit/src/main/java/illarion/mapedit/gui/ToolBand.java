@@ -44,7 +44,7 @@ public class ToolBand extends JRibbonBand {
     public ToolBand() {
         super(Lang.getMsg("gui.toolband.Name"), null);
 
-        final Collection<AbstractTool> tools = new FastTable<AbstractTool>();
+        final Collection<AbstractTool> tools = new FastTable<>();
         final CommandToggleButtonGroup group = new CommandToggleButtonGroup();
 
         tools.add(new TileBrushTool());
@@ -55,12 +55,12 @@ public class ToolBand extends JRibbonBand {
         tools.add(new WarpTool());
 
         for (final AbstractTool tool : tools) {
-            final JCommandToggleButton button =new ToolMenuButton(tool);
+            final JCommandToggleButton button = new ToolMenuButton(tool);
             addCommandButton(button, RibbonElementPriority.MEDIUM);
             group.add(button);
         }
 
-        setResizePolicies(Arrays.<RibbonBandResizePolicy>asList(
-                new CoreRibbonResizePolicies.Mirror(getControlPanel())));
+        setResizePolicies(
+                Arrays.<RibbonBandResizePolicy>asList(new CoreRibbonResizePolicies.Mirror(getControlPanel())));
     }
 }

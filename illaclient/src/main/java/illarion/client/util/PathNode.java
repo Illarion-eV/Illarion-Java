@@ -39,7 +39,7 @@ public final class PathNode implements Comparable<PathNode> {
      * values calculated before.
      */
     @Nonnull
-    private static final TLongObjectHashMap<PathNode> CACHE = new TLongObjectHashMap<PathNode>();
+    private static final TLongObjectHashMap<PathNode> CACHE = new TLongObjectHashMap<>();
 
     /**
      * Is the tile blocked or not.
@@ -130,7 +130,7 @@ public final class PathNode implements Comparable<PathNode> {
      *
      * @param o the path node this path nodes is compared with
      * @return 0 in case the result of the sumation is the same for both nodes, 1 in case the value of this node is
-     *         larger, else -1
+     * larger, else -1
      * @see Comparable#compareTo(Object)
      */
     @Override

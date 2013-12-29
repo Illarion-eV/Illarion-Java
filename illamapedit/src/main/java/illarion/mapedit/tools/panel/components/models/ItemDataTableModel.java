@@ -39,20 +39,22 @@ import java.util.regex.Pattern;
 public class ItemDataTableModel extends AbstractTableModel {
     private static final Pattern PATTERN_DATA = Pattern.compile("(?:\\\\.|[^=\\\\]++)*");
 
-    private final String[] columnNames = { "Key", "Value" };
+    private final String[] columnNames = {"Key", "Value"};
     @Nonnull
     private final List<String> data;
 
     /**
      * Default constructor
+     *
      * @param data List with key=value data as strings
      */
     public ItemDataTableModel(@Nonnull final List<String> data) {
-        this.data = new ArrayList<String>(data);
+        this.data = new ArrayList<>(data);
     }
 
     /**
      * Adds data to the table
+     *
      * @param keyValue a string with key=value
      */
     public void addData(final String keyValue) {
@@ -74,7 +76,7 @@ public class ItemDataTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return  columnNames.length;
+        return columnNames.length;
     }
 
     @Override
@@ -92,7 +94,7 @@ public class ItemDataTableModel extends AbstractTableModel {
     @Nonnull
     private static String[] split(final CharSequence line) {
         final Matcher regexMatcher = PATTERN_DATA.matcher(line);
-        final List<String> matches = new LinkedList<String>();
+        final List<String> matches = new LinkedList<>();
         while (regexMatcher.find()) {
             final String match = regexMatcher.group();
             if (!match.isEmpty()) {
@@ -104,10 +106,11 @@ public class ItemDataTableModel extends AbstractTableModel {
 
     /**
      * Removes the row from the table
+     *
      * @param row the row to remove
      */
     public void removeRow(final int row) {
-        if ((data.size() > row) && (row > -1)){
+        if ((data.size() > row) && (row > -1)) {
             data.remove(row);
             EventBus.publish(new ItemDataRemovedEvent(row));
         }
@@ -118,18 +121,19 @@ public class ItemDataTableModel extends AbstractTableModel {
         String newKeyVal = null;
         final String[] dataKeyVal = split(data.get(rowIndex));
         if (columnIndex == 0) {
-            newKeyVal = aValue + "=" + dataKeyVal[1];  
+            newKeyVal = aValue + "=" + dataKeyVal[1];
         } else if (columnIndex == 1) {
-            newKeyVal = dataKeyVal[0] + '=' + aValue; 
+            newKeyVal = dataKeyVal[0] + '=' + aValue;
         }
         if (newKeyVal != null) {
-            data.set(rowIndex,newKeyVal);
+            data.set(rowIndex, newKeyVal);
             EventBus.publish(new ItemItemDataChangedEvent(rowIndex, newKeyVal));
         }
     }
 
     /**
      * Clears the list and adds the new data
+     *
      * @param dataList List with key=value data as strings
      */
     public void setData(@Nonnull final Collection<String> dataList) {

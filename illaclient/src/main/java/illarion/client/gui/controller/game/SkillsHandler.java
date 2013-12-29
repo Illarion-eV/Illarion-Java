@@ -78,7 +78,7 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
     private boolean loginDone;
 
     @Override
-    public void bind(final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
         this.nifty = nifty;
         this.screen = screen;
 

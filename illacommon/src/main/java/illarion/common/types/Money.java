@@ -57,7 +57,7 @@ public final class Money implements Comparable<Money> {
     /**
      * Create a new money object and store the price in gold, silver and copper.
      *
-     * @param gold   the gold coins
+     * @param gold the gold coins
      * @param silver the silver coins
      * @param copper the copper coins
      */
@@ -122,7 +122,6 @@ public final class Money implements Comparable<Money> {
     @Override
     public boolean equals(@Nonnull final Object o) {
         return super.equals(o) || ((o instanceof Money) && (copperCoins == ((Money) o).copperCoins));
-
     }
 
     @Override
@@ -141,10 +140,6 @@ public final class Money implements Comparable<Money> {
     @Nonnull
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(getGold()).append("g ");
-        builder.append(getSilver()).append("s ");
-        builder.append(getCopper()).append("c");
-        return builder.toString();
+        return String.valueOf(getGold()) + "g " + getSilver() + "s " + getCopper() + "c";
     }
 }

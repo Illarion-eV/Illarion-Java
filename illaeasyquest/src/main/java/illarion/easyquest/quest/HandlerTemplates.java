@@ -54,7 +54,7 @@ public class HandlerTemplates {
     }
 
     public HandlerTemplates() {
-        typeMap = new FastMap<String, HandlerTemplate>(Equalities.LEXICAL_FAST, Equalities.STANDARD);
+        typeMap = new FastMap<>(Equalities.LEXICAL_FAST, Equalities.STANDARD);
 
         load();
     }
@@ -66,12 +66,10 @@ public class HandlerTemplates {
 
     @Nonnull
     private static List<String> loadFileList() {
-        List<String> result = new FastTable<String>();
+        List<String> result = new FastTable<>();
         BufferedReader bRead = null;
         try {
-            bRead =
-                    new BufferedReader(new InputStreamReader(
-                            (getResource("template/handler/filelist"))));
+            bRead = new BufferedReader(new InputStreamReader((getResource("template/handler/filelist"))));
 
             String line = null;
             while ((line = bRead.readLine()) != null) {
@@ -94,7 +92,7 @@ public class HandlerTemplates {
 
     private void load() {
         List<String> templateFiles = loadFileList();
-        Collection<HandlerTemplate> templateList = new FastTable<HandlerTemplate>();
+        Collection<HandlerTemplate> templateList = new FastTable<>();
 
         if (templateFiles.isEmpty()) {
             System.out.println("Handler directory does not exist!");
@@ -103,16 +101,12 @@ public class HandlerTemplates {
             for (String rawFileName : templateFiles) {
                 String fileName = rawFileName.replace('\\', '/');
                 String line = null;
-                String uniqueName =
-                        fileName.substring(fileName.lastIndexOf('/') + 1,
-                                fileName.lastIndexOf('.'));
+                String uniqueName = fileName.substring(fileName.lastIndexOf('/') + 1, fileName.lastIndexOf('.'));
                 int parameterCount = 0;
-                HandlerTemplate handlerTemplate =
-                        new HandlerTemplate(uniqueName);
+                HandlerTemplate handlerTemplate = new HandlerTemplate(uniqueName);
                 try {
-                    BufferedReader reader =
-                            new BufferedReader(new InputStreamReader(
-                                    getResource(fileName), "ISO-8859-1"));
+                    BufferedReader reader = new BufferedReader(
+                            new InputStreamReader(getResource(fileName), "ISO-8859-1"));
 
                     while ((line = reader.readLine()) != null) {
 
@@ -125,23 +119,16 @@ public class HandlerTemplates {
                             } else {
                                 handlerTemplate.setTitle(names[1]);
                             }
-                        } else if (line
-                                .matches("local\\s+[_A-Z0-9]+\\s*=\\s*[_A-Z0-9]+\\s*--.*\\w+.*--.*\\w+.*")) {
-                            String[] param =
-                                    line.split("^local\\s+|\\s*=\\s*|\\s*--\\s*");
+                        } else if (line.matches("local\\s+[_A-Z0-9]+\\s*=\\s*[_A-Z0-9]+\\s*--.*\\w+.*--.*\\w+.*")) {
+                            String[] param = line.split("^local\\s+|\\s*=\\s*|\\s*--\\s*");
                             if (isGerman) {
-                                handlerTemplate
-                                        .addParameter(new TemplateParameter(
-                                                param[1], param[2], param[4]));
+                                handlerTemplate.addParameter(new TemplateParameter(param[1], param[2], param[4]));
                             } else {
-                                handlerTemplate
-                                        .addParameter(new TemplateParameter(
-                                                param[1], param[2], param[3]));
+                                handlerTemplate.addParameter(new TemplateParameter(param[1], param[2], param[3]));
                             }
                             parameterCount = parameterCount + 1;
                         } else if (line.matches("--\\s*PLAYER")) {
-                            handlerTemplate
-                                    .addPlayerParameterAt(parameterCount);
+                            handlerTemplate.addPlayerParameterAt(parameterCount);
                         }
                     }
 
@@ -149,8 +136,7 @@ public class HandlerTemplates {
                         templateList.add(handlerTemplate);
                         typeMap.put(uniqueName, handlerTemplate);
                     } else {
-                        System.out.println("Syntax error in template "
-                                + fileName);
+                        System.out.println("Syntax error in template " + fileName);
                     }
                 } catch (@Nonnull final IOException e1) {
                     System.out.println("Error loading template " + fileName);

@@ -72,11 +72,7 @@ public class IllarionSSLSocketFactory {
             try {
                 keyStoreInput = Thread.currentThread().getContextClassLoader().getResourceAsStream("keystore.jks");
                 keyStore.load(keyStoreInput, "jcFv8XQxRN".toCharArray());
-            } catch (@Nonnull final CertificateException e) {
-                LOGGER.error("Failed to load keystore.", e);
-            } catch (@Nonnull final NoSuchAlgorithmException e) {
-                LOGGER.error("Failed to load keystore.", e);
-            } catch (@Nonnull final IOException e) {
+            } catch (@Nonnull final CertificateException | IOException | NoSuchAlgorithmException e) {
                 LOGGER.error("Failed to load keystore.", e);
             } finally {
                 if (keyStoreInput != null) {

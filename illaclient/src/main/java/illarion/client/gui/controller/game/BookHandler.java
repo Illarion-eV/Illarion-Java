@@ -58,7 +58,7 @@ public final class BookHandler implements BookGui, ScreenController, UpdatableHa
     private Screen screen;
 
     @Override
-    public void bind(final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
         this.nifty = nifty;
         this.screen = screen;
 

@@ -111,7 +111,7 @@ public final class LightSource {
      *
      * @param location the location of the light source on the server map
      * @param encoding the encoding of the light, this contains the color, the
-     *                 brightness, the size and the inversion flag
+     * brightness, the size and the inversion flag
      */
     private LightSource(@Nonnull final Location location, final int encoding) {
         final int newSize = (encoding / 10000) % 10;
@@ -125,15 +125,15 @@ public final class LightSource {
     /**
      * Retrieve a light from the cache or create a new one.
      *
-     * @param loc      the location of the light source on the map
+     * @param loc the location of the light source on the map
      * @param encoding the encoding of the light source that has to be decoded
-     *                 in order to receive the parameters of the light
+     * in order to receive the parameters of the light
      * @return the prepared instance of the light source
      */
     @Nonnull
     @SuppressWarnings("nls")
-    public static LightSource createLight(@Nonnull final Location loc,
-                                          final int encoding) {
+    public static LightSource createLight(
+            @Nonnull final Location loc, final int encoding) {
         final int size = ((encoding / 10000) % 10) - 1;
         if (size < 0) {
             throw new IllegalArgumentException("empty light source");
@@ -172,7 +172,7 @@ public final class LightSource {
         final int size = light.size - 1;
 
         if (CACHE[size] == null) {
-            CACHE[size] = new ArrayList<LightSource>();
+            CACHE[size] = new ArrayList<>();
         }
         synchronized (CACHE[size]) {
             if (!CACHE[size].contains(light)) {
@@ -196,8 +196,7 @@ public final class LightSource {
         final int xLimit = intensity.length + xOff;
         final int yLimit = intensity.length + yOff;
         while (tempLocation.getScX() < xLimit) {
-            tempLocation.setSC(tempLocation.getScX(), yOff,
-                    tempLocation.getScZ());
+            tempLocation.setSC(tempLocation.getScX(), yOff, tempLocation.getScZ());
             while (tempLocation.getScY() < yLimit) {
                 final double locIntensity = intensity[tempLocation.getScX() - xOff][tempLocation.getScY() - yOff];
                 if (locIntensity == 0) {
@@ -265,7 +264,7 @@ public final class LightSource {
      * Initializes the light source. So set the location to the correct one and
      * update the color of the light source by decoding the encoded data.
      *
-     * @param newLoc   the new location of this light source
+     * @param newLoc the new location of this light source
      * @param encoding the encoded data that defines the light source
      */
     @SuppressWarnings("nls")
@@ -315,8 +314,8 @@ public final class LightSource {
             return;
         }
 
-        if ((Math.abs(changeLoc.getScX() - location.getScX()) <= size)
-                && (Math.abs(changeLoc.getScY() - location.getScY()) <= size)) {
+        if ((Math.abs(changeLoc.getScX() - location.getScX()) <= size) &&
+                (Math.abs(changeLoc.getScY() - location.getScY()) <= size)) {
             dirty = true;
         }
     }
@@ -344,10 +343,10 @@ public final class LightSource {
     /**
      * Set light intensity in shadow map and return opacity value.
      *
-     * @param x      the X offset of the location that's intensity shall be set to the
-     *               location of the light source
-     * @param y      the Y offset of the location that's intensity shall be set to the
-     *               location of the light source
+     * @param x the X offset of the location that's intensity shall be set to the
+     * location of the light source
+     * @param y the Y offset of the location that's intensity shall be set to the
+     * location of the light source
      * @param newInt the intensity that shall for this location now
      * @return the obscurity of the location that's light intensity was just set
      */

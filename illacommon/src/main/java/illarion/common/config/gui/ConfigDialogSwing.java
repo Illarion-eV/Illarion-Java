@@ -59,7 +59,7 @@ public final class ConfigDialogSwing extends JDialog {
          * object to work properly.
          *
          * @param parent the parent dialog that is closed once this action is
-         *               performed
+         * performed
          */
         public CancelButtonListener(final JDialog parent) {
             parentDialog = parent;
@@ -101,12 +101,12 @@ public final class ConfigDialogSwing extends JDialog {
          * object to work properly.
          *
          * @param saveList the list of objects saved in case this action is
-         *                 performed
-         * @param parent   the parent dialog that is closed once this action is
-         *                 performed
+         * performed
+         * @param parent the parent dialog that is closed once this action is
+         * performed
          */
-        public SaveButtonListener(final List<SaveableEntry> saveList,
-                                  final JDialog parent) {
+        public SaveButtonListener(
+                final List<SaveableEntry> saveList, final JDialog parent) {
             todoList = saveList;
             parentDialog = parent;
         }
@@ -145,32 +145,25 @@ public final class ConfigDialogSwing extends JDialog {
      */
     @SuppressWarnings("nls")
     public ConfigDialogSwing(@Nonnull final ConfigDialog dialog) {
-        super((JDialog) null, dialog.getMessageSource()
-                .getMessage("illarion.common.config.gui.Title"), true);
+        super((JDialog) null, dialog.getMessageSource().getMessage("illarion.common.config.gui.Title"), true);
 
         final MessageSource msgs = dialog.getMessageSource();
 
-        final FastTable<SaveableEntry> contentList =
-                new FastTable<SaveableEntry>();
+        final FastTable<SaveableEntry> contentList = new FastTable<>();
 
         final JPanel content = new JPanel(new BorderLayout(5, 5));
         add(content);
 
         {
-            final JPanel buttonPanel =
-                    new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
+            final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
             content.add(buttonPanel, BorderLayout.SOUTH);
 
-            final JButton saveButton =
-                    new JButton(msgs.getMessage("illarion.common.config.gui.Save"));
-            saveButton.addActionListener(new SaveButtonListener(contentList
-                    .unmodifiable(), this));
+            final JButton saveButton = new JButton(msgs.getMessage("illarion.common.config.gui.Save"));
+            saveButton.addActionListener(new SaveButtonListener(contentList.unmodifiable(), this));
             saveButton.setPreferredSize(new Dimension(100, 25));
             buttonPanel.add(saveButton);
 
-            final JButton cancelButton =
-                    new JButton(
-                            msgs.getMessage("illarion.common.config.gui.Cancel"));
+            final JButton cancelButton = new JButton(msgs.getMessage("illarion.common.config.gui.Cancel"));
             cancelButton.addActionListener(new CancelButtonListener(this));
             cancelButton.setPreferredSize(new Dimension(100, 25));
             buttonPanel.add(cancelButton);
@@ -185,8 +178,7 @@ public final class ConfigDialogSwing extends JDialog {
         for (int i = 0; i < pageCount; i++) {
             currentPage = dialog.getPage(i);
             currentPanel = new JPanel(new GridBagLayout());
-            currentPanel
-                    .setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            currentPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             tabs.addTab(msgs.getMessage(currentPage.getTitle()), currentPanel);
 
             final GridBagConstraints con = new GridBagConstraints();
@@ -203,8 +195,7 @@ public final class ConfigDialogSwing extends JDialog {
                 con.insets.right = 5;
                 con.insets.top = 5;
                 con.weightx = 0.0;
-                currentPanel.add(
-                        new JLabel(msgs.getMessage(entry.getTitle())), con);
+                currentPanel.add(new JLabel(msgs.getMessage(entry.getTitle())), con);
 
                 con.gridwidth = GridBagConstraints.REMAINDER;
                 con.gridheight = 1;

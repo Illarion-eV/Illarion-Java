@@ -66,8 +66,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
      *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
-    private static final class GameMapDragEndOperation
-            implements Runnable {
+    private static final class GameMapDragEndOperation implements Runnable {
         /**
          * The element that is dragged around.
          */
@@ -81,7 +80,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
         /**
          * Create a new end of drag operation.
          *
-         * @param draggedElement  the dragged element
+         * @param draggedElement the dragged element
          * @param returnToElement the element the dragged element needs to return to
          */
         GameMapDragEndOperation(final Element draggedElement, final Element returnToElement) {
@@ -155,8 +154,10 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
     /**
      * Default constructor that takes care to initialize the variables required for this class to work.
      */
-    public GameMapHandler(@Nonnull final Input input, final NumberSelectPopupHandler numberSelectPopupHandler,
-                          final TooltipHandler tooltip) {
+    public GameMapHandler(
+            @Nonnull final Input input,
+            final NumberSelectPopupHandler numberSelectPopupHandler,
+            final TooltipHandler tooltip) {
         mouseEvent = new NiftyMouseInputEvent();
         numberSelect = numberSelectPopupHandler;
         tooltipHandler = tooltip;
@@ -248,7 +249,8 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
             draggedImage.setHeight(height);
 
             final ImageRenderer imgRender = draggedImage.getRenderer(ImageRenderer.class);
-            imgRender.setImage(new NiftyImage(activeNifty.getRenderEngine(), new EntitySlickRenderImage(movedItem.getTemplate())));
+            imgRender.setImage(
+                    new NiftyImage(activeNifty.getRenderEngine(), new EntitySlickRenderImage(movedItem.getTemplate())));
 
             gamePanel.layoutElements();
             input.disableForwarding(ForwardingTarget.Mouse);
@@ -338,7 +340,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
     }
 
     @Override
-    public void bind(final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
         activeNifty = nifty;
         activeScreen = screen;
         gamePanel = screen.findElementById("gamePanel");

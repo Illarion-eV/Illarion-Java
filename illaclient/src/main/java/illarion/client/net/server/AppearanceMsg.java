@@ -154,9 +154,9 @@ public final class AppearanceMsg extends AbstractGuiMsg {
      * execution.
      *
      * @param reader the receiver that got the data from the server that needs
-     *               to be decoded
+     * to be decoded
      * @throws IOException thrown in case there was not enough data received to
-     *                     decode the full message
+     * decode the full message
      */
     @Override
     public void decode(@Nonnull final NetCommReader reader) throws IOException {
@@ -218,7 +218,6 @@ public final class AppearanceMsg extends AbstractGuiMsg {
             character.setInventoryItem(i, itemSlots[i]);
         }
         character.updatePaperdoll();
-
 
         if ((skinColorRed != Color.MAX_INT_VALUE) || (skinColorGreen != Color.MAX_INT_VALUE) ||
                 (skinColorBlue != Color.MAX_INT_VALUE)) {
@@ -462,18 +461,12 @@ public final class AppearanceMsg extends AbstractGuiMsg {
      * Get the data of this appearance message as string.
      *
      * @return the string that contains the values that were decoded for this
-     *         message
+     * message
      */
     @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(charId);
-        builder.append(" app=");
-        builder.append(appearance);
-        builder.append(" size=");
-        builder.append(size);
-        return toString(builder.toString());
+        return toString(String.valueOf(charId) + " app=" + appearance + " size=" + size);
     }
 }

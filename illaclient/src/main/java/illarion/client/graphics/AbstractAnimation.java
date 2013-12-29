@@ -81,10 +81,10 @@ abstract class AbstractAnimation {
      * {@link #addTarget(Animated, boolean)}.
      *
      * @param firstTarget the first animation target, so the first object that
-     *                    is actually animated
+     * is actually animated
      */
     protected AbstractAnimation(@Nullable final Animated firstTarget) {
-        targets = new ArrayList<Animated>();
+        targets = new ArrayList<>();
         if (firstTarget != null) {
             targets.add(firstTarget);
         }
@@ -95,11 +95,11 @@ abstract class AbstractAnimation {
      * synchronized. So they start in the same moment and stop in the same
      * moment.
      *
-     * @param target    the new animation target that shall be added this animation
+     * @param target the new animation target that shall be added this animation
      * @param autoStart true in case the animation shall start right away after
-     *                  the new animation target is added. The auto start will invoke
-     *                  the {@link #restart()} method so this one needs all data to
-     *                  start this animation in case its needed to do so
+     * the new animation target is added. The auto start will invoke
+     * the {@link #restart()} method so this one needs all data to
+     * start this animation in case its needed to do so
      */
     public final void addTarget(final Animated target, final boolean autoStart) {
         if (!targets.contains(target)) {
@@ -118,7 +118,7 @@ abstract class AbstractAnimation {
      *
      * @param delta the time since the last update of this animation
      * @return {@code true} in case the animation is in process,
-     *         {@code false} if its done
+     * {@code false} if its done
      */
     public abstract boolean animate(int delta);
 
@@ -126,7 +126,7 @@ abstract class AbstractAnimation {
      * Get the progress of the animation.
      *
      * @return a value between 0 and 1. 0 means the animation just started, 1
-     *         means the animation ended
+     * means the animation ended
      */
     public final float animationProgress() {
         return (float) currentTime / (float) duration;
@@ -146,7 +146,7 @@ abstract class AbstractAnimation {
      * the target empties the target list the animation stops automatically.
      *
      * @param target the animation target that shall be removed from the target
-     *               list
+     * list
      */
     public final void removeTarget(final Animated target) {
         targets.remove(target);
@@ -167,7 +167,7 @@ abstract class AbstractAnimation {
      * Stopped or that it started.
      *
      * @param newState the new value for the running state. True means the
-     *                 animation is still running, false means that it stopped
+     * animation is still running, false means that it stopped
      */
     public final void setRunning(final boolean newState) {
         running = newState;
@@ -212,7 +212,7 @@ abstract class AbstractAnimation {
      * some update functions.
      *
      * @param index the list index of the animation target that is wanted. This
-     *              value needs to be between 0 and {@link #getTargetCount()}
+     * value needs to be between 0 and {@link #getTargetCount()}
      * @return the requested target
      */
     @Nullable
@@ -272,9 +272,9 @@ abstract class AbstractAnimation {
      * handled in milliseconds.
      *
      * @param delta the time in milliseconds that shall be added to the current
-     *              time
+     * time
      * @return true in case the animation ended by this update, means the
-     *         current time reached the total duration of the animation
+     * current time reached the total duration of the animation
      */
     protected final boolean updateCurrentTime(final int delta) {
         currentTime += delta;

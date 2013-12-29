@@ -223,7 +223,7 @@ public class Location implements Serializable {
      * Copy constructor. This constructor creates a copy of the location instance set here and moves the new instance
      * to a specified direction.
      *
-     * @param org       the original Location instance
+     * @param org the original Location instance
      * @param direction the direction to move the location to
      */
     public Location(@Nonnull final Location org, final int direction) {
@@ -533,7 +533,7 @@ public class Location implements Serializable {
      *
      * @param loc the target position
      * @return the amount of steps needed to get from the current position to the target position in case there are not
-     *         blocked tiles on the way
+     * blocked tiles on the way
      */
     public int getDistance(@Nonnull final Location loc) {
         if (dirtySC) {
@@ -614,7 +614,7 @@ public class Location implements Serializable {
      *
      * @param loc the target location
      * @return the square root distance between the two locations. So the length of a straight line between this
-     *         location and the target location.
+     * location and the target location.
      */
     public float getSqrtDistance(@Nonnull final Location loc) {
         if (dirtySC) {
@@ -769,7 +769,7 @@ public class Location implements Serializable {
      */
     public void setKey(final long key) {
         setSC((int) (((key % KEY_MOD_Z) / KEY_MOD_X) - (KEY_MOD_X / 2)), (int) (key % KEY_MOD_Z % KEY_MOD_X),
-                (int) ((key / KEY_MOD_Z) - (KEY_MOD_Z / 2)));
+              (int) ((key / KEY_MOD_Z) - (KEY_MOD_Z / 2)));
     }
 
     /**
@@ -828,14 +828,7 @@ public class Location implements Serializable {
         if (dirtySC) {
             toServerCoordinates();
         }
-        final StringBuilder builder = new StringBuilder();
-        builder.append("Location: ");
-        builder.append(scX);
-        builder.append(',');
-        builder.append(scY);
-        builder.append(',');
-        builder.append(scZ);
-        return builder.toString();
+        return "Location: " + scX + ',' + scY + ',' + scZ;
     }
 
     /**
@@ -894,10 +887,10 @@ public class Location implements Serializable {
 
             dirtySC = false;
         } else if (!dirtyDC) {
-            scX = FastMath.round(((-dcY / (float) (MapConstants.STEP_Y + gap)) + (dcX / (float) (MapConstants.STEP_X
-                    + gap))) / 2.f);
-            scY = FastMath.round(((dcX / (float) (MapConstants.STEP_X + gap)) - (-dcY / (float) (MapConstants.STEP_Y
-                    + gap))) / 2.f);
+            scX = FastMath.round(((-dcY / (float) (MapConstants.STEP_Y + gap)) +
+                    (dcX / (float) (MapConstants.STEP_X + gap))) / 2.f);
+            scY = FastMath.round(((dcX / (float) (MapConstants.STEP_X + gap)) -
+                    (-dcY / (float) (MapConstants.STEP_Y + gap))) / 2.f);
             scZ = 0;
 
             dirtySC = false;

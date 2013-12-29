@@ -94,14 +94,19 @@ public class SkillLoader {
                         int serverId = -1;
                         for (int i = 0; i < attribCount; i++) {
                             final String attribName = parser.getAttributeName(i);
-                            if ("name".equals(attribName)) {
-                                serverName = parser.getAttributeValue(i);
-                            } else if ("german".equals(attribName)) {
-                                germanName = parser.getAttributeValue(i);
-                            } else if ("english".equals(attribName)) {
-                                englishName = parser.getAttributeValue(i);
-                            } else if ("id".equals(attribName)) {
-                                serverId = Integer.parseInt(parser.getAttributeValue(i));
+                            switch (attribName) {
+                                case "name":
+                                    serverName = parser.getAttributeValue(i);
+                                    break;
+                                case "german":
+                                    germanName = parser.getAttributeValue(i);
+                                    break;
+                                case "english":
+                                    englishName = parser.getAttributeValue(i);
+                                    break;
+                                case "id":
+                                    serverId = Integer.parseInt(parser.getAttributeValue(i));
+                                    break;
                             }
                         }
                         if ((germanName != null) && (englishName != null) && (serverName != null) && (serverId >= 0)) {

@@ -38,7 +38,6 @@ import java.util.List;
  */
 public class DocuLoader implements Resource, TreeModel {
 
-
     @Nonnull
     public static DocuLoader getInstance() {
         return INSTANCE;
@@ -46,7 +45,7 @@ public class DocuLoader implements Resource, TreeModel {
 
     public static class Folder extends File {
 
-        private final List<File> files = new FastTable<File>();
+        private final List<File> files = new FastTable<>();
 
         private Folder(final String name, final String path) {
             super(name, path);
@@ -156,7 +155,6 @@ public class DocuLoader implements Resource, TreeModel {
     public void removeTreeModelListener(final TreeModelListener l) {
     }
 
-
     private static void loadFolder(@Nonnull final Folder parent) throws IOException {
         final String[] files = loadList(parent);
         for (final String file : files) {
@@ -186,7 +184,7 @@ public class DocuLoader implements Resource, TreeModel {
             return new String[0];
         }
         final BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        final List<String> stringList = new FastTable<String>();
+        final List<String> stringList = new FastTable<>();
         String s;
         while ((s = reader.readLine()) != null) {
             stringList.add(s);

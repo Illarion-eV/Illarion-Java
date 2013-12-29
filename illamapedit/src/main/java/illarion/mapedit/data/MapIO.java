@@ -53,7 +53,7 @@ public class MapIO {
     public static final String EXT_ANNO = ".annot.txt";
     private static final char NEWLINE = '\n';
     private static final String VERSION_PATTERN = "V: \\d+";
-    private static final java.util.Map<String, Decoder> DECODERS = new HashMap<String, Decoder>();
+    private static final java.util.Map<String, Decoder> DECODERS = new HashMap<>();
 
     static {
         DECODERS.put("2", new Version2Decoder());
@@ -75,7 +75,7 @@ public class MapIO {
             @Override
             public void run() {
                 try {
-                    EventBus.publish(new MapLoadedEvent(loadMapThread(path,name)));
+                    EventBus.publish(new MapLoadedEvent(loadMapThread(path, name)));
                 } catch (FormatCorruptedException ex) {
                     LOGGER.warn("Format wrong.", ex);
                     EventBus.publish(new MapLoadErrorEvent(ex.getMessage()));
@@ -90,7 +90,7 @@ public class MapIO {
     @Nullable
     public static Map loadMapThread(final String path, final String name) throws IOException {
         LOGGER.debug("Load map " + name + "  at " + path);
-//        Open the streams for all 3 files, containing the map data
+        //        Open the streams for all 3 files, containing the map data
         final File tileFile = new File(path, name + EXT_TILE);
         final File itemFile = new File(path, name + EXT_ITEM);
         final File warpFile = new File(path, name + EXT_WARP);
@@ -131,7 +131,8 @@ public class MapIO {
                 decoder.decodeWarpLine(s, i);
             }
             if (annotationFileExist) {
-                final BufferedReader annoInput = new BufferedReader(new InputStreamReader(new FileInputStream(annoFile)));
+                final BufferedReader annoInput = new BufferedReader(
+                        new InputStreamReader(new FileInputStream(annoFile)));
                 for (int i = 0; ((s = annoInput.readLine()) != null) && !s.isEmpty(); i++) {
                     decoder.decodeAnnoLine(s, i);
                 }
@@ -144,8 +145,7 @@ public class MapIO {
         Map m = decoder.getDecodedMap();
 
         LOGGER.debug(String.format("W=%d; H=%d; X=%d; Y=%d; L=%d;", m.getWidth(), m.getHeight(), m.getX(), m.getY(),
-                m.getY()));
-
+                                   m.getY()));
 
         return m;
     }
@@ -205,11 +205,12 @@ public class MapIO {
 
                 final List<MapItem> items = tile.getMapItems();
                 if (items != null) {
-                    for (int i = 0; i< items.size(); i++) {
+                    for (int i = 0; i < items.size(); i++) {
                         //        <dx>;<dy>;<item ID>;<quality>[;<data value>[;...]]
                         writeLine(itemOutput, String.format("%d;%d;%s", x, y, items.get(i)));
                         if (items.get(i).hasAnnotation()) {
-                            writeLine(annoOutput, String.format("%d;%d;%d;%s", x, y, i + 1, items.get(i).getAnnotation()));
+                            writeLine(annoOutput,
+                                      String.format("%d;%d;%d;%s", x, y, i + 1, items.get(i).getAnnotation()));
                         }
                     }
                 }
@@ -217,7 +218,6 @@ public class MapIO {
                 if (warp != null) {
                     writeLine(warpOutput, String.format("%d;%d;%s", x, y, warp));
                 }
-
             }
         }
         tileOutput.close();

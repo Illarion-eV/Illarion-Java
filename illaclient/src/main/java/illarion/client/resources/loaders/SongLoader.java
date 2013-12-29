@@ -33,8 +33,8 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class SongLoader extends AbstractResourceLoader<IdWrapper<String>> implements
-        TableLoaderSink<TableLoaderMusic> {
+public final class SongLoader extends AbstractResourceLoader<IdWrapper<String>>
+        implements TableLoaderSink<TableLoaderMusic> {
     /**
      * The logger that is used to report error messages.
      */
@@ -70,12 +70,11 @@ public final class SongLoader extends AbstractResourceLoader<IdWrapper<String>> 
         final String filename = loader.getSongFile();
 
         try {
-            getTargetFactory().storeResource(new IdWrapper<String>(clipID, filename));
+            getTargetFactory().storeResource(new IdWrapper<>(clipID, filename));
         } catch (@Nonnull final IllegalStateException ex) {
             LOGGER.error("Failed adding song to internal factory. ID: " + clipID + " - Filename: " + filename);
         }
 
         return true;
     }
-
 }

@@ -58,15 +58,14 @@ public class PositionParameter extends JPanel implements Parameter {
         } else {
             p = new Position();
         }
-        xField.setValue(new Short(p.getX()));
-        yField.setValue(new Short(p.getY()));
-        zField.setValue(new Short(p.getZ()));
+        xField.setValue(p.getX());
+        yField.setValue(p.getY());
+        zField.setValue(p.getZ());
     }
 
     @Nonnull
     public Object getParameter() {
-        return new Position(((Number) xField.getValue()).shortValue(),
-                ((Number) yField.getValue()).shortValue(),
-                ((Number) zField.getValue()).shortValue());
+        return new Position(((Number) xField.getValue()).shortValue(), ((Number) yField.getValue()).shortValue(),
+                            ((Number) zField.getValue()).shortValue());
     }
 }

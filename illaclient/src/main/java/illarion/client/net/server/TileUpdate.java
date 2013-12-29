@@ -46,12 +46,12 @@ public final class TileUpdate {
     /**
      * List of count values for the items on this tile.
      */
-    private final List<ItemCount> itemCount = new ArrayList<ItemCount>(DEFAULT_SIZE);
+    private final List<ItemCount> itemCount = new ArrayList<>(DEFAULT_SIZE);
 
     /**
      * List of Item IDs on this tile.
      */
-    private final List<ItemId> itemId = new ArrayList<ItemId>(DEFAULT_SIZE);
+    private final List<ItemId> itemId = new ArrayList<>(DEFAULT_SIZE);
 
     /**
      * Count of item stacks on the tile.
@@ -192,9 +192,9 @@ public final class TileUpdate {
      * executed.
      *
      * @param reader the receiver that got the data from the server that needs
-     *               to be decoded
+     * to be decoded
      * @throws IOException thrown in case there was not enough data received to
-     *                     decode the full message
+     * decode the full message
      */
     protected void decode(@Nonnull final NetCommReader reader) throws IOException {
         // read tile attributes

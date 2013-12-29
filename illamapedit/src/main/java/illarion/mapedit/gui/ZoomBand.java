@@ -44,11 +44,11 @@ public class ZoomBand extends JRibbonBand {
         super(Lang.getMsg("gui.zoomband.Name"), ImageLoader.getResizableIcon("viewmag"));
 
         final JCommandButton zoomOriginal = new JCommandButton(Lang.getMsg("gui.zoomband.Original"),
-                ImageLoader.getResizableIcon("viewmag1"));
+                                                               ImageLoader.getResizableIcon("viewmag1"));
         final JCommandButton zoomOut = new JCommandButton(Lang.getMsg("gui.zoomband.Out"),
-                ImageLoader.getResizableIcon("viewmag-"));
+                                                          ImageLoader.getResizableIcon("viewmag-"));
         final JCommandButton zoomIn = new JCommandButton(Lang.getMsg("gui.zoomband.In"),
-                ImageLoader.getResizableIcon("viewmag+"));
+                                                         ImageLoader.getResizableIcon("viewmag+"));
 
         final ActionListener zoomOutListener = new ActionListener() {
             @Override
@@ -79,7 +79,7 @@ public class ZoomBand extends JRibbonBand {
         addCommandButton(zoomOut, RibbonElementPriority.TOP);
         addCommandButton(zoomIn, RibbonElementPriority.TOP);
 
-        final List<RibbonBandResizePolicy> policies = new ArrayList<RibbonBandResizePolicy>();
+        final List<RibbonBandResizePolicy> policies = new ArrayList<>();
         policies.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
         policies.add(new CoreRibbonResizePolicies.High2Low(getControlPanel()));
         setResizePolicies(policies);

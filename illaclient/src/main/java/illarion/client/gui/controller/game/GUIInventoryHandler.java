@@ -209,8 +209,10 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
         }
     };
 
-    public GUIInventoryHandler(@Nonnull final Input input, final NumberSelectPopupHandler numberSelectPopupHandler,
-                               final TooltipHandler tooltipHandler) {
+    public GUIInventoryHandler(
+            @Nonnull final Input input,
+            final NumberSelectPopupHandler numberSelectPopupHandler,
+            final TooltipHandler tooltipHandler) {
         slots = new String[Inventory.SLOT_COUNT];
         slots[0] = "invslot_bag";
         slots[1] = "invslot_head";
@@ -362,8 +364,8 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
     @NiftyEventSubscriber(pattern = "invslot_.*")
     public void dragFromInventory(@Nonnull final String topic, final DraggableDragStartedEvent data) {
         final int slotId = getSlotNumber(topic);
-        World.getInteractionManager().notifyDraggingInventory(slotId,
-                new GUIInventoryHandler.EndOfDragOperation(invSlots[slotId].getNiftyControl(InventorySlot.class)));
+        World.getInteractionManager().notifyDraggingInventory(slotId, new GUIInventoryHandler.EndOfDragOperation(
+                invSlots[slotId].getNiftyControl(InventorySlot.class)));
         tooltipHandler.hideToolTip();
     }
 
@@ -428,7 +430,7 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
     }
 
     @Override
-    public void bind(final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
         activeNifty = nifty;
         activeScreen = screen;
 
@@ -476,7 +478,7 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
      *
      * @param slotId the ID of the slot to change
      * @param itemId the ID of the item that shall be displayed in the slot
-     * @param count  the amount of items displayed in this slot
+     * @param count the amount of items displayed in this slot
      */
     private void setSlotItem(final int slotId, @Nullable final ItemId itemId, @Nullable final ItemCount count) {
         if ((slotId < 0) || (slotId >= Inventory.SLOT_COUNT)) {
@@ -490,7 +492,7 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
             final ItemTemplate displayedItem = ItemFactory.getInstance().getTemplate(itemId.getValue());
 
             final NiftyImage niftyImage = new NiftyImage(activeNifty.getRenderEngine(),
-                    new EntitySlickRenderImage(displayedItem));
+                                                         new EntitySlickRenderImage(displayedItem));
 
             invSlot.setImage(niftyImage);
             if (ItemCount.isGreaterOne(count)) {

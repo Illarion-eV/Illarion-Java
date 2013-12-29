@@ -75,9 +75,8 @@ final class MessageExecutor extends Thread implements Stoppable {
     public MessageExecutor(final BlockingQueue<AbstractReply> inputQueue) {
         super("NetComm MessageExecutor");
         input = inputQueue;
-        delayedQueue = new LinkedList<AbstractReply>();
+        delayedQueue = new LinkedList<>();
     }
-
 
     @Override
     public synchronized void start() {

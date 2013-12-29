@@ -43,7 +43,7 @@ public final class ScriptWriter {
         /**
          * This target makes the writer generate a LUA script.
          */
-        LUA;
+        LUA
     }
 
     /**

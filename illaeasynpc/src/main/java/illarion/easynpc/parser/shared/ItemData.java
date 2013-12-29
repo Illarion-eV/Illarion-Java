@@ -50,7 +50,7 @@ public final class ItemData {
      */
     @Nonnull
     public static ParsedItemData getData(@Nonnull final String... lines) {
-        final Map<String, String> dataValues = new HashMap<String, String>();
+        final Map<String, String> dataValues = new HashMap<>();
 
         for (final String line : lines) {
             final Matcher matcher = DATA_PATTERN.matcher(line);

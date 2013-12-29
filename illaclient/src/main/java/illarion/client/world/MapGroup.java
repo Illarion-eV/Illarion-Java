@@ -91,8 +91,7 @@ public final class MapGroup {
     private boolean isOverwritingGroupHidden() {
         @Nullable final List<MapGroup> lclList = overwritingGroups;
         if (lclList != null) {
-            for (int i = 0; i < lclList.size(); i++) {
-                final MapGroup group = lclList.get(i);
+            for (final MapGroup group : lclList) {
                 if (group.isHidden()) {
                     return true;
                 }
@@ -131,8 +130,8 @@ public final class MapGroup {
             return;
         }
 
-        for (int i = 0; i < children.size(); i++) {
-            children.get(i).hidden = hidden;
+        for (MapGroup aChildren : children) {
+            aChildren.hidden = hidden;
         }
     }
 
@@ -152,15 +151,14 @@ public final class MapGroup {
         parent.addChild(this);
 
         if (children != null) {
-            for (int i = 0; i < children.size(); i++) {
-                parent.addChild(children.get(i));
+            for (MapGroup aChildren : children) {
+                parent.addChild(aChildren);
             }
             children = null;
         }
 
         if (overwritingGroups != null) {
-            for (int i = 0; i < overwritingGroups.size(); i++) {
-                final MapGroup group = overwritingGroups.get(i);
+            for (final MapGroup group : overwritingGroups) {
                 parent.addOverwritingGroup(group);
             }
             overwritingGroups = null;
@@ -174,7 +172,7 @@ public final class MapGroup {
      */
     private void addChild(@Nonnull final MapGroup child) {
         if (children == null) {
-            children = new ArrayList<MapGroup>();
+            children = new ArrayList<>();
         }
         if (!children.contains(child)) {
             children.add(child);
@@ -191,7 +189,7 @@ public final class MapGroup {
             throw new IllegalStateException("Adding overwriting groups no non-root groups is not allowed.");
         }
         if (overwritingGroups == null) {
-            overwritingGroups = new ArrayList<MapGroup>();
+            overwritingGroups = new ArrayList<>();
         }
         if (!overwritingGroups.contains(group)) {
             overwritingGroups.add(group);

@@ -37,8 +37,7 @@ import java.io.IOException;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_CHANGE_ITEM)
-public final class ChangeItemMsg
-        extends AbstractReply {
+public final class ChangeItemMsg extends AbstractReply {
     /**
      * The new count value of the item.
      */
@@ -66,8 +65,7 @@ public final class ChangeItemMsg
      * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader)
-            throws IOException {
+    public void decode(@Nonnull final NetCommReader reader) throws IOException {
         loc = decodeLocation(reader);
         oldItem = new ItemId(reader);
         newItem = new ItemId(reader);
@@ -98,14 +96,6 @@ public final class ChangeItemMsg
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(oldItem);
-        builder.append(" to ");
-        builder.append(newItem);
-        builder.append(" - count: ");
-        builder.append(count);
-        builder.append(" at ");
-        builder.append(loc);
-        return toString(builder.toString());
+        return toString(String.valueOf(oldItem) + " to " + newItem + " - count: " + count + " at " + loc);
     }
 }

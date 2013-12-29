@@ -27,12 +27,11 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class DialogMessageBuilder
-        extends ControlBuilder {
+public class DialogMessageBuilder extends ControlBuilder {
     /**
      * Build a new message dialog with a set title and ID.
      *
-     * @param id    the nifty-gui ID of the dialog
+     * @param id the nifty-gui ID of the dialog
      * @param title the title of the dialog
      */
     public DialogMessageBuilder(@Nonnull final String id, final String title) {
@@ -50,7 +49,7 @@ public class DialogMessageBuilder
      *
      * @param text the text displayed in this dialog
      */
-    public void text(final String text) {
+    public void text(@Nonnull final String text) {
         set("text", text);
     }
 

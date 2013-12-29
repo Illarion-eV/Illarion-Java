@@ -324,7 +324,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     }
 
     @Override
-    public boolean keyEvent(final NiftyInputEvent inputEvent) {
+    public boolean keyEvent(@Nonnull final NiftyInputEvent inputEvent) {
         if (inputEvent == NiftyStandardInputEvent.SubmitText) {
             if (popupIsVisible) {
                 closeError();

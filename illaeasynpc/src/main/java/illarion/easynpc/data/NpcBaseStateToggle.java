@@ -33,5 +33,5 @@ public enum NpcBaseStateToggle {
     /**
      * Set the NPC back into the normal modus.
      */
-    end;
+    end
 }

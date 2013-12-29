@@ -63,14 +63,14 @@ public final class CreditsList implements Iterable<CreditsPerson> {
     /**
      * Create a new credits list.
      *
-     * @param nameGerman  the german name of the list
+     * @param nameGerman the german name of the list
      * @param nameEnglish the english name of the list
      */
     public CreditsList(final String nameGerman, final String nameEnglish) {
         this.nameGerman = nameGerman;
         this.nameEnglish = nameEnglish;
 
-        members = new ArrayList<CreditsPerson>();
+        members = new ArrayList<>();
     }
 
     /**

@@ -58,21 +58,23 @@ public class TextureAtlasFinalizeTask<T> implements Runnable, TextureAtlasTask {
     private final float progressToAdd;
     private boolean done;
 
-    public TextureAtlasFinalizeTask(@Nonnull final FutureTask<T> preLoadTask,
-                                    @Nonnull final String atlasName,
-                                    @Nonnull final AbstractTextureManager<T> textureManager,
-                                    @Nonnull final ProgressMonitor monitor, final float progressToAdd) {
+    public TextureAtlasFinalizeTask(
+            @Nonnull final FutureTask<T> preLoadTask,
+            @Nonnull final String atlasName,
+            @Nonnull final AbstractTextureManager<T> textureManager,
+            @Nonnull final ProgressMonitor monitor,
+            final float progressToAdd) {
         this.preLoadTask = preLoadTask;
         this.atlasName = atlasName;
         this.textureManager = textureManager;
         this.monitor = monitor;
         this.progressToAdd = progressToAdd;
-        spriteList = new ArrayList<SpriteData>();
+        spriteList = new ArrayList<>();
         done = false;
     }
 
-    public void addSprite(@Nonnull final String name, final int posX, final int posY, final int width,
-                          final int height) {
+    public void addSprite(
+            @Nonnull final String name, final int posX, final int posY, final int width, final int height) {
         final SpriteData data = new SpriteData();
         data.spriteName = name;
         data.posX = posX;
@@ -87,7 +89,6 @@ public class TextureAtlasFinalizeTask<T> implements Runnable, TextureAtlasTask {
         return done;
     }
 
-
     @Override
     public void run() {
         try {
@@ -96,8 +97,8 @@ public class TextureAtlasFinalizeTask<T> implements Runnable, TextureAtlasTask {
             if (atlasTexture != null) {
                 textureManager.addTexture(atlasName, atlasTexture);
                 for (@Nonnull final SpriteData data : spriteList) {
-                    final Texture spriteTexture = atlasTexture.getSubTexture(data.posX, data.posY, data.width,
-                            data.height);
+                    final Texture spriteTexture = atlasTexture
+                            .getSubTexture(data.posX, data.posY, data.width, data.height);
                     textureManager.addTexture(data.spriteName, spriteTexture);
                 }
             }

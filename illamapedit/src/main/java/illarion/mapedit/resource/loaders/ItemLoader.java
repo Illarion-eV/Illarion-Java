@@ -42,7 +42,7 @@ public class ItemLoader implements TableLoaderSink<TableLoaderItems>, Resource {
     private static final int DB_INDEX_NAME = 2;
     private static final ItemLoader INSTANCE = new ItemLoader();
     private static final String DIR_IMG_ITEMS = "items/";
-    private final TIntObjectHashMap<ItemImg> items = new TIntObjectHashMap<ItemImg>();
+    private final TIntObjectHashMap<ItemImg> items = new TIntObjectHashMap<>();
 
     private ItemLoader() {
 
@@ -78,13 +78,11 @@ public class ItemLoader implements TableLoaderSink<TableLoaderItems>, Resource {
         final int animationSpeed = loader.getAnimationSpeed();
         final int editorGroup = loader.getMapEditorGroup();
 
-        final ItemInfo info =
-                ItemInfo.create(face, moveable, specialFlag, obstacle, variance,
-                        opacity, surfaceLevel, itemLight);
+        final ItemInfo info = ItemInfo
+                .create(face, moveable, specialFlag, obstacle, variance, opacity, surfaceLevel, itemLight);
 
-        final ItemImg img = new ItemImg(itemID, resourceName, editorGroup, offsetX, offsetY,
-                frameCount, animationSpeed, mode
-                , getTextures(loader.getResourceName(), frameCount), info);
+        final ItemImg img = new ItemImg(itemID, resourceName, editorGroup, offsetX, offsetY, frameCount, animationSpeed,
+                                        mode, getTextures(loader.getResourceName(), frameCount), info);
 
         items.put(img.getItemId(), img);
         return true;
@@ -97,8 +95,8 @@ public class ItemLoader implements TableLoaderSink<TableLoaderItems>, Resource {
             imgs[0] = TextureLoaderAwt.getInstance().getTexture(DIR_IMG_ITEMS + resourceName);
         } else {
             for (int i = 0; i < frameCount; i++) {
-                imgs[i] = TextureLoaderAwt.getInstance().getTexture(String.format("%s%s-%d", DIR_IMG_ITEMS,
-                        resourceName, i));
+                imgs[i] = TextureLoaderAwt.getInstance()
+                        .getTexture(String.format("%s%s-%d", DIR_IMG_ITEMS, resourceName, i));
             }
         }
         return imgs;

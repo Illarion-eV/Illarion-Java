@@ -34,9 +34,7 @@ import java.util.List;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class Pathfinder
-        extends Thread
-        implements Stoppable {
+public final class Pathfinder extends Thread implements Stoppable {
     /**
      * The singleton instance of the pathfinder class.
      */
@@ -97,7 +95,7 @@ public final class Pathfinder
         endLoc = new Location();
         startLoc = new Location();
 
-        open = new ArrayList<PathNode>();
+        open = new ArrayList<>();
 
         start();
         StoppableStorage.getInstance().add(this);
@@ -132,10 +130,13 @@ public final class Pathfinder
      * Search a path between two locations.
      *
      * @param pathStart the location where the path starts
-     * @param pathDest  the location where the path ends
-     * @param pathRec   the class that receives the resulting path
+     * @param pathDest the location where the path ends
+     * @param pathRec the class that receives the resulting path
      */
-    public void findPath(@Nonnull final Location pathStart, @Nonnull final Location pathDest, final PathReceiver pathRec) {
+    public void findPath(
+            @Nonnull final Location pathStart,
+            @Nonnull final Location pathDest,
+            final PathReceiver pathRec) {
         startLoc.set(pathStart);
         endLoc.set(pathDest);
         receiver = pathRec;
@@ -246,8 +247,8 @@ public final class Pathfinder
                 if (!searchNode.isBlocked()) {
                     int newMoveCost = currentNode.getCost() + searchNode.getValue();
 
-                    if ((dir == Location.DIR_NORTHEAST) || (dir == Location.DIR_NORTHWEST) || (dir == Location
-                            .DIR_SOUTHEAST) || (dir == Location.DIR_SOUTHWEST)) {
+                    if ((dir == Location.DIR_NORTHEAST) || (dir == Location.DIR_NORTHWEST) ||
+                            (dir == Location.DIR_SOUTHEAST) || (dir == Location.DIR_SOUTHWEST)) {
                         newMoveCost *= 1.1f;
                     }
 

@@ -1,7 +1,6 @@
 package illarion.client.gui.controller.game;
 
 import de.lessvoid.nifty.elements.Element;
-import illarion.client.graphics.AnimationUtility;
 import illarion.client.gui.MiniMapGui;
 import illarion.client.resources.MiscImageFactory;
 import illarion.client.world.World;
@@ -76,16 +75,33 @@ final class MiniMapStartPointer implements IgeRenderImage, MiniMapGui.Pointer {
     }
 
     @Override
-    public void renderImage(@Nonnull final Graphics g, final int x, final int y, final int width, final int height,
-                            @Nonnull final Color color, final float imageScale) {
-        renderImage(g, x, y, width, height, 0, 0, pointSprite.getWidth(), pointSprite.getHeight(), color,
-                imageScale, pointSprite.getWidth() / 2, pointSprite.getHeight() / 2);
+    public void renderImage(
+            @Nonnull final Graphics g,
+            final int x,
+            final int y,
+            final int width,
+            final int height,
+            @Nonnull final Color color,
+            final float imageScale) {
+        renderImage(g, x, y, width, height, 0, 0, pointSprite.getWidth(), pointSprite.getHeight(), color, imageScale,
+                    pointSprite.getWidth() / 2, pointSprite.getHeight() / 2);
     }
 
     @Override
-    public void renderImage(@Nonnull final Graphics g, final int x, final int y, final int w, final int h, final int srcX,
-                            final int srcY, final int srcW, final int srcH, @Nonnull final Color color, final float scale,
-                            final int centerX, final int centerY) {
+    public void renderImage(
+            @Nonnull final Graphics g,
+            final int x,
+            final int y,
+            final int w,
+            final int h,
+            final int srcX,
+            final int srcY,
+            final int srcW,
+            final int srcH,
+            @Nonnull final Color color,
+            final float scale,
+            final int centerX,
+            final int centerY) {
         final int scaledWidth = Math.round(w * scale);
         final int scaledHeight = Math.round(h * scale);
 
@@ -105,9 +121,8 @@ final class MiniMapStartPointer implements IgeRenderImage, MiniMapGui.Pointer {
                 renderColor = color;
             }
 
-            g.drawTexture(pointSprite.getFrame(0), fixedX - offsetX, fixedY - offsetY,
-                    scaledWidth, scaledHeight, srcX, srcY, srcW, srcH, centerX - fixedX, centerY - fixedY,
-                    0.f, renderColor);
+            g.drawTexture(pointSprite.getFrame(0), fixedX - offsetX, fixedY - offsetY, scaledWidth, scaledHeight, srcX,
+                          srcY, srcW, srcH, centerX - fixedX, centerY - fixedY, 0.f, renderColor);
         }
     }
 

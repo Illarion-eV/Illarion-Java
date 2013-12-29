@@ -30,7 +30,8 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class BookLoader extends AbstractResourceLoader<IdWrapper<String>> implements TableLoaderSink<TableLoaderBooks> {
+public final class BookLoader extends AbstractResourceLoader<IdWrapper<String>>
+        implements TableLoaderSink<TableLoaderBooks> {
     @Nonnull
     @Override
     public ResourceFactory<IdWrapper<String>> call() {
@@ -54,7 +55,7 @@ public final class BookLoader extends AbstractResourceLoader<IdWrapper<String>> 
         final int id = loader.getBookId();
         final String bookFile = loader.getBookFile();
 
-        getTargetFactory().storeResource(new IdWrapper<String>(id, bookFile));
+        getTargetFactory().storeResource(new IdWrapper<>(id, bookFile));
 
         return true;
     }

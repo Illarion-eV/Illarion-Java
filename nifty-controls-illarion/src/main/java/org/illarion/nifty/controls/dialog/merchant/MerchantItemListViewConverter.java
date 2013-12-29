@@ -68,16 +68,17 @@ public final class MerchantItemListViewConverter implements ListBox.ListBoxViewC
         final int copper = money.getCopper();
 
         applyMoneyValues(gold, listBoxItem.findElementById("#moneyGoldCount"),
-                listBoxItem.findElementById("#moneyGoldImage"));
+                         listBoxItem.findElementById("#moneyGoldImage"));
         applyMoneyValues(silver, listBoxItem.findElementById("#moneySilverCount"),
-                listBoxItem.findElementById("#moneySilverImage"));
+                         listBoxItem.findElementById("#moneySilverImage"));
         applyMoneyValues(copper, listBoxItem.findElementById("#moneyCopperCount"),
-                listBoxItem.findElementById("#moneyCopperImage"));
+                         listBoxItem.findElementById("#moneyCopperImage"));
 
         final Element bundleSizeDisplay = listBoxItem.findElementById("#bundleSizeDisplay");
         if (ItemCount.isGreaterOne(item.getBundleSize())) {
             bundleSizeDisplay.setVisible(true);
-            bundleSizeDisplay.getRenderer(TextRenderer.class).setText(Integer.toString(item.getBundleSize().getValue()));
+            bundleSizeDisplay.getRenderer(TextRenderer.class)
+                    .setText(Integer.toString(item.getBundleSize().getValue()));
         } else {
             bundleSizeDisplay.setVisible(false);
         }
@@ -90,11 +91,14 @@ public final class MerchantItemListViewConverter implements ListBox.ListBoxViewC
     /**
      * This function is used to apply the money data to the displayed entries.
      *
-     * @param money        the money value
-     * @param textDisplay  the text display for this part of the money
+     * @param money the money value
+     * @param textDisplay the text display for this part of the money
      * @param imageDisplay the image display for this part of money
      */
-    private static void applyMoneyValues(final int money, @Nonnull final Element textDisplay, @Nonnull final Element imageDisplay) {
+    private static void applyMoneyValues(
+            final int money,
+            @Nonnull final Element textDisplay,
+            @Nonnull final Element imageDisplay) {
         if (money > 0) {
             textDisplay.getRenderer(TextRenderer.class).setText(Integer.toString(money));
             textDisplay.showWithoutEffects();
@@ -113,7 +117,7 @@ public final class MerchantItemListViewConverter implements ListBox.ListBoxViewC
     }
 
     @Override
-    public int getWidth(@Nonnull final Element element, final MerchantListEntry item) {
+    public int getWidth(@Nonnull final Element element, @Nonnull final MerchantListEntry item) {
         return element.getWidth();
     }
 }

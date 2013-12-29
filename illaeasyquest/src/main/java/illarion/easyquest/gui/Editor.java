@@ -66,8 +66,7 @@ public final class Editor extends mxGraphComponent {
 
     private final mxIEventListener undoHandler = new mxIEventListener() {
         public void invoke(final Object source, @Nonnull final mxEventObject evt) {
-            undoManager.undoableEditHappened((mxUndoableEdit) evt
-                    .getProperty("edit"));
+            undoManager.undoableEditHappened((mxUndoableEdit) evt.getProperty("edit"));
         }
     };
 
@@ -83,7 +82,6 @@ public final class Editor extends mxGraphComponent {
             } catch (NumberFormatException e) {
             }
         }
-
 
         getConnectionHandler().getMarker().setHotspot(0.5f);
 
@@ -108,10 +106,8 @@ public final class Editor extends mxGraphComponent {
 
         final mxIEventListener undoHandler = new mxIEventListener() {
             public void invoke(final Object source, @Nonnull final mxEventObject evt) {
-                final List<mxUndoableChange> changes = ((mxUndoableEdit) evt
-                        .getProperty("edit")).getChanges();
-                g.setSelectionCells(g
-                        .getSelectionCellsForChanges(changes));
+                final List<mxUndoableChange> changes = ((mxUndoableEdit) evt.getProperty("edit")).getChanges();
+                g.setSelectionCells(g.getSelectionCellsForChanges(changes));
             }
         };
 
@@ -122,9 +118,8 @@ public final class Editor extends mxGraphComponent {
 
         getGraphControl().addMouseListener(new MouseAdapter() {
             public void mouseClicked(@Nonnull final MouseEvent e) {
-                if ((e.getClickCount() == 2) ||
-                        ((e.getClickCount() == 1) &&
-                                (MainFrame.getInstance().getCreateType() == MainFrame.CREATE_STATUS))) {
+                if ((e.getClickCount() == 2) || ((e.getClickCount() == 1) &&
+                        (MainFrame.getInstance().getCreateType() == MainFrame.CREATE_STATUS))) {
                     final Object cell = getCellAt(e.getX(), e.getY());
                     if (cell == null) {
                         final Object parent = g.getDefaultParent();
@@ -133,8 +128,7 @@ public final class Editor extends mxGraphComponent {
                             final Status status = new Status();
                             status.setName("New Quest Status");
                             status.setStart(false);
-                            g.insertVertex(parent, null, status, e.getX() - 60, e.getY() - 15, 120,
-                                    30);
+                            g.insertVertex(parent, null, status, e.getX() - 60, e.getY() - 15, 120, 30);
                         } finally {
                             g.getModel().endUpdate();
                         }
@@ -178,7 +172,7 @@ public final class Editor extends mxGraphComponent {
         edgeStyle.put(mxConstants.STYLE_STROKEWIDTH, 2.0);
         edgeStyle.put(mxConstants.STYLE_ROUNDED, true);
         stylesheet.setDefaultEdgeStyle(edgeStyle);
-        final Map<String, Object> startStyle = new HashMap<String, Object>();
+        final Map<String, Object> startStyle = new HashMap<>();
         startStyle.put(mxConstants.STYLE_STROKEWIDTH, 3.0);
         startStyle.put(mxConstants.STYLE_STROKECOLOR, "#0000F0");
         stylesheet.putCellStyle("StartStyle", startStyle);
@@ -270,7 +264,7 @@ public final class Editor extends mxGraphComponent {
     @Nonnull
     public Map<String, String> getQuestLua(final String questName) {
         String questtxt = "";
-        final Map<String, String> quest = new HashMap<String, String>();
+        final Map<String, String> quest = new HashMap<>();
 
         final Graph g = (Graph) getGraph();
         final Object[] edges = g.getChildEdges(g.getDefaultParent());
@@ -279,8 +273,7 @@ public final class Editor extends mxGraphComponent {
         for (final Object obj : edges) {
             final mxCell edge = (mxCell) obj;
             final Trigger trigger = (Trigger) edge.getValue();
-            final TriggerTemplate template =
-                    TriggerTemplates.getInstance().getTemplate(trigger.getType());
+            final TriggerTemplate template = TriggerTemplates.getInstance().getTemplate(trigger.getType());
 
             final String scriptName = "trigger" + i;
             final mxICell source = edge.getSource();
@@ -291,15 +284,14 @@ public final class Editor extends mxGraphComponent {
             final String targetId = targetState.isStart() ? "0" : target.getId();
             final Object[] parameters = trigger.getParameters();
             final Handler[] handlers = targetState.getHandlers();
-            final Collection<String> handlerTypes = new HashSet<String>();
+            final Collection<String> handlerTypes = new HashSet<>();
             final Condition[] conditions = trigger.getConditions();
 
             final StringBuilder handlerCode = new StringBuilder();
             for (final Handler handler : handlers) {
                 final String type = handler.getType();
                 final Object[] handlerParameters = handler.getParameters();
-                final HandlerTemplate handlerTemplate =
-                        HandlerTemplates.getInstance().getTemplate(type);
+                final HandlerTemplate handlerTemplate = HandlerTemplates.getInstance().getTemplate(type);
                 final int playerIndex = handlerTemplate.getPlayerIndex();
 
                 handlerTypes.add(type);
@@ -309,15 +301,15 @@ public final class Editor extends mxGraphComponent {
                     if (playerIndex == 0) {
                         handlerCode.append("PLAYER, ");
                     }
-                    handlerCode.append(exportParameter(handlerParameters[0],
-                            handlerTemplate.getParameter(0).getType()));
+                    handlerCode
+                            .append(exportParameter(handlerParameters[0], handlerTemplate.getParameter(0).getType()));
 
                     for (int j = 1; j < handlerParameters.length; ++j) {
                         if (playerIndex == j) {
                             handlerCode.append(", PLAYER");
                         }
                         handlerCode.append(", ").append(exportParameter(handlerParameters[j],
-                                handlerTemplate.getParameter(j).getType()));
+                                                                        handlerTemplate.getParameter(j).getType()));
                     }
                 }
                 handlerCode.append("):execute()\n");
@@ -327,8 +319,7 @@ public final class Editor extends mxGraphComponent {
             for (final Condition condition : conditions) {
                 final String type = condition.getType();
                 final Object[] conditionParameters = condition.getParameters();
-                final ConditionTemplate conditionTemplate =
-                        ConditionTemplates.getInstance().getTemplate(type);
+                final ConditionTemplate conditionTemplate = ConditionTemplates.getInstance().getTemplate(type);
                 String conditionString = conditionTemplate.getCondition();
                 for (int j = 0; j < conditionParameters.length; ++j) {
                     final Object param = conditionParameters[j];
@@ -341,8 +332,7 @@ public final class Editor extends mxGraphComponent {
                         value = String.valueOf(ir.getInteger());
                         operator = ir.getRelation().toLua();
                     }
-                    conditionString = conditionString
-                            .replaceAll("OPERATOR_" + j, operator)
+                    conditionString = conditionString.replaceAll("OPERATOR_" + j, operator)
                             .replaceAll(paramName, value);
                 }
                 if (conditionCode.length() > 0) {
@@ -359,7 +349,8 @@ public final class Editor extends mxGraphComponent {
                 t.append("require(\"handler.").append(type.toLowerCase()).append("\")\n");
             }
             t.append(template.getHeader());
-            t.append("module(\"questsystem.").append(questName).append('.').append(scriptName).append("\", package.seeall)\n");
+            t.append("module(\"questsystem.").append(questName).append('.').append(scriptName)
+                    .append("\", package.seeall)\n");
             t.append('\n');
             t.append("local QUEST_NUMBER = ").append(questID).append('\n');
             t.append("local PRECONDITION_QUESTSTATE = ").append(sourceId).append('\n');
@@ -375,13 +366,11 @@ public final class Editor extends mxGraphComponent {
             t.append("function HANDLER(PLAYER)\n").append(handlerCode).append("end\n\n");
             t.append("function ADDITIONALCONDITIONS(PLAYER)\nreturn ").append(conditionCode).append("end");
 
-
             quest.put(scriptName + ".lua", t.toString());
 
-            questtxt = questtxt + template.getCategory() + ','
-                    + exportId(trigger.getObjectId(), template.getId().getType()) + ','
-                    + template.getEntryPoint() + ','
-                    + scriptName + '\n';
+            questtxt = questtxt + template.getCategory() + ',' +
+                    exportId(trigger.getObjectId(), template.getId().getType()) + ',' + template.getEntryPoint() + ',' +
+                    scriptName + '\n';
 
             i += 1;
         }
@@ -475,10 +464,8 @@ public final class Editor extends mxGraphComponent {
         }
 
         if (!errors.isEmpty()) {
-            JOptionPane.showMessageDialog(MainFrame.getInstance(),
-                    errors,
-                    Lang.getMsg(Editor.class, "exportFailed"),
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(MainFrame.getInstance(), errors, Lang.getMsg(Editor.class, "exportFailed"),
+                                          JOptionPane.ERROR_MESSAGE);
 
             return false;
         }

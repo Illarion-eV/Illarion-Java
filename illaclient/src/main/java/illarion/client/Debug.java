@@ -78,5 +78,5 @@ public enum Debug {
      * Debug the renderer that updates the game screen. This option will show the areas of the map that receive
      * updates.
      */
-    mapRenderer;
+    mapRenderer
 }

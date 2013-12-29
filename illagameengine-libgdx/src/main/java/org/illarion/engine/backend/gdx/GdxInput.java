@@ -112,7 +112,7 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     GdxInput(@Nonnull final Input gdxInput) {
         this.gdxInput = gdxInput;
         gdxInput.setInputProcessor(this);
-        events = new LinkedList<Runnable>();
+        events = new LinkedList<>();
         Keyboard.enableRepeatEvents(true);
     }
 
@@ -536,8 +536,8 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
         if (releasedButton == null) {
             return true;
         }
-        if ((touchDownButton == releasedButton) && (touchDownPointer == pointer)
-                && (FastMath.abs(touchDownX - x) < CLICK_TOLERANCE) && (FastMath.abs(touchDownY - y) < CLICK_TOLERANCE)) {
+        if ((touchDownButton == releasedButton) && (touchDownPointer == pointer) &&
+                (FastMath.abs(touchDownX - x) < CLICK_TOLERANCE) && (FastMath.abs(touchDownY - y) < CLICK_TOLERANCE)) {
             publishClick(x, y, releasedButton);
         }
         events.offer(new Runnable() {
@@ -553,8 +553,8 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     /**
      * Publish the event as mouse click event. This function also handles double clicks.
      *
-     * @param x      the x coordinate where the click happened
-     * @param y      the y coordinate where the click happened
+     * @param x the x coordinate where the click happened
+     * @param y the y coordinate where the click happened
      * @param button the button that was clicked
      */
     private void publishClick(final int x, final int y, @Nonnull final Button button) {

@@ -51,7 +51,7 @@ public class ItemTree extends JScrollPane {
 
         private ItemGroupModel(@Nonnull final ItemImg[] items) {
             final ItemGroupLoader gl = ItemGroupLoader.getInstance();
-            groups = new FastTable<ItemGroup>();
+            groups = new FastTable<>();
 
             for (final ItemImg i : items) {
                 boolean existedGroup = false;
@@ -156,7 +156,7 @@ public class ItemTree extends JScrollPane {
 
         private ItemGroup(final int id, final String name) {
             this.id = id;
-            items = new FastTable<ItemImg>();
+            items = new FastTable<>();
             this.name = name;
         }
 

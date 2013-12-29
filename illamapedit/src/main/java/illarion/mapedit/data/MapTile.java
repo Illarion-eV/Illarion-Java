@@ -63,7 +63,11 @@ public class MapTile {
         }
 
         @Nonnull
-        public static MapTile setOverlay(final int baseID, final int overlayID, final int shapeID, @Nonnull final MapTile old) {
+        public static MapTile setOverlay(
+                final int baseID,
+                final int overlayID,
+                final int shapeID,
+                @Nonnull final MapTile old) {
             return new MapTile(baseID, overlayID, shapeID, old.musicID, old.mapItems, old.mapWarpPoint);
         }
 
@@ -74,7 +78,7 @@ public class MapTile {
 
         @Nonnull
         public static MapTile copy(@Nonnull final MapTile old) {
-            final List<MapItem> items = new FastTable<MapItem>();
+            final List<MapItem> items = new FastTable<>();
             if (old.mapItems != null) {
                 for (final MapItem item : old.mapItems) {
                     items.add(new MapItem(item.getId(), new ArrayList<String>(), MapItem.QUALITY_NONE));
@@ -85,7 +89,7 @@ public class MapTile {
 
         @Nonnull
         public static MapTile copyAll(@Nonnull final MapTile old) {
-            final List<MapItem> items = new FastTable<MapItem>();
+            final List<MapItem> items = new FastTable<>();
             if (old.mapItems != null) {
                 for (final MapItem item : old.mapItems) {
                     List<String> itemData = null;
@@ -130,15 +134,20 @@ public class MapTile {
     @Nullable
     private MapWarpPoint mapWarpPoint;
 
-    public MapTile(final int baseId, final int overlayID, final int shapeID, final int musicID,
-                   @Nullable final Collection<MapItem> mapItems, @Nullable final MapWarpPoint mapWarpPoint) {
+    public MapTile(
+            final int baseId,
+            final int overlayID,
+            final int shapeID,
+            final int musicID,
+            @Nullable final Collection<MapItem> mapItems,
+            @Nullable final MapWarpPoint mapWarpPoint) {
         tileId = baseId;
         this.overlayID = overlayID;
         this.shapeID = shapeID;
         this.musicID = musicID;
         this.mapWarpPoint = mapWarpPoint;
         if (mapItems != null) {
-            this.mapItems = new FastTable<MapItem>();
+            this.mapItems = new FastTable<>();
             this.mapItems.addAll(mapItems);
         }
     }
@@ -184,7 +193,7 @@ public class MapTile {
 
     public void addMapItem(final MapItem item) {
         if (mapItems == null) {
-            mapItems = new FastTable<MapItem>();
+            mapItems = new FastTable<>();
         }
         mapItems.add(item);
     }

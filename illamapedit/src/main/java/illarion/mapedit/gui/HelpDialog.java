@@ -60,9 +60,8 @@ public class HelpDialog extends JDialog implements HyperlinkListener, TreeSelect
         html.addHyperlinkListener(this);
 
         tree.addTreeSelectionListener(this);
-        add(new JScrollPane(html,
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+        add(new JScrollPane(html, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER),
+            BorderLayout.CENTER);
         add(new JScrollPane(tree), BorderLayout.WEST);
         pack();
     }
@@ -81,9 +80,7 @@ public class HelpDialog extends JDialog implements HyperlinkListener, TreeSelect
                     if (Desktop.isDesktopSupported()) {
                         try {
                             Desktop.getDesktop().browse(e.getURL().toURI());
-                        } catch (IOException e1) {
-                            LOGGER.warn("Can't launch browser: ", e1);
-                        } catch (URISyntaxException e1) {
+                        } catch (IOException | URISyntaxException e1) {
                             LOGGER.warn("Can't launch browser: ", e1);
                         }
                     }
@@ -115,5 +112,4 @@ public class HelpDialog extends JDialog implements HyperlinkListener, TreeSelect
             html.setText(Lang.getMsg("gui.docu.IOError") + '\n' + b.toString());
         }
     }
-
 }

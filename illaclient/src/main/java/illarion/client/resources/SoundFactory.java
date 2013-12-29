@@ -103,7 +103,7 @@ public final class SoundFactory implements ResourceFactory<IdWrapper<String>> {
     @Override
     @SuppressWarnings("nls")
     public void init() {
-        sounds = new TIntObjectHashMap<String>();
+        sounds = new TIntObjectHashMap<>();
     }
 
     /**
@@ -131,7 +131,7 @@ public final class SoundFactory implements ResourceFactory<IdWrapper<String>> {
      */
     @Nonnull
     public List<String> getSoundNames() {
-        final List<String> result = new ArrayList<String>();
+        final List<String> result = new ArrayList<>();
         Collections.addAll(result, sounds.values(new String[0]));
         return result;
     }
@@ -140,7 +140,7 @@ public final class SoundFactory implements ResourceFactory<IdWrapper<String>> {
      * Load a specific sound effect.
      *
      * @param manager the manager used to load the sound
-     * @param sound   the name of the sound to load
+     * @param sound the name of the sound to load
      */
     public void loadSound(@Nonnull final SoundsManager manager, @Nonnull final String sound) {
         manager.getSound(sound);

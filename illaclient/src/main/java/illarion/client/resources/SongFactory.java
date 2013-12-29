@@ -73,10 +73,10 @@ public final class SongFactory implements ResourceFactory<IdWrapper<String>> {
     /**
      * Get a song from a id. This function also selects what variation of a song shall be used.
      *
-     * @param id      id of the song that is needed
+     * @param id id of the song that is needed
      * @param manager the manager that actually supplies the music
      * @return {@code null} if the song was not found, if there is just one song with this id, the song is returned,
-     *         in case there are multiple variations of this song, one is selected randomly and returned
+     * in case there are multiple variations of this song, one is selected randomly and returned
      */
     @Nullable
     public Music getSong(final int id, @Nonnull final SoundsManager manager) {
@@ -95,7 +95,7 @@ public final class SongFactory implements ResourceFactory<IdWrapper<String>> {
     @Override
     @SuppressWarnings("nls")
     public void init() {
-        songs = new TIntObjectHashMap<List<String>>();
+        songs = new TIntObjectHashMap<>();
     }
 
     /**
@@ -118,7 +118,7 @@ public final class SongFactory implements ResourceFactory<IdWrapper<String>> {
         if (songs.contains(clipID)) {
             clipList = songs.get(clipID);
         } else {
-            clipList = new ArrayList<String>();
+            clipList = new ArrayList<>();
             songs.put(clipID, clipList);
         }
         clipList.add(SONG_DIR + music);
@@ -131,7 +131,7 @@ public final class SongFactory implements ResourceFactory<IdWrapper<String>> {
      */
     @Nonnull
     public List<String> getSongNames() {
-        final List<String> result = new ArrayList<String>();
+        final List<String> result = new ArrayList<>();
         songs.forEachValue(new TObjectProcedure<List<String>>() {
             @Override
             public boolean execute(@Nonnull final List<String> object) {
@@ -146,7 +146,7 @@ public final class SongFactory implements ResourceFactory<IdWrapper<String>> {
      * Load a specific music track.
      *
      * @param manager the manager used to load the track
-     * @param song    the name of the song to load
+     * @param song the name of the song to load
      */
     public void loadSong(@Nonnull final SoundsManager manager, @Nonnull final String song) {
         manager.getMusic(song);

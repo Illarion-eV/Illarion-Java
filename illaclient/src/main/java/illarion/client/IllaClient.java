@@ -77,12 +77,16 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
 
     static {
         final String server = System.getProperty("illarion.server");
-        if ("testserver".equals(server)) {
-            DEFAULT_SERVER = Servers.testserver;
-        } else if ("devserver".equals(server)) {
-            DEFAULT_SERVER = Servers.devserver;
-        } else {
-            DEFAULT_SERVER = Servers.realserver;
+        switch (server) {
+            case "testserver":
+                DEFAULT_SERVER = Servers.testserver;
+                break;
+            case "devserver":
+                DEFAULT_SERVER = Servers.devserver;
+                break;
+            default:
+                DEFAULT_SERVER = Servers.realserver;
+                break;
         }
     }
 
@@ -151,9 +155,10 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         try {
             EventServiceLocator.setEventService(EventServiceLocator.SERVICE_NAME_EVENT_BUS, null);
             EventServiceLocator.setEventService(EventServiceLocator.SERVICE_NAME_SWING_EVENT_SERVICE, null);
-            EventServiceLocator.setEventService(EventServiceLocator.SERVICE_NAME_EVENT_BUS, new ThreadSafeEventService());
+            EventServiceLocator
+                    .setEventService(EventServiceLocator.SERVICE_NAME_EVENT_BUS, new ThreadSafeEventService());
             EventServiceLocator.setEventService(EventServiceLocator.SERVICE_NAME_SWING_EVENT_SERVICE,
-                    EventServiceLocator.getEventBusService());
+                                                EventServiceLocator.getEventBusService());
         } catch (EventServiceExistsException e1) {
             LOGGER.error("Failed preparing the EventBus. Settings the Service handler happened too late");
         }
@@ -215,16 +220,16 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
                 requestedWidth = (windowedWidth < 0) ? res.getWidth() : windowedWidth;
             }
 
-            gameContainer = EngineManager.createDesktopGame(Backend.libGDX, game,
-                    requestedWidth, requestedHeight, fullScreenMode);
+            gameContainer = EngineManager
+                    .createDesktopGame(Backend.libGDX, game, requestedWidth, requestedHeight, fullScreenMode);
         } catch (@Nonnull final EngineException e) {
             LOGGER.error("Fatal error creating game screen!!!", e);
             System.exit(-1);
         }
 
         gameContainer.setTitle(APPLICATION.getApplicationIdentifier());
-        gameContainer.setIcons(new String[]{"illarion_client16.png", "illarion_client32.png",
-                "illarion_client64.png", "illarion_client256.png"});
+        gameContainer.setIcons(new String[]{"illarion_client16.png", "illarion_client32.png", "illarion_client64.png",
+                                            "illarion_client256.png"});
 
         EventBus.subscribe(CFG_FULLSCREEN, this);
         EventBus.subscribe(CFG_RESOLUTION, this);
@@ -329,7 +334,8 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      */
     @Nonnull
     public static String getFile(@Nonnull final String name) {
-        return new File(DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User), name).getAbsolutePath();
+        return new File(DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User), name)
+                .getAbsolutePath();
     }
 
     /**
@@ -484,8 +490,8 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         System.out.println("Startup done.");
         LOGGER.info(APPLICATION.getApplicationIdentifier() + " started.");
         LOGGER.info("VM: " + System.getProperty("java.version"));
-        LOGGER.info("OS: " + System.getProperty("os.name") + ' ' + System.getProperty("os.version") + ' ' + System
-                .getProperty("os.arch"));
+        LOGGER.info("OS: " + System.getProperty("os.name") + ' ' + System.getProperty("os.version") + ' ' +
+                            System.getProperty("os.arch"));
 
         java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(Level.WARNING);
         java.util.logging.Logger.getLogger("de.lessvoid.nifty").setLevel(Level.WARNING);

@@ -76,14 +76,14 @@ public class QuestAvailabilityMsg extends AbstractGuiMsg {
         if (availableQuests == null) {
             available = Collections.emptyList();
         } else {
-            available = new HashSet<Location>(Arrays.asList(availableQuests));
+            available = new HashSet<>(Arrays.asList(availableQuests));
         }
 
         final Collection<Location> availableSoon;
         if (availableSoonQuests == null) {
             availableSoon = Collections.emptyList();
         } else {
-            availableSoon = new HashSet<Location>(Arrays.asList(availableSoonQuests));
+            availableSoon = new HashSet<>(Arrays.asList(availableSoonQuests));
         }
         availableSoon.removeAll(available);
 
@@ -95,6 +95,7 @@ public class QuestAvailabilityMsg extends AbstractGuiMsg {
     @Override
     public String toString() {
         return toString("Available quests: " + ((availableQuests == null) ? '0' : availableQuests.length) +
-                " Available soon quests: " + ((availableSoonQuests == null) ? '0' : availableSoonQuests.length));
+                                " Available soon quests: " +
+                                ((availableSoonQuests == null) ? '0' : availableSoonQuests.length));
     }
 }

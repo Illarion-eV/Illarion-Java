@@ -43,7 +43,7 @@ public abstract class AbstractCursorManager implements CursorManager {
      * Create a new instance of this manager.
      */
     protected AbstractCursorManager() {
-        loadedCursors = new HashMap<String, MouseCursor>();
+        loadedCursors = new HashMap<>();
     }
 
     @Nullable
@@ -63,7 +63,7 @@ public abstract class AbstractCursorManager implements CursorManager {
     /**
      * Load the cursor that is referred to with the reference.
      *
-     * @param ref      the reference to the cursor
+     * @param ref the reference to the cursor
      * @param hotspotX the x coordinate of the hotspot
      * @param hotspotY the y coordinate of the hotspot
      * @return the newly load cursor

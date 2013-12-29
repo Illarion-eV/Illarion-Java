@@ -47,7 +47,7 @@ public class IntegerParameter extends JFormattedTextField implements Parameter {
                 setValue(new Long((String) parameter));
             }
         } else {
-            setValue(new Long(0));
+            setValue((long) 0);
         }
     }
 

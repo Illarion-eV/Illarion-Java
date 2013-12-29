@@ -104,17 +104,14 @@ public class MapFileBand extends JRibbonBand {
             }
         });
 
-
         addRibbonComponent(new JRibbonComponent(new JScrollPane(list)));
         addRibbonComponent(new JRibbonComponent(mapSelector));
         addRibbonComponent(new JRibbonComponent(close));
 
-        final List<RibbonBandResizePolicy> resize = new FastTable<RibbonBandResizePolicy>();
+        final List<RibbonBandResizePolicy> resize = new FastTable<>();
         resize.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
 
-
         setResizePolicies(resize);
-
     }
 
     @EventSubscriber

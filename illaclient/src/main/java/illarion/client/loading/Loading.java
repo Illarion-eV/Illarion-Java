@@ -56,7 +56,7 @@ public final class Loading {
      * Create a new instance of this class. This also enlists all the required entries.
      */
     public Loading() {
-        tasks = new ArrayList<LoadingTask>();
+        tasks = new ArrayList<>();
     }
 
     /**

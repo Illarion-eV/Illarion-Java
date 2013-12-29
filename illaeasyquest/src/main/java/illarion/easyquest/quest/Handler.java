@@ -34,7 +34,7 @@ public class Handler implements Serializable {
         parameters = null;
     }
 
-    public void setType(String type) {
+    public void setType(@Nullable String type) {
         this.type = type;
     }
 
@@ -43,7 +43,7 @@ public class Handler implements Serializable {
         return type;
     }
 
-    public void setParameters(Object[] parameters) {
+    public void setParameters(@Nullable Object[] parameters) {
         this.parameters = parameters;
     }
 
@@ -51,5 +51,4 @@ public class Handler implements Serializable {
     public Object[] getParameters() {
         return parameters;
     }
-
 }

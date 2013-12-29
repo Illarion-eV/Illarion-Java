@@ -84,7 +84,7 @@ public final class CharStatusHandler implements PlayerStatusGui, ScreenControlle
     private int currentManaPoints;
 
     @Override
-    public void bind(final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
         hitPointBar = screen.findNiftyControl("healthBar", Progress.class);
         manaPointBar = screen.findNiftyControl("manaBar", Progress.class);
         foodPointBar = screen.findNiftyControl("foodBar", Progress.class);

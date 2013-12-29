@@ -31,12 +31,11 @@ import java.awt.event.ActionEvent;
 public class EditorActions {
 
     @Nullable
-    public static final Editor getEditor(@Nonnull ActionEvent e) {
+    public static Editor getEditor(@Nonnull ActionEvent e) {
         if (e.getSource() instanceof Component) {
             Component component = (Component) e.getSource();
 
-            while (component != null
-                    && !(component instanceof Editor)) {
+            while (component != null && !(component instanceof Editor)) {
                 component = component.getParent();
             }
 
@@ -63,8 +62,7 @@ public class EditorActions {
     @SuppressWarnings("serial")
     public static class SaveAction extends AbstractAction {
         public void actionPerformed(ActionEvent e) {
-            Utils.saveEasyQuest(MainFrame.getInstance()
-                    .getCurrentQuestEditor());
+            Utils.saveEasyQuest(MainFrame.getInstance().getCurrentQuestEditor());
         }
     }
 

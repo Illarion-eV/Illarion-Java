@@ -140,8 +140,8 @@ public final class NetComm {
     public NetComm() {
         ReplyFactory.getInstance();
 
-        inputQueue = new LinkedBlockingQueue<AbstractReply>();
-        outputQueue = new LinkedBlockingQueue<AbstractCommand>();
+        inputQueue = new LinkedBlockingQueue<>();
+        outputQueue = new LinkedBlockingQueue<>();
     }
 
     /**
@@ -150,7 +150,7 @@ public final class NetComm {
      * unchanged after the function leaves.
      *
      * @param buffer the byte buffer that provides the byte data
-     * @param len    the amount of byte that shall be included to the checksum calculation
+     * @param len the amount of byte that shall be included to the checksum calculation
      * @return the calculated checksum
      */
     public static int getCRC(@Nonnull final ByteBuffer buffer, final int len) {
@@ -253,16 +253,15 @@ public final class NetComm {
             inputThread.start();
             messageHandler.start();
 
-            keepAliveTimer =
-                    new Timer(INITIAL_DELAY, KEEP_ALIVE_DELAY, new Runnable() {
-                        @Override
-                        public void run() {
-                            if (ConnectionPerformanceClock.isReadyForNewPing()) {
-                                ConnectionPerformanceClock.notifySendToNetComm();
-                                World.getNet().sendCommand(keepAliveCmd);
-                            }
-                        }
-                    });
+            keepAliveTimer = new Timer(INITIAL_DELAY, KEEP_ALIVE_DELAY, new Runnable() {
+                @Override
+                public void run() {
+                    if (ConnectionPerformanceClock.isReadyForNewPing()) {
+                        ConnectionPerformanceClock.notifySendToNetComm();
+                        World.getNet().sendCommand(keepAliveCmd);
+                    }
+                }
+            });
             keepAliveTimer.setRepeats(true);
             keepAliveTimer.start();
         } catch (@Nonnull final IOException e) {
@@ -339,8 +338,7 @@ public final class NetComm {
         try {
             outputQueue.put(cmd);
         } catch (@Nonnull final InterruptedException e) {
-            LOGGER
-                    .error("Got interrupted while trying to add a command to to the queue.");
+            LOGGER.error("Got interrupted while trying to add a command to to the queue.");
         }
     }
 }

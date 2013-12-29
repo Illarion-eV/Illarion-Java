@@ -33,18 +33,25 @@ public class ParameterPanel extends JPanel {
     public ParameterPanel(@Nonnull TemplateParameter parameter) {
         JLabel description = new JLabel(parameter.getDescription() + ":");
         String type = parameter.getType();
-        if (type.equals("TEXT")) {
-            comp = new TextParameter(17);
-        } else if (type.equals("POSITION")) {
-            comp = new PositionParameter();
-        } else if (type.equals("INTEGER")) {
-            comp = new IntegerParameter();
-        } else if (type.equals("INTEGERRELATION")) {
-            comp = new IntegerRelationParameter();
-        } else if (type.equals("TEXTRELATION")) {
-            comp = new TextRelationParameter();
-        } else {
-            comp = null;
+        switch (type) {
+            case "TEXT":
+                comp = new TextParameter(17);
+                break;
+            case "POSITION":
+                comp = new PositionParameter();
+                break;
+            case "INTEGER":
+                comp = new IntegerParameter();
+                break;
+            case "INTEGERRELATION":
+                comp = new IntegerRelationParameter();
+                break;
+            case "TEXTRELATION":
+                comp = new TextRelationParameter();
+                break;
+            default:
+                comp = null;
+                break;
         }
 
         setLayout(new GridLayout(1, 2));

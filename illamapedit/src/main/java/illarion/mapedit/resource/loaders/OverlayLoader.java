@@ -38,8 +38,7 @@ public class OverlayLoader implements TableLoaderSink<TableLoaderOverlay>, Resou
     private static final int SHAPE_COUNT = 28;
     private static final String DIR_IMG_TILES = "tiles/";
 
-    private final TIntObjectHashMap<Overlay> overlays = new TIntObjectHashMap<Overlay>();
-
+    private final TIntObjectHashMap<Overlay> overlays = new TIntObjectHashMap<>();
 
     @Nonnull
     public static OverlayLoader getInstance() {
@@ -64,8 +63,8 @@ public class OverlayLoader implements TableLoaderSink<TableLoaderOverlay>, Resou
             imgs[i] = TextureLoaderAwt.getInstance().
                     getTexture(String.format("%s%s-%d.png", DIR_IMG_TILES, loader.getOverlayFile(), i));
         }
-        overlays.put(loader.getTileId(), new Overlay(loader.getTileId(), loader.getOverlayFile(),
-                loader.getLayer(), imgs));
+        overlays.put(loader.getTileId(),
+                     new Overlay(loader.getTileId(), loader.getOverlayFile(), loader.getLayer(), imgs));
         return true;
     }
 

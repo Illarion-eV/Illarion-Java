@@ -24,8 +24,10 @@ public class GuiModel {
     @Nullable
     private Config config;
 
-    public GuiModel(@Nonnull final Stage stage, @Nonnull final HostServices hostServices,
-                    @Nonnull final Storyboard storyboard) {
+    public GuiModel(
+            @Nonnull final Stage stage,
+            @Nonnull final HostServices hostServices,
+            @Nonnull final Storyboard storyboard) {
         this.stage = stage;
         this.hostServices = hostServices;
         this.storyboard = storyboard;
@@ -46,7 +48,7 @@ public class GuiModel {
         return storyboard;
     }
 
-    public void setConfig(@Nonnull final Config config) {
+    public void setConfig(@Nullable final Config config) {
         this.config = config;
     }
 

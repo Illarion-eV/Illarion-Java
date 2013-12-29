@@ -71,7 +71,7 @@ public final class ProgressMonitor implements ProgressMonitorCallback {
      *
      * @param weight the weight value of this progress monitor
      * @throws IllegalArgumentException in case the weight is set to a value less then {@code 0.f} or to NaN or to
-     *                                  Infinity
+     * Infinity
      */
     public ProgressMonitor(final float weight) {
         if (weight < 0.f) {
@@ -120,7 +120,7 @@ public final class ProgressMonitor implements ProgressMonitorCallback {
      */
     public void addChild(@Nonnull final ProgressMonitor childMonitor) {
         if (children == null) {
-            children = new ArrayList<ProgressMonitor>();
+            children = new ArrayList<>();
         }
         children.add(childMonitor);
         final ProgressMonitorCallback targetCallback = callback;

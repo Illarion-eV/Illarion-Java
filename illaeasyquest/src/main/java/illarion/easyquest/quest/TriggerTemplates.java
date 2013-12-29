@@ -45,7 +45,7 @@ public class TriggerTemplates {
     }
 
     public TriggerTemplates() {
-        typeMap = new FastMap<String, TriggerTemplate>(Equalities.LEXICAL_FAST, Equalities.STANDARD);
+        typeMap = new FastMap<>(Equalities.LEXICAL_FAST, Equalities.STANDARD);
 
         load();
     }
@@ -57,12 +57,10 @@ public class TriggerTemplates {
 
     @Nonnull
     private static List<String> loadFileList() {
-        List<String> result = new FastTable<String>();
+        List<String> result = new FastTable<>();
         BufferedReader bRead = null;
         try {
-            bRead =
-                    new BufferedReader(new InputStreamReader(
-                            getResource("template/trigger/filelist")));
+            bRead = new BufferedReader(new InputStreamReader(getResource("template/trigger/filelist")));
 
             String line = null;
             while ((line = bRead.readLine()) != null) {
@@ -87,7 +85,7 @@ public class TriggerTemplates {
 
     private void load() {
         List<String> templateFiles = loadFileList();
-        Collection<TriggerTemplate> templateList = new FastTable<TriggerTemplate>();
+        Collection<TriggerTemplate> templateList = new FastTable<>();
 
         if (templateFiles.isEmpty()) {
             System.out.println("Trigger directory does not exist!");
@@ -99,15 +97,11 @@ public class TriggerTemplates {
                 boolean isHeader = true;
                 StringBuffer header = new StringBuffer();
                 StringBuffer body = new StringBuffer();
-                String uniqueName =
-                        fileName.substring(fileName.lastIndexOf('/') + 1,
-                                fileName.lastIndexOf('.'));
-                TriggerTemplate triggerTemplate =
-                        new TriggerTemplate(uniqueName);
+                String uniqueName = fileName.substring(fileName.lastIndexOf('/') + 1, fileName.lastIndexOf('.'));
+                TriggerTemplate triggerTemplate = new TriggerTemplate(uniqueName);
                 try {
-                    BufferedReader reader =
-                            new BufferedReader(new InputStreamReader(
-                                    getResource(fileName), "ISO-8859-1"));
+                    BufferedReader reader = new BufferedReader(
+                            new InputStreamReader(getResource(fileName), "ISO-8859-1"));
 
                     while ((line = reader.readLine()) != null) {
                         if (isHeader && line.matches("function .*")) {
@@ -134,22 +128,17 @@ public class TriggerTemplates {
                                     triggerTemplate.setTitle(names[1]);
                                 }
                                 continue;
-                            } else if (line
-                                    .matches("local\\s+QUEST_NUMBER\\s*=\\s*0\\s*")) {
+                            } else if (line.matches("local\\s+QUEST_NUMBER\\s*=\\s*0\\s*")) {
                                 triggerTemplate.foundQuestNumber();
                                 continue;
-                            } else if (line
-                                    .matches("local\\s+PRECONDITION_QUESTSTATE\\s*=\\s*0\\s*")) {
+                            } else if (line.matches("local\\s+PRECONDITION_QUESTSTATE\\s*=\\s*0\\s*")) {
                                 triggerTemplate.foundPrior();
                                 continue;
-                            } else if (line
-                                    .matches("local\\s+POSTCONDITION_QUESTSTATE\\s*=\\s*0\\s*")) {
+                            } else if (line.matches("local\\s+POSTCONDITION_QUESTSTATE\\s*=\\s*0\\s*")) {
                                 triggerTemplate.foundPosterior();
                                 continue;
-                            } else if (line
-                                    .matches("local\\s+[_A-Z0-9]+\\s*=\\s*[_A-Z0-9]+\\s*--.*\\w+.*--.*\\w+.*")) {
-                                String[] param =
-                                        line.split("^local\\s+|\\s*=\\s*|\\s*--\\s*");
+                            } else if (line.matches("local\\s+[_A-Z0-9]+\\s*=\\s*[_A-Z0-9]+\\s*--.*\\w+.*--.*\\w+.*")) {
+                                String[] param = line.split("^local\\s+|\\s*=\\s*|\\s*--\\s*");
 
                                 String description;
                                 if (isGerman) {
@@ -158,8 +147,7 @@ public class TriggerTemplates {
                                     description = param[3];
                                 }
 
-                                TemplateParameter parameter = new TemplateParameter(
-                                        param[1], param[2], description);
+                                TemplateParameter parameter = new TemplateParameter(param[1], param[2], description);
 
                                 triggerTemplate.addParameter(parameter);
 
@@ -179,8 +167,7 @@ public class TriggerTemplates {
                         templateList.add(triggerTemplate);
                         typeMap.put(uniqueName, triggerTemplate);
                     } else {
-                        System.out.println("Syntax error in template "
-                                + fileName);
+                        System.out.println("Syntax error in template " + fileName);
                     }
                 } catch (@Nonnull final Exception e1) {
                     System.out.println("Error loading template " + fileName);

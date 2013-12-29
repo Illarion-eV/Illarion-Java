@@ -2,7 +2,6 @@ package illarion.download.gui.view;
 
 import illarion.download.gui.model.GuiModel;
 import javafx.scene.Node;
-import javafx.scene.layout.Pane;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;

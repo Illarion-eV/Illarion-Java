@@ -67,7 +67,6 @@ public class GuiController extends WindowAdapter {
     @Nonnull
     private final AnnotationChecker annotationChecker;
 
-
     @Nullable
     private Map selected;
 
@@ -83,7 +82,7 @@ public class GuiController extends WindowAdapter {
         mainFrame = new MainFrame(this);
         historyManager = new HistoryManager();
         annotationChecker = new AnnotationChecker();
-        maps = new FastTable<Map>();
+        maps = new FastTable<>();
         notSaved = false;
     }
 
@@ -123,7 +122,6 @@ public class GuiController extends WindowAdapter {
                 SplashScreen.getInstance().setVisible(false);
             }
         });
-
     }
 
     public void initialize() {
@@ -211,13 +209,10 @@ public class GuiController extends WindowAdapter {
                 if (map != null) {
                     MapIO.saveMap(map);
                 }
-
             } catch (IOException ex) {
                 LOGGER.warn("Can't save map", ex);
-                JOptionPane.showMessageDialog(MainFrame.getInstance(),
-                        Lang.getMsg("gui.error.SaveMap"),
-                        Lang.getMsg("gui.error"),
-                        JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(MainFrame.getInstance(), Lang.getMsg("gui.error.SaveMap"),
+                                              Lang.getMsg("gui.error"), JOptionPane.ERROR_MESSAGE);
             }
         }
         notSaved = false;
@@ -285,8 +280,8 @@ public class GuiController extends WindowAdapter {
     @EventSubscriber
     public void onPasteClipboard(@Nonnull final PasteEvent e) {
         EventBus.publish(new DidPasteEvent());
-        if ((getSelected() != null) && (clipboard != null) && !annotationChecker.isAnnotated(e.getX(),e.getY(),
-                getSelected(), clipboard)) {
+        if ((getSelected() != null) && (clipboard != null) &&
+                !annotationChecker.isAnnotated(e.getX(), e.getY(), getSelected(), clipboard)) {
             getSelected().pasteTiles(e.getX(), e.getY(), clipboard);
             EventBus.publish(new RepaintRequestEvent());
             setSaved(false);

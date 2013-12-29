@@ -85,14 +85,14 @@ public final class Timer {
      * This creates a new timer with a separated set initial and between time delay. Also the first listener is added
      * right away using this constructor.
      *
-     * @param initDelay    the initial delay of this timer in milliseconds
+     * @param initDelay the initial delay of this timer in milliseconds
      * @param betweenDelay the delay between two calls in milliseconds
-     * @param listener     the first listener that is called using this timer
+     * @param listener the first listener that is called using this timer
      */
     public Timer(final int initDelay, final int betweenDelay, @Nullable final Runnable listener) {
         delay = betweenDelay;
         initialDelay = initDelay;
-        listeners = new FastTable<Runnable>();
+        listeners = new FastTable<>();
 
         if (listener != null) {
             addListener(listener);
@@ -104,7 +104,7 @@ public final class Timer {
      * using this constructor.
      *
      * @param timerDelay the initial and the between delay time in milliseconds
-     * @param listener   the listener that is added as first listener
+     * @param listener the listener that is added as first listener
      */
     public Timer(final int timerDelay, @Nullable final Runnable listener) {
         this(timerDelay, timerDelay, listener);
@@ -194,8 +194,7 @@ public final class Timer {
     @SuppressWarnings("nls")
     public void setInitialDelay(final int initDelay) {
         if (initDelay < 0) {
-            throw new IllegalArgumentException("Invalid initial delay: "
-                    + initDelay);
+            throw new IllegalArgumentException("Invalid initial delay: " + initDelay);
         }
         initialDelay = initDelay;
     }

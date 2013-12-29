@@ -54,8 +54,7 @@ public final class SayMsg extends AbstractReply {
      * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader)
-            throws IOException {
+    public void decode(@Nonnull final NetCommReader reader) throws IOException {
         loc = decodeLocation(reader);
         text = reader.readString();
     }
@@ -80,12 +79,6 @@ public final class SayMsg extends AbstractReply {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("at ");
-        builder.append(loc.toString());
-        builder.append(" \"");
-        builder.append(text);
-        builder.append('"');
-        return toString(builder.toString());
+        return toString("at " + loc.toString() + " \"" + text + '"');
     }
 }

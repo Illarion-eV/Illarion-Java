@@ -56,7 +56,7 @@ public final class ReportDialogSwing implements ReportDialog {
          * Also this sets the result value that is put in place in case the
          * button this listener is assigned to is clicked.
          *
-         * @param dialog    the dialog that is closed upon calling this listener
+         * @param dialog the dialog that is closed upon calling this listener
          * @param setResult the result value that is supposed to be set
          */
         public ButtonListener(final JDialog dialog, final int setResult) {
@@ -72,7 +72,6 @@ public final class ReportDialogSwing implements ReportDialog {
             setResult(resultValue);
             closingDialog.setVisible(false);
         }
-
     }
 
     /**
@@ -128,8 +127,7 @@ public final class ReportDialogSwing implements ReportDialog {
     @Override
     public void showDialog() {
         if ((messages == null) || (crashData == null)) {
-            throw new IllegalStateException(
-                    "The message source and the crash data needs to be set.");
+            throw new IllegalStateException("The message source and the crash data needs to be set.");
         }
         final JDialog dialog = new JDialog();
 
@@ -140,8 +138,7 @@ public final class ReportDialogSwing implements ReportDialog {
         final JPanel mainPanel = new JPanel(new BorderLayout(5, 5));
         dialog.getContentPane().add(mainPanel);
 
-        final JTextArea introText =
-                new JTextArea(messages.getMessage(crashData.getDescription()));
+        final JTextArea introText = new JTextArea(messages.getMessage(crashData.getDescription()));
         introText.setMargin(new Insets(10, 10, 10, 10));
         introText.setEditable(false);
         introText.setCursor(null);
@@ -149,40 +146,19 @@ public final class ReportDialogSwing implements ReportDialog {
         introText.setFocusable(false);
         mainPanel.add(introText, BorderLayout.NORTH);
 
-        final StringBuilder builder = new StringBuilder();
-        builder.append(messages
-                .getMessage("illarion.common.bug.details.Intro"));
-        builder.append(NL).append(NL);
-
-        builder.append(messages
-                .getMessage("illarion.common.bug.details.Application"));
-        builder.append(' ');
-        builder.append(crashData.getApplicationIdentifier().getApplicationName());
-        builder.append(NL);
-
-        builder.append(messages
-                .getMessage("illarion.common.bug.details.Version"));
-        builder.append(' ');
-        builder.append(crashData.getApplicationIdentifier().getApplicationVersion());
-        builder.append(NL);
-
-        builder.append(messages.getMessage("illarion.common.bug.details.OS"));
-        builder.append(' ');
-        builder.append(CrashData.getOSName());
-        builder.append(NL);
-
-        builder.append(messages
-                .getMessage("illarion.common.bug.details.Thread"));
-        builder.append(' ');
-        builder.append(crashData.getThreadName());
-        builder.append(NL);
-
-        builder.append(messages
-                .getMessage("illarion.common.bug.details.Stack"));
-        builder.append(NL);
-        builder.append(crashData.getStackBacktrace());
-
-        final JTextArea detailsText = new JTextArea(builder.toString());
+        final JTextArea detailsText = new JTextArea(messages.getMessage("illarion.common.bug.details.Intro") + NL + NL +
+                                                            messages.getMessage(
+                                                                    "illarion.common.bug.details.Application") + ' ' +
+                                                            crashData.getApplicationIdentifier().getApplicationName() +
+                                                            NL +
+                                                            messages.getMessage("illarion.common.bug.details.Version") +
+                                                            ' ' + crashData.getApplicationIdentifier()
+                .getApplicationVersion() + NL + messages.getMessage("illarion.common.bug.details.OS") + ' ' +
+                                                            CrashData.getOSName() + NL +
+                                                            messages.getMessage("illarion.common.bug.details.Thread") +
+                                                            ' ' + crashData.getThreadName() + NL +
+                                                            messages.getMessage("illarion.common.bug.details.Stack") +
+                                                            NL + crashData.getStackBacktrace());
         detailsText.setEditable(false);
         detailsText.setCursor(null);
         detailsText.setOpaque(false);
@@ -194,20 +170,12 @@ public final class ReportDialogSwing implements ReportDialog {
         final JPanel buttonPanel = new JPanel(new GridLayout(1, 4, 5, 5));
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        final JButton alwaysButton =
-                new JButton(
-                        messages.getMessage("illarion.common.bug.buttons.always"));
-        final JButton onceButton =
-                new JButton(
-                        messages.getMessage("illarion.common.bug.buttons.once"));
-        final JButton notButton =
-                new JButton(messages.getMessage("illarion.common.bug.buttons.not"));
-        final JButton neverButton =
-                new JButton(
-                        messages.getMessage("illarion.common.bug.buttons.never"));
+        final JButton alwaysButton = new JButton(messages.getMessage("illarion.common.bug.buttons.always"));
+        final JButton onceButton = new JButton(messages.getMessage("illarion.common.bug.buttons.once"));
+        final JButton notButton = new JButton(messages.getMessage("illarion.common.bug.buttons.not"));
+        final JButton neverButton = new JButton(messages.getMessage("illarion.common.bug.buttons.never"));
 
-        alwaysButton
-                .addActionListener(new ButtonListener(dialog, SEND_ALWAYS));
+        alwaysButton.addActionListener(new ButtonListener(dialog, SEND_ALWAYS));
         onceButton.addActionListener(new ButtonListener(dialog, SEND_ONCE));
         notButton.addActionListener(new ButtonListener(dialog, SEND_NOT));
         neverButton.addActionListener(new ButtonListener(dialog, SEND_NEVER));

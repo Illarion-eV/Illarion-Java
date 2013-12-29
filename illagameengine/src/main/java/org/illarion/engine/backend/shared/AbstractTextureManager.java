@@ -27,7 +27,10 @@ import org.xmlpull.mxp1.MXParserFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * This is the shared code of the texture manager that is used by all backend implementations in a similar way.
@@ -95,11 +98,11 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
      */
     @SuppressWarnings("unchecked")
     protected AbstractTextureManager() {
-        directoryMonitors = new ArrayList<ProgressMonitor>();
-        rootDirectories = new ArrayList<String>();
-        textures = new HashMap<String, Texture>();
+        directoryMonitors = new ArrayList<>();
+        rootDirectories = new ArrayList<>();
+        textures = new HashMap<>();
         progressMonitor = new ProgressMonitor();
-        directoriesLoaded = new ArrayList<Boolean>();
+        directoriesLoaded = new ArrayList<>();
     }
 
     @Override
@@ -113,8 +116,8 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
         }
 
         loadingStarted = true;
-        loadingTasks = new ConcurrentLinkedDeque<TextureAtlasTask>();
-        updateTasks = new ConcurrentLinkedQueue<Runnable>();
+        loadingTasks = new ConcurrentLinkedDeque<>();
+        updateTasks = new ConcurrentLinkedQueue<>();
 
         // Prepare the parser factory for processing the XML files
         final MXParserFactory parserFactory = new MXParserFactory();
@@ -129,8 +132,11 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
                 continue;
             }
             final String directoryName = rootDirectories.get(i);
-            final TextureAtlasListXmlLoadingTask<T> task = new TextureAtlasListXmlLoadingTask<T>(parserFactory,
-                    directoryName, this, directoryMonitors.get(i), loadingExecutor);
+            final TextureAtlasListXmlLoadingTask<T> task = new TextureAtlasListXmlLoadingTask<>(parserFactory,
+                                                                                                directoryName, this,
+                                                                                                directoryMonitors
+                                                                                                        .get(i),
+                                                                                                loadingExecutor);
             loadingExecutor.execute(task);
             loadingTasks.addFirst(task);
             directoriesLoaded.set(i, Boolean.TRUE);
@@ -168,13 +174,11 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
         }
     }
 
-
     @Override
     @Nonnull
     public ProgressMonitor getProgress() {
         return progressMonitor;
     }
-
 
     @Nonnull
     private static String cleanTextureName(@Nonnull final String name) {
@@ -188,7 +192,7 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
      * Combine the path from a directory and the name.
      *
      * @param directory the directory
-     * @param name      the name of the new path element
+     * @param name the name of the new path element
      * @return the full path, properly merged
      */
     @Nonnull
@@ -224,7 +228,7 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
      *
      * @param directory the directory
      * @return the index of the root directory or {@code -1} in case the directory could not be assigned to a root
-     *         directory
+     * directory
      */
     private int getDirectoryIndex(@Nonnull final String directory) {
         if (directory.endsWith("/")) {
@@ -290,11 +294,14 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
             parserFactory.setNamespaceAware(false);
             parserFactory.setValidating(false);
 
-            final TextureAtlasListXmlLoadingTask<T> task = new TextureAtlasListXmlLoadingTask<T>(parserFactory,
-                    directoryName, this, directoryMonitors.get(directoryIndex), null);
+            final TextureAtlasListXmlLoadingTask<T> task = new TextureAtlasListXmlLoadingTask<>(parserFactory,
+                                                                                                directoryName, this,
+                                                                                                directoryMonitors
+                                                                                                        .get(directoryIndex),
+                                                                                                null);
             if (loadingTasks == null) {
-                loadingTasks = new ConcurrentLinkedDeque<TextureAtlasTask>();
-                updateTasks = new ConcurrentLinkedQueue<Runnable>();
+                loadingTasks = new ConcurrentLinkedDeque<>();
+                updateTasks = new ConcurrentLinkedQueue<>();
             }
             loadingTasks.add(task);
             task.run();

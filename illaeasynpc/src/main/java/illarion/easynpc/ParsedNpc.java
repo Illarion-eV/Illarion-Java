@@ -57,10 +57,10 @@ public final class ParsedNpc {
          * Create this error message.
          *
          * @param problemLine the line that caused this problem
-         * @param errorMsg    the message of this error
+         * @param errorMsg the message of this error
          */
-        Error(final EasyNpcScript.Line problemLine,
-              final String errorMsg) {
+        Error(
+                final EasyNpcScript.Line problemLine, final String errorMsg) {
             line = problemLine;
             message = errorMsg;
         }
@@ -229,7 +229,7 @@ public final class ParsedNpc {
      */
     public void addAuthor(final String author) {
         if (authors == null) {
-            authors = new FastTable<String>();
+            authors = new FastTable<>();
         }
         authors.add(author);
     }
@@ -238,12 +238,12 @@ public final class ParsedNpc {
      * Add a error to the list of errors that occurred while this NPC was
      * parsed.
      *
-     * @param line    the line the error occurred at
+     * @param line the line the error occurred at
      * @param message the message describing the error
      */
     public void addError(final EasyNpcScript.Line line, final String message) {
         if (errors == null) {
-            errors = new FastTable<Error>();
+            errors = new FastTable<>();
         }
         errors.add(new ParsedNpc.Error(line, message));
         errorOrderDirty = true;
@@ -256,7 +256,7 @@ public final class ParsedNpc {
      */
     public void addLanguage(final CharacterLanguage lang) {
         if (languages == null) {
-            languages = new FastTable<CharacterLanguage>();
+            languages = new FastTable<>();
         }
         if (!languages.contains(lang)) {
             languages.add(lang);
@@ -270,7 +270,7 @@ public final class ParsedNpc {
      */
     public void addNpcData(final ParsedData data) {
         if (npcData == null) {
-            npcData = new FastTable<ParsedData>();
+            npcData = new FastTable<>();
         }
         npcData.add(data);
     }
@@ -484,7 +484,7 @@ public final class ParsedNpc {
     @Nonnull
     public CharacterLanguage[] getLanguages() {
         if (languages == null) {
-            languages = new FastTable<CharacterLanguage>();
+            languages = new FastTable<>();
         }
         if (languages.isEmpty()) {
             languages.add(CharacterLanguage.common);
@@ -509,8 +509,7 @@ public final class ParsedNpc {
                     break;
             }
 
-            final CharacterLanguage[] result =
-                    languages.toArray(new CharacterLanguage[languages.size()]);
+            final CharacterLanguage[] result = languages.toArray(new CharacterLanguage[languages.size()]);
             languages.clear();
             return result;
         }

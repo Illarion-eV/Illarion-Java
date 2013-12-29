@@ -78,15 +78,12 @@ public class IntegerRelationParameter extends JPanel implements Parameter {
         } else {
             rel = new IntegerRelation();
         }
-        integer.setValue(new Long(rel.getInteger()));
+        integer.setValue(rel.getInteger());
         relation.setSelectedItem(relationMap.get(rel.getRelation().getType()));
     }
 
     @Nonnull
     public Object getParameter() {
-        return new IntegerRelation(
-                (Relation) relation.getSelectedItem(),
-                (Long) integer.getValue()
-        );
+        return new IntegerRelation((Relation) relation.getSelectedItem(), (Long) integer.getValue());
     }
 }

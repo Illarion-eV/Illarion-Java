@@ -80,7 +80,7 @@ public final class SelectItemViewConverter implements ListBox.ListBoxViewConvert
     }
 
     @Override
-    public int getWidth(@Nonnull final Element element, final SelectListEntry item) {
+    public int getWidth(@Nonnull final Element element, @Nonnull final SelectListEntry item) {
         return element.getWidth();
     }
 }

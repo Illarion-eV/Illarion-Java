@@ -39,8 +39,7 @@ import java.util.List;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_UPDATE_ITEMS)
-public final class ItemUpdateMsg
-        extends AbstractReply {
+public final class ItemUpdateMsg extends AbstractReply {
     /**
      * Default size of the array that stores the items on this field. The size is increase automatically if needed.
      */
@@ -49,12 +48,12 @@ public final class ItemUpdateMsg
     /**
      * Count values for each item on this map tile.
      */
-    private final List<ItemCount> itemCount = new ArrayList<ItemCount>(DEFAULT_SIZE);
+    private final List<ItemCount> itemCount = new ArrayList<>(DEFAULT_SIZE);
 
     /**
      * List of the item IDs on this map tile.
      */
-    private final List<ItemId> itemId = new ArrayList<ItemId>(DEFAULT_SIZE);
+    private final List<ItemId> itemId = new ArrayList<>(DEFAULT_SIZE);
 
     /**
      * Amount of item stacks on the map tile.
@@ -73,8 +72,7 @@ public final class ItemUpdateMsg
      * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader)
-            throws IOException {
+    public void decode(@Nonnull final NetCommReader reader) throws IOException {
         loc = decodeLocation(reader);
 
         itemNumber = reader.readUByte();

@@ -50,8 +50,8 @@ public abstract class AbstractForwardingInput implements Input {
      * Create a new instance and setup the required internal structures.
      */
     protected AbstractForwardingInput() {
-        forwardingFlags = new EnumMap<ForwardingTarget, Boolean>(ForwardingTarget.class);
-        forwardingListeners = new LinkedList<ForwardingListener>();
+        forwardingFlags = new EnumMap<>(ForwardingTarget.class);
+        forwardingListeners = new LinkedList<>();
         disableForwarding(ForwardingTarget.All);
     }
 

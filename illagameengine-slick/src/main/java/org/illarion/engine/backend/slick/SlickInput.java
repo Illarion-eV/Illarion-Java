@@ -57,7 +57,7 @@ class SlickInput extends AbstractForwardingInput implements org.newdawn.slick.In
      * Create a new instance of the slick input.
      */
     SlickInput() {
-        pollingQueue = new LinkedList<Runnable>();
+        pollingQueue = new LinkedList<>();
     }
 
     /**

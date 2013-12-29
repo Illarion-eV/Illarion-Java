@@ -49,7 +49,7 @@ public class ResourceManager {
      * A private constructor to prevent multiple instances.
      */
     private ResourceManager() {
-        res = new FastTable<Resource>();
+        res = new FastTable<>();
         index = 0;
     }
 

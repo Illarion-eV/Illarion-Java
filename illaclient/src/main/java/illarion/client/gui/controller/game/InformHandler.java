@@ -70,7 +70,7 @@ public final class InformHandler implements InformGui, ScreenController {
          *
          * @param informBuilder the element builder that creates the message
          * @param parentElement the parent element that will store the elements created by the element builder
-         * @param layoutParent  the element that needs to get a new layout once the inform is displayed
+         * @param layoutParent the element that needs to get a new layout once the inform is displayed
          */
         InformBuildTask(final ElementBuilder informBuilder, final Element parentElement, final Element layoutParent) {
             builder = informBuilder;
@@ -182,7 +182,7 @@ public final class InformHandler implements InformGui, ScreenController {
     private Element scriptParentPanel;
 
     @Override
-    public void bind(final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
         parentNifty = nifty;
         parentScreen = screen;
 
@@ -225,8 +225,8 @@ public final class InformHandler implements InformGui, ScreenController {
      * Show a inform on the screen.
      *
      * @param informBuilder the builder that is meant to create the inform message
-     * @param parent        the parent element that stores the inform message
-     * @param layoutParent  the element that needs to get its layout recalculated
+     * @param parent the parent element that stores the inform message
+     * @param layoutParent the element that needs to get its layout recalculated
      */
     public void showInform(final ElementBuilder informBuilder, final Element parent, final Element layoutParent) {
         World.getUpdateTaskManager().addTask(new InformBuildTask(informBuilder, parent, layoutParent));
@@ -236,7 +236,7 @@ public final class InformHandler implements InformGui, ScreenController {
      * Show a script inform message on the screen.
      *
      * @param priority the priority of the message
-     * @param message  the message
+     * @param message the message
      */
     @Override
     public void showScriptInform(final int priority, @Nonnull final String message) {

@@ -52,14 +52,14 @@ public final class SkillGroup {
     /**
      * Create a new group of skills.
      *
-     * @param german  the german name of the group
+     * @param german the german name of the group
      * @param english the english name of the group
      */
     public SkillGroup(@Nonnull final String german, @Nonnull final String english) {
         nameEnglish = english;
         nameGerman = german;
 
-        skills = new ArrayList<Skill>();
+        skills = new ArrayList<>();
     }
 
     /**

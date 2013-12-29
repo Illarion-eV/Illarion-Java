@@ -98,29 +98,33 @@ public class MapEditorConfig {
         dialog.setMessageSource(Lang.getInstance());
 
         final ConfigDialog.Page generalPage = new ConfigDialog.Page("gui.config.generalTab");
-        generalPage.addEntry(new ConfigDialog.Entry("gui.config.MapeditFolderLabel", new DirectoryEntry(MAPEDIT_FOLDER,
-                null)));
+        generalPage.addEntry(
+                new ConfigDialog.Entry("gui.config.MapeditFolderLabel", new DirectoryEntry(MAPEDIT_FOLDER, null)));
 
-        generalPage.addEntry(new ConfigDialog.Entry("gui.config.language", new SelectEntry(USED_LANGUAGE,
-                SelectEntry.STORE_VALUE, LANGUAGES)));
+        generalPage.addEntry(new ConfigDialog.Entry("gui.config.language",
+                                                    new SelectEntry(USED_LANGUAGE, SelectEntry.STORE_VALUE,
+                                                                    LANGUAGES)));
 
         generalPage.addEntry(new ConfigDialog.Entry("gui.config.showMapPostion", new CheckEntry(SHOW_MAP_POSITION)));
 
         dialog.addPage(generalPage);
 
         final ConfigDialog.Page lookAndFeelPage = new ConfigDialog.Page("gui.config.lookAndFeelTab");
-        lookAndFeelPage.addEntry(new ConfigDialog.Entry("gui.config.useWindowDecoLabel", new CheckEntry(USE_WINDOW_DECO)));
+        lookAndFeelPage
+                .addEntry(new ConfigDialog.Entry("gui.config.useWindowDecoLabel", new CheckEntry(USE_WINDOW_DECO)));
 
-        final Collection<String> themeObject = new FastTable<String>();
-        final Collection<String> themeLabel = new FastTable<String>();
+        final Collection<String> themeObject = new FastTable<>();
+        final Collection<String> themeLabel = new FastTable<>();
 
         for (final Map.Entry<String, SkinInfo> skin : SubstanceLookAndFeel.getAllSkins().entrySet()) {
             themeObject.add(skin.getValue().getClassName());
             themeLabel.add(skin.getValue().getDisplayName());
         }
 
-        lookAndFeelPage.addEntry(new ConfigDialog.Entry("gui.config.usedThemeLabel", new SelectEntry(USED_LOOK_AND_FEEL,
-                SelectEntry.STORE_VALUE, themeObject.toArray(), themeLabel.toArray(new String[themeLabel.size()]))));
+        lookAndFeelPage.addEntry(new ConfigDialog.Entry("gui.config.usedThemeLabel",
+                                                        new SelectEntry(USED_LOOK_AND_FEEL, SelectEntry.STORE_VALUE,
+                                                                        themeObject.toArray(), themeLabel
+                                                                .toArray(new String[themeLabel.size()]))));
 
         dialog.addPage(lookAndFeelPage);
 
@@ -129,6 +133,7 @@ public class MapEditorConfig {
 
     /**
      * Get the the language for the editor
+     *
      * @return Locale
      */
     public Locale getLanguage() {
@@ -225,16 +230,14 @@ public class MapEditorConfig {
      * see if the folder is valid.
      *
      * @return a string with the path to the folder or null in case no folder is
-     *         set
+     * set
      */
     @Nonnull
     private static String checkFolder() {
         if (!DirectoryManager.getInstance().isDirectorySet(DirectoryManager.Directory.User)) {
             SplashScreen.getInstance().setVisible(false);
-            JOptionPane.showMessageDialog(null,
-                    "Installation ist fehlerhaft. Bitte neu ausführen.\n\n"
-                            + "Installation is corrupted, please run it again.",
-                    "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Installation ist fehlerhaft. Bitte neu ausführen.\n\n" +
+                    "Installation is corrupted, please run it again.", "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(-1);
         }
 
@@ -245,6 +248,7 @@ public class MapEditorConfig {
 
     /**
      * Set the size of the window
+     *
      * @param windowSize size of the window
      */
     public void setWindowSize(@Nonnull final Dimension windowSize) {
@@ -252,8 +256,8 @@ public class MapEditorConfig {
             LOGGER.error("Configuration system not initialized yet.");
             return;
         }
-            configSystem.set(WINDOW_WIDTH, windowSize.width);
-            configSystem.set(WINDOW_HEIGHT, windowSize.height);
+        configSystem.set(WINDOW_WIDTH, windowSize.width);
+        configSystem.set(WINDOW_HEIGHT, windowSize.height);
     }
 
     /**
@@ -265,7 +269,7 @@ public class MapEditorConfig {
     public Dimension getWindowSize() {
         if (configSystem == null) {
             LOGGER.error("Configuration system not initialized yet.");
-            return new Dimension(0,0);
+            return new Dimension(0, 0);
         }
         return new Dimension(configSystem.getInteger("windowSizeW"), configSystem.getInteger("windowSizeH"));
     }
@@ -326,7 +330,7 @@ public class MapEditorConfig {
      * Get the flag if the editor is supposed to decorate the windows.
      *
      * @return {@code true} in case the editor is expected to decorate the
-     *         windows
+     * windows
      */
     public boolean isUseWindowDecoration() {
         if (configSystem == null) {

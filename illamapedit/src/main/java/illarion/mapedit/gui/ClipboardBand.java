@@ -39,17 +39,17 @@ public class ClipboardBand extends JRibbonBand {
         super(Lang.getMsg("gui.clipboardband.Name"), null);
 
         final JCommandButton copy = new JCommandButton(Lang.getMsg("gui.clipboardband.Copy"),
-                ImageLoader.getResizableIcon("editcopy"));
+                                                       ImageLoader.getResizableIcon("editcopy"));
         final JCommandButton paste = new JCommandButton(Lang.getMsg("gui.clipboardband.Paste"),
-                ImageLoader.getResizableIcon("editpaste"));
+                                                        ImageLoader.getResizableIcon("editpaste"));
         final JCommandButton cut = new JCommandButton(Lang.getMsg("gui.clipboardband.Cut"),
-                ImageLoader.getResizableIcon("editcut"));
+                                                      ImageLoader.getResizableIcon("editcut"));
 
         addCommandButton(paste, RibbonElementPriority.TOP);
         addCommandButton(copy, RibbonElementPriority.MEDIUM);
         addCommandButton(cut, RibbonElementPriority.MEDIUM);
 
-        final List<RibbonBandResizePolicy> policies = new ArrayList<RibbonBandResizePolicy>();
+        final List<RibbonBandResizePolicy> policies = new ArrayList<>();
         policies.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
         policies.add(new CoreRibbonResizePolicies.High2Mid(getControlPanel()));
         setResizePolicies(policies);

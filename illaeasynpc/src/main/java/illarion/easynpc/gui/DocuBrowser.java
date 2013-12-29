@@ -72,7 +72,7 @@ public final class DocuBrowser extends JDialog {
         @Nullable
         @Override
         public Enumeration<DocuTreeNode> children() {
-            return new ArrayEnumeration<DocuTreeNode>(children);
+            return new ArrayEnumeration<>(children);
         }
 
         /**
@@ -169,22 +169,18 @@ public final class DocuBrowser extends JDialog {
      */
     @SuppressWarnings("nls")
     public DocuBrowser() {
-        super(MainFrame.getInstance(),
-                Lang.getMsg(DocuBrowser.class, "title"), false);
+        super(MainFrame.getInstance(), Lang.getMsg(DocuBrowser.class, "title"), false);
 
-        final JSplitPane splitPane =
-                new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
         try {
-            setIconImage(ImageIO.read(getClass().getClassLoader()
-                    .getResourceAsStream("easynpc16.png")));
+            setIconImage(ImageIO.read(getClass().getClassLoader().getResourceAsStream("easynpc16.png")));
         } catch (@Nonnull final IOException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
 
-        final JTree contentTree =
-                new JTree(new DocuTreeNode(Parser.getInstance()));
+        final JTree contentTree = new JTree(new DocuTreeNode(Parser.getInstance()));
         final JScrollPane contentScroll = new JScrollPane(contentTree);
         contentScroll.setMinimumSize(new Dimension(350, 400));
         contentScroll.setPreferredSize(contentScroll.getMinimumSize());
@@ -202,8 +198,7 @@ public final class DocuBrowser extends JDialog {
         contentTree.addTreeSelectionListener(new TreeSelectionListener() {
             @Override
             public void valueChanged(@Nonnull final TreeSelectionEvent e) {
-                ((DocuTreeNode) e.getPath().getLastPathComponent())
-                        .displayNode();
+                ((DocuTreeNode) e.getPath().getLastPathComponent()).displayNode();
             }
         });
 
@@ -240,8 +235,7 @@ public final class DocuBrowser extends JDialog {
         final JPanel descriptionPanel = new JPanel(new BorderLayout());
         descriptionPanel.add(descriptionTitle, BorderLayout.NORTH);
         descriptionPanel.add(descriptionContent, BorderLayout.CENTER);
-        descriptionPanel.add(Box.createRigidArea(new Dimension(20, 1)),
-                BorderLayout.WEST);
+        descriptionPanel.add(Box.createRigidArea(new Dimension(20, 1)), BorderLayout.WEST);
 
         syntaxTitle.setFont(subheadlineFont);
         syntaxTitle.setVisible(false);
@@ -256,8 +250,7 @@ public final class DocuBrowser extends JDialog {
         final JPanel syntaxPanel = new JPanel(new BorderLayout());
         syntaxPanel.add(syntaxTitle, BorderLayout.NORTH);
         syntaxPanel.add(syntaxContent, BorderLayout.CENTER);
-        syntaxPanel.add(Box.createRigidArea(new Dimension(20, 1)),
-                BorderLayout.WEST);
+        syntaxPanel.add(Box.createRigidArea(new Dimension(20, 1)), BorderLayout.WEST);
 
         exampleTitle.setFont(subheadlineFont);
         exampleTitle.setVisible(false);
@@ -272,11 +265,9 @@ public final class DocuBrowser extends JDialog {
         final JPanel examplePanel = new JPanel(new BorderLayout());
         examplePanel.add(exampleTitle, BorderLayout.NORTH);
         examplePanel.add(exampleContent, BorderLayout.CENTER);
-        examplePanel.add(Box.createRigidArea(new Dimension(20, 1)),
-                BorderLayout.WEST);
+        examplePanel.add(Box.createRigidArea(new Dimension(20, 1)), BorderLayout.WEST);
 
-        final JPanel titlePanel =
-                new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        final JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
         titlePanel.add(titleLabel);
         detailsPanel.add(titlePanel);
         detailsPanel.add(Box.createRigidArea(new Dimension(10, 10)));
@@ -291,7 +282,7 @@ public final class DocuBrowser extends JDialog {
         final Point parentPos = getOwner().getLocation();
 
         setLocation(((parentDim.width - getWidth()) / 2) + parentPos.x,
-                ((parentDim.height - getHeight()) / 2) + parentPos.y);
+                    ((parentDim.height - getHeight()) / 2) + parentPos.y);
     }
 
     /**

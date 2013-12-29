@@ -50,7 +50,7 @@ public class NiftyCraftingCategory implements CraftingCategoryEntry {
      */
     public NiftyCraftingCategory(final String categoryName) {
         name = categoryName;
-        children = new ArrayList<CraftingItemEntry>();
+        children = new ArrayList<>();
     }
 
     @Nonnull

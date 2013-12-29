@@ -43,7 +43,7 @@ public abstract class AbstractReply {
      * @param reader the receiver that delivers the data that shall be used as location data
      * @return the location that stores the position informations now
      * @throws IOException in case there are not enough bytes in the buffer to decode a location, this exception is
-     *                     thrown
+     * thrown
      */
     @Nonnull
     protected static Location decodeLocation(@Nonnull final NetCommReader reader) throws IOException {
@@ -58,8 +58,7 @@ public abstract class AbstractReply {
      * @param reader the receiver that stores the data that shall be decoded in this function
      * @throws IOException In case the function reads over the buffer of the receiver this exception is thrown
      */
-    public abstract void decode(final NetCommReader reader)
-            throws IOException;
+    public abstract void decode(final NetCommReader reader) throws IOException;
 
     /**
      * Execute the update and send the decoded data to the rest of the client.
@@ -95,11 +94,6 @@ public abstract class AbstractReply {
      */
     @Nonnull
     protected final String toString(final CharSequence param) {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(getClass().getSimpleName());
-        builder.append('(');
-        builder.append(param);
-        builder.append(')');
-        return builder.toString();
+        return getClass().getSimpleName() + '(' + param + ')';
     }
 }

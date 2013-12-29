@@ -55,25 +55,19 @@ final class GraphBand extends JRibbonBand {
     public GraphBand() {
         super(Lang.getMsg(GraphBand.class, "title"), null);
 
-        propertiesButton =
-                new JCommandButton(Lang.getMsg(getClass(), "properties"),
-                        Utils.getResizableIconFromResource("properties.png"));
-        nodeButton =
-                new JCommandToggleButton(Lang.getMsg(getClass(), "state"),
-                        Utils.getResizableIconFromResource("state.png"));
-        transitionButton =
-                new JCommandToggleButton(Lang.getMsg(getClass(), "transition"),
-                        Utils.getResizableIconFromResource("transition.png"));
+        propertiesButton = new JCommandButton(Lang.getMsg(getClass(), "properties"),
+                                              Utils.getResizableIconFromResource("properties.png"));
+        nodeButton = new JCommandToggleButton(Lang.getMsg(getClass(), "state"),
+                                              Utils.getResizableIconFromResource("state.png"));
+        transitionButton = new JCommandToggleButton(Lang.getMsg(getClass(), "transition"),
+                                                    Utils.getResizableIconFromResource("transition.png"));
 
-        propertiesButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(
-                getClass(), "propertiesTooltipTitle"), Lang.getMsg(
-                getClass(), "propertiesTooltip")));
-        nodeButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(
-                getClass(), "nodeTooltipTitle"), Lang.getMsg(
-                getClass(), "nodeTooltip")));
-        transitionButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(
-                getClass(), "transitionTooltipTitle"), Lang.getMsg(
-                getClass(), "transitionTooltip")));
+        propertiesButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(getClass(), "propertiesTooltipTitle"),
+                                                              Lang.getMsg(getClass(), "propertiesTooltip")));
+        nodeButton.setActionRichTooltip(
+                new RichTooltip(Lang.getMsg(getClass(), "nodeTooltipTitle"), Lang.getMsg(getClass(), "nodeTooltip")));
+        transitionButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(getClass(), "transitionTooltipTitle"),
+                                                              Lang.getMsg(getClass(), "transitionTooltip")));
 
         final String idRequestTitle = Lang.getMsg(getClass(), "idRequestTitle");
         final String idRequest = Lang.getMsg(getClass(), "idRequest");
@@ -84,10 +78,9 @@ final class GraphBand extends JRibbonBand {
                 int id = MainFrame.getInstance().getCurrentQuestEditor().getQuestID();
                 while (!validID) {
                     validID = true;
-                    String input =
-                            (String) JOptionPane.showInputDialog(null, idRequest,
-                                    idRequestTitle, JOptionPane.QUESTION_MESSAGE,
-                                    null, null, id);
+                    String input = (String) JOptionPane
+                            .showInputDialog(null, idRequest, idRequestTitle, JOptionPane.QUESTION_MESSAGE, null, null,
+                                             id);
                     if (input != null) {
                         try {
                             id = Integer.parseInt(input);
@@ -134,8 +127,7 @@ final class GraphBand extends JRibbonBand {
         addCommandButton(nodeButton, RibbonElementPriority.TOP);
         addCommandButton(transitionButton, RibbonElementPriority.TOP);
 
-        final List<RibbonBandResizePolicy> policies =
-                new ArrayList<RibbonBandResizePolicy>();
+        final List<RibbonBandResizePolicy> policies = new ArrayList<>();
         policies.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
         policies.add(new CoreRibbonResizePolicies.Mid2Low(getControlPanel()));
         setResizePolicies(policies);

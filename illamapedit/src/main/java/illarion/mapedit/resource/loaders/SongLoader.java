@@ -18,7 +18,6 @@
  */
 package illarion.mapedit.resource.loaders;
 
-
 import gnu.trove.map.hash.TIntObjectHashMap;
 import illarion.common.util.TableLoader;
 import illarion.common.util.TableLoaderSink;
@@ -45,12 +44,14 @@ public class SongLoader implements TableLoaderSink<TableLoader>, Resource {
      */
     private static final int TB_NAME = 1;
 
-    private final TIntObjectHashMap<Song> songs = new TIntObjectHashMap<Song>();
+    private final TIntObjectHashMap<Song> songs = new TIntObjectHashMap<>();
 
-    private static final SongLoader INSTANCE = new SongLoader();;
+    private static final SongLoader INSTANCE = new SongLoader();
+    ;
 
     /**
      * Creates a new TableLoader
+     *
      * @throws IOException
      */
     @Override
@@ -75,6 +76,7 @@ public class SongLoader implements TableLoaderSink<TableLoader>, Resource {
 
     /**
      * Get the instance of SongLoader
+     *
      * @return
      */
     @Nonnull
@@ -84,6 +86,7 @@ public class SongLoader implements TableLoaderSink<TableLoader>, Resource {
 
     /**
      * Get the songs sorted by the songs clipID
+     *
      * @return Array of songs
      */
     public Song[] getSongs() {

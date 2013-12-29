@@ -38,43 +38,16 @@ import java.util.Map;
 public class ImageLoader implements Resource {
     private static final Logger LOGGER = Logger.getLogger(ImageLoader.class);
     private static final ImageLoader INSTANCE = new ImageLoader();
-    private static final Map<String, Image> IMAGES = new FastMap<String, Image>();
+    private static final Map<String, Image> IMAGES = new FastMap<>();
 
-
-    private static final String[] FILES = {
-            "sound.png",
-            "messagebox_critical.png",
-            "singleSelect.png",
-            "viewmag.png",
-            "viewmag1.png",
-            "viewmag-.png",
-            "viewmag+.png",
-            "mapedit64.png",
-            "fileopen.png",
-            "filenew.png",
-            "filesave.png",
-            "editcopy.png",
-            "editpaste.png",
-            "editcut.png",
-            "file_tiles.png",
-            "file_items.png",
-            "messagebox_warning.png",
-            "viewGrid.png",
-            "reload.png",
-            "undo.png",
-            "redo.png",
-            "close.png",
-            "help.png",
-            "player_play.png",
-            "edit_add.png",
-            "edit_remove.png",
-            "1uparrow.png",
-            "1downarrow.png",
-            "render.png",
-            "configure.png",
-            "info.png",
-            "annotation.png"
-    };
+    private static final String[] FILES = {"sound.png", "messagebox_critical.png", "singleSelect.png", "viewmag.png",
+                                           "viewmag1.png", "viewmag-.png", "viewmag+.png", "mapedit64.png",
+                                           "fileopen.png", "filenew.png", "filesave.png", "editcopy.png",
+                                           "editpaste.png", "editcut.png", "file_tiles.png", "file_items.png",
+                                           "messagebox_warning.png", "viewGrid.png", "reload.png", "undo.png",
+                                           "redo.png", "close.png", "help.png", "player_play.png", "edit_add.png",
+                                           "edit_remove.png", "1uparrow.png", "1downarrow.png", "render.png",
+                                           "configure.png", "info.png", "annotation.png"};
 
     private ImageLoader() {
 
@@ -109,7 +82,7 @@ public class ImageLoader implements Resource {
         if (!IMAGES.containsKey(key)) {
             LOGGER.warn("Image [" + key + "] does not exist!");
             throw new RuntimeException("Image [" + key + "] does not exist!");
-//            return null;
+            //            return null;
         }
         return IMAGES.get(key);
     }
@@ -119,9 +92,7 @@ public class ImageLoader implements Resource {
 
         final int height = image.getHeight(null);
         final int width = image.getWidth(null);
-        final ResizableIcon resizeIcon =
-                ImageWrapperResizableIcon.getIcon(image, new Dimension(width,
-                        height));
+        final ResizableIcon resizeIcon = ImageWrapperResizableIcon.getIcon(image, new Dimension(width, height));
         return resizeIcon;
     }
 

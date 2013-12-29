@@ -115,16 +115,14 @@ public final class Config implements ConfigChangeListener {
      * see if the folder is valid.
      *
      * @return a string with the path to the folder or null in case no folder is
-     *         set
+     * set
      */
     @Nonnull
     @SuppressWarnings("nls")
     private static String checkFolder() {
         if (!DirectoryManager.getInstance().isDirectorySet(DirectoryManager.Directory.User)) {
-            JOptionPane.showMessageDialog(null,
-                    "Installation ist fehlerhaft. Bitte neu ausführen.\n\n"
-                            + "Installation is corrupted, please run it again.",
-                    "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Installation ist fehlerhaft. Bitte neu ausführen.\n\n" +
+                    "Installation is corrupted, please run it again.", "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(-1);
         }
 
@@ -137,8 +135,7 @@ public final class Config implements ConfigChangeListener {
      * @param file the file to prepend
      */
     public void addLastOpenedFile(@Nonnull final File file) {
-        cfg.set(lastFilesKey, file.getAbsolutePath() + File.pathSeparator
-                + cfg.getString(lastFilesKey));
+        cfg.set(lastFilesKey, file.getAbsolutePath() + File.pathSeparator + cfg.getString(lastFilesKey));
         lastOpenedFilesBuffer = null;
     }
 
@@ -151,21 +148,15 @@ public final class Config implements ConfigChangeListener {
 
         ConfigDialog.Page page;
         page = new ConfigDialog.Page("illarion.easyquest.gui.config.generalTab");
-        page.addEntry(new ConfigDialog.Entry(
-                "illarion.easyquest.gui.config.easyQuestFolderLabel",
-                new DirectoryEntry(easyQuestFolder, null)));
-        page.addEntry(new ConfigDialog.Entry(
-                "illarion.easyquest.gui.config.exportFolderLabel", new DirectoryEntry(
-                exportFolder, null)));
+        page.addEntry(new ConfigDialog.Entry("illarion.easyquest.gui.config.easyQuestFolderLabel",
+                                             new DirectoryEntry(easyQuestFolder, null)));
+        page.addEntry(new ConfigDialog.Entry("illarion.easyquest.gui.config.exportFolderLabel",
+                                             new DirectoryEntry(exportFolder, null)));
         dialog.addPage(page);
 
         page = new ConfigDialog.Page("illarion.easyquest.gui.config.serverTab");
-        page.addEntry(new ConfigDialog.Entry(
-                "illarion.easyquest.gui.config.characterLabel",
-                new TextEntry(character)));
-        page.addEntry(new ConfigDialog.Entry(
-                "illarion.easyquest.gui.config.passwordLabel",
-                new TextEntry(password)));
+        page.addEntry(new ConfigDialog.Entry("illarion.easyquest.gui.config.characterLabel", new TextEntry(character)));
+        page.addEntry(new ConfigDialog.Entry("illarion.easyquest.gui.config.passwordLabel", new TextEntry(password)));
         dialog.addPage(page);
 
         return dialog;
@@ -185,14 +176,12 @@ public final class Config implements ConfigChangeListener {
         if (lastOpenedFilesBuffer != null) {
             return lastOpenedFilesBuffer;
         }
-        final String[] fetchedList =
-                cfg.getString(lastFilesKey).split(File.pathSeparator);
+        final String[] fetchedList = cfg.getString(lastFilesKey).split(File.pathSeparator);
         final File[] returnList = new File[LAST_OPEN_FILES_COUNT];
         final String[] cleanList = new String[LAST_OPEN_FILES_COUNT];
 
         int entryPos = 0;
-        for (int i = 0; (i < fetchedList.length)
-                && (i < LAST_OPEN_FILES_COUNT); i++) {
+        for (int i = 0; (i < fetchedList.length) && (i < LAST_OPEN_FILES_COUNT); i++) {
             final String workString = fetchedList[i];
             if (workString.length() < 5) {
                 continue;
@@ -220,7 +209,7 @@ public final class Config implements ConfigChangeListener {
             return returnList;
         }
 
-        final StringBuffer cleanedResult = new StringBuffer();
+        final StringBuilder cleanedResult = new StringBuilder();
         for (int i = 0; i < entryPos; i++) {
             cleanedResult.append(cleanList[i]);
             cleanedResult.append(File.pathSeparator);
@@ -258,8 +247,7 @@ public final class Config implements ConfigChangeListener {
         cfg = new ConfigSystem(configFile);
 
         cfg.setDefault(lastFilesKey, "");
-        cfg.setDefault(easyQuestFolder,
-                new File(System.getProperty("user.home")));
+        cfg.setDefault(easyQuestFolder, new File(System.getProperty("user.home")));
         cfg.setDefault(lastFilesKey, "");
         cfg.setDefault(exportFolder, System.getProperty("user.home"));
         cfg.setDefault(openFiles, "");
@@ -291,7 +279,7 @@ public final class Config implements ConfigChangeListener {
      * @param files the files to open
      */
     public void setOldFiles(@Nonnull final String[] files) {
-        final StringBuffer buffer = new StringBuffer();
+        final StringBuilder buffer = new StringBuilder();
         for (final String file : files) {
             buffer.append(file);
             buffer.append(File.pathSeparator);

@@ -71,16 +71,19 @@ public final class Credits {
      * you really want to display this stuff.
      */
     private Credits() {
-        singlePosList = new ArrayList<CreditsList>();
-        multiPosList = new ArrayList<CreditsList>();
+        singlePosList = new ArrayList<>();
+        multiPosList = new ArrayList<>();
 
         final CreditsList projectManager = new CreditsList("Projektleiter", "Project Manager");
-        final CreditsList chiefContent = new CreditsList("Leitender Entwickler für Spielinhalte", "Chief Game Content Developer");
-        final CreditsList chiefClient = new CreditsList("Leitender Entwickler für den Client", "Chief Client Developer");
+        final CreditsList chiefContent = new CreditsList("Leitender Entwickler für Spielinhalte",
+                                                         "Chief Game Content Developer");
+        final CreditsList chiefClient = new CreditsList("Leitender Entwickler für den Client",
+                                                        "Chief Client Developer");
         final CreditsList chiefGraphics = new CreditsList("Leitender Grafiker", "Chief Graphics Designer");
         final CreditsList chiefMusic = new CreditsList("Original-Soundtrack", "Original Soundtrack");
         final CreditsList chiefMap = new CreditsList("Leitender Gestalter für die Karte", "Chief Map Designer");
-        final CreditsList chiefServer = new CreditsList("Leitender Entwickler für den Server", "Chief Server Developer");
+        final CreditsList chiefServer = new CreditsList("Leitender Entwickler für den Server",
+                                                        "Chief Server Developer");
         final CreditsList presentedBy = new CreditsList("Präsentiert vom", "Presented by the");
 
         final CreditsList gameplay = new CreditsList("Spielmechanik", "Gameplay");
@@ -98,13 +101,14 @@ public final class Credits {
         final CreditsList qualityAssurance = new CreditsList("Qualitätsprüfung", "Quality Assurance");
         final CreditsList specialThanks = new CreditsList("Besonderen Dank", "Special Thanks");
 
-        CreditsPerson.create("Andreas", "Vilarion", "Grob", projectManager, chiefServer, gameplay, client, website,
-                easyNPC, easyQuest, server, qualityAssurance);
+        CreditsPerson
+                .create("Andreas", "Vilarion", "Grob", projectManager, chiefServer, gameplay, client, website, easyNPC,
+                        easyQuest, server, qualityAssurance);
         CreditsPerson.create("Lennart", "Estralis", "Stutz", chiefContent, gameplay, content, qualityAssurance);
-        CreditsPerson.create("Martin", "Nitram", "Karing", chiefClient, gameplay, client, website, easyNPC,
-                easyQuest, mapEditor, server, qualityAssurance);
-        CreditsPerson.create("Martin", "Polak", chiefGraphics, gameplay, client, graphics, website, easyNPC,
-                easyQuest, server, qualityAssurance);
+        CreditsPerson.create("Martin", "Nitram", "Karing", chiefClient, gameplay, client, website, easyNPC, easyQuest,
+                             mapEditor, server, qualityAssurance);
+        CreditsPerson.create("Martin", "Polak", chiefGraphics, gameplay, client, graphics, website, easyNPC, easyQuest,
+                             server, qualityAssurance);
         CreditsPerson.create("Oganalp", "Canatan", chiefMusic);
         CreditsPerson.create("Marvin", "Kopp", chiefMusic);
         CreditsPerson.create("Zot", chiefMap, content, graphics, maps, gameMaster, qualityAssurance);

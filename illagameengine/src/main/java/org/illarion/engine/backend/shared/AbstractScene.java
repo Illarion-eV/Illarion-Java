@@ -79,9 +79,9 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
      * Create a new scene and setup the internal structures.
      */
     protected AbstractScene() {
-        sceneElements = new ArrayList<SceneElement>();
-        eventQueue = new ConcurrentLinkedQueue<SceneEvent>();
-        sceneEffects = new ArrayList<T>();
+        sceneElements = new ArrayList<>();
+        eventQueue = new ConcurrentLinkedQueue<>();
+        sceneEffects = new ArrayList<>();
     }
 
     @Override
@@ -120,7 +120,7 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
      * This function performs the actual calling of the update functions for all scene elements.
      *
      * @param container the game container that is forwarded to the scene elements
-     * @param delta     the time since the last update that is reported to the elements
+     * @param delta the time since the last update that is reported to the elements
      */
     protected final void updateScene(@Nonnull final GameContainer container, final int delta) {
         Arrays.fill(workingArray, null);

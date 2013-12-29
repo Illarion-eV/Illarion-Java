@@ -71,7 +71,7 @@ public class QuestMarker extends AbstractEntity<MiscImageTemplate> {
     private int appliedOffset;
 
     static {
-        COLOR_MAP = new EnumMap<QuestMarkerAvailability, Color>(QuestMarkerAvailability.class);
+        COLOR_MAP = new EnumMap<>(QuestMarkerAvailability.class);
         COLOR_MAP.put(QuestMarkerAvailability.Available, new ImmutableColor(1.f, .75f, 0.f, 1.f));
         COLOR_MAP.put(QuestMarkerAvailability.AvailableSoon, new ImmutableColor(1.f, 1.f, 1.f, .8f));
     }
@@ -79,7 +79,7 @@ public class QuestMarker extends AbstractEntity<MiscImageTemplate> {
     /**
      * Create a new quest marker with the default image and with the reference to the tile its displayed on.
      *
-     * @param type       the type of quest marker that is supposed to be created
+     * @param type the type of quest marker that is supposed to be created
      * @param parentTile the parent tile
      */
     public QuestMarker(@Nonnull final QuestMarkerType type, @Nonnull final MapTile parentTile) {
@@ -105,7 +105,7 @@ public class QuestMarker extends AbstractEntity<MiscImageTemplate> {
     /**
      * Create a new quest marker with the required image and with the reference to the tile its displayed on.
      *
-     * @param template   the image template
+     * @param template the image template
      * @param parentTile the parent tile
      */
     public QuestMarker(@Nonnull final MiscImageTemplate template, @Nonnull final MapTile parentTile) {

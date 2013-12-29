@@ -60,7 +60,7 @@ public final class SkillGroups {
      * instances of this class are created.
      */
     private SkillGroups() {
-        skillGroupList = new ArrayList<SkillGroup>();
+        skillGroupList = new ArrayList<>();
     }
 
     /**

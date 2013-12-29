@@ -301,7 +301,7 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
      * @return {@code false} in any case
      */
     @Override
-    public boolean inputEvent(final NiftyInputEvent inputEvent) {
+    public boolean inputEvent(@Nonnull final NiftyInputEvent inputEvent) {
         return false;
     }
 }

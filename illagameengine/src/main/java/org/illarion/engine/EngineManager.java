@@ -36,19 +36,21 @@ public final class EngineManager {
     /**
      * Create a new desktop game instance.
      *
-     * @param backend      the backend used for the game
+     * @param backend the backend used for the game
      * @param gameListener the listener
-     * @param width        the width of the window
-     * @param height       the height of the window
-     * @param fullScreen   {@code true} in case this application is supposed to show up as full screen application
+     * @param width the width of the window
+     * @param height the height of the window
+     * @param fullScreen {@code true} in case this application is supposed to show up as full screen application
      * @return the container that displays the desktop game
      * @throws EngineException in case the creation of the game container fails
      */
     @Nonnull
-    public static DesktopGameContainer createDesktopGame(@Nonnull final Backend backend,
-                                                         @Nonnull final GameListener gameListener, final int width,
-                                                         final int height, final boolean fullScreen) throws
-            EngineException {
+    public static DesktopGameContainer createDesktopGame(
+            @Nonnull final Backend backend,
+            @Nonnull final GameListener gameListener,
+            final int width,
+            final int height,
+            final boolean fullScreen) throws EngineException {
         final String engineClassRef = backend.getDesktopContainerClass();
         if (engineClassRef == null) {
             throw new EngineException("Selected backend " + backend.name() + " does not support desktop games.");
@@ -63,16 +65,14 @@ public final class EngineManager {
             @SuppressWarnings("unchecked")
             final Class<DesktopGameContainer> desktopGameClass = (Class<DesktopGameContainer>) clazz;
 
-            final Constructor<DesktopGameContainer> constructor = desktopGameClass.getConstructor(GameListener.class,
-                    int.class, int.class, boolean.class);
+            final Constructor<DesktopGameContainer> constructor = desktopGameClass
+                    .getConstructor(GameListener.class, int.class, int.class, boolean.class);
             return constructor.newInstance(gameListener, width, height, fullScreen);
         } catch (@Nonnull final ClassNotFoundException e) {
             throw new EngineException("Selected backend " + backend.name() + " is not available.", e);
         } catch (@Nonnull final NoSuchMethodException e) {
             throw new EngineException("Selected backend " + backend.name() + " doesn't provide suited constructor.", e);
-        } catch (@Nonnull final InvocationTargetException e) {
-            throw new EngineException("Creation of backend " + backend.name() + " container failed.", e);
-        } catch (@Nonnull final InstantiationException e) {
+        } catch (@Nonnull final InvocationTargetException | InstantiationException e) {
             throw new EngineException("Creation of backend " + backend.name() + " container failed.", e);
         } catch (@Nonnull final IllegalAccessException e) {
             throw new EngineException("Access to backend " + backend.name() + " constructor was rejected.", e);

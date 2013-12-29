@@ -32,7 +32,7 @@ public class HandlerTemplate {
     public HandlerTemplate(String name) {
         this.name = name;
         title = null;
-        parameters = new ArrayList<TemplateParameter>();
+        parameters = new ArrayList<>();
         playerParameterIndex = -1;
     }
 

@@ -54,7 +54,7 @@ public final class ReplyFactory {
      * The default constructor of the factory. This registers all commands.
      */
     private ReplyFactory() {
-        replyMap = new HashMap<Integer, Class<? extends AbstractReply>>();
+        replyMap = new HashMap<>();
 
         register(AppearanceMsg.class);
         register(AttackMsg.class);

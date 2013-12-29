@@ -42,9 +42,9 @@ public class HistoryBand extends JRibbonBand {
         super(Lang.getMsg("gui.history"), ImageLoader.getResizableIcon("reload"));
 
         final JCommandButton undo = new JCommandButton(Lang.getMsg("gui.history.undo"),
-                ImageLoader.getResizableIcon("undo"));
+                                                       ImageLoader.getResizableIcon("undo"));
         final JCommandButton redo = new JCommandButton(Lang.getMsg("gui.history.redo"),
-                ImageLoader.getResizableIcon("redo"));
+                                                       ImageLoader.getResizableIcon("redo"));
 
         final ActionListener undoListener = new ActionListener() {
             @Override
@@ -66,7 +66,7 @@ public class HistoryBand extends JRibbonBand {
         addCommandButton(undo, RibbonElementPriority.MEDIUM);
         addCommandButton(redo, RibbonElementPriority.MEDIUM);
 
-        final List<RibbonBandResizePolicy> policies = new ArrayList<RibbonBandResizePolicy>();
+        final List<RibbonBandResizePolicy> policies = new ArrayList<>();
         policies.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
         policies.add(new CoreRibbonResizePolicies.Mid2Low(getControlPanel()));
         setResizePolicies(policies);

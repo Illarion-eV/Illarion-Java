@@ -76,8 +76,8 @@ import java.util.regex.Pattern;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class DialogHandler implements DialogCraftingGui, DialogMessageGui, DialogInputGui, ScreenController,
-        UpdatableHandler {
+public final class DialogHandler
+        implements DialogCraftingGui, DialogMessageGui, DialogInputGui, ScreenController, UpdatableHandler {
     private static class BuildWrapper {
         private final ControlBuilder builder;
         private final Element parent;
@@ -85,8 +85,10 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
         @Nullable
         private final DialogHandler.PostBuildTask task;
 
-        BuildWrapper(final ControlBuilder builder, final Element parent,
-                     @Nullable final DialogHandler.PostBuildTask task) {
+        BuildWrapper(
+                final ControlBuilder builder,
+                final Element parent,
+                @Nullable final DialogHandler.PostBuildTask task) {
             this.builder = builder;
             this.parent = parent;
             this.task = task;
@@ -135,12 +137,14 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
 
     private int lastCraftingTooltip = -2;
 
-    public DialogHandler(final Input input, final NumberSelectPopupHandler numberSelectPopupHandler,
-                         final TooltipHandler tooltipHandler) {
+    public DialogHandler(
+            final Input input,
+            final NumberSelectPopupHandler numberSelectPopupHandler,
+            final TooltipHandler tooltipHandler) {
         this.input = input;
         this.tooltipHandler = tooltipHandler;
-        builders = new ConcurrentLinkedQueue<DialogHandler.BuildWrapper>();
-        closers = new ConcurrentLinkedQueue<CloseDialogEvent>();
+        builders = new ConcurrentLinkedQueue<>();
+        closers = new ConcurrentLinkedQueue<>();
         numberSelect = numberSelectPopupHandler;
     }
 
@@ -205,7 +209,9 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
         }
     }
 
-    private void addCraftingItemsToDialog(@Nonnull final DialogCraftingReceivedEvent event, @Nonnull final DialogCrafting dialog) {
+    private void addCraftingItemsToDialog(
+            @Nonnull final DialogCraftingReceivedEvent event,
+            @Nonnull final DialogCrafting dialog) {
         final NiftyCraftingCategory[] categories = new NiftyCraftingCategory[event.getGroupCount()];
         for (int i = 0; i < event.getGroupCount(); i++) {
             categories[i] = new NiftyCraftingCategory(event.getGroupTitle(i));
@@ -283,9 +289,11 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
         });
     }
 
-    private void addMerchantItemsToDialog(@Nonnull final DialogMerchantReceivedEvent event, @Nonnull final DialogMerchant dialog) {
-        final List<MerchantListEntry> sellingList = new ArrayList<MerchantListEntry>();
-        final List<MerchantListEntry> buyingList = new ArrayList<MerchantListEntry>();
+    private void addMerchantItemsToDialog(
+            @Nonnull final DialogMerchantReceivedEvent event,
+            @Nonnull final DialogMerchant dialog) {
+        final List<MerchantListEntry> sellingList = new ArrayList<>();
+        final List<MerchantListEntry> buyingList = new ArrayList<>();
         for (int i = 0; i < event.getItemCount(); i++) {
             final NiftyMerchantItem item = new NiftyMerchantItem(nifty, event.getItem(i));
 
@@ -315,8 +323,8 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
 
     private void showSelectDialog(@Nonnull final DialogSelectionReceivedEvent event) {
         final Element parentArea = screen.findElementById("windows");
-        final DialogSelectBuilder builder = new DialogSelectBuilder(
-                "selectDialog" + Integer.toString(event.getId()), event.getTitle());
+        final DialogSelectBuilder builder = new DialogSelectBuilder("selectDialog" + Integer.toString(event.getId()),
+                                                                    event.getTitle());
         builder.dialogId(event.getId());
         builder.message(event.getMessage());
 
@@ -353,7 +361,9 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
         }));
     }
 
-    private void addSelectItemsToDialog(@Nonnull final DialogSelectionReceivedEvent event, @Nonnull final DialogSelect dialog) {
+    private void addSelectItemsToDialog(
+            @Nonnull final DialogSelectionReceivedEvent event,
+            @Nonnull final DialogSelect dialog) {
         for (int i = 0; i < event.getOptionCount(); i++) {
             dialog.addItem(new NiftySelectItem(nifty, event.getOption(i)));
         }
@@ -384,13 +394,14 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
 
     @NiftyEventSubscriber(id = "craftingDialog")
     public void handleCraftingCraftItemEvent(final String topic, @Nonnull final DialogCraftingCraftEvent event) {
-        World.getNet().sendCommand(new CraftItemCmd(event.getDialogId(), event.getItem().getItemIndex(),
-                event.getCount()));
+        World.getNet()
+                .sendCommand(new CraftItemCmd(event.getDialogId(), event.getItem().getItemIndex(), event.getCount()));
     }
 
     @NiftyEventSubscriber(id = "craftingDialog")
-    public void handleCraftingIngredientLookAtEvent(final String topic,
-                                                    @Nonnull final DialogCraftingLookAtIngredientItemEvent event) {
+    public void handleCraftingIngredientLookAtEvent(
+            final String topic,
+            @Nonnull final DialogCraftingLookAtIngredientItemEvent event) {
         if (lastCraftingTooltip == event.getIngredientIndex()) {
             return;
         }
@@ -400,7 +411,7 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
         }
 
         World.getNet().sendCommand(new LookAtCraftIngredientCmd(event.getDialogId(), event.getItem().getItemIndex(),
-                event.getIngredientIndex()));
+                                                                event.getIngredientIndex()));
         lastCraftingTooltip = event.getIngredientIndex();
     }
 
@@ -440,7 +451,11 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
     }
 
     @Override
-    public void showCraftIngredientTooltip(final int dialogId, final int index, final int ingredientIndex, @Nonnull final Tooltip tooltip) {
+    public void showCraftIngredientTooltip(
+            final int dialogId,
+            final int index,
+            final int ingredientIndex,
+            @Nonnull final Tooltip tooltip) {
         if ((craftingDialog == null) || (craftingDialog.getDialogId() != dialogId)) {
             return;
         }
@@ -450,7 +465,7 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
             final Element targetElement = craftingDialog.getIngredientItemDisplay(ingredientIndex);
             final Rectangle elementRectangle = new Rectangle();
             elementRectangle.set(targetElement.getX(), targetElement.getY(), targetElement.getWidth(),
-                    targetElement.getHeight());
+                                 targetElement.getHeight());
             tooltipHandler.showToolTip(elementRectangle, tooltip);
         }
     }
@@ -466,14 +481,18 @@ public final class DialogHandler implements DialogCraftingGui, DialogMessageGui,
             final Element targetElement = craftingDialog.getCraftingItemDisplay();
             final Rectangle elementRectangle = new Rectangle();
             elementRectangle.set(targetElement.getX(), targetElement.getY(), targetElement.getWidth(),
-                    targetElement.getHeight());
+                                 targetElement.getHeight());
             tooltipHandler.showToolTip(elementRectangle, tooltip);
         }
     }
 
     @Override
-    public void showInputDialog(final int id, final String title, final String description, final int maxCharacters,
-                                final boolean multipleLines) {
+    public void showInputDialog(
+            final int id,
+            final String title,
+            final String description,
+            final int maxCharacters,
+            final boolean multipleLines) {
         final Element parentArea = screen.findElementById("windows");
         final DialogInputBuilder builder = new DialogInputBuilder("inputDialog" + Integer.toString(id), title);
         builder.description(description);

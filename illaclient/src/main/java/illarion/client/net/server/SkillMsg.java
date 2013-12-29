@@ -60,9 +60,9 @@ public final class SkillMsg extends AbstractGuiMsg {
      * Decode the skill data the receiver got and prepare it for the execution.
      *
      * @param reader the receiver that got the data from the server that needs
-     *               to be decoded
+     * to be decoded
      * @throws IOException thrown in case there was not enough data received to
-     *                     decode the full message
+     * decode the full message
      */
     @Override
     public void decode(@Nonnull final NetCommReader reader) throws IOException {
@@ -94,18 +94,12 @@ public final class SkillMsg extends AbstractGuiMsg {
      * Get the data of this skill message as string.
      *
      * @return the string that contains the values that were decoded for this
-     *         message
+     * message
      */
     @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(skill);
-        builder.append(": ");
-        builder.append(value);
-        builder.append(" - ");
-        builder.append(minor);
-        return toString(builder.toString());
+        return toString(String.valueOf(skill) + ": " + value + " - " + minor);
     }
 }

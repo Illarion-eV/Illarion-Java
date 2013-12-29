@@ -60,16 +60,19 @@ public final class DoubleEffect implements EffectImpl {
     /**
      * initialize effect.
      *
-     * @param nifty     Nifty
-     * @param element   Element
+     * @param nifty Nifty
+     * @param element Element
      * @param parameter parameters
      */
     @Override
     @SuppressWarnings("unchecked")
-    public void activate(final Nifty nifty, final Element element, @Nonnull final EffectProperties parameter) {
+    public void activate(
+            @Nonnull final Nifty nifty,
+            @Nonnull final Element element,
+            @Nonnull final EffectProperties parameter) {
         try {
-            targetControlClass = (Class<? extends NiftyControl>) Class.forName(
-                    String.valueOf(parameter.get("targetClass")));
+            targetControlClass = (Class<? extends NiftyControl>) Class
+                    .forName(String.valueOf(parameter.get("targetClass")));
         } catch (@Nonnull final ClassNotFoundException e) {
             LOGGER.error("Illegal target class for double effect.");
             return;
@@ -85,13 +88,17 @@ public final class DoubleEffect implements EffectImpl {
     /**
      * execute the effect.
      *
-     * @param element    the Element
+     * @param element the Element
      * @param effectTime current effect time
-     * @param falloff    the Falloff class for hover effects. This is supposed to be null for none hover effects.
-     * @param r          RenderDevice to use
+     * @param falloff the Falloff class for hover effects. This is supposed to be null for none hover effects.
+     * @param r RenderDevice to use
      */
     @Override
-    public void execute(@Nonnull final Element element, final float effectTime, final Falloff falloff, final NiftyRenderEngine r) {
+    public void execute(
+            @Nonnull final Element element,
+            final float effectTime,
+            final Falloff falloff,
+            @Nonnull final NiftyRenderEngine r) {
         if ((targetControlClass == null) || (targetMethod == null)) {
             // something is badly wrong. Don't do anything in this effect.
             return;

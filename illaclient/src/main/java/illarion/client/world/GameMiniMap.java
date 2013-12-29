@@ -138,8 +138,8 @@ public final class GameMiniMap implements WorldMapDataProvider {
         worldMap = engine.getAssets().createWorldMap(this);
         miniMapImage = new IgeMiniMapRenderImage(engine, worldMap, MINI_RADIUS);
 
-        mapDataStorage = new HashMap<Location, Reference<ByteBuffer>>();
-        strongMapDataStorage = new ArrayList<ByteBuffer>(5);
+        mapDataStorage = new HashMap<>();
+        strongMapDataStorage = new ArrayList<>(5);
         mapOrigin = new Location();
     }
 
@@ -325,7 +325,7 @@ public final class GameMiniMap implements WorldMapDataProvider {
      */
     @Nonnull
     private static List<Location> getOriginsList(@Nonnull final Location origin) {
-        final List<Location> list = new ArrayList<Location>(5);
+        final List<Location> list = new ArrayList<>(5);
         for (int i = -2; i <= 2; i++) {
             final Location loc = new Location();
             loc.setSC(origin.getScX(), origin.getScY(), origin.getScZ() + i);
@@ -378,7 +378,7 @@ public final class GameMiniMap implements WorldMapDataProvider {
             }
         }
 
-        final Collection<Callable<Void>> updateList = new ArrayList<Callable<Void>>();
+        final Collection<Callable<Void>> updateList = new ArrayList<>();
 
         /* Save all the old data to the file system and weaken the storage of each map. */
         for (@Nonnull final Location loc : oldActive) {
@@ -606,7 +606,7 @@ public final class GameMiniMap implements WorldMapDataProvider {
         @Nonnull final ByteBuffer mapData = createMapBuffer();
         final File mapFile = getMapFilename(mapOrigin);
 
-        mapDataStorage.put(mapOrigin, new SoftReference<ByteBuffer>(mapData));
+        mapDataStorage.put(mapOrigin, new SoftReference<>(mapData));
         strongMapDataStorage.add(mapData);
 
         if (!mapFile.exists()) {
@@ -672,11 +672,11 @@ public final class GameMiniMap implements WorldMapDataProvider {
     /**
      * Save the information about a tile within the map data. This will overwrite any existing data about a tile.
      *
-     * @param loc     the location of the tile
-     * @param tileID  the ID of tile that is located at the position
+     * @param loc the location of the tile
+     * @param tileID the ID of tile that is located at the position
      * @param blocked true in case this tile is not passable
      * @return {@code true} in case the new ID of the tile and the already set ID are not equal and the ID did change
-     *         this way
+     * this way
      */
     @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
     private boolean saveTile(@Nonnull final Location loc, final int tileID, final boolean blocked) {

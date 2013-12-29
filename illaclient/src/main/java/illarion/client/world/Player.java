@@ -196,7 +196,7 @@ public final class Player {
         combatHandler = new CombatHandler();
         movementHandler = new PlayerMovement(engine.getInput(), this);
         inventory = new Inventory();
-        containers = new TIntObjectHashMap<ItemContainer>();
+        containers = new TIntObjectHashMap<>();
         containerLock = new ReentrantReadWriteLock();
 
         AnnotationProcessor.process(this);
@@ -253,8 +253,8 @@ public final class Player {
         if (hasContainer(event.getContainerId())) {
             container = getContainer(event.getContainerId());
             if (container == null) {
-                throw new IllegalStateException("Has container with ID but can't receive it. "
-                        + "Internal state corrupted.");
+                throw new IllegalStateException(
+                        "Has container with ID but can't receive it. " + "Internal state corrupted.");
             }
             if (container.getSlotCount() != slotCount) {
                 LOGGER.error("Received container event for existing container but without fitting slot count!");
@@ -319,7 +319,7 @@ public final class Player {
     /**
      * Create a new item container instance.
      *
-     * @param id        the ID of the container
+     * @param id the ID of the container
      * @param slotCount the amount of slots the new container is supposed to have
      * @return the new item container
      * @throws IllegalArgumentException in case there is already a container with the same ID
@@ -474,7 +474,7 @@ public final class Player {
      * Get the visibility of a target location for the players character.
      *
      * @param targetLoc The location that is checked for visibility
-     * @param limit     The maximum value for the visibility
+     * @param limit The maximum value for the visibility
      * @return The visibility of the target location
      */
     private int getVisibility(@Nonnull final Location targetLoc, final int limit) {
@@ -494,8 +494,9 @@ public final class Player {
             final int length = line.getLength() - 1;
             final GameMap map = World.getMap();
             final Point point = new Point();
-            int coverage = World.getWeather().getVisiblity() - ((getCharacter().getAttribute(CharacterAttribute.Perception) - PERCEPTION_AVERAGE) *
-                    PERCEPTION_COVER_SHARE);
+            int coverage = World.getWeather().getVisiblity() -
+                    ((getCharacter().getAttribute(CharacterAttribute.Perception) - PERCEPTION_AVERAGE) *
+                            PERCEPTION_COVER_SHARE);
             // skip tile the character is standing on
             for (int i = 1; i < length; i++) {
                 line.getPoint(i, point);
@@ -544,7 +545,7 @@ public final class Player {
     /**
      * Check of a position in server coordinates is on the screen of the player.
      *
-     * @param testLoc   The location that shall be checked.
+     * @param testLoc The location that shall be checked.
      * @param tolerance an additional tolerance added to the default clipping distance
      * @return true if the position is within the clipping distance and the tolerance
      */
@@ -556,7 +557,8 @@ public final class Player {
         final int height = MapDimensions.getInstance().getStripesHeight() >> 1;
         final int limit = (Math.max(width, height) + tolerance) - 2;
 
-        return (Math.abs(playerLocation.getScX() - testLoc.getScX()) + Math.abs(playerLocation.getScY() - testLoc.getScY())) < limit;
+        return (Math.abs(playerLocation.getScX() - testLoc.getScX()) +
+                Math.abs(playerLocation.getScY() - testLoc.getScY())) < limit;
     }
 
     /**

@@ -48,7 +48,7 @@ final class ErrorPane extends JPanel {
          *
          */
         private static final long serialVersionUID = 1L;
-        private final List<Editor> errorEditors = new ArrayList<Editor>();
+        private final List<Editor> errorEditors = new ArrayList<>();
 
         protected ErrorPaneTableModel() {
             // nothing
@@ -75,10 +75,8 @@ final class ErrorPane extends JPanel {
                 } else {
                     localErrors = problemNpc.getErrorCount();
                     if ((errorCount + localErrors) >= (rowIndex + 1)) {
-                        final ParsedNpc.Error error =
-                                problemNpc.getError(rowIndex - errorCount);
-                        errorEditors.get(i).getLineToFocus(
-                                error.getLine().getLineNumber());
+                        final ParsedNpc.Error error = problemNpc.getError(rowIndex - errorCount);
+                        errorEditors.get(i).getLineToFocus(error.getLine().getLineNumber());
                     }
                     errorCount += localErrors;
                 }
@@ -186,8 +184,7 @@ final class ErrorPane extends JPanel {
     public ErrorPane() {
         super(new BorderLayout(5, 0));
 
-        summery =
-                new JLabel(String.format(errorMessage, Integer.toString(20)));
+        summery = new JLabel(String.format(errorMessage, Integer.toString(20)));
         tableModel = new ErrorPaneTableModel();
         errorList = new JTable(tableModel);
 
@@ -225,18 +222,14 @@ final class ErrorPane extends JPanel {
         final JScrollPane errorListScroll = new JScrollPane(errorList);
 
         final Icon errorIcon = UIManager.getIcon("OptionPane.errorIcon");
-        final ComponentColorModel colorModel =
-                new ComponentColorModel(
-                        ColorSpace.getInstance(ColorSpace.CS_sRGB), new int[]{8, 8,
-                        8, 8}, true, false, Transparency.TRANSLUCENT,
-                        DataBuffer.TYPE_BYTE);
-        final WritableRaster raster =
-                Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE,
-                        errorIcon.getIconWidth(), errorIcon.getIconHeight(), 4, null);
+        final ComponentColorModel colorModel = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB),
+                                                                       new int[]{8, 8, 8, 8}, true, false,
+                                                                       Transparency.TRANSLUCENT, DataBuffer.TYPE_BYTE);
+        final WritableRaster raster = Raster
+                .createInterleavedRaster(DataBuffer.TYPE_BYTE, errorIcon.getIconWidth(), errorIcon.getIconHeight(), 4,
+                                         null);
 
-        final BufferedImage image =
-                new BufferedImage(colorModel, raster, false,
-                        new Hashtable<Object, Object>());
+        final BufferedImage image = new BufferedImage(colorModel, raster, false, new Hashtable<>());
         errorIcon.paintIcon(null, image.getGraphics(), 0, 0);
         new ImageIcon(image.getScaledInstance(14, 14, Image.SCALE_SMOOTH));
 

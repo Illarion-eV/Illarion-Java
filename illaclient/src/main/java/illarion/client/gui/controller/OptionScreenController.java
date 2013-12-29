@@ -70,7 +70,7 @@ public final class OptionScreenController implements ScreenController {
     private CheckBox serverResetSettings;
 
     @Override
-    public void bind(final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
         this.nifty = nifty;
         this.screen = screen;
 
@@ -84,7 +84,7 @@ public final class OptionScreenController implements ScreenController {
 
         runAutoAvoid = tabRoot.findNiftyControl("runAutoAvoid", CheckBox.class);
         wasdWalk = tabRoot.findNiftyControl("wasdWalk", CheckBox.class);
-        classicWalk  = tabRoot.findNiftyControl("classicWalk", CheckBox.class);
+        classicWalk = tabRoot.findNiftyControl("classicWalk", CheckBox.class);
         disableChatAfterSending = tabRoot.findNiftyControl("disableChatAfterSending", CheckBox.class);
         showQuestsOnGameMap = tabRoot.findNiftyControl("showQuestsOnGameMap", CheckBox.class);
         showQuestsOnMiniMap = tabRoot.findNiftyControl("showQuestsOnMiniMap", CheckBox.class);
@@ -172,7 +172,7 @@ public final class OptionScreenController implements ScreenController {
 
         String resolutionSelection = resolutions.getSelection();
 
-        if (resolutionSelection != null)  {
+        if (resolutionSelection != null) {
             configSystem.set(IllaClient.CFG_RESOLUTION, resolutionSelection);
         }
 
@@ -217,7 +217,7 @@ public final class OptionScreenController implements ScreenController {
 
         final GraphicResolution[] resolutions = container.getFullScreenResolutions();
 
-        final List<String> resList = new ArrayList<String>();
+        final List<String> resList = new ArrayList<>();
 
         for (final GraphicResolution resolution : resolutions) {
             resList.add(resolution.toString());

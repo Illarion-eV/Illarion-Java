@@ -41,17 +41,15 @@ public final class NpcHair implements NpcType {
      * The pattern to fetch the beard id.
      */
     @SuppressWarnings("nls")
-    private static final Pattern BEARD_ID = Pattern.compile(
-            "^\\s*(beardID)\\s*=\\s*([0-9]{1,3})[\\s;]*", Pattern.CASE_INSENSITIVE
-            | Pattern.MULTILINE);
+    private static final Pattern BEARD_ID = Pattern
+            .compile("^\\s*(beardID)\\s*=\\s*([0-9]{1,3})[\\s;]*", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     /**
      * The pattern to fetch the hair id.
      */
     @SuppressWarnings("nls")
-    private static final Pattern HAIR_ID = Pattern.compile(
-            "^\\s*(hairID)\\s*=\\s*([0-9]{1,3})[\\s;]*", Pattern.CASE_INSENSITIVE
-            | Pattern.MULTILINE);
+    private static final Pattern HAIR_ID = Pattern
+            .compile("^\\s*(hairID)\\s*=\\s*([0-9]{1,3})[\\s;]*", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     /**
      * The documentation entry for the beard ID.
@@ -165,8 +163,7 @@ public final class NpcHair implements NpcType {
             return beardEntry;
         }
 
-        throw new IndexOutOfBoundsException(
-                "The index is too small or too large");
+        throw new IndexOutOfBoundsException("The index is too small or too large");
     }
 
     /**
@@ -235,7 +232,6 @@ public final class NpcHair implements NpcType {
             final int id = Integer.parseInt(matcher.group(2));
 
             npc.addNpcData(new ParsedHair(ParsedHair.HairType.Beard, id));
-            ;
         }
     }
 

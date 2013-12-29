@@ -56,10 +56,9 @@ public final class DialogMerchantMsg extends AbstractGuiMsg {
     private List<MerchantItem> items;
 
     @Override
-    public void decode(@Nonnull final NetCommReader reader)
-            throws IOException {
+    public void decode(@Nonnull final NetCommReader reader) throws IOException {
         title = reader.readString();
-        items = new ArrayList<MerchantItem>();
+        items = new ArrayList<>();
 
         final int entriesSell = reader.readUByte();
         for (int i = 0; i < entriesSell; i++) {
@@ -68,7 +67,8 @@ public final class DialogMerchantMsg extends AbstractGuiMsg {
             final long itemValue = reader.readUInt();
             final ItemCount bundleSize = ItemCount.getInstance(reader);
 
-            items.add(new MerchantItem(i, MerchantItem.MerchantItemType.SellingItem, itemId, name, itemValue, bundleSize));
+            items.add(new MerchantItem(i, MerchantItem.MerchantItemType.SellingItem, itemId, name, itemValue,
+                                       bundleSize));
         }
 
         final int entriesBuyPrimary = reader.readUByte();

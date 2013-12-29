@@ -41,18 +41,14 @@ public final class Utils {
             final String resource) {
         Image image;
         try {
-            image =
-                    ImageIO.read(Utils.class.getClassLoader()
-                            .getResource(resource));
+            image = ImageIO.read(Utils.class.getClassLoader().getResource(resource));
         } catch (@Nonnull final IOException e) {
             LOGGER.error("Failed to read image: \"" + resource + "\"");
             return null;
         }
         final int height = image.getHeight(null);
         final int width = image.getWidth(null);
-        final ResizableIcon resizeIcon =
-                ImageWrapperResizableIcon.getIcon(image, new Dimension(width,
-                        height));
+        final ResizableIcon resizeIcon = ImageWrapperResizableIcon.getIcon(image, new Dimension(width, height));
         return resizeIcon;
     }
 
@@ -74,10 +70,8 @@ public final class Utils {
             dirDiag.setDialogTitle("Exportieren");
             dirDiag.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             dirDiag.setAcceptAllFileFilterUsed(false);
-            dirDiag.setCurrentDirectory(new File(Config.getInstance()
-                    .getExportFolder()));
-            final int fileReturn =
-                    dirDiag.showSaveDialog(MainFrame.getInstance());
+            dirDiag.setCurrentDirectory(new File(Config.getInstance().getExportFolder()));
+            final int fileReturn = dirDiag.showSaveDialog(MainFrame.getInstance());
             if (fileReturn == JFileChooser.APPROVE_OPTION) {
                 final File targetDir = dirDiag.getSelectedFile();
                 exportEasyQuestImpl(editor.getQuestLua(targetDir.getName()), targetDir);
@@ -99,11 +93,9 @@ public final class Utils {
             }
         });
         fileDiag.setAcceptAllFileFilterUsed(false);
-        fileDiag.setCurrentDirectory(new File(Config.getInstance()
-                .getEasyQuestFolder()));
+        fileDiag.setCurrentDirectory(new File(Config.getInstance().getEasyQuestFolder()));
 
-        final int fileReturn =
-                fileDiag.showOpenDialog(MainFrame.getInstance());
+        final int fileReturn = fileDiag.showOpenDialog(MainFrame.getInstance());
         if (fileReturn == JFileChooser.APPROVE_OPTION) {
             final File selectedFile = fileDiag.getSelectedFile();
             openQuest(selectedFile);
@@ -118,7 +110,7 @@ public final class Utils {
                 return;
             }
 
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             String line = null;
             BufferedReader reader = new BufferedReader(new FileReader(file));
             while ((line = reader.readLine()) != null) {
@@ -151,11 +143,9 @@ public final class Utils {
             }
         });
         fileDiag.setAcceptAllFileFilterUsed(false);
-        fileDiag.setCurrentDirectory(new File(Config.getInstance()
-                .getEasyQuestFolder()));
+        fileDiag.setCurrentDirectory(new File(Config.getInstance().getEasyQuestFolder()));
         fileDiag.setSelectedFile(editor.getQuestFile());
-        final int fileReturn =
-                fileDiag.showSaveDialog(MainFrame.getInstance());
+        final int fileReturn = fileDiag.showSaveDialog(MainFrame.getInstance());
         if (fileReturn == JFileChooser.APPROVE_OPTION) {
             File targetFile = fileDiag.getSelectedFile();
             if (!targetFile.getName().endsWith(".quest")) {
@@ -168,10 +158,9 @@ public final class Utils {
         editor.saved();
     }
 
-    private static void saveEasyQuestImpl(@Nonnull final String quest,
-                                          @Nonnull final File targetFile) {
-        final File backupFile =
-                new File(targetFile.getAbsolutePath() + ".bak"); //$NON-NLS-1$
+    private static void saveEasyQuestImpl(
+            @Nonnull final String quest, @Nonnull final File targetFile) {
+        final File backupFile = new File(targetFile.getAbsolutePath() + ".bak"); //$NON-NLS-1$
 
         FileWriter fw = null;
         try {
@@ -197,16 +186,17 @@ public final class Utils {
             }
             //LOGGER.error("Writing the easyNPC Script failed.", e); //$NON-NLS-1$
         } finally {
-            if (fw != null)
+            if (fw != null) {
                 try {
                     fw.close();
                 } catch (IOException e) {
                 }
+            }
         }
     }
 
-    private static void exportEasyQuestImpl(@Nonnull final Map<String, String> quest,
-                                            final File targetDir) {
+    private static void exportEasyQuestImpl(
+            @Nonnull final Map<String, String> quest, final File targetDir) {
 
         FileWriter fw = null;
         File file = null;
@@ -217,18 +207,18 @@ public final class Utils {
                 fw.write(entry.getValue());
                 fw.close();
                 fw = null;
-
             }
         } catch (@Nonnull final Exception e) {
             System.out.println("Writing the easyQuest failed: " + e);
             e.printStackTrace();
             //LOGGER.error("Writing the easyQuest failed.", e); //$NON-NLS-1$
         } finally {
-            if (fw != null)
+            if (fw != null) {
                 try {
                     fw.close();
                 } catch (IOException e) {
                 }
+            }
         }
     }
 }

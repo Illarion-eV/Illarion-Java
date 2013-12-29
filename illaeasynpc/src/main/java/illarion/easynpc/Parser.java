@@ -89,7 +89,7 @@ public final class Parser implements DocuEntry {
         crypt.loadPublicKey();
         TableLoader.setCrypto(crypt);
 
-        final List<NpcType> typeList = new ArrayList<NpcType>();
+        final List<NpcType> typeList = new ArrayList<>();
         typeList.add(new NpcComment());
         typeList.add(new NpcBasics());
         typeList.add(new NpcColors());
@@ -106,7 +106,7 @@ public final class Parser implements DocuEntry {
         types = typeList.toArray(new NpcType[typeList.size()]);
 
         executorService = new ThreadPoolExecutor(1, Runtime.getRuntime().availableProcessors() * 2, 500,
-                TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+                                                 TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
     }
 
     /**
@@ -139,20 +139,17 @@ public final class Parser implements DocuEntry {
             if (sourceFile.exists() && sourceFile.isFile()) {
                 parseScript(sourceFile);
             } else if (sourceFile.exists() && sourceFile.isDirectory()) {
-                final String[] fileNames =
-                        sourceFile.list(new FilenameFilter() {
-                            private static final String fileEnding = ".npc";
+                final String[] fileNames = sourceFile.list(new FilenameFilter() {
+                    private static final String fileEnding = ".npc";
 
-                            @Override
-                            public boolean accept(final File dir, @Nonnull final String name) {
-                                return name.endsWith(fileEnding);
-                            }
-                        });
+                    @Override
+                    public boolean accept(final File dir, @Nonnull final String name) {
+                        return name.endsWith(fileEnding);
+                    }
+                });
 
                 for (final String fileName : fileNames) {
-                    final File targetFile =
-                            new File(sourceFile.getPath() + File.separator
-                                    + fileName);
+                    final File targetFile = new File(sourceFile.getPath() + File.separator + fileName);
                     parseScript(targetFile);
                 }
             }
@@ -170,16 +167,15 @@ public final class Parser implements DocuEntry {
         final EasyNpcScript script = new EasyNpcScript(file);
         final ParsedNpc parsedNPC = getInstance().parse(script);
 
-        System.out.print("File \"" + file.getName() + "\" parsed - Encoding: "
-                + script.getScriptEncoding().name() + " - Errors: ");
+        System.out.print("File \"" + file.getName() + "\" parsed - Encoding: " + script.getScriptEncoding().name() +
+                                 " - Errors: ");
         if (parsedNPC.hasErrors()) {
             System.out.println(Integer.toString(parsedNPC.getErrorCount()));
             final int errorCount = parsedNPC.getErrorCount();
             for (int i = 0; i < errorCount; ++i) {
                 final ParsedNpc.Error error = parsedNPC.getError(i);
-                System.out.println("\tLine "
-                        + Integer.toString(error.getLine().getLineNumber()) + ": "
-                        + error.getMessage());
+                System.out.println(
+                        "\tLine " + Integer.toString(error.getLine().getLineNumber()) + ": " + error.getMessage());
             }
             System.out.println();
             return;
@@ -189,12 +185,9 @@ public final class Parser implements DocuEntry {
         final ScriptWriter writer = new ScriptWriter();
         writer.setTargetLanguage(ScriptWriter.ScriptWriterTarget.LUA);
         writer.setSource(parsedNPC);
-        final File luaTargetFile =
-                new File(file.getParentFile().getParent() + File.separator
-                        + parsedNPC.getLuaFilename());
-        Writer outputWriter =
-                new OutputStreamWriter(new FileOutputStream(luaTargetFile),
-                        "ISO-8859-1");
+        final File luaTargetFile = new File(
+                file.getParentFile().getParent() + File.separator + parsedNPC.getLuaFilename());
+        Writer outputWriter = new OutputStreamWriter(new FileOutputStream(luaTargetFile), "ISO-8859-1");
         writer.setWritingTarget(outputWriter);
         writer.write();
         outputWriter.close();
@@ -243,7 +236,6 @@ public final class Parser implements DocuEntry {
     public String getTitle() {
         return Lang.getMsg(getClass(), "Docu.title");
     }
-
 
     /**
      * Parse the script asynchronously. You have to monitor the event bus for the {@link illarion.easynpc.parser.events.ParserFinishedEvent}

@@ -76,8 +76,8 @@ public final class TalkingLine {
      * work properly.
      */
     public TalkingLine() {
-        condPar = new ArrayList<ConditionParser>();
-        consPar = new ArrayList<ConsequenceParser>();
+        condPar = new ArrayList<>();
+        consPar = new ArrayList<>();
 
         condPar.add(new illarion.easynpc.parser.talk.conditions.State());
         condPar.add(new illarion.easynpc.parser.talk.conditions.Skill());
@@ -138,8 +138,7 @@ public final class TalkingLine {
             @SuppressWarnings("nls")
             @Override
             public String getDescription() {
-                return Lang.getMsg(TalkingLine.class,
-                        "Conditions.Docu.description");
+                return Lang.getMsg(TalkingLine.class, "Conditions.Docu.description");
             }
 
             @Nullable
@@ -179,8 +178,7 @@ public final class TalkingLine {
             @SuppressWarnings("nls")
             @Override
             public String getDescription() {
-                return Lang.getMsg(TalkingLine.class,
-                        "Consequence.Docu.description");
+                return Lang.getMsg(TalkingLine.class, "Consequence.Docu.description");
             }
 
             @Nullable
@@ -198,8 +196,7 @@ public final class TalkingLine {
             @Override
             @SuppressWarnings("nls")
             public String getTitle() {
-                return Lang
-                        .getMsg(TalkingLine.class, "Consequence.Docu.title");
+                return Lang.getMsg(TalkingLine.class, "Consequence.Docu.title");
             }
         };
     }
@@ -228,7 +225,7 @@ public final class TalkingLine {
      * Parse a talking line into a properly parsed line.
      *
      * @param line the line to parse
-     * @param npc  the npc that receives the data parsed here
+     * @param npc the npc that receives the data parsed here
      */
     @SuppressWarnings("nls")
     public void parseLine(@Nonnull final EasyNpcScript.Line line, @Nonnull final ParsedNpc npc) {
@@ -281,12 +278,10 @@ public final class TalkingLine {
         }
 
         if (!conditions.isEmpty()) {
-            npc.addError(line, Lang.getMsg(getClass(), "remainConditions")
-                    + ' ' + conditions);
+            npc.addError(line, Lang.getMsg(getClass(), "remainConditions") + ' ' + conditions);
         }
         if (!consequences.isEmpty()) {
-            npc.addError(line, Lang.getMsg(getClass(), "remainConsequences")
-                    + ' ' + consequences);
+            npc.addError(line, Lang.getMsg(getClass(), "remainConsequences") + ' ' + consequences);
         }
 
         npc.addNpcData(parsedLine);

@@ -55,7 +55,7 @@ public abstract class AbstractTemplateFactory<T extends ResourceTemplate> implem
      * The default constructor.
      */
     protected AbstractTemplateFactory(final int defaultId) {
-        storage = new HashMap<Integer, T>();
+        storage = new HashMap<>();
         this.defaultId = defaultId;
     }
 

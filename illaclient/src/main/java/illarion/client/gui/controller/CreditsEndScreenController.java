@@ -25,6 +25,8 @@ import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
@@ -47,7 +49,7 @@ public final class CreditsEndScreenController implements ScreenController, KeyIn
     }
 
     @Override
-    public boolean keyEvent(final NiftyInputEvent inputEvent) {
+    public boolean keyEvent(@Nonnull final NiftyInputEvent inputEvent) {
         if (inputEvent == NiftyStandardInputEvent.Escape) {
             nifty.gotoScreen("login");
             return true;

@@ -50,25 +50,19 @@ final class ClipboardBand extends JRibbonBand {
     public ClipboardBand() {
         super(Lang.getMsg(ClipboardBand.class, "title"), null);
 
-        final JCommandButton pasteButton =
-                new JCommandButton(Lang.getMsg(getClass(), "pasteButton"),
-                        Utils.getResizableIconFromResource("editpaste.png"));
-        final JCommandButton copyButton =
-                new JCommandButton(Lang.getMsg(getClass(), "copyButton"),
-                        Utils.getResizableIconFromResource("editcopy.png"));
-        final JCommandButton cutButton =
-                new JCommandButton(Lang.getMsg(getClass(), "cutButton"),
-                        Utils.getResizableIconFromResource("editcut.png"));
+        final JCommandButton pasteButton = new JCommandButton(Lang.getMsg(getClass(), "pasteButton"),
+                                                              Utils.getResizableIconFromResource("editpaste.png"));
+        final JCommandButton copyButton = new JCommandButton(Lang.getMsg(getClass(), "copyButton"),
+                                                             Utils.getResizableIconFromResource("editcopy.png"));
+        final JCommandButton cutButton = new JCommandButton(Lang.getMsg(getClass(), "cutButton"),
+                                                            Utils.getResizableIconFromResource("editcut.png"));
 
-        pasteButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(
-                getClass(), "pasteButtonTooltipTitle"), Lang.getMsg(getClass(),
-                "pasteButtonTooltip")));
-        copyButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(
-                getClass(), "copyButtonTooltipTitle"), Lang.getMsg(getClass(),
-                "copyButtonTooltip")));
-        cutButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(getClass(),
-                "cutButtonTooltipTitle"), Lang.getMsg(getClass(),
-                "cutButtonTooltip")));
+        pasteButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(getClass(), "pasteButtonTooltipTitle"),
+                                                         Lang.getMsg(getClass(), "pasteButtonTooltip")));
+        copyButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(getClass(), "copyButtonTooltipTitle"),
+                                                        Lang.getMsg(getClass(), "copyButtonTooltip")));
+        cutButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(getClass(), "cutButtonTooltipTitle"),
+                                                       Lang.getMsg(getClass(), "cutButtonTooltip")));
 
         pasteButton.getActionModel().setActionCommand("paste");
         copyButton.getActionModel().setActionCommand("copy");
@@ -82,8 +76,7 @@ final class ClipboardBand extends JRibbonBand {
         addCommandButton(copyButton, RibbonElementPriority.MEDIUM);
         addCommandButton(cutButton, RibbonElementPriority.MEDIUM);
 
-        final List<RibbonBandResizePolicy> policies =
-                new ArrayList<RibbonBandResizePolicy>();
+        final List<RibbonBandResizePolicy> policies = new ArrayList<>();
         policies.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
         policies.add(new CoreRibbonResizePolicies.Mid2Low(getControlPanel()));
         setResizePolicies(policies);

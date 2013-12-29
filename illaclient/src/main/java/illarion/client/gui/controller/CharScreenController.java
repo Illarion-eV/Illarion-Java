@@ -18,7 +18,6 @@
  */
 package illarion.client.gui.controller;
 
-
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.controls.ListBox;
@@ -185,7 +184,7 @@ public final class CharScreenController implements ScreenController, KeyInputHan
     }
 
     @Override
-    public boolean keyEvent(final NiftyInputEvent inputEvent) {
+    public boolean keyEvent(@Nonnull final NiftyInputEvent inputEvent) {
         if (inputEvent == NiftyStandardInputEvent.Activate) {
             play();
             return true;

@@ -50,8 +50,7 @@ public final class LookAtDialogItemMsg extends AbstractGuiMsg {
      * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader)
-            throws IOException {
+    public void decode(@Nonnull final NetCommReader reader) throws IOException {
         dialogId = reader.readInt();
         type = reader.readUByte();
         switch (type) {
@@ -82,8 +81,8 @@ public final class LookAtDialogItemMsg extends AbstractGuiMsg {
                 World.getGameGui().getDialogCraftingGui().showCraftItemTooltip(dialogId, slotId, tooltip);
                 break;
             case 1:
-                World.getGameGui().getDialogCraftingGui().showCraftIngredientTooltip(dialogId, slotId,
-                        secondarySlotId, tooltip);
+                World.getGameGui().getDialogCraftingGui()
+                        .showCraftIngredientTooltip(dialogId, slotId, secondarySlotId, tooltip);
                 break;
             default:
                 LOGGER.error("Illegal type ID " + Integer.toString(type));
@@ -101,10 +100,6 @@ public final class LookAtDialogItemMsg extends AbstractGuiMsg {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("Type: ").append(type);
-        builder.append(" Slot: ").append(slotId);
-        builder.append(" secondary Slot: ").append(secondarySlotId);
-        return toString(builder.toString());
+        return toString("Type: " + type + " Slot: " + slotId + " secondary Slot: " + secondarySlotId);
     }
 }

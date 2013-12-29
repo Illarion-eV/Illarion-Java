@@ -54,7 +54,7 @@ public class ViewBand extends JRibbonBand {
         newRenderButton(manager, new AnnotationRenderer(manager));
         newRenderButton(manager, new ObstacleRenderer(manager));
 
-        final List<RibbonBandResizePolicy> resize = new FastTable<RibbonBandResizePolicy>();
+        final List<RibbonBandResizePolicy> resize = new FastTable<>();
         resize.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
         resize.add(new CoreRibbonResizePolicies.Mid2Low(getControlPanel()));
         resize.add(new CoreRibbonResizePolicies.High2Low(getControlPanel()));
@@ -63,9 +63,8 @@ public class ViewBand extends JRibbonBand {
     }
 
     private void newRenderButton(@Nonnull final RendererManager manager, @Nonnull final AbstractMapRenderer renderer) {
-        final JCommandToggleButton btn = new JCommandToggleButton(
-                renderer.getLocalizedName(), renderer.getRendererIcon()
-        );
+        final JCommandToggleButton btn = new JCommandToggleButton(renderer.getLocalizedName(),
+                                                                  renderer.getRendererIcon());
         btn.getActionModel().setSelected(renderer.isDefaultOn());
         btn.addActionListener(new ActionListener() {
             @Override
@@ -83,10 +82,9 @@ public class ViewBand extends JRibbonBand {
         addCommandButton(btn, renderer.getPriority());
     }
 
-    private void renderEmptyTilesButton(@Nonnull final TileRenderer renderer)   {
-        final JCommandToggleButton btn = new JCommandToggleButton(
-                renderer.getEmptyTileLocalizedName(), renderer.getEmptyTileRendererIcon()
-        );
+    private void renderEmptyTilesButton(@Nonnull final TileRenderer renderer) {
+        final JCommandToggleButton btn = new JCommandToggleButton(renderer.getEmptyTileLocalizedName(),
+                                                                  renderer.getEmptyTileRendererIcon());
         btn.getActionModel().setSelected(renderer.isEmptyTileDefaultOn());
         btn.addActionListener(new ActionListener() {
             @Override

@@ -44,11 +44,11 @@ public final class TextureAtlasAwt implements TextureAtlas<BufferedImage> {
     /**
      * Create a new instance of the texture atlas.
      *
-     * @param image      the buffered image that contains the entire texture
+     * @param image the buffered image that contains the entire texture
      * @param textureDef the XML document that contains the locations of the sub-images on the large image
      */
     public TextureAtlasAwt(@Nonnull final BufferedImage image, @Nonnull final Document textureDef) {
-        textures = new FastMap<String, BufferedImage>(Equalities.LEXICAL_FAST, Equalities.STANDARD);
+        textures = new FastMap<>(Equalities.LEXICAL_FAST, Equalities.STANDARD);
 
         final NodeList list = textureDef.getElementsByTagName("sprite");
         for (int i = 0; i < list.getLength(); i++) {

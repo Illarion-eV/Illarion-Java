@@ -56,7 +56,7 @@ public final class BookLanguage implements Iterable<BookPage> {
      */
     public BookLanguage(final Locale bookLocale) {
         locale = bookLocale;
-        pages = new ArrayList<BookPage>();
+        pages = new ArrayList<>();
     }
 
     /**

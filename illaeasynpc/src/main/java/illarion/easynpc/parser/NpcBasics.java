@@ -74,7 +74,7 @@ public final class NpcBasics implements NpcType {
          * The default constructor that prepares the key values.
          *
          * @param name the name that is part of the key value to identify the
-         *             header entry
+         * header entry
          */
         @SuppressWarnings("nls")
         public ChildDocuClass(final String name) {
@@ -115,151 +115,137 @@ public final class NpcBasics implements NpcType {
         public String getTitle() {
             return Lang.getMsg(NpcBasics.class, docuTitle);
         }
-
     }
 
     /**
      * The pattern to find a affiliation of this NPC.
      */
     @SuppressWarnings("nls")
-    private static final Pattern HEADER_AFFILIATION = Pattern.compile(
-            "^\\s*(affiliation)\\s*=\\s*\"*([a-z]+)\"*[\\s;]*",
-            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+    private static final Pattern HEADER_AFFILIATION = Pattern
+            .compile("^\\s*(affiliation)\\s*=\\s*\"*([a-z]+)\"*[\\s;]*", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     /**
      * The pattern to find a author name in this NPC script.
      */
     @SuppressWarnings("nls")
-    private static final Pattern HEADER_AUTHOR = Pattern.compile(
-            "^\\s*(author)\\s*=\\s*\"*([^\"]+)\"*[\\s;]*", Pattern.MULTILINE);
+    private static final Pattern HEADER_AUTHOR = Pattern
+            .compile("^\\s*(author)\\s*=\\s*\"*([^\"]+)\"*[\\s;]*", Pattern.MULTILINE);
 
     /**
      * The header that stores the flag of the NPC is supposed to auto introduce
      * himself or not.
      */
     @SuppressWarnings("nls")
-    private static final Pattern HEADER_AUTO_INTRO = Pattern.compile(
-            "^\\s*(autointroduce)\\s*=\\s*([a-z]+)\\s*$", Pattern.CASE_INSENSITIVE
-            | Pattern.MULTILINE);
+    private static final Pattern HEADER_AUTO_INTRO = Pattern
+            .compile("^\\s*(autointroduce)\\s*=\\s*([a-z]+)\\s*$", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     /**
      * The header that stores the German version of the message displayed if the
      * character talks in a language the NPC does not understand.
      */
     @SuppressWarnings("nls")
-    private static final Pattern HEADER_CONFUSED_DE = Pattern.compile(
-            "^\\s*(wrongLangDE)\\s*=\\s*\"(.*)\"\\s*$", Pattern.CASE_INSENSITIVE
-            | Pattern.MULTILINE);
+    private static final Pattern HEADER_CONFUSED_DE = Pattern
+            .compile("^\\s*(wrongLangDE)\\s*=\\s*\"(.*)\"\\s*$", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     /**
      * The header that stores the English version of the message displayed if
      * the character talks in a language the NPC does not understand.
      */
     @SuppressWarnings("nls")
-    private static final Pattern HEADER_CONFUSED_US = Pattern.compile(
-            "^\\s*(wrongLangUS)\\s*=\\s*\"(.*)\"\\s*$", Pattern.CASE_INSENSITIVE
-            | Pattern.MULTILINE);
+    private static final Pattern HEADER_CONFUSED_US = Pattern
+            .compile("^\\s*(wrongLangUS)\\s*=\\s*\"(.*)\"\\s*$", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     /**
      * The pattern to find the default language of this NPC.
      */
     @SuppressWarnings("nls")
-    private static final Pattern HEADER_DEFAULT_LANG = Pattern.compile(
-            "^\\s*(defaultLanguage)\\s*=\\s*\"*([a-z]+)\"*[\\s;]*",
-            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+    private static final Pattern HEADER_DEFAULT_LANG = Pattern
+            .compile("^\\s*(defaultLanguage)\\s*=\\s*\"*([a-z]+)\"*[\\s;]*",
+                     Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     /**
      * The pattern to find the looking direction of the NPC in the easyNPC
      * script.
      */
     @SuppressWarnings("nls")
-    private static final Pattern HEADER_DIRECTION = Pattern.compile(
-            "^\\s*(dire?c?t?i?o?n?)\\s*=\\s*\"*([a-z]+)\"*[\\s;]*",
-            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+    private static final Pattern HEADER_DIRECTION = Pattern
+            .compile("^\\s*(dire?c?t?i?o?n?)\\s*=\\s*\"*([a-z]+)\"*[\\s;]*",
+                     Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     /**
      * The pattern to find a job of this NPC.
      */
     @SuppressWarnings("nls")
-    private static final Pattern HEADER_JOB = Pattern.compile(
-            "^\\s*(job)\\s*=\\s*\"*([^\"]+)\"*[\\s;]*", Pattern.MULTILINE);
+    private static final Pattern HEADER_JOB = Pattern
+            .compile("^\\s*(job)\\s*=\\s*\"*([^\"]+)\"*[\\s;]*", Pattern.MULTILINE);
 
     /**
      * The pattern to find a language of this NPC.
      */
     @SuppressWarnings("nls")
-    private static final Pattern HEADER_LANGUAGE = Pattern.compile(
-            "^\\s*(language)\\s*=\\s*\"*([a-z]+)\"*[\\s;]*",
-            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+    private static final Pattern HEADER_LANGUAGE = Pattern
+            .compile("^\\s*(language)\\s*=\\s*\"*([a-z]+)\"*[\\s;]*", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     /**
      * The header that stores the German version of the message displayed on a
      * look at.
      */
     @SuppressWarnings("nls")
-    private static final Pattern HEADER_LOOKAT_DE = Pattern.compile(
-            "^\\s*(lookatDE)\\s*=\\s*\"(.*)\"\\s*$", Pattern.CASE_INSENSITIVE
-            | Pattern.MULTILINE);
+    private static final Pattern HEADER_LOOKAT_DE = Pattern
+            .compile("^\\s*(lookatDE)\\s*=\\s*\"(.*)\"\\s*$", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     /**
      * The header that stores the English version of the message displayed on a
      * look at.
      */
     @SuppressWarnings("nls")
-    private static final Pattern HEADER_LOOKAT_US = Pattern.compile(
-            "^\\s*(lookatUS)\\s*=\\s*\"(.*)\"\\s*$", Pattern.CASE_INSENSITIVE
-            | Pattern.MULTILINE);
+    private static final Pattern HEADER_LOOKAT_US = Pattern
+            .compile("^\\s*(lookatUS)\\s*=\\s*\"(.*)\"\\s*$", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     /**
      * The pattern to find the name of the NPC in this easyNPC script.
      */
     @SuppressWarnings("nls")
-    private static final Pattern HEADER_NAME = Pattern.compile(
-            "^\\s*(name)\\s*=\\s*\"*([^\"]+)\"*[\\s;]*", Pattern.MULTILINE);
+    private static final Pattern HEADER_NAME = Pattern
+            .compile("^\\s*(name)\\s*=\\s*\"*([^\"]+)\"*[\\s;]*", Pattern.MULTILINE);
 
     /**
      * The pattern to find the position of the NPC in the easyNPC script.
      */
     @SuppressWarnings("nls")
-    private static final Pattern HEADER_POSITION =
-            Pattern
-                    .compile(
-                            "^\\s*(position)\\s*=\\s*(-*[0-9]+)[, ]+(-*[0-9]+)[, ]+(-*[0-9]+)[\\s;]*",
-                            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+    private static final Pattern HEADER_POSITION = Pattern
+            .compile("^\\s*(position)\\s*=\\s*(-*[0-9]+)[, ]+(-*[0-9]+)[, ]+(-*[0-9]+)[\\s;]*",
+                     Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     /**
      * The pattern to find the race of the NPC in the easyNPC script.
      */
     @SuppressWarnings("nls")
-    private static final Pattern HEADER_RACE = Pattern.compile(
-            "^\\s*(race)\\s*=\\s*\"*([a-z ]+)\"*[\\s;]*", Pattern.CASE_INSENSITIVE
-            | Pattern.MULTILINE);
+    private static final Pattern HEADER_RACE = Pattern
+            .compile("^\\s*(race)\\s*=\\s*\"*([a-z ]+)\"*[\\s;]*", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     /**
      * The pattern to find the sex of the NPC in the easyNPC script.
      */
     @SuppressWarnings("nls")
-    private static final Pattern HEADER_SEX = Pattern.compile(
-            "^\\s*(sex)\\s*=\\s*\"*([a-z]+)\"*[\\s;]*", Pattern.CASE_INSENSITIVE
-            | Pattern.MULTILINE);
+    private static final Pattern HEADER_SEX = Pattern
+            .compile("^\\s*(sex)\\s*=\\s*\"*([a-z]+)\"*[\\s;]*", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     /**
      * The header that stores the German version of the message displayed on a
      * useNPC.
      */
     @SuppressWarnings("nls")
-    private static final Pattern HEADER_USE_DE = Pattern.compile(
-            "^\\s*(useMsgDE)\\s*=\\s*\"(.*)\"\\s*$", Pattern.CASE_INSENSITIVE
-            | Pattern.MULTILINE);
+    private static final Pattern HEADER_USE_DE = Pattern
+            .compile("^\\s*(useMsgDE)\\s*=\\s*\"(.*)\"\\s*$", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     /**
      * The header that stores the English version of the message displayed on a
      * useNPC.
      */
     @SuppressWarnings("nls")
-    private static final Pattern HEADER_USE_US = Pattern.compile(
-            "^\\s*(useMsgUS)\\s*=\\s*\"(.*)\"\\s*$", Pattern.CASE_INSENSITIVE
-            | Pattern.MULTILINE);
+    private static final Pattern HEADER_USE_US = Pattern
+            .compile("^\\s*(useMsgUS)\\s*=\\s*\"(.*)\"\\s*$", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     /**
      * The list of documentation entries that are insert as children of the NPC
@@ -274,7 +260,7 @@ public final class NpcBasics implements NpcType {
      */
     @SuppressWarnings("nls")
     public NpcBasics() {
-        final List<DocuEntry> list = new ArrayList<DocuEntry>();
+        final List<DocuEntry> list = new ArrayList<>();
 
         list.add(new ChildDocuClass("Name"));
         list.add(new ChildDocuClass("Sex"));
@@ -397,8 +383,8 @@ public final class NpcBasics implements NpcType {
      */
     @Override
     @SuppressWarnings("nls")
-    public void parseLine(@Nonnull final EasyNpcScript.Line lineStruct,
-                          @Nonnull final ParsedNpc npc) {
+    public void parseLine(
+            @Nonnull final EasyNpcScript.Line lineStruct, @Nonnull final ParsedNpc npc) {
         Matcher matcher;
 
         final String line = lineStruct.getLine();
@@ -438,8 +424,7 @@ public final class NpcBasics implements NpcType {
         if (matcher.find()) {
             final String dir = matcher.group(2);
 
-            for (final CharacterDirection dirConstant : CharacterDirection
-                    .values()) {
+            for (final CharacterDirection dirConstant : CharacterDirection.values()) {
                 if (dir.equalsIgnoreCase(dirConstant.name())) {
                     npc.setNpcDir(dirConstant);
                     return;
@@ -449,8 +434,7 @@ public final class NpcBasics implements NpcType {
             final StringBuilder errorBuilder = new StringBuilder();
             errorBuilder.append(Lang.getMsg(getClass(), "direction"));
             errorBuilder.append(' ');
-            for (final CharacterDirection dirConstant : CharacterDirection
-                    .values()) {
+            for (final CharacterDirection dirConstant : CharacterDirection.values()) {
                 errorBuilder.append(dirConstant.name());
                 errorBuilder.append(", ");
             }
@@ -584,8 +568,7 @@ public final class NpcBasics implements NpcType {
         if (matcher.find()) {
             final String value = matcher.group(2).trim();
 
-            for (final BooleanFlagValues testValue : BooleanFlagValues
-                    .values()) {
+            for (final BooleanFlagValues testValue : BooleanFlagValues.values()) {
                 if (testValue.getPattern().matcher(value).matches()) {
                     npc.setAutoIntroduce(testValue);
                     return;
@@ -595,8 +578,7 @@ public final class NpcBasics implements NpcType {
             final StringBuilder errorBuilder = new StringBuilder();
             errorBuilder.append(Lang.getMsg(getClass(), "autoIntro"));
             errorBuilder.append(' ');
-            for (final BooleanFlagValues testValue : BooleanFlagValues
-                    .values()) {
+            for (final BooleanFlagValues testValue : BooleanFlagValues.values()) {
                 errorBuilder.append(testValue.getEasyNpc());
                 errorBuilder.append(", ");
             }

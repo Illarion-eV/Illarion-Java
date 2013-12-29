@@ -53,12 +53,12 @@ public final class DragMapMapCmd extends AbstractDragCommand {
     /**
      * Default constructor for the dragging from map to map command.
      *
-     * @param source      the location from where the item is taken
+     * @param source the location from where the item is taken
      * @param destination the destination location on the map
-     * @param count       the amount of items to move
+     * @param count the amount of items to move
      */
-    public DragMapMapCmd(@Nonnull final Location source, @Nonnull final Location destination,
-                         @Nonnull final ItemCount count) {
+    public DragMapMapCmd(
+            @Nonnull final Location source, @Nonnull final Location destination, @Nonnull final ItemCount count) {
         super(CommandList.CMD_DRAG_MAP_MAP, count);
         srcLoc = new Location(source);
         dstLoc = new Location(destination);
@@ -75,13 +75,6 @@ public final class DragMapMapCmd extends AbstractDragCommand {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("Source: ");
-        builder.append(srcLoc.toString());
-        builder.append(" Destination: ");
-        builder.append(dstLoc.toString());
-        builder.append(' ');
-        builder.append(getCount());
-        return toString(builder.toString());
+        return toString("Source: " + srcLoc.toString() + " Destination: " + dstLoc.toString() + ' ' + getCount());
     }
 }

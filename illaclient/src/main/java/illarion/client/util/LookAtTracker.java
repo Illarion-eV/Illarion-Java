@@ -58,7 +58,7 @@ public final class LookAtTracker implements EventSubscriber<TooltipsRemovedEvent
      * @param object the object to set als current look at focus
      */
     public static void setLookAtObject(final Object object) {
-        INSTANCE.lookAtObject = new SoftReference<Object>(object);
+        INSTANCE.lookAtObject = new SoftReference<>(object);
     }
 
     /**
@@ -75,7 +75,6 @@ public final class LookAtTracker implements EventSubscriber<TooltipsRemovedEvent
 
         final Object localLookAtObject = reference.get();
         return (localLookAtObject != null) && (localLookAtObject == testObject);
-
     }
 
     @Override

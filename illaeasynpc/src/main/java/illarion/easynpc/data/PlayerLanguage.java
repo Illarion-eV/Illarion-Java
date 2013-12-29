@@ -33,5 +33,5 @@ public enum PlayerLanguage {
     /**
      * The player language is set to German.
      */
-    german;
+    german
 }

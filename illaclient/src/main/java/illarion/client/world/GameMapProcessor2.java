@@ -38,7 +38,6 @@ public class GameMapProcessor2 {
      */
     private static final GameMapProcessor2 INSTANCE = new GameMapProcessor2();
 
-
     /**
      * Process a single new tile.
      *
@@ -116,8 +115,8 @@ public class GameMapProcessor2 {
     }
 
     @Nullable
-    private static MapTile getFirstTileBelow(@Nonnull final Location startLocation, final int zLimit,
-                                             final boolean perceptiveOffset) {
+    private static MapTile getFirstTileBelow(
+            @Nonnull final Location startLocation, final int zLimit, final boolean perceptiveOffset) {
         if (startLocation.getScZ() <= zLimit) {
             return null;
         }
@@ -141,9 +140,9 @@ public class GameMapProcessor2 {
     }
 
     @Nonnull
-    private static List<MapTile> getAllTilesAbove(final Location startLocation, final int zLimit,
-                                                  final boolean perceptiveOffset) {
-        final List<MapTile> tileList = new ArrayList<MapTile>();
+    private static List<MapTile> getAllTilesAbove(
+            final Location startLocation, final int zLimit, final boolean perceptiveOffset) {
+        final List<MapTile> tileList = new ArrayList<>();
         Location currentLocation = startLocation;
         while (true) {
             final MapTile currentTile = getFirstTileAbove(currentLocation, zLimit, perceptiveOffset);
@@ -157,8 +156,8 @@ public class GameMapProcessor2 {
     }
 
     @Nullable
-    private static MapTile getFirstTileAbove(@Nonnull final Location startLocation, final int zLimit,
-                                             final boolean perceptiveOffset) {
+    private static MapTile getFirstTileAbove(
+            @Nonnull final Location startLocation, final int zLimit, final boolean perceptiveOffset) {
         if (startLocation.getScZ() >= zLimit) {
             return null;
         }
@@ -183,15 +182,15 @@ public class GameMapProcessor2 {
 
     @Nonnull
     private static List<MapGroup> getSurroundingMapGroups(@Nonnull final Location startLocation) {
-        final List<MapGroup> groupList = new ArrayList<MapGroup>();
+        final List<MapGroup> groupList = new ArrayList<>();
 
         for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {
                 if ((x == 0) && (y == 0)) {
                     continue;
                 }
-                final MapTile tile = World.getMap().getMapAt(startLocation.getScX() + x, startLocation.getScY() + y,
-                        startLocation.getScZ());
+                final MapTile tile = World.getMap()
+                        .getMapAt(startLocation.getScX() + x, startLocation.getScY() + y, startLocation.getScZ());
                 if (tile != null) {
                     MapGroup group = tile.getMapGroup();
                     if (group != null) {

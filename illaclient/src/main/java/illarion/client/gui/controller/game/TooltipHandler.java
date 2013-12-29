@@ -96,7 +96,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
     };
 
     @Override
-    public void bind(final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
         parentNifty = nifty;
         parentScreen = screen;
 
@@ -137,8 +137,8 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
      * Create a new tooltip.
      *
      * @param location the tooltip should be place around, the area of this rectangle won't be hidden by the tooltip.
-     *                 Also the mouse is required to remain inside this area to keep the tooltip active
-     * @param tooltip  the tooltip to display
+     * Also the mouse is required to remain inside this area to keep the tooltip active
+     * @param tooltip the tooltip to display
      */
     public void showToolTip(@Nonnull final Rectangle location, @Nonnull final Tooltip tooltip) {
         hideToolTip();
@@ -166,7 +166,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
      * Create a new tooltip. This is the internal implementation that is only called from the update loop.
      *
      * @param location the tooltip should be place around, the area of this rectangle won't be hidden by the tooltip
-     * @param tooltip  the tooltip to display
+     * @param tooltip the tooltip to display
      */
     private void showToolTipImpl(@Nonnull final Rectangle location, @Nonnull final Tooltip tooltip) {
         final ToolTipBuilder builder = new ToolTipBuilder("tooltip-" + Long.toString(count++));
@@ -212,7 +212,6 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
         builder.emeraldLevel(tooltip.getEmeraldLevel());
         builder.rubyLevel(tooltip.getRubyLevel());
         builder.topazLevel(tooltip.getTopazLevel());
-
 
         if (tooltip.getBonus() > 0) {
             builder.gemBonus(Integer.toString(tooltip.getBonus()));

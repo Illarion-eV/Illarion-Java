@@ -47,7 +47,6 @@ public class Md5Crypto {
         }
     }
 
-
     @Nonnull
     public String crypt(@Nonnull final String message, @Nonnull final String salt) {
         return crypt(message, salt, "$1$");
@@ -56,7 +55,6 @@ public class Md5Crypto {
     @Nonnull
     public String crypt(@Nonnull final String message, @Nonnull final String salt, @Nonnull final String magic) {
         String cleanedSalt;
-
 
         if (salt.startsWith(magic)) {
             cleanedSalt = salt.substring(magic.length());
@@ -129,21 +127,13 @@ public class Md5Crypto {
             currentEncPassword = md5Digest.digest();
         }
 
-        final StringBuilder result = new StringBuilder();
-
-        result.append(magic);
-        result.append(salt);
-        result.append('$');
-
         final byte[] pw = currentEncPassword;
-        result.append(to64((bytes2u(pw[0]) << 16) | (bytes2u(pw[6]) << 8) | bytes2u(pw[12]), 4));
-        result.append(to64((bytes2u(pw[1]) << 16) | (bytes2u(pw[7]) << 8) | bytes2u(pw[13]), 4));
-        result.append(to64((bytes2u(pw[2]) << 16) | (bytes2u(pw[8]) << 8) | bytes2u(pw[14]), 4));
-        result.append(to64((bytes2u(pw[3]) << 16) | (bytes2u(pw[9]) << 8) | bytes2u(pw[15]), 4));
-        result.append(to64((bytes2u(pw[4]) << 16) | (bytes2u(pw[10]) << 8) | bytes2u(pw[5]), 4));
-        result.append(to64(bytes2u(pw[11]), 2));
 
-        return result.toString();
+        return magic + salt + '$' + to64((bytes2u(pw[0]) << 16) | (bytes2u(pw[6]) << 8) | bytes2u(pw[12]), 4) +
+                to64((bytes2u(pw[1]) << 16) | (bytes2u(pw[7]) << 8) | bytes2u(pw[13]), 4) +
+                to64((bytes2u(pw[2]) << 16) | (bytes2u(pw[8]) << 8) | bytes2u(pw[14]), 4) +
+                to64((bytes2u(pw[3]) << 16) | (bytes2u(pw[9]) << 8) | bytes2u(pw[15]), 4) +
+                to64((bytes2u(pw[4]) << 16) | (bytes2u(pw[10]) << 8) | bytes2u(pw[5]), 4) + to64(bytes2u(pw[11]), 2);
     }
 
     /**
@@ -154,7 +144,7 @@ public class Md5Crypto {
     /**
      * Convert a 64bit integer value to a string character.
      *
-     * @param v    the long value
+     * @param v the long value
      * @param size the size of the resulting text in characters
      * @return the generated text
      */

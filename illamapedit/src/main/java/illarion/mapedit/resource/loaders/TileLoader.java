@@ -43,7 +43,7 @@ public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
     private static final TileLoader INSTANCE = new TileLoader();
     private static final String DIR_IMG_TILES = "tiles/";
 
-    private final TIntObjectHashMap<TileImg> tiles = new TIntObjectHashMap<TileImg>();
+    private final TIntObjectHashMap<TileImg> tiles = new TIntObjectHashMap<>();
 
     private TileLoader() {
     }
@@ -68,70 +68,36 @@ public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
         final int mode = loader.getTileMode();
         final String name = loader.getResourceName();
         final TileImg tile;
-        final TileInfo info =
-                new TileInfo(loader.getTileColor(), loader.getMovementCost(), loader.isOpaque());
+        final TileInfo info = new TileInfo(loader.getTileColor(), loader.getMovementCost(), loader.isOpaque());
         switch (mode) {
             case TableLoaderTiles.TILE_MODE_ANIMATED:
 
                 if (isLocaleGerman()) {
-                    tile = new TileImg(id,
-                            name,
-                            loader.getFrameCount(),
-                            loader.getAnimationSpeed(),
-                            info,
-                            getImages(name, loader.getFrameCount()),
-                            loader.getNameGerman());
+                    tile = new TileImg(id, name, loader.getFrameCount(), loader.getAnimationSpeed(), info,
+                                       getImages(name, loader.getFrameCount()), loader.getNameGerman());
                 } else {
-                    tile = new TileImg(id,
-                            name,
-                            loader.getFrameCount(),
-                            loader.getAnimationSpeed(),
-                            info,
-                            getImages(name, loader.getFrameCount()),
-                            loader.getNameEnglish());
+                    tile = new TileImg(id, name, loader.getFrameCount(), loader.getAnimationSpeed(), info,
+                                       getImages(name, loader.getFrameCount()), loader.getNameEnglish());
                 }
                 break;
 
             case TableLoaderTiles.TILE_MODE_VARIANT:
                 if (isLocaleGerman()) {
-                    tile = new TileImg(id,
-                            name,
-                            loader.getFrameCount(),
-                            0,
-                            info,
-                            getImages(name, loader.getFrameCount()),
-                            loader.getNameGerman());
+                    tile = new TileImg(id, name, loader.getFrameCount(), 0, info,
+                                       getImages(name, loader.getFrameCount()), loader.getNameGerman());
                 } else {
-                    tile = new TileImg(id,
-                            name,
-                            loader.getFrameCount(),
-                            0,
-                            info,
-                            getImages(name, loader.getFrameCount()),
-                            loader.getNameEnglish());
+                    tile = new TileImg(id, name, loader.getFrameCount(), 0, info,
+                                       getImages(name, loader.getFrameCount()), loader.getNameEnglish());
                 }
                 break;
 
             default:
                 if (isLocaleGerman()) {
-                    tile = new TileImg(id,
-                            name,
-                            1,
-                            0,
-                            info,
-                            getImages(name, 1),
-                            loader.getNameGerman());
+                    tile = new TileImg(id, name, 1, 0, info, getImages(name, 1), loader.getNameGerman());
                 } else {
-                    tile = new TileImg(id,
-                            name,
-                            1,
-                            0,
-                            info,
-                            getImages(name, 1),
-                            loader.getNameEnglish());
+                    tile = new TileImg(id, name, 1, 0, info, getImages(name, 1), loader.getNameEnglish());
                 }
                 break;
-
         }
 
         tiles.put(tile.getId(), tile);

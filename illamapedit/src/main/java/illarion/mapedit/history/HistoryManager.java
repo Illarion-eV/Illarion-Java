@@ -54,8 +54,8 @@ public class HistoryManager {
 
     public HistoryManager() {
         AnnotationProcessor.process(this);
-        undoList = new FastTable<HistoryAction>();
-        redoList = new FastTable<HistoryAction>();
+        undoList = new FastTable<>();
+        redoList = new FastTable<>();
     }
 
     /**

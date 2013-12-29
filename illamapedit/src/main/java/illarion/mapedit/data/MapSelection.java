@@ -16,7 +16,7 @@ public class MapSelection {
     private int minY = Integer.MAX_VALUE;
 
     public MapSelection() {
-        selectedTiles = new HashMap<MapPosition, MapTile>();
+        selectedTiles = new HashMap<>();
     }
 
     public void addSelectedTile(@Nonnull final MapPosition mapPosition, final MapTile tile) {
@@ -36,7 +36,7 @@ public class MapSelection {
     }
 
     @Nonnull
-    public  HashMap<MapPosition, MapTile> getTiles() {
+    public HashMap<MapPosition, MapTile> getTiles() {
         return selectedTiles;
     }
 }

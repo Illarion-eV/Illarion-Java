@@ -81,9 +81,9 @@ public final class WeatherMsg extends AbstractReply {
      * execution.
      *
      * @param reader the receiver that got the data from the server that needs
-     *               to be decoded
+     * to be decoded
      * @throws IOException thrown in case there was not enougth data received to
-     *                     decode the full message
+     * decode the full message
      */
     @Override
     public void decode(@Nonnull final NetCommReader reader) throws IOException {
@@ -121,29 +121,15 @@ public final class WeatherMsg extends AbstractReply {
      * Get the data of this weather update message as string.
      *
      * @return the string that contains the values that were decoded for this
-     *         message
+     * message
      */
     @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("clouds: ");
-        builder.append(clouds);
-        builder.append(", fog: ");
-        builder.append(fog);
-        builder.append(", wind: ");
-        builder.append(wind);
-        builder.append(", gusts: ");
-        builder.append(gusts);
-        builder.append(", precipitation: ");
-        builder.append(precipitation);
-        builder.append(", precType: ");
-        builder.append(precType);
-        builder.append(", lightning: ");
-        builder.append(lightning);
-        builder.append(", temperature: ");
-        builder.append(temperature);
-        return toString(builder.toString());
+        return toString(
+                "clouds: " + clouds + ", fog: " + fog + ", wind: " + wind + ", gusts: " + gusts + ", precipitation: " +
+                        precipitation + ", precType: " + precType + ", lightning: " + lightning + ", temperature: " +
+                        temperature);
     }
 }

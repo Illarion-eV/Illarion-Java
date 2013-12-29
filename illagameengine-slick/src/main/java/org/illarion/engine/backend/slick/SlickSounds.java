@@ -72,7 +72,7 @@ class SlickSounds implements MusicListener, Sounds {
      * Create the implementation of the slick sounds and setup the internal values.
      */
     SlickSounds() {
-        activeSoundsMap = new HashMap<Integer, SlickSound>();
+        activeSoundsMap = new HashMap<>();
     }
 
     @Override
@@ -173,7 +173,12 @@ class SlickSounds implements MusicListener, Sounds {
     }
 
     @Override
-    public int playSound(@Nonnull final Sound sound, final float volume, final int offsetX, final int offsetY, final int offsetZ) {
+    public int playSound(
+            @Nonnull final Sound sound,
+            final float volume,
+            final int offsetX,
+            final int offsetY,
+            final int offsetZ) {
         if (sound instanceof SlickSound) {
             @Nonnull final org.newdawn.slick.Sound slickSound = ((SlickSound) sound).getInternalSound();
             slickSound.playAt(1.f, SoundStore.get().getSoundVolume() * volume, offsetX, offsetY, offsetZ);
@@ -207,7 +212,6 @@ class SlickSounds implements MusicListener, Sounds {
         if (nextMusic != null) {
             startMusic(nextMusic, nextFadeInTime);
         }
-
     }
 
     @Override

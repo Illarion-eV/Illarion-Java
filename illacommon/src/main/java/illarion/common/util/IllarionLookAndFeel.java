@@ -86,20 +86,14 @@ public final class IllarionLookAndFeel {
             UIManager.put("textHighlight", background.brighter().brighter());
             UIManager.put("textHighlightText", background.brighter());
             UIManager.put("textInactiveText", background.darker());
-            for (final LookAndFeelInfo info : UIManager
-                    .getInstalledLookAndFeels()) {
+            for (final LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
-        } catch (@Nonnull final UnsupportedLookAndFeelException e) {
-            // handle exception
-        } catch (@Nonnull final ClassNotFoundException e) {
-            // handle exception
-        } catch (@Nonnull final InstantiationException e) {
-            // handle exception
-        } catch (@Nonnull final IllegalAccessException e) {
+        } catch (@Nonnull
+        final UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException | ClassNotFoundException e) {
             // handle exception
         }
     }

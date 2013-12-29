@@ -37,8 +37,7 @@ import java.io.IOException;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_PUT_ITEM)
-public final class PutItemMsg
-        extends AbstractReply {
+public final class PutItemMsg extends AbstractReply {
     /**
      * The ID of the item that is placed on the ground.
      */
@@ -61,8 +60,7 @@ public final class PutItemMsg
      * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader)
-            throws IOException {
+    public void decode(@Nonnull final NetCommReader reader) throws IOException {
         loc = decodeLocation(reader);
         itemId = new ItemId(reader);
         number = ItemCount.getInstance(reader);
@@ -91,13 +89,6 @@ public final class PutItemMsg
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("Item: ");
-        builder.append(itemId);
-        builder.append(" Count: ");
-        builder.append(number);
-        builder.append(" at pos: ");
-        builder.append(loc.toString());
-        return toString(builder.toString());
+        return toString("Item: " + itemId + " Count: " + number + " at pos: " + loc.toString());
     }
 }

@@ -44,7 +44,7 @@ public final class ClothFactoryRelay implements ResourceFactory<AvatarClothTempl
      */
     @Override
     public void init() {
-        usedAvatars = new ArrayList<AvatarTemplate>();
+        usedAvatars = new ArrayList<>();
     }
 
     /**
@@ -72,5 +72,4 @@ public final class ClothFactoryRelay implements ResourceFactory<AvatarClothTempl
             usedAvatars.add(avatarTemplate);
         }
     }
-
 }

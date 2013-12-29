@@ -52,9 +52,9 @@ public final class IntroduceMsg extends AbstractReply {
      * execution.
      *
      * @param reader the receiver that got the data from the server that needs
-     *               to be decoded
+     * to be decoded
      * @throws IOException thrown in case there was not enough data received to
-     *                     decode the full message
+     * decode the full message
      */
     @Override
     public void decode(@Nonnull final NetCommReader reader) throws IOException {
@@ -81,18 +81,12 @@ public final class IntroduceMsg extends AbstractReply {
      * Get the data of this introduce message as string.
      *
      * @return the string that contains the values that were decoded for this
-     *         message
+     * message
      */
     @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("Chat(");
-        builder.append(charId);
-        builder.append(") is named \"");
-        builder.append(text);
-        builder.append('"');
-        return toString(builder.toString());
+        return toString("Chat(" + charId + ") is named \"" + text + '"');
     }
 }

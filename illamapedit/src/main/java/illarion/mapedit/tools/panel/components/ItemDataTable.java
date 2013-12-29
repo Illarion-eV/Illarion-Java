@@ -39,22 +39,9 @@ import java.util.ArrayList;
  */
 public class ItemDataTable extends JPanel {
     private static final int PREFERRED_KEY_WIDTH = 15;
-    private static final String[] DATA_KEYS = {
-            "",
-            "nameDe",
-            "nameEn",
-            "descriptionDe",
-            "descriptionEn",
-            "rareness",
-            "craftedBy",
-            "magicalDiamond",
-            "magicalEmerald",
-            "magicalRuby",
-            "magicalSapphire",
-            "magicalAmethyst",
-            "magicalObsidian",
-            "magicalTopaz"
-    };
+    private static final String[] DATA_KEYS = {"", "nameDe", "nameEn", "descriptionDe", "descriptionEn", "rareness",
+                                               "craftedBy", "magicalDiamond", "magicalEmerald", "magicalRuby",
+                                               "magicalSapphire", "magicalAmethyst", "magicalObsidian", "magicalTopaz"};
 
     @Nonnull
     private final ItemDataTableModel dataTableModel;
@@ -75,7 +62,7 @@ public class ItemDataTable extends JPanel {
         add(annotation, BorderLayout.NORTH);
 
         final JScrollPane scroll = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                                                   JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         dataTableModel = new ItemDataTableModel(new ArrayList<String>());
 
@@ -85,13 +72,13 @@ public class ItemDataTable extends JPanel {
         scroll.setViewportView(dataTable);
         add(scroll, BorderLayout.CENTER);
 
-        final ResizableIcon iconAdd =  ImageLoader.getResizableIcon("edit_add") ;
+        final ResizableIcon iconAdd = ImageLoader.getResizableIcon("edit_add");
         iconAdd.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
 
-        final ResizableIcon iconRemove =  ImageLoader.getResizableIcon("edit_remove") ;
+        final ResizableIcon iconRemove = ImageLoader.getResizableIcon("edit_remove");
         iconRemove.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
 
-        final ResizableIcon iconAnnotation =  ImageLoader.getResizableIcon("annotation") ;
+        final ResizableIcon iconAnnotation = ImageLoader.getResizableIcon("annotation");
         iconAnnotation.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
 
         addDataButton = new JButton();
@@ -99,7 +86,7 @@ public class ItemDataTable extends JPanel {
         addDataButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                 addData();
+                addData();
             }
         });
 
@@ -139,8 +126,8 @@ public class ItemDataTable extends JPanel {
         panel.add(new JLabel(Lang.getMsg("tools.DataTool.Annotation")));
         panel.add(annotationField);
 
-        final int result = JOptionPane.showConfirmDialog(null, panel,
-                Lang.getMsg("tools.DataTool.Annotation_header"), JOptionPane.OK_CANCEL_OPTION);
+        final int result = JOptionPane.showConfirmDialog(null, panel, Lang.getMsg("tools.DataTool.Annotation_header"),
+                                                         JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
             EventBus.publish(new ItemDataAnnotationEvent(annotationField.getText()));
         }
@@ -158,8 +145,9 @@ public class ItemDataTable extends JPanel {
         keyValuePanel.add(new JLabel(Lang.getMsg("tools.DataTool.Value")));
         keyValuePanel.add(valueField);
 
-        final int result = JOptionPane.showConfirmDialog(null, keyValuePanel,
-                Lang.getMsg("tools.DataTool.Dialog_header"), JOptionPane.OK_CANCEL_OPTION);
+        final int result = JOptionPane
+                .showConfirmDialog(null, keyValuePanel, Lang.getMsg("tools.DataTool.Dialog_header"),
+                                   JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
             dataTableModel.addData(String.format("%s=%s", keyField.getSelectedItem(), valueField.getText()));
             dataTableModel.fireTableDataChanged();
@@ -188,7 +176,7 @@ public class ItemDataTable extends JPanel {
         annotationButton.setEnabled(true);
     }
 
-    public void setAnnotation(final String text) {
+    public void setAnnotation(@Nonnull final String text) {
         annotation.setAnnotation(text);
     }
 }

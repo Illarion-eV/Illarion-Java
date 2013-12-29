@@ -32,7 +32,7 @@ public final class Path {
     /**
      * List if the path nodes that create this path.
      */
-    private final LinkedList<PathNode> path = new LinkedList<PathNode>();
+    private final LinkedList<PathNode> path = new LinkedList<>();
 
     /**
      * Default constructor for a new path.
@@ -75,7 +75,7 @@ public final class Path {
      * Add a path node to the very beginning of the path.
      *
      * @param newNode the new path node that is added to the beginning of the
-     *                path
+     * path
      */
     public void prependStep(final PathNode newNode) {
         path.addFirst(newNode);

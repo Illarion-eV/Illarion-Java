@@ -50,7 +50,7 @@ public final class CreditsSinglesScreenController implements ScreenController, K
     private Label nameLabel;
 
     @Override
-    public void bind(final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
         this.nifty = nifty;
 
         displayParent = screen.findElementById("nameDisplay");
@@ -78,7 +78,7 @@ public final class CreditsSinglesScreenController implements ScreenController, K
             titleLabel.setText(list.getNameEnglish());
         }
 
-        final List<String> names = new ArrayList<String>();
+        final List<String> names = new ArrayList<>();
         for (final CreditsPerson person : list) {
             names.add(person.getName());
         }
@@ -110,7 +110,6 @@ public final class CreditsSinglesScreenController implements ScreenController, K
                 });
             }
         });
-
     }
 
     private void gotoNextScreen() {

@@ -40,7 +40,7 @@ public final class AvatarInfo {
      * appearance. This object is deleted after the characters are loaded completely.
      */
     @Nullable
-    private static Map<Integer, AvatarInfo> buffer = new HashMap<Integer, AvatarInfo>();
+    private static Map<Integer, AvatarInfo> buffer = new HashMap<>();
 
     /**
      * The list of animations known to this avatar. All animation index values marked with true need to be playable.
@@ -58,7 +58,7 @@ public final class AvatarInfo {
      * Default constructor of the avatar information.
      *
      * @param visibilityMod the visibility modifications for the avatar in percent. Values above 100 increase the
-     *                      default visibility.
+     * default visibility.
      */
     private AvatarInfo(final int visibilityMod) {
         visibility = visibilityMod;
@@ -81,9 +81,9 @@ public final class AvatarInfo {
      * creates a new instance of the AvatarInfo class with the parameters, or returns a already created one for this
      * appearance.
      *
-     * @param appearance    the appearance this avatar information are related to
+     * @param appearance the appearance this avatar information are related to
      * @param visibilityMod the visibility modifications for the avatar in percent. Values above 100 increase the
-     *                      default visibility.
+     * default visibility.
      * @return the newly created instance of AvatarInfo or a already created one from the cache
      */
     public static AvatarInfo getInstance(final int appearance, final int visibilityMod) {

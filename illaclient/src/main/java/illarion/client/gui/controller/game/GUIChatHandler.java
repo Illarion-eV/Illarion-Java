@@ -99,7 +99,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
      * Add a entry to the chat box.
      *
      * @param message the message to add to the chat box
-     * @param color   the color of the message
+     * @param color the color of the message
      */
     @Override
     public void addChatMessage(@Nonnull final String message, @Nonnull final Color color) {
@@ -110,11 +110,14 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
      * Display a chat bubble on the screen.
      *
      * @param character the character this chat message is assigned to
-     * @param message   the message that is displayed
-     * @param color     the color of the message
+     * @param message the message that is displayed
+     * @param color the color of the message
      */
     @Override
-    public void showChatBubble(@Nullable final Char character, @Nonnull final String message, @Nonnull final Color color) {
+    public void showChatBubble(
+            @Nullable final Char character,
+            @Nonnull final String message,
+            @Nonnull final Color color) {
         World.getUpdateTaskManager().addTask(new CharTalkEntry(character, message, color));
     }
 
@@ -137,7 +140,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         /**
          * Constructor for the entry.
          *
-         * @param msgText  the text stored in the entry
+         * @param msgText the text stored in the entry
          * @param msgColor the color of the entry
          */
         ChatBoxEntry(@Nonnull final String msgText, @Nonnull final Color msgColor) {
@@ -174,8 +177,8 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
          * Constructor for the entry.
          *
          * @param character the character that spoke this text
-         * @param message   the text stored in the entry
-         * @param msgColor  the color of the entry
+         * @param message the text stored in the entry
+         * @param msgColor the color of the entry
          */
         CharTalkEntry(@Nullable final Char character, @Nonnull final String message, final Color msgColor) {
             text = message;
@@ -250,7 +253,8 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
     /**
      * The pattern to detect a whispered message.
      */
-    private final Pattern whisperPattern = Pattern.compile("^\\s*[/#]w(hisper)?\\s*(.*)\\s*$", Pattern.CASE_INSENSITIVE);
+    private final Pattern whisperPattern = Pattern
+            .compile("^\\s*[/#]w(hisper)?\\s*(.*)\\s*$", Pattern.CASE_INSENSITIVE);
 
     /**
      * The pattern to detect a shouted message.
@@ -295,7 +299,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
     }
 
     @Override
-    public void bind(final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
         this.screen = screen;
         this.nifty = nifty;
 
@@ -311,7 +315,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
      * Receive a Input event from the GUI and send a text in case this event applies.
      */
     @Override
-    public boolean keyEvent(final NiftyInputEvent inputEvent) {
+    public boolean keyEvent(@Nonnull final NiftyInputEvent inputEvent) {
         if (inputEvent == NiftyStandardInputEvent.SubmitText) {
             assert chatMsg != null;
             if (chatMsg.hasFocus()) {
@@ -378,10 +382,13 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
      * Cleanup the text and send it in case anything remains to send.
      *
      * @param prefix the prefix that is prepend to the text
-     * @param text   the text to send
-     * @param mode   the speech mode used to send the command
+     * @param text the text to send
+     * @param mode the speech mode used to send the command
      */
-    private static void cleanAndSendText(final String prefix, @Nonnull final String text, @Nonnull final ChatHandler.SpeechMode mode) {
+    private static void cleanAndSendText(
+            final String prefix,
+            @Nonnull final String text,
+            @Nonnull final ChatHandler.SpeechMode mode) {
         final String cleanText = REPEATED_SPACE_PATTERN.matcher(text.trim()).replaceAll(" ");
         if (cleanText.isEmpty()) {
             return;
@@ -454,7 +461,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
     /**
      * Add a entry to the Chat log.
      *
-     * @param text  the text to add
+     * @param text the text to add
      * @param color the color of the text to add
      */
     private void addChatLogText(@Nonnull final String text, final Color color) {
@@ -479,8 +486,8 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
      * The the Chat bubble of a character talking on the map.
      *
      * @param character the character who is talking
-     * @param message   the message to display
-     * @param color     the color to show the text in
+     * @param message the message to display
+     * @param color the color to show the text in
      */
     private void addMessageBubble(@Nullable final Char character, @Nonnull final String message, final Color color) {
         if ((character == null) || (chatLayer == null)) {
@@ -527,10 +534,10 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         final int charDisplayCenterX = charDisplayRect.getCenterX() - Camera.getInstance().getViewportOffsetX();
         final int charDisplayY = charDisplayRect.getBottom() - Camera.getInstance().getViewportOffsetY();
 
-        final int bubblePosX = FastMath.clamp(charDisplayCenterX - (bubble.getWidth() / 2), 0,
-                chatLayer.getWidth() - bubble.getWidth());
-        final int bubblePosY = FastMath.clamp(charDisplayY - bubble.getHeight() - 5, 0,
-                chatLayer.getHeight() - bubble.getHeight());
+        final int bubblePosX = FastMath
+                .clamp(charDisplayCenterX - (bubble.getWidth() / 2), 0, chatLayer.getWidth() - bubble.getWidth());
+        final int bubblePosY = FastMath
+                .clamp(charDisplayY - bubble.getHeight() - 5, 0, chatLayer.getHeight() - bubble.getHeight());
 
         bubble.setConstraintX(SizeValue.px(bubblePosX));
         bubble.setConstraintY(SizeValue.px(bubblePosY));

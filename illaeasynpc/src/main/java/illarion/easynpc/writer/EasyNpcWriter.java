@@ -72,15 +72,14 @@ public final class EasyNpcWriter {
         /**
          * During this stage the trading texts should be displayed.
          */
-        trading;
+        trading
     }
 
     /**
      * The header of auto comment.
      */
     @SuppressWarnings("nls")
-    public static final String AC_HEADER =
-            "------------------------------------------------------------------------------AC\n";
+    public static final String AC_HEADER = "------------------------------------------------------------------------------AC\n";
 
     /**
      * The new line string that is used by default for this scripts.
@@ -118,8 +117,7 @@ public final class EasyNpcWriter {
      * @param target the writer that takes the written data
      * @throws IOException thrown in case a writing operation failed
      */
-    public void write(@Nonnull final ParsedNpc source, @Nonnull final Writer target)
-            throws IOException {
+    public void write(@Nonnull final ParsedNpc source, @Nonnull final Writer target) throws IOException {
         writeIntro(source, target, WritingStage.header);
         // first the default header
         writeHeader(source, target);
@@ -167,11 +165,11 @@ public final class EasyNpcWriter {
      * Check if there are any entries in this stage.
      *
      * @param source the NPC that is the data source
-     * @param stage  the stage to check
+     * @param stage the stage to check
      * @return <code>true</code> in case the NPC contains entries in this stage.
      */
-    private static boolean checkStageExists(@Nonnull final ParsedNpc source,
-                                            final WritingStage stage) {
+    private static boolean checkStageExists(
+            @Nonnull final ParsedNpc source, final WritingStage stage) {
         final int count = source.getDataCount();
 
         EasyNpcWritable writeable = null;
@@ -192,12 +190,11 @@ public final class EasyNpcWriter {
      *
      * @param source the easyNPC that is the data source for this function
      * @param target the target writer that takes the data extracted from the
-     *               source
+     * source
      * @throws IOException thrown in case a writing operation failed
      */
     @SuppressWarnings("nls")
-    private static void writeHeader(@Nonnull final ParsedNpc source, @Nonnull final Writer target)
-            throws IOException {
+    private static void writeHeader(@Nonnull final ParsedNpc source, @Nonnull final Writer target) throws IOException {
         target.write("name = \"");
         target.write(source.getNpcName());
         target.write("\"");
@@ -298,38 +295,34 @@ public final class EasyNpcWriter {
      *
      * @param source the parsed NPC that is the data source
      * @param target the writer that is the target
-     * @param stage  the current stage that is supposed to be processed
+     * @param stage the current stage that is supposed to be processed
      * @throws IOException thrown in case the writing operations fail
      */
     @SuppressWarnings("nls")
-    private static void writeIntro(@Nonnull final ParsedNpc source, @Nonnull final Writer target,
-                                   @Nonnull final WritingStage stage) throws IOException {
+    private static void writeIntro(
+            @Nonnull final ParsedNpc source, @Nonnull final Writer target, @Nonnull final WritingStage stage)
+            throws IOException {
 
         switch (stage) {
             case header:
                 target.write(AC_HEADER);
 
-                target.write(String.format("-- %1$-10s%2$-49s%3$15s --%n",
-                        "NPC Name:", source.getNpcName(), source.getAffiliation()
-                        .name()));
-                target.write(String.format("-- %1$-10s%2$-64s --%n",
-                        "NPC Job:", source.getJob()));
+                target.write(String.format("-- %1$-10s%2$-49s%3$15s --%n", "NPC Name:", source.getNpcName(),
+                                           source.getAffiliation().name()));
+                target.write(String.format("-- %1$-10s%2$-64s --%n", "NPC Job:", source.getJob()));
 
                 final String freeLine = String.format("-- %1$74s --%n", "");
                 target.write(freeLine);
 
-                final String positionString =
-                        Integer.toString(source.getNpcPos().getScX()) + ", "
-                                + Integer.toString(source.getNpcPos().getScY()) + ", "
-                                + Integer.toString(source.getNpcPos().getScZ());
-                target.write(String.format("-- %1$-37s%2$-37s --",
-                        "NPC Race: " + source.getNpcRace().name(),
-                        "NPC Position:  " + positionString));
+                final String positionString = Integer.toString(source.getNpcPos().getScX()) + ", " +
+                        Integer.toString(source.getNpcPos().getScY()) + ", " +
+                        Integer.toString(source.getNpcPos().getScZ());
+                target.write(String.format("-- %1$-37s%2$-37s --", "NPC Race: " + source.getNpcRace().name(),
+                                           "NPC Position:  " + positionString));
                 target.write(NL);
 
-                target.write(String.format("-- %1$-37s%2$-37s --",
-                        "NPC Sex:  " + source.getNpcSex().name(),
-                        "NPC Direction: " + source.getNpcDir().name()));
+                target.write(String.format("-- %1$-37s%2$-37s --", "NPC Sex:  " + source.getNpcSex().name(),
+                                           "NPC Direction: " + source.getNpcDir().name()));
                 target.write(NL);
 
                 target.write(freeLine);
@@ -337,26 +330,20 @@ public final class EasyNpcWriter {
                 final String[] authors = source.getAuthors();
                 final String authorFormat = "-- %1$-10s%2$-64s --%n";
                 if (authors.length == 0) {
-                    target.write(String.format(authorFormat, "Author:",
-                            "not set"));
+                    target.write(String.format(authorFormat, "Author:", "not set"));
                 } else if (authors.length == 1) {
-                    target.write(String.format(authorFormat, "Author:",
-                            authors[0]));
+                    target.write(String.format(authorFormat, "Author:", authors[0]));
                 } else {
-                    target.write(String.format(authorFormat, "Authors:",
-                            authors[0]));
+                    target.write(String.format(authorFormat, "Authors:", authors[0]));
 
                     for (int i = 1; i < authors.length; ++i) {
-                        target.write(String.format(authorFormat, "",
-                                authors[i]));
+                        target.write(String.format(authorFormat, "", authors[i]));
                     }
                 }
 
-                target.write(String.format("-- %1$-47s%2$27s --%n",
-                        "", Parser.APPLICATION.getApplicationIdentifier()));
+                target.write(String.format("-- %1$-47s%2$27s --%n", "", Parser.APPLICATION.getApplicationIdentifier()));
 
-                target
-                        .write("--------------------------------------------------------------------------------");
+                target.write("--------------------------------------------------------------------------------");
                 target.write(NL);
                 target.write(NL);
 
@@ -393,11 +380,11 @@ public final class EasyNpcWriter {
      *
      * @param source the parsed NPC that is the data source
      * @param target the writer that is the target
-     * @param stage  the current stage that is supposed to be processed
+     * @param stage the current stage that is supposed to be processed
      * @throws IOException thrown in case the writing operations fail
      */
-    private static void writeStage(@Nonnull final ParsedNpc source, final Writer target,
-                                   final WritingStage stage) throws IOException {
+    private static void writeStage(
+            @Nonnull final ParsedNpc source, final Writer target, final WritingStage stage) throws IOException {
         final int count = source.getDataCount();
 
         for (int i = 0; i < count; ++i) {

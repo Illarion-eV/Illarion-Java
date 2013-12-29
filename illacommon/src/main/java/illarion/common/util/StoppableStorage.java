@@ -35,7 +35,7 @@ public final class StoppableStorage {
     /**
      * The list of stoppable instances stored in this class.
      */
-    private final LinkedList<Stoppable> list = new LinkedList<Stoppable>();
+    private final LinkedList<Stoppable> list = new LinkedList<>();
 
     /**
      * Get the singleton instance of this class.
@@ -52,7 +52,7 @@ public final class StoppableStorage {
      * class will be stopped as well.
      *
      * @param newStoppable the new stoppable instance that will be killed if
-     *                     requested
+     * requested
      */
     public void add(final Stoppable newStoppable) {
         list.add(newStoppable);

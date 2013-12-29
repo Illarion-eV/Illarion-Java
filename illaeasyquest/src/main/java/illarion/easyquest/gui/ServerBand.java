@@ -55,13 +55,11 @@ final class ServerBand extends JRibbonBand {
     public ServerBand() {
         super(Lang.getMsg(ServerBand.class, "title"), null);
 
-        statusButton =
-                new JCommandButton(Lang.getMsg(ServerBand.class, "status"),
-                        Utils.getResizableIconFromResource("setstatus.png"));
+        statusButton = new JCommandButton(Lang.getMsg(ServerBand.class, "status"),
+                                          Utils.getResizableIconFromResource("setstatus.png"));
 
-        statusButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(
-                ServerBand.class, "statusTooltipTitle"), Lang.getMsg(
-                ServerBand.class, "statusTooltip")));
+        statusButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(ServerBand.class, "statusTooltipTitle"),
+                                                          Lang.getMsg(ServerBand.class, "statusTooltip")));
 
         final ActionListener statusAction = new ActionListener() {
             @Override
@@ -73,9 +71,10 @@ final class ServerBand extends JRibbonBand {
                     status = currentEditor.getSelectedStatusNumber();
                 } catch (IllegalStateException exception) {
                     JOptionPane.showMessageDialog(MainFrame.getInstance(),
-                            Lang.getMsg(ServerBand.class, "wrongSelectionText") + exception.getMessage(),
-                            Lang.getMsg(ServerBand.class, "wrongSelectionCaption"),
-                            JOptionPane.ERROR_MESSAGE);
+                                                  Lang.getMsg(ServerBand.class, "wrongSelectionText") +
+                                                          exception.getMessage(),
+                                                  Lang.getMsg(ServerBand.class, "wrongSelectionCaption"),
+                                                  JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
@@ -85,27 +84,17 @@ final class ServerBand extends JRibbonBand {
 
                 try {
 
-                    final URL requestURL =
-                            new URL("http://illarion.org/easyquest/xml_setqueststatus.php");
+                    final URL requestURL = new URL("http://illarion.org/easyquest/xml_setqueststatus.php");
 
-                    final HttpURLConnection conn =
-                            (HttpURLConnection) requestURL.openConnection();
+                    final HttpURLConnection conn = (HttpURLConnection) requestURL.openConnection();
                     conn.setDoOutput(true);
                     conn.setDoInput(true);
 
-                    final StringBuilder queryBuilder = new StringBuilder();
-                    queryBuilder.append("character=");
-                    queryBuilder.append(URLEncoder.encode(Config.getInstance().getCharacter(), "UTF-8"));
-                    queryBuilder.append("&password=");
-                    queryBuilder.append(URLEncoder.encode(Config.getInstance().getPassword(), "UTF-8"));
-                    queryBuilder.append("&questid=");
-                    queryBuilder.append(id);
-                    queryBuilder.append("&queststatus=");
-                    queryBuilder.append(status);
-
-                    final String query = queryBuilder.toString();
-                    final OutputStreamWriter output =
-                            new OutputStreamWriter(conn.getOutputStream());
+                    final String query =
+                            "character=" + URLEncoder.encode(Config.getInstance().getCharacter(), "UTF-8") +
+                                    "&password=" + URLEncoder.encode(Config.getInstance().getPassword(), "UTF-8") +
+                                    "&questid=" + id + "&queststatus=" + status;
+                    final OutputStreamWriter output = new OutputStreamWriter(conn.getOutputStream());
 
                     output.write(query);
                     output.flush();
@@ -118,18 +107,22 @@ final class ServerBand extends JRibbonBand {
                         msgText = Lang.getMsg(ServerBand.class, "successText") + Config.getInstance().getCharacter();
                     } else {
                         msgType = JOptionPane.ERROR_MESSAGE;
-                        if (result.equals("E_MISS")) {
-                            msgCaption = Lang.getMsg(ServerBand.class, "incompatibleCaption");
-                            msgText = Lang.getMsg(ServerBand.class, "incompatibleText");
-                        } else if (result.equals("E_CHAR")) {
-                            msgCaption = Lang.getMsg(ServerBand.class, "noCharCaption");
-                            msgText = Lang.getMsg(ServerBand.class, "noCharText") + Config.getInstance().getCharacter();
-                        } else if (result.equals("E_LOGIN")) {
-                            msgCaption = Lang.getMsg(ServerBand.class, "noLoginCaption");
-                            msgText = Lang.getMsg(ServerBand.class, "noLoginText");
+                        switch (result) {
+                            case "E_MISS":
+                                msgCaption = Lang.getMsg(ServerBand.class, "incompatibleCaption");
+                                msgText = Lang.getMsg(ServerBand.class, "incompatibleText");
+                                break;
+                            case "E_CHAR":
+                                msgCaption = Lang.getMsg(ServerBand.class, "noCharCaption");
+                                msgText = Lang.getMsg(ServerBand.class, "noCharText") +
+                                        Config.getInstance().getCharacter();
+                                break;
+                            case "E_LOGIN":
+                                msgCaption = Lang.getMsg(ServerBand.class, "noLoginCaption");
+                                msgText = Lang.getMsg(ServerBand.class, "noLoginText");
+                                break;
                         }
                     }
-
                 } catch (@Nonnull final UnknownHostException exception) {
                     msgType = JOptionPane.ERROR_MESSAGE;
                     msgCaption = Lang.getMsg(ServerBand.class, "noHostCaption");
@@ -140,10 +133,7 @@ final class ServerBand extends JRibbonBand {
                     msgText = Lang.getMsg(ServerBand.class, "failureText");
                 }
 
-                JOptionPane.showMessageDialog(MainFrame.getInstance(),
-                        msgText,
-                        msgCaption,
-                        msgType);
+                JOptionPane.showMessageDialog(MainFrame.getInstance(), msgText, msgCaption, msgType);
             }
         };
 
@@ -151,8 +141,7 @@ final class ServerBand extends JRibbonBand {
 
         addCommandButton(statusButton, RibbonElementPriority.TOP);
 
-        final List<RibbonBandResizePolicy> policies =
-                new ArrayList<RibbonBandResizePolicy>();
+        final List<RibbonBandResizePolicy> policies = new ArrayList<>();
         policies.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
         policies.add(new CoreRibbonResizePolicies.Mid2Low(getControlPanel()));
         setResizePolicies(policies);
