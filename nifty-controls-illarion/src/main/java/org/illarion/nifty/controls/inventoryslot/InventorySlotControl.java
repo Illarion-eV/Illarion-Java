@@ -194,7 +194,7 @@ public class InventorySlotControl extends AbstractController implements Inventor
             backgroundImage.setConstraintHeight(heightSize);
             backgroundImage.setConstraintWidth(widthSize);
             draggable.setVisible(true);
-            draggedImage.setVisible(false);
+            draggedImage.setVisible(screen.isActivePopup(draggable));
             draggable.enable();
         } else {
             backgroundImage.setVisible(false);

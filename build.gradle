@@ -77,6 +77,14 @@ allprojects { project ->
         task.project.version = mainVersion
         task.project.ext.fullVersion = gitVersion
     }
+
+    project.configurations.all {
+        resolutionStrategy {
+            cacheDynamicVersionsFor 10 * 60, 'seconds'
+            cacheChangingModulesFor 0, 'seconds'
+        }
+    }
+
 }
 
 buildscript {
