@@ -686,6 +686,7 @@ public class ConfigSystem implements Config {
             serializer.endDocument();
             serializer.flush();
             stream.flush();
+            changed = false;
         } catch (@Nonnull final IOException e) {
             LOGGER.error("Configuration not saved: error accessing config file.");
         } catch (@Nonnull final XmlPullParserException e) {
