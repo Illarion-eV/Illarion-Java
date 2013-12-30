@@ -330,6 +330,8 @@ public final class AppearanceMsg extends AbstractGuiMsg {
                 return 39;
             case 43:
                 return 43;
+            case 47:
+                return 111;
             case 48:
                 return 48;
             case 49:

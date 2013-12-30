@@ -65,10 +65,11 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
     }
 
     @Override
-    public void bind(@Nonnull final Nifty nifty,
-                     @Nonnull final Screen screen,
-                     @Nonnull final Element element,
-                     @Nonnull final Parameters parameter) {
+    public void bind(
+            @Nonnull final Nifty nifty,
+            @Nonnull final Screen screen,
+            @Nonnull final Element element,
+            @Nonnull final Parameters parameter) {
         super.bind(nifty, screen, element, parameter);
 
         niftyInstance = nifty;
@@ -113,8 +114,6 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
             }
 
             currentPanelBuilder.control(buildSlot(contentPanel.getId(), i, slotHeight, slotWidth, slotBackground));
-
-
         }
 
         if (currentPanelBuilder != null) {
@@ -136,16 +135,20 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
     /**
      * Build a inventory slot.
      *
-     * @param prefix         the string that is prepend to the ID of the slot
-     * @param index          the index of the slot
-     * @param height         the height of the slot
-     * @param width          the width of the slot
+     * @param prefix the string that is prepend to the ID of the slot
+     * @param index the index of the slot
+     * @param height the height of the slot
+     * @param width the width of the slot
      * @param slotBackground the background image of the slot
      * @return the builder of the inventory slot
      */
     @Nonnull
-    private static ControlBuilder buildSlot(final String prefix, final int index, final int height, final int width,
-                                            @Nullable final String slotBackground) {
+    private static ControlBuilder buildSlot(
+            final String prefix,
+            final int index,
+            final int height,
+            final int width,
+            @Nullable final String slotBackground) {
         final InventorySlotBuilder builder = new InventorySlotBuilder(prefix + "#slot" + index);
         builder.height(SizeValue.px(height));
         builder.width(SizeValue.px(width));
