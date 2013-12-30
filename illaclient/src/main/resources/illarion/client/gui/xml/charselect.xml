@@ -36,7 +36,7 @@
                 <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#0000"
                        childLayout="vertical" visibleToMouse="true">
                     <panel childLayout="center" visibleToMouse="true" align="center">
-                        <control id="myListBox" name="listBox" vertical="optional" horizontal="optional"
+                        <control id="myListBox" name="listBox" vertical="on" horizontal="off"
                                  displayItems="5" selection="Single" forceSelection="true"/>
                     </panel>
 
