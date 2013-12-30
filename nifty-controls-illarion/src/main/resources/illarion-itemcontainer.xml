@@ -20,7 +20,7 @@
     <controlDefinition name="itemcontainer" visibleToMouse="true"
                        controller="org.illarion.nifty.controls.itemcontainer.ItemContainerControl">
         <control name="window" title="Container" id="#window" visibleToMouse="true">
-            <panel childLayout="vertical" visibleToMouse="true" id="#contentPanel"/>
+            <panel childLayout="center" visibleToMouse="true" id="#contentPanel"/>
         </control>
     </controlDefinition>
 </nifty-controls>

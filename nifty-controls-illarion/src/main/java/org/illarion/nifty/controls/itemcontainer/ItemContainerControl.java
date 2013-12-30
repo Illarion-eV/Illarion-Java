@@ -89,12 +89,19 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
         final String slotBackground = "gui/containerslot.png";
 
         final Element contentPanel = getContent().findElementById("#contentPanel");
+
+        SizeValue contentWidth = SizeValue.px((slotWidth + 2) * columns);
+
+        PanelBuilder contentPanelBuilder = new PanelBuilder();
+        contentPanelBuilder.childLayoutVertical();
+        contentPanelBuilder.width(contentWidth);
+
         PanelBuilder currentPanelBuilder = null;
 
         for (int i = 0; i < slotCount; i++) {
             if ((i % columns) == 0) {
                 if (currentPanelBuilder != null) {
-                    currentPanelBuilder.build(nifty, screen, contentPanel);
+                    contentPanelBuilder.panel(currentPanelBuilder);
                 }
                 currentPanelBuilder = null;
             }
@@ -111,10 +118,11 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
         }
 
         if (currentPanelBuilder != null) {
-            currentPanelBuilder.build(nifty, screen, contentPanel);
+            contentPanelBuilder.panel(currentPanelBuilder);
         }
+        contentPanelBuilder.build(nifty, screen, contentPanel);
 
-        contentPanel.setConstraintWidth(SizeValue.px((slotWidth + 2) * columns));
+        contentPanel.setConstraintWidth(contentWidth);
         getElement().setConstraintWidth(SizeValue.px(((slotWidth + 2) * columns) + 26 + 16));
 
         slots = new InventorySlot[slotCount];
