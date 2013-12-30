@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ This file is part of the Illarion Nifty-GUI Style.
+  ~
+  ~ Copyright © 2012 - Illarion e.V.
+  ~
+  ~ The Illarion Nifty-GUI Style is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ The Illarion Nifty-GUI Style is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with the Illarion Nifty-GUI Style.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<nifty-styles>
+    <!-- Style for the vertical scrollbar -->
+    <style id="nifty-vertical-scrollbar#panel">
+        <attributes childLayout="vertical" width="16px" align="center" focusable="true"/>
+    </style>
+
+    <style id="nifty-vertical-scrollbar#up">
+        <attributes filename="gui/scrollbar/scrollbarup.png" width="16px" height="11px"/>
+        <effect>
+            <onClick name="focus" targetElement="#parent"/>
+            <onClick name="imageOverlay" filename="gui/scrollbar/scrollbarup_pressed.png"/>
+        </effect>
+    </style>
+
+    <style id="nifty-vertical-scrollbar#down">
+        <attributes filename="gui/scrollbar/scrollbardown.png" width="16px" height="11px"/>
+        <effect>
+            <onClick name="focus" targetElement="#parent"/>
+            <onClick name="imageOverlay" filename="gui/scrollbar/scrollbardown_pressed.png"/>
+        </effect>
+    </style>
+
+    <style id="nifty-vertical-scrollbar#background">
+        <attributes filename="gui/scrollbar/scrollbarbgvert.png" width="16px" height="*"
+                    imageMode="resize:0,16,0,4,0,16,0,1,0,16,0,4" childLayout="absolute"/>
+        <effect>
+            <onClick name="focus" targetElement="#parent"/>
+        </effect>
+    </style>
+
+    <style id="nifty-vertical-scrollbar#position">
+        <attributes filename="gui/scrollbar/scrollbarvert.png" width="12px" height="46px" x="2px" y="0px"
+                    imageMode="resize:0,12,0,23,0,12,0,1,0,12,0,23"/>
+        <effect>
+            <onClick name="focus" targetElement="#parent#parent"/>
+        </effect>
+    </style>
+
+    <!-- Style for the horizontal scrollbar -->
+    <style id="nifty-horizontal-scrollbar#panel">
+        <attributes childLayout="horizontal" height="16px" align="center" focusable="true"/>
+    </style>
+
+    <style id="nifty-horizontal-scrollbar#left">
+        <attributes filename="gui/scrollbar/scrollbarleft.png" height="16px" width="11px"/>
+        <effect>
+            <onClick name="focus" targetElement="#parent"/>
+            <onClick name="imageOverlay" filename="gui/scrollbar/scrollbarleft_pressed.png" post="true"/>
+        </effect>
+    </style>
+
+    <style id="nifty-horizontal-scrollbar#right">
+        <attributes filename="gui/scrollbar/scrollbarright.png" height="16px" width="11px"/>
+        <effect>
+            <onClick name="focus" targetElement="#parent"/>
+            <onClick name="imageOverlay" filename="gui/scrollbar/scrollbarright_pressed.png" post="true"/>
+        </effect>
+    </style>
+
+    <style id="nifty-horizontal-scrollbar#background">
+        <attributes filename="gui/scrollbar/scrollbarbghor.png" height="16px" width="*"
+                    imageMode="resize:4,1,4,0,4,1,4,16,4,1,4,0" childLayout="absolute"/>
+        <effect>
+            <onClick name="focus" targetElement="#parent"/>
+        </effect>
+    </style>
+
+    <style id="nifty-horizontal-scrollbar#position">
+        <attributes filename="gui/scrollbar/scrollbarhor.png" height="12px" width="47px" x="0px" y="2px"
+                    imageMode="resize:23,1,23,0,23,1,23,12,23,1,23,0"/>
+        <effect>
+            <onClick name="focus" targetElement="#parent#parent"/>
+        </effect>
+    </style>
+</nifty-styles>

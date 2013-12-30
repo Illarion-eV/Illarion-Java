@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?scenebuilder-preview-i18n-resource uninstallView_de.properties?>
+<?scenebuilder-stylesheet applicationFrame.css?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"
+            fx:controller="illarion.download.gui.controller.UninstallController">
+    <BorderPane fx:id="footer">
+        <right>
+            <HBox spacing="10">
+                <Button fx:id="buttonCancel" onAction="#cancel" prefHeight="25.0" prefWidth="100.0"
+                        styleClass="button-gray" text="%cancel"/>
+                <Button fx:id="buttonUninstall" onAction="#uninstall" prefHeight="25.0" prefWidth="100.0"
+                        styleClass="button-red" text="%uninstall"/>
+            </HBox>
+        </right>
+    </BorderPane>
+    <BorderPane fx:id="content" prefHeight="200.0" prefWidth="200.0">
+        <center>
+            <VBox fillWidth="true" spacing="10">
+                <fx:define>
+                    <ToggleGroup fx:id="uninstallMethod"/>
+                </fx:define>
+                <padding>
+                    <Insets/>
+                </padding>
+                <Label text="%descriptionGeneral" textAlignment="LEFT" wrapText="true"/>
+                <Label text="%descriptionFeedback" textAlignment="LEFT" wrapText="true"/>
+                <HBox alignment="CENTER" VBox.vgrow="ALWAYS" spacing="20">
+                    <RadioButton fx:id="keepPlayerOption" selected="true" text="%optionKeepPlayer"
+                                 toggleGroup="$uninstallMethod"/>
+                    <RadioButton fx:id="removeAllOption" text="%optionRemoveAll"
+                                 toggleGroup="$uninstallMethod"/>
+                </HBox>
+            </VBox>
+        </center>
+        <padding>
+            <Insets bottom="10.0" top="20.0"/>
+        </padding>
+        <top>
+            <Label style="-fx-font-size: 20pt" text="%title">
+                <BorderPane.margin>
+                    <Insets bottom="10.0"/>
+                </BorderPane.margin>
+            </Label>
+        </top>
+    </BorderPane>
+</AnchorPane>

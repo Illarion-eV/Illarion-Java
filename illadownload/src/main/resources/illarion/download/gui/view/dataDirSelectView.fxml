@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?scenebuilder-preview-i18n-resource dataDirSelectView_de.properties?>
+<?scenebuilder-stylesheet applicationFrame.css?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"
+            fx:controller="illarion.download.gui.controller.DataDirSelectionController">
+    <VBox fx:id="content" fillWidth="true">
+        <fx:define>
+            <ToggleGroup fx:id="storageMethodSelect"/>
+        </fx:define>
+        <padding>
+            <Insets top="20.0"/>
+        </padding>
+        <Label style="-fx-font-size: 20pt" text="%title">
+            <VBox.margin>
+                <Insets bottom="10.0"/>
+            </VBox.margin>
+        </Label>
+        <Label text="%descriptionGeneral" wrapText="true"/>
+        <Label text="%descriptionAbsoluteRelative" wrapText="true"/>
+        <VBox alignment="BOTTOM_LEFT" fillWidth="true" VBox.vgrow="ALWAYS">
+            <padding>
+                <Insets bottom="20.0" top="20.0"/>
+            </padding>
+            <RadioButton fx:id="optionAbsolute" text="%optionAbsolute" toggleGroup="$storageMethodSelect">
+                <VBox.margin>
+                    <Insets bottom="5.0"/>
+                </VBox.margin>
+            </RadioButton>
+            <VBox fillWidth="true">
+                <padding>
+                    <Insets bottom="20.0" left="18.0"/>
+                </padding>
+                <HBox prefHeight="-1.0" prefWidth="-1.0" spacing="10.0" VBox.vgrow="NEVER">
+                    <TextField fx:id="selectedDirectory" HBox.hgrow="ALWAYS"/>
+                    <Button onAction="#browse" prefHeight="22.0" prefWidth="100.0"
+                            styleClass="button-gray" text="%browse" HBox.hgrow="NEVER"/>
+                </HBox>
+            </VBox>
+            <RadioButton fx:id="optionRelative" text="%optionRelative" toggleGroup="$storageMethodSelect"/>
+        </VBox>
+    </VBox>
+    <BorderPane fx:id="footer">
+        <right>
+            <Button alignment="CENTER_RIGHT" onAction="#nextStep" styleClass="button-green" text="%continue"
+                    prefHeight="25.0" prefWidth="80.0"/>
+        </right>
+    </BorderPane>
+</AnchorPane>

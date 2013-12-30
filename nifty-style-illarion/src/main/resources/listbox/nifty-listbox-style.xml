@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ This file is part of the Illarion Nifty-GUI Style.
+  ~
+  ~ Copyright © 2012 - Illarion e.V.
+  ~
+  ~ The Illarion Nifty-GUI Style is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ The Illarion Nifty-GUI Style is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with the Illarion Nifty-GUI Style.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<nifty-styles>
+    <style id="nifty-listbox">
+        <attributes backgroundImage="gui/listbox/listview_rahmen.png"
+                    imageMode="resize:4,2,4,12,4,2,4,2,4,2,4,12" padding="5px,4px"/>
+    </style>
+    <style id="nifty-listbox#scrollpanel">
+        <attributes focusable="true"/>
+        <effect overlay="true">
+        </effect>
+    </style>
+    <style id="nifty-listbox#bottom-right">
+        <attributes width="16px" height="16px"/>
+    </style>
+    <style id="nifty-listbox-item" base="nifty-label">
+        <attributes color="#eeef" width="*" align="left" textVAlign="center" textHAlign="left"/>
+        <interact onClick="listBoxItemClicked()"/>
+        <effect>
+            <onHover name="colorBar" color="#264d1cff" neverStopRendering="true" timeType="infinite"/>
+            <onCustom customKey="select" name="colorBar" post="false" color="#051901ff" neverStopRendering="true"
+                      timeType="infinite"/>
+            <onCustom customKey="select" name="textColor" post="false" color="#eeef" neverStopRendering="true"
+                      timeType="infinite"/>
+            <onClick name="focus" targetElement="#parent#parent"/>
+        </effect>
+    </style>
+</nifty-styles>

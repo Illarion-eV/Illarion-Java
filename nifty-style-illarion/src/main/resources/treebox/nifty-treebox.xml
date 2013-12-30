@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ This file is part of the Illarion Nifty-GUI Style.
+  ~
+  ~ Copyright © 2012 - Illarion e.V.
+  ~
+  ~ The Illarion Nifty-GUI Style is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ The Illarion Nifty-GUI Style is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with the Illarion Nifty-GUI Style.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<nifty-styles>
+    <style id="nifty-treebox-item" base="nifty-listbox-item">
+        <attributes childLayout="horizontal" height="24px"/>
+    </style>
+    <style id="nifty-treebox-item#tree-item-icon-container">
+        <attributes childLayout="center" height="24px" width="24px"/>
+    </style>
+    <style id="nifty-treebox-item#content">
+        <attributes childLayout="horizontal" height="24px"/>
+    </style>
+    <style id="nifty-treebox-item#closed">
+        <attributes filename="gui/treebox/closed.png" height="13px" width="8px"/>
+    </style>
+    <style id="nifty-treebox-item#opened">
+        <attributes filename="gui/treebox/opened.png" height="8px" width="13px"/>
+    </style>
+    <style id="nifty-treebox-item#leaf">
+        <attributes height="0px" width="0px" visible="false"/>
+    </style>
+</nifty-styles>

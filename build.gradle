@@ -1,0 +1,123 @@
+/*
+ * This file is part of the Illarion Java Applications.
+ *
+ * Copyright © 2013 - Illarion e.V.
+ *
+ * The Illarion Java Applications is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Java Applications is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Java Applications.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+apply plugin: 'idea'
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.9'
+}
+
+idea {
+    project {
+        languageLevel = '1.7'
+    }
+}
+
+allprojects { project ->
+    if (project.hasProperty('targetRepo')) {
+        project.ext.mavenRepo = "file://$targetRepo"
+    } else {
+        project.ext.mavenRepo = "file://${project.buildDir}/repo"
+    }
+
+    task gitVersion { task ->
+        def gitVersion = 'unknown'
+        def branch = 'develop'
+        def File rootDir = project.rootDir
+        for (def gitCmd in ['git', 'git.cmd']) {
+            try {
+                def procBranch = "$gitCmd rev-parse --abbrev-ref HEAD".execute(null as List, rootDir)
+                procBranch.waitFor()
+                branch = procBranch.in.text
+                procBranch.destroy()
+
+                def procVersion = "$gitCmd describe --tags HEAD".execute(null as List, rootDir)
+                procVersion.waitFor()
+                gitVersion = procVersion.in.text
+                procVersion.destroy()
+
+                break
+            } catch (e) {
+                logger.error('Failed to get version from Git', e)
+            }
+        }
+
+        def String mainVersion
+        def indexOfSeparator = gitVersion.indexOf('-')
+        if (indexOfSeparator == -1) {
+            mainVersion = gitVersion
+        } else {
+            mainVersion = gitVersion.substring(0, indexOfSeparator)
+        }
+
+        if (branch == 'master') {
+            if (indexOfSeparator > -1) {
+                throw new RuntimeException("Can't build snapshot in master branch.")
+            }
+        } else {
+            mainVersion += '-SNAPSHOT'
+        }
+
+        task.project.version = mainVersion
+        task.project.ext.fullVersion = gitVersion
+    }
+
+    project.configurations.all {
+        resolutionStrategy {
+            cacheDynamicVersionsFor 10 * 60, 'seconds'
+            cacheChangingModulesFor 0, 'seconds'
+        }
+    }
+
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath group: 'eu.appsatori', name: 'gradle-fatjar-plugin', version: '0.2-rc1'
+        classpath group: 'net.sf.proguard', name: 'proguard-gradle', version: '4.10'
+    }
+}
+
+subprojects {
+    project.group = 'org.illarion'
+
+    plugins.withType(JavaPlugin) {
+        project.sourceCompatibility = JavaVersion.VERSION_1_7
+        project.targetCompatibility = JavaVersion.VERSION_1_7
+        project.tasks.withType(JavaCompile) {
+            options.encoding = 'UTF-8'
+        }
+    }
+
+    repositories {
+        mavenCentral()
+        maven {
+            url 'http://illarion.org/media/java/maven'
+        }
+        maven {
+            url 'http://nifty-gui.sourceforge.net/nifty-maven-repo'
+        }
+        maven {
+            url 'http://oss.sonatype.org/content/repositories/releases/'
+        }
+    }
+}
