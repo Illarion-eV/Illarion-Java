@@ -44,12 +44,12 @@ allprojects { project ->
             try {
                 def procBranch = "$gitCmd rev-parse --abbrev-ref HEAD".execute(null as List, rootDir)
                 procBranch.waitFor()
-                branch = procBranch.in.text
+                branch = procBranch.in.text.trim()
                 procBranch.destroy()
 
                 def procVersion = "$gitCmd describe --tags HEAD".execute(null as List, rootDir)
                 procVersion.waitFor()
-                gitVersion = procVersion.in.text
+                gitVersion = procVersion.in.text.trim()
                 procVersion.destroy()
 
                 break
