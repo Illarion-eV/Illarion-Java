@@ -76,7 +76,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     public static final Servers DEFAULT_SERVER;
 
     static {
-        final String server = System.getProperty("illarion.server");
+        final String server = System.getProperty("illarion.server", "realserver");
         switch (server) {
             case "testserver":
                 DEFAULT_SERVER = Servers.testserver;
