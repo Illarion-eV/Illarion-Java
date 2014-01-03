@@ -18,6 +18,7 @@
  */
 package illarion.mapedit.data;
 
+import illarion.common.util.CopyrightHeader;
 import illarion.mapedit.Lang;
 import illarion.mapedit.crash.exceptions.FormatCorruptedException;
 import illarion.mapedit.data.formats.Decoder;
@@ -30,6 +31,7 @@ import org.bushe.swing.event.EventBus;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -54,6 +56,8 @@ public class MapIO {
     private static final char NEWLINE = '\n';
     private static final String VERSION_PATTERN = "V: \\d+";
     private static final java.util.Map<String, Decoder> DECODERS = new HashMap<>();
+
+    private static final CopyrightHeader COPYRIGHT_HEADER = new CopyrightHeader(80, null, null, "# ", null);
 
     static {
         DECODERS.put("2", new Version2Decoder());
@@ -178,10 +182,21 @@ public class MapIO {
             throw new IOException("Files are folders or can't be created.");
         }
 
-        final BufferedWriter tileOutput = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tileFile)));
-        final BufferedWriter itemOutput = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(itemFile)));
-        final BufferedWriter warpOutput = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(warpFile)));
-        final BufferedWriter annoOutput = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(annoFile)));
+        Charset charset = Charset.forName("ISO-8859-1");
+
+        final BufferedWriter tileOutput = new BufferedWriter(
+                new OutputStreamWriter(new FileOutputStream(tileFile), charset));
+        final BufferedWriter itemOutput = new BufferedWriter(
+                new OutputStreamWriter(new FileOutputStream(itemFile), charset));
+        final BufferedWriter warpOutput = new BufferedWriter(
+                new OutputStreamWriter(new FileOutputStream(warpFile), charset));
+        final BufferedWriter annoOutput = new BufferedWriter(
+                new OutputStreamWriter(new FileOutputStream(annoFile), charset));
+
+        COPYRIGHT_HEADER.writeTo(tileOutput);
+        COPYRIGHT_HEADER.writeTo(itemOutput);
+        COPYRIGHT_HEADER.writeTo(warpOutput);
+        COPYRIGHT_HEADER.writeTo(annoOutput);
 
         tileOutput.write(String.format("%s %d%s", HEADER_V, 2, NEWLINE));
         tileOutput.write(String.format("%s %d%s", HEADER_L, map.getZ(), NEWLINE));
