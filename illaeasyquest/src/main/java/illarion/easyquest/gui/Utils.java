@@ -18,6 +18,7 @@
  */
 package illarion.easyquest.gui;
 
+import illarion.common.util.CopyrightHeader;
 import illarion.easyquest.Lang;
 import org.apache.log4j.Logger;
 import org.pushingpixels.flamingo.api.common.icon.ImageWrapperResizableIcon;
@@ -33,6 +34,8 @@ import java.io.*;
 import java.util.Map;
 
 public final class Utils {
+
+    private static final CopyrightHeader COPYRIGHT_HEADER = new CopyrightHeader(80, "<!--", "-->", null, null);
 
     private static final Logger LOGGER = Logger.getLogger(Utils.class);
 
@@ -172,6 +175,7 @@ public final class Utils {
             }
 
             fw = new FileWriter(targetFile);
+            COPYRIGHT_HEADER.writeTo(fw);
             fw.write(quest);
 
             if (backupFile.exists()) {
