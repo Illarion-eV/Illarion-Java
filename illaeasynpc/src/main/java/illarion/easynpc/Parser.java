@@ -25,7 +25,6 @@ import illarion.easynpc.docu.DocuEntry;
 import illarion.easynpc.gui.Config;
 import illarion.easynpc.parser.*;
 import illarion.easynpc.parser.tasks.ParseScriptTask;
-import org.apache.log4j.Logger;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
 import javax.annotation.Nonnull;
@@ -37,7 +36,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 
 /**
  * This class parses a easyNPC script that contains the plain script data to a parsed script that contains the
@@ -56,17 +54,6 @@ public final class Parser implements DocuEntry {
      * The singleton instance of this class.
      */
     private static final Parser INSTANCE = new Parser();
-
-    /**
-     * The logger instance that takes care for the logging output of this class.
-     */
-    private static final Logger LOGGER = Logger.getLogger(Parser.class);
-
-    /**
-     * This pattern is used to find a string in the text.
-     */
-    @SuppressWarnings("nls")
-    private static final Pattern STRING_ENTRY = Pattern.compile("(\"[^\"]*\")", Pattern.MULTILINE);
 
     /**
      * The list of NPC types this parser knows.
@@ -119,6 +106,9 @@ public final class Parser implements DocuEntry {
         return INSTANCE;
     }
 
+    private static boolean verbose = false;
+    private static boolean quiet = false;
+
     /**
      * This function starts the parser without GUI and is used to parse some
      * scripts directly.
@@ -135,6 +125,16 @@ public final class Parser implements DocuEntry {
         }
 
         for (final String arg : args) {
+            switch (arg) {
+                case "-v":
+                case "--verbose":
+                    verbose = true;
+                    continue;
+                case "-q":
+                case "--quiet":
+                    quiet = true;
+                    continue;
+            }
             final File sourceFile = new File(arg);
             if (sourceFile.exists() && sourceFile.isFile()) {
                 parseScript(sourceFile);
@@ -167,20 +167,27 @@ public final class Parser implements DocuEntry {
         final EasyNpcScript script = new EasyNpcScript(file);
         final ParsedNpc parsedNPC = getInstance().parse(script);
 
-        System.out.print("File \"" + file.getName() + "\" parsed - Encoding: " + script.getScriptEncoding().name() +
-                                 " - Errors: ");
+        StringBuilder output = new StringBuilder();
+        output.append("File \"").append(file.getName()).append("\" parsed - Encoding: ")
+                .append(script.getScriptEncoding().name()).append(" - Errors: ");
         if (parsedNPC.hasErrors()) {
-            System.out.println(Integer.toString(parsedNPC.getErrorCount()));
+            output.append(parsedNPC.getErrorCount()).append("\n");
             final int errorCount = parsedNPC.getErrorCount();
             for (int i = 0; i < errorCount; ++i) {
                 final ParsedNpc.Error error = parsedNPC.getError(i);
-                System.out.println(
-                        "\tLine " + Integer.toString(error.getLine().getLineNumber()) + ": " + error.getMessage());
+                output.append("\tLine ").append(Integer.toString(error.getLine().getLineNumber())).append(": ")
+                        .append(error.getMessage()).append("\n");
             }
-            System.out.println();
-            return;
+            if (!quiet) {
+                output.setLength(output.length() - 1);
+                System.err.println(output.toString());
+            }
+            System.exit(-1);
         }
-        System.out.println("none");
+        if (verbose) {
+            output.append("none");
+            System.out.println(output.toString());
+        }
 
         final ScriptWriter writer = new ScriptWriter();
         writer.setTargetLanguage(ScriptWriter.ScriptWriterTarget.LUA);
@@ -193,7 +200,7 @@ public final class Parser implements DocuEntry {
         outputWriter.close();
 
         writer.setTargetLanguage(ScriptWriter.ScriptWriterTarget.EasyNPC);
-        outputWriter = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+        outputWriter = new OutputStreamWriter(new FileOutputStream(file), "ISO-8859-1");
         writer.setWritingTarget(outputWriter);
         writer.write();
         outputWriter.close();
@@ -256,7 +263,6 @@ public final class Parser implements DocuEntry {
     @Nonnull
     @SuppressWarnings("nls")
     public ParsedNpc parse(@Nonnull final EasyNpcScript source) {
-        final long start = System.currentTimeMillis();
         final int count = source.getEntryCount();
         final ParsedNpc resultNpc = new ParsedNpc();
 
@@ -276,14 +282,12 @@ public final class Parser implements DocuEntry {
             }
         }
 
-        LOGGER.debug("Parsing the script took " + Long.toString(System.currentTimeMillis() - start) + "ms");
-
         return resultNpc;
     }
 
     public void enlistHighlightedWords(final TokenMap map) {
-        for (int parserIdx = 0; parserIdx < types.length; ++parserIdx) {
-            types[parserIdx].enlistHighlightedWords(map);
+        for (NpcType type : types) {
+            type.enlistHighlightedWords(map);
         }
     }
 }

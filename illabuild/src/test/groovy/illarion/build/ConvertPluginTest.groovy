@@ -19,14 +19,14 @@
 package illarion.build
 
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaPlugin
-import org.gradle.api.tasks.Copy
 import org.gradle.testfixtures.ProjectBuilder
-import org.junit.Before
-import org.junit.Test
+import org.testng.annotations.BeforeTest
+import org.testng.annotations.Test
 
-import static org.hamcrest.Matchers.*
-import static org.junit.Assert.*
+import static org.hamcrest.MatcherAssert.assertThat
+import static org.hamcrest.Matchers.instanceOf
+import static org.hamcrest.Matchers.is
+import static org.testng.Assert.assertTrue
 
 /**
  * This application is used to test of the convert plugin is properly applied.
@@ -35,7 +35,7 @@ import static org.junit.Assert.*
 class ConvertPluginTest {
     private Project project
 
-    @Before
+    @BeforeTest
     public void setUp() {
         project = ProjectBuilder.builder().build();
     }
@@ -44,7 +44,7 @@ class ConvertPluginTest {
     public void applyTest() {
         project.plugins.apply(ConvertPlugin)
 
-        assertTrue("Convert plugin not present", project.plugins.hasPlugin(ConvertPlugin))
+        assertTrue(project.plugins.hasPlugin(ConvertPlugin), "Convert plugin not present")
         assertThat("Resource task", project.tasks.getByName("convertResources"), is(instanceOf(ResourceConverter)))
         assertThat("Converter convention",
                 project.convention.plugins.get("converter"), is(instanceOf(ConvertPluginConvention)))
@@ -53,6 +53,6 @@ class ConvertPluginTest {
     @Test
     public void applyStringTest() {
         project.plugins.apply('convert')
-        assertTrue("Convert plugin not present", project.plugins.hasPlugin(ConvertPlugin))
+        assertTrue(project.plugins.hasPlugin(ConvertPlugin), "Convert plugin not present")
     }
 }

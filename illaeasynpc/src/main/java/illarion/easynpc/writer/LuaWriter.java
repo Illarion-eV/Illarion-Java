@@ -18,6 +18,7 @@
  */
 package illarion.easynpc.writer;
 
+import illarion.common.util.CopyrightHeader;
 import illarion.easynpc.ParsedNpc;
 import illarion.easynpc.Parser;
 import illarion.easynpc.data.CharacterLanguage;
@@ -130,6 +131,12 @@ public final class LuaWriter {
      */
     @SuppressWarnings("nls")
     private static final String setUseMessageCode = "mainNPC:setUseMessage(\"%1$s\", \"%2$s\");";
+
+    /**
+     * The copyright header of the LUA writer.
+     */
+    @Nonnull
+    private static final CopyrightHeader COPYRIGHT_HEADER = new CopyrightHeader(80, "--[[", "]]", null, null);
 
     /**
      * A flag used to check if the introduction part for the talkingNPC is
@@ -359,6 +366,7 @@ public final class LuaWriter {
 
         switch (stage) {
             case Header:
+                COPYRIGHT_HEADER.writeTo(target);
                 target.write(commentSepLine);
                 target.write(NL);
 

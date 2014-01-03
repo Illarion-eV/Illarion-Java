@@ -19,6 +19,7 @@
 package illarion.easynpc;
 
 import illarion.easynpc.gui.Editor;
+import illarion.easynpc.writer.EasyNpcWriter;
 
 import javax.annotation.Nonnull;
 import java.io.*;
@@ -365,7 +366,15 @@ public final class EasyNpcScript {
             } else if (line.startsWith(LUA_COMMENT_LEAD)) {
                 if (currentlyCommentBlock) {
                     final EasyNpcScript.Line lastLine = entries.remove(entries.size() - 1);
-                    entries.add(new EasyNpcScript.Line(lastLine.getLineNumber(), lastLine.getLine() + NEW_LINE + line));
+                    String newLine = lastLine.getLine() + NEW_LINE + line;
+                    if (EasyNpcWriter.COPYRIGHT_HEADER.isLicenseText(newLine)) {
+                        currentlyCommentBlock = false;
+                        currentlyEmptyBlock = false;
+                        continue;
+                    } else {
+                        entries.add(
+                                new EasyNpcScript.Line(lastLine.getLineNumber(), lastLine.getLine() + NEW_LINE + line));
+                    }
                 } else {
                     entries.add(new EasyNpcScript.Line(lineNumber, line));
                 }

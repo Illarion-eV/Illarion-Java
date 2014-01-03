@@ -29,6 +29,7 @@ dependencies {
     compile group: 'xpp3', name: 'xpp3', version: '1.1.4c'
     compile group: 'org.bushe', name: 'eventbus', version: '1.4'
     compile group: 'org.mantisbt', name: 'mantisconnect', version: '1.1.2.0'
+    testCompile group: 'org.testng', name: 'testng', version: '6.8.7'
 }
 
 processResources.dependsOn {
@@ -49,16 +50,16 @@ task downloadSkills {
 jar {
     dependsOn { gitVersion }
     manifest {
-        attributes     \
-            'Permissions': 'all-permissions',    \
-            'Codebase': 'illarion.org',    \
-            'Trusted-Library': true,    \
-            'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),    \
-            'Built-By': System.getProperty('user.name'),     \
-            'Built-JDK': System.getProperty('java.version'),     \
-            'Implementation-Title': 'Illarion Common Library',     \
-            'Implementation-Vendor': 'Illarion e.V.',    \
-            'Implementation-Version': project.ext.fullVersion
+        attributes      \
+             'Permissions': 'all-permissions',     \
+             'Codebase': 'illarion.org',     \
+             'Trusted-Library': true,     \
+             'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),     \
+             'Built-By': System.getProperty('user.name'),      \
+             'Built-JDK': System.getProperty('java.version'),      \
+             'Implementation-Title': 'Illarion Common Library',      \
+             'Implementation-Vendor': 'Illarion e.V.',     \
+             'Implementation-Version': project.ext.fullVersion
     }
 }
 

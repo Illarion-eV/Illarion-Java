@@ -18,6 +18,7 @@
  */
 package illarion.easynpc.writer;
 
+import illarion.common.util.CopyrightHeader;
 import illarion.easynpc.ParsedNpc;
 import illarion.easynpc.Parser;
 import illarion.easynpc.data.CharacterLanguage;
@@ -78,18 +79,27 @@ public final class EasyNpcWriter {
     /**
      * The header of auto comment.
      */
+    @Nonnull
     @SuppressWarnings("nls")
     public static final String AC_HEADER = "------------------------------------------------------------------------------AC\n";
 
     /**
      * The new line string that is used by default for this scripts.
      */
+    @Nonnull
     public static final String NL = "\n"; //$NON-NLS-1$
 
     /**
      * The singleton instance of this class.
      */
+    @Nonnull
     private static final EasyNpcWriter INSTANCE = new EasyNpcWriter();
+
+    /**
+     * The copyright header of the easyNPC writer.
+     */
+    @Nonnull
+    public static final CopyrightHeader COPYRIGHT_HEADER = new CopyrightHeader(80, null, null, "-- ", null);
 
     /**
      * The private default constructor to avoid any instances but the singleton
@@ -305,6 +315,7 @@ public final class EasyNpcWriter {
 
         switch (stage) {
             case header:
+                COPYRIGHT_HEADER.writeTo(target);
                 target.write(AC_HEADER);
 
                 target.write(String.format("-- %1$-10s%2$-49s%3$15s --%n", "NPC Name:", source.getNpcName(),

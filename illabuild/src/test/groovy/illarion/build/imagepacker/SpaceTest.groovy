@@ -18,8 +18,9 @@
  */
 package illarion.build.imagepacker
 
-import org.junit.Assert
-import org.junit.Test
+import org.testng.annotations.Test
+
+import static org.testng.Assert.*;
 
 /**
  * The test class for the {@link Space} class.
@@ -30,40 +31,40 @@ class SpaceTest {
     @Test
     void parametersTest() {
         def space = new Space(1, 2, 3, 4);
-        Assert.assertEquals("Applying parameter x failed", space.x, 1)
-        Assert.assertEquals("Applying parameter x failed", space.y, 2)
-        Assert.assertEquals("Applying parameter x failed", space.height, 3)
-        Assert.assertEquals("Applying parameter x failed", space.width, 4)
+        assertEquals(space.x, 1, "Applying parameter x failed")
+        assertEquals(space.y, 2, "Applying parameter x failed")
+        assertEquals(space.height, 3, "Applying parameter x failed")
+        assertEquals(space.width, 4, "Applying parameter x failed")
     }
 
     @Test
     void sizeTest() {
         def space = new Space(1, 2, 3, 4);
-        Assert.assertEquals("Calculation of the size failed.", space.size, 12)
+        assertEquals(space.size, 12, "Calculation of the size failed.")
     }
 
     @Test
     void fitInsideTest() {
         def spaces = [new Space(0, 0, 1, 1), new Space(0, 0, 1, 2), new Space(0, 0, 2, 1), new Space(0, 0, 2, 2)]
 
-        Assert.assertTrue(spaces[0].isFittingInside(spaces[0]))
-        Assert.assertFalse(spaces[0].isFittingInside(spaces[1]))
-        Assert.assertFalse(spaces[0].isFittingInside(spaces[2]))
-        Assert.assertFalse(spaces[0].isFittingInside(spaces[3]))
+        assertTrue(spaces[0].isFittingInside(spaces[0]))
+        assertFalse(spaces[0].isFittingInside(spaces[1]))
+        assertFalse(spaces[0].isFittingInside(spaces[2]))
+        assertFalse(spaces[0].isFittingInside(spaces[3]))
 
-        Assert.assertTrue(spaces[1].isFittingInside(spaces[0]))
-        Assert.assertTrue(spaces[1].isFittingInside(spaces[1]))
-        Assert.assertFalse(spaces[1].isFittingInside(spaces[2]))
-        Assert.assertFalse(spaces[1].isFittingInside(spaces[3]))
+        assertTrue(spaces[1].isFittingInside(spaces[0]))
+        assertTrue(spaces[1].isFittingInside(spaces[1]))
+        assertFalse(spaces[1].isFittingInside(spaces[2]))
+        assertFalse(spaces[1].isFittingInside(spaces[3]))
 
-        Assert.assertTrue(spaces[2].isFittingInside(spaces[0]))
-        Assert.assertFalse(spaces[2].isFittingInside(spaces[1]))
-        Assert.assertTrue(spaces[2].isFittingInside(spaces[2]))
-        Assert.assertFalse(spaces[2].isFittingInside(spaces[3]))
+        assertTrue(spaces[2].isFittingInside(spaces[0]))
+        assertFalse(spaces[2].isFittingInside(spaces[1]))
+        assertTrue(spaces[2].isFittingInside(spaces[2]))
+        assertFalse(spaces[2].isFittingInside(spaces[3]))
 
-        Assert.assertTrue(spaces[3].isFittingInside(spaces[0]))
-        Assert.assertTrue(spaces[3].isFittingInside(spaces[1]))
-        Assert.assertTrue(spaces[3].isFittingInside(spaces[2]))
-        Assert.assertTrue(spaces[3].isFittingInside(spaces[3]))
+        assertTrue(spaces[3].isFittingInside(spaces[0]))
+        assertTrue(spaces[3].isFittingInside(spaces[1]))
+        assertTrue(spaces[3].isFittingInside(spaces[2]))
+        assertTrue(spaces[3].isFittingInside(spaces[3]))
     }
 }

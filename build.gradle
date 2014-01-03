@@ -106,6 +106,9 @@ subprojects {
         project.tasks.withType(JavaCompile) {
             options.encoding = 'UTF-8'
         }
+        project.test {
+            useTestNG()
+        }
     }
 
     repositories {
