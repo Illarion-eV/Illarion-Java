@@ -50,7 +50,7 @@ task createFileLists {
         listFile.write("")
         filesTree.visit { file ->
             if (file.relativePath.toString().endsWith('.lua')) {
-                listFile << "template/$directory/$file.relativePath\n"
+                listFile << "$file.relativePath\n"
             }
         }
     }
