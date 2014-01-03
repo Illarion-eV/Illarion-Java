@@ -106,7 +106,10 @@ public class MapIO {
         final BufferedReader warpInput = new BufferedReader(new InputStreamReader(new FileInputStream(warpFile)));
 
         final String version;
-        final String versionLine = tileInput.readLine();
+        String versionLine = tileInput.readLine();
+        while (versionLine.startsWith("# ")) {
+            versionLine = tileInput.readLine();
+        }
         final Decoder decoder;
         if (Pattern.matches(VERSION_PATTERN, versionLine)) {
             version = versionLine.substring(3).trim();
