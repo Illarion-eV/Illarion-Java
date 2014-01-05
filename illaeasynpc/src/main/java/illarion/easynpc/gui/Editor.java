@@ -42,7 +42,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.File;
+import java.nio.file.Path;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -78,7 +78,7 @@ public final class Editor extends RTextScrollPane {
     private ParsedNpc errorNpc;
 
     @Nullable
-    private File loadScriptFile;
+    private Path loadScriptFile;
 
     /**
      * The parsed version of this script.
@@ -117,8 +117,6 @@ public final class Editor extends RTextScrollPane {
         }
 
         setViewportView(editor);
-
-        final Editor parentEditor = this;
 
         timer = new Timer(1000, new ActionListener() {
             @SuppressWarnings("synthetic-access")
@@ -200,7 +198,7 @@ public final class Editor extends RTextScrollPane {
         if (loadScriptFile == null) {
             return "New Script";
         }
-        return loadScriptFile.getName();
+        return loadScriptFile.getFileName().toString();
     }
 
     /**
@@ -277,7 +275,7 @@ public final class Editor extends RTextScrollPane {
      * @return the script file that is load in this editor
      */
     @Nullable
-    public File getScriptFile() {
+    public Path getScriptFile() {
         return loadScriptFile;
     }
 
@@ -326,7 +324,7 @@ public final class Editor extends RTextScrollPane {
         savedSinceLastChange = false;
     }
 
-    public void setLoadScriptFile(@Nullable final File file) {
+    public void setLoadScriptFile(@Nullable final Path file) {
         if (file != null) {
             loadScriptFile = file;
         }

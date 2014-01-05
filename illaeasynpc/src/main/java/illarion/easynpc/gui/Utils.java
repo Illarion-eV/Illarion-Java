@@ -37,6 +37,10 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 /**
  * A small set of static utility functions that help at some points.
@@ -92,7 +96,7 @@ final class Utils {
      *
      * @param file the file that is the source of this script
      */
-    protected static void openScript(@Nonnull final File file) {
+    protected static void openScript(@Nonnull final Path file) {
         try {
             final int editorIndex = MainFrame.getInstance().alreadyOpen(file);
             if (editorIndex > -1) {
@@ -101,7 +105,7 @@ final class Utils {
             }
             final EasyNpcScript easyScript = new EasyNpcScript(file);
             MainFrame.getInstance().addNewScript().loadScript(easyScript);
-            MainFrame.getInstance().setCurrentTabTitle(file.getName());
+            MainFrame.getInstance().setCurrentTabTitle(file.getFileName().toString());
             Config.getInstance().addLastOpenedFile(file);
         } catch (@Nonnull final IOException e1) {
             LOGGER.error("Reading the script failed.", e1); //$NON-NLS-1$
@@ -152,7 +156,7 @@ final class Utils {
      */
     protected static void saveEasyNPC(@Nonnull final Editor editor) {
         final String script = editor.getScriptText();
-        final File targetFile = editor.getScriptFile();
+        final Path targetFile = editor.getScriptFile();
         if (targetFile == null) {
             selectAndSaveEasyNPC(editor);
             return;
@@ -256,7 +260,7 @@ final class Utils {
                 fileDiag.showOpenDialog(MainFrame.getInstance());
         if (fileReturn == JFileChooser.APPROVE_OPTION) {
             final File selectedFile = fileDiag.getSelectedFile();
-            openScript(selectedFile);
+            openScript(selectedFile.toPath());
         }
     }
 
@@ -282,7 +286,8 @@ final class Utils {
             }
         });
         fileDiag.setCurrentDirectory(new File(Config.getInstance().getEasyNpcFolder()));
-        fileDiag.setSelectedFile(editor.getScriptFile());
+        Path scriptFile = editor.getScriptFile();
+        fileDiag.setSelectedFile(scriptFile == null ? null : scriptFile.toFile());
         final int fileReturn = fileDiag.showSaveDialog(MainFrame.getInstance());
         if (fileReturn == JFileChooser.APPROVE_OPTION) {
             String targetFile = fileDiag.getSelectedFile().getAbsolutePath();
@@ -290,10 +295,10 @@ final class Utils {
                 targetFile += ".npc";
             }
 
-            final File realTargetFile = new File(targetFile);
+            final Path realTargetFile = Paths.get(targetFile);
             saveEasyNPCImpl(script, realTargetFile);
             editor.setLoadScriptFile(realTargetFile);
-            MainFrame.getInstance().setTabTitle(editor, realTargetFile.getName());
+            MainFrame.getInstance().setTabTitle(editor, realTargetFile.getFileName().toString());
         }
         editor.saved();
     }
@@ -377,30 +382,29 @@ final class Utils {
      * @param script     the text of the script
      * @param targetFile the file that is the target of this writing operation
      */
-    private static void saveEasyNPCImpl(@Nonnull final String script, @Nonnull final File targetFile) {
-        final File backupFile = new File(targetFile.getAbsolutePath() + ".bak"); //$NON-NLS-1$
+    private static void saveEasyNPCImpl(@Nonnull final String script, @Nonnull final Path targetFile) {
         try {
-            if (backupFile.exists()) {
-                backupFile.delete();
-            }
-            if (targetFile.exists()) {
-                targetFile.renameTo(backupFile);
-            }
-
+            Path backupFile = Files.createTempFile(targetFile.getParent(), "npc_", ".bak");
             final EasyNpcScript easyScript = new EasyNpcScript();
-            easyScript.readNPCScript(script);
-            easyScript.writeNPCScript(targetFile);
 
-            if (backupFile.exists()) {
-                backupFile.delete();
+            if (Files.isReadable(targetFile)) {
+                Files.copy(targetFile, backupFile, StandardCopyOption.REPLACE_EXISTING);
+            } else {
+                Files.deleteIfExists(backupFile);
+                backupFile = null;
+            }
+            try {
+                easyScript.readNPCScript(script);
+                easyScript.writeNPCScript(targetFile);
+            } catch (@Nonnull final Exception e) {
+                if (backupFile != null) {
+                    Files.copy(backupFile, targetFile, StandardCopyOption.REPLACE_EXISTING);
+                }
+            }
+            if (backupFile != null) {
+                Files.deleteIfExists(backupFile);
             }
         } catch (@Nonnull final Exception e) {
-            if (backupFile.exists()) {
-                if (targetFile.exists()) {
-                    targetFile.delete();
-                }
-                backupFile.renameTo(targetFile);
-            }
             LOGGER.error("Writing the easyNPC Script failed.", e); //$NON-NLS-1$
         }
     }

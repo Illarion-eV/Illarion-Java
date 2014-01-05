@@ -29,8 +29,12 @@ import org.fife.ui.rsyntaxtextarea.TokenMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.*;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -135,23 +139,18 @@ public final class Parser implements DocuEntry {
                     quiet = true;
                     continue;
             }
-            final File sourceFile = new File(arg);
-            if (sourceFile.exists() && sourceFile.isFile()) {
+            final Path sourceFile = Paths.get(arg);
+            if (!Files.isDirectory(sourceFile) && Files.isReadable(sourceFile)) {
                 parseScript(sourceFile);
-            } else if (sourceFile.exists() && sourceFile.isDirectory()) {
-                final String[] fileNames = sourceFile.list(new FilenameFilter() {
-                    private static final String fileEnding = ".npc";
-
-                    @Override
-                    public boolean accept(final File dir, @Nonnull final String name) {
-                        return name.endsWith(fileEnding);
+            } else if (Files.isDirectory(sourceFile)) {
+                Files.walkFileTree(sourceFile, EnumSet.noneOf(FileVisitOption.class), 1, new SimpleFileVisitor<Path>() {
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                        if (file.toUri().toString().endsWith(".npc")) {
+                            parseScript(file);
+                        }
+                        return FileVisitResult.CONTINUE;
                     }
                 });
-
-                for (final String fileName : fileNames) {
-                    final File targetFile = new File(sourceFile.getPath() + File.separator + fileName);
-                    parseScript(targetFile);
-                }
             }
         }
     }
@@ -163,12 +162,12 @@ public final class Parser implements DocuEntry {
      * @throws IOException in case reading the script fails
      */
     @SuppressWarnings("nls")
-    public static void parseScript(@Nonnull final File file) throws IOException {
+    public static void parseScript(@Nonnull final Path file) throws IOException {
         final EasyNpcScript script = new EasyNpcScript(file);
         final ParsedNpc parsedNPC = getInstance().parse(script);
 
         StringBuilder output = new StringBuilder();
-        output.append("File \"").append(file.getName()).append("\" parsed - Encoding: ")
+        output.append("File \"").append(file.getFileName().toString()).append("\" parsed - Encoding: ")
                 .append(script.getScriptEncoding().name()).append(" - Errors: ");
         if (parsedNPC.hasErrors()) {
             output.append(parsedNPC.getErrorCount()).append("\n");
@@ -190,20 +189,22 @@ public final class Parser implements DocuEntry {
         }
 
         final ScriptWriter writer = new ScriptWriter();
-        writer.setTargetLanguage(ScriptWriter.ScriptWriterTarget.LUA);
         writer.setSource(parsedNPC);
-        final File luaTargetFile = new File(
-                file.getParentFile().getParent() + File.separator + parsedNPC.getLuaFilename());
-        Writer outputWriter = new OutputStreamWriter(new FileOutputStream(luaTargetFile), "ISO-8859-1");
-        writer.setWritingTarget(outputWriter);
-        writer.write();
-        outputWriter.close();
+
+        writer.setTargetLanguage(ScriptWriter.ScriptWriterTarget.LUA);
+        final Path luaTargetFile = file.getParent().resolveSibling(parsedNPC.getLuaFilename());
+        try (Writer outputWriter = Files.newBufferedWriter(luaTargetFile, EasyNpcScript.DEFAULT_CHARSET)) {
+            writer.setWritingTarget(outputWriter);
+            writer.write();
+            outputWriter.flush();
+        }
 
         writer.setTargetLanguage(ScriptWriter.ScriptWriterTarget.EasyNPC);
-        outputWriter = new OutputStreamWriter(new FileOutputStream(file), "ISO-8859-1");
-        writer.setWritingTarget(outputWriter);
-        writer.write();
-        outputWriter.close();
+        try (Writer outputWriter = Files.newBufferedWriter(file, EasyNpcScript.DEFAULT_CHARSET)) {
+            writer.setWritingTarget(outputWriter);
+            writer.write();
+            outputWriter.flush();
+        }
     }
 
     @SuppressWarnings("nls")
