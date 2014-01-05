@@ -75,6 +75,7 @@ public class CopyrightHeader {
                     resultBuilder.append(line.trim());
                     resultBuilder.append(' ');
                 }
+                resultBuilder.setLength(resultBuilder.length() - 1);
                 int index;
                 while ((index = resultBuilder.indexOf("{NL}")) != -1) {
                     resultBuilder.replace(index, index + 4, "\n");
@@ -171,18 +172,18 @@ public class CopyrightHeader {
             int lineStartIndex = 0;
             int lineEndIndex = line.length();
             if (commentLineStart != null) {
-                if (!line.startsWith(commentLineStart)) {
+                if (!line.startsWith(commentLineStart.trim())) {
                     return false;
                 }
                 lineStartIndex = commentLineStart.length();
             }
             if (commentLineEnd != null) {
-                if (!line.endsWith(commentLineEnd)) {
+                if (!line.endsWith(commentLineEnd.trim())) {
                     return false;
                 }
                 lineEndIndex = line.length() - commentLineEnd.length();
             }
-            if (lineStartIndex != lineEndIndex) {
+            if (lineStartIndex < lineEndIndex) {
                 licenseText.append(line.substring(lineStartIndex, lineEndIndex).trim());
             }
             licenseText.append(' ');
