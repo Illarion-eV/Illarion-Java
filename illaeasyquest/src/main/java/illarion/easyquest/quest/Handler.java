@@ -18,36 +18,39 @@
  */
 package illarion.easyquest.quest;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 
 @SuppressWarnings("serial")
 public class Handler implements Serializable {
 
-    @Nullable
+    @Nonnull
     private String type;
-    @Nullable
+    @Nonnull
     private Object[] parameters;
 
     public Handler() {
-        type = null;
-        parameters = null;
     }
 
-    public void setType(@Nullable String type) {
+    public Handler(@Nonnull final String type, @Nonnull final Object... parameters) {
+        this.type = type;
+        this.parameters = parameters;
+    }
+
+    public void setParameters(@Nonnull final Object[] parameters) {
+        this.parameters = parameters;
+    }
+
+    public void setType(@Nonnull final String type) {
         this.type = type;
     }
 
-    @Nullable
+    @Nonnull
     public String getType() {
         return type;
     }
 
-    public void setParameters(@Nullable Object[] parameters) {
-        this.parameters = parameters;
-    }
-
-    @Nullable
+    @Nonnull
     public Object[] getParameters() {
         return parameters;
     }

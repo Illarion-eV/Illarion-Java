@@ -19,6 +19,7 @@
 include "illabuild"
 include "illaclient"
 include "illacommon"
+include "illacompiler"
 include "illadownload"
 include "illaeasynpc"
 include "illaeasyquest"
@@ -41,6 +42,9 @@ rootProject.children.each {
             break;
         case "illacommon":
             it.name = "common";
+            break;
+        case "illacompiler":
+            it.name = "compiler";
             break;
         case "illadownload":
             it.name = "download";

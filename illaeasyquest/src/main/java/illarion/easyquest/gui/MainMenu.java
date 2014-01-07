@@ -31,6 +31,7 @@ import javax.annotation.Nullable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.nio.file.Path;
 
 final class MainMenu extends RibbonApplicationMenu {
 
@@ -66,7 +67,7 @@ final class MainMenu extends RibbonApplicationMenu {
             workingEntries[entryIndex] = new RibbonApplicationMenuEntrySecondary(
                     Utils.getResizableIconFromResource("source.png"), openFile.getName(), new ActionListener() {
                 @Nullable
-                private final File fileToOpen = openFile;
+                private final Path fileToOpen = openFile.toPath();
 
                 @Override
                 public void actionPerformed(final ActionEvent e) {

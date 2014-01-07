@@ -18,11 +18,12 @@
  */
 package illarion.easyquest.gui;
 
-import com.mxgraph.io.mxCodec;
 import com.mxgraph.io.mxCodecRegistry;
 import com.mxgraph.io.mxObjectCodec;
 import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.model.mxICell;
+import com.mxgraph.model.mxIGraphModel;
 import com.mxgraph.swing.handler.mxKeyboardHandler;
 import com.mxgraph.swing.handler.mxRubberband;
 import com.mxgraph.swing.mxGraphComponent;
@@ -33,22 +34,27 @@ import com.mxgraph.view.mxGraphSelectionModel;
 import com.mxgraph.view.mxStylesheet;
 import illarion.easyquest.EditorKeyboardHandler;
 import illarion.easyquest.Lang;
-import illarion.easyquest.quest.*;
-import org.w3c.dom.Document;
+import illarion.easyquest.QuestIO;
+import illarion.easyquest.quest.Position;
+import illarion.easyquest.quest.Status;
+import illarion.easyquest.quest.Trigger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
-import java.util.*;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("serial")
 public final class Editor extends mxGraphComponent {
 
     @Nullable
-    private File questFile;
+    private Path questFile;
 
     private boolean savedSinceLastChange = false;
 
@@ -210,15 +216,25 @@ public final class Editor extends mxGraphComponent {
     }
 
     public void setQuestID(final int questID) {
-        this.questID = questID;
+        if (this.questID != questID) {
+            this.questID = questID;
+            mxIGraphModel model = getGraph().getModel();
+            model.beginUpdate();
+            try {
+                final mxICell root = (mxCell) model.getRoot();
+                root.setValue(questID);
+            } finally {
+                model.endUpdate();
+            }
+        }
     }
 
     @Nullable
-    public File getQuestFile() {
+    public Path getQuestFile() {
         return questFile;
     }
 
-    public void setQuestFile(@Nullable final File file) {
+    public void setQuestFile(@Nullable final Path file) {
         if (file != null) {
             questFile = file;
         }
@@ -237,183 +253,20 @@ public final class Editor extends mxGraphComponent {
     }
 
     @Nonnull
-    public static Editor loadQuest(@Nonnull final String quest) {
-        final Graph graph = new Graph();
+    public static Editor loadQuest(@Nullable final Path quest) {
+        mxIGraphModel model;
+        if (quest == null) {
+            model = new mxGraphModel();
+        } else {
+            try {
+                model = QuestIO.loadGraphModel(quest);
+            } catch (IOException e) {
+                model = new mxGraphModel();
+            }
+        }
+        final Graph graph = new Graph(model);
         setup(graph);
-        if (!quest.isEmpty()) {
-            final Document document = mxXmlUtils.parseXml(quest);
-            final mxCodec codec = new mxCodec(document);
-            codec.decode(document.getDocumentElement(), graph.getModel());
-        }
         return new Editor(graph);
-    }
-
-    public String getQuestXML() {
-        getGraph().getModel().beginUpdate();
-        try {
-            final mxICell root = (mxCell) getGraph().getModel().getRoot();
-            root.setValue(questID);
-        } finally {
-            getGraph().getModel().endUpdate();
-        }
-
-        final mxCodec codec = new mxCodec();
-        return mxXmlUtils.getXml(codec.encode(getGraph().getModel()));
-    }
-
-    @Nonnull
-    public Map<String, String> getQuestLua(final String questName) {
-        String questtxt = "";
-        final Map<String, String> quest = new HashMap<>();
-
-        final Graph g = (Graph) getGraph();
-        final Object[] edges = g.getChildEdges(g.getDefaultParent());
-
-        int i = 1;
-        for (final Object obj : edges) {
-            final mxCell edge = (mxCell) obj;
-            final Trigger trigger = (Trigger) edge.getValue();
-            final TriggerTemplate template = TriggerTemplates.getInstance().getTemplate(trigger.getType());
-
-            final String scriptName = "trigger" + i;
-            final mxICell source = edge.getSource();
-            final mxICell target = edge.getTarget();
-            final Status sourceState = (Status) source.getValue();
-            final Status targetState = (Status) target.getValue();
-            final String sourceId = sourceState.isStart() ? "0" : source.getId();
-            final String targetId = targetState.isStart() ? "0" : target.getId();
-            final Object[] parameters = trigger.getParameters();
-            final Handler[] handlers = targetState.getHandlers();
-            final Collection<String> handlerTypes = new HashSet<>();
-            final Condition[] conditions = trigger.getConditions();
-
-            final StringBuilder handlerCode = new StringBuilder();
-            for (final Handler handler : handlers) {
-                final String type = handler.getType();
-                final Object[] handlerParameters = handler.getParameters();
-                final HandlerTemplate handlerTemplate = HandlerTemplates.getInstance().getTemplate(type);
-                final int playerIndex = handlerTemplate.getPlayerIndex();
-
-                handlerTypes.add(type);
-
-                handlerCode.append("    handler.").append(type.toLowerCase()).append('.').append(type).append('(');
-                if (handlerParameters.length > 0) {
-                    if (playerIndex == 0) {
-                        handlerCode.append("PLAYER, ");
-                    }
-                    handlerCode
-                            .append(exportParameter(handlerParameters[0], handlerTemplate.getParameter(0).getType()));
-
-                    for (int j = 1; j < handlerParameters.length; ++j) {
-                        if (playerIndex == j) {
-                            handlerCode.append(", PLAYER");
-                        }
-                        handlerCode.append(", ").append(exportParameter(handlerParameters[j],
-                                                                        handlerTemplate.getParameter(j).getType()));
-                    }
-                }
-                handlerCode.append("):execute()\n");
-            }
-
-            final StringBuilder conditionCode = new StringBuilder();
-            for (final Condition condition : conditions) {
-                final String type = condition.getType();
-                final Object[] conditionParameters = condition.getParameters();
-                final ConditionTemplate conditionTemplate = ConditionTemplates.getInstance().getTemplate(type);
-                String conditionString = conditionTemplate.getCondition();
-                for (int j = 0; j < conditionParameters.length; ++j) {
-                    final Object param = conditionParameters[j];
-                    final String paramName = conditionTemplate.getParameter(j).getName();
-                    final String paramType = conditionTemplate.getParameter(j).getType();
-                    String operator = null;
-                    String value = null;
-                    if ("INTEGERRELATION".equals(paramType)) {
-                        final IntegerRelation ir = (IntegerRelation) param;
-                        value = String.valueOf(ir.getInteger());
-                        operator = ir.getRelation().toLua();
-                    }
-                    conditionString = conditionString.replaceAll("OPERATOR_" + j, operator)
-                            .replaceAll(paramName, value);
-                }
-                if (conditionCode.length() > 0) {
-                    conditionCode.append("   and ");
-                }
-                conditionCode.append(conditionString).append('\n');
-            }
-            if (conditionCode.length() == 0) {
-                conditionCode.append("true\n");
-            }
-
-            StringBuilder t = new StringBuilder();
-            for (final String type : handlerTypes) {
-                t.append("require(\"handler.").append(type.toLowerCase()).append("\")\n");
-            }
-            t.append(template.getHeader());
-            t.append("module(\"questsystem.").append(questName).append('.').append(scriptName)
-                    .append("\", package.seeall)\n");
-            t.append('\n');
-            t.append("local QUEST_NUMBER = ").append(questID).append('\n');
-            t.append("local PRECONDITION_QUESTSTATE = ").append(sourceId).append('\n');
-            t.append("local POSTCONDITION_QUESTSTATE = ").append(targetId).append('\n');
-            t.append('\n');
-            for (int j = 0; j < template.size(); ++j) {
-                t.append("local ").append(template.getParameter(j).getName()).append(" = ");
-                t.append(exportParameter(parameters[j], template.getParameter(j).getType())).append('\n');
-            }
-            t.append('\n');
-            t.append(template.getBody()).append("\n\n");
-
-            t.append("function HANDLER(PLAYER)\n").append(handlerCode).append("end\n\n");
-            t.append("function ADDITIONALCONDITIONS(PLAYER)\nreturn ").append(conditionCode).append("end");
-
-            quest.put(scriptName + ".lua", t.toString());
-
-            questtxt = questtxt + template.getCategory() + ',' +
-                    exportId(trigger.getObjectId(), template.getId().getType()) + ',' + template.getEntryPoint() + ',' +
-                    scriptName + '\n';
-
-            i += 1;
-        }
-
-        quest.put("quest.txt", questtxt);
-
-        return quest;
-    }
-
-    private static String exportId(final Object parameter, final String type) {
-        if ("POSITION".equals(type)) {
-            final Position p = (Position) parameter;
-            return p.getX() + "," + p.getY() + ',' + p.getZ();
-        }
-        if ("INTEGER".equals(type)) {
-            if (parameter instanceof Long) {
-                final Long n = (Long) parameter;
-                return n.toString();
-            }
-            final String s = (String) parameter;
-            return s;
-        }
-        return "TYPE NOT SUPPORTED";
-    }
-
-    private static String exportParameter(final Object parameter, final String type) {
-        if ("TEXT".equals(type)) {
-            final String s = (String) parameter;
-            return '"' + s.replace("\\", "\\\\").replace("\"", "\\\"") + '"';
-        }
-        if ("POSITION".equals(type)) {
-            final Position p = (Position) parameter;
-            return "position(" + p.getX() + ", " + p.getY() + ", " + p.getZ() + ')';
-        }
-        if ("INTEGER".equals(type)) {
-            if (parameter instanceof Long) {
-                final Long n = (Long) parameter;
-                return n.toString();
-            }
-            final String s = (String) parameter;
-            return s;
-        }
-        return "TYPE NOT SUPPORTED";
     }
 
     public boolean validQuest() {

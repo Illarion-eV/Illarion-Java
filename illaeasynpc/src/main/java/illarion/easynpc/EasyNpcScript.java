@@ -195,7 +195,7 @@ public final class EasyNpcScript {
      * @throws IOException error thrown in case reading failed
      */
     public void readFromInputStream(@Nonnull final Path sourceFile) throws IOException {
-        if (!Files.isDirectory(sourceFile) && Files.isReadable(sourceFile)) {
+        if (Files.isDirectory(sourceFile) || !Files.isReadable(sourceFile)) {
             throw new FileNotFoundException(sourceFile.toString());
         }
 

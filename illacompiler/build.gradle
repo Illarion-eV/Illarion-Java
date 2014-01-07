@@ -1,0 +1,48 @@
+/*
+ * This file is part of the Illarion Compiler.
+ *
+ * Copyright © 2013 - Illarion e.V.
+ *
+ * The Illarion Compiler is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The Illarion Compiler is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the Illarion Compiler.  If not, see <http://www.gnu.org/licenses/>.
+ */
+apply plugin: 'java'
+apply plugin: 'application'
+
+archivesBaseName = 'illarion_compiler'
+mainClassName = 'illarion.download.gui.GuiApplication'
+
+dependencies {
+    compile project(':common')
+    compile project(':easynpc')
+    compile project(':easyquest')
+    compile group: 'commons-cli', name: 'commons-cli', version: '1.2'
+}
+
+jar {
+    dependsOn { gitVersion }
+    manifest {
+        attributes      \
+             'Main-Class': 'illarion.download.gui.GuiApplication',     \
+             'Permissions': 'all-permissions',     \
+             'Codebase': 'illarion.org',     \
+             'Application-Name': 'Illarion Compiler',     \
+             'Application-Library-Allowable-Codebase': 'illarion.org',     \
+             'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),     \
+             'Built-By': System.getProperty('user.name'),      \
+             'Built-JDK': System.getProperty('java.version'),      \
+             'Implementation-Title': 'Illarion Compiler',      \
+             'Implementation-Vendor': 'Illarion e.V.',     \
+             'Implementation-Version': project.ext.fullVersion
+    }
+}
