@@ -71,8 +71,7 @@ public final class Lang implements MessageSource {
         }
 
         messages =
-                ResourceBundle.getBundle(MESSAGE_BUNDLE, locale,
-                        Lang.class.getClassLoader());
+                ResourceBundle.getBundle(MESSAGE_BUNDLE, locale, Thread.currentThread().getContextClassLoader());
     }
 
     /**
