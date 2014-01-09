@@ -75,11 +75,7 @@ task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jar') {
     libraryjars files("${System.getProperty('java.home')}/lib/jce.jar")
     libraryjars files("${System.getProperty('java.home')}/lib/rt.jar")
 
-    if (project.hasProperty('compilerDir')) {
-        outjars new File("${compilerDir}/compiler.jar").absolutePath
-    } else {
-        outjars new File(project.buildDir, "compiler.jar").absolutePath
-    }
+    new File(project.buildDir, "compiler.jar").absolutePath
 
     /* Forcing all class files to contain the same codebase level. */
     target "1.7"
@@ -153,3 +149,14 @@ task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jar') {
     dontwarn "org.osgi.service.**"
     dontnote "javax.xml.**"
 }
+
+
+if (project.hasProperty('compilerDir')) {
+    task publishBundle(type: Copy, dependsOn: 'proguard') {
+        from new File(project.buildDir, "compiler.jar").absolutePath
+        into file(project.compilerDir)
+    }
+    publish.dependsOn("publishBundle")
+}
+
+build.dependsOn("proguard")
