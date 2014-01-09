@@ -18,56 +18,53 @@
  */
 package illarion.easyquest.quest;
 
+import illarion.common.util.CalledByReflection;
+
 import java.io.Serializable;
 
 @SuppressWarnings("serial")
 public class Position implements Serializable {
-    
+
     private short x;
     private short y;
     private short z;
-    
-    public Position ()
-    {
+
+    public Position() {
         x = 0;
         y = 0;
         z = 0;
     }
-    
-    public Position (short x, short y, short z)
-    {
+
+    public Position(short x, short y, short z) {
         this.x = x;
         this.y = y;
         this.z = z;
     }
-    
-    public short getX()
-    {
+
+    public short getX() {
         return x;
     }
-    
-    public void setX(short x)
-    {
+
+    @CalledByReflection
+    public void setX(short x) {
         this.x = x;
     }
-    
-    public short getY()
-    {
+
+    public short getY() {
         return y;
     }
-    
-    public void setY(short y)
-    {
+
+    @CalledByReflection
+    public void setY(short y) {
         this.y = y;
     }
-    
-    public short getZ()
-    {
+
+    public short getZ() {
         return z;
     }
-    
-    public void setZ(short z)
-    {
+
+    @CalledByReflection
+    public void setZ(short z) {
         this.z = z;
     }
 }

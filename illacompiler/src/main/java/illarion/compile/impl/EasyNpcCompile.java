@@ -24,7 +24,7 @@ public class EasyNpcCompile extends AbstractCompile {
             final EasyNpcScript script = new EasyNpcScript(file);
             ParsedNpc npc = Parser.getInstance().parse(script);
             if (npc.hasErrors()) {
-                System.err.println("Parsind the NPC failed with " + npc.getErrorCount() + " errors");
+                System.err.println("Parsing the NPC failed with " + npc.getErrorCount() + " errors");
                 for (int i = 0; i < npc.getErrorCount(); i++) {
                     ParsedNpc.Error error = npc.getError(i);
                     System.err.println("\tLine " + error.getLine().getLineNumber() + ": " + error.getMessage());

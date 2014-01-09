@@ -18,6 +18,8 @@
  */
 package illarion.easyquest.quest;
 
+import illarion.common.util.CalledByReflection;
+
 import javax.annotation.Nonnull;
 import java.io.Serializable;
 
@@ -37,10 +39,12 @@ public class Handler implements Serializable {
         this.parameters = parameters;
     }
 
+    @CalledByReflection
     public void setParameters(@Nonnull final Object[] parameters) {
         this.parameters = parameters;
     }
 
+    @CalledByReflection
     public void setType(@Nonnull final String type) {
         this.type = type;
     }

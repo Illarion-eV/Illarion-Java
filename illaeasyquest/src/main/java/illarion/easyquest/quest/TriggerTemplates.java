@@ -51,7 +51,7 @@ public class TriggerTemplates {
     }
 
     private static InputStream getResource(final String name) {
-        final ClassLoader loader = TriggerTemplates.class.getClassLoader();
+        final ClassLoader loader = Thread.currentThread().getContextClassLoader();
         return loader.getResourceAsStream(name);
     }
 
@@ -187,6 +187,9 @@ public class TriggerTemplates {
     }
 
     public TriggerTemplate getTemplate(String type) {
-        return typeMap.get(type);
+        if (typeMap.containsKey(type)) {
+            return typeMap.get(type);
+        }
+        throw new IllegalArgumentException("Illegal template type requested: " + type);
     }
 }

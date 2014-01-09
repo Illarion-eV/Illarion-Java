@@ -18,6 +18,8 @@
  */
 package illarion.easyquest.quest;
 
+import illarion.common.util.CalledByReflection;
+
 import javax.annotation.Nonnull;
 import java.io.Serializable;
 
@@ -45,6 +47,7 @@ public class Relation implements Serializable {
         return type;
     }
 
+    @CalledByReflection
     public void setType(int type) {
         this.type = type;
     }
@@ -88,5 +91,4 @@ public class Relation implements Serializable {
                 return "";
         }
     }
-
 }
