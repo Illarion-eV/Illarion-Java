@@ -102,7 +102,12 @@ public class Compiler {
                             compile.setTargetDir(storagePaths.get(type).resolve(parent));
                         }
                     } else {
-                        compile.setTargetDir(path.getParent());
+                        Path parent = path.getParent();
+                        if (parent == null) {
+                            compile.setTargetDir(path.toAbsolutePath().getParent());
+                        } else {
+                            compile.setTargetDir(parent);
+                        }
                     }
                 }
                 compileResult = compile.compileFile(path.toAbsolutePath());
