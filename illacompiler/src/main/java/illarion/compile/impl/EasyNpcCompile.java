@@ -21,6 +21,7 @@ public class EasyNpcCompile extends AbstractCompile {
         Objects.requireNonNull(file);
         Path targetDir = Objects.requireNonNull(getTargetDir());
         try {
+            ensureTargetDir();
             final EasyNpcScript script = new EasyNpcScript(file);
             ParsedNpc npc = Parser.getInstance().parse(script);
             if (npc.hasErrors()) {

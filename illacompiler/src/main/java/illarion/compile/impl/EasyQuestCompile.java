@@ -14,6 +14,7 @@ public class EasyQuestCompile extends AbstractCompile {
     @Override
     public int compileFile(@Nonnull final Path file) {
         try {
+            ensureTargetDir();
             mxIGraphModel model = QuestIO.loadGraphModel(file);
             String fileName = file.getFileName().toString();
             String questName = fileName.replace(".quest", "");

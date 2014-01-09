@@ -1,6 +1,8 @@
 package illarion.compile.impl;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
@@ -16,5 +18,15 @@ public abstract class AbstractCompile implements Compile {
 
     protected Path getTargetDir() {
         return targetDir;
+    }
+
+    protected void ensureTargetDir() throws IOException {
+        if (Files.isDirectory(targetDir)) {
+            return;
+        }
+        if (Files.exists(targetDir)) {
+            throw new IOException("Target directory points to a file: " + targetDir);
+        }
+        Files.createDirectories(targetDir);
     }
 }
