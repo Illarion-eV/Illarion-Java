@@ -156,7 +156,7 @@ if (project.hasProperty('compilerDir')) {
         from new File(project.buildDir, "compiler.jar").absolutePath
         into file(project.compilerDir)
     }
-    publish.dependsOn("publishBundle")
+    task publish(dependsOn: "publishBundle") {}
 }
 
 build.dependsOn("proguard")
