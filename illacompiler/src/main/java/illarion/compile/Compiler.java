@@ -87,12 +87,25 @@ public class Compiler {
         for (CompilerType type : CompilerType.values()) {
             if (type.isValidFile(path)) {
                 Compile compile = type.getImplementation();
-                if (storagePaths.containsKey(type)) {
-                    compile.setTargetDir(storagePaths.get(type));
+                if (path.isAbsolute()) {
+                    if (storagePaths.containsKey(type)) {
+                        compile.setTargetDir(storagePaths.get(type));
+                    } else {
+                        compile.setTargetDir(path.getParent());
+                    }
                 } else {
-                    compile.setTargetDir(path.getParent());
+                    if (storagePaths.containsKey(type)) {
+                        Path parent = path.getParent();
+                        if (parent == null) {
+                            compile.setTargetDir(storagePaths.get(type));
+                        } else {
+                            compile.setTargetDir(storagePaths.get(type).resolve(parent));
+                        }
+                    } else {
+                        compile.setTargetDir(path.getParent());
+                    }
                 }
-                compileResult = compile.compileFile(path);
+                compileResult = compile.compileFile(path.toAbsolutePath());
                 if (compileResult == 0) {
                     break;
                 }
