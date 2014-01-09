@@ -75,7 +75,7 @@ task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jar') {
     libraryjars files("${System.getProperty('java.home')}/lib/jce.jar")
     libraryjars files("${System.getProperty('java.home')}/lib/rt.jar")
 
-    outjar new File(project.buildDir, "compiler.jar").absolutePath
+    outjars new File(project.buildDir, "compiler.jar").absolutePath
 
     /* Forcing all class files to contain the same codebase level. */
     target "1.7"
