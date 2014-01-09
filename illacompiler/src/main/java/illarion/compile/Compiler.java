@@ -22,13 +22,14 @@ public class Compiler {
     public static void main(final String[] args) {
         Options options = new Options();
 
-        final Option npcDir = new Option("n", "npc-dir", true, "The where the compiled NPC files are stored.");
+        final Option npcDir = new Option("n", "npc-dir", true, "The place where the compiled NPC files are stored.");
         npcDir.setArgs(1);
         npcDir.setArgName("directory");
         npcDir.setRequired(true);
         options.addOption(npcDir);
 
-        final Option questDir = new Option("q", "quest-dir", true, "The where the compiled Quest files are stored.");
+        final Option questDir = new Option("q", "quest-dir", true,
+                                           "The place where the compiled Quest files are " + "stored.");
         questDir.setArgs(1);
         questDir.setArgName("directory");
         questDir.setRequired(true);
@@ -63,7 +64,7 @@ public class Compiler {
             }
         } catch (final ParseException e) {
             final HelpFormatter helpFormatter = new HelpFormatter();
-            helpFormatter.printHelp("java -jar illarion_compiler.jar", options);
+            helpFormatter.printHelp("java -jar compiler.jar [Options] File", options);
             System.exit(-1);
         } catch (final IOException e) {
             System.err.println(e.getLocalizedMessage());
