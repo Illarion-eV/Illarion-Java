@@ -25,14 +25,14 @@ public class Compiler {
         final Option npcDir = new Option("n", "npc-dir", true, "The place where the compiled NPC files are stored.");
         npcDir.setArgs(1);
         npcDir.setArgName("directory");
-        npcDir.setRequired(true);
+        npcDir.setRequired(false);
         options.addOption(npcDir);
 
         final Option questDir = new Option("q", "quest-dir", true,
                                            "The place where the compiled Quest files are " + "stored.");
         questDir.setArgs(1);
         questDir.setArgName("directory");
-        questDir.setRequired(true);
+        questDir.setRequired(false);
         options.addOption(questDir);
 
         CommandLineParser parser = new GnuParser();
@@ -40,8 +40,14 @@ public class Compiler {
             CommandLine cmd = parser.parse(options, args);
 
             storagePaths = new EnumMap<>(CompilerType.class);
-            storagePaths.put(CompilerType.easyNPC, Paths.get(cmd.getOptionValue('n')));
-            storagePaths.put(CompilerType.easyQuest, Paths.get(cmd.getOptionValue('q')));
+            String npcPath = cmd.getOptionValue('n');
+            if (npcPath != null) {
+                storagePaths.put(CompilerType.easyNPC, Paths.get(npcPath));
+            }
+            String questPath = cmd.getOptionValue('q');
+            if (questPath != null) {
+                storagePaths.put(CompilerType.easyQuest, Paths.get(questPath));
+            }
 
             String[] files = cmd.getArgs();
             for (String file : files) {
@@ -81,7 +87,11 @@ public class Compiler {
         for (CompilerType type : CompilerType.values()) {
             if (type.isValidFile(path)) {
                 Compile compile = type.getImplementation();
-                compile.setTargetDir(storagePaths.get(type));
+                if (storagePaths.containsKey(type)) {
+                    compile.setTargetDir(storagePaths.get(type));
+                } else {
+                    compile.setTargetDir(path.getParent());
+                }
                 compileResult = compile.compileFile(path);
                 if (compileResult == 0) {
                     break;
