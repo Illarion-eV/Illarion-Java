@@ -18,6 +18,7 @@
  */
 package illarion.common.data;
 
+import org.apache.log4j.Logger;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -39,6 +40,11 @@ import java.io.InputStream;
 @NotThreadSafe
 public class SkillLoader {
     /**
+     * The logger instance of this class.
+     */
+    private static final Logger LOGGER = Logger.getLogger(SkillLoader.class);
+
+    /**
      * This value is turned {@code true} once the loading is finished.
      */
     private static boolean loadingFinished;
@@ -56,13 +62,11 @@ public class SkillLoader {
                 return;
             }
             final ClassLoader ccl = Thread.currentThread().getContextClassLoader();
-            final InputStream skillXmlStream = ccl.getResourceAsStream("skills.xml");
 
-            if (skillXmlStream == null) {
-                throw new IllegalStateException("Skill XML was not found.");
-            }
-
-            try {
+            try (InputStream skillXmlStream = ccl.getResourceAsStream("skills.xml")) {
+                if (skillXmlStream == null) {
+                    throw new IllegalStateException("Skill XML was not found.");
+                }
                 final XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
                 parser.setInput(skillXmlStream, "UTF-8");
 
@@ -70,56 +74,64 @@ public class SkillLoader {
                 @Nullable SkillGroup currentGroup = null;
                 while (currentTag != XmlPullParser.END_DOCUMENT) {
                     final String tagName = parser.getName();
-                    if ("group".equals(tagName)) {
-                        final int attribCount = parser.getAttributeCount();
-                        String germanName = null;
-                        String englishName = null;
-                        for (int i = 0; i < attribCount; i++) {
-                            final String attribName = parser.getAttributeName(i);
-                            if ("german".equals(attribName)) {
-                                germanName = parser.getAttributeValue(i);
-                            } else if ("english".equals(attribName)) {
-                                englishName = parser.getAttributeValue(i);
-                            }
-                        }
-                        if ((germanName != null) && (englishName != null)) {
-                            currentGroup = new SkillGroup(germanName, englishName);
-                            SkillGroups.getInstance().addSkillGroup(currentGroup);
-                        }
-                    } else if ("skill".equals(tagName) && (currentGroup != null)) {
-                        final int attribCount = parser.getAttributeCount();
-                        String serverName = null;
-                        String germanName = null;
-                        String englishName = null;
-                        int serverId = -1;
-                        for (int i = 0; i < attribCount; i++) {
-                            final String attribName = parser.getAttributeName(i);
-                            switch (attribName) {
-                                case "name":
-                                    serverName = parser.getAttributeValue(i);
-                                    break;
-                                case "german":
+                    if (currentTag == XmlPullParser.START_TAG) {
+                        if ("group".equals(tagName)) {
+                            final int attribCount = parser.getAttributeCount();
+                            String germanName = null;
+                            String englishName = null;
+                            for (int i = 0; i < attribCount; i++) {
+                                final String attribName = parser.getAttributeName(i);
+                                if ("german".equals(attribName)) {
                                     germanName = parser.getAttributeValue(i);
-                                    break;
-                                case "english":
+                                } else if ("english".equals(attribName)) {
                                     englishName = parser.getAttributeValue(i);
-                                    break;
-                                case "id":
-                                    serverId = Integer.parseInt(parser.getAttributeValue(i));
-                                    break;
+                                }
                             }
-                        }
-                        if ((germanName != null) && (englishName != null) && (serverName != null) && (serverId >= 0)) {
-                            final Skill skill = new Skill(serverId, serverName, germanName, englishName, currentGroup);
-                            Skills.getInstance().addSkill(skill);
+                            if ((germanName != null) && (englishName != null)) {
+                                currentGroup = new SkillGroup(germanName, englishName);
+                                SkillGroups.getInstance().addSkillGroup(currentGroup);
+                            }
+                            currentTag = parser.nextTag();
+                            continue;
+                        } else if ("skill".equals(tagName) && (currentGroup != null)) {
+                            final int attribCount = parser.getAttributeCount();
+                            String serverName = null;
+                            String germanName = null;
+                            String englishName = null;
+                            int serverId = -1;
+                            for (int i = 0; i < attribCount; i++) {
+                                final String attribName = parser.getAttributeName(i);
+                                switch (attribName) {
+                                    case "name":
+                                        serverName = parser.getAttributeValue(i);
+                                        break;
+                                    case "german":
+                                        germanName = parser.getAttributeValue(i);
+                                        break;
+                                    case "english":
+                                        englishName = parser.getAttributeValue(i);
+                                        break;
+                                    case "id":
+                                        serverId = Integer.parseInt(parser.getAttributeValue(i));
+                                        break;
+                                }
+                            }
+                            if ((germanName != null) && (englishName != null) && (serverName != null) &&
+                                    (serverId >= 0)) {
+                                final Skill skill = new Skill(serverId, serverName, germanName, englishName,
+                                                              currentGroup);
+                                Skills.getInstance().addSkill(skill);
+                            }
+                            currentTag = parser.nextTag();
+                            continue;
                         }
                     }
-                    currentTag = parser.nextTag();
+                    currentTag = parser.nextToken();
                 }
             } catch (@Nonnull final XmlPullParserException e) {
-                // nothing
+                LOGGER.error("Parsing the XML file failed.", e);
             } catch (@Nonnull final IOException e) {
-                // nothing
+                LOGGER.error("Reading the XML file failed.", e);
             }
             loadingFinished = true;
         }
