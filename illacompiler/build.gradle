@@ -123,6 +123,7 @@ task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jar') {
     keep "class org.apache.log4j.PatternLayout"
     keep "class illarion.compile.impl.EasyQuestCompile"
     keep "class illarion.compile.impl.EasyNpcCompile"
+    keep "class org.xmlpull.mxp1.MXParserFactory"
 
     keepclasseswithmembers "class org.apache.log4j.PatternLayout {" +
             "void setConversionPattern(java.lang.String);" +

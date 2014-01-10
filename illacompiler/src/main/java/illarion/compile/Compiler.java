@@ -2,6 +2,8 @@ package illarion.compile;
 
 import illarion.compile.impl.Compile;
 import org.apache.commons.cli.*;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -17,9 +19,12 @@ import java.util.Map;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class Compiler {
+    private static final Logger LOGGER = Logger.getLogger(Compiler.class);
     private static Map<CompilerType, Path> storagePaths;
 
     public static void main(final String[] args) {
+        new PropertyConfigurator()
+                .doConfigure(Compiler.class.getResource("/compiler_logging.properties"), LOGGER.getLoggerRepository());
         Options options = new Options();
 
         final Option npcDir = new Option("n", "npc-dir", true, "The place where the compiled NPC files are stored.");
