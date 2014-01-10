@@ -103,14 +103,10 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
             final TreeItem<ListEntry> selectedTreeEntry = selection.get(0);
             final CraftingTreeItem selectedEntry = selectedTreeEntry.getValue().entry;
 
-            if (selectedEntry instanceof CraftingCategoryEntry) {
-                if (!selectedTreeEntry.isExpanded()) {
-                    selectedTreeEntry.setExpanded(true);
-                    updateTree(selectedTreeEntry);
-                }
-                setSelectedItem(null);
-            } else {
+            if (selectedEntry instanceof CraftingItemEntry) {
                 setSelectedItem((CraftingItemEntry) selectedEntry);
+            } else {
+                setSelectedItem(null);
             }
         }
     }
