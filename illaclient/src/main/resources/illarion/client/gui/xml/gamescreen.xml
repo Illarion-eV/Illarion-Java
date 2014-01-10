@@ -21,7 +21,7 @@
     <useControls filename="nifty-default-controls.xml"/>
     <useControls filename="illarion-gamecontrols.xml"/>
 
-    <registerEffect name="DoubleEffect" class="org.illarion.org.illarion.engine.nifty.effects.DoubleEffect"/>
+    <registerEffect name="DoubleEffect" class="org.illarion.nifty.effects.DoubleEffect"/>
 
     <resourceBundle id="gamescreen-bundle" filename="gamescreen"/>
 
@@ -169,7 +169,7 @@
                      hideOnClose="true" visible="false" width="700px" height="305px">
                 <panel childLayout="horizontal">
                     <panel childLayout="vertical" width="230px" paddingRight="8px">
-                        <control name="listBox" id="#questList" vertical="optional" horizontal="optional"
+                        <control name="listBox" id="#questList" vertical="on" horizontal="off"
                                  displayItems="10" selection="Single" forceSelection="true" marginBottom="5px"/>
                         <panel childLayout="horizontal">
                             <control name="checkbox" id="#showFinishedCheckbox" marginRight="4px"/>
