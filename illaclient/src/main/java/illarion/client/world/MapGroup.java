@@ -91,8 +91,10 @@ public final class MapGroup {
     private boolean isOverwritingGroupHidden() {
         @Nullable final List<MapGroup> lclList = overwritingGroups;
         if (lclList != null) {
-            for (final MapGroup group : lclList) {
-                if (group.isHidden()) {
+            int count = lclList.size();
+            //noinspection ForLoopReplaceableByForEach
+            for (int i = 0; i < count; i++) {
+                if (lclList.get(i).isHidden()) {
                     return true;
                 }
             }
