@@ -129,12 +129,7 @@ public final class BookFactory implements ResourceFactory<IdWrapper<String>> {
             return null;
         }
 
-        final StringBuilder builder = new StringBuilder();
-        builder.append("books/");
-        builder.append(baseName);
-        builder.append(".book.xml");
-
-        return Thread.currentThread().getContextClassLoader().getResource(builder.toString());
+        return Thread.currentThread().getContextClassLoader().getResource("books/" + baseName + ".book.xml");
     }
 
     /**

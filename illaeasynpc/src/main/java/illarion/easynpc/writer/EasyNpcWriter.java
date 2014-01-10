@@ -352,7 +352,7 @@ public final class EasyNpcWriter {
                     }
                 }
 
-                target.write(String.format("-- %1$-47s%2$27s --%n", "", Parser.APPLICATION.getApplicationIdentifier()));
+                target.write(String.format("-- %1$-47s%2$27s --%n", "", Parser.APPLICATION.getApplicationName()));
 
                 target.write("--------------------------------------------------------------------------------");
                 target.write(NL);

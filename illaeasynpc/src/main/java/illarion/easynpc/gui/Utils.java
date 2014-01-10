@@ -145,7 +145,9 @@ final class Utils {
             }
         }
 
-        editor.setScriptText(writer.getBuffer().toString());
+        EasyNpcScript newScript = new EasyNpcScript();
+        newScript.readNPCScript(writer.toString());
+        editor.setScriptText(newScript);
     }
 
     /**
@@ -155,14 +157,13 @@ final class Utils {
      * @param editor the editor that supplies the script text
      */
     protected static void saveEasyNPC(@Nonnull final Editor editor) {
-        final String script = editor.getScriptText();
         final Path targetFile = editor.getScriptFile();
         if (targetFile == null) {
             selectAndSaveEasyNPC(editor);
             return;
         }
 
-        saveEasyNPCImpl(script, targetFile);
+        saveEasyNPCImpl(editor, targetFile);
         editor.saved();
     }
 
@@ -272,7 +273,6 @@ final class Utils {
      * @param editor the editor that supplies the script text
      */
     protected static void selectAndSaveEasyNPC(@Nonnull final Editor editor) {
-        final String script = editor.getScriptText();
         final JFileChooser fileDiag = new JFileChooser();
         fileDiag.setFileFilter(new FileFilter() {
             @Override
@@ -296,7 +296,7 @@ final class Utils {
             }
 
             final Path realTargetFile = Paths.get(targetFile);
-            saveEasyNPCImpl(script, realTargetFile);
+            saveEasyNPCImpl(editor, realTargetFile);
             editor.setLoadScriptFile(realTargetFile);
             MainFrame.getInstance().setTabTitle(editor, realTargetFile.getFileName().toString());
         }
@@ -379,23 +379,32 @@ final class Utils {
      * The private implementation of the of the save easyScript function. This
      * writes a text to a file using the correct encoding.
      *
-     * @param script     the text of the script
+     * @param editor     the editor supplying the script
      * @param targetFile the file that is the target of this writing operation
      */
-    private static void saveEasyNPCImpl(@Nonnull final String script, @Nonnull final Path targetFile) {
+    private static void saveEasyNPCImpl(@Nonnull final Editor editor, @Nonnull final Path targetFile) {
         try {
             Path backupFile = Files.createTempFile(targetFile.getParent(), "npc_", ".bak");
-            final EasyNpcScript easyScript = new EasyNpcScript();
-
             if (Files.isReadable(targetFile)) {
                 Files.copy(targetFile, backupFile, StandardCopyOption.REPLACE_EXISTING);
             } else {
                 Files.deleteIfExists(backupFile);
                 backupFile = null;
             }
-            try {
-                easyScript.readNPCScript(script);
-                easyScript.writeNPCScript(targetFile);
+
+            try (Writer bufferedWriter = Files.newBufferedWriter(targetFile, EasyNpcScript.DEFAULT_CHARSET)) {
+                final ParsedNpc npc = editor.getParsedData();
+                if (npc == null) {
+                    final String scriptText = editor.getScriptText();
+                    bufferedWriter.write(scriptText);
+                } else {
+                    ScriptWriter writer = new ScriptWriter();
+                    writer.setGenerated(false);
+                    writer.setSource(npc);
+                    writer.setWritingTarget(bufferedWriter);
+                    writer.setTargetLanguage(ScriptWriter.ScriptWriterTarget.EasyNPC);
+                    writer.write();
+                }
             } catch (@Nonnull final Exception e) {
                 if (backupFile != null) {
                     Files.copy(backupFile, targetFile, StandardCopyOption.REPLACE_EXISTING);
