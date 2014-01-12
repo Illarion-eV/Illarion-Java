@@ -54,6 +54,11 @@ public final class LuaWriter {
         CycleText,
 
         /**
+         * The writing stage for the guard part of NPCs.
+         */
+        Guarding,
+
+        /**
          * Header writing stage. This lines appears in the head of the LUA script.
          */
         Header,
@@ -126,6 +131,12 @@ public final class LuaWriter {
     private static final String setLookatMessageCode = "mainNPC:setLookat(\"%1$s\", \"%2$s\");";
 
     /**
+     * The LUA code needed to set the affiliation of a NPC.
+     */
+    @SuppressWarnings("nls")
+    private static final String setAffiliationCode = "mainNPC:setAffiliation(%1$s);";
+
+    /**
      * The LUA code needed to set the message displayed in case the player uses
      * the NPC.
      */
@@ -184,10 +195,12 @@ public final class LuaWriter {
 
         // now the big bad initialization
         introInitPart(target);
+        writeNpcAffiliation(source, target);
 
         final boolean talkingExists = checkStageExists(source, LuaWriter.WritingStage.Talking);
         final boolean cycleTextExists = checkStageExists(source, LuaWriter.WritingStage.CycleText);
         final boolean tradingExists = checkStageExists(source, LuaWriter.WritingStage.Trading);
+        final boolean guardingExists = checkStageExists(source, LuaWriter.WritingStage.Guarding);
 
         if (talkingExists) {
             writeIntro(source, target, LuaWriter.WritingStage.Talking);
@@ -198,6 +211,9 @@ public final class LuaWriter {
         if (tradingExists) {
             writeIntro(source, target, LuaWriter.WritingStage.Trading);
         }
+        if (guardingExists) {
+            writeIntro(source, target, LuaWriter.WritingStage.Guarding);
+        }
 
         if (talkingExists) {
             writeStage(source, target, LuaWriter.WritingStage.Talking);
@@ -207,6 +223,9 @@ public final class LuaWriter {
         }
         if (tradingExists) {
             writeStage(source, target, LuaWriter.WritingStage.Trading);
+        }
+        if (guardingExists) {
+            writeStage(source, target, LuaWriter.WritingStage.Guarding);
         }
 
         writeNpcLanguages(source, target);
@@ -443,6 +462,11 @@ public final class LuaWriter {
             case Trading:
                 target.write("local tradingNPC = npc.base.trade.tradeNPC(mainNPC);");
                 writeNewLine(target);
+                break;
+            case Guarding:
+                target.write("local guardNPC = npc.base.guard.guardNPC(mainNPC);");
+                writeNewLine(target);
+                break;
             case Clothes:
                 break;
         }
@@ -581,6 +605,20 @@ public final class LuaWriter {
         writeNewLine(target);
 
         target.write(String.format(setConfusedMessageCode, source.getGermanWrongLang(), source.getEnglishWrongLang()));
+        writeNewLine(target);
+    }
+
+    /**
+     * Write the code needed to set the special messages each NPC is able to
+     * handle.
+     *
+     * @param source the parsed NPC that is the data source
+     * @param target the writer that receives the written text
+     * @throws IOException thrown in case the writing operations fail
+     */
+    private static void writeNpcAffiliation(
+            @Nonnull final ParsedNpc source, @Nonnull final Writer target) throws IOException {
+        target.write(String.format(setAffiliationCode, source.getAffiliation().getFactionId()));
         writeNewLine(target);
     }
 

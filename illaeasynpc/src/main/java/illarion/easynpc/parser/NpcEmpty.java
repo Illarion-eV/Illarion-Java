@@ -91,12 +91,12 @@ public final class NpcEmpty implements NpcType {
      * Add the empty line to the parsed NPC.
      */
     @Override
-    public void parseLine(final EasyNpcScript.Line line, @Nonnull final ParsedNpc npc) {
+    public void parseLine(@Nonnull final EasyNpcScript.Line line, @Nonnull final ParsedNpc npc) {
         npc.addNpcData(new ParsedEmptyLine());
     }
 
     @Override
-    public void enlistHighlightedWords(final TokenMap map) {
+    public void enlistHighlightedWords(@Nonnull final TokenMap map) {
         // nothing
     }
 }

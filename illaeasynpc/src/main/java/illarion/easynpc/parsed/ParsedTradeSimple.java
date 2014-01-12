@@ -45,7 +45,8 @@ public class ParsedTradeSimple extends AbstractParsedTrade {
     }
 
     @Override
-    public void writeEasyNpc(@Nonnull final Writer target, final EasyNpcWriter.WritingStage stage) throws IOException {
+    public void writeEasyNpc(@Nonnull final Writer target, @Nonnull final EasyNpcWriter.WritingStage stage)
+            throws IOException {
         if (stage == EasyNpcWriter.WritingStage.trading) {
             switch (getMode()) {
                 case selling:
@@ -71,12 +72,12 @@ public class ParsedTradeSimple extends AbstractParsedTrade {
     }
 
     @Override
-    public void buildSQL(final SQLBuilder builder) {
+    public void buildSQL(@Nonnull final SQLBuilder builder) {
         // nothing to do
     }
 
     @Override
-    public void writeLua(@Nonnull final Writer target, final LuaWriter.WritingStage stage) throws IOException {
+    public void writeLua(@Nonnull final Writer target, @Nonnull final LuaWriter.WritingStage stage) throws IOException {
         if (stage == LuaWriter.WritingStage.Trading) {
             for (final int itemId : itemIds) {
                 target.write("tradingNPC:addItem(npc.base.trade.tradeNPCItem(");

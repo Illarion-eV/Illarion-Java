@@ -55,6 +55,11 @@ public final class EasyNpcWriter {
         cycleTexts,
 
         /**
+         * The writing stage for the guard part of NPCs.
+         */
+        guarding,
+
+        /**
          * The hair stage is used to write the hair IDs to the NPC script.
          */
         hair,
@@ -156,6 +161,12 @@ public final class EasyNpcWriter {
         if (checkStageExists(source, WritingStage.trading)) {
             writeIntro(source, target, WritingStage.trading);
             writeStage(source, target, WritingStage.trading);
+        }
+
+        // now the guarding part
+        if (checkStageExists(source, WritingStage.guarding)) {
+            writeIntro(source, target, WritingStage.guarding);
+            writeStage(source, target, WritingStage.guarding);
         }
 
         // now the talking part

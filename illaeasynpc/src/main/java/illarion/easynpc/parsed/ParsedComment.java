@@ -38,8 +38,7 @@ public final class ParsedComment implements ParsedData {
      * The pattern that is used to format the comment correctly for the script.
      */
     @SuppressWarnings("nls")
-    private static final Pattern replacePattern = Pattern.compile("^(.*)$",
-            Pattern.MULTILINE);
+    private static final Pattern replacePattern = Pattern.compile("^(.*)$", Pattern.MULTILINE);
 
     /**
      * The comment that is stored in this object.
@@ -59,7 +58,7 @@ public final class ParsedComment implements ParsedData {
      * Comment data do not effect the query. Nothing to do.
      */
     @Override
-    public void buildSQL(final SQLBuilder builder) {
+    public void buildSQL(@Nonnull final SQLBuilder builder) {
         // nothing to add to the query.
     }
 
@@ -67,7 +66,7 @@ public final class ParsedComment implements ParsedData {
      * Check the stages effected by this comment entry.
      */
     @Override
-    public boolean effectsEasyNpcStage(final EasyNpcWriter.WritingStage stage) {
+    public boolean effectsEasyNpcStage(@Nonnull final EasyNpcWriter.WritingStage stage) {
         return stage == EasyNpcWriter.WritingStage.talking;
     }
 
@@ -78,7 +77,7 @@ public final class ParsedComment implements ParsedData {
      * @return <code>false</code> in all cases
      */
     @Override
-    public boolean effectsLuaWritingStage(final LuaWriter.WritingStage stage) {
+    public boolean effectsLuaWritingStage(@Nonnull final LuaWriter.WritingStage stage) {
         return false;
     }
 
@@ -99,8 +98,8 @@ public final class ParsedComment implements ParsedData {
      */
     @SuppressWarnings("nls")
     @Override
-    public void writeEasyNpc(@Nonnull final Writer target,
-                             final EasyNpcWriter.WritingStage stage) throws IOException {
+    public void writeEasyNpc(
+            @Nonnull final Writer target, @Nonnull final EasyNpcWriter.WritingStage stage) throws IOException {
         if (stage == EasyNpcWriter.WritingStage.talking) {
             final String formattedComment = replacePattern.matcher(comment).replaceAll("-- $1");
             target.write(EasyNpcWriter.NL);
@@ -114,8 +113,8 @@ public final class ParsedComment implements ParsedData {
      * generated scripts. All user defined comments are discarded.
      */
     @Override
-    public void writeLua(final Writer target,
-                         final LuaWriter.WritingStage stage) {
+    public void writeLua(
+            @Nonnull final Writer target, @Nonnull final LuaWriter.WritingStage stage) {
         // nothing to do here
     }
 }

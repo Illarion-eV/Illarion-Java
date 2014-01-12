@@ -76,24 +76,25 @@ public final class ParsedTradeText implements ParsedData {
     /**
      * This constructor creates this parsed instance with all required values.
      *
-     * @param textType    the type of the text
-     * @param germanText  the german text
+     * @param textType the type of the text
+     * @param germanText the german text
      * @param englishText the english text
      */
-    public ParsedTradeText(final ParsedTradeText.TradeTextType textType, final String germanText,
-                           final String englishText) {
+    public ParsedTradeText(
+            final ParsedTradeText.TradeTextType textType, final String germanText, final String englishText) {
         type = textType;
         german = germanText;
         english = englishText;
     }
 
     @Override
-    public boolean effectsEasyNpcStage(final EasyNpcWriter.WritingStage stage) {
+    public boolean effectsEasyNpcStage(@Nonnull final EasyNpcWriter.WritingStage stage) {
         return stage == EasyNpcWriter.WritingStage.trading;
     }
 
     @Override
-    public void writeEasyNpc(@Nonnull final Writer target, final EasyNpcWriter.WritingStage stage) throws IOException {
+    public void writeEasyNpc(@Nonnull final Writer target, @Nonnull final EasyNpcWriter.WritingStage stage)
+            throws IOException {
         switch (type) {
             case NoMoney:
                 target.write("tradeNotEnoughMoneyMsg");
@@ -118,12 +119,12 @@ public final class ParsedTradeText implements ParsedData {
     }
 
     @Override
-    public void buildSQL(final SQLBuilder builder) {
+    public void buildSQL(@Nonnull final SQLBuilder builder) {
         // nothing
     }
 
     @Override
-    public boolean effectsLuaWritingStage(final LuaWriter.WritingStage stage) {
+    public boolean effectsLuaWritingStage(@Nonnull final LuaWriter.WritingStage stage) {
         return stage == LuaWriter.WritingStage.Trading;
     }
 
@@ -134,7 +135,7 @@ public final class ParsedTradeText implements ParsedData {
     }
 
     @Override
-    public void writeLua(@Nonnull final Writer target, final LuaWriter.WritingStage stage) throws IOException {
+    public void writeLua(@Nonnull final Writer target, @Nonnull final LuaWriter.WritingStage stage) throws IOException {
         target.write("tradingNPC:");
         switch (type) {
             case NoMoney:

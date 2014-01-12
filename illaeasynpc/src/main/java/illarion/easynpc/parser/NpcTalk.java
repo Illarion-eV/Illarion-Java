@@ -40,8 +40,7 @@ public final class NpcTalk implements NpcType {
      * script.
      */
     @SuppressWarnings("nls")
-    private static final Pattern NORMAL_LINE = Pattern.compile(
-            "^.*[\"].*[^\\\\][\"].*([-][>]).*$", Pattern.MULTILINE);
+    private static final Pattern NORMAL_LINE = Pattern.compile("^.*[\"].*[^\\\\][\"].*([-][>]).*$", Pattern.MULTILINE);
 
     /**
      * The parser that is used to parse one talking line.
@@ -105,12 +104,12 @@ public final class NpcTalk implements NpcType {
      * Parse the line and add the analyzed values to the parsed NPC.
      *
      * @param lineStruct the line that is parsed
-     * @param npc        the NPC that is the target for the parsed values
+     * @param npc the NPC that is the target for the parsed values
      */
     @Override
     @SuppressWarnings("nls")
-    public void parseLine(@Nonnull final EasyNpcScript.Line lineStruct,
-                          @Nonnull final ParsedNpc npc) {
+    public void parseLine(
+            @Nonnull final EasyNpcScript.Line lineStruct, @Nonnull final ParsedNpc npc) {
         final String line = lineStruct.getLine();
 
         if (NORMAL_LINE.matcher(line).matches()) {
@@ -122,7 +121,7 @@ public final class NpcTalk implements NpcType {
     }
 
     @Override
-    public void enlistHighlightedWords(final TokenMap map) {
+    public void enlistHighlightedWords(@Nonnull final TokenMap map) {
         talkLineParser.enlistHighlightedWords(map);
     }
 }

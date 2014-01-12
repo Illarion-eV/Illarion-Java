@@ -44,10 +44,15 @@ public class ParsedTradeComplex extends AbstractParsedTrade {
     private final int quality;
     private final ParsedItemData data;
 
-
-    public ParsedTradeComplex(final AbstractParsedTrade.TradeMode tradeMode, final int tradeItemId,
-                              final String itemTextDe, final String itemTextEn, final int tradePrice,
-                              final int tradeStackSize, final int itemQuality, final ParsedItemData itemData) {
+    public ParsedTradeComplex(
+            final AbstractParsedTrade.TradeMode tradeMode,
+            final int tradeItemId,
+            final String itemTextDe,
+            final String itemTextEn,
+            final int tradePrice,
+            final int tradeStackSize,
+            final int itemQuality,
+            final ParsedItemData itemData) {
         super(tradeMode);
 
         itemId = tradeItemId;
@@ -60,7 +65,8 @@ public class ParsedTradeComplex extends AbstractParsedTrade {
     }
 
     @Override
-    public void writeEasyNpc(@Nonnull final Writer target, final EasyNpcWriter.WritingStage stage) throws IOException {
+    public void writeEasyNpc(@Nonnull final Writer target, @Nonnull final EasyNpcWriter.WritingStage stage)
+            throws IOException {
         if (stage == EasyNpcWriter.WritingStage.trading) {
             switch (getMode()) {
                 case selling:
@@ -98,12 +104,12 @@ public class ParsedTradeComplex extends AbstractParsedTrade {
     }
 
     @Override
-    public void buildSQL(final SQLBuilder builder) {
+    public void buildSQL(@Nonnull final SQLBuilder builder) {
         // nothing to do
     }
 
     @Override
-    public void writeLua(@Nonnull final Writer target, final LuaWriter.WritingStage stage) throws IOException {
+    public void writeLua(@Nonnull final Writer target, @Nonnull final LuaWriter.WritingStage stage) throws IOException {
         if (stage == LuaWriter.WritingStage.Trading) {
             target.write("tradingNPC:addItem(npc.base.trade.tradeNPCItem(");
             target.write(Integer.toString(itemId));
