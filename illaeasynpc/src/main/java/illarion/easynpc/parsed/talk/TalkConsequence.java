@@ -18,6 +18,7 @@
  */
 package illarion.easynpc.parsed.talk;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Writer;
@@ -48,7 +49,7 @@ public interface TalkConsequence {
      * @param target the writer that takes the data
      * @throws IOException thrown in case the writing operations fail.
      */
-    void writeEasyNpc(Writer target) throws IOException;
+    void writeEasyNpc(@Nonnull Writer target) throws IOException;
 
     /**
      * Write the data of this talking consequence to a LUA script.
@@ -56,5 +57,5 @@ public interface TalkConsequence {
      * @param target the writer that takes the data
      * @throws IOException thrown in case the writing operations fail
      */
-    void writeLua(Writer target) throws IOException;
+    void writeLua(@Nonnull Writer target) throws IOException;
 }
