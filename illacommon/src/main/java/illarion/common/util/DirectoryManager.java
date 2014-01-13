@@ -263,6 +263,17 @@ public final class DirectoryManager {
     }
 
     /**
+     * In case the directory manager supports relative directories, this is the working directory the client needs to
+     * be launched in.
+     *
+     * @return the working directory or {@code null} in case none is supported
+     */
+    @Nullable
+    public File getWorkingDirectory() {
+        return workingDirectory;
+    }
+
+    /**
      * This function unsets a directory.
      *
      * @param dir the directory to unset
