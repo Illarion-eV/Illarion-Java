@@ -2,13 +2,13 @@
     <if condition='property("log_dir").length()>0'>
         <then>
             <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-                <file>${log_dir:-}/client.log</file>
+                <file>${log_dir:-}/easyquest.log</file>
                 <encoder>
                     <pattern>%-5p - %d{ISO8601} - [%t]: %m%n</pattern>
                 </encoder>
                 <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
                     <maxIndex>5</maxIndex>
-                    <FileNamePattern>${log_dir:-}/client.log.%i.gz</FileNamePattern>
+                    <FileNamePattern>${log_dir:-}/easyquest.log.%i.gz</FileNamePattern>
                 </rollingPolicy>
                 <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy"/>
             </appender>

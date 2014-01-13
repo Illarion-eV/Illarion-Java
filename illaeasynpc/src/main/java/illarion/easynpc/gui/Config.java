@@ -29,14 +29,12 @@ import illarion.common.config.entries.SelectEntry;
 import illarion.common.util.DirectoryManager;
 import illarion.easynpc.Lang;
 import javolution.util.FastTable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.skin.SkinInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,13 +42,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Map.Entry;
-import java.util.Properties;
 
 /**
  * This class is used to store and to publish the settings used by the editor GUI.
@@ -579,7 +575,6 @@ public final class Config {
     @SuppressWarnings("nls")
     public void init() {
         final String folder = checkFolder();
-        initLogging(folder);
 
         final File configFile = new File(folder, "easynpceditor.xcfgz");
         cfg = new ConfigSystem(configFile);
@@ -800,24 +795,6 @@ public final class Config {
                                               "Restart needed", JOptionPane.INFORMATION_MESSAGE);
             }
         });
-    }
-
-    /**
-     * Prepare the proper output of the log files.
-     *
-     * @param folder the folder the log file is written to
-     */
-    @SuppressWarnings("nls")
-    private static void initLogging(final String folder) {
-        final Properties tempProps = new Properties();
-        try {
-            tempProps.load(Config.class.getClassLoader().getResourceAsStream("logging.properties"));
-            tempProps.put("log4j.appender.IllaLogfileAppender.file", folder + File.separator + "easynpc.log");
-            tempProps.put("log4j.reset", "true");
-            new PropertyConfigurator().doConfigure(tempProps, LOGGER.getLoggerRepository());
-        } catch (@Nonnull final IOException ex) {
-            System.err.println("Error setting up logging environment");
-        }
     }
 
     @EventTopicSubscriber(topic = "autoCheckScript")

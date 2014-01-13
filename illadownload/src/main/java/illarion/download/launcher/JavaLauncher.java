@@ -118,9 +118,9 @@ public final class JavaLauncher {
 
             printCallList(callList);
             if (!launchCallList(callList)) {
-                LOGGER.fatal("Error while launching application\n" + firstError);
+                LOGGER.error("Error while launching application\n" + firstError);
                 if (!firstError.equals(errorData)) {
-                    LOGGER.fatal("Error while launching application\n" + errorData);
+                    LOGGER.error("Error while launching application\n" + errorData);
                     errorData = firstError + '\n' + errorData;
                 }
                 return false;
@@ -180,7 +180,7 @@ public final class JavaLauncher {
             for (final String aCallList : callList) {
                 debugBuilder.append(aCallList).append(' ');
             }
-            LOGGER.debug(debugBuilder);
+            LOGGER.debug(debugBuilder.toString());
         }
     }
 

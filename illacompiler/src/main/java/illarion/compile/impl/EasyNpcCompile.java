@@ -4,6 +4,8 @@ import illarion.easynpc.EasyNpcScript;
 import illarion.easynpc.ParsedNpc;
 import illarion.easynpc.Parser;
 import illarion.easynpc.ScriptWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -16,6 +18,8 @@ import java.util.Objects;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class EasyNpcCompile extends AbstractCompile {
+    private static final Logger LOGGER = LoggerFactory.getLogger(EasyNpcCompile.class);
+
     @Override
     public int compileFile(@Nonnull final Path file) {
         Objects.requireNonNull(file);
@@ -25,10 +29,10 @@ public class EasyNpcCompile extends AbstractCompile {
             final EasyNpcScript script = new EasyNpcScript(file);
             ParsedNpc npc = Parser.getInstance().parse(script);
             if (npc.hasErrors()) {
-                System.err.println("Parsing the NPC failed with " + npc.getErrorCount() + " errors");
+                LOGGER.error("Parsing the NPC failed with {] errors", npc.getErrorCount());
                 for (int i = 0; i < npc.getErrorCount(); i++) {
                     ParsedNpc.Error error = npc.getError(i);
-                    System.err.println("\tLine " + error.getLine().getLineNumber() + ": " + error.getMessage());
+                    LOGGER.error("\t Line {}: {}", error.getLine().getLineNumber(), error.getMessage());
                 }
                 return -1;
             }
@@ -43,7 +47,7 @@ public class EasyNpcCompile extends AbstractCompile {
                 write.flush();
             }
         } catch (IOException e) {
-            System.err.println(e.getLocalizedMessage());
+            LOGGER.error(e.getLocalizedMessage());
             return -1;
         }
         return 0;

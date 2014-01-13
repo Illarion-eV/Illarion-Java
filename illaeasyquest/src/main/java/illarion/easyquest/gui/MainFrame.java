@@ -18,6 +18,11 @@
  */
 package illarion.easyquest.gui;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.util.ContextInitializer;
+import ch.qos.logback.core.joran.spi.JoranException;
+import ch.qos.logback.core.util.StatusPrinter;
+import illarion.common.util.DirectoryManager;
 import illarion.easyquest.Lang;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.common.RichTooltip;
@@ -25,6 +30,8 @@ import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.tabbed.VetoableTabCloseListener;
+import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,6 +41,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
 import java.nio.file.Path;
 
 @SuppressWarnings("serial")
@@ -190,6 +198,7 @@ public class MainFrame extends JRibbonFrame {
     }
 
     public static void main(String[] args) {
+        initLogging();
         Config.getInstance().init();
 
         JRibbonFrame.setDefaultLookAndFeelDecorated(true);
@@ -210,6 +219,28 @@ public class MainFrame extends JRibbonFrame {
                 System.out.println("Startup done.");
             }
         });
+    }
+
+    private static void initLogging() {
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
+
+        File userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        if (userDir == null) {
+            return;
+        }
+        System.setProperty("log_dir", userDir.getAbsolutePath());
+
+        //Reload:
+        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+        ContextInitializer ci = new ContextInitializer(lc);
+        lc.reset();
+        try {
+            ci.autoConfig();
+        } catch (JoranException e) {
+            e.printStackTrace();
+        }
+        StatusPrinter.printInCaseOfErrorsOrWarnings(lc);
     }
 
     public static MainFrame getInstance() {

@@ -18,18 +18,24 @@
  */
 package illarion.easynpc.gui;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.util.ContextInitializer;
+import ch.qos.logback.core.joran.spi.JoranException;
+import ch.qos.logback.core.util.StatusPrinter;
 import illarion.common.bug.CrashReporter;
+import illarion.common.util.DirectoryManager;
 import illarion.easynpc.EasyNpcScript;
 import illarion.easynpc.Lang;
 import illarion.easynpc.crash.AWTCrashHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.common.RichTooltip;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.tabbed.VetoableTabCloseListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -40,6 +46,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -92,17 +99,13 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
     private MainFrame() {
         super("easyNPC Scripteditor");
 
-        final RibbonTask startTask =
-                new RibbonTask(Lang.getMsg(getClass(), "ribbonTaskStart"),
-                        new ClipboardBand(), new SearchBand(), new CompileBand());
+        final RibbonTask startTask = new RibbonTask(Lang.getMsg(getClass(), "ribbonTaskStart"), new ClipboardBand(),
+                                                    new SearchBand(), new CompileBand());
         getRibbon().addTask(startTask);
 
-        final JCommandButton saveButton =
-                new JCommandButton(
-                        Utils.getResizableIconFromResource("filesave.png"));
-        saveButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(
-                getClass(), "saveButtonTooltipTitle"), Lang.getMsg(getClass(),
-                "saveButtonTooltip")));
+        final JCommandButton saveButton = new JCommandButton(Utils.getResizableIconFromResource("filesave.png"));
+        saveButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(getClass(), "saveButtonTooltipTitle"),
+                                                        Lang.getMsg(getClass(), "saveButtonTooltip")));
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
@@ -111,21 +114,17 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
         });
         getRibbon().addTaskbarComponent(saveButton);
 
-        getRibbon().addTaskbarComponent(
-                UndoMonitor.getInstance().getUndoButton());
-        getRibbon().addTaskbarComponent(
-                UndoMonitor.getInstance().getRedoButton());
+        getRibbon().addTaskbarComponent(UndoMonitor.getInstance().getUndoButton());
+        getRibbon().addTaskbarComponent(UndoMonitor.getInstance().getRedoButton());
 
         getRibbon().setApplicationMenu(new MainMenu());
 
-        getRibbon().configureHelp(
-                Utils.getResizableIconFromResource("help.png"),
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(final ActionEvent e) {
-                        DocuBrowser.showDocuBrowser();
-                    }
-                });
+        getRibbon().configureHelp(Utils.getResizableIconFromResource("help.png"), new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                DocuBrowser.showDocuBrowser();
+            }
+        });
 
         final JPanel rootPanel = new JPanel(new BorderLayout());
         mainPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
@@ -186,8 +185,8 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
 
         validate();
 
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                KeyStroke.getKeyStroke("F1"), "displayHelpWindow");
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke("F1"), "displayHelpWindow");
         getRootPane().getActionMap().put("displayHelpWindow", new Action() {
             @Override
             public void actionPerformed(final ActionEvent e) {
@@ -277,8 +276,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
         };
         SubstanceLookAndFeel.registerTabCloseChangeListener(tabbedEditorArea, editorTabListener);
 
-        setApplicationIcon(Utils
-                .getResizableIconFromResource("easynpc256.png"));
+        setApplicationIcon(Utils.getResizableIconFromResource("easynpc256.png"));
 
         final String[] lastFiles = Config.getInstance().getOldFiles();
         if ((lastFiles.length == 0)) {
@@ -315,12 +313,11 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
     @SuppressWarnings("nls")
     public static void crashEditor(@Nullable final String message) {
         if (message != null) {
-            JOptionPane.showMessageDialog(getInstance(), message,
-                    Lang.getMsg(MainFrame.class, "crashEditor.Title"),
-                    JOptionPane.ERROR_MESSAGE);
-            LOGGER.fatal("Editor crashed! Fatal error: " + message);
+            JOptionPane.showMessageDialog(getInstance(), message, Lang.getMsg(MainFrame.class, "crashEditor.Title"),
+                                          JOptionPane.ERROR_MESSAGE);
+            LOGGER.error("Editor crashed! Fatal error: " + message);
         } else {
-            LOGGER.fatal("Editor crashed!");
+            LOGGER.error("Editor crashed!");
         }
         System.exit(-1);
     }
@@ -331,15 +328,13 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
      * @param args start arguments
      */
     public static void main(final String[] args) {
+        initLogging();
         Config.getInstance().init();
 
-        JFrame.setDefaultLookAndFeelDecorated(Config.getInstance()
-                .getUseWindowDecoration());
-        JDialog.setDefaultLookAndFeelDecorated(Config.getInstance()
-                .getUseWindowDecoration());
+        JFrame.setDefaultLookAndFeelDecorated(Config.getInstance().getUseWindowDecoration());
+        JDialog.setDefaultLookAndFeelDecorated(Config.getInstance().getUseWindowDecoration());
 
-        CrashReporter.getInstance().setConfig(
-                Config.getInstance().getInternalCfg());
+        CrashReporter.getInstance().setConfig(Config.getInstance().getInternalCfg());
         CrashReporter.getInstance().setMessageSource(Lang.getInstance());
         AWTCrashHandler.init();
 
@@ -359,6 +354,28 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
                 System.out.println("Startup done.");
             }
         });
+    }
+
+    private static void initLogging() {
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
+
+        File userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        if (userDir == null) {
+            return;
+        }
+        System.setProperty("log_dir", userDir.getAbsolutePath());
+
+        //Reload:
+        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+        ContextInitializer ci = new ContextInitializer(lc);
+        lc.reset();
+        try {
+            ci.autoConfig();
+        } catch (JoranException e) {
+            e.printStackTrace();
+        }
+        StatusPrinter.printInCaseOfErrorsOrWarnings(lc);
     }
 
     /**
@@ -426,11 +443,9 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
     @SuppressWarnings("nls")
     protected Editor addNewScript() {
         final Editor editor = new Editor();
-        editor.putClientProperty(
-                SubstanceLookAndFeel.TABBED_PANE_CLOSE_BUTTONS_PROPERTY,
-                Boolean.TRUE);
-        tabbedEditorArea.insertTab(Lang.getMsg(getClass(), "newScriptTab"),
-                null, editor, null, tabbedEditorArea.getTabCount());
+        editor.putClientProperty(SubstanceLookAndFeel.TABBED_PANE_CLOSE_BUTTONS_PROPERTY, Boolean.TRUE);
+        tabbedEditorArea
+                .insertTab(Lang.getMsg(getClass(), "newScriptTab"), null, editor, null, tabbedEditorArea.getTabCount());
         tabbedEditorArea.setSelectedIndex(tabbedEditorArea.getTabCount() - 1);
         return editor;
     }
@@ -441,15 +456,14 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
      *
      * @param file the file that is to be opened
      * @return the index of the editor that opened this file or -1 in case its
-     *         not opened yet
+     * not opened yet
      */
     protected int alreadyOpen(final Path file) {
         final int count = tabbedEditorArea.getComponentCount();
         Editor currentComp;
         for (int i = 0; i < count; i++) {
             currentComp = (Editor) tabbedEditorArea.getComponent(i);
-            if ((currentComp.getScriptFile() != null)
-                    && currentComp.getScriptFile().equals(file)) {
+            if ((currentComp.getScriptFile() != null) && currentComp.getScriptFile().equals(file)) {
                 return i;
             }
         }
@@ -477,18 +491,14 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
                 continue;
             }
 
-            final Object[] options =
-                    new Object[]{
-                            Lang.getMsg(MainFrame.class, "UnsavedChanges.saveButton"),
-                            Lang.getMsg(MainFrame.class,
-                                    "UnsavedChanges.discardButton"),
-                            Lang.getMsg(MainFrame.class, "UnsavedChanges.cancelButton")};
-            final int result =
-                    JOptionPane.showOptionDialog(this, String.format(
-                            Lang.getMsg(MainFrame.class, "UnsavedChanges.message2"),
-                            editor.getFileName()), Lang.getMsg(MainFrame.class,
-                            "UnsavedChanges.title"), JOptionPane.YES_NO_CANCEL_OPTION,
-                            JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+            final Object[] options = new Object[]{Lang.getMsg(MainFrame.class, "UnsavedChanges.saveButton"),
+                                                  Lang.getMsg(MainFrame.class, "UnsavedChanges.discardButton"),
+                                                  Lang.getMsg(MainFrame.class, "UnsavedChanges.cancelButton")};
+            final int result = JOptionPane.showOptionDialog(this, String.format(
+                    Lang.getMsg(MainFrame.class, "UnsavedChanges.message2"), editor.getFileName()),
+                                                            Lang.getMsg(MainFrame.class, "UnsavedChanges.title"),
+                                                            JOptionPane.YES_NO_CANCEL_OPTION,
+                                                            JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 
             if (result == JOptionPane.YES_OPTION) {
                 Utils.saveEasyNPC(editor);
@@ -503,9 +513,8 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
 
         Config.getInstance().setOldFiles(fileList);
         Config.getInstance().setLastWindowValues(this);
-        Config.getInstance().setSplitPaneState(
-                (double) mainPanel.getDividerLocation()
-                        / (double) mainPanel.getHeight());
+        Config.getInstance()
+                .setSplitPaneState((double) mainPanel.getDividerLocation() / (double) mainPanel.getHeight());
 
         setVisible(false);
         dispose();
@@ -540,7 +549,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
      * Set the title of a tab that holds a specified component.
      *
      * @param component the component in the tab
-     * @param title     the new title of the tab
+     * @param title the new title of the tab
      */
     protected void setTabTitle(final Editor component, final String title) {
         final int count = tabbedEditorArea.getComponentCount();
