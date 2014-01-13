@@ -37,10 +37,7 @@ import org.eclipse.aether.version.Version;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
 
 import static org.eclipse.aether.repository.RepositoryPolicy.*;
@@ -125,19 +122,50 @@ public class MavenDownloader {
             }
             final VersionRangeResult result = system.resolveVersionRange(session, new VersionRangeRequest(artifact,
                     repositories, RUNTIME));
-            Version selectedVersion = null;
-            Version lastLocatedVersion = null;
+            final NavigableSet<String> versions = new TreeSet<>(new Comparator<String>() {
+                @Override
+                public int compare(@Nonnull final String o1, @Nonnull final String o2) {
+                    String[] versionParts1 = o1.split("[.-]");
+                    String[] versionParts2 = o2.split("[.-]");
+
+                    int count = Math.min(versionParts1.length, versionParts2.length);
+                    for (int i = 0; i < count; i++) {
+                        int cmpResult = compareEntry(versionParts1[i], versionParts2[i]);
+                        if (cmpResult != 0) {
+                            return cmpResult;
+                        }
+                    }
+
+                    return Integer.compare(versionParts1.length, versionParts2.length);
+                }
+
+                public int compareEntry(@Nonnull final String e1, @Nonnull final String e2) {
+                    if ("SNAPSHOT".equals(e1)) {
+                        if ("SNAPSHOT".equals(e2)) {
+                            return 0;
+                        }
+                        return -1;
+                    } else if ("SNAPSHOT".equals(e2)) {
+                        return 1;
+                    }
+                    try {
+                        int version1 = Integer.parseInt(e1);
+                        int version2 = Integer.parseInt(e2);
+                        return Integer.compare(version1, version2);
+                    } catch (NumberFormatException e) {
+                        // illegal formatted number
+                    }
+                    return e1.compareTo(e2);
+                }
+            });
             for (final Version version : result.getVersions()) {
-                lastLocatedVersion = version;
                 if (snapshot || !version.toString().contains("SNAPSHOT")) {
-                    selectedVersion = version;
+                    versions.add(version.toString());
                 }
             }
 
-            if (selectedVersion != null) {
-                artifact = new DefaultArtifact(groupId, artifactId, "jar", selectedVersion.toString());
-            } else if (lastLocatedVersion != null) {
-                artifact = new DefaultArtifact(groupId, artifactId, "jar", lastLocatedVersion.toString());
+            if (!versions.isEmpty()) {
+                artifact = new DefaultArtifact(groupId, artifactId, "jar", versions.pollLast());
             }
         } catch (VersionRangeResolutionException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

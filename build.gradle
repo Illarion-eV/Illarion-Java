@@ -20,7 +20,7 @@
 apply plugin: 'idea'
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.9'
+    gradleVersion = '1.10'
 }
 
 idea {
@@ -105,6 +105,9 @@ subprojects {
         project.targetCompatibility = JavaVersion.VERSION_1_7
         project.tasks.withType(JavaCompile) {
             options.encoding = 'UTF-8'
+        }
+        project.test {
+            useTestNG()
         }
     }
 

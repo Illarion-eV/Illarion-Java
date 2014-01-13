@@ -30,6 +30,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.swing.*;
 import java.io.File;
+import java.nio.file.Path;
 
 public final class Config implements ConfigChangeListener {
 
@@ -134,8 +135,8 @@ public final class Config implements ConfigChangeListener {
      *
      * @param file the file to prepend
      */
-    public void addLastOpenedFile(@Nonnull final File file) {
-        cfg.set(lastFilesKey, file.getAbsolutePath() + File.pathSeparator + cfg.getString(lastFilesKey));
+    public void addLastOpenedFile(@Nonnull final Path file) {
+        cfg.set(lastFilesKey, file.toAbsolutePath() + File.pathSeparator + cfg.getString(lastFilesKey));
         lastOpenedFilesBuffer = null;
     }
 

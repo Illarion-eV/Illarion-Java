@@ -103,7 +103,7 @@ public final class NpcComment implements NpcType {
     }
 
     @Override
-    public void enlistHighlightedWords(final TokenMap map) {
+    public void enlistHighlightedWords(@Nonnull final TokenMap map) {
         // nothing
     }
 }

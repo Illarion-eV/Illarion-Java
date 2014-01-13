@@ -72,5 +72,6 @@ public interface DocuEntry {
      *
      * @return the title of this documentation entry
      */
+    @Nullable
     String getTitle();
 }

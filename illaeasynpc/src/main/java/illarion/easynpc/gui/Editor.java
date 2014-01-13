@@ -42,7 +42,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.File;
+import java.nio.file.Path;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -78,7 +78,7 @@ public final class Editor extends RTextScrollPane {
     private ParsedNpc errorNpc;
 
     @Nullable
-    private File loadScriptFile;
+    private Path loadScriptFile;
 
     /**
      * The parsed version of this script.
@@ -117,8 +117,6 @@ public final class Editor extends RTextScrollPane {
         }
 
         setViewportView(editor);
-
-        final Editor parentEditor = this;
 
         timer = new Timer(1000, new ActionListener() {
             @SuppressWarnings("synthetic-access")
@@ -200,7 +198,7 @@ public final class Editor extends RTextScrollPane {
         if (loadScriptFile == null) {
             return "New Script";
         }
-        return loadScriptFile.getName();
+        return loadScriptFile.getFileName().toString();
     }
 
     /**
@@ -277,7 +275,7 @@ public final class Editor extends RTextScrollPane {
      * @return the script file that is load in this editor
      */
     @Nullable
-    public File getScriptFile() {
+    public Path getScriptFile() {
         return loadScriptFile;
     }
 
@@ -300,18 +298,7 @@ public final class Editor extends RTextScrollPane {
      * @param script the script to display in this editor
      */
     public void loadScript(@Nonnull final EasyNpcScript script) {
-        final StringBuilder buffer = new StringBuilder();
-
-        final int count = script.getEntryCount();
-        if (count > 0) {
-            for (int i = 0; i < count; i++) {
-                buffer.append(script.getEntry(i).getLine());
-                buffer.append(NL);
-            }
-            buffer.setLength(buffer.length() - 1);
-        }
-        editor.setText(buffer.toString());
-        editor.setCaretPosition(0);
+        setScriptText(script);
         setLoadScriptFile(script.getSourceScriptFile());
         editor.discardAllEdits();
     }
@@ -326,7 +313,7 @@ public final class Editor extends RTextScrollPane {
         savedSinceLastChange = false;
     }
 
-    public void setLoadScriptFile(@Nullable final File file) {
+    public void setLoadScriptFile(@Nullable final Path file) {
         if (file != null) {
             loadScriptFile = file;
         }
@@ -337,10 +324,33 @@ public final class Editor extends RTextScrollPane {
      *
      * @param text the text that shall be shown in the editor now
      */
-    public void setScriptText(final String text) {
+    public void setScriptText(@Nonnull final String text) {
+        int oldCaret = editor.getCaretPosition();
         editor.setText(text);
+        if (oldCaret > -1) {
+            editor.setCaretPosition(Math.min(oldCaret, text.length() - 1));
+        }
         clearParsedData();
         changedText();
+    }
+
+    /**
+     * Set the text shown in this editor.
+     *
+     * @param script the script supplying the text
+     */
+    public void setScriptText(@Nonnull final EasyNpcScript script) {
+        final StringBuilder buffer = new StringBuilder();
+
+        final int count = script.getEntryCount();
+        if (count > 0) {
+            for (int i = 0; i < count; i++) {
+                buffer.append(script.getEntry(i).getLine());
+                buffer.append(NL);
+            }
+            buffer.setLength(buffer.length() - 1);
+        }
+        setScriptText(buffer.toString());
     }
 
     void changedText() {

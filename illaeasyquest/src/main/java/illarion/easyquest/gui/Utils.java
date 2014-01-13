@@ -18,7 +18,9 @@
  */
 package illarion.easyquest.gui;
 
+import illarion.common.util.CopyrightHeader;
 import illarion.easyquest.Lang;
+import illarion.easyquest.QuestIO;
 import org.apache.log4j.Logger;
 import org.pushingpixels.flamingo.api.common.icon.ImageWrapperResizableIcon;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
@@ -29,10 +31,13 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
-import java.io.*;
-import java.util.Map;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 
 public final class Utils {
+
+    private static final CopyrightHeader COPYRIGHT_HEADER = new CopyrightHeader(80, "<!--", "-->", null, null);
 
     private static final Logger LOGGER = Logger.getLogger(Utils.class);
 
@@ -53,15 +58,18 @@ public final class Utils {
     }
 
     public static void saveEasyQuest(@Nonnull final Editor editor) {
-        final File file = editor.getQuestFile();
+        final Path file = editor.getQuestFile();
         if (file == null) {
             selectAndSaveEasyQuest(editor);
             return;
         }
 
-        final String quest = editor.getQuestXML();
-        saveEasyQuestImpl(quest, file);
-        editor.saved();
+        try {
+            QuestIO.saveGraphModel(editor.getGraph().getModel(), file);
+            editor.saved();
+        } catch (IOException e) {
+            LOGGER.error("Saving file failed.", e);
+        }
     }
 
     protected static void exportEasyQuest(@Nonnull final Editor editor) {
@@ -74,7 +82,11 @@ public final class Utils {
             final int fileReturn = dirDiag.showSaveDialog(MainFrame.getInstance());
             if (fileReturn == JFileChooser.APPROVE_OPTION) {
                 final File targetDir = dirDiag.getSelectedFile();
-                exportEasyQuestImpl(editor.getQuestLua(targetDir.getName()), targetDir);
+                try {
+                    QuestIO.exportQuest(editor.getGraph().getModel(), targetDir.toPath());
+                } catch (IOException e) {
+                    LOGGER.error("Exporting the quest failed.", e);
+                }
             }
         }
     }
@@ -98,38 +110,25 @@ public final class Utils {
         final int fileReturn = fileDiag.showOpenDialog(MainFrame.getInstance());
         if (fileReturn == JFileChooser.APPROVE_OPTION) {
             final File selectedFile = fileDiag.getSelectedFile();
-            openQuest(selectedFile);
+            openQuest(selectedFile.toPath());
         }
     }
 
-    protected static void openQuest(@Nonnull final File file) {
-        try {
-            final int editorIndex = MainFrame.getInstance().alreadyOpen(file);
-            if (editorIndex > -1) {
-                MainFrame.getInstance().setCurrentEditorTab(editorIndex);
-                return;
-            }
-
-            StringBuilder sb = new StringBuilder();
-            String line = null;
-            BufferedReader reader = new BufferedReader(new FileReader(file));
-            while ((line = reader.readLine()) != null) {
-                sb.append(line);
-            }
-            String quest = sb.toString();
-
-            Editor editor = MainFrame.getInstance().addNewQuest(quest);
-            editor.setQuestFile(file);
-
-            MainFrame.getInstance().setCurrentTabTitle(file.getName());
-            Config.getInstance().addLastOpenedFile(file);
-        } catch (@Nonnull final IOException e1) {
-            //LOGGER.error("Reading the script failed.", e1); //$NON-NLS-1$
+    protected static void openQuest(@Nonnull final Path file) {
+        final int editorIndex = MainFrame.getInstance().alreadyOpen(file);
+        if (editorIndex > -1) {
+            MainFrame.getInstance().setCurrentEditorTab(editorIndex);
+            return;
         }
+
+        Editor editor = MainFrame.getInstance().addNewQuest(file);
+        editor.setQuestFile(file);
+
+        MainFrame.getInstance().setCurrentTabTitle(file.getFileName().toString());
+        Config.getInstance().addLastOpenedFile(file);
     }
 
     protected static void selectAndSaveEasyQuest(@Nonnull final Editor editor) {
-        final String quest = editor.getQuestXML();
         final JFileChooser fileDiag = new JFileChooser();
         fileDiag.setFileFilter(new FileFilter() {
             @Override
@@ -144,80 +143,22 @@ public final class Utils {
         });
         fileDiag.setAcceptAllFileFilterUsed(false);
         fileDiag.setCurrentDirectory(new File(Config.getInstance().getEasyQuestFolder()));
-        fileDiag.setSelectedFile(editor.getQuestFile());
+        final Path questFile = editor.getQuestFile();
+        fileDiag.setSelectedFile(questFile == null ? null : questFile.toFile());
         final int fileReturn = fileDiag.showSaveDialog(MainFrame.getInstance());
         if (fileReturn == JFileChooser.APPROVE_OPTION) {
             File targetFile = fileDiag.getSelectedFile();
             if (!targetFile.getName().endsWith(".quest")) {
                 targetFile = new File(targetFile.getParent(), targetFile.getName() + ".quest");
             }
-            saveEasyQuestImpl(quest, targetFile);
-            editor.setQuestFile(targetFile);
-            MainFrame.getInstance().setTabTitle(editor, targetFile.getName());
-        }
-        editor.saved();
-    }
-
-    private static void saveEasyQuestImpl(
-            @Nonnull final String quest, @Nonnull final File targetFile) {
-        final File backupFile = new File(targetFile.getAbsolutePath() + ".bak"); //$NON-NLS-1$
-
-        FileWriter fw = null;
-        try {
-            if (backupFile.exists()) {
-                backupFile.delete();
-            }
-            if (targetFile.exists()) {
-                targetFile.renameTo(backupFile);
-            }
-
-            fw = new FileWriter(targetFile);
-            fw.write(quest);
-
-            if (backupFile.exists()) {
-                backupFile.delete();
-            }
-        } catch (@Nonnull final Exception e) {
-            if (backupFile.exists()) {
-                if (targetFile.exists()) {
-                    targetFile.delete();
-                }
-                backupFile.renameTo(targetFile);
-            }
-            //LOGGER.error("Writing the easyNPC Script failed.", e); //$NON-NLS-1$
-        } finally {
-            if (fw != null) {
-                try {
-                    fw.close();
-                } catch (IOException e) {
-                }
-            }
-        }
-    }
-
-    private static void exportEasyQuestImpl(
-            @Nonnull final Map<String, String> quest, final File targetDir) {
-
-        FileWriter fw = null;
-        File file = null;
-        try {
-            for (Map.Entry<String, String> entry : quest.entrySet()) {
-                file = new File(targetDir, entry.getKey());
-                fw = new FileWriter(file);
-                fw.write(entry.getValue());
-                fw.close();
-                fw = null;
-            }
-        } catch (@Nonnull final Exception e) {
-            System.out.println("Writing the easyQuest failed: " + e);
-            e.printStackTrace();
-            //LOGGER.error("Writing the easyQuest failed.", e); //$NON-NLS-1$
-        } finally {
-            if (fw != null) {
-                try {
-                    fw.close();
-                } catch (IOException e) {
-                }
+            final Path targetPath = targetFile.toPath();
+            editor.setQuestFile(targetPath);
+            try {
+                QuestIO.saveGraphModel(editor.getGraph().getModel(), targetPath);
+                MainFrame.getInstance().setTabTitle(editor, targetFile.getName());
+                editor.saved();
+            } catch (IOException e) {
+                LOGGER.error("Failed to save file.", e);
             }
         }
     }

@@ -18,21 +18,26 @@
  */
 package illarion.easyquest.quest;
 
+import illarion.common.util.CalledByReflection;
+
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.Serializable;
 
 @SuppressWarnings("serial")
 public class Trigger implements Serializable {
-
+    @Nonnull
     private String name;
     @Nullable
     private String type;
+    @Nullable
     private Object objectId;
     @Nullable
     private Object[] parameters;
     @Nullable
     private Condition[] conditions;
 
+    @CalledByReflection
     public Trigger() {
         name = "";
         type = null;
@@ -40,49 +45,62 @@ public class Trigger implements Serializable {
         conditions = null;
     }
 
-    public void setName(String name) {
+    @CalledByReflection
+    public void setName(@Nonnull String name) {
         this.name = name;
     }
 
+    @CalledByReflection
+    @Nonnull
     public String getName() {
         return name;
     }
 
+    @CalledByReflection
     public void setObjectId(Object id) {
         objectId = id;
     }
 
+    @Nullable
+    @CalledByReflection
     public Object getObjectId() {
         return objectId;
     }
 
+    @CalledByReflection
     public void setType(@Nullable String type) {
         this.type = type;
     }
 
+    @CalledByReflection
     @Nullable
     public String getType() {
         return type;
     }
 
+    @CalledByReflection
     public void setParameters(@Nullable Object[] parameters) {
         this.parameters = parameters;
     }
 
+    @CalledByReflection
     @Nullable
     public Object[] getParameters() {
         return parameters;
     }
 
+    @CalledByReflection
     public void setConditions(@Nullable Condition[] conditions) {
         this.conditions = conditions;
     }
 
+    @CalledByReflection
     @Nullable
     public Condition[] getConditions() {
         return conditions;
     }
 
+    @Nonnull
     public final String toString() {
         return getName();
     }

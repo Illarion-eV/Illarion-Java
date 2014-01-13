@@ -19,13 +19,19 @@
 package illarion.easynpc;
 
 import illarion.easynpc.gui.Editor;
+import illarion.easynpc.writer.EasyNpcWriter;
 
 import javax.annotation.Nonnull;
-import java.io.*;
-import java.nio.charset.*;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map.Entry;
 
 /**
  * This class contains the script data to a easyNPC script. It contains the
@@ -35,6 +41,12 @@ import java.util.Map.Entry;
  */
 @SuppressWarnings("nls")
 public final class EasyNpcScript {
+    /**
+     * The default charset that is used to read and write the easyNPC script files.
+     */
+    @Nonnull
+    public static final Charset DEFAULT_CHARSET = Charset.forName("ISO-8859-1");
+
     /**
      * The representation of each line in the easyNPC script. It stores the line number and the text of the lines.
      */
@@ -81,58 +93,9 @@ public final class EasyNpcScript {
     }
 
     /**
-     * The default encodings to be used to decode the script. In case those
-     * fail, it will be tried to decode the script with more rare encodings.
-     */
-    @Nonnull
-    private static final Charset[] ENCODINGS;
-
-    /**
      * The leading characters for Lua comments.
      */
     private static final String LUA_COMMENT_LEAD = "--";
-
-    /**
-     * Default new line string to be used in all scripts.
-     */
-    private static final String NEW_LINE = "\n";
-
-    static {
-        final ArrayList<Charset> possibleEncodings = new ArrayList<>();
-
-        String charsetName = "UTF-8";
-        if (Charset.isSupported(charsetName)) {
-            possibleEncodings.add(Charset.forName(charsetName));
-        }
-
-        charsetName = "ISO-8859-1";
-        if (Charset.isSupported(charsetName)) {
-            possibleEncodings.add(Charset.forName(charsetName));
-        }
-
-        charsetName = "UTF-16LE";
-        if (Charset.isSupported(charsetName)) {
-            possibleEncodings.add(Charset.forName(charsetName));
-        }
-
-        charsetName = "UTF-16BE";
-        if (Charset.isSupported(charsetName)) {
-            possibleEncodings.add(Charset.forName(charsetName));
-        }
-
-        boolean defaultCharsetIsIn = false;
-        for (final Charset testCharset : possibleEncodings) {
-            if (testCharset.equals(Charset.defaultCharset())) {
-                defaultCharsetIsIn = true;
-            }
-        }
-
-        if (!defaultCharsetIsIn) {
-            possibleEncodings.add(Charset.defaultCharset());
-        }
-
-        ENCODINGS = possibleEncodings.toArray(new Charset[possibleEncodings.size()]);
-    }
 
     /**
      * The original encoding used by this script.
@@ -149,7 +112,7 @@ public final class EasyNpcScript {
     /**
      * The file that script was load from.
      */
-    private File sourceScriptFile;
+    private Path sourceScriptFile;
 
     /**
      * The editor this easyNPC script was generated from.
@@ -173,7 +136,7 @@ public final class EasyNpcScript {
      * @throws IOException thrown in case anything goes wrong while reading this
      * file.
      */
-    public EasyNpcScript(@Nonnull final File sourceFile) throws IOException {
+    public EasyNpcScript(@Nonnull final Path sourceFile) throws IOException {
         this();
 
         readFromInputStream(sourceFile);
@@ -212,7 +175,7 @@ public final class EasyNpcScript {
      *
      * @return the script this file was load from
      */
-    public File getSourceScriptFile() {
+    public Path getSourceScriptFile() {
         return sourceScriptFile;
     }
 
@@ -231,33 +194,17 @@ public final class EasyNpcScript {
      * @param sourceFile the file that is read
      * @throws IOException error thrown in case reading failed
      */
-    public void readFromInputStream(@Nonnull final File sourceFile) throws IOException {
-        if (!sourceFile.exists() || !sourceFile.isFile() || !sourceFile.canRead()) {
-            throw new FileNotFoundException(sourceFile.getAbsolutePath());
+    public void readFromInputStream(@Nonnull final Path sourceFile) throws IOException {
+        if (Files.isDirectory(sourceFile) || !Files.isReadable(sourceFile)) {
+            throw new FileNotFoundException(sourceFile.toString());
         }
 
-        for (final Charset charset : ENCODINGS) {
-            final CharsetDecoder decoder = charset.newDecoder();
-            decoder.onMalformedInput(CodingErrorAction.REPORT);
-            decoder.onUnmappableCharacter(CodingErrorAction.REPORT);
-            if (readNPCScript(sourceFile, decoder)) {
-                sourceScriptFile = sourceFile;
-                return;
-            }
+        if (readNPCScript(sourceFile)) {
+            sourceScriptFile = sourceFile;
+            return;
         }
 
-        for (final Entry<String, Charset> entry : Charset.availableCharsets().entrySet()) {
-            final Charset charset = entry.getValue();
-            final CharsetDecoder decoder = charset.newDecoder();
-            decoder.onMalformedInput(CodingErrorAction.REPORT);
-            decoder.onUnmappableCharacter(CodingErrorAction.REPORT);
-            if (readNPCScript(sourceFile, decoder)) {
-                sourceScriptFile = sourceFile;
-                return;
-            }
-        }
-
-        throw new IOException("Can't read file: " + sourceFile.getAbsolutePath());
+        throw new IOException("Can't read file: " + sourceFile);
     }
 
     /**
@@ -268,7 +215,7 @@ public final class EasyNpcScript {
     public void readNPCScript(@Nonnull final String source) {
         final String[] lines = source.split("\n");
 
-        readNPCScript(lines);
+        readNPCScript(Arrays.asList(lines));
     }
 
     /**
@@ -289,58 +236,44 @@ public final class EasyNpcScript {
      * script
      * @throws IOException thrown in case there is a problem while writing
      */
-    public void writeNPCScript(@Nonnull final File targetFile) throws IOException {
-        final BufferedWriter writer = new BufferedWriter(
-                new OutputStreamWriter(new FileOutputStream(targetFile), "ISO-8859-1"));
-
-        for (final EasyNpcScript.Line line : entries) {
-            writer.write(line.getLine());
-            writer.write(NEW_LINE);
+    public void writeNPCScript(@Nonnull final Path targetFile) throws IOException {
+        try (BufferedWriter writer = Files.newBufferedWriter(targetFile, DEFAULT_CHARSET)) {
+            for (final EasyNpcScript.Line line : entries) {
+                writer.write(line.getLine());
+                writer.newLine();
+            }
+            writer.flush();
         }
-        writer.flush();
-        writer.close();
     }
 
     /**
      * Read the easyNPC script from a file.
      *
      * @param sourceFile the file to read
-     * @param decoder the CharsetDecoder used to read the script
      * @return <code>true</code> in case everything worked
      * @throws IOException thrown in case the reading operation failed
      */
-    private boolean readNPCScript(
-            final File sourceFile, @Nonnull final CharsetDecoder decoder) throws IOException {
-        BufferedReader reader = null;
-
-        final List<String> lineList = new ArrayList<>();
-
+    private boolean readNPCScript(@Nonnull final Path sourceFile) throws IOException {
         try {
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(sourceFile), decoder));
-            while (true) {
-                final String line = reader.readLine();
-                if (line == null) {
-                    break;
-                }
+            final List<String> lineList = Files.readAllLines(sourceFile, DEFAULT_CHARSET);
+            encoding = DEFAULT_CHARSET;
+            readNPCScript(lineList);
+            return true;
+        } catch (IOException e) {
+            // nothing
+        }
 
-                lineList.add(line);
-            }
-        } catch (@Nonnull final UnmappableCharacterException ex) {
-            return false;
-        } catch (@Nonnull final MalformedInputException ex) {
-            return false;
-        } catch (@Nonnull final FileNotFoundException ex) {
-            return false;
-        } finally {
-            if (reader != null) {
-                reader.close();
+        for (Charset set : Charset.availableCharsets().values()) {
+            try {
+                final List<String> lineList = Files.readAllLines(sourceFile, set);
+                encoding = set;
+                readNPCScript(lineList);
+                return true;
+            } catch (IOException e) {
+                // nothing
             }
         }
-        encoding = decoder.charset();
-
-        readNPCScript(lineList.toArray(new String[lineList.size()]));
-
-        return true;
+        return false;
     }
 
     /**
@@ -348,7 +281,7 @@ public final class EasyNpcScript {
      *
      * @param lines The array of lines
      */
-    private void readNPCScript(@Nonnull final String[] lines) {
+    private void readNPCScript(@Nonnull final Collection<String> lines) {
         boolean currentlyCommentBlock = false;
         boolean currentlyEmptyBlock = false;
         int lineNumber = 0;
@@ -365,7 +298,14 @@ public final class EasyNpcScript {
             } else if (line.startsWith(LUA_COMMENT_LEAD)) {
                 if (currentlyCommentBlock) {
                     final EasyNpcScript.Line lastLine = entries.remove(entries.size() - 1);
-                    entries.add(new EasyNpcScript.Line(lastLine.getLineNumber(), lastLine.getLine() + NEW_LINE + line));
+                    String newLine = lastLine.getLine() + "\n" + line;
+                    if (EasyNpcWriter.COPYRIGHT_HEADER.isLicenseText(newLine)) {
+                        currentlyCommentBlock = false;
+                        currentlyEmptyBlock = false;
+                        continue;
+                    } else {
+                        entries.add(new EasyNpcScript.Line(lastLine.getLineNumber(), lastLine.getLine() + "\n" + line));
+                    }
                 } else {
                     entries.add(new EasyNpcScript.Line(lineNumber, line));
                 }

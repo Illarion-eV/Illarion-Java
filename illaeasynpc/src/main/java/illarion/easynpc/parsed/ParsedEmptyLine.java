@@ -22,6 +22,7 @@ import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Writer;
@@ -37,7 +38,7 @@ public final class ParsedEmptyLine implements ParsedData {
      * Empty lines do not effect the query.
      */
     @Override
-    public void buildSQL(final SQLBuilder builder) {
+    public void buildSQL(@Nonnull final SQLBuilder builder) {
         // nothing to add to the query.
     }
 
@@ -45,7 +46,7 @@ public final class ParsedEmptyLine implements ParsedData {
      * Check the stages effected by this empty lines.
      */
     @Override
-    public boolean effectsEasyNpcStage(final EasyNpcWriter.WritingStage stage) {
+    public boolean effectsEasyNpcStage(@Nonnull final EasyNpcWriter.WritingStage stage) {
         return false;
     }
 
@@ -55,7 +56,7 @@ public final class ParsedEmptyLine implements ParsedData {
      * @return <code>false</code> always because no stages are effected
      */
     @Override
-    public boolean effectsLuaWritingStage(final LuaWriter.WritingStage stage) {
+    public boolean effectsLuaWritingStage(@Nonnull final LuaWriter.WritingStage stage) {
         return false;
     }
 
@@ -75,8 +76,8 @@ public final class ParsedEmptyLine implements ParsedData {
      * from the easyNPC script and so never written.
      */
     @Override
-    public void writeEasyNpc(final Writer target,
-                             final EasyNpcWriter.WritingStage stage) throws IOException {
+    public void writeEasyNpc(
+            @Nonnull final Writer target, @Nonnull final EasyNpcWriter.WritingStage stage) throws IOException {
         // empty lines are never written to the easyNPC script
     }
 
@@ -85,9 +86,8 @@ public final class ParsedEmptyLine implements ParsedData {
      * default.
      */
     @Override
-    public void writeLua(final Writer target,
-                         final LuaWriter.WritingStage stage) throws IOException {
+    public void writeLua(
+            @Nonnull final Writer target, @Nonnull final LuaWriter.WritingStage stage) throws IOException {
         // nothing to do
     }
-
 }

@@ -23,6 +23,8 @@ import illarion.easynpc.ParsedNpc;
 import illarion.easynpc.docu.DocuEntry;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
+import javax.annotation.Nonnull;
+
 /**
  * This interface is implement by all different kind of NPCs that can be load
  * into the parsed NPC. Each type requires the ability to parse the lines
@@ -37,20 +39,20 @@ public interface NpcType extends DocuEntry {
      * @param line the line that is supposed to be parsed
      * @return <code>true</code> in case the line can be parsed
      */
-    boolean canParseLine(EasyNpcScript.Line line);
+    boolean canParseLine(@Nonnull EasyNpcScript.Line line);
 
     /**
      * Parse the line and add it to the parsed NPC structure.
      *
      * @param line the line to parse
-     * @param npc  the NPC the parsed line is supposed to be added to
+     * @param npc the NPC the parsed line is supposed to be added to
      */
-    void parseLine(EasyNpcScript.Line line, ParsedNpc npc);
+    void parseLine(@Nonnull EasyNpcScript.Line line, @Nonnull ParsedNpc npc);
 
     /**
      * Add the tokens the the map that need to be highlighted in the editor.
      *
      * @param map the token list
      */
-    void enlistHighlightedWords(TokenMap map);
+    void enlistHighlightedWords(@Nonnull TokenMap map);
 }

@@ -43,6 +43,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -184,7 +187,7 @@ public final class Config {
      * time.
      */
     @Nullable
-    private File[] lastOpenedFilesBuffer;
+    private Path[] lastOpenedFilesBuffer;
 
     /**
      * If this is set to true, the application requires to restart to take all
@@ -237,12 +240,12 @@ public final class Config {
      *
      * @param file the file to prepend
      */
-    public void addLastOpenedFile(@Nonnull final File file) {
+    public void addLastOpenedFile(@Nonnull final Path file) {
         if (cfg == null) {
             LOGGER.error("Configuration system not initialized yet.");
             return;
         }
-        cfg.set(LAST_FILES_KEY, file.getAbsolutePath() + File.pathSeparator + cfg.getString(LAST_FILES_KEY));
+        cfg.set(LAST_FILES_KEY, file.toAbsolutePath().toString() + File.pathSeparator + cfg.getString(LAST_FILES_KEY));
         lastOpenedFilesBuffer = null;
     }
 
@@ -353,21 +356,21 @@ public final class Config {
      * @return the list of last opened files
      */
     @Nullable
-    public File[] getLastOpenedFiles() {
+    public Path[] getLastOpenedFiles() {
         if (lastOpenedFilesBuffer != null) {
             return lastOpenedFilesBuffer;
         }
         if (cfg == null) {
             LOGGER.error("Configuration system not initialized yet.");
-            return new File[LAST_OPEN_FILES_COUNT];
+            return new Path[LAST_OPEN_FILES_COUNT];
         }
         final String fetchedListString = cfg.getString(LAST_FILES_KEY);
         if (fetchedListString == null) {
-            return new File[LAST_OPEN_FILES_COUNT];
+            return new Path[LAST_OPEN_FILES_COUNT];
         }
         final String[] fetchedList = fetchedListString.split(File.pathSeparator);
-        final File[] returnList = new File[LAST_OPEN_FILES_COUNT];
-        final String[] cleanList = new String[LAST_OPEN_FILES_COUNT];
+        final Path[] returnList = new Path[LAST_OPEN_FILES_COUNT];
+        final Path[] cleanList = new Path[LAST_OPEN_FILES_COUNT];
 
         int entryPos = 0;
         for (int i = 0; (i < fetchedList.length) && (i < LAST_OPEN_FILES_COUNT); i++) {
@@ -375,9 +378,9 @@ public final class Config {
             if (workString.length() < 5) {
                 continue;
             }
-            final File createdFile = new File(workString);
-            if (createdFile.exists() && createdFile.isFile()) {
-                final String absolutPath = createdFile.getAbsolutePath();
+            final Path createdFile = Paths.get(workString);
+            if (Files.isReadable(createdFile)) {
+                final Path absolutPath = createdFile.toAbsolutePath();
                 boolean alreadyInsert = false;
                 for (int j = 0; j < entryPos; j++) {
                     if (cleanList[j].equals(absolutPath)) {
@@ -389,7 +392,7 @@ public final class Config {
                     continue;
                 }
                 returnList[entryPos] = createdFile;
-                cleanList[entryPos] = createdFile.getAbsolutePath();
+                cleanList[entryPos] = createdFile;
                 entryPos++;
             }
         }
@@ -398,7 +401,7 @@ public final class Config {
             return returnList;
         }
 
-        final StringBuffer cleanedResult = new StringBuffer();
+        final StringBuilder cleanedResult = new StringBuilder();
         for (int i = 0; i < entryPos; i++) {
             cleanedResult.append(cleanList[i]);
             cleanedResult.append(File.pathSeparator);
@@ -700,7 +703,7 @@ public final class Config {
             LOGGER.error("Configuration system not initialized yet.");
             return;
         }
-        final StringBuffer buffer = new StringBuffer();
+        final StringBuilder buffer = new StringBuilder();
         for (final String file : files) {
             buffer.append(file);
             buffer.append(File.pathSeparator);

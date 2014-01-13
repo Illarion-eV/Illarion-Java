@@ -18,6 +18,8 @@
  */
 package illarion.easyquest.quest;
 
+import illarion.common.util.CalledByReflection;
+
 import javax.annotation.Nullable;
 import java.io.Serializable;
 
@@ -37,6 +39,7 @@ public class Status implements Serializable {
         handlers = null;
     }
 
+    @CalledByReflection
     public void setName(String name) {
         this.name = name;
     }
@@ -45,6 +48,7 @@ public class Status implements Serializable {
         return name;
     }
 
+    @CalledByReflection
     public void setStart(boolean start) {
         this.start = start;
     }
@@ -53,18 +57,22 @@ public class Status implements Serializable {
         return start;
     }
 
+    @CalledByReflection
     public void setNumber(int number) {
         this.number = number;
     }
 
+    @CalledByReflection
     public int getNumber() {
         return number;
     }
 
+    @CalledByReflection
     public void setHandlers(@Nullable Handler[] handlers) {
         this.handlers = handlers;
     }
 
+    @CalledByReflection
     @Nullable
     public Handler[] getHandlers() {
         return handlers;

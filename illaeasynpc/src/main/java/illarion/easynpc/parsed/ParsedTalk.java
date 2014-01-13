@@ -86,7 +86,7 @@ public final class ParsedTalk implements ParsedData {
      * Talking lines do not effect the SQL query.
      */
     @Override
-    public void buildSQL(final SQLBuilder builder) {
+    public void buildSQL(@Nonnull final SQLBuilder builder) {
         // nothing to add to the SQL query
     }
 
@@ -94,7 +94,7 @@ public final class ParsedTalk implements ParsedData {
      * Check the stages effected by this talking line.
      */
     @Override
-    public boolean effectsEasyNpcStage(final EasyNpcWriter.WritingStage stage) {
+    public boolean effectsEasyNpcStage(@Nonnull final EasyNpcWriter.WritingStage stage) {
         return stage == EasyNpcWriter.WritingStage.talking;
     }
 
@@ -103,7 +103,7 @@ public final class ParsedTalk implements ParsedData {
      * talking lines.
      */
     @Override
-    public boolean effectsLuaWritingStage(final LuaWriter.WritingStage stage) {
+    public boolean effectsLuaWritingStage(@Nonnull final LuaWriter.WritingStage stage) {
         return stage == LuaWriter.WritingStage.Talking;
     }
 
@@ -145,7 +145,7 @@ public final class ParsedTalk implements ParsedData {
     @SuppressWarnings("nls")
     @Override
     public void writeEasyNpc(
-            @Nonnull final Writer target, final EasyNpcWriter.WritingStage stage) throws IOException {
+            @Nonnull final Writer target, @Nonnull final EasyNpcWriter.WritingStage stage) throws IOException {
 
         if (stage == EasyNpcWriter.WritingStage.talking) {
             final int conditionCount = conditions.size();
@@ -175,7 +175,7 @@ public final class ParsedTalk implements ParsedData {
      */
     @Override
     public void writeLua(
-            @Nonnull final Writer target, final LuaWriter.WritingStage stage) throws IOException {
+            @Nonnull final Writer target, @Nonnull final LuaWriter.WritingStage stage) throws IOException {
 
         if (stage == LuaWriter.WritingStage.Talking) {
             target.write("if (true) then"); //$NON-NLS-1$

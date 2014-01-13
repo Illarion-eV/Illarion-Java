@@ -52,7 +52,7 @@ public final class ParsedCycleText implements ParsedData {
      * Default constructor that sets the text value that were defined for this
      * cycle text entry.
      *
-     * @param germanText  the German version of the cycle text
+     * @param germanText the German version of the cycle text
      * @param englishText the English version of the cycle text
      */
     public ParsedCycleText(final String germanText, final String englishText) {
@@ -64,7 +64,7 @@ public final class ParsedCycleText implements ParsedData {
      * Cycle texts do not effect the SQL query.
      */
     @Override
-    public void buildSQL(final SQLBuilder builder) {
+    public void buildSQL(@Nonnull final SQLBuilder builder) {
         // nothing to add to the query.
     }
 
@@ -72,7 +72,7 @@ public final class ParsedCycleText implements ParsedData {
      * Check the stage that is effected by this cycle texts entry.
      */
     @Override
-    public boolean effectsEasyNpcStage(final EasyNpcWriter.WritingStage stage) {
+    public boolean effectsEasyNpcStage(@Nonnull final EasyNpcWriter.WritingStage stage) {
         return stage == EasyNpcWriter.WritingStage.cycleTexts;
     }
 
@@ -80,7 +80,7 @@ public final class ParsedCycleText implements ParsedData {
      * Check if the selected stage is effected by this cycle text.
      */
     @Override
-    public boolean effectsLuaWritingStage(final LuaWriter.WritingStage stage) {
+    public boolean effectsLuaWritingStage(@Nonnull final LuaWriter.WritingStage stage) {
         return stage == LuaWriter.WritingStage.CycleText;
     }
 
@@ -98,8 +98,8 @@ public final class ParsedCycleText implements ParsedData {
      */
     @SuppressWarnings("nls")
     @Override
-    public void writeEasyNpc(@Nonnull final Writer target,
-                             final EasyNpcWriter.WritingStage stage) throws IOException {
+    public void writeEasyNpc(
+            @Nonnull final Writer target, @Nonnull final EasyNpcWriter.WritingStage stage) throws IOException {
         if (stage == EasyNpcWriter.WritingStage.cycleTexts) {
             target.write("cycletext \"");
             target.write(german);
@@ -114,8 +114,8 @@ public final class ParsedCycleText implements ParsedData {
      * Write the LUA code required to ensure this cycle text is working.
      */
     @Override
-    public void writeLua(@Nonnull final Writer target,
-                         final LuaWriter.WritingStage stage) throws IOException {
+    public void writeLua(
+            @Nonnull final Writer target, @Nonnull final LuaWriter.WritingStage stage) throws IOException {
         if (stage == LuaWriter.WritingStage.CycleText) {
             target.write("talkingNPC:addCycleText(\""); //$NON-NLS-1$
             target.write(german);

@@ -28,6 +28,8 @@ import org.fife.ui.rsyntaxtextarea.TokenMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,43 +39,40 @@ import java.util.regex.Pattern;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class NpcTradeText implements NpcType {
-    private static final Pattern WRONG_ITEM_PATTERN = Pattern.compile(
-            "^\\s*(tradeWrongItemMsg)\\s*[\\(]*\\s*\"([^\"]*)\"\\s*,\\s*\"([^\"]*)\"\\s*[\\)]*\\s*$");
-    private static final Pattern NOT_ENOUGH_MONEY_PATTERN = Pattern.compile(
-            "^\\s*(tradeNotEnoughMoneyMsg)\\s*[\\(]*\\s*\"([^\"]*)\"\\s*,\\s*\"([^\"]*)\"\\s*[\\)]*\\s*$");
-    private static final Pattern TRADE_ENDED_PATTERN = Pattern.compile(
-            "^\\s*(tradeFinishedMsg)\\s*[\\(]*\\s*\"([^\"]*)\"\\s*,\\s*\"([^\"]*)\"\\s*[\\)]*\\s*$");
-    private static final Pattern TRADE_ENDED_NO_ACTION_PATTERN = Pattern.compile(
-            "^\\s*(tradeFinishedWithoutTradingMsg)\\s*[\\(]*\\s*\"([^\"]*)\"\\s*,\\s*\"([^\"]*)\"\\s*[\\)]*\\s*$");
+    private static final Map<ParsedTradeText.TradeTextType, Pattern> PATTERN_MAP;
+
+    static {
+        PATTERN_MAP = new EnumMap<>(ParsedTradeText.TradeTextType.class);
+        PATTERN_MAP.put(ParsedTradeText.TradeTextType.NoMoney, Pattern.compile(
+                "^\\s*(tradeNotEnoughMoneyMsg)\\s*[\\(]*\\s*\"([^\"]*)\"\\s*,\\s*\"([^\"]*)\"\\s*[\\)]*\\s*$"));
+        PATTERN_MAP.put(ParsedTradeText.TradeTextType.TradingCanceled, Pattern.compile(
+                "^\\s*(tradeFinishedMsg)\\s*[\\(]*\\s*\"([^\"]*)\"\\s*,\\s*\"([^\"]*)\"\\s*[\\)]*\\s*$"));
+        PATTERN_MAP.put(ParsedTradeText.TradeTextType.TradingCanceledWithoutTrade, Pattern.compile(
+                "^\\s*(tradeFinishedWithoutTradingMsg)\\s*[\\(]*\\s*\"([^\"]*)\"\\s*,\\s*\"([^\"]*)\"\\s*[\\)]*\\s*$"));
+        PATTERN_MAP.put(ParsedTradeText.TradeTextType.WrongItem, Pattern.compile(
+                "^\\s*(tradeWrongItemMsg)\\s*[\\(]*\\s*\"([^\"]*)\"\\s*,\\s*\"([^\"]*)\"\\s*[\\)]*\\s*$"));
+    }
 
     @Override
     public boolean canParseLine(@Nonnull final EasyNpcScript.Line line) {
-        return WRONG_ITEM_PATTERN.matcher(line.getLine()).matches() ||
-                NOT_ENOUGH_MONEY_PATTERN.matcher(line.getLine()).matches() ||
-                TRADE_ENDED_PATTERN.matcher(line.getLine()).matches() ||
-                TRADE_ENDED_NO_ACTION_PATTERN.matcher(line.getLine()).matches();
+        for (Pattern pattern : PATTERN_MAP.values()) {
+            if (pattern.matcher(line.getLine()).matches()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public void parseLine(@Nonnull final EasyNpcScript.Line line, @Nonnull final ParsedNpc npc) {
-        ParsedTradeText entry = parseHelper(NOT_ENOUGH_MONEY_PATTERN.matcher(line.getLine()),
-                ParsedTradeText.TradeTextType.NoMoney);
-        if (entry == null) {
-            entry = parseHelper(TRADE_ENDED_PATTERN.matcher(line.getLine()),
-                    ParsedTradeText.TradeTextType.TradingCanceled);
-            if (entry == null) {
-                entry = parseHelper(TRADE_ENDED_NO_ACTION_PATTERN.matcher(line.getLine()),
-                        ParsedTradeText.TradeTextType.TradingCanceledWithoutTrade);
-                if (entry == null) {
-                    entry = parseHelper(WRONG_ITEM_PATTERN.matcher(line.getLine()),
-                            ParsedTradeText.TradeTextType.WrongItem);
-                    if (entry == null) {
-                        return;
-                    }
-                }
+        String stringLine = line.getLine();
+        for (Map.Entry<ParsedTradeText.TradeTextType, Pattern> entry : PATTERN_MAP.entrySet()) {
+            ParsedTradeText parsedText = parseHelper(entry.getValue().matcher(stringLine), entry.getKey());
+            if (parsedText != null) {
+                npc.addNpcData(parsedText);
+                return;
             }
         }
-        npc.addNpcData(entry);
     }
 
     /**

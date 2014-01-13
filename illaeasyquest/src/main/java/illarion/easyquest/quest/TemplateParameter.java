@@ -18,6 +18,8 @@
  */
 package illarion.easyquest.quest;
 
+import illarion.easyquest.Lang;
+
 public class TemplateParameter
 {
     private String name;
@@ -43,6 +45,6 @@ public class TemplateParameter
     
     public String getDescription()
     {
-        return description;
+        return Lang.getMsg(description);
     }
 }

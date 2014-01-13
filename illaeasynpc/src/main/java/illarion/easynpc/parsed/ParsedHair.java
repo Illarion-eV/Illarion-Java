@@ -89,7 +89,7 @@ public final class ParsedHair implements ParsedData {
      * "hair" stage.
      */
     @Override
-    public boolean effectsEasyNpcStage(final EasyNpcWriter.WritingStage stage) {
+    public boolean effectsEasyNpcStage(@Nonnull final EasyNpcWriter.WritingStage stage) {
         return stage == EasyNpcWriter.WritingStage.hair;
     }
 
@@ -97,7 +97,7 @@ public final class ParsedHair implements ParsedData {
      * Hair information are not written into the LUA script. No stage is effected.
      */
     @Override
-    public boolean effectsLuaWritingStage(final LuaWriter.WritingStage stage) {
+    public boolean effectsLuaWritingStage(@Nonnull final LuaWriter.WritingStage stage) {
         return false;
     }
 
@@ -116,7 +116,7 @@ public final class ParsedHair implements ParsedData {
     @SuppressWarnings("nls")
     @Override
     public void writeEasyNpc(
-            @Nonnull final Writer target, final EasyNpcWriter.WritingStage stage) throws IOException {
+            @Nonnull final Writer target, @Nonnull final EasyNpcWriter.WritingStage stage) throws IOException {
         if (!effectsEasyNpcStage(stage)) {
             return;
         }
@@ -139,7 +139,7 @@ public final class ParsedHair implements ParsedData {
      */
     @Override
     public void writeLua(
-            final Writer target, final LuaWriter.WritingStage stage) throws IOException {
+            @Nonnull final Writer target, @Nonnull final LuaWriter.WritingStage stage) throws IOException {
         // nothing
     }
 }

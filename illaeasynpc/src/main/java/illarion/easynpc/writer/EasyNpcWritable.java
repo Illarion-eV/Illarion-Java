@@ -18,6 +18,7 @@
  */
 package illarion.easynpc.writer;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -37,16 +38,15 @@ public interface EasyNpcWritable {
      * @param stage the stage to check
      * @return <code>true</code> in case this stage is effected
      */
-    boolean effectsEasyNpcStage(EasyNpcWriter.WritingStage stage);
+    boolean effectsEasyNpcStage(@Nonnull EasyNpcWriter.WritingStage stage);
 
     /**
      * Write the data of this EasyNpcWriteable to the script according to the
      * parsing stage the script writer is currently working in.
      *
      * @param target the writer that is the data target
-     * @param stage  the current stage of the writing process
+     * @param stage the current stage of the writing process
      * @throws IOException thrown in case the writing operation failed
      */
-    void writeEasyNpc(Writer target, EasyNpcWriter.WritingStage stage)
-            throws IOException;
+    void writeEasyNpc(@Nonnull Writer target, @Nonnull EasyNpcWriter.WritingStage stage) throws IOException;
 }

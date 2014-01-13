@@ -66,7 +66,7 @@ public final class ParsedEquipment implements ParsedData {
      * The equipment data does not effect the query.
      */
     @Override
-    public void buildSQL(final SQLBuilder builder) {
+    public void buildSQL(@Nonnull final SQLBuilder builder) {
         // nothing to add to the query
     }
 
@@ -76,7 +76,7 @@ public final class ParsedEquipment implements ParsedData {
      * {@link EasyNpcWriter.WritingStage#clothes}.
      */
     @Override
-    public boolean effectsEasyNpcStage(final EasyNpcWriter.WritingStage stage) {
+    public boolean effectsEasyNpcStage(@Nonnull final EasyNpcWriter.WritingStage stage) {
         return stage == EasyNpcWriter.WritingStage.clothes;
     }
 
@@ -85,7 +85,7 @@ public final class ParsedEquipment implements ParsedData {
      * construct.
      */
     @Override
-    public boolean effectsLuaWritingStage(final LuaWriter.WritingStage stage) {
+    public boolean effectsLuaWritingStage(@Nonnull final LuaWriter.WritingStage stage) {
         return stage == LuaWriter.WritingStage.Clothes;
     }
 
@@ -103,8 +103,8 @@ public final class ParsedEquipment implements ParsedData {
      * Write the values stores in this equipment values to the easyNPC script.
      */
     @Override
-    public void writeEasyNpc(@Nonnull final Writer target,
-                             final EasyNpcWriter.WritingStage stage) throws IOException {
+    public void writeEasyNpc(
+            @Nonnull final Writer target, @Nonnull final EasyNpcWriter.WritingStage stage) throws IOException {
         if (!effectsEasyNpcStage(stage)) {
             return;
         }
@@ -144,8 +144,8 @@ public final class ParsedEquipment implements ParsedData {
      * Write the LUA representation of this data to the LUA NPC script.
      */
     @Override
-    public void writeLua(@Nonnull final Writer target,
-                         final LuaWriter.WritingStage stage) throws IOException {
+    public void writeLua(
+            @Nonnull final Writer target, @Nonnull final LuaWriter.WritingStage stage) throws IOException {
         if (!effectsLuaWritingStage(stage)) {
             return;
         }

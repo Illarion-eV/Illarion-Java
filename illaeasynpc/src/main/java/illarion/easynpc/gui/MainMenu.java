@@ -30,7 +30,7 @@ import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntrySecondary
 import javax.annotation.Nullable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.nio.file.Path;
 
 /**
  * This class prepares the application menu of the editor that offers access to
@@ -68,22 +68,22 @@ final class MainMenu extends RibbonApplicationMenu {
                             }
                         }, CommandButtonKind.ACTION_ONLY);
 
-        final File[] oldFiles = Config.getInstance().getLastOpenedFiles();
+        final Path[] oldFiles = Config.getInstance().getLastOpenedFiles();
         final RibbonApplicationMenuEntrySecondary[] workingEntries =
                 new RibbonApplicationMenuEntrySecondary[oldFiles.length];
         int entryIndex = 0;
-        for (@Nullable final File openFile : oldFiles) {
+        for (@Nullable final Path openFile : oldFiles) {
             if (openFile == null) {
                 continue;
             }
             workingEntries[entryIndex] =
                     new RibbonApplicationMenuEntrySecondary(
-                            Utils.getResizableIconFromResource("source.png"),
-                            openFile.getName(), new ActionListener() {
-                        @Nullable
-                        private final File fileToOpen = openFile;
+                            Utils.getResizableIconFromResource("source.png"), openFile.getFileName().toString(),
+                            new ActionListener() {
+                                @Nullable
+                                private final Path fileToOpen = openFile;
 
-                        @Override
+                                @Override
                         public void actionPerformed(final ActionEvent e) {
                             Utils.openScript(fileToOpen);
                         }

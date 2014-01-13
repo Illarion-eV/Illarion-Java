@@ -40,9 +40,8 @@ public final class NpcCycleText implements NpcType {
      * The pattern to find out of this line is a cycle text
      */
     @SuppressWarnings("nls")
-    private static final Pattern CYCLETEXT_LINE =
-            Pattern.compile("^\\s*(cycletext)\\s*[\\(]*\\s*\"([^\"]*)\"\\s*,\\s*\"([^\"]*)\"\\s*[\\)]*\\s*$",
-                    Pattern.MULTILINE);
+    private static final Pattern CYCLETEXT_LINE = Pattern
+            .compile("^\\s*(cycletext)\\s*[\\(]*\\s*\"([^\"]*)\"\\s*,\\s*\"([^\"]*)\"\\s*[\\)]*\\s*$");
 
     /**
      * Check if the line is a comment block

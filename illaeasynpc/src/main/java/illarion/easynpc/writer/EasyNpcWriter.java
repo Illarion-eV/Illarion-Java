@@ -18,6 +18,7 @@
  */
 package illarion.easynpc.writer;
 
+import illarion.common.util.CopyrightHeader;
 import illarion.easynpc.ParsedNpc;
 import illarion.easynpc.Parser;
 import illarion.easynpc.data.CharacterLanguage;
@@ -54,6 +55,11 @@ public final class EasyNpcWriter {
         cycleTexts,
 
         /**
+         * The writing stage for the guard part of NPCs.
+         */
+        guarding,
+
+        /**
          * The hair stage is used to write the hair IDs to the NPC script.
          */
         hair,
@@ -78,18 +84,27 @@ public final class EasyNpcWriter {
     /**
      * The header of auto comment.
      */
+    @Nonnull
     @SuppressWarnings("nls")
     public static final String AC_HEADER = "------------------------------------------------------------------------------AC\n";
 
     /**
      * The new line string that is used by default for this scripts.
      */
+    @Nonnull
     public static final String NL = "\n"; //$NON-NLS-1$
 
     /**
      * The singleton instance of this class.
      */
+    @Nonnull
     private static final EasyNpcWriter INSTANCE = new EasyNpcWriter();
+
+    /**
+     * The copyright header of the easyNPC writer.
+     */
+    @Nonnull
+    public static final CopyrightHeader COPYRIGHT_HEADER = new CopyrightHeader(80, null, null, "-- ", null);
 
     /**
      * The private default constructor to avoid any instances but the singleton
@@ -146,6 +161,12 @@ public final class EasyNpcWriter {
         if (checkStageExists(source, WritingStage.trading)) {
             writeIntro(source, target, WritingStage.trading);
             writeStage(source, target, WritingStage.trading);
+        }
+
+        // now the guarding part
+        if (checkStageExists(source, WritingStage.guarding)) {
+            writeIntro(source, target, WritingStage.guarding);
+            writeStage(source, target, WritingStage.guarding);
         }
 
         // now the talking part
@@ -305,6 +326,7 @@ public final class EasyNpcWriter {
 
         switch (stage) {
             case header:
+                COPYRIGHT_HEADER.writeTo(target);
                 target.write(AC_HEADER);
 
                 target.write(String.format("-- %1$-10s%2$-49s%3$15s --%n", "NPC Name:", source.getNpcName(),
@@ -341,7 +363,7 @@ public final class EasyNpcWriter {
                     }
                 }
 
-                target.write(String.format("-- %1$-47s%2$27s --%n", "", Parser.APPLICATION.getApplicationIdentifier()));
+                target.write(String.format("-- %1$-47s%2$27s --%n", "", Parser.APPLICATION.getApplicationName()));
 
                 target.write("--------------------------------------------------------------------------------");
                 target.write(NL);

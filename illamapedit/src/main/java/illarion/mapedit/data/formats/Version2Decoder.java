@@ -72,6 +72,9 @@ public class Version2Decoder implements Decoder {
 
     @Override
     public void decodeItemLine(final String line, final int i) throws FormatCorruptedException {
+        if (line.startsWith("# ")) {
+            return;
+        }
         final List<String> matches = getItemMatches(line);
         if (matches.size() < 4) {
             throw new FormatCorruptedException(path + ".item.txt", line, i,
@@ -114,6 +117,9 @@ public class Version2Decoder implements Decoder {
 
     @Override
     public void decodeTileLine(final String line, final int i) throws FormatCorruptedException {
+        if (line.startsWith("# ")) {
+            return;
+        }
         //        <dx>;<dy>;<tileID>;<musicID>
 
         if (map == null) {
@@ -140,6 +146,9 @@ public class Version2Decoder implements Decoder {
 
     @Override
     public void decodeAnnoLine(final String line, final int i) throws FormatCorruptedException {
+        if (line.startsWith("# ")) {
+            return;
+        }
         final String[] sections = DELIMITER.split(line);
         if (sections.length != 4) {
             throw new FormatCorruptedException(path + ".annot.txt", line, i, "<sx>;<sy>;<type>;<annotation>");
@@ -162,6 +171,9 @@ public class Version2Decoder implements Decoder {
 
     @Override
     public void decodeWarpLine(final String line, final int i) throws FormatCorruptedException {
+        if (line.startsWith("# ")) {
+            return;
+        }
         // <sx>;<sy>;<tx>;<ty>;<tz>
         final String[] sections = DELIMITER.split(line);
         if (sections.length != 5) {

@@ -103,7 +103,7 @@ public final class ParsedColors implements ParsedData {
      * Check if the current script writing stage is effected by this color parser.
      */
     @Override
-    public boolean effectsEasyNpcStage(final EasyNpcWriter.WritingStage stage) {
+    public boolean effectsEasyNpcStage(@Nonnull final EasyNpcWriter.WritingStage stage) {
         return stage == EasyNpcWriter.WritingStage.color;
     }
 
@@ -113,7 +113,7 @@ public final class ParsedColors implements ParsedData {
      * @return {@code false} at all times
      */
     @Override
-    public boolean effectsLuaWritingStage(final LuaWriter.WritingStage stage) {
+    public boolean effectsLuaWritingStage(@Nonnull final LuaWriter.WritingStage stage) {
         return false;
     }
 
@@ -133,7 +133,8 @@ public final class ParsedColors implements ParsedData {
      */
     @SuppressWarnings("nls")
     @Override
-    public void writeEasyNpc(@Nonnull final Writer target, final EasyNpcWriter.WritingStage stage) throws IOException {
+    public void writeEasyNpc(@Nonnull final Writer target, @Nonnull final EasyNpcWriter.WritingStage stage)
+            throws IOException {
         if (!effectsEasyNpcStage(stage)) {
             return;
         }
@@ -160,7 +161,7 @@ public final class ParsedColors implements ParsedData {
      */
     @Override
     public void writeLua(
-            final Writer target, final LuaWriter.WritingStage stage) throws IOException {
+            @Nonnull final Writer target, @Nonnull final LuaWriter.WritingStage stage) throws IOException {
         // nothing to do
     }
 }

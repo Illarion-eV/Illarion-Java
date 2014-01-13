@@ -113,7 +113,9 @@ public final class TalkingLine {
         consPar.add(new illarion.easynpc.parser.talk.consequences.Treasure());
         consPar.add(new illarion.easynpc.parser.talk.consequences.Warp());
         consPar.add(new illarion.easynpc.parser.talk.consequences.Answer());
+        consPar.add(new illarion.easynpc.parser.talk.consequences.Arena());
         consPar.add(new illarion.easynpc.parser.talk.consequences.Trade());
+        consPar.add(new illarion.easynpc.parser.talk.consequences.Repair());
         consPar.add(new illarion.easynpc.parser.talk.consequences.Gemcraft());
         consPar.add(new illarion.easynpc.parser.talk.consequences.Introduce());
 

@@ -128,10 +128,7 @@ public class HandlerPanel extends JPanel {
                 parameters[i] = p.getParameter();
             }
 
-
-            handler = new Handler();
-            handler.setType(template.getName());
-            handler.setParameters(parameters);
+            handler = new Handler(template.getName(), parameters);
         }
         return handler;
     }

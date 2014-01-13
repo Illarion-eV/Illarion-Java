@@ -31,6 +31,7 @@ import java.io.Writer;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ScriptWriter {
+
     /**
      * This enumerator contains the possible targets of the script writer.
      */
@@ -59,6 +60,11 @@ public final class ScriptWriter {
     private ParsedNpc sourceNPC;
 
     /**
+     * This flag should be set true in case the created source is only used as generated code and is never edited.
+     */
+    private boolean generated;
+
+    /**
      * The language that is the target of the writer. Either LUA or easyNPC.
      */
     @Nullable
@@ -71,6 +77,7 @@ public final class ScriptWriter {
         scriptTarget = null;
         targetLang = null;
         sourceNPC = null;
+        generated = false;
     }
 
     /**
@@ -102,6 +109,16 @@ public final class ScriptWriter {
     }
 
     /**
+     * Set the writer to the generated mode. This way the created files may be smaller as the things not required are
+     * left out.
+     *
+     * @param generated the generated flag
+     */
+    public void setGenerated(boolean generated) {
+        this.generated = generated;
+    }
+
+    /**
      * Write the set NPC to a script.
      *
      * @throws IOException thrown in case writing to the assigned target fails
@@ -112,7 +129,7 @@ public final class ScriptWriter {
                 EasyNpcWriter.getInstance().write(sourceNPC, scriptTarget);
                 break;
             case LUA:
-                LuaWriter.getInstance().write(sourceNPC, scriptTarget);
+                LuaWriter.getInstance().write(sourceNPC, scriptTarget, generated);
                 break;
         }
     }

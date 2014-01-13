@@ -18,6 +18,7 @@
  */
 package illarion.easynpc.writer;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Writer;
@@ -35,7 +36,7 @@ public interface LuaWritable {
      *
      * @param builder the builder that is used to construct the SQL query
      */
-    void buildSQL(final SQLBuilder builder);
+    void buildSQL(@Nonnull SQLBuilder builder);
 
     /**
      * Check if this LUA writable has any effect on a selected stage.
@@ -43,7 +44,7 @@ public interface LuaWritable {
      * @param stage the selected stage
      * @return <code>true<code> in case this LUA writable effects the stage
      */
-    boolean effectsLuaWritingStage(LuaWriter.WritingStage stage);
+    boolean effectsLuaWritingStage(@Nonnull LuaWriter.WritingStage stage);
 
     /**
      * Get the list of modules required to have the code written by this
@@ -58,9 +59,8 @@ public interface LuaWritable {
      * Write the LUA Code fitting into the currently selected writing stage.
      *
      * @param target the writer that is supposed to receive the script data
-     * @param stage  the stage that is currently written
+     * @param stage the stage that is currently written
      * @throws IOException thrown in case a writing error occurs
      */
-    void writeLua(Writer target, LuaWriter.WritingStage stage)
-            throws IOException;
+    void writeLua(@Nonnull Writer target, @Nonnull LuaWriter.WritingStage stage) throws IOException;
 }

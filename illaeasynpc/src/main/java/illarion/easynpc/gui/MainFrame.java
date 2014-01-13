@@ -39,8 +39,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * This is the Main Frame of the display of the easyNPC editor.
@@ -62,58 +63,6 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
      * The serialization UID of this main frame.
      */
     private static final long serialVersionUID = 1L;
-
-    /**
-     * The listener that listens the editor tabs to be closed and ask the user
-     * to save the content of the tab in case its needed.
-     */
-    private final VetoableTabCloseListener editorTabListener =
-            new VetoableTabCloseListener() {
-                @Override
-                public void tabClosed(@Nonnull final JTabbedPane pane,
-                                      @Nonnull final Component component) {
-                    ((Editor) component).cleanup();
-                    if (pane.getTabCount() == 0) {
-                        addNewScript();
-                    }
-                }
-
-                @Override
-                public void tabClosing(final JTabbedPane pane,
-                                       final Component component) {
-                    // nothing
-                }
-
-                @SuppressWarnings("nls")
-                @Override
-                public boolean vetoTabClosing(final JTabbedPane pane,
-                                              final Component component) {
-                    final Editor editor = (Editor) component;
-                    if (!editor.changedSinceSave()) {
-                        return false;
-                    }
-
-                    final Object[] options = {
-                            Lang.getMsg(MainFrame.class, "UnsavedChanges.saveButton"),
-                            Lang.getMsg(MainFrame.class, "UnsavedChanges.discardButton"),
-                            Lang.getMsg(MainFrame.class, "UnsavedChanges.cancelButton")};
-                    final int result =
-                            JOptionPane
-                                    .showOptionDialog(MainFrame.getInstance(),
-                                            Lang.getMsg(MainFrame.class,
-                                                    "UnsavedChanges.message"), Lang.getMsg(
-                                            MainFrame.class, "UnsavedChanges.title"),
-                                            JOptionPane.YES_NO_CANCEL_OPTION,
-                                            JOptionPane.WARNING_MESSAGE, null, options,
-                                            options[0]);
-
-                    if (result == JOptionPane.YES_OPTION) {
-                        Utils.saveEasyNPC(editor);
-                        return false;
-                    }
-                    return (result == JOptionPane.CANCEL_OPTION);
-                }
-            };
 
     /**
      * The area where the error messages are displayed.
@@ -280,14 +229,58 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
 
         mainPanel.setDividerLocation(Config.getInstance().getSplitPaneState());
 
-        SubstanceLookAndFeel.registerTabCloseChangeListener(tabbedEditorArea,
-                editorTabListener);
+        /*
+      The listener that listens the editor tabs to be closed and ask the user
+      to save the content of the tab in case its needed.
+     */
+        VetoableTabCloseListener editorTabListener = new VetoableTabCloseListener() {
+            @Override
+            public void tabClosed(
+                    @Nonnull final JTabbedPane pane, @Nonnull final Component component) {
+                ((Editor) component).cleanup();
+                if (pane.getTabCount() == 0) {
+                    addNewScript();
+                }
+            }
+
+            @Override
+            public void tabClosing(
+                    final JTabbedPane pane, final Component component) {
+                // nothing
+            }
+
+            @SuppressWarnings("nls")
+            @Override
+            public boolean vetoTabClosing(
+                    final JTabbedPane pane, final Component component) {
+                final Editor editor = (Editor) component;
+                if (!editor.changedSinceSave()) {
+                    return false;
+                }
+
+                final Object[] options = {Lang.getMsg(MainFrame.class, "UnsavedChanges.saveButton"),
+                                          Lang.getMsg(MainFrame.class, "UnsavedChanges.discardButton"),
+                                          Lang.getMsg(MainFrame.class, "UnsavedChanges.cancelButton")};
+                final int result = JOptionPane.showOptionDialog(MainFrame.getInstance(),
+                                                                Lang.getMsg(MainFrame.class, "UnsavedChanges.message"),
+                                                                Lang.getMsg(MainFrame.class, "UnsavedChanges.title"),
+                                                                JOptionPane.YES_NO_CANCEL_OPTION,
+                                                                JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+
+                if (result == JOptionPane.YES_OPTION) {
+                    Utils.saveEasyNPC(editor);
+                    return false;
+                }
+                return (result == JOptionPane.CANCEL_OPTION);
+            }
+        };
+        SubstanceLookAndFeel.registerTabCloseChangeListener(tabbedEditorArea, editorTabListener);
 
         setApplicationIcon(Utils
                 .getResizableIconFromResource("easynpc256.png"));
 
         final String[] lastFiles = Config.getInstance().getOldFiles();
-        if ((lastFiles == null) || (lastFiles.length == 0)) {
+        if ((lastFiles.length == 0)) {
             addNewScript();
         } else {
             for (final String file : lastFiles) {
@@ -298,9 +291,9 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
                     continue;
                 }
                 try {
-                    final EasyNpcScript easyScript = new EasyNpcScript(new File(file));
+                    final EasyNpcScript easyScript = new EasyNpcScript(Paths.get(file));
                     addNewScript().loadScript(easyScript);
-                    setCurrentTabTitle(easyScript.getSourceScriptFile().getName());
+                    setCurrentTabTitle(easyScript.getSourceScriptFile().getFileName().toString());
                 } catch (@Nonnull final IOException e1) {
                     LOGGER.warn("Originally opened file: " + file + " could not be opened.");
                 }
@@ -449,7 +442,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
      * @return the index of the editor that opened this file or -1 in case its
      *         not opened yet
      */
-    protected int alreadyOpen(final File file) {
+    protected int alreadyOpen(final Path file) {
         final int count = tabbedEditorArea.getComponentCount();
         Editor currentComp;
         for (int i = 0; i < count; i++) {
@@ -477,7 +470,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
             if (editor.getScriptFile() == null) {
                 fileList[i] = "new";
             } else {
-                fileList[i] = editor.getScriptFile().getAbsolutePath();
+                fileList[i] = editor.getScriptFile().toString();
             }
             if (!editor.changedSinceSave()) {
                 continue;
@@ -498,7 +491,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
 
             if (result == JOptionPane.YES_OPTION) {
                 Utils.saveEasyNPC(editor);
-                fileList[i] = editor.getScriptFile().getAbsolutePath();
+                fileList[i] = editor.getScriptFile().toString();
                 continue;
             }
             if (result == JOptionPane.NO_OPTION) {

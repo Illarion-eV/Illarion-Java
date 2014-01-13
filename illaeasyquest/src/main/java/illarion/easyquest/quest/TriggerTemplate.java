@@ -18,8 +18,6 @@
  */
 package illarion.easyquest.quest;
 
-import illarion.easyquest.Lang;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -76,10 +74,10 @@ public class TriggerTemplate {
         String idType, idDescription;
         if (category.equals("triggerfield")) {
             idType = "POSITION";
-            idDescription = Lang.getMsg(getClass(), "idPosition");
+            idDescription = TriggerTemplate.class.getName() + ".idPosition";
         } else {
             idType = "INTEGER";
-            idDescription = Lang.getMsg(getClass(), "idInteger");
+            idDescription = TriggerTemplate.class.getName() + ".idInteger";
         }
         id = new TemplateParameter("objectId", idType, idDescription);
     }

@@ -29,34 +29,28 @@ import java.util.ResourceBundle;
 @SuppressWarnings("nls")
 public final class Lang implements MessageSource {
     /**
-     * The string stores in the configuration for English language.
-     */
-    public static final String LOCALE_CFG_ENGLISH = "en";
-
-    /**
-     * The string stores in the configuration for German language.
-     */
-    public static final String LOCALE_CFG_GERMAN = "de";
-
-    /**
      * The singleton instance of this class.
      */
+    @Nonnull
     private static final Lang INSTANCE = new Lang();
 
     /**
      * The file name of the message bundles the client loads for the language.
      */
-    private static final String MESSAGE_BUNDLE = "messages";
+    @Nonnull
+    private static final String MESSAGE_BUNDLE = "easyquest_messages";
 
     /**
      * The current local settings.
      */
+    @Nonnull
     private Locale locale;
 
     /**
      * The storage of the localized messages. Holds the key for the string and
      * the localized full message.
      */
+    @Nonnull
     private final ResourceBundle messages;
 
     /**
@@ -71,8 +65,7 @@ public final class Lang implements MessageSource {
         }
 
         messages =
-                ResourceBundle.getBundle(MESSAGE_BUNDLE, locale,
-                        Lang.class.getClassLoader());
+                ResourceBundle.getBundle(MESSAGE_BUNDLE, locale, Thread.currentThread().getContextClassLoader());
     }
 
     /**
@@ -93,7 +86,8 @@ public final class Lang implements MessageSource {
      * @return the localized message or the key with surrounding < > in case the
      *         key was not found in the storage
      */
-    public static String getMsg(@Nonnull final Class<?> clazz, final String key) {
+    @Nonnull
+    public static String getMsg(@Nonnull final Class<?> clazz, @Nonnull final String key) {
         final TextBuilder builder = new TextBuilder();
         builder.append(clazz.getName());
         builder.append('.');
@@ -108,7 +102,8 @@ public final class Lang implements MessageSource {
      * @return the localized message or the key with surrounding &lt; &gt; in
      *         case the key was not found in the storage
      */
-    public static String getMsg(final String key) {
+    @Nonnull
+    public static String getMsg(@Nonnull final String key) {
         return INSTANCE.getMessage(key);
     }
 
@@ -117,6 +112,7 @@ public final class Lang implements MessageSource {
      *
      * @return the local object of the chosen local settings
      */
+    @Nonnull
     public Locale getLocale() {
         return locale;
     }
@@ -129,7 +125,8 @@ public final class Lang implements MessageSource {
      *         case the key was not found in the storage
      */
     @Override
-    public String getMessage(final String key) {
+    @Nonnull
+    public String getMessage(@Nonnull final String key) {
         try {
             return messages.getString(key);
         } catch (@Nonnull final MissingResourceException e) {
@@ -144,7 +141,7 @@ public final class Lang implements MessageSource {
      * @param key the key that shall be checked
      * @return true in case a message was found
      */
-    public boolean hasMsg(final String key) {
+    public boolean hasMsg(@Nonnull final String key) {
         try {
             messages.getString(key);
         } catch (@Nonnull final MissingResourceException e) {

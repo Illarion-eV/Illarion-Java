@@ -49,7 +49,7 @@ public final class ParsedWalkingRadius implements ParsedData {
      * No effect on the SQL query.
      */
     @Override
-    public void buildSQL(final SQLBuilder builder) {
+    public void buildSQL(@Nonnull final SQLBuilder builder) {
         // nothing to add to the query.
     }
 
@@ -57,12 +57,12 @@ public final class ParsedWalkingRadius implements ParsedData {
      * Check the stage effected by this walking radius value.
      */
     @Override
-    public boolean effectsEasyNpcStage(final EasyNpcWriter.WritingStage stage) {
+    public boolean effectsEasyNpcStage(@Nonnull final EasyNpcWriter.WritingStage stage) {
         return stage == EasyNpcWriter.WritingStage.header;
     }
 
     @Override
-    public boolean effectsLuaWritingStage(final LuaWriter.WritingStage stage) {
+    public boolean effectsLuaWritingStage(@Nonnull final LuaWriter.WritingStage stage) {
         return false;
     }
 
@@ -77,20 +77,18 @@ public final class ParsedWalkingRadius implements ParsedData {
      */
     @SuppressWarnings("nls")
     @Override
-    public void writeEasyNpc(@Nonnull final Writer target, final EasyNpcWriter.WritingStage stage)
+    public void writeEasyNpc(@Nonnull final Writer target, @Nonnull final EasyNpcWriter.WritingStage stage)
             throws IOException {
         if (stage == EasyNpcWriter.WritingStage.header) {
             target.write("radius = ");
             target.write(Integer.toString(range, 0));
             target.write(EasyNpcWriter.NL);
         }
-
     }
 
     @Override
-    public void writeLua(final Writer target,
-                         final LuaWriter.WritingStage stage)
-            throws IOException {
+    public void writeLua(
+            @Nonnull final Writer target, @Nonnull final LuaWriter.WritingStage stage) throws IOException {
         // not implemented yet.
     }
 }
