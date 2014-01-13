@@ -16,26 +16,20 @@
  */
 package illarion.build
 
-import groovy.xml.MarkupBuilder;
-import illarion.build.imagepacker.ImagePacker;
-import illarion.common.data.Book;
-import illarion.common.util.Crypto;
+import groovy.xml.MarkupBuilder
+import illarion.build.imagepacker.ImagePacker
+import illarion.common.data.Book
+import illarion.common.util.Crypto
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.StopExecutionException;
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.w3c.dom.Document
-import org.xml.sax.SAXException;
+import org.xml.sax.SAXException
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nonnull
 import javax.imageio.ImageIO
-import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
-import java.io.*
 
 /**
  * This converter mainly converts the PNG image files into a format optimized for OpenGL, in order to improve the speed
@@ -275,7 +269,7 @@ public class ResourceConverter extends DefaultTask {
             return
         }
 
-        final ImagePacker packer = new ImagePacker(rootDir)
+        final ImagePacker packer = new ImagePacker(rootDir, logger)
         packer.addImages(textureFiles)
         packer.printTypeCounts()
         textureFiles.clear()
