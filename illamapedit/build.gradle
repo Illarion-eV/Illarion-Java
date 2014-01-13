@@ -34,10 +34,10 @@ dependencies {
     compile group: 'com.github.insubstantial', name: 'substance', version: '7.2.1'
     compile group: 'com.github.insubstantial', name: 'substance-flamingo', version: '7.2.1'
     compile group: 'org.swinglabs', name: 'swingx', version: '1.6.1'
-    runtime group: 'org.illarion', name: 'rsc_items', version: '2.1.12.1-SNAPSHOT'
-    runtime group: 'org.illarion', name: 'rsc_music', version: '2.1.12.1-SNAPSHOT'
-    runtime group: 'org.illarion', name: 'rsc_tables', version: '2.1.12.1-SNAPSHOT'
-    runtime group: 'org.illarion', name: 'rsc_tiles', version: '2.1.12.1-SNAPSHOT'
+    runtime group: 'org.illarion', name: 'rsc_items', version: '2.1.13-SNAPSHOT'
+    runtime group: 'org.illarion', name: 'rsc_music', version: '2.1.13-SNAPSHOT'
+    runtime group: 'org.illarion', name: 'rsc_tables', version: '2.1.13-SNAPSHOT'
+    runtime group: 'org.illarion', name: 'rsc_tiles', version: '2.1.13-SNAPSHOT'
 }
 
 jar {
