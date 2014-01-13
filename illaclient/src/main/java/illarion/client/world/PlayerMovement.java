@@ -31,7 +31,8 @@ import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
 import illarion.common.util.FastMath;
 import illarion.common.util.Timer;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.illarion.engine.input.Input;
 import org.illarion.engine.input.Key;
@@ -89,7 +90,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      */
     @SuppressWarnings("UnusedDeclaration")
     @Nonnull
-    private static final Logger LOGGER = Logger.getLogger(PlayerMovement.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PlayerMovement.class);
 
     /**
      * The destination location of the automated walking.

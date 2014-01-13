@@ -25,7 +25,8 @@ import illarion.client.util.Lang;
 import illarion.client.world.World;
 import illarion.common.data.IllarionSSLSocketFactory;
 import illarion.common.util.Base64;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -256,7 +257,7 @@ public final class Login {
      * The instance of the logger that is used write the log output of this
      * class.
      */
-    private static final Logger LOGGER = Logger.getLogger(Login.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Login.class);
 
     private void readXML(@Nonnull final Node root, @Nonnull final Login.RequestCharListCallback resultCallback) {
         if (!"chars".equals(root.getNodeName()) && !NODE_NAME_ERROR.equals(root.getNodeName())) {

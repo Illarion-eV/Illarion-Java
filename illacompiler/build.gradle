@@ -27,6 +27,9 @@ dependencies {
     compile project(':easynpc')
     compile project(':easyquest')
     compile group: 'commons-cli', name: 'commons-cli', version: '1.2'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.5'
+    compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: '1.7.5'
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.0.13'
 }
 
 jar {
@@ -61,14 +64,21 @@ task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jar') {
                 filter += ",!javax/xml/namespace/QName.class"
             }
             if (file.absolutePath.contains("illarion")) {
-                filter += ",!*.png,!cloths.dat"
+                filter += ",!*.png,!logback.xml"
+                filter += ",!Books.dat"
+                filter += ",!Chars.dat"
+                filter += ",!Cloth.dat"
+                filter += ",!Effects.dat"
+                filter += ",!Gui.dat"
+                filter += ",!Overlays.dat"
+                filter += ",!Runes.dat"
+                filter += ",!Sounds.dat"
+                filter += ",!Tiles.dat"
             }
             if (file.absolutePath.contains("javolution-core-java")) {
                 filter += ",!org/osgi/**"
             }
-            if (!file.absolutePath.contains("jcl-over-slf4j")) {
-                injars([filter: filter], file.absolutePath)
-            }
+            injars([filter: filter], file.absolutePath)
         }
     }
 
@@ -119,24 +129,10 @@ task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jar') {
             "java.lang.Object readResolve();" +
             "}"
 
-    keep "class org.apache.log4j.ConsoleAppender"
-    keep "class org.apache.log4j.PatternLayout"
+    keep "class ch.qos.logback.** { *; }"
     keep "class illarion.compile.impl.EasyQuestCompile"
     keep "class illarion.compile.impl.EasyNpcCompile"
     keep "class org.xmlpull.mxp1.MXParserFactory"
-
-    keepclasseswithmembers "class org.apache.log4j.PatternLayout {" +
-            "void setConversionPattern(java.lang.String);" +
-            "java.lang.String getConversionPattern();" +
-            "}"
-
-    keepclassmembers "class org.apache.commons.logging.impl.SimpleLog {" +
-            "<init>(java.lang.String);" +
-            "}"
-
-    keepclasseswithmembers "class * {" +
-            "org.apache.commons.logging.Log getLog(java.lang.String);" +
-            "}"
 
     dontwarn "com.sun.**"
     dontwarn "javax.servlet.**"
@@ -149,6 +145,9 @@ task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jar') {
     dontwarn "org.mantisbt.**"
     dontwarn "org.osgi.service.**"
     dontnote "javax.xml.**"
+    dontwarn "ch.qos.logback.classic.**"
+    dontwarn "org.codehaus.janino.**"
+    dontwarn "org.apache.log4j.**"
 }
 
 

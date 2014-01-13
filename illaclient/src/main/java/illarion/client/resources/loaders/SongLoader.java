@@ -22,7 +22,8 @@ import illarion.client.resources.ResourceFactory;
 import illarion.client.util.IdWrapper;
 import illarion.common.util.TableLoaderMusic;
 import illarion.common.util.TableLoaderSink;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
@@ -38,7 +39,7 @@ public final class SongLoader extends AbstractResourceLoader<IdWrapper<String>>
     /**
      * The logger that is used to report error messages.
      */
-    private static final Logger LOGGER = Logger.getLogger(ItemLoader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ItemLoader.class);
 
     /**
      * Trigger the loading sequence for this loader.

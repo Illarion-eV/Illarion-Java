@@ -25,7 +25,8 @@ import illarion.mapedit.data.formats.Decoder;
 import illarion.mapedit.data.formats.Version2Decoder;
 import illarion.mapedit.events.menu.MapLoadErrorEvent;
 import illarion.mapedit.events.menu.MapLoadedEvent;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.EventBus;
 
 import javax.annotation.Nonnull;
@@ -42,7 +43,7 @@ import java.util.regex.Pattern;
  * @author Tim
  */
 public class MapIO {
-    private static final Logger LOGGER = Logger.getLogger(MapIO.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MapIO.class);
     private static final String HEADER_V = "V:";
     private static final String HEADER_L = "L:";
     private static final String HEADER_X = "X:";

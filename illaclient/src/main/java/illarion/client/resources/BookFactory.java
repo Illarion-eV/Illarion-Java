@@ -20,7 +20,8 @@ package illarion.client.resources;
 
 import illarion.client.util.IdWrapper;
 import illarion.common.data.Book;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -44,7 +45,7 @@ public final class BookFactory implements ResourceFactory<IdWrapper<String>> {
     /**
      * The logger instance of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(BookFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BookFactory.class);
 
     /**
      * The map that stores the file names in relation to the book IDs.

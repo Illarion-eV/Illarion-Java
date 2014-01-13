@@ -26,7 +26,8 @@ import illarion.client.util.Lang;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import javolution.text.TextBuilder;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,7 +44,7 @@ public final class InformMsg extends AbstractGuiMsg {
      * The logger that is used for the log output of this class.
      */
     @Nonnull
-    private static final Logger LOGGER = Logger.getLogger(InformMsg.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InformMsg.class);
 
     /**
      * The type of the inform.

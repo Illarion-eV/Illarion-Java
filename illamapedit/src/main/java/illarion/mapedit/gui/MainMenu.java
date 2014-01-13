@@ -26,7 +26,8 @@ import illarion.mapedit.events.menu.MapNewEvent;
 import illarion.mapedit.events.menu.MapSaveEvent;
 import illarion.mapedit.events.menu.SetFolderEvent;
 import illarion.mapedit.resource.loaders.ImageLoader;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.EventBus;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenu;
@@ -45,7 +46,7 @@ import java.io.IOException;
  */
 public class MainMenu extends RibbonApplicationMenu {
 
-    private static final Logger LOGGER = Logger.getLogger(MainMenu.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MainMenu.class);
 
 
     public MainMenu() {

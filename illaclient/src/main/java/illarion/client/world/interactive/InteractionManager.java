@@ -25,7 +25,8 @@ import illarion.client.world.items.ContainerSlot;
 import illarion.client.world.items.InventorySlot;
 import illarion.client.world.items.ItemContainer;
 import illarion.common.types.ItemCount;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,7 +43,7 @@ public final class InteractionManager {
     /**
      * The logger instance of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(InteractionManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InteractionManager.class);
     /**
      * The object that is currently dragged around.
      */

@@ -33,7 +33,8 @@ import illarion.common.types.CharacterId;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
 import illarion.common.util.FastMath;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.EventBus;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.LightSource;
@@ -84,7 +85,7 @@ public final class Char implements AnimatedMove {
      * The instance of the logger that is used to write out the data.
      */
     @Nonnull
-    private static final Logger LOGGER = Logger.getLogger(Char.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Char.class);
 
     /**
      * Maximal scale value for the character.

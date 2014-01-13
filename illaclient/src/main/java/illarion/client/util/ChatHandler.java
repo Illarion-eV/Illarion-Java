@@ -22,7 +22,8 @@ import illarion.client.gui.ChatGui;
 import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.common.types.Location;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.graphic.Color;
 
 import javax.annotation.Nonnull;
@@ -143,7 +144,7 @@ public final class ChatHandler {
     /**
      * The logger that takes care of the logging output of the Chat handler.
      */
-    private static final Logger LOGGER = Logger.getLogger(ChatHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ChatHandler.class);
 
     /**
      * Handle a message by this processor. This method stores a message in the

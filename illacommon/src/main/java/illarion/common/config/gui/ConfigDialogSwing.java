@@ -24,7 +24,8 @@ import illarion.common.config.gui.entries.SaveableEntry;
 import illarion.common.config.gui.entries.swing.*;
 import illarion.common.util.MessageSource;
 import javolution.util.FastTable;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.swing.*;
@@ -130,7 +131,7 @@ public final class ConfigDialogSwing extends JDialog {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(ConfigDialogSwing.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigDialogSwing.class);
 
     /**
      * The serialization UID of this dialog.

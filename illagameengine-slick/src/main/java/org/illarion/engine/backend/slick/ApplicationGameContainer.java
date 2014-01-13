@@ -18,7 +18,8 @@
  */
 package org.illarion.engine.backend.slick;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.DesktopGameContainer;
 import org.illarion.engine.EngineException;
 import org.illarion.engine.GameListener;
@@ -46,7 +47,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
      * The logger instance for this class.
      */
     @Nonnull
-    private static final Logger LOGGER = Logger.getLogger(ApplicationGameContainer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationGameContainer.class);
 
     /**
      * The engine instance for the Slick2D backend.

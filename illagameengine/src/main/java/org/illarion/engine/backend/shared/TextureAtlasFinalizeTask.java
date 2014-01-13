@@ -19,7 +19,8 @@
 package org.illarion.engine.backend.shared;
 
 import illarion.common.util.ProgressMonitor;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.graphic.Texture;
 
 import javax.annotation.Nonnull;
@@ -35,7 +36,7 @@ public class TextureAtlasFinalizeTask<T> implements Runnable, TextureAtlasTask {
     /**
      * The logger that provides the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(TextureAtlasFinalizeTask.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TextureAtlasFinalizeTask.class);
 
     private static final class SpriteData {
         String spriteName;

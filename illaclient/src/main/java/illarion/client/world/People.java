@@ -23,7 +23,8 @@ import illarion.client.world.events.CharRemovedEvent;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
 import javolution.util.FastTable;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.EventBus;
 
 import javax.annotation.Nonnull;
@@ -49,7 +50,7 @@ public final class People {
      */
     @Nonnull
     @SuppressWarnings("UnusedDeclaration")
-    private static final Logger LOGGER = Logger.getLogger(People.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(People.class);
 
     /**
      * This is the format string that is displayed in the {@link #toString()} function.

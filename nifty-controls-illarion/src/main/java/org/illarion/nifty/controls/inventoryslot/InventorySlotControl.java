@@ -27,7 +27,8 @@ import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.illarion.nifty.controls.InventorySlot;
 
@@ -108,7 +109,7 @@ public class InventorySlotControl extends AbstractController implements Inventor
      * The logger that displays all logging output of this class.
      */
     @SuppressWarnings("deprecation")
-    private static final Logger LOGGER = Logger.getLogger(InventorySlotControl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InventorySlotControl.class);
 
     /**
      * {@inheritDoc}

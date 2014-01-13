@@ -2,8 +2,9 @@ package illarion.compile;
 
 import illarion.compile.impl.Compile;
 import org.apache.commons.cli.*;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -19,12 +20,13 @@ import java.util.Map;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class Compiler {
-    private static final Logger LOGGER = Logger.getLogger(Compiler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Compiler.class);
     private static Map<CompilerType, Path> storagePaths;
 
     public static void main(final String[] args) {
-        new PropertyConfigurator()
-                .doConfigure(Compiler.class.getResource("/compiler_logging.properties"), LOGGER.getLoggerRepository());
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
+
         Options options = new Options();
 
         final Option npcDir = new Option("n", "npc-dir", true, "The place where the compiled NPC files are stored.");
@@ -75,10 +77,10 @@ public class Compiler {
             }
         } catch (final ParseException e) {
             final HelpFormatter helpFormatter = new HelpFormatter();
-            helpFormatter.printHelp("java -jar compiler.jar [Options] File", options);
+            helpFormatter.printHelp("java -jar compiler.jar [Options] File", options, true);
             System.exit(-1);
         } catch (final IOException e) {
-            System.err.println(e.getLocalizedMessage());
+            LOGGER.error(e.getLocalizedMessage());
             System.exit(-1);
         }
     }
@@ -124,7 +126,7 @@ public class Compiler {
 
         switch (compileResult) {
             case 1:
-                System.out.println("Skipped file: " + path.getFileName());
+                LOGGER.info("Skipped file: {}", path.getFileName());
                 break;
             case 0:
                 return;

@@ -18,7 +18,8 @@
  */
 package illarion.common.debug;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
@@ -33,8 +34,7 @@ public class DefaultDeadlockListener implements
     /**
      * The logger instance that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger
-            .getLogger(DefaultDeadlockListener.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultDeadlockListener.class);
 
     /**
      * Output the results of the deadlock detection.
@@ -47,7 +47,7 @@ public class DefaultDeadlockListener implements
         LOGGER.error("Deadlocked Threads:");
         LOGGER.error("-------------------");
         for (final Thread thread : threads) {
-            LOGGER.error(thread);
+            LOGGER.error(thread.getName());
             for (final StackTraceElement ste : thread.getStackTrace()) {
                 LOGGER.error("\t" + ste);
             }

@@ -24,7 +24,8 @@ import illarion.common.config.Config;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.util.Stoppable;
 import illarion.common.util.StoppableStorage;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicPatternSubscriber;
 import org.illarion.engine.Engine;
@@ -195,7 +196,7 @@ public final class MusicBox implements Stoppable {
     /**
      * The logging instance that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(MusicBox.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MusicBox.class);
 
     /**
      * Stop playing the fighting music and fall back to the last sound track played.

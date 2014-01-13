@@ -21,7 +21,8 @@ package illarion.easyquest.gui;
 import illarion.common.util.CopyrightHeader;
 import illarion.easyquest.Lang;
 import illarion.easyquest.QuestIO;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.pushingpixels.flamingo.api.common.icon.ImageWrapperResizableIcon;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
@@ -39,7 +40,7 @@ public final class Utils {
 
     private static final CopyrightHeader COPYRIGHT_HEADER = new CopyrightHeader(80, "<!--", "-->", null, null);
 
-    private static final Logger LOGGER = Logger.getLogger(Utils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
 
     @Nullable
     public static ResizableIcon getResizableIconFromResource(

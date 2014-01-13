@@ -23,7 +23,8 @@ import illarion.mapedit.data.MapPosition;
 import illarion.mapedit.data.MapTile;
 import illarion.mapedit.history.GroupAction;
 import illarion.mapedit.history.HistoryManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import javax.annotation.Nonnull;
@@ -36,7 +37,7 @@ import javax.swing.*;
  */
 public abstract class AbstractTool {
 
-    protected static final Logger LOGGER = Logger.getLogger(AbstractTool.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractTool.class);
 
     private HistoryManager history;
 

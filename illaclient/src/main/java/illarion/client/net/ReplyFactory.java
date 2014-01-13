@@ -20,7 +20,8 @@ package illarion.client.net;
 
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.net.server.*;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,7 +43,7 @@ public final class ReplyFactory {
     /**
      * The logger that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(ReplyFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReplyFactory.class);
 
     /**
      * This map stores the message classes along with the IDs of the command encoded in them.

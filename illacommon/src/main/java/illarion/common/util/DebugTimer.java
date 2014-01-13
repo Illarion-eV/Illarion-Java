@@ -18,7 +18,8 @@
  */
 package illarion.common.util;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Debug function used to write time stamps to the relative to the start time of
@@ -30,7 +31,7 @@ public final class DebugTimer {
     /**
      * The error and debug logger of the client.
      */
-    private static final Logger LOGGER = Logger.getLogger(DebugTimer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DebugTimer.class);
 
     /**
      * The string used to write the line.

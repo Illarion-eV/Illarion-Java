@@ -23,7 +23,8 @@ import illarion.client.resources.TileFactory;
 import illarion.client.util.GlobalExecutorService;
 import illarion.common.graphics.TileInfo;
 import illarion.common.types.Location;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.Engine;
 import org.illarion.engine.EngineException;
 import org.illarion.engine.GameContainer;
@@ -76,7 +77,7 @@ public final class GameMiniMap implements WorldMapDataProvider {
      * The log file handler that takes care for the logging output of this class.
      */
     @Nonnull
-    private static final Logger LOGGER = Logger.getLogger(GameMiniMap.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GameMiniMap.class);
 
     /**
      * Indicated how many bits the blocked bit is shifted.

@@ -32,7 +32,8 @@ import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.gui.InformGui;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
@@ -148,7 +149,7 @@ public final class InformHandler implements InformGui, ScreenController {
     /**
      * The logger that is used for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(InformHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InformHandler.class);
 
     /**
      * The instance of the Nifty-GUI this handler is bound to.

@@ -22,11 +22,14 @@ import illarion.common.config.Config;
 import illarion.common.util.AppIdent;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.MessageSource;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.mantisbt.connect.IMCSession;
 import org.mantisbt.connect.MCException;
 import org.mantisbt.connect.axis.MCSession;
 import org.mantisbt.connect.model.*;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -87,7 +90,7 @@ public final class CrashReporter {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(CrashReporter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CrashReporter.class);
 
     static {
         URL result = null;
@@ -156,11 +159,12 @@ public final class CrashReporter {
     }
 
     public void dumpCrash(@Nonnull final CrashData crash) {
-        LOGGER.fatal("Fatal error occured: " + crash.getDescription());
-        LOGGER.fatal("Fatal error exception: " + crash.getExceptionName());
-        LOGGER.fatal("Fatal error thread: " + crash.getThreadName());
-        LOGGER.fatal("Fatal error backtrace: " + crash.getStackBacktrace());
-        LOGGER.fatal(crash.getApplicationIdentifier().getApplicationName() + " is going down. Brace for impact.");
+        Marker fatalMark = MarkerFactory.getMarker("fatal");
+        LOGGER.error(fatalMark, "Fatal error occurred: {}", crash.getDescription());
+        LOGGER.error(fatalMark, "Fatal error exception: {}", crash.getExceptionName());
+        LOGGER.error(fatalMark, "Fatal error thread: {}", crash.getThreadName());
+        LOGGER.error(fatalMark, "Fatal error backtrace: {}", crash.getStackBacktrace());
+        LOGGER.error(fatalMark, "{} is going down. Brace for impact.", crash.getApplicationIdentifier().getApplicationName());
         final Calendar cal = Calendar.getInstance();
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         final String dateStr = sdf.format(cal.getTime());

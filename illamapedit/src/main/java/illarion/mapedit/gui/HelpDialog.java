@@ -22,7 +22,8 @@ import illarion.mapedit.Lang;
 import illarion.mapedit.events.menu.ShowHelpDialogEvent;
 import illarion.mapedit.resource.loaders.DocuLoader;
 import javolution.text.TextBuilder;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.jdesktop.swingx.JXTree;
@@ -43,7 +44,7 @@ import java.net.URL;
  * @author Tim
  */
 public class HelpDialog extends JDialog implements HyperlinkListener, TreeSelectionListener {
-    private static final Logger LOGGER = Logger.getLogger(HelpDialog.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HelpDialog.class);
     @Nonnull
     private final JEditorPane html;
 

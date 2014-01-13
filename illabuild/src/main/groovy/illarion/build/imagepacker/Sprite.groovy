@@ -20,13 +20,12 @@ package illarion.build.imagepacker
 
 import de.matthiasmann.twl.utils.PNGDecoder
 import de.matthiasmann.twl.utils.PNGDecoder.Format
-import org.slf4j.LoggerFactory
+import org.gradle.api.logging.Logger
 
 import javax.annotation.Nonnull
 import javax.annotation.Nullable
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
-import java.io.*
 import java.nio.ByteBuffer
 
 /**
@@ -44,8 +43,6 @@ final class Sprite extends TextureElement {
     @Nullable
     private InputStream decoderStream;
 
-    private static final def LOGGER = LoggerFactory.getLogger(ImagePacker.class)
-
     /**
      * The name of the sprite
      */
@@ -58,13 +55,19 @@ final class Sprite extends TextureElement {
     private final File file
 
     /**
+     * The used logging instance.
+     */
+    private final Logger logger;
+
+    /**
      * Create a sprite based on a file
      *
      * @param fileEntry The file entry containing the sprite image
      * @throws IOException
      * @throws FileNotFoundException
      */
-    public Sprite(@Nonnull final File fileEntry) throws IOException {
+    public Sprite(@Nonnull final File fileEntry, final Logger logger) throws IOException {
+        this.logger = logger;
         file = fileEntry
         name = stripFileExtension(fileEntry.absolutePath)
 
@@ -176,7 +179,7 @@ final class Sprite extends TextureElement {
         try {
             decoder.decode(imageData, width * format.numComponents, format)
         } catch (e) {
-            LOGGER.error("Decoding the image failed!", e)
+            logger.error("Decoding the image failed!", e)
         }
         return imageData
     }
@@ -214,7 +217,7 @@ final class Sprite extends TextureElement {
      */
     private int detectImageType() {
         if (decoder == null) {
-            LOGGER.warn("Detecting the image type while there is no decoder set will lead to illegal results.")
+            logger.warn("Detecting the image type while there is no decoder set will lead to illegal results.")
             return ImagePacker.TYPE_GREY_ALPHA
         }
         final Format format = decoder.decideTextureFormat(Format.LUMINANCE)

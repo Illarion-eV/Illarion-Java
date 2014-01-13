@@ -18,7 +18,8 @@
  */
 package illarion.client.graphics;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.assets.Assets;
 import org.illarion.engine.assets.FontManager;
 
@@ -42,7 +43,7 @@ public final class FontLoader {
      * The logger instance that takes care for the logging output of this class.
      */
     @SuppressWarnings("UnusedDeclaration")
-    private static final Logger LOGGER = Logger.getLogger(FontLoader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FontLoader.class);
 
     /**
      * Get instance of singleton.

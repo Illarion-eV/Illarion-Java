@@ -31,7 +31,8 @@ import illarion.client.world.World;
 import illarion.common.graphics.MapVariance;
 import illarion.common.graphics.TileInfo;
 import illarion.common.types.Location;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Graphics;
@@ -78,7 +79,7 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
      * The instance of the logging class for this class.
      */
     @SuppressWarnings("UnusedDeclaration")
-    private static final Logger LOGGER = Logger.getLogger(Tile.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Tile.class);
 
     public Tile(final int tileId, @Nonnull final MapTile parentTile) {
         this(TileFactory.getInstance().getTemplate(TileInfo.getBaseID(tileId)), tileId, parentTile);

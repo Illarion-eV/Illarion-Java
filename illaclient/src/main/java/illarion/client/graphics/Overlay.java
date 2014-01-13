@@ -21,7 +21,8 @@ package illarion.client.graphics;
 import illarion.client.resources.OverlayFactory;
 import illarion.client.resources.Resource;
 import illarion.client.resources.data.OverlayTemplate;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.graphic.Color;
 
 import javax.annotation.Nonnull;
@@ -39,7 +40,7 @@ public class Overlay extends AbstractEntity<OverlayTemplate> implements Resource
      * The logger instance that takes care for the logging output of this class.
      */
     @Nonnull
-    private static final Logger LOGGER = Logger.getLogger(Overlay.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Overlay.class);
 
     /**
      * The parent tile of this overlay.

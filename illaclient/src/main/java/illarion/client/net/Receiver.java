@@ -23,7 +23,8 @@ import illarion.client.IllaClient;
 import illarion.client.net.server.AbstractReply;
 import illarion.client.util.Lang;
 import illarion.common.net.NetCommReader;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
@@ -59,7 +60,7 @@ final class Receiver extends Thread implements NetCommReader {
      * The instance of the logger that is used to write out the data.
      */
     @Nonnull
-    private static final Logger LOGGER = Logger.getLogger(Receiver.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Receiver.class);
 
     /**
      * Time the receiver waits for more data before throwing away the incomplete things it already got.
@@ -340,14 +341,14 @@ final class Receiver extends Thread implements NetCommReader {
                 }
             } catch (@Nonnull final IOException e) {
                 if (running) {
-                    LOGGER.fatal("The connection to the server is not working anymore.", e);
+                    LOGGER.error("The connection to the server is not working anymore.", e);
                     IllaClient.fallbackToLogin(Lang.getMsg("error.receiver"));
                     running = false;
                     return;
                 }
             } catch (@Nonnull final Exception e) {
                 if (running) {
-                    LOGGER.fatal("General error in the receiver", e);
+                    LOGGER.error("General error in the receiver", e);
                     IllaClient.fallbackToLogin(Lang.getMsg("error.receiver"));
                     running = false;
                     return;

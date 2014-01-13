@@ -18,7 +18,8 @@
  */
 package illarion.common.config;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.EventBus;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -58,7 +59,7 @@ public class ConfigSystem implements Config {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(ConfigSystem.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigSystem.class);
 
     /**
      * The name of the root node in the XML file.

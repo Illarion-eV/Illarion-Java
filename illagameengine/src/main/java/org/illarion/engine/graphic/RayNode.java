@@ -18,7 +18,8 @@
  */
 package org.illarion.engine.graphic;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
@@ -37,7 +38,7 @@ final class RayNode {
     /**
      * The error and debug logger of the client.
      */
-    private static final Logger LOGGER = Logger.getLogger(RayNode.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RayNode.class);
 
     /**
      * The maximum amount of children a node can get. This is the size of the array that stores the child references.

@@ -18,12 +18,16 @@
  */
 package illarion.client.util;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.rolling.RollingFileAppender;
+import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
 import illarion.client.IllaClient;
 import illarion.common.config.ConfigChangedEvent;
-import org.apache.log4j.DailyRollingFileAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 
@@ -53,7 +57,7 @@ public final class ChatLog {
      * Instance of the used logger.
      */
     @SuppressWarnings("nls")
-    private static final Logger logger = Logger.getLogger("CHAT");
+    private static final Logger logger = LoggerFactory.getLogger("CHAT");
 
     /**
      * Stores the information if the logger is set up and working. Only in this case log files are written.
@@ -68,15 +72,30 @@ public final class ChatLog {
     public ChatLog(final File playerPath) {
         logActive = IllaClient.getCfg().getBoolean(CFG_TEXTLOG);
 
-        final DailyRollingFileAppender appender = new DailyRollingFileAppender();
-        appender.setDatePattern("'.'yyyy-MM'.log'");
+        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        RollingFileAppender<ILoggingEvent> appender = new RollingFileAppender<>();
+        appender.setContext(loggerContext);
         appender.setFile(new File(playerPath, "illarion.log").getAbsolutePath());
-        appender.setLayout(new PatternLayout("%m%n"));
-        appender.setAppend(true);
-        appender.activateOptions();
 
-        logger.setLevel(Level.ALL);
-        logger.addAppender(appender);
+        TimeBasedRollingPolicy<ILoggingEvent> policy = new TimeBasedRollingPolicy<>();
+        policy.setFileNamePattern(new File(playerPath, "illarion-%d{yyyy-MM}.log").getAbsolutePath());
+        policy.setParent(appender);
+        policy.setContext(loggerContext);
+        policy.start();
+
+        PatternLayoutEncoder encoder = new PatternLayoutEncoder();
+        encoder.setContext(loggerContext);
+        encoder.setPattern("%msg%n");
+        encoder.start();
+
+        appender.setTriggeringPolicy(policy);
+        appender.setRollingPolicy(policy);
+        appender.setEncoder(encoder);
+        appender.start();
+
+        loggerContext.getLogger("CHAT").setAdditive(false);
+        loggerContext.getLogger("CHAT").addAppender(appender);
+        loggerContext.getLogger("CHAT").setLevel(Level.ALL);
 
         loggerWorking = true;
 
@@ -94,7 +113,7 @@ public final class ChatLog {
      *
      * @param text the text to log
      */
-    public void logText(final CharSequence text) {
+    public void logText(@Nonnull final String text) {
         if (loggerWorking && logActive) {
             logger.info(text);
         }

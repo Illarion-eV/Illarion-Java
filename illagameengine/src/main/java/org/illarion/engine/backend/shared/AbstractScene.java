@@ -19,7 +19,8 @@
 package org.illarion.engine.backend.shared;
 
 import illarion.common.util.FastMath;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Graphics;
 import org.illarion.engine.graphic.Scene;
@@ -43,7 +44,7 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
      * The logger of this class.
      */
     @SuppressWarnings("UnusedDeclaration")
-    private static final Logger LOGGER = Logger.getLogger(AbstractScene.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractScene.class);
 
     /**
      * This list of elements in the scene. This list is kept sorted.

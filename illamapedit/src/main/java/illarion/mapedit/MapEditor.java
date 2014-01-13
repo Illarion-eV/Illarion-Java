@@ -18,6 +18,10 @@
  */
 package illarion.mapedit;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.util.ContextInitializer;
+import ch.qos.logback.core.joran.spi.JoranException;
+import ch.qos.logback.core.util.StatusPrinter;
 import illarion.common.bug.CrashReporter;
 import illarion.common.util.*;
 import illarion.mapedit.crash.DefaultCrashHandler;
@@ -28,10 +32,13 @@ import illarion.mapedit.gui.MapEditorConfig;
 import illarion.mapedit.gui.SplashScreen;
 import illarion.mapedit.resource.ResourceManager;
 import illarion.mapedit.resource.loaders.*;
-import org.apache.log4j.*;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.swing.*;
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -49,14 +56,9 @@ public final class MapEditor {
     public static final AppIdent APPLICATION = new AppIdent("Illarion Mapeditor");
 
     /**
-     * The instance of the map editor.
-     */
-    private static MapEditor instance;
-
-    /**
      * The logger instance that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getRootLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(MapEditor.class);
 
     /**
      * Constructor of the map editor that loads up all required data.
@@ -74,7 +76,7 @@ public final class MapEditor {
      * @param message the message the editor is supposed to crash with
      */
     public static void crashEditor(final String message) {
-        LOGGER.fatal(message);
+        LOGGER.error(message);
         System.exit(-1);
     }
 
@@ -102,7 +104,8 @@ public final class MapEditor {
 
         JRibbonFrame.setDefaultLookAndFeelDecorated(MapEditorConfig.getInstance().isUseWindowDecoration());
         JDialog.setDefaultLookAndFeelDecorated(MapEditorConfig.getInstance().isUseWindowDecoration());
-        instance = new MapEditor();
+
+        MapEditor instance = new MapEditor();
 
         loadResources();
         final GuiController controller = new GuiController();
@@ -115,16 +118,10 @@ public final class MapEditor {
 
     private static void loadResources() {
         final ResourceManager resourceManager = ResourceManager.getInstance();
-        resourceManager.addResources(
-                ImageLoader.getInstance(),
-                TextureLoaderAwt.getInstance(),
-                TileLoader.getInstance(),
-                ItemLoader.getInstance(),
-                SongLoader.getInstance(),
-                ItemGroupLoader.getInstance(),
-                OverlayLoader.getInstance(),
-                DocuLoader.getInstance()
-        );
+        resourceManager
+                .addResources(ImageLoader.getInstance(), TextureLoaderAwt.getInstance(), TileLoader.getInstance(),
+                              ItemLoader.getInstance(), SongLoader.getInstance(), ItemGroupLoader.getInstance(),
+                              OverlayLoader.getInstance(), DocuLoader.getInstance());
         while (resourceManager.hasNextToLoad()) {
             try {
                 LOGGER.debug("Loading " + resourceManager.getNextDescription());
@@ -132,7 +129,7 @@ public final class MapEditor {
                 resourceManager.loadNext();
             } catch (IOException e) {
                 LOGGER.warn(resourceManager.getPrevDescription() + " failed!");
-//                Crash the editor
+                //                Crash the editor
                 throw new UnhandlableException("Can't load " + resourceManager.getPrevDescription(), e);
             }
         }
@@ -156,21 +153,24 @@ public final class MapEditor {
      */
     @SuppressWarnings("nls")
     private static void initLogging() {
-        LOGGER.setLevel(Level.ALL);
-        final Layout consoleLayout = new PatternLayout("%-5p - (%c) - [%t]: %m%n");
-        LOGGER.addAppender(new ConsoleAppender(consoleLayout));
-        final Layout fileLayout = new PatternLayout("%-5p - %d{ISO8601} - [%t]: %m%n");
-        try {
-            final RollingFileAppender fileAppender = new RollingFileAppender(fileLayout, "mapedit.log");
-            fileAppender.setMaxBackupIndex(9);
-            fileAppender.setMaxFileSize("50KB");
-            LOGGER.addAppender(fileAppender);
-        } catch (IOException e) {
-            LOGGER.warn("Can't write log to file");
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
+
+        File userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        if (userDir == null) {
+            return;
         }
-        System.out.println("Startup done.");
-        LOGGER.info(APPLICATION + " started.");
-        JavaLogToLog4J.setup();
-        StdOutToLog4J.setup();
+        System.setProperty("log_dir", userDir.getAbsolutePath());
+
+        //Reload:
+        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+        ContextInitializer ci = new ContextInitializer(lc);
+        lc.reset();
+        try {
+            ci.autoConfig();
+        } catch (JoranException e) {
+            e.printStackTrace();
+        }
+        StatusPrinter.printInCaseOfErrorsOrWarnings(lc);
     }
 }

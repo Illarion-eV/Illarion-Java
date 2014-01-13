@@ -24,7 +24,8 @@ import illarion.client.world.items.ContainerSlot;
 import illarion.client.world.items.MerchantList;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -60,7 +61,7 @@ public final class InteractiveContainerSlot implements Draggable, DropTarget {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(InteractiveContainerSlot.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InteractiveContainerSlot.class);
 
     /**
      * Drag the item in this inventory slot to another inventory slot.

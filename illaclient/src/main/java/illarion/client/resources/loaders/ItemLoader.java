@@ -23,7 +23,8 @@ import illarion.client.resources.data.ItemTemplate;
 import illarion.common.graphics.ItemInfo;
 import illarion.common.util.TableLoaderItems;
 import illarion.common.util.TableLoaderSink;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.assets.Assets;
 import org.illarion.engine.assets.SpriteFactory;
 import org.illarion.engine.graphic.Color;
@@ -43,7 +44,7 @@ public final class ItemLoader extends AbstractResourceLoader<ItemTemplate> imple
     /**
      * The logger that is used to report error messages.
      */
-    private static final Logger LOGGER = Logger.getLogger(ItemLoader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ItemLoader.class);
 
     /**
      * The resource path to the item graphics. All graphics need to be located at this path within the JAR-resource

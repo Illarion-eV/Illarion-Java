@@ -22,7 +22,8 @@ import illarion.client.IllaClient;
 import illarion.client.util.Lang;
 import illarion.common.bug.CrashData;
 import illarion.common.bug.CrashReporter;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.lang.Thread.UncaughtExceptionHandler;
@@ -37,8 +38,7 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger
-            .getLogger(AbstractCrashHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCrashHandler.class);
 
     /**
      * The time since the last crash in milliseconds that need to have passed to

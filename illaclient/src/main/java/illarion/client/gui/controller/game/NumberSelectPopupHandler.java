@@ -32,7 +32,8 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
@@ -325,7 +326,7 @@ public final class NumberSelectPopupHandler implements ScreenController {
     /**
      * The logging instance for this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(NumberSelectPopupHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NumberSelectPopupHandler.class);
 
     /**
      * Cancel and destroy the currently active popup. This sends a cancel to the callback and removes the active popup.

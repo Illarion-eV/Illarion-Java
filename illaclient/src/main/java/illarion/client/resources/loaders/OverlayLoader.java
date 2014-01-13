@@ -22,7 +22,8 @@ import illarion.client.resources.ResourceFactory;
 import illarion.client.resources.data.OverlayTemplate;
 import illarion.common.util.TableLoaderOverlay;
 import illarion.common.util.TableLoaderSink;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.assets.Assets;
 import org.illarion.engine.assets.SpriteFactory;
 import org.illarion.engine.graphic.Sprite;
@@ -41,7 +42,7 @@ public final class OverlayLoader extends AbstractResourceLoader<OverlayTemplate>
     /**
      * The logger that is used to report error messages.
      */
-    private static final Logger LOGGER = Logger.getLogger(ItemLoader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ItemLoader.class);
 
     /**
      * The assets of the game engine that are required to load the data needed for the overlays.

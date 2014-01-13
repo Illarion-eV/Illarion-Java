@@ -22,7 +22,8 @@ import illarion.mapedit.events.HistoryEvent;
 import illarion.mapedit.events.HistoryPasteCutEvent;
 import illarion.mapedit.events.map.RepaintRequestEvent;
 import javolution.util.FastTable;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -38,7 +39,7 @@ import java.util.Deque;
  * @since 0.99
  */
 public class HistoryManager {
-    private static final Logger LOGGER = Logger.getLogger(HistoryManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HistoryManager.class);
     private static final int MAX_HISTORY_LENGHT = 100;
     /**
      * The list of history entries that can be done again.

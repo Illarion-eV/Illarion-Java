@@ -20,17 +20,14 @@ package illarion.build.imagepacker
 
 import groovy.xml.MarkupBuilder
 import illarion.common.util.FastMath
-import org.slf4j.LoggerFactory
+import org.gradle.api.logging.Logger
 
 import javax.annotation.Nonnull
 import javax.annotation.Nullable
-import java.awt.Transparency
 import java.awt.color.ColorSpace
 import java.awt.image.*
 import java.lang.ref.SoftReference
 import java.nio.ByteBuffer
-import java.util.*
-import java.util.List
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -62,8 +59,6 @@ public final class ImagePacker implements Comparator<TextureElement> {
      * Maximal texture size in both directions in pixel.
      */
     private static final int MAX_SIZE = 1024
-
-    private final def logger = LoggerFactory.getLogger(ImagePacker.class)
 
     /**
      * The index for the RGB images in the different image format related arrays.
@@ -153,14 +148,24 @@ public final class ImagePacker implements Comparator<TextureElement> {
      */
     private final List<Sprite> usedImages = new LinkedList<Sprite>()
 
+    /**
+     * The source directory
+     */
     private final def File srcDir;
+
+    /**
+     * The used logging instance.
+     */
+    @Nonnull
+    private final Logger logger;
 
     /**
      * Constructor for a image packer. Sets up all needed lists to handle the
      * packing of the images
      */
     @SuppressWarnings("unchecked")
-    public ImagePacker(final File srcDir) {
+    public ImagePacker(final File srcDir, @Nonnull final Logger logger) {
+        this.logger = logger;
         images = new List[4]
         for (i in 0..<images.size()) {
             images[i] = new ArrayList<Sprite>()
@@ -648,7 +653,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
      */
     void processAddImage(@Nonnull final File fileEntry) {
         try {
-            final Sprite sprite = new Sprite(fileEntry)
+            final Sprite sprite = new Sprite(fileEntry, logger)
 
             if (sprite.pixelCount == 0) {
                 return
