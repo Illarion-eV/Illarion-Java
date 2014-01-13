@@ -27,7 +27,8 @@ import illarion.client.world.items.ContainerSlot;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -82,7 +83,7 @@ public class InteractiveMapTile implements Draggable, DropTarget {
     /**
      * The logging instance that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(InteractiveMapTile.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InteractiveMapTile.class);
 
     /**
      * Drag something from a map tile to

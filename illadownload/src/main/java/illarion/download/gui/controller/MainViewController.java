@@ -21,7 +21,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -62,7 +63,7 @@ public class MainViewController extends AbstractController implements MavenDownl
 
     private ResourceBundle resourceBundle;
 
-    private static final Logger LOGGER = Logger.getLogger(MainViewController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MainViewController.class);
 
     @Override
     public void initialize(URL url, @Nonnull ResourceBundle resourceBundle) {

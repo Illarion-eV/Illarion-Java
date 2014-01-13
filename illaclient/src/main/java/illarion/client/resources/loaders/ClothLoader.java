@@ -24,7 +24,8 @@ import illarion.client.resources.data.AvatarClothTemplate;
 import illarion.client.resources.data.AvatarTemplate;
 import illarion.common.util.TableLoaderClothes;
 import illarion.common.util.TableLoaderSink;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.assets.Assets;
 import org.illarion.engine.assets.SpriteFactory;
 import org.illarion.engine.graphic.Sprite;
@@ -41,7 +42,7 @@ public final class ClothLoader extends AbstractResourceLoader<AvatarClothTemplat
     /**
      * The logger instance that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(ClothLoader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClothLoader.class);
 
     /**
      * The assets of the game engine that are required to load the data needed for the clothes.

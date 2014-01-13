@@ -24,7 +24,8 @@ import illarion.client.states.*;
 import illarion.client.util.ConnectionPerformanceClock;
 import illarion.client.util.Lang;
 import illarion.common.config.ConfigChangedEvent;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.illarion.engine.GameContainer;
@@ -108,7 +109,7 @@ public final class Game implements GameListener {
         return null;
     }
 
-    private static final Logger LOGGER = Logger.getLogger(Game.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Game.class);
 
     @Override
     public void create(@Nonnull final GameContainer container) {

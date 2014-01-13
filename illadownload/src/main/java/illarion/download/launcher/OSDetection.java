@@ -18,7 +18,8 @@
  */
 package illarion.download.launcher;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
@@ -82,7 +83,7 @@ public final class OSDetection {
     /**
      * The logger instance that takes care for the logger output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(OSDetection.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OSDetection.class);
 
     /**
      * The private constructor that generates the required values.

@@ -19,7 +19,8 @@
 package illarion.mapedit.util;
 
 import illarion.common.util.Stoppable;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.sound.sampled.*;
@@ -33,7 +34,7 @@ public class OggPlayer extends Thread implements Stoppable {
     /**
      * This logger for this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(OggPlayer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OggPlayer.class);
 
     private volatile boolean running;
     private AudioInputStream audioInputStream;

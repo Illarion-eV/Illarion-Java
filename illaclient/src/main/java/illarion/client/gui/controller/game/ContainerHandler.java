@@ -53,7 +53,8 @@ import illarion.common.gui.AbstractMultiActionHelper;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Rectangle;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.engine.GameContainer;
@@ -202,7 +203,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      */
     private static final Pattern containerPattern = Pattern.compile("container([0-9]+)");
 
-    private static final Logger LOGGER = Logger.getLogger(ContainerHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContainerHandler.class);
 
     /**
      * The Nifty-GUI instance that is handling the GUI display currently.

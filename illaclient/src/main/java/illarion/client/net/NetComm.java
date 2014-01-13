@@ -29,7 +29,8 @@ import illarion.client.util.ConnectionPerformanceClock;
 import illarion.client.world.World;
 import illarion.common.util.Timer;
 import javolution.text.TextBuilder;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -90,7 +91,7 @@ public final class NetComm {
     /**
      * The instance of the logger that is used to write out the data.
      */
-    private static final Logger LOGGER = Logger.getLogger(NetComm.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NetComm.class);
 
     /**
      * General time to wait in case its needed that other threads need to react on some input.
@@ -265,7 +266,7 @@ public final class NetComm {
             keepAliveTimer.setRepeats(true);
             keepAliveTimer.start();
         } catch (@Nonnull final IOException e) {
-            LOGGER.fatal("Connection error");
+            LOGGER.error("Connection error");
             return false;
         }
         return true;

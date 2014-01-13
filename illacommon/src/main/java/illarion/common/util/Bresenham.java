@@ -41,7 +41,7 @@ public final class Bresenham {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
-    // private static final Logger LOGGER = Logger.getLogger(Bresenham.class);
+    // private static final Logger LOGGER = LoggerFactory.getLogger(Bresenham.class);
 
     /**
      * The singleton instance of this class.

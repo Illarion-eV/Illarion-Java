@@ -23,7 +23,8 @@ import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -41,7 +42,7 @@ public final class LookAtDialogItemMsg extends AbstractGuiMsg {
     private int secondarySlotId;
     private Tooltip tooltip;
 
-    private static final Logger LOGGER = Logger.getLogger(LookAtDialogItemMsg.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LookAtDialogItemMsg.class);
 
     /**
      * Decode the tile look at text data the receiver got and prepare it for the execution.

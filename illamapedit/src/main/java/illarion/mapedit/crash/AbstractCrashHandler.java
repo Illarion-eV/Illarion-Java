@@ -22,7 +22,8 @@ import illarion.common.bug.CrashData;
 import illarion.common.bug.CrashReporter;
 import illarion.mapedit.Lang;
 import illarion.mapedit.MapEditor;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 

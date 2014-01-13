@@ -2,8 +2,10 @@ package illarion.compile;
 
 import illarion.compile.impl.Compile;
 import org.apache.commons.cli.*;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -19,7 +21,7 @@ import java.util.Map;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class Compiler {
-    private static final Logger LOGGER = Logger.getLogger(Compiler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Compiler.class);
     private static Map<CompilerType, Path> storagePaths;
 
     public static void main(final String[] args) {

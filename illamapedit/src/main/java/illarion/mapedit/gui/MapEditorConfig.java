@@ -28,7 +28,8 @@ import illarion.common.config.entries.SelectEntry;
 import illarion.common.util.DirectoryManager;
 import illarion.mapedit.Lang;
 import javolution.util.FastTable;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
@@ -47,7 +48,7 @@ import java.util.Map;
  * @author Fredrik K
  */
 public class MapEditorConfig {
-    private static final Logger LOGGER = Logger.getLogger(MapEditorConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MapEditorConfig.class);
     private static final String DEFAULT_LOOK_AND_FEEL = "org.pushingpixels.substance.api.skin.OfficeSilver2007Skin";
     private static final String[] LANGUAGES = {"English", "German", ""};
     private static final MapEditorConfig INSTANCE = new MapEditorConfig();

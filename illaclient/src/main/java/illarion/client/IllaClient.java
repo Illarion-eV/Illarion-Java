@@ -18,6 +18,10 @@
  */
 package illarion.client;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.util.ContextInitializer;
+import ch.qos.logback.core.joran.spi.JoranException;
+import ch.qos.logback.core.util.StatusPrinter;
 import illarion.client.crash.DefaultCrashHandler;
 import illarion.client.net.client.LogoutCmd;
 import illarion.client.resources.SongFactory;
@@ -34,15 +38,15 @@ import illarion.common.config.Config;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.config.ConfigSystem;
 import illarion.common.util.*;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.bushe.swing.event.*;
 import org.illarion.engine.Backend;
 import org.illarion.engine.DesktopGameContainer;
 import org.illarion.engine.EngineException;
 import org.illarion.engine.EngineManager;
 import org.illarion.engine.graphic.GraphicResolution;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -51,11 +55,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Level;
-import java.util.Timer;
 
 /**
  * Main Class of the Illarion Client, this loads up the whole game and runs the main loop of the Illarion Client.
@@ -93,7 +94,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     /**
      * The error and debug logger of the client.
      */
-    static final Logger LOGGER = Logger.getLogger(IllaClient.class);
+    static final Logger LOGGER = LoggerFactory.getLogger(IllaClient.class);
 
     /**
      * Stores if there currently is a exit requested to avoid that the question area is opened multiple times.
@@ -104,14 +105,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      * The singleton instance of this class.
      */
     private static final IllaClient INSTANCE = new IllaClient();
-
-    /**
-     * Storage of the properties that are used by the logger settings. This is needed to set up the correct paths to
-     * the
-     * files.
-     */
-    @Nonnull
-    private static final Properties tempProps = new Properties();
 
     /**
      * The configuration of the client settings.
@@ -238,7 +231,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
             gameContainer.setResizeable(true);
             gameContainer.startGame();
         } catch (@Nonnull final Exception e) {
-            LOGGER.fatal("Exception while launching game.", e);
+            LOGGER.error("Exception while launching game.", e);
             exitGameContainer();
         }
     }
@@ -289,11 +282,10 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
 
         LOGGER.info("Client terminated on user request.");
 
-        LOGGER.fatal(Lang.getMsg(message));
-        LOGGER.fatal("Terminating client!");
+        LOGGER.error(Lang.getMsg(message));
+        LOGGER.error("Terminating client!");
 
         INSTANCE.cfg.save();
-        LogManager.shutdown();
 
         new Thread(new Runnable() {
             @Override
@@ -375,6 +367,8 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      */
     @SuppressWarnings("nls")
     public static void main(final String[] args) {
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
         final String folder = checkFolder();
 
         // Setup the crash reporter so the client is able to crash properly.
@@ -479,25 +473,30 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      */
     @SuppressWarnings("nls")
     private static void initLogfiles() throws IOException {
-        tempProps.load(getResource("logging.properties"));
-        tempProps.put("log4j.appender.IllaLogfileAppender.file", getFile("error.log"));
-        tempProps.put("log4j.appender.ChatAppender.file", getFile("illarion.log"));
-        tempProps.put("log4j.reset", "true");
-        new PropertyConfigurator().doConfigure(tempProps, LOGGER.getLoggerRepository());
+        File userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        if (userDir == null) {
+            return;
+        }
+        System.setProperty("log_dir", userDir.getAbsolutePath());
+
+        //Reload:
+        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+        ContextInitializer ci = new ContextInitializer(lc);
+        lc.reset();
+        try {
+            ci.autoConfig();
+        } catch (JoranException e) {
+            e.printStackTrace();
+        }
+        StatusPrinter.printInCaseOfErrorsOrWarnings(lc);
 
         Thread.setDefaultUncaughtExceptionHandler(DefaultCrashHandler.getInstance());
 
         System.out.println("Startup done.");
-        LOGGER.info(APPLICATION.getApplicationIdentifier() + " started.");
-        LOGGER.info("VM: " + System.getProperty("java.version"));
-        LOGGER.info("OS: " + System.getProperty("os.name") + ' ' + System.getProperty("os.version") + ' ' +
-                            System.getProperty("os.arch"));
-
-        java.util.logging.Logger.getAnonymousLogger().getParent().setLevel(Level.WARNING);
-        java.util.logging.Logger.getLogger("de.lessvoid.nifty").setLevel(Level.WARNING);
-        java.util.logging.Logger.getLogger("javolution").setLevel(Level.SEVERE);
-        JavaLogToLog4J.setup();
-        StdOutToLog4J.setup();
+        LOGGER.info("{} started.", APPLICATION.getApplicationIdentifier());
+        LOGGER.info("VM: {}", System.getProperty("java.version"));
+        LOGGER.info("OS: {} {} {}", System.getProperty("os.name"), System.getProperty("os.version"),
+                    System.getProperty("os.arch"));
     }
 
     public static final String CFG_FULLSCREEN = "fullscreen";

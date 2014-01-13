@@ -20,7 +20,8 @@ package illarion.client.resources;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 import illarion.client.util.IdWrapper;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.assets.SoundsManager;
 import org.illarion.engine.sound.Sound;
 
@@ -49,7 +50,7 @@ public final class SoundFactory implements ResourceFactory<IdWrapper<String>> {
     /**
      * The instance of the logger that is used to write out the data.
      */
-    private static final Logger LOGGER = Logger.getLogger(SoundFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SoundFactory.class);
 
     /**
      * Get the singleton instance of the sound factory.

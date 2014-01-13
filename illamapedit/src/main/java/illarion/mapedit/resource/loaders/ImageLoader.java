@@ -20,7 +20,8 @@ package illarion.mapedit.resource.loaders;
 
 import illarion.mapedit.resource.Resource;
 import javolution.util.FastMap;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.pushingpixels.flamingo.api.common.icon.ImageWrapperResizableIcon;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
@@ -36,7 +37,7 @@ import java.util.Map;
  * @author Tim
  */
 public class ImageLoader implements Resource {
-    private static final Logger LOGGER = Logger.getLogger(ImageLoader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ImageLoader.class);
     private static final ImageLoader INSTANCE = new ImageLoader();
     private static final Map<String, Image> IMAGES = new FastMap<>();
 

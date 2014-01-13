@@ -33,7 +33,8 @@ import illarion.common.graphics.MapVariance;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Graphics;
@@ -214,7 +215,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      * The logging instance that takes care for the logging output of this class.
      */
     @SuppressWarnings("UnusedDeclaration")
-    private static final Logger LOGGER = Logger.getLogger(Item.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Item.class);
 
     @Override
     public boolean isEventProcessed(@Nonnull final GameContainer container, final int delta,

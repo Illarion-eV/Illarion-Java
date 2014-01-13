@@ -20,7 +20,8 @@ package illarion.download.launcher;
 
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.Timer;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,7 +40,7 @@ public final class JavaLauncher {
     /**
      * This instance of the logger takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(JavaLauncher.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JavaLauncher.class);
 
     private boolean cancelExecution;
 

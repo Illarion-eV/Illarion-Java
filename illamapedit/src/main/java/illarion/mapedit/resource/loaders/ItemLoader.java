@@ -24,7 +24,8 @@ import illarion.common.util.TableLoaderItems;
 import illarion.common.util.TableLoaderSink;
 import illarion.mapedit.resource.ItemImg;
 import illarion.mapedit.resource.Resource;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.assets.TextureManager;
 
 import javax.annotation.Nonnull;
@@ -39,7 +40,7 @@ public class ItemLoader implements TableLoaderSink<TableLoaderItems>, Resource {
     /**
      * The logger instance for this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(ItemLoader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ItemLoader.class);
     private static final int DB_INDEX_NAME = 2;
     private static final ItemLoader INSTANCE = new ItemLoader();
     private static final String DIR_IMG_ITEMS = "items/";

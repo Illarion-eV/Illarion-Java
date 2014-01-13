@@ -20,7 +20,8 @@ package illarion.easynpc;
 
 import illarion.common.util.MessageSource;
 import javolution.text.TextBuilder;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.Locale;
@@ -53,7 +54,7 @@ public final class Lang implements MessageSource {
     /**
      * The logger instance that handles the log output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(Lang.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Lang.class);
 
     /**
      * The file name of the message bundles the client loads for the language.

@@ -25,7 +25,8 @@ import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.Location;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.sound.Sound;
 import org.illarion.engine.sound.Sounds;
@@ -67,7 +68,7 @@ public final class SoundEffectMsg extends AbstractReply implements UpdateTask {
     /**
      * The logging instance of this class..
      */
-    private static final Logger LOGGER = Logger.getLogger(SoundEffectMsg.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SoundEffectMsg.class);
 
     /**
      * Execute the effect message and send the decoded data to the rest of the client.

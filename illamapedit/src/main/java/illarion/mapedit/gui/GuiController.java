@@ -30,7 +30,8 @@ import illarion.mapedit.history.ItemPlacedAction;
 import illarion.mapedit.render.RendererManager;
 import illarion.mapedit.util.SwingLocation;
 import javolution.util.FastTable;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -53,7 +54,7 @@ import java.util.List;
  */
 public class GuiController extends WindowAdapter {
 
-    private static final Logger LOGGER = Logger.getLogger(GuiController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GuiController.class);
 
     @Nonnull
     private final MainFrame mainFrame;

@@ -18,7 +18,8 @@
  */
 package org.illarion.engine.graphic;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;
@@ -60,7 +61,7 @@ public final class MapColor {
     /**
      * The error and debug logger of the client.
      */
-    private static final Logger LOGGER = Logger.getLogger(MapColor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MapColor.class);
 
     /**
      * Private constructor so nothing can create a instance of this utility

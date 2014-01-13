@@ -21,7 +21,8 @@ package illarion.common.config;
 import illarion.common.config.entries.ConfigEntry;
 import illarion.common.util.MessageSource;
 import javolution.util.FastTable;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -202,7 +203,7 @@ public final class ConfigDialog {
      * The logger instance that takes care for the logging output of this class.
      */
     @Nonnull
-    private static final Logger LOGGER = Logger.getLogger(ConfigDialog.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigDialog.class);
 
     /**
      * The configuration that is used as data source for the entries. Also this

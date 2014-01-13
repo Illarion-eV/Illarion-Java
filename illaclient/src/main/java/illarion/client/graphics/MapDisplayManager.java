@@ -23,7 +23,8 @@ import illarion.client.input.CurrentMouseLocationEvent;
 import illarion.client.world.World;
 import illarion.client.world.characters.CharacterAttribute;
 import illarion.common.types.Location;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.Engine;
 import org.illarion.engine.EngineException;
 import org.illarion.engine.GameContainer;
@@ -62,7 +63,7 @@ public final class MapDisplayManager implements AnimatedMove {
     @Nonnull
     private final Location origin;
 
-    private static final Logger LOGGER = Logger.getLogger(MapDisplayManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MapDisplayManager.class);
 
     /**
      * The scene the game is displayed in.

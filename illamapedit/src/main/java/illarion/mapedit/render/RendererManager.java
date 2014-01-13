@@ -24,7 +24,8 @@ import illarion.mapedit.events.map.RepaintRequestEvent;
 import illarion.mapedit.events.map.ZoomEvent;
 import illarion.mapedit.util.Vector2i;
 import javolution.util.FastTable;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -42,7 +43,7 @@ import java.util.List;
  * @author Tim
  */
 public class RendererManager {
-    private static final Logger LOGGER = Logger.getLogger(RendererManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RendererManager.class);
     private static final int DEFAULT_TILE_HEIGHT = 16;
     private static final int DEFAULT_TILE_WIDTH = 32;
     public static final float DEFAULT_ZOOM = 1f;

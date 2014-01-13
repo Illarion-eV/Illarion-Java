@@ -23,7 +23,8 @@ import illarion.easynpc.EasyNpcScript;
 import illarion.easynpc.Lang;
 import illarion.easynpc.ParsedNpc;
 import illarion.easynpc.ScriptWriter;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.pushingpixels.flamingo.api.common.icon.ImageWrapperResizableIcon;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
@@ -51,7 +52,7 @@ final class Utils {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(Utils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
 
     @Nullable
     public static ResizableIcon getResizableIconFromResource(

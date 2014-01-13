@@ -24,7 +24,8 @@ import illarion.common.util.TableLoaderSink;
 import illarion.common.util.TableLoaderTiles;
 import illarion.mapedit.resource.Resource;
 import illarion.mapedit.resource.TileImg;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.assets.TextureManager;
 
 import javax.annotation.Nonnull;
@@ -40,7 +41,7 @@ public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
     /**
      * The logger instance for this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(TileLoader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TileLoader.class);
     private static final TileLoader INSTANCE = new TileLoader();
     private static final String DIR_IMG_TILES = "tiles/";
 

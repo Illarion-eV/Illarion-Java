@@ -38,7 +38,8 @@ import illarion.common.types.Location;
 import illarion.common.util.Bresenham;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.FastMath;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -92,7 +93,7 @@ public final class Player {
     /**
      * The instance of the logger used by this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(Player.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Player.class);
 
     /**
      * The graphical representation of the character.

@@ -2,7 +2,8 @@ package illarion.download.maven;
 
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.ProgressMonitor;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.maven.model.building.DefaultModelBuilderFactory;
 import org.apache.maven.model.building.ModelBuilder;
 import org.apache.maven.repository.internal.*;
@@ -81,7 +82,7 @@ public class MavenDownloader {
      * The logger that takes care for the logging output of this class.
      */
     @Nonnull
-    private static final Logger LOGGER = Logger.getLogger(MavenDownloader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MavenDownloader.class);
 
     /**
      * Create a new instance of the downloader along with the information if its supposed to download snapshot

@@ -31,7 +31,8 @@ import illarion.mapedit.resource.ItemImg;
 import illarion.mapedit.resource.TileImg;
 import illarion.mapedit.util.Disposable;
 import illarion.mapedit.util.MouseButton;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -43,7 +44,7 @@ import javax.annotation.Nullable;
  * @author Tim
  */
 public final class ToolManager implements Disposable {
-    private static final Logger LOGGER = Logger.getLogger(ToolManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ToolManager.class);
     public static final int TOOL_RADIUS = 10000;
     public static final int ICON_SIZE = 16;
 

@@ -42,7 +42,8 @@ import illarion.client.world.World;
 import illarion.common.data.Skill;
 import illarion.common.data.SkillGroup;
 import illarion.common.data.SkillGroups;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.engine.GameContainer;
@@ -284,7 +285,7 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
         }
     }
 
-    private static final Logger LOGGER = Logger.getLogger(SkillsHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SkillsHandler.class);
 
     private void updateVisibility() {
         final Element content = skillWindow.getElement().findElementById("#textContent");

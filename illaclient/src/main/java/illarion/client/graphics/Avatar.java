@@ -28,7 +28,8 @@ import illarion.client.util.Lang;
 import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.common.graphics.Layers;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Graphics;
@@ -271,7 +272,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    private static final Logger LOGGER = Logger.getLogger(Avatar.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Avatar.class);
 
     /**
      * Draw the avatar to the game screen. Calling this function causes the light value to approach the target light

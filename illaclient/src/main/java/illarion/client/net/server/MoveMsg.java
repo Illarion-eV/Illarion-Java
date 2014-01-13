@@ -26,7 +26,8 @@ import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -42,7 +43,7 @@ public final class MoveMsg extends AbstractReply {
     /**
      * The instance of the logger that is used to write out the data.
      */
-    private static final Logger LOGGER = Logger.getLogger(MoveMsg.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MoveMsg.class);
 
     /**
      * Mode information that a normal move was done.

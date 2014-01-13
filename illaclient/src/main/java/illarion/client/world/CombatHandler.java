@@ -21,7 +21,8 @@ package illarion.client.world;
 import illarion.client.net.client.AttackCmd;
 import illarion.client.net.client.StandDownCmd;
 import illarion.common.types.CharacterId;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -116,7 +117,7 @@ public final class CombatHandler {
     /**
      * The logging instance of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(CombatHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CombatHandler.class);
 
     /**
      * Set the character that is attacked from now in.

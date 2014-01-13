@@ -24,7 +24,8 @@ import illarion.client.world.World;
 import illarion.common.data.Skill;
 import illarion.common.data.Skills;
 import illarion.common.net.NetCommReader;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -40,7 +41,7 @@ public final class SkillMsg extends AbstractGuiMsg {
     /**
      * The logger instance of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(SkillMsg.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SkillMsg.class);
     /**
      * The current minor skill points of that skill.
      */

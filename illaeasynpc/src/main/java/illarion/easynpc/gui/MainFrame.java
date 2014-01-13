@@ -22,7 +22,8 @@ import illarion.common.bug.CrashReporter;
 import illarion.easynpc.EasyNpcScript;
 import illarion.easynpc.Lang;
 import illarion.easynpc.crash.AWTCrashHandler;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.common.RichTooltip;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
@@ -57,7 +58,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
     /**
      * The logger instance that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(MainFrame.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MainFrame.class);
 
     /**
      * The serialization UID of this main frame.

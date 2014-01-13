@@ -24,7 +24,8 @@ import illarion.client.net.client.AbstractCommand;
 import illarion.client.util.Lang;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.Location;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
@@ -53,7 +54,7 @@ final class Sender extends Thread implements NetCommWriter {
     /**
      * The instance of the logger that is used to write out the data.
      */
-    private static final Logger LOGGER = Logger.getLogger(Receiver.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Receiver.class);
 
     /**
      * The maximal size in bytes one command can use.
@@ -168,7 +169,7 @@ final class Sender extends Thread implements NetCommWriter {
                 outChannel.write(buffer);
             }
         } catch (@Nonnull final Exception e) {
-            LOGGER.fatal("General error within the sender", e);
+            LOGGER.error("General error within the sender", e);
             IllaClient.fallbackToLogin(Lang.getMsg("error.sender"));
         }
     }

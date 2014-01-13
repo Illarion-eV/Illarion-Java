@@ -23,7 +23,8 @@ import illarion.client.Game;
 import illarion.client.gui.controller.CharScreenController;
 import illarion.client.gui.controller.CreditsStartScreenController;
 import illarion.client.gui.controller.LoginScreenController;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
@@ -43,7 +44,7 @@ public class LoginState implements GameState {
     /**
      * The logger that is used for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(LoginState.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoginState.class);
 
     @Override
     public void create(@Nonnull final Game game, @Nonnull final GameContainer container, @Nonnull final Nifty nifty) {

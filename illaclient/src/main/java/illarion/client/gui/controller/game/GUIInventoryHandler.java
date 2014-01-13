@@ -51,7 +51,8 @@ import illarion.common.gui.AbstractMultiActionHelper;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Rectangle;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.engine.GameContainer;
@@ -177,7 +178,7 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
     /**
      * The logger that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(GUIInventoryHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GUIInventoryHandler.class);
 
     @Nonnull
     private final String[] slots;

@@ -10,8 +10,10 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,7 +40,7 @@ public class GuiApplication extends Application implements Storyboard {
     @Nullable
     private ConfigSystem cfg;
 
-    private static final Logger LOGGER = Logger.getLogger(GuiApplication.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GuiApplication.class);
 
     @Override
     public void start(@Nonnull Stage stage) throws Exception {

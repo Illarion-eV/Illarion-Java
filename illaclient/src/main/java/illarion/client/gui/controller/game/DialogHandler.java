@@ -47,7 +47,8 @@ import illarion.client.world.items.MerchantList;
 import illarion.client.world.items.SelectionItem;
 import illarion.common.types.ItemCount;
 import illarion.common.types.Rectangle;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -113,7 +114,7 @@ public final class DialogHandler
         void run(Element createdElement);
     }
 
-    private static final Logger LOGGER = Logger.getLogger(DialogHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DialogHandler.class);
 
     private static final Pattern dialogNamePattern = Pattern.compile("([a-z]+)Dialog([0-9]+)");
     /**

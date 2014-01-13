@@ -18,7 +18,8 @@
  */
 package illarion.client.graphics;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created: 23.08.2005 23:42:22
@@ -117,7 +118,7 @@ public class MoveAnimation extends AbstractAnimation {
         start(srcX, srcY, 0, dstX, dstY, 0, speed);
     }
 
-    private static final Logger LOGGER = Logger.getLogger(MoveAnimation.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MoveAnimation.class);
 
     private void setPosition(final int x, final int y, final int z) {
         final int targetCnt = getTargetCount();

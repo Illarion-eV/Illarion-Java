@@ -29,8 +29,10 @@ import illarion.common.config.entries.SelectEntry;
 import illarion.common.util.DirectoryManager;
 import illarion.easynpc.Lang;
 import javolution.util.FastTable;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
@@ -123,7 +125,7 @@ public final class Config {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(Config.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
 
     /**
      * The property key value for the luaNPC script folder.

@@ -18,7 +18,8 @@
  */
 package illarion.mapedit.gui;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,7 +33,7 @@ import java.io.IOException;
  */
 public class SplashScreen extends JWindow {
     private static final SplashScreen INSTANCE = new SplashScreen();
-    private static final Logger LOGGER = Logger.getLogger(SplashScreen.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SplashScreen.class);
     private static final Color TRANSPARENT = new Color(0, 0, 0, 0);
     public static final int HEIGHT_ADJUSTMENT = 30;
     private static final int FONT_SIZE = 20;

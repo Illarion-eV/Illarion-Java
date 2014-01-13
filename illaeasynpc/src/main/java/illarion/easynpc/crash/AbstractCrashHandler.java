@@ -23,7 +23,8 @@ import illarion.common.bug.CrashReporter;
 import illarion.easynpc.Lang;
 import illarion.easynpc.Parser;
 import illarion.easynpc.gui.MainFrame;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.lang.Thread.UncaughtExceptionHandler;
