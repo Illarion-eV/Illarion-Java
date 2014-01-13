@@ -33,7 +33,7 @@ dependencies {
     compile group: 'com.github.insubstantial', name: 'substance', version: '7.2.1'
     compile group: 'com.github.insubstantial', name: 'substance-flamingo', version: '7.2.1'
     compile group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '2.0.7'
-    runtime group: 'org.illarion', name: 'rsc_tables', version: '2.1.12.1-SNAPSHOT'
+    runtime group: 'org.illarion', name: 'rsc_tables', version: '2.1.13'
 }
 
 jar {
