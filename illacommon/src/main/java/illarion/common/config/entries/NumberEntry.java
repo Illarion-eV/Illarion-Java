@@ -59,12 +59,12 @@ public final class NumberEntry implements ConfigEntry {
     /**
      * Create a new configuration entry that is handled by this entry.
      *
-     * @param entry    the configuration key that is handled by this text entry
+     * @param entry the configuration key that is handled by this text entry
      * @param minLimit the minimal value that is allowed for this entry
      * @param maxLimit the maximal value that is allowed for this entry
      */
-    public NumberEntry(final String entry, final int minLimit,
-                       final int maxLimit) {
+    public NumberEntry(
+            final String entry, final int minLimit, final int maxLimit) {
         configEntry = entry;
         range = new Range(minLimit, maxLimit);
     }
@@ -92,10 +92,10 @@ public final class NumberEntry implements ConfigEntry {
      * Set the configuration handled by this configuration entry.
      *
      * @param config the configuration that is supposed to be handled by this
-     *               configuration entry
+     * configuration entry
      */
     @Override
-    public void setConfig(final Config config) {
+    public void setConfig(@Nonnull final Config config) {
         cfg = config;
     }
 

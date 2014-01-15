@@ -20,6 +20,7 @@ package illarion.common.config.entries;
 
 import illarion.common.config.Config;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -62,10 +63,10 @@ public final class TextEntry implements ConfigEntry {
      * Set the configuration handled by this configuration entry.
      *
      * @param config the configuration that is supposed to be handled by this
-     *               configuration entry
+     * configuration entry
      */
     @Override
-    public void setConfig(final Config config) {
+    public void setConfig(@Nonnull final Config config) {
         cfg = config;
     }
 

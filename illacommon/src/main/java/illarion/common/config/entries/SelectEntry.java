@@ -47,8 +47,7 @@ public final class SelectEntry implements ConfigEntry {
      * illegal value.
      */
     @SuppressWarnings("nls")
-    private static final String ERROR_STORE_TYPE =
-            "Illegal store type chosen.";
+    private static final String ERROR_STORE_TYPE = "Illegal store type chosen.";
 
     /**
      * The configuration that is controlled by this text entry.
@@ -79,12 +78,12 @@ public final class SelectEntry implements ConfigEntry {
     /**
      * Create a new configuration entry that is handled by this entry.
      *
-     * @param entry  the configuration key that is handled by this text entry
-     * @param store  the method used to store the values in the configuration
+     * @param entry the configuration key that is handled by this text entry
+     * @param store the method used to store the values in the configuration
      * @param option the options to be displayed in this entry
      */
-    public SelectEntry(final String entry, final int store,
-                       final Object[] option) {
+    public SelectEntry(
+            final String entry, final int store, final Object[] option) {
         configEntry = entry;
         storeValue = store;
         options = option;
@@ -98,13 +97,13 @@ public final class SelectEntry implements ConfigEntry {
     /**
      * Create a new configuration entry that is handled by this entry.
      *
-     * @param entry  the configuration key that is handled by this text entry
-     * @param store  the method used to store the values in the configuration
+     * @param entry the configuration key that is handled by this text entry
+     * @param store the method used to store the values in the configuration
      * @param option the options to be displayed in this entry
-     * @param label  the texts displayed for each entry
+     * @param label the texts displayed for each entry
      */
-    public SelectEntry(final String entry, final int store,
-                       final Object[] option, final String[] label) {
+    public SelectEntry(
+            final String entry, final int store, final Object[] option, final String[] label) {
         configEntry = entry;
         storeValue = store;
         options = option;
@@ -114,7 +113,7 @@ public final class SelectEntry implements ConfigEntry {
     /**
      * Create a new configuration entry that is handled by this entry.
      *
-     * @param entry  the configuration key that is handled by this text entry
+     * @param entry the configuration key that is handled by this text entry
      * @param option the options to be displayed in this entry
      */
     public SelectEntry(final String entry, final Object... option) {
@@ -124,12 +123,12 @@ public final class SelectEntry implements ConfigEntry {
     /**
      * Create a new configuration entry that is handled by this entry.
      *
-     * @param entry  the configuration key that is handled by this text entry
+     * @param entry the configuration key that is handled by this text entry
      * @param option the options to be displayed in this entry
-     * @param label  the texts displayed for each entry
+     * @param label the texts displayed for each entry
      */
-    public SelectEntry(final String entry, final Object[] option,
-                       final String[] label) {
+    public SelectEntry(
+            final String entry, final Object[] option, final String[] label) {
         this(entry, STORE_INDEX, option, label);
     }
 
@@ -141,8 +140,7 @@ public final class SelectEntry implements ConfigEntry {
     public int getIndex() {
         switch (storeValue) {
             case STORE_INDEX:
-                return FastMath.clamp(cfg.getInteger(configEntry), 0,
-                        options.length - 1);
+                return FastMath.clamp(cfg.getInteger(configEntry), 0, options.length - 1);
             case STORE_VALUE:
                 final String value = cfg.getString(configEntry);
                 for (int i = 0; i < options.length; i++) {
@@ -173,8 +171,7 @@ public final class SelectEntry implements ConfigEntry {
     public String getLabel() {
         switch (storeValue) {
             case STORE_INDEX:
-                return labels[FastMath.clamp(cfg.getInteger(configEntry), 0,
-                        options.length - 1)];
+                return labels[FastMath.clamp(cfg.getInteger(configEntry), 0, options.length - 1)];
             case STORE_VALUE:
                 final String value = cfg.getString(configEntry);
                 for (int i = 0; i < options.length; i++) {
@@ -205,8 +202,7 @@ public final class SelectEntry implements ConfigEntry {
     public Object getValue() {
         switch (storeValue) {
             case STORE_INDEX:
-                return options[FastMath.clamp(cfg.getInteger(configEntry), 0,
-                        options.length - 1)];
+                return options[FastMath.clamp(cfg.getInteger(configEntry), 0, options.length - 1)];
             case STORE_VALUE:
                 final String value = cfg.getString(configEntry);
                 for (final Object option : options) {
@@ -224,10 +220,10 @@ public final class SelectEntry implements ConfigEntry {
      * Set the configuration handled by this configuration entry.
      *
      * @param config the configuration that is supposed to be handled by this
-     *               configuration entry
+     * configuration entry
      */
     @Override
-    public void setConfig(final Config config) {
+    public void setConfig(@Nonnull final Config config) {
         cfg = config;
     }
 

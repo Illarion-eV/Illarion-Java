@@ -20,6 +20,8 @@ package illarion.common.config.entries;
 
 import illarion.common.config.Config;
 
+import javax.annotation.Nonnull;
+
 /**
  * This is a configuration entry that is used to display a checkbox in the
  * configuration dialog. So a simple yes/no option.
@@ -59,10 +61,10 @@ public final class CheckEntry implements ConfigEntry {
      * Set the configuration handled by this configuration entry.
      *
      * @param config the configuration that is supposed to be handled by this
-     *               configuration entry
+     * configuration entry
      */
     @Override
-    public void setConfig(final Config config) {
+    public void setConfig(@Nonnull final Config config) {
         cfg = config;
     }
 

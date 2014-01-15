@@ -20,8 +20,9 @@ package illarion.common.config.entries;
 
 import illarion.common.config.Config;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.File;
+import java.nio.file.Path;
 
 /**
  * This is a configuration entry that is used to set a directory select entry in
@@ -51,9 +52,9 @@ public final class DirectoryEntry implements ConfigEntry {
     /**
      * Create a new configuration entry that is handled by this entry.
      *
-     * @param entry      the configuration key that is handled by this file entry
+     * @param entry the configuration key that is handled by this file entry
      * @param defaultDir the default directory that is opened in case no file is
-     *                   selected
+     * selected
      */
     @SuppressWarnings("nls")
     public DirectoryEntry(final String entry, @Nullable final String defaultDir) {
@@ -81,18 +82,18 @@ public final class DirectoryEntry implements ConfigEntry {
      * @return the configuration stored for this text entry
      */
     @Nullable
-    public File getValue() {
-        return cfg.getFile(configEntry);
+    public Path getValue() {
+        return cfg.getPath(configEntry);
     }
 
     /**
      * Set the configuration handled by this configuration entry.
      *
      * @param config the configuration that is supposed to be handled by this
-     *               configuration entry
+     * configuration entry
      */
     @Override
-    public void setConfig(final Config config) {
+    public void setConfig(@Nonnull final Config config) {
         cfg = config;
     }
 
@@ -101,7 +102,7 @@ public final class DirectoryEntry implements ConfigEntry {
      *
      * @param newValue the new configuration value
      */
-    public void setValue(final File newValue) {
+    public void setValue(@Nonnull final Path newValue) {
         cfg.set(configEntry, newValue);
     }
 }

@@ -20,6 +20,8 @@ package illarion.common.config.entries;
 
 import illarion.common.config.Config;
 
+import javax.annotation.Nonnull;
+
 /**
  * This interface describes how a configuration entry is supposed work like in
  * public. The configuration entries are the things shown in the configuration
@@ -32,7 +34,7 @@ public interface ConfigEntry {
      * Set the configuration handled by this configuration entry.
      *
      * @param config the configuration that is supposed to be handled by this
-     *               configuration entry
+     * configuration entry
      */
-    void setConfig(Config config);
+    void setConfig(@Nonnull Config config);
 }
