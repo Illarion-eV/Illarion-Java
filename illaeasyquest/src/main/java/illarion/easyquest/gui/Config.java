@@ -18,7 +18,6 @@
  */
 package illarion.easyquest.gui;
 
-import illarion.common.config.ConfigChangeListener;
 import illarion.common.config.ConfigDialog;
 import illarion.common.config.ConfigSystem;
 import illarion.common.config.entries.DirectoryEntry;
@@ -32,7 +31,7 @@ import javax.swing.*;
 import java.io.File;
 import java.nio.file.Path;
 
-public final class Config implements ConfigChangeListener {
+public final class Config {
 
     /**
      * The amount of last opened files that shall be stored.
@@ -254,8 +253,6 @@ public final class Config implements ConfigChangeListener {
         cfg.setDefault(openFiles, "");
         cfg.setDefault(character, "");
         cfg.setDefault(password, "");
-
-        cfg.addListener(this);
     }
 
     /**
@@ -287,11 +284,6 @@ public final class Config implements ConfigChangeListener {
         }
         buffer.setLength(buffer.length() - 1);
         cfg.set(openFiles, buffer.toString());
-    }
-
-    @Override
-    public void configChanged(illarion.common.config.Config cfg, String key) {
-
     }
 
     public void setCharacter(final String newCharacter) {
