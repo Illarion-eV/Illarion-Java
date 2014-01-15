@@ -21,21 +21,31 @@ package illarion.mapedit.data;
 import illarion.common.util.CopyrightHeader;
 import illarion.mapedit.Lang;
 import illarion.mapedit.crash.exceptions.FormatCorruptedException;
+import illarion.mapedit.data.formats.DataType;
 import illarion.mapedit.data.formats.Decoder;
-import illarion.mapedit.data.formats.Version2Decoder;
+import illarion.mapedit.data.formats.DecoderFactory;
 import illarion.mapedit.events.menu.MapLoadErrorEvent;
 import illarion.mapedit.events.menu.MapLoadedEvent;
+import org.bushe.swing.event.EventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.bushe.swing.event.EventBus;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.HashMap;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static java.nio.file.StandardOpenOption.WRITE;
 
 /**
  * This class takes care of loading and saving maps
@@ -55,14 +65,11 @@ public class MapIO {
     public static final String EXT_TILE = ".tiles.txt";
     public static final String EXT_ANNO = ".annot.txt";
     private static final char NEWLINE = '\n';
-    private static final String VERSION_PATTERN = "V: \\d+";
-    private static final java.util.Map<String, Decoder> DECODERS = new HashMap<>();
-
+    private static final Pattern VERSION_PATTERN = Pattern.compile("V: (\\d+)");
     private static final CopyrightHeader COPYRIGHT_HEADER = new CopyrightHeader(80, null, null, "# ", null);
-
-    static {
-        DECODERS.put("2", new Version2Decoder());
-    }
+    private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
+    private static final Charset CHARSET = Charset.forName("ISO-8859-1");
+    private static final DecoderFactory DECODER_FACTORY = new DecoderFactory();
 
     private MapIO() {
 
@@ -74,7 +81,7 @@ public class MapIO {
      * @param path the path
      * @param name the map name
      */
-    public static void loadMap(final String path, final String name) {
+    public static void loadMap(final Path path, final String name) {
         new Thread(new Runnable() {
 
             @Override
@@ -92,70 +99,107 @@ public class MapIO {
         }).start();
     }
 
+    private static final class LoadFileCallable implements Callable<List<String>> {
+        @Nonnull
+        private final Path file;
+
+        private LoadFileCallable(@Nonnull final Path file) {
+            this.file = file;
+        }
+
+        @Override
+        public List<String> call() throws Exception {
+            try {
+                return Files.readAllLines(file, CHARSET);
+            } catch (IOException e) {
+                return Collections.emptyList();
+            }
+        }
+    }
+
+    private static final class LoadMapDataCallable implements Callable<Void> {
+        @Nonnull
+        private final DataType type;
+        @Nonnull
+        private final Decoder decoder;
+        @Nonnull
+        private final List<String> lines;
+
+        private LoadMapDataCallable(
+                @Nonnull final DataType type, @Nonnull final Decoder decoder, @Nonnull final List<String> lines) {
+            this.type = type;
+            this.decoder = decoder;
+            this.lines = lines;
+        }
+
+        @Override
+        public Void call() throws Exception {
+            final int size = lines.size();
+            for (int i = 0; i < size; i++) {
+                decoder.decodeLine(type, lines.get(i), i);
+            }
+            return null;
+        }
+    }
+
     @Nullable
-    public static Map loadMapThread(final String path, final String name) throws IOException {
-        LOGGER.debug("Load map " + name + "  at " + path);
+    public static Map loadMapThread(@Nonnull final Path path, @Nonnull final String name) throws IOException {
+        LOGGER.debug("Load map {} at {}", name, path);
         //        Open the streams for all 3 files, containing the map data
-        final File tileFile = new File(path, name + EXT_TILE);
-        final File itemFile = new File(path, name + EXT_ITEM);
-        final File warpFile = new File(path, name + EXT_WARP);
-        final File annoFile = new File(path, name + EXT_ANNO);
-        final boolean annotationFileExist = checkFile(annoFile);
+        final Path tileFile = path.resolve(name + EXT_TILE);
+        final Path itemFile = path.resolve(name + EXT_ITEM);
+        final Path warpFile = path.resolve(name + EXT_WARP);
+        final Path annoFile = path.resolve(name + EXT_ANNO);
 
-        final BufferedReader tileInput = new BufferedReader(new InputStreamReader(new FileInputStream(tileFile)));
-        final BufferedReader itemInput = new BufferedReader(new InputStreamReader(new FileInputStream(itemFile)));
-        final BufferedReader warpInput = new BufferedReader(new InputStreamReader(new FileInputStream(warpFile)));
-
-        final String version;
-        String versionLine = tileInput.readLine();
-        while (versionLine.startsWith("# ")) {
-            versionLine = tileInput.readLine();
-        }
-        final Decoder decoder;
-        if (Pattern.matches(VERSION_PATTERN, versionLine)) {
-            version = versionLine.substring(3).trim();
-            LOGGER.debug("Mapfileversion: " + version);
-            decoder = DECODERS.get(version);
-            decoder.newMap(name, path);
-        } else {
-            version = "1";
-            LOGGER.debug("Mapfileversion: " + version);
-            decoder = DECODERS.get(version);
-            decoder.newMap(name, path);
-            decoder.decodeTileLine(versionLine, 0);
-        }
+        final Future<List<String>> tileLoadFuture = EXECUTOR_SERVICE.submit(new LoadFileCallable(tileFile));
+        final Future<List<String>> itemLoadFuture = EXECUTOR_SERVICE.submit(new LoadFileCallable(itemFile));
+        final Future<List<String>> warpLoadFuture = EXECUTOR_SERVICE.submit(new LoadFileCallable(warpFile));
+        final Future<List<String>> annoLoadFuture = EXECUTOR_SERVICE.submit(new LoadFileCallable(annoFile));
 
         try {
-            String s;
-            for (int i = 0; ((s = tileInput.readLine()) != null) && !s.isEmpty(); i++) {
-                decoder.decodeTileLine(s, i);
-            }
-
-            for (int i = 0; ((s = itemInput.readLine()) != null) && !s.isEmpty(); i++) {
-                decoder.decodeItemLine(s, i);
-            }
-
-            for (int i = 0; ((s = warpInput.readLine()) != null) && !s.isEmpty(); i++) {
-                decoder.decodeWarpLine(s, i);
-            }
-            if (annotationFileExist) {
-                final BufferedReader annoInput = new BufferedReader(
-                        new InputStreamReader(new FileInputStream(annoFile)));
-                for (int i = 0; ((s = annoInput.readLine()) != null) && !s.isEmpty(); i++) {
-                    decoder.decodeAnnoLine(s, i);
+            List<String> tileLines = tileLoadFuture.get();
+            Iterator<String> tileLinesItr = tileLines.iterator();
+            Decoder decoder = null;
+            int i = 0;
+            while (tileLinesItr.hasNext()) {
+                i++;
+                String line = tileLinesItr.next();
+                if (line.startsWith("# ")) {
+                    continue;
+                }
+                Matcher versionLineMatcher = VERSION_PATTERN.matcher(line);
+                if (versionLineMatcher.find()) {
+                    String version = versionLineMatcher.group(1);
+                    decoder = DECODER_FACTORY.getDecoder(Integer.parseInt(version), name, path);
+                    break;
                 }
             }
-        } catch (FormatCorruptedException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new IOException("Unknown error occurred", e);
+            if (decoder == null) {
+                throw new IOException("Failed to find required version number line.");
+            }
+            while (tileLinesItr.hasNext()) {
+                i++;
+                String line = tileLinesItr.next();
+                decoder.decodeLine(DataType.Tiles, line, i);
+            }
+
+            List<Callable<Void>> loadingTasks = new ArrayList<>();
+            loadingTasks.add(new LoadMapDataCallable(DataType.Items, decoder, itemLoadFuture.get()));
+            loadingTasks.add(new LoadMapDataCallable(DataType.WarpPoints, decoder, warpLoadFuture.get()));
+            loadingTasks.add(new LoadMapDataCallable(DataType.Annotations, decoder, annoLoadFuture.get()));
+            EXECUTOR_SERVICE.invokeAll(loadingTasks);
+            Map m = decoder.getDecodedMap();
+
+            if (m == null) {
+                throw new IOException("No map was created by the decoder.");
+            }
+
+            LOGGER.debug("W={}; H={}; X={}; Y={}; L={};", m.getWidth(), m.getHeight(), m.getX(), m.getY(), m.getZ());
+
+            return m;
+        } catch (InterruptedException | ExecutionException e) {
+            throw new IOException("Error while loading map.", e);
         }
-        Map m = decoder.getDecodedMap();
-
-        LOGGER.debug(String.format("W=%d; H=%d; X=%d; Y=%d; L=%d;", m.getWidth(), m.getHeight(), m.getX(), m.getY(),
-                                   m.getY()));
-
-        return m;
     }
 
     /**
@@ -176,86 +220,80 @@ public class MapIO {
      * @param path path to map files
      * @throws IOException
      */
-    public static void saveMap(@Nonnull final Map map, final String name, final String path) throws IOException {
-        final File tileFile = new File(path, name + EXT_TILE);
-        final File itemFile = new File(path, name + EXT_ITEM);
-        final File warpFile = new File(path, name + EXT_WARP);
-        final File annoFile = new File(path, name + EXT_ANNO);
+    public static void saveMap(
+            @Nonnull final Map map, @Nonnull final String name, @Nonnull final Path path) throws IOException {
+        final Path tileFile = path.resolve(name + EXT_TILE);
+        final Path itemFile = path.resolve(name + EXT_ITEM);
+        final Path warpFile = path.resolve(name + EXT_WARP);
+        final Path annoFile = path.resolve(name + EXT_ANNO);
 
-        if (!checkFile(tileFile) || !checkFile(itemFile) || !checkFile(warpFile) || !checkFile(annoFile)) {
-            throw new IOException("Files are folders or can't be created.");
-        }
+        try (BufferedWriter tileOutput = Files.newBufferedWriter(tileFile, CHARSET, WRITE)) {
+            try (BufferedWriter itemOutput = Files.newBufferedWriter(itemFile, CHARSET, WRITE)) {
+                try (BufferedWriter warpOutput = Files.newBufferedWriter(warpFile, CHARSET, WRITE)) {
+                    try (BufferedWriter annoOutput = Files.newBufferedWriter(annoFile, CHARSET, WRITE)) {
+                        COPYRIGHT_HEADER.writeTo(tileOutput);
+                        COPYRIGHT_HEADER.writeTo(itemOutput);
+                        COPYRIGHT_HEADER.writeTo(warpOutput);
+                        COPYRIGHT_HEADER.writeTo(annoOutput);
 
-        Charset charset = Charset.forName("ISO-8859-1");
+                        tileOutput.write(String.format("%s %d%s", HEADER_V, 2, NEWLINE));
+                        tileOutput.write(String.format("%s %d%s", HEADER_L, map.getZ(), NEWLINE));
+                        tileOutput.write(String.format("%s %d%s", HEADER_X, map.getX(), NEWLINE));
+                        tileOutput.write(String.format("%s %d%s", HEADER_Y, map.getY(), NEWLINE));
+                        tileOutput.write(String.format("%s %d%s", HEADER_W, map.getWidth(), NEWLINE));
+                        tileOutput.write(String.format("%s %d%s", HEADER_H, map.getHeight(), NEWLINE));
+                        for (int x = 0; x < map.getWidth(); ++x) {
+                            for (int y = 0; y < map.getHeight(); ++y) {
+                                final MapTile tile = map.getTileAt(x, y);
 
-        final BufferedWriter tileOutput = new BufferedWriter(
-                new OutputStreamWriter(new FileOutputStream(tileFile), charset));
-        final BufferedWriter itemOutput = new BufferedWriter(
-                new OutputStreamWriter(new FileOutputStream(itemFile), charset));
-        final BufferedWriter warpOutput = new BufferedWriter(
-                new OutputStreamWriter(new FileOutputStream(warpFile), charset));
-        final BufferedWriter annoOutput = new BufferedWriter(
-                new OutputStreamWriter(new FileOutputStream(annoFile), charset));
+                                //        <dx>;<dy>;<tileID>;<musicID>
+                                writeLine(tileOutput, String.format("%d;%d;%s", x, y, tile));
 
-        COPYRIGHT_HEADER.writeTo(tileOutput);
-        COPYRIGHT_HEADER.writeTo(itemOutput);
-        COPYRIGHT_HEADER.writeTo(warpOutput);
-        COPYRIGHT_HEADER.writeTo(annoOutput);
+                                if (tile == null) {
+                                    continue;
+                                }
+                                if (tile.hasAnnotation()) {
+                                    writeLine(annoOutput, String.format("%d;%d;0;%s", x, y, tile.getAnnotation()));
+                                }
 
-        tileOutput.write(String.format("%s %d%s", HEADER_V, 2, NEWLINE));
-        tileOutput.write(String.format("%s %d%s", HEADER_L, map.getZ(), NEWLINE));
-        tileOutput.write(String.format("%s %d%s", HEADER_X, map.getX(), NEWLINE));
-        tileOutput.write(String.format("%s %d%s", HEADER_Y, map.getY(), NEWLINE));
-        tileOutput.write(String.format("%s %d%s", HEADER_W, map.getWidth(), NEWLINE));
-        tileOutput.write(String.format("%s %d%s", HEADER_H, map.getHeight(), NEWLINE));
-        for (int x = 0; x < map.getWidth(); ++x) {
-            for (int y = 0; y < map.getHeight(); ++y) {
-                final MapTile tile = map.getTileAt(x, y);
-
-                //        <dx>;<dy>;<tileID>;<musicID>
-                writeLine(tileOutput, String.format("%d;%d;%s", x, y, tile));
-
-                if (tile == null) {
-                    continue;
-                }
-                if (tile.hasAnnotation()) {
-                    writeLine(annoOutput, String.format("%d;%d;0;%s", x, y, tile.getAnnotation()));
-                }
-
-                final List<MapItem> items = tile.getMapItems();
-                if (items != null) {
-                    for (int i = 0; i < items.size(); i++) {
-                        //        <dx>;<dy>;<item ID>;<quality>[;<data value>[;...]]
-                        writeLine(itemOutput, String.format("%d;%d;%s", x, y, items.get(i)));
-                        if (items.get(i).hasAnnotation()) {
-                            writeLine(annoOutput,
-                                      String.format("%d;%d;%d;%s", x, y, i + 1, items.get(i).getAnnotation()));
+                                final List<MapItem> items = tile.getMapItems();
+                                if (items != null) {
+                                    for (int i = 0; i < items.size(); i++) {
+                                        //        <dx>;<dy>;<item ID>;<quality>[;<data value>[;...]]
+                                        writeLine(itemOutput, String.format("%d;%d;%s", x, y, items.get(i)));
+                                        if (items.get(i).hasAnnotation()) {
+                                            writeLine(annoOutput, String.format("%d;%d;%d;%s", x, y, i + 1,
+                                                                                items.get(i).getAnnotation()));
+                                        }
+                                    }
+                                }
+                                final MapWarpPoint warp = tile.getMapWarpPoint();
+                                if (warp != null) {
+                                    writeLine(warpOutput, String.format("%d;%d;%s", x, y, warp));
+                                }
+                            }
                         }
+                        tileOutput.flush();
+                        itemOutput.flush();
+                        warpOutput.flush();
+                        annoOutput.flush();
                     }
-                }
-                final MapWarpPoint warp = tile.getMapWarpPoint();
-                if (warp != null) {
-                    writeLine(warpOutput, String.format("%d;%d;%s", x, y, warp));
                 }
             }
         }
-        tileOutput.close();
-        itemOutput.close();
-        warpOutput.close();
-        annoOutput.close();
     }
 
-    private static boolean checkFile(@Nonnull final File file) {
-        if (file.isDirectory()) {
+    private static boolean checkFile(@Nonnull final Path file) {
+        if (Files.isDirectory(file)) {
             return false;
         }
-        if (!file.exists()) {
+        if (!Files.exists(file)) {
             try {
-                file.createNewFile();
+                Files.createFile(file);
             } catch (IOException e) {
                 return false;
             }
-            return file.exists();
+            return Files.exists(file);
         }
         return true;
     }

@@ -28,18 +28,20 @@ import illarion.common.config.entries.SelectEntry;
 import illarion.common.util.DirectoryManager;
 import illarion.mapedit.Lang;
 import javolution.util.FastTable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.skin.SkinInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
@@ -302,14 +304,14 @@ public class MapEditorConfig {
      * @return the folder to store the maps
      */
     @Nullable
-    public File getMapFolder() {
+    public Path getMapFolder() {
         if (configSystem == null) {
             LOGGER.error("Configuration system not initialized yet.");
-            return new File(System.getProperty("user.home"));
+            return Paths.get(System.getProperty("user.home"));
         }
-        final File mapFolder = configSystem.getFile(MAPEDIT_FOLDER);
+        final Path mapFolder = configSystem.getPath(MAPEDIT_FOLDER);
         if (mapFolder == null) {
-            return new File(System.getProperty("user.home"));
+            return Paths.get(System.getProperty("user.home"));
         }
         return mapFolder;
     }

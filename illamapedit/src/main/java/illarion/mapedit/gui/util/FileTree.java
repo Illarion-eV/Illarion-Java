@@ -23,6 +23,8 @@ import illarion.mapedit.events.menu.MapOpenEvent;
 import illarion.mapedit.resource.loaders.ImageLoader;
 import org.bushe.swing.event.EventBus;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,7 +34,10 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -40,6 +45,7 @@ import java.util.Comparator;
  * @author Fredrik K
  */
 public class FileTree extends JTree {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileTree.class);
     private static final Color SELECTED_COLOR = new Color(115,164,209);
 
     private class FileTreeMouseAdapter extends MouseAdapter {
@@ -120,40 +126,46 @@ public class FileTree extends JTree {
     }
 
     @Nullable
-    private static MutableTreeNode scan(@Nonnull final File node) {
-        if (node.isDirectory()) {
+    private static MutableTreeNode scan(@Nonnull final Path node) {
+        if (Files.isDirectory(node)) {
             return getDirectoryTreeNode(node);
         }
-        final MapOpenEvent leaf = new MapOpenEvent(node.getParent(), node.getName().substring(0,
-                node.getName().length() - MapIO.EXT_TILE.length()));
+        String fileName = node.getFileName().toString();
+        final MapOpenEvent leaf = new MapOpenEvent(node.getParent(),
+                                                   fileName.substring(0, fileName.length() - MapIO.EXT_TILE.length()));
         return new DefaultMutableTreeNode(leaf);
     }
 
+    private static final DirectoryStream.Filter<Path> MAP_FILE_FILTER = new DirectoryStream.Filter<Path>() {
+        @Override
+        public boolean accept(Path entry) throws IOException {
+            if (Files.isDirectory(entry)) {
+                return true;
+            }
+            return entry.toString().endsWith(MapIO.EXT_TILE);
+        }
+    };
+
     @Nullable
-    private static MutableTreeNode getDirectoryTreeNode(@Nonnull final File node) {
-        final File[] files = node.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(@Nonnull final File file) {
-                return isMapFile(file);
-            }
-        });
+    private static MutableTreeNode getDirectoryTreeNode(@Nonnull final Path node) {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(node, MAP_FILE_FILTER)) {
+            final String dirName = node.getFileName().toString();
+            final DefaultMutableTreeNode ret = new DefaultMutableTreeNode(dirName);
 
-        if (files == null) {
-            return null;
-        }
-        sortFiles(files);
-
-        final DefaultMutableTreeNode ret = new DefaultMutableTreeNode(node.getName());
-        for (final File child : files) {
-            final MutableTreeNode childNode = scan(child);
-            if (childNode != null) {
-                ret.add(childNode);
+            for (final Path child : stream) {
+                final MutableTreeNode childNode = scan(child);
+                if (childNode != null) {
+                    ret.add(childNode);
+                }
             }
+            if (ret.getChildCount() == 0) {
+                return null;
+            }
+            return ret;
+        } catch (IOException e) {
+            LOGGER.error("Error while reading directory: {}", e.getMessage());
         }
-        if (ret.getChildCount() == 0) {
-            return null;
-        }
-        return ret;
+        return null;
     }
 
     private static void sortFiles(final File[] files) {
@@ -173,10 +185,16 @@ public class FileTree extends JTree {
         });
     }
 
-    public void setDirectory(@Nonnull final File file) {
-        if (file.isDirectory()) {
+    private SwingWorker<MutableTreeNode, Object> currentWorker;
+
+    public void setDirectory(@Nonnull final Path file) {
+        if (Files.isDirectory(file)) {
+            SwingWorker<MutableTreeNode, Object> localCurrentWorker = currentWorker;
+            if (localCurrentWorker != null && localCurrentWorker.getState() != SwingWorker.StateValue.DONE) {
+                localCurrentWorker.cancel(true);
+            }
             setModel(null);
-            new SwingWorker<MutableTreeNode, Object>() {
+            currentWorker = new SwingWorker<MutableTreeNode, Object>() {
                 @Override
                 @Nullable
                 protected MutableTreeNode doInBackground() {
@@ -188,8 +206,10 @@ public class FileTree extends JTree {
                         setModel(new DefaultTreeModel(get()));
                     } catch (Exception ignore) {
                     }
+                    currentWorker = null;
                 }
-            }.execute();
+            };
+            currentWorker.execute();
         }
     }
 

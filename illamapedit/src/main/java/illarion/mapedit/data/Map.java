@@ -27,6 +27,7 @@ import org.bushe.swing.event.EventBus;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
@@ -43,7 +44,7 @@ public class Map {
     /**
      * The path to save this map
      */
-    private final String path;
+    private final Path path;
     /**
      * The width of the map
      */
@@ -88,14 +89,14 @@ public class Map {
      *
      * @param name the map name
      * @param path the map path
-     * @param w    the with of the map
-     * @param h    the height of the map
-     * @param x    the x coordinate of the origin of the map
-     * @param y    the y coordinate of the origin of the map
-     * @param z    the map level (= z coordinate)
+     * @param w the with of the map
+     * @param h the height of the map
+     * @param x the x coordinate of the origin of the map
+     * @param y the y coordinate of the origin of the map
+     * @param z the map level (= z coordinate)
      */
-    public Map(final String name, final String path, final int w, final int h,
-               final int x, final int y, final int z) {
+    public Map(
+            final String name, final Path path, final int w, final int h, final int x, final int y, final int z) {
         this.name = name;
         this.path = path;
         width = w;
@@ -110,13 +111,13 @@ public class Map {
 
     @Nullable
     public MapTile getActiveTile() {
-        return getTileAt(activeX,activeY);
+        return getTileAt(activeX, activeY);
     }
 
     @Nullable
     public List<MapItem> getItemsOnActiveTile() {
         List<MapItem> items = null;
-        final MapTile tile = getTileAt(activeX,activeY);
+        final MapTile tile = getTileAt(activeX, activeY);
         if (tile != null) {
             items = tile.getMapItems();
         }
@@ -143,7 +144,7 @@ public class Map {
     @Nullable
     public ItemPlacedAction removeItemOnActiveTile(final int index) {
         ItemPlacedAction action = null;
-        final MapTile tile = getTileAt(activeX,activeY);
+        final MapTile tile = getTileAt(activeX, activeY);
         if (tile != null) {
 
             action = new ItemPlacedAction(activeX, activeY, tile.getMapItemAt(index), null, this);
@@ -153,7 +154,7 @@ public class Map {
     }
 
     public void replaceItemOnActiveTile(final int index, final int newIndex) {
-        final MapTile tile = getTileAt(activeX,activeY);
+        final MapTile tile = getTileAt(activeX, activeY);
         if (tile != null) {
             final List<MapItem> items = tile.getMapItems();
             if (items != null) {
@@ -199,8 +200,8 @@ public class Map {
     /**
      * Adds an item to a specified position.
      *
-     * @param x       the x coordinate relative to the origin
-     * @param y       the y coordinate relative to the origin
+     * @param x the x coordinate relative to the origin
+     * @param y the y coordinate relative to the origin
      * @param mapItem the item  <- u don't sayy ;)
      */
     public void addItemAt(final int x, final int y, final MapItem mapItem) {
@@ -219,8 +220,8 @@ public class Map {
     /**
      * Sets a warp point at to specified tile
      *
-     * @param x         the x coordinate of the warp point
-     * @param y         the y coordinate of the warp point
+     * @param x the x coordinate of the warp point
+     * @param y the y coordinate of the warp point
      * @param warpPoint the warp point <- u don't sayy ;)
      */
     public void setWarpAt(final int x, final int y, final MapWarpPoint warpPoint) {
@@ -293,7 +294,7 @@ public class Map {
     /**
      * @return the path to save the map
      */
-    public String getPath() {
+    public Path getPath() {
         return path;
     }
 
@@ -361,7 +362,7 @@ public class Map {
      * @return {@code true} if x and y is a selected tile
      */
     public boolean isSelected(final int x, final int y) {
-        return selectionManager.isSelected(x,y);
+        return selectionManager.isSelected(x, y);
     }
 
     /**
@@ -416,7 +417,7 @@ public class Map {
             final int newY = startY + (position.getY() - mapSelection.getOffsetY());
 
             if (contains(newX, newY)) {
-                final MapTile oldTile = getTileAt(newX ,newY);
+                final MapTile oldTile = getTileAt(newX, newY);
                 final MapTile newTile = MapTile.MapTileFactory.copy(mapSelection.getTiles().get(position));
                 action.addAction(new CopyPasteAction(newX, newY, oldTile, newTile, this));
                 setTileAt(newX, newY, newTile);

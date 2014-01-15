@@ -27,6 +27,7 @@ import illarion.mapedit.data.MapWarpPoint;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -56,10 +57,9 @@ public class Version2Decoder implements Decoder {
     private Map map;
 
     private String name;
-    private String path;
+    private Path path;
 
-    @Override
-    public void newMap(final String name, final String path) {
+    Version2Decoder(@Nonnull final String name, @Nonnull final Path path) {
         this.name = name;
         this.path = path;
         map = null;
@@ -70,7 +70,6 @@ public class Version2Decoder implements Decoder {
         height = -1;
     }
 
-    @Override
     public void decodeItemLine(final String line, final int i) throws FormatCorruptedException {
         if (line.startsWith("# ")) {
             return;
@@ -115,7 +114,6 @@ public class Version2Decoder implements Decoder {
         }
     }
 
-    @Override
     public void decodeTileLine(final String line, final int i) throws FormatCorruptedException {
         if (line.startsWith("# ")) {
             return;
@@ -144,7 +142,6 @@ public class Version2Decoder implements Decoder {
         map.setTileAt(tx, ty, tile);
     }
 
-    @Override
     public void decodeAnnoLine(final String line, final int i) throws FormatCorruptedException {
         if (line.startsWith("# ")) {
             return;
@@ -169,7 +166,6 @@ public class Version2Decoder implements Decoder {
         }
     }
 
-    @Override
     public void decodeWarpLine(final String line, final int i) throws FormatCorruptedException {
         if (line.startsWith("# ")) {
             return;
@@ -187,6 +183,24 @@ public class Version2Decoder implements Decoder {
         final MapWarpPoint warp = new MapWarpPoint(tx, ty, tz);
         if (map != null) {
             map.setWarpAt(sx, sy, warp);
+        }
+    }
+
+    @Override
+    public void decodeLine(DataType type, String line, int i) throws FormatCorruptedException {
+        switch (type) {
+            case Tiles:
+                decodeTileLine(line, i);
+                break;
+            case Items:
+                decodeItemLine(line, i);
+                break;
+            case WarpPoints:
+                decodeWarpLine(line, i);
+                break;
+            case Annotations:
+                decodeAnnoLine(line, i);
+                break;
         }
     }
 

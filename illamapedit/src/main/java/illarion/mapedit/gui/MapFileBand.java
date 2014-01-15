@@ -36,6 +36,8 @@ import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonComponent;
 import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
 import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.swing.*;
@@ -43,18 +45,23 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.File;
-import java.io.FilenameFilter;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Tim
  */
 public class MapFileBand extends JRibbonBand {
-    private static final FilenameFilter FILTER_TILES = new FilenameFilter() {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MapFileBand.class);
+
+    private static final DirectoryStream.Filter<Path> FILTER_TILES = new DirectoryStream.Filter<Path>() {
         @Override
-        public boolean accept(final File dir, @Nonnull final String name) {
-            return name.endsWith(MapIO.EXT_TILE);
+        public boolean accept(@Nonnull final Path entry) throws IOException {
+            return entry.getFileName().toString().endsWith(MapIO.EXT_TILE);
         }
     };
     @Nonnull
@@ -65,23 +72,31 @@ public class MapFileBand extends JRibbonBand {
 
         AnnotationProcessor.process(this);
 
-        final File dir = config.getFile("mapLastOpenDir");
+        final Path dir = config.getPath("mapLastOpenDir");
 
-        final String[] maps = dir.list(FILTER_TILES);
-        final JList list;
-        if (maps != null) {
-            for (int i = 0; i < maps.length; ++i) {
-                maps[i] = maps[i].substring(0, maps[i].length() - MapIO.EXT_TILE.length());
+        String[] maps = null;
+        try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(dir, FILTER_TILES)) {
+            final List<String> mapNames = new ArrayList<>();
+            for (Path file : dirStream) {
+                String fileName = file.getFileName().toString();
+                mapNames.add(fileName.substring(0, fileName.length() - MapIO.EXT_TILE.length()));
             }
-            list = new JList(maps);
+            maps = mapNames.toArray(new String[mapNames.size()]);
+        } catch (@Nonnull final IOException e) {
+            LOGGER.error("Failed to read the directory of the maps.");
+        }
+
+        final JList<String> list;
+        if (maps != null) {
+            list = new JList<>(maps);
         } else {
-            list = new JList();
+            list = new JList<>();
         }
         list.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(@Nonnull final ListSelectionEvent e) {
                 if (e.getValueIsAdjusting() && (list.getSelectedValue() != null)) {
-                    EventBus.publish(new MapOpenEvent(dir.getPath(), (String) list.getSelectedValue()));
+                    EventBus.publish(new MapOpenEvent(dir, (String) list.getSelectedValue()));
                     list.clearSelection();
                 }
             }

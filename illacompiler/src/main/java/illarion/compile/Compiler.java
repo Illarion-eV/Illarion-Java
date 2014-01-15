@@ -7,7 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.annotation.Nonnull;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.EnumMap;
@@ -24,6 +26,10 @@ public class Compiler {
     private static Map<CompilerType, Path> storagePaths;
 
     public static void main(final String[] args) {
+        ByteArrayOutputStream stdOutBuffer = new ByteArrayOutputStream();
+        PrintStream orgStdOut = System.out;
+        System.setOut(new PrintStream(stdOutBuffer));
+
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
 
@@ -57,22 +63,29 @@ public class Compiler {
             }
 
             String[] files = cmd.getArgs();
-            for (String file : files) {
-                Path path = Paths.get(file);
-                if (Files.isDirectory(path)) {
-                    Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
-                        @Override
-                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                            FileVisitResult result = super.visitFile(file, attrs);
-                            if (result == FileVisitResult.CONTINUE) {
-                                processPath(file);
-                                return FileVisitResult.CONTINUE;
+            if (files.length > 0) {
+                // restore std out
+                System.setOut(orgStdOut);
+                stdOutBuffer.writeTo(orgStdOut);
+
+                // process files
+                for (String file : files) {
+                    Path path = Paths.get(file);
+                    if (Files.isDirectory(path)) {
+                        Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+                            @Override
+                            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                                FileVisitResult result = super.visitFile(file, attrs);
+                                if (result == FileVisitResult.CONTINUE) {
+                                    processPath(file);
+                                    return FileVisitResult.CONTINUE;
+                                }
+                                return result;
                             }
-                            return result;
-                        }
-                    });
-                } else {
-                    processPath(path);
+                        });
+                    } else {
+                        processPath(path);
+                    }
                 }
             }
         } catch (final ParseException e) {

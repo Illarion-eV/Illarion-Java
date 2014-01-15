@@ -26,18 +26,18 @@ import illarion.mapedit.events.menu.MapNewEvent;
 import illarion.mapedit.events.menu.MapSaveEvent;
 import illarion.mapedit.events.menu.SetFolderEvent;
 import illarion.mapedit.resource.loaders.ImageLoader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.EventBus;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenu;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntryFooter;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntryPrimary;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 /**
  * This class represents the main menu.
@@ -57,7 +57,7 @@ public class MainMenu extends RibbonApplicationMenu {
                         new ActionListener() {
                             @Override
                             public void actionPerformed(final ActionEvent e) {
-                                File file = null;
+                                Path file = null;
                                 try {
                                     file = MapDialogs.showSetFolderDialog();
                                 } catch (IOException ex) {

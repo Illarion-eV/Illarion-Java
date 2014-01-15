@@ -27,6 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 /**
  * @author Tim
@@ -36,7 +37,7 @@ public class MapDialogs {
     private static final int SIGNED_MAX = 10000;
 
     @Nullable
-    private static File saveDir;
+    private static Path saveDir;
 
     private MapDialogs() {
 
@@ -60,7 +61,7 @@ public class MapDialogs {
         btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                final JFileChooser ch = new JFileChooser(MapEditorConfig.getInstance().getMapFolder());
+                final JFileChooser ch = new JFileChooser(MapEditorConfig.getInstance().getMapFolder().toFile());
                 ch.setDialogType(JFileChooser.OPEN_DIALOG);
                 ch.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
@@ -68,7 +69,8 @@ public class MapDialogs {
                     dialog.setVisible(false);
                     return;
                 }
-                saveDir = ch.getSelectedFile();
+                File selectedFile = ch.getSelectedFile();
+                saveDir = selectedFile == null ? null : selectedFile.toPath();
                 dialog.setVisible(false);
             }
         });
@@ -92,24 +94,24 @@ public class MapDialogs {
         dialog.dispose();
 
         if (saveDir != null) {
-            return new Map(name.getText(), saveDir.getPath(), (Integer) width.getValue(), (Integer) height.getValue(),
-                    (Integer) x.getValue(), (Integer) y.getValue(), (Integer) l.getValue());
+            return new Map(name.getText(), saveDir, (Integer) width.getValue(), (Integer) height.getValue(),
+                           (Integer) x.getValue(), (Integer) y.getValue(), (Integer) l.getValue());
         }
         return null;
     }
 
     @Nullable
-    public static File showSetFolderDialog() throws IOException {
+    public static Path showSetFolderDialog() throws IOException {
         final JFileChooser fileChooser = new JFileChooser();
         if (MapEditorConfig.getInstance().getMapFolder() != null) {
-            fileChooser.setCurrentDirectory(MapEditorConfig.getInstance().getMapFolder());
+            fileChooser.setCurrentDirectory(MapEditorConfig.getInstance().getMapFolder().toFile());
         }
         fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         if (fileChooser.showOpenDialog(MainFrame.getInstance()) != JFileChooser.APPROVE_OPTION) {
             return null;
         }
-        return fileChooser.getSelectedFile();
+        return fileChooser.getSelectedFile().toPath();
     }
 
     public static boolean isShowSaveDialog() {
