@@ -222,6 +222,7 @@ public class MainFrame extends JRibbonFrame {
     }
 
     private static void initLogging() {
+        System.out.println("Startup done.");
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
 

@@ -357,6 +357,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
     }
 
     private static void initLogging() {
+        System.out.println("Startup done.");
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
 

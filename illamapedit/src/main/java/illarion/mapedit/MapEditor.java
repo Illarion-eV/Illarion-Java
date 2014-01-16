@@ -153,6 +153,7 @@ public final class MapEditor {
      */
     @SuppressWarnings("nls")
     private static void initLogging() {
+        System.out.println("Startup done.");
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
 
@@ -160,7 +161,6 @@ public final class MapEditor {
         if (userDir == null) {
             return;
         }
-        System.out.println("Startup done.");
         System.setProperty("log_dir", userDir.getAbsolutePath());
 
         //Reload:
