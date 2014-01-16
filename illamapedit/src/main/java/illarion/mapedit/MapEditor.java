@@ -160,6 +160,7 @@ public final class MapEditor {
         if (userDir == null) {
             return;
         }
+        System.out.println("Startup done.");
         System.setProperty("log_dir", userDir.getAbsolutePath());
 
         //Reload:
