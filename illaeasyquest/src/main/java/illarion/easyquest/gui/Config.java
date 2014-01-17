@@ -30,6 +30,7 @@ import javax.annotation.Nullable;
 import javax.swing.*;
 import java.io.File;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public final class Config {
 
@@ -81,7 +82,7 @@ public final class Config {
      * The file that holds the configuration.
      */
     @Nullable
-    private File configFile = null;
+    private Path configFile = null;
 
     /**
      * The last generated list of opened files. When this is set to
@@ -163,7 +164,7 @@ public final class Config {
     }
 
     public String getEasyQuestFolder() {
-        return cfg.getFile(easyQuestFolder).toString();
+        return cfg.getPath(easyQuestFolder).toString();
     }
 
     @Nullable
@@ -222,7 +223,7 @@ public final class Config {
     }
 
     public String getExportFolder() {
-        return cfg.getFile(exportFolder).toString();
+        return cfg.getPath(exportFolder).toString();
     }
 
     /**
@@ -243,13 +244,13 @@ public final class Config {
     public void init() {
         final String folder = checkFolder();
 
-        configFile = new File(folder, "easyquesteditor.xcfgz");
+        configFile = Paths.get(folder, "easyquesteditor.xcfgz");
         cfg = new ConfigSystem(configFile);
 
         cfg.setDefault(lastFilesKey, "");
-        cfg.setDefault(easyQuestFolder, new File(System.getProperty("user.home")));
+        cfg.setDefault(easyQuestFolder, Paths.get(System.getProperty("user.home")));
         cfg.setDefault(lastFilesKey, "");
-        cfg.setDefault(exportFolder, System.getProperty("user.home"));
+        cfg.setDefault(exportFolder, Paths.get(System.getProperty("user.home")));
         cfg.setDefault(openFiles, "");
         cfg.setDefault(character, "");
         cfg.setDefault(password, "");
@@ -263,7 +264,7 @@ public final class Config {
     }
 
     public void setEasyQuestFolder(@Nonnull final String newFolder) {
-        cfg.set(easyQuestFolder, new File(newFolder));
+        cfg.set(easyQuestFolder, Paths.get(newFolder));
     }
 
     public void setExportFolder(final String newFolder) {
@@ -295,10 +296,10 @@ public final class Config {
     }
 
     public String getCharacter() {
-        return cfg.getFile(character).toString();
+        return cfg.getString(character);
     }
 
     public String getPassword() {
-        return cfg.getFile(password).toString();
+        return cfg.getString(password);
     }
 }
