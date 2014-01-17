@@ -22,7 +22,7 @@ import illarion.common.config.Config;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.File;
+import java.nio.file.Path;
 
 /**
  * This is a configuration entry that is used to set a file select entry in the
@@ -46,7 +46,7 @@ public final class FileEntry implements ConfigEntry {
     /**
      * The directory that is displayed by default.
      */
-    @Nullable
+    @Nonnull
     private final String dir;
 
     /**
@@ -101,7 +101,7 @@ public final class FileEntry implements ConfigEntry {
      *
      * @return the directory displayed by default
      */
-    @Nullable
+    @Nonnull
     public String getDefaultDir() {
         return dir;
     }
@@ -139,8 +139,8 @@ public final class FileEntry implements ConfigEntry {
      * @return the configuration stored for this text entry
      */
     @Nullable
-    public File getValue() {
-        return cfg.getFile(configEntry);
+    public Path getValue() {
+        return cfg.getPath(configEntry);
     }
 
     /**
@@ -159,7 +159,7 @@ public final class FileEntry implements ConfigEntry {
      *
      * @param newValue the new configuration value
      */
-    public void setValue(final File newValue) {
+    public void setValue(@Nonnull final Path newValue) {
         cfg.set(configEntry, newValue);
     }
 }
