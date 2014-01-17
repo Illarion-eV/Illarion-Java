@@ -301,6 +301,7 @@ public final class Editor extends RTextScrollPane {
         setScriptText(script);
         setLoadScriptFile(script.getSourceScriptFile());
         editor.discardAllEdits();
+        saved();
     }
 
     public void resetEditorKit() {

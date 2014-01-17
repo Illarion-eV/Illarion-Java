@@ -43,8 +43,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
@@ -145,13 +145,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
 
         Config.getInstance().getLastWindowValue(this);
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowListener() {
-
-            @Override
-            public void windowActivated(final WindowEvent e) {
-                // nothing
-            }
-
+        addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(final WindowEvent e) {
                 MainFrame.getInstance().dispose();
@@ -160,26 +154,6 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
             @Override
             public void windowClosing(final WindowEvent e) {
                 MainFrame.getInstance().closeWindow();
-            }
-
-            @Override
-            public void windowDeactivated(final WindowEvent e) {
-                // nothing
-            }
-
-            @Override
-            public void windowDeiconified(final WindowEvent e) {
-                // nothing
-            }
-
-            @Override
-            public void windowIconified(final WindowEvent e) {
-                // nothing
-            }
-
-            @Override
-            public void windowOpened(final WindowEvent e) {
-                // nothing
             }
         });
 

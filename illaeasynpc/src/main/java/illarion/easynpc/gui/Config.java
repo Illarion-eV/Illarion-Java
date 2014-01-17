@@ -329,11 +329,11 @@ public final class Config {
     public String getEasyNpcFolder() {
         if (cfg == null) {
             LOGGER.error("Configuration system not initialized yet.");
-            return new File(System.getProperty("user.home")).toString();
+            return Paths.get(System.getProperty("user.home")).toString();
         }
-        final File easyNpcFolderFile = cfg.getFile(LUA_NPC_FOLDER);
+        final Path easyNpcFolderFile = cfg.getPath(EASY_NPC_FOLDER);
         if (easyNpcFolderFile == null) {
-            return new File(System.getProperty("user.home")).toString();
+            return Paths.get(System.getProperty("user.home")).toString();
         }
         return easyNpcFolderFile.toString();
     }
@@ -483,11 +483,11 @@ public final class Config {
     public String getLuaNpcFolder() {
         if (cfg == null) {
             LOGGER.error("Configuration system not initialized yet.");
-            return new File(System.getProperty("user.home")).toString();
+            return Paths.get(System.getProperty("user.home")).toString();
         }
-        final File luaNpcFolderFile = cfg.getFile(LUA_NPC_FOLDER);
+        final Path luaNpcFolderFile = cfg.getPath(LUA_NPC_FOLDER);
         if (luaNpcFolderFile == null) {
-            return new File(System.getProperty("user.home")).toString();
+            return Paths.get(System.getProperty("user.home")).toString();
         }
         return luaNpcFolderFile.toString();
     }
@@ -576,11 +576,11 @@ public final class Config {
     public void init() {
         final String folder = checkFolder();
 
-        final File configFile = new File(folder, "easynpceditor.xcfgz");
+        final Path configFile = Paths.get(folder, "easynpceditor.xcfgz");
         cfg = new ConfigSystem(configFile);
 
         cfg.setDefault(LAST_FILES_KEY, "");
-        cfg.setDefault(EASY_NPC_FOLDER, new File(System.getProperty("user.home")));
+        cfg.setDefault(EASY_NPC_FOLDER, Paths.get(System.getProperty("user.home")));
         cfg.setDefault(LAST_FILES_KEY, "");
         cfg.setDefault(LAST_WINDOW_H, -1);
         cfg.setDefault(LAST_WINDOW_STATE, -1);
@@ -588,7 +588,7 @@ public final class Config {
         cfg.setDefault(LAST_WINDOW_X, -1);
         cfg.setDefault(LAST_WINDOW_Y, -1);
         cfg.setDefault(USED_LOOK_AND_FEEL, DEFAULT_LOOK_AND_FEEL);
-        cfg.setDefault(LUA_NPC_FOLDER, System.getProperty("user.home"));
+        cfg.setDefault(LUA_NPC_FOLDER, Paths.get(System.getProperty("user.home")));
         cfg.setDefault(OPEN_FILES, "");
         cfg.setDefault(SPLIT_STATE, 0.75d);
         cfg.setDefault(UNDO_COUNT_KEY, 100);
@@ -636,7 +636,7 @@ public final class Config {
             LOGGER.error("Configuration system not initialized yet.");
             return;
         }
-        cfg.set(EASY_NPC_FOLDER, new File(newFolder));
+        cfg.set(EASY_NPC_FOLDER, Paths.get(newFolder));
     }
 
     /**
