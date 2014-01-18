@@ -27,7 +27,7 @@ mainClassName = 'illarion.download.gui.GuiApplication'
 dependencies {
     compile project(':common')
     compile group: 'org.javolution', name: 'javolution-core-java', version: '6.0.0'
-    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.2'
+    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.3'
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.5'
     compile group: 'org.slf4j', name: 'jul-to-slf4j', version: '1.7.5'
     compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: '1.7.5'
@@ -45,18 +45,18 @@ dependencies {
 jar {
     dependsOn { gitVersion }
     manifest {
-        attributes     \
-            'Main-Class': 'illarion.download.gui.GuiApplication',    \
-            'Permissions': 'all-permissions',    \
-            'Codebase': 'illarion.org',    \
-            'Application-Name': 'Illarion Launcher',    \
-            'Application-Library-Allowable-Codebase': 'illarion.org',    \
-            'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),    \
-            'Built-By': System.getProperty('user.name'),     \
-            'Built-JDK': System.getProperty('java.version'),     \
-            'Implementation-Title': 'Illarion Launcher',     \
-            'Implementation-Vendor': 'Illarion e.V.',    \
-            'Implementation-Version': project.ext.fullVersion
+        attributes      \
+             'Main-Class': 'illarion.download.gui.GuiApplication',     \
+             'Permissions': 'all-permissions',     \
+             'Codebase': 'illarion.org',     \
+             'Application-Name': 'Illarion Launcher',     \
+             'Application-Library-Allowable-Codebase': 'illarion.org',     \
+             'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),     \
+             'Built-By': System.getProperty('user.name'),      \
+             'Built-JDK': System.getProperty('java.version'),      \
+             'Implementation-Title': 'Illarion Launcher',      \
+             'Implementation-Vendor': 'Illarion e.V.',     \
+             'Implementation-Version': project.ext.fullVersion
     }
 }
 
@@ -185,30 +185,30 @@ task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jfxJar') {
     keepattributes "*Annotation*"
 
     keepclasseswithmembers "public class com.javafx.main.Main {" +
-        "public static void main(java.lang.String[]);" +
-    "}"
+            "public static void main(java.lang.String[]);" +
+            "}"
 
     keepclasseswithmembers "public class illarion.download.** {" +
             "public static void main(java.lang.String[]);" +
-    "}"
+            "}"
 
     keepclasseswithmembernames "class * {" +
-        "native <methods>;" +
-    "}"
+            "native <methods>;" +
+            "}"
 
     keepclassmembers "class * extends java.lang.Enum {" +
-        "public static **[] values();" +
-        "public static ** valueOf(java.lang.String);" +
-    "}"
+            "public static **[] values();" +
+            "public static ** valueOf(java.lang.String);" +
+            "}"
 
     keepclassmembers "class * implements java.io.Serializable {" +
-        "static final long serialVersionUID;" +
-        "static final java.io.ObjectStreamField[] serialPersistentFields;" +
-        "private void writeObject(java.io.ObjectOutputStream);" +
-        "private void readObject(java.io.ObjectInputStream);" +
-        "java.lang.Object writeReplace();" +
-        "java.lang.Object readResolve();" +
-    "}"
+            "static final long serialVersionUID;" +
+            "static final java.io.ObjectStreamField[] serialPersistentFields;" +
+            "private void writeObject(java.io.ObjectOutputStream);" +
+            "private void readObject(java.io.ObjectInputStream);" +
+            "java.lang.Object writeReplace();" +
+            "java.lang.Object readResolve();" +
+            "}"
 
     keep "class ch.qos.logback.** { *; }"
     keep "class illarion.download.gui.controller.*"
@@ -217,12 +217,12 @@ task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jfxJar') {
     keep "class org.xmlpull.mxp1.MXParserFactory"
 
     keepclassmembers "class illarion.download.** {" +
-        "@javafx.fxml.FXML *;" +
-    "}"
+            "@javafx.fxml.FXML *;" +
+            "}"
 
     keepclasseswithmembers "class * {" +
-        "org.apache.commons.logging.Log getLog(java.lang.String);" +
-    "}"
+            "org.apache.commons.logging.Log getLog(java.lang.String);" +
+            "}"
 
     dontwarn "javafx.embed.**"
     dontwarn "com.sun.**"

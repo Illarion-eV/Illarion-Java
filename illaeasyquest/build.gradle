@@ -26,7 +26,7 @@ mainClassName = 'illarion.easyquest.gui.MainFrame'
 dependencies {
     compile project(':common')
     compile group: 'org.javolution', name: 'javolution-core-java', version: '6.0.0'
-    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.2'
+    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.3'
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.5'
     compile group: 'org.slf4j', name: 'jul-to-slf4j', version: '1.7.5'
     compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: '1.7.5'
@@ -64,18 +64,18 @@ task createFileLists {
 jar {
     dependsOn { gitVersion }
     manifest {
-        attributes      \
-             'Main-Class': 'illarion.easyquest.gui.MainFrame',    \
-             'Permissions': 'all-permissions',     \
-             'Codebase': 'illarion.org',     \
-             'Application-Name': 'Illarion easyQuest editor',     \
-             'Application-Library-Allowable-Codebase': 'illarion.org',     \
-             'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),     \
-             'Built-By': System.getProperty('user.name'),      \
-             'Built-JDK': System.getProperty('java.version'),      \
-             'Implementation-Title': 'Illarion easyQuest Editor',      \
-             'Implementation-Vendor': 'Illarion e.V.',     \
-             'Implementation-Version': project.ext.fullVersion
+        attributes       \
+              'Main-Class': 'illarion.easyquest.gui.MainFrame',     \
+              'Permissions': 'all-permissions',      \
+              'Codebase': 'illarion.org',      \
+              'Application-Name': 'Illarion easyQuest editor',      \
+              'Application-Library-Allowable-Codebase': 'illarion.org',      \
+              'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),      \
+              'Built-By': System.getProperty('user.name'),       \
+              'Built-JDK': System.getProperty('java.version'),       \
+              'Implementation-Title': 'Illarion easyQuest Editor',       \
+              'Implementation-Vendor': 'Illarion e.V.',      \
+              'Implementation-Version': project.ext.fullVersion
     }
 }
 

@@ -22,14 +22,20 @@ import illarion.common.util.AppIdent;
 import illarion.common.util.Crypto;
 import illarion.common.util.TableLoader;
 import illarion.easynpc.docu.DocuEntry;
+import illarion.easynpc.grammar.EasyNpcLexer;
+import illarion.easynpc.grammar.EasyNpcParser;
 import illarion.easynpc.gui.Config;
 import illarion.easynpc.parser.*;
 import illarion.easynpc.parser.tasks.ParseScriptTask;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.BufferedTokenStream;
+import org.antlr.v4.runtime.CharStream;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Writer;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -144,7 +150,7 @@ public final class Parser implements DocuEntry {
             }
             final Path sourceFile = Paths.get(arg);
             if (!Files.isDirectory(sourceFile) && Files.isReadable(sourceFile)) {
-                parseScript(sourceFile);
+                parseAntlr4Script(sourceFile);
             } else if (Files.isDirectory(sourceFile)) {
                 Files.walkFileTree(sourceFile, EnumSet.noneOf(FileVisitOption.class), 1, new SimpleFileVisitor<Path>() {
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
@@ -154,6 +160,18 @@ public final class Parser implements DocuEntry {
                         return FileVisitResult.CONTINUE;
                     }
                 });
+            }
+        }
+    }
+
+    public static void parseAntlr4Script(@Nonnull final Path file) throws IOException {
+        try (InputStream stream = Files.newInputStream(file)) {
+            CharStream antlrStream = new ANTLRInputStream(stream);
+            EasyNpcLexer lexer = new EasyNpcLexer(antlrStream);
+            EasyNpcParser parser = new EasyNpcParser(new BufferedTokenStream(lexer));
+            parser.setTrace(true);
+            while (parser.line().exception == null) {
+                ;
             }
         }
     }
