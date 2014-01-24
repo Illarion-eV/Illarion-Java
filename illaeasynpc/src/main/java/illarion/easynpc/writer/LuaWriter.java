@@ -49,11 +49,6 @@ public final class LuaWriter {
         Clothes,
 
         /**
-         * Cycletext writing stage. All things related to the cycle talk of the NPC should be written there.
-         */
-        CycleText,
-
-        /**
          * The writing stage for the guard part of NPCs.
          */
         Guarding,
@@ -150,12 +145,6 @@ public final class LuaWriter {
     private static final CopyrightHeader COPYRIGHT_HEADER = new CopyrightHeader(80, "--[[", "]]", null, null);
 
     /**
-     * A flag used to check if the introduction part for the talkingNPC is
-     * already written or not.
-     */
-    private boolean talkingNPCInitWritten = false;
-
-    /**
      * Private default constructor to ensure the only instance to be the
      * singleton instance.
      */
@@ -198,15 +187,11 @@ public final class LuaWriter {
         writeNpcAffiliation(source, target);
 
         final boolean talkingExists = checkStageExists(source, LuaWriter.WritingStage.Talking);
-        final boolean cycleTextExists = checkStageExists(source, LuaWriter.WritingStage.CycleText);
         final boolean tradingExists = checkStageExists(source, LuaWriter.WritingStage.Trading);
         final boolean guardingExists = checkStageExists(source, LuaWriter.WritingStage.Guarding);
 
         if (talkingExists) {
             writeIntro(source, target, LuaWriter.WritingStage.Talking);
-        }
-        if (cycleTextExists) {
-            writeIntro(source, target, LuaWriter.WritingStage.CycleText);
         }
         if (tradingExists) {
             writeIntro(source, target, LuaWriter.WritingStage.Trading);
@@ -217,9 +202,6 @@ public final class LuaWriter {
 
         if (talkingExists) {
             writeStage(source, target, LuaWriter.WritingStage.Talking);
-        }
-        if (cycleTextExists) {
-            writeStage(source, target, LuaWriter.WritingStage.CycleText);
         }
         if (tradingExists) {
             writeStage(source, target, LuaWriter.WritingStage.Trading);
@@ -246,7 +228,6 @@ public final class LuaWriter {
 
         // finish the script. Nothing is to be written after this line
         writeLastLines(target);
-        reset();
     }
 
     /**
@@ -258,7 +239,7 @@ public final class LuaWriter {
      */
     private static void autoIntroPart(@Nonnull final ParsedNpc source, @Nonnull final Writer target)
             throws IOException {
-        target.write(String.format(addSetAutoIntro, source.getAutoIntroduce().getLUA()));
+        target.write(String.format(addSetAutoIntro, source.getAutoIntroduce() ? "true" : "false"));
         writeNewLine(target);
     }
 
@@ -370,14 +351,6 @@ public final class LuaWriter {
     }
 
     /**
-     * Set the parser back to the starting stage to make it ready for the next
-     * script to parse.
-     */
-    private void reset() {
-        talkingNPCInitWritten = false;
-    }
-
-    /**
      * Write the introduction texts for the easyNPC script.
      *
      * @param source the parsed NPC that is the data source
@@ -446,18 +419,8 @@ public final class LuaWriter {
 
                 break;
             case Talking:
-                if (!talkingNPCInitWritten) {
-                    talkingNPCInitWritten = true;
-                    target.write("local talkingNPC = npc.base.talk.talkNPC(mainNPC);");
-                    writeNewLine(target);
-                }
-                break;
-            case CycleText:
-                if (!talkingNPCInitWritten) {
-                    talkingNPCInitWritten = true;
-                    target.write("local talkingNPC = npc.base.talk.talkNPC(mainNPC);");
-                    writeNewLine(target);
-                }
+                target.write("local talkingNPC = npc.base.talk.talkNPC(mainNPC);");
+                writeNewLine(target);
                 break;
             case Trading:
                 target.write("local tradingNPC = npc.base.trade.tradeNPC(mainNPC);");

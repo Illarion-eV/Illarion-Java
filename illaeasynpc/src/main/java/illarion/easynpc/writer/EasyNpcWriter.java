@@ -262,7 +262,7 @@ public final class EasyNpcWriter {
         target.write(source.getDefaultLanguage().name());
         target.write(NL);
         target.write("autointroduce = ");
-        target.write(source.getAutoIntroduce().getEasyNpc());
+        target.write(source.getAutoIntroduce() ? "on" : "off");
         target.write(NL);
 
         target.write(NL);

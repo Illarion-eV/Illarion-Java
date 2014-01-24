@@ -568,11 +568,14 @@ public final class NpcBasics implements NpcType {
         if (matcher.find()) {
             final String value = matcher.group(2).trim();
 
-            for (final BooleanFlagValues testValue : BooleanFlagValues.values()) {
-                if (testValue.getPattern().matcher(value).matches()) {
-                    npc.setAutoIntroduce(testValue);
-                    return;
-                }
+            switch (value) {
+                case "true":
+                case "on":
+                case "yes":
+                    npc.setAutoIntroduce(true);
+                    break;
+                default:
+                    npc.setAutoIntroduce(false);
             }
 
             final StringBuilder errorBuilder = new StringBuilder();

@@ -26,13 +26,12 @@ public class EasyNpcCompile extends AbstractCompile {
         Path targetDir = Objects.requireNonNull(getTargetDir());
         try {
             ensureTargetDir();
-            final EasyNpcScript script = new EasyNpcScript(file);
-            ParsedNpc npc = Parser.getInstance().parse(script);
+            ParsedNpc npc = Parser.getInstance().parse(file);
             if (npc.hasErrors()) {
                 LOGGER.error("Parsing the NPC failed with {] errors", npc.getErrorCount());
                 for (int i = 0; i < npc.getErrorCount(); i++) {
                     ParsedNpc.Error error = npc.getError(i);
-                    LOGGER.error("\t Line {}: {}", error.getLine().getLineNumber(), error.getMessage());
+                    LOGGER.error("\t Line {}: {}", error.getLine(), error.getMessage());
                 }
                 return -1;
             }

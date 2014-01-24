@@ -18,27 +18,34 @@
  */
 grammar EasyNpc;
 
+script
+    : ( line+ EOF? ) | ( EOF )
+    ;
+
 line
-    : statement? EOL
+    : statement? ( LINE_COMMENT | COMMENT | EOL )
     ;
 
 statement
-    : COMMENT
-    | command
+    : command
     ;
 
 command
     : configuration
-    | conditionList '->' consequenceList
-    | textKey STRING ',' STRING
+    | talkCommand
+    | textConfiguration
+    ;
+
+talkCommand
+    : conditionList '->' consequenceList
     ;
 
 conditionList
-    : ( condition ',' )* trigger+ ( ',' condition )*
+    : ( condition ',' )* trigger ( ',' condition )*
     ;
 
 consequenceList
-    : ( consequence ',' )* answer+ ( ',' consequence )*
+    : consequence ( ',' consequence )*
     ;
 
 condition
@@ -46,7 +53,7 @@ condition
     | 'isAdmin'
     | 'attrib' '(' attribute ')' compare advancedNumber
     | 'chance' '(' ( FLOAT | INT ) ')'
-    | 'item' '(' itemid ')' compare advancedNumber
+    | 'item' '(' itemId ',' itemPos ( ',' itemDataList )? ')' compare advancedNumber
     | language
     | 'magictype' '=' magictype
     | 'money' compare advancedNumber
@@ -66,11 +73,11 @@ consequence
     : answer
     | 'arena' '(' arenaTask ')'
     | 'attrib' '(' attribute ')' set advancedNumber
-    | 'deleteItem' '(' itemid ',' advancedNumber ( ',' itemDataList )? ')'
+    | 'deleteItem' '(' itemId ',' advancedNumber ( ',' itemDataList )? ')'
     | 'gemcraft'
     | 'inform' '(' STRING ')'
     | 'introduce'
-    | 'item' '(' itemid ',' advancedNumber ( ',' itemQuality )? ( ',' itemDataList )? ')'
+    | 'item' '(' itemId ',' advancedNumber ( ',' itemQuality )? ( ',' itemDataList )? ')'
     | 'money' set advancedNumber
     | 'queststatus' '(' questId ')' set advancedNumber
     | 'rankpoints' set advancedNumber
@@ -99,8 +106,6 @@ basicConfiguration
     : 'affiliation' '=' town
     | 'author' '=' STRING
     | 'autointroduce' '=' BOOLEAN
-    | 'wrongLangDE' '=' STRING
-    | 'wrongLangUS' '=' STRING
     | 'defaultLanguage' '=' charLanguage
     | 'direction' '=' direction
     | 'job' '=' STRING
@@ -113,6 +118,8 @@ basicConfiguration
     | 'sex' '=' gender
     | 'useMsgDE' '=' STRING
     | 'useMsgUS' '=' STRING
+    | 'wrongLangDE' '=' STRING
+    | 'wrongLangUS' '=' STRING
     ;
 
 colorConfiguration
@@ -121,14 +128,14 @@ colorConfiguration
     ;
 
 equipmentConfiguration
-    : 'itemChest' '=' itemid
-    | 'itemCoat' '=' itemid
-    | 'itemHands' '=' itemid
-    | 'itemHead' '=' itemid
-    | 'itemMainHand' '=' itemid
-    | 'itemSecondHand' '=' itemid
-    | 'itemShoes' '=' itemid
-    | 'itemTrousers' '=' itemid
+    : 'itemChest' '=' itemId
+    | 'itemCoat' '=' itemId
+    | 'itemHands' '=' itemId
+    | 'itemHead' '=' itemId
+    | 'itemMainHand' '=' itemId
+    | 'itemSecondHand' '=' itemId
+    | 'itemShoes' '=' itemId
+    | 'itemTrousers' '=' itemId
     ;
 
 guardConfiguration
@@ -142,8 +149,16 @@ hairConfiguration
     ;
 
 traderConfiguration
-    : ( 'sellItems' | 'buyPrimaryItems' | 'buySecondaryItems' ) '=' itemid ( ',' itemid )*?
-    | ( 'sellItem' | 'buyPrimaryItem' | 'buySecondaryItem' ) '=' traderComplexItemId ( ',' traderComplexEntry )*?
+    : traderSimpleConfiguration
+    | traderComplexConfiguration
+    ;
+
+traderSimpleConfiguration
+    : ( 'sellItems' | 'buyPrimaryItems' | 'buySecondaryItems' ) '=' itemId ( ',' itemId )*?
+    ;
+
+traderComplexConfiguration
+    : ( 'sellItem' | 'buyPrimaryItem' | 'buySecondaryItem' ) '=' traderComplexItemId ( ',' traderComplexEntry )*?
     ;
 
 traderComplexEntry
@@ -152,26 +167,30 @@ traderComplexEntry
     | 'price' '(' INT ')'
     | 'stack' '(' INT ')'
     | 'quality' '(' itemQuality ')'
-    | 'data' '(' itemData ')'
+    | 'data' '(' itemDataList ')'
     ;
 
 traderComplexItemId
-    : 'id' '(' itemid ')'
+    : 'id' '(' itemId ')'
     ;
 
 walkConfiguration
     : 'radius' '=' INT
     ;
 
+textConfiguration
+    : textKey STRING ',' STRING
+    ;
+
 textKey
     : 'cycletext'
-    | 'warpedMonsterMsg'
-    | 'warpedPlayerMsg'
     | 'hitPlayerMsg'
-    | 'tradeNotEnoughMoneyMsg'
     | 'tradeFinishedMsg'
     | 'tradeFinishedWithoutTradingMsg'
+    | 'tradeNotEnoughMoneyMsg'
     | 'tradeWrongItemMsg'
+    | 'warpedMonsterMsg'
+    | 'warpedPlayerMsg'
     ;
 
 trigger
@@ -238,7 +257,11 @@ charLanguage
     ;
 
 location
-    : ( NEG_INT | INT ) ',' ( NEG_INT | INT ) ',' ( NEG_INT | INT )
+    : locationComponent ',' locationComponent ',' locationComponent
+    ;
+
+locationComponent
+    : unop? INT
     ;
 
 race
@@ -248,6 +271,13 @@ race
     | 'human'
     | 'lizardman'
     | 'orc'
+    ;
+
+itemPos
+    : 'all'
+    | 'backpack'
+    | 'belt'
+    | 'body'
     ;
 
 gender
@@ -277,8 +307,8 @@ talkstateSet
 
 town
     : rankedTown
-    | 'Free'
-    | 'None'
+    | 'Free' | 'free'
+    | 'None' | 'none'
     ;
 
 rankedTown
@@ -288,7 +318,7 @@ rankedTown
     | STRING
     ;
 
-itemid
+itemId
     : INT
     ;
 
@@ -317,17 +347,39 @@ magictypeWithRunes
     ;
 
 compare
-    : '=' | '<' | '>' | '<=' | '>=' | '~=' | '!=' | '<>'
+    : '=' | '<' | '>' | '<=' | '>=' | '~='
+    ;
+
+unop
+    : '-'
     ;
 
 set
-    : '=' | '+=' | '-='
+    : '=' | '+' | '-'
     ;
 
 advancedNumber
     : INT
     | '%NUMBER'
-    | NUMBER_EXPRESSION
+    | advancedNumberExpression
+    ;
+
+advancedNumberExpression
+    : 'expr' '(' advancedNumberExpressionBody ')'
+    ;
+
+advancedNumberExpressionBody
+    : '(' advancedNumberExpressionBody ')'
+    | advancedNumberExpressionBody luaCalcOp advancedNumberExpressionBody
+    | luaCalcValue
+    ;
+
+luaCalcValue
+    : unop? ('%NUMBER' | INT | FLOAT )
+    ;
+
+luaCalcOp
+    : '+' | '-' | '*' | '/' | '%' | '^'
     ;
 
 BOOLEAN
@@ -335,10 +387,12 @@ BOOLEAN
     | BOOLEAN_FALSE
     ;
 
+fragment
 BOOLEAN_TRUE
     : 'true' | 'yes' | 'on'
     ;
 
+fragment
 BOOLEAN_FALSE
     : 'false' | 'no' | 'off'
     ;
@@ -348,32 +402,24 @@ FLOAT
     | '.' Digit+
     ;
 
-NEG_INT
-    : '-' INT
-    ;
-
 INT
     : Digit+
     ;
 
 NAME
-    : [A-Za-z][A-Za-z ]*?
+    : [a-zA-Z_][a-zA-Z_0-9]*
     ;
 
 COMMENT
-    : '--' ~('\n'|'\r')* -> channel(HIDDEN)
+    : '--[[' .*? ']]'-> channel(HIDDEN)
+    ;
+
+LINE_COMMENT
+    : '--' '['? (~('['|'\n'|'\r') ~('\n'|'\r')*)? ('\n'|'\r')* -> channel(HIDDEN)
     ;
 
 STRING
     : '"' ( EscapeSequence | ~('\\'|'"') )* '"'
-    ;
-
-NUMBER_EXPRESSION
-    : 'expr' '(' NUMBER_EXPRESSION_BODY ')'
-    ;
-
-NUMBER_EXPRESSION_BODY
-    : ('%NUMBER' | Digit+) ( [+-*/^%]+ ('%NUMBER' | Digit+) )*
     ;
 
 fragment

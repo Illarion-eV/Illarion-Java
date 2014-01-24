@@ -21,6 +21,7 @@ package illarion.easynpc.parser;
 import illarion.easynpc.EasyNpcScript.Line;
 import illarion.easynpc.Lang;
 import illarion.easynpc.ParsedNpc;
+import illarion.easynpc.data.Color;
 import illarion.easynpc.docu.DocuEntry;
 import illarion.easynpc.parsed.ParsedColors;
 import org.fife.ui.rsyntaxtextarea.Token;
@@ -41,17 +42,17 @@ public final class NpcColors implements NpcType {
      * The pattern to fetch the hair color.
      */
     @SuppressWarnings("nls")
-    private static final Pattern COLOR_HAIR = Pattern.compile(
-            "^\\s*(colorHair)\\s*=\\s*([0-9]{1,3})\\s*,\\s*([0-9]{1,3})\\s*,\\s*([0-9]{1,3})[\\s;]*",
-            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+    private static final Pattern COLOR_HAIR = Pattern
+            .compile("^\\s*(colorHair)\\s*=\\s*([0-9]{1,3})\\s*,\\s*([0-9]{1,3})\\s*,\\s*([0-9]{1,3})[\\s;]*",
+                     Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     /**
      * The pattern to fetch the skin color.
      */
     @SuppressWarnings("nls")
-    private static final Pattern COLOR_SKIN = Pattern.compile(
-            "^\\s*(colorSkin)\\s*=\\s*([0-9]{1,3})\\s*,\\s*([0-9]{1,3})\\s*,\\s*([0-9]{1,3})[\\s;]*",
-            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+    private static final Pattern COLOR_SKIN = Pattern
+            .compile("^\\s*(colorSkin)\\s*=\\s*([0-9]{1,3})\\s*,\\s*([0-9]{1,3})\\s*,\\s*([0-9]{1,3})[\\s;]*",
+                     Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     /**
      * The documentation entry for the hair color.
@@ -162,8 +163,7 @@ public final class NpcColors implements NpcType {
             return hairDocu;
         }
 
-        throw new IndexOutOfBoundsException(
-                "The index is too small or too large.");
+        throw new IndexOutOfBoundsException("The index is too small or too large.");
     }
 
     /**
@@ -237,7 +237,7 @@ public final class NpcColors implements NpcType {
                 return;
             }
 
-            npc.addNpcData(new ParsedColors(ParsedColors.ColorTarget.Skin, red, green, blue));
+            npc.addNpcData(new ParsedColors(ParsedColors.ColorTarget.Skin, new Color(red, green, blue)));
             return;
         }
 
@@ -260,7 +260,7 @@ public final class NpcColors implements NpcType {
                 return;
             }
 
-            npc.addNpcData(new ParsedColors(ParsedColors.ColorTarget.Hair, red, green, blue));
+            npc.addNpcData(new ParsedColors(ParsedColors.ColorTarget.Hair, new Color(red, green, blue)));
         }
     }
 
