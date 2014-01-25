@@ -27,6 +27,7 @@ import javolution.util.FastTable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.text.Normalizer;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -185,6 +186,12 @@ public final class ParsedNpc {
      * The name of this NPC.
      */
     private String npcName;
+
+    /**
+     * The name of the module of the NPC and in the same consequence the name of the file the NPC needs to be stored
+     * in.
+     */
+    private String moduleName;
 
     /**
      * The position of this NPC.
@@ -566,7 +573,23 @@ public final class ParsedNpc {
     @Nonnull
     @SuppressWarnings("nls")
     public String getLuaFilename() {
-        return getNpcName().replace(' ', '_').toLowerCase() + ".lua";
+        return getModuleName() + ".lua";
+    }
+
+    public String getModuleName() {
+        if (moduleName == null) {
+            return convertToModuleName(getNpcName());
+        }
+        return moduleName;
+    }
+
+    public static String convertToModuleName(@Nonnull final String string) {
+        return Normalizer.normalize(string, Normalizer.Form.NFC).replaceAll("[^\\p{ASCII}]", "").replace(' ', '_')
+                .toLowerCase();
+    }
+
+    public void setModuleName(@Nullable final String moduleName) {
+        this.moduleName = moduleName;
     }
 
     /**

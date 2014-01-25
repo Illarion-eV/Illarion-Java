@@ -88,25 +88,25 @@ public class QuestIO {
         if (!Files.isReadable(file)) {
             throw new IOException("Can't read the required file.");
         }
+        IOException firstException = null;
+        for (Charset charset : CHARSETS) {
+            try (Reader reader = Files.newBufferedReader(file, charset)) {
+                return loadGraphModel(reader);
+            } catch (IOException e) {
+                if (firstException == null) {
+                    firstException = e;
+                }
+            }
+        }
+        throw firstException;
+    }
+
+    public static mxIGraphModel loadGraphModel(@Nonnull final Reader reader) throws IOException {
         try {
             DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 
-            IOException firstException = null;
-            Document document = null;
-            for (Charset charset : CHARSETS) {
-                try (Reader reader = Files.newBufferedReader(file, charset)) {
-                    document = docBuilder.parse(new InputSource(reader));
-                    break;
-                } catch (IOException e) {
-                    if (firstException == null) {
-                        firstException = e;
-                    }
-                }
-            }
-            if (document == null) {
-                throw firstException;
-            }
+            Document document = docBuilder.parse(new InputSource(reader));
             final mxCodec codec = new mxCodec(document);
             mxIGraphModel model = new mxGraphModel();
             codec.decode(document.getDocumentElement(), model);

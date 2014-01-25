@@ -262,8 +262,7 @@ public final class LuaWriter {
 
         builder.setNpcName(source.getNpcName());
 
-        final String scriptName = source.getNpcName().toLowerCase().replace(' ', '_');
-        builder.setNpcScript("npc." + scriptName); //$NON-NLS-1$
+        builder.setNpcScript("npc." + source.getModuleName()); //$NON-NLS-1$
 
         builder.setNpcFaceTo(source.getNpcDir().getId());
         builder.setNpcPosX(source.getNpcPos().getScX());
@@ -487,9 +486,8 @@ public final class LuaWriter {
     private static void writeModuleHeader(@Nonnull final ParsedNpc source, @Nonnull final Writer target)
             throws IOException {
 
-        final String scriptName = source.getNpcName().toLowerCase().replace(' ', '_');
         target.write("module(\"npc."); //$NON-NLS-1$
-        target.write(scriptName);
+        target.write(source.getModuleName());
         target.write("\", package.seeall)"); //$NON-NLS-1$
         writeNewLine(target);
         writeNewLine(target);

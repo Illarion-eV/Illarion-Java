@@ -7,6 +7,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.file.Path;
 
 /**
@@ -23,6 +26,17 @@ public class EasyQuestCompile extends AbstractCompile {
             String fileName = file.getFileName().toString();
             String questName = fileName.replace(".quest", "");
             QuestIO.exportQuest(model, getTargetDir().resolve(questName));
+        } catch (IOException e) {
+            LOGGER.error(e.getLocalizedMessage());
+            return -1;
+        }
+        return 0;
+    }
+
+    @Override
+    public int compileStream(@Nonnull InputStream in, @Nonnull OutputStream out) {
+        try {
+            QuestIO.loadGraphModel(new InputStreamReader(in, QuestIO.CHARSET));
         } catch (IOException e) {
             LOGGER.error(e.getLocalizedMessage());
             return -1;

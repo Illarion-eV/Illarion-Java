@@ -1,6 +1,7 @@
 package illarion.easynpc.parser;
 
 import illarion.common.data.Skill;
+import illarion.common.data.SkillLoader;
 import illarion.easynpc.ParsedNpc;
 import illarion.easynpc.data.Color;
 import illarion.easynpc.data.EquipmentSlots;
@@ -38,6 +39,10 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> {
     private static final Logger LOGGER = LoggerFactory.getLogger(ParsedNpcVisitor.class);
     @Nonnull
     private final ParsedNpc npc = new ParsedNpc();
+
+    static {
+        SkillLoader.load();
+    }
 
     @Override
     public ParsedNpcVisitor visitBasicConfiguration(@NotNull BasicConfigurationContext ctx) {

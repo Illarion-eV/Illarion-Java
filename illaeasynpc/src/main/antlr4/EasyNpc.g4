@@ -23,7 +23,7 @@ script
     ;
 
 line
-    : statement? ( LINE_COMMENT | COMMENT | EOL )
+    : statement? ( LINE_COMMENT | COMMENT | EOL | EOF )
     ;
 
 statement
