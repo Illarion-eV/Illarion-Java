@@ -19,15 +19,11 @@
 grammar EasyNpc;
 
 script
-    : ( line+ EOF? ) | ( EOF )
+    : line* EOF
     ;
 
 line
-    : statement? ( LINE_COMMENT | COMMENT | EOL | EOF )
-    ;
-
-statement
-    : command
+    : command? COMMENT* ( LINE_COMMENT | EOL )
     ;
 
 command
@@ -415,7 +411,7 @@ COMMENT
     ;
 
 LINE_COMMENT
-    : '--' '['? (~('['|'\n'|'\r') ~('\n'|'\r')*)? ('\n'|'\r')* -> channel(HIDDEN)
+    : '--' '['? ( ~( '[' | '\r' | '\n' ) ~( '\r' | '\n' )* )? EOL -> channel(HIDDEN)
     ;
 
 STRING

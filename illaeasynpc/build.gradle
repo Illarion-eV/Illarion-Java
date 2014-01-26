@@ -56,7 +56,7 @@ dependencies {
     compile group: 'org.bushe', name: 'eventbus', version: '1.4'
     compile group: 'com.github.insubstantial', name: 'substance', version: '7.2.1'
     compile group: 'com.github.insubstantial', name: 'substance-flamingo', version: '7.2.1'
-    compile group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '2.0.7'
+    compile group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '2.5.0'
     compile group: 'org.antlr', name: 'antlr4-runtime', version: '4.1'
 
     antlr4 group: "org.antlr", name: "antlr4", version: "4.1"

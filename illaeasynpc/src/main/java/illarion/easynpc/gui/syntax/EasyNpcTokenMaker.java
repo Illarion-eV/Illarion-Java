@@ -20,10 +20,7 @@ package illarion.easynpc.gui.syntax;
 
 import illarion.easynpc.Parser;
 import illarion.easynpc.data.*;
-import org.fife.ui.rsyntaxtextarea.AbstractTokenMaker;
-import org.fife.ui.rsyntaxtextarea.RSyntaxUtilities;
-import org.fife.ui.rsyntaxtextarea.Token;
-import org.fife.ui.rsyntaxtextarea.TokenMap;
+import org.fife.ui.rsyntaxtextarea.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -312,12 +309,29 @@ public final class EasyNpcTokenMaker extends AbstractTokenMaker {
                     break;
 
                 case Token.COMMENT_EOL:
-                    i = end - 1;
-                    addToken(text, currentTokenStart, i, Token.COMMENT_EOL, newStartOffset + currentTokenStart);
-                    // We need to set token type to null so at the bottom we don't add one more token.
-                    currentTokenType = Token.NULL;
+                    if (c == '[') {
+                        if (((i - currentTokenStart) == 3) &&
+                                (array[i - 1] == '[') &&
+                                (array[i - 2] == '-') &&
+                                (array[i - 3] == '-')) {
+                            currentTokenType = Token.COMMENT_MULTILINE;
+                        }
+                    } else {
+                        i = end - 1;
+                        addToken(text, currentTokenStart, i, Token.COMMENT_EOL, newStartOffset + currentTokenStart);
+                        // We need to set token type to null so at the bottom we don't add one more token.
+                        currentTokenType = Token.NULL;
+                    }
                     break;
-
+                case Token.COMMENT_MULTILINE:
+                    if (c == ']') {
+                        if (((i - currentTokenStart) > 0) && (array[i - 1] == ']')) {
+                            addToken(text, currentTokenStart, i, Token.COMMENT_MULTILINE,
+                                     newStartOffset + currentTokenStart);
+                            currentTokenType = Token.NULL;
+                        }
+                    }
+                    break;
                 case Token.ERROR_STRING_DOUBLE:
 
                     if ((c == '"') && (array[i - 1] != '\\')) {
@@ -333,6 +347,7 @@ public final class EasyNpcTokenMaker extends AbstractTokenMaker {
         } // End of for (int i=offset; i<end; i++).
 
         // Deal with the (possibly there) last token.
+
         if (currentTokenType != Token.NULL) {
 
             // Check for REM comments.
@@ -342,8 +357,10 @@ public final class EasyNpcTokenMaker extends AbstractTokenMaker {
 
             addToken(text, currentTokenStart, end - 1, currentTokenType, newStartOffset + currentTokenStart);
         }
+        if (currentTokenType != Token.COMMENT_MULTILINE) {
+            addNullToken();
+        }
 
-        addNullToken();
 
         // Return the first token in our linked list.
         return firstToken;
