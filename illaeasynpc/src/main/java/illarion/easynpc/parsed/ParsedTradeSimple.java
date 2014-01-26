@@ -26,6 +26,7 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * This class enables the NPC to trade and stores some items the NPC is trading.
@@ -38,6 +39,14 @@ public class ParsedTradeSimple extends AbstractParsedTrade {
      */
     @Nonnull
     private final int[] itemIds;
+
+    public ParsedTradeSimple(final ParsedTradeSimple.TradeMode tradeMode, @Nonnull final List<Integer> tradeItemIds) {
+        super(tradeMode);
+        itemIds = new int[tradeItemIds.size()];
+        for (int i = 0; i < itemIds.length; i++) {
+            itemIds[i] = tradeItemIds.get(i);
+        }
+    }
 
     public ParsedTradeSimple(final ParsedTradeSimple.TradeMode tradeMode, @Nonnull final int... tradeItemIds) {
         super(tradeMode);

@@ -22,7 +22,7 @@ apply plugin: 'maven-publish'
 archivesBaseName = 'illarion_engine_libgdx'
 dependencies {
     compile project(':engine')
-    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.2'
+    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.3'
     compile group: 'com.badlogicgames.gdx', name: 'gdx', version: '0.9.9'
     compile group: 'com.badlogicgames.gdx', name: 'gdx-backend-lwjgl', version: '0.9.9'
     runtime group: 'com.badlogicgames.gdx', name: 'gdx-platform', version: '0.9.9', classifier: 'natives-desktop'
@@ -31,16 +31,16 @@ dependencies {
 jar {
     dependsOn { gitVersion }
     manifest {
-        attributes     \
-            'Permissions': 'all-permissions',    \
-            'Codebase': 'illarion.org',    \
-            'Trusted-Library': true,    \
-            'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),    \
-            'Built-By': System.getProperty('user.name'),     \
-            'Built-JDK': System.getProperty('java.version'),     \
-            'Implementation-Title': 'Illarion Game Engine - libGDX Backend',     \
-            'Implementation-Vendor': 'Illarion e.V.',    \
-            'Implementation-Version': project.ext.fullVersion
+        attributes      \
+             'Permissions': 'all-permissions',     \
+             'Codebase': 'illarion.org',     \
+             'Trusted-Library': true,     \
+             'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),     \
+             'Built-By': System.getProperty('user.name'),      \
+             'Built-JDK': System.getProperty('java.version'),      \
+             'Implementation-Title': 'Illarion Game Engine - libGDX Backend',      \
+             'Implementation-Vendor': 'Illarion e.V.',     \
+             'Implementation-Version': project.ext.fullVersion
     }
 }
 

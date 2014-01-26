@@ -22,24 +22,30 @@ import illarion.common.util.AppIdent;
 import illarion.common.util.Crypto;
 import illarion.common.util.TableLoader;
 import illarion.easynpc.docu.DocuEntry;
+import illarion.easynpc.grammar.EasyNpcLexer;
+import illarion.easynpc.grammar.EasyNpcParser;
 import illarion.easynpc.gui.Config;
-import illarion.easynpc.parser.*;
-import illarion.easynpc.parser.tasks.ParseScriptTask;
+import illarion.easynpc.parser.ParsedNpcVisitor;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.BufferedTokenStream;
+import org.antlr.v4.runtime.CharStream;
+import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class parses a easyNPC script that contains the plain script data to a parsed script that contains the
@@ -60,17 +66,6 @@ public final class Parser implements DocuEntry {
     private static final Parser INSTANCE = new Parser();
 
     /**
-     * The list of NPC types this parser knows.
-     */
-    @Nonnull
-    private final NpcType[] types;
-
-    /**
-     * This executor service takes care for the asynchronous execution of the parser.
-     */
-    private ExecutorService executorService;
-
-    /**
      * The private constructor to avoid any instances but the singleton instance. This also prepares the list that
      * are required to work and the registers the parsers working in this parser.
      */
@@ -79,28 +74,6 @@ public final class Parser implements DocuEntry {
         final Crypto crypt = new Crypto();
         crypt.loadPublicKey();
         TableLoader.setCrypto(crypt);
-
-        final List<NpcType> typeList = new ArrayList<>();
-        typeList.add(new NpcComment());
-        typeList.add(new NpcBasics());
-        typeList.add(new NpcColors());
-        typeList.add(new NpcHair());
-        typeList.add(new NpcEquipment());
-        typeList.add(new NpcTalk());
-        typeList.add(new NpcEmpty());
-        typeList.add(new NpcCycleText());
-        typeList.add(new NpcWalk());
-        typeList.add(new NpcTradeComplex());
-        typeList.add(new NpcTradeSimple());
-        typeList.add(new NpcTradeText());
-        typeList.add(new NpcGuardRange());
-        typeList.add(new NpcGuardWarpTarget());
-        typeList.add(new NpcGuardText());
-
-        types = typeList.toArray(new NpcType[typeList.size()]);
-
-        executorService = new ThreadPoolExecutor(1, Runtime.getRuntime().availableProcessors() * 2, 500,
-                                                 TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
     }
 
     /**
@@ -146,82 +119,91 @@ public final class Parser implements DocuEntry {
             if (!Files.isDirectory(sourceFile) && Files.isReadable(sourceFile)) {
                 parseScript(sourceFile);
             } else if (Files.isDirectory(sourceFile)) {
+                final ExecutorService executor = Executors.newCachedThreadPool();
                 Files.walkFileTree(sourceFile, EnumSet.noneOf(FileVisitOption.class), 1, new SimpleFileVisitor<Path>() {
-                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    public FileVisitResult visitFile(final Path file, BasicFileAttributes attrs) throws IOException {
                         if (file.toUri().toString().endsWith(".npc")) {
-                            parseScript(file);
+                            executor.submit(new Callable<Void>() {
+                                @Override
+                                public Void call() throws Exception {
+                                    parseScript(file);
+                                    return null;
+                                }
+                            });
                         }
                         return FileVisitResult.CONTINUE;
                     }
                 });
+                executor.shutdown();
+                try {
+                    executor.awaitTermination(20, TimeUnit.MINUTES);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
 
-    /**
-     * Parse one script.
-     *
-     * @param file the file of the script to parse
-     * @throws IOException in case reading the script fails
-     */
-    @SuppressWarnings("nls")
+    private static ParsedNpc parseScript(@Nonnull final CharStream stream) {
+        EasyNpcLexer lexer = new EasyNpcLexer(stream);
+        EasyNpcParser parser = new EasyNpcParser(new BufferedTokenStream(lexer));
+
+        ParsedNpcVisitor visitor = new ParsedNpcVisitor();
+        EasyNpcParser.ScriptContext context = parser.script();
+
+        context.accept(visitor);
+
+        return visitor.getParsedNpc();
+    }
+
     public static void parseScript(@Nonnull final Path file) throws IOException {
-        final EasyNpcScript script = new EasyNpcScript(file);
-        final ParsedNpc parsedNPC = getInstance().parse(script);
+        try (Reader stream = Files.newBufferedReader(file, EasyNpcScript.DEFAULT_CHARSET)) {
+            ParsedNpc parsedNPC = parseScript(new ANTLRInputStream(stream));
 
-        StringBuilder output = new StringBuilder();
-        output.append("File \"").append(file.getFileName().toString()).append("\" parsed - Encoding: ")
-                .append(script.getScriptEncoding().name()).append(" - Errors: ");
-        if (parsedNPC.hasErrors()) {
-            output.append(parsedNPC.getErrorCount()).append("\n");
-            final int errorCount = parsedNPC.getErrorCount();
-            for (int i = 0; i < errorCount; ++i) {
-                final ParsedNpc.Error error = parsedNPC.getError(i);
-                output.append("\tLine ").append(Integer.toString(error.getLine().getLineNumber())).append(": ")
-                        .append(error.getMessage()).append("\n");
+            StringBuilder output = new StringBuilder();
+            output.append("File \"").append(file.getFileName().toString()).append("\" parsed - Encoding: ")
+                    .append(EasyNpcScript.DEFAULT_CHARSET.name()).append(" - Errors: ");
+            if (parsedNPC.hasErrors()) {
+                output.append(parsedNPC.getErrorCount()).append("\n");
+                final int errorCount = parsedNPC.getErrorCount();
+                for (int i = 0; i < errorCount; ++i) {
+                    final ParsedNpc.Error error = parsedNPC.getError(i);
+                    output.append("\tLine ").append(Integer.toString(error.getLine())).append(": ")
+                            .append(error.getMessage()).append("\n");
+                }
+                if (!quiet) {
+                    output.setLength(output.length() - 1);
+                    System.err.println(output.toString());
+                }
+                System.exit(-1);
             }
-            if (!quiet) {
-                output.setLength(output.length() - 1);
-                System.err.println(output.toString());
+            if (verbose) {
+                output.append("done");
+                System.out.println(output.toString());
             }
-            System.exit(-1);
-        }
-        if (verbose) {
-            output.append("none");
-            System.out.println(output.toString());
-        }
 
-        final ScriptWriter writer = new ScriptWriter();
-        writer.setSource(parsedNPC);
+            final ScriptWriter writer = new ScriptWriter();
+            writer.setSource(parsedNPC);
 
-        writer.setTargetLanguage(ScriptWriter.ScriptWriterTarget.LUA);
-        final Path luaTargetFile = file.getParent().resolveSibling(parsedNPC.getLuaFilename());
-        try (Writer outputWriter = Files.newBufferedWriter(luaTargetFile, EasyNpcScript.DEFAULT_CHARSET)) {
-            writer.setWritingTarget(outputWriter);
-            writer.write();
-            outputWriter.flush();
-        }
-
-        writer.setTargetLanguage(ScriptWriter.ScriptWriterTarget.EasyNPC);
-        try (Writer outputWriter = Files.newBufferedWriter(file, EasyNpcScript.DEFAULT_CHARSET)) {
-            writer.setWritingTarget(outputWriter);
-            writer.write();
-            outputWriter.flush();
+            writer.setTargetLanguage(ScriptWriter.ScriptWriterTarget.LUA);
+            final Path luaTargetFile = file.getParent().resolveSibling(parsedNPC.getLuaFilename());
+            try (Writer outputWriter = Files.newBufferedWriter(luaTargetFile, EasyNpcScript.DEFAULT_CHARSET)) {
+                writer.setWritingTarget(outputWriter);
+                writer.write();
+                outputWriter.flush();
+            }
         }
     }
 
     @SuppressWarnings("nls")
     @Override
     public DocuEntry getChild(final int index) {
-        if ((index < 0) || (index >= types.length)) {
-            throw new IllegalArgumentException("Index out of range.");
-        }
-        return types[index];
+        return null;
     }
 
     @Override
     public int getChildCount() {
-        return types.length;
+        return 0;
     }
 
     @SuppressWarnings("nls")
@@ -249,49 +231,50 @@ public final class Parser implements DocuEntry {
     }
 
     /**
-     * Parse the script asynchronously. You have to monitor the event bus for the {@link illarion.easynpc.parser.events.ParserFinishedEvent}
-     * to find out when the parsing is done.
+     * Parse the NPC and return the parsed version of the NPC.
      *
-     * @param source the script that is parsed
+     * @param source the string containing the text of the script
+     * @return the parsed version of the NPC
      */
-    public void parseAsynchronously(final EasyNpcScript source) {
-        executorService.submit(new ParseScriptTask(source));
+    @Nonnull
+    @SuppressWarnings("nls")
+    public ParsedNpc parse(@Nonnull final String source) {
+        return parseScript(new ANTLRInputStream(source));
     }
 
     /**
      * Parse the NPC and return the parsed version of the NPC.
      *
-     * @param source the easyNPC source script that is supposed to be parsed.
+     * @param source the reader supplying the script data
      * @return the parsed version of the NPC
      */
     @Nonnull
     @SuppressWarnings("nls")
-    public ParsedNpc parse(@Nonnull final EasyNpcScript source) {
-        final int count = source.getEntryCount();
-        final ParsedNpc resultNpc = new ParsedNpc();
+    public ParsedNpc parse(@Nonnull final Reader source) throws IOException {
+        return parseScript(new ANTLRInputStream(source));
+    }
 
-        for (int i = 0; i < count; i++) {
-            EasyNpcScript.Line line = source.getEntry(i);
-            boolean lineParsed = false;
-            for (final NpcType type : types) {
-                if (type.canParseLine(line)) {
-                    type.parseLine(line, resultNpc);
-                    lineParsed = true;
-                    break;
-                }
-            }
-
-            if (!lineParsed) {
-                resultNpc.addError(line, "No parser seems to know what to do with this line.");
-            }
+    /**
+     * Parse the NPC and return the parsed version of the NPC.
+     *
+     * @param source the path holding the script file
+     * @return the parsed version of the NPC
+     */
+    @Nonnull
+    @SuppressWarnings("nls")
+    public ParsedNpc parse(@Nonnull final Path source) throws IOException {
+        try (Reader reader = Files.newBufferedReader(source, EasyNpcScript.DEFAULT_CHARSET)) {
+            return parseScript(new ANTLRInputStream(reader));
         }
-
-        return resultNpc;
     }
 
     public void enlistHighlightedWords(final TokenMap map) {
-        for (NpcType type : types) {
-            type.enlistHighlightedWords(map);
+        Pattern tokenPattern = Pattern.compile("'([a-zA-Z]+)'");
+        for (String token : EasyNpcLexer.tokenNames) {
+            Matcher matcher = tokenPattern.matcher(token);
+            if (matcher.matches()) {
+                map.put(matcher.group(1), Token.RESERVED_WORD);
+            }
         }
     }
 }

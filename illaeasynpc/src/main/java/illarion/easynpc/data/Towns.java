@@ -38,8 +38,7 @@ public enum Towns {
     private final int id;
 
     /**
-     * This valid contains <code>true</code> in case this constant is useable
-     * for rankpoints.
+     * This valid contains <code>true</code> in case this constant is usable for rankpoints.
      */
     private final boolean rankpt;
 

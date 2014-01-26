@@ -18,6 +18,7 @@
  */
 package illarion.easynpc.parsed;
 
+import illarion.easynpc.data.Color;
 import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
@@ -51,36 +52,24 @@ public final class ParsedColors implements ParsedData {
     /**
      * The target of this color.
      */
+    @Nonnull
     private final ParsedColors.ColorTarget colorTarget;
 
     /**
-     * This variable stores the red component of the color.
+     * The actual color value.
      */
-    private final int colorRed;
-
-    /**
-     * This variable stores the red component of the color.
-     */
-    private final int colorGreen;
-
-    /**
-     * This variable stores the red component of the color.
-     */
-    private final int colorBlue;
+    @Nonnull
+    private final Color color;
 
     /**
      * Create a parsed color entry.
      *
      * @param target the target of the color
-     * @param red the red share of the color. Valid values from 0 to 255
-     * @param green the green share of the color. Valid values from 0 to 255
-     * @param blue the blue share of the color. Valid values from 0 to 255
+     * @param color the color stored in this parsed color
      */
-    public ParsedColors(final ParsedColors.ColorTarget target, final int red, final int green, final int blue) {
+    public ParsedColors(@Nonnull final ParsedColors.ColorTarget target, @Nonnull final Color color) {
         colorTarget = target;
-        colorRed = red;
-        colorGreen = green;
-        colorBlue = blue;
+        this.color = color;
     }
 
     /**
@@ -91,10 +80,10 @@ public final class ParsedColors implements ParsedData {
     public void buildSQL(@Nonnull final SQLBuilder builder) {
         switch (colorTarget) {
             case Skin:
-                builder.setNpcSkinColor(colorRed, colorGreen, colorBlue);
+                builder.setNpcSkinColor(color.getRed(), color.getGreen(), color.getBlue());
                 break;
             case Hair:
-                builder.setNpcHairColor(colorRed, colorGreen, colorBlue);
+                builder.setNpcHairColor(color.getRed(), color.getGreen(), color.getBlue());
                 break;
         }
     }
@@ -148,11 +137,11 @@ public final class ParsedColors implements ParsedData {
                 break;
         }
 
-        target.write(Integer.toString(colorRed));
+        target.write(Integer.toString(color.getRed()));
         target.write(", ");
-        target.write(Integer.toString(colorGreen));
+        target.write(Integer.toString(color.getGreen()));
         target.write(", ");
-        target.write(Integer.toString(colorBlue));
+        target.write(Integer.toString(color.getBlue()));
         target.write(EasyNpcWriter.NL);
     }
 

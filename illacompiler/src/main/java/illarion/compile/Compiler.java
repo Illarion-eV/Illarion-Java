@@ -42,51 +42,33 @@ public class Compiler {
         options.addOption(npcDir);
 
         final Option questDir = new Option("q", "quest-dir", true,
-                                           "The place where the compiled Quest files are " + "stored.");
+                                           "The place where the compiled Quest files are stored.");
         questDir.setArgs(1);
         questDir.setArgName("directory");
         questDir.setRequired(false);
         options.addOption(questDir);
 
+        final Option type = new Option("t", "type", true,
+                                       "This option is used to set what kind of parser is supposed to be used in case" +
+                                               " the content of standard input is processed.");
+        type.setArgs(1);
+        type.setArgName("type");
+        type.setRequired(false);
+        options.addOption(type);
+
         CommandLineParser parser = new GnuParser();
         try {
             CommandLine cmd = parser.parse(options, args);
 
-            storagePaths = new EnumMap<>(CompilerType.class);
-            String npcPath = cmd.getOptionValue('n');
-            if (npcPath != null) {
-                storagePaths.put(CompilerType.easyNPC, Paths.get(npcPath));
-            }
-            String questPath = cmd.getOptionValue('q');
-            if (questPath != null) {
-                storagePaths.put(CompilerType.easyQuest, Paths.get(questPath));
-            }
-
             String[] files = cmd.getArgs();
             if (files.length > 0) {
-                // restore std out
                 System.setOut(orgStdOut);
                 stdOutBuffer.writeTo(orgStdOut);
 
-                // process files
-                for (String file : files) {
-                    Path path = Paths.get(file);
-                    if (Files.isDirectory(path)) {
-                        Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
-                            @Override
-                            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                                FileVisitResult result = super.visitFile(file, attrs);
-                                if (result == FileVisitResult.CONTINUE) {
-                                    processPath(file);
-                                    return FileVisitResult.CONTINUE;
-                                }
-                                return result;
-                            }
-                        });
-                    } else {
-                        processPath(path);
-                    }
-                }
+                processFileMode(cmd);
+            } else {
+                System.setOut(orgStdOut);
+                processStdIn(cmd);
             }
         } catch (final ParseException e) {
             final HelpFormatter helpFormatter = new HelpFormatter();
@@ -96,6 +78,60 @@ public class Compiler {
             LOGGER.error(e.getLocalizedMessage());
             System.exit(-1);
         }
+    }
+
+    private static void processFileMode(@Nonnull final CommandLine cmd) throws IOException {
+        storagePaths = new EnumMap<>(CompilerType.class);
+        String npcPath = cmd.getOptionValue('n');
+        if (npcPath != null) {
+            storagePaths.put(CompilerType.easyNPC, Paths.get(npcPath));
+        }
+        String questPath = cmd.getOptionValue('q');
+        if (questPath != null) {
+            storagePaths.put(CompilerType.easyQuest, Paths.get(questPath));
+        }
+
+        for (String file : cmd.getArgs()) {
+            Path path = Paths.get(file);
+            if (Files.isDirectory(path)) {
+                Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                        FileVisitResult result = super.visitFile(file, attrs);
+                        if (result == FileVisitResult.CONTINUE) {
+                            processPath(file);
+                            return FileVisitResult.CONTINUE;
+                        }
+                        return result;
+                    }
+                });
+            } else {
+                processPath(path);
+            }
+        }
+    }
+
+    private static void processStdIn(@Nonnull final CommandLine cmd) throws IOException {
+        String dataType = cmd.getOptionValue('t');
+
+        CompilerType usedType = null;
+        if (dataType != null) {
+            switch (dataType) {
+                case "npc":
+                    usedType = CompilerType.easyNPC;
+                    break;
+                case "quest":
+                    usedType = CompilerType.easyQuest;
+                    break;
+            }
+        }
+        if (usedType == null) {
+            LOGGER.error("Standard input mode requires a valid definition of the type option.");
+            System.exit(-1);
+        }
+
+        Compile compile = usedType.getImplementation();
+        System.exit(compile.compileStream(System.in, System.out));
     }
 
     private static void processPath(@Nonnull final Path path) throws IOException {

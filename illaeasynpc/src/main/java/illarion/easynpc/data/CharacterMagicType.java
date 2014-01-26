@@ -34,25 +34,29 @@ public enum CharacterMagicType {
      * Enumerator constant that stores the value used in case the character has
      * bard-magic.
      */
-    bard(2, "bard", true), //$NON-NLS-1$
+    bard(2, "bard", true),
+    //$NON-NLS-1$
 
     /**
      * Enumerator constant that stores the value used in case the character has
      * druidic-magic.
      */
-    druid(3, "druid", true), //$NON-NLS-1$
+    druid(3, "druid", true),
+    //$NON-NLS-1$
 
     /**
      * Enumerator constant that stores the value used in case the character has
      * magician-magic.
      */
-    mage(0, "mage", true), //$NON-NLS-1$
+    mage(0, "mage", true),
+    //$NON-NLS-1$
 
     /**
      * Enumerator constant that stores the value used in case no magic type
      * applies. This only works on conditions, never on consequences.
      */
-    none(-1, "nomagic", false), //$NON-NLS-1$
+    nomagic(-1, "nomagic", false),
+    //$NON-NLS-1$
 
     /**
      * Enumerator constant that stores the value used in case the character has
@@ -80,12 +84,12 @@ public enum CharacterMagicType {
     /**
      * Default constructor that stores the data for each enumerator constant.
      *
-     * @param id          the ID of the magic type
-     * @param name        the name of the magic type
+     * @param id the ID of the magic type
+     * @param name the name of the magic type
      * @param consequence the flag if the magic type can be a consequence or not
      */
-    private CharacterMagicType(final int id, final String name,
-                               final boolean consequence) {
+    private CharacterMagicType(
+            final int id, final String name, final boolean consequence) {
         magicTypeId = id;
         magicTypeName = name;
         magicTypeConsequence = consequence;

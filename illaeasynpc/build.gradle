@@ -19,14 +19,33 @@
 apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'maven-publish'
+apply plugin: 'idea'
 
 archivesBaseName = 'illarion_easynpc'
 mainClassName = 'illarion.easynpc.gui.MainFrame'
 
+project.extensions.antlr = [
+        grammarpackage: "illarion.easynpc.grammar",
+        antlrSource: 'src/main/antlr4',
+        destinationDir: "src/generated/java"
+]
+
+idea {
+    module {
+        sourceDirs += file(antlr.destinationDir)
+    }
+}
+
+configurations {
+    antlr4 {
+        description = "ANTLR4"
+    }
+}
+
 dependencies {
     compile project(':common')
     compile group: 'org.javolution', name: 'javolution-core-java', version: '6.0.0'
-    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.2'
+    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.3'
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.5'
     compile group: 'org.slf4j', name: 'jul-to-slf4j', version: '1.7.5'
     compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: '1.7.5'
@@ -37,8 +56,36 @@ dependencies {
     compile group: 'org.bushe', name: 'eventbus', version: '1.4'
     compile group: 'com.github.insubstantial', name: 'substance', version: '7.2.1'
     compile group: 'com.github.insubstantial', name: 'substance-flamingo', version: '7.2.1'
-    compile group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '2.0.7'
-    runtime group: 'org.illarion', name: 'rsc_tables', version: '2.1.12.1-SNAPSHOT'
+    compile group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '2.5.0'
+    compile group: 'org.antlr', name: 'antlr4-runtime', version: '4.1'
+
+    antlr4 group: "org.antlr", name: "antlr4", version: "4.1"
+
+    runtime group: 'org.illarion', name: 'rsc_tables', version: '2.1.13-SNAPSHOT'
+}
+
+task antlrOutputDir << {
+    mkdir(antlr.destinationDir)
+}
+
+task generateGrammarSource(dependsOn: antlrOutputDir, type: JavaExec) {
+    description = 'Generates Java sources from ANTLR4 grammars.'
+
+    inputs.dir file(antlr.antlrSource)
+    outputs.dir file(antlr.destinationDir)
+
+    def grammars = fileTree(antlr.antlrSource).include('**/*.g4')
+
+    main = 'org.antlr.v4.Tool'
+    classpath = configurations.antlr4
+    def pkg = antlr.grammarpackage.replaceAll("\\.", "/")
+    args = ["-o", "${antlr.destinationDir}/${pkg}"/*, "-atn"*/, "-visitor", "-package", antlr.grammarpackage, grammars.files].flatten()
+
+}
+
+compileJava {
+    dependsOn generateGrammarSource
+    source antlr.destinationDir
 }
 
 jar {
@@ -57,6 +104,10 @@ jar {
              'Implementation-Vendor': 'Illarion e.V.',     \
              'Implementation-Version': project.ext.fullVersion
     }
+}
+
+clean {
+    delete antlr.destinationDir
 }
 
 task sourceJar(type: Jar) {

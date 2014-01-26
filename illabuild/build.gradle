@@ -24,7 +24,7 @@ archivesBaseName = 'illarion_build'
 
 dependencies {
     compile project(':common')
-    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.2'
+    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.3'
     compile group: 'de.matthiasmann', name: 'pngdecoder', version: '20130527'
     compile gradleApi()
     compile localGroovy()

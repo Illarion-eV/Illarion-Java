@@ -18,6 +18,7 @@
  */
 package illarion.easynpc.parsed.talk.consequences;
 
+import illarion.common.types.Location;
 import illarion.easynpc.parsed.talk.TalkConsequence;
 import illarion.easynpc.writer.LuaWriter;
 
@@ -51,19 +52,10 @@ public final class ConsequenceWarp implements TalkConsequence {
     private static final String LUA_MODULE = BASE_LUA_MODULE + "warp";
 
     /**
-     * The x coordinate of the location that the player is sent to.
+     * The location of the location that the player is sent to.
      */
-    private final int x;
-
-    /**
-     * The y coordinate of the location that the player is sent to.
-     */
-    private final int y;
-
-    /**
-     * The z coordinate of the location that the player is sent to.
-     */
-    private final int z;
+    @Nonnull
+    private final Location loc;
 
     /**
      * The constructor that allows setting the target coordinates of the warp.
@@ -73,9 +65,16 @@ public final class ConsequenceWarp implements TalkConsequence {
      * @param posZ z-coordinate.
      */
     public ConsequenceWarp(final int posX, final int posY, final int posZ) {
-        x = posX;
-        y = posY;
-        z = posZ;
+        loc = new Location(posX, posY, posZ);
+    }
+
+    /**
+     * The constructor that allows setting the target coordinates of the warp.
+     *
+     * @param loc the location
+     */
+    public ConsequenceWarp(@Nonnull final Location loc) {
+        this.loc = loc;
     }
 
     /**
@@ -92,7 +91,7 @@ public final class ConsequenceWarp implements TalkConsequence {
      */
     @Override
     public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
-        target.write(String.format(EASY_CODE, x, y, z));
+        target.write(String.format(EASY_CODE, loc.getScX(), loc.getScY(), loc.getScZ()));
     }
 
     /**
@@ -100,6 +99,6 @@ public final class ConsequenceWarp implements TalkConsequence {
      */
     @Override
     public void writeLua(@Nonnull final Writer target) throws IOException {
-        target.write(String.format(LUA_CODE, LUA_MODULE, x, y, z));
+        target.write(String.format(LUA_CODE, LUA_MODULE, loc.getScX(), loc.getScY(), loc.getScZ()));
     }
 }

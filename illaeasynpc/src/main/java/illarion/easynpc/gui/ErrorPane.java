@@ -76,7 +76,7 @@ final class ErrorPane extends JPanel {
                     localErrors = problemNpc.getErrorCount();
                     if ((errorCount + localErrors) >= (rowIndex + 1)) {
                         final ParsedNpc.Error error = problemNpc.getError(rowIndex - errorCount);
-                        errorEditors.get(i).getLineToFocus(error.getLine().getLineNumber());
+                        errorEditors.get(i).getLineToFocus(error.getLine());
                     }
                     errorCount += localErrors;
                 }
@@ -148,7 +148,7 @@ final class ErrorPane extends JPanel {
                             return error.getMessage();
                         }
                         if (columnIndex == 2) {
-                            return "line " + Integer.toString(error.getLine().getLineNumber());
+                            return "line " + Integer.toString(error.getLine());
                         }
                     }
                     errorCount += localErrors;
