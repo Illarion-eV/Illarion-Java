@@ -578,14 +578,13 @@ public final class ParsedNpc {
 
     public String getModuleName() {
         if (moduleName == null) {
-            return convertToModuleName(getNpcName());
+            return convertToModuleName(getNpcName()).toLowerCase();
         }
         return moduleName;
     }
 
     public static String convertToModuleName(@Nonnull final String string) {
-        return Normalizer.normalize(string, Normalizer.Form.NFC).replaceAll("[^\\p{ASCII}]", "").replace(' ', '_')
-                .toLowerCase();
+        return Normalizer.normalize(string, Normalizer.Form.NFC).replaceAll("[^\\p{ASCII}]", "").replace(' ', '_');
     }
 
     public void setModuleName(@Nullable final String moduleName) {
