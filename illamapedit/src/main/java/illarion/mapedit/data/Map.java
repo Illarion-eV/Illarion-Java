@@ -36,7 +36,7 @@ import java.util.Set;
  *
  * @author Tim
  */
-public class Map {
+public class Map implements Iterable<MapTile> {
     /**
      * The map name
      */
@@ -189,8 +189,56 @@ public class Map {
      * @param mapTile the tile to add.
      */
     public void setTileAt(final int x, final int y, final MapTile mapTile) {
-        final int i = (y * width) + x;
-        mapTileData[i] = mapTile;
+        setTileAtIndex(mapToIndex(x, y), mapTile);
+    }
+
+    /**
+     * Sets a tile at a specified position.
+     *
+     * @param index the index where the new tile is set
+     * @param mapTile the tile to add.
+     */
+    private void setTileAtIndex(final int index, @Nonnull final MapTile mapTile) {
+        mapTileData[index] = mapTile;
+    }
+
+    /**
+     * Get a tile located at a specific internal index value.
+     */
+    MapTile getTileAtIndex(final int index) {
+        return mapTileData[index];
+    }
+
+    /**
+     * Convert map coordinates to the internal index value.
+     *
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @return the internal index value
+     * @throws IllegalArgumentException in case x or y is out of range
+     */
+    private int mapToIndex(final int x, final int y) {
+        if (x < 0 || x >= getWidth()) {
+            throw new IllegalArgumentException("X is out of range. 0 <= " + x + " < " + getWidth());
+        }
+        if (y < 0 || y >= getHeight()) {
+            throw new IllegalArgumentException("Y is out of range. 0 <= " + y + " < " + getHeight());
+        }
+        return (y * width) + x;
+    }
+
+    int indexToMapX(final int index) {
+        if (index < 0 || index >= mapTileData.length) {
+            throw new IllegalArgumentException("Index is out of range. 0 <= " + index + " < " + mapTileData.length);
+        }
+        return index % width;
+    }
+
+    int indexToMapY(final int index) {
+        if (index < 0 || index >= mapTileData.length) {
+            throw new IllegalArgumentException("Index is out of range. 0 <= " + index + " < " + mapTileData.length);
+        }
+        return index / width;
     }
 
     public void setTileAt(@Nonnull final Location loc, final MapTile mapTile) {
@@ -205,8 +253,7 @@ public class Map {
      * @param mapItem the item  <- u don't sayy ;)
      */
     public void addItemAt(final int x, final int y, final MapItem mapItem) {
-        final int i = (y * width) + x;
-        mapTileData[i].addMapItem(mapItem);
+        mapTileData[mapToIndex(x, y)].addMapItem(mapItem);
     }
 
     public void setVisible(final boolean visible) {
@@ -225,8 +272,7 @@ public class Map {
      * @param warpPoint the warp point <- u don't sayy ;)
      */
     public void setWarpAt(final int x, final int y, final MapWarpPoint warpPoint) {
-        final int i = (y * width) + x;
-        mapTileData[i].setMapWarpPoint(warpPoint);
+        mapTileData[mapToIndex(x, y)].setMapWarpPoint(warpPoint);
     }
 
     /**
@@ -241,13 +287,13 @@ public class Map {
         if (!contains(x, y)) {
             return null;
         }
-        final int i = (y * width) + x;
+        final int i = mapToIndex(x, y);
         if (mapTileData[i] != null) {
             return mapTileData[i];
         }
 
         final MapTile tile = MapTile.MapTileFactory.createNew(0, 0, 0, 0);
-        setTileAt(x, y, tile);
+        setTileAtIndex(i, tile);
         return tile;
     }
 
@@ -426,6 +472,11 @@ public class Map {
         if (!action.isEmpty()) {
             EventBus.publish(new HistoryPasteCutEvent(action));
         }
+    }
+
+    @Override
+    public MapIterator iterator() {
+        return new MapIterator(this, mapTileData.length);
     }
 }
 

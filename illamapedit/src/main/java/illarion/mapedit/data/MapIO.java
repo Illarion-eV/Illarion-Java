@@ -34,6 +34,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -44,8 +45,6 @@ import java.util.List;
 import java.util.concurrent.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static java.nio.file.StandardOpenOption.WRITE;
 
 /**
  * This class takes care of loading and saving maps
@@ -227,75 +226,62 @@ public class MapIO {
         final Path warpFile = path.resolve(name + EXT_WARP);
         final Path annoFile = path.resolve(name + EXT_ANNO);
 
-        try (BufferedWriter tileOutput = Files.newBufferedWriter(tileFile, CHARSET, WRITE)) {
-            try (BufferedWriter itemOutput = Files.newBufferedWriter(itemFile, CHARSET, WRITE)) {
-                try (BufferedWriter warpOutput = Files.newBufferedWriter(warpFile, CHARSET, WRITE)) {
-                    try (BufferedWriter annoOutput = Files.newBufferedWriter(annoFile, CHARSET, WRITE)) {
+        try (BufferedWriter tileOutput = Files.newBufferedWriter(tileFile, CHARSET)) {
+            try (BufferedWriter itemOutput = Files.newBufferedWriter(itemFile, CHARSET)) {
+                try (BufferedWriter warpOutput = Files.newBufferedWriter(warpFile, CHARSET)) {
+                    try (BufferedWriter annoOutput = Files.newBufferedWriter(annoFile, CHARSET)) {
                         COPYRIGHT_HEADER.writeTo(tileOutput);
                         COPYRIGHT_HEADER.writeTo(itemOutput);
                         COPYRIGHT_HEADER.writeTo(warpOutput);
                         COPYRIGHT_HEADER.writeTo(annoOutput);
 
-                        tileOutput.write(String.format("%s %d%s", HEADER_V, 2, NEWLINE));
-                        tileOutput.write(String.format("%s %d%s", HEADER_L, map.getZ(), NEWLINE));
-                        tileOutput.write(String.format("%s %d%s", HEADER_X, map.getX(), NEWLINE));
-                        tileOutput.write(String.format("%s %d%s", HEADER_Y, map.getY(), NEWLINE));
-                        tileOutput.write(String.format("%s %d%s", HEADER_W, map.getWidth(), NEWLINE));
-                        tileOutput.write(String.format("%s %d%s", HEADER_H, map.getHeight(), NEWLINE));
-                        for (int x = 0; x < map.getWidth(); ++x) {
-                            for (int y = 0; y < map.getHeight(); ++y) {
-                                final MapTile tile = map.getTileAt(x, y);
+                        writeHeader(tileOutput, HEADER_V, 2);
+                        writeHeader(tileOutput, HEADER_L, map.getZ());
+                        writeHeader(tileOutput, HEADER_X, map.getX());
+                        writeHeader(tileOutput, HEADER_Y, map.getY());
+                        writeHeader(tileOutput, HEADER_W, map.getWidth());
+                        writeHeader(tileOutput, HEADER_H, map.getHeight());
 
-                                //        <dx>;<dy>;<tileID>;<musicID>
-                                writeLine(tileOutput, String.format("%d;%d;%s", x, y, tile));
+                        MapIterator itr = map.iterator();
+                        while (itr.hasNext()) {
+                            final MapTile tile = itr.next();
+                            final int x = itr.getCurrentX();
+                            final int y = itr.getCurrentY();
 
-                                if (tile == null) {
-                                    continue;
-                                }
-                                if (tile.hasAnnotation()) {
-                                    writeLine(annoOutput, String.format("%d;%d;0;%s", x, y, tile.getAnnotation()));
-                                }
+                            //        <dx>;<dy>;<tileID>;<musicID>
+                            writeLine(tileOutput, String.format("%d;%d;%s", x, y, tile));
+                            if (tile.hasAnnotation()) {
+                                writeLine(annoOutput, String.format("%d;%d;0;%s", x, y, tile.getAnnotation()));
+                            }
 
-                                final List<MapItem> items = tile.getMapItems();
-                                if (items != null) {
-                                    for (int i = 0; i < items.size(); i++) {
-                                        //        <dx>;<dy>;<item ID>;<quality>[;<data value>[;...]]
-                                        writeLine(itemOutput, String.format("%d;%d;%s", x, y, items.get(i)));
-                                        if (items.get(i).hasAnnotation()) {
-                                            writeLine(annoOutput, String.format("%d;%d;%d;%s", x, y, i + 1,
-                                                                                items.get(i).getAnnotation()));
-                                        }
+                            final List<MapItem> items = tile.getMapItems();
+                            if (items != null) {
+                                for (int i = 0; i < items.size(); i++) {
+                                    //        <dx>;<dy>;<item ID>;<quality>[;<data value>[;...]]
+                                    writeLine(itemOutput, String.format("%d;%d;%s", x, y, items.get(i)));
+                                    if (items.get(i).hasAnnotation()) {
+                                        writeLine(annoOutput, String.format("%d;%d;%d;%s", x, y, i + 1,
+                                                                            items.get(i).getAnnotation()));
                                     }
                                 }
-                                final MapWarpPoint warp = tile.getMapWarpPoint();
-                                if (warp != null) {
-                                    writeLine(warpOutput, String.format("%d;%d;%s", x, y, warp));
-                                }
+                            }
+                            final MapWarpPoint warp = tile.getMapWarpPoint();
+                            if (warp != null) {
+                                writeLine(warpOutput, String.format("%d;%d;%s", x, y, warp));
                             }
                         }
-                        tileOutput.flush();
-                        itemOutput.flush();
-                        warpOutput.flush();
-                        annoOutput.flush();
                     }
                 }
             }
         }
     }
 
-    private static boolean checkFile(@Nonnull final Path file) {
-        if (Files.isDirectory(file)) {
-            return false;
-        }
-        if (!Files.exists(file)) {
-            try {
-                Files.createFile(file);
-            } catch (IOException e) {
-                return false;
-            }
-            return Files.exists(file);
-        }
-        return true;
+    private static void writeHeader(@Nonnull final Writer writer, @Nonnull final String header, final int value)
+            throws IOException {
+        writer.write(header);
+        writer.write(' ');
+        writer.write(Integer.toString(value));
+        writer.write(NEWLINE);
     }
 
     private static void writeLine(@Nonnull final BufferedWriter writer, @Nonnull Object... args) throws IOException {
