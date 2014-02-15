@@ -25,7 +25,6 @@ import javolution.util.FastTable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -78,13 +77,7 @@ public class MapTile {
 
         @Nonnull
         public static MapTile copy(@Nonnull final MapTile old) {
-            final List<MapItem> items = new FastTable<>();
-            if (old.mapItems != null) {
-                for (final MapItem item : old.mapItems) {
-                    items.add(new MapItem(item.getId(), new ArrayList<String>(), MapItem.QUALITY_NONE));
-                }
-            }
-            return new MapTile(old.tileId, old.overlayID, old.shapeID, old.musicID, items, old.mapWarpPoint);
+            return new MapTile(old);
         }
 
         @Nonnull
@@ -149,6 +142,20 @@ public class MapTile {
         if (mapItems != null) {
             this.mapItems = new FastTable<>();
             this.mapItems.addAll(mapItems);
+        }
+    }
+
+    public MapTile(@Nonnull final MapTile org) {
+        tileId = org.tileId;
+        overlayID = org.overlayID;
+        shapeID = org.shapeID;
+        musicID = org.musicID;
+        mapWarpPoint = org.mapWarpPoint;
+        if (org.mapItems != null) {
+            mapItems = new FastTable<>();
+            for (MapItem orgItem : org.mapItems) {
+                mapItems.add(new MapItem(orgItem));
+            }
         }
     }
 
