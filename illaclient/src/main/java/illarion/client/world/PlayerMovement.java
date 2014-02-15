@@ -58,7 +58,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * The overlap time of a movement in milliseconds. If this time is left of the last move animation the next step is
      * already requested from the server in oder to get a smooth walking animation.
      */
-    private static final int MOVEMENT_OVERLAP_TIME = 250;
+    private static final int MOVEMENT_OVERLAP_TIME = 200;
 
     /**
      * The time when the updated position is reported to the rest of the client and the game map is updated regarding
@@ -659,7 +659,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     }
 
     private long getMovementOverlapTime() {
-        return ConnectionPerformanceClock.getServerPing();
+        return MOVEMENT_OVERLAP_TIME + ConnectionPerformanceClock.getMaxServerPing();
     }
 
     /**
