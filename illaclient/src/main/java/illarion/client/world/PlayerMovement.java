@@ -23,19 +23,16 @@ import illarion.client.graphics.AnimatedMove;
 import illarion.client.graphics.MoveAnimation;
 import illarion.client.net.client.MoveCmd;
 import illarion.client.net.client.TurnCmd;
-import illarion.client.util.Path;
-import illarion.client.util.PathNode;
-import illarion.client.util.PathReceiver;
-import illarion.client.util.Pathfinder;
+import illarion.client.util.*;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
 import illarion.common.util.FastMath;
 import illarion.common.util.Timer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.illarion.engine.input.Input;
 import org.illarion.engine.input.Key;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -661,6 +658,10 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         }
     }
 
+    private long getMovementOverlapTime() {
+        return ConnectionPerformanceClock.getServerPing();
+    }
+
     /**
      * Set current location of the animation. This is useless in this class and this function is only implemented so
      * this class is a valid animation target.
@@ -673,8 +674,8 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     public void setPosition(final int posX, final int posY, final int posZ) {
         if (positionDirty && (moveAnimation.animationProgress() > POSITION_UPDATE_PROCESS)) {
             positionDirty = false;
-        } else if ((moveAnimation.timeRemaining() <= MOVEMENT_OVERLAP_TIME) && (lastAllowedMove == Location.DIR_ZERO)
-                && (lastMoveRequest == Location.DIR_ZERO)) {
+        } else if ((moveAnimation.timeRemaining() <= getMovementOverlapTime()) &&
+                (lastAllowedMove == Location.DIR_ZERO) && (lastMoveRequest == Location.DIR_ZERO)) {
             if (moveToDirectionActive) {
                 requestMove(getCurrentMoveToDirection(), moveToDirectionMode);
             } else if (walkTowards) {
