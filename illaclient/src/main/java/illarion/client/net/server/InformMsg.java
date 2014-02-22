@@ -98,13 +98,11 @@ public final class InformMsg extends AbstractGuiMsg {
                 break;
             case 101:
                 gui.getInformGui().showScriptInform(1, informText);
-                gui.getChatGui().addChatMessage(Lang.getMsg("chat.scriptInform") + ": " + informText,
-                        ChatGui.COLOR_DEFAULT);
+                gui.getChatGui().addChatMessage(informText, ChatGui.COLOR_INFORM);
                 break;
             case 102:
                 gui.getInformGui().showScriptInform(2, informText);
-                gui.getChatGui().addChatMessage(Lang.getMsg("chat.scriptInform") + ": " + informText,
-                        ChatGui.COLOR_SHOUT);
+                gui.getChatGui().addChatMessage(informText, ChatGui.COLOR_INFORM);
                 break;
 
             default:

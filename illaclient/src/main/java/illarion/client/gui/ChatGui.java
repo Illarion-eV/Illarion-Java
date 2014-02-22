@@ -51,6 +51,11 @@ public interface ChatGui {
     Color COLOR_EMOTE = new Color("#ffcc33");
 
     /**
+     * The color of emoted.
+     */
+    Color COLOR_INFORM = new Color("#9298D1");
+
+    /**
      * Activate the chat input line. All keyboard input will be forwarded to the chat line once its activated.
      */
     void activateChatBox();
