@@ -410,7 +410,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
             discardCheck();
         } else {
             if ((lastMoveRequest == Location.DIR_ZERO) && (lastAllowedMove == Location.DIR_ZERO)) {
-                if (!moving || (moveAnimation.timeRemaining() <= MOVEMENT_OVERLAP_TIME)) {
+                if (!moving || (moveAnimation.timeRemaining() <= getMovementOverlapTime())) {
                     lastMoveRequest = direction;
                     timeOfDiscard = System.currentTimeMillis() + TIME_UNTIL_DISCARD;
                     if ((mode == CharMovementMode.Run) && runPathModification && allowRunPathModification) {
