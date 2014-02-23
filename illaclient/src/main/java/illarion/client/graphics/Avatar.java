@@ -20,16 +20,17 @@ package illarion.client.graphics;
 
 import illarion.client.input.AbstractMouseLocationEvent;
 import illarion.client.input.ClickOnMapEvent;
+import illarion.client.input.CurrentMouseLocationEvent;
+import illarion.client.input.DoubleClickOnMapEvent;
 import illarion.client.resources.CharacterFactory;
 import illarion.client.resources.MiscImageFactory;
 import illarion.client.resources.Resource;
 import illarion.client.resources.data.AvatarTemplate;
 import illarion.client.util.Lang;
 import illarion.client.world.Char;
+import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.graphics.Layers;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Graphics;
@@ -38,6 +39,8 @@ import org.illarion.engine.graphic.SceneEvent;
 import org.illarion.engine.input.Button;
 import org.illarion.engine.input.Input;
 import org.illarion.engine.input.Key;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -126,6 +129,8 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
      */
     @Nonnull
     private Color targetLight;
+
+    private int showHighlight;
 
     private Avatar(@Nonnull final AvatarTemplate template, @Nonnull final Char parentChar) {
         super(template);
@@ -231,6 +236,26 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         if (event instanceof ClickOnMapEvent) {
             return isEventProcessed(container, delta, (ClickOnMapEvent) event);
         }
+        if (parentChar.isNPC()) {
+            if (event instanceof CurrentMouseLocationEvent) {
+                final CurrentMouseLocationEvent moveEvent = (CurrentMouseLocationEvent) event;
+                if (!isMouseInInteractionRect(moveEvent.getX(), moveEvent.getY())) {
+                    return false;
+                }
+
+                showHighlight = 1;
+                MapTile tile = parentChar.getInteractive().getMapTile();
+                if (tile != null && tile.getInteractive().isInUseRange()) {
+                    showHighlight = 2;
+                }
+                return true;
+            }
+
+            if (event instanceof DoubleClickOnMapEvent) {
+                return isEventProcessed(container, delta, (DoubleClickOnMapEvent) event);
+            }
+        }
+
         return super.isEventProcessed(container, delta, event);
     }
 
@@ -256,6 +281,37 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
     }
 
     /**
+     * This function handles double click events on the avatars.
+     *
+     * @param container the game container
+     * @param delta     the time since the last update
+     * @param event     the event that actually happened
+     * @return {@code true} in case the event was handled
+     */
+    @SuppressWarnings({"BooleanMethodNameMustStartWithQuestion", "UnusedParameters"})
+    private boolean isEventProcessed(final GameContainer container, final int delta, @Nonnull final DoubleClickOnMapEvent event) {
+        if (event.getKey() != Button.Left) {
+            return false;
+        }
+
+        if (!isMouseInInteractiveOrOnTag(event)) {
+            return false;
+        }
+
+        if (!isMouseInInteractionRect(event.getX(), event.getY())) {
+            return false;
+        }
+
+        MapTile tile = parentChar.getInteractive().getMapTile();
+        if (tile == null) {
+            return false;
+        }
+
+        tile.getInteractive().use();
+        return true;
+    }
+
+    /**
      * Check if a mouse event points at the interactive area of a avatar or on its tag.
      *
      * @param event the mouse event
@@ -273,6 +329,11 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
 
     @SuppressWarnings("UnusedDeclaration")
     private static final Logger LOGGER = LoggerFactory.getLogger(Avatar.class);
+
+    @Override
+    public int getHighlight() {
+        return showHighlight;
+    }
 
     /**
      * Draw the avatar to the game screen. Calling this function causes the light value to approach the target light
@@ -301,6 +362,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         if (renderName) {
             avatarTextTag.render(g);
         }
+        showHighlight = 0;
     }
 
     /**

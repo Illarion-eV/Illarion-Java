@@ -33,6 +33,7 @@ import illarion.common.graphics.MapVariance;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
+import org.illarion.engine.input.Button;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.illarion.engine.GameContainer;
@@ -256,6 +257,10 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
 
         if (event instanceof DoubleClickOnMapEvent) {
             final DoubleClickOnMapEvent moveEvent = (DoubleClickOnMapEvent) event;
+            if (moveEvent.getKey() != Button.Left) {
+                return false;
+            }
+
             if (!isMouseInInteractionRect(moveEvent.getX(), moveEvent.getY())) {
                 return false;
             }
