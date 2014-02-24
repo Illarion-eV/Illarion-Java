@@ -20,6 +20,7 @@ package illarion.client.world.interactive;
 
 import illarion.client.graphics.Avatar;
 import illarion.client.graphics.MapDisplayManager;
+import illarion.client.net.client.UseMapCmd;
 import illarion.client.world.Char;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
@@ -155,5 +156,29 @@ public final class InteractiveChar implements Draggable, DropTarget {
             return Integer.MAX_VALUE;
         }
         return avatar.getOrder();
+    }
+
+    /**
+     * Perform a use operation on this Avatar.
+     */
+    public void use() {
+        if (!isInUseRange()) {
+            return;
+        }
+
+        World.getNet().sendCommand(new UseMapCmd(getLocation()));
+    }
+
+    /**
+     * Check if the Avatar is inside the valid using range of the player character.
+     *
+     * @return {@code true} in case the character is allowed to use anything on this tile or the tile itself
+     */
+    public boolean isInUseRange() {
+        @Nonnull final Location playerLocation = World.getPlayer().getLocation();
+        if (playerLocation.getScZ() == getLocation().getScZ()) {
+            return playerLocation.getDistance(getLocation()) < 3;
+        }
+        return false;
     }
 }

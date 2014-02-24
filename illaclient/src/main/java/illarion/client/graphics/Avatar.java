@@ -30,6 +30,7 @@ import illarion.client.util.Lang;
 import illarion.client.world.Char;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
+import illarion.client.world.interactive.InteractiveChar;
 import illarion.common.graphics.Layers;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
@@ -302,12 +303,13 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
             return false;
         }
 
-        MapTile tile = parentChar.getInteractive().getMapTile();
-        if (tile == null) {
+        InteractiveChar interactiveChar = parentChar.getInteractive();
+
+        if (interactiveChar == null) {
             return false;
         }
+        interactiveChar.use();
 
-        tile.getInteractive().use();
         return true;
     }
 
