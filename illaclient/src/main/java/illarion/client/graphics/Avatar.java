@@ -28,7 +28,6 @@ import illarion.client.resources.Resource;
 import illarion.client.resources.data.AvatarTemplate;
 import illarion.client.util.Lang;
 import illarion.client.world.Char;
-import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.client.world.interactive.InteractiveChar;
 import illarion.common.graphics.Layers;
@@ -245,8 +244,8 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
                 }
 
                 showHighlight = 1;
-                MapTile tile = parentChar.getInteractive().getMapTile();
-                if (tile != null && tile.getInteractive().isInUseRange()) {
+                InteractiveChar interactiveChar = parentChar.getInteractive();
+                if (interactiveChar != null && interactiveChar.isInUseRange()) {
                     showHighlight = 2;
                 }
                 return true;
