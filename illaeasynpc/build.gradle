@@ -61,7 +61,7 @@ dependencies {
 
     antlr4 group: "org.antlr", name: "antlr4", version: "4.1"
 
-    runtime group: 'org.illarion', name: 'rsc_tables', version: '2.1.14-SNAPSHOT'
+    runtime group: 'org.illarion', name: 'rsc_tables', version: '2.1.13-SNAPSHOT'
 }
 
 task antlrOutputDir << {
