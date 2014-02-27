@@ -197,6 +197,7 @@ public class IgeInputSystem implements InputSystem, InputListener {
             consumeClicks--;
             receivedClick = true;
             if (count > 1) {
+                consumeClicks++;
                 buttonClicked(mouseX, mouseY, button, count - 1);
             }
         }
