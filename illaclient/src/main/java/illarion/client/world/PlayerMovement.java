@@ -398,9 +398,28 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * Make the character automatically walking to a target location.
      *
      * @param destination the location the character shall walk to
+     * @param usable the usable the character should use
+     */
+    public void walkTo(@Nonnull final Location destination, @Nonnull final Usable usable) {
+        cancelAutoWalk();
+
+        final Location loc = parentPlayer.getLocation();
+        final MapTile walkTarget = World.getMap().getMapAt(destination);
+        if ((walkTarget != null) && (destination.getScZ() == loc.getScZ())) {
+            Pathfinder.getInstance().findPath(loc, destination, this, usable.getUseRange());
+        }
+    }
+
+    /**
+     * Make the character automatically walking to a target location and use the item
+     * at the destination.
+     *
+     * @param destination the location the character shall walk to
+     * @param usable the usable the character should use
      */
     public void walkToAndUse(@Nonnull final Location destination, @Nonnull final Usable usable) {
         cancelAutoWalk();
+
         usableAction = usable;
         final Location loc = parentPlayer.getLocation();
         final MapTile walkTarget = World.getMap().getMapAt(destination);
