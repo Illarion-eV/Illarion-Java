@@ -37,7 +37,7 @@ import javax.annotation.concurrent.Immutable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @Immutable
-public final class InteractiveChar implements Draggable, DropTarget {
+public final class InteractiveChar implements Draggable, DropTarget, Usable {
     /**
      * The character this interactive reference points to.
      */
@@ -161,6 +161,7 @@ public final class InteractiveChar implements Draggable, DropTarget {
     /**
      * Perform a use operation on this Avatar.
      */
+    @Override
     public void use() {
         if (!isInUseRange()) {
             return;
@@ -174,11 +175,17 @@ public final class InteractiveChar implements Draggable, DropTarget {
      *
      * @return {@code true} in case the character is allowed to use anything on this tile or the tile itself
      */
+    @Override
     public boolean isInUseRange() {
         @Nonnull final Location playerLocation = World.getPlayer().getLocation();
         if (playerLocation.getScZ() == getLocation().getScZ()) {
-            return playerLocation.getDistance(getLocation()) < 3;
+            return playerLocation.getDistance(getLocation()) <= getUseRange();
         }
         return false;
+    }
+
+    @Override
+    public int getUseRange() {
+        return 2;
     }
 }

@@ -24,6 +24,7 @@ import illarion.client.graphics.MoveAnimation;
 import illarion.client.net.client.MoveCmd;
 import illarion.client.net.client.TurnCmd;
 import illarion.client.util.*;
+import illarion.client.world.interactive.Usable;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
 import illarion.common.util.FastMath;
@@ -197,6 +198,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
 
     @Nonnull
     private final Timer delayedMoveTrigger;
+    private Usable usableAction;
 
 
     /**
@@ -318,7 +320,9 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
 
     @Override
     public void handlePath(@Nonnull final Path path) {
+        Usable action = usableAction;
         cancelAutoWalk();
+        usableAction = action;
         autoPath = path;
         autoDestination = autoPath.getDestination();
         autoPath.nextStep();
@@ -337,6 +341,9 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         final PathNode node = autoPath.nextStep();
         // reached target
         if (node == null) {
+            if (usableAction != null && usableAction.isInUseRange()) {
+                usableAction.use();
+            }
             cancelAutoWalk();
             return;
         }
@@ -349,7 +356,11 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         if ((tile == null) || tile.isBlocked() || (loc.getDistance(stepDestination) > 1)) {
             // recalculate route if blocked or char is off route
             if (autoDestination != null) {
-                walkTo(autoDestination);
+                if (usableAction != null) {
+                    walkToAndUse(autoDestination, usableAction);
+                } else {
+                    walkTo(autoDestination);
+                }
             }
             return;
         }
@@ -365,6 +376,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     public void cancelAutoWalk() {
         autoPath = null;
         autoDestination = null;
+        usableAction = null;
     }
 
     /**
@@ -379,6 +391,21 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         final MapTile walkTarget = World.getMap().getMapAt(destination);
         if ((walkTarget != null) && (destination.getScZ() == loc.getScZ()) && !walkTarget.isObstacle()) {
             Pathfinder.getInstance().findPath(loc, destination, this);
+        }
+    }
+
+    /**
+     * Make the character automatically walking to a target location.
+     *
+     * @param destination the location the character shall walk to
+     */
+    public void walkToAndUse(@Nonnull final Location destination, @Nonnull final Usable usable) {
+        cancelAutoWalk();
+        usableAction = usable;
+        final Location loc = parentPlayer.getLocation();
+        final MapTile walkTarget = World.getMap().getMapAt(destination);
+        if ((walkTarget != null) && (destination.getScZ() == loc.getScZ())) {
+            Pathfinder.getInstance().findPath(loc, destination, this, usable.getUseRange());
         }
     }
 

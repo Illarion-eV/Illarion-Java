@@ -307,7 +307,12 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         if (interactiveChar == null) {
             return false;
         }
-        interactiveChar.use();
+
+        if (interactiveChar.isInUseRange()) {
+            interactiveChar.use();
+        } else {
+            World.getPlayer().getMovementHandler().walkToAndUse(parentChar.getLocation(), interactiveChar);
+        }
 
         return true;
     }

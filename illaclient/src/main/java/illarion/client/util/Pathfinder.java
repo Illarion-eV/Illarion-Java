@@ -147,6 +147,50 @@ public final class Pathfinder extends Thread implements Stoppable {
     }
 
     /**
+     * Search a path between two locations.
+     *
+     * @param pathStart the location where the path starts
+     * @param pathDest the location where the path ends
+     * @param pathRec the class that receives the resulting path
+     */
+    public void findPath(
+            @Nonnull final Location pathStart,
+            @Nonnull final Location pathDest,
+            final PathReceiver pathRec,
+            final int range) {
+        Location destination = pathDest;
+        if (range > 0 && PathNode.getNode(pathDest).isBlocked()) {
+             destination = findClosestNonBlockedLocation(pathStart, pathDest, range);
+        }
+        findPath(pathStart, destination, pathRec);
+    }
+
+    private Location findClosestNonBlockedLocation(Location pathStart, Location pathDest, int range) {
+        Location newLoc = new Location();
+        Location bestLoc = new Location();
+        bestLoc.set(pathDest);
+        int distance = Integer.MAX_VALUE;
+
+        for (int x = -range; x <= range; x++) {
+            for (int y = -range; y <= range; y++) {
+                if (x == 0 && y == 0) {
+                    continue;
+                }
+                newLoc.set(pathDest);
+                newLoc.addSC(x, y, 0);
+                if (!PathNode.getNode(newLoc).isBlocked()) {
+                    int testDistance =  newLoc.getDistance(pathStart);
+                    if (testDistance < distance) {
+                        bestLoc.set(newLoc);
+                        distance = testDistance;
+                    }
+                }
+            }
+        }
+        return bestLoc;
+    }
+
+    /**
      * Run the thread. This function keeps running as long as the path finder thread is working. It will sleep as long
      * as the the path finder is idle. To quit this function use the {@link #saveShutdown()} function.
      */
