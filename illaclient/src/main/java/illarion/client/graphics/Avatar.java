@@ -277,6 +277,16 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
             World.getPlayer().getCombatHandler().toggleAttackOnCharacter(parentChar);
             return true;
         }
+
+        if (!isMouseInInteractionRect(event.getX(), event.getY())) {
+            return false;
+        }
+
+        if (event.getKey() == Button.Left) {
+            World.getPlayer().getMovementHandler().walkTo(parentChar.getLocation(), parentChar.getInteractive());
+            return false;
+        }
+
         return false;
     }
 
@@ -307,7 +317,12 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         if (interactiveChar == null) {
             return false;
         }
-        interactiveChar.use();
+
+        if (interactiveChar.isInUseRange()) {
+            interactiveChar.use();
+        } else {
+            World.getPlayer().getMovementHandler().walkToAndUse(parentChar.getLocation(), interactiveChar);
+        }
 
         return true;
     }

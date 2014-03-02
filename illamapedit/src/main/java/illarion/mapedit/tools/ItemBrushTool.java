@@ -70,7 +70,7 @@ public class ItemBrushTool extends AbstractTool {
         if (tile == null) {
             return null;
         }
-        final MapItem mapItem = new MapItem(item.getItemId(), 0);
+        final MapItem mapItem = new MapItem(item.getItemId());
         tile.addMapItem(mapItem);
         return new ItemPlacedAction(x, y, mapItem, map);
     }

@@ -39,7 +39,7 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Vilarion &lt;vilarion@illarion.org&gt;
  */
-public class InteractiveMapTile implements Draggable, DropTarget {
+public class InteractiveMapTile implements Draggable, DropTarget, Usable {
     /**
      * The ID that is needed to tell the server that the operations refer to a
      * tile on the map.
@@ -158,6 +158,7 @@ public class InteractiveMapTile implements Draggable, DropTarget {
     /**
      * Perform a use operation on this tile.
      */
+    @Override
     public void use() {
         if (!isInUseRange()) {
             return;
@@ -194,12 +195,18 @@ public class InteractiveMapTile implements Draggable, DropTarget {
      *
      * @return {@code true} in case the character is allowed to use anything on this tile or the tile itself
      */
+    @Override
     public boolean isInUseRange() {
         @Nonnull final Location playerLocation = World.getPlayer().getLocation();
         if (playerLocation.getScZ() == getLocation().getScZ()) {
-            return playerLocation.getDistance(getLocation()) < 2;
+            return playerLocation.getDistance(getLocation()) <= getUseRange();
         }
         return false;
+    }
+
+    @Override
+    public int getUseRange() {
+        return 1;
     }
 
     /**

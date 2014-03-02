@@ -26,20 +26,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents a single item, with a position, an id, a quality, and data.
+ * Represents a single item, with a position, an id, a qualityDurability, and data.
  *
  * @author Tim
  * @author Fredrik K
  */
 public class MapItem {
     /**
-     * Represents a not existing qualtity
-     */
-    public static final int QUALITY_NONE = -1;
-
-    /**
-     * Represents the default quality, if the {@link MapItem#quality} is {@link MapItem#QUALITY_NONE}
-     * time of serialisation
+     * Represents the default qualityDurability
      */
     public static final int QUALITY_DEFAULT = 333;
 
@@ -53,9 +47,9 @@ public class MapItem {
     @Nullable
     private List<String> itemData;
     /**
-     * The quality of this item.
+     * The qualityDurability of this item.
      */
-    private final int quality;
+    private int qualityDurability;
     private String annotation;
 
     /**
@@ -63,14 +57,14 @@ public class MapItem {
      *
      * @param itemId The item id.
      * @param itemData The data of this item.
-     * @param quality The quality of this item.
+     * @param qualityDurability The qualityDurability of this item.
      */
-    public MapItem(final int itemId, @Nullable final List<String> itemData, final int quality) {
+    public MapItem(final int itemId, @Nullable final List<String> itemData, final int qualityDurability) {
         this.itemId = itemId;
         if ((itemData != null) && !itemData.isEmpty()) {
             this.itemData = new ArrayList<>(itemData);
         }
-        this.quality = quality;
+        this.qualityDurability = qualityDurability;
     }
 
     /**
@@ -81,17 +75,17 @@ public class MapItem {
     public MapItem(@Nonnull final MapItem old) {
         itemId = old.itemId;
         itemData = new ArrayList<>(old.itemData);
-        quality = old.quality;
+        qualityDurability = old.qualityDurability;
     }
 
     /**
      * Creates a new Item
      *
      * @param itemId The item id.
-     * @param quality The quality of this item.
+     *
      */
-    public MapItem(final int itemId, final int quality) {
-        this(itemId, new ArrayList<String>(), quality);
+    public MapItem(final int itemId) {
+        this(itemId, new ArrayList<String>(), QUALITY_DEFAULT);
     }
 
     public String getAnnotation() {
@@ -108,12 +102,48 @@ public class MapItem {
     }
 
     /**
+     * Returns the qualityDurability of the item.
+     *
+     * @return the qualityDurability
+     */
+    public int getQualityDurability() {
+        return qualityDurability;
+    }
+
+    /**
      * Returns the quality of the item.
      *
      * @return the quality
      */
     public int getQuality() {
-        return quality;
+        return qualityDurability / 100;
+    }
+
+    /**
+     * Returns the durability of the item.
+     *
+     * @return the durability
+     */
+    public int getDurability() {
+        return qualityDurability % 100;
+    }
+
+    /**
+     * Sets the quality of the item.
+     *
+     * @param quality the quality to set
+     */
+    public void setQuality(int quality) {
+        qualityDurability = (quality * 100) + getDurability();
+    }
+
+    /**
+     * Sets the durability of the item.
+     *
+     * @param durability the durability to set
+     */
+    public void setDurability(int durability) {
+        qualityDurability = (getQuality() * 100 + durability);
     }
 
     /**
@@ -177,7 +207,7 @@ public class MapItem {
 
     /**
      * Serializes this MapItem object into a string in the format:<br>
-     * {@code <item ID>;<quality>[;<data value>[;...]]}
+     * {@code <item ID>;<qualityDurability>[;<data value>[;...]]}
      *
      * @return the serialized String
      */
@@ -186,7 +216,7 @@ public class MapItem {
     public String toString() {
         final TextBuilder builder = new TextBuilder();
         builder.append(itemId).append(';');
-        builder.append(quality);
+        builder.append(qualityDurability);
 
         if ((itemData != null) && !itemData.isEmpty()) {
             builder.append(';').append(join(itemData, ";"));

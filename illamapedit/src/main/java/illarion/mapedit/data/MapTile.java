@@ -89,7 +89,7 @@ public class MapTile {
                     if (item.getItemData() != null) {
                         itemData = item.getItemData();
                     }
-                    final MapItem newItem = new MapItem(item.getId(), itemData, item.getQuality());
+                    final MapItem newItem = new MapItem(item.getId(), itemData, item.getQualityDurability());
                     newItem.setAnnotation(item.getAnnotation());
                     items.add(newItem);
                 }
