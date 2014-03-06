@@ -118,10 +118,18 @@ public final class MapEditor {
 
     private static void loadResources() {
         final ResourceManager resourceManager = ResourceManager.getInstance();
-        resourceManager
-                .addResources(ImageLoader.getInstance(), TextureLoaderAwt.getInstance(), TileLoader.getInstance(),
-                              ItemLoader.getInstance(), SongLoader.getInstance(), ItemGroupLoader.getInstance(),
-                              OverlayLoader.getInstance(), DocuLoader.getInstance());
+        resourceManager.addResources(
+                ImageLoader.getInstance(),
+                TextureLoaderAwt.getInstance(),
+                TileLoader.getInstance(),
+                ItemNameLoader.getInstance(),
+                ItemLoader.getInstance(),
+                SongLoader.getInstance(),
+                ItemGroupLoader.getInstance(),
+                OverlayLoader.getInstance(),
+                DocuLoader.getInstance()
+        );
+
         while (resourceManager.hasNextToLoad()) {
             try {
                 LOGGER.debug("Loading " + resourceManager.getNextDescription());
