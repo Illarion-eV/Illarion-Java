@@ -73,7 +73,7 @@ class GdxLwjglCursorManager extends AbstractCursorManager {
             if ((cursorHeight != cursorPixels.getHeight()) || (cursorWidth != cursorPixels.getWidth()) ||
                     (cursorPixels.getFormat() != Pixmap.Format.RGBA8888)) {
 
-                final Pixmap tempPixMap = new Pixmap(cursorHeight, cursorHeight, Pixmap.Format.RGBA8888);
+                final Pixmap tempPixMap = new Pixmap(cursorWidth, cursorHeight, Pixmap.Format.RGBA8888);
                 tempPixMap.drawPixmap(cursorPixels, 0, 0);
                 cursorPixels.dispose();
                 cursorPixels = tempPixMap;

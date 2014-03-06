@@ -83,8 +83,9 @@ public class ItemLoader implements TableLoaderSink<TableLoaderItems>, Resource {
         final ItemInfo info = ItemInfo
                 .create(face, moveable, specialFlag, obstacle, variance, opacity, surfaceLevel, itemLight);
 
-        final ItemImg img = new ItemImg(itemID, resourceName, editorGroup, offsetX, offsetY, frameCount, animationSpeed,
-                                        mode, getTextures(loader.getResourceName(), frameCount), info);
+        final ItemImg img = new ItemImg(itemID, resourceName, ItemNameLoader.getInstance().getItemName(itemID),
+                editorGroup, offsetX, offsetY, frameCount, animationSpeed, mode, getTextures(resourceName, frameCount),
+                info);
 
         items.put(img.getItemId(), img);
         return true;
