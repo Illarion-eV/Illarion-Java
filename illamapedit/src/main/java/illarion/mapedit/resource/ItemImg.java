@@ -55,9 +55,9 @@ public class ItemImg {
 
     public String getName() {
         if (itemName == null) {
-            return String.format("%d - %s", itemId, getResourceName());
+            return getResourceName();
         }
-        return String.format("%d - %s", itemId, itemName);
+        return itemName;
     }
 
     public int getOffsetX() {
