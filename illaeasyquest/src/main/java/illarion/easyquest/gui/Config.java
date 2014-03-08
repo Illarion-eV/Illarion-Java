@@ -18,7 +18,6 @@
  */
 package illarion.easyquest.gui;
 
-import illarion.common.config.ConfigChangeListener;
 import illarion.common.config.ConfigDialog;
 import illarion.common.config.ConfigSystem;
 import illarion.common.config.entries.DirectoryEntry;
@@ -31,8 +30,9 @@ import javax.annotation.Nullable;
 import javax.swing.*;
 import java.io.File;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
-public final class Config implements ConfigChangeListener {
+public final class Config {
 
     /**
      * The amount of last opened files that shall be stored.
@@ -82,7 +82,7 @@ public final class Config implements ConfigChangeListener {
      * The file that holds the configuration.
      */
     @Nullable
-    private File configFile = null;
+    private Path configFile = null;
 
     /**
      * The last generated list of opened files. When this is set to
@@ -164,7 +164,7 @@ public final class Config implements ConfigChangeListener {
     }
 
     public String getEasyQuestFolder() {
-        return cfg.getFile(easyQuestFolder).toString();
+        return cfg.getPath(easyQuestFolder).toString();
     }
 
     @Nullable
@@ -223,7 +223,7 @@ public final class Config implements ConfigChangeListener {
     }
 
     public String getExportFolder() {
-        return cfg.getFile(exportFolder).toString();
+        return cfg.getPath(exportFolder).toString();
     }
 
     /**
@@ -244,18 +244,16 @@ public final class Config implements ConfigChangeListener {
     public void init() {
         final String folder = checkFolder();
 
-        configFile = new File(folder, "easyquesteditor.xcfgz");
+        configFile = Paths.get(folder, "easyquesteditor.xcfgz");
         cfg = new ConfigSystem(configFile);
 
         cfg.setDefault(lastFilesKey, "");
-        cfg.setDefault(easyQuestFolder, new File(System.getProperty("user.home")));
+        cfg.setDefault(easyQuestFolder, Paths.get(System.getProperty("user.home")));
         cfg.setDefault(lastFilesKey, "");
-        cfg.setDefault(exportFolder, System.getProperty("user.home"));
+        cfg.setDefault(exportFolder, Paths.get(System.getProperty("user.home")));
         cfg.setDefault(openFiles, "");
         cfg.setDefault(character, "");
         cfg.setDefault(password, "");
-
-        cfg.addListener(this);
     }
 
     /**
@@ -266,7 +264,7 @@ public final class Config implements ConfigChangeListener {
     }
 
     public void setEasyQuestFolder(@Nonnull final String newFolder) {
-        cfg.set(easyQuestFolder, new File(newFolder));
+        cfg.set(easyQuestFolder, Paths.get(newFolder));
     }
 
     public void setExportFolder(final String newFolder) {
@@ -289,11 +287,6 @@ public final class Config implements ConfigChangeListener {
         cfg.set(openFiles, buffer.toString());
     }
 
-    @Override
-    public void configChanged(illarion.common.config.Config cfg, String key) {
-
-    }
-
     public void setCharacter(final String newCharacter) {
         cfg.set(character, newCharacter);
     }
@@ -303,10 +296,10 @@ public final class Config implements ConfigChangeListener {
     }
 
     public String getCharacter() {
-        return cfg.getFile(character).toString();
+        return cfg.getString(character);
     }
 
     public String getPassword() {
-        return cfg.getFile(password).toString();
+        return cfg.getString(password);
     }
 }

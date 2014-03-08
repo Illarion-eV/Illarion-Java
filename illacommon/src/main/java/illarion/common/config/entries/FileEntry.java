@@ -20,8 +20,9 @@ package illarion.common.config.entries;
 
 import illarion.common.config.Config;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.File;
+import java.nio.file.Path;
 
 /**
  * This is a configuration entry that is used to set a file select entry in the
@@ -45,7 +46,7 @@ public final class FileEntry implements ConfigEntry {
     /**
      * The directory that is displayed by default.
      */
-    @Nullable
+    @Nonnull
     private final String dir;
 
     /**
@@ -67,20 +68,23 @@ public final class FileEntry implements ConfigEntry {
     /**
      * Create a new configuration entry that is handled by this entry.
      *
-     * @param entry              the configuration key that is handled by this file entry
+     * @param entry the configuration key that is handled by this file entry
      * @param allowedFileEndings the list of file endings that are allowed as
-     *                           files to be chosen, as separator a semicolon is used
-     * @param fileDescription    the description displayed of the files to be
-     *                           selected
-     * @param defaultDir         the default directory that is opened in case no file is
-     *                           selected
-     * @param defaultName        the default name of the file to be created using this
-     *                           file entry
+     * files to be chosen, as separator a semicolon is used
+     * @param fileDescription the description displayed of the files to be
+     * selected
+     * @param defaultDir the default directory that is opened in case no file is
+     * selected
+     * @param defaultName the default name of the file to be created using this
+     * file entry
      */
     @SuppressWarnings("nls")
-    public FileEntry(final String entry, final String allowedFileEndings,
-                     final String fileDescription, @Nullable final String defaultDir,
-                     final String defaultName) {
+    public FileEntry(
+            final String entry,
+            final String allowedFileEndings,
+            final String fileDescription,
+            @Nullable final String defaultDir,
+            final String defaultName) {
         configEntry = entry;
         fileEndings = allowedFileEndings;
         fileDesc = fileDescription;
@@ -97,7 +101,7 @@ public final class FileEntry implements ConfigEntry {
      *
      * @return the directory displayed by default
      */
-    @Nullable
+    @Nonnull
     public String getDefaultDir() {
         return dir;
     }
@@ -135,18 +139,18 @@ public final class FileEntry implements ConfigEntry {
      * @return the configuration stored for this text entry
      */
     @Nullable
-    public File getValue() {
-        return cfg.getFile(configEntry);
+    public Path getValue() {
+        return cfg.getPath(configEntry);
     }
 
     /**
      * Set the configuration handled by this configuration entry.
      *
      * @param config the configuration that is supposed to be handled by this
-     *               configuration entry
+     * configuration entry
      */
     @Override
-    public void setConfig(final Config config) {
+    public void setConfig(@Nonnull final Config config) {
         cfg = config;
     }
 
@@ -155,7 +159,7 @@ public final class FileEntry implements ConfigEntry {
      *
      * @param newValue the new configuration value
      */
-    public void setValue(final File newValue) {
+    public void setValue(@Nonnull final Path newValue) {
         cfg.set(configEntry, newValue);
     }
 }

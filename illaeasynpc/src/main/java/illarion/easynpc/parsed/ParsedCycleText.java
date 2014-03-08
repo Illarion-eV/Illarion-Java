@@ -81,7 +81,7 @@ public final class ParsedCycleText implements ParsedData {
      */
     @Override
     public boolean effectsLuaWritingStage(@Nonnull final LuaWriter.WritingStage stage) {
-        return stage == LuaWriter.WritingStage.CycleText;
+        return stage == LuaWriter.WritingStage.Talking;
     }
 
     /**
@@ -116,7 +116,7 @@ public final class ParsedCycleText implements ParsedData {
     @Override
     public void writeLua(
             @Nonnull final Writer target, @Nonnull final LuaWriter.WritingStage stage) throws IOException {
-        if (stage == LuaWriter.WritingStage.CycleText) {
+        if (stage == LuaWriter.WritingStage.Talking) {
             target.write("talkingNPC:addCycleText(\""); //$NON-NLS-1$
             target.write(german);
             target.write("\", \""); //$NON-NLS-1$

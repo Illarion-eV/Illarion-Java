@@ -18,10 +18,12 @@
  */
 package illarion.easynpc.data;
 
+import illarion.common.types.ItemId;
 import illarion.common.util.TableLoader;
 import illarion.common.util.TableLoaderSink;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -42,22 +44,25 @@ public final class Items implements Comparable<Items> {
      * The list of items that were load.
      */
     @Nonnull
-    private static final Items[] itemsList;
+    private static final int[] itemsList;
 
     static {
-        final ArrayList<Items> itemList = new ArrayList<>();
+        final ArrayList<Integer> itemList = new ArrayList<>();
 
         new TableLoader("Items", new TableLoaderSink() {
             @Override
             public boolean processRecord(
                     final int line, @Nonnull final TableLoader loader) {
                 final int itemId = loader.getInt(TB_ID);
-                itemList.add(new Items(itemId));
+                itemList.add(itemId);
                 return true;
             }
         });
 
-        itemsList = itemList.toArray(new Items[itemList.size()]);
+        itemsList = new int[itemList.size()];
+        for (int i = 0; i < itemList.size(); i++) {
+            itemsList[i] = itemList.get(i);
+        }
         Arrays.sort(itemsList);
     }
 
@@ -83,9 +88,28 @@ public final class Items implements Comparable<Items> {
      */
     @Nonnull
     public static Items[] values() {
-        final Items[] tempList = new Items[itemsList.length];
-        System.arraycopy(itemsList, 0, tempList, 0, itemsList.length);
-        return tempList;
+        Items[] retList = new Items[itemsList.length];
+        for (int i = 0; i < itemsList.length; i++) {
+            retList[i] = new Items(itemsList[i]);
+        }
+        return retList;
+    }
+
+    @Nullable
+    public static Items valueOf(final int id) {
+        if (contains(id)) {
+            return new Items(id);
+        }
+        return null;
+    }
+
+    @Nullable
+    public static Items valueOf(@Nullable final ItemId id) {
+        if (ItemId.isValidItem(id)) {
+            assert id != null;
+            return valueOf(id.getValue());
+        }
+        return null;
     }
 
     /**
@@ -95,7 +119,7 @@ public final class Items implements Comparable<Items> {
      * @return {@code true} in case the item is found in the list of valid items
      */
     public static boolean contains(final int id) {
-        return Arrays.binarySearch(itemsList, new Items(id)) > 0;
+        return Arrays.binarySearch(itemsList, id) >= 0;
     }
 
     /**
@@ -110,5 +134,22 @@ public final class Items implements Comparable<Items> {
     @Override
     public int compareTo(@Nonnull final Items o) {
         return Integer.valueOf(itemId).compareTo(o.itemId);
+    }
+
+    @Override
+    public boolean equals(@Nullable final Object obj) {
+        if (super.equals(obj)) {
+            return true;
+        }
+        if (obj instanceof Items) {
+            Items objItems = (Items) obj;
+            return (objItems.itemId == itemId);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return itemId;
     }
 }

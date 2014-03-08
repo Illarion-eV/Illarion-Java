@@ -25,7 +25,8 @@ import de.lessvoid.nifty.effects.EffectProperties;
 import de.lessvoid.nifty.effects.Falloff;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.render.NiftyRenderEngine;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,7 +43,7 @@ public final class DoubleEffect implements EffectImpl {
     /**
      * The logger for this class that keeps track on the problems occurring in this effect.
      */
-    private static final Logger LOGGER = Logger.getLogger(DoubleEffect.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DoubleEffect.class);
 
     /**
      * The target class that contains the method that will be called. This class is requested as Nifty-Control from

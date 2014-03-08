@@ -26,7 +26,8 @@ import illarion.client.util.Lang;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import javolution.text.TextBuilder;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,7 +44,7 @@ public final class InformMsg extends AbstractGuiMsg {
      * The logger that is used for the log output of this class.
      */
     @Nonnull
-    private static final Logger LOGGER = Logger.getLogger(InformMsg.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InformMsg.class);
 
     /**
      * The type of the inform.
@@ -97,13 +98,11 @@ public final class InformMsg extends AbstractGuiMsg {
                 break;
             case 101:
                 gui.getInformGui().showScriptInform(1, informText);
-                gui.getChatGui().addChatMessage(Lang.getMsg("chat.scriptInform") + ": " + informText,
-                        ChatGui.COLOR_DEFAULT);
+                gui.getChatGui().addChatMessage(informText, ChatGui.COLOR_INFORM);
                 break;
             case 102:
                 gui.getInformGui().showScriptInform(2, informText);
-                gui.getChatGui().addChatMessage(Lang.getMsg("chat.scriptInform") + ": " + informText,
-                        ChatGui.COLOR_SHOUT);
+                gui.getChatGui().addChatMessage(informText, ChatGui.COLOR_INFORM);
                 break;
 
             default:

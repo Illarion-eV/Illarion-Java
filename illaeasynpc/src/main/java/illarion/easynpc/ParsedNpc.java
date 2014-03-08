@@ -27,6 +27,7 @@ import javolution.util.FastTable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.text.Normalizer;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -46,7 +47,12 @@ public final class ParsedNpc {
         /**
          * The line the error occurred at.
          */
-        private final EasyNpcScript.Line line;
+        private final int lineNumber;
+
+        /**
+         * The character the error occurred at.
+         */
+        private final int characterNumber;
 
         /**
          * The error message.
@@ -59,9 +65,9 @@ public final class ParsedNpc {
          * @param problemLine the line that caused this problem
          * @param errorMsg the message of this error
          */
-        Error(
-                final EasyNpcScript.Line problemLine, final String errorMsg) {
-            line = problemLine;
+        Error(final int problemLine, final int problemChar, final String errorMsg) {
+            lineNumber = problemLine;
+            characterNumber = problemChar;
             message = errorMsg;
         }
 
@@ -70,12 +76,15 @@ public final class ParsedNpc {
          */
         @Override
         public int compareTo(@Nonnull final ParsedNpc.Error o) {
-            return line.getLineNumber() - o.line.getLineNumber();
+            if (lineNumber == o.lineNumber) {
+                return characterNumber - characterNumber;
+            }
+            return lineNumber - o.lineNumber;
         }
 
         @Override
         public int hashCode() {
-            return line.getLineNumber();
+            return lineNumber + (characterNumber << 13);
         }
 
         @Override
@@ -85,7 +94,9 @@ public final class ParsedNpc {
             }
 
             if (o instanceof ParsedNpc.Error) {
-                return ((Error) o).line.getLineNumber() == line.getLineNumber();
+                Error errObj = (Error) o;
+                return errObj.lineNumber == lineNumber && errObj.characterNumber == characterNumber &&
+                        errObj.message.equals(message);
             }
             return false;
         }
@@ -95,8 +106,8 @@ public final class ParsedNpc {
          *
          * @return the line with the error
          */
-        public EasyNpcScript.Line getLine() {
-            return line;
+        public int getLine() {
+            return lineNumber;
         }
 
         /**
@@ -122,7 +133,7 @@ public final class ParsedNpc {
     /**
      * The auto introduce flag of the NPC. If this is set to false, the NPC will not introduce automatically.
      */
-    private BooleanFlagValues autoIntroduce;
+    private boolean autoIntroduce = true;
 
     /**
      * The language the NPC is talking by default.
@@ -175,6 +186,12 @@ public final class ParsedNpc {
      * The name of this NPC.
      */
     private String npcName;
+
+    /**
+     * The name of the module of the NPC and in the same consequence the name of the file the NPC needs to be stored
+     * in.
+     */
+    private String moduleName;
 
     /**
      * The position of this NPC.
@@ -241,11 +258,34 @@ public final class ParsedNpc {
      * @param line the line the error occurred at
      * @param message the message describing the error
      */
+    @Deprecated
     public void addError(final EasyNpcScript.Line line, final String message) {
+        addError(line.getLineNumber(), message);
+    }
+
+    /**
+     * Add a error to the list of errors that occurred while this NPC was
+     * parsed.
+     *
+     * @param line the line the error occurred at
+     * @param message the message describing the error
+     */
+    public void addError(final int line, final String message) {
+        addError(line, 0, message);
+    }
+
+    /**
+     * Add a error to the list of errors that occurred while this NPC was
+     * parsed.
+     *
+     * @param line the line the error occurred at
+     * @param message the message describing the error
+     */
+    public void addError(final int line, final int charNr, final String message) {
         if (errors == null) {
             errors = new FastTable<>();
         }
-        errors.add(new ParsedNpc.Error(line, message));
+        errors.add(new ParsedNpc.Error(line, charNr, message));
         errorOrderDirty = true;
     }
 
@@ -305,10 +345,7 @@ public final class ParsedNpc {
      *
      * @return the auto introduce flag
      */
-    public BooleanFlagValues getAutoIntroduce() {
-        if (autoIntroduce == null) {
-            return BooleanFlagValues.on;
-        }
+    public boolean getAutoIntroduce() {
         return autoIntroduce;
     }
 
@@ -536,7 +573,22 @@ public final class ParsedNpc {
     @Nonnull
     @SuppressWarnings("nls")
     public String getLuaFilename() {
-        return getNpcName().replace(' ', '_').toLowerCase() + ".lua";
+        return getModuleName() + ".lua";
+    }
+
+    public String getModuleName() {
+        if (moduleName == null) {
+            return convertToModuleName(getNpcName()).toLowerCase();
+        }
+        return moduleName;
+    }
+
+    public static String convertToModuleName(@Nonnull final String string) {
+        return Normalizer.normalize(string, Normalizer.Form.NFC).replaceAll("[^\\p{ASCII}]", "").replace(' ', '_');
+    }
+
+    public void setModuleName(@Nullable final String moduleName) {
+        this.moduleName = moduleName;
     }
 
     /**
@@ -626,7 +678,7 @@ public final class ParsedNpc {
      *
      * @param newValue the new value for the auto introduce flag
      */
-    public void setAutoIntroduce(final BooleanFlagValues newValue) {
+    public void setAutoIntroduce(final boolean newValue) {
         autoIntroduce = newValue;
     }
 

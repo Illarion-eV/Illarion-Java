@@ -30,6 +30,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
 /**
@@ -73,7 +76,7 @@ public final class FileEntrySwing extends JPanel implements SaveableEntry {
              * that are matched against the files shown in the dialog.
              *
              * @param files the list of regular expressions
-             * @param desc  the description that is displayed in the dialog
+             * @param desc the description that is displayed in the dialog
              */
             public Filter(final String files, final String desc) {
                 validFiles = files;
@@ -94,8 +97,7 @@ public final class FileEntrySwing extends JPanel implements SaveableEntry {
 
                 final String[] names = validFiles.split(";");
                 for (final String testName : names) {
-                    final String fixedTextName =
-                            testName.replace(".", "\\.").replace("*", ".+");
+                    final String fixedTextName = testName.replace(".", "\\.").replace("*", ".+");
                     if (Pattern.matches(testName, fixedTextName)) {
                         return true;
                     }
@@ -110,7 +112,6 @@ public final class FileEntrySwing extends JPanel implements SaveableEntry {
             public String getDescription() {
                 return description;
             }
-
         }
 
         /**
@@ -135,12 +136,12 @@ public final class FileEntrySwing extends JPanel implements SaveableEntry {
          * handler properly.
          *
          * @param fileEntry the file entry that is the parent of this instance
-         * @param cfg       the configuration entry that is the data source
+         * @param cfg the configuration entry that is the data source
          * @param msgSource the message source used as source for all texts
-         *                  displayed in this dialog
+         * displayed in this dialog
          */
-        public ButtonListener(final FileEntrySwing fileEntry,
-                              final FileEntry cfg, final MessageSource msgSource) {
+        public ButtonListener(
+                final FileEntrySwing fileEntry, final FileEntry cfg, final MessageSource msgSource) {
             cfgEntry = cfg;
             parentEntry = fileEntry;
             messageSource = msgSource;
@@ -157,15 +158,13 @@ public final class FileEntrySwing extends JPanel implements SaveableEntry {
             fileDiag.setFileSelectionMode(JFileChooser.FILES_ONLY);
             fileDiag.setCurrentDirectory(new File(cfgEntry.getDefaultDir()));
             fileDiag.setSelectedFile(new File(cfgEntry.getName()));
-            fileDiag.setFileFilter(new Filter(cfgEntry.getFileEndings(),
-                    cfgEntry.getFileDesc()));
-            fileDiag.setDialogTitle(messageSource
-                    .getMessage("illarion.common.config.gui.file.Title"));
+            fileDiag.setFileFilter(new Filter(cfgEntry.getFileEndings(), cfgEntry.getFileDesc()));
+            fileDiag.setDialogTitle(messageSource.getMessage("illarion.common.config.gui.file.Title"));
             fileDiag.setVisible(true);
 
             if (fileDiag.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
                 final File file = fileDiag.getSelectedFile();
-                parentEntry.setCurrentValue(file);
+                parentEntry.setCurrentValue(file.toPath());
             }
         }
     }
@@ -178,7 +177,7 @@ public final class FileEntrySwing extends JPanel implements SaveableEntry {
     /**
      * The current value of this number entry.
      */
-    private File currentValue;
+    private Path currentValue;
 
     /**
      * The text entry used to initialize this instance.
@@ -193,19 +192,13 @@ public final class FileEntrySwing extends JPanel implements SaveableEntry {
     private final JTextField input;
 
     /**
-     * The button that opens the search dialog.
-     */
-    @Nonnull
-    private final JButton searchBtn;
-
-    /**
      * Create a instance of this check entry and set the configuration entry
      * that is used to setup this class.
      *
      * @param usedEntry the entry used to setup this class, the entry needs to
-     *                  pass the check with the static method
-     * @param msgs      the message source that is used to fetch the texts displayed
-     *                  in this entry
+     * pass the check with the static method
+     * @param msgs the message source that is used to fetch the texts displayed
+     * in this entry
      */
     @SuppressWarnings("nls")
     public FileEntrySwing(final ConfigEntry usedEntry, @Nonnull final MessageSource msgs) {
@@ -216,14 +209,14 @@ public final class FileEntrySwing extends JPanel implements SaveableEntry {
         entry = (FileEntry) usedEntry;
 
         currentValue = entry.getValue();
-
+        if (currentValue == null) {
+            currentValue = Paths.get(((FileEntry) usedEntry).getDefaultDir());
+        }
         input = new JTextField(currentValue.toString());
         input.setColumns(20);
         add(input, BorderLayout.CENTER);
 
-        searchBtn =
-                new JButton(
-                        msgs.getMessage("illarion.common.config.gui.file.Browse"));
+        JButton searchBtn = new JButton(msgs.getMessage("illarion.common.config.gui.file.Browse"));
         searchBtn.addActionListener(new ButtonListener(this, entry, msgs));
         add(searchBtn, BorderLayout.EAST);
 
@@ -253,11 +246,10 @@ public final class FileEntrySwing extends JPanel implements SaveableEntry {
      *
      * @param newValue the new value that is set from now on
      */
-    void setCurrentValue(@Nonnull final File newValue) {
-        if (newValue.isFile()) {
+    void setCurrentValue(@Nonnull final Path newValue) {
+        if (Files.isRegularFile(newValue)) {
             currentValue = newValue;
-            input.setText(newValue.getAbsolutePath());
+            input.setText(newValue.toAbsolutePath().toString());
         }
     }
-
 }

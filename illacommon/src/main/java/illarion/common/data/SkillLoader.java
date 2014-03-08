@@ -18,7 +18,8 @@
  */
 package illarion.common.data;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -41,7 +42,7 @@ public class SkillLoader {
     /**
      * The logger instance of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(SkillLoader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SkillLoader.class);
 
     /**
      * This value is turned {@code true} once the loading is finished.

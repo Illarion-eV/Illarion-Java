@@ -61,7 +61,10 @@ public abstract class AbstractMultiActionHelper implements Runnable {
      * @param timeoutInMs the timeout value in milliseconds
      * @param limit       the amount of clicks allowed at the maximum
      */
-    protected AbstractMultiActionHelper(final int timeoutInMs, final int limit) {
+    protected AbstractMultiActionHelper(Integer timeoutInMs, final int limit) {
+        if (timeoutInMs == null) {
+            timeoutInMs = 500;
+        }
         timer = new Timer(timeoutInMs, this);
         timer.setRepeats(false);
         countLimit = limit;

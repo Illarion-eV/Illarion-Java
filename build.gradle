@@ -92,8 +92,9 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'eu.appsatori', name: 'gradle-fatjar-plugin', version: '0.2-rc1'
         classpath group: 'net.sf.proguard', name: 'proguard-gradle', version: '4.10'
+        classpath group: 'edu.sc.seis.gradle', name: 'launch4j', version: '1.0.6'
+        classpath group: 'edu.sc.seis.gradle', name: 'macappbundle', version: '2.0.0'
     }
 }
 

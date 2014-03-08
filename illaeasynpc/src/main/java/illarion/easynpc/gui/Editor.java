@@ -22,9 +22,7 @@ import illarion.easynpc.EasyNpcScript;
 import illarion.easynpc.ParsedNpc;
 import illarion.easynpc.Parser;
 import illarion.easynpc.gui.syntax.EasyNpcTokenMaker;
-import illarion.easynpc.parser.events.ParserFinishedEvent;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
-import org.bushe.swing.event.annotation.EventSubscriber;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -43,6 +41,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.nio.file.Path;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -154,7 +153,6 @@ public final class Editor extends RTextScrollPane {
                     timer.stop();
                 }
             }
-
         });
 
         setMinimumSize(new Dimension(100, 100));
@@ -215,8 +213,7 @@ public final class Editor extends RTextScrollPane {
         final JTabbedPane parentPane = getParent();
         parentPane.setSelectedComponent(this);
 
-        final Matcher fullLineMatch =
-                fullLinePattern.matcher(editor.getText());
+        final Matcher fullLineMatch = fullLinePattern.matcher(editor.getText());
         boolean lastFind = true;
         for (int i = 0; i < line; i++) {
             lastFind = fullLineMatch.find();
@@ -250,9 +247,7 @@ public final class Editor extends RTextScrollPane {
             return currentData;
         }
 
-        final EasyNpcScript script = new EasyNpcScript();
-        script.readFromEditor(this);
-        currentData = Parser.getInstance().parse(script);
+        currentData = Parser.getInstance().parse(getScriptText());
 
         if (currentData.hasErrors()) {
             errorNpc = currentData;
@@ -301,6 +296,7 @@ public final class Editor extends RTextScrollPane {
         setScriptText(script);
         setLoadScriptFile(script.getSourceScriptFile());
         editor.discardAllEdits();
+        saved();
     }
 
     public void resetEditorKit() {
@@ -456,9 +452,31 @@ public final class Editor extends RTextScrollPane {
         }
 
         if (parsedVersion == null) {
-            final EasyNpcScript script = new EasyNpcScript();
-            script.readFromEditor(this);
-            Parser.getInstance().parseAsynchronously(script);
+            final String scriptText = getScriptText();
+            SwingWorker<ParsedNpc, Void> worker = new SwingWorker<ParsedNpc, Void>() {
+                @Override
+                protected ParsedNpc doInBackground() throws Exception {
+                    return Parser.getInstance().parse(scriptText);
+                }
+
+                @Override
+                protected void done() {
+                    try {
+                        ParsedNpc currentData = get();
+                        if (currentData.hasErrors()) {
+                            errorNpc = currentData;
+                            parsedVersion = null;
+                            MainFrame.getInstance().getErrorArea().addErrorEditor(Editor.this);
+                        } else {
+                            parsedVersion = currentData;
+                            errorNpc = null;
+                            MainFrame.getInstance().getErrorArea().removeErrorEditor(Editor.this);
+                        }
+                    } catch (InterruptedException | ExecutionException ignored) {
+                    }
+                }
+            };
+            worker.run();
         }
     }
 
@@ -469,21 +487,5 @@ public final class Editor extends RTextScrollPane {
         }
 
         Utils.reparseScript(this);
-    }
-
-    @EventSubscriber
-    public void onParserFinished(@Nonnull final ParserFinishedEvent event) {
-        if (event.getScript().getSourceEditor() == this) {
-            final ParsedNpc currentData = event.getNpc();
-            if (currentData.hasErrors()) {
-                errorNpc = currentData;
-                parsedVersion = null;
-                MainFrame.getInstance().getErrorArea().addErrorEditor(this);
-            } else {
-                parsedVersion = currentData;
-                errorNpc = null;
-                MainFrame.getInstance().getErrorArea().removeErrorEditor(this);
-            }
-        }
     }
 }

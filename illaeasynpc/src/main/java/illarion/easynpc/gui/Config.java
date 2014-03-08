@@ -29,12 +29,12 @@ import illarion.common.config.entries.SelectEntry;
 import illarion.common.util.DirectoryManager;
 import illarion.easynpc.Lang;
 import javolution.util.FastTable;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.skin.SkinInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,13 +42,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Map.Entry;
-import java.util.Properties;
 
 /**
  * This class is used to store and to publish the settings used by the editor GUI.
@@ -123,7 +121,7 @@ public final class Config {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(Config.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
 
     /**
      * The property key value for the luaNPC script folder.
@@ -331,11 +329,11 @@ public final class Config {
     public String getEasyNpcFolder() {
         if (cfg == null) {
             LOGGER.error("Configuration system not initialized yet.");
-            return new File(System.getProperty("user.home")).toString();
+            return Paths.get(System.getProperty("user.home")).toString();
         }
-        final File easyNpcFolderFile = cfg.getFile(LUA_NPC_FOLDER);
+        final Path easyNpcFolderFile = cfg.getPath(EASY_NPC_FOLDER);
         if (easyNpcFolderFile == null) {
-            return new File(System.getProperty("user.home")).toString();
+            return Paths.get(System.getProperty("user.home")).toString();
         }
         return easyNpcFolderFile.toString();
     }
@@ -485,11 +483,11 @@ public final class Config {
     public String getLuaNpcFolder() {
         if (cfg == null) {
             LOGGER.error("Configuration system not initialized yet.");
-            return new File(System.getProperty("user.home")).toString();
+            return Paths.get(System.getProperty("user.home")).toString();
         }
-        final File luaNpcFolderFile = cfg.getFile(LUA_NPC_FOLDER);
+        final Path luaNpcFolderFile = cfg.getPath(LUA_NPC_FOLDER);
         if (luaNpcFolderFile == null) {
-            return new File(System.getProperty("user.home")).toString();
+            return Paths.get(System.getProperty("user.home")).toString();
         }
         return luaNpcFolderFile.toString();
     }
@@ -577,13 +575,12 @@ public final class Config {
     @SuppressWarnings("nls")
     public void init() {
         final String folder = checkFolder();
-        initLogging(folder);
 
-        final File configFile = new File(folder, "easynpceditor.xcfgz");
+        final Path configFile = Paths.get(folder, "easynpceditor.xcfgz");
         cfg = new ConfigSystem(configFile);
 
         cfg.setDefault(LAST_FILES_KEY, "");
-        cfg.setDefault(EASY_NPC_FOLDER, new File(System.getProperty("user.home")));
+        cfg.setDefault(EASY_NPC_FOLDER, Paths.get(System.getProperty("user.home")));
         cfg.setDefault(LAST_FILES_KEY, "");
         cfg.setDefault(LAST_WINDOW_H, -1);
         cfg.setDefault(LAST_WINDOW_STATE, -1);
@@ -591,7 +588,7 @@ public final class Config {
         cfg.setDefault(LAST_WINDOW_X, -1);
         cfg.setDefault(LAST_WINDOW_Y, -1);
         cfg.setDefault(USED_LOOK_AND_FEEL, DEFAULT_LOOK_AND_FEEL);
-        cfg.setDefault(LUA_NPC_FOLDER, System.getProperty("user.home"));
+        cfg.setDefault(LUA_NPC_FOLDER, Paths.get(System.getProperty("user.home")));
         cfg.setDefault(OPEN_FILES, "");
         cfg.setDefault(SPLIT_STATE, 0.75d);
         cfg.setDefault(UNDO_COUNT_KEY, 100);
@@ -639,7 +636,7 @@ public final class Config {
             LOGGER.error("Configuration system not initialized yet.");
             return;
         }
-        cfg.set(EASY_NPC_FOLDER, new File(newFolder));
+        cfg.set(EASY_NPC_FOLDER, Paths.get(newFolder));
     }
 
     /**
@@ -798,24 +795,6 @@ public final class Config {
                                               "Restart needed", JOptionPane.INFORMATION_MESSAGE);
             }
         });
-    }
-
-    /**
-     * Prepare the proper output of the log files.
-     *
-     * @param folder the folder the log file is written to
-     */
-    @SuppressWarnings("nls")
-    private static void initLogging(final String folder) {
-        final Properties tempProps = new Properties();
-        try {
-            tempProps.load(Config.class.getClassLoader().getResourceAsStream("logging.properties"));
-            tempProps.put("log4j.appender.IllaLogfileAppender.file", folder + File.separator + "easynpc.log");
-            tempProps.put("log4j.reset", "true");
-            new PropertyConfigurator().doConfigure(tempProps, LOGGER.getLoggerRepository());
-        } catch (@Nonnull final IOException ex) {
-            System.err.println("Error setting up logging environment");
-        }
     }
 
     @EventTopicSubscriber(topic = "autoCheckScript")

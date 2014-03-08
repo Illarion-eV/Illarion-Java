@@ -22,7 +22,8 @@ import illarion.client.resources.data.AbstractEntityTemplate;
 import illarion.client.world.World;
 import illarion.common.types.Location;
 import illarion.common.types.Rectangle;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.EngineException;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.*;
@@ -574,7 +575,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
     /**
      * The logging instance of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(AbstractEntity.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractEntity.class);
 
     @Override
     public void show() {

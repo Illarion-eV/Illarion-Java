@@ -19,7 +19,8 @@
 package illarion.client.world;
 
 import illarion.client.graphics.AnimationUtility;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.graphic.Color;
 
 import javax.annotation.Nonnull;
@@ -141,7 +142,7 @@ public final class Weather {
     /**
      * The instance of the logger that is used to write out the data.
      */
-    private static final Logger LOGGER = Logger.getLogger(Weather.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Weather.class);
 
     /**
      * General value for no effect in the used environment.

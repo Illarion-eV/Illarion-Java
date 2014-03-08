@@ -19,7 +19,8 @@
 package org.illarion.engine.backend.shared;
 
 import illarion.common.util.ProgressMonitor;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -40,7 +41,7 @@ public class TextureAtlasListXmlLoadingTask<T> implements Runnable, TextureAtlas
     /**
      * The logger that provides the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(TextureAtlasListXmlLoadingTask.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TextureAtlasListXmlLoadingTask.class);
 
     /**
      * The factory required to create the XML parser. Setting up this parser should be done before its assigned to

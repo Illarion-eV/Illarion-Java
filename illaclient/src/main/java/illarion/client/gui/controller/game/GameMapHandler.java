@@ -41,7 +41,8 @@ import illarion.client.world.interactive.InteractiveMapTile;
 import illarion.common.types.ItemCount;
 import illarion.common.types.Location;
 import illarion.common.types.Rectangle;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.engine.graphic.SceneEvent;
@@ -101,7 +102,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
     /**
      * The logging instance that handles the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(GameMapHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GameMapHandler.class);
     @Nonnull
     private final Input input;
 

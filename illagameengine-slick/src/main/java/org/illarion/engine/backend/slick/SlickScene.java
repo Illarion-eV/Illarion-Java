@@ -18,7 +18,8 @@
  */
 package org.illarion.engine.backend.slick;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.backend.shared.AbstractScene;
 import org.illarion.engine.graphic.Graphics;
@@ -39,7 +40,7 @@ class SlickScene extends AbstractScene<SlickSceneEffect> {
     /**
      * The logger of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(SlickScene.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SlickScene.class);
 
     /**
      * The instance of the slick container this scene is rendered in.

@@ -21,7 +21,8 @@ package illarion.mapedit.resource.loaders;
 import illarion.mapedit.Lang;
 import illarion.mapedit.resource.Resource;
 import javolution.util.FastTable;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.swing.event.TreeModelListener;
@@ -95,7 +96,7 @@ public class DocuLoader implements Resource, TreeModel {
     }
 
     private static final DocuLoader INSTANCE = new DocuLoader();
-    private static final Logger LOGGER = Logger.getLogger(DocuLoader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DocuLoader.class);
 
     private static final String BASE = "/docu/";
 

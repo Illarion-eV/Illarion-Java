@@ -20,7 +20,8 @@ package illarion.client.world;
 
 import illarion.client.graphics.MapDisplayManager;
 import illarion.common.types.Location;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
@@ -43,7 +44,7 @@ public final class GameMapProcessor extends Thread {
      * The logger instance that takes care for the logging output of this class.
      */
     @Nonnull
-    private static final Logger LOGGER = Logger.getLogger(GameMapProcessor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GameMapProcessor.class);
 
     /**
      * The map that is handled by this processor instance.

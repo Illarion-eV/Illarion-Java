@@ -158,7 +158,7 @@ public class ItemDataTable extends JPanel {
     public void clearDataList() {
         dataTableModel.clearData();
         dataTableModel.fireTableDataChanged();
-        setAnnotation("");
+        annotation.setAnnotation("");
         addDataButton.setEnabled(false);
         removeDataButton.setEnabled(false);
         annotationButton.setEnabled(false);
@@ -170,13 +170,9 @@ public class ItemDataTable extends JPanel {
             dataTableModel.setData(item.getItemData());
         }
         dataTableModel.fireTableDataChanged();
-        setAnnotation(item.getAnnotation());
+        annotation.setAnnotation(item.getAnnotation());
         addDataButton.setEnabled(true);
         removeDataButton.setEnabled(dataTableModel.getRowCount() > 0);
         annotationButton.setEnabled(true);
-    }
-
-    public void setAnnotation(@Nonnull final String text) {
-        annotation.setAnnotation(text);
     }
 }

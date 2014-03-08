@@ -25,7 +25,8 @@ import illarion.common.graphics.Layers;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.LightSource;
 import org.illarion.engine.graphic.Sprite;
@@ -59,7 +60,7 @@ public final class MapTile implements AlphaChangeListener {
      * The instance of the logger that is used to write out the data.
      */
     @Nonnull
-    private static final Logger LOGGER = Logger.getLogger(MapTile.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MapTile.class);
 
     /**
      * Highest elevation caused by an item on this tile.

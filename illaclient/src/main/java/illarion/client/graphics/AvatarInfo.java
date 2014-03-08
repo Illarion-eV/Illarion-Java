@@ -19,7 +19,8 @@
 package illarion.client.graphics;
 
 import illarion.common.graphics.CharAnimations;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -105,7 +106,7 @@ public final class AvatarInfo {
     /**
      * The instance of the logger for this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(AvatarInfo.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AvatarInfo.class);
 
     /**
      * Get the visibility modifications of the avatar. The modifications is set in percent. Use the return of this

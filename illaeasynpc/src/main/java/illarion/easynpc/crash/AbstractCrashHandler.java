@@ -23,7 +23,8 @@ import illarion.common.bug.CrashReporter;
 import illarion.easynpc.Lang;
 import illarion.easynpc.Parser;
 import illarion.easynpc.gui.MainFrame;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.lang.Thread.UncaughtExceptionHandler;
@@ -38,8 +39,7 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger
-            .getLogger(AbstractCrashHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCrashHandler.class);
 
     /**
      * The time since the last crash in milliseconds that need to have passed to
@@ -94,8 +94,7 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
      */
     @SuppressWarnings("nls")
     protected final void crashEditor() {
-        MainFrame.crashEditor(Lang.getMsg(getCrashMessage()) + "\n"
-                + Lang.getMsg("crash.fixfailed"));
+        MainFrame.crashEditor(Lang.getMsg(getCrashMessage()) + "\n" + Lang.getMsg("crash.fixfailed"));
 
         currentlyCrashing = false;
     }

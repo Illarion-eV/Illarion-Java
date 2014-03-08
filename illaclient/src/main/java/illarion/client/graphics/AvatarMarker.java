@@ -20,7 +20,8 @@ package illarion.client.graphics;
 
 import illarion.client.resources.MiscImageFactory;
 import illarion.client.resources.data.MiscImageTemplate;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
@@ -33,7 +34,7 @@ public class AvatarMarker extends AbstractEntity<MiscImageTemplate> {
     /**
      * The logging instance of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(AvatarMarker.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AvatarMarker.class);
 
     /**
      * The avatar that is the parent of this class.

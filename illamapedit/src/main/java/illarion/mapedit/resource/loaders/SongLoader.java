@@ -23,7 +23,8 @@ import illarion.common.util.TableLoader;
 import illarion.common.util.TableLoaderSink;
 import illarion.mapedit.resource.Resource;
 import illarion.mapedit.resource.Song;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -33,7 +34,7 @@ import java.util.Arrays;
  * @author Fredrik K
  */
 public class SongLoader implements TableLoaderSink<TableLoader>, Resource {
-    private static final Logger LOGGER = Logger.getLogger(SongLoader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SongLoader.class);
     /**
      * The index in the table record of the sound id.
      */

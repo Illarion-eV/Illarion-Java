@@ -20,7 +20,8 @@ package org.illarion.engine.backend.slick;
 
 import illarion.common.types.Location;
 import illarion.common.types.Rectangle;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.*;
 import org.newdawn.slick.Color;
@@ -52,7 +53,7 @@ class SlickWorldMap implements WorldMap, WorldMapDataProviderCallback {
     /**
      * The logger of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(SlickWorldMap.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SlickWorldMap.class);
 
     /**
      * The provider that supplies the class with the required data.

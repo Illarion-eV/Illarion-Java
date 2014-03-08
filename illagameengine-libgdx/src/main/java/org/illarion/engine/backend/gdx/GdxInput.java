@@ -558,7 +558,7 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
      * @param button the button that was clicked
      */
     private void publishClick(final int x, final int y, @Nonnull final Button button) {
-        if ((clickTimeout == 0) || (clickButton != button) || (System.currentTimeMillis() < clickTimeout)) {
+        if ((clickTimeout == 0) || (clickButton != button) || (System.currentTimeMillis() > clickTimeout)) {
             clickButton = button;
             clickTimeout = System.currentTimeMillis() + DOUBLE_CLICK_DELAY;
             events.offer(new Runnable() {

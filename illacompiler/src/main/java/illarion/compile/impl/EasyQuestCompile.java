@@ -2,15 +2,22 @@ package illarion.compile.impl;
 
 import com.mxgraph.model.mxIGraphModel;
 import illarion.easyquest.QuestIO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.file.Path;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class EasyQuestCompile extends AbstractCompile {
+    private static final Logger LOGGER = LoggerFactory.getLogger(EasyQuestCompile.class);
+
     @Override
     public int compileFile(@Nonnull final Path file) {
         try {
@@ -20,7 +27,19 @@ public class EasyQuestCompile extends AbstractCompile {
             String questName = fileName.replace(".quest", "");
             QuestIO.exportQuest(model, getTargetDir().resolve(questName));
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getLocalizedMessage());
+            return -1;
+        }
+        return 0;
+    }
+
+    @Override
+    public int compileStream(@Nonnull InputStream in, @Nonnull OutputStream out) {
+        try {
+            QuestIO.loadGraphModel(new InputStreamReader(in, QuestIO.CHARSET));
+        } catch (IOException e) {
+            LOGGER.error(e.getLocalizedMessage());
+            return -1;
         }
         return 0;
     }

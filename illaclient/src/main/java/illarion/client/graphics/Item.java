@@ -18,26 +18,26 @@
  */
 package illarion.client.graphics;
 
-import illarion.client.input.CurrentMouseLocationEvent;
-import illarion.client.input.DoubleClickOnMapEvent;
-import illarion.client.input.PointOnMapEvent;
-import illarion.client.input.PrimaryKeyMapDrag;
+import illarion.client.input.*;
 import illarion.client.resources.ItemFactory;
 import illarion.client.resources.Resource;
 import illarion.client.resources.data.ItemTemplate;
 import illarion.client.util.Lang;
 import illarion.client.util.LookAtTracker;
 import illarion.client.world.MapTile;
+import illarion.client.world.World;
 import illarion.common.graphics.MapConstants;
 import illarion.common.graphics.MapVariance;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
-import org.apache.log4j.Logger;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Graphics;
 import org.illarion.engine.graphic.SceneEvent;
+import org.illarion.engine.input.Button;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -214,7 +214,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      * The logging instance that takes care for the logging output of this class.
      */
     @SuppressWarnings("UnusedDeclaration")
-    private static final Logger LOGGER = Logger.getLogger(Item.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Item.class);
 
     @Override
     public boolean isEventProcessed(@Nonnull final GameContainer container, final int delta,
@@ -253,13 +253,34 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
             return false;
         }
 
+        if (event instanceof ClickOnMapEvent) {
+            final ClickOnMapEvent moveEvent = (ClickOnMapEvent) event;
+            if (moveEvent.getKey() != Button.Left) {
+                return false;
+            }
+
+            if (!isMouseInInteractionRect(moveEvent.getX(), moveEvent.getY())) {
+                return false;
+            }
+            World.getPlayer().getMovementHandler().walkTo(parentTile.getLocation(), parentTile.getInteractive());
+        }
+
         if (event instanceof DoubleClickOnMapEvent) {
             final DoubleClickOnMapEvent moveEvent = (DoubleClickOnMapEvent) event;
+            if (moveEvent.getKey() != Button.Left) {
+                return false;
+            }
+
             if (!isMouseInInteractionRect(moveEvent.getX(), moveEvent.getY())) {
                 return false;
             }
 
-            parentTile.getInteractive().use();
+            if (parentTile.getInteractive().isInUseRange()) {
+                parentTile.getInteractive().use();
+            } else {
+                World.getPlayer().getMovementHandler().walkToAndUse(parentTile.getLocation(), parentTile.getInteractive());
+            }
+
             return true;
         }
 

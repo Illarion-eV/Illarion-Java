@@ -19,7 +19,8 @@
 package illarion.client.states;
 
 import de.lessvoid.nifty.Nifty;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
@@ -32,7 +33,7 @@ class Util {
     /**
      * The logger that is used for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(Util.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Util.class);
 
     /**
      * Load the XML file after validating its contents.

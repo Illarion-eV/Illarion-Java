@@ -19,7 +19,8 @@
 package org.illarion.engine.backend.shared;
 
 import illarion.common.util.ProgressMonitor;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.assets.TextureManager;
 import org.illarion.engine.graphic.Texture;
 import org.xmlpull.mxp1.MXParserFactory;
@@ -43,7 +44,7 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
     /**
      * The logger that provides the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(AbstractTextureManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTextureManager.class);
 
     /**
      * These are the progress monitors for each directory.

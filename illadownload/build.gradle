@@ -20,6 +20,17 @@ apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'maven-publish'
 apply from: '../javafx.plugin'
+apply from: '../versions.gradle'
+
+if (project.hasProperty('targetDistDir')) {
+    // Launch4j requires a native installment. Has to remain disabled until the server contains this
+    //apply plugin: 'launch4j'
+
+    // The MacOS bundle plugin is broken to the point where its not usable at all. Its impossible to set the input
+    // files as this plugin receives the from the jar task directly. And those requirements are resolved wrong due
+    // the usage of JavaFX.
+    //apply plugin: 'macAppBundle'
+}
 
 archivesBaseName = 'illarion_download'
 mainClassName = 'illarion.download.gui.GuiApplication'
@@ -27,33 +38,36 @@ mainClassName = 'illarion.download.gui.GuiApplication'
 dependencies {
     compile project(':common')
     compile group: 'org.javolution', name: 'javolution-core-java', version: '6.0.0'
-    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.2'
-    compile group: 'log4j', name: 'log4j', version: '1.2.17'
+    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.3'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: project.ext.slf4jVersion
+    compile group: 'org.slf4j', name: 'jul-to-slf4j', version: project.ext.slf4jVersion
+    compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: project.ext.slf4jVersion
+    compile group: 'org.slf4j', name: 'log4j-over-slf4j', version: project.ext.slf4jVersion
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.0.13'
     compile group: 'net.sf.trove4j', name: 'trove4j', version: '3.0.3'
     compile group: 'xpp3', name: 'xpp3', version: '1.1.4c'
     compile group: 'org.bushe', name: 'eventbus', version: '1.4'
-    compile group: 'org.mantisbt', name: 'mantisconnect', version: '1.1.2.0'
-    compile group: 'org.eclipse.aether', name: 'aether-impl', version: '0.9.0.M3'
-    compile group: 'org.eclipse.aether', name: 'aether-transport-http', version: '0.9.0.M3'
-    compile group: 'org.eclipse.aether', name: 'aether-connector-basic', version: '0.9.0.M3'
-    compile group: 'org.apache.maven', name: 'maven-aether-provider', version: '3.1.1'
+    compile group: 'org.eclipse.aether', name: 'aether-impl', version: '0.9.0.v20140226'
+    compile group: 'org.eclipse.aether', name: 'aether-transport-http', version: '0.9.0.v20140226'
+    compile group: 'org.eclipse.aether', name: 'aether-connector-basic', version: '0.9.0.v20140226'
+    compile group: 'org.apache.maven', name: 'maven-aether-provider', version: '3.2.1'
 }
 
 jar {
     dependsOn { gitVersion }
     manifest {
-        attributes     \
-            'Main-Class': 'illarion.download.gui.GuiApplication',    \
-            'Permissions': 'all-permissions',    \
-            'Codebase': 'illarion.org',    \
-            'Application-Name': 'Illarion Launcher',    \
-            'Application-Library-Allowable-Codebase': 'illarion.org',    \
-            'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),    \
-            'Built-By': System.getProperty('user.name'),     \
-            'Built-JDK': System.getProperty('java.version'),     \
-            'Implementation-Title': 'Illarion Launcher',     \
-            'Implementation-Vendor': 'Illarion e.V.',    \
-            'Implementation-Version': project.ext.fullVersion
+        attributes      \
+             'Main-Class': 'illarion.download.gui.GuiApplication',     \
+             'Permissions': 'all-permissions',     \
+             'Codebase': 'illarion.org',     \
+             'Application-Name': 'Illarion Launcher',     \
+             'Application-Library-Allowable-Codebase': 'illarion.org',     \
+             'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),     \
+             'Built-By': System.getProperty('user.name'),      \
+             'Built-JDK': System.getProperty('java.version'),      \
+             'Implementation-Title': 'Illarion Launcher',      \
+             'Implementation-Vendor': 'Illarion e.V.',     \
+             'Implementation-Version': project.ext.fullVersion
     }
 }
 
@@ -65,6 +79,8 @@ if (project.hasProperty('targetDistDir')) {
     }
     publishDownloaderBundle.dependsOn {
         publishBundle
+        //launch4j
+        //publishMacBundle
     }
 }
 
@@ -122,6 +138,23 @@ javafx {
 }
 
 if (project.hasProperty('targetDistDir')) {
+    /*launch4j {
+        mainClassName = project.mainClassName
+        icon = 'icons/windows.ico'
+        outfile = new File(project.targetDistDir, "illarion.exe").absolutePath
+        copyright = '2014 - Illarion e.V'
+    }*/
+    /*macAppBundle {
+        mainClassName = project.mainClassName
+        icon = 'icons/mac.icns'
+        bundleJRE = false
+        javaProperties.put("apple.laf.useScreenMenuBar", "true")
+        jvmVersion = '1.7+'
+        appName = "Illarion"
+        dmgOutputDir = "macApp"
+        dmgName = "illarion.app.zip"
+    }*/
+
     task clearDistDir(type: Delete) {
         delete project.distsDir
     }
@@ -138,6 +171,10 @@ if (project.hasProperty('targetDistDir')) {
         from new File(project.buildDir, "downloader.jar").absolutePath
         into file(project.targetDistDir)
     }
+    /*task publishMacBundle(type: Copy, dependsOn: 'createAppZip') {
+        from new File(project.buildDir, "macApp/illarion.app.zip").absolutePath
+        into file(project.targetDistDir)
+    }*/
 }
 
 task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jfxJar') {
@@ -156,9 +193,7 @@ task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jfxJar') {
             if (file.absolutePath.contains("javolution-core-java")) {
                 filter += ",!org/osgi/**"
             }
-            if (!file.absolutePath.contains("jcl-over-slf4j")) {
-                injars([filter:filter], file.absolutePath)
-            }
+            injars([filter: filter], file.absolutePath)
         }
     }
 
@@ -184,54 +219,44 @@ task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jfxJar') {
     keepattributes "*Annotation*"
 
     keepclasseswithmembers "public class com.javafx.main.Main {" +
-        "public static void main(java.lang.String[]);" +
-    "}"
+            "public static void main(java.lang.String[]);" +
+            "}"
 
     keepclasseswithmembers "public class illarion.download.** {" +
             "public static void main(java.lang.String[]);" +
-    "}"
+            "}"
 
     keepclasseswithmembernames "class * {" +
-        "native <methods>;" +
-    "}"
+            "native <methods>;" +
+            "}"
 
     keepclassmembers "class * extends java.lang.Enum {" +
-        "public static **[] values();" +
-        "public static ** valueOf(java.lang.String);" +
-    "}"
+            "public static **[] values();" +
+            "public static ** valueOf(java.lang.String);" +
+            "}"
 
     keepclassmembers "class * implements java.io.Serializable {" +
-        "static final long serialVersionUID;" +
-        "static final java.io.ObjectStreamField[] serialPersistentFields;" +
-        "private void writeObject(java.io.ObjectOutputStream);" +
-        "private void readObject(java.io.ObjectInputStream);" +
-        "java.lang.Object writeReplace();" +
-        "java.lang.Object readResolve();" +
-    "}"
+            "static final long serialVersionUID;" +
+            "static final java.io.ObjectStreamField[] serialPersistentFields;" +
+            "private void writeObject(java.io.ObjectOutputStream);" +
+            "private void readObject(java.io.ObjectInputStream);" +
+            "java.lang.Object writeReplace();" +
+            "java.lang.Object readResolve();" +
+            "}"
 
-    keep "class org.apache.log4j.ConsoleAppender"
-    keep "class org.apache.log4j.PatternLayout"
+    keep "class ch.qos.logback.** { *; }"
     keep "class illarion.download.gui.controller.*"
     keep "class org.apache.commons.logging.impl.LogFactoryImpl"
     keep "class org.apache.commons.logging.impl.SimpleLog"
     keep "class org.xmlpull.mxp1.MXParserFactory"
 
-    keepclasseswithmembers "class org.apache.log4j.PatternLayout {" +
-        "void setConversionPattern(java.lang.String);" +
-        "java.lang.String getConversionPattern();" +
-    "}"
-
-    keepclassmembers "class org.apache.commons.logging.impl.SimpleLog {" +
-        "<init>(java.lang.String);" +
-    "}"
-
     keepclassmembers "class illarion.download.** {" +
-        "@javafx.fxml.FXML *;" +
-    "}"
+            "@javafx.fxml.FXML *;" +
+            "}"
 
     keepclasseswithmembers "class * {" +
-        "org.apache.commons.logging.Log getLog(java.lang.String);" +
-    "}"
+            "org.apache.commons.logging.Log getLog(java.lang.String);" +
+            "}"
 
     dontwarn "javafx.embed.**"
     dontwarn "com.sun.**"
@@ -254,6 +279,9 @@ task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jfxJar') {
     dontwarn "org.eclipse.aether.transport.**"
     dontwarn "org.osgi.service.**"
     dontwarn "org.slf4j.**"
+    dontwarn "ch.qos.logback.**"
+    dontwarn "org.codehaus.janino.**"
+    dontwarn "org.apache.log4j.**"
 }
 
 publishing {

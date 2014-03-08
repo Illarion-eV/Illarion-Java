@@ -31,6 +31,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * This is a special implementation for the panel that is initialized with a
@@ -84,7 +86,6 @@ public final class DirectoryEntrySwing extends JPanel implements SaveableEntry {
             public String getDescription() {
                 return null;
             }
-
         }
 
         /**
@@ -109,12 +110,12 @@ public final class DirectoryEntrySwing extends JPanel implements SaveableEntry {
          * handler properly.
          *
          * @param fileEntry the file entry that is the parent of this instance
-         * @param cfg       the configuration entry that is the data source
+         * @param cfg the configuration entry that is the data source
          * @param msgSource the message source used as source for all texts
-         *                  displayed in this dialog
+         * displayed in this dialog
          */
-        public ButtonListener(final DirectoryEntrySwing fileEntry,
-                              final DirectoryEntry cfg, final MessageSource msgSource) {
+        public ButtonListener(
+                final DirectoryEntrySwing fileEntry, final DirectoryEntry cfg, final MessageSource msgSource) {
             cfgEntry = cfg;
             parentEntry = fileEntry;
             messageSource = msgSource;
@@ -131,13 +132,12 @@ public final class DirectoryEntrySwing extends JPanel implements SaveableEntry {
             fileDiag.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             fileDiag.setCurrentDirectory(new File(cfgEntry.getDefaultDir()));
             fileDiag.setFileFilter(new Filter());
-            fileDiag.setDialogTitle(messageSource
-                    .getMessage("illarion.common.config.gui.directory.Title"));
+            fileDiag.setDialogTitle(messageSource.getMessage("illarion.common.config.gui.directory.Title"));
             fileDiag.setVisible(true);
 
             if (fileDiag.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                 final File file = fileDiag.getSelectedFile();
-                parentEntry.setCurrentValue(file);
+                parentEntry.setCurrentValue(file.toPath());
             }
         }
     }
@@ -150,7 +150,7 @@ public final class DirectoryEntrySwing extends JPanel implements SaveableEntry {
     /**
      * The current value of this number entry.
      */
-    private File currentValue;
+    private Path currentValue;
 
     /**
      * The text entry used to initialize this instance.
@@ -175,13 +175,13 @@ public final class DirectoryEntrySwing extends JPanel implements SaveableEntry {
      * that is used to setup this class.
      *
      * @param usedEntry the entry used to setup this class, the entry needs to
-     *                  pass the check with the static method
-     * @param msgs      the message source that is used to fetch the texts displayed
-     *                  in this entry
+     * pass the check with the static method
+     * @param msgs the message source that is used to fetch the texts displayed
+     * in this entry
      */
     @SuppressWarnings("nls")
-    public DirectoryEntrySwing(final ConfigEntry usedEntry,
-                               @Nonnull final MessageSource msgs) {
+    public DirectoryEntrySwing(
+            final ConfigEntry usedEntry, @Nonnull final MessageSource msgs) {
         super(new BorderLayout(10, 0));
         if (!isUsableEntry(usedEntry)) {
             throw new IllegalArgumentException("ConfigEntry type illegal.");
@@ -194,9 +194,7 @@ public final class DirectoryEntrySwing extends JPanel implements SaveableEntry {
         input.setColumns(20);
         add(input, BorderLayout.CENTER);
 
-        searchBtn =
-                new JButton(
-                        msgs.getMessage("illarion.common.config.gui.directory.Browse"));
+        searchBtn = new JButton(msgs.getMessage("illarion.common.config.gui.directory.Browse"));
         searchBtn.addActionListener(new ButtonListener(this, entry, msgs));
         add(searchBtn, BorderLayout.EAST);
 
@@ -226,11 +224,10 @@ public final class DirectoryEntrySwing extends JPanel implements SaveableEntry {
      *
      * @param newValue the new value that is set from now on
      */
-    void setCurrentValue(@Nonnull final File newValue) {
-        if (newValue.isDirectory()) {
+    void setCurrentValue(@Nonnull final Path newValue) {
+        if (Files.isDirectory(newValue)) {
             currentValue = newValue;
-            input.setText(newValue.getAbsolutePath());
+            input.setText(newValue.toAbsolutePath().toString());
         }
     }
-
 }

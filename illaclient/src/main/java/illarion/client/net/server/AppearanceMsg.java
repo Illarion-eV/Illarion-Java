@@ -29,7 +29,8 @@ import illarion.client.world.items.Inventory;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.CharacterId;
 import illarion.common.types.ItemId;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.graphic.Color;
 
 import javax.annotation.Nonnull;
@@ -47,7 +48,7 @@ public final class AppearanceMsg extends AbstractGuiMsg {
     /**
      * The instance of the logger that is used to write out the data.
      */
-    private static final Logger LOGGER = Logger.getLogger(AppearanceMsg.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AppearanceMsg.class);
 
     /**
      * Conversation value for the scale value received from the server and the value the client actually uses.
@@ -454,6 +455,8 @@ public final class AppearanceMsg extends AbstractGuiMsg {
                 return 107;
             case 108:
                 return 108;
+            case 111:
+                return 111;
             default:
                 return 1;
         }

@@ -27,7 +27,8 @@ import illarion.client.world.items.ContainerSlot;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,7 +39,7 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Vilarion &lt;vilarion@illarion.org&gt;
  */
-public class InteractiveMapTile implements Draggable, DropTarget {
+public class InteractiveMapTile implements Draggable, DropTarget, Usable {
     /**
      * The ID that is needed to tell the server that the operations refer to a
      * tile on the map.
@@ -82,7 +83,7 @@ public class InteractiveMapTile implements Draggable, DropTarget {
     /**
      * The logging instance that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(InteractiveMapTile.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InteractiveMapTile.class);
 
     /**
      * Drag something from a map tile to
@@ -157,6 +158,7 @@ public class InteractiveMapTile implements Draggable, DropTarget {
     /**
      * Perform a use operation on this tile.
      */
+    @Override
     public void use() {
         if (!isInUseRange()) {
             return;
@@ -193,12 +195,18 @@ public class InteractiveMapTile implements Draggable, DropTarget {
      *
      * @return {@code true} in case the character is allowed to use anything on this tile or the tile itself
      */
+    @Override
     public boolean isInUseRange() {
         @Nonnull final Location playerLocation = World.getPlayer().getLocation();
         if (playerLocation.getScZ() == getLocation().getScZ()) {
-            return playerLocation.getDistance(getLocation()) < 2;
+            return playerLocation.getDistance(getLocation()) <= getUseRange();
         }
         return false;
+    }
+
+    @Override
+    public int getUseRange() {
+        return 1;
     }
 
     /**

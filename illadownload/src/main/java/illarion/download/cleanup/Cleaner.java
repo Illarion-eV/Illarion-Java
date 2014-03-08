@@ -3,7 +3,8 @@ package illarion.download.cleanup;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.EnvironmentDetect;
 import illarion.common.util.ProgressMonitor;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -45,7 +46,7 @@ public class Cleaner {
     /**
      * The logger that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(Cleaner.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Cleaner.class);
 
     /**
      * The mode the cleaner is working with

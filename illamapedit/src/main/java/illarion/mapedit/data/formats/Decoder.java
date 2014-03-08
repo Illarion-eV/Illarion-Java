@@ -28,16 +28,7 @@ import javax.annotation.Nullable;
  */
 public interface Decoder {
 
-
-    void newMap(String name, String path);
-
-    void decodeAnnoLine(String line, int i) throws FormatCorruptedException;
-
-    void decodeItemLine(String line, int i) throws FormatCorruptedException;
-
-    void decodeTileLine(String line, int i) throws FormatCorruptedException;
-
-    void decodeWarpLine(String line, int i) throws FormatCorruptedException;
+    void decodeLine(DataType type, String line, int i) throws FormatCorruptedException;
 
     @Nullable
     Map getDecodedMap();

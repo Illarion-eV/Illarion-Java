@@ -21,7 +21,7 @@ package illarion.mapedit.tools.panel;
 import illarion.mapedit.data.MapItem;
 import illarion.mapedit.events.*;
 import illarion.mapedit.events.map.RepaintRequestEvent;
-import illarion.mapedit.tools.panel.components.ItemDataTable;
+import illarion.mapedit.tools.panel.components.ItemDataPanel;
 import illarion.mapedit.tools.panel.components.ItemInspectorList;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -42,14 +42,14 @@ public class DataPanel extends JPanel {
     @Nonnull
     private final ItemInspectorList itemPanel;
     @Nonnull
-    private final ItemDataTable dataPanel;
+    private final ItemDataPanel dataPanel;
 
     public DataPanel() {
         super(new GridLayout(2, 1));
         AnnotationProcessor.process(this);
 
         itemPanel = new ItemInspectorList();
-        dataPanel = new ItemDataTable();
+        dataPanel = new ItemDataPanel();
 
         add(itemPanel);
         add(dataPanel);
@@ -71,12 +71,6 @@ public class DataPanel extends JPanel {
         }
         itemPanel.setDataList(mapItems);
         dataPanel.clearDataList();
-    }
-
-    @EventSubscriber
-    public void onItemInspectorSelected(@Nonnull final ItemInspectorSelectedEvent e) {
-        dataPanel.setAnnotation(e.getItem().getAnnotation());
-        dataPanel.setDataList(e.getItem());
     }
 
     @EventSubscriber

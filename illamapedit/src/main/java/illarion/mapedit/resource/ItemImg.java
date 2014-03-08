@@ -38,6 +38,7 @@ public class ItemImg {
     private final int itemMode;
     @Nonnull
     private final Image[] imgs;
+    private final String itemName;
     private final int editorGroup;
 
     public int getItemId() {
@@ -50,6 +51,13 @@ public class ItemImg {
 
     public String getResourceName() {
         return resourceName;
+    }
+
+    public String getName() {
+        if (itemName == null) {
+            return getResourceName();
+        }
+        return itemName;
     }
 
     public int getOffsetX() {
@@ -82,13 +90,14 @@ public class ItemImg {
         return itemMode;
     }
 
-    public ItemImg(final int itemId, final String resourceName,
+    public ItemImg(final int itemId, final String resourceName, final String itemName,
                    final int editorGroup, final int offsetX, final int offsetY, final int frameCount,
                    final int animationSpeed, final int itemMode,
                    @Nonnull final Image[] imgs, final ItemInfo info) {
 
         this.itemId = itemId;
         this.resourceName = resourceName;
+        this.itemName = itemName;
         this.editorGroup = editorGroup;
         this.offsetX = offsetX;
         this.offsetY = offsetY;

@@ -23,18 +23,17 @@ import illarion.client.graphics.AnimatedMove;
 import illarion.client.graphics.MoveAnimation;
 import illarion.client.net.client.MoveCmd;
 import illarion.client.net.client.TurnCmd;
-import illarion.client.util.Path;
-import illarion.client.util.PathNode;
-import illarion.client.util.PathReceiver;
-import illarion.client.util.Pathfinder;
+import illarion.client.util.*;
+import illarion.client.world.interactive.Usable;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
 import illarion.common.util.FastMath;
 import illarion.common.util.Timer;
-import org.apache.log4j.Logger;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.illarion.engine.input.Input;
 import org.illarion.engine.input.Key;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -60,7 +59,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * The overlap time of a movement in milliseconds. If this time is left of the last move animation the next step is
      * already requested from the server in oder to get a smooth walking animation.
      */
-    private static final int MOVEMENT_OVERLAP_TIME = 250;
+    private static final int MOVEMENT_OVERLAP_TIME = 200;
 
     /**
      * The time when the updated position is reported to the rest of the client and the game map is updated regarding
@@ -89,7 +88,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      */
     @SuppressWarnings("UnusedDeclaration")
     @Nonnull
-    private static final Logger LOGGER = Logger.getLogger(PlayerMovement.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PlayerMovement.class);
 
     /**
      * The destination location of the automated walking.
@@ -199,6 +198,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
 
     @Nonnull
     private final Timer delayedMoveTrigger;
+    private Usable usableAction;
 
 
     /**
@@ -320,7 +320,9 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
 
     @Override
     public void handlePath(@Nonnull final Path path) {
+        Usable action = usableAction;
         cancelAutoWalk();
+        usableAction = action;
         autoPath = path;
         autoDestination = autoPath.getDestination();
         autoPath.nextStep();
@@ -339,6 +341,9 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         final PathNode node = autoPath.nextStep();
         // reached target
         if (node == null) {
+            if (usableAction != null && usableAction.isInUseRange()) {
+                usableAction.use();
+            }
             cancelAutoWalk();
             return;
         }
@@ -351,7 +356,11 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         if ((tile == null) || tile.isBlocked() || (loc.getDistance(stepDestination) > 1)) {
             // recalculate route if blocked or char is off route
             if (autoDestination != null) {
-                walkTo(autoDestination);
+                if (usableAction != null) {
+                    walkToAndUse(autoDestination, usableAction);
+                } else {
+                    walkTo(autoDestination);
+                }
             }
             return;
         }
@@ -367,6 +376,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     public void cancelAutoWalk() {
         autoPath = null;
         autoDestination = null;
+        usableAction = null;
     }
 
     /**
@@ -381,6 +391,40 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         final MapTile walkTarget = World.getMap().getMapAt(destination);
         if ((walkTarget != null) && (destination.getScZ() == loc.getScZ()) && !walkTarget.isObstacle()) {
             Pathfinder.getInstance().findPath(loc, destination, this);
+        }
+    }
+
+    /**
+     * Make the character automatically walking to a target location.
+     *
+     * @param destination the location the character shall walk to
+     * @param usable the usable the character should use
+     */
+    public void walkTo(@Nonnull final Location destination, @Nonnull final Usable usable) {
+        cancelAutoWalk();
+
+        final Location loc = parentPlayer.getLocation();
+        final MapTile walkTarget = World.getMap().getMapAt(destination);
+        if ((walkTarget != null) && (destination.getScZ() == loc.getScZ())) {
+            Pathfinder.getInstance().findPath(loc, destination, this, usable.getUseRange());
+        }
+    }
+
+    /**
+     * Make the character automatically walking to a target location and use the item
+     * at the destination.
+     *
+     * @param destination the location the character shall walk to
+     * @param usable the usable the character should use
+     */
+    public void walkToAndUse(@Nonnull final Location destination, @Nonnull final Usable usable) {
+        cancelAutoWalk();
+
+        usableAction = usable;
+        final Location loc = parentPlayer.getLocation();
+        final MapTile walkTarget = World.getMap().getMapAt(destination);
+        if ((walkTarget != null) && (destination.getScZ() == loc.getScZ())) {
+            Pathfinder.getInstance().findPath(loc, destination, this, usable.getUseRange());
         }
     }
 
@@ -412,7 +456,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
             discardCheck();
         } else {
             if ((lastMoveRequest == Location.DIR_ZERO) && (lastAllowedMove == Location.DIR_ZERO)) {
-                if (!moving || (moveAnimation.timeRemaining() <= MOVEMENT_OVERLAP_TIME)) {
+                if (!moving || (moveAnimation.timeRemaining() <= getMovementOverlapTime())) {
                     lastMoveRequest = direction;
                     timeOfDiscard = System.currentTimeMillis() + TIME_UNTIL_DISCARD;
                     if ((mode == CharMovementMode.Run) && runPathModification && allowRunPathModification) {
@@ -660,6 +704,10 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         }
     }
 
+    private long getMovementOverlapTime() {
+        return MOVEMENT_OVERLAP_TIME + ConnectionPerformanceClock.getMaxServerPing();
+    }
+
     /**
      * Set current location of the animation. This is useless in this class and this function is only implemented so
      * this class is a valid animation target.
@@ -672,8 +720,8 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     public void setPosition(final int posX, final int posY, final int posZ) {
         if (positionDirty && (moveAnimation.animationProgress() > POSITION_UPDATE_PROCESS)) {
             positionDirty = false;
-        } else if ((moveAnimation.timeRemaining() <= MOVEMENT_OVERLAP_TIME) && (lastAllowedMove == Location.DIR_ZERO)
-                && (lastMoveRequest == Location.DIR_ZERO)) {
+        } else if ((moveAnimation.timeRemaining() <= getMovementOverlapTime()) &&
+                (lastAllowedMove == Location.DIR_ZERO) && (lastMoveRequest == Location.DIR_ZERO)) {
             if (moveToDirectionActive) {
                 requestMove(getCurrentMoveToDirection(), moveToDirectionMode);
             } else if (walkTowards) {

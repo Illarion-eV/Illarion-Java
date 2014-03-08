@@ -36,7 +36,8 @@ import illarion.client.net.server.events.LoginFinishedEvent;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
 import illarion.common.types.Location;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.engine.GameContainer;
@@ -205,7 +206,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
      * The logging instance of this class.
      */
     @Nonnull
-    private static final Logger LOGGER = Logger.getLogger(QuestHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(QuestHandler.class);
 
     /**
      * The window that shows the quest log.

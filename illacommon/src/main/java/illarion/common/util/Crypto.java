@@ -18,7 +18,8 @@
  */
 package illarion.common.util;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,7 +42,7 @@ public final class Crypto {
     /**
      * The error and debug logger of the client.
      */
-    private static final Logger LOGGER = Logger.getLogger(Crypto.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Crypto.class);
 
     /**
      * The filename of the private key.

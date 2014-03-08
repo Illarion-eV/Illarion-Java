@@ -19,7 +19,8 @@
 package illarion.mapedit.gui;
 
 import illarion.mapedit.events.ToolSelectedEvent;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 
@@ -32,7 +33,7 @@ import java.awt.*;
  * @author Tim
  */
 public class ToolSettingsPanel extends JPanel {
-    public static final Logger LOGGER = Logger.getLogger(ToolSettingsPanel.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(ToolSettingsPanel.class);
     private static final int WIDTH = 200;
     @Nullable
     private JComponent lastChild;

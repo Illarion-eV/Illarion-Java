@@ -18,6 +18,8 @@
  */
 package illarion.client.util;
 
+import java.util.Arrays;
+
 /**
  * This class is used to measure the performance of the connection to the server.
  *
@@ -27,22 +29,31 @@ public class ConnectionPerformanceClock {
     /**
      * The last time the ping command was handed over to NetComm.
      */
-    private static long lastSendToNetComm = -1;
+    private static long lastSendToNetComm;
 
     /**
      * The last time the command was encoded to the network interface.
      */
-    private static long lastEncode = -1;
+    private static long lastEncode;
 
     /**
      * The last measured time the server took to respond to a command.
      */
-    private static long lastServerTime = -1;
+    private static long lastServerTime;
 
     /**
      * The last measured time the command required to pass though NetComm, the server and the publishing queue.
      */
-    private static long lastNetCommTime = -1;
+    private static long lastNetCommTime;
+
+    private static long lastServerTimes[] = new long[16];
+    private static long lastNetCommTimes[] = new long[16];
+    private static int serverTimesCursor;
+    private static int netCommTimesCursor;
+
+    static {
+        reset();
+    }
 
     public static boolean isReadyForNewPing() {
         if (lastSendToNetComm == -1) {
@@ -77,6 +88,8 @@ public class ConnectionPerformanceClock {
         lastEncode = -1;
         if (localLastEncode > -1) {
             lastServerTime = System.currentTimeMillis() - localLastEncode;
+            lastServerTimes[serverTimesCursor] = lastServerTime;
+            serverTimesCursor = (serverTimesCursor + 1) % lastServerTimes.length;
         }
     }
 
@@ -88,6 +101,8 @@ public class ConnectionPerformanceClock {
         lastSendToNetComm = -1;
         if (localLastSendToNetComm > -1) {
             lastNetCommTime = System.currentTimeMillis() - localLastSendToNetComm;
+            lastNetCommTimes[netCommTimesCursor] = lastServerTime;
+            netCommTimesCursor = (netCommTimesCursor + 1) % lastNetCommTimes.length;
         }
     }
 
@@ -99,6 +114,10 @@ public class ConnectionPerformanceClock {
         lastEncode = -1;
         lastServerTime = -1;
         lastNetCommTime = -1;
+        Arrays.fill(lastServerTimes, 0);
+        Arrays.fill(lastNetCommTimes, 0);
+        serverTimesCursor = 0;
+        netCommTimesCursor = 0;
     }
 
     /**
@@ -117,5 +136,15 @@ public class ConnectionPerformanceClock {
      */
     public static long getNetCommPing() {
         return lastNetCommTime;
+    }
+
+    public static long getMaxServerPing() {
+        long max = 0L;
+        for (long lastServerTime : lastServerTimes) {
+            if (lastServerTime > max) {
+                max = lastServerTime;
+            }
+        }
+        return max;
     }
 }

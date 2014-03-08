@@ -18,7 +18,8 @@
  */
 package illarion.common.util;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.*;
@@ -43,7 +44,7 @@ public class TableLoader {
     /**
      * The error and debug logger of the client.
      */
-    private static final Logger LOGGER = Logger.getLogger(TableLoader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TableLoader.class);
 
     /**
      * The delimiter that is used at this table.

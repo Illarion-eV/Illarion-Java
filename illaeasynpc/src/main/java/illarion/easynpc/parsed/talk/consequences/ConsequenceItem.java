@@ -27,7 +27,7 @@ import illarion.easynpc.writer.LuaWriter;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashMap;
+import java.util.Collections;
 
 /**
  * This class is used to store all required values for the item consequence.
@@ -51,8 +51,8 @@ public final class ConsequenceItem implements TalkConsequence {
      * The LUA code needed to be included for a create item consequence.
      */
     @SuppressWarnings("nls")
-    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.item(%2$s, %3$s, %4$s, %5$s));"
-            + LuaWriter.NL;
+    private static final String LUA_CODE =
+            "talkEntry:addConsequence(%1$s.item(%2$s, %3$s, %4$s, %5$s));" + LuaWriter.NL;
 
     /**
      * The LUA module needed for this consequence to work.
@@ -88,24 +88,24 @@ public final class ConsequenceItem implements TalkConsequence {
     /**
      * The constructor that allows setting the parameters of this item.
      *
-     * @param newItem    the item to create
-     * @param newValue   the amount to create
+     * @param newItem the item to create
+     * @param newValue the amount to create
      * @param newQuality the quality value of the item
      */
     public ConsequenceItem(final Items newItem, final AdvancedNumber newValue, final int newQuality) {
-        this(newItem, newValue, newQuality, new ParsedItemData(new HashMap<String, String>()));
+        this(newItem, newValue, newQuality, new ParsedItemData(Collections.<String, String>emptyMap()));
     }
 
     /**
      * The constructor that allows setting the parameters of this item.
      *
-     * @param newItem    the item to create
-     * @param newValue   the amount to create
+     * @param newItem the item to create
+     * @param newValue the amount to create
      * @param newQuality the quality value of the item
-     * @param newData    the data value of the item
+     * @param newData the data value of the item
      */
-    public ConsequenceItem(final Items newItem, final AdvancedNumber newValue, final int newQuality,
-                           final ParsedItemData newData) {
+    public ConsequenceItem(
+            final Items newItem, final AdvancedNumber newValue, final int newQuality, final ParsedItemData newData) {
         item = newItem;
         value = newValue;
         quality = newQuality;
@@ -128,10 +128,10 @@ public final class ConsequenceItem implements TalkConsequence {
     public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
         if (data.hasValues()) {
             target.write(String.format(EASY_CODE, Integer.toString(item.getItemId()), value.getEasyNPC(),
-                    Integer.toString(quality), data.getEasyNPC()));
+                                       Integer.toString(quality), data.getEasyNPC()));
         } else {
             target.write(String.format(EASY_CODE_NO_DATA, Integer.toString(item.getItemId()), value.getEasyNPC(),
-                    Integer.toString(quality)));
+                                       Integer.toString(quality)));
         }
     }
 
@@ -141,6 +141,6 @@ public final class ConsequenceItem implements TalkConsequence {
     @Override
     public void writeLua(@Nonnull final Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, Integer.toString(item.getItemId()), value.getLua(),
-                Integer.toString(quality), data.getLua()));
+                                   Integer.toString(quality), data.getLua()));
     }
 }

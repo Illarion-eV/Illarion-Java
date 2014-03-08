@@ -22,7 +22,8 @@ import illarion.client.IllaClient;
 import illarion.client.world.World;
 import illarion.common.data.SkillLoader;
 import illarion.common.util.ProgressMonitor;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.Engine;
 import org.illarion.engine.EngineException;
 
@@ -57,7 +58,7 @@ final class GameEnvironmentLoading implements LoadingTask {
      * The logger of this class.
      */
     @Nonnull
-    private final Logger logger = Logger.getLogger(GameEnvironmentLoading.class);
+    private final Logger logger = LoggerFactory.getLogger(GameEnvironmentLoading.class);
 
     /**
      * The constructor of this loading task.

@@ -21,7 +21,8 @@ package org.illarion.engine.graphic;
 import illarion.common.types.Location;
 import illarion.common.util.Stoppable;
 import illarion.common.util.StoppableStorage;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public final class LightTracer extends Thread implements Stoppable {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(LightTracer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LightTracer.class);
 
     /**
      * The storage of the pre-calculated rays.

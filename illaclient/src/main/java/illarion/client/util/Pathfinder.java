@@ -85,6 +85,11 @@ public final class Pathfinder extends Thread implements Stoppable {
     private final Location startLoc;
 
     /**
+     * The range to destination that it can be used at.
+     */
+    private int useRange;
+
+    /**
      * Private constructor.
      */
     @SuppressWarnings("nls")
@@ -137,10 +142,24 @@ public final class Pathfinder extends Thread implements Stoppable {
             @Nonnull final Location pathStart,
             @Nonnull final Location pathDest,
             final PathReceiver pathRec) {
+         findPath(pathStart, pathDest, pathRec, 0);
+    }
+
+    /**
+     * Search a path between two locations.
+     *
+     * @param pathStart the location where the path starts
+     * @param pathDest the location where the path ends
+     * @param pathRec the class that receives the resulting path
+     * @param range the range the destination can be used at
+     */
+    public void findPath(@Nonnull final Location pathStart, @Nonnull final Location pathDest,
+                         final PathReceiver pathRec, final int range) {
         startLoc.set(pathStart);
         endLoc.set(pathDest);
         receiver = pathRec;
         restart = true;
+        useRange = range;
         synchronized (this) {
             notify();
         }
@@ -192,7 +211,7 @@ public final class Pathfinder extends Thread implements Stoppable {
                 maxDepth = 0;
                 outputPath = false;
 
-                if (PathNode.getNode(searchEndLoc).isBlocked()) {
+                if (useRange == 0 && PathNode.getNode(searchEndLoc).isBlocked()) {
                     searching = false;
                     continue;
                 }
@@ -230,8 +249,12 @@ public final class Pathfinder extends Thread implements Stoppable {
             maxDepth = currentNode.getDepth();
             final Location currentLoc = currentNode.getLocation();
 
-            if (currentNode.getLocation().equals(searchEndLoc)) {
+            if (currentLoc.equals(searchEndLoc)) {
                 outputPath = true;
+                continue;
+            } else if (useRange > 0 && currentLoc.getDistance(searchEndLoc) <= useRange){
+                outputPath = true;
+                searchEndLoc.set(currentLoc);
                 continue;
             }
 

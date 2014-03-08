@@ -2,7 +2,6 @@ package illarion.download.maven;
 
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.ProgressMonitor;
-import org.apache.log4j.Logger;
 import org.apache.maven.model.building.DefaultModelBuilderFactory;
 import org.apache.maven.model.building.ModelBuilder;
 import org.apache.maven.repository.internal.*;
@@ -13,6 +12,7 @@ import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.collection.CollectRequest;
 import org.eclipse.aether.collection.CollectResult;
 import org.eclipse.aether.collection.DependencyCollectionException;
+import org.eclipse.aether.collection.DependencySelector;
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyFilter;
@@ -29,10 +29,14 @@ import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
 import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.filter.DependencyFilterUtils;
+import org.eclipse.aether.util.graph.selector.AndDependencySelector;
+import org.eclipse.aether.util.graph.selector.OptionalDependencySelector;
 import org.eclipse.aether.util.graph.selector.ScopeDependencySelector;
 import org.eclipse.aether.util.graph.visitor.FilteringDependencyVisitor;
 import org.eclipse.aether.util.graph.visitor.TreeDependencyVisitor;
 import org.eclipse.aether.version.Version;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -81,7 +85,7 @@ public class MavenDownloader {
      * The logger that takes care for the logging output of this class.
      */
     @Nonnull
-    private static final Logger LOGGER = Logger.getLogger(MavenDownloader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MavenDownloader.class);
 
     /**
      * Create a new instance of the downloader along with the information if its supposed to download snapshot
@@ -177,9 +181,10 @@ public class MavenDownloader {
         final Dependency dependency = new Dependency(artifact, RUNTIME, false);
 
         final List<String> usedScopes = Arrays.asList(COMPILE, RUNTIME, SYSTEM);
+        final DependencySelector selector = new AndDependencySelector(new OptionalDependencySelector(),
+                                                                      new ScopeDependencySelector(usedScopes, null));
         session.setDependencySelector(
-                new ScopeDependencySelector(usedScopes, null)
-                        .deriveChildSelector(new DefaultDependencyCollectionContext(session, artifact, dependency)));
+                selector.deriveChildSelector(new DefaultDependencyCollectionContext(session, artifact, dependency)));
 
         final DependencyFilter filter = DependencyFilterUtils.classpathFilter(RUNTIME, COMPILE);
 
@@ -226,7 +231,7 @@ public class MavenDownloader {
             }
             return result;
         } catch (@Nonnull DependencyCollectionException | InterruptedException | ExecutionException e) {
-            LOGGER.error("Failed to download.");
+            LOGGER.error("Failed to download.", e);
         }
         if (callback != null) {
             callback.resolvingDone(null);

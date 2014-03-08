@@ -117,13 +117,13 @@ public final class EasyNpcTokenMaker extends AbstractTokenMaker {
 
                             final int indexOf = operators.indexOf(c, 0);
                             if (indexOf > -1) {
-                                addToken(text, currentTokenStart, i, Token.OPERATOR, newStartOffset + currentTokenStart);
+                                addToken(text, currentTokenStart, i, Token.OPERATOR,
+                                         newStartOffset + currentTokenStart);
                                 currentTokenType = Token.NULL;
                                 break;
                             }
                             currentTokenType = Token.IDENTIFIER;
                             break;
-
                     }
                     break;
 
@@ -131,13 +131,15 @@ public final class EasyNpcTokenMaker extends AbstractTokenMaker {
                     switch (c) {
                         case ' ':
                         case '\t':
-                            addToken(text, currentTokenStart, i - 1, Token.OPERATOR, newStartOffset + currentTokenStart);
+                            addToken(text, currentTokenStart, i - 1, Token.OPERATOR,
+                                     newStartOffset + currentTokenStart);
                             currentTokenStart = i;
                             currentTokenType = Token.WHITESPACE;
                             break;
 
                         case '"':
-                            addToken(text, currentTokenStart, i - 1, Token.OPERATOR, newStartOffset + currentTokenStart);
+                            addToken(text, currentTokenStart, i - 1, Token.OPERATOR,
+                                     newStartOffset + currentTokenStart);
                             currentTokenStart = i;
                             currentTokenType = Token.ERROR_STRING_DOUBLE;
                             break;
@@ -147,14 +149,16 @@ public final class EasyNpcTokenMaker extends AbstractTokenMaker {
                         case ')':
                         case '[':
                         case ']':
-                            addToken(text, currentTokenStart, i - 1, Token.OPERATOR, newStartOffset + currentTokenStart);
+                            addToken(text, currentTokenStart, i - 1, Token.OPERATOR,
+                                     newStartOffset + currentTokenStart);
                             addToken(text, i - 1, i, Token.SEPARATOR, newStartOffset + i);
                             currentTokenType = Token.NULL;
                             break;
 
                         // The "separators2".
                         case ',':
-                            addToken(text, currentTokenStart, i - 1, Token.OPERATOR, newStartOffset + currentTokenStart);
+                            addToken(text, currentTokenStart, i - 1, Token.OPERATOR,
+                                     newStartOffset + currentTokenStart);
                             addToken(text, i - 1, i, Token.IDENTIFIER, newStartOffset + i);
                             currentTokenType = Token.NULL;
                             break;
@@ -168,7 +172,8 @@ public final class EasyNpcTokenMaker extends AbstractTokenMaker {
                             break;
 
                         default:
-                            addToken(text, currentTokenStart, i - 1, Token.OPERATOR, newStartOffset + currentTokenStart);
+                            addToken(text, currentTokenStart, i - 1, Token.OPERATOR,
+                                     newStartOffset + currentTokenStart);
                             currentTokenStart = i;
 
                             // Just to speed things up a tad, as this will usually be the case (if spaces above failed).
@@ -179,13 +184,13 @@ public final class EasyNpcTokenMaker extends AbstractTokenMaker {
 
                             final int indexOf = operators.indexOf(c, 0);
                             if (indexOf > -1) {
-                                addToken(text, currentTokenStart, i, Token.OPERATOR, newStartOffset + currentTokenStart);
+                                addToken(text, currentTokenStart, i, Token.OPERATOR,
+                                         newStartOffset + currentTokenStart);
                                 currentTokenType = Token.NULL;
                                 break;
                             }
                             currentTokenType = Token.IDENTIFIER;
                             break;
-
                     }
                     break;
 
@@ -196,7 +201,8 @@ public final class EasyNpcTokenMaker extends AbstractTokenMaker {
                             break;
 
                         case '"':
-                            addToken(text, currentTokenStart, i - 1, Token.WHITESPACE, newStartOffset + currentTokenStart);
+                            addToken(text, currentTokenStart, i - 1, Token.WHITESPACE,
+                                     newStartOffset + currentTokenStart);
                             currentTokenStart = i;
                             currentTokenType = Token.ERROR_STRING_DOUBLE;
                             break;
@@ -206,20 +212,23 @@ public final class EasyNpcTokenMaker extends AbstractTokenMaker {
                         case ')':
                         case '[':
                         case ']':
-                            addToken(text, currentTokenStart, i - 1, Token.WHITESPACE, newStartOffset + currentTokenStart);
+                            addToken(text, currentTokenStart, i - 1, Token.WHITESPACE,
+                                     newStartOffset + currentTokenStart);
                             addToken(text, i, i, Token.SEPARATOR, newStartOffset + i);
                             currentTokenType = Token.NULL;
                             break;
 
                         // The "separators2".
                         case ',':
-                            addToken(text, currentTokenStart, i - 1, Token.WHITESPACE, newStartOffset + currentTokenStart);
+                            addToken(text, currentTokenStart, i - 1, Token.WHITESPACE,
+                                     newStartOffset + currentTokenStart);
                             addToken(text, i, i, Token.SEPARATOR, newStartOffset + i);
                             currentTokenType = Token.NULL;
                             break;
 
                         default:    // Add the whitespace token and start anew.
-                            addToken(text, currentTokenStart, i - 1, Token.WHITESPACE, newStartOffset + currentTokenStart);
+                            addToken(text, currentTokenStart, i - 1, Token.WHITESPACE,
+                                     newStartOffset + currentTokenStart);
                             currentTokenStart = i;
 
                             // Just to speed things up a tad, as this will usually be the case (if spaces above failed).
@@ -230,12 +239,12 @@ public final class EasyNpcTokenMaker extends AbstractTokenMaker {
 
                             final int indexOf = operators.indexOf(c, 0);
                             if (indexOf > -1) {
-                                addToken(text, currentTokenStart, i, Token.OPERATOR, newStartOffset + currentTokenStart);
+                                addToken(text, currentTokenStart, i, Token.OPERATOR,
+                                         newStartOffset + currentTokenStart);
                                 currentTokenType = Token.NULL;
                                 break;
                             }
                             currentTokenType = Token.IDENTIFIER;
-
                     } // End of switch (c).
 
                     break;
@@ -256,19 +265,22 @@ public final class EasyNpcTokenMaker extends AbstractTokenMaker {
                                 currentTokenType = Token.COMMENT_EOL;
                                 break;
                             }
-                            addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
+                            addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER,
+                                     newStartOffset + currentTokenStart);
                             currentTokenStart = i;
                             currentTokenType = Token.WHITESPACE;
                             break;
 
                         case '"':
-                            addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
+                            addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER,
+                                     newStartOffset + currentTokenStart);
                             currentTokenStart = i;
                             currentTokenType = Token.ERROR_STRING_DOUBLE;
                             break;
 
                         case '%':
-                            addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
+                            addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER,
+                                     newStartOffset + currentTokenStart);
                             currentTokenStart = i;
                             currentTokenType = Token.VARIABLE;
                             break;
@@ -278,14 +290,16 @@ public final class EasyNpcTokenMaker extends AbstractTokenMaker {
                         case ')':
                         case ']':
                         case '[':
-                            addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
+                            addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER,
+                                     newStartOffset + currentTokenStart);
                             addToken(text, i, i, Token.SEPARATOR, newStartOffset + i);
                             currentTokenType = Token.NULL;
                             break;
 
                         // The "separators2".
                         case ',':
-                            addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
+                            addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER,
+                                     newStartOffset + currentTokenStart);
                             addToken(text, i, i, Token.IDENTIFIER, newStartOffset + i);
                             currentTokenType = Token.NULL;
                             break;
@@ -299,7 +313,8 @@ public final class EasyNpcTokenMaker extends AbstractTokenMaker {
 
                             final int indexOf = operators.indexOf(c);
                             if (indexOf > -1) {
-                                addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER, newStartOffset + currentTokenStart);
+                                addToken(text, currentTokenStart, i - 1, Token.IDENTIFIER,
+                                         newStartOffset + currentTokenStart);
                                 addToken(text, i, i, Token.OPERATOR, newStartOffset + i);
                                 currentTokenType = Token.NULL;
                                 break;
@@ -312,16 +327,34 @@ public final class EasyNpcTokenMaker extends AbstractTokenMaker {
                     break;
 
                 case Token.COMMENT_EOL:
-                    i = end - 1;
-                    addToken(text, currentTokenStart, i, Token.COMMENT_EOL, newStartOffset + currentTokenStart);
-                    // We need to set token type to null so at the bottom we don't add one more token.
-                    currentTokenType = Token.NULL;
+                    if (c == '[') {
+                        if (((i - currentTokenStart) == 3) &&
+                                (array[i - 1] == '[') &&
+                                (array[i - 2] == '-') &&
+                                (array[i - 3] == '-')) {
+                            currentTokenType = Token.COMMENT_MULTILINE;
+                        }
+                    } else {
+                        i = end - 1;
+                        addToken(text, currentTokenStart, i, Token.COMMENT_EOL, newStartOffset + currentTokenStart);
+                        // We need to set token type to null so at the bottom we don't add one more token.
+                        currentTokenType = Token.NULL;
+                    }
                     break;
-
+                case Token.COMMENT_MULTILINE:
+                    if (c == ']') {
+                        if (((i - currentTokenStart) > 0) && (array[i - 1] == ']')) {
+                            addToken(text, currentTokenStart, i, Token.COMMENT_MULTILINE,
+                                     newStartOffset + currentTokenStart);
+                            currentTokenType = Token.NULL;
+                        }
+                    }
+                    break;
                 case Token.ERROR_STRING_DOUBLE:
 
                     if ((c == '"') && (array[i - 1] != '\\')) {
-                        addToken(text, currentTokenStart, i, Token.LITERAL_STRING_DOUBLE_QUOTE, newStartOffset + currentTokenStart);
+                        addToken(text, currentTokenStart, i, Token.LITERAL_STRING_DOUBLE_QUOTE,
+                                 newStartOffset + currentTokenStart);
                         currentTokenStart = i + 1;
                         currentTokenType = Token.NULL;
                     }
@@ -329,10 +362,10 @@ public final class EasyNpcTokenMaker extends AbstractTokenMaker {
 
                     break;
             } // End of switch (currentTokenType).
-
         } // End of for (int i=offset; i<end; i++).
 
         // Deal with the (possibly there) last token.
+
         if (currentTokenType != Token.NULL) {
 
             // Check for REM comments.
@@ -342,22 +375,22 @@ public final class EasyNpcTokenMaker extends AbstractTokenMaker {
 
             addToken(text, currentTokenStart, end - 1, currentTokenType, newStartOffset + currentTokenStart);
         }
-
-        addNullToken();
+        if (currentTokenType != Token.COMMENT_MULTILINE) {
+            addNullToken();
+        }
 
         // Return the first token in our linked list.
         return firstToken;
     }
 
-    public void addToken(final Segment segment, final int start, final int end, final int tokenType,
-                         final int startOffset) {
+    public void addToken(
+            final Segment segment, final int start, final int end, final int tokenType, final int startOffset) {
         int newTokenType = tokenType;
         if (tokenType == Token.IDENTIFIER) {
             final int value = wordsToHighlight.get(segment, start, end);
             if (value != -1) {
                 newTokenType = value;
             }
-
         }
 
         super.addToken(segment, start, end, newTokenType, startOffset);

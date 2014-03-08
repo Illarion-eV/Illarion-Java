@@ -33,7 +33,8 @@ import illarion.client.IllaClient;
 import illarion.client.Login;
 import illarion.client.Servers;
 import illarion.client.util.Lang;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.engine.Engine;
 
 import javax.annotation.Nonnull;
@@ -119,7 +120,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     /**
      * This is the logging instance for this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(LoginScreenController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoginScreenController.class);
 
     public LoginScreenController(@Nonnull final Game game, @Nonnull final Engine engine) {
         this.game = game;

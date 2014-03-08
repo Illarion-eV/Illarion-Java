@@ -38,6 +38,7 @@ public class ItemTreeCellRenderer extends JPanel implements TreeCellRenderer {
     private final JLabel label = new JLabel();
     private Image image;
     private String name;
+    private String id;
     private boolean selected;
 
     private Dimension size;
@@ -70,8 +71,9 @@ public class ItemTreeCellRenderer extends JPanel implements TreeCellRenderer {
         selected = isSelected;
 
         image = value.getImgs()[0];
-        name = value.getResourceName();
-        size = new Dimension(MAX_WIDTH * 2, MAX_HEIGHT);
+        name = value.getName();
+        id = String.format("%d", value.getItemId());
+        size = new Dimension((MAX_WIDTH * 2) - 15, MAX_HEIGHT);
         return this;
     }
 
@@ -92,17 +94,17 @@ public class ItemTreeCellRenderer extends JPanel implements TreeCellRenderer {
         final int newWidth;
         final int newHeight;
 
-        if (w > h) {
+        if (w > (h)) {
             newWidth = Math.min(w, MAX_WIDTH);
             newHeight = (int) (((float) h / (float) w) * (float) newWidth);
         } else {
-            newHeight = Math.min(h, MAX_HEIGHT);
+            newHeight = Math.min(h, MAX_HEIGHT-15);
             newWidth = (int) (((float) w / (float) h) * (float) newHeight);
         }
 
         g.setFont(FONT);
-        g.drawImage(image, 0, 0, newWidth, newHeight, null);
-        g.drawString(name, MAX_WIDTH - 5, 10);
-
+        g.drawImage(image, 50, 20, newWidth, newHeight, null);
+        g.drawString(name, 0, 15);
+        g.drawString(id, 0, 30);
     }
 }

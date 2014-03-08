@@ -18,22 +18,22 @@
  */
 package illarion.mapedit.events.menu;
 
-import javax.annotation.Nullable;
-import java.io.File;
+import javax.annotation.Nonnull;
+import java.nio.file.Path;
 
 /**
  * @author Fredrik K
  */
 public class SetFolderEvent {
-    @Nullable
-    private File file;
+    @Nonnull
+    private Path file;
 
-    public SetFolderEvent(@Nullable final File file) {
+    public SetFolderEvent(@Nonnull final Path file) {
         this.file = file;
     }
 
-    @Nullable
-    public File getFile() {
+    @Nonnull
+    public Path getFile() {
         return file;
     }
 }

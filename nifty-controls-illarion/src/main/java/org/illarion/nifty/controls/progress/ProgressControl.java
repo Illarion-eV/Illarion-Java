@@ -29,7 +29,8 @@ import de.lessvoid.nifty.render.image.ImageMode;
 import de.lessvoid.nifty.render.image.ImageModeFactory;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.illarion.nifty.controls.Progress;
 
 import javax.annotation.Nonnull;
@@ -42,7 +43,7 @@ import javax.annotation.Nullable;
  * @deprecated Use {@link Progress}
  */
 public final class ProgressControl extends AbstractController implements Progress {
-    private static final Logger LOGGER = Logger.getLogger(ProgressControl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProgressControl.class);
     private int minImageWidth;
     private int maxWidth;
     @Nullable

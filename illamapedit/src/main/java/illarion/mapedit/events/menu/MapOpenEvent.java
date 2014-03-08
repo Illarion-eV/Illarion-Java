@@ -19,6 +19,7 @@
 package illarion.mapedit.events.menu;
 
 import javax.annotation.Nonnull;
+import java.nio.file.Path;
 
 /**
  * @author Tim
@@ -26,16 +27,16 @@ import javax.annotation.Nonnull;
 public class MapOpenEvent {
 
     @Nonnull
-    private final String path;
+    private final Path path;
     private final String name;
 
-    public MapOpenEvent(@Nonnull final String path, final String name) {
+    public MapOpenEvent(@Nonnull final Path path, final String name) {
         this.path = path;
         this.name = name;
     }
 
     @Nonnull
-    public String getPath() {
+    public Path getPath() {
         return path;
     }
 
