@@ -19,10 +19,13 @@
 apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'maven-publish'
-//apply plugin: 'launch4j'
-apply plugin: 'macAppBundle'
 apply from: '../javafx.plugin'
 apply from: '../versions.gradle'
+
+if (project.hasProperty('targetDistDir')) {
+    //apply plugin: 'launch4j'
+    apply plugin: 'macAppBundle'
+}
 
 archivesBaseName = 'illarion_download'
 mainClassName = 'illarion.download.gui.GuiApplication'
