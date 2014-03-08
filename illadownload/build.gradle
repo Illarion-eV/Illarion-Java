@@ -23,8 +23,13 @@ apply from: '../javafx.plugin'
 apply from: '../versions.gradle'
 
 if (project.hasProperty('targetDistDir')) {
+    // Launch4j requires a native installment. Has to remain disabled until the server contains this
     //apply plugin: 'launch4j'
-    apply plugin: 'macAppBundle'
+
+    // The MacOS bundle plugin is broken to the point where its not usable at all. Its impossible to set the input
+    // files as this plugin receives the from the jar task directly. And those requirements are resolved wrong due
+    // the usage of JavaFX.
+    //apply plugin: 'macAppBundle'
 }
 
 archivesBaseName = 'illarion_download'
@@ -71,11 +76,11 @@ task publishDownloaderBundle() {}
 if (project.hasProperty('targetDistDir')) {
     publish.dependsOn {
         publishDownloader
-        //launch4j
-        createAppZip
     }
     publishDownloaderBundle.dependsOn {
         publishBundle
+        //launch4j
+        //publishMacBundle
     }
 }
 
@@ -139,13 +144,16 @@ if (project.hasProperty('targetDistDir')) {
         outfile = new File(project.targetDistDir, "illarion.exe").absolutePath
         copyright = '2014 - Illarion e.V'
     }*/
-    macAppBundle {
+    /*macAppBundle {
         mainClassName = project.mainClassName
         icon = 'icons/mac.icns'
-        bundleJRE = true
+        bundleJRE = false
         javaProperties.put("apple.laf.useScreenMenuBar", "true")
         jvmVersion = '1.7+'
-    }
+        appName = "Illarion"
+        dmgOutputDir = "macApp"
+        dmgName = "illarion.app.zip"
+    }*/
 
     task clearDistDir(type: Delete) {
         delete project.distsDir
@@ -163,6 +171,10 @@ if (project.hasProperty('targetDistDir')) {
         from new File(project.buildDir, "downloader.jar").absolutePath
         into file(project.targetDistDir)
     }
+    /*task publishMacBundle(type: Copy, dependsOn: 'createAppZip') {
+        from new File(project.buildDir, "macApp/illarion.app.zip").absolutePath
+        into file(project.targetDistDir)
+    }*/
 }
 
 task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jfxJar') {
