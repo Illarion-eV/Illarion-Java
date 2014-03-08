@@ -1,4 +1,4 @@
 ext {
     slf4jVersion = '1.7.6'
-    illarionResourcesVersion = '2.1.14.1'
+    illarionResourcesVersion = '2.1.14.2'
 }
