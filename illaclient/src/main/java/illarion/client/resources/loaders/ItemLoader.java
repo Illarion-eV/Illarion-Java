@@ -23,13 +23,13 @@ import illarion.client.resources.data.ItemTemplate;
 import illarion.common.graphics.ItemInfo;
 import illarion.common.util.TableLoaderItems;
 import illarion.common.util.TableLoaderSink;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.illarion.engine.assets.Assets;
 import org.illarion.engine.assets.SpriteFactory;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Sprite;
 import org.illarion.engine.graphic.Texture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
@@ -144,8 +144,14 @@ public final class ItemLoader extends AbstractResourceLoader<ItemTemplate> imple
             speed = 0;
         }
 
-        final Sprite itemSprite = assets.getSpriteFactory().createSprite(getTextures(assets.getTextureManager(),
-                ITEM_PATH, name, frames), offsetX, offsetY, SpriteFactory.CENTER, SpriteFactory.BOTTOM, false);
+        final Sprite itemSprite;
+        try {
+            itemSprite = assets.getSpriteFactory()
+                    .createSprite(getTextures(assets.getTextureManager(), ITEM_PATH, name, frames), offsetX, offsetY, SpriteFactory.CENTER, SpriteFactory.BOTTOM, false);
+        } catch (@Nonnull final IllegalArgumentException e) {
+            LOGGER.error("Failed to fetch graphics for item {} (ID: {}) because: {}", name, itemID, e.getMessage());
+            return true;
+        }
 
         final Texture guiTexture = assets.getTextureManager().getTexture(GUI_PATH, "items/" + name);
         final Texture usedGuiTexture;
@@ -162,7 +168,7 @@ public final class ItemLoader extends AbstractResourceLoader<ItemTemplate> imple
         try {
             getTargetFactory().storeResource(template);
         } catch (@Nonnull final IllegalStateException e) {
-            LOGGER.error("Failed to register item " + name + "in factory due" + " a dublicated ID: " + itemID);
+            LOGGER.error("Failed to register item {} in factory due a duplicated ID: {}", name, itemID);
         }
 
         return true;
