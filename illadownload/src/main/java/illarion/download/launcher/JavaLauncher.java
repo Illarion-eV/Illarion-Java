@@ -26,9 +26,12 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The use of this class is to start a independent JVM that runs the chosen application. This class requires calls
@@ -90,43 +93,73 @@ public final class JavaLauncher {
      */
     @SuppressWarnings("nls")
     public boolean launch(@Nonnull final Collection<File> classpath, @Nonnull final String startupClass) {
-
         final String classPathString = buildClassPathString(classpath);
 
-        final StringBuilder builder = new StringBuilder();
-        final List<String> callList = new ArrayList<>();
-
-        builder.append(System.getProperty("java.home"));
-        builder.append(File.separatorChar).append("bin");
-        builder.append(File.separatorChar).append("java");
-        callList.add(escapePath(builder.toString()));
-
-        callList.add("-classpath");
-        callList.add(classPathString);
-
-        if (snapshot) {
-            callList.add("-Dillarion.server=devserver");
+        Iterable<Path> executablePaths;
+        if (OSDetection.isMacOSX()) {
+            executablePaths = new MacOsXJavaExecutableIterable();
+        } else {
+            executablePaths = new JavaExecutableIterable();
         }
 
-        callList.add(startupClass);
-
-        printCallList(callList);
-
-        if (!launchCallList(callList)) {
-            callList.set(0, "java");
-            final String firstError = errorData;
-
-            printCallList(callList);
-            if (!launchCallList(callList)) {
-                LOGGER.error("Error while launching application\n" + firstError);
-                if (!firstError.equals(errorData)) {
-                    LOGGER.error("Error while launching application\n" + errorData);
-                    errorData = firstError + '\n' + errorData;
+        for (Path executable : executablePaths) {
+            if (isJavaExecutableWorking(executable)) {
+                final List<String> callList = new ArrayList<>();
+                callList.add(escapePath(executable.toString()));
+                callList.add("-classpath");
+                callList.add(classPathString);
+                if (snapshot) {
+                    callList.add("-Dillarion.server=devserver");
                 }
-                return false;
+                callList.add(startupClass);
+                printCallList(callList);
+                if (launchCallList(callList)) {
+                    return true;
+                } else {
+                    LOGGER.error("Error while launching application: {}" + errorData);
+                }
             }
         }
-        return true;
+        return false;
+    }
+
+    /**
+     * This function is used to check if the java executable has the proper version.
+     *
+     * @param executable the path to the executable
+     * @return {@code true} in case java meets the required specifications
+     */
+    private boolean isJavaExecutableWorking(@Nonnull final Path executable) {
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder(executable.toString(), "-version");
+            processBuilder.redirectErrorStream(true);
+            Process process = processBuilder.start();
+            process.getOutputStream().close();
+
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (line.startsWith("java version")) {
+                        Matcher matcher = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)_(\\d+)").matcher(line);
+                        if (matcher.find()) {
+                            int mainVersion = Integer.parseInt(matcher.group(1));
+                            int majorVersion = Integer.parseInt(matcher.group(2));
+                            int minorVersion = Integer.parseInt(matcher.group(3));
+                            int buildNumber = Integer.parseInt(matcher.group(4));
+
+                            LOGGER.info("Matched Java version to {}.{}.{}_b{}", mainVersion, majorVersion, minorVersion,
+                                        buildNumber);
+
+                            return mainVersion >= 1 && majorVersion >= 7 && buildNumber >= 21;
+                        }
+                    }
+                }
+            }
+            process.destroy();
+        } catch (IOException e) {
+            LOGGER.error("Launching {} failed.", executable);
+        }
+        return false;
     }
 
     /**
