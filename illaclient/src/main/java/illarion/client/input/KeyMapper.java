@@ -226,6 +226,9 @@ public final class KeyMapper {
             case J:
                 World.getGameGui().getQuestGui().toggleQuestLog();
                 break;
+            case F1:
+                World.getGameGui().getDocumentationGui().toggleDocumentation();
+                break;
             case P:
                 World.getNet().sendCommand(new PickUpAllItemsCmd());
                 break;
