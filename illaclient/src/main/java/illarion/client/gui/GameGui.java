@@ -119,6 +119,14 @@ public interface GameGui {
     QuestGui getQuestGui();
 
     /**
+     * Get the GUI that control the display of the documentation in the GUI.
+     *
+     * @return the documentation GUI controller
+     */
+    @Nonnull
+    DocumentationGui getDocumentationGui();
+
+    /**
      * Get the main screen controller of the GUI.
      *
      * @return the GUI screen controller
