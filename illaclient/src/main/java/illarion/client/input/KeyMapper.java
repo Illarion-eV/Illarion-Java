@@ -193,11 +193,11 @@ public final class KeyMapper {
             case LeftAlt:
                 final PlayerMovement movement = World.getPlayer().getMovementHandler();
                 if (input.isAnyKeyDown(Key.LeftCtrl, Key.RightCtrl)) {
-                    movement.setMovingToDirectionMode(CharMovementMode.Run);
+                    movement.setMovingToDirectionMode(CharMovementMode.Walk);
                 } else if (input.isKeyDown(Key.LeftAlt)) {
                     movement.setMovingToDirectionMode(CharMovementMode.None);
                 } else {
-                    movement.setMovingToDirectionMode(CharMovementMode.Walk);
+                    movement.setMovingToDirectionMode(CharMovementMode.Run);
                 }
                 break;
         }
@@ -345,11 +345,11 @@ public final class KeyMapper {
             case LeftAlt:
                 final PlayerMovement movement = World.getPlayer().getMovementHandler();
                 if (input.isAnyKeyDown(Key.LeftCtrl, Key.RightCtrl)) {
-                    movement.setMovingToDirectionMode(CharMovementMode.Run);
+                    movement.setMovingToDirectionMode(CharMovementMode.Walk);
                 } else if (input.isKeyDown(Key.LeftAlt)) {
                     movement.setMovingToDirectionMode(CharMovementMode.None);
                 } else {
-                    movement.setMovingToDirectionMode(CharMovementMode.Walk);
+                    movement.setMovingToDirectionMode(CharMovementMode.Run);
                 }
                 break;
 
