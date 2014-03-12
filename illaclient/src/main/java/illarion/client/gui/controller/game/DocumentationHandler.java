@@ -144,6 +144,7 @@ public class DocumentationHandler implements DocumentationGui, ScreenController,
             groupPanel.childLayoutVertical();
             groupPanel.height(SizeValue.def());
             groupPanel.marginBottom("10px");
+            groupPanel.marginLeft("5px");
             groupPanel.alignCenter();
             groupPanel.valignTop();
 
@@ -161,23 +162,28 @@ public class DocumentationHandler implements DocumentationGui, ScreenController,
                 final PanelBuilder entryPanel = new PanelBuilder(entryId);
                 entryPanel.childLayoutCenter();
                 entryPanel.width(content.getConstraintWidth().toString());
+                entryPanel.marginBottom("5px");
 
                 final LabelBuilder entryKey = new LabelBuilder(entryId + "#key");
                 entryKey.label(child.getTitle());
                 entryKey.font("textFont");
                 entryKey.width("40%");
-                entryKey.height("24px");
+                entryKey.height(SizeValue.def());
                 entryKey.alignLeft();
                 entryKey.textHAlignLeft();
+                entryKey.wrap(true);
+                entryKey.valignTop();
                 entryPanel.control(entryKey);
 
                 final LabelBuilder entryText = new LabelBuilder(entryId + "#text");
                 entryText.label(child.getDescription());
                 entryText.width("60%");
                 entryText.font("textFont");
-                entryText.height("24px");
+                entryText.height(SizeValue.def());
+                entryText.wrap(true);
                 entryText.alignRight();
                 entryText.textHAlignLeft();
+                entryText.valignTop();
                 entryPanel.control(entryText);
 
                 entryPanel.height(SizeValue.def());
