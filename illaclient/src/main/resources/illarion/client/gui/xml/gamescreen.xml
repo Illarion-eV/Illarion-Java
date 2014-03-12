@@ -185,10 +185,10 @@
                 </panel>
             </control>
             <control id="helpDialog" name="window" style="nifty-window" title="${gamescreen-bundle.help}"
-                     hideOnClose="true" visible="false" width="610px" height="550px">
+                     hideOnClose="true" visible="false" width="510px" height="550px">
                 <control name="scrollPanel" id="#scrollArea" childLayout="vertical" autoScroll="off" stepSizeY="20"
-                         height="*" style="nifty-scrollpanel" width="568px" horizontal="false">
-                    <panel id="#textContent" childLayout="vertical" width="538px"/>
+                         height="*" style="nifty-scrollpanel" width="468px" horizontal="false">
+                    <panel id="#textContent" childLayout="vertical" width="438px"/>
                 </control>
             </control>
         </layer>
