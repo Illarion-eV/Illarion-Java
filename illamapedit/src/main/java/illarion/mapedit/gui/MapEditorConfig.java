@@ -218,7 +218,7 @@ public class MapEditorConfig {
         final String userDir = checkFolder();
         configSystem = new ConfigSystem(userDir + File.separator + "MapEdit.xcfgz");
 
-        configSystem.setDefault(MAPEDIT_FOLDER, new File(System.getProperty("user.home")));
+        configSystem.setDefault(MAPEDIT_FOLDER, Paths.get(System.getProperty("user.home")));
         configSystem.setDefault(USE_WINDOW_DECO, true);
         configSystem.setDefault(USED_LOOK_AND_FEEL, DEFAULT_LOOK_AND_FEEL);
         configSystem.setDefault(USED_LANGUAGE, getDefaultLanguageString());
@@ -314,19 +314,6 @@ public class MapEditorConfig {
             return Paths.get(System.getProperty("user.home"));
         }
         return mapFolder;
-    }
-
-    /**
-     * Set the folder where to store the maps.
-     *
-     * @param newFolder the folder where to store the maps
-     */
-    public void setMapFolder(@Nonnull final File newFolder) {
-        if (configSystem == null) {
-            LOGGER.error("Configuration system not initialized yet.");
-            return;
-        }
-        configSystem.set(MAPEDIT_FOLDER, newFolder);
     }
 
     /**

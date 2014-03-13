@@ -46,8 +46,9 @@ public abstract class AbstractTool {
     /**
      * X and Y are tile coordinates.
      *
-     * @param x
-     * @param y
+     * @param x coordinate
+     * @param y coordinate
+     * @param map current map
      */
     public abstract void clickedAt(int x, int y, Map map);
 

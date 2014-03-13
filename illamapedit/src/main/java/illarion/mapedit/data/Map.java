@@ -95,8 +95,7 @@ public class Map implements Iterable<MapTile> {
      * @param y the y coordinate of the origin of the map
      * @param z the map level (= z coordinate)
      */
-    public Map(
-            final String name, final Path path, final int w, final int h, final int x, final int y, final int z) {
+    public Map(final String name, final Path path, final int w, final int h, final int x, final int y, final int z) {
         this.name = name;
         this.path = path;
         width = w;
