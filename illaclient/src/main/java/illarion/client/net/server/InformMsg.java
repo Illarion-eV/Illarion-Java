@@ -102,7 +102,7 @@ public final class InformMsg extends AbstractGuiMsg {
                 break;
             case 102:
                 gui.getInformGui().showScriptInform(2, informText);
-                gui.getChatGui().addChatMessage(informText, ChatGui.COLOR_INFORM);
+                gui.getChatGui().addChatMessage(informText, ChatGui.COLOR_HIGH_INFORM);
                 break;
 
             default:
