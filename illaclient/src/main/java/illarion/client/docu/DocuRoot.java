@@ -60,6 +60,10 @@ public class DocuRoot implements Iterable<DocuEntry> {
         docu.addChild("ctrlNumpad");
         docu.addChild("cKey");
         docu.addChild("iKey");
+        docu.addChild("pKey");
+        docu.addChild("qKey");
+        docu.addChild("bKey");
+        docu.addChild("esc");
         types.add(docu);
 
         docu = new DocuNode("inChat");
@@ -67,6 +71,7 @@ public class DocuRoot implements Iterable<DocuEntry> {
         docu.addChild("oCommand");
         docu.addChild("wCommand");
         docu.addChild("sCommand");
+        docu.addChild("meCommand");
         types.add(docu);
     }
 
