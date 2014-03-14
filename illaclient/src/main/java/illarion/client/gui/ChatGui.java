@@ -33,27 +33,32 @@ public interface ChatGui {
     /**
      * The default color of text entries.
      */
-    Color COLOR_DEFAULT = new Color("#ffffff");
+    Color COLOR_DEFAULT = new Color("#FFFFFF");
 
     /**
      * The color of shouted or important messages
      */
-    Color COLOR_SHOUT = new Color("#ff0000");
+    Color COLOR_SHOUT = new Color("#FF0000");
 
     /**
      * The color of whispered text.
      */
-    Color COLOR_WHISPER = new Color("#c0c0c0");
+    Color COLOR_WHISPER = new Color("#C0C0C0");
 
     /**
      * The color of emoted.
      */
-    Color COLOR_EMOTE = new Color("#ffcc33");
+    Color COLOR_EMOTE = new Color("#FFCC33");
 
     /**
-     * The color of emoted.
+     * The color of inform.
      */
     Color COLOR_INFORM = new Color("#9298D1");
+
+    /**
+     * The color of high inform.
+     */
+    Color COLOR_HIGH_INFORM = new Color("#FF8080");
 
     /**
      * Activate the chat input line. All keyboard input will be forwarded to the chat line once its activated.
