@@ -126,8 +126,7 @@ public final class MapEditor {
                 ItemLoader.getInstance(),
                 SongLoader.getInstance(),
                 ItemGroupLoader.getInstance(),
-                OverlayLoader.getInstance(),
-                DocuLoader.getInstance()
+                OverlayLoader.getInstance()
         );
 
         while (resourceManager.hasNextToLoad()) {

@@ -64,8 +64,6 @@ public class MainFrame extends JRibbonFrame {
     private static MainFrame instance;
 
     @Nonnull
-    private final HelpDialog helpDialog;
-    @Nonnull
     private final MapPanel mapPanel;
     @Nonnull
     private final ToolSettingsPanel settingsPanel;
@@ -77,7 +75,6 @@ public class MainFrame extends JRibbonFrame {
         settingsPanel = new ToolSettingsPanel();
         filePanel = new OpenMapPanel();
         instance = this;
-        helpDialog = new HelpDialog(this);
     }
 
     public void initialize(final WindowListener controller) {
