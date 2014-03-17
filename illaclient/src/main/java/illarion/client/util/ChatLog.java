@@ -32,7 +32,6 @@ import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 
 import javax.annotation.Nonnull;
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -69,16 +68,16 @@ public final class ChatLog {
      *
      * @param playerPath the path this chat log is supposed to be stored at
      */
-    public ChatLog(final File playerPath) {
+    public ChatLog(final java.nio.file.Path playerPath) {
         logActive = IllaClient.getCfg().getBoolean(CFG_TEXTLOG);
 
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
         RollingFileAppender<ILoggingEvent> appender = new RollingFileAppender<>();
         appender.setContext(loggerContext);
-        appender.setFile(new File(playerPath, "illarion.log").getAbsolutePath());
+        appender.setFile(playerPath.resolve("illarion.log").toAbsolutePath().toString());
 
         TimeBasedRollingPolicy<ILoggingEvent> policy = new TimeBasedRollingPolicy<>();
-        policy.setFileNamePattern(new File(playerPath, "illarion-%d{yyyy-MM}.log").getAbsolutePath());
+        policy.setFileNamePattern(playerPath.resolve("illarion-%d{yyyy-MM}.log").toAbsolutePath().toString());
         policy.setParent(appender);
         policy.setContext(loggerContext);
         policy.start();

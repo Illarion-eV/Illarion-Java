@@ -221,16 +221,16 @@ public final class Config {
      */
     @SuppressWarnings("nls")
     @Nonnull
-    private static String checkFolder() {
+    private static Path checkFolder() {
         if (!DirectoryManager.getInstance().isDirectorySet(DirectoryManager.Directory.User)) {
             JOptionPane.showMessageDialog(null, "Installation ist fehlerhaft. Bitte neu ausführen.\n\n" +
                     "Installation is corrupted, please run it again.", "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(-1);
         }
 
-        final File userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        final Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
         assert userDir != null;
-        return userDir.getAbsolutePath();
+        return userDir;
     }
 
     /**
@@ -574,9 +574,9 @@ public final class Config {
      */
     @SuppressWarnings("nls")
     public void init() {
-        final String folder = checkFolder();
+        final Path folder = checkFolder();
 
-        final Path configFile = Paths.get(folder, "easynpceditor.xcfgz");
+        final Path configFile = folder.resolve("easynpceditor.xcfgz");
         cfg = new ConfigSystem(configFile);
 
         cfg.setDefault(LAST_FILES_KEY, "");
@@ -681,7 +681,7 @@ public final class Config {
      *
      * @param newFolder the folder where to store the easyNPC scripts
      */
-    public void setLuaNpcFolder(final String newFolder) {
+    public void setLuaNpcFolder(@Nonnull final Path newFolder) {
         if (cfg == null) {
             LOGGER.error("Configuration system not initialized yet.");
             return;
@@ -695,14 +695,14 @@ public final class Config {
      *
      * @param files the files to open
      */
-    public void setOldFiles(@Nonnull final String[] files) {
+    public void setOldFiles(@Nonnull final Iterable<Path> files) {
         if (cfg == null) {
             LOGGER.error("Configuration system not initialized yet.");
             return;
         }
         final StringBuilder buffer = new StringBuilder();
-        for (final String file : files) {
-            buffer.append(file);
+        for (final Path file : files) {
+            buffer.append(file.toAbsolutePath().toString());
             buffer.append(File.pathSeparator);
         }
         buffer.setLength(buffer.length() - 1);
