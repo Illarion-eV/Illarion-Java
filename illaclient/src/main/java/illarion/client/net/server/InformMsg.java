@@ -46,7 +46,6 @@ public final class InformMsg extends AbstractGuiMsg {
     @Nonnull
     private static final Logger LOGGER = LoggerFactory.getLogger(InformMsg.class);
 
-
     private static final int SERVER = 0;
     private static final int BROADCAST = 1;
     private static final int GM = 2;
