@@ -227,7 +227,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
 
     private boolean moveToDirectionActive;
     private final boolean[] activeDirections = new boolean[8];
-    private CharMovementMode moveToDirectionMode = CharMovementMode.Run;
+    private CharMovementMode moveToDirectionMode = CharMovementMode.Walk;
 
     public void setMovingToDirectionMode(final CharMovementMode mode) {
         moveToDirectionMode = mode;

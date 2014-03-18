@@ -67,6 +67,7 @@ public class GuiController extends WindowAdapter {
 
     @Nonnull
     private final AnnotationChecker annotationChecker;
+    private final HelpDialog helpDialog;
 
     @Nullable
     private Map selected;
@@ -85,6 +86,7 @@ public class GuiController extends WindowAdapter {
         annotationChecker = new AnnotationChecker();
         maps = new FastTable<>();
         notSaved = false;
+        helpDialog = new HelpDialog(mainFrame);
     }
 
     @Nonnull
@@ -329,5 +331,10 @@ public class GuiController extends WindowAdapter {
             tile.setAnnotation(e.getText());
             EventBus.publish(new RepaintRequestEvent());
         }
+    }
+
+    @EventSubscriber
+    public void onShowHelpDialog(final ShowHelpDialogEvent e) {
+        helpDialog.setVisible(true);
     }
 }

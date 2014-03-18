@@ -46,6 +46,13 @@ public final class InformMsg extends AbstractGuiMsg {
     @Nonnull
     private static final Logger LOGGER = LoggerFactory.getLogger(InformMsg.class);
 
+    private static final int SERVER = 0;
+    private static final int BROADCAST = 1;
+    private static final int GM = 2;
+    private static final int SCRIPT_LOW_PRIORITY = 100;
+    private static final int SCRIPT_MEDIUM_PRIORITY = 101;
+    private static final int SCRIPT_HIGH_PRIORITY = 102;
+
     /**
      * The type of the inform.
      */
@@ -80,31 +87,30 @@ public final class InformMsg extends AbstractGuiMsg {
 
         final GameGui gui = World.getGameGui();
         switch (informType) {
-            case 0:
+            case SERVER:
                 gui.getInformGui().showServerInform(informText);
                 break;
-            case 1:
+            case BROADCAST:
                 gui.getInformGui().showBroadcastInform(informText);
                 gui.getChatGui().addChatMessage(Lang.getMsg("chat.broadcast") + ": " + informText,
                         ChatGui.COLOR_DEFAULT);
                 break;
-            case 2:
+            case GM:
                 gui.getInformGui().showTextToInform(informText);
                 gui.getChatGui().addChatMessage(Lang.getMsg("chat.textto") + ": " + informText,
                         ChatGui.COLOR_DEFAULT);
                 break;
-            case 100:
+            case SCRIPT_LOW_PRIORITY:
                 gui.getInformGui().showScriptInform(0, informText);
                 break;
-            case 101:
+            case SCRIPT_MEDIUM_PRIORITY:
                 gui.getInformGui().showScriptInform(1, informText);
                 gui.getChatGui().addChatMessage(informText, ChatGui.COLOR_INFORM);
                 break;
-            case 102:
+            case SCRIPT_HIGH_PRIORITY:
                 gui.getInformGui().showScriptInform(2, informText);
                 gui.getChatGui().addChatMessage(informText, ChatGui.COLOR_HIGH_INFORM);
                 break;
-
             default:
                 TextBuilder builder = new TextBuilder();
                 builder.append("Received inform with unknown type: ").append(informType);

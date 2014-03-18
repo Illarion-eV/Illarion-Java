@@ -200,7 +200,10 @@ public final class InputReceiver implements InputListener {
 
     @Override
     public void buttonDown(final int mouseX, final int mouseY, @Nonnull final Button button) {
-        // nothing
+        if (enabled) {
+            buttonMultiClickHelper.setInputData(button, mouseX, mouseY);
+            buttonMultiClickHelper.pulse();
+        }
     }
 
     @Override
@@ -213,10 +216,7 @@ public final class InputReceiver implements InputListener {
 
     @Override
     public void buttonClicked(final int mouseX, final int mouseY, @Nonnull final Button button, final int count) {
-        if (enabled) {
-            buttonMultiClickHelper.setInputData(button, mouseX, mouseY);
-            buttonMultiClickHelper.pulse();
-        }
+        // nothing
     }
 
     @Override
