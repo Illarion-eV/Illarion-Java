@@ -32,8 +32,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The inform message that is used to receive inform messages from the server.
@@ -47,13 +45,6 @@ public final class InformMsg extends AbstractGuiMsg {
      */
     @Nonnull
     private static final Logger LOGGER = LoggerFactory.getLogger(InformMsg.class);
-
-    private static final Map<Integer, InformType> informTypeMap = new HashMap<>();
-    static {
-        for (InformType type : InformType.values()) {
-            informTypeMap.put(type.value, type);
-        }
-    }
 
     /**
      * The type of the inform.
@@ -87,73 +78,39 @@ public final class InformMsg extends AbstractGuiMsg {
             throw new IllegalStateException("Executing a inform message while the inform text is not set.");
         }
 
-        if (informTypeMap.containsKey(informType)) {
-            informTypeMap.get(informType).action(informText);
-        }  else {
-            TextBuilder builder = new TextBuilder();
-            builder.append("Received inform with unknown type: ").append(informType);
-            builder.append("(").append(informText).append(")");
-            LOGGER.warn(builder.toString());
-        }
-
-        return true;
-    }
-
-    public enum InformType {
-        Server(0) {
-            @Override
-            public void action(String informText) {
-                final GameGui gui = World.getGameGui();
+        final GameGui gui = World.getGameGui();
+        switch (informType) {
+            case 0:
                 gui.getInformGui().showServerInform(informText);
-            }
-        },
-        Broadcast(1) {
-            @Override
-            public void action(String informText) {
-                final GameGui gui = World.getGameGui();
+                break;
+            case 1:
                 gui.getInformGui().showBroadcastInform(informText);
-                gui.getChatGui().addChatMessage(String.format("%s: %s", Lang.getMsg("chat.broadcast"), informText),
+                gui.getChatGui().addChatMessage(Lang.getMsg("chat.broadcast") + ": " + informText,
                         ChatGui.COLOR_DEFAULT);
-            }
-        },
-        GM(2) {
-            @Override
-            public void action(String informText) {
-                final GameGui gui = World.getGameGui();
+                break;
+            case 2:
                 gui.getInformGui().showTextToInform(informText);
-                gui.getChatGui().addChatMessage(String.format("%s: %s", Lang.getMsg("chat.textto"), informText),
+                gui.getChatGui().addChatMessage(Lang.getMsg("chat.textto") + ": " + informText,
                         ChatGui.COLOR_DEFAULT);
-            }
-        },
-        ScriptLowPriority(100) {
-            @Override
-            public void action(String informText) {
-                final GameGui gui = World.getGameGui();
+                break;
+            case 100:
                 gui.getInformGui().showScriptInform(0, informText);
-            }
-        },
-        ScriptMediumPriority(101) {
-            @Override
-            public void action(String informText) {
-                final GameGui gui = World.getGameGui();
+                break;
+            case 101:
                 gui.getInformGui().showScriptInform(1, informText);
                 gui.getChatGui().addChatMessage(informText, ChatGui.COLOR_INFORM);
-            }
-        },
-        ScriptHighPriority(102) {
-            @Override
-            public void action(String informText) {
-                final GameGui gui = World.getGameGui();
+                break;
+            case 102:
                 gui.getInformGui().showScriptInform(2, informText);
                 gui.getChatGui().addChatMessage(informText, ChatGui.COLOR_HIGH_INFORM);
-            }
-        };
-        private int value;
+                break;
 
-        public abstract void action(String informText);
-
-        private InformType(int value) {
-            this.value = value;
+            default:
+                TextBuilder builder = new TextBuilder();
+                builder.append("Received inform with unknown type: ").append(informType);
+                builder.append("(").append(informText).append(")");
+                LOGGER.warn(builder.toString());
         }
+        return true;
     }
 }
