@@ -226,11 +226,11 @@ public class MainFrame extends JRibbonFrame {
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
 
-        Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        File userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
         if (userDir == null) {
             return;
         }
-        System.setProperty("log_dir", userDir.toAbsolutePath().toString());
+        System.setProperty("log_dir", userDir.getAbsolutePath());
 
         //Reload:
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();

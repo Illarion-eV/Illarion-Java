@@ -41,7 +41,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -248,11 +247,7 @@ public class MavenDownloader {
         repositories.add(setupRepository("oss-sonatype", "http://oss.sonatype.org/content/repositories/releases/",
                 true));
 
-        Path localDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.Data);
-        if (localDir == null) {
-            return;
-        }
-        LocalRepository localRepo = new LocalRepository(localDir.toFile());
+        LocalRepository localRepo = new LocalRepository(DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.Data));
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
     }
 

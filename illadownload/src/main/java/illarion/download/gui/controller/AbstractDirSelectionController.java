@@ -12,7 +12,6 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
 /**
@@ -41,7 +40,7 @@ public abstract class AbstractDirSelectionController extends AbstractController 
         final DirectoryManager dm = DirectoryManager.getInstance();
         if (dm.isDirectorySet(dir)) {
             //noinspection ConstantConditions
-            selectedDirectory.setText(dm.getDirectory(dir).toAbsolutePath().toString());
+            selectedDirectory.setText(dm.getDirectory(dir).getAbsolutePath());
         }
 
         if (dm.isRelativeDirectoryPossible()) {
@@ -59,7 +58,7 @@ public abstract class AbstractDirSelectionController extends AbstractController 
 
         final DirectoryManager dm = DirectoryManager.getInstance();
         if (dm.isDirectorySet(dir)) {
-            directoryChooser.setInitialDirectory(dm.getDirectory(dir).toAbsolutePath().toFile());
+            directoryChooser.setInitialDirectory(dm.getDirectory(dir));
         } else {
             final File subDir = new File(System.getProperty("user.home"), "Illarion");
             directoryChooser.setInitialDirectory(new File(subDir, dir.getDefaultDir()));
@@ -81,7 +80,8 @@ public abstract class AbstractDirSelectionController extends AbstractController 
         if (optionRelative.isSelected() && dm.isRelativeDirectoryPossible()) {
             dm.setDirectoryRelative(dir);
         } else {
-            dm.setDirectory(dir, Paths.get(selectedDirectory.getText()));
+            final File targetDir = new File(selectedDirectory.getText());
+            dm.setDirectory(dir, targetDir);
         }
         if (dm.isDirectorySet(dir)) {
             dm.save();

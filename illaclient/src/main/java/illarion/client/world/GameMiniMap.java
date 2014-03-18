@@ -45,8 +45,6 @@ import java.nio.ByteOrder;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.zip.GZIPInputStream;
@@ -531,14 +529,17 @@ public final class GameMiniMap implements WorldMapDataProvider {
             return;
         }
 
-        final Path mapFile = getMapFilename(origin);
-        if (Files.exists(mapFile) && !Files.isWritable(mapFile)) {
+        final File mapFile = getMapFilename(origin);
+        if (mapFile.exists() && !mapFile.canWrite()) {
             LOGGER.error("The map file is not accessible. Can't write anything.");
             return;
         }
 
-        try (WritableByteChannel outChannel = Channels.newChannel(new GZIPOutputStream(Files.newOutputStream(mapFile)))) {
-            //noinspection SynchronizationOnLocalVariableOrMethodParameter
+        WritableByteChannel outChannel = null;
+        try {
+            final FileOutputStream outStream = new FileOutputStream(mapFile);
+            final GZIPOutputStream gOutStream = new GZIPOutputStream(outStream);
+            outChannel = Channels.newChannel(gOutStream);
             synchronized (mapData) {
                 mapData.rewind();
                 int toWrite = mapData.remaining();
@@ -550,6 +551,22 @@ public final class GameMiniMap implements WorldMapDataProvider {
             LOGGER.error("Target file not found", e);
         } catch (@Nonnull final IOException e) {
             LOGGER.error("Error while writing minimap file", e);
+        } finally {
+            closeQuietly(outChannel);
+        }
+    }
+
+    /**
+     * This function closes a closeable object without exposing any kind of error handling.
+     *
+     * @param closeable the object to be closed
+     */
+    private static void closeQuietly(@Nullable final Closeable closeable) {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            } catch (@Nonnull final IOException ignored) {
+            }
         }
     }
 
@@ -562,7 +579,7 @@ public final class GameMiniMap implements WorldMapDataProvider {
      */
     @SuppressWarnings("nls")
     @Nonnull
-    private static Path getMapFilename(@Nonnull final Location mapOrigin) {
+    private static File getMapFilename(@Nonnull final Location mapOrigin) {
         final StringBuilder builder = new StringBuilder();
         builder.setLength(0);
         builder.append("map");
@@ -570,7 +587,7 @@ public final class GameMiniMap implements WorldMapDataProvider {
         builder.append(mapOrigin.getScY() / WORLDMAP_HEIGHT);
         builder.append(mapOrigin.getScZ());
         builder.append(".dat");
-        return World.getPlayer().getPath().resolve(builder.toString());
+        return new File(World.getPlayer().getPath(), builder.toString());
     }
 
     /**
@@ -588,17 +605,20 @@ public final class GameMiniMap implements WorldMapDataProvider {
         }
 
         @Nonnull final ByteBuffer mapData = createMapBuffer();
-        final Path mapFile = getMapFilename(mapOrigin);
+        final File mapFile = getMapFilename(mapOrigin);
 
         mapDataStorage.put(mapOrigin, new SoftReference<>(mapData));
         strongMapDataStorage.add(mapData);
 
-        if (!Files.isRegularFile(mapFile)) {
+        if (!mapFile.exists()) {
             return;
         }
 
-        try (ReadableByteChannel inChannel = Channels.newChannel(new GZIPInputStream(Files.newInputStream(mapFile)))) {
-            //noinspection SynchronizationOnLocalVariableOrMethodParameter
+        @Nullable ReadableByteChannel inChannel = null;
+        try {
+            final InputStream inStream = new GZIPInputStream(new FileInputStream(mapFile));
+            inChannel = Channels.newChannel(inStream);
+
             synchronized (mapData) {
                 mapData.rewind();
 
@@ -612,13 +632,14 @@ public final class GameMiniMap implements WorldMapDataProvider {
             performFullUpdate();
         } catch (@Nonnull final IOException e) {
             LOGGER.error("Failed loading the map data from its file.", e);
-            //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (mapData) {
                 mapData.rewind();
                 while (mapData.hasRemaining()) {
                     mapData.put((byte) 0);
                 }
             }
+        } finally {
+            closeQuietly(inChannel);
         }
     }
 
@@ -669,7 +690,6 @@ public final class GameMiniMap implements WorldMapDataProvider {
         }
 
         if (tileID == MapTile.ID_NONE) {
-            //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (mapData) {
                 if (mapData.getShort(index) == 0) {
                     return false;
@@ -685,7 +705,6 @@ public final class GameMiniMap implements WorldMapDataProvider {
             encodedTileValue += 1 << SHIFT_BLOCKED;
         }
 
-        //noinspection SynchronizationOnLocalVariableOrMethodParameter
         synchronized (mapData) {
             if (mapData.getShort(index) == encodedTileValue) {
                 return false;

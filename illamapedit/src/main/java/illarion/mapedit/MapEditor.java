@@ -38,8 +38,8 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.swing.*;
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 
 /**
  * Main MapEditor class. This class starts the map editor and handles all
@@ -165,11 +165,11 @@ public final class MapEditor {
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
 
-        Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        File userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
         if (userDir == null) {
             return;
         }
-        System.setProperty("log_dir", userDir.toAbsolutePath().toString());
+        System.setProperty("log_dir", userDir.getAbsolutePath());
 
         //Reload:
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();

@@ -55,7 +55,6 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -326,12 +325,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      * @return the full path to a file
      */
     @Nonnull
-    public static Path getFile(@Nonnull final String name) {
-        Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
-        if (userDir == null) {
-            throw new IllegalStateException("User directory can't be null.");
-        }
-        return userDir.resolve(name);
+    public static String getFile(@Nonnull final String name) {
+        return new File(DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User), name)
+                .getAbsolutePath();
     }
 
     /**
@@ -438,9 +434,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
             System.exit(-1);
         }
 
-        final Path userDirectory = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        final File userDirectory = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
         assert userDirectory != null;
-        return userDirectory.toAbsolutePath().toString();
+        return userDirectory.getAbsolutePath();
     }
 
     /**
@@ -477,11 +473,11 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      */
     @SuppressWarnings("nls")
     private static void initLogfiles() throws IOException {
-        Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        File userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
         if (userDir == null) {
             return;
         }
-        System.setProperty("log_dir", userDir.toAbsolutePath().toString());
+        System.setProperty("log_dir", userDir.getAbsolutePath());
 
         //Reload:
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();

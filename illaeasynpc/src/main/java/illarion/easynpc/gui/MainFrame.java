@@ -50,7 +50,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 
 /**
  * This is the Main Frame of the display of the easyNPC editor.
@@ -336,11 +335,11 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
 
-        final Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        File userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
         if (userDir == null) {
             return;
         }
-        System.setProperty("log_dir", userDir.toAbsolutePath().toString());
+        System.setProperty("log_dir", userDir.getAbsolutePath());
 
         //Reload:
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
@@ -454,28 +453,37 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
     protected void closeWindow() {
         final int tabCount = getOpenTabs();
 
-        final java.util.List<Path> fileList = new ArrayList<>();
+        final String[] fileList = new String[tabCount];
+        Editor editor;
         for (int i = 0; i < tabCount; i++) {
-            final Editor editor = getScriptEditor(i);
-            if (editor.changedSinceSave()) {
-                final Object[] options = new Object[]{Lang.getMsg(MainFrame.class, "UnsavedChanges.saveButton"),
-                                                      Lang.getMsg(MainFrame.class, "UnsavedChanges.discardButton"),
-                                                      Lang.getMsg(MainFrame.class, "UnsavedChanges.cancelButton")};
-                final int result = JOptionPane.showOptionDialog(this, String.format(
-                        Lang.getMsg(MainFrame.class, "UnsavedChanges.message2"), editor.getFileName()),
-                                                                Lang.getMsg(MainFrame.class, "UnsavedChanges.title"),
-                                                                JOptionPane.YES_NO_CANCEL_OPTION,
-                                                                JOptionPane.WARNING_MESSAGE, null, options, options[0]);
-
-                if (result == JOptionPane.YES_OPTION) {
-                    Utils.saveEasyNPC(editor);
-                    fileList.add(editor.getScriptFile());
-                }
+            editor = getScriptEditor(i);
+            if (editor.getScriptFile() == null) {
+                fileList[i] = "new";
             } else {
-                if (editor.getScriptFile() != null) {
-                    fileList.add(editor.getScriptFile());
-                }
+                fileList[i] = editor.getScriptFile().toString();
             }
+            if (!editor.changedSinceSave()) {
+                continue;
+            }
+
+            final Object[] options = new Object[]{Lang.getMsg(MainFrame.class, "UnsavedChanges.saveButton"),
+                                                  Lang.getMsg(MainFrame.class, "UnsavedChanges.discardButton"),
+                                                  Lang.getMsg(MainFrame.class, "UnsavedChanges.cancelButton")};
+            final int result = JOptionPane.showOptionDialog(this, String.format(
+                    Lang.getMsg(MainFrame.class, "UnsavedChanges.message2"), editor.getFileName()),
+                                                            Lang.getMsg(MainFrame.class, "UnsavedChanges.title"),
+                                                            JOptionPane.YES_NO_CANCEL_OPTION,
+                                                            JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+
+            if (result == JOptionPane.YES_OPTION) {
+                Utils.saveEasyNPC(editor);
+                fileList[i] = editor.getScriptFile().toString();
+                continue;
+            }
+            if (result == JOptionPane.NO_OPTION) {
+                continue;
+            }
+            return;
         }
 
         Config.getInstance().setOldFiles(fileList);

@@ -39,6 +39,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
@@ -214,8 +215,8 @@ public class MapEditorConfig {
      * Init the config system
      */
     public void init() {
-        final Path userDir = checkFolder();
-        configSystem = new ConfigSystem(userDir.resolve("MapEdit.xcfgz"));
+        final String userDir = checkFolder();
+        configSystem = new ConfigSystem(userDir + File.separator + "MapEdit.xcfgz");
 
         configSystem.setDefault(MAPEDIT_FOLDER, Paths.get(System.getProperty("user.home")));
         configSystem.setDefault(USE_WINDOW_DECO, true);
@@ -235,7 +236,7 @@ public class MapEditorConfig {
      * set
      */
     @Nonnull
-    private static Path checkFolder() {
+    private static String checkFolder() {
         if (!DirectoryManager.getInstance().isDirectorySet(DirectoryManager.Directory.User)) {
             SplashScreen.getInstance().setVisible(false);
             JOptionPane.showMessageDialog(null, "Installation ist fehlerhaft. Bitte neu ausführen.\n\n" +
@@ -243,9 +244,9 @@ public class MapEditorConfig {
             System.exit(-1);
         }
 
-        final Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        final File userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
         assert userDir != null;
-        return userDir;
+        return userDir.getAbsolutePath();
     }
 
     /**
@@ -313,19 +314,6 @@ public class MapEditorConfig {
             return Paths.get(System.getProperty("user.home"));
         }
         return mapFolder;
-    }
-
-    /**
-     * Set the folder where to store the maps.
-     *
-     * @param newFolder the folder where to store the maps
-     */
-    public void setMapFolder(@Nonnull final Path newFolder) {
-        if (configSystem == null) {
-            LOGGER.error("Configuration system not initialized yet.");
-            return;
-        }
-        configSystem.set(MAPEDIT_FOLDER, newFolder);
     }
 
     /**

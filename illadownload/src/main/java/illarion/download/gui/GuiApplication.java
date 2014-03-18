@@ -14,6 +14,7 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -70,7 +71,7 @@ public class GuiApplication extends Application implements Storyboard {
         if (cfg == null) {
             final DirectoryManager dm = DirectoryManager.getInstance();
             if (dm.isDirectorySet(DirectoryManager.Directory.User)) {
-                cfg = new ConfigSystem(dm.resolveFile(DirectoryManager.Directory.User, "download.xcfgz"));
+                cfg = new ConfigSystem(new File(dm.getDirectory(DirectoryManager.Directory.User), "download.xcfgz"));
                 cfg.setDefault("channelClient", 0);
                 cfg.setDefault("channelEasyNpc", 1);
                 cfg.setDefault("channelEasyQuest", 1);

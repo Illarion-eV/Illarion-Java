@@ -51,9 +51,6 @@ import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -126,7 +123,7 @@ public final class Player {
      * The path to the folder of character specific stuff, like the map or the names table.
      */
     @Nonnull
-    private final Path path;
+    private final File path;
 
     /**
      * The character ID of the player.
@@ -184,22 +181,15 @@ public final class Player {
      */
     @SuppressWarnings("nls")
     public Player(@Nonnull final Engine engine, @Nonnull final String charName) {
-        Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
-        if (userDir == null) {
-            throw new IllegalStateException("User directory is null?!");
-        }
-        path = userDir.resolve(charName);
+        path = new File(DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User), charName);
         chatLog = new ChatLog(path);
 
         character = new Char();
         validLocation = false;
 
-        try {
-            if (Files.notExists(path)) {
-                Files.createDirectory(path);
-            }
-        } catch (IOException e) {
-            throw new IllegalStateException("Failed to create directory for user data.", e);
+        if (!path.isDirectory() && !path.mkdir()) {
+            IllaClient.fallbackToLogin(Lang.getMsg("error.character_settings"));
+            throw new IllegalStateException("Failed to init player.");
         }
 
         character.setName(charName);
@@ -416,7 +406,7 @@ public final class Player {
      * @return The path to the player directory
      */
     @Nonnull
-    public Path getPath() {
+    public File getPath() {
         return path;
     }
 

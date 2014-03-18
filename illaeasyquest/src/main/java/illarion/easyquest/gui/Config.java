@@ -29,13 +29,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.swing.*;
 import java.io.File;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 public final class Config {
 
@@ -80,8 +75,14 @@ public final class Config {
     /**
      * The properties that store the values of this configuration.
      */
-    @Nonnull
+    @Nullable
     private ConfigSystem cfg;
+
+    /**
+     * The file that holds the configuration.
+     */
+    @Nullable
+    private Path configFile = null;
 
     /**
      * The last generated list of opened files. When this is set to
@@ -89,7 +90,7 @@ public final class Config {
      * time.
      */
     @Nullable
-    private List<Path> lastOpenedFilesBuffer;
+    private File[] lastOpenedFilesBuffer;
 
     /**
      * Private constructor to ensure that no instance but the singleton instance
@@ -119,16 +120,14 @@ public final class Config {
      */
     @Nonnull
     @SuppressWarnings("nls")
-    private static Path checkFolder() {
+    private static String checkFolder() {
         if (!DirectoryManager.getInstance().isDirectorySet(DirectoryManager.Directory.User)) {
             JOptionPane.showMessageDialog(null, "Installation ist fehlerhaft. Bitte neu ausführen.\n\n" +
                     "Installation is corrupted, please run it again.", "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(-1);
         }
 
-        final Path result = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
-        assert result != null;
-        return result;
+        return DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User).getAbsolutePath();
     }
 
     /**
@@ -164,25 +163,23 @@ public final class Config {
         return dialog;
     }
 
-    @Nonnull
-    public Path getEasyQuestFolder() {
-        final Path folder = cfg.getPath(easyQuestFolder);
-        assert folder != null;
-        return folder;
+    public String getEasyQuestFolder() {
+        return cfg.getPath(easyQuestFolder).toString();
     }
 
-    @Nonnull
-    public Collection<Path> getLastOpenedFiles() {
+    @Nullable
+    public illarion.common.config.Config getInternalCfg() {
+        return cfg;
+    }
+
+    @Nullable
+    public File[] getLastOpenedFiles() {
         if (lastOpenedFilesBuffer != null) {
             return lastOpenedFilesBuffer;
         }
-        final String lastFiles = cfg.getString(lastFilesKey);
-        if (lastFiles == null || lastFiles.isEmpty()) {
-            lastOpenedFilesBuffer = Collections.emptyList();
-            return lastOpenedFilesBuffer;
-        }
-        final String[] fetchedList = lastFiles.split(File.pathSeparator);
-        final List<Path> returnList = Arrays.asList(new Path[Math.min(fetchedList.length, LAST_OPEN_FILES_COUNT)]);
+        final String[] fetchedList = cfg.getString(lastFilesKey).split(File.pathSeparator);
+        final File[] returnList = new File[LAST_OPEN_FILES_COUNT];
+        final String[] cleanList = new String[LAST_OPEN_FILES_COUNT];
 
         int entryPos = 0;
         for (int i = 0; (i < fetchedList.length) && (i < LAST_OPEN_FILES_COUNT); i++) {
@@ -190,12 +187,21 @@ public final class Config {
             if (workString.length() < 5) {
                 continue;
             }
-            final Path createdFile = Paths.get(workString);
-            if (Files.isRegularFile(createdFile)) {
-                if (returnList.contains(createdFile)) {
+            final File createdFile = new File(workString);
+            if (createdFile.exists() && createdFile.isFile()) {
+                final String absolutPath = createdFile.getAbsolutePath();
+                boolean alreadyInsert = false;
+                for (int j = 0; j < entryPos; j++) {
+                    if (cleanList[j].equals(absolutPath)) {
+                        alreadyInsert = true;
+                        break;
+                    }
+                }
+                if (alreadyInsert) {
                     continue;
                 }
-                returnList.set(entryPos, createdFile);
+                returnList[entryPos] = createdFile;
+                cleanList[entryPos] = createdFile.getAbsolutePath();
                 entryPos++;
             }
         }
@@ -206,7 +212,7 @@ public final class Config {
 
         final StringBuilder cleanedResult = new StringBuilder();
         for (int i = 0; i < entryPos; i++) {
-            cleanedResult.append(returnList.get(i).toAbsolutePath().toString());
+            cleanedResult.append(cleanList[i]);
             cleanedResult.append(File.pathSeparator);
         }
         cleanedResult.setLength(cleanedResult.length() - 1);
@@ -216,11 +222,8 @@ public final class Config {
         return returnList;
     }
 
-    @Nonnull
-    public Path getExportFolder() {
-        final Path folder = cfg.getPath(exportFolder);
-        assert folder != null;
-        return folder;
+    public String getExportFolder() {
+        return cfg.getPath(exportFolder).toString();
     }
 
     /**
@@ -230,17 +233,8 @@ public final class Config {
      * @return the list of file paths
      */
     @Nonnull
-    public Collection<Path> getOldFiles() {
-        final String openFilesString = cfg.getString(openFiles);
-        if (openFilesString == null || openFilesString.isEmpty()) {
-            return Collections.emptyList();
-        }
-        final String[] splitFiles = openFilesString.split(File.pathSeparator);
-        final Path[] paths = new Path[splitFiles.length];
-        for (int i = 0; i < paths.length; i++) {
-            paths[i] = Paths.get(splitFiles[i]);
-        }
-        return Arrays.asList(paths);
+    public String[] getOldFiles() {
+        return cfg.getString(openFiles).split(File.pathSeparator);
     }
 
     /**
@@ -248,12 +242,9 @@ public final class Config {
      */
     @SuppressWarnings("nls")
     public void init() {
-        final Path folder = checkFolder();
+        final String folder = checkFolder();
 
-        /*
-      The file that holds the configuration.
-     */
-        Path configFile = folder.resolve("easyquesteditor.xcfgz");
+        configFile = Paths.get(folder, "easyquesteditor.xcfgz");
         cfg = new ConfigSystem(configFile);
 
         cfg.setDefault(lastFilesKey, "");
@@ -272,11 +263,11 @@ public final class Config {
         cfg.save();
     }
 
-    public void setEasyQuestFolder(@Nonnull final Path newFolder) {
-        cfg.set(easyQuestFolder, newFolder);
+    public void setEasyQuestFolder(@Nonnull final String newFolder) {
+        cfg.set(easyQuestFolder, Paths.get(newFolder));
     }
 
-    public void setExportFolder(@Nonnull final Path newFolder) {
+    public void setExportFolder(final String newFolder) {
         cfg.set(exportFolder, newFolder);
     }
 
@@ -286,21 +277,21 @@ public final class Config {
      *
      * @param files the files to open
      */
-    public void setOldFiles(@Nonnull final Iterable<Path> files) {
+    public void setOldFiles(@Nonnull final String[] files) {
         final StringBuilder buffer = new StringBuilder();
-        for (final Path file : files) {
-            buffer.append(file.toAbsolutePath().toString());
+        for (final String file : files) {
+            buffer.append(file);
             buffer.append(File.pathSeparator);
         }
         buffer.setLength(buffer.length() - 1);
         cfg.set(openFiles, buffer.toString());
     }
 
-    public void setCharacter(@Nonnull final String newCharacter) {
+    public void setCharacter(final String newCharacter) {
         cfg.set(character, newCharacter);
     }
 
-    public void setPassword(@Nonnull final String newPassword) {
+    public void setPassword(final String newPassword) {
         cfg.set(password, newPassword);
     }
 
