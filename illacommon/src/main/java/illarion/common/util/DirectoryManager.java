@@ -18,8 +18,6 @@
  */
 package illarion.common.util;
 
-import com.sun.nio.sctp.InvalidStreamException;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;
@@ -258,7 +256,7 @@ public final class DirectoryManager {
     public Path resolveFile(@Nonnull final Directory dir, @Nonnull final String... segments) {
         final Path dirPath = getDirectory(dir);
         if (dirPath == null) {
-            throw new InvalidStreamException("Root directory is not yet load.");
+            throw new IllegalStateException("Root directory is not yet load.");
         }
         Path result = dirPath;
         for (final String segment : segments) {
