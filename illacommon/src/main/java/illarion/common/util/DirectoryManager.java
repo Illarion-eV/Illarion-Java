@@ -199,7 +199,13 @@ public final class DirectoryManager {
             for (final String line : lines) {
                 for (final Directory dir : Directory.values()) {
                     if (line.startsWith(dir.getHeader())) {
-                        final Path testDir = Paths.get(dir.getDefaultDir());
+                        final Path testDir;
+                        if (relative) {
+                            testDir = Paths.get(dir.getDefaultDir());
+                        } else {
+                            testDir = Paths.get(line.substring(dir.getHeader().length()));
+                        }
+
                         if (testDirectory(testDir)) {
                             if (createDataDirFile(testDir)) {
                                 directories.put(dir, testDir);
