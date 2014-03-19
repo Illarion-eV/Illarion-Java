@@ -32,9 +32,9 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
+import org.illarion.engine.GameContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -115,9 +115,7 @@ public final class NumberSelectPopupHandler implements ScreenController {
      * @param callback the callback that is called in case the user interacts with the popup
      */
     public void requestNewPopup(
-            final int minValue,
-            final int maxValue,
-            @Nonnull final NumberSelectPopupHandler.Callback callback) {
+            final int minValue, final int maxValue, @Nonnull final NumberSelectPopupHandler.Callback callback) {
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
             public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
@@ -134,9 +132,7 @@ public final class NumberSelectPopupHandler implements ScreenController {
      * @param callback the callback that is called in case the user interacts with the popup
      */
     private void internalCreateNewPopup(
-            final int minValue,
-            final int maxValue,
-            @Nonnull final NumberSelectPopupHandler.Callback callback) {
+            final int minValue, final int maxValue, @Nonnull final NumberSelectPopupHandler.Callback callback) {
         cancelActivePopup();
 
         activePopup = parentNifty.createPopup("numberSelect");
@@ -167,9 +163,7 @@ public final class NumberSelectPopupHandler implements ScreenController {
             @Nonnull
             @Override
             public CharSequence getDisplaySequence(
-                    @Nonnull final CharSequence original,
-                    final int start,
-                    final int end) {
+                    @Nonnull final CharSequence original, final int start, final int end) {
                 if (original.length() == 0) {
                     return Integer.toString(minValue);
                 }

@@ -31,11 +31,11 @@ import illarion.mapedit.resource.ItemImg;
 import illarion.mapedit.resource.TileImg;
 import illarion.mapedit.util.Disposable;
 import illarion.mapedit.util.MouseButton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -108,12 +108,12 @@ public final class ToolManager implements Disposable {
         } else if ((actualTool != null) && isFillAction(e)) {
             actualTool.fillSelected(e.getMap());
             EventBus.publish(new RepaintRequestEvent());
-            e.getMap().setActiveTile(e.getX(),e.getY());
+            e.getMap().setActiveTile(e.getX(), e.getY());
             controller.setSaved(false);
         } else if ((actualTool != null) && !actualTool.isFillSelected()) {
             actualTool.clickedAt(e.getX(), e.getY(), e.getMap());
             EventBus.publish(new RepaintRequestEvent());
-            e.getMap().setActiveTile(e.getX(),e.getY());
+            e.getMap().setActiveTile(e.getX(), e.getY());
             controller.setSaved(false);
         }
     }
@@ -137,12 +137,12 @@ public final class ToolManager implements Disposable {
         if ((actualTool != null) && (e.getButton() == MouseButton.LeftButton)) {
             if (actualTool.isFillAreaAction()) {
                 e.getMap().setFillingArea(e.getX(), e.getY(), e.getStartX(), e.getStartY());
-            } else if (currentX != e.getX() || currentY != e.getY()){
+            } else if (currentX != e.getX() || currentY != e.getY()) {
                 currentX = e.getX();
                 currentY = e.getY();
                 actualTool.clickedAt(e.getX(), e.getY(), e.getMap());
                 EventBus.publish(new RepaintRequestEvent());
-                e.getMap().setActiveTile(e.getX(),e.getY());
+                e.getMap().setActiveTile(e.getX(), e.getY());
                 controller.setSaved(false);
             }
         }
@@ -156,7 +156,7 @@ public final class ToolManager implements Disposable {
             e.getMap().setFillDragging(false);
             actualTool.fillArea(e.getStartX(), e.getStartY(), e.getEndX(), e.getEndY(), e.getMap());
             EventBus.publish(new RepaintRequestEvent());
-            e.getMap().setActiveTile(e.getEndX(),e.getEndY());
+            e.getMap().setActiveTile(e.getEndX(), e.getEndY());
             controller.setSaved(false);
         }
     }
@@ -165,7 +165,6 @@ public final class ToolManager implements Disposable {
     public void onTileSelected(@Nonnull final TileSelectedEvent e) {
         selectedTile = e.getTileImg();
     }
-
 
     @EventSubscriber
     public void onItemSelected(@Nonnull final ItemSelectedEvent e) {

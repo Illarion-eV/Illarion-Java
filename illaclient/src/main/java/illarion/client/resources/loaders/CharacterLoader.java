@@ -23,12 +23,12 @@ import illarion.client.resources.ResourceFactory;
 import illarion.client.resources.data.AvatarTemplate;
 import illarion.common.util.TableLoaderCharacters;
 import illarion.common.util.TableLoaderSink;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.illarion.engine.assets.Assets;
 import org.illarion.engine.assets.SpriteFactory;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Sprite;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
@@ -39,8 +39,8 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class CharacterLoader extends AbstractResourceLoader<AvatarTemplate> implements
-        TableLoaderSink<TableLoaderCharacters> {
+public final class CharacterLoader extends AbstractResourceLoader<AvatarTemplate>
+        implements TableLoaderSink<TableLoaderCharacters> {
     /**
      * The logger that is used to report error messages.
      */
@@ -109,11 +109,12 @@ public final class CharacterLoader extends AbstractResourceLoader<AvatarTemplate
 
         final Color defaultColor = new Color(skinRed, skinGreen, skinBlue);
 
-        final Sprite avatarSprite = assets.getSpriteFactory().createSprite(getTextures(assets.getTextureManager(),
-                CHAR_PATH, name, frames), offsetX, offsetY, SpriteFactory.CENTER, SpriteFactory.BOTTOM, mirror);
+        final Sprite avatarSprite = assets.getSpriteFactory()
+                .createSprite(getTextures(assets.getTextureManager(), CHAR_PATH, name, frames), offsetX, offsetY,
+                              SpriteFactory.CENTER, SpriteFactory.BOTTOM, mirror);
 
         final AvatarTemplate template = new AvatarTemplate(avatarId, avatarSprite, frames, stillFrame, defaultColor,
-                shadowOffset, direction, info);
+                                                           shadowOffset, direction, info);
 
         try {
             getTargetFactory().storeResource(template);

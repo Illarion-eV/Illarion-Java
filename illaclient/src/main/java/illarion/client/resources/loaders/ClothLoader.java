@@ -24,11 +24,11 @@ import illarion.client.resources.data.AvatarClothTemplate;
 import illarion.client.resources.data.AvatarTemplate;
 import illarion.common.util.TableLoaderClothes;
 import illarion.common.util.TableLoaderSink;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.illarion.engine.assets.Assets;
 import org.illarion.engine.assets.SpriteFactory;
 import org.illarion.engine.graphic.Sprite;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
@@ -37,8 +37,8 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class ClothLoader extends AbstractResourceLoader<AvatarClothTemplate> implements
-        TableLoaderSink<TableLoaderClothes> {
+public final class ClothLoader extends AbstractResourceLoader<AvatarClothTemplate>
+        implements TableLoaderSink<TableLoaderClothes> {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
@@ -87,11 +87,11 @@ public final class ClothLoader extends AbstractResourceLoader<AvatarClothTemplat
      * Handle one record from the table that is loaded by this function. This
      * function is called by the table loader.
      *
-     * @param line   the line in the list that is currently processed
+     * @param line the line in the list that is currently processed
      * @param loader the table loader class that handles the table that is
-     *               currently loading
+     * currently loading
      * @return true in case the loader shall go on reading the table, false if
-     *         it should stop
+     * it should stop
      */
     @SuppressWarnings("nls")
     @Override
@@ -108,16 +108,17 @@ public final class ClothLoader extends AbstractResourceLoader<AvatarClothTemplat
         final int offsetX = loader.getOffsetX() + avatarTemplate.getSprite().getOffsetX();
         final int offsetY = loader.getOffsetY() + avatarTemplate.getSprite().getOffsetY();
 
-        final Sprite clothSprite = assets.getSpriteFactory().createSprite(getTextures(assets.getTextureManager(),
-                CLOTH_PATH, name, frames), offsetX, offsetY, SpriteFactory.CENTER, SpriteFactory.BOTTOM, mirror);
+        final Sprite clothSprite = assets.getSpriteFactory()
+                .createSprite(getTextures(assets.getTextureManager(), CLOTH_PATH, name, frames), offsetX, offsetY,
+                              SpriteFactory.CENTER, SpriteFactory.BOTTOM, mirror);
         final AvatarClothTemplate template = new AvatarClothTemplate(itemID, clothSprite, loader.getFrameCount(),
-                avatarID, location);
+                                                                     avatarID, location);
 
         try {
             getTargetFactory().storeResource(template);
         } catch (@Nonnull final IllegalStateException e) {
             LOGGER.error("Error adding paperdolling item to avatar: " + avatarID + " in group: " + location + " to " +
-                    "item: " + itemID);
+                                 "item: " + itemID);
         }
         return true;
     }

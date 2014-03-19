@@ -22,11 +22,11 @@ import illarion.client.resources.ResourceFactory;
 import illarion.client.resources.data.EffectTemplate;
 import illarion.common.util.TableLoaderEffects;
 import illarion.common.util.TableLoaderSink;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.illarion.engine.assets.Assets;
 import org.illarion.engine.assets.SpriteFactory;
 import org.illarion.engine.graphic.Sprite;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
@@ -37,8 +37,8 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class EffectLoader extends AbstractResourceLoader<EffectTemplate> implements
-        TableLoaderSink<TableLoaderEffects> {
+public final class EffectLoader extends AbstractResourceLoader<EffectTemplate>
+        implements TableLoaderSink<TableLoaderEffects> {
     /**
      * The logger that is used to report error messages.
      */
@@ -100,8 +100,9 @@ public final class EffectLoader extends AbstractResourceLoader<EffectTemplate> i
         final int speed = loader.getAnimationSpeed();
         final int light = loader.getEffectLight();
 
-        final Sprite effectSprite = assets.getSpriteFactory().createSprite(getTextures(assets.getTextureManager(),
-                EFFECTS_PATH, name, frames), offsetX, offsetY, SpriteFactory.CENTER, SpriteFactory.CENTER, false);
+        final Sprite effectSprite = assets.getSpriteFactory()
+                .createSprite(getTextures(assets.getTextureManager(), EFFECTS_PATH, name, frames), offsetX, offsetY,
+                              SpriteFactory.CENTER, SpriteFactory.CENTER, false);
 
         final EffectTemplate template = new EffectTemplate(effectID, effectSprite, frames, speed, light);
         try {
@@ -112,5 +113,4 @@ public final class EffectLoader extends AbstractResourceLoader<EffectTemplate> i
 
         return true;
     }
-
 }

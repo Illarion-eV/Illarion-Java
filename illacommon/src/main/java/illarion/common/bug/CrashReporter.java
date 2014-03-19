@@ -22,26 +22,19 @@ import illarion.common.config.Config;
 import illarion.common.util.AppIdent;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.MessageSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.mantisbt.connect.IMCSession;
 import org.mantisbt.connect.MCException;
 import org.mantisbt.connect.axis.MCSession;
 import org.mantisbt.connect.model.*;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 /**
  * This class stores the crash reporter itself. It holds all settings done to

@@ -36,11 +36,11 @@ import illarion.client.net.server.events.LoginFinishedEvent;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
 import illarion.common.types.Location;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.engine.GameContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -88,14 +88,18 @@ public final class QuestHandler implements QuestGui, ScreenController {
         /**
          * The constructor of the quest.
          *
-         * @param questId     the ID of the quest
-         * @param name        the name of the quest
+         * @param questId the ID of the quest
+         * @param name the name of the quest
          * @param description the description of the quest state
-         * @param finished    {@code true} in case the quest is finished
-         * @param locations   the valid target locations
+         * @param finished {@code true} in case the quest is finished
+         * @param locations the valid target locations
          */
-        QuestEntry(final int questId, final String name, final String description, final boolean finished,
-                   @Nonnull final Location... locations) {
+        QuestEntry(
+                final int questId,
+                final String name,
+                final String description,
+                final boolean finished,
+                @Nonnull final Location... locations) {
             this.questId = questId;
             targetLocations = new Location[0];
             updateData(name, description, finished, locations);
@@ -104,12 +108,16 @@ public final class QuestHandler implements QuestGui, ScreenController {
         /**
          * Update the data of this quest.
          *
-         * @param name        the name of the quest
+         * @param name the name of the quest
          * @param description the description of the quest state
-         * @param finished    {@code true} in case the quest is finished
-         * @param locations   the valid target locations of this quest
+         * @param finished {@code true} in case the quest is finished
+         * @param locations the valid target locations of this quest
          */
-        void updateData(final String name, final String description, final boolean finished, @Nonnull final Location... locations) {
+        void updateData(
+                final String name,
+                final String description,
+                final boolean finished,
+                @Nonnull final Location... locations) {
             this.name = name;
             this.description = description;
             this.finished = finished;
@@ -320,7 +328,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
      * The event subscriber for click events on the quest button.
      *
      * @param topic the event topic
-     * @param data  the event data
+     * @param data the event data
      */
     @NiftyEventSubscriber(id = "openQuestBtn")
     public void onQuestLogButtonClicked(final String topic, final ButtonClickedEvent data) {
@@ -338,8 +346,9 @@ public final class QuestHandler implements QuestGui, ScreenController {
      * @param event the event data
      */
     @NiftyEventSubscriber(id = "questLog#questList")
-    public void onSelectedQuestChanged(@Nonnull final String topic,
-                                       @Nonnull final ListBoxSelectionChangedEvent<QuestEntry> event) {
+    public void onSelectedQuestChanged(
+            @Nonnull final String topic,
+            @Nonnull final ListBoxSelectionChangedEvent<QuestEntry> event) {
         Element descriptionArea = getDescriptionArea();
         if (descriptionArea != null) {
             descriptionArea.hide(new EndNotify() {
@@ -351,7 +360,6 @@ public final class QuestHandler implements QuestGui, ScreenController {
         }
     }
 
-
     private void updateAllQuests() {
         ListBox<QuestEntry> questList = getQuestList();
         if (questList == null) {
@@ -359,8 +367,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
             return;
         }
         final List<QuestEntry> selectedEntries = getQuestList().getItems();
-        for (QuestEntry selectedEntry: selectedEntries)
-        {
+        for (QuestEntry selectedEntry : selectedEntries) {
             final Collection<Location> locationList = new ArrayList<>(selectedEntry.getTargetLocationCount());
             for (int i = 0; i < selectedEntry.getTargetLocationCount(); i++) {
                 final Location target = selectedEntry.getTargetLocation(i);
@@ -379,7 +386,6 @@ public final class QuestHandler implements QuestGui, ScreenController {
         World.getMap().removeQuestMarkers(locationList);
         World.getMap().applyQuestTargetLocations(locationList);
     }
-
 
     /**
      * Update the quest that is currently displayed in the dialog.
@@ -641,8 +647,12 @@ public final class QuestHandler implements QuestGui, ScreenController {
     }
 
     @Override
-    public void setQuest(final int questId, @Nonnull final String name, @Nonnull final String description,
-                         final boolean finished, @Nonnull final Location... locations) {
+    public void setQuest(
+            final int questId,
+            @Nonnull final String name,
+            @Nonnull final String description,
+            final boolean finished,
+            @Nonnull final Location... locations) {
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
             public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
@@ -664,14 +674,18 @@ public final class QuestHandler implements QuestGui, ScreenController {
      * The internal method to set the quest. This needs to be called during the update call before Nifty itself is
      * updated.
      *
-     * @param questId     the ID of the quest
-     * @param name        the name of the quest
+     * @param questId the ID of the quest
+     * @param name the name of the quest
      * @param description the current description of the quest
-     * @param finished    {@code true} if the quest is finished
-     * @param locations   the valid target locations
+     * @param finished {@code true} if the quest is finished
+     * @param locations the valid target locations
      */
-    private void setQuestInternal(final int questId, @Nonnull final String name, @Nonnull final String description,
-                                  final boolean finished, @Nonnull final Location... locations) {
+    private void setQuestInternal(
+            final int questId,
+            @Nonnull final String name,
+            @Nonnull final String description,
+            final boolean finished,
+            @Nonnull final Location... locations) {
         final QuestEntry oldEntry = findQuest(questId);
         if (finished && oldEntry != null) {
             final Collection<Location> locationList = new ArrayList<>(oldEntry.getTargetLocationCount());

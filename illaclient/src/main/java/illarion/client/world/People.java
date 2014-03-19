@@ -23,9 +23,9 @@ import illarion.client.world.events.CharRemovedEvent;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
 import javolution.util.FastTable;
+import org.bushe.swing.event.EventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.bushe.swing.event.EventBus;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

@@ -23,16 +23,15 @@ import illarion.mapedit.data.MapPosition;
 import illarion.mapedit.data.MapTile;
 import illarion.mapedit.history.GroupAction;
 import illarion.mapedit.history.HistoryManager;
+import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.swing.*;
 
 /**
- *
  * @author Tim
  */
 public abstract class AbstractTool {
@@ -101,7 +100,6 @@ public abstract class AbstractTool {
             getHistory().addEntry(action);
         }
     }
-
 
     protected final ToolManager getManager() {
         return manager;

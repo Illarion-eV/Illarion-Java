@@ -23,8 +23,6 @@ import illarion.client.resources.TileFactory;
 import illarion.client.util.GlobalExecutorService;
 import illarion.common.graphics.TileInfo;
 import illarion.common.types.Location;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.illarion.engine.Engine;
 import org.illarion.engine.EngineException;
 import org.illarion.engine.GameContainer;
@@ -33,11 +31,14 @@ import org.illarion.engine.graphic.WorldMapDataProvider;
 import org.illarion.engine.graphic.WorldMapDataProviderCallback;
 import org.illarion.engine.nifty.IgeMiniMapRenderImage;
 import org.illarion.engine.nifty.IgeRenderImage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.nio.ByteBuffer;
@@ -537,7 +538,8 @@ public final class GameMiniMap implements WorldMapDataProvider {
             return;
         }
 
-        try (WritableByteChannel outChannel = Channels.newChannel(new GZIPOutputStream(Files.newOutputStream(mapFile)))) {
+        try (WritableByteChannel outChannel = Channels
+                .newChannel(new GZIPOutputStream(Files.newOutputStream(mapFile)))) {
             //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (mapData) {
                 mapData.rewind();

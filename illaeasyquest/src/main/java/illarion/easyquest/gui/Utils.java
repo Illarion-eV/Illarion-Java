@@ -21,10 +21,10 @@ package illarion.easyquest.gui;
 import illarion.common.util.CopyrightHeader;
 import illarion.easyquest.Lang;
 import illarion.easyquest.QuestIO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.pushingpixels.flamingo.api.common.icon.ImageWrapperResizableIcon;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

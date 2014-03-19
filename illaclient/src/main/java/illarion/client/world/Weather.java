@@ -19,9 +19,9 @@
 package illarion.client.world;
 
 import illarion.client.graphics.AnimationUtility;
+import org.illarion.engine.graphic.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.illarion.engine.graphic.Color;
 
 import javax.annotation.Nonnull;
 import java.util.Random;
@@ -35,31 +35,30 @@ public final class Weather {
      * level, the clear and overcast colors in the second level and the red, green and blue color value in the third
      * level.
      */
-    private static final float[][][] AMBIENT_LIGHT_COLORS = {
-            {{0.2f, 0.2f, 0.4f}, {0.15f, 0.15f, 0.2f}},
-            {{0.15f, 0.15f, 0.3f}, {0.1f, 0.1f, 0.15f}},
-            {{0.15f, 0.15f, 0.3f}, {0.1f, 0.1f, 0.15f}},
-            {{0.15f, 0.15f, 0.3f}, {0.2f, 0.2f, 0.3f}},
-            {{0.7f, 0.7f, 0.75f}, {0.4f, 0.4f, 0.45f}},
-            {{1, 0.95f, 0.8f}, {0.6f, 0.6f, 0.6f}},
-            {{1f, 0.98f, 0.9f}, {0.7f, 0.7f, 0.7f}}, // 6:00
-            {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
-            {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
-            {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
-            {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
-            {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
-            {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}}, // 12:00
-            {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
-            {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
-            {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
-            {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
-            {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
-            {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}}, // 18:00
-            {{1f, 0.9f, 0.8f}, {0.7f, 0.7f, 0.7f}},
-            {{1, 0.8f, 0.7f}, {0.6f, 0.6f, 0.6f}},
-            {{0.7f, 0.6f, 0.7f}, {0.4f, 0.4f, 0.45f}},
-            {{0.2f, 0.2f, 0.4f}, {0.2f, 0.2f, 0.3f}},
-            {{0.2f, 0.2f, 0.4f}, {0.15f, 0.15f, 0.2f}}};
+    private static final float[][][] AMBIENT_LIGHT_COLORS = {{{0.2f, 0.2f, 0.4f}, {0.15f, 0.15f, 0.2f}},
+                                                             {{0.15f, 0.15f, 0.3f}, {0.1f, 0.1f, 0.15f}},
+                                                             {{0.15f, 0.15f, 0.3f}, {0.1f, 0.1f, 0.15f}},
+                                                             {{0.15f, 0.15f, 0.3f}, {0.2f, 0.2f, 0.3f}},
+                                                             {{0.7f, 0.7f, 0.75f}, {0.4f, 0.4f, 0.45f}},
+                                                             {{1, 0.95f, 0.8f}, {0.6f, 0.6f, 0.6f}},
+                                                             {{1f, 0.98f, 0.9f}, {0.7f, 0.7f, 0.7f}}, // 6:00
+                                                             {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
+                                                             {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
+                                                             {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
+                                                             {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
+                                                             {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
+                                                             {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}}, // 12:00
+                                                             {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
+                                                             {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
+                                                             {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
+                                                             {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
+                                                             {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
+                                                             {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}}, // 18:00
+                                                             {{1f, 0.9f, 0.8f}, {0.7f, 0.7f, 0.7f}},
+                                                             {{1, 0.8f, 0.7f}, {0.6f, 0.6f, 0.6f}},
+                                                             {{0.7f, 0.6f, 0.7f}, {0.4f, 0.4f, 0.45f}},
+                                                             {{0.2f, 0.2f, 0.4f}, {0.2f, 0.2f, 0.3f}},
+                                                             {{0.2f, 0.2f, 0.4f}, {0.15f, 0.15f, 0.2f}}};
 
     /**
      * Value of the cloud overcast where it reaches the maximal amount of darken
@@ -365,7 +364,6 @@ public final class Weather {
         ambientTargetColor = new Color(ambientLight);
     }
 
-
     /**
      * Calculate the current ambient light, depending on the time of day, the environment (inside,
      * outside) and the current weather.
@@ -386,26 +384,29 @@ public final class Weather {
 
         // heavily overcast - all grey
         if (cloud > CLOUD_LIMIT) {
-            ambientTargetColor.setRedf((AMBIENT_LIGHT_COLORS[nextHour][1][0] * timeAlpha)
-                    + (AMBIENT_LIGHT_COLORS[hour][1][0] * (1f - timeAlpha)));
-            ambientTargetColor.setGreenf((AMBIENT_LIGHT_COLORS[nextHour][1][1] * timeAlpha)
-                    + (AMBIENT_LIGHT_COLORS[hour][1][1] * (1f - timeAlpha)));
-            ambientTargetColor.setBluef((AMBIENT_LIGHT_COLORS[nextHour][1][2] * timeAlpha)
-                    + (AMBIENT_LIGHT_COLORS[hour][1][2] * (1f - timeAlpha)));
+            ambientTargetColor.setRedf((AMBIENT_LIGHT_COLORS[nextHour][1][0] * timeAlpha) +
+                                               (AMBIENT_LIGHT_COLORS[hour][1][0] * (1f - timeAlpha)));
+            ambientTargetColor.setGreenf((AMBIENT_LIGHT_COLORS[nextHour][1][1] * timeAlpha) +
+                                                 (AMBIENT_LIGHT_COLORS[hour][1][1] * (1f - timeAlpha)));
+            ambientTargetColor.setBluef((AMBIENT_LIGHT_COLORS[nextHour][1][2] * timeAlpha) +
+                                                (AMBIENT_LIGHT_COLORS[hour][1][2] * (1f - timeAlpha)));
         } else { // partially cloudy, interpolate color
             final float cloudAlpha = (float) cloud / CLOUD_LIMIT;
             ambientTargetColor.setRedf((((AMBIENT_LIGHT_COLORS[nextHour][0][0] * timeAlpha) +
-                    (AMBIENT_LIGHT_COLORS[hour][0][0] * (1f - timeAlpha))) * (1f - cloudAlpha))
-                    + (((AMBIENT_LIGHT_COLORS[nextHour][1][0] * timeAlpha) +
-                    (AMBIENT_LIGHT_COLORS[hour][1][0] * (1f - timeAlpha))) * cloudAlpha));
+                    (AMBIENT_LIGHT_COLORS[hour][0][0] * (1f - timeAlpha))) * (1f - cloudAlpha)) +
+                                               (((AMBIENT_LIGHT_COLORS[nextHour][1][0] * timeAlpha) +
+                                                       (AMBIENT_LIGHT_COLORS[hour][1][0] * (1f - timeAlpha))) *
+                                                       cloudAlpha));
             ambientTargetColor.setGreenf((((AMBIENT_LIGHT_COLORS[nextHour][0][1] * timeAlpha) +
-                    (AMBIENT_LIGHT_COLORS[hour][0][1] * (1f - timeAlpha))) * (1f - cloudAlpha))
-                    + (((AMBIENT_LIGHT_COLORS[nextHour][1][1] * timeAlpha) +
-                    (AMBIENT_LIGHT_COLORS[hour][1][1] * (1f - timeAlpha))) * cloudAlpha));
+                    (AMBIENT_LIGHT_COLORS[hour][0][1] * (1f - timeAlpha))) * (1f - cloudAlpha)) +
+                                                 (((AMBIENT_LIGHT_COLORS[nextHour][1][1] * timeAlpha) +
+                                                         (AMBIENT_LIGHT_COLORS[hour][1][1] * (1f - timeAlpha))) *
+                                                         cloudAlpha));
             ambientTargetColor.setBluef((((AMBIENT_LIGHT_COLORS[nextHour][0][2] * timeAlpha) +
-                    (AMBIENT_LIGHT_COLORS[hour][0][2] * (1f - timeAlpha))) * (1f - cloudAlpha))
-                    + (((AMBIENT_LIGHT_COLORS[nextHour][1][2] * timeAlpha) +
-                    (AMBIENT_LIGHT_COLORS[hour][1][2] * (1f - timeAlpha))) * cloudAlpha));
+                    (AMBIENT_LIGHT_COLORS[hour][0][2] * (1f - timeAlpha))) * (1f - cloudAlpha)) +
+                                                (((AMBIENT_LIGHT_COLORS[nextHour][1][2] * timeAlpha) +
+                                                        (AMBIENT_LIGHT_COLORS[hour][1][2] * (1f - timeAlpha))) *
+                                                        cloudAlpha));
         }
 
         // it is somewhat darker in buildings
@@ -543,7 +544,7 @@ public final class Weather {
      * Set the new cloud cover value.
      *
      * @param newCloud new value for the clouds between {@link #CLOUDS_MIN} and
-     *                 {@link #CLOUDS_MAX}
+     * {@link #CLOUDS_MAX}
      */
     @SuppressWarnings("nls")
     public void setCloud(final int newCloud) {
@@ -573,7 +574,7 @@ public final class Weather {
      * Set the new lighting intensity value.
      *
      * @param newLightning New value for the lightnings between
-     *                     {@link #LIGHTNING_MIN} and {@link #LIGHTNING_MAX}
+     * {@link #LIGHTNING_MIN} and {@link #LIGHTNING_MAX}
      */
     @SuppressWarnings("nls")
     public void setLightning(final int newLightning) {
@@ -597,16 +598,14 @@ public final class Weather {
     /**
      * Set the precipitation type and strength.
      *
-     * @param type     Type of precipitation. Possible values are {@link #RAIN} and
-     *                 {@link #SNOW}
+     * @param type Type of precipitation. Possible values are {@link #RAIN} and
+     * {@link #SNOW}
      * @param strength new precipitation strength value
      */
     @SuppressWarnings("nls")
     public void setPrecipitation(final int type, final int strength) {
-        if ((type < 0) || (type > 2) || (strength < PREC_SERVER_MIN)
-                || (strength > PREC_SERVER_MAX)) {
-            LOGGER.warn("Illegal precipitation value: " + type + " strength: "
-                    + strength);
+        if ((type < 0) || (type > 2) || (strength < PREC_SERVER_MIN) || (strength > PREC_SERVER_MAX)) {
+            LOGGER.warn("Illegal precipitation value: " + type + " strength: " + strength);
             return;
         }
 
@@ -623,13 +622,13 @@ public final class Weather {
      * Set the strength of the wind and the frequency and strength of the wind
      * gusts.
      *
-     * @param newWind  the new value for the wind
+     * @param newWind the new value for the wind
      * @param newGusts the new value for the wind gusts
      */
     @SuppressWarnings("nls")
     public void setWind(final int newWind, final int newGusts) {
-        if ((newWind < WIND_SERVER_MIN) || (newWind > WIND_SERVER_MAX)
-                || (newGusts < WIND_GUST_MIN) || (newGusts > WIND_GUST_MAX)) {
+        if ((newWind < WIND_SERVER_MIN) || (newWind > WIND_SERVER_MAX) || (newGusts < WIND_GUST_MIN) ||
+                (newGusts > WIND_GUST_MAX)) {
             LOGGER.warn("Illegal wind value: " + newWind + " gusts: " + newGusts);
             return;
         }

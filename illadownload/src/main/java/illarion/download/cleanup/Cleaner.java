@@ -8,12 +8,13 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -154,7 +155,6 @@ public class Cleaner {
         } else {
             userDirFilter = new UserDirectoryFilenameFilter();
         }
-
 
         final Path userDir = dm.getDirectory(DirectoryManager.Directory.User);
         if (userDir != null) {
@@ -305,8 +305,8 @@ public class Cleaner {
     }
 
     @Nonnull
-    private List<Path> enlistFiles(@Nonnull Path rootPath, @Nonnull DirectoryStream.Filter<Path> filter) throws
-            IOException {
+    private List<Path> enlistFiles(@Nonnull Path rootPath, @Nonnull DirectoryStream.Filter<Path> filter)
+            throws IOException {
         final List<Path> snapshotJars = new ArrayList<>();
         try (DirectoryStream<Path> files = Files.newDirectoryStream(rootPath, filter)) {
             for (Path file : files) {

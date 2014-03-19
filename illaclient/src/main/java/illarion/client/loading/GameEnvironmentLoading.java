@@ -22,10 +22,10 @@ import illarion.client.IllaClient;
 import illarion.client.world.World;
 import illarion.common.data.SkillLoader;
 import illarion.common.util.ProgressMonitor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.illarion.engine.Engine;
 import org.illarion.engine.EngineException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;

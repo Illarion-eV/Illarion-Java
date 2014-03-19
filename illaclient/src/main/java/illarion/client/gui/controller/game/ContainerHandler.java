@@ -53,8 +53,6 @@ import illarion.common.gui.AbstractMultiActionHelper;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Rectangle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.engine.GameContainer;
@@ -64,6 +62,8 @@ import org.illarion.engine.input.Key;
 import org.illarion.nifty.controls.InventorySlot;
 import org.illarion.nifty.controls.ItemContainerCloseEvent;
 import org.illarion.nifty.controls.itemcontainer.builder.ItemContainerBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -253,9 +253,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      * @param tooltip the tooltip handler
      */
     public ContainerHandler(
-            final Input input,
-            final NumberSelectPopupHandler numberSelectPopupHandler,
-            final TooltipHandler tooltip) {
+            final Input input, final NumberSelectPopupHandler numberSelectPopupHandler, final TooltipHandler tooltip) {
         itemContainerMap = new TIntObjectHashMap<>();
         numberSelect = numberSelectPopupHandler;
         tooltipHandler = tooltip;
@@ -557,8 +555,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
         itemContainerMap.forEachEntry(new TIntObjectProcedure<org.illarion.nifty.controls.ItemContainer>() {
             @Override
             public boolean execute(
-                    final int id,
-                    @Nonnull final org.illarion.nifty.controls.ItemContainer itemContainer) {
+                    final int id, @Nonnull final org.illarion.nifty.controls.ItemContainer itemContainer) {
                 final int slotCount = itemContainer.getSlotCount();
                 for (int i = 0; i < slotCount; i++) {
                     final InventorySlot conSlot = itemContainer.getSlot(i);

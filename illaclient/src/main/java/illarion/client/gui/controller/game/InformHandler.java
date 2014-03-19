@@ -32,9 +32,9 @@ import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.gui.InformGui;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
+import org.illarion.engine.GameContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

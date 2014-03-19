@@ -1,7 +1,6 @@
 package illarion.download.cleanup;
 
 import javax.annotation.Nonnull;
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
@@ -59,7 +58,8 @@ class VersionComparator implements Comparator<Path> {
                 if (compareResult != 0) {
                     return compareResult;
                 }
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException ignored) {
+            }
             final int compareResult = version1Parts[i].compareTo(version2Parts[i]);
             if (compareResult != 0) {
                 return compareResult;

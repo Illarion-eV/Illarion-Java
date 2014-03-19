@@ -24,9 +24,9 @@ import illarion.common.util.TableLoaderSink;
 import illarion.common.util.TableLoaderTiles;
 import illarion.mapedit.resource.Resource;
 import illarion.mapedit.resource.TileImg;
+import org.illarion.engine.assets.TextureManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.illarion.engine.assets.TextureManager;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

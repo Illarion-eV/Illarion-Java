@@ -25,11 +25,11 @@ import illarion.mapedit.tools.ToolManager;
 import illarion.mapedit.util.MouseButton;
 import illarion.mapedit.util.SwingLocation;
 import illarion.mapedit.util.Vector2i;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.swing.*;

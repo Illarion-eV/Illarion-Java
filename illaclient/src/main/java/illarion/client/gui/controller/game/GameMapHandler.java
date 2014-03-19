@@ -41,14 +41,14 @@ import illarion.client.world.interactive.InteractiveMapTile;
 import illarion.common.types.ItemCount;
 import illarion.common.types.Location;
 import illarion.common.types.Rectangle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.engine.graphic.SceneEvent;
 import org.illarion.engine.input.ForwardingTarget;
 import org.illarion.engine.input.Input;
 import org.illarion.engine.input.Key;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
