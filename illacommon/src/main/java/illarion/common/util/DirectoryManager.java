@@ -91,7 +91,7 @@ public final class DirectoryManager {
      * The character set used to save the configuration file.
      */
     @Nonnull
-    private static final Charset CHARSET = Charset.forName("UTF-8");
+    private final Charset charSet;
 
     /**
      * The assignment of the directory identifiers and the actual directory.
@@ -127,6 +127,7 @@ public final class DirectoryManager {
      */
     @SuppressWarnings("nls")
     private DirectoryManager() {
+        charSet = Charset.forName("UTF-8");
         directories = new EnumMap<>(Directory.class);
         relativeDirectory = new EnumMap<>(Directory.class);
 
@@ -194,7 +195,7 @@ public final class DirectoryManager {
         }
 
         try {
-            final List<String> lines = Files.readAllLines(settingsFile, CHARSET);
+            final List<String> lines = Files.readAllLines(settingsFile, charSet);
             for (final String line : lines) {
                 for (final Directory dir : Directory.values()) {
                     if (line.startsWith(dir.getHeader())) {
@@ -388,7 +389,7 @@ public final class DirectoryManager {
         }
 
         if (foundRelativeDirectory) {
-            try (BufferedWriter writer = Files.newBufferedWriter(settingsFile, CHARSET)) {
+            try (BufferedWriter writer = Files.newBufferedWriter(settingsFile, charSet)) {
                 for (@Nonnull final Directory dir : Directory.values()) {
                     if (isDirectoryRelative(dir)) {
                         writer.write(dir.getHeader());
