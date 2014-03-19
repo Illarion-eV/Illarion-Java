@@ -18,6 +18,7 @@
  */
 package illarion.easyquest.gui;
 
+import com.sun.javafx.beans.annotations.NonNull;
 import illarion.common.config.ConfigDialog;
 import illarion.common.config.gui.ConfigDialogSwing;
 import illarion.easyquest.Lang;
@@ -27,11 +28,14 @@ import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntryFooter;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntryPrimary;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntrySecondary;
 
+import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Collection;
 
 final class MainMenu extends RibbonApplicationMenu {
 
@@ -57,17 +61,16 @@ final class MainMenu extends RibbonApplicationMenu {
                     }
                 }, CommandButtonKind.ACTION_ONLY);
 
-        final File[] oldFiles = Config.getInstance().getLastOpenedFiles();
-        final RibbonApplicationMenuEntrySecondary[] workingEntries = new RibbonApplicationMenuEntrySecondary[oldFiles.length];
+        final Collection<Path> oldFiles = Config.getInstance().getLastOpenedFiles();
+        final RibbonApplicationMenuEntrySecondary[] workingEntries =
+                new RibbonApplicationMenuEntrySecondary[oldFiles.size()];
         int entryIndex = 0;
-        for (@Nullable final File openFile : oldFiles) {
-            if (openFile == null) {
-                continue;
-            }
+        for (@Nonnull final Path openFile : oldFiles) {
             workingEntries[entryIndex] = new RibbonApplicationMenuEntrySecondary(
-                    Utils.getResizableIconFromResource("source.png"), openFile.getName(), new ActionListener() {
-                @Nullable
-                private final Path fileToOpen = openFile.toPath();
+                    Utils.getResizableIconFromResource("source.png"), openFile.getFileName().toString(),
+                    new ActionListener() {
+                @Nonnull
+                private final Path fileToOpen = openFile;
 
                 @Override
                 public void actionPerformed(final ActionEvent e) {

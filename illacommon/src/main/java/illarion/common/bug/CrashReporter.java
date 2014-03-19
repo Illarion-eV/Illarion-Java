@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -158,37 +159,6 @@ public final class CrashReporter {
         this.dialogFactory = dialogFactory;
     }
 
-    public void dumpCrash(@Nonnull final CrashData crash) {
-        Marker fatalMark = MarkerFactory.getMarker("fatal");
-        LOGGER.error(fatalMark, "Fatal error occurred: {}", crash.getDescription());
-        LOGGER.error(fatalMark, "Fatal error exception: {}", crash.getExceptionName());
-        LOGGER.error(fatalMark, "Fatal error thread: {}", crash.getThreadName());
-        LOGGER.error(fatalMark, "Fatal error backtrace: {}", crash.getStackBacktrace());
-        LOGGER.error(fatalMark, "{} is going down. Brace for impact.", crash.getApplicationIdentifier().getApplicationName());
-        final Calendar cal = Calendar.getInstance();
-        final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-        final String dateStr = sdf.format(cal.getTime());
-        final File target = new File(DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User),
-                                     "crash_" + dateStr + ".dump");
-
-        ObjectOutputStream oOut = null;
-        try {
-            oOut = new ObjectOutputStream(new FileOutputStream(target));
-            oOut.writeObject(crash);
-            oOut.flush();
-        } catch (@Nonnull final IOException e) {
-            // ignored
-        } finally {
-            if (oOut != null) {
-                try {
-                    oOut.close();
-                } catch (@Nonnull final IOException e) {
-                    // ignored
-                }
-            }
-        }
-    }
-
     /**
      * Report a crash to the Illarion Server in case the application is supposed
      * to do so.
@@ -221,8 +191,8 @@ public final class CrashReporter {
         if ("NoClassDefFoundError".equals(crash.getExceptionName())) {
             try {
                 //noinspection ResultOfMethodCallIgnored
-                new File(DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.Data), "corrupted")
-                        .createNewFile();
+                Files.createFile(
+                        DirectoryManager.getInstance().resolveFile(DirectoryManager.Directory.Data, "corrupted"));
             } catch (@Nonnull final IOException e) {
                 LOGGER.error("Failed to mark data as corrupted.");
             }
