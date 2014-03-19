@@ -64,12 +64,14 @@
                         <control name="button" id="openInventoryBtn" style="nifty-button-inventory" valign="bottom"
                                  focusable="false" marginRight="10px"/>
                         <control name="button" id="openQuestBtn" style="nifty-button-quest-log" valign="bottom"
-                                 focusable="false">
+                                 focusable="false" marginRight="10px">
                             <effect>
                                 <onCustom name="imageOverlayPulsate" customKey="pulse" startDelay="0" length="10000"
                                           filename="gui/button/questlog_highlight.png" post="true"/>
                             </effect>
                         </control>
+                        <control name="button" id="openHelpBtn" style="nifty-button-help" valign="bottom"
+                                 focusable="false"/>
                     </panel>
                     <control name="progress" style="illarion-health-bar" width="100%" id="healthBar"/>
                     <panel width="100%" childLayout="horizontal">

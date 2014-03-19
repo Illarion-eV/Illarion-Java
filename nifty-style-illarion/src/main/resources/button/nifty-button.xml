@@ -152,6 +152,16 @@
         <attributes visible="false"/>
     </style>
 
+    <!-- Style for the help button -->
+    <style id="nifty-button-help#panel">
+        <attributes backgroundImage="gui/button/help.png" width="24px" height="24px" childLayout="center"
+                    visibleToMouse="true" align="center" valign="center"/>
+    </style>
+
+    <style id="nifty-button-help#text">
+        <attributes visible="false"/>
+    </style>
+
     <!-- Style for the default button -->
     <style id="nifty-button#panel" base="nifty-button-gray#panel"/>
     <style id="nifty-button#text" base="nifty-button-gray#text"/>
