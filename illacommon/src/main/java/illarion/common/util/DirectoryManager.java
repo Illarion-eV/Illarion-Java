@@ -18,8 +18,6 @@
  */
 package illarion.common.util;
 
-import com.sun.nio.sctp.InvalidStreamException;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;
@@ -91,7 +89,7 @@ public final class DirectoryManager {
      * The character set used to save the configuration file.
      */
     @Nonnull
-    private static final Charset CHARSET = Charset.forName("UTF-8");
+    private final Charset charSet;
 
     /**
      * The assignment of the directory identifiers and the actual directory.
@@ -127,6 +125,7 @@ public final class DirectoryManager {
      */
     @SuppressWarnings("nls")
     private DirectoryManager() {
+        charSet = Charset.forName("UTF-8");
         directories = new EnumMap<>(Directory.class);
         relativeDirectory = new EnumMap<>(Directory.class);
 
@@ -194,11 +193,17 @@ public final class DirectoryManager {
         }
 
         try {
-            final List<String> lines = Files.readAllLines(settingsFile, CHARSET);
+            final List<String> lines = Files.readAllLines(settingsFile, charSet);
             for (final String line : lines) {
                 for (final Directory dir : Directory.values()) {
                     if (line.startsWith(dir.getHeader())) {
-                        final Path testDir = Paths.get(dir.getDefaultDir());
+                        final Path testDir;
+                        if (relative) {
+                            testDir = Paths.get(dir.getDefaultDir());
+                        } else {
+                            testDir = Paths.get(line.substring(dir.getHeader().length()));
+                        }
+
                         if (testDirectory(testDir)) {
                             if (createDataDirFile(testDir)) {
                                 directories.put(dir, testDir);
@@ -251,7 +256,7 @@ public final class DirectoryManager {
     public Path resolveFile(@Nonnull final Directory dir, @Nonnull final String... segments) {
         final Path dirPath = getDirectory(dir);
         if (dirPath == null) {
-            throw new InvalidStreamException("Root directory is not yet load.");
+            throw new IllegalStateException("Root directory is not yet load.");
         }
         Path result = dirPath;
         for (final String segment : segments) {
@@ -388,7 +393,7 @@ public final class DirectoryManager {
         }
 
         if (foundRelativeDirectory) {
-            try (BufferedWriter writer = Files.newBufferedWriter(settingsFile, CHARSET)) {
+            try (BufferedWriter writer = Files.newBufferedWriter(settingsFile, charSet)) {
                 for (@Nonnull final Directory dir : Directory.values()) {
                     if (isDirectoryRelative(dir)) {
                         writer.write(dir.getHeader());
