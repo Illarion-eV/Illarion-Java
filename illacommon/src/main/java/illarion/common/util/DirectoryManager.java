@@ -18,7 +18,7 @@
  */
 package illarion.common.util;
 
-
+import com.sun.nio.sctp.InvalidStreamException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -80,11 +80,6 @@ public final class DirectoryManager {
             return defaultDir;
         }
     }
-    /**
-     * The character set used to save the configuration file.
-     */
-    @Nonnull
-    private static final Charset CHARSET = Charset.forName("UTF-8");
 
     /**
      * The singleton instance of this class.
@@ -92,6 +87,11 @@ public final class DirectoryManager {
     @Nonnull
     private static final DirectoryManager INSTANCE = new DirectoryManager();
 
+    /**
+     * The character set used to save the configuration file.
+     */
+    @Nonnull
+    private static final Charset CHARSET = Charset.forName("UTF-8");
 
     /**
      * The assignment of the directory identifiers and the actual directory.
@@ -251,10 +251,7 @@ public final class DirectoryManager {
     public Path resolveFile(@Nonnull final Directory dir, @Nonnull final String... segments) {
         final Path dirPath = getDirectory(dir);
         if (dirPath == null) {
-            // TODO: com.sun.nio.sctp.InvalidStreamException as it was here before is
-            // does not work on mac and will be added in Java 8
-            // http://bugs.java.com/bugdatabase/view_bug.do?bug_id=7076487
-            throw new NullPointerException("Root directory is not yet load.");
+            throw new InvalidStreamException("Root directory is not yet load.");
         }
         Path result = dirPath;
         for (final String segment : segments) {
