@@ -215,7 +215,7 @@
 
     <popup id="noServerFound" childLayout="center">
         <panel style="nifty-panel-small" childLayout="vertical">
-            <control name="label" text="${gamescreen-bundle.noServer}" width="300px" style="nifty-label"
+            <control name="label" id="#closeMsg" text="${gamescreen-bundle.noServer}" width="300px" style="nifty-label"
                      wrap="true"/>
             <panel height="10px" width="1px"/>
             <panel childLayout="center" width="300px">

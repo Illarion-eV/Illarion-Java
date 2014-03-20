@@ -84,7 +84,7 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
         reportError(t, e);
 
         if (restart()) {
-            IllaClient.fallbackToLogin(getCrashMessage());
+            IllaClient.sendDisconnectEvent(getCrashMessage());
         }
         currentlyCrashing = false;
     }

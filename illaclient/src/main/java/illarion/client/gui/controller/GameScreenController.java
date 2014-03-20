@@ -91,7 +91,7 @@ public final class GameScreenController implements GameGui, ScreenController {
         addHandler(dialogHandler);
         addHandler(containerHandler);
         addHandler(new CloseGameHandler());
-        addHandler(new NoServerHandler());
+        addHandler(new DisconnectHandler());
         addHandler(charStatusHandler);
         addHandler(skillsHandler);
         addHandler(questHandler);
