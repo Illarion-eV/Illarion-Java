@@ -19,7 +19,6 @@
 package illarion.client.net.server;
 
 import illarion.client.IllaClient;
-import illarion.client.Login;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.util.Lang;
@@ -93,11 +92,8 @@ public final class DisconnectMsg extends AbstractReply {
             BUILDER.append(Lang.getMsg("logout.unknown"));
             BUILDER.append(Integer.toHexString(reason));
         }
-        BUILDER.append("\n");
-        BUILDER.append(Lang.getMsg("logout.char"));
-        BUILDER.append(" ");
-        BUILDER.append(Login.getInstance().getLoginCharacter());
-        IllaClient.fallbackToLogin(BUILDER.toString());
+
+        IllaClient.sendDisconnectEvent(BUILDER.toString());
         return true;
     }
 

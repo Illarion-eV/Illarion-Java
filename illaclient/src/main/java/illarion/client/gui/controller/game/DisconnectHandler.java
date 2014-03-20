@@ -21,9 +21,11 @@ package illarion.client.gui.controller.game;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.elements.Element;
+import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.IllaClient;
+import illarion.client.world.events.ConnectionLostEvent;
 import illarion.client.world.events.ServerNotFoundEvent;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -35,14 +37,14 @@ import javax.annotation.Nonnull;
 /**
  * @author Fredrik K
  */
-public class NoServerHandler implements ScreenController, UpdatableHandler, EventTopicSubscriber<ButtonClickedEvent> {
+public class DisconnectHandler implements ScreenController, UpdatableHandler, EventTopicSubscriber<ButtonClickedEvent> {
     private Element popup;
     private boolean isVisible;
     private boolean isActive;
     private Nifty parentNifty;
     private Screen parentScreen;
 
-    public NoServerHandler() {
+    public DisconnectHandler() {
         AnnotationProcessor.process(this);
     }
 
@@ -76,6 +78,23 @@ public class NoServerHandler implements ScreenController, UpdatableHandler, Even
         if (!isActive) {
             isVisible = true;
         }
+    }
+
+    @EventSubscriber
+    public void onConnectionLostEventReceived(final ConnectionLostEvent event) {
+        if (isActive) {
+            return;
+        }
+        isVisible = true;
+        final Element msgLabel = popup.findElementById("#closeMsg");
+        if (msgLabel == null) {
+            return;
+        }
+        final TextRenderer valueTextRenderer = msgLabel.getRenderer(TextRenderer.class);
+        if (valueTextRenderer == null) {
+            return;
+        }
+        valueTextRenderer.setText(event.getMessage());
     }
 
     @Override

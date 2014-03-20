@@ -33,6 +33,7 @@ import illarion.client.util.GlobalExecutorService;
 import illarion.client.util.Lang;
 import illarion.client.world.Player;
 import illarion.client.world.World;
+import illarion.client.world.events.ConnectionLostEvent;
 import illarion.common.bug.CrashReporter;
 import illarion.common.config.Config;
 import illarion.common.config.ConfigChangedEvent;
@@ -300,15 +301,13 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     }
 
     /**
-     * Quit the client and restart the connection with the login screen right away.
+     * Publishing a ConnectionLostEvent.
      *
-     * @param message the message that shall be displayed in the login screen
+     * @param message the message that shall be displayed
      */
-    public static void fallbackToLogin(final String message) {
+    public static void sendDisconnectEvent(final String message) {
         LOGGER.warn(message);
-        ensureExit();
-        //INSTANCE.game.enterState(Game.STATE_LOGIN);
-        //World.cleanEnvironment();
+        EventBus.publish(new ConnectionLostEvent(message));
     }
 
     /**

@@ -20,7 +20,9 @@ package illarion.client.gui.controller.game;
 
 import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.builder.PanelBuilder;
+import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.controls.Window;
 import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
 import de.lessvoid.nifty.elements.Element;
@@ -195,11 +197,12 @@ public class DocumentationHandler implements DocumentationGui, ScreenController,
 
     @Override
     public void onStartScreen() {
-
+        nifty.subscribeAnnotations(this);
     }
 
     @Override
     public void onEndScreen() {
+        nifty.unsubscribeAnnotations(this);
         IllaClient.getCfg().set("docuWindowPosX", Integer.toString(documentationWindow.getElement().getX()) + "px");
         IllaClient.getCfg().set("docuWindowPosY", Integer.toString(documentationWindow.getElement().getY()) + "px");
     }
@@ -207,5 +210,10 @@ public class DocumentationHandler implements DocumentationGui, ScreenController,
     @Override
     public void update(GameContainer container, int delta) {
 
+    }
+
+    @NiftyEventSubscriber(id = "openHelpBtn")
+    public void onInventoryButtonClicked(final String topic, final ButtonClickedEvent data) {
+        toggleDocumentation();
     }
 }
