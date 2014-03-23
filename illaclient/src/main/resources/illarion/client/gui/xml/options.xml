@@ -24,6 +24,11 @@
     <resourceBundle id="options-bundle" filename="options"/>
 
     <screen id="options" controller="illarion.client.gui.controller.OptionScreenController">
+        <layer childLayout="vertical">
+            <panel height="422px" width="*" backgroundImage="gui/window_background.png"
+                   imageMode="repeat:0,0,1024,422"/>
+        </layer>
+
         <layer id="layer2" backgroundColor="#0000" childLayout="center">
 
             <effect>

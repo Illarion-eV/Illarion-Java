@@ -23,6 +23,11 @@
 
     <screen id="clientEnd" controller="illarion.client.gui.controller.ClientEndScreenController"
             inputMapping="de.lessvoid.nifty.input.mapping.DefaultScreenMapping">
+        <layer childLayout="vertical">
+            <panel height="422px" width="*" backgroundImage="gui/window_background.png"
+                   imageMode="repeat:0,0,1024,422"/>
+        </layer>
+
         <layer childLayout="center">
             <panel childLayout="center">
                 <effect>
