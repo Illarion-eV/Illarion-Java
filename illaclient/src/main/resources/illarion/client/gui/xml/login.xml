@@ -62,17 +62,17 @@
 
                     <panel width="100%" childLayout="center">
                         <panel childLayout="vertical">
-                            <panel childLayout="horizontal" marginBottom="10px">
-                                <control id="optionBtn" name="button" label="${login-bundle.options}" width="100px"
-                                         height="35px" marginRight="25px"/>
+                            <panel childLayout="center" marginBottom="15px" width="400">
                                 <control id="loginBtn" name="button" label="${login-bundle.login}" width="225px"
                                          height="45px"/>
-                                <control id="exitBtn" name="button" label="${login-bundle.exit}" width="100px"
-                                         height="35px" marginLeft="25px"/>
                             </panel>
-                            <panel childLayout="center" width="475px">
+                            <panel childLayout="horizontal">
+                                <control id="optionBtn" name="button" label="${login-bundle.options}" width="100px"
+                                         height="35px" marginRight="25px"/>
                                 <control id="creditsBtn" name="button" label="${login-bundle.credits}" width="150px"
                                          height="35px"/>
+                                <control id="exitBtn" name="button" label="${login-bundle.exit}" width="100px"
+                                         height="35px" marginLeft="25px"/>
                             </panel>
                         </panel>
                     </panel>
