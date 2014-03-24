@@ -78,6 +78,17 @@
         </effect>
     </style>
 
+    <!-- Style for the large gray button -->
+    <style id="nifty-button-large#panel" base="nifty-button-gray#panel"/>
+
+    <style id="nifty-button-large#text">
+        <attributes font="menuFont" align="center" valign="center" textHAlign="center" textVAlign="center"
+                    color="#ffff"/>
+        <effect>
+            <onClick name="move" mode="toOffset" direction="bottom" offsetY="1"/>
+        </effect>
+    </style>
+
     <!-- Style for the green button -->
     <style id="nifty-button-green#panel">
         <attributes backgroundImage="gui/button/buttongreen.png" imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9"
