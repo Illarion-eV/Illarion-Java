@@ -92,6 +92,11 @@ public final class FontLoader {
     public static final String MENU_FONT = "menuFont";
 
     /**
+     * The key for the caption font.
+     */
+    public static final String CAPTION_FONT = "captionFont";
+
+    /**
      * The key for the small font.
      */
     public static final String SMALL_FONT = "smallFont";
@@ -120,6 +125,8 @@ public final class FontLoader {
         fontManager = assets.getFontManager();
         fontManager
                 .createFont(MENU_FONT, "fonts/BlackChancery.ttf", 24.f, Font.PLAIN, "gui/menuFont.fnt", FONT_IMAGE_DIR);
+        fontManager
+                .createFont(CAPTION_FONT, "fonts/BlackChancery.ttf", 18.f, Font.PLAIN, "gui/captionFont.fnt", FONT_IMAGE_DIR);
         fontManager.createFont(SMALL_FONT, "fonts/Ubuntu.ttf", 14.f, Font.BOLD, "gui/smallFont.fnt", FONT_IMAGE_DIR);
         fontManager.createFont(TEXT_FONT, "fonts/Ubuntu.ttf", 16.f, Font.PLAIN, "gui/textFont.fnt", FONT_IMAGE_DIR);
         fontManager.createFont(CHAT_FONT, "fonts/LiberationSansNarrow-Bold.ttf", 16.f, Font.PLAIN, "gui/chatFont.fnt",
