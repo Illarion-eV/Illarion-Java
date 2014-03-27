@@ -30,6 +30,7 @@ import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
+import illarion.client.IllaClient;
 import illarion.client.graphics.Camera;
 import illarion.client.graphics.Item;
 import illarion.client.gui.EntitySlickRenderImage;
@@ -345,7 +346,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
      * @param data the event data
      */
     @NiftyEventSubscriber(id = "toggleRunBtn")
-    public void onQuestLogButtonClicked(final String topic, final ButtonClickedEvent data) {
+    public void onToggleRunButtonClicked(final String topic, final ButtonClickedEvent data) {
         toggleRunMode();
     }
 
@@ -380,6 +381,9 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
         draggedGraphic = gamePanel.findElementById("mapDragObject");
         draggedImage = draggedGraphic.findElementById("mapDragImage");
         endOfDragOp = new GameMapDragEndOperation(draggedGraphic, gamePanel);
+        if (!IllaClient.getCfg().getBoolean("walkAsDefault")) {
+            toggleRunMode();
+        }
     }
 
     @Override

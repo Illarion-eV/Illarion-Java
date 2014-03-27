@@ -549,6 +549,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("disableChatAfterSending", true);
         cfg.setDefault("showQuestsOnGameMap", true);
         cfg.setDefault("showQuestsOnMiniMap", true);
+        cfg.setDefault("walkAsDefault", true);
 
         @Nonnull final Toolkit awtDefaultToolkit = Toolkit.getDefaultToolkit();
         @Nullable final Object doubleClick = awtDefaultToolkit.getDesktopProperty("awt.multiClickInterval");
