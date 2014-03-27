@@ -203,6 +203,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
 
     private boolean moveToDirectionActive;
     private final boolean[] activeDirections = new boolean[8];
+    private boolean mouseFollowAutoRun;
 
     /**
      * Default constructor.
@@ -214,6 +215,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         parentPlayer = parent;
         this.input = input;
         AnnotationProcessor.process(this);
+        mouseFollowAutoRun = IllaClient.getCfg().getBoolean("mouseFollowAutoRun");
 
         delayedMoveTrigger = new Timer(100, new Runnable() {
             @Override
@@ -233,6 +235,10 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
             return CharMovementMode.None;
         }
 
+        return getCharMovementMode();
+    }
+
+    private CharMovementMode getCharMovementMode() {
         CharMovementMode mode = CharMovementMode.Run;
         if (isInWalkMode) {
             mode = CharMovementMode.Walk;
@@ -893,15 +899,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         final float relYOffset = (float) yOffset / (float) distance;
 
         //noinspection IfStatementWithTooManyBranches
-        if (input.isAnyKeyDown(Key.LeftShift, Key.RightShift)) {
-            walkTowardsMode = CharMovementMode.None;
-        } else if (distance > 200) {
-            walkTowardsMode = CharMovementMode.Run;
-        } else if (distance < 30) {
-            walkTowardsMode = CharMovementMode.None;
-        } else {
-            walkTowardsMode = CharMovementMode.Walk;
-        }
+        walkTowardsMode = getWalkTowardsMode(distance);
 
         //noinspection IfStatementWithTooManyBranches
         if (relXOffset > MOUSE_ANGLE) {
@@ -937,6 +935,24 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         walkTowards = true;
 
         requestMove(walkTowardsDir, walkTowardsMode, true, true);
+    }
+
+    private CharMovementMode getWalkTowardsMode(int distance) {
+        if (input.isAnyKeyDown(Key.LeftShift, Key.RightShift)) {
+            return CharMovementMode.None;
+        }
+
+        if (mouseFollowAutoRun) {
+            return getCharMovementMode();
+        }
+
+        CharMovementMode mode = CharMovementMode.Walk;
+        if (distance > 200) {
+            mode = CharMovementMode.Run;
+        } else if (distance < 30) {
+            mode = CharMovementMode.None;
+        }
+        return mode;
     }
 
     public void toggleRunWalk() {

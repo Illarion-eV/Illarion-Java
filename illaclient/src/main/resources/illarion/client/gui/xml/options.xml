@@ -61,6 +61,11 @@
                             <control name="checkbox" id="walkAsDefault"/>
                         </panel>
                         <panel width="100%" childLayout="horizontal">
+                            <control name="label" text="${options-bundle.mouseFollowAutoRun}"/>
+                            <panel width="*"/>
+                            <control name="checkbox" id="mouseFollowAutoRun"/>
+                        </panel>
+                        <panel width="100%" childLayout="horizontal">
                             <control name="label" text="${options-bundle.disableChatAfterSending}"/>
                             <panel width="*"/>
                             <control name="checkbox" id="disableChatAfterSending"/>
