@@ -20,7 +20,9 @@ package illarion.client.gui.controller.game;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
+import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.controls.DroppableDroppedEvent;
+import de.lessvoid.nifty.effects.EffectEventId;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.ImageRenderer;
 import de.lessvoid.nifty.input.NiftyMouseInputEvent;
@@ -333,6 +335,36 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
             });
         } else {
             iManager.dropAtMap(dropSpotX, dropSpotY, amount);
+        }
+    }
+
+    /**
+     * The event subscriber for click events on the run button.
+     *
+     * @param topic the event topic
+     * @param data the event data
+     */
+    @NiftyEventSubscriber(id = "toggleRunBtn")
+    public void onQuestLogButtonClicked(final String topic, final ButtonClickedEvent data) {
+        toggleRunMode();
+    }
+
+    /**
+     * Toggle the pulsing animation of the run button.
+     */
+    public void toggleRunMode() {
+        World.getPlayer().getMovementHandler().toggleRunWalk();
+        if (activeScreen == null) {
+            return;
+        }
+        @Nullable final Element runBtn = activeScreen.findElementById("toggleRunBtn");
+        if (runBtn == null) {
+            return;
+        }
+        if (World.getPlayer().getMovementHandler().isInWalkMode()) {
+            runBtn.stopEffect(EffectEventId.onCustom);
+        } else  {
+            runBtn.startEffect(EffectEventId.onCustom, null, "pulse");
         }
     }
 

@@ -35,4 +35,9 @@ public interface GameMapGui {
      * @param tooltip  the tooltip of the item that is supposed to be displayed
      */
     void showItemTooltip(@Nonnull Location location, @Nonnull Tooltip tooltip);
+
+    /**
+     * Toggle the pulsing animation of the run button.
+     */
+    void toggleRunMode();
 }

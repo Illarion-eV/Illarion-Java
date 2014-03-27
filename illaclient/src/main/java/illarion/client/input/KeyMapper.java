@@ -327,7 +327,7 @@ public final class KeyMapper {
 
             case LeftCtrl:
             case RightCtrl:
-                World.getPlayer().getMovementHandler().toggleRunWalk();
+                World.getGameGui().getGameMapGui().toggleRunMode();
                 break;
 
             default:

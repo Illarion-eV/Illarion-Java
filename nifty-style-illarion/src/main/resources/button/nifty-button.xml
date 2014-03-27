@@ -163,6 +163,16 @@
         <attributes visible="false"/>
     </style>
 
+    <!-- Style for the toggle run button -->
+    <style id="nifty-button-toggle-run#panel">
+        <attributes backgroundImage="gui/button/toggle_run.png" width="24px" height="24px" childLayout="center"
+                    visibleToMouse="true" align="center" valign="center"/>
+    </style>
+
+    <style id="nifty-button-toggle-run#text">
+        <attributes visible="false"/>
+    </style>
+
     <!-- Style for the help button -->
     <style id="nifty-button-help#panel">
         <attributes backgroundImage="gui/button/help.png" width="24px" height="24px" childLayout="center"

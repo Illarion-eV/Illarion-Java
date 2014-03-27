@@ -942,4 +942,8 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     public void toggleRunWalk() {
         isInWalkMode = !isInWalkMode;
     }
+
+    public boolean isInWalkMode() {
+        return isInWalkMode;
+    }
 }
