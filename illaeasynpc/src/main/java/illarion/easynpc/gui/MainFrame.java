@@ -477,7 +477,9 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
             }
         }
 
-        Config.getInstance().setOldFiles(fileList);
+        if (fileList.size() > 0) {
+            Config.getInstance().setOldFiles(fileList);
+        }
         Config.getInstance().setLastWindowValues(this);
         Config.getInstance()
                 .setSplitPaneState((double) mainPanel.getDividerLocation() / (double) mainPanel.getHeight());
