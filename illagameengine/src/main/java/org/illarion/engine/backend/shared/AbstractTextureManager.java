@@ -298,7 +298,13 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
         // is not yet loaded.
         if (!directoriesLoaded.get(directoryIndex)) {
             final String directoryName = rootDirectories.get(directoryIndex);
-            final MXParserFactory parserFactory = new MXParserFactory();
+            final XmlPullParserFactory parserFactory;
+            try {
+                parserFactory = XmlPullParserFactory.newInstance();
+            } catch (XmlPullParserException e) {
+                LOGGER.error("Failed to create parser factory.", e);
+                return null;
+            }
             parserFactory.setNamespaceAware(false);
             parserFactory.setValidating(false);
 
