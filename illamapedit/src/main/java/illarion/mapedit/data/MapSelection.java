@@ -36,10 +36,26 @@ public class MapSelection {
 
     public void addSelectedTile(@Nonnull final MapPosition mapPosition, final MapTile tile) {
         if (!selectedTiles.containsKey(mapPosition)) {
-            minX = Math.min(minX, mapPosition.getX());
-            minY = Math.min(minY, mapPosition.getY());
+            adjustOffsets(mapPosition);
             selectedTiles.put(mapPosition, tile);
         }
+    }
+
+    private void adjustOffsets(MapPosition mapPosition) {
+        adjustHorizontalOffset(mapPosition.getX());
+        adjustVerticalOffset(mapPosition.getY());
+    }
+
+    private void adjustHorizontalOffset(int horizontalCoordinate) {
+        minX = min(minX, horizontalCoordinate);
+    }
+
+    private void adjustVerticalOffset(int verticalCoordinate) {
+        minY = min(minY, verticalCoordinate);
+    }
+
+    private int min(int currentMinimum, int candidateMinimum) {
+        return Math.min(currentMinimum, candidateMinimum);
     }
 
     public int getOffsetX() {
