@@ -30,13 +30,13 @@ import illarion.mapedit.history.ItemPlacedAction;
 import illarion.mapedit.render.RendererManager;
 import illarion.mapedit.util.SwingLocation;
 import javolution.util.FastTable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -67,6 +67,7 @@ public class GuiController extends WindowAdapter {
 
     @Nonnull
     private final AnnotationChecker annotationChecker;
+    private final HelpDialog helpDialog;
 
     @Nullable
     private Map selected;
@@ -85,6 +86,7 @@ public class GuiController extends WindowAdapter {
         annotationChecker = new AnnotationChecker();
         maps = new FastTable<>();
         notSaved = false;
+        helpDialog = new HelpDialog(mainFrame);
     }
 
     @Nonnull
@@ -329,5 +331,10 @@ public class GuiController extends WindowAdapter {
             tile.setAnnotation(e.getText());
             EventBus.publish(new RepaintRequestEvent());
         }
+    }
+
+    @EventSubscriber
+    public void onShowHelpDialog(final ShowHelpDialogEvent e) {
+        helpDialog.setVisible(true);
     }
 }

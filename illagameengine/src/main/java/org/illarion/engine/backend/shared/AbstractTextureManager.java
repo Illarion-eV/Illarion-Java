@@ -19,10 +19,10 @@
 package org.illarion.engine.backend.shared;
 
 import illarion.common.util.ProgressMonitor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.illarion.engine.assets.TextureManager;
 import org.illarion.engine.graphic.Texture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xmlpull.mxp1.MXParserFactory;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;

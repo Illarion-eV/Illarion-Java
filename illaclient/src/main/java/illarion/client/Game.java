@@ -24,8 +24,6 @@ import illarion.client.states.*;
 import illarion.client.util.ConnectionPerformanceClock;
 import illarion.client.util.Lang;
 import illarion.common.config.ConfigChangedEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.illarion.engine.GameContainer;
@@ -39,6 +37,8 @@ import org.illarion.engine.nifty.IgeInputSystem;
 import org.illarion.engine.nifty.IgeRenderDevice;
 import org.illarion.engine.nifty.IgeSoundDevice;
 import org.illarion.engine.sound.Sounds;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -128,7 +128,8 @@ public final class Game implements GameListener {
 
         final InputReceiver inputReceiver = new InputReceiver(container.getEngine().getInput());
         nifty = new Nifty(new IgeRenderDevice(container, "gui/"), new IgeSoundDevice(container.getEngine()),
-                new IgeInputSystem(container.getEngine().getInput(), inputReceiver), new AccurateTimeProvider());
+                          new IgeInputSystem(container.getEngine().getInput(), inputReceiver),
+                          new AccurateTimeProvider());
         nifty.setLocale(Lang.getInstance().getLocale());
         container.getEngine().getInput().addForwardingListener(new ForwardingListener() {
             @Override
@@ -231,8 +232,8 @@ public final class Game implements GameListener {
             int renderLine = 10;
             if (fpsFont != null) {
                 if (showFPS) {
-                    container.getEngine().getGraphics().drawText(fpsFont, "FPS: " + container.getFPS(), Color.WHITE, 10,
-                            renderLine);
+                    container.getEngine().getGraphics()
+                            .drawText(fpsFont, "FPS: " + container.getFPS(), Color.WHITE, 10, renderLine);
                     renderLine += fpsFont.getLineHeight();
 
                     if (SHOW_RENDER_DIAGNOSTIC) {
@@ -247,9 +248,8 @@ public final class Game implements GameListener {
                     final long serverPing = ConnectionPerformanceClock.getServerPing();
                     final long netCommPing = ConnectionPerformanceClock.getNetCommPing();
                     if (serverPing > -1) {
-                        container.getEngine().getGraphics().drawText(fpsFont,
-                                "Ping: " + serverPing + '+' + Math.max(0, netCommPing - serverPing) + " ms",
-                                Color.WHITE, 10, renderLine);
+                        container.getEngine().getGraphics().drawText(fpsFont, "Ping: " + serverPing + '+' +
+                                Math.max(0, netCommPing - serverPing) + " ms", Color.WHITE, 10, renderLine);
                         renderLine += fpsFont.getLineHeight();
                     }
                 }

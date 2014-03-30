@@ -18,8 +18,6 @@
  */
 package org.illarion.engine.backend.slick;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.backend.shared.AbstractScene;
 import org.illarion.engine.graphic.Graphics;
@@ -27,6 +25,8 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.opengl.renderer.SGL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -72,7 +72,7 @@ class SlickScene extends AbstractScene<SlickSceneEffect> {
     /**
      * Get the next image that can be used as render target.
      *
-     * @param width  the width the image is supposed to have
+     * @param width the width the image is supposed to have
      * @param height the height the image is supposed to have
      * @return the image that can be used now
      * @throws SlickException in case requesting the image fails
@@ -92,21 +92,23 @@ class SlickScene extends AbstractScene<SlickSceneEffect> {
     /**
      * Check if a image is fitting the requirements.
      *
-     * @param width    the width the image needs to have
-     * @param height   the height the image needs to have
+     * @param width the width the image needs to have
+     * @param height the height the image needs to have
      * @param original the original image, if this is {@code null} a new image will be created
      * @return the image fitting the requirements
      * @throws SlickException in case creating the image fails
      */
     @Nullable
-    private static Image validateImage(final int width, final int height, @Nullable final Image original) throws SlickException {
+    private static Image validateImage(final int width, final int height, @Nullable final Image original)
+            throws SlickException {
         if (original == null) {
             return Image.createOffscreenImage(width, height, SGL.GL_LINEAR);
         }
         if ((original.getHeight() == height) && (original.getWidth() == width)) {
             return original;
         }
-        if ((original.getTexture().getTextureHeight() >= height) && (original.getTexture().getTextureWidth() >= width)) {
+        if ((original.getTexture().getTextureHeight() >= height) &&
+                (original.getTexture().getTextureWidth() >= width)) {
             return original.getSubImage(0, 0, width, height);
         }
         original.destroy();
@@ -168,7 +170,7 @@ class SlickScene extends AbstractScene<SlickSceneEffect> {
                         nextGraphics.setBackground(Color.black);
                         nextGraphics.clear();
                         effect.activateEffect(width, height, nextImage.getTexture().getTextureWidth(),
-                                nextImage.getTexture().getTextureHeight());
+                                              nextImage.getTexture().getTextureHeight());
                         nextGraphics.drawImage(lastProcessedImage, 0, 0);
                         effect.disableEffect();
                         nextGraphics.flush();

@@ -131,7 +131,7 @@ public final class Credits {
         CreditsPerson.create("Dominic", "Dyluck", "W.", content);
         CreditsPerson.create("Martin", "Skamato", "Großmann", content, qualityAssurance, gameMaster);
         CreditsPerson.create("Tiim", client, mapEditor);
-        CreditsPerson.create("Fredrik K", mapEditor);
+        CreditsPerson.create("Fredrik K", client, mapEditor);
         CreditsPerson.create("Smjert", client);
         CreditsPerson.create("Samaras", graphics);
         CreditsPerson.create("Dandelion", graphics);

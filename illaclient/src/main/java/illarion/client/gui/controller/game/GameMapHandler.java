@@ -20,7 +20,9 @@ package illarion.client.gui.controller.game;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
+import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.controls.DroppableDroppedEvent;
+import de.lessvoid.nifty.effects.EffectEventId;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.ImageRenderer;
 import de.lessvoid.nifty.input.NiftyMouseInputEvent;
@@ -28,6 +30,7 @@ import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
+import illarion.client.IllaClient;
 import illarion.client.graphics.Camera;
 import illarion.client.graphics.Item;
 import illarion.client.gui.EntitySlickRenderImage;
@@ -41,14 +44,14 @@ import illarion.client.world.interactive.InteractiveMapTile;
 import illarion.common.types.ItemCount;
 import illarion.common.types.Location;
 import illarion.common.types.Rectangle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.engine.graphic.SceneEvent;
 import org.illarion.engine.input.ForwardingTarget;
 import org.illarion.engine.input.Input;
 import org.illarion.engine.input.Key;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -336,6 +339,36 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
         }
     }
 
+    /**
+     * The event subscriber for click events on the run button.
+     *
+     * @param topic the event topic
+     * @param data the event data
+     */
+    @NiftyEventSubscriber(id = "toggleRunBtn")
+    public void onToggleRunButtonClicked(final String topic, final ButtonClickedEvent data) {
+        toggleRunMode();
+    }
+
+    /**
+     * Toggle the pulsing animation of the run button.
+     */
+    public void toggleRunMode() {
+        World.getPlayer().getMovementHandler().toggleRunWalk();
+        if (activeScreen == null) {
+            return;
+        }
+        @Nullable final Element runBtn = activeScreen.findElementById("toggleRunBtn");
+        if (runBtn == null) {
+            return;
+        }
+        if (World.getPlayer().getMovementHandler().isInWalkMode()) {
+            runBtn.stopEffect(EffectEventId.onCustom);
+        } else  {
+            runBtn.startEffect(EffectEventId.onCustom, null, "pulse");
+        }
+    }
+
     private boolean isShiftPressed() {
         return input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
     }
@@ -348,6 +381,9 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
         draggedGraphic = gamePanel.findElementById("mapDragObject");
         draggedImage = draggedGraphic.findElementById("mapDragImage");
         endOfDragOp = new GameMapDragEndOperation(draggedGraphic, gamePanel);
+        if (!IllaClient.getCfg().getBoolean("walkAsDefault")) {
+            toggleRunMode();
+        }
     }
 
     @Override

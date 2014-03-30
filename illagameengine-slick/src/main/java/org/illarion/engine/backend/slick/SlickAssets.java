@@ -18,7 +18,7 @@
  */
 package org.illarion.engine.backend.slick;
 
-import org.illarion.engine.assets.*;
+import org.illarion.engine.assets.Assets;
 import org.illarion.engine.graphic.WorldMapDataProvider;
 import org.newdawn.slick.GameContainer;
 

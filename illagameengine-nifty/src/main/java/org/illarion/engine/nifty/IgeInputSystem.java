@@ -231,7 +231,7 @@ public class IgeInputSystem implements InputSystem, InputListener {
             final int buttonKey = getNiftyButtonKey(button);
             final boolean startUsed = currentConsumer.processMouseEvent(fromX, fromY, 0, buttonKey, true);
             final boolean endUsed = currentConsumer.processMouseEvent(toX, toY, 0, buttonKey, true);
-            if (!(startUsed || endUsed)) {
+            if (!startUsed && !endUsed) {
                 listener.mouseDragged(button, fromX, fromY, toX, toY);
             }
             consumeClicks = 0;

@@ -25,6 +25,7 @@ import illarion.client.util.Lang;
 import illarion.client.world.World;
 import illarion.common.data.IllarionSSLSocketFactory;
 import illarion.common.util.Base64;
+import illarion.common.util.DirectoryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -45,6 +46,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -394,7 +396,11 @@ public final class Login {
         try {
             final Charset usedCharset = Charset.forName("UTF-8");
             // creating the key
-            final DESKeySpec keySpec = new DESKeySpec(IllaClient.getFile("").getBytes(usedCharset));
+            final Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+            if (userDir == null) {
+                throw new IllegalStateException("User directory can't be null.");
+            }
+            final DESKeySpec keySpec = new DESKeySpec(userDir.toAbsolutePath().toString().getBytes(usedCharset));
             final SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
             final SecretKey key = keyFactory.generateSecret(keySpec);
 

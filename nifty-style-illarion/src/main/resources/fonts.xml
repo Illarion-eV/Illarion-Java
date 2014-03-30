@@ -19,7 +19,7 @@
   -->
 <nifty-styles>
     <style id="button-font">
-        <attributes font="textFont"/>
+        <attributes font="captionFont"/>
     </style>
 
     <style id="drop-down-font">

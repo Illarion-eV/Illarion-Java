@@ -21,10 +21,10 @@ package illarion.easyquest.gui;
 import illarion.common.util.CopyrightHeader;
 import illarion.easyquest.Lang;
 import illarion.easyquest.QuestIO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.pushingpixels.flamingo.api.common.icon.ImageWrapperResizableIcon;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -79,7 +79,7 @@ public final class Utils {
             dirDiag.setDialogTitle("Exportieren");
             dirDiag.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             dirDiag.setAcceptAllFileFilterUsed(false);
-            dirDiag.setCurrentDirectory(new File(Config.getInstance().getExportFolder()));
+            dirDiag.setCurrentDirectory(Config.getInstance().getExportFolder().toFile());
             final int fileReturn = dirDiag.showSaveDialog(MainFrame.getInstance());
             if (fileReturn == JFileChooser.APPROVE_OPTION) {
                 final File targetDir = dirDiag.getSelectedFile();
@@ -106,7 +106,7 @@ public final class Utils {
             }
         });
         fileDiag.setAcceptAllFileFilterUsed(false);
-        fileDiag.setCurrentDirectory(new File(Config.getInstance().getEasyQuestFolder()));
+        fileDiag.setCurrentDirectory(Config.getInstance().getEasyQuestFolder().toFile());
 
         final int fileReturn = fileDiag.showOpenDialog(MainFrame.getInstance());
         if (fileReturn == JFileChooser.APPROVE_OPTION) {
@@ -143,7 +143,7 @@ public final class Utils {
             }
         });
         fileDiag.setAcceptAllFileFilterUsed(false);
-        fileDiag.setCurrentDirectory(new File(Config.getInstance().getEasyQuestFolder()));
+        fileDiag.setCurrentDirectory(Config.getInstance().getEasyQuestFolder().toFile());
         final Path questFile = editor.getQuestFile();
         fileDiag.setSelectedFile(questFile == null ? null : questFile.toFile());
         final int fileReturn = fileDiag.showSaveDialog(MainFrame.getInstance());

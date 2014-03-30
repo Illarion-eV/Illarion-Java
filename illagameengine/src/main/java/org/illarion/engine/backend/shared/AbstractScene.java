@@ -19,14 +19,14 @@
 package org.illarion.engine.backend.shared;
 
 import illarion.common.util.FastMath;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Graphics;
 import org.illarion.engine.graphic.Scene;
 import org.illarion.engine.graphic.SceneElement;
 import org.illarion.engine.graphic.SceneEvent;
 import org.illarion.engine.graphic.effects.SceneEffect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

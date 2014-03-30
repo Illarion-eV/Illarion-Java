@@ -168,7 +168,7 @@ if (project.hasProperty('targetDistDir')) {
         into file(project.targetDistDir)
     }
     task publishBundle(type: Copy, dependsOn: 'proguard') {
-        from new File(project.buildDir, "downloader.jar").absolutePath
+        from new File(project.buildDir, "illarion.jar").absolutePath
         into file(project.targetDistDir)
     }
     /*task publishMacBundle(type: Copy, dependsOn: 'createAppZip') {
@@ -200,7 +200,7 @@ task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jfxJar') {
     libraryjars files("${System.getProperty('java.home')}/lib/jce.jar")
     libraryjars files("${System.getProperty('java.home')}/lib/rt.jar")
 
-    outjars new File(project.buildDir, "downloader.jar").absolutePath
+    outjars new File(project.buildDir, "illarion.jar").absolutePath
 
     /* Forcing all class files to contain the same codebase level. */
     target "1.7"

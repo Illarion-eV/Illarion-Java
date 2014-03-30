@@ -24,6 +24,11 @@
 
     <!-- loading screen -->
     <screen id="loading" controller="illarion.client.gui.controller.LoadScreenController">
+        <layer childLayout="vertical">
+            <panel height="422px" width="*" backgroundImage="gui/window_background.png"
+                   imageMode="repeat:0,0,1024,422"/>
+        </layer>
+
         <layer id="layerprogress" backgroundColor="#0000" childLayout="center">
             <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#0000"
                    childLayout="vertical">

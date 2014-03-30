@@ -24,12 +24,12 @@ import illarion.common.config.Config;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.util.Stoppable;
 import illarion.common.util.StoppableStorage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicPatternSubscriber;
 import org.illarion.engine.Engine;
 import org.illarion.engine.sound.Music;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

@@ -22,9 +22,9 @@ import illarion.client.gui.ChatGui;
 import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.common.types.Location;
+import org.illarion.engine.graphic.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.illarion.engine.graphic.Color;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -93,12 +93,14 @@ public final class ChatHandler {
         /**
          * Constructor for the speech mode that stores the color of the mode.
          *
-         * @param modeColor  the color of the speech mode
+         * @param modeColor the color of the speech mode
          * @param findRegexp the regular expression used to find out if the line is fits this Chat type or not
-         * @param replace    the regular expression needed to isolate the actual text
+         * @param replace the regular expression needed to isolate the actual text
          */
-        SpeechMode(final org.illarion.engine.graphic.Color modeColor, @Nullable @RegEx final String findRegexp,
-                   @Nullable final String replace) {
+        SpeechMode(
+                final org.illarion.engine.graphic.Color modeColor,
+                @Nullable @RegEx final String findRegexp,
+                @Nullable final String replace) {
             color = modeColor;
             if (findRegexp == null) {
                 regexp = null;
@@ -123,7 +125,7 @@ public final class ChatHandler {
          * the one used in the text.
          *
          * @return the pattern with the regular expression or {@code null}
-         *         in case none applies
+         * in case none applies
          */
         @Nullable
         public Pattern getRegexp() {
@@ -150,10 +152,13 @@ public final class ChatHandler {
      * Handle a message by this processor. This method stores a message in the
      * ChatHandler thread so the handler takes care of the message later on.
      *
-     * @param text     the text that was spoken
+     * @param text the text that was spoken
      * @param location the location where the text was spoken
      */
-    public void handleMessage(@Nonnull final String text, @Nonnull final Location location, @Nonnull final SpeechMode receivedMode) {
+    public void handleMessage(
+            @Nonnull final String text,
+            @Nonnull final Location location,
+            @Nonnull final SpeechMode receivedMode) {
         final Char talkingChar = World.getPeople().getCharacterAt(location);
 
         final ChatHandler.SpeechMode mode;

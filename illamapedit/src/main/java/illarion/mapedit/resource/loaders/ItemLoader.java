@@ -24,9 +24,9 @@ import illarion.common.util.TableLoaderItems;
 import illarion.common.util.TableLoaderSink;
 import illarion.mapedit.resource.ItemImg;
 import illarion.mapedit.resource.Resource;
+import org.illarion.engine.assets.TextureManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.illarion.engine.assets.TextureManager;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -84,8 +84,8 @@ public class ItemLoader implements TableLoaderSink<TableLoaderItems>, Resource {
                 .create(face, moveable, specialFlag, obstacle, variance, opacity, surfaceLevel, itemLight);
 
         final ItemImg img = new ItemImg(itemID, resourceName, ItemNameLoader.getInstance().getItemName(itemID),
-                editorGroup, offsetX, offsetY, frameCount, animationSpeed, mode, getTextures(resourceName, frameCount),
-                info);
+                                        editorGroup, offsetX, offsetY, frameCount, animationSpeed, mode,
+                                        getTextures(resourceName, frameCount), info);
 
         items.put(img.getItemId(), img);
         return true;

@@ -25,11 +25,11 @@ import illarion.common.graphics.Layers;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.LightSource;
 import org.illarion.engine.graphic.Sprite;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

@@ -23,6 +23,11 @@
 
     <screen id="creditsStart" controller="illarion.client.gui.controller.CreditsStartScreenController"
             inputMapping="de.lessvoid.nifty.input.mapping.DefaultScreenMapping">
+        <layer childLayout="vertical">
+            <panel height="422px" width="*" backgroundImage="gui/window_background.png"
+                   imageMode="repeat:0,0,1024,422"/>
+        </layer>
+
         <layer childLayout="center">
             <panel childLayout="center">
                 <effect>
@@ -36,6 +41,11 @@
 
     <screen id="creditsSingles" controller="illarion.client.gui.controller.CreditsSinglesScreenController"
             inputMapping="de.lessvoid.nifty.input.mapping.DefaultScreenMapping">
+        <layer childLayout="vertical">
+            <panel height="422px" width="*" backgroundImage="gui/window_background.png"
+                   imageMode="repeat:0,0,1024,422"/>
+        </layer>
+
         <layer childLayout="center">
             <panel childLayout="vertical" id="nameDisplay" visible="false">
                 <effect>
@@ -50,6 +60,11 @@
 
     <screen id="creditsMulti" controller="illarion.client.gui.controller.CreditsMultiScreenController"
             inputMapping="de.lessvoid.nifty.input.mapping.DefaultScreenMapping">
+        <layer childLayout="vertical">
+            <panel height="422px" width="*" backgroundImage="gui/window_background.png"
+                   imageMode="repeat:0,0,1024,422"/>
+        </layer>
+
         <layer childLayout="center">
             <panel childLayout="vertical" id="nameDisplay" visible="false" valign="center">
                 <effect>
@@ -64,6 +79,11 @@
 
     <screen id="creditsEnd" controller="illarion.client.gui.controller.CreditsEndScreenController"
             inputMapping="de.lessvoid.nifty.input.mapping.DefaultScreenMapping">
+        <layer childLayout="vertical">
+            <panel height="422px" width="*" backgroundImage="gui/window_background.png"
+                   imageMode="repeat:0,0,1024,422"/>
+        </layer>
+
         <layer childLayout="center">
             <panel childLayout="center" height="100%" width="100%">
                 <effect>

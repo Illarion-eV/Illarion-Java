@@ -95,8 +95,7 @@ public class Map implements Iterable<MapTile> {
      * @param y the y coordinate of the origin of the map
      * @param z the map level (= z coordinate)
      */
-    public Map(
-            final String name, final Path path, final int w, final int h, final int x, final int y, final int z) {
+    public Map(final String name, final Path path, final int w, final int h, final int x, final int y, final int z) {
         this.name = name;
         this.path = path;
         width = w;
@@ -458,13 +457,13 @@ public class Map implements Iterable<MapTile> {
      */
     public void pasteTiles(final int startX, final int startY, @Nonnull final MapSelection mapSelection) {
         final GroupAction action = new GroupAction();
-        for (final MapPosition position : mapSelection.getTiles().keySet()) {
+        for (final MapPosition position : mapSelection.getSelectedPositions()) {
             final int newX = startX + (position.getX() - mapSelection.getOffsetX());
             final int newY = startY + (position.getY() - mapSelection.getOffsetY());
 
             if (contains(newX, newY)) {
                 final MapTile oldTile = getTileAt(newX, newY);
-                final MapTile newTile = MapTile.MapTileFactory.copy(mapSelection.getTiles().get(position));
+                final MapTile newTile = MapTile.MapTileFactory.copy(mapSelection.getMapTileAt(position));
                 action.addAction(new CopyPasteAction(newX, newY, oldTile, newTile, this));
                 setTileAt(newX, newY, newTile);
             }

@@ -199,7 +199,11 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     @Nonnull
     private final Timer delayedMoveTrigger;
     private Usable usableAction;
+    private boolean isInWalkMode = true;
 
+    private boolean moveToDirectionActive;
+    private final boolean[] activeDirections = new boolean[8];
+    private boolean mouseFollowAutoRun;
 
     /**
      * Default constructor.
@@ -211,12 +215,13 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         parentPlayer = parent;
         this.input = input;
         AnnotationProcessor.process(this);
+        mouseFollowAutoRun = IllaClient.getCfg().getBoolean("mouseFollowAutoRun");
 
         delayedMoveTrigger = new Timer(100, new Runnable() {
             @Override
             public void run() {
                 if (moveToDirectionActive) {
-                    requestMove(getCurrentMoveToDirection(), moveToDirectionMode);
+                    requestMove(getCurrentMoveToDirection(), getMovingToDirectionMode());
                 } else {
                     LOGGER.info("Delayed, invalid move trigger received.");
                 }
@@ -225,12 +230,20 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         delayedMoveTrigger.setRepeats(false);
     }
 
-    private boolean moveToDirectionActive;
-    private final boolean[] activeDirections = new boolean[8];
-    private CharMovementMode moveToDirectionMode = CharMovementMode.Walk;
+    private CharMovementMode getMovingToDirectionMode() {
+        if (input.isKeyDown(Key.LeftAlt)) {
+            return CharMovementMode.None;
+        }
 
-    public void setMovingToDirectionMode(final CharMovementMode mode) {
-        moveToDirectionMode = mode;
+        return getCharMovementMode();
+    }
+
+    private CharMovementMode getCharMovementMode() {
+        CharMovementMode mode = CharMovementMode.Run;
+        if (isInWalkMode) {
+            mode = CharMovementMode.Walk;
+        }
+        return mode;
     }
 
     public void startMovingToDirection(final int direction) {
@@ -245,7 +258,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
 
         delayedMoveTrigger.stop();
         if (moveToDirectionActive) {
-            requestMove(getCurrentMoveToDirection(), moveToDirectionMode);
+            requestMove(getCurrentMoveToDirection(), getMovingToDirectionMode());
         } else {
             moveToDirectionActive = true;
             stopWalkTowards();
@@ -263,7 +276,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
 
         if (delayedMoveTrigger.isRunning()) {
             delayedMoveTrigger.stop();
-            requestMove(getCurrentMoveToDirection(), moveToDirectionMode);
+            requestMove(getCurrentMoveToDirection(), getMovingToDirectionMode());
         }
         activeDirections[direction] = false;
 
@@ -367,7 +380,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
 
         // execute walking step
         final int direction = loc.getDirection(stepDestination);
-        requestMove(direction, CharMovementMode.Walk, false, false);
+        requestMove(direction, getMovingToDirectionMode(), false, false);
     }
 
     /**
@@ -723,7 +736,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         } else if ((moveAnimation.timeRemaining() <= getMovementOverlapTime()) &&
                 (lastAllowedMove == Location.DIR_ZERO) && (lastMoveRequest == Location.DIR_ZERO)) {
             if (moveToDirectionActive) {
-                requestMove(getCurrentMoveToDirection(), moveToDirectionMode);
+                requestMove(getCurrentMoveToDirection(), getMovingToDirectionMode());
             } else if (walkTowards) {
                 requestMove(walkTowardsDir, walkTowardsMode, true, true);
             } else {
@@ -886,15 +899,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         final float relYOffset = (float) yOffset / (float) distance;
 
         //noinspection IfStatementWithTooManyBranches
-        if (input.isAnyKeyDown(Key.LeftShift, Key.RightShift)) {
-            walkTowardsMode = CharMovementMode.None;
-        } else if (distance > 200) {
-            walkTowardsMode = CharMovementMode.Run;
-        } else if (distance < 30) {
-            walkTowardsMode = CharMovementMode.None;
-        } else {
-            walkTowardsMode = CharMovementMode.Walk;
-        }
+        walkTowardsMode = getWalkTowardsMode(distance);
 
         //noinspection IfStatementWithTooManyBranches
         if (relXOffset > MOUSE_ANGLE) {
@@ -930,5 +935,31 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         walkTowards = true;
 
         requestMove(walkTowardsDir, walkTowardsMode, true, true);
+    }
+
+    private CharMovementMode getWalkTowardsMode(int distance) {
+        if (input.isAnyKeyDown(Key.LeftShift, Key.RightShift)) {
+            return CharMovementMode.None;
+        }
+
+        if (mouseFollowAutoRun) {
+            return getCharMovementMode();
+        }
+
+        CharMovementMode mode = CharMovementMode.Walk;
+        if (distance > 200) {
+            mode = CharMovementMode.Run;
+        } else if (distance < 30) {
+            mode = CharMovementMode.None;
+        }
+        return mode;
+    }
+
+    public void toggleRunWalk() {
+        isInWalkMode = !isInWalkMode;
+    }
+
+    public boolean isInWalkMode() {
+        return isInWalkMode;
     }
 }

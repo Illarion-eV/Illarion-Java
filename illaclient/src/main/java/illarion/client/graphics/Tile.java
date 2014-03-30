@@ -31,14 +31,14 @@ import illarion.client.world.World;
 import illarion.common.graphics.MapVariance;
 import illarion.common.graphics.TileInfo;
 import illarion.common.types.Location;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Graphics;
 import org.illarion.engine.graphic.SceneEvent;
 import org.illarion.engine.graphic.effects.TextureEffect;
 import org.illarion.engine.input.Button;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -123,8 +123,12 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
     }
 
     @Override
-    protected void renderSprite(@Nonnull final Graphics g, final int x, final int y, @Nonnull final Color light,
-                                @Nonnull final TextureEffect... effects) {
+    protected void renderSprite(
+            @Nonnull final Graphics g,
+            final int x,
+            final int y,
+            @Nonnull final Color light,
+            @Nonnull final TextureEffect... effects) {
         super.renderSprite(g, x, y, light, effects);
         if (overlay != null) {
             g.drawSprite(overlay.getSprite(), x, y, light, overlayShape, getScale(), 0.f, effects);
@@ -168,8 +172,8 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
     }
 
     @Override
-    public boolean isEventProcessed(@Nonnull final GameContainer container, final int delta,
-                                    @Nonnull final SceneEvent event) {
+    public boolean isEventProcessed(
+            @Nonnull final GameContainer container, final int delta, @Nonnull final SceneEvent event) {
         if (event instanceof PointOnMapEvent) {
             if (!isVisible()) {
                 return false;

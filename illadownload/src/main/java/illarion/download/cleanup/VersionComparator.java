@@ -1,30 +1,31 @@
 package illarion.download.cleanup;
 
 import javax.annotation.Nonnull;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Comparator;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class VersionComparator implements Comparator<File> {
+class VersionComparator implements Comparator<Path> {
     @Override
-    public int compare(@Nonnull final File file1, @Nonnull final File file2) {
+    public int compare(@Nonnull final Path file1, @Nonnull final Path file2) {
         String version1;
         String version2;
-        if (file1.isDirectory()) {
-            if (file2.isDirectory()) {
-                version1 = file1.getName();
-                version2 = file2.getName();
+        if (Files.isDirectory(file1)) {
+            if (Files.isDirectory(file2)) {
+                version1 = file1.toString();
+                version2 = file2.toString();
             } else {
                 return 1;
             }
         } else {
-            if (file2.isDirectory()) {
+            if (Files.isDirectory(file2)) {
                 return -1;
             } else {
-                version1 = file1.getName();
-                version2 = file2.getName();
+                version1 = file1.toString();
+                version2 = file2.toString();
                 version1 = version1.substring(version1.indexOf('-'));
                 version2 = version2.substring(version2.indexOf('-'));
             }
@@ -57,7 +58,8 @@ class VersionComparator implements Comparator<File> {
                 if (compareResult != 0) {
                     return compareResult;
                 }
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException ignored) {
+            }
             final int compareResult = version1Parts[i].compareTo(version2Parts[i]);
             if (compareResult != 0) {
                 return compareResult;

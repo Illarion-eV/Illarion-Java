@@ -25,6 +25,11 @@
     <resourceBundle id="login-bundle" filename="login"/>
 
     <screen id="login" controller="illarion.client.gui.controller.LoginScreenController">
+        <layer childLayout="vertical">
+            <panel height="422px" width="*" backgroundImage="gui/window_background.png"
+                   imageMode="repeat:0,0,1024,422"/>
+        </layer>
+
         <layer id="layer" childLayout="center">
             <effect>
                 <onStartScreen name="fade" start="#00" end="#ff" inherit="true"/>
@@ -36,38 +41,44 @@
                 <panel childLayout="vertical">
 
                     <panel id="serverPanel" childLayout="horizontal" marginBottom="2px">
-                        <control name="label" text="${login-bundle.server}" textHAlign="left" width="130px"/>
+                        <control name="label" text="${login-bundle.server}" font="captionFont" textHAlign="left"
+                                 width="130px"/>
                         <control name="dropDown" id="server" marginLeft="10px"/>
                     </panel>
 
                     <panel childLayout="horizontal" marginBottom="2px">
-                        <control name="label" text="${login-bundle.account}" textHAlign="left" width="130px"/>
+                        <control name="label" text="${login-bundle.account}" font="captionFont" textHAlign="left"
+                                 width="130px"/>
                         <control name="textfield" id="nameTxt" maxLength="20" marginLeft="10px"/>
                     </panel>
 
                     <panel childLayout="horizontal" marginBottom="15px">
-                        <control name="label" text="${login-bundle.password}" textHAlign="left" width="130px"/>
+                        <control name="label" text="${login-bundle.password}" font="captionFont" textHAlign="left"
+                                 width="130px"/>
                         <control name="textfield" id="passwordTxt" maxLength="20" passwordChar="*" marginLeft="10px"/>
                     </panel>
 
                     <panel childLayout="horizontal" marginBottom="30px">
-                        <control name="label" text="${login-bundle.savePassword}" textHAlign="left" width="130px"/>
+                        <control name="label" text="${login-bundle.savePassword}" font="captionFont" textHAlign="left"
+                                 width="130px"/>
                         <control id="savePassword" name="checkbox" marginLeft="10px"/>
                     </panel>
 
                     <panel width="100%" childLayout="center">
                         <panel childLayout="vertical">
-                            <panel childLayout="horizontal" marginBottom="10px">
+                            <panel childLayout="center" marginBottom="15px" width="350">
+                                <control id="loginBtn" name="button" label="${login-bundle.login}"
+                                         style="nifty-button-large" width="225px" height="45px">
+                                    <control id="#text" font="menuFont"/>
+                                </control>
+                            </panel>
+                            <panel childLayout="horizontal">
                                 <control id="optionBtn" name="button" label="${login-bundle.options}" width="100px"
                                          height="35px" marginRight="25px"/>
-                                <control id="loginBtn" name="button" label="${login-bundle.login}" width="225px"
-                                         height="45px"/>
+                                <control id="creditsBtn" name="button" label="${login-bundle.credits}" width="100px"
+                                         height="35px"/>
                                 <control id="exitBtn" name="button" label="${login-bundle.exit}" width="100px"
                                          height="35px" marginLeft="25px"/>
-                            </panel>
-                            <panel childLayout="center" width="475px">
-                                <control id="creditsBtn" name="button" label="${login-bundle.credits}" width="150px"
-                                         height="35px"/>
                             </panel>
                         </panel>
                     </panel>

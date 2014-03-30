@@ -20,10 +20,10 @@ package illarion.client.util;
 
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.util.MessageSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -107,7 +107,7 @@ public final class Lang implements MessageSource {
      *
      * @param key The key of the localized message
      * @return the localized message or the key with surrounding < > in case the
-     *         key was not found in the storage
+     * key was not found in the storage
      */
     public static String getMsg(final String key) {
         return INSTANCE.getMessage(key);
@@ -132,7 +132,7 @@ public final class Lang implements MessageSource {
      *
      * @param key The key of the localized message
      * @return the localized message or the key with surrounding &lt; &gt; in
-     *         case the key was not found in the storage
+     * case the key was not found in the storage
      */
     @Override
     public String getMessage(final String key) {

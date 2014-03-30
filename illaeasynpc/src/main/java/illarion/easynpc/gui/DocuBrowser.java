@@ -20,8 +20,8 @@ package illarion.easynpc.gui;
 
 import illarion.common.util.ArrayEnumeration;
 import illarion.easynpc.Lang;
-import illarion.easynpc.Parser;
 import illarion.easynpc.docu.DocuEntry;
+import illarion.easynpc.docu.DocuRoot;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -180,7 +180,7 @@ public final class DocuBrowser extends JDialog {
             e1.printStackTrace();
         }
 
-        final JTree contentTree = new JTree(new DocuTreeNode(Parser.getInstance()));
+        final JTree contentTree = new JTree(new DocuTreeNode(DocuRoot.getInstance()));
         final JScrollPane contentScroll = new JScrollPane(contentTree);
         contentScroll.setMinimumSize(new Dimension(350, 400));
         contentScroll.setPreferredSize(contentScroll.getMinimumSize());

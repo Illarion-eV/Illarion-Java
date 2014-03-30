@@ -170,7 +170,7 @@ final class Sender extends Thread implements NetCommWriter {
             }
         } catch (@Nonnull final Exception e) {
             LOGGER.error("General error within the sender", e);
-            IllaClient.fallbackToLogin(Lang.getMsg("error.sender"));
+            IllaClient.sendDisconnectEvent(Lang.getMsg("error.sender"));
         }
     }
 

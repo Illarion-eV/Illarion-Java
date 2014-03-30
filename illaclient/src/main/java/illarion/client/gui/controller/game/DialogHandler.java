@@ -47,8 +47,6 @@ import illarion.client.world.items.MerchantList;
 import illarion.client.world.items.SelectionItem;
 import illarion.common.types.ItemCount;
 import illarion.common.types.Rectangle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -61,6 +59,8 @@ import org.illarion.nifty.controls.*;
 import org.illarion.nifty.controls.dialog.input.builder.DialogInputBuilder;
 import org.illarion.nifty.controls.dialog.message.builder.DialogMessageBuilder;
 import org.illarion.nifty.controls.dialog.select.builder.DialogSelectBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -87,9 +87,7 @@ public final class DialogHandler
         private final DialogHandler.PostBuildTask task;
 
         BuildWrapper(
-                final ControlBuilder builder,
-                final Element parent,
-                @Nullable final DialogHandler.PostBuildTask task) {
+                final ControlBuilder builder, final Element parent, @Nullable final DialogHandler.PostBuildTask task) {
             this.builder = builder;
             this.parent = parent;
             this.task = task;
@@ -211,8 +209,7 @@ public final class DialogHandler
     }
 
     private void addCraftingItemsToDialog(
-            @Nonnull final DialogCraftingReceivedEvent event,
-            @Nonnull final DialogCrafting dialog) {
+            @Nonnull final DialogCraftingReceivedEvent event, @Nonnull final DialogCrafting dialog) {
         final NiftyCraftingCategory[] categories = new NiftyCraftingCategory[event.getGroupCount()];
         for (int i = 0; i < event.getGroupCount(); i++) {
             categories[i] = new NiftyCraftingCategory(event.getGroupTitle(i));
@@ -291,8 +288,7 @@ public final class DialogHandler
     }
 
     private void addMerchantItemsToDialog(
-            @Nonnull final DialogMerchantReceivedEvent event,
-            @Nonnull final DialogMerchant dialog) {
+            @Nonnull final DialogMerchantReceivedEvent event, @Nonnull final DialogMerchant dialog) {
         final List<MerchantListEntry> sellingList = new ArrayList<>();
         final List<MerchantListEntry> buyingList = new ArrayList<>();
         for (int i = 0; i < event.getItemCount(); i++) {
@@ -363,8 +359,7 @@ public final class DialogHandler
     }
 
     private void addSelectItemsToDialog(
-            @Nonnull final DialogSelectionReceivedEvent event,
-            @Nonnull final DialogSelect dialog) {
+            @Nonnull final DialogSelectionReceivedEvent event, @Nonnull final DialogSelect dialog) {
         for (int i = 0; i < event.getOptionCount(); i++) {
             dialog.addItem(new NiftySelectItem(nifty, event.getOption(i)));
         }
@@ -401,8 +396,7 @@ public final class DialogHandler
 
     @NiftyEventSubscriber(id = "craftingDialog")
     public void handleCraftingIngredientLookAtEvent(
-            final String topic,
-            @Nonnull final DialogCraftingLookAtIngredientItemEvent event) {
+            final String topic, @Nonnull final DialogCraftingLookAtIngredientItemEvent event) {
         if (lastCraftingTooltip == event.getIngredientIndex()) {
             return;
         }
@@ -453,10 +447,7 @@ public final class DialogHandler
 
     @Override
     public void showCraftIngredientTooltip(
-            final int dialogId,
-            final int index,
-            final int ingredientIndex,
-            @Nonnull final Tooltip tooltip) {
+            final int dialogId, final int index, final int ingredientIndex, @Nonnull final Tooltip tooltip) {
         if ((craftingDialog == null) || (craftingDialog.getDialogId() != dialogId)) {
             return;
         }

@@ -54,7 +54,7 @@ public class AnnotationChecker {
             @Nonnull final Map map,
             @Nonnull final MapSelection mapSelection) {
         final List<String[]> annotatedTiles = new ArrayList<>();
-        for (final MapPosition position : mapSelection.getTiles().keySet()) {
+        for (final MapPosition position : mapSelection.getSelectedPositions()) {
             final int newX = x + (position.getX() - mapSelection.getOffsetX());
             final int newY = y + (position.getY() - mapSelection.getOffsetY());
             if (map.contains(newX, newY)) {

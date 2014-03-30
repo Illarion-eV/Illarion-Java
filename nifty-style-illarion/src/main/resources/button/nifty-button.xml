@@ -78,6 +78,17 @@
         </effect>
     </style>
 
+    <!-- Style for the large gray button -->
+    <style id="nifty-button-large#panel" base="nifty-button-gray#panel"/>
+
+    <style id="nifty-button-large#text">
+        <attributes font="menuFont" align="center" valign="center" textHAlign="center" textVAlign="center"
+                    color="#ffff"/>
+        <effect>
+            <onClick name="move" mode="toOffset" direction="bottom" offsetY="1"/>
+        </effect>
+    </style>
+
     <!-- Style for the green button -->
     <style id="nifty-button-green#panel">
         <attributes backgroundImage="gui/button/buttongreen.png" imageMode="resize:8,2,8,9,8,2,8,1,8,2,8,9"
@@ -149,6 +160,26 @@
     </style>
 
     <style id="nifty-button-quest-log#text">
+        <attributes visible="false"/>
+    </style>
+
+    <!-- Style for the toggle run button -->
+    <style id="nifty-button-toggle-run#panel">
+        <attributes backgroundImage="gui/button/toggle_run.png" width="24px" height="24px" childLayout="center"
+                    visibleToMouse="true" align="center" valign="center"/>
+    </style>
+
+    <style id="nifty-button-toggle-run#text">
+        <attributes visible="false"/>
+    </style>
+
+    <!-- Style for the help button -->
+    <style id="nifty-button-help#panel">
+        <attributes backgroundImage="gui/button/help.png" width="24px" height="24px" childLayout="center"
+                    visibleToMouse="true" align="center" valign="center"/>
+    </style>
+
+    <style id="nifty-button-help#text">
         <attributes visible="false"/>
     </style>
 

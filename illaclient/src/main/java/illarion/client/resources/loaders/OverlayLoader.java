@@ -22,11 +22,11 @@ import illarion.client.resources.ResourceFactory;
 import illarion.client.resources.data.OverlayTemplate;
 import illarion.common.util.TableLoaderOverlay;
 import illarion.common.util.TableLoaderSink;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.illarion.engine.assets.Assets;
 import org.illarion.engine.assets.SpriteFactory;
 import org.illarion.engine.graphic.Sprite;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
@@ -37,8 +37,8 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class OverlayLoader extends AbstractResourceLoader<OverlayTemplate> implements
-        TableLoaderSink<TableLoaderOverlay> {
+public final class OverlayLoader extends AbstractResourceLoader<OverlayTemplate>
+        implements TableLoaderSink<TableLoaderOverlay> {
     /**
      * The logger that is used to report error messages.
      */
@@ -92,8 +92,9 @@ public final class OverlayLoader extends AbstractResourceLoader<OverlayTemplate>
         final int id = loader.getTileId();
         final String name = loader.getOverlayFile();
 
-        final Sprite overlaySprite = assets.getSpriteFactory().createSprite(getTextures(assets.getTextureManager(),
-                OVERLAY_PATH, name, OVERLAY_VARIATIONS), 0, 0, SpriteFactory.CENTER, SpriteFactory.CENTER, false);
+        final Sprite overlaySprite = assets.getSpriteFactory()
+                .createSprite(getTextures(assets.getTextureManager(), OVERLAY_PATH, name, OVERLAY_VARIATIONS), 0, 0,
+                              SpriteFactory.CENTER, SpriteFactory.CENTER, false);
 
         final OverlayTemplate template = new OverlayTemplate(id, overlaySprite);
 
@@ -105,5 +106,4 @@ public final class OverlayLoader extends AbstractResourceLoader<OverlayTemplate>
 
         return true;
     }
-
 }

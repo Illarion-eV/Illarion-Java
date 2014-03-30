@@ -23,10 +23,10 @@ import illarion.easynpc.EasyNpcScript;
 import illarion.easynpc.Lang;
 import illarion.easynpc.ParsedNpc;
 import illarion.easynpc.ScriptWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.pushingpixels.flamingo.api.common.icon.ImageWrapperResizableIcon;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -59,18 +59,14 @@ final class Utils {
             final String resource) {
         Image image;
         try {
-            image =
-                    ImageIO.read(Utils.class.getClassLoader()
-                            .getResource(resource));
+            image = ImageIO.read(Utils.class.getClassLoader().getResource(resource));
         } catch (@Nonnull final IOException e) {
             LOGGER.error("Failed to read image: \"" + resource + "\"");
             return null;
         }
         final int height = image.getHeight(null);
         final int width = image.getWidth(null);
-        final ResizableIcon resizeIcon =
-                ImageWrapperResizableIcon.getIcon(image, new Dimension(width,
-                        height));
+        final ResizableIcon resizeIcon = ImageWrapperResizableIcon.getIcon(image, new Dimension(width, height));
         return resizeIcon;
     }
 
@@ -179,10 +175,8 @@ final class Utils {
     protected static void saveLuaScript(@Nonnull final Editor editor) {
         final ParsedNpc npc = editor.getParsedData();
         if (npc == null) {
-            JOptionPane.showMessageDialog(MainFrame.getInstance(),
-                    Lang.getMsg(Utils.class, "saveLuaErrors"),
-                    Lang.getMsg(Utils.class, "saveLuaErrorsTitle"),
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(MainFrame.getInstance(), Lang.getMsg(Utils.class, "saveLuaErrors"),
+                                          Lang.getMsg(Utils.class, "saveLuaErrorsTitle"), JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -198,17 +192,14 @@ final class Utils {
                 return Lang.getMsg(Utils.class, "luaScriptsFileType"); //$NON-NLS-1$
             }
         });
-        fileDiag.setCurrentDirectory(new File(Config.getInstance()
-                .getLuaNpcFolder()));
-        fileDiag.setSelectedFile(new File(Config.getInstance()
-                .getLuaNpcFolder() + File.separator + npc.getLuaFilename()));
+        fileDiag.setCurrentDirectory(new File(Config.getInstance().getLuaNpcFolder()));
+        fileDiag.setSelectedFile(
+                new File(Config.getInstance().getLuaNpcFolder() + File.separator + npc.getLuaFilename()));
 
-        final int fileReturn =
-                fileDiag.showSaveDialog(MainFrame.getInstance());
+        final int fileReturn = fileDiag.showSaveDialog(MainFrame.getInstance());
         if (fileReturn == JFileChooser.APPROVE_OPTION) {
             final File targetFile = fileDiag.getSelectedFile();
-            final File backupFile =
-                    new File(targetFile.getAbsolutePath() + ".bak");
+            final File backupFile = new File(targetFile.getAbsolutePath() + ".bak");
 
             if (targetFile.exists()) {
                 targetFile.renameTo(backupFile);
@@ -218,9 +209,7 @@ final class Utils {
                 final ScriptWriter writer = new ScriptWriter();
                 writer.setTargetLanguage(ScriptWriter.ScriptWriterTarget.LUA);
                 writer.setSource(npc);
-                final Writer outputWriter =
-                        new OutputStreamWriter(new FileOutputStream(targetFile),
-                                "ISO-8859-1");
+                final Writer outputWriter = new OutputStreamWriter(new FileOutputStream(targetFile), "ISO-8859-1");
                 writer.setWritingTarget(outputWriter);
                 writer.write();
                 outputWriter.close();
@@ -255,11 +244,9 @@ final class Utils {
                 return Lang.getMsg(Utils.class, "easyNpcScriptsFileType"); //$NON-NLS-1$
             }
         });
-        fileDiag.setCurrentDirectory(new File(Config.getInstance()
-                .getEasyNpcFolder()));
+        fileDiag.setCurrentDirectory(new File(Config.getInstance().getEasyNpcFolder()));
 
-        final int fileReturn =
-                fileDiag.showOpenDialog(MainFrame.getInstance());
+        final int fileReturn = fileDiag.showOpenDialog(MainFrame.getInstance());
         if (fileReturn == JFileChooser.APPROVE_OPTION) {
             final File selectedFile = fileDiag.getSelectedFile();
             openScript(selectedFile.toPath());
@@ -308,20 +295,16 @@ final class Utils {
     protected static void uploadLuaScript(@Nonnull final Editor editor) {
         final ParsedNpc npc = editor.getParsedData();
         if (npc == null) {
-            JOptionPane.showMessageDialog(MainFrame.getInstance(),
-                    Lang.getMsg(Utils.class, "uploadLuaErrors"),
-                    Lang.getMsg(Utils.class, "uploadLuaErrorsTitle"),
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(MainFrame.getInstance(), Lang.getMsg(Utils.class, "uploadLuaErrors"),
+                                          Lang.getMsg(Utils.class, "uploadLuaErrorsTitle"), JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         Writer output = null;
         Reader input = null;
         try {
-            final URL url =
-                    new URL("http://illarion.org/~nitram/test_npc.php");
-            final HttpURLConnection conn =
-                    (HttpURLConnection) url.openConnection();
+            final URL url = new URL("http://illarion.org/~nitram/test_npc.php");
+            final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
             conn.setDoInput(true);
 
@@ -333,29 +316,21 @@ final class Utils {
             writer.write();
             final String script = stringWriter.toString();
             final String base64Script = Base64.encode(script, "UTF-8");
-            final String fixedScript =
-                    base64Script.replace('\\', '_').replace('+', '-')
-                            .replace('=', '*');
+            final String fixedScript = base64Script.replace('\\', '_').replace('+', '-').replace('=', '*');
 
-            final String query =
-                    "script=" + URLEncoder.encode(fixedScript, "UTF-8");
+            final String query = "script=" + URLEncoder.encode(fixedScript, "UTF-8");
 
-            output =
-                    new BufferedWriter(new OutputStreamWriter(
-                            conn.getOutputStream(), "UTF-8"));
+            output = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), "UTF-8"));
             output.write(query);
             output.flush();
 
-            input =
-                    new BufferedReader(
-                            new InputStreamReader(conn.getInputStream()));
+            input = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
             input.close();
 
-            JOptionPane.showMessageDialog(MainFrame.getInstance(),
-                    Lang.getMsg(Utils.class, "luaUploadInfos"),
-                    Lang.getMsg(Utils.class, "luaUploadInfosTitle"),
-                    JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(MainFrame.getInstance(), Lang.getMsg(Utils.class, "luaUploadInfos"),
+                                          Lang.getMsg(Utils.class, "luaUploadInfosTitle"),
+                                          JOptionPane.INFORMATION_MESSAGE);
         } catch (@Nonnull final IOException ex) {
             LOGGER.error("Connection to host failed", ex);
         } finally {
@@ -380,7 +355,7 @@ final class Utils {
      * The private implementation of the of the save easyScript function. This
      * writes a text to a file using the correct encoding.
      *
-     * @param editor     the editor supplying the script
+     * @param editor the editor supplying the script
      * @param targetFile the file that is the target of this writing operation
      */
     private static void saveEasyNPCImpl(@Nonnull final Editor editor, @Nonnull final Path targetFile) {

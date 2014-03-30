@@ -41,6 +41,7 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.file.Path;
 
 /**
  * @author Fredrik K
@@ -81,7 +82,10 @@ public class OpenMapPanel extends JPanel {
     }
 
     private void initMaps() {
-        tree.setDirectory(MapEditorConfig.getInstance().getMapFolder());
+        Path mapFolder = MapEditorConfig.getInstance().getMapFolder();
+        if (mapFolder != null) {
+            tree.setDirectory(mapFolder);
+        }
     }
 
     private void initOpenMaps() {

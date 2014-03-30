@@ -23,9 +23,9 @@ import illarion.client.Game;
 import illarion.client.gui.controller.CharScreenController;
 import illarion.client.gui.controller.CreditsStartScreenController;
 import illarion.client.gui.controller.LoginScreenController;
+import org.illarion.engine.GameContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
 
@@ -50,7 +50,7 @@ public class LoginState implements GameState {
     public void create(@Nonnull final Game game, @Nonnull final GameContainer container, @Nonnull final Nifty nifty) {
         loginScreenController = new LoginScreenController(game, container.getEngine());
         nifty.registerScreenController(loginScreenController, new CharScreenController(game),
-                new CreditsStartScreenController(container.getEngine()));
+                                       new CreditsStartScreenController(container.getEngine()));
 
         Util.loadXML(nifty, "illarion/client/gui/xml/login.xml");
         Util.loadXML(nifty, "illarion/client/gui/xml/charselect.xml");

@@ -20,10 +20,10 @@ package illarion.client.resources;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 import illarion.client.util.IdWrapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.illarion.engine.assets.SoundsManager;
 import org.illarion.engine.sound.Sound;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

@@ -23,16 +23,15 @@ import illarion.mapedit.data.MapPosition;
 import illarion.mapedit.data.MapTile;
 import illarion.mapedit.history.GroupAction;
 import illarion.mapedit.history.HistoryManager;
+import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.swing.*;
 
 /**
- *
  * @author Tim
  */
 public abstract class AbstractTool {
@@ -46,8 +45,9 @@ public abstract class AbstractTool {
     /**
      * X and Y are tile coordinates.
      *
-     * @param x
-     * @param y
+     * @param x coordinate
+     * @param y coordinate
+     * @param map current map
      */
     public abstract void clickedAt(int x, int y, Map map);
 
@@ -100,7 +100,6 @@ public abstract class AbstractTool {
             getHistory().addEntry(action);
         }
     }
-
 
     protected final ToolManager getManager() {
         return manager;

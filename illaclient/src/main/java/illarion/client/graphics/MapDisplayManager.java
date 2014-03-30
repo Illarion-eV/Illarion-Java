@@ -23,8 +23,6 @@ import illarion.client.input.CurrentMouseLocationEvent;
 import illarion.client.world.World;
 import illarion.client.world.characters.CharacterAttribute;
 import illarion.common.types.Location;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.illarion.engine.Engine;
 import org.illarion.engine.EngineException;
 import org.illarion.engine.GameContainer;
@@ -32,6 +30,8 @@ import org.illarion.engine.graphic.Scene;
 import org.illarion.engine.graphic.effects.FogEffect;
 import org.illarion.engine.graphic.effects.GrayScaleEffect;
 import org.illarion.engine.input.Input;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
@@ -162,7 +162,7 @@ public final class MapDisplayManager implements AnimatedMove {
      * Update the display entries.
      *
      * @param container the container that holds the game
-     * @param delta     the time in milliseconds since the last update
+     * @param delta the time in milliseconds since the last update
      */
     public void update(@Nonnull final GameContainer container, final int delta) {
         if (!active) {
@@ -210,7 +210,8 @@ public final class MapDisplayManager implements AnimatedMove {
         if (hitPoints == 0) {
             if (!deadViewEnabled) {
                 try {
-                    final GrayScaleEffect effect = c.getEngine().getAssets().getEffectManager().getGrayScaleEffect(true);
+                    final GrayScaleEffect effect = c.getEngine().getAssets().getEffectManager()
+                            .getGrayScaleEffect(true);
                     gameScene.addEffect(effect);
                     deadViewEnabled = true;
                 } catch (EngineException e) {
@@ -220,7 +221,8 @@ public final class MapDisplayManager implements AnimatedMove {
         } else {
             if (deadViewEnabled) {
                 try {
-                    final GrayScaleEffect effect = c.getEngine().getAssets().getEffectManager().getGrayScaleEffect(true);
+                    final GrayScaleEffect effect = c.getEngine().getAssets().getEffectManager()
+                            .getGrayScaleEffect(true);
                     gameScene.removeEffect(effect);
                     deadViewEnabled = false;
                 } catch (EngineException e) {

@@ -61,9 +61,7 @@ public class MapItem {
      */
     public MapItem(final int itemId, @Nullable final List<String> itemData, final int qualityDurability) {
         this.itemId = itemId;
-        if ((itemData != null) && !itemData.isEmpty()) {
-            this.itemData = new ArrayList<>(itemData);
-        }
+        setItemData(itemData);
         this.qualityDurability = qualityDurability;
     }
 
@@ -73,9 +71,14 @@ public class MapItem {
      * @param old the old instance.
      */
     public MapItem(@Nonnull final MapItem old) {
-        itemId = old.itemId;
-        itemData = new ArrayList<>(old.itemData);
-        qualityDurability = old.qualityDurability;
+        this(old.itemId, old.itemData, old.qualityDurability);
+    }
+
+    private void setItemData(@Nullable final List<String> data) {
+        if (data == null || data.isEmpty()) {
+            return;
+        }
+        itemData = new ArrayList<>(data);
     }
 
     /**

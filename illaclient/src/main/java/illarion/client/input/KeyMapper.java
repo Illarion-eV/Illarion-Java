@@ -21,8 +21,6 @@ package illarion.client.input;
 import illarion.client.IllaClient;
 import illarion.client.net.client.CloseShowcaseCmd;
 import illarion.client.net.client.PickUpAllItemsCmd;
-import illarion.client.world.CharMovementMode;
-import illarion.client.world.PlayerMovement;
 import illarion.client.world.World;
 import illarion.client.world.items.InventorySlot;
 import illarion.common.config.ConfigChangedEvent;
@@ -187,19 +185,6 @@ public final class KeyMapper {
                     World.getPlayer().getMovementHandler().stopMovingToDirection(Location.DIR_EAST);
                 }
                 break;
-
-            case LeftCtrl:
-            case RightCtrl:
-            case LeftAlt:
-                final PlayerMovement movement = World.getPlayer().getMovementHandler();
-                if (input.isAnyKeyDown(Key.LeftCtrl, Key.RightCtrl)) {
-                    movement.setMovingToDirectionMode(CharMovementMode.Run);
-                } else if (input.isKeyDown(Key.LeftAlt)) {
-                    movement.setMovingToDirectionMode(CharMovementMode.None);
-                } else {
-                    movement.setMovingToDirectionMode(CharMovementMode.Walk);
-                }
-                break;
         }
     }
 
@@ -225,6 +210,9 @@ public final class KeyMapper {
             case Q:
             case J:
                 World.getGameGui().getQuestGui().toggleQuestLog();
+                break;
+            case F1:
+                World.getGameGui().getDocumentationGui().toggleDocumentation();
                 break;
             case P:
                 World.getNet().sendCommand(new PickUpAllItemsCmd());
@@ -339,15 +327,7 @@ public final class KeyMapper {
 
             case LeftCtrl:
             case RightCtrl:
-            case LeftAlt:
-                final PlayerMovement movement = World.getPlayer().getMovementHandler();
-                if (input.isAnyKeyDown(Key.LeftCtrl, Key.RightCtrl)) {
-                    movement.setMovingToDirectionMode(CharMovementMode.Run);
-                } else if (input.isKeyDown(Key.LeftAlt)) {
-                    movement.setMovingToDirectionMode(CharMovementMode.None);
-                } else {
-                    movement.setMovingToDirectionMode(CharMovementMode.Walk);
-                }
+                World.getGameGui().getGameMapGui().toggleRunMode();
                 break;
 
             default:

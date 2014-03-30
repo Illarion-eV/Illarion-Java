@@ -19,21 +19,13 @@
 package illarion.mapedit.gui;
 
 import illarion.mapedit.Lang;
-import illarion.mapedit.events.menu.ShowHelpDialogEvent;
-import illarion.mapedit.resource.loaders.DocuLoader;
-import javolution.text.TextBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.bushe.swing.event.annotation.AnnotationProcessor;
-import org.bushe.swing.event.annotation.EventSubscriber;
-import org.jdesktop.swingx.JXTree;
 
 import javax.annotation.Nonnull;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;
 import java.io.IOException;
@@ -42,75 +34,52 @@ import java.net.URL;
 
 /**
  * @author Tim
+ * @author Fredrik K
  */
-public class HelpDialog extends JDialog implements HyperlinkListener, TreeSelectionListener {
+public class HelpDialog extends JDialog implements HyperlinkListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(HelpDialog.class);
-    @Nonnull
-    private final JEditorPane html;
 
     public HelpDialog(final JFrame frame) {
         super(frame, Lang.getMsg("gui.docu.Name"), false);
-        AnnotationProcessor.process(this);
         setLayout(new BorderLayout());
 
-        html = new JEditorPane(new HTMLEditorKit().getContentType(), "");
-        final JXTree tree = new JXTree(DocuLoader.getInstance());
+        JEditorPane html = new JEditorPane(new HTMLEditorKit().getContentType(), "");
 
         html.setEditable(false);
-        setMinimumSize(new Dimension(700, 100));
+        setMinimumSize(new Dimension(300, 400));
+        setPreferredSize(new Dimension(500, 500));
         html.addHyperlinkListener(this);
-
-        tree.addTreeSelectionListener(this);
+        final URL url = HelpDialog.class.getResource(String.format("/docu/%s/mapeditor_docu.html",
+                (Lang.getInstance().isGerman()) ? "de" : "en"));
+        html.setContentType("text/html");
+        try {
+            html.setPage(url);
+        } catch (IOException e) {
+            html.setContentType("text/plain");
+            html.setText(Lang.getMsg("gui.docu.IOError"));
+            LOGGER.warn(Lang.getMsg("gui.docu.IOError"), e);
+        }
         add(new JScrollPane(html, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER),
             BorderLayout.CENTER);
-        add(new JScrollPane(tree), BorderLayout.WEST);
         pack();
-    }
-
-    @EventSubscriber
-    public void onShowHelpDialog(final ShowHelpDialogEvent e) {
-        setVisible(true);
     }
 
     @Override
     public void hyperlinkUpdate(@Nonnull final HyperlinkEvent e) {
-        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    if (Desktop.isDesktopSupported()) {
-                        try {
-                            Desktop.getDesktop().browse(e.getURL().toURI());
-                        } catch (IOException | URISyntaxException e1) {
-                            LOGGER.warn("Can't launch browser: ", e1);
-                        }
-                    }
-                }
-            });
-        }
-    }
-
-    @Override
-    public void valueChanged(@Nonnull final TreeSelectionEvent e) {
-        final Object[] path = e.getPath().getPath();
-        if (path[path.length - 1] instanceof DocuLoader.Folder) {
+        if (e.getEventType() != HyperlinkEvent.EventType.ACTIVATED) {
             return;
         }
-        final TextBuilder b = new TextBuilder();
-        try {
-            for (final Object o : path) {
-                final DocuLoader.File file = (DocuLoader.File) o;
-                b.append(file.getPath());
-                if (!file.isFile()) {
-                    b.append('/');
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                if (Desktop.isDesktopSupported()) {
+                    try {
+                        Desktop.getDesktop().browse(e.getURL().toURI());
+                    } catch (IOException | URISyntaxException e1) {
+                        LOGGER.warn("Can't launch browser: ", e1);
+                    }
                 }
             }
-            final URL url = HelpDialog.class.getResource(b.toString());
-            html.setContentType("text/html");
-            html.setPage(url);
-        } catch (IOException e1) {
-            html.setContentType("text/plain");
-            html.setText(Lang.getMsg("gui.docu.IOError") + '\n' + b.toString());
-        }
+        });
     }
 }

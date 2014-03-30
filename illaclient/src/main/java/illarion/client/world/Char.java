@@ -33,11 +33,11 @@ import illarion.common.types.CharacterId;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
 import illarion.common.util.FastMath;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.bushe.swing.event.EventBus;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.LightSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -451,8 +451,8 @@ public final class Char implements AnimatedMove {
         }
 
         // calculate avatar id
-        final int newAvatarId = (((appearance * Location.DIR_MOVE8) + direction) * CharAnimations.TOTAL_ANIMATIONS) +
-                animation;
+        final int newAvatarId =
+                (((appearance * Location.DIR_MOVE8) + direction) * CharAnimations.TOTAL_ANIMATIONS) + animation;
 
         // no change, return
         if ((avatarId == newAvatarId) && (avatar != null)) {
@@ -542,15 +542,19 @@ public final class Char implements AnimatedMove {
             return;
         }
         lightValue = 0;
-        if (hasWearingItem(avatar, AvatarClothManager.GROUP_FIRST_HAND, wearItems[AvatarClothManager.GROUP_FIRST_HAND])
-                || hasWearingItem(avatar, AvatarClothManager.GROUP_SECOND_HAND,
-                wearItems[AvatarClothManager.GROUP_SECOND_HAND])
-                ) {
-            applyPaperdollingItem(avatar, AvatarClothManager.GROUP_FIRST_HAND, wearItems[AvatarClothManager.GROUP_FIRST_HAND]);
-            applyPaperdollingItem(avatar, AvatarClothManager.GROUP_SECOND_HAND, wearItems[AvatarClothManager.GROUP_SECOND_HAND]);
+        if (hasWearingItem(avatar, AvatarClothManager.GROUP_FIRST_HAND,
+                           wearItems[AvatarClothManager.GROUP_FIRST_HAND]) ||
+                hasWearingItem(avatar, AvatarClothManager.GROUP_SECOND_HAND,
+                               wearItems[AvatarClothManager.GROUP_SECOND_HAND])) {
+            applyPaperdollingItem(avatar, AvatarClothManager.GROUP_FIRST_HAND,
+                                  wearItems[AvatarClothManager.GROUP_FIRST_HAND]);
+            applyPaperdollingItem(avatar, AvatarClothManager.GROUP_SECOND_HAND,
+                                  wearItems[AvatarClothManager.GROUP_SECOND_HAND]);
         } else {
-            applyPaperdollingItem(avatar, AvatarClothManager.GROUP_FIRST_HAND, wearItems[AvatarClothManager.GROUP_SECOND_HAND]);
-            applyPaperdollingItem(avatar, AvatarClothManager.GROUP_SECOND_HAND, wearItems[AvatarClothManager.GROUP_FIRST_HAND]);
+            applyPaperdollingItem(avatar, AvatarClothManager.GROUP_FIRST_HAND,
+                                  wearItems[AvatarClothManager.GROUP_SECOND_HAND]);
+            applyPaperdollingItem(avatar, AvatarClothManager.GROUP_SECOND_HAND,
+                                  wearItems[AvatarClothManager.GROUP_FIRST_HAND]);
         }
         for (int i = 0; i < wearItems.length; ++i) {
             if ((i != AvatarClothManager.GROUP_HAIR) && (i != AvatarClothManager.GROUP_BEARD)) {
@@ -567,8 +571,8 @@ public final class Char implements AnimatedMove {
      * Check if a cloth item is defined in a specified group.
      *
      * @param avatar the avatar to update
-     * @param slot   the slot where the item shall be checked
-     * @param id     the id of the item that shall be checked
+     * @param slot the slot where the item shall be checked
+     * @param id the id of the item that shall be checked
      * @return <code>true</code> in case a item is defined and displayable
      */
     @SuppressWarnings("nls")
@@ -579,7 +583,6 @@ public final class Char implements AnimatedMove {
         }
 
         return (id != 0) && ((avatar == null) || avatar.getTemplate().getClothes().doesClothExists(slot, id));
-
     }
 
     private void applyLightValue(final int itemId) {
@@ -604,14 +607,15 @@ public final class Char implements AnimatedMove {
      * Update the avatar display position.
      *
      * @param avatar the avatar that is altered
-     * @param fix    additional position offset for the character, used for the elevation.
+     * @param fix additional position offset for the character, used for the elevation.
      */
     private void updatePosition(@Nullable final Avatar avatar, final int fix) {
         if (removedCharacter) {
             return;
         }
         if (avatar != null) {
-            avatar.setScreenPos(charLocation.getDcX() + dX, (charLocation.getDcY() + dY) - fix, charLocation.getDcZ() + dZ);
+            avatar.setScreenPos(charLocation.getDcX() + dX, (charLocation.getDcY() + dY) - fix,
+                                charLocation.getDcZ() + dZ);
         }
     }
 
@@ -619,7 +623,7 @@ public final class Char implements AnimatedMove {
      * Update the light source of the character.
      *
      * @param avatar the avatar that is updated
-     * @param mode   the mode of the update
+     * @param mode the mode of the update
      */
     private void updateLight(@Nullable final Avatar avatar, final int mode) {
         if (removedCharacter) {
@@ -889,8 +893,8 @@ public final class Char implements AnimatedMove {
      * Move the character to a new position with animation. This function takes absolute coordinates.
      *
      * @param newPos the target location of the move
-     * @param mode   the mode of the move
-     * @param speed  moving speed
+     * @param mode the mode of the move
+     * @param speed moving speed
      */
     public void moveTo(@Nonnull final Location newPos, @Nonnull final CharMovementMode mode, final int speed) {
         final CharacterId characterId = getCharId();
@@ -931,14 +935,15 @@ public final class Char implements AnimatedMove {
             }
 
             // start animations only if reasonable distance
-            if ((charLocation.getDistance(tempLoc) <= range) && (speed > 0) && (dir != Location.DIR_ZERO) && (mode != CharMovementMode.Push)) {
+            if ((charLocation.getDistance(tempLoc) <= range) && (speed > 0) && (dir != Location.DIR_ZERO) &&
+                    (mode != CharMovementMode.Push)) {
                 if (mode == CharMovementMode.Walk) {
                     startAnimation(CharAnimations.WALK, speed);
                 } else if (mode == CharMovementMode.Run) {
                     startAnimation(CharAnimations.RUN, speed);
                 }
-                move.start(tempLoc.getDcX() - charLocation.getDcX(), tempLoc.getDcY() - fromElevation - charLocation.getDcY(), 0, 0,
-                        -elevation, 0, speed);
+                move.start(tempLoc.getDcX() - charLocation.getDcX(),
+                           tempLoc.getDcY() - fromElevation - charLocation.getDcY(), 0, 0, -elevation, 0, speed);
             } else {
                 // reset last animation result
                 dX = 0;
@@ -1030,7 +1035,7 @@ public final class Char implements AnimatedMove {
      * returns to the normal state.
      *
      * @param newAnimation the ID of the new animation
-     * @param speed        the animation speed, the larger the value the slower the animation
+     * @param speed the animation speed, the larger the value the slower the animation
      */
     public void startAnimation(final int newAnimation, final int speed) {
         if (removedCharacter) {
@@ -1134,7 +1139,7 @@ public final class Char implements AnimatedMove {
     /**
      * Update the color of a specified cloth part.
      *
-     * @param slot  the slot that shall be changed
+     * @param slot the slot that shall be changed
      * @param color the color this part shall be displayed in
      */
     public void setClothColor(final int slot, @Nonnull final Color color) {
@@ -1151,7 +1156,7 @@ public final class Char implements AnimatedMove {
     /**
      * Set a item this character has in its inventory.
      *
-     * @param slot   the slot of the inventory
+     * @param slot the slot of the inventory
      * @param itemId the item id of the item at this slot
      */
     public void setInventoryItem(final int slot, @Nonnull final ItemId itemId) {
@@ -1191,7 +1196,7 @@ public final class Char implements AnimatedMove {
      * {@link #updatePaperdoll(Avatar)} is called.
      *
      * @param slot the slot the item is carried at
-     * @param id   the ID of the item the character wears
+     * @param id the ID of the item the character wears
      */
     @SuppressWarnings("nls")
     public void setWearingItem(final int slot, final int id) {

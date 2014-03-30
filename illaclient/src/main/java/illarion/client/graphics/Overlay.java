@@ -21,9 +21,9 @@ package illarion.client.graphics;
 import illarion.client.resources.OverlayFactory;
 import illarion.client.resources.Resource;
 import illarion.client.resources.data.OverlayTemplate;
+import org.illarion.engine.graphic.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.illarion.engine.graphic.Color;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -52,7 +52,7 @@ public class Overlay extends AbstractEntity<OverlayTemplate> implements Resource
      * The default constructor for this class.
      *
      * @param template the template of the overlay this instance will refer to
-     * @param shape    the shape of the overlay, this value will be set as frame
+     * @param shape the shape of the overlay, this value will be set as frame
      */
     public Overlay(@Nonnull final OverlayTemplate template, final int shape, @Nonnull final Tile parentTile) {
         super(template);
@@ -63,7 +63,7 @@ public class Overlay extends AbstractEntity<OverlayTemplate> implements Resource
     /**
      * Create a new instance of a overlay.
      *
-     * @param id    the ID of the overlay tile
+     * @param id the ID of the overlay tile
      * @param shape the shape of the overlay ({@code 1} is the first shape
      * @return the newly created overlay or {@code null} in case the creation of the overlay failed
      */

@@ -18,8 +18,6 @@
  */
 package org.illarion.engine.backend.slick;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.illarion.engine.DesktopGameContainer;
 import org.illarion.engine.EngineException;
 import org.illarion.engine.GameListener;
@@ -32,6 +30,8 @@ import org.lwjgl.util.Display;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.opengl.renderer.Renderer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -87,13 +87,14 @@ public class ApplicationGameContainer implements DesktopGameContainer {
      * Create a new instance of this container.
      *
      * @param gameListener the listener
-     * @param width        the width of the window
-     * @param height       the height of the window
-     * @param fullScreen   {@code true} in case this application is supposed to show up as full screen application
+     * @param width the width of the window
+     * @param height the height of the window
+     * @param fullScreen {@code true} in case this application is supposed to show up as full screen application
      * @throws SlickEngineException This exception is thrown in case creating the container failed badly
      */
-    public ApplicationGameContainer(@Nonnull final GameListener gameListener, final int width,
-                                    final int height, final boolean fullScreen) throws SlickEngineException {
+    public ApplicationGameContainer(
+            @Nonnull final GameListener gameListener, final int width, final int height, final boolean fullScreen)
+            throws SlickEngineException {
         try {
             slickContainer = new AppGameContainer(new ListenerGame(gameListener, this), width, height, fullScreen);
             slickContainer.setForceExit(false);
@@ -112,7 +113,6 @@ public class ApplicationGameContainer implements DesktopGameContainer {
             throw new SlickEngineException("Failed to create the application container.", e);
         }
     }
-
 
     @Override
     public void exitGame() {
@@ -200,8 +200,8 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         try {
             if (cursor instanceof SlickMouseCursor) {
                 final SlickMouseCursor slickCursor = (SlickMouseCursor) cursor;
-                slickContainer.setMouseCursor(slickCursor.getCursor(), slickCursor.getHotspotX(),
-                        slickCursor.getHotspotY());
+                slickContainer
+                        .setMouseCursor(slickCursor.getCursor(), slickCursor.getHotspotX(), slickCursor.getHotspotY());
             } else {
                 slickContainer.setMouseCursor((Cursor) null, 0, 0);
             }
@@ -242,7 +242,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         DisplayMode[] displayModes;
         try {
             displayModes = Display.getAvailableDisplayModes(800, 600, slickContainer.getScreenWidth(),
-                    slickContainer.getScreenHeight(), 24, 32, 40, 120);
+                                                            slickContainer.getScreenHeight(), 24, 32, 40, 120);
         } catch (@Nonnull final LWJGLException exc) {
             displayModes = new DisplayMode[1];
             displayModes[0] = new DisplayMode(800, 600);
@@ -255,7 +255,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         for (int i = 0; i < displayModes.length; i++) {
             final DisplayMode mode = displayModes[i];
             result[i] = new GraphicResolution(mode.getWidth(), mode.getHeight(), mode.getBitsPerPixel(),
-                    mode.getFrequency());
+                                              mode.getFrequency());
         }
 
         return result;

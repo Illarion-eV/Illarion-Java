@@ -227,9 +227,9 @@ public final class JavaLauncher {
         try {
             final ProcessBuilder pBuilder = new ProcessBuilder(callList);
 
-            File workingDirectory = DirectoryManager.getInstance().getWorkingDirectory();
+            Path workingDirectory = DirectoryManager.getInstance().getWorkingDirectory();
             if (workingDirectory != null) {
-                pBuilder.directory(workingDirectory);
+                pBuilder.directory(workingDirectory.toFile());
             }
             pBuilder.redirectErrorStream(true);
             final Process proc = pBuilder.start();

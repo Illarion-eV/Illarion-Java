@@ -29,9 +29,9 @@ import de.lessvoid.nifty.render.image.ImageMode;
 import de.lessvoid.nifty.render.image.ImageModeFactory;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
+import org.illarion.nifty.controls.Progress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.illarion.nifty.controls.Progress;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -60,10 +60,11 @@ public final class ProgressControl extends AbstractController implements Progres
     private Element fillArea;
 
     @Override
-    public void bind(@Nonnull final Nifty nifty,
-                     @Nonnull final Screen screen,
-                     @Nonnull final Element element,
-                     @Nonnull final Parameters parameter) {
+    public void bind(
+            @Nonnull final Nifty nifty,
+            @Nonnull final Screen screen,
+            @Nonnull final Element element,
+            @Nonnull final Parameters parameter) {
         bind(element);
 
         minImageWidth = parameter.getAsInteger("minImageWidth", 0);
@@ -160,9 +161,9 @@ public final class ProgressControl extends AbstractController implements Progres
     /**
      * Set the value of the progress. All values will be clamped to {@code 0.f} and {@code 1.f}.
      *
-     * @param value  the progress value
+     * @param value the progress value
      * @param forced {@code true} in case the values are supposed to be updated event if the old and the new progress
-     *               value are equal
+     * value are equal
      */
     private void setProgress(final double value, final boolean forced) {
         final double usedValue;

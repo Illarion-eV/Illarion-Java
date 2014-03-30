@@ -33,28 +33,32 @@ import illarion.client.util.GlobalExecutorService;
 import illarion.client.util.Lang;
 import illarion.client.world.Player;
 import illarion.client.world.World;
+import illarion.client.world.events.ConnectionLostEvent;
 import illarion.common.bug.CrashReporter;
 import illarion.common.config.Config;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.config.ConfigSystem;
-import illarion.common.util.*;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
+import illarion.common.util.AppIdent;
+import illarion.common.util.Crypto;
+import illarion.common.util.DirectoryManager;
+import illarion.common.util.TableLoader;
 import org.bushe.swing.event.*;
 import org.illarion.engine.Backend;
 import org.illarion.engine.DesktopGameContainer;
 import org.illarion.engine.EngineException;
 import org.illarion.engine.EngineManager;
 import org.illarion.engine.graphic.GraphicResolution;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -297,15 +301,13 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     }
 
     /**
-     * Quit the client and restart the connection with the login screen right away.
+     * Publishing a ConnectionLostEvent.
      *
-     * @param message the message that shall be displayed in the login screen
+     * @param message the message that shall be displayed
      */
-    public static void fallbackToLogin(final String message) {
+    public static void sendDisconnectEvent(final String message) {
         LOGGER.warn(message);
-        ensureExit();
-        //INSTANCE.game.enterState(Game.STATE_LOGIN);
-        //World.cleanEnvironment();
+        EventBus.publish(new ConnectionLostEvent(message));
     }
 
     /**
@@ -325,9 +327,12 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      * @return the full path to a file
      */
     @Nonnull
-    public static String getFile(@Nonnull final String name) {
-        return new File(DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User), name)
-                .getAbsolutePath();
+    public static Path getFile(@Nonnull final String name) {
+        Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        if (userDir == null) {
+            throw new IllegalStateException("User directory can't be null.");
+        }
+        return userDir.resolve(name);
     }
 
     /**
@@ -434,9 +439,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
             System.exit(-1);
         }
 
-        final File userDirectory = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        final Path userDirectory = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
         assert userDirectory != null;
-        return userDirectory.getAbsolutePath();
+        return userDirectory.toAbsolutePath().toString();
     }
 
     /**
@@ -473,11 +478,11 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      */
     @SuppressWarnings("nls")
     private static void initLogfiles() throws IOException {
-        File userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
         if (userDir == null) {
             return;
         }
-        System.setProperty("log_dir", userDir.getAbsolutePath());
+        System.setProperty("log_dir", userDir.toAbsolutePath().toString());
 
         //Reload:
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
@@ -544,6 +549,8 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("disableChatAfterSending", true);
         cfg.setDefault("showQuestsOnGameMap", true);
         cfg.setDefault("showQuestsOnMiniMap", true);
+        cfg.setDefault("walkAsDefault", true);
+        cfg.setDefault("mouseFollowAutoRun", false);
 
         @Nonnull final Toolkit awtDefaultToolkit = Toolkit.getDefaultToolkit();
         @Nullable final Object doubleClick = awtDefaultToolkit.getDesktopProperty("awt.multiClickInterval");

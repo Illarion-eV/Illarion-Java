@@ -39,7 +39,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
@@ -215,10 +214,10 @@ public class MapEditorConfig {
      * Init the config system
      */
     public void init() {
-        final String userDir = checkFolder();
-        configSystem = new ConfigSystem(userDir + File.separator + "MapEdit.xcfgz");
+        final Path userDir = checkFolder();
+        configSystem = new ConfigSystem(userDir.resolve("MapEdit.xcfgz"));
 
-        configSystem.setDefault(MAPEDIT_FOLDER, new File(System.getProperty("user.home")));
+        configSystem.setDefault(MAPEDIT_FOLDER, Paths.get(System.getProperty("user.home")));
         configSystem.setDefault(USE_WINDOW_DECO, true);
         configSystem.setDefault(USED_LOOK_AND_FEEL, DEFAULT_LOOK_AND_FEEL);
         configSystem.setDefault(USED_LANGUAGE, getDefaultLanguageString());
@@ -236,7 +235,7 @@ public class MapEditorConfig {
      * set
      */
     @Nonnull
-    private static String checkFolder() {
+    private static Path checkFolder() {
         if (!DirectoryManager.getInstance().isDirectorySet(DirectoryManager.Directory.User)) {
             SplashScreen.getInstance().setVisible(false);
             JOptionPane.showMessageDialog(null, "Installation ist fehlerhaft. Bitte neu ausführen.\n\n" +
@@ -244,9 +243,9 @@ public class MapEditorConfig {
             System.exit(-1);
         }
 
-        final File userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        final Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
         assert userDir != null;
-        return userDir.getAbsolutePath();
+        return userDir;
     }
 
     /**
@@ -321,7 +320,7 @@ public class MapEditorConfig {
      *
      * @param newFolder the folder where to store the maps
      */
-    public void setMapFolder(@Nonnull final File newFolder) {
+    public void setMapFolder(@Nonnull final Path newFolder) {
         if (configSystem == null) {
             LOGGER.error("Configuration system not initialized yet.");
             return;

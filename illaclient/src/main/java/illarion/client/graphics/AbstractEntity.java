@@ -22,14 +22,14 @@ import illarion.client.resources.data.AbstractEntityTemplate;
 import illarion.client.world.World;
 import illarion.common.types.Location;
 import illarion.common.types.Rectangle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.illarion.engine.EngineException;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.*;
 import org.illarion.engine.graphic.effects.HighlightEffect;
 import org.illarion.engine.graphic.effects.TextureEffect;
 import org.illarion.engine.input.Input;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -47,7 +47,8 @@ import javax.annotation.concurrent.NotThreadSafe;
  */
 @SuppressWarnings("nls")
 @NotThreadSafe
-public abstract class AbstractEntity<T extends AbstractEntityTemplate> implements DisplayItem, AlphaHandler, AnimatedFrame {
+public abstract class AbstractEntity<T extends AbstractEntityTemplate>
+        implements DisplayItem, AlphaHandler, AnimatedFrame {
     /**
      * This class is used in case more then one alpha change listener is added. It forwards a alpha change message to
      * two other handlers. This way its possible to create a infinite amount of listeners on one entity.
@@ -78,7 +79,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
          * This method receives the alpha changed event and forwards its data to both added listeners.
          *
          * @param from the old alpha value
-         * @param to   the new alpha value
+         * @param to the new alpha value
          */
         @Override
         public void alphaChanged(final int from, final int to) {
@@ -303,8 +304,12 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
         }
     }
 
-    protected void renderSprite(@Nonnull final Graphics g, final int x, final int y, @Nonnull final Color light,
-                                @Nonnull final TextureEffect... effects) {
+    protected void renderSprite(
+            @Nonnull final Graphics g,
+            final int x,
+            final int y,
+            @Nonnull final Color light,
+            @Nonnull final TextureEffect... effects) {
         g.drawSprite(template.getSprite(), x, y, light, getCurrentFrame(), getScale(), 0.f, effects);
     }
 
@@ -519,9 +524,9 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
     /**
      * Set the position of the entity on the display. The display origin is at the origin of the game map.
      *
-     * @param dispX     the x coordinate of the location of the display
-     * @param dispY     the y coordinate of the location of the display
-     * @param zLayer    the z layer of the coordinate
+     * @param dispX the x coordinate of the location of the display
+     * @param dispY the y coordinate of the location of the display
+     * @param zLayer the z layer of the coordinate
      * @param typeLayer the global layer of this type of entity.
      */
     public void setScreenPos(final int dispX, final int dispY, final int zLayer, final int typeLayer) {
@@ -548,7 +553,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
      * Set the position of the entity on the display. The display origin is at
      * the origin of the game map.
      *
-     * @param loc       the location of the entity on the map
+     * @param loc the location of the entity on the map
      * @param typeLayer the global layer of this type of entity.
      */
     public final void setScreenPos(@Nonnull final Location loc, final int typeLayer) {
@@ -556,8 +561,8 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
     }
 
     @Override
-    public boolean isEventProcessed(@Nonnull final GameContainer container, final int delta,
-                                    @Nonnull final SceneEvent event) {
+    public boolean isEventProcessed(
+            @Nonnull final GameContainer container, final int delta, @Nonnull final SceneEvent event) {
         return false;
     }
 
@@ -636,9 +641,9 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
         final int widthNoShadow = displayRect.getWidth() - (int) (offS * scale);
 
         if (fadingCorridorEffect) {
-            final boolean transparent =
-                    FadingCorridor.getInstance().isInCorridor(displayRect.getX(), displayRect.getY(), layerZ,
-                            widthNoShadow, displayRect.getHeight());
+            final boolean transparent = FadingCorridor.getInstance()
+                    .isInCorridor(displayRect.getX(), displayRect.getY(), layerZ, widthNoShadow,
+                                  displayRect.getHeight());
 
             if (transparent) {
                 setAlphaTarget(FADE_OUT_ALPHA);
@@ -746,7 +751,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate> implement
      * drawn with.
      *
      * @return {@code true} in case the graphic is turned transparent due
-     *         its color
+     * its color
      */
     public boolean isTransparent() {
         return getAlpha() < 255;

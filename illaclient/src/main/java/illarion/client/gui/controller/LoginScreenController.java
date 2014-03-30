@@ -33,9 +33,9 @@ import illarion.client.IllaClient;
 import illarion.client.Login;
 import illarion.client.Servers;
 import illarion.client.util.Lang;
+import org.illarion.engine.Engine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.illarion.engine.Engine;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

@@ -23,11 +23,11 @@ import illarion.client.resources.data.TileTemplate;
 import illarion.common.graphics.TileInfo;
 import illarion.common.util.TableLoaderSink;
 import illarion.common.util.TableLoaderTiles;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.illarion.engine.assets.Assets;
 import org.illarion.engine.assets.SpriteFactory;
 import org.illarion.engine.graphic.Sprite;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
@@ -38,8 +38,8 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class TileLoader extends AbstractResourceLoader<TileTemplate> implements
-        TableLoaderSink<TableLoaderTiles> {
+public final class TileLoader extends AbstractResourceLoader<TileTemplate>
+        implements TableLoaderSink<TableLoaderTiles> {
     /**
      * The logger that is used to report error messages.
      */
@@ -112,8 +112,9 @@ public final class TileLoader extends AbstractResourceLoader<TileTemplate> imple
                 break;
         }
 
-        final Sprite tileSprite = assets.getSpriteFactory().createSprite(getTextures(assets.getTextureManager(),
-                TILE_PATH, name, frames), 0, 0, SpriteFactory.CENTER, SpriteFactory.CENTER, false);
+        final Sprite tileSprite = assets.getSpriteFactory()
+                .createSprite(getTextures(assets.getTextureManager(), TILE_PATH, name, frames), 0, 0,
+                              SpriteFactory.CENTER, SpriteFactory.CENTER, false);
 
         try {
             final TileTemplate template = new TileTemplate(id, tileSprite, frames, speed, info);
@@ -124,5 +125,4 @@ public final class TileLoader extends AbstractResourceLoader<TileTemplate> imple
 
         return true;
     }
-
 }
