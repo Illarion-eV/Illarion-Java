@@ -84,15 +84,12 @@ public final class MapStripeMsg extends AbstractReply {
         count = reader.readUByte();
 
         for (int i = 0; i < count; ++i) {
-            final TileUpdate workUpdate = new TileUpdate();
-            workUpdate.setLocation(workLoc);
-            workUpdate.decode(reader);
+            tiles.add(new TileUpdate(workLoc, reader));
             if (dir == DIR_DOWN) {
                 workLoc.addSC(-1, 1, 0);
             } else if (dir == DIR_RIGHT) {
                 workLoc.addSC(1, 1, 0);
             }
-            tiles.add(workUpdate);
         }
     }
 
