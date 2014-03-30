@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.graphics;
 
@@ -44,7 +41,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 
 /**
  * Class for the avatar of a characters. The avatar is the visual representation of a character on a map. All
@@ -87,7 +83,6 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
 
     @Nonnull
     private final AvatarMarker attackAvailableMark;
-
 
     /**
      * The text tag is the small text box shown above the avatar that contains
@@ -161,7 +156,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
      * existing instance from the list of currently unused instances.
      *
      * @param avatarID the ID of the character that identifies the name and the sex and the direction of the avatar
-     *                 that is needed
+     * that is needed
      * @return a instance of the needed avatar type
      */
     @Nullable
@@ -179,9 +174,9 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
      * Start a animation for this avatar.
      *
      * @param speed the speed of the animation, the larger this value, the
-     *              longer the animation takes to finish
-     * @param loop  true in case the animation shall never stop and rather run
-     *              forever
+     * longer the animation takes to finish
+     * @param loop true in case the animation shall never stop and rather run
+     * forever
      */
     public void animate(final int speed, final boolean loop) {
         if (isMarkedAsRemoved()) {
@@ -223,7 +218,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
     /**
      * Change the color of one paperdolling object.
      *
-     * @param slot  the slot of the object that shall get a different color
+     * @param slot the slot of the object that shall get a different color
      * @param color the new color that shall be used to color the graphic itself
      */
     public void changeClothColor(final int slot, final Color color) {
@@ -231,8 +226,10 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
     }
 
     @Override
-    public boolean isEventProcessed(@Nonnull final GameContainer container, final int delta,
-                                    @Nonnull final SceneEvent event) {
+    public boolean isEventProcessed(
+            @Nonnull final GameContainer container,
+            final int delta,
+            @Nonnull final SceneEvent event) {
         if (event instanceof ClickOnMapEvent) {
             return isEventProcessed(container, delta, (ClickOnMapEvent) event);
         }
@@ -263,12 +260,15 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
      * This function handles click events on the avatars.
      *
      * @param container the game container
-     * @param delta     the time since the last update
-     * @param event     the event that actually happened
+     * @param delta the time since the last update
+     * @param event the event that actually happened
      * @return {@code true} in case the event was handled
      */
     @SuppressWarnings({"BooleanMethodNameMustStartWithQuestion", "UnusedParameters"})
-    private boolean isEventProcessed(final GameContainer container, final int delta, @Nonnull final ClickOnMapEvent event) {
+    private boolean isEventProcessed(
+            final GameContainer container,
+            final int delta,
+            @Nonnull final ClickOnMapEvent event) {
         if (!isMouseInInteractiveOrOnTag(event)) {
             return false;
         }
@@ -294,12 +294,15 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
      * This function handles double click events on the avatars.
      *
      * @param container the game container
-     * @param delta     the time since the last update
-     * @param event     the event that actually happened
+     * @param delta the time since the last update
+     * @param event the event that actually happened
      * @return {@code true} in case the event was handled
      */
     @SuppressWarnings({"BooleanMethodNameMustStartWithQuestion", "UnusedParameters"})
-    private boolean isEventProcessed(final GameContainer container, final int delta, @Nonnull final DoubleClickOnMapEvent event) {
+    private boolean isEventProcessed(
+            final GameContainer container,
+            final int delta,
+            @Nonnull final DoubleClickOnMapEvent event) {
         if (event.getKey() != Button.Left) {
             return false;
         }
@@ -399,7 +402,6 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         super.hide();
     }
 
-
     /**
      * Remove a item from the list of items that are shown as clothes.
      *
@@ -413,7 +415,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
      * Set a item as a clothing item to a specified body location. In case its defined the cloth renderer will try to
      * show the cloth on the avatar.
      *
-     * @param group  the group of the item, so the location of the item, where it shall be displayed
+     * @param group the group of the item, so the location of the item, where it shall be displayed
      * @param itemID the ID of the item that shall be displayed
      */
     public void setClothItem(final int group, final int itemID) {
@@ -483,7 +485,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
      * Set the color of the text that is shown above the avatar that is shown.
      *
      * @param color the color that is used for the font of the the text that is
-     *              shown above the character and shows the name of the character
+     * shown above the character and shows the name of the character
      */
     public void setNameColor(final Color color) {
         avatarTextTag.setCharNameColor(color);
@@ -530,8 +532,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
     }
 
     @Override
-    public void setScreenPos(final int posX, final int posY, final int layerZ,
-                             final int groupLayer) {
+    public void setScreenPos(final int posX, final int posY, final int layerZ, final int groupLayer) {
         super.setScreenPos(posX, posY, layerZ, groupLayer);
         clothRender.setScreenLocation(posX, posY, layerZ, groupLayer);
         attackMark.setScreenPos(posX, posY, layerZ, groupLayer);
@@ -553,10 +554,10 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
 
         final Input input = container.getEngine().getInput();
 
-        renderName = (isMouseInInteractionRect(input) || input.isKeyDown(Key.RightAlt)) && (getAlpha() >
-                HIDE_NAME_ALPHA);
+        renderName =
+                (isMouseInInteractionRect(input) || input.isKeyDown(Key.RightAlt)) && (getAlpha() > HIDE_NAME_ALPHA);
 
-        if (isMouseInInteractionRect(input) &&  World.getPlayer().getCombatHandler().canBeAttacked(parentChar)) {
+        if (isMouseInInteractionRect(input) && World.getPlayer().getCombatHandler().canBeAttacked(parentChar)) {
             showAttackAvailable = true;
             attackAvailableMark.setAlpha(getAlpha());
             attackAvailableMark.update(container, delta);

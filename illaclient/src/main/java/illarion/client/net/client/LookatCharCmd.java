@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.net.client;
 
@@ -69,7 +66,7 @@ public final class LookatCharCmd extends AbstractCommand {
      * the buffer.
      *
      * @param writer the interface that allows writing data to the network
-     *               communication system
+     * communication system
      */
     @Override
     public void encode(@Nonnull final NetCommWriter writer) {
@@ -81,8 +78,8 @@ public final class LookatCharCmd extends AbstractCommand {
      * Set the target of the look at and the way the look at is done.
      *
      * @param lookAtCharId the ID of the char we want to look at
-     * @param lookAtMode   the mode of the look at so the method used to look at
-     *                     the target character
+     * @param lookAtMode the mode of the look at so the method used to look at
+     * the target character
      */
     public void examine(final CharacterId lookAtCharId, final int lookAtMode) {
         charId = lookAtCharId;

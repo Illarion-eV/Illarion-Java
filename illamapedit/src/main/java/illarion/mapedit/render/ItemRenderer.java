@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Mapeditor.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Mapeditor is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Mapeditor is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.mapedit.render;
 
@@ -38,7 +35,6 @@ import java.util.List;
  */
 public class ItemRenderer extends AbstractMapRenderer {
 
-
     /**
      * Creates a new map renderer
      */
@@ -47,9 +43,12 @@ public class ItemRenderer extends AbstractMapRenderer {
     }
 
     @Override
-    public void renderMap(@Nonnull final Map map, @Nonnull final Rectangle viewport, final int level, @Nonnull final Graphics2D g) {
+    public void renderMap(
+            @Nonnull final Map map,
+            @Nonnull final Rectangle viewport,
+            final int level,
+            @Nonnull final Graphics2D g) {
         final AffineTransform t = g.getTransform();
-
 
         //actual H-Position
         int actualH = 0;
@@ -76,12 +75,17 @@ public class ItemRenderer extends AbstractMapRenderer {
                     actualH = 0;
                 }
             }
-
         }
         g.setTransform(t);
     }
 
-    private void render(final int x, final int y, @Nonnull final Rectangle viewport, @Nonnull final Map map, final int level, @Nonnull final Graphics2D g) {
+    private void render(
+            final int x,
+            final int y,
+            @Nonnull final Rectangle viewport,
+            @Nonnull final Map map,
+            final int level,
+            @Nonnull final Graphics2D g) {
         final int z = map.getZ() - level;
         final List<MapItem> items = map.getTileAt(x, y).getMapItems();
         if ((items == null) || items.isEmpty()) {
@@ -91,7 +95,7 @@ public class ItemRenderer extends AbstractMapRenderer {
         final int xdisp = SwingLocation.displayCoordinateX(x + map.getX(), y + map.getY(), z);
         final int ydisp = SwingLocation.displayCoordinateY(x + map.getX(), y + map.getY(), z);
         if (viewport.contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
-                (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
+                              (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
             int height = 0;
             final AffineTransform tr = g.getTransform();
             for (final MapItem item : items) {

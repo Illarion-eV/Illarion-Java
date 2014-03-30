@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Game Engine.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Game Engine is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Game Engine is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.illarion.engine.backend.gdx;
 
@@ -123,8 +120,8 @@ class GdxScene extends AbstractScene<GdxSceneEffect> {
                 renderBatch.begin();
                 final GdxSceneEffect effect = getEffect(i);
                 effect.activateEffect(renderBatch, container.getWidth(), container.getHeight(),
-                        currentFrameBuffer.getColorBufferTexture().getWidth(),
-                        currentFrameBuffer.getColorBufferTexture().getHeight());
+                                      currentFrameBuffer.getColorBufferTexture().getWidth(),
+                                      currentFrameBuffer.getColorBufferTexture().getHeight());
                 renderBatch.draw(lastFrameBuffer.getColorBufferTexture(), 0.f, 0.f);
                 effect.disableEffect(renderBatch);
                 renderBatch.end();
@@ -143,7 +140,7 @@ class GdxScene extends AbstractScene<GdxSceneEffect> {
     /**
      * Get the next frame buffer that can be used as render target.
      *
-     * @param width  the width the image is supposed to have
+     * @param width the width the image is supposed to have
      * @param height the height the image is supposed to have
      * @return the image that can be used now
      */
@@ -162,13 +159,16 @@ class GdxScene extends AbstractScene<GdxSceneEffect> {
     /**
      * Check if a frame buffer is fitting the requirements.
      *
-     * @param width    the width the image needs to have
-     * @param height   the height the image needs to have
+     * @param width the width the image needs to have
+     * @param height the height the image needs to have
      * @param original the original image, if this is {@code null} a new image will be created
      * @return the image fitting the requirements
      */
     @Nonnull
-    private static FrameBuffer validateFrameBuffer(final int width, final int height, @Nullable final FrameBuffer original) {
+    private static FrameBuffer validateFrameBuffer(
+            final int width,
+            final int height,
+            @Nullable final FrameBuffer original) {
         if (original == null) {
             return new FrameBuffer(Pixmap.Format.RGBA8888, width, height, false);
         }

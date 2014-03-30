@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Common Library.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Common Library is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.util;
 
@@ -39,7 +36,7 @@ public interface ObjectSource<T> {
     /**
      * Return a object to the source once its not used anymore.
      *
-     * @param key    the key that was used to request the object
+     * @param key the key that was used to request the object
      * @param object the object itself
      */
     void disposeObject(String key, T object);
@@ -49,7 +46,7 @@ public interface ObjectSource<T> {
      *
      * @param key the key of the object to fetch
      * @return the object that is assigned to the key or <code>null</code> in
-     *         case no object is bound to the set key
+     * case no object is bound to the set key
      */
     @Nullable
     T getObject(String key);

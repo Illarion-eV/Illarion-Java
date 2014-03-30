@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Common Library.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Common Library is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.illarion.engine.graphic;
 
@@ -40,8 +37,8 @@ public interface LightingMap {
      * direction.
      *
      * @param loc the location on that is checked
-     * @param dx  x part of the direction of the light ray
-     * @param dy  y part of the direction of the light ray
+     * @param dx x part of the direction of the light ray
+     * @param dy y part of the direction of the light ray
      * @return true if location accepts from this direction
      */
     boolean acceptsLight(Location loc, int dx, int dy);
@@ -51,7 +48,7 @@ public interface LightingMap {
      *
      * @param loc the location on the map
      * @return obscurity, 0 is for free view, {@link #BLOCKED_VIEW} for fully
-     *         blocked
+     * blocked
      */
     int blocksView(Location loc);
 
@@ -68,7 +65,7 @@ public interface LightingMap {
     /**
      * Assign the cumulative light value to a map tile.
      *
-     * @param loc   the location on the map the light is assigned to
+     * @param loc the location on the map the light is assigned to
      * @param color the color that is assigned to the tile
      */
     void setLight(Location loc, Color color);

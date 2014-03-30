@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion easyNPC Editor.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion easyNPC Editor is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion easyNPC Editor is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion easyNPC Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easynpc.parsed.talk.conditions;
 
@@ -44,8 +41,8 @@ public final class ConditionSkill implements TalkCondition {
      * The LUA code needed for this consequence to work.
      */
     @SuppressWarnings("nls")
-    private static final String LUA_CODE = "talkEntry:addCondition(%1$s.skill(Character.%2$s, \"%3$s\", %4$s));"
-            + LuaWriter.NL;
+    private static final String LUA_CODE =
+            "talkEntry:addCondition(%1$s.skill(Character.%2$s, \"%3$s\", %4$s));" + LuaWriter.NL;
 
     /**
      * The LUA module required for this condition to work.
@@ -71,8 +68,8 @@ public final class ConditionSkill implements TalkCondition {
      * Constructor that allows setting the parameters of this skill test.
      *
      * @param skillData the skill used for this condition
-     * @param op        the compare operator used for the condition
-     * @param newValue  the value used to compare against
+     * @param op the compare operator used for the condition
+     * @param newValue the value used to compare against
      */
     public ConditionSkill(final Skill skillData, final CompareOperators op, final AdvancedNumber newValue) {
         skill = skillData;

@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.world.interactive;
 
@@ -81,8 +78,8 @@ public final class InteractionManager {
      * Drop a object to a container slot.
      *
      * @param container the ID of the container the object is dropped in
-     * @param slot      the slot inside the container the object is dropped in
-     * @param count     the amount of objects to be dropped at the container
+     * @param slot the slot inside the container the object is dropped in
+     * @param count the amount of objects to be dropped at the container
      */
     public void dropAtContainer(final int container, final int slot, @Nonnull final ItemCount count) {
         if (draggedObject == null) {
@@ -109,7 +106,7 @@ public final class InteractionManager {
     /**
      * Drop a object at a slot in the inventory.
      *
-     * @param slot  the inventory slot
+     * @param slot the inventory slot
      * @param count the amount of items to be dropped in the inventory
      */
     public void dropAtInventory(final int slot, @Nonnull final ItemCount count) {
@@ -131,8 +128,8 @@ public final class InteractionManager {
     /**
      * Drop the currently dragged object on the map.
      *
-     * @param x     the x coordinate on the screen to drop the object to
-     * @param y     the y coordinate on the screen to drop the object to
+     * @param x the x coordinate on the screen to drop the object to
+     * @param y the y coordinate on the screen to drop the object to
      * @param count the amount of objects to be dropped at the map
      */
     public void dropAtMap(final int x, final int y, @Nonnull final ItemCount count) {
@@ -147,8 +144,8 @@ public final class InteractionManager {
             @Nullable final InteractiveChar playerChar = World.getPlayer().getCharacter().getInteractive();
             @Nullable final InteractiveMapTile targetTile;
             if ((playerChar != null) && playerChar.isCharOnScreenLoc(x, y)) {
-                if ((possibleTile != null) && (possibleTile.getElevationDisplayLevel() < playerChar.getDisplayLevel()
-                )) {
+                if ((possibleTile != null) &&
+                        (possibleTile.getElevationDisplayLevel() < playerChar.getDisplayLevel())) {
                     targetTile = possibleTile;
                 } else {
                     targetTile = playerChar.getInteractiveTile();
@@ -191,8 +188,8 @@ public final class InteractionManager {
     /**
      * Start dragging around a item from a container slot.
      *
-     * @param container   the ID of the container
-     * @param slot        the slot in the container
+     * @param container the ID of the container
+     * @param slot the slot in the container
      * @param endOfDragOp the operation to be performed at the end of the dragging operation
      */
     public void notifyDraggingContainer(final int container, final int slot, @Nullable final Runnable endOfDragOp) {
@@ -232,7 +229,7 @@ public final class InteractionManager {
     /**
      * Start dragging around a item from a inventory slot.
      *
-     * @param slot        the slot in the inventory
+     * @param slot the slot in the inventory
      * @param endOfDragOp the operation to be performed at the end of the dragging operation
      */
     public void notifyDraggingInventory(final int slot, @Nullable final Runnable endOfDragOp) {
@@ -259,7 +256,7 @@ public final class InteractionManager {
     /**
      * Start dragging around a item from the map.
      *
-     * @param targetTile  the tile on the map that is dragged around
+     * @param targetTile the tile on the map that is dragged around
      * @param endOfDragOp the operation to be performed at the end of the dragging operation
      */
     public void notifyDraggingMap(@Nonnull final MapTile targetTile, @Nullable final Runnable endOfDragOp) {

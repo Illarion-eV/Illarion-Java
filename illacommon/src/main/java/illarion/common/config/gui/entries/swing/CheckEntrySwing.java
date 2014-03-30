@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Common Library.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Common Library is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.config.gui.entries.swing;
 
@@ -49,7 +46,7 @@ public final class CheckEntrySwing extends JCheckBox implements SaveableEntry {
      * that is used to setup this class.
      *
      * @param usedEntry the entry used to setup this class, the entry needs to
-     *                  pass the check with the static method
+     * pass the check with the static method
      */
     @SuppressWarnings("nls")
     public CheckEntrySwing(final ConfigEntry usedEntry) {
@@ -77,5 +74,4 @@ public final class CheckEntrySwing extends JCheckBox implements SaveableEntry {
     public void save() {
         entry.setValue(isSelected());
     }
-
 }

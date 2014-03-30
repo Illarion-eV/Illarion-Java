@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.resources.loaders;
 
@@ -136,14 +133,17 @@ public abstract class AbstractResourceLoader<T extends Resource> implements Call
      * to create sprite objects.
      *
      * @param textureManager the texture manager that supplies the textures
-     * @param path           the root path of the textures
-     * @param name           the name of the texture
-     * @param frames         the amount of frames
+     * @param path the root path of the textures
+     * @param name the name of the texture
+     * @param frames the amount of frames
      * @return a array with the length equal to the frames that contains the load textures
      */
     @Nonnull
-    protected static Texture[] getTextures(@Nonnull final TextureManager textureManager, @Nonnull final String path,
-                                           @Nonnull final String name, final int frames) {
+    protected static Texture[] getTextures(
+            @Nonnull final TextureManager textureManager,
+            @Nonnull final String path,
+            @Nonnull final String name,
+            final int frames) {
         final Texture[] resultTextures = new Texture[frames];
         if (frames == 1) {
             resultTextures[0] = textureManager.getTexture(path, name);

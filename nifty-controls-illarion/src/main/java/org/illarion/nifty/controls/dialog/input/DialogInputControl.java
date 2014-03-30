@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Nifty-GUI Controls.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Nifty-GUI Controls is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Nifty-GUI Controls is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Nifty-GUI Controls.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.illarion.nifty.controls.dialog.input;
 
@@ -38,9 +35,7 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @Deprecated
-public class DialogInputControl
-        extends WindowControl
-        implements DialogInput, EventTopicSubscriber<ButtonClickedEvent> {
+public class DialogInputControl extends WindowControl implements DialogInput, EventTopicSubscriber<ButtonClickedEvent> {
     /**
      * The instance of the Nifty-GUI that is parent to this control.
      */
@@ -87,10 +82,11 @@ public class DialogInputControl
     private String description;
 
     @Override
-    public void bind(@Nonnull final Nifty nifty,
-                     @Nonnull final Screen screen,
-                     @Nonnull final Element element,
-                     @Nonnull final Parameters parameter) {
+    public void bind(
+            @Nonnull final Nifty nifty,
+            @Nonnull final Screen screen,
+            @Nonnull final Element element,
+            @Nonnull final Parameters parameter) {
         super.bind(nifty, screen, element, parameter);
         niftyInstance = nifty;
         currentScreen = screen;
@@ -179,10 +175,12 @@ public class DialogInputControl
 
         if (topic.contains("#buttonLeft")) {
             niftyInstance.publishEvent(getId(),
-                    new DialogInputConfirmedEvent(dialogId, DialogInput.DialogButton.LeftButton, getInputText()));
+                                       new DialogInputConfirmedEvent(dialogId, DialogInput.DialogButton.LeftButton,
+                                                                     getInputText()));
         } else {
             niftyInstance.publishEvent(getId(),
-                    new DialogInputConfirmedEvent(dialogId, DialogInput.DialogButton.RightButton, getInputText()));
+                                       new DialogInputConfirmedEvent(dialogId, DialogInput.DialogButton.RightButton,
+                                                                     getInputText()));
         }
         closeWindow();
     }

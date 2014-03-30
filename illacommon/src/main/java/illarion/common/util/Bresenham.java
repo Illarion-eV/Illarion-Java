@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Common Library.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Common Library is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.util;
 
@@ -113,8 +110,8 @@ public final class Bresenham {
      * @param x1 the x coordinate of the target location of the line
      * @param y1 the y coordinate of the target location of the line
      */
-    public void calculate(final int x0, final int y0, final int x1,
-                          final int y1) {
+    public void calculate(
+            final int x0, final int y0, final int x1, final int y1) {
         length = 0;
 
         int currX = x0;
@@ -198,8 +195,8 @@ public final class Bresenham {
      * @param index the index of the point in the list of points
      * @param point the object the point data is stored in
      * @return true in case the index was valid and the point data got stored in
-     *         the object, false if the index was smaller then 0 or larger then
-     *         the length of the calculated line
+     * the object, false if the index was smaller then 0 or larger then
+     * the length of the calculated line
      */
     @SuppressWarnings("nls")
     public boolean getPoint(final int index, @Nullable final Point point) {

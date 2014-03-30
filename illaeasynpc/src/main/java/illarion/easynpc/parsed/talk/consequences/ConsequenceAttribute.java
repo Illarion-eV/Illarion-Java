@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion easyNPC Editor.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion easyNPC Editor is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion easyNPC Editor is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion easyNPC Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easynpc.parsed.talk.consequences;
 
@@ -44,8 +41,8 @@ public final class ConsequenceAttribute implements TalkConsequence {
      * The LUA code needed to be included for a attribute consequence.
      */
     @SuppressWarnings("nls")
-    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.attribute(\"%2$s\", \"%3$s\", %4$s));"
-            + LuaWriter.NL;
+    private static final String LUA_CODE =
+            "talkEntry:addConsequence(%1$s.attribute(\"%2$s\", \"%3$s\", %4$s));" + LuaWriter.NL;
 
     /**
      * The module used to access this attribute consequence.
@@ -72,11 +69,11 @@ public final class ConsequenceAttribute implements TalkConsequence {
      * The constructor that allows setting the parameters of this attribute change.
      *
      * @param newAttrib The attribute that is effected by the consequence
-     * @param op        The operator used to change the attribute
-     * @param newValue  the value the attribute is changed by
+     * @param op The operator used to change the attribute
+     * @param newValue the value the attribute is changed by
      */
-    public ConsequenceAttribute(final CharacterAttribute newAttrib, final CalculationOperators op,
-                                final AdvancedNumber newValue) {
+    public ConsequenceAttribute(
+            final CharacterAttribute newAttrib, final CalculationOperators op, final AdvancedNumber newValue) {
         attrib = newAttrib;
         operator = op;
         value = newValue;

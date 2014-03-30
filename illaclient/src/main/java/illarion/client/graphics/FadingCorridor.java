@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.graphics;
 
@@ -81,23 +78,23 @@ public final class FadingCorridor {
     /**
      * Test given screen coordinates for intersection with transparent corridor.
      *
-     * @param testLocX  the x location of the area that needs to be checked for
-     *                  intersection
-     * @param testLocY  the y location of the area that needs to be checked for
-     *                  intersection
+     * @param testLocX the x location of the area that needs to be checked for
+     * intersection
+     * @param testLocY the y location of the area that needs to be checked for
+     * intersection
      * @param testLayer the layer of the area that needs to be checked, that
-     *                  generally is the Z order and it ensures that objects that are
-     *                  "below" the avatar are not faded out
-     * @param width     the width of the area that needs to be checked for
-     *                  intersection
-     * @param height    the height of the area that needs to be checked for
-     *                  intersection
+     * generally is the Z order and it ensures that objects that are
+     * "below" the avatar are not faded out
+     * @param width the width of the area that needs to be checked for
+     * intersection
+     * @param height the height of the area that needs to be checked for
+     * intersection
      * @return {@code true} in case the area intersects and is "above" the
-     *         avatar image (spoken in z order), so returning {@code true}
-     *         means that the tested object needs to be faded out
+     * avatar image (spoken in z order), so returning {@code true}
+     * means that the tested object needs to be faded out
      */
-    protected boolean isInCorridor(final int testLocX, final int testLocY,
-                                   final int testLayer, final int width, final int height) {
+    protected boolean isInCorridor(
+            final int testLocX, final int testLocY, final int testLayer, final int width, final int height) {
         TEMP_RECT.setBounds(testLocX, testLocY, width, height);
 
         return (testLayer < back) && fading.intersects(TEMP_RECT);
@@ -113,13 +110,13 @@ public final class FadingCorridor {
      * </p>
      *
      * @param character the avatar that delivers the size for the fading
-     *                  corridor
+     * corridor
      */
     protected void setCorridor(@Nonnull final AbstractEntity character) {
         final Sprite characterSprite = character.getTemplate().getSprite();
         fading.setBounds(character.getDisplayX() + TOLERANCE,
-                (character.getDisplayY() + TOLERANCE) - characterSprite.getHeight(), characterSprite.getWidth(),
-                characterSprite.getHeight());
+                         (character.getDisplayY() + TOLERANCE) - characterSprite.getHeight(),
+                         characterSprite.getWidth(), characterSprite.getHeight());
         back = character.getOrder() - (Layers.DISTANCE / 2);
     }
 }

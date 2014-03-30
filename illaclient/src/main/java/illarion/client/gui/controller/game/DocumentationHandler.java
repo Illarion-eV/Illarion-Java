@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
  * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.gui.controller.game;
 
@@ -58,8 +55,7 @@ public class DocumentationHandler implements DocumentationGui, ScreenController,
     public void toggleDocumentation() {
         if (isDocumentationVisible()) {
             hideDocumentation();
-        }
-        else {
+        } else {
             showDocumentation();
         }
     }
@@ -124,8 +120,10 @@ public class DocumentationHandler implements DocumentationGui, ScreenController,
 
         documentationWindow = getDocumentationWindow();
         if ((documentationWindow != null && documentationWindow.getElement() != null)) {
-            documentationWindow.getElement().setConstraintX(new SizeValue(IllaClient.getCfg().getString("docuWindowPosX")));
-            documentationWindow.getElement().setConstraintY(new SizeValue(IllaClient.getCfg().getString("docuWindowPosY")));
+            documentationWindow.getElement()
+                    .setConstraintX(new SizeValue(IllaClient.getCfg().getString("docuWindowPosX")));
+            documentationWindow.getElement()
+                    .setConstraintY(new SizeValue(IllaClient.getCfg().getString("docuWindowPosY")));
         }
         createDocumentationEntries();
     }
@@ -156,7 +154,6 @@ public class DocumentationHandler implements DocumentationGui, ScreenController,
             headline.width("*");
             headline.height("30px");
             groupPanel.control(headline);
-
 
             int entryCnt = 0;
             for (final DocuEntry child : group) {

@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.world.items;
 
@@ -89,17 +86,22 @@ public class CraftingItem {
     /**
      * Constructor that applies all required values.
      *
-     * @param itemIndex      the index of this item
-     * @param group          the group this item belongs to
-     * @param itemId         the ID of the item that is crafted
-     * @param name           the name of the item that is crafted
-     * @param buildTime      the time required to craft this item
+     * @param itemIndex the index of this item
+     * @param group the group this item belongs to
+     * @param itemId the ID of the item that is crafted
+     * @param name the name of the item that is crafted
+     * @param buildTime the time required to craft this item
      * @param buildStackSize the amount of items crafted at once
-     * @param ingredients    the ingredients required to build this
+     * @param ingredients the ingredients required to build this
      */
-    public CraftingItem(final int itemIndex, final int group, @Nonnull final ItemId itemId, @Nonnull final String name,
-                        final int buildTime, @Nonnull final ItemCount buildStackSize,
-                        @Nonnull final CraftingIngredientItem[] ingredients) {
+    public CraftingItem(
+            final int itemIndex,
+            final int group,
+            @Nonnull final ItemId itemId,
+            @Nonnull final String name,
+            final int buildTime,
+            @Nonnull final ItemCount buildStackSize,
+            @Nonnull final CraftingIngredientItem[] ingredients) {
         this.itemIndex = itemIndex;
         this.group = group;
         this.itemId = itemId;
@@ -130,7 +132,7 @@ public class CraftingItem {
      * @param index the index of the ingredient
      * @return the ingredient item assigned to this index
      * @throws IndexOutOfBoundsException in case {@code index} is less then 0 or larger or equal to {@link
-     *                                   #getIngredientCount()}
+     * #getIngredientCount()}
      */
     @Nonnull
     public CraftingIngredientItem getIngredient(final int index) {

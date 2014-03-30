@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Mapeditor.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Mapeditor is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Mapeditor is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.mapedit.render;
 
@@ -46,7 +43,11 @@ public class ItemDataRenderer extends AbstractMapRenderer {
     }
 
     @Override
-    public void renderMap(@Nonnull final Map map, @Nonnull final Rectangle viewport, final int level, @Nonnull final Graphics2D g) {
+    public void renderMap(
+            @Nonnull final Map map,
+            @Nonnull final Rectangle viewport,
+            final int level,
+            @Nonnull final Graphics2D g) {
         final int width = map.getWidth();
         final int height = map.getHeight();
         final int z = map.getZ() - level;
@@ -61,8 +62,9 @@ public class ItemDataRenderer extends AbstractMapRenderer {
                 final int xDisplay = SwingLocation.displayCoordinateX(x + map.getX(), y + map.getY(), z);
                 final int yDisplay = SwingLocation.displayCoordinateY(x + map.getX(), y + map.getY(), z);
                 if (viewport.contains((xDisplay * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
-                        (yDisplay * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
-                    g.drawImage(image, xDisplay + (int) (XOFFSET * getZoom()), yDisplay + (int) (YOFFSET * getZoom()), null);
+                                      (yDisplay * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
+                    g.drawImage(image, xDisplay + (int) (XOFFSET * getZoom()), yDisplay + (int) (YOFFSET * getZoom()),
+                                null);
                 }
             }
         }
@@ -76,7 +78,7 @@ public class ItemDataRenderer extends AbstractMapRenderer {
 
     @Override
     public String getLocalizedName() {
-        return  Lang.getMsg("renderer.ItemData");
+        return Lang.getMsg("renderer.ItemData");
     }
 
     @Override

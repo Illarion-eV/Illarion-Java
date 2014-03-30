@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion easyQuest Editor.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion easyQuest Editor is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion easyQuest Editor is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion easyQuest Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easyquest.gui;
 
@@ -45,7 +42,8 @@ final class MainMenu extends RibbonApplicationMenu {
                     public void actionPerformed(final ActionEvent e) {
                         MainFrame.getInstance().addNewQuest();
                     }
-                }, CommandButtonKind.ACTION_ONLY);
+                }, CommandButtonKind.ACTION_ONLY
+        );
         addMenuEntry(newQuest);
 
         final RibbonApplicationMenuEntryPrimary openQuest = new RibbonApplicationMenuEntryPrimary(
@@ -55,7 +53,8 @@ final class MainMenu extends RibbonApplicationMenu {
                     public void actionPerformed(final ActionEvent e) {
                         Utils.selectAndOpenQuest();
                     }
-                }, CommandButtonKind.ACTION_ONLY);
+                }, CommandButtonKind.ACTION_ONLY
+        );
 
         final Collection<Path> oldFiles = Config.getInstance().getLastOpenedFiles();
         final RibbonApplicationMenuEntrySecondary[] workingEntries = new RibbonApplicationMenuEntrySecondary[oldFiles
@@ -72,7 +71,8 @@ final class MainMenu extends RibbonApplicationMenu {
                         public void actionPerformed(final ActionEvent e) {
                             Utils.openQuest(fileToOpen);
                         }
-                    }, CommandButtonKind.ACTION_ONLY);
+                    }, CommandButtonKind.ACTION_ONLY
+            );
             entryIndex++;
         }
 
@@ -93,7 +93,8 @@ final class MainMenu extends RibbonApplicationMenu {
                     public void actionPerformed(final ActionEvent e) {
                         Utils.saveEasyQuest(MainFrame.getInstance().getCurrentQuestEditor());
                     }
-                }, CommandButtonKind.ACTION_ONLY);
+                }, CommandButtonKind.ACTION_ONLY
+        );
         addMenuEntry(saveQuest);
 
         final RibbonApplicationMenuEntryPrimary saveAllQuest = new RibbonApplicationMenuEntryPrimary(
@@ -103,7 +104,8 @@ final class MainMenu extends RibbonApplicationMenu {
                     public void actionPerformed(final ActionEvent e) {
 
                     }
-                }, CommandButtonKind.ACTION_ONLY);
+                }, CommandButtonKind.ACTION_ONLY
+        );
         addMenuEntry(saveAllQuest);
 
         final RibbonApplicationMenuEntryPrimary saveAsQuest = new RibbonApplicationMenuEntryPrimary(
@@ -113,7 +115,8 @@ final class MainMenu extends RibbonApplicationMenu {
                     public void actionPerformed(final ActionEvent e) {
 
                     }
-                }, CommandButtonKind.ACTION_ONLY);
+                }, CommandButtonKind.ACTION_ONLY
+        );
         addMenuEntry(saveAsQuest);
 
         addMenuSeparator();
@@ -125,7 +128,8 @@ final class MainMenu extends RibbonApplicationMenu {
                     public void actionPerformed(final ActionEvent e) {
                         Utils.exportEasyQuest(MainFrame.getInstance().getCurrentQuestEditor());
                     }
-                }, CommandButtonKind.ACTION_ONLY);
+                }, CommandButtonKind.ACTION_ONLY
+        );
         addMenuEntry(exportQuest);
 
         addMenuSeparator();
@@ -137,7 +141,8 @@ final class MainMenu extends RibbonApplicationMenu {
                     public void actionPerformed(final ActionEvent e) {
                         MainFrame.getInstance().closeWindow();
                     }
-                }, CommandButtonKind.ACTION_ONLY);
+                }, CommandButtonKind.ACTION_ONLY
+        );
         addMenuEntry(exitButton);
 
         final RibbonApplicationMenuEntryFooter settings = new RibbonApplicationMenuEntryFooter(
@@ -148,7 +153,8 @@ final class MainMenu extends RibbonApplicationMenu {
                         final ConfigDialog dialog = Config.getInstance().createDialog();
                         new ConfigDialogSwing(dialog);
                     }
-                });
+                }
+        );
         addFooterEntry(settings);
     }
 }

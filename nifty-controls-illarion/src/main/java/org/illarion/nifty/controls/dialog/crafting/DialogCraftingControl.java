@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Nifty-GUI Controls.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Nifty-GUI Controls is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Nifty-GUI Controls is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Nifty-GUI Controls.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.illarion.nifty.controls.dialog.crafting;
 
@@ -57,8 +54,8 @@ import java.util.regex.Pattern;
  * @deprecated Use {@link DialogCrafting} to access the dialog
  */
 @Deprecated
-public class DialogCraftingControl extends WindowControl implements DialogCrafting,
-        EventTopicSubscriber<ButtonClickedEvent> {
+public class DialogCraftingControl extends WindowControl
+        implements DialogCrafting, EventTopicSubscriber<ButtonClickedEvent> {
 
     /**
      * The size of the slot to show the ingredient in pixels.
@@ -91,8 +88,8 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
         }
     }
 
-    private final class SelectCraftItemEventSubscriber implements
-            EventTopicSubscriber<TreeItemSelectionChangedEvent<ListEntry>> {
+    private final class SelectCraftItemEventSubscriber
+            implements EventTopicSubscriber<TreeItemSelectionChangedEvent<ListEntry>> {
         @Override
         public void onEvent(final String topic, @Nonnull final TreeItemSelectionChangedEvent<ListEntry> data) {
             final List<TreeItem<ListEntry>> selection = data.getSelection();
@@ -136,8 +133,8 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
 
             final int ingredientId = Integer.parseInt(matcher.group(1));
 
-            niftyInstance.publishEvent(getId(), new DialogCraftingLookAtIngredientItemEvent(dialogId,
-                    selectedItem, ingredientId));
+            niftyInstance.publishEvent(getId(), new DialogCraftingLookAtIngredientItemEvent(dialogId, selectedItem,
+                                                                                            ingredientId));
         }
     }
 
@@ -214,10 +211,11 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
     }
 
     @Override
-    public void bind(@Nonnull final Nifty nifty,
-                     @Nonnull final Screen screen,
-                     @Nonnull final Element element,
-                     @Nonnull final Parameters parameter) {
+    public void bind(
+            @Nonnull final Nifty nifty,
+            @Nonnull final Screen screen,
+            @Nonnull final Element element,
+            @Nonnull final Parameters parameter) {
         super.bind(nifty, screen, element, parameter);
         niftyInstance = nifty;
         currentScreen = screen;
@@ -244,7 +242,10 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
         getAmountTextField().setFormat(new TextFieldDisplayFormat() {
             @Nonnull
             @Override
-            public CharSequence getDisplaySequence(@Nonnull final CharSequence original, final int start, final int end) {
+            public CharSequence getDisplaySequence(
+                    @Nonnull final CharSequence original,
+                    final int start,
+                    final int end) {
                 if (original.length() == 0) {
                     return Integer.toString(1);
                 }
@@ -269,18 +270,17 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
         parent.layoutElements();
 
         niftyInstance.subscribe(currentScreen, getContent().findElementById("#craftButton").getId(),
-                ButtonClickedEvent.class, craftButtonEventHandler);
+                                ButtonClickedEvent.class, craftButtonEventHandler);
         niftyInstance.subscribe(currentScreen, getContent().findElementById("#cancelButton").getId(),
-                ButtonClickedEvent.class, closeButtonEventHandler);
+                                ButtonClickedEvent.class, closeButtonEventHandler);
         niftyInstance.subscribe(currentScreen, getContent().findElementById("#buttonAmountUp").getId(),
-                ButtonClickedEvent.class, increaseAmountButtonEventHandler);
+                                ButtonClickedEvent.class, increaseAmountButtonEventHandler);
         niftyInstance.subscribe(currentScreen, getContent().findElementById("#buttonAmountDown").getId(),
-                ButtonClickedEvent.class, decreaseAmountButtonEventHandler);
-        niftyInstance.subscribe(currentScreen, getItemList().getElement().getId(),
-                ListBoxSelectionChangedEvent.class, listSelectionChangedEventHandler);
+                                ButtonClickedEvent.class, decreaseAmountButtonEventHandler);
+        niftyInstance.subscribe(currentScreen, getItemList().getElement().getId(), ListBoxSelectionChangedEvent.class,
+                                listSelectionChangedEventHandler);
         niftyInstance.subscribe(currentScreen, getContent().findElementById("#selectedItemInfos").getId(),
-                NiftyMouseMovedEvent.class, mouseOverItemEventHandler);
-
+                                NiftyMouseMovedEvent.class, mouseOverItemEventHandler);
     }
 
     @Override
@@ -492,8 +492,9 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
         title.getRenderer(TextRenderer.class).setText(selectedEntry.getName());
 
         final Element productionTime = getContent().findElementById("#productionTime");
-        productionTime.getRenderer(TextRenderer.class).setText("${illarion-dialog-crafting-bundle.craftTime}: "
-                + timeFormat.format(selectedEntry.getCraftTime()) + "s");
+        productionTime.getRenderer(TextRenderer.class).setText(
+                "${illarion-dialog-crafting-bundle.craftTime}: " + timeFormat.format(selectedEntry.getCraftTime()) +
+                        "s");
 
         final Element ingredientsPanel = getContent().findElementById("#ingredients");
 
@@ -506,8 +507,7 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
 
             assert currentPanel != null;
             final Element currentImage = getIngredientImage(ingredientsPanel.getId(), currentPanel, i % 10);
-            applyImage(currentImage.getChildren().get(0), selectedEntry.getIngredientImage(i),
-                    INGREDIENT_IMAGE_SIZE);
+            applyImage(currentImage.getChildren().get(0), selectedEntry.getIngredientImage(i), INGREDIENT_IMAGE_SIZE);
             showIngredientAmount(currentImage, selectedEntry.getIngredientAmount(i));
         }
 
@@ -580,7 +580,7 @@ public class DialogCraftingControl extends WindowControl implements DialogCrafti
 
         final Element ingredientObject = panelBuilder.build(niftyInstance, currentScreen, parentPanel);
         niftyInstance.subscribe(currentScreen, ingredientObject.getId(), NiftyMouseMovedEvent.class,
-                mouseOverIngredientEventHandler);
+                                mouseOverIngredientEventHandler);
         return ingredientObject;
     }
 

@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion easyNPC Editor.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion easyNPC Editor is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion easyNPC Editor is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion easyNPC Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easynpc.parsed.talk.conditions;
 
@@ -96,14 +93,18 @@ public final class ConditionItem implements TalkCondition {
     /**
      * Constructor to set the values of the item.
      *
-     * @param newItem  the item that is stored in this condition
-     * @param pos      the position where to search for this item
-     * @param op       the operation that is used to compare the amount
+     * @param newItem the item that is stored in this condition
+     * @param pos the position where to search for this item
+     * @param op the operation that is used to compare the amount
      * @param newValue the value the amount of items is compared against
-     * @param newData  the data value the search is limited to
+     * @param newData the data value the search is limited to
      */
-    public ConditionItem(final Items newItem, final ItemPositions pos, final CompareOperators op,
-                         final AdvancedNumber newValue, final ParsedItemData newData) {
+    public ConditionItem(
+            final Items newItem,
+            final ItemPositions pos,
+            final CompareOperators op,
+            final AdvancedNumber newValue,
+            final ParsedItemData newData) {
         item = newItem;
         itemPos = pos;
         operator = op;
@@ -127,10 +128,11 @@ public final class ConditionItem implements TalkCondition {
     public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
         if (data.hasValues()) {
             target.write(String.format(EASY_CODE_DATA, Integer.toString(item.getItemId()), itemPos.name(),
-                    operator.getLuaComp(), value.getEasyNPC(), data.getEasyNPC()));
+                                       operator.getLuaComp(), value.getEasyNPC(), data.getEasyNPC()));
         } else {
-            target.write(String.format(EASY_CODE, Integer.toString(item.getItemId()), itemPos.name(),
-                    operator.getLuaComp(), value.getEasyNPC()));
+            target.write(
+                    String.format(EASY_CODE, Integer.toString(item.getItemId()), itemPos.name(), operator.getLuaComp(),
+                                  value.getEasyNPC()));
         }
     }
 
@@ -140,6 +142,6 @@ public final class ConditionItem implements TalkCondition {
     @Override
     public void writeLua(@Nonnull final Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, Integer.toString(item.getItemId()), itemPos.name(),
-                operator.getLuaComp(), value.getLua(), data.getLua()));
+                                   operator.getLuaComp(), value.getLua(), data.getLua()));
     }
 }

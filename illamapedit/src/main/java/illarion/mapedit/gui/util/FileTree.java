@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Mapeditor.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Mapeditor is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Mapeditor is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.mapedit.gui.util;
 
@@ -46,13 +43,13 @@ import java.util.Comparator;
  */
 public class FileTree extends JTree {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileTree.class);
-    private static final Color SELECTED_COLOR = new Color(115,164,209);
+    private static final Color SELECTED_COLOR = new Color(115, 164, 209);
 
     private class FileTreeMouseAdapter extends MouseAdapter {
         @Override
         public void mousePressed(@Nonnull final MouseEvent e) {
             final int selRow = getClosestRowForLocation(e.getX(), e.getY());
-            if(selRow == -1) {
+            if (selRow == -1) {
                 return;
             }
             final Rectangle bounds = getRowBounds(selRow);
@@ -60,9 +57,9 @@ public class FileTree extends JTree {
 
             final boolean onRow = (e.getY() >= bounds.getY()) && (e.getY() < (bounds.getY() + bounds.getHeight()));
             if (onRow) {
-                if(outside) {
+                if (outside) {
                     setSelectionRow(selRow);
-                    if(e.getClickCount() == 2) {
+                    if (e.getClickCount() == 2) {
                         final DefaultMutableTreeNode node = (DefaultMutableTreeNode) getLastSelectedPathComponent();
                         if (node == null) {
                             return;
@@ -74,7 +71,7 @@ public class FileTree extends JTree {
                         }
                     }
                 }
-                if(e.getClickCount() == 2) {
+                if (e.getClickCount() == 2) {
                     final DefaultMutableTreeNode node = (DefaultMutableTreeNode) getLastSelectedPathComponent();
                     if (node == null) {
                         return;
@@ -200,6 +197,7 @@ public class FileTree extends JTree {
                 protected MutableTreeNode doInBackground() {
                     return scan(file);
                 }
+
                 @Override
                 protected void done() {
                     try {
@@ -218,7 +216,7 @@ public class FileTree extends JTree {
         g.setColor(getBackground());
         g.fillRect(0, 0, getWidth(), getHeight());
 
-        final int fromRow = getRowForPath( getSelectionPath());
+        final int fromRow = getRowForPath(getSelectionPath());
         if (fromRow != -1) {
             final Rectangle fromBounds = getRowBounds(fromRow);
             if (fromBounds != null) {

@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Build Utility.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Build Utility is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Build Utility is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * Illarion is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Build Utility.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.build.imagepacker
 
@@ -102,7 +99,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
      * groups. In case spaces are created with a lower height, they are not
      * needed to be stored.
      */
-    private final int[] imageMinHeight =  [MAX_SIZE, MAX_SIZE, MAX_SIZE, MAX_SIZE]
+    private final int[] imageMinHeight = [MAX_SIZE, MAX_SIZE, MAX_SIZE, MAX_SIZE]
 
     /**
      * A list of the minimal width of all images of each of the four image
@@ -191,9 +188,9 @@ public final class ImagePacker implements Comparator<TextureElement> {
      * @param file the entry that defines the location of the source file
      */
     public void addImages(final Collection<File> files) {
-        def defer = { c -> getExecService().submit(c as Callable)}
-        files.each {file ->
-            defer{processAddImage(file)}
+        def defer = { c -> getExecService().submit(c as Callable) }
+        files.each { file ->
+            defer { processAddImage(file) }
         }
     }
 
@@ -215,7 +212,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
     /**
      * Pack the images provided
      *
-     * @param targetDoc       the XML document reference that is supposed to store the definition where the images are
+     * @param targetDoc the XML document reference that is supposed to store the definition where the images are
      *                        located
      * @param spriteDefTarget the node inside the document where the sprite definition are supposed to be stored
      * @return The generated sprite sheet
@@ -347,7 +344,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
 
             images[currType].removeAll(usedImages)
 
-            usedImages.each {image ->
+            usedImages.each { image ->
                 String imageName = image.name;
 
                 if (imageName.startsWith(srcDir.absolutePath)) {
@@ -363,7 +360,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
             }
             usedImages.clear()
 
-            if (![spacesWidth, spacesHeight].any {spaceList -> !spaceList.empty}) {
+            if (![spacesWidth, spacesHeight].any { spaceList -> !spaceList.empty }) {
                 break;
             }
 
@@ -408,9 +405,9 @@ public final class ImagePacker implements Comparator<TextureElement> {
      * Search the optimal base 2 dimensions for the sprite and return them. The
      * dimension will keep within the limit set with {@link #MAX_SIZE}.
      *
-     * @param minWidth  the minimal width value that is needed
+     * @param minWidth the minimal width value that is needed
      * @param minHeight the minimal height value that is needed
-     * @param currType  the current type that is handled, so the index of the per
+     * @param currType the current type that is handled, so the index of the per
      *                  type arrays
      * @return integer array with 2 values, first is the width, second the
      *         height
@@ -440,14 +437,14 @@ public final class ImagePacker implements Comparator<TextureElement> {
      * Get a raster with the given specifications. Either create a new one or
      * get a buffered one.
      *
-     * @param width      the width of the raster
-     * @param height     the height of the raster
+     * @param width the width of the raster
+     * @param height the height of the raster
      * @param components the samples per pixel of the raster
      * @return the raster, either a new one or a buffered one
      */
     private WritableRaster getRaster(final int width, final int height, final int components) {
         if (!rasterBuffer.empty) {
-            rasterBuffer.retainAll {it.get() == null}
+            rasterBuffer.retainAll { it.get() == null }
             for (rasterRef in rasterBuffer) {
                 def raster = rasterRef.get()
                 if (raster != null) {
@@ -469,22 +466,22 @@ public final class ImagePacker implements Comparator<TextureElement> {
      * transfers the pixels directly. Even transparent pixels would overwrite
      * everything below them.
      *
-     * @param sourceImage  the byte data of the source image
-     * @param sourceWidth  the width of the source image
+     * @param sourceImage the byte data of the source image
+     * @param sourceWidth the width of the source image
      * @param sourceHeight the height of the source image
-     * @param sourceType   the type of the source image, based on that type the bits per pixel are set up
-     * @param targetImage  the byte data of the target image
-     * @param targetX      the x location of the source image on the target image
-     * @param targetY      the y location of the source image on the target image
-     * @param targetWidth  the width of the target image
+     * @param sourceType the type of the source image, based on that type the bits per pixel are set up
+     * @param targetImage the byte data of the target image
+     * @param targetX the x location of the source image on the target image
+     * @param targetY the y location of the source image on the target image
+     * @param targetWidth the width of the target image
      * @param targetHeight the height of the target image
-     * @param targetType   the type of the target image, based on that type the bits per pixel are set up
+     * @param targetType the type of the target image, based on that type the bits per pixel are set up
      */
     @SuppressWarnings("nls")
     private void transferPixel(@Nonnull final ByteBuffer sourceImage,
-                                      final int sourceWidth, final int sourceHeight, final int sourceType,
-                                      @Nonnull final byte[] targetImage, final int targetX, final int targetY,
-                                      final int targetWidth, final int targetHeight, final int targetType) {
+                               final int sourceWidth, final int sourceHeight, final int sourceType,
+                               @Nonnull final byte[] targetImage, final int targetX, final int targetY,
+                               final int targetWidth, final int targetHeight, final int targetType) {
         if ((targetX + sourceWidth) > targetWidth) {
             throw new IllegalArgumentException("Image outside of legal range (width).")
         }
@@ -626,7 +623,8 @@ public final class ImagePacker implements Comparator<TextureElement> {
                     if (execService.awaitTermination(2, TimeUnit.HOURS)) {
                         break;
                     }
-                } catch (ignored) {}
+                } catch (ignored) {
+                }
             }
             if (imageCount > 0) {
                 logger.info("${imageCount} images loaded.")
@@ -642,7 +640,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
     public void printTypeCounts() {
         shutdownExecutionService()
 
-        images.eachWithIndex{ entry, index -> logger.info("${typeToName(index)} textures: ${entry.size()}")};
+        images.eachWithIndex { entry, index -> logger.info("${typeToName(index)} textures: ${entry.size()}") };
     }
 
     /**

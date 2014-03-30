@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.resources.loaders;
 
@@ -40,7 +37,8 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class ItemLoader extends AbstractResourceLoader<ItemTemplate> implements TableLoaderSink<TableLoaderItems> {
+public final class ItemLoader extends AbstractResourceLoader<ItemTemplate>
+        implements TableLoaderSink<TableLoaderItems> {
     /**
      * The logger that is used to report error messages.
      */
@@ -126,9 +124,8 @@ public final class ItemLoader extends AbstractResourceLoader<ItemTemplate> imple
 
         final int paperdollingRef = loader.getPaperdollingItemId();
 
-        final ItemInfo info =
-                ItemInfo.create(face, moveable, specialFlag, obstacle, variance,
-                        opacity, surfaceLevel, itemLight);
+        final ItemInfo info = ItemInfo
+                .create(face, moveable, specialFlag, obstacle, variance, opacity, surfaceLevel, itemLight);
 
         final int frames;
         final int speed;
@@ -147,7 +144,8 @@ public final class ItemLoader extends AbstractResourceLoader<ItemTemplate> imple
         final Sprite itemSprite;
         try {
             itemSprite = assets.getSpriteFactory()
-                    .createSprite(getTextures(assets.getTextureManager(), ITEM_PATH, name, frames), offsetX, offsetY, SpriteFactory.CENTER, SpriteFactory.BOTTOM, false);
+                    .createSprite(getTextures(assets.getTextureManager(), ITEM_PATH, name, frames), offsetX, offsetY,
+                                  SpriteFactory.CENTER, SpriteFactory.BOTTOM, false);
         } catch (@Nonnull final IllegalArgumentException e) {
             LOGGER.error("Failed to fetch graphics for item {} (ID: {}) because: {}", name, itemID, e.getMessage());
             return true;
@@ -162,7 +160,7 @@ public final class ItemLoader extends AbstractResourceLoader<ItemTemplate> imple
         }
 
         final ItemTemplate template = new ItemTemplate(itemID, itemSprite, usedGuiTexture, frames, offsetShadow, speed,
-                info, paperdollingRef, paperdollingColor);
+                                                       info, paperdollingRef, paperdollingColor);
 
         // register item with factory
         try {
@@ -173,5 +171,4 @@ public final class ItemLoader extends AbstractResourceLoader<ItemTemplate> imple
 
         return true;
     }
-
 }

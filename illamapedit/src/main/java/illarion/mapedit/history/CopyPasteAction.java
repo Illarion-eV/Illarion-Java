@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Mapeditor.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Mapeditor is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Mapeditor is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.mapedit.history;
 
@@ -35,7 +32,12 @@ public class CopyPasteAction extends HistoryAction {
     private final int x;
     private final int y;
 
-    public CopyPasteAction(final int x, final int y, @Nullable final MapTile oldTile, final MapTile newTile, final Map map) {
+    public CopyPasteAction(
+            final int x,
+            final int y,
+            @Nullable final MapTile oldTile,
+            final MapTile newTile,
+            final Map map) {
         super(map);
         this.x = x;
         this.y = y;
@@ -47,13 +49,13 @@ public class CopyPasteAction extends HistoryAction {
     void redo() {
         map.setTileAt(x, y, MapTile.MapTileFactory.copyAll(newTile));
         MapTransitions.getInstance().checkTileAndSurround(map, new Location(x, y, 0));
-        map.getTileAt(x,y).setAnnotation(newTile.getAnnotation());
+        map.getTileAt(x, y).setAnnotation(newTile.getAnnotation());
     }
 
     @Override
     void undo() {
         map.setTileAt(x, y, MapTile.MapTileFactory.copyAll(oldTile));
         MapTransitions.getInstance().checkTileAndSurround(map, new Location(x, y, 0));
-        map.getTileAt(x,y).setAnnotation(oldTile.getAnnotation());
+        map.getTileAt(x, y).setAnnotation(oldTile.getAnnotation());
     }
 }

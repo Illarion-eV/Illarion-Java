@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Mapeditor.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Mapeditor is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Mapeditor is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.mapedit.render;
 
@@ -41,16 +38,15 @@ import java.awt.geom.AffineTransform;
  */
 public class TileRenderer extends AbstractMapRenderer {
 
-    private static final Color[] TILE_COLORS = {
-            new Color(0, 0, 0), // black
-            new Color(182, 214, 158), // green
-            new Color(155, 120, 90), // brown
-            new Color(175, 183, 165), // gray
-            new Color(126, 193, 238), // blue
-            new Color(255, 255, 204), // yellow
-            new Color(205, 101, 101), // red
-            new Color(255, 255, 255), // white
-            new Color(140, 160, 100) // dark green
+    private static final Color[] TILE_COLORS = {new Color(0, 0, 0), // black
+                                                new Color(182, 214, 158), // green
+                                                new Color(155, 120, 90), // brown
+                                                new Color(175, 183, 165), // gray
+                                                new Color(126, 193, 238), // blue
+                                                new Color(255, 255, 204), // yellow
+                                                new Color(205, 101, 101), // red
+                                                new Color(255, 255, 255), // white
+                                                new Color(140, 160, 100) // dark green
     };
 
     /**
@@ -66,7 +62,11 @@ public class TileRenderer extends AbstractMapRenderer {
     }
 
     @Override
-    public void renderMap(@Nonnull final Map map, @Nonnull final Rectangle viewport, final int level, @Nonnull final Graphics2D g) {
+    public void renderMap(
+            @Nonnull final Map map,
+            @Nonnull final Rectangle viewport,
+            final int level,
+            @Nonnull final Graphics2D g) {
         final int z = map.getZ() - level;
         final AffineTransform transform = g.getTransform();
 
@@ -75,7 +75,7 @@ public class TileRenderer extends AbstractMapRenderer {
                 final int xdisp = SwingLocation.displayCoordinateX(x + map.getX(), y + map.getY(), z);
                 final int ydisp = SwingLocation.displayCoordinateY(x + map.getX(), y + map.getY(), z);
                 if (viewport.contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
-                        (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
+                                      (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
                     final MapTile mt = map.getTileAt(x, y);
                     if (renderEmpty || (mt != null && mt.getId() != 0)) {
                         final TileImg t = TileLoader.getInstance().getTileFromId(mt.getId());
@@ -101,7 +101,11 @@ public class TileRenderer extends AbstractMapRenderer {
         g.setTransform(transform);
     }
 
-    private void renderTile(final int xDisp, final int yDisp, @Nonnull final Graphics2D graphics, @Nonnull final Image image) {
+    private void renderTile(
+            final int xDisp,
+            final int yDisp,
+            @Nonnull final Graphics2D graphics,
+            @Nonnull final Image image) {
         graphics.translate(xDisp, yDisp);
         graphics.drawImage(image, 0, 0, null);
     }

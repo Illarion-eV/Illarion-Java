@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Game Engine.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Game Engine is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Game Engine is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.illarion.engine.input;
 
@@ -76,7 +73,7 @@ public interface InputListener {
      * @param mouseX the X coordinate of the mouse cursor when this event occurred
      * @param mouseY the y coordinate of the mouse cursor when this event occurred
      * @param button the button that was clicked
-     * @param count  the amount of clicks that occurred
+     * @param count the amount of clicks that occurred
      */
     void buttonClicked(int mouseX, int mouseY, @Nonnull Button button, int count);
 
@@ -92,10 +89,10 @@ public interface InputListener {
      * This event is generated in case the mouse is moved a button pressed down.
      *
      * @param button the button that was down during the dragging operation
-     * @param fromX  the X coordinate of the mouse where the drag started
-     * @param fromY  the Y coordinate of the mouse where the drag started
-     * @param toX    the X coordinate of the new mouse location
-     * @param toY    the Y coordinate of the new mouse location
+     * @param fromX the X coordinate of the mouse where the drag started
+     * @param fromY the Y coordinate of the mouse where the drag started
+     * @param toX the X coordinate of the new mouse location
+     * @param toY the Y coordinate of the new mouse location
      */
     void mouseDragged(@Nonnull Button button, int fromX, int fromY, int toX, int toY);
 
@@ -104,7 +101,7 @@ public interface InputListener {
      *
      * @param mouseX the current X coordinate of the mouse location
      * @param mouseY the current Y coordinate of the mouse location
-     * @param delta  the delta of the wheel movement
+     * @param delta the delta of the wheel movement
      */
     void mouseWheelMoved(int mouseX, int mouseY, int delta);
 }

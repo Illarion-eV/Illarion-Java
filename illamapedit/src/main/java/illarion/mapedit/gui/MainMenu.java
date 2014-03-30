@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Mapeditor.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Mapeditor is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Mapeditor is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.mapedit.gui;
 
@@ -48,61 +45,51 @@ public class MainMenu extends RibbonApplicationMenu {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainMenu.class);
 
-
     public MainMenu() {
-        final RibbonApplicationMenuEntryPrimary menuOpenMap =
-                new RibbonApplicationMenuEntryPrimary(
-                        ImageLoader.getResizableIcon("fileopen"),
-                        Lang.getMsg("gui.mainmenu.Open"),
-                        new ActionListener() {
-                            @Override
-                            public void actionPerformed(final ActionEvent e) {
-                                Path file = null;
-                                try {
-                                    file = MapDialogs.showSetFolderDialog();
-                                } catch (IOException ex) {
-                                    LOGGER.warn("Can't set folder", ex);
-                                    EventBus.publish(new MapLoadErrorEvent(Lang.getMsg("gui.error.LoadMap")));
-                                }
-                                if (file != null) {
-                                    EventBus.publish(new SetFolderEvent(file));
-                                }
-                            }
-                        }, JCommandButton.CommandButtonKind.ACTION_ONLY);
-        final RibbonApplicationMenuEntryPrimary menuNewMap =
-                new RibbonApplicationMenuEntryPrimary(
-                        ImageLoader.getResizableIcon("filenew"),
-                        Lang.getMsg("gui.mainmenu.New"),
-                        new ActionListener() {
-                            @Override
-                            public void actionPerformed(final ActionEvent e) {
-                                EventBus.publish(new MapNewEvent());
-                            }
-                        }, JCommandButton.CommandButtonKind.ACTION_ONLY
-                );
-        final RibbonApplicationMenuEntryPrimary menuSave =
-                new RibbonApplicationMenuEntryPrimary(
-                        ImageLoader.getResizableIcon("filesave"),
-                        Lang.getMsg("gui.mainmenu.Save"),
-                        new ActionListener() {
-                            @Override
-                            public void actionPerformed(final ActionEvent e) {
-                                EventBus.publish(new MapSaveEvent());
-                            }
-                        }, JCommandButton.CommandButtonKind.ACTION_ONLY
-                );
+        final RibbonApplicationMenuEntryPrimary menuOpenMap = new RibbonApplicationMenuEntryPrimary(
+                ImageLoader.getResizableIcon("fileopen"), Lang.getMsg("gui.mainmenu.Open"), new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                Path file = null;
+                try {
+                    file = MapDialogs.showSetFolderDialog();
+                } catch (IOException ex) {
+                    LOGGER.warn("Can't set folder", ex);
+                    EventBus.publish(new MapLoadErrorEvent(Lang.getMsg("gui.error.LoadMap")));
+                }
+                if (file != null) {
+                    EventBus.publish(new SetFolderEvent(file));
+                }
+            }
+        }, JCommandButton.CommandButtonKind.ACTION_ONLY
+        );
+        final RibbonApplicationMenuEntryPrimary menuNewMap = new RibbonApplicationMenuEntryPrimary(
+                ImageLoader.getResizableIcon("filenew"), Lang.getMsg("gui.mainmenu.New"), new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                EventBus.publish(new MapNewEvent());
+            }
+        }, JCommandButton.CommandButtonKind.ACTION_ONLY
+        );
+        final RibbonApplicationMenuEntryPrimary menuSave = new RibbonApplicationMenuEntryPrimary(
+                ImageLoader.getResizableIcon("filesave"), Lang.getMsg("gui.mainmenu.Save"), new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                EventBus.publish(new MapSaveEvent());
+            }
+        }, JCommandButton.CommandButtonKind.ACTION_ONLY
+        );
 
-        final RibbonApplicationMenuEntryFooter settings =
-                new RibbonApplicationMenuEntryFooter(
-                        ImageLoader.getResizableIcon("configure"),
-                        Lang.getMsg("gui.mainmenu.MapEditorConfig"),
-                        new ActionListener() {
-                            @Override
-                            public void actionPerformed(final ActionEvent e) {
-                                final ConfigDialog dialog = MapEditorConfig.getInstance().createDialog();
-                                new ConfigDialogSwing(dialog);
-                            }
-                        });
+        final RibbonApplicationMenuEntryFooter settings = new RibbonApplicationMenuEntryFooter(
+                ImageLoader.getResizableIcon("configure"), Lang.getMsg("gui.mainmenu.MapEditorConfig"),
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(final ActionEvent e) {
+                        final ConfigDialog dialog = MapEditorConfig.getInstance().createDialog();
+                        new ConfigDialogSwing(dialog);
+                    }
+                }
+        );
         addFooterEntry(settings);
 
         addMenuEntry(menuOpenMap);

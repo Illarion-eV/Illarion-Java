@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.gui;
 
@@ -48,11 +45,11 @@ public interface InventoryGui {
      *
      * @param slotId the ID of the slot to set
      * @param itemId the ID of the item in this slot, in case this is {@code null} the item ID is assumed to be
-     *               {@code 0}
-     * @param count  the amount of items in this slot, {@code null} or {@code 0} is only allowed in case the item ID
-     *               is {@code null} or {@code 0} as well
+     * {@code 0}
+     * @param count the amount of items in this slot, {@code null} or {@code 0} is only allowed in case the item ID
+     * is {@code null} or {@code 0} as well
      * @throws IllegalArgumentException in case the slot ID is less then {@code 0} or larger or equal then
-     *                                  {@link Inventory#SLOT_COUNT}
+     * {@link Inventory#SLOT_COUNT}
      */
     void setItemSlot(int slotId, @Nullable ItemId itemId, @Nullable ItemCount count);
 
@@ -66,7 +63,7 @@ public interface InventoryGui {
      * cursor is inside the interactive area of the slot. It will be displayed as long as the mouse cursor stays
      * inside this area.
      *
-     * @param slotId  the ID of the slot
+     * @param slotId the ID of the slot
      * @param tooltip the tooltip
      */
     void showTooltip(int slotId, @Nonnull Tooltip tooltip);

@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.world;
 
@@ -323,7 +320,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * already earlier so the movement looks all in all smooth.
      *
      * @param direction the direction the move shall be performed in
-     * @param mode      the mode of the move that shall be performed
+     * @param mode the mode of the move that shall be performed
      */
     public void requestMove(final int direction, @Nonnull final CharMovementMode mode) {
         if (direction != Location.DIR_ZERO) {
@@ -449,15 +446,18 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * is one and depending on how far the old move is processed already, its possible that a new move is requested
      * already earlier so the movement looks all in all smooth.
      *
-     * @param direction           the direction the move shall be performed in
-     * @param mode                the mode of the move that shall be performed
-     * @param stopAutoMove        {@code true} in case this request shall remove the currently running automated movement
+     * @param direction the direction the move shall be performed in
+     * @param mode the mode of the move that shall be performed
+     * @param stopAutoMove {@code true} in case this request shall remove the currently running automated movement
      * @param runPathModification {@code true} in case the function is supposed to try to change the running path in
-     *                            order to avoid obstacles
+     * order to avoid obstacles
      */
     @SuppressWarnings("nls")
-    private void requestMove(final int direction, @Nonnull final CharMovementMode mode, final boolean stopAutoMove,
-                             final boolean runPathModification) {
+    private void requestMove(
+            final int direction,
+            @Nonnull final CharMovementMode mode,
+            final boolean stopAutoMove,
+            final boolean runPathModification) {
         if (mode == CharMovementMode.Push) {
             throw new IllegalArgumentException("Pushed moves are not supported by the player movement handler.");
         }
@@ -488,15 +488,15 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     /**
      * This function needs to be triggered in case a turn needs to be done.
      *
-     * @param direction    the direction the player wants his character to look at
+     * @param direction the direction the player wants his character to look at
      * @param stopAutoMove {@code true} in case this request shall remove the currently running automated movement
      */
     private void requestTurn(final int direction, final boolean stopAutoMove) {
         if (stopAutoMove) {
             cancelAutoWalk();
         }
-        if ((isAnyTrunRequested() || (parentPlayer.getCharacter().getDirection() != direction))
-                && !requestedTurns[direction]) {
+        if ((isAnyTrunRequested() || (parentPlayer.getCharacter().getDirection() != direction)) &&
+                !requestedTurns[direction]) {
             requestedTurns[direction] = true;
             World.getNet().sendCommand(new TurnCmd(direction));
             timeOfDiscard = System.currentTimeMillis() + TIME_UNTIL_DISCARD;
@@ -635,10 +635,10 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * Check if a move is possible.
      *
      * @param direction the direction of the move
-     * @param mode      the mode method, only {@link CharMovementMode#Run} and {@link CharMovementMode#Walk} are allowed
+     * @param mode the mode method, only {@link CharMovementMode#Run} and {@link CharMovementMode#Walk} are allowed
      * @return {@code true} in case the step is possible
      * @throws IllegalArgumentException in case the mode has a illegal value
-     * @throws IllegalStateException    in case something else goes wrong
+     * @throws IllegalStateException in case something else goes wrong
      */
     public static boolean isStepPossible(final int direction, @Nonnull final CharMovementMode mode) {
         switch (mode) {
@@ -682,7 +682,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * Send a turn and a move command to the server,
      *
      * @param direction the direction the character is supposed to move towards
-     * @param mode      the movement method of the character
+     * @param mode the movement method of the character
      */
     private void sendTurnAndMoveToServer(final int direction, @Nonnull final CharMovementMode mode) {
         requestTurn(direction, false);
@@ -693,7 +693,7 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * Send the movement command to the server.
      *
      * @param direction the direction of the requested move
-     * @param mode      the mode of the requested move
+     * @param mode the mode of the requested move
      */
     private void sendMoveToServer(final int direction, @Nonnull final CharMovementMode mode) {
         final CharacterId playerId = parentPlayer.getPlayerId();
@@ -748,12 +748,12 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     /**
      * Perform the move of a player character after the move was confirmed by the player.
      *
-     * @param mode   the moving method that was send by the server
+     * @param mode the moving method that was send by the server
      * @param target the target location of the character after the move
-     * @param speed  the speed of the move
+     * @param speed the speed of the move
      */
-    public void acknowledgeMove(@Nonnull final CharMovementMode mode, @Nonnull final Location target,
-                                final int speed) {
+    public void acknowledgeMove(
+            @Nonnull final CharMovementMode mode, @Nonnull final Location target, final int speed) {
         lastMoveRequest = Location.DIR_ZERO;
 
         if (!moving) {
@@ -779,9 +779,9 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * Perform a move of the player character. This function does not perform any checks. It just does the move no
      * matter what the status of everything is.
      *
-     * @param mode   the movement mode
+     * @param mode the movement mode
      * @param target the target location where the character shall be located at at the end of the move
-     * @param speed  the speed of the walk that determines how long the animation takes
+     * @param speed the speed of the walk that determines how long the animation takes
      */
     private void performMove(@Nonnull final CharMovementMode mode, @Nonnull final Location target, final int speed) {
         final Char playerCharacter = parentPlayer.getCharacter();

@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Common Library.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Common Library is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.data;
 
@@ -43,11 +40,13 @@ public final class CreditsPerson implements Comparable<CreditsPerson> {
      * Create a person that is supposed to be listed in the credits and add this member to the lists.
      *
      * @param firstName the first name of the person
-     * @param lastName  the last name of the person
-     * @param lists     the lists this member is supposed to be added to
+     * @param lastName the last name of the person
+     * @param lists the lists this member is supposed to be added to
      */
-    public static void create(@Nonnull final String firstName, @Nonnull final String lastName,
-                              @Nonnull final CreditsList... lists) {
+    public static void create(
+            @Nonnull final String firstName,
+            @Nonnull final String lastName,
+            @Nonnull final CreditsList... lists) {
         create(firstName, null, lastName, lists);
     }
 
@@ -55,7 +54,7 @@ public final class CreditsPerson implements Comparable<CreditsPerson> {
      * Create a person that is supposed to be listed in the credits and add this member to the lists.
      *
      * @param nickName the nick name of the person
-     * @param lists    the lists this member is supposed to be added to
+     * @param lists the lists this member is supposed to be added to
      */
     public static void create(@Nonnull final String nickName, @Nonnull final CreditsList... lists) {
         create(null, nickName, null, lists);
@@ -65,12 +64,15 @@ public final class CreditsPerson implements Comparable<CreditsPerson> {
      * Create a person that is supposed to be listed in the credits and add this member to the lists.
      *
      * @param firstName the first name of the person
-     * @param nickName  the nick name of the person
-     * @param lastName  the last name of the person
-     * @param lists     the lists this member is supposed to be added to
+     * @param nickName the nick name of the person
+     * @param lastName the last name of the person
+     * @param lists the lists this member is supposed to be added to
      */
-    public static void create(@Nullable final String firstName, @Nullable final String nickName, @Nullable final String lastName,
-                              @Nonnull final CreditsList... lists) {
+    public static void create(
+            @Nullable final String firstName,
+            @Nullable final String nickName,
+            @Nullable final String lastName,
+            @Nonnull final CreditsList... lists) {
         final CreditsPerson person = new CreditsPerson(firstName, nickName, lastName);
         for (final CreditsList list : lists) {
             list.addMember(person);
@@ -81,10 +83,13 @@ public final class CreditsPerson implements Comparable<CreditsPerson> {
      * Create a person that is supposed to be listed in the credits.
      *
      * @param firstName the first name of the person
-     * @param nickName  the nick name of the person
-     * @param lastName  the last name of the person
+     * @param nickName the nick name of the person
+     * @param lastName the last name of the person
      */
-    private CreditsPerson(@Nullable final String firstName, @Nullable final String nickName, @Nullable final String lastName) {
+    private CreditsPerson(
+            @Nullable final String firstName,
+            @Nullable final String nickName,
+            @Nullable final String lastName) {
         if ((isNullOrWhitespace(firstName) || isNullOrWhitespace(lastName)) && isNullOrWhitespace(nickName)) {
             throw new IllegalArgumentException("No valid name supplied.");
         }

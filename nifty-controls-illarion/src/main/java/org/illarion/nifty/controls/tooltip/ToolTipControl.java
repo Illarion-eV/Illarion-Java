@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Nifty-GUI Controls.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Nifty-GUI Controls is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Nifty-GUI Controls is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Nifty-GUI Controls.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.illarion.nifty.controls.tooltip;
 
@@ -46,10 +43,11 @@ import javax.annotation.Nullable;
 @Deprecated
 public final class ToolTipControl extends AbstractController implements ToolTip {
     @Override
-    public void bind(@Nonnull final Nifty nifty,
-                     @Nonnull final Screen screen,
-                     @Nonnull final Element element,
-                     @Nonnull final Parameters parameter) {
+    public void bind(
+            @Nonnull final Nifty nifty,
+            @Nonnull final Screen screen,
+            @Nonnull final Element element,
+            @Nonnull final Parameters parameter) {
         bind(element);
 
         boolean largeToolTip = false;
@@ -84,7 +82,6 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
                 removeElement(element.findElementById("#levelTitle"));
                 removeElement(element.findElementById("#levelLabel"));
             }
-
         } else {
             removeElement(element.findElementById("#typeLevelLine"));
         }
@@ -232,14 +229,18 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
     /**
      * Apply the the image of a gem to the element.
      *
-     * @param nifty        the nifty instance
-     * @param element      the root element where all gem images are located
-     * @param gemText      the text that was stores in the attribute that contains the level of the gem
+     * @param nifty the nifty instance
+     * @param element the root element where all gem images are located
+     * @param gemText the text that was stores in the attribute that contains the level of the gem
      * @param elementImage the name of the image element
-     * @param images       the name of the gems
+     * @param images the name of the gems
      */
-    private static void applyGem(@Nonnull final Nifty nifty, @Nonnull final Element element, @Nullable final String gemText,
-                                 final String elementImage, final String images) {
+    private static void applyGem(
+            @Nonnull final Nifty nifty,
+            @Nonnull final Element element,
+            @Nullable final String gemText,
+            final String elementImage,
+            final String images) {
         final Element image = element.findElementById(elementImage);
         if (gemText == null) {
             removeElement(image);
@@ -251,8 +252,8 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
             return;
         }
 
-        final NiftyImage gemImage = nifty.createImage(
-                "gui/items/" + images + Integer.toString(gemLevel - 1) + ".png", false);
+        final NiftyImage gemImage = nifty
+                .createImage("gui/items/" + images + Integer.toString(gemLevel - 1) + ".png", false);
         image.getRenderer(ImageRenderer.class).setImage(gemImage);
         image.setConstraintHeight(SizeValue.px(gemImage.getHeight()));
         image.setConstraintWidth(SizeValue.px(gemImage.getWidth()));
@@ -261,13 +262,16 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
     /**
      * Apply the money values to the element.
      *
-     * @param element      the root element where the money values are stored in
-     * @param money        the money component that is supposed to be displayed
+     * @param element the root element where the money values are stored in
+     * @param money the money component that is supposed to be displayed
      * @param elementCount the element that contains the count of the money component
      * @param elementImage the element that contains the image of the money component
      */
-    private static void applyMoney(@Nonnull final Element element, final int money, @Nonnull final String elementCount,
-                                   final String elementImage) {
+    private static void applyMoney(
+            @Nonnull final Element element,
+            final int money,
+            @Nonnull final String elementCount,
+            final String elementImage) {
         if (money > 0) {
             applyTextToLabel(element.findNiftyControl(elementCount, Label.class), Integer.toString(money));
         } else {
@@ -280,7 +284,7 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
      * Apply some text to a label and resize the label to fit the text.
      *
      * @param label the label
-     * @param text  the text to be stored in the label
+     * @param text the text to be stored in the label
      */
     private static void applyTextToLabel(@Nonnull final Label label, final String text) {
         final Element labelElement = label.getElement();

@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Game Engine.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Game Engine is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Game Engine is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.illarion.engine.assets;
 
@@ -58,14 +55,14 @@ public interface SpriteFactory {
      * Create a new sprite.
      *
      * @param textures the textures assigned to this sprite, the textures need to have the same size
-     * @param offsetX  the x offset that is applied to the texture
-     * @param offsetY  the y offset that is applied to the texture
-     * @param centerX  the x offset of the center (between {@code 0.f} and {@code 1.f}
-     * @param centerY  the y offset of the center (between {@code 0.f} and {@code 1.f}
-     * @param mirror   {@code true} in case the textures are supposed to be rendered mirrored
+     * @param offsetX the x offset that is applied to the texture
+     * @param offsetY the y offset that is applied to the texture
+     * @param centerX the x offset of the center (between {@code 0.f} and {@code 1.f}
+     * @param centerY the y offset of the center (between {@code 0.f} and {@code 1.f}
+     * @param mirror {@code true} in case the textures are supposed to be rendered mirrored
      * @return the created sprite
      */
     @Nonnull
-    Sprite createSprite(@Nonnull Texture[] textures, int offsetX, int offsetY, float centerX, float centerY,
-                        boolean mirror);
+    Sprite createSprite(
+            @Nonnull Texture[] textures, int offsetX, int offsetY, float centerX, float centerY, boolean mirror);
 }

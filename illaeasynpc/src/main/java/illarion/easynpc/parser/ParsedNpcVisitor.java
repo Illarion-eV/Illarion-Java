@@ -1,3 +1,18 @@
+/*
+ * This file is part of the Illarion project.
+ *
+ * Copyright © 2014 - Illarion e.V.
+ *
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Illarion is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
 package illarion.easynpc.parser;
 
 import illarion.common.data.Skill;
@@ -361,7 +376,8 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> {
             case "attrib":
                 currentTalkingLine.addCondition(
                         new ConditionAttrib(getAttribute(ctx.attribute()), getOperator(ctx.compare()),
-                                            getAdvancedNumber(ctx.advancedNumber())));
+                                            getAdvancedNumber(ctx.advancedNumber()))
+                );
                 break;
             case "chance":
                 TerminalNode intNode = ctx.INT();
@@ -377,7 +393,8 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> {
                     currentTalkingLine.addCondition(
                             new ConditionItem(item, getItemPosition(ctx.itemPos()), getOperator(ctx.compare()),
                                               getAdvancedNumber(ctx.advancedNumber()),
-                                              new ParsedItemData(getItemDataOpt(ctx.itemDataList()))));
+                                              new ParsedItemData(getItemDataOpt(ctx.itemDataList())))
+                    );
                 }
                 break;
             case "magictype":
@@ -393,7 +410,8 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> {
             case "queststatus":
                 currentTalkingLine.addCondition(
                         new ConditionQueststatus(getQuestId(ctx.questId()), getOperator(ctx.compare()),
-                                                 getAdvancedNumber(ctx.advancedNumber())));
+                                                 getAdvancedNumber(ctx.advancedNumber()))
+                );
                 break;
             case "race":
                 currentTalkingLine.addCondition(new ConditionRace(getRace(ctx.race())));
@@ -469,14 +487,16 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> {
             case "attrib":
                 currentTalkingLine.addConsequence(
                         new ConsequenceAttribute(getAttribute(ctx.attribute()), getOperator(ctx.set()),
-                                                 getAdvancedNumber(ctx.advancedNumber())));
+                                                 getAdvancedNumber(ctx.advancedNumber()))
+                );
                 break;
             case "deleteItem":
                 Items item = getItem(ctx.itemId());
                 if (item != null) {
                     currentTalkingLine.addConsequence(
                             new ConsequenceDeleteItem(item, getAdvancedNumber(ctx.advancedNumber()),
-                                                      new ParsedItemData(getItemDataOpt(ctx.itemDataList()))));
+                                                      new ParsedItemData(getItemDataOpt(ctx.itemDataList())))
+                    );
                 } else {
                     ctx.addErrorNode(ctx.itemId().getStart());
                 }
@@ -496,7 +516,8 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> {
                     currentTalkingLine.addConsequence(new ConsequenceItem(item, getAdvancedNumber(ctx.advancedNumber()),
                                                                           getItemQualityOpt(ctx.itemQuality()),
                                                                           new ParsedItemData(
-                                                                                  getItemDataOpt(ctx.itemDataList()))));
+                                                                                  getItemDataOpt(ctx.itemDataList()))
+                    ));
                 } else {
                     ctx.addErrorNode(ctx.itemId().getStart());
                 }
@@ -508,7 +529,8 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> {
             case "queststatus":
                 currentTalkingLine.addConsequence(
                         new ConsequenceQueststatus(getQuestId(ctx.questId()), getOperator(ctx.set()),
-                                                   getAdvancedNumber(ctx.advancedNumber())));
+                                                   getAdvancedNumber(ctx.advancedNumber()))
+                );
                 break;
             case "rankpoints":
                 currentTalkingLine.addConsequence(

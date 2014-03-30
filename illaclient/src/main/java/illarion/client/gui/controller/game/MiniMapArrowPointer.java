@@ -1,3 +1,18 @@
+/*
+ * This file is part of the Illarion project.
+ *
+ * Copyright © 2014 - Illarion e.V.
+ *
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Illarion is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
 package illarion.client.gui.controller.game;
 
 import de.lessvoid.nifty.elements.Element;
@@ -106,24 +121,43 @@ final class MiniMapArrowPointer implements IgeRenderImage, MiniMapGui.Pointer {
     }
 
     @Override
-    public void renderImage(@Nonnull final Graphics g, final int x, final int y, final int width, final int height,
-                            @Nonnull final Color color, final float imageScale) {
-        renderImage(g, x, y, width, height, 0, 0, arrowSprite.getWidth(), arrowSprite.getHeight(), color,
-                imageScale, arrowSprite.getWidth() / 2, arrowSprite.getHeight() / 2);
+    public void renderImage(
+            @Nonnull final Graphics g,
+            final int x,
+            final int y,
+            final int width,
+            final int height,
+            @Nonnull final Color color,
+            final float imageScale) {
+        renderImage(g, x, y, width, height, 0, 0, arrowSprite.getWidth(), arrowSprite.getHeight(), color, imageScale,
+                    arrowSprite.getWidth() / 2, arrowSprite.getHeight() / 2);
     }
 
     @Override
-    public void renderImage(@Nonnull final Graphics g, final int x, final int y, final int w, final int h, final int srcX,
-                            final int srcY, final int srcW, final int srcH, @Nonnull final Color color, final float scale,
-                            final int centerX, final int centerY) {
+    public void renderImage(
+            @Nonnull final Graphics g,
+            final int x,
+            final int y,
+            final int w,
+            final int h,
+            final int srcX,
+            final int srcY,
+            final int srcW,
+            final int srcH,
+            @Nonnull final Color color,
+            final float scale,
+            final int centerX,
+            final int centerY) {
         final int scaledWidth = Math.round(w * scale);
         final int scaledHeight = Math.round(h * scale);
 
         final int fixedX = x + Math.round((w - scaledWidth) * ((float) centerX / (float) w));
         final int fixedY = y + Math.round((h - scaledHeight) * ((float) centerY / (float) h));
 
-        Color pointerColor =  POINTER_COLOR;
-        if (isCurrentQuest) pointerColor =  ACTIVEPOINTER_COLOR;
+        Color pointerColor = POINTER_COLOR;
+        if (isCurrentQuest) {
+            pointerColor = ACTIVEPOINTER_COLOR;
+        }
 
         if (isOnMapArea()) {
             final int offsetX = (FastMath.sqrt(FastMath.sqr(currentDeltaX) / 2) * -FastMath.sign(currentDeltaX)) +
@@ -131,9 +165,8 @@ final class MiniMapArrowPointer implements IgeRenderImage, MiniMapGui.Pointer {
             final int offsetY = (FastMath.sqrt(FastMath.sqr(currentDeltaX) / 2) * FastMath.sign(currentDeltaX)) +
                     (FastMath.sqrt(FastMath.sqr(currentDeltaY) / 2) * -FastMath.sign(currentDeltaY));
 
-            g.drawTexture(pointSprite.getFrame(0), fixedX - offsetX, fixedY - offsetY,
-                    scaledWidth, scaledHeight, srcX, srcY, srcW, srcH, centerX - fixedX, centerY - fixedY,
-                    0.f, pointerColor);
+            g.drawTexture(pointSprite.getFrame(0), fixedX - offsetX, fixedY - offsetY, scaledWidth, scaledHeight, srcX,
+                          srcY, srcW, srcH, centerX - fixedX, centerY - fixedY, 0.f, pointerColor);
         } else {
             final float angle = (float) currentAngle / 10.f;
 
@@ -147,9 +180,9 @@ final class MiniMapArrowPointer implements IgeRenderImage, MiniMapGui.Pointer {
             final int rotationOffsetX = Math.round((spriteOffsetX * cosAngle) + (spriteOffsetY * sinAngle));
             final int rotationOffsetY = Math.round((spriteOffsetX * sinAngle) + (spriteOffsetY * cosAngle));
 
-            g.drawTexture(arrowSprite.getFrame(0), fixedX + rotationOffsetX, fixedY - rotationOffsetY,
-                    scaledWidth, scaledHeight, srcX, srcY, srcW, srcH, centerX - fixedX, centerY - fixedY,
-                    angle, pointerColor);
+            g.drawTexture(arrowSprite.getFrame(0), fixedX + rotationOffsetX, fixedY - rotationOffsetY, scaledWidth,
+                          scaledHeight, srcX, srcY, srcW, srcH, centerX - fixedX, centerY - fixedY, angle,
+                          pointerColor);
         }
     }
 

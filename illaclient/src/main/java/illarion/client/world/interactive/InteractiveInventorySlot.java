@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.world.interactive;
 
@@ -119,7 +116,6 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
         World.getNet().sendCommand(new LookatInvCmd(getSlotId()));
     }
 
-
     /**
      * Check if it is valid to drop a item on this inventory slot.
      *
@@ -154,7 +150,7 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
      * Drag the item in the inventory to a location on the map.
      *
      * @param targetTile the target location on the map
-     * @param count      the amount of items to drag to the new location
+     * @param count the amount of items to drag to the new location
      */
     @Override
     public void dragTo(@Nonnull final InteractiveMapTile targetTile, @Nonnull final ItemCount count) {
@@ -188,7 +184,7 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
      * Check if this interactive slot refers to a valid item.
      *
      * @return <code>true</code> in case this interactive item refers to a valid
-     *         item
+     * item
      */
     public boolean isValidItem() {
         return parentItem.containsItem();

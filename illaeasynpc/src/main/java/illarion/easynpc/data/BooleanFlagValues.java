@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion easyNPC Editor.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion easyNPC Editor is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion easyNPC Editor is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion easyNPC Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easynpc.data;
 
@@ -61,11 +58,11 @@ public enum BooleanFlagValues {
      * The constructor for the boolean flag values.
      *
      * @param regex the regular expression used to identify the flag
-     * @param easy  the easyNPC representation of this flag
-     * @param lua   the LUa representation of this flag
+     * @param easy the easyNPC representation of this flag
+     * @param lua the LUa representation of this flag
      */
-    private BooleanFlagValues(@Nonnull final String regex, final String easy,
-                              final String lua) {
+    private BooleanFlagValues(
+            @Nonnull final String regex, final String easy, final String lua) {
         findPattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         luaString = lua;
         easyString = easy;

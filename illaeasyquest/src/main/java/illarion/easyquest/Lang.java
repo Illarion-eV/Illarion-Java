@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion easyQuest Editor.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion easyQuest Editor is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion easyQuest Editor is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion easyQuest Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easyquest;
 
@@ -64,8 +61,7 @@ public final class Lang implements MessageSource {
             locale = Locale.ENGLISH;
         }
 
-        messages =
-                ResourceBundle.getBundle(MESSAGE_BUNDLE, locale, Thread.currentThread().getContextClassLoader());
+        messages = ResourceBundle.getBundle(MESSAGE_BUNDLE, locale, Thread.currentThread().getContextClassLoader());
     }
 
     /**
@@ -82,9 +78,9 @@ public final class Lang implements MessageSource {
      * Get a localized message from a key.
      *
      * @param clazz The class that is accessing this text
-     * @param key   The key of the localized message
+     * @param key The key of the localized message
      * @return the localized message or the key with surrounding < > in case the
-     *         key was not found in the storage
+     * key was not found in the storage
      */
     @Nonnull
     public static String getMsg(@Nonnull final Class<?> clazz, @Nonnull final String key) {
@@ -100,7 +96,7 @@ public final class Lang implements MessageSource {
      *
      * @param key The key of the localized message
      * @return the localized message or the key with surrounding &lt; &gt; in
-     *         case the key was not found in the storage
+     * case the key was not found in the storage
      */
     @Nonnull
     public static String getMsg(@Nonnull final String key) {
@@ -122,7 +118,7 @@ public final class Lang implements MessageSource {
      *
      * @param key The key of the localized message
      * @return the localized message or the key with surrounding &lt; &gt; in
-     *         case the key was not found in the storage
+     * case the key was not found in the storage
      */
     @Override
     @Nonnull

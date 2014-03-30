@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.net.client;
 
@@ -46,9 +43,9 @@ public final class DragInvInvCmd extends AbstractDragCommand {
     /**
      * Default constructor for the dragging from inventory to inventory command.
      *
-     * @param source      the inventory position where the drag starts
+     * @param source the inventory position where the drag starts
      * @param destination the inventory position where the drag ends
-     * @param count       the amount of items to drag
+     * @param count the amount of items to drag
      */
     public DragInvInvCmd(final int source, final int destination, @Nonnull final ItemCount count) {
         super(CommandList.CMD_DRAG_INV_INV, count);
@@ -63,7 +60,6 @@ public final class DragInvInvCmd extends AbstractDragCommand {
         writer.writeUByte(dstPos);
         getCount().encode(writer);
     }
-
 
     @Nonnull
     @SuppressWarnings("nls")

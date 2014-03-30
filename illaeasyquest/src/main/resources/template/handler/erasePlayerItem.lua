@@ -1,5 +1,20 @@
--- Erase items from player inventory -- Gegenstände aus dem Inventar des Charakters löschen
+--[[
+  This file is part of the Illarion project.
+
+  Copyright Â© 2014 - Illarion e.V.
+
+  Illarion is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  Illarion is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  ]]
+-- Erase items from player inventory -- Gegenstï¿½nde aus dem Inventar des Charakters lï¿½schen
 
 -- PLAYER
 local ID = INTEGER -- Item-ID -- Item-ID
-local AMNT = INTEGER -- Amount to erase from player -- Anzahl der vom Charakter zu löschenden Gegenstände
+local AMNT = INTEGER -- Amount to erase from player -- Anzahl der vom Charakter zu lï¿½schenden Gegenstï¿½nde

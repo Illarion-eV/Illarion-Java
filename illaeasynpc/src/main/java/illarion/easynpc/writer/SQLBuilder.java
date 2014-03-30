@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion easyNPC Editor.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion easyNPC Editor is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion easyNPC Editor is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion easyNPC Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easynpc.writer;
 
@@ -30,8 +27,8 @@ public final class SQLBuilder {
      */
     @SuppressWarnings("nls")
     private static final String queryFormat =
-            "INSERT INTO \"npc\" (\"npc_type\", \"npc_posx\", \"npc_posy\", \"npc_posz\", \"npc_faceto\", \"npc_name\", \"npc_script\", \"npc_sex\", \"npc_hair\", \"npc_beard\", \"npc_hairred\", \"npc_hairgreen\", \"npc_hairblue\", \"npc_skinred\", \"npc_skingreen\", \"npc_skinblue\") \n"
-                    + "VALUES (%1$s, %2$s, %3$s, %4$s, %5$s, '%6$s', %7$s, %8$s, %9$s, %10$s, %11$s, %12$s, %13$s, %14$s, %15$s, %16$s);";
+            "INSERT INTO \"npc\" (\"npc_type\", \"npc_posx\", \"npc_posy\", \"npc_posz\", \"npc_faceto\", \"npc_name\", \"npc_script\", \"npc_sex\", \"npc_hair\", \"npc_beard\", \"npc_hairred\", \"npc_hairgreen\", \"npc_hairblue\", \"npc_skinred\", \"npc_skingreen\", \"npc_skinblue\") \n" +
+                    "VALUES (%1$s, %2$s, %3$s, %4$s, %5$s, '%6$s', %7$s, %8$s, %9$s, %10$s, %11$s, %12$s, %13$s, %14$s, %15$s, %16$s);";
 
     private int npcBeard = 0;
     private int npcFaceTo = 0;
@@ -87,9 +84,9 @@ public final class SQLBuilder {
     /**
      * Set the hair color of this NPC.
      *
-     * @param red   the red share of the hair color
+     * @param red the red share of the hair color
      * @param green the green share of the hair color
-     * @param blue  the blue share of the hair color
+     * @param blue the blue share of the hair color
      */
     public void setNpcHairColor(final int red, final int green, final int blue) {
         npcHairRed = red;
@@ -154,9 +151,9 @@ public final class SQLBuilder {
     /**
      * Set the skin color of this NPC.
      *
-     * @param red   the red share of the skin color
+     * @param red the red share of the skin color
      * @param green the green share of the skin color
-     * @param blue  the blue share of the skin color
+     * @param blue the blue share of the skin color
      */
     public void setNpcSkinColor(final int red, final int green, final int blue) {
         npcSkinRed = red;
@@ -184,13 +181,11 @@ public final class SQLBuilder {
         if (!npcScript.equals("null")) {
             npcScriptReal = "'" + npcScriptReal + "'";
         }
-        return String.format(queryFormat, Integer.toString(npcType),
-                Integer.toString(npcPosX), Integer.toString(npcPosY),
-                Integer.toString(npcPosZ), Integer.toString(npcFaceTo), npcName,
-                npcScriptReal, Integer.toString(npcSex),
-                Integer.toString(npcHair), Integer.toString(npcBeard),
-                Integer.toString(npcHairRed), Integer.toString(npcHairGreen),
-                Integer.toString(npcHairBlue), Integer.toString(npcSkinRed),
-                Integer.toString(npcSkinGreen), Integer.toString(npcSkinBlue));
+        return String
+                .format(queryFormat, Integer.toString(npcType), Integer.toString(npcPosX), Integer.toString(npcPosY),
+                        Integer.toString(npcPosZ), Integer.toString(npcFaceTo), npcName, npcScriptReal,
+                        Integer.toString(npcSex), Integer.toString(npcHair), Integer.toString(npcBeard),
+                        Integer.toString(npcHairRed), Integer.toString(npcHairGreen), Integer.toString(npcHairBlue),
+                        Integer.toString(npcSkinRed), Integer.toString(npcSkinGreen), Integer.toString(npcSkinBlue));
     }
 }

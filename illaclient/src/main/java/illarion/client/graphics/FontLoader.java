@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.graphics;
 
@@ -125,8 +122,8 @@ public final class FontLoader {
         fontManager = assets.getFontManager();
         fontManager
                 .createFont(MENU_FONT, "fonts/BlackChancery.ttf", 24.f, Font.PLAIN, "gui/menuFont.fnt", FONT_IMAGE_DIR);
-        fontManager
-                .createFont(CAPTION_FONT, "fonts/BlackChancery.ttf", 18.f, Font.PLAIN, "gui/captionFont.fnt", FONT_IMAGE_DIR);
+        fontManager.createFont(CAPTION_FONT, "fonts/BlackChancery.ttf", 18.f, Font.PLAIN, "gui/captionFont.fnt",
+                               FONT_IMAGE_DIR);
         fontManager.createFont(SMALL_FONT, "fonts/Ubuntu.ttf", 14.f, Font.BOLD, "gui/smallFont.fnt", FONT_IMAGE_DIR);
         fontManager.createFont(TEXT_FONT, "fonts/Ubuntu.ttf", 16.f, Font.PLAIN, "gui/textFont.fnt", FONT_IMAGE_DIR);
         fontManager.createFont(CHAT_FONT, "fonts/LiberationSansNarrow-Bold.ttf", 16.f, Font.PLAIN, "gui/chatFont.fnt",

@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Common Library.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Common Library is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.config;
 
@@ -311,6 +308,7 @@ public class ConfigSystem implements Config {
 
     private interface ConfigTypeConverter {
         String getString(@Nonnull Object object);
+
         Object getObject(@Nonnull String string);
     }
 
@@ -346,6 +344,7 @@ public class ConfigSystem implements Config {
             public String getString(@Nonnull final Object object) {
                 return ((Path) object).toAbsolutePath().toString();
             }
+
             @Nonnull
             @Override
             public Path getObject(@Nonnull final String string) {
@@ -384,13 +383,14 @@ public class ConfigSystem implements Config {
             }
         });
 
-
         private String typeName;
         private Class<?> typeClass;
         private ConfigTypeConverter converter;
 
-        ConfigTypes(@Nonnull final String typeName, @Nonnull final Class<?> typeClass,
-                    @Nonnull final ConfigTypeConverter converter) {
+        ConfigTypes(
+                @Nonnull final String typeName,
+                @Nonnull final Class<?> typeClass,
+                @Nonnull final ConfigTypeConverter converter) {
             this.typeClass = typeClass;
             this.typeName = typeName;
             this.converter = converter;
@@ -512,7 +512,7 @@ public class ConfigSystem implements Config {
      * Set one entry of the configuration file to a new value. In this case the
      * value is a Object value.
      *
-     * @param key   the key the value is stored with
+     * @param key the key the value is stored with
      * @param value the value that is stored along with the key
      */
     public void set(final String key, @Nonnull final Object value) {
@@ -547,7 +547,7 @@ public class ConfigSystem implements Config {
      * <b>Note:</b> This method is not exposed by the {@link Config} interface.
      * </p>
      *
-     * @param key   the key the value is stored with
+     * @param key the key the value is stored with
      * @param value the value that is stored along with the key
      */
     public void setDefault(@Nonnull final String key, final boolean value) {
@@ -564,7 +564,7 @@ public class ConfigSystem implements Config {
      * <b>Note:</b> This method is not exposed by the {@link Config} interface.
      * </p>
      *
-     * @param key   the key the value is stored with
+     * @param key the key the value is stored with
      * @param value the value that is stored along with the key
      */
     public void setDefault(@Nonnull final String key, final byte value) {
@@ -581,7 +581,7 @@ public class ConfigSystem implements Config {
      * <b>Note:</b> This method is not exposed by the {@link Config} interface.
      * </p>
      *
-     * @param key   the key the value is stored with
+     * @param key the key the value is stored with
      * @param value the value that is stored along with the key
      */
     public void setDefault(@Nonnull final String key, final double value) {
@@ -598,7 +598,7 @@ public class ConfigSystem implements Config {
      * <b>Note:</b> This method is not exposed by the {@link Config} interface.
      * </p>
      *
-     * @param key   the key the value is stored with
+     * @param key the key the value is stored with
      * @param value the value that is stored along with the key
      */
     @Deprecated
@@ -631,7 +631,7 @@ public class ConfigSystem implements Config {
      * <b>Note:</b> This method is not exposed by the {@link Config} interface.
      * </p>
      *
-     * @param key   the key the value is stored with
+     * @param key the key the value is stored with
      * @param value the value that is stored along with the key
      */
     public void setDefault(@Nonnull final String key, final float value) {
@@ -648,7 +648,7 @@ public class ConfigSystem implements Config {
      * <b>Note:</b> This method is not exposed by the {@link Config} interface.
      * </p>
      *
-     * @param key   the key the value is stored with
+     * @param key the key the value is stored with
      * @param value the value that is stored along with the key
      */
     public void setDefault(@Nonnull final String key, final int value) {
@@ -665,7 +665,7 @@ public class ConfigSystem implements Config {
      * <b>Note:</b> This method is not exposed by the {@link Config} interface.
      * </p>
      *
-     * @param key   the key the value is stored with
+     * @param key the key the value is stored with
      * @param value the value that is stored along with the key
      */
     public void setDefault(@Nonnull final String key, final long value) {
@@ -682,7 +682,7 @@ public class ConfigSystem implements Config {
      * <b>Note:</b> This method is not exposed by the {@link Config} interface.
      * </p>
      *
-     * @param key   the key the value is stored with
+     * @param key the key the value is stored with
      * @param value the value that is stored along with the key
      */
     public void setDefault(@Nonnull final String key, final short value) {
@@ -699,7 +699,7 @@ public class ConfigSystem implements Config {
      * <b>Note:</b> This method is not exposed by the {@link Config} interface.
      * </p>
      *
-     * @param key   the key the value is stored with
+     * @param key the key the value is stored with
      * @param value the value that is stored along with the key
      */
     public void setDefault(@Nonnull final String key, final String value) {

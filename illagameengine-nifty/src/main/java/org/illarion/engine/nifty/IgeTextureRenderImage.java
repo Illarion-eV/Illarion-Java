@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Game Engine.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Game Engine is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Game Engine is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.illarion.engine.nifty;
 
@@ -66,8 +63,14 @@ public class IgeTextureRenderImage implements IgeRenderImage {
     }
 
     @Override
-    public void renderImage(@Nonnull final Graphics g, final int x, final int y, final int width, final int height,
-                            @Nonnull final Color color, final float imageScale) {
+    public void renderImage(
+            @Nonnull final Graphics g,
+            final int x,
+            final int y,
+            final int width,
+            final int height,
+            @Nonnull final Color color,
+            final float imageScale) {
         final int scaledWidth = Math.round(width * imageScale);
         final int scaledHeight = Math.round(height * imageScale);
         final int fixedX = x + ((width - scaledWidth) / 2);
@@ -76,9 +79,20 @@ public class IgeTextureRenderImage implements IgeRenderImage {
     }
 
     @Override
-    public void renderImage(@Nonnull final Graphics g, final int x, final int y, final int w, final int h,
-                            final int srcX, final int srcY, final int srcW, final int srcH, @Nonnull final Color color,
-                            final float scale, final int centerX, final int centerY) {
+    public void renderImage(
+            @Nonnull final Graphics g,
+            final int x,
+            final int y,
+            final int w,
+            final int h,
+            final int srcX,
+            final int srcY,
+            final int srcW,
+            final int srcH,
+            @Nonnull final Color color,
+            final float scale,
+            final int centerX,
+            final int centerY) {
         final int scaledWidth = Math.round(w * scale);
         final int scaledHeight = Math.round(h * scale);
         final int fixedX = (int) Math.round(x + ((w - scaledWidth) * ((double) w / (double) centerX)));

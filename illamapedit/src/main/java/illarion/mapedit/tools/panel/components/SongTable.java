@@ -1,23 +1,19 @@
 /*
- * This file is part of the Illarion Mapeditor.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Mapeditor is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Mapeditor is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.mapedit.tools.panel.components;
-
 
 import illarion.mapedit.resource.Song;
 import illarion.mapedit.resource.loaders.SongLoader;
@@ -51,10 +47,11 @@ public class SongTable extends JScrollPane {
 
     /**
      * Get the selected songs clipID
+     *
      * @return clipID
      */
     public int getSelectedMusicID() {
-        return (Integer)songTable.getValueAt(songTable.getSelectedRow(),0);
+        return (Integer) songTable.getValueAt(songTable.getSelectedRow(), 0);
     }
 
     /**

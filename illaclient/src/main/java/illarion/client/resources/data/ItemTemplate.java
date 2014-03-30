@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.resources.data;
 
@@ -75,20 +72,26 @@ public class ItemTemplate extends AbstractAnimatedEntityTemplate {
     /**
      * The constructor of this class.
      *
-     * @param id                the identification number of the entity
-     * @param sprite            the sprite used to render the entity
-     * @param guiTexture        the texture for that item that is shown in case this item is used for GUI interaction
-     * @param frames            the total amount of frames
-     * @param shadowOffset      the offset of the shadow
-     * @param speed             the animation speed
-     * @param itemInfo          the general item information
-     * @param paperdollingId    the referenced paperdolling id
+     * @param id the identification number of the entity
+     * @param sprite the sprite used to render the entity
+     * @param guiTexture the texture for that item that is shown in case this item is used for GUI interaction
+     * @param frames the total amount of frames
+     * @param shadowOffset the offset of the shadow
+     * @param speed the animation speed
+     * @param itemInfo the general item information
+     * @param paperdollingId the referenced paperdolling id
      * @param paperdollingColor the color that is applied to the paperdolling item
      */
-    public ItemTemplate(final int id, @Nonnull final Sprite sprite,
-                        @Nonnull final Texture guiTexture, final int frames,
-                        final int shadowOffset, final int speed, @Nonnull final ItemInfo itemInfo,
-                        final int paperdollingId, @Nullable final Color paperdollingColor) {
+    public ItemTemplate(
+            final int id,
+            @Nonnull final Sprite sprite,
+            @Nonnull final Texture guiTexture,
+            final int frames,
+            final int shadowOffset,
+            final int speed,
+            @Nonnull final ItemInfo itemInfo,
+            final int paperdollingId,
+            @Nullable final Color paperdollingColor) {
         super(id, sprite, frames, 0, speed, null, shadowOffset);
 
         this.itemInfo = itemInfo;

@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Common Library.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Common Library is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.util;
 
@@ -144,7 +141,7 @@ public final class Crypto {
         try {
             final byte[] buffer = new byte[TRANSFER_BUFFER_SIZE];
             int n = in.read(buffer);
-            while(n > -1) {
+            while (n > -1) {
                 out.write(buffer, 0, n);
                 n = in.read(buffer);
             }
@@ -179,7 +176,8 @@ public final class Crypto {
                 try {
                     cOutStream.close();
                     dst.flush();
-                } catch (@Nonnull final IOException ignored) {}
+                } catch (@Nonnull final IOException ignored) {
+                }
             }
         }
     }
@@ -313,8 +311,8 @@ public final class Crypto {
      * this file.
      *
      * @param keyFile the reference to the key file
-     * @param <T>     the type of the key that is expected
-     * @return        the loaded key or {@code null} in case the key was not found
+     * @param <T> the type of the key that is expected
+     * @return the loaded key or {@code null} in case the key was not found
      */
     @Nullable
     private static <T extends Key> T loadKeyImpl(@Nonnull final String keyFile) {
@@ -338,7 +336,8 @@ public final class Crypto {
                 if (keyIn != null) {
                     try {
                         keyIn.close();
-                    } catch (@Nonnull final IOException ignored) {}
+                    } catch (@Nonnull final IOException ignored) {
+                    }
                 }
             }
         }

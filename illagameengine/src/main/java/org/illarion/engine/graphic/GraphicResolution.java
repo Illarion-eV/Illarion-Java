@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Game Engine.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Game Engine is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Game Engine is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.illarion.engine.graphic;
 
@@ -57,10 +54,10 @@ public final class GraphicResolution {
     /**
      * Constructor for a graphic resolution definition.
      *
-     * @param newWidth  the width of this resolution in pixel
+     * @param newWidth the width of this resolution in pixel
      * @param newHeight the height of this resolution in pixel
-     * @param newBpp    the bits per point of this resolution
-     * @param refresh   the refresh rate of this resolution in Hz
+     * @param newBpp the bits per point of this resolution
+     * @param refresh the refresh rate of this resolution in Hz
      */
     public GraphicResolution(final int newWidth, final int newHeight, final int newBpp, final int refresh) {
         height = newHeight;
@@ -129,23 +126,22 @@ public final class GraphicResolution {
      * @return {@code true} in case all values of the resolutions are equal
      */
     public boolean equals(@Nonnull final GraphicResolution compRes) {
-        return (height == compRes.height) && (width == compRes.width)
-                && (bpp == compRes.bpp) && (refreshRate == compRes.refreshRate);
+        return (height == compRes.height) && (width == compRes.width) && (bpp == compRes.bpp) &&
+                (refreshRate == compRes.refreshRate);
     }
 
     /**
      * Compare the resolution to a set of resolution values.
      *
-     * @param compWidth   the width to compare with
-     * @param compHeight  the height to compare with
-     * @param compBpp     the bits per point to compare with
+     * @param compWidth the width to compare with
+     * @param compHeight the height to compare with
+     * @param compBpp the bits per point to compare with
      * @param compRefresh the fresh rate to compare with
      * @return {@code true} in case all values equal with this instance
      */
-    public boolean equals(final int compWidth, final int compHeight,
-                          final int compBpp, final int compRefresh) {
-        return (height == compHeight) && (width == compWidth)
-                && (bpp == compBpp) && (refreshRate == compRefresh);
+    public boolean equals(
+            final int compWidth, final int compHeight, final int compBpp, final int compRefresh) {
+        return (height == compHeight) && (width == compWidth) && (bpp == compBpp) && (refreshRate == compRefresh);
     }
 
     /**
@@ -173,7 +169,7 @@ public final class GraphicResolution {
      *
      * @param compString the string to compare with
      * @return {@code true} if this object and the string represent the
-     *         same resolution
+     * same resolution
      */
     public boolean equals(final String compString) {
         return toString().equals(compString);
@@ -183,7 +179,7 @@ public final class GraphicResolution {
      * Get the bits per point of this resolution.
      *
      * @return the bits per point of this resolution or -1 in case it was not
-     *         possible to determine the bits per point.
+     * possible to determine the bits per point.
      */
     public int getBPP() {
         return bpp;

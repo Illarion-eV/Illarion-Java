@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Game Engine.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Game Engine is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Game Engine is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.illarion.engine.graphic;
 
@@ -76,9 +73,9 @@ public class Color {
     /**
      * Create a new color instance with the specified values.
      *
-     * @param red   the red color component
+     * @param red the red color component
      * @param green the green color component
-     * @param blue  the blue color component
+     * @param blue the blue color component
      * @param alpha the alpha color component
      */
     public Color(final int red, final int green, final int blue, final int alpha) {
@@ -91,22 +88,22 @@ public class Color {
     /**
      * Create a new color instance with the specified values.
      *
-     * @param red   the red color component
+     * @param red the red color component
      * @param green the green color component
-     * @param blue  the blue color component
+     * @param blue the blue color component
      * @param alpha the alpha color component
      */
     public Color(final float red, final float green, final float blue, final float alpha) {
         this(Math.round(red * MAX_INT_VALUE), Math.round(green * MAX_INT_VALUE), Math.round(blue * MAX_INT_VALUE),
-                Math.round(alpha * MAX_INT_VALUE));
+             Math.round(alpha * MAX_INT_VALUE));
     }
 
     /**
      * Create a new opaque color instance with the specified values.
      *
-     * @param red   the red color component
+     * @param red the red color component
      * @param green the green color component
-     * @param blue  the blue color component
+     * @param blue the blue color component
      */
     public Color(final int red, final int green, final int blue) {
         this(red, green, blue, MAX_INT_VALUE);
@@ -115,9 +112,9 @@ public class Color {
     /**
      * Create a new opaque color instance with the specified values.
      *
-     * @param red   the red color component
+     * @param red the red color component
      * @param green the green color component
-     * @param blue  the blue color component
+     * @param blue the blue color component
      */
     public Color(final float red, final float green, final float blue) {
         this(red, green, blue, 1.f);

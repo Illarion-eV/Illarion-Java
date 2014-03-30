@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.gui.controller.game;
 
@@ -115,9 +112,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
      */
     @Override
     public void showChatBubble(
-            @Nullable final Char character,
-            @Nonnull final String message,
-            @Nonnull final Color color) {
+            @Nullable final Char character, @Nonnull final String message, @Nonnull final Color color) {
         World.getUpdateTaskManager().addTask(new CharTalkEntry(character, message, color));
     }
 
@@ -386,9 +381,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
      * @param mode the speech mode used to send the command
      */
     private static void cleanAndSendText(
-            final String prefix,
-            @Nonnull final String text,
-            @Nonnull final ChatHandler.SpeechMode mode) {
+            final String prefix, @Nonnull final String text, @Nonnull final ChatHandler.SpeechMode mode) {
         final String cleanText = REPEATED_SPACE_PATTERN.matcher(text.trim()).replaceAll(" ");
         if (cleanText.isEmpty()) {
             return;

@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion easyNPC Editor.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion easyNPC Editor is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion easyNPC Editor is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion easyNPC Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easynpc.parsed.talk.conditions;
 
@@ -62,7 +59,7 @@ public final class ConditionNumber implements TalkCondition {
     /**
      * Constructor that takes the parameters for the number text.
      *
-     * @param op       the operator used to compare the said number
+     * @param op the operator used to compare the said number
      * @param newValue the value the said number is compared against
      */
     public ConditionNumber(final CompareOperators op, final int newValue) {
@@ -84,8 +81,7 @@ public final class ConditionNumber implements TalkCondition {
      */
     @Override
     public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
-        target.write(String.format(EASY_CODE, operator.getLuaComp(),
-                Integer.toString(value)));
+        target.write(String.format(EASY_CODE, operator.getLuaComp(), Integer.toString(value)));
     }
 
     /**
@@ -93,7 +89,6 @@ public final class ConditionNumber implements TalkCondition {
      */
     @Override
     public void writeLua(@Nonnull final Writer target) throws IOException {
-        target.write(String.format(LUA_CODE, LUA_MODULE,
-                operator.getLuaComp(), Integer.toString(value)));
+        target.write(String.format(LUA_CODE, LUA_MODULE, operator.getLuaComp(), Integer.toString(value)));
     }
 }

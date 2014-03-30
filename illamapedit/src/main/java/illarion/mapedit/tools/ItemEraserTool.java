@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Mapeditor.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Mapeditor is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Mapeditor is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.mapedit.tools;
 
@@ -67,8 +64,8 @@ public class ItemEraserTool extends AbstractTool {
         if (!map.contains(x, y)) {
             return null;
         }
-        final MapTile tile = map.getTileAt(x,y);
-        if (tile == null){
+        final MapTile tile = map.getTileAt(x, y);
+        if (tile == null) {
             return null;
         }
         final List<MapItem> items = tile.getMapItems();
@@ -77,21 +74,29 @@ public class ItemEraserTool extends AbstractTool {
         }
         final HistoryAction action;
         if (panel.shouldClear()) {
-            action = clearItems(x,y,map,items);
+            action = clearItems(x, y, map, items);
         } else {
-            action = removeTopItem(x,y,map,items);
+            action = removeTopItem(x, y, map, items);
         }
         return action;
     }
 
     @Nullable
-    private static HistoryAction removeTopItem(final int x, final int y, final Map map, @Nonnull final List<MapItem> items) {
-        final MapItem item = items.remove(items.size()-1);
+    private static HistoryAction removeTopItem(
+            final int x,
+            final int y,
+            final Map map,
+            @Nonnull final List<MapItem> items) {
+        final MapItem item = items.remove(items.size() - 1);
         return new ItemPlacedAction(x, y, item, null, map);
     }
 
     @Nonnull
-    private static HistoryAction clearItems(final int x, final int y, @Nonnull final Map map, @Nonnull final Collection<MapItem> items) {
+    private static HistoryAction clearItems(
+            final int x,
+            final int y,
+            @Nonnull final Map map,
+            @Nonnull final Collection<MapItem> items) {
         final GroupAction action = new GroupAction();
         for (final MapItem item : items) {
             action.addAction(new ItemPlacedAction(x, y, item, null, map));

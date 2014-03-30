@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.gui;
 
@@ -57,14 +54,18 @@ public interface QuestGui {
     /**
      * Add or update a quest in the log.
      *
-     * @param questId     the ID of the quest
-     * @param name        the title of the quest
+     * @param questId the ID of the quest
+     * @param name the title of the quest
      * @param description the current description text of the quest
-     * @param finished    {@code true} in case this quest is finished already
-     * @param locations   a list of target locations for the text stage of the quest
+     * @param finished {@code true} in case this quest is finished already
+     * @param locations a list of target locations for the text stage of the quest
      */
-    void setQuest(int questId, @Nonnull String name, @Nonnull String description, boolean finished,
-                  @Nonnull Location... locations);
+    void setQuest(
+            int questId,
+            @Nonnull String name,
+            @Nonnull String description,
+            boolean finished,
+            @Nonnull Location... locations);
 
     /**
      * Toggle the visibility state of the quest log.

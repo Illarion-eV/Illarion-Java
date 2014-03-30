@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Common Library.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Common Library is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.util;
 
@@ -33,12 +30,11 @@ public final class Base64 {
      * Table of the sixty-four characters that are used as the Base64 alphabet:
      * [a-z0-9A-Z+/]
      */
-    protected static final byte[] base64Chars = {'A', 'B', 'C', 'D', 'E',
-            'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
-            'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g',
-            'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
-            'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8',
-            '9', '+', '/',};
+    protected static final byte[] base64Chars = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
+                                                 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b',
+                                                 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+                                                 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3',
+                                                 '4', '5', '6', '7', '8', '9', '+', '/',};
 
     /**
      * Reverse lookup table for the Base64 alphabet. reversebase64Chars[byte]
@@ -129,11 +125,10 @@ public final class Base64 {
      * not part of the Base64 alphabet are ignored in the input.
      *
      * @param bytes The data to decode.
-     * @param out   Stream to which to write decoded data.
+     * @param out Stream to which to write decoded data.
      * @throws IOException if an IO error occurs.
      */
-    public static void decode(final byte[] bytes, @Nonnull final OutputStream out)
-            throws IOException {
+    public static void decode(final byte[] bytes, @Nonnull final OutputStream out) throws IOException {
         final ByteArrayInputStream in = new ByteArrayInputStream(bytes);
         decode(in, out, false);
     }
@@ -144,12 +139,11 @@ public final class Base64 {
      * expected to be in url encoded data. The presence of other characters
      * could be a sign that the data is corrupted.
      *
-     * @param in  Stream from which to read data that needs to be decoded.
+     * @param in Stream from which to read data that needs to be decoded.
      * @param out Stream to which to write decoded data.
      * @throws IOException if an IO error occurs.
      */
-    public static void decode(@Nonnull final InputStream in, @Nonnull final OutputStream out)
-            throws IOException {
+    public static void decode(@Nonnull final InputStream in, @Nonnull final OutputStream out) throws IOException {
         decode(in, out, true);
     }
 
@@ -159,23 +153,23 @@ public final class Base64 {
      * expected to be in url encoded data. The presence of other characters
      * could be a sign that the data is corrupted.
      *
-     * @param in              Stream from which to read data that needs to be decoded.
-     * @param out             Stream to which to write decoded data.
+     * @param in Stream from which to read data that needs to be decoded.
+     * @param out Stream to which to write decoded data.
      * @param throwExceptions Whether to throw exceptions when unexpected data
-     *                        is encountered.
+     * is encountered.
      * @throws IOException if an IO error occurs.
      */
-    public static void decode(@Nonnull final InputStream in, @Nonnull final OutputStream out,
-                              final boolean throwExceptions) throws IOException {
+    public static void decode(
+            @Nonnull final InputStream in, @Nonnull final OutputStream out, final boolean throwExceptions)
+            throws IOException {
         // Base64 decoding converts four bytes of input to three bytes of output
         final int[] inBuffer = new int[4];
 
         // read bytes unmapping them from their ASCII encoding in the process
         // we must read at least two bytes to be able to output anything
         boolean done = false;
-        while (!done
-                && ((inBuffer[0] = readBase64(in, throwExceptions)) != END_OF_INPUT)
-                && ((inBuffer[1] = readBase64(in, throwExceptions)) != END_OF_INPUT)) {
+        while (!done && ((inBuffer[0] = readBase64(in, throwExceptions)) != END_OF_INPUT) &&
+                ((inBuffer[1] = readBase64(in, throwExceptions)) != END_OF_INPUT)) {
             // Fill the buffer
             inBuffer[2] = readBase64(in, throwExceptions);
             inBuffer[3] = readBase64(in, throwExceptions);
@@ -226,10 +220,10 @@ public final class Base64 {
      * Base64 alphabet are ignored in the input.
      *
      * @param string The data to decode.
-     * @param enc    Character encoding to use when converting to and from bytes.
+     * @param enc Character encoding to use when converting to and from bytes.
      * @return A decoded String.
      * @throws UnsupportedEncodingException if the character encoding specified
-     *                                      is not supported.
+     * is not supported.
      */
     @Nonnull
     public static String decode(@Nonnull final String string, @Nonnull final String enc)
@@ -242,18 +236,19 @@ public final class Base64 {
      * Base64 alphabet are ignored in the input.
      *
      * @param string The data to decode.
-     * @param encIn  Character encoding to use when converting input to bytes
-     *               (should not matter because Base64 data is designed to survive
-     *               most character encodings)
+     * @param encIn Character encoding to use when converting input to bytes
+     * (should not matter because Base64 data is designed to survive
+     * most character encodings)
      * @param encOut Character encoding to use when converting decoded bytes to
-     *               output.
+     * output.
      * @return A decoded String.
      * @throws UnsupportedEncodingException if the character encoding specified
-     *                                      is not supported.
+     * is not supported.
      */
     @Nonnull
-    public static String decode(@Nonnull final String string, @Nonnull final String encIn,
-                                @Nonnull final String encOut) throws UnsupportedEncodingException {
+    public static String decode(
+            @Nonnull final String string, @Nonnull final String encIn, @Nonnull final String encOut)
+            throws UnsupportedEncodingException {
         return new String(decode(string.getBytes(encIn)), encOut);
     }
 
@@ -277,8 +272,7 @@ public final class Base64 {
      * @return decoded data.
      * @throws IOException if an IO error occurs.
      */
-    public static byte[] decodeToBytes(@Nonnull final InputStream in)
-            throws IOException {
+    public static byte[] decodeToBytes(@Nonnull final InputStream in) throws IOException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         decode(in, out, false);
         return out.toByteArray();
@@ -301,10 +295,10 @@ public final class Base64 {
      * Base64 alphabet are ignored in the input.
      *
      * @param string The data to decode.
-     * @param enc    Character encoding to use when converting from bytes.
+     * @param enc Character encoding to use when converting from bytes.
      * @return decoded data.
      * @throws UnsupportedEncodingException if the character encoding specified
-     *                                      is not supported.
+     * is not supported.
      */
     public static byte[] decodeToBytes(@Nonnull final String string, @Nonnull final String enc)
             throws UnsupportedEncodingException {
@@ -316,11 +310,11 @@ public final class Base64 {
      * not part of the Base64 alphabet are ignored in the input.
      *
      * @param bytes The data to decode.
-     * @param out   Stream to which to write decoded data.
+     * @param out Stream to which to write decoded data.
      * @throws IOException if an IO error occurs.
      */
-    public static void decodeToStream(final byte[] bytes,
-                                      @Nonnull final OutputStream out) throws IOException {
+    public static void decodeToStream(
+            final byte[] bytes, @Nonnull final OutputStream out) throws IOException {
         final ByteArrayInputStream in = new ByteArrayInputStream(bytes);
         decode(in, out, false);
     }
@@ -332,11 +326,11 @@ public final class Base64 {
      * encoding.
      *
      * @param string The data to decode.
-     * @param out    Stream to which to write decoded data.
+     * @param out Stream to which to write decoded data.
      * @throws IOException if an IO error occurs.
      */
-    public static void decodeToStream(@Nonnull final String string,
-                                      @Nonnull final OutputStream out) throws IOException {
+    public static void decodeToStream(
+            @Nonnull final String string, @Nonnull final OutputStream out) throws IOException {
         decode(new ByteArrayInputStream(string.getBytes()), out);
     }
 
@@ -345,15 +339,15 @@ public final class Base64 {
      * not part of the Base64 alphabet are ignored in the input.
      *
      * @param string The data to decode.
-     * @param enc    Character encoding to use when converting to and from bytes.
-     * @param out    Stream to which to write decoded data.
+     * @param enc Character encoding to use when converting to and from bytes.
+     * @param out Stream to which to write decoded data.
      * @throws UnsupportedEncodingException if the character encoding specified
-     *                                      is not supported.
-     * @throws IOException                  if an IO error occurs.
+     * is not supported.
+     * @throws IOException if an IO error occurs.
      */
-    public static void decodeToStream(@Nonnull final String string, @Nonnull final String enc,
-                                      @Nonnull final OutputStream out) throws UnsupportedEncodingException,
-            IOException {
+    public static void decodeToStream(
+            @Nonnull final String string, @Nonnull final String enc, @Nonnull final OutputStream out)
+            throws UnsupportedEncodingException, IOException {
         decode(new ByteArrayInputStream(string.getBytes(enc)), out);
     }
 
@@ -375,10 +369,10 @@ public final class Base64 {
      * alphabet are ignored in the input.
      *
      * @param bytes The data to decode.
-     * @param enc   Character encoding to use when converting to and from bytes.
+     * @param enc Character encoding to use when converting to and from bytes.
      * @return A decoded String.
      * @throws UnsupportedEncodingException if the character encoding specified
-     *                                      is not supported.
+     * is not supported.
      */
     @Nonnull
     public static String decodeToString(@Nonnull final byte[] bytes, @Nonnull final String enc)
@@ -397,8 +391,7 @@ public final class Base64 {
      * @throws IOException if an IO error occurs.
      */
     @Nonnull
-    public static String decodeToString(@Nonnull final InputStream in)
-            throws IOException {
+    public static String decodeToString(@Nonnull final InputStream in) throws IOException {
         return new String(decodeToBytes(in));
     }
 
@@ -406,16 +399,15 @@ public final class Base64 {
      * Decode Base64 encoded data from the InputStream to a String. Characters
      * that are not part of the Base64 alphabet are ignored in the input.
      *
-     * @param in  Stream from which to read data that needs to be decoded.
+     * @param in Stream from which to read data that needs to be decoded.
      * @param enc Character encoding to use when converting bytes to characters.
      * @return decoded data.
-     * @throws IOException                  if an IO error occurs.Throws:
+     * @throws IOException if an IO error occurs.Throws:
      * @throws UnsupportedEncodingException if the character encoding specified
-     *                                      is not supported.
+     * is not supported.
      */
     @Nonnull
-    public static String decodeToString(@Nonnull final InputStream in, @Nonnull final String enc)
-            throws IOException {
+    public static String decodeToString(@Nonnull final InputStream in, @Nonnull final String enc) throws IOException {
         return new String(decodeToBytes(in), enc);
     }
 
@@ -437,10 +429,10 @@ public final class Base64 {
      * Base64 alphabet are ignored in the input.
      *
      * @param string The data to decode.
-     * @param enc    Character encoding to use when converting to and from bytes.
+     * @param enc Character encoding to use when converting to and from bytes.
      * @return A decoded String.
      * @throws UnsupportedEncodingException if the character encoding specified
-     *                                      is not supported.
+     * is not supported.
      */
     @Nonnull
     public static String decodeToString(@Nonnull final String string, @Nonnull final String enc)
@@ -453,18 +445,18 @@ public final class Base64 {
      * Base64 alphabet are ignored in the input.
      *
      * @param string The data to decode.
-     * @param encIn  Character encoding to use when converting input to bytes
-     *               (should not matter because Base64 data is designed to survive
-     *               most character encodings)
+     * @param encIn Character encoding to use when converting input to bytes
+     * (should not matter because Base64 data is designed to survive
+     * most character encodings)
      * @param encOut Character encoding to use when converting decoded bytes to
-     *               output.
+     * output.
      * @return A decoded String.
      * @throws UnsupportedEncodingException if the character encoding specified
-     *                                      is not supported.
+     * is not supported.
      */
     @Nonnull
-    public static String decodeToString(@Nonnull final String string,
-                                        @Nonnull final String encIn, @Nonnull final String encOut)
+    public static String decodeToString(
+            @Nonnull final String string, @Nonnull final String encIn, @Nonnull final String encOut)
             throws UnsupportedEncodingException {
         return new String(decode(string.getBytes(encIn)), encOut);
     }
@@ -483,9 +475,9 @@ public final class Base64 {
     /**
      * Encode bytes in Base64.
      *
-     * @param bytes      The data to encode.
+     * @param bytes The data to encode.
      * @param lineBreaks Whether to insert line breaks every 76 characters in
-     *                   the output.
+     * the output.
      * @return Encoded bytes.
      */
     public static byte[] encode(@Nonnull final byte[] bytes, final boolean lineBreaks) {
@@ -517,26 +509,26 @@ public final class Base64 {
      * Encode data from the InputStream to the OutputStream in Base64. Line
      * breaks are inserted every 76 characters in the output.
      *
-     * @param in  Stream from which to read data that needs to be encoded.
+     * @param in Stream from which to read data that needs to be encoded.
      * @param out Stream to which to write encoded data.
      * @throws IOException if there is a problem reading or writing.
      */
-    public static void encode(@Nonnull final InputStream in, @Nonnull final OutputStream out)
-            throws IOException {
+    public static void encode(@Nonnull final InputStream in, @Nonnull final OutputStream out) throws IOException {
         encode(in, out, true);
     }
 
     /**
      * Encode data from the InputStream to the OutputStream in Base64.
      *
-     * @param in         Stream from which to read data that needs to be encoded.
-     * @param out        Stream to which to write encoded data.
+     * @param in Stream from which to read data that needs to be encoded.
+     * @param out Stream to which to write encoded data.
      * @param lineBreaks Whether to insert line breaks every 76 characters in
-     *                   the output.
+     * the output.
      * @throws IOException if there is a problem reading or writing.
      */
-    public static void encode(@Nonnull final InputStream in, @Nonnull final OutputStream out,
-                              final boolean lineBreaks) throws IOException {
+    public static void encode(
+            @Nonnull final InputStream in, @Nonnull final OutputStream out, final boolean lineBreaks)
+            throws IOException {
         // Base64 encoding converts three bytes of input to
         // four bytes of output
         final int[] inBuffer = new int[3];
@@ -564,13 +556,11 @@ public final class Base64 {
             if (inBuffer[1] != END_OF_INPUT) {
                 // B's: last two bits of first byte, first four bits of second
                 // byte
-                out.write(base64Chars[((inBuffer[0] << 4) & 0x30)
-                        | (inBuffer[1] >> 4)]);
+                out.write(base64Chars[((inBuffer[0] << 4) & 0x30) | (inBuffer[1] >> 4)]);
                 if (inBuffer[2] != END_OF_INPUT) {
                     // C's: last four bits of second byte, first two bits of
                     // third byte
-                    out.write(base64Chars[((inBuffer[1] << 2) & 0x3c)
-                            | (inBuffer[2] >> 6)]);
+                    out.write(base64Chars[((inBuffer[1] << 2) & 0x3c) | (inBuffer[2] >> 6)]);
                     // D's: last six bits of third byte
                     out.write(base64Chars[inBuffer[2] & 0x3F]);
                 } else {
@@ -620,10 +610,10 @@ public final class Base64 {
      * inserted into the encoded data.
      *
      * @param string The data to encode.
-     * @param enc    Character encoding to use when converting to and from bytes.
+     * @param enc Character encoding to use when converting to and from bytes.
      * @return An encoded String.
      * @throws UnsupportedEncodingException if the character encoding specified
-     *                                      is not supported.
+     * is not supported.
      */
     @Nonnull
     public static String encode(@Nonnull final String string, @Nonnull final String enc)
@@ -646,14 +636,14 @@ public final class Base64 {
     /**
      * Encode bytes in Base64.
      *
-     * @param bytes      The data to encode.
+     * @param bytes The data to encode.
      * @param lineBreaks Whether to insert line breaks every 76 characters in
-     *                   the output.
+     * the output.
      * @return String with Base64 encoded data.
      */
     @Nonnull
-    public static String encodeToString(@Nonnull final byte[] bytes,
-                                        final boolean lineBreaks) {
+    public static String encodeToString(
+            @Nonnull final byte[] bytes, final boolean lineBreaks) {
         try {
             return new String(encode(bytes, lineBreaks), "ASCII"); //$NON-NLS-1$
         } catch (@Nonnull final UnsupportedEncodingException iex) {
@@ -806,10 +796,10 @@ public final class Base64 {
      * off the scent and cause it to return false.
      *
      * @param string String that may be in base64 format.
-     * @param enc    Character encoding to use when converting to bytes.
+     * @param enc Character encoding to use when converting to bytes.
      * @return Best guess as to whether the data is in base64 format.
      * @throws UnsupportedEncodingException if the character encoding specified
-     *                                      is not supported.
+     * is not supported.
      */
     public static boolean isBase64(@Nonnull final String string, @Nonnull final String enc)
             throws UnsupportedEncodingException {
@@ -820,18 +810,18 @@ public final class Base64 {
      * Reads the next (decoded) Base64 character from the input stream. Non
      * Base64 characters are skipped.
      *
-     * @param in              Stream from which bytes are read.
+     * @param in Stream from which bytes are read.
      * @param throwExceptions Throw an exception if an unexpected character is
-     *                        encountered.
+     * encountered.
      * @return the next Base64 character from the stream or -1 if there are no
-     *         more Base64 characters on the stream.
-     * @throws IOException           if an IO Error occurs.
+     * more Base64 characters on the stream.
+     * @throws IOException if an IO Error occurs.
      * @throws IllegalStateException if unexpected data is encountered when
-     *                               throwExceptions is specified.
+     * throwExceptions is specified.
      * @since ostermillerutils 1.00.00
      */
-    private static int readBase64(@Nonnull final InputStream in,
-                                  final boolean throwExceptions) throws IOException {
+    private static int readBase64(
+            @Nonnull final InputStream in, final boolean throwExceptions) throws IOException {
         int read;
         int numPadding = 0;
         do {
@@ -840,8 +830,7 @@ public final class Base64 {
                 return END_OF_INPUT;
             }
             read = reverseBase64Chars[(byte) read];
-            if (throwExceptions
-                    && ((read == NON_BASE_64) || ((numPadding > 0) && (read > NON_BASE_64)))) {
+            if (throwExceptions && ((read == NON_BASE_64) || ((numPadding > 0) && (read > NON_BASE_64)))) {
                 throw new IllegalStateException("Unexpected character"); //$NON-NLS-1$
             }
             if (read == NON_BASE_64_PADDING) {

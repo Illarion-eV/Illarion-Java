@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.input;
 
@@ -39,8 +36,7 @@ public final class InputReceiver implements InputListener {
      *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
-    private static final class ButtonMultiClickHelper
-            extends AbstractMultiActionHelper {
+    private static final class ButtonMultiClickHelper extends AbstractMultiActionHelper {
         /**
          * The x coordinate of the last reported click.
          */
@@ -67,8 +63,8 @@ public final class InputReceiver implements InputListener {
          * Update the data that is needed to report the state of the last click properly.
          *
          * @param mouseKey the key that was clicked
-         * @param posX     the x coordinate where the click happened
-         * @param posY     the y coordinate where the click happened
+         * @param posX the x coordinate where the click happened
+         * @param posY the y coordinate where the click happened
          */
         public void setInputData(@Nonnull final Button mouseKey, final int posX, final int posY) {
             x = posX;
@@ -229,8 +225,8 @@ public final class InputReceiver implements InputListener {
     }
 
     @Override
-    public void mouseDragged(@Nonnull final Button button, final int fromX, final int fromY, final int toX,
-                             final int toY) {
+    public void mouseDragged(
+            @Nonnull final Button button, final int fromX, final int fromY, final int toX, final int toY) {
         if (enabled) {
             EventBus.publish(new DragOnMapEvent(fromX, fromY, toX, toY, button));
         }

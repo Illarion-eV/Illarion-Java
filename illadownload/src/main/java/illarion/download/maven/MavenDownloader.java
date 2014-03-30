@@ -1,3 +1,18 @@
+/*
+ * This file is part of the Illarion project.
+ *
+ * Copyright © 2014 - Illarion e.V.
+ *
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Illarion is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
 package illarion.download.maven;
 
 import illarion.common.util.DirectoryManager;
@@ -118,15 +133,17 @@ public class MavenDownloader {
      * @return the files that have to be in the classpath to run the application
      */
     @Nullable
-    public Collection<File> downloadArtifact(@Nonnull final String groupId, @Nonnull final String artifactId,
-                                             @Nullable final MavenDownloaderCallback callback) {
+    public Collection<File> downloadArtifact(
+            @Nonnull final String groupId,
+            @Nonnull final String artifactId,
+            @Nullable final MavenDownloaderCallback callback) {
         Artifact artifact = new DefaultArtifact(groupId, artifactId, "jar", "[1,]");
         try {
             if (callback != null) {
                 callback.reportNewState(MavenDownloaderCallback.State.SearchingNewVersion, null);
             }
-            final VersionRangeResult result = system.resolveVersionRange(session, new VersionRangeRequest(artifact,
-                    repositories, RUNTIME));
+            final VersionRangeResult result = system
+                    .resolveVersionRange(session, new VersionRangeRequest(artifact, repositories, RUNTIME));
             final NavigableSet<String> versions = new TreeSet<>(new Comparator<String>() {
                 @Override
                 public int compare(@Nonnull final String o1, @Nonnull final String o2) {
@@ -242,11 +259,10 @@ public class MavenDownloader {
 
     private void setupRepositories() {
         repositories.add(setupRepository("central", "http://repo1.maven.org/maven2/", true));
-        repositories.add(
-                setupRepository("nifty-gui", "http://nifty-gui.sourceforge.net/nifty-maven-repo", true));
+        repositories.add(setupRepository("nifty-gui", "http://nifty-gui.sourceforge.net/nifty-maven-repo", true));
         repositories.add(setupRepository("illarion", "http://illarion.org/media/java/maven", snapshot));
-        repositories.add(setupRepository("oss-sonatype", "http://oss.sonatype.org/content/repositories/releases/",
-                true));
+        repositories
+                .add(setupRepository("oss-sonatype", "http://oss.sonatype.org/content/repositories/releases/", true));
 
         Path localDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.Data);
         if (localDir == null) {
@@ -257,9 +273,8 @@ public class MavenDownloader {
     }
 
     @Nonnull
-    private RemoteRepository setupRepository(@Nonnull final String id,
-                                             @Nonnull final String url,
-                                             final boolean enableSnapshots) {
+    private RemoteRepository setupRepository(
+            @Nonnull final String id, @Nonnull final String url, final boolean enableSnapshots) {
         RemoteRepository.Builder repo = new RemoteRepository.Builder(id, "default", url);
         if (enableSnapshots) {
             repo.setSnapshotPolicy(new RepositoryPolicy(true, UPDATE_POLICY_ALWAYS, CHECKSUM_POLICY_FAIL));

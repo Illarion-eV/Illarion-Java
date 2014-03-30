@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Game Engine.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Game Engine is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Game Engine is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.illarion.engine.backend.slick;
 
@@ -105,13 +102,16 @@ class SlickGraphics implements Graphics {
         /**
          * Set the colors that will be rendered using this rectangle.
          *
-         * @param topLeft     the color in the top left corner
-         * @param topRight    the color in the top right corner
-         * @param bottomLeft  the color in the bottom left corner
+         * @param topLeft the color in the top left corner
+         * @param topRight the color in the top right corner
+         * @param bottomLeft the color in the bottom left corner
          * @param bottomRight the color in the bottom right corner
          */
-        public void setColors(@Nonnull final Color topLeft, @Nonnull final Color topRight,
-                              @Nonnull final Color bottomLeft, @Nonnull final Color bottomRight) {
+        public void setColors(
+                @Nonnull final Color topLeft,
+                @Nonnull final Color topRight,
+                @Nonnull final Color bottomLeft,
+                @Nonnull final Color bottomRight) {
             transferColor(bottomLeft, this.bottomLeft);
             transferColor(bottomRight, this.bottomRight);
             transferColor(topLeft, this.topLeft);
@@ -187,7 +187,15 @@ class SlickGraphics implements Graphics {
     }
 
     @Override
-    public void drawRectangle(final int x, final int y, final int width, final int height, @Nonnull final Color topLeftColor, @Nonnull final Color topRightColor, @Nonnull final Color bottomLeftColor, @Nonnull final Color bottomRightColor) {
+    public void drawRectangle(
+            final int x,
+            final int y,
+            final int width,
+            final int height,
+            @Nonnull final Color topLeftColor,
+            @Nonnull final Color topRightColor,
+            @Nonnull final Color bottomLeftColor,
+            @Nonnull final Color bottomRightColor) {
         if (slickGraphicsImpl == null) {
             throw new IllegalStateException("Using graphics outside of the render loop is not allowed.");
         }
@@ -198,9 +206,15 @@ class SlickGraphics implements Graphics {
     }
 
     @Override
-    public void drawSprite(@Nonnull final Sprite sprite, final int posX, final int posY, @Nonnull final Color color,
-                           final int frame, final double scale, final double rotation,
-                           @Nonnull final TextureEffect... effects) {
+    public void drawSprite(
+            @Nonnull final Sprite sprite,
+            final int posX,
+            final int posY,
+            @Nonnull final Color color,
+            final int frame,
+            final double scale,
+            final double rotation,
+            @Nonnull final TextureEffect... effects) {
         if (slickGraphicsImpl == null) {
             throw new IllegalStateException("Using graphics outside of the render loop is not allowed.");
         }
@@ -248,7 +262,12 @@ class SlickGraphics implements Graphics {
     }
 
     @Override
-    public void drawText(@Nonnull final Font font, @Nonnull final CharSequence text, @Nonnull final Color color, final int x, final int y) {
+    public void drawText(
+            @Nonnull final Font font,
+            @Nonnull final CharSequence text,
+            @Nonnull final Color color,
+            final int x,
+            final int y) {
         if (slickGraphicsImpl == null) {
             throw new IllegalStateException("Using graphics outside of the render loop is not allowed.");
         }
@@ -261,8 +280,14 @@ class SlickGraphics implements Graphics {
     }
 
     @Override
-    public void drawText(@Nonnull final Font font, @Nonnull final CharSequence text, @Nonnull final Color color,
-                         final int x, final int y, final double scaleX, final double scaleY) {
+    public void drawText(
+            @Nonnull final Font font,
+            @Nonnull final CharSequence text,
+            @Nonnull final Color color,
+            final int x,
+            final int y,
+            final double scaleX,
+            final double scaleY) {
         if (slickGraphicsImpl == null) {
             throw new IllegalStateException("Using graphics outside of the render loop is not allowed.");
         }
@@ -279,8 +304,14 @@ class SlickGraphics implements Graphics {
     }
 
     @Override
-    public void drawTexture(@Nonnull final Texture texture, final int x, final int y, final int width,
-                            final int height, @Nonnull final Color color, @Nonnull final TextureEffect... effects) {
+    public void drawTexture(
+            @Nonnull final Texture texture,
+            final int x,
+            final int y,
+            final int width,
+            final int height,
+            @Nonnull final Color color,
+            @Nonnull final TextureEffect... effects) {
         if (slickGraphicsImpl == null) {
             throw new IllegalStateException("Using graphics outside of the render loop is not allowed.");
         }
@@ -295,8 +326,9 @@ class SlickGraphics implements Graphics {
         if (usedEffect != null) {
             usedEffect.activateEffect(slickGraphicsImpl);
         }
-        slickGraphicsImpl.drawImage(slickTexture.getBackingImage(), x, y, x + width, y + height, 0, 0,
-                slickTexture.getWidth(), slickTexture.getHeight(), tempSlickColor1);
+        slickGraphicsImpl
+                .drawImage(slickTexture.getBackingImage(), x, y, x + width, y + height, 0, 0, slickTexture.getWidth(),
+                           slickTexture.getHeight(), tempSlickColor1);
 
         if (usedEffect != null) {
             usedEffect.disableEffect(slickGraphicsImpl);
@@ -304,10 +336,18 @@ class SlickGraphics implements Graphics {
     }
 
     @Override
-    public void drawTexture(@Nonnull final Texture texture, final int x, final int y, final int width,
-                            final int height, final int texX, final int texY, final int texWidth,
-                            final int texHeight, @Nonnull final Color color,
-                            @Nonnull final TextureEffect... effects) {
+    public void drawTexture(
+            @Nonnull final Texture texture,
+            final int x,
+            final int y,
+            final int width,
+            final int height,
+            final int texX,
+            final int texY,
+            final int texWidth,
+            final int texHeight,
+            @Nonnull final Color color,
+            @Nonnull final TextureEffect... effects) {
         if (slickGraphicsImpl == null) {
             throw new IllegalStateException("Using graphics outside of the render loop is not allowed.");
         }
@@ -322,8 +362,9 @@ class SlickGraphics implements Graphics {
         if (usedEffect != null) {
             usedEffect.activateEffect(slickGraphicsImpl);
         }
-        slickGraphicsImpl.drawImage(slickTexture.getBackingImage(), x, y, x + width, y + height, texX, texY,
-                texX + texWidth, texY + texHeight, tempSlickColor1);
+        slickGraphicsImpl
+                .drawImage(slickTexture.getBackingImage(), x, y, x + width, y + height, texX, texY, texX + texWidth,
+                           texY + texHeight, tempSlickColor1);
 
         if (usedEffect != null) {
             usedEffect.disableEffect(slickGraphicsImpl);
@@ -331,10 +372,21 @@ class SlickGraphics implements Graphics {
     }
 
     @Override
-    public void drawTexture(@Nonnull final Texture texture, final int x, final int y, final int width,
-                            final int height, final int texX, final int texY, final int texWidth,
-                            final int texHeight, final int centerX, final int centerY, final double rotate,
-                            @Nonnull final Color color, @Nonnull final TextureEffect... effects) {
+    public void drawTexture(
+            @Nonnull final Texture texture,
+            final int x,
+            final int y,
+            final int width,
+            final int height,
+            final int texX,
+            final int texY,
+            final int texWidth,
+            final int texHeight,
+            final int centerX,
+            final int centerY,
+            final double rotate,
+            @Nonnull final Color color,
+            @Nonnull final TextureEffect... effects) {
         if (slickGraphicsImpl == null) {
             throw new IllegalStateException("Using graphics outside of the render loop is not allowed.");
         }
@@ -355,8 +407,9 @@ class SlickGraphics implements Graphics {
             slickGraphicsImpl.rotate(0, 0, (float) rotate);
             slickGraphicsImpl.translate(-centerX - x, -centerY - y);
         }
-        slickGraphicsImpl.drawImage(slickTexture.getBackingImage(), x, y, x + width, y + height, texX, texY,
-                texX + texWidth, texY + texHeight, tempSlickColor1);
+        slickGraphicsImpl
+                .drawImage(slickTexture.getBackingImage(), x, y, x + width, y + height, texX, texY, texX + texWidth,
+                           texY + texHeight, tempSlickColor1);
 
         if (usedEffect != null) {
             usedEffect.disableEffect(slickGraphicsImpl);

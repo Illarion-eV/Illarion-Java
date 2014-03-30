@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Common Library.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Common Library is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.util;
 
@@ -65,18 +62,17 @@ public final class ArrayEnumeration<T> implements Enumeration<T>, Iterator<T> {
      * used to walk over the array content.
      *
      * @param targetArray the array this enumerator is using
-     * @param startIndex  the first valid instance of the array
-     * @param length      the amount of elements this enumerator shall enumerate
+     * @param startIndex the first valid instance of the array
+     * @param length the amount of elements this enumerator shall enumerate
      */
     @SuppressWarnings("nls")
-    public ArrayEnumeration(@Nonnull final T[] targetArray, final int startIndex,
-                            final int length) {
+    public ArrayEnumeration(
+            @Nonnull final T[] targetArray, final int startIndex, final int length) {
         if ((startIndex < 0) || (startIndex >= targetArray.length)) {
             throw new IllegalArgumentException(
                     "The starting index is smaller then 0 or larger then the length of the array.");
         }
-        if ((length < 0)
-                || (((length + startIndex) - 1) >= targetArray.length)) {
+        if ((length < 0) || (((length + startIndex) - 1) >= targetArray.length)) {
             throw new IllegalArgumentException(
                     "The length is either smaller then 0 or larger then the remaining elements in the array.");
         }

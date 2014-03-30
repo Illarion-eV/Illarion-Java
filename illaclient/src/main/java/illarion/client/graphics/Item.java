@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.graphics;
 
@@ -91,7 +88,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
     /**
      * The default constructor of a new item.
      *
-     * @param template   the template used to create the new item
+     * @param template the template used to create the new item
      * @param parentTile the tile this item is located on
      */
     public Item(@Nonnull final ItemTemplate template, @Nonnull final MapTile parentTile) {
@@ -129,15 +126,15 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      * Create a new item instance for a ID and a specified location. The location is used in case the item has
      * variances. The item is not set on the map tile of the location by default.
      *
-     * @param itemID    the ID of the item that shall be created
+     * @param itemID the ID of the item that shall be created
      * @param locColumn the column on the map where the item shall be created
-     * @param locRow    the row on the map where the item shall be created
-     * @param parent    the tile this item is located on
+     * @param locRow the row on the map where the item shall be created
+     * @param parent the tile this item is located on
      * @return the new item
      */
     @Nonnull
-    public static Item create(@Nonnull final ItemId itemID, final int locColumn,
-                              final int locRow, @Nonnull final MapTile parent) {
+    public static Item create(
+            @Nonnull final ItemId itemID, final int locColumn, final int locRow, @Nonnull final MapTile parent) {
         final ItemTemplate template = ItemFactory.getInstance().getTemplate(itemID.getValue());
         final Item item = new Item(template, parent);
         // Set variant and scaling, this functions check on their own if this is allowed
@@ -151,13 +148,13 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      * variances. The item is not set on the map tile of the location by default.
      *
      * @param itemID the ID of the item that shall be created
-     * @param loc    the location where the item shall be shown
+     * @param loc the location where the item shall be shown
      * @param parent the tile this item is located on
      * @return the new item
      */
     @Nonnull
-    public static Item create(@Nonnull final ItemId itemID, @Nonnull final Location loc,
-                              @Nonnull final MapTile parent) {
+    public static Item create(
+            @Nonnull final ItemId itemID, @Nonnull final Location loc, @Nonnull final MapTile parent) {
         return create(itemID, loc.getCol(), loc.getRow(), parent);
     }
 
@@ -192,7 +189,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      * kind on it.
      *
      * @return the number of items on the stack or 1 in case there is just one
-     *         item
+     * item
      */
     public ItemCount getCount() {
         return count;
@@ -217,8 +214,8 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
     private static final Logger LOGGER = LoggerFactory.getLogger(Item.class);
 
     @Override
-    public boolean isEventProcessed(@Nonnull final GameContainer container, final int delta,
-                                    @Nonnull final SceneEvent event) {
+    public boolean isEventProcessed(
+            @Nonnull final GameContainer container, final int delta, @Nonnull final SceneEvent event) {
         if (getLocalLight().getAlpha() == 0) {
             return false;
         }
@@ -278,7 +275,8 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
             if (parentTile.getInteractive().isInUseRange()) {
                 parentTile.getInteractive().use();
             } else {
-                World.getPlayer().getMovementHandler().walkToAndUse(parentTile.getLocation(), parentTile.getInteractive());
+                World.getPlayer().getMovementHandler()
+                        .walkToAndUse(parentTile.getLocation(), parentTile.getInteractive());
             }
 
             return true;
@@ -300,8 +298,8 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      * Set number of stacked items.
      *
      * @param newCount the number of items on this stack, in case its more then
-     *                 one a text is displayed next to the item that shown how many
-     *                 items are on the stack
+     * one a text is displayed next to the item that shown how many
+     * items are on the stack
      */
     public void setCount(final ItemCount newCount) {
         count = newCount;
@@ -310,7 +308,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         if (count.getValue() > 1) {
             number = new TextTag(count.getShortText(Lang.getInstance().getLocale()), Color.YELLOW);
             number.setOffset((MapConstants.TILE_W / 2) - number.getHeight() - number.getWidth(),
-                    -number.getHeight() / 2);
+                             -number.getHeight() / 2);
         } else {
             number = null;
         }

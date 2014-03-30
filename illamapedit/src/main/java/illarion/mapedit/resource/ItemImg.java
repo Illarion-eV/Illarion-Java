@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Mapeditor.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Mapeditor is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Mapeditor is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.mapedit.resource;
 
@@ -90,10 +87,18 @@ public class ItemImg {
         return itemMode;
     }
 
-    public ItemImg(final int itemId, final String resourceName, final String itemName,
-                   final int editorGroup, final int offsetX, final int offsetY, final int frameCount,
-                   final int animationSpeed, final int itemMode,
-                   @Nonnull final Image[] imgs, final ItemInfo info) {
+    public ItemImg(
+            final int itemId,
+            final String resourceName,
+            final String itemName,
+            final int editorGroup,
+            final int offsetX,
+            final int offsetY,
+            final int frameCount,
+            final int animationSpeed,
+            final int itemMode,
+            @Nonnull final Image[] imgs,
+            final ItemInfo info) {
 
         this.itemId = itemId;
         this.resourceName = resourceName;
@@ -104,7 +109,6 @@ public class ItemImg {
         this.frameCount = frameCount;
         this.animationSpeed = animationSpeed;
         this.itemMode = itemMode;
-
 
         this.info = info;
         this.imgs = new Image[imgs.length];

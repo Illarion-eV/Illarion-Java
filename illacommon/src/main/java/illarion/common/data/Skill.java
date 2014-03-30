@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Common Library.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Common Library is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.data;
 
@@ -62,14 +59,18 @@ public final class Skill {
     /**
      * Create a new instance of the skill class.
      *
-     * @param skillId    the ID of the skill
-     * @param skillName  the name of the skill
-     * @param german     the german name of the skill
-     * @param english    the english name of the skill
+     * @param skillId the ID of the skill
+     * @param skillName the name of the skill
+     * @param german the german name of the skill
+     * @param english the english name of the skill
      * @param skillGroup the group this skill belong to
      */
-    Skill(final int skillId, @Nonnull final String skillName, @Nonnull final String german,
-          @Nonnull final String english, @Nonnull final SkillGroup skillGroup) {
+    Skill(
+            final int skillId,
+            @Nonnull final String skillName,
+            @Nonnull final String german,
+            @Nonnull final String english,
+            @Nonnull final SkillGroup skillGroup) {
         id = skillId;
         name = skillName;
         nameEnglish = english;

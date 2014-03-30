@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion easyNPC Editor.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion easyNPC Editor is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion easyNPC Editor is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion easyNPC Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easynpc.gui;
 
@@ -62,17 +59,13 @@ public final class SearchDialog extends JDialog {
         generalConstraints.insets.top = 5;
         generalConstraints.anchor = GridBagConstraints.WEST;
 
-        final JLabel searchLabel =
-                new JLabel(Lang.getMsg(SearchDialog.class, "searchForLabel"));
-        final JLabel replaceLabel =
-                new JLabel(Lang.getMsg(SearchDialog.class, "replaceWithLabel"));
+        final JLabel searchLabel = new JLabel(Lang.getMsg(SearchDialog.class, "searchForLabel"));
+        final JLabel replaceLabel = new JLabel(Lang.getMsg(SearchDialog.class, "replaceWithLabel"));
 
         final JTextField searchText = new JTextField();
         final JTextField replaceField = new JTextField();
-        searchText.setPreferredSize(new Dimension(300, searchText
-                .getPreferredSize().height));
-        replaceField.setPreferredSize(new Dimension(300, replaceField
-                .getPreferredSize().height));
+        searchText.setPreferredSize(new Dimension(300, searchText.getPreferredSize().height));
+        replaceField.setPreferredSize(new Dimension(300, replaceField.getPreferredSize().height));
 
         final JCheckBox caseSensitiveCheck = new JCheckBox(Lang.getMsg(SearchDialog.class, "caseCheck"));
         final JCheckBox regExpCheck = new JCheckBox(Lang.getMsg(SearchDialog.class, "regExpCheck"));
@@ -191,8 +184,8 @@ public final class SearchDialog extends JDialog {
         final Dimension parentDim = getOwner().getSize();
         final Point parentPos = getOwner().getLocation();
 
-        setLocation(((parentDim.width - getSize().width) / 2) + parentPos.x, ((parentDim.height - getSize().height) /
-                2) + parentPos.y);
+        setLocation(((parentDim.width - getSize().width) / 2) + parentPos.x,
+                    ((parentDim.height - getSize().height) / 2) + parentPos.y);
         setResizable(false);
     }
 }

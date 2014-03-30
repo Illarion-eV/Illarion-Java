@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.net;
 
@@ -65,8 +62,7 @@ final class Sender extends Thread implements NetCommWriter {
      * Length of the byte buffer used to store the data before its send to the
      * server.
      */
-    private final ByteBuffer buffer = ByteBuffer
-            .allocateDirect(MAX_COMMAND_SIZE);
+    private final ByteBuffer buffer = ByteBuffer.allocateDirect(MAX_COMMAND_SIZE);
 
     /**
      * The string encoder that is used to encode the strings before they are
@@ -100,12 +96,12 @@ final class Sender extends Thread implements NetCommWriter {
      * The basic constructor for the sender that sets up all needed data.
      *
      * @param outputQueue the list of yet not encoded server commands
-     * @param out         the output channel of the socket connection used to send the
-     *                    data to the server
+     * @param out the output channel of the socket connection used to send the
+     * data to the server
      */
     @SuppressWarnings("nls")
-    Sender(final BlockingQueue<AbstractCommand> outputQueue,
-           final WritableByteChannel out) {
+    Sender(
+            final BlockingQueue<AbstractCommand> outputQueue, final WritableByteChannel out) {
         super("Illarion output thread");
 
         queue = outputQueue;

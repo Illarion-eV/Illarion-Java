@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.graphics;
 
@@ -141,7 +138,7 @@ public final class AvatarClothManager {
     /**
      * Check if a cloth item is defined on a specified location.
      *
-     * @param group  the location of the cloth
+     * @param group the location of the cloth
      * @param itemID the item id of the item that shall be checked
      * @return {@code true} in case the cloth item is defined for that location
      */
@@ -179,11 +176,11 @@ public final class AvatarClothManager {
     /**
      * Get a item from the storage.
      *
-     * @param group        the group the requested item is assigned to
-     * @param itemID       the item id of the requested item
+     * @param group the group the requested item is assigned to
+     * @param itemID the item id of the requested item
      * @param parentAvatar the avatar the cloth will belong to
      * @return the item that was found regarding the parameters or {@code null} in case the requested item was not
-     *         defined in this storage
+     * defined in this storage
      */
     @Nullable
     @SuppressWarnings("nls")

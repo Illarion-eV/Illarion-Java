@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.gui.util;
 
@@ -46,13 +43,13 @@ public final class NiftyMerchantItem extends MerchantItem implements MerchantLis
      * This constructor performs changes to the Nifty-GUI. Do not call it outside the regular update loop of the GUI.
      *
      * @param nifty the instance of the Nifty-GUI used to create the objects for the GUI
-     * @param org   the original merchant item that contains the actual data
+     * @param org the original merchant item that contains the actual data
      */
     public NiftyMerchantItem(@Nonnull final Nifty nifty, @Nonnull final MerchantItem org) {
         super(org);
 
-        itemImage = new NiftyImage(nifty.getRenderEngine(),
-                new EntitySlickRenderImage(ItemFactory.getInstance().getTemplate(org.getItemId().getValue())));
+        itemImage = new NiftyImage(nifty.getRenderEngine(), new EntitySlickRenderImage(
+                ItemFactory.getInstance().getTemplate(org.getItemId().getValue())));
     }
 
     /**

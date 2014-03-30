@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.util;
 
@@ -65,11 +62,11 @@ public abstract class AbstractDialog extends JDialog {
      * @param owner Owner of this dialog, has to be a JFrame
      * @param titel Title of the dialog
      * @param modal true for a modal dialog, false for one that allows other
-     *              dialogs to be in focus at the same time.
+     * dialogs to be in focus at the same time.
      * @see javax.swing.JDialog#JDialog(java.awt.Frame, String, boolean)
      */
-    public AbstractDialog(final Frame owner, final String titel,
-                          final boolean modal) {
+    public AbstractDialog(
+            final Frame owner, final String titel, final boolean modal) {
         super(owner, titel, modal);
         init();
     }
@@ -78,13 +75,13 @@ public abstract class AbstractDialog extends JDialog {
      * Constructor for a Dialoge using a JDialog as owner.
      *
      * @param parent Owner of this dialog, has to be a JDialog
-     * @param titel  Title of the dialog
-     * @param modal  true for a modal dialog, false for one that allows other
-     *               dialogs to be in focus at the same time.
+     * @param titel Title of the dialog
+     * @param modal true for a modal dialog, false for one that allows other
+     * dialogs to be in focus at the same time.
      * @see javax.swing.JDialog#JDialog(java.awt.Dialog, String, boolean)
      */
-    public AbstractDialog(final JDialog parent, final String titel,
-                          final boolean modal) {
+    public AbstractDialog(
+            final JDialog parent, final String titel, final boolean modal) {
         super(parent, titel, modal);
         init();
     }
@@ -144,8 +141,7 @@ public abstract class AbstractDialog extends JDialog {
         buttons = new JPanel(new FlowLayout());
         okButton = new JButton(Lang.getMsg("button.save"));
         cancelButton = new JButton(Lang.getMsg("button.cancel"));
-        cancelButton.setFont(cancelButton.getFont().deriveFont(Font.PLAIN,
-                16.f));
+        cancelButton.setFont(cancelButton.getFont().deriveFont(Font.PLAIN, 16.f));
         okButton.setPreferredSize(new Dimension(120, 40));
         okButton.setFont(okButton.getFont().deriveFont(Font.BOLD, 16.f));
         cancelButton.setPreferredSize(new Dimension(120, 40));
@@ -169,12 +165,13 @@ public abstract class AbstractDialog extends JDialog {
 
         // window keyboard actions
         getRootPane().registerKeyboardAction(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent ae) {
-                actionCancel();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false),
-                JComponent.WHEN_IN_FOCUSED_WINDOW);
+                                                 @Override
+                                                 public void actionPerformed(final ActionEvent ae) {
+                                                     actionCancel();
+                                                 }
+                                             }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false),
+                                             JComponent.WHEN_IN_FOCUSED_WINDOW
+        );
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -188,7 +185,7 @@ public abstract class AbstractDialog extends JDialog {
      * Check if a button is enabled.
      *
      * @param button Select the button that shall be checked. Possible values
-     *               are {@link #BUTTON_OK} and {@link #BUTTON_CANCEL}
+     * are {@link #BUTTON_OK} and {@link #BUTTON_CANCEL}
      * @return <code>true</code> in case the button is enabled
      */
     @SuppressWarnings("nls")
@@ -205,13 +202,13 @@ public abstract class AbstractDialog extends JDialog {
     /**
      * Change the enabled status of one of the buttons created by default.
      *
-     * @param button  Select the button that shall be changed. Possible values
-     *                are {@link #BUTTON_OK} and {@link #BUTTON_CANCEL}
+     * @param button Select the button that shall be changed. Possible values
+     * are {@link #BUTTON_OK} and {@link #BUTTON_CANCEL}
      * @param enabled the new enabled status
      */
     @SuppressWarnings("nls")
-    protected final void setButtonEnabled(final int button,
-                                          final boolean enabled) {
+    protected final void setButtonEnabled(
+            final int button, final boolean enabled) {
         if (button == BUTTON_OK) {
             okButton.setEnabled(enabled);
         } else if (button == BUTTON_CANCEL) {
@@ -225,8 +222,8 @@ public abstract class AbstractDialog extends JDialog {
      * Change the name of one of the buttons created by default.
      *
      * @param button Select the button that shall be changed. Possible values
-     *               are {@link #BUTTON_OK} and {@link #BUTTON_CANCEL}
-     * @param name   the new text written on the button
+     * are {@link #BUTTON_OK} and {@link #BUTTON_CANCEL}
+     * @param name the new text written on the button
      */
     @SuppressWarnings("nls")
     protected final void setButtonName(final int button, final String name) {
@@ -244,7 +241,7 @@ public abstract class AbstractDialog extends JDialog {
      * pane.
      *
      * @param button Select the button that shall be changed. Possible values
-     *               are {@link #BUTTON_OK} and {@link #BUTTON_CANCEL}
+     * are {@link #BUTTON_OK} and {@link #BUTTON_CANCEL}
      */
     @SuppressWarnings("nls")
     protected final void setDefaultButton(final int button) {
@@ -256,5 +253,4 @@ public abstract class AbstractDialog extends JDialog {
             throw new IllegalArgumentException("Undefined button identifier");
         }
     }
-
 }

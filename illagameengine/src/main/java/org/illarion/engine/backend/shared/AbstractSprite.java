@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Game Engine.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Game Engine is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Game Engine is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.illarion.engine.backend.shared;
 
@@ -77,14 +74,19 @@ public abstract class AbstractSprite<T extends Texture> implements Sprite {
      * Create a abstract sprite.
      *
      * @param textures the textures that are the frames of this sprite
-     * @param offsetX  the x offset of the sprite
-     * @param offsetY  the y offset of the sprite
-     * @param centerX  the offset of the center point long the x coordinate
-     * @param centerY  the offset of the center point long the y coordinate
-     * @param mirror   the mirrored flag
+     * @param offsetX the x offset of the sprite
+     * @param offsetY the y offset of the sprite
+     * @param centerX the offset of the center point long the x coordinate
+     * @param centerY the offset of the center point long the y coordinate
+     * @param mirror the mirrored flag
      */
-    protected AbstractSprite(@Nonnull final T[] textures, final int offsetX, final int offsetY,
-                             final double centerX, final double centerY, final boolean mirror) {
+    protected AbstractSprite(
+            @Nonnull final T[] textures,
+            final int offsetX,
+            final int offsetY,
+            final double centerX,
+            final double centerY,
+            final boolean mirror) {
         if (textures.length == 0) {
             throw new IllegalArgumentException("Amount of textures does not fit.");
         }
@@ -164,8 +166,8 @@ public abstract class AbstractSprite<T extends Texture> implements Sprite {
 
     @Nonnull
     @Override
-    public Rectangle getDisplayArea(final int x, final int y, final double scale, final double rotation,
-                                    @Nullable final Rectangle storage) {
+    public Rectangle getDisplayArea(
+            final int x, final int y, final double scale, final double rotation, @Nullable final Rectangle storage) {
         @Nonnull final Rectangle targetRectangle;
         if (storage == null) {
             targetRectangle = new Rectangle();

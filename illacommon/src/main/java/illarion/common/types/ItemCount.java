@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.common.types;
 
@@ -70,7 +67,7 @@ public final class ItemCount implements Comparable<ItemCount> {
      * @param value the value of the item count
      * @return the new instance of the item count representing the value
      * @throws IllegalArgumentException in case the value is less then {@link #MIN_VALUE} or larger then
-     *                                  {@link #MAX_VALUE}.
+     * {@link #MAX_VALUE}.
      */
     @Nonnull
     public static ItemCount getInstance(final int value) {
@@ -90,8 +87,8 @@ public final class ItemCount implements Comparable<ItemCount> {
      * @param reader the network reader that is used to fetch the value
      * @return the new instance of the item count representing the value
      * @throws IllegalArgumentException in case the value is less then {@link #MIN_VALUE} or larger then
-     *                                  {@link #MAX_VALUE}.
-     * @throws IOException              in case the reading operation fails
+     * {@link #MAX_VALUE}.
+     * @throws IOException in case the reading operation fails
      */
     @Nonnull
     public static ItemCount getInstance(@Nonnull final NetCommReader reader) throws IOException {
@@ -103,7 +100,7 @@ public final class ItemCount implements Comparable<ItemCount> {
      *
      * @param value the value of the item count
      * @throws IllegalArgumentException in case the value is less then {@link #MIN_VALUE} or larger then
-     *                                  {@link #MAX_VALUE}.
+     * {@link #MAX_VALUE}.
      */
     private ItemCount(final int value) {
         if ((value < MIN_VALUE) || (value > MAX_VALUE)) {

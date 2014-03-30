@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.world;
 
@@ -238,7 +235,7 @@ public final class MapDimensions {
      * Report a new screen size to the application. This needs to be done upon every update of the screen size. This
      * function will cause all internal values to be recalculated in case new values are reported.
      *
-     * @param width  the width of the screen in pixels
+     * @param width the width of the screen in pixels
      * @param height the height of the screen in pixels
      */
     public void reportScreenSize(final int width, final int height) {
@@ -266,8 +263,7 @@ public final class MapDimensions {
         final int serverMapDimWidth = stripesWidth >> 2;
         final int serverMapDimHeight = stripesHeight >> 2;
 
-        if ((serverMapDimHeight != serverMapDimensionHeight) ||
-                (serverMapDimWidth != serverMapDimensionWidth)) {
+        if ((serverMapDimHeight != serverMapDimensionHeight) || (serverMapDimWidth != serverMapDimensionWidth)) {
             serverMapDimensionHeight = serverMapDimHeight;
             serverMapDimensionWidth = serverMapDimWidth;
             World.getNet().sendCommand(new MapDimensionCmd(serverMapDimWidth, serverMapDimHeight));

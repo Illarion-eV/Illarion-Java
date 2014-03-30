@@ -1,3 +1,18 @@
+/*
+ * This file is part of the Illarion project.
+ *
+ * Copyright © 2014 - Illarion e.V.
+ *
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Illarion is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
 package illarion.download.gui.controller;
 
 import illarion.common.config.Config;
@@ -122,9 +137,10 @@ public class MainViewController extends AbstractController implements MavenDownl
         showNewsQuestInList(questList, questsPane);
     }
 
-    private static void parseLauncherXml(@Nonnull final XmlPullParser parser,
-                                         @Nonnull final Collection<NewsQuestEntry> newsList,
-                                         @Nonnull final Collection<NewsQuestEntry> questList)
+    private static void parseLauncherXml(
+            @Nonnull final XmlPullParser parser,
+            @Nonnull final Collection<NewsQuestEntry> newsList,
+            @Nonnull final Collection<NewsQuestEntry> questList)
             throws IOException, XmlPullParserException, ParseException {
         while (true) {
             int current = parser.nextToken();
@@ -150,8 +166,8 @@ public class MainViewController extends AbstractController implements MavenDownl
         }
     }
 
-    private static void parserNewsXml(@Nonnull final XmlPullParser parser,
-                                      @Nonnull final Collection<NewsQuestEntry> newsList)
+    private static void parserNewsXml(
+            @Nonnull final XmlPullParser parser, @Nonnull final Collection<NewsQuestEntry> newsList)
             throws IOException, XmlPullParserException, ParseException {
         final boolean useGerman = Locale.getDefault().getLanguage().equals(Locale.GERMAN.getLanguage());
 
@@ -203,8 +219,8 @@ public class MainViewController extends AbstractController implements MavenDownl
         }
     }
 
-    private static void parserQuestXml(@Nonnull final XmlPullParser parser,
-                                       @Nonnull final Collection<NewsQuestEntry> newsList)
+    private static void parserQuestXml(
+            @Nonnull final XmlPullParser parser, @Nonnull final Collection<NewsQuestEntry> newsList)
             throws IOException, XmlPullParserException, ParseException {
         final boolean useGerman = Locale.getDefault().getLanguage().equals(Locale.GERMAN.getLanguage());
 
@@ -322,8 +338,12 @@ public class MainViewController extends AbstractController implements MavenDownl
         launch("org.illarion", "client", "illarion.client.IllaClient", "channelClient");
     }
 
-    private void updateLaunchButtons(final boolean enabled, final boolean client, final boolean easyNpc,
-                                     final boolean easyQuest, final boolean mapEdit) {
+    private void updateLaunchButtons(
+            final boolean enabled,
+            final boolean client,
+            final boolean easyNpc,
+            final boolean easyQuest,
+            final boolean mapEdit) {
         if (Platform.isFxApplicationThread()) {
             launchClientButton.setDisable(!enabled);
             launchMapEditButton.setDisable(!enabled);
@@ -351,8 +371,11 @@ public class MainViewController extends AbstractController implements MavenDownl
         }
     }
 
-    private void launch(@Nonnull final String groupId, @Nonnull final String artifactId,
-                        @Nonnull final String launchClass, @Nonnull final String configKey) {
+    private void launch(
+            @Nonnull final String groupId,
+            @Nonnull final String artifactId,
+            @Nonnull final String launchClass,
+            @Nonnull final String configKey) {
         final Config cfg = getModel().getConfig();
         if (cfg == null) {
             throw new IllegalStateException("Can't show options without the config system");
@@ -365,7 +388,7 @@ public class MainViewController extends AbstractController implements MavenDownl
             public void run() {
                 try {
                     final MavenDownloader downloader = new MavenDownloader(useSnapshots);
-                    downloader.downloadArtifact(groupId,artifactId, MainViewController.this);
+                    downloader.downloadArtifact(groupId, artifactId, MainViewController.this);
                 } catch (@Nonnull final Exception e) {
                     cancelLaunch();
                     Platform.runLater(new Runnable() {

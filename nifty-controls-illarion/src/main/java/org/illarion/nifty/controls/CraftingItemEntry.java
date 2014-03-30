@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Nifty-GUI Controls.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Nifty-GUI Controls is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Nifty-GUI Controls is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Nifty-GUI Controls.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.illarion.nifty.controls;
 
@@ -60,7 +57,7 @@ public interface CraftingItemEntry extends CraftingTreeItem {
      * @param index the index of the ingredient
      * @return the amount of items required of this ingredient
      * @throws IndexOutOfBoundsException in case {@code index} is less then 0 or equal or greater then the result of
-     *                                   {@link #getIngredientCount()}
+     * {@link #getIngredientCount()}
      */
     @Nonnull
     ItemCount getIngredientAmount(int index);
@@ -78,7 +75,7 @@ public interface CraftingItemEntry extends CraftingTreeItem {
      * @param index the index of the ingredient
      * @return the image of this ingredient
      * @throws IndexOutOfBoundsException in case {@code index} is less then 0 or equal or greater then the result of
-     *                                   {@link #getIngredientCount()}
+     * {@link #getIngredientCount()}
      */
     @Nonnull
     NiftyImage getIngredientImage(int index);
@@ -89,7 +86,7 @@ public interface CraftingItemEntry extends CraftingTreeItem {
      * @param index the index of the ingredient
      * @return the item ID of the ingredient with that index
      * @throws IndexOutOfBoundsException in case {@code index} is less then 0 or equal or greater then the result of
-     *                                   {@link #getIngredientCount()}
+     * {@link #getIngredientCount()}
      */
     @Nonnull
     ItemId getIngredientItemId(int index);

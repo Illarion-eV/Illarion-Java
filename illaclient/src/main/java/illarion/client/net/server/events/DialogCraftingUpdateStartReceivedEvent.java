@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.net.server.events;
 
@@ -42,11 +39,11 @@ public class DialogCraftingUpdateStartReceivedEvent {
     /**
      * Create a new instance of this event.
      *
-     * @param requestId    the ID of the dialog that is updated
-     * @param remaining    the amount of items remaining to be produced
+     * @param requestId the ID of the dialog that is updated
+     * @param remaining the amount of items remaining to be produced
      * @param requiredTime the time required to finish the operation started with this update
      * @throws IllegalArgumentException in case the {@code requiredTime} parameter is less then {@code 0} or in case
-     *                                  the {@code remaining} parameter is less then {@code 0}
+     * the {@code remaining} parameter is less then {@code 0}
      */
     public DialogCraftingUpdateStartReceivedEvent(final int requestId, final int remaining, final int requiredTime) {
         if (requiredTime < 0) {
@@ -55,7 +52,6 @@ public class DialogCraftingUpdateStartReceivedEvent {
         if (remaining < 0) {
             throw new IllegalArgumentException("The remaining item count must not be less then zero");
         }
-
 
         this.requestId = requestId;
         this.remaining = remaining;

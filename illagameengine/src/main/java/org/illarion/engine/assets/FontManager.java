@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Game Engine.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Game Engine is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Game Engine is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.illarion.engine.assets;
 
@@ -37,18 +34,23 @@ public interface FontManager {
      * font definition. The backend is allowed to choose if its using the TTF font or the bitmap based angelcode font.
      *
      * @param identifier the identifier of the font, this is used to retrieve the font later
-     * @param ttfRef     the reference to the TTF file that stores the glyphs of the font
-     * @param size       the size of the font (applies to the TTF file)
-     * @param style      the style of the font (applies to the TTF file)
-     * @param fntRef     the Angelcode font definition
-     * @param imageRoot  the root directory where the image for the angelcode font is located
+     * @param ttfRef the reference to the TTF file that stores the glyphs of the font
+     * @param size the size of the font (applies to the TTF file)
+     * @param style the style of the font (applies to the TTF file)
+     * @param fntRef the Angelcode font definition
+     * @param imageRoot the root directory where the image for the angelcode font is located
      * @return the newly created font
-     * @throws IOException              in case loading the font fails
+     * @throws IOException in case loading the font fails
      * @throws IllegalArgumentException in case the identifier is already used for another font
      */
     @Nonnull
-    Font createFont(@Nonnull Object identifier, @Nonnull String ttfRef, float size, int style,
-                    @Nonnull String fntRef, @Nonnull String imageRoot) throws IOException;
+    Font createFont(
+            @Nonnull Object identifier,
+            @Nonnull String ttfRef,
+            float size,
+            int style,
+            @Nonnull String fntRef,
+            @Nonnull String imageRoot) throws IOException;
 
     /**
      * Fetch a font that was created before.

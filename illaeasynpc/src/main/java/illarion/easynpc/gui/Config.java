@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion easyNPC Editor.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion easyNPC Editor is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion easyNPC Editor is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion easyNPC Editor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.easynpc.gui;
 
@@ -285,7 +282,9 @@ public final class Config {
                                                                           Lang.getMsg(
                                                                                   "illarion.easynpc.gui.config.errorAlways"),
                                                                           Lang.getMsg(
-                                                                                  "illarion.easynpc.gui.config.errorNever")})));
+                                                                                  "illarion.easynpc.gui.config.errorNever")}
+                                             )
+        ));
         dialog.addPage(page);
 
         page = new ConfigDialog.Page("illarion.easynpc.gui.config.lookAndFeelTab");
@@ -303,7 +302,8 @@ public final class Config {
         page.addEntry(new ConfigDialog.Entry("illarion.easynpc.gui.config.usedThemeLabel",
                                              new SelectEntry(USED_LOOK_AND_FEEL, SelectEntry.STORE_VALUE,
                                                              themeObject.toArray(),
-                                                             themeLabel.toArray(new String[themeLabel.size()]))));
+                                                             themeLabel.toArray(new String[themeLabel.size()]))
+        ));
 
         page.addEntry(new ConfigDialog.Entry("illarion.easynpc.gui.config.useSyntaxLabel",
                                              new CheckEntry(USE_SYNTAX_HIGHLIGHT)));

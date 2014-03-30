@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.net;
 
@@ -111,8 +108,8 @@ final class Receiver extends Thread implements NetCommReader {
      * The basic constructor for the receiver that sets up all needed data.
      *
      * @param inputQueue the list of decoded server messages that need to be executed by NetComm
-     * @param in         the input stream of the socket connection to the server that contains the data that needs to
-     *                   be decoded
+     * @param in the input stream of the socket connection to the server that contains the data that needs to
+     * be decoded
      */
     @SuppressWarnings("nls")
     Receiver(@Nonnull final BlockingQueue<AbstractReply> inputQueue, @Nonnull final ReadableByteChannel in) {
@@ -136,7 +133,7 @@ final class Receiver extends Thread implements NetCommReader {
      *
      * @return The byte from the buffer handled as signed byte
      * @throws IOException If there are more byte read then there are written in
-     *                     the buffer
+     * the buffer
      */
     @Override
     public byte readByte() throws IOException {
@@ -148,7 +145,7 @@ final class Receiver extends Thread implements NetCommReader {
      *
      * @return The two bytes in the buffer handled as signed 4 byte value
      * @throws IOException If there are more byte read then there are written in
-     *                     the buffer
+     * the buffer
      */
     @Override
     public int readInt() throws IOException {
@@ -160,7 +157,7 @@ final class Receiver extends Thread implements NetCommReader {
      *
      * @return The two bytes in the buffer handled as signed 2 byte value
      * @throws IOException If there are more byte read then there are written in
-     *                     the buffer
+     * the buffer
      */
     @Override
     public short readShort() throws IOException {
@@ -172,7 +169,7 @@ final class Receiver extends Thread implements NetCommReader {
      *
      * @return the decoded string
      * @throws IOException If there are more byte read then there are written in
-     *                     the buffer
+     * the buffer
      */
     @Nonnull
     @Override
@@ -185,8 +182,7 @@ final class Receiver extends Thread implements NetCommReader {
         }
 
         if (len > buffer.remaining()) {
-            throw new IndexOutOfBoundsException(
-                    "reading beyond receive buffer " + (buffer.remaining() + len));
+            throw new IndexOutOfBoundsException("reading beyond receive buffer " + (buffer.remaining() + len));
         }
         decodingBuffer.clear();
         final int lastLimit = buffer.limit();
@@ -203,7 +199,7 @@ final class Receiver extends Thread implements NetCommReader {
      *
      * @return The byte of the buffer handled as unsigned byte.
      * @throws IOException If there are more byte read then there are written in
-     *                     the buffer
+     * the buffer
      */
     @Override
     public short readUByte() throws IOException {
@@ -220,7 +216,7 @@ final class Receiver extends Thread implements NetCommReader {
      *
      * @return The two bytes in the buffer handled as unsigned 4 byte value
      * @throws IOException If there are more byte read then there are written in
-     *                     the buffer
+     * the buffer
      */
     @Override
     public long readUInt() throws IOException {
@@ -237,7 +233,7 @@ final class Receiver extends Thread implements NetCommReader {
      *
      * @return The two bytes in the buffer handled as unsigned 2 byte value
      * @throws IOException If there are more byte read then there are written in
-     *                     the buffer
+     * the buffer
      */
     @Override
     public int readUShort() throws IOException {
@@ -357,7 +353,6 @@ final class Receiver extends Thread implements NetCommReader {
         }
     }
 
-
     /**
      * Shutdown the receiver.
      */
@@ -401,13 +396,12 @@ final class Receiver extends Thread implements NetCommReader {
      * Read data from the input stream of the socket and store it in the buffer.
      *
      * @param neededDataInBuffer The data that is needed at least before the method has to return in order to parse
-     *                           the values correctly
+     * the values correctly
      * @return true in case there is any data to be decoded in the buffer
      * @throws IOException In case there is something wrong with the input stream
      */
     @SuppressWarnings("nls")
-    private boolean receiveData(final int neededDataInBuffer)
-            throws IOException {
+    private boolean receiveData(final int neededDataInBuffer) throws IOException {
 
         int data = buffer.remaining();
 
@@ -441,5 +435,4 @@ final class Receiver extends Thread implements NetCommReader {
 
         return buffer.hasRemaining();
     }
-
 }

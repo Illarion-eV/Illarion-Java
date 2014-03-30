@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Nifty-GUI Controls.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Nifty-GUI Controls is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Nifty-GUI Controls is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Nifty-GUI Controls.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.illarion.nifty.controls.inventoryslot.builder;
 
@@ -57,14 +54,14 @@ public class CreateInventorySlotControl extends ControlAttributes {
     /**
      * Create the inventory slot.
      *
-     * @param nifty  the instance of the Nifty-GUI that will display the slot
+     * @param nifty the instance of the Nifty-GUI that will display the slot
      * @param screen the screen this slot will be a part of
      * @param parent the parent element of this slot
      * @return the newly created inventory slot
      */
     @Nullable
-    public InventorySlot create(@Nonnull final Nifty nifty, @Nonnull final Screen screen,
-                                @Nonnull final Element parent) {
+    public InventorySlot create(
+            @Nonnull final Nifty nifty, @Nonnull final Screen screen, @Nonnull final Element parent) {
         return nifty.addControl(screen, parent, getStandardControl()).getNiftyControl(InventorySlot.class);
     }
 

@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Mapeditor.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Mapeditor is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Mapeditor is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.mapedit.processing;
 
@@ -257,7 +254,9 @@ public final class MapTransitions {
      *
      * @param loc the location to check
      */
-    public void checkTileAndSurround(@Nonnull final Map map, @Nonnull final Location loc/*, final GroupAction history*/) {
+    public void checkTileAndSurround(
+            @Nonnull final Map map,
+            @Nonnull final Location loc/*, final GroupAction history*/) {
         checkTile(map, loc);
         final Location tempLoc = new Location();
 
@@ -478,36 +477,28 @@ public final class MapTransitions {
 
         final Location searchLoc = new Location();
 
-        searchLoc.setSC(centerLoc.getScX(), centerLoc.getScY() - 1,
-                centerLoc.getScZ());
+        searchLoc.setSC(centerLoc.getScX(), centerLoc.getScY() - 1, centerLoc.getScZ());
         checkTiles[0] = map.getTileAt(searchLoc);
 
-        searchLoc.setSC(centerLoc.getScX() + 1, centerLoc.getScY() - 1,
-                centerLoc.getScZ());
+        searchLoc.setSC(centerLoc.getScX() + 1, centerLoc.getScY() - 1, centerLoc.getScZ());
         checkTiles[1] = map.getTileAt(searchLoc);
 
-        searchLoc.setSC(centerLoc.getScX() + 1, centerLoc.getScY(),
-                centerLoc.getScZ());
+        searchLoc.setSC(centerLoc.getScX() + 1, centerLoc.getScY(), centerLoc.getScZ());
         checkTiles[2] = map.getTileAt(searchLoc);
 
-        searchLoc.setSC(centerLoc.getScX() + 1, centerLoc.getScY() + 1,
-                centerLoc.getScZ());
+        searchLoc.setSC(centerLoc.getScX() + 1, centerLoc.getScY() + 1, centerLoc.getScZ());
         checkTiles[3] = map.getTileAt(searchLoc);
 
-        searchLoc.setSC(centerLoc.getScX(), centerLoc.getScY() + 1,
-                centerLoc.getScZ());
+        searchLoc.setSC(centerLoc.getScX(), centerLoc.getScY() + 1, centerLoc.getScZ());
         checkTiles[4] = map.getTileAt(searchLoc);
 
-        searchLoc.setSC(centerLoc.getScX() - 1, centerLoc.getScY() + 1,
-                centerLoc.getScZ());
+        searchLoc.setSC(centerLoc.getScX() - 1, centerLoc.getScY() + 1, centerLoc.getScZ());
         checkTiles[5] = map.getTileAt(searchLoc);
 
-        searchLoc.setSC(centerLoc.getScX() - 1, centerLoc.getScY(),
-                centerLoc.getScZ());
+        searchLoc.setSC(centerLoc.getScX() - 1, centerLoc.getScY(), centerLoc.getScZ());
         checkTiles[6] = map.getTileAt(searchLoc);
 
-        searchLoc.setSC(centerLoc.getScX() - 1, centerLoc.getScY() - 1,
-                centerLoc.getScZ());
+        searchLoc.setSC(centerLoc.getScX() - 1, centerLoc.getScY() - 1, centerLoc.getScZ());
         checkTiles[7] = map.getTileAt(searchLoc);
     }
 }

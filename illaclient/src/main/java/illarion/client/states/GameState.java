@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.states;
 
@@ -35,9 +32,9 @@ public interface GameState {
      * <p/>
      * Its called for all game states, not just for the active one.
      *
-     * @param game      the game that is running
+     * @param game the game that is running
      * @param container the container that carries the game
-     * @param nifty     the instance of the Nifty GUI that displays the game
+     * @param nifty the instance of the Nifty GUI that displays the game
      */
     void create(@Nonnull Game game, @Nonnull GameContainer container, @Nonnull Nifty nifty);
 
@@ -52,8 +49,8 @@ public interface GameState {
      * This function is called for the active state once the size of the game container changes.
      *
      * @param container the container that carries the game
-     * @param width     the new width of the game surface
-     * @param height    the new height of the game surface
+     * @param width the new width of the game surface
+     * @param height the new height of the game surface
      */
     void resize(@Nonnull GameContainer container, int width, int height);
 
@@ -61,7 +58,7 @@ public interface GameState {
      * This function is called during the update loop for the active game state.
      *
      * @param container the container that carries the game
-     * @param delta     the time since the last update in milliseconds
+     * @param delta the time since the last update in milliseconds
      */
     void update(@Nonnull GameContainer container, int delta);
 

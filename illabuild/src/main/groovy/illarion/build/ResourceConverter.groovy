@@ -1,18 +1,17 @@
 /*
- * This file is part of the Illarion Build Utility.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Build Utility is free software: you can redistribute and/or modify it under the terms of the GNU
- * General Public License as published by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * The Illarion Build Utility is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
- * License for more details.
- *
- * You should have received a copy of the GNU General Public License along with the Illarion Build Utility. If not,
- * see <http://www.gnu.org/licenses/>.
+ * Illarion is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  */
 package illarion.build
 
@@ -177,14 +176,14 @@ public class ResourceConverter extends DefaultTask {
 
         final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance()
 
-        bookFiles.each {file ->
+        bookFiles.each { file ->
             final Document document = docBuilderFactory.newDocumentBuilder().parse(file)
             final Book book = new Book(document)
 
             logger.info("Book ${file.name} read with ${book.englishBook.pageCount} pages")
 
-            file.withInputStream {is ->
-                getTargetFile(targetDirectory, file).withOutputStream {os ->
+            file.withInputStream { is ->
+                getTargetFile(targetDirectory, file).withOutputStream { os ->
                     os << is
                 }
             }
@@ -218,9 +217,9 @@ public class ResourceConverter extends DefaultTask {
             return;
         }
 
-        miscFiles.each {file ->
-            file.withInputStream {is ->
-                getTargetFile(targetDirectory, file, {it.replace("notouch_", "")}).withOutputStream {os ->
+        miscFiles.each { file ->
+            file.withInputStream { is ->
+                getTargetFile(targetDirectory, file, { it.replace("notouch_", "") }).withOutputStream { os ->
                     os << is
                 }
             }
@@ -254,9 +253,9 @@ public class ResourceConverter extends DefaultTask {
             throw new StopExecutionException("Failed to load the required private key.")
         }
 
-        tableFiles.each {file ->
-            file.withInputStream {is ->
-                getTargetFile(targetDirectory, file, {it.replace(".tbl", ".dat")}).withOutputStream {os ->
+        tableFiles.each { file ->
+            file.withInputStream { is ->
+                getTargetFile(targetDirectory, file, { it.replace(".tbl", ".dat") }).withOutputStream { os ->
                     crypto.encrypt(is, os)
                 }
             }
@@ -291,7 +290,7 @@ public class ResourceConverter extends DefaultTask {
 
             ImageIO.write(resultImage, "png", new File(targetDirectory, fileName));
 
-            atlasMarkup.atlas (file: fileName) {
+            atlasMarkup.atlas(file: fileName) {
                 mkp.yieldUnescaped(spriteMarkupWriter.toString())
             }
         }
@@ -299,7 +298,7 @@ public class ResourceConverter extends DefaultTask {
         def xmlWriter;
         try {
             xmlWriter = new BufferedWriter(new FileWriter(new File(targetDirectory, "${baseName}.xml")))
-            new MarkupBuilder(xmlWriter).atlasList (atlasCount: atlasFiles) {
+            new MarkupBuilder(xmlWriter).atlasList(atlasCount: atlasFiles) {
                 mkp.yieldUnescaped(atlasMarkupWriter.toString())
             }
         } finally {

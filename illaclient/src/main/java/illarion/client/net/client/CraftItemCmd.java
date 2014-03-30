@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.client.net.client;
 
@@ -49,9 +46,9 @@ public final class CraftItemCmd extends AbstractCommand {
     /**
      * Default constructor for the trade item command.
      *
-     * @param dialogId      the dialog ID of the dialog to craft a item from
+     * @param dialogId the dialog ID of the dialog to craft a item from
      * @param craftingIndex the index of the item to craft
-     * @param amount        the amount of items to create as a batch
+     * @param amount the amount of items to create as a batch
      */
     public CraftItemCmd(final int dialogId, final int craftingIndex, final int amount) {
         super(CommandList.CMD_CRAFT_ITEM);

@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Common Library.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2012 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Common Library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Common Library is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Common Library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.illarion.engine.graphic;
 
@@ -81,7 +78,7 @@ final class RayNode {
      * Create a ray node. A node created with this constructor is placed at the origin of the light as the root node.
      *
      * @param size the length of the rays of the light this node is a part of, its used to calculate the intensity of
-     *             the light
+     * the light
      */
     public RayNode(final float size) {
         this(0, 0, 0, size);
@@ -90,11 +87,11 @@ final class RayNode {
     /**
      * Create a ray node at a location. The location is relative to the origin of the light.
      *
-     * @param posX      the relative x coordinate to the origin of the light
-     * @param posY      the relative y coordinate to the origin of the light
+     * @param posX the relative x coordinate to the origin of the light
+     * @param posY the relative y coordinate to the origin of the light
      * @param nodeLevel the level of the node, means how many steps the node is away from the origin of the light or
-     *                  how many nodes are in front of this ray node. The root ray node is level 0
-     * @param size      the length of the rays of the light this node is a part of,
+     * how many nodes are in front of this ray node. The root ray node is level 0
+     * @param size the length of the rays of the light this node is a part of,
      */
     RayNode(final int posX, final int posY, final int nodeLevel, final double size) {
         level = nodeLevel;
@@ -113,9 +110,9 @@ final class RayNode {
      *
      * @param xPath the array of relative x coordinates to the parent node
      * @param yPath the array of relative y coordinates to the parent node
-     * @param len   the length of the ray, means the coordinate values in the arrays for this ray
+     * @param len the length of the ray, means the coordinate values in the arrays for this ray
      * @param index the current position on the ray
-     * @param size  real length of the ray
+     * @param size real length of the ray
      */
     public void addRay(final int[] xPath, final int[] yPath, final int len, final int index, final double size) {
         // there are more points on the path
@@ -155,10 +152,10 @@ final class RayNode {
      * ray stops at this location and the following ray nodes are not rendered applies anymore,
      * that leads to the point that the light has no influence anymore.
      *
-     * @param shadowMap       the map that is the target of the apply operation and gives the data how much light is
-     *                        blocked out by the tiles
+     * @param shadowMap the map that is the target of the apply operation and gives the data how much light is
+     * blocked out by the tiles
      * @param globalIntensity global intensity modificator that reduces the default intensity of the light by the
-     *                        glowing intensity of the light in order to make the light generally weaker
+     * glowing intensity of the light in order to make the light generally weaker
      */
     public void apply(@Nonnull final LightSource shadowMap, final float globalIntensity) {
         int blocked = shadowMap.setIntensity(x, y, globalIntensity * intensity);

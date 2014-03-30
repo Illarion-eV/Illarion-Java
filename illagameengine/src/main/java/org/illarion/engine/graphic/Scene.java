@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Game Engine.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Game Engine is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Game Engine is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Game Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.illarion.engine.graphic;
 
@@ -57,7 +54,7 @@ public interface Scene {
      * function of all the elements of the scene.
      *
      * @param container the container of the game
-     * @param delta     the time since the last update
+     * @param delta the time since the last update
      */
     void update(@Nonnull GameContainer container, int delta);
 
@@ -66,8 +63,8 @@ public interface Scene {
      * function.
      *
      * @param graphics the graphics instance that is supposed to be used to render the element
-     * @param offsetX  the x coordinate of the offset that is applied to all rendered elements
-     * @param offsetY  the y coordinate of the offset that is applied to all rendered elements
+     * @param offsetX the x coordinate of the offset that is applied to all rendered elements
+     * @param offsetY the y coordinate of the offset that is applied to all rendered elements
      */
     void render(@Nonnull Graphics graphics, int offsetX, int offsetY);
 

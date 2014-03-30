@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Mapeditor.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Mapeditor is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Mapeditor is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Mapeditor.  If not, see <http://www.gnu.org/licenses/>.
  */
 package illarion.mapedit.render;
 
@@ -46,12 +43,11 @@ public class SelectedTileRenderer extends AbstractMapRenderer {
     public SelectedTileRenderer(final RendererManager manager) {
         super(manager);
         showPosition = MapEditorConfig.getInstance().isShowPosition();
-
     }
 
     @Override
-    public void renderMap(@Nonnull final Map map, final Rectangle viewport, final int level,
-                          @Nonnull final Graphics2D g) {
+    public void renderMap(
+            @Nonnull final Map map, final Rectangle viewport, final int level, @Nonnull final Graphics2D g) {
         final int width = map.getWidth();
         final int height = map.getHeight();
         final int z = map.getZ() - level;
@@ -79,16 +75,16 @@ public class SelectedTileRenderer extends AbstractMapRenderer {
                     drawLine(mapX, mapY + 1, mapX + 1, mapY + 1, z, g);
                     g.setColor(Color.ORANGE);
                 } else if (map.isSelected(x, y)) {
-                    if (!map.isSelected(x-1, y)) {
+                    if (!map.isSelected(x - 1, y)) {
                         drawLine(mapX, mapY, mapX, mapY + 1, z, g);
                     }
-                    if (!map.isSelected(x+1, y)) {
+                    if (!map.isSelected(x + 1, y)) {
                         drawLine(mapX + 1, mapY, mapX + 1, mapY + 1, z, g);
                     }
-                    if (!map.isSelected(x, y-1)) {
+                    if (!map.isSelected(x, y - 1)) {
                         drawLine(mapX, mapY, mapX + 1, mapY, z, g);
                     }
-                    if (!map.isSelected(x, y+1)) {
+                    if (!map.isSelected(x, y + 1)) {
                         drawLine(mapX, mapY + 1, mapX + 1, mapY + 1, z, g);
                     }
                 }
@@ -96,10 +92,10 @@ public class SelectedTileRenderer extends AbstractMapRenderer {
         }
 
         if (map.isFillDragging()) {
-            final int startX = Math.min(map.getFillX(),map.getFillStartX());
-            final int startY = Math.min(map.getFillY(),map.getFillStartY());
-            final int endX = Math.max(map.getFillX(),map.getFillStartX()) + 1;
-            final int endY = Math.max(map.getFillY(),map.getFillStartY()) + 1;
+            final int startX = Math.min(map.getFillX(), map.getFillStartX());
+            final int startY = Math.min(map.getFillY(), map.getFillStartY());
+            final int endX = Math.max(map.getFillX(), map.getFillStartX()) + 1;
+            final int endY = Math.max(map.getFillY(), map.getFillStartY()) + 1;
 
             g.setColor(Color.RED);
             drawLine(startX, startY, startX, endY, z, g);
@@ -112,13 +108,10 @@ public class SelectedTileRenderer extends AbstractMapRenderer {
         g.setTransform(transform);
     }
 
-    private void drawLine(final int fromX, final int fromY, final int toX, final int toY, final int z,
-                          @Nonnull final Graphics2D g) {
-        g.drawLine(
-                SwingLocation.displayCoordinateX(fromX, fromY, z),
-                SwingLocation.displayCoordinateY(fromX, fromY, z),
-                SwingLocation.displayCoordinateX(toX, toY, z),
-                SwingLocation.displayCoordinateY(toX, toY, z));
+    private void drawLine(
+            final int fromX, final int fromY, final int toX, final int toY, final int z, @Nonnull final Graphics2D g) {
+        g.drawLine(SwingLocation.displayCoordinateX(fromX, fromY, z), SwingLocation.displayCoordinateY(fromX, fromY, z),
+                   SwingLocation.displayCoordinateX(toX, toY, z), SwingLocation.displayCoordinateY(toX, toY, z));
     }
 
     @Override

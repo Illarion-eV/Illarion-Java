@@ -1,20 +1,17 @@
 /*
- * This file is part of the Illarion Client.
+ * This file is part of the Illarion project.
  *
- * Copyright © 2013 - Illarion e.V.
+ * Copyright © 2014 - Illarion e.V.
  *
- * The Illarion Client is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * The Illarion Client is distributed in the hope that it will be useful,
+ * Illarion is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with the Illarion Client.  If not, see <http://www.gnu.org/licenses/>.
  */
 apply plugin: 'java'
 apply plugin: 'application'
@@ -28,7 +25,7 @@ mainClassName = 'illarion.easynpc.gui.MainFrame'
 
 project.extensions.antlr = [
         grammarpackage: "illarion.easynpc.grammar",
-        antlrSource: 'src/main/antlr4',
+        antlrSource   : 'src/main/antlr4',
         destinationDir: "src/generated/java"
 ]
 
@@ -95,18 +92,18 @@ compileJava {
 jar {
     dependsOn { gitVersion }
     manifest {
-        attributes       \
-              'Main-Class': 'illarion.easynpc.gui.MainFrame',      \
-              'Permissions': 'all-permissions',      \
-              'Codebase': 'illarion.org',      \
-              'Application-Name': 'Illarion easyNPC editor',      \
-              'Application-Library-Allowable-Codebase': 'illarion.org',      \
-              'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),      \
-              'Built-By': System.getProperty('user.name'),       \
-              'Built-JDK': System.getProperty('java.version'),       \
-              'Implementation-Title': 'Illarion easyNPC Editor',       \
-              'Implementation-Vendor': 'Illarion e.V.',      \
-              'Implementation-Version': project.ext.fullVersion
+        attributes        \
+               'Main-Class': 'illarion.easynpc.gui.MainFrame',       \
+               'Permissions': 'all-permissions',       \
+               'Codebase': 'illarion.org',       \
+               'Application-Name': 'Illarion easyNPC editor',       \
+               'Application-Library-Allowable-Codebase': 'illarion.org',       \
+               'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),       \
+               'Built-By': System.getProperty('user.name'),        \
+               'Built-JDK': System.getProperty('java.version'),        \
+               'Implementation-Title': 'Illarion easyNPC Editor',        \
+               'Implementation-Vendor': 'Illarion e.V.',       \
+               'Implementation-Version': project.ext.fullVersion
     }
 }
 
