@@ -26,6 +26,11 @@
 
     <screen id="login" controller="illarion.client.gui.controller.LoginScreenController">
         <layer childLayout="vertical">
+            <effect>
+                <onStartScreen name="fade" start="#00" end="#ff" length="3000" inherit="true"/>
+                <onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true"/>
+            </effect>
+
             <panel height="422px" width="*" backgroundImage="gui/window_background.png"
                    imageMode="repeat:0,0,1024,422"/>
         </layer>
