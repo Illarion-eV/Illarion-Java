@@ -18,14 +18,13 @@
  */
 package illarion.client.net.server;
 
-import illarion.client.world.MapTile;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +35,7 @@ import java.util.List;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
+@Immutable
 public final class TileUpdate {
     /**
      * Default size of the arrays that store the items of this tile update. The size is increased automatically in
@@ -56,49 +56,51 @@ public final class TileUpdate {
     /**
      * Count of item stacks on the tile.
      */
-    private int itemNumber;
+    private final int itemNumber;
 
     /**
      * Location of the tile.
      */
     @Nonnull
-    private final transient Location loc;
-
-    /**
-     * Reference to the map tile that is used here.
-     */
-    @Nullable
-    private transient MapTile mapTile;
+    private final Location tileLocation;
 
     /**
      * ID of this tile.
      */
-    private int tileId;
+    private final int tileId;
 
     /**
-     * The ID of the sound track that is supposed to be played while the user is
-     * standing on this tile.
+     * The ID of the sound track that is supposed to be played while the user is standing on this tile.
      */
-    private int tileMusic;
+    private final int tileMusic;
+
+    /**
+     * The movement cost for this tile.
+     */
+    private final int movementCost;
 
     /**
      * Constructor for this new tile update.
      */
-    public TileUpdate() {
-        loc = new Location();
-    }
+    public TileUpdate(@Nonnull Location loc, @Nonnull NetCommReader reader) throws IOException {
+        tileLocation = new Location(loc);
 
-    /**
-     * Get the coverage of the map tile that was created by this update. This
-     * also clears the reference to the map tile.
-     *
-     * @return the coverage of the map tile
-     */
-    public int getCoverage() {
-        if (mapTile != null) {
-            return mapTile.getCoverage();
+        // read tile attributes
+        tileId = reader.readShort();
+
+        // read the movement cost for this tile
+        movementCost = reader.readUByte();
+
+        // read the sound track of this tile
+        tileMusic = reader.readUShort();
+
+        // read items
+        itemNumber = reader.readUByte();
+
+        for (int i = 0; i < itemNumber; ++i) {
+            itemId.add(new ItemId(reader));
+            itemCount.add(ItemCount.getInstance(reader));
         }
-        return 0;
     }
 
     /**
@@ -137,7 +139,7 @@ public final class TileUpdate {
      */
     @Nonnull
     public Location getLocation() {
-        return loc;
+        return tileLocation;
     }
 
     /**
@@ -164,51 +166,15 @@ public final class TileUpdate {
      * @return true if the tile is static blocked
      */
     public boolean isBlocked() {
-        return (mapTile != null) && mapTile.isObstacle();
+        return movementCost == 255;
     }
 
     /**
-     * Change the location this Tile update points at.
+     * Get the movement cost for a move on this file.
      *
-     * @param newLoc the new location.
+     * @return the movement cost or {@code 255} in case the tile is blocked
      */
-    public void setLocation(@Nonnull final Location newLoc) {
-        loc.set(newLoc);
-        mapTile = null;
-    }
-
-    /**
-     * Set the real map tile that was created by this update, for later usage
-     * along with the mini map update.
-     *
-     * @param newMapTile the map tile that was created by this update
-     */
-    public void setMapTile(@Nullable final MapTile newMapTile) {
-        mapTile = newMapTile;
-    }
-
-    /**
-     * Decode the tile data the receiver got and store it until the update is
-     * executed.
-     *
-     * @param reader the receiver that got the data from the server that needs
-     * to be decoded
-     * @throws IOException thrown in case there was not enough data received to
-     * decode the full message
-     */
-    protected void decode(@Nonnull final NetCommReader reader) throws IOException {
-        // read tile attributes
-        tileId = reader.readShort();
-
-        // read the sound track of this tile
-        tileMusic = reader.readUShort();
-
-        // read items
-        itemNumber = reader.readUByte();
-
-        for (int i = 0; i < itemNumber; ++i) {
-            itemId.add(new ItemId(reader));
-            itemCount.add(ItemCount.getInstance(reader));
-        }
+    public int getMovementCost() {
+        return movementCost;
     }
 }

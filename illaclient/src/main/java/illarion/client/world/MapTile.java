@@ -140,6 +140,11 @@ public final class MapTile implements AlphaChangeListener {
     private int tileId;
 
     /**
+     * The movement cost of this tile.
+     */
+    private int movementCost;
+
+    /**
      * The temporary light instance that is used for the calculations before its applied to the actual light.
      */
     private final Color tmpLight = new Color(Color.WHITE);
@@ -742,10 +747,10 @@ public final class MapTile implements AlphaChangeListener {
             return Integer.MAX_VALUE;
         }
         final Tile localTile = tile;
-        if (localTile == null) {
+        if (localTile == null || movementCost == -1) {
             return Integer.MAX_VALUE;
         }
-        return localTile.getTemplate().getTileInfo().getMovementCost();
+        return movementCost;
     }
 
     /**
@@ -815,31 +820,7 @@ public final class MapTile implements AlphaChangeListener {
             LOGGER.warn("Checking a removed tile if its a obstacle.");
             return true;
         }
-        final Tile localTile = tile;
-        if (localTile == null) {
-            return true;
-        }
-
-        boolean obstacle = localTile.getTemplate().getTileInfo().getMovementCost() == 0;
-
-        // check items
-        itemsLock.readLock().lock();
-        try {
-            if (items != null) {
-                for (final Item item : items) {
-                    if (item.getTemplate().getItemInfo().isObstacle()) {
-                        return true;
-                    }
-                    if (item.getTemplate().getItemInfo().isJesus()) {
-                        obstacle = false;
-                    }
-                }
-            }
-        } finally {
-            itemsLock.readLock().unlock();
-        }
-
-        return obstacle;
+        return getMovementCost() == Integer.MAX_VALUE;
     }
 
     /**
@@ -906,6 +887,11 @@ public final class MapTile implements AlphaChangeListener {
         // update tile
         setTileId(update.getTileId());
 
+        if (update.isBlocked()) {
+            movementCost = -1;
+        } else {
+            movementCost = update.getMovementCost();
+        }
         musicId = update.getTileMusic();
 
         // update items
