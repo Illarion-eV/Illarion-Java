@@ -35,6 +35,8 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * The player movement class takes and handles all move requests and orders that are needed to move the player
@@ -202,6 +204,8 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
     private final boolean[] activeDirections = new boolean[8];
     private boolean mouseFollowAutoRun;
 
+    private final ReadWriteLock autoPathLock = new ReentrantReadWriteLock();
+
     /**
      * Default constructor.
      *
@@ -330,12 +334,17 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
 
     @Override
     public void handlePath(@Nonnull final Path path) {
-        Usable action = usableAction;
-        cancelAutoWalk();
-        usableAction = action;
-        autoPath = path;
-        autoDestination = autoPath.getDestination();
-        autoPath.nextStep();
+        autoPathLock.writeLock().lock();
+        try {
+            Usable action = usableAction;
+            cancelAutoWalk();
+            usableAction = action;
+            autoPath = path;
+            autoDestination = path.getDestination();
+        } finally {
+            autoPathLock.writeLock().unlock();
+        }
+        path.nextStep();
         autoStep();
     }
 
@@ -343,16 +352,29 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * Perform the next step on a automated walking path.
      */
     private void autoStep() {
-        if (autoPath == null) {
+        final Path localAutoPath;
+        final Usable localUsableAction;
+        final Location localAutoDestination;
+
+        autoPathLock.readLock().lock();
+        try {
+            localAutoPath = autoPath;
+            localUsableAction = usableAction;
+            localAutoDestination = autoDestination;
+        } finally {
+            autoPathLock.readLock().unlock();
+        }
+
+        if (localAutoPath == null) {
             return;
         }
 
         // get next step
-        final PathNode node = autoPath.nextStep();
+        final PathNode node = localAutoPath.nextStep();
         // reached target
         if (node == null) {
-            if (usableAction != null && usableAction.isInUseRange()) {
-                usableAction.use();
+            if (localUsableAction != null && localUsableAction.isInUseRange()) {
+                localUsableAction.use();
             }
             cancelAutoWalk();
             return;
@@ -365,11 +387,11 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
         // check whether path is clear
         if ((tile == null) || tile.isBlocked() || (loc.getDistance(stepDestination) > 1)) {
             // recalculate route if blocked or char is off route
-            if (autoDestination != null) {
-                if (usableAction != null) {
-                    walkToAndUse(autoDestination, usableAction);
+            if (localAutoDestination != null) {
+                if (localUsableAction != null) {
+                    walkToAndUse(localAutoDestination, localUsableAction);
                 } else {
-                    walkTo(autoDestination);
+                    walkTo(localAutoDestination);
                 }
             }
             return;
@@ -384,9 +406,14 @@ public final class PlayerMovement implements AnimatedMove, PathReceiver {
      * Stop the automated walking.
      */
     public void cancelAutoWalk() {
-        autoPath = null;
-        autoDestination = null;
-        usableAction = null;
+        autoPathLock.writeLock().lock();
+        try {
+            autoPath = null;
+            autoDestination = null;
+            usableAction = null;
+        } finally {
+            autoPathLock.writeLock().unlock();
+        }
     }
 
     /**
