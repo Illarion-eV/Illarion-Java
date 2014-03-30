@@ -457,13 +457,13 @@ public class Map implements Iterable<MapTile> {
      */
     public void pasteTiles(final int startX, final int startY, @Nonnull final MapSelection mapSelection) {
         final GroupAction action = new GroupAction();
-        for (final MapPosition position : mapSelection.getTiles().keySet()) {
+        for (final MapPosition position : mapSelection.getSelectedPositions()) {
             final int newX = startX + (position.getX() - mapSelection.getOffsetX());
             final int newY = startY + (position.getY() - mapSelection.getOffsetY());
 
             if (contains(newX, newY)) {
                 final MapTile oldTile = getTileAt(newX, newY);
-                final MapTile newTile = MapTile.MapTileFactory.copy(mapSelection.getTiles().get(position));
+                final MapTile newTile = MapTile.MapTileFactory.copy(mapSelection.getMapTileAt(position));
                 action.addAction(new CopyPasteAction(newX, newY, oldTile, newTile, this));
                 setTileAt(newX, newY, newTile);
             }

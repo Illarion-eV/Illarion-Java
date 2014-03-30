@@ -1,6 +1,8 @@
 package illarion.mapedit.data;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -52,7 +54,11 @@ public class MapSelection {
     }
 
     @Nonnull
-    public HashMap<MapPosition, MapTile> getTiles() {
-        return selectedTiles;
+    public Collection<MapPosition> getSelectedPositions() {
+        return Collections.unmodifiableCollection(selectedTiles.keySet());
+    }
+
+    public MapTile getMapTileAt(MapPosition position) {
+        return selectedTiles.get(position);
     }
 }
