@@ -30,15 +30,19 @@ import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author Fredrik K
  */
 public class DisconnectHandler implements ScreenController, UpdatableHandler, EventTopicSubscriber<ButtonClickedEvent> {
+    @Nullable
     private Element popup;
     private boolean isVisible;
     private boolean isActive;
+    @Nullable
     private Nifty parentNifty;
+    @Nullable
     private Screen parentScreen;
 
     public DisconnectHandler() {
@@ -62,14 +66,32 @@ public class DisconnectHandler implements ScreenController, UpdatableHandler, Ev
 
     @Override
     public void update(GameContainer container, int delta) {
-        if (isVisible && !isActive) {
-            parentNifty.showPopup(parentScreen, popup.getId(), null);
-            parentNifty
-                    .subscribe(parentScreen, popup.findElementById("#closeOkButton").getId(), ButtonClickedEvent.class,
-                               this);
+        if (isVisible && !isActive && parentNifty != null && parentScreen != null && popup != null) {
+            String id = popup.getId();
+            if (id == null) {
+                return;
+            }
+            String closeButtonId = getCloseButtonId();
+            if (closeButtonId == null) {
+                return;
+            }
+            parentNifty.showPopup(parentScreen, id, null);
+            parentNifty.subscribe(parentScreen, closeButtonId, ButtonClickedEvent.class, this);
             isActive = true;
             isVisible = false;
         }
+    }
+
+    @Nullable
+    private String getCloseButtonId() {
+        if (popup == null) {
+            return null;
+        }
+        Element button = popup.findElementById("#closeOkButton");
+        if (button == null) {
+            return null;
+        }
+        return button.getId();
     }
 
     @EventSubscriber
@@ -81,7 +103,7 @@ public class DisconnectHandler implements ScreenController, UpdatableHandler, Ev
 
     @EventSubscriber
     public void onConnectionLostEventReceived(final ConnectionLostEvent event) {
-        if (isActive) {
+        if (isActive || popup == null) {
             return;
         }
         isVisible = true;
