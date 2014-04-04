@@ -15,8 +15,8 @@
  */
 package illarion.easynpc;
 
+import illarion.common.util.CopyrightHeader;
 import illarion.easynpc.gui.Editor;
-import illarion.easynpc.writer.EasyNpcWriter;
 
 import javax.annotation.Nonnull;
 import java.io.BufferedWriter;
@@ -43,6 +43,12 @@ public final class EasyNpcScript {
      */
     @Nonnull
     public static final Charset DEFAULT_CHARSET = Charset.forName("ISO-8859-1");
+
+    /**
+     * The copyright header of the easyNPC writer.
+     */
+    @Nonnull
+    public static final CopyrightHeader COPYRIGHT_HEADER = new CopyrightHeader(80, null, null, "-- ", null);
 
     /**
      * The representation of each line in the easyNPC script. It stores the line number and the text of the lines.
@@ -282,9 +288,8 @@ public final class EasyNpcScript {
         boolean currentlyCommentBlock = false;
         boolean currentlyEmptyBlock = false;
         int lineNumber = 0;
-        String line;
         for (final String orgLine : lines) {
-            line = orgLine.trim();
+            final String line = orgLine.trim();
             lineNumber++;
             if (line.isEmpty()) {
                 if (!currentlyEmptyBlock) {
@@ -296,7 +301,7 @@ public final class EasyNpcScript {
                 if (currentlyCommentBlock) {
                     final EasyNpcScript.Line lastLine = entries.remove(entries.size() - 1);
                     String newLine = lastLine.getLine() + "\n" + line;
-                    if (EasyNpcWriter.COPYRIGHT_HEADER.isLicenseText(newLine)) {
+                    if (COPYRIGHT_HEADER.isLicenseText(newLine)) {
                         currentlyCommentBlock = false;
                         currentlyEmptyBlock = false;
                         continue;
@@ -313,6 +318,9 @@ public final class EasyNpcScript {
                 currentlyCommentBlock = false;
                 currentlyEmptyBlock = false;
             }
+        }
+        if (!currentlyEmptyBlock) {
+            entries.add(new EasyNpcScript.Line(lineNumber + 1, ""));
         }
     }
 }

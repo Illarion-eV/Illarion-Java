@@ -31,12 +31,6 @@ import java.io.Writer;
  */
 public final class ConditionRank implements TalkCondition {
     /**
-     * The code needed for this condition in the easyNPC script.
-     */
-    @SuppressWarnings("nls")
-    private static final String EASY_CODE = "rank %1$s %2$s";
-
-    /**
      * The LUA code needed for this condition to work.
      */
     @SuppressWarnings("nls")
@@ -76,14 +70,6 @@ public final class ConditionRank implements TalkCondition {
     @Override
     public String getLuaModule() {
         return LUA_MODULE;
-    }
-
-    /**
-     * Write the easyNPC version of this rank condition.
-     */
-    @Override
-    public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
-        target.write(String.format(EASY_CODE, operator.getLuaComp(), value.getEasyNPC()));
     }
 
     /**

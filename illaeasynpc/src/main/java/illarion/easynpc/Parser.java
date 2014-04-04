@@ -181,8 +181,6 @@ public final class Parser implements DocuEntry {
 
             final ScriptWriter writer = new ScriptWriter();
             writer.setSource(parsedNPC);
-
-            writer.setTargetLanguage(ScriptWriter.ScriptWriterTarget.LUA);
             final Path luaTargetFile = file.getParent().resolveSibling(parsedNPC.getLuaFilename());
             try (Writer outputWriter = Files.newBufferedWriter(luaTargetFile, EasyNpcScript.DEFAULT_CHARSET)) {
                 writer.setWritingTarget(outputWriter);

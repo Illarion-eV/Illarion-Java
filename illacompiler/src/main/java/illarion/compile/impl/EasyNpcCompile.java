@@ -57,7 +57,6 @@ public class EasyNpcCompile extends AbstractCompile {
 
             final ScriptWriter writer = new ScriptWriter();
             writer.setSource(npc);
-            writer.setTargetLanguage(ScriptWriter.ScriptWriterTarget.LUA);
             writer.setGenerated(true);
             try (Writer write = Files.newBufferedWriter(targetDir.resolve(npc.getLuaFilename()), DEFAULT_CHARSET)) {
                 writer.setWritingTarget(write);
@@ -88,7 +87,6 @@ public class EasyNpcCompile extends AbstractCompile {
             }
             final ScriptWriter writer = new ScriptWriter();
             writer.setSource(npc);
-            writer.setTargetLanguage(ScriptWriter.ScriptWriterTarget.LUA);
             writer.setGenerated(true);
             Writer write = new OutputStreamWriter(out, DEFAULT_CHARSET);
             writer.setWritingTarget(write);

@@ -15,7 +15,6 @@
  */
 package illarion.easynpc.parsed;
 
-import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
@@ -82,37 +81,6 @@ public final class ParsedTradeText implements ParsedData {
         type = textType;
         german = germanText;
         english = englishText;
-    }
-
-    @Override
-    public boolean effectsEasyNpcStage(@Nonnull final EasyNpcWriter.WritingStage stage) {
-        return stage == EasyNpcWriter.WritingStage.trading;
-    }
-
-    @Override
-    public void writeEasyNpc(@Nonnull final Writer target, @Nonnull final EasyNpcWriter.WritingStage stage)
-            throws IOException {
-        switch (type) {
-            case NoMoney:
-                target.write("tradeNotEnoughMoneyMsg");
-                break;
-            case TradingCanceled:
-                target.write("tradeFinishedMsg");
-                break;
-            case TradingCanceledWithoutTrade:
-                target.write("tradeFinishedWithoutTradingMsg");
-                break;
-            case WrongItem:
-                target.write("tradeWrongItemMsg");
-                break;
-        }
-
-        target.write(" \"");
-        target.write(german);
-        target.write("\", \"");
-        target.write(english);
-        target.write('"');
-        target.write(EasyNpcWriter.NL);
     }
 
     @Override

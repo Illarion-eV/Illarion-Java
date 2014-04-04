@@ -17,7 +17,6 @@ package illarion.easynpc.parsed;
 
 import illarion.easynpc.parsed.talk.TalkCondition;
 import illarion.easynpc.parsed.talk.TalkConsequence;
-import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 import javolution.util.FastTable;
@@ -35,11 +34,6 @@ import java.util.List;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ParsedTalk implements ParsedData {
-    /**
-     * The string that is used as separator between two conditions or between two consequences.
-     */
-    @SuppressWarnings("nls")
-    private static final String SEPARATOR = ", ";
 
     /**
      * The list of conditions that are used in this line.
@@ -88,14 +82,6 @@ public final class ParsedTalk implements ParsedData {
     }
 
     /**
-     * Check the stages effected by this talking line.
-     */
-    @Override
-    public boolean effectsEasyNpcStage(@Nonnull final EasyNpcWriter.WritingStage stage) {
-        return stage == EasyNpcWriter.WritingStage.talking;
-    }
-
-    /**
      * Check if the LUA code is effected at the current stage by this parsed
      * talking lines.
      */
@@ -112,17 +98,15 @@ public final class ParsedTalk implements ParsedData {
     public String[] getRequiredModules() {
         final Collection<String> moduleList = new FastTable<>();
 
-        final int conditionCount = conditions.size();
-        for (int i = 0; i < conditionCount; ++i) {
-            final String module = conditions.get(i).getLuaModule();
+        for (TalkCondition condition : conditions) {
+            final String module = condition.getLuaModule();
             if (module != null) {
                 moduleList.add(module);
             }
         }
 
-        final int consequenceCount = consequences.size();
-        for (int i = 0; i < consequenceCount; ++i) {
-            final String module = consequences.get(i).getLuaModule();
+        for (TalkConsequence consequence : consequences) {
+            final String module = consequence.getLuaModule();
             if (module != null) {
                 moduleList.add(module);
             }
@@ -134,37 +118,6 @@ public final class ParsedTalk implements ParsedData {
         String[] result = new String[moduleList.size()];
         result = moduleList.toArray(result);
         return result;
-    }
-
-    /**
-     * Write this talking entry to a easyNPC script.
-     */
-    @SuppressWarnings("nls")
-    @Override
-    public void writeEasyNpc(
-            @Nonnull final Writer target, @Nonnull final EasyNpcWriter.WritingStage stage) throws IOException {
-
-        if (stage == EasyNpcWriter.WritingStage.talking) {
-            final int conditionCount = conditions.size();
-            for (int i = 0; i < conditionCount; ++i) {
-                if (i > 0) {
-                    target.write(SEPARATOR);
-                }
-                conditions.get(i).writeEasyNpc(target);
-            }
-
-            target.write(" -> ");
-
-            final int consequenceCount = consequences.size();
-            for (int i = 0; i < consequenceCount; ++i) {
-                if (i > 0) {
-                    target.write(SEPARATOR);
-                }
-                consequences.get(i).writeEasyNpc(target);
-            }
-
-            target.write(EasyNpcWriter.NL);
-        }
     }
 
     /**
@@ -180,13 +133,11 @@ public final class ParsedTalk implements ParsedData {
             target.write("local talkEntry = npc.base.talk.talkNPCEntry();"); //$NON-NLS-1$
             target.write(LuaWriter.NL);
 
-            final int conditionCount = conditions.size();
-            for (int i = 0; i < conditionCount; ++i) {
-                conditions.get(i).writeLua(target);
+            for (TalkCondition condition : conditions) {
+                condition.writeLua(target);
             }
-            final int consequenceCount = consequences.size();
-            for (int i = 0; i < consequenceCount; ++i) {
-                consequences.get(i).writeLua(target);
+            for (TalkConsequence consequence : consequences) {
+                consequence.writeLua(target);
             }
 
             target.write("talkingNPC:addTalkingEntry(talkEntry);"); //$NON-NLS-1$

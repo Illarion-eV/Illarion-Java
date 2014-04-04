@@ -15,7 +15,6 @@
  */
 package illarion.easynpc.parsed;
 
-import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
@@ -50,14 +49,6 @@ public final class ParsedWalkingRadius implements ParsedData {
         // nothing to add to the query.
     }
 
-    /**
-     * Check the stage effected by this walking radius value.
-     */
-    @Override
-    public boolean effectsEasyNpcStage(@Nonnull final EasyNpcWriter.WritingStage stage) {
-        return stage == EasyNpcWriter.WritingStage.header;
-    }
-
     @Override
     public boolean effectsLuaWritingStage(@Nonnull final LuaWriter.WritingStage stage) {
         return false;
@@ -67,20 +58,6 @@ public final class ParsedWalkingRadius implements ParsedData {
     @Override
     public String[] getRequiredModules() {
         return null;
-    }
-
-    /**
-     * Write the walking radius to the easyNPC script.
-     */
-    @SuppressWarnings("nls")
-    @Override
-    public void writeEasyNpc(@Nonnull final Writer target, @Nonnull final EasyNpcWriter.WritingStage stage)
-            throws IOException {
-        if (stage == EasyNpcWriter.WritingStage.header) {
-            target.write("radius = ");
-            target.write(Integer.toString(range, 0));
-            target.write(EasyNpcWriter.NL);
-        }
     }
 
     @Override

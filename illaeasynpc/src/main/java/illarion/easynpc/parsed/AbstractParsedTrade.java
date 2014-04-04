@@ -15,7 +15,6 @@
  */
 package illarion.easynpc.parsed;
 
-import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 
 import javax.annotation.Nonnull;
@@ -72,11 +71,6 @@ public abstract class AbstractParsedTrade implements ParsedData {
      */
     protected AbstractParsedTrade.TradeMode getMode() {
         return mode;
-    }
-
-    @Override
-    public boolean effectsEasyNpcStage(@Nonnull final EasyNpcWriter.WritingStage stage) {
-        return stage == EasyNpcWriter.WritingStage.trading;
     }
 
     @Override

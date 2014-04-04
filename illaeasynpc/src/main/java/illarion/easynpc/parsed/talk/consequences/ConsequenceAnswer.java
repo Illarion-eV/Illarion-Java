@@ -55,16 +55,6 @@ public final class ConsequenceAnswer implements TalkConsequence {
     }
 
     /**
-     * Write this consequence to its easyNPC shape.
-     */
-    @Override
-    public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
-        target.write('"');
-        target.write(answer);
-        target.write('"');
-    }
-
-    /**
      * Write the LUA code for this answer consequence to a LUA script.
      */
     @Override

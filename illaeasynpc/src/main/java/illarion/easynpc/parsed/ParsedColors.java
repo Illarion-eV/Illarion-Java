@@ -16,7 +16,6 @@
 package illarion.easynpc.parsed;
 
 import illarion.easynpc.data.Color;
-import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
@@ -86,14 +85,6 @@ public final class ParsedColors implements ParsedData {
     }
 
     /**
-     * Check if the current script writing stage is effected by this color parser.
-     */
-    @Override
-    public boolean effectsEasyNpcStage(@Nonnull final EasyNpcWriter.WritingStage stage) {
-        return stage == EasyNpcWriter.WritingStage.color;
-    }
-
-    /**
      * The color values are not written into the LUA script.
      *
      * @return {@code false} at all times
@@ -112,34 +103,6 @@ public final class ParsedColors implements ParsedData {
     @Override
     public String[] getRequiredModules() {
         return null;
-    }
-
-    /**
-     * Write the parsed data to the easyNPC script.
-     */
-    @SuppressWarnings("nls")
-    @Override
-    public void writeEasyNpc(@Nonnull final Writer target, @Nonnull final EasyNpcWriter.WritingStage stage)
-            throws IOException {
-        if (!effectsEasyNpcStage(stage)) {
-            return;
-        }
-
-        switch (colorTarget) {
-            case Skin:
-                target.write("colorSkin = ");
-                break;
-            case Hair:
-                target.write("colorHair = ");
-                break;
-        }
-
-        target.write(Integer.toString(color.getRed()));
-        target.write(", ");
-        target.write(Integer.toString(color.getGreen()));
-        target.write(", ");
-        target.write(Integer.toString(color.getBlue()));
-        target.write(EasyNpcWriter.NL);
     }
 
     /**

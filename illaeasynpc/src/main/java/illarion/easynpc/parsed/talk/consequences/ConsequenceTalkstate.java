@@ -65,14 +65,6 @@ public final class ConsequenceTalkstate implements TalkConsequence {
     }
 
     /**
-     * Write this change basic NPC state condition into its easyNPC shape.
-     */
-    @Override
-    public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
-        target.write(mode.name());
-    }
-
-    /**
      * Write the LUA code of this consequence.
      */
     @Override

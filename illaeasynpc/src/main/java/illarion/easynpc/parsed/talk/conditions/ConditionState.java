@@ -31,12 +31,6 @@ import java.io.Writer;
  */
 public final class ConditionState implements TalkCondition {
     /**
-     * The code needed for this condition in the easyNPC script.
-     */
-    @SuppressWarnings("nls")
-    private static final String EASY_CODE = "state %1$s %2$s";
-
-    /**
      * The LUA code needed for this consequence to work.
      */
     @SuppressWarnings("nls")
@@ -76,14 +70,6 @@ public final class ConditionState implements TalkCondition {
     @Override
     public String getLuaModule() {
         return LUA_MODULE;
-    }
-
-    /**
-     * Write this NPC state condition into its easyNPC shape.
-     */
-    @Override
-    public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
-        target.write(String.format(EASY_CODE, operator.getLuaComp(), value.getEasyNPC()));
     }
 
     /**

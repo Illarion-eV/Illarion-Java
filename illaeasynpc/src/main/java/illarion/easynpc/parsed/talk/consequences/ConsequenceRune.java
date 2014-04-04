@@ -30,12 +30,6 @@ import java.io.Writer;
  */
 public final class ConsequenceRune implements TalkConsequence {
     /**
-     * The easyNPC code needed for this consequence.
-     */
-    @SuppressWarnings("nls")
-    private static final String EASY_CODE = "rune(%1$s, %2$s)";
-
-    /**
      * The LUA code needed to be included for a rune consequence.
      */
     @SuppressWarnings("nls")
@@ -75,14 +69,6 @@ public final class ConsequenceRune implements TalkConsequence {
     @Override
     public String getLuaModule() {
         return LUA_MODULE;
-    }
-
-    /**
-     * Write this rune consequence into its easyNPC shape.
-     */
-    @Override
-    public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
-        target.write(String.format(EASY_CODE, Integer.toString(magicType.getMagicTypeId()), Integer.toString(value)));
     }
 
     /**

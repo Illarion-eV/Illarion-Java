@@ -31,12 +31,6 @@ import java.io.Writer;
  */
 public final class ConditionQueststatus implements TalkCondition {
     /**
-     * The code needed for this condition in the easyNPC script.
-     */
-    @SuppressWarnings("nls")
-    private static final String EASY_CODE = "queststatus(%1$s) %2$s %3$s";
-
-    /**
      * The LUA code needed for this consequence to work.
      */
     @SuppressWarnings("nls")
@@ -83,14 +77,6 @@ public final class ConditionQueststatus implements TalkCondition {
     @Override
     public String getLuaModule() {
         return LUA_MODULE;
-    }
-
-    /**
-     * Write this quest status condition into its easyNPC state.
-     */
-    @Override
-    public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
-        target.write(String.format(EASY_CODE, Integer.toString(id), operator.getLuaComp(), value.getEasyNPC()));
     }
 
     /**

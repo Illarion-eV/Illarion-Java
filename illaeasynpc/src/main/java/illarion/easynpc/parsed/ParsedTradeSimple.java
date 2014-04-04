@@ -15,14 +15,12 @@
  */
 package illarion.easynpc.parsed;
 
-import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -42,38 +40,6 @@ public class ParsedTradeSimple extends AbstractParsedTrade {
         itemIds = new int[tradeItemIds.size()];
         for (int i = 0; i < itemIds.length; i++) {
             itemIds[i] = tradeItemIds.get(i);
-        }
-    }
-
-    public ParsedTradeSimple(final ParsedTradeSimple.TradeMode tradeMode, @Nonnull final int... tradeItemIds) {
-        super(tradeMode);
-        itemIds = Arrays.copyOf(tradeItemIds, tradeItemIds.length);
-    }
-
-    @Override
-    public void writeEasyNpc(@Nonnull final Writer target, @Nonnull final EasyNpcWriter.WritingStage stage)
-            throws IOException {
-        if (stage == EasyNpcWriter.WritingStage.trading) {
-            switch (getMode()) {
-                case selling:
-                    target.write("sellItems = ");
-                    break;
-                case buyingPrimary:
-                    target.write("buyPrimaryItems = ");
-                    break;
-                case buyingSecondary:
-                    target.write("buySecondaryItems = ");
-                    break;
-            }
-
-            if (itemIds.length > 0) {
-                target.write(Integer.toString(itemIds[0]));
-                for (int i = 1; i < itemIds.length; i++) {
-                    target.write(", ");
-                    target.write(Integer.toString(itemIds[i]));
-                }
-            }
-            target.write(EasyNpcWriter.NL);
         }
     }
 

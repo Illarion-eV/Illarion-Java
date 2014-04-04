@@ -30,12 +30,6 @@ import java.io.Writer;
  */
 public final class ConditionTrigger implements TalkCondition {
     /**
-     * The code needed for this condition in the easyNPC script.
-     */
-    @SuppressWarnings("nls")
-    private static final String EASY_CODE = "\"%1$s\"";
-
-    /**
      * The LUA code needed for this consequence to work.
      */
     @SuppressWarnings("nls")
@@ -62,14 +56,6 @@ public final class ConditionTrigger implements TalkCondition {
     @Override
     public String getLuaModule() {
         return null;
-    }
-
-    /**
-     * Write this trigger condition into its easyNPC shape.
-     */
-    @Override
-    public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
-        target.write(String.format(EASY_CODE, triggerString));
     }
 
     /**

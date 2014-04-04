@@ -40,14 +40,6 @@ public interface TalkCondition {
     String getLuaModule();
 
     /**
-     * Write the data of this talking condition to a easyNPC script.
-     *
-     * @param target the writer that takes the data
-     * @throws IOException thrown in case the writing operations fail.
-     */
-    void writeEasyNpc(Writer target) throws IOException;
-
-    /**
      * Write the data of this talking condition to a LUA script.
      *
      * @param target the writer that takes the data

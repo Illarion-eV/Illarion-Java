@@ -16,7 +16,6 @@
 package illarion.easynpc.parsed;
 
 import illarion.common.types.Location;
-import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
@@ -42,26 +41,6 @@ public class ParsedGuardWarpTarget implements ParsedData {
      */
     public ParsedGuardWarpTarget(@Nonnull Location target) {
         this.target = target;
-    }
-
-    @Override
-    public boolean effectsEasyNpcStage(@Nonnull EasyNpcWriter.WritingStage stage) {
-        return stage == EasyNpcWriter.WritingStage.guarding;
-    }
-
-    @Override
-    public void writeEasyNpc(@Nonnull Writer target, @Nonnull EasyNpcWriter.WritingStage stage) throws IOException {
-        if (stage != EasyNpcWriter.WritingStage.guarding) {
-            throw new IllegalArgumentException("This function did not request a call for a stage but guarding.");
-        }
-
-        target.write("guardWarpTarget = ");
-        target.write(Integer.toString(this.target.getScX()));
-        target.write(", ");
-        target.write(Integer.toString(this.target.getScY()));
-        target.write(", ");
-        target.write(Integer.toString(this.target.getScZ()));
-        target.write(EasyNpcWriter.NL);
     }
 
     @Override

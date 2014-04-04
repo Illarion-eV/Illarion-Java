@@ -28,7 +28,6 @@ import java.io.Writer;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ConsequenceTrade implements TalkConsequence {
-
     /**
      * The LUA code needed to be included for a introduce consequence.
      */
@@ -48,14 +47,6 @@ public final class ConsequenceTrade implements TalkConsequence {
     @Override
     public String getLuaModule() {
         return LUA_MODULE;
-    }
-
-    /**
-     * Write this change basic NPC state condition into its easyNPC shape.
-     */
-    @Override
-    public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
-        target.write("trade"); //$NON-NLS-1$
     }
 
     /**

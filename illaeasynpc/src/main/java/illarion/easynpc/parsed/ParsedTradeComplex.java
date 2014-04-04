@@ -16,7 +16,6 @@
 package illarion.easynpc.parsed;
 
 import illarion.easynpc.parsed.shared.ParsedItemData;
-import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
@@ -59,45 +58,6 @@ public class ParsedTradeComplex extends AbstractParsedTrade {
         stackSize = tradeStackSize;
         quality = itemQuality;
         data = itemData;
-    }
-
-    @Override
-    public void writeEasyNpc(@Nonnull final Writer target, @Nonnull final EasyNpcWriter.WritingStage stage)
-            throws IOException {
-        if (stage == EasyNpcWriter.WritingStage.trading) {
-            switch (getMode()) {
-                case selling:
-                    target.write("sellItem = ");
-                    break;
-                case buyingPrimary:
-                    target.write("buyPrimaryItem = ");
-                    break;
-                case buyingSecondary:
-                    target.write("buySecondaryItem = ");
-                    break;
-            }
-
-            target.write(String.format("id(%1$d)", itemId));
-            if (textDe != null) {
-                target.write(String.format(", de(\"%1$s\")", textDe));
-            }
-            if (textEn != null) {
-                target.write(String.format(", en(\"%1$s\")", textEn));
-            }
-            if (price > 0) {
-                target.write(String.format(", price(%1$d)", price));
-            }
-            if (stackSize > 0) {
-                target.write(String.format(", stack(%1$d)", stackSize));
-            }
-            if (quality > 0) {
-                target.write(String.format(", quality(%1$d)", quality));
-            }
-            if (data.hasValues()) {
-                target.write(String.format(", data(%1$s)", data.getEasyNPC()));
-            }
-            target.write(EasyNpcWriter.NL);
-        }
     }
 
     @Override

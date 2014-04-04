@@ -51,14 +51,6 @@ public final class ConsequenceGemcraft implements TalkConsequence {
     }
 
     /**
-     * Write this change basic NPC state condition into its easyNPC shape.
-     */
-    @Override
-    public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
-        target.write("gemcraft"); //$NON-NLS-1$
-    }
-
-    /**
      * Write the LUA code of this consequence.
      */
     @Override

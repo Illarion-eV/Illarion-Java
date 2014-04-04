@@ -15,7 +15,6 @@
  */
 package illarion.easynpc.parsed;
 
-import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
@@ -66,14 +65,6 @@ public final class ParsedCycleText implements ParsedData {
     }
 
     /**
-     * Check the stage that is effected by this cycle texts entry.
-     */
-    @Override
-    public boolean effectsEasyNpcStage(@Nonnull final EasyNpcWriter.WritingStage stage) {
-        return stage == EasyNpcWriter.WritingStage.cycleTexts;
-    }
-
-    /**
      * Check if the selected stage is effected by this cycle text.
      */
     @Override
@@ -88,23 +79,6 @@ public final class ParsedCycleText implements ParsedData {
     @Override
     public String[] getRequiredModules() {
         return LUA_MODULES;
-    }
-
-    /**
-     * Write the cycle texts out to the easyNPC script.
-     */
-    @SuppressWarnings("nls")
-    @Override
-    public void writeEasyNpc(
-            @Nonnull final Writer target, @Nonnull final EasyNpcWriter.WritingStage stage) throws IOException {
-        if (stage == EasyNpcWriter.WritingStage.cycleTexts) {
-            target.write("cycletext \"");
-            target.write(german);
-            target.write("\", \"");
-            target.write(english);
-            target.write("\"");
-            target.write(EasyNpcWriter.NL);
-        }
     }
 
     /**

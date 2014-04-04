@@ -18,7 +18,6 @@ package illarion.easynpc;
 import illarion.common.types.Location;
 import illarion.easynpc.data.*;
 import illarion.easynpc.parsed.ParsedData;
-import illarion.easynpc.writer.EasyNpcWritable;
 import illarion.easynpc.writer.LuaWritable;
 import javolution.util.FastTable;
 
@@ -369,20 +368,6 @@ public final class ParsedNpc {
             return CharacterLanguage.common;
         }
         return defaultLanguage;
-    }
-
-    /**
-     * Get the easyNPC data sources for the writer.
-     *
-     * @param index the index of the data
-     * @return the data at the selected index
-     */
-    @SuppressWarnings("nls")
-    public EasyNpcWritable getEasyNpcData(final int index) {
-        if (npcData == null) {
-            throw new IndexOutOfBoundsException("No values stored.");
-        }
-        return npcData.get(index);
     }
 
     /**

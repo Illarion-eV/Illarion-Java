@@ -41,14 +41,6 @@ public interface TalkConsequence {
     String getLuaModule();
 
     /**
-     * Write the data of this talking consequence to a easyNPC script.
-     *
-     * @param target the writer that takes the data
-     * @throws IOException thrown in case the writing operations fail.
-     */
-    void writeEasyNpc(@Nonnull Writer target) throws IOException;
-
-    /**
      * Write the data of this talking consequence to a LUA script.
      *
      * @param target the writer that takes the data

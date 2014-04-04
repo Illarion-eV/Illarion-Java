@@ -65,14 +65,6 @@ public final class ConditionLanguage implements TalkCondition {
     }
 
     /**
-     * Write this language condition into its easyNPC change.
-     */
-    @Override
-    public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
-        target.write(lang.name());
-    }
-
-    /**
      * Write the LUA code needed for this language condition.
      */
     @Override

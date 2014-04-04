@@ -15,7 +15,6 @@
  */
 package illarion.easynpc.parsed;
 
-import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
@@ -82,15 +81,6 @@ public final class ParsedHair implements ParsedData {
     }
 
     /**
-     * Check if the selected stage is effected by the data stored in this. This is only <code>true</code> for the
-     * "hair" stage.
-     */
-    @Override
-    public boolean effectsEasyNpcStage(@Nonnull final EasyNpcWriter.WritingStage stage) {
-        return stage == EasyNpcWriter.WritingStage.hair;
-    }
-
-    /**
      * Hair information are not written into the LUA script. No stage is effected.
      */
     @Override
@@ -105,30 +95,6 @@ public final class ParsedHair implements ParsedData {
     @Override
     public String[] getRequiredModules() {
         return null;
-    }
-
-    /**
-     * Write the data stored in this line to the easyNPC script.
-     */
-    @SuppressWarnings("nls")
-    @Override
-    public void writeEasyNpc(
-            @Nonnull final Writer target, @Nonnull final EasyNpcWriter.WritingStage stage) throws IOException {
-        if (!effectsEasyNpcStage(stage)) {
-            return;
-        }
-
-        switch (hairType) {
-            case Beard:
-                target.write("beardID = ");
-                break;
-            case Hair:
-                target.write("hairID = ");
-                break;
-        }
-
-        target.write(Integer.toString(hairId));
-        target.write(EasyNpcWriter.NL);
     }
 
     /**

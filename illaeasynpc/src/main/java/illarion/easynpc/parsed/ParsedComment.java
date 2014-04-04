@@ -15,13 +15,11 @@
  */
 package illarion.easynpc.parsed;
 
-import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.IOException;
 import java.io.Writer;
 import java.util.regex.Pattern;
 
@@ -60,14 +58,6 @@ public final class ParsedComment implements ParsedData {
     }
 
     /**
-     * Check the stages effected by this comment entry.
-     */
-    @Override
-    public boolean effectsEasyNpcStage(@Nonnull final EasyNpcWriter.WritingStage stage) {
-        return stage == EasyNpcWriter.WritingStage.talking;
-    }
-
-    /**
      * The comments are never written into the LUA script. So no stage is
      * effected.
      *
@@ -88,21 +78,6 @@ public final class ParsedComment implements ParsedData {
     @Override
     public String[] getRequiredModules() {
         return null;
-    }
-
-    /**
-     * Write the comment into the easyNPC script.
-     */
-    @SuppressWarnings("nls")
-    @Override
-    public void writeEasyNpc(
-            @Nonnull final Writer target, @Nonnull final EasyNpcWriter.WritingStage stage) throws IOException {
-        if (stage == EasyNpcWriter.WritingStage.talking) {
-            final String formattedComment = replacePattern.matcher(comment).replaceAll("-- $1");
-            target.write(EasyNpcWriter.NL);
-            target.write(formattedComment);
-            target.write(EasyNpcWriter.NL);
-        }
     }
 
     /**

@@ -65,14 +65,6 @@ public final class ConditionTalkstate implements TalkCondition {
     }
 
     /**
-     * Write this talking state condition to its easyNPC shape.
-     */
-    @Override
-    public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
-        target.write(talkState.name());
-    }
-
-    /**
      * Write the LUA code needed for this race condition.
      */
     @Override

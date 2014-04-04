@@ -24,7 +24,6 @@ import illarion.easynpc.writer.LuaWriter;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Collections;
 
 /**
  * This class is used to store all required values for the item consequence.
@@ -32,12 +31,6 @@ import java.util.Collections;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ConsequenceItem implements TalkConsequence {
-    /**
-     * The easyNPC code needed for this consequence.
-     */
-    @SuppressWarnings("nls")
-    private static final String EASY_CODE = "item(%1$s, %2$s, %3$s, %4$s)";
-
     /**
      * The easyNPC code (without data) needed for this consequence.
      */
@@ -56,11 +49,6 @@ public final class ConsequenceItem implements TalkConsequence {
      */
     @SuppressWarnings("nls")
     private static final String LUA_MODULE = BASE_LUA_MODULE + "item";
-
-    /**
-     * The default value of data in case its not set.
-     */
-    private static final int NO_DATA = 0;
 
     /**
      * The data value of the created items.
@@ -88,17 +76,6 @@ public final class ConsequenceItem implements TalkConsequence {
      * @param newItem the item to create
      * @param newValue the amount to create
      * @param newQuality the quality value of the item
-     */
-    public ConsequenceItem(final Items newItem, final AdvancedNumber newValue, final int newQuality) {
-        this(newItem, newValue, newQuality, new ParsedItemData(Collections.<String, String>emptyMap()));
-    }
-
-    /**
-     * The constructor that allows setting the parameters of this item.
-     *
-     * @param newItem the item to create
-     * @param newValue the amount to create
-     * @param newQuality the quality value of the item
      * @param newData the data value of the item
      */
     public ConsequenceItem(
@@ -116,20 +93,6 @@ public final class ConsequenceItem implements TalkConsequence {
     @Override
     public String getLuaModule() {
         return LUA_MODULE;
-    }
-
-    /**
-     * Write this create item consequence into its easyNPC shape.
-     */
-    @Override
-    public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
-        if (data.hasValues()) {
-            target.write(String.format(EASY_CODE, Integer.toString(item.getItemId()), value.getEasyNPC(),
-                                       Integer.toString(quality), data.getEasyNPC()));
-        } else {
-            target.write(String.format(EASY_CODE_NO_DATA, Integer.toString(item.getItemId()), value.getEasyNPC(),
-                                       Integer.toString(quality)));
-        }
     }
 
     /**

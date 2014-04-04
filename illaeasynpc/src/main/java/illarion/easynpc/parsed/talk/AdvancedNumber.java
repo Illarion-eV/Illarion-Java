@@ -90,25 +90,6 @@ public final class AdvancedNumber {
     }
 
     /**
-     * Get the easyNPC representation of this advanced number value.
-     *
-     * @return the easyNPC representation of the advanced number
-     */
-    @Nullable
-    @SuppressWarnings("nls")
-    public String getEasyNPC() {
-        switch (type) {
-            case Normal:
-                return Integer.toString(value);
-            case SaidNumber:
-                return "%NUMBER";
-            case Expression:
-                return "expr( " + expression + ')';
-        }
-        return null;
-    }
-
-    /**
      * Get the LUA representation of this advanced number value.
      *
      * @return the LUA representation of the advanced number

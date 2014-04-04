@@ -15,7 +15,6 @@
  */
 package illarion.easynpc.parsed;
 
-import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
@@ -40,14 +39,6 @@ public final class ParsedEmptyLine implements ParsedData {
     }
 
     /**
-     * Check the stages effected by this empty lines.
-     */
-    @Override
-    public boolean effectsEasyNpcStage(@Nonnull final EasyNpcWriter.WritingStage stage) {
-        return false;
-    }
-
-    /**
      * Get the stages effected by the free lines.
      *
      * @return <code>false</code> always because no stages are effected
@@ -66,16 +57,6 @@ public final class ParsedEmptyLine implements ParsedData {
     @Override
     public String[] getRequiredModules() {
         return null;
-    }
-
-    /**
-     * Empty lines follow a strict predefined pattern. They are removed entirely
-     * from the easyNPC script and so never written.
-     */
-    @Override
-    public void writeEasyNpc(
-            @Nonnull final Writer target, @Nonnull final EasyNpcWriter.WritingStage stage) throws IOException {
-        // empty lines are never written to the easyNPC script
     }
 
     /**

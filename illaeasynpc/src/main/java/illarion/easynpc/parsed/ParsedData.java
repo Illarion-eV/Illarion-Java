@@ -15,7 +15,6 @@
  */
 package illarion.easynpc.parsed;
 
-import illarion.easynpc.writer.EasyNpcWritable;
 import illarion.easynpc.writer.LuaWritable;
 
 /**
@@ -23,6 +22,6 @@ import illarion.easynpc.writer.LuaWritable;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface ParsedData extends EasyNpcWritable, LuaWritable {
+public interface ParsedData extends LuaWritable {
     // no functions needed by default
 }

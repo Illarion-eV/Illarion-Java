@@ -476,13 +476,4 @@ public final class Editor extends RTextScrollPane {
             worker.run();
         }
     }
-
-    @EventTopicSubscriber(topic = "parseScript")
-    public void onParseScript(final String topic, final ActionEvent event) {
-        if (!isActiveEditor()) {
-            return;
-        }
-
-        Utils.reparseScript(this);
-    }
 }

@@ -17,7 +17,6 @@ package illarion.easynpc.parsed;
 
 import illarion.easynpc.data.EquipmentSlots;
 import illarion.easynpc.data.Items;
-import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
@@ -68,16 +67,6 @@ public final class ParsedEquipment implements ParsedData {
     }
 
     /**
-     * Check if the current NPC stage is effected by this data entries. This
-     * will return only <code>true</code> in case the stage is
-     * {@link EasyNpcWriter.WritingStage#clothes}.
-     */
-    @Override
-    public boolean effectsEasyNpcStage(@Nonnull final EasyNpcWriter.WritingStage stage) {
-        return stage == EasyNpcWriter.WritingStage.clothes;
-    }
-
-    /**
      * Check if the current stage is effected by the values stores in this
      * construct.
      */
@@ -94,47 +83,6 @@ public final class ParsedEquipment implements ParsedData {
     @Override
     public String[] getRequiredModules() {
         return null;
-    }
-
-    /**
-     * Write the values stores in this equipment values to the easyNPC script.
-     */
-    @Override
-    public void writeEasyNpc(
-            @Nonnull final Writer target, @Nonnull final EasyNpcWriter.WritingStage stage) throws IOException {
-        if (!effectsEasyNpcStage(stage)) {
-            return;
-        }
-
-        switch (slot) {
-            case chest:
-                target.write("itemChest = "); //$NON-NLS-1$
-                break;
-            case coat:
-                target.write("itemCoat = "); //$NON-NLS-1$
-                break;
-            case feet:
-                target.write("itemShoes = "); //$NON-NLS-1$
-                break;
-            case hands:
-                target.write("itemHands = "); //$NON-NLS-1$
-                break;
-            case head:
-                target.write("itemHead = "); //$NON-NLS-1$
-                break;
-            case mainHand:
-                target.write("itemMainHand = "); //$NON-NLS-1$
-                break;
-            case secondHand:
-                target.write("itemSecondHand = "); //$NON-NLS-1$
-                break;
-            case trousers:
-                target.write("itemTrousers = "); //$NON-NLS-1$
-                break;
-        }
-
-        target.write(Integer.toString(item.getItemId()));
-        target.write(EasyNpcWriter.NL);
     }
 
     /**

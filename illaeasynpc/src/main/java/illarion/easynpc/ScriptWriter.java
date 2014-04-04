@@ -15,7 +15,6 @@
  */
 package illarion.easynpc;
 
-import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 
 import javax.annotation.Nullable;
@@ -28,22 +27,6 @@ import java.io.Writer;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ScriptWriter {
-
-    /**
-     * This enumerator contains the possible targets of the script writer.
-     */
-    public enum ScriptWriterTarget {
-        /**
-         * This target makes the writer generate a easyNPC script.
-         */
-        EasyNPC,
-
-        /**
-         * This target makes the writer generate a LUA script.
-         */
-        LUA
-    }
-
     /**
      * This writer will receive the written script.
      */
@@ -62,17 +45,10 @@ public final class ScriptWriter {
     private boolean generated;
 
     /**
-     * The language that is the target of the writer. Either LUA or easyNPC.
-     */
-    @Nullable
-    private ScriptWriter.ScriptWriterTarget targetLang;
-
-    /**
      * Default constructor.
      */
     public ScriptWriter() {
         scriptTarget = null;
-        targetLang = null;
         sourceNPC = null;
         generated = false;
     }
@@ -84,16 +60,6 @@ public final class ScriptWriter {
      */
     public void setSource(final ParsedNpc source) {
         sourceNPC = source;
-    }
-
-    /**
-     * Set the target language of the script writer.
-     *
-     * @param lang the target language
-     */
-    @SuppressWarnings("nls")
-    public void setTargetLanguage(final ScriptWriter.ScriptWriterTarget lang) {
-        targetLang = lang;
     }
 
     /**
@@ -121,13 +87,6 @@ public final class ScriptWriter {
      * @throws IOException thrown in case writing to the assigned target fails
      */
     public void write() throws IOException {
-        switch (targetLang) {
-            case EasyNPC:
-                EasyNpcWriter.getInstance().write(sourceNPC, scriptTarget);
-                break;
-            case LUA:
-                LuaWriter.getInstance().write(sourceNPC, scriptTarget, generated);
-                break;
-        }
+        LuaWriter.getInstance().write(sourceNPC, scriptTarget, generated);
     }
 }

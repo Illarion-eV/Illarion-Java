@@ -107,44 +107,6 @@ final class Utils {
     }
 
     /**
-     * Parse the script again and write the new state to the display in case
-     * parsing the script was successfully. Else the errors are displayed.
-     *
-     * @param editor the editor that contains the script to parse
-     */
-    @SuppressWarnings("nls")
-    protected static void reparseScript(@Nonnull final Editor editor) {
-        final ParsedNpc npc = editor.getParsedData();
-        if (npc == null) {
-            return;
-        }
-
-        StringWriter writer = null;
-        try {
-            writer = new StringWriter();
-            final ScriptWriter scriptWriter = new ScriptWriter();
-            scriptWriter.setSource(npc);
-            scriptWriter.setTargetLanguage(ScriptWriter.ScriptWriterTarget.EasyNPC);
-            scriptWriter.setWritingTarget(writer);
-            scriptWriter.write();
-        } catch (@Nonnull final IOException e) {
-            LOGGER.error("Error occured while writing a script.", e);
-        } finally {
-            if (writer != null) {
-                try {
-                    writer.close();
-                } catch (@Nonnull final IOException ignored) {
-                    // nothing
-                }
-            }
-        }
-
-        EasyNpcScript newScript = new EasyNpcScript();
-        newScript.readNPCScript(writer.toString());
-        editor.setScriptText(newScript);
-    }
-
-    /**
      * Save a script in the editor as easyNPC script. This saves the current
      * state of the script and does not parse it again.
      *
@@ -204,7 +166,6 @@ final class Utils {
 
             try {
                 final ScriptWriter writer = new ScriptWriter();
-                writer.setTargetLanguage(ScriptWriter.ScriptWriterTarget.LUA);
                 writer.setSource(npc);
                 final Writer outputWriter = new OutputStreamWriter(new FileOutputStream(targetFile), "ISO-8859-1");
                 writer.setWritingTarget(outputWriter);
@@ -306,7 +267,6 @@ final class Utils {
             conn.setDoInput(true);
 
             final ScriptWriter writer = new ScriptWriter();
-            writer.setTargetLanguage(ScriptWriter.ScriptWriterTarget.LUA);
             writer.setSource(npc);
             final StringWriter stringWriter = new StringWriter();
             writer.setWritingTarget(stringWriter);
@@ -366,18 +326,10 @@ final class Utils {
             }
 
             try (Writer bufferedWriter = Files.newBufferedWriter(targetFile, EasyNpcScript.DEFAULT_CHARSET)) {
-                final ParsedNpc npc = editor.getParsedData();
-                if (npc == null) {
-                    final String scriptText = editor.getScriptText();
-                    bufferedWriter.write(scriptText);
-                } else {
-                    ScriptWriter writer = new ScriptWriter();
-                    writer.setGenerated(false);
-                    writer.setSource(npc);
-                    writer.setWritingTarget(bufferedWriter);
-                    writer.setTargetLanguage(ScriptWriter.ScriptWriterTarget.EasyNPC);
-                    writer.write();
-                }
+                final String scriptText = editor.getScriptText();
+                EasyNpcScript.COPYRIGHT_HEADER.writeTo(bufferedWriter);
+                bufferedWriter.write(scriptText);
+                bufferedWriter.flush();
             } catch (@Nonnull final Exception e) {
                 if (backupFile != null) {
                     Files.copy(backupFile, targetFile, StandardCopyOption.REPLACE_EXISTING);

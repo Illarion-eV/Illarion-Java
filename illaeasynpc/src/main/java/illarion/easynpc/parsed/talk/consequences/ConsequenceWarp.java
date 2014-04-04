@@ -31,12 +31,6 @@ import java.io.Writer;
  */
 public final class ConsequenceWarp implements TalkConsequence {
     /**
-     * The format string for the easy NPC code needed for this consequence.
-     */
-    @SuppressWarnings("nls")
-    private static final String EASY_CODE = "warp(%1$s, %2$s, %3$s)";
-
-    /**
      * The LUA code needed to be included for a warp consequence.
      */
     @SuppressWarnings("nls")
@@ -57,17 +51,6 @@ public final class ConsequenceWarp implements TalkConsequence {
     /**
      * The constructor that allows setting the target coordinates of the warp.
      *
-     * @param posX x-coordinate.
-     * @param posY y-coordinate.
-     * @param posZ z-coordinate.
-     */
-    public ConsequenceWarp(final int posX, final int posY, final int posZ) {
-        loc = new Location(posX, posY, posZ);
-    }
-
-    /**
-     * The constructor that allows setting the target coordinates of the warp.
-     *
      * @param loc the location
      */
     public ConsequenceWarp(@Nonnull final Location loc) {
@@ -81,14 +64,6 @@ public final class ConsequenceWarp implements TalkConsequence {
     @Override
     public String getLuaModule() {
         return LUA_MODULE;
-    }
-
-    /**
-     * Write this warp consequence into its easyNPC form.
-     */
-    @Override
-    public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
-        target.write(String.format(EASY_CODE, loc.getScX(), loc.getScY(), loc.getScZ()));
     }
 
     /**

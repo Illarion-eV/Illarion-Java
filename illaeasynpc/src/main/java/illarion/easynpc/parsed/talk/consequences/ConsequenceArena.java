@@ -48,21 +48,6 @@ public class ConsequenceArena implements TalkConsequence {
     }
 
     @Override
-    public void writeEasyNpc(@Nonnull Writer target) throws IOException {
-        switch (task) {
-            case RequestMonster:
-                target.write("arena(requestMonster)");
-                break;
-            case ShowStatistics:
-                target.write("arena(getStats)");
-                break;
-            case ShowRanking:
-                target.write("arena(getRanking)");
-                break;
-        }
-    }
-
-    @Override
     public void writeLua(@Nonnull Writer target) throws IOException {
         target.write("talkEntry:addConsequence(");
         target.write(getLuaModule() + ".arena(\"");

@@ -29,12 +29,6 @@ import java.io.Writer;
  */
 public final class ConsequenceInform implements TalkConsequence {
     /**
-     * The format string for the easy NPC code needed for this consequence.
-     */
-    @SuppressWarnings("nls")
-    private static final String EASY_CODE = "inform(\"%1$s\")";
-
-    /**
      * The LUA code needed to be included for a inform consequence.
      */
     @SuppressWarnings("nls")
@@ -67,14 +61,6 @@ public final class ConsequenceInform implements TalkConsequence {
     @Override
     public String getLuaModule() {
         return LUA_MODULE;
-    }
-
-    /**
-     * Write this inform consequence into its easyNPC form.
-     */
-    @Override
-    public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
-        target.write(String.format(EASY_CODE, message));
     }
 
     /**

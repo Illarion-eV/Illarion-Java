@@ -50,14 +50,6 @@ public final class ConditionAdmin implements TalkCondition {
     }
 
     /**
-     * Write this talking state condition to its easyNPC shape.
-     */
-    @Override
-    public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
-        target.write("isAdmin"); //$NON-NLS-1$
-    }
-
-    /**
      * Write the LUA code needed for this race condition.
      */
     @Override

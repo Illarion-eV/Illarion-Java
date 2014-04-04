@@ -15,7 +15,6 @@
  */
 package illarion.easynpc.parsed;
 
-import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
@@ -79,38 +78,6 @@ public class ParsedGuardText implements ParsedData {
         this.type = type;
         this.german = german;
         this.english = english;
-    }
-
-    @Override
-    public boolean effectsEasyNpcStage(@Nonnull EasyNpcWriter.WritingStage stage) {
-        return stage == EasyNpcWriter.WritingStage.guarding;
-    }
-
-    @Override
-    public void writeEasyNpc(@Nonnull Writer target, @Nonnull EasyNpcWriter.WritingStage stage) throws IOException {
-        if (stage != EasyNpcWriter.WritingStage.guarding) {
-            throw new IllegalArgumentException("This function did not request a call for a stage but guarding.");
-        }
-
-        switch (type) {
-            case WarpedMonster:
-                target.write("warpedMonsterMsg");
-                break;
-            case WarpedPlayer:
-                target.write("warpedPlayerMsg");
-                break;
-            case HitPlayer:
-                target.write("hitPlayerMsg");
-                break;
-            default:
-                throw new IllegalStateException("Illegal value for type: " + String.valueOf(type));
-        }
-        target.write(" \"");
-        target.write(german);
-        target.write("\", \"");
-        target.write(english);
-        target.write('"');
-        target.write(EasyNpcWriter.NL);
     }
 
     @Override

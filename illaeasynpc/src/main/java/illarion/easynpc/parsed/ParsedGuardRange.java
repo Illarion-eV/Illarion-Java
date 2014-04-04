@@ -15,7 +15,6 @@
  */
 package illarion.easynpc.parsed;
 
-import illarion.easynpc.writer.EasyNpcWriter;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
@@ -55,28 +54,6 @@ public class ParsedGuardRange implements ParsedData {
         this.rangeSouth = rangeSouth;
         this.rangeEast = rangeEast;
         this.rangeWest = rangeWest;
-    }
-
-    @Override
-    public boolean effectsEasyNpcStage(@Nonnull EasyNpcWriter.WritingStage stage) {
-        return stage == EasyNpcWriter.WritingStage.guarding;
-    }
-
-    @Override
-    public void writeEasyNpc(@Nonnull Writer target, @Nonnull EasyNpcWriter.WritingStage stage) throws IOException {
-        if (stage != EasyNpcWriter.WritingStage.guarding) {
-            throw new IllegalArgumentException("This function did not request a call for a stage but guarding.");
-        }
-
-        target.write("guardRange = ");
-        target.write(Integer.toString(rangeNorth));
-        target.write(", ");
-        target.write(Integer.toString(rangeSouth));
-        target.write(", ");
-        target.write(Integer.toString(rangeWest));
-        target.write(", ");
-        target.write(Integer.toString(rangeEast));
-        target.write(EasyNpcWriter.NL);
     }
 
     @Override

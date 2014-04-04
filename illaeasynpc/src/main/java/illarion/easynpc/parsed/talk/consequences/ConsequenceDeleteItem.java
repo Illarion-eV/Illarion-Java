@@ -31,23 +31,6 @@ import java.io.Writer;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ConsequenceDeleteItem implements TalkConsequence {
-    /**
-     * The format string for the easyNPC code.
-     */
-    @SuppressWarnings("nls")
-    private static final String EASY_CODE = "deleteItem(%1$s, %2$s)";
-
-    /**
-     * The format string for the easyNPC code. This code is used in case there is a data value set.
-     */
-    @SuppressWarnings("nls")
-    private static final String EASY_CODE_DATA = "deleteItem(%1$s, %2$s, %3$s)";
-
-    /**
-     * The LUA code needed to be included for a delete item consequence.
-     */
-    @SuppressWarnings("nls")
-    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.deleteitem(%2$s, %3$s));" + LuaWriter.NL;
 
     /**
      * The LUA code needed to be included for a delete item consequence. This code is used in case there is a data
@@ -99,19 +82,6 @@ public final class ConsequenceDeleteItem implements TalkConsequence {
     @Override
     public String getLuaModule() {
         return LUA_MODULE;
-    }
-
-    /**
-     * Write this delete item consequence into its easyNPC shape
-     */
-    @Override
-    public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
-        if (data.hasValues()) {
-            target.write(String.format(EASY_CODE_DATA, Integer.toString(item.getItemId()), value.getEasyNPC(),
-                                       data.getEasyNPC()));
-        } else {
-            target.write(String.format(EASY_CODE, Integer.toString(item.getItemId()), value.getEasyNPC()));
-        }
     }
 
     /**

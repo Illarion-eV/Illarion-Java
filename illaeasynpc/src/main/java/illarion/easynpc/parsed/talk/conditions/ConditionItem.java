@@ -34,12 +34,6 @@ import java.io.Writer;
  */
 public final class ConditionItem implements TalkCondition {
     /**
-     * The code needed for this condition in the easyNPC script.
-     */
-    @SuppressWarnings("nls")
-    private static final String EASY_CODE = "item(%1$s, %2$s) %3$s %4$s";
-
-    /**
      * The code needed for this condition in the easyNPC script. This code uses the additional data parameter this
      * condition can use.
      */
@@ -59,11 +53,6 @@ public final class ConditionItem implements TalkCondition {
      */
     @SuppressWarnings("nls")
     private static final String LUA_MODULE = BASE_LUA_MODULE + "item";
-
-    /**
-     * The constant used to mark the data value that no data is used.
-     */
-    private static final long NO_DATA = -1L;
 
     /**
      * The data value the search for the item is limited to.
@@ -119,21 +108,6 @@ public final class ConditionItem implements TalkCondition {
     @Override
     public String getLuaModule() {
         return LUA_MODULE;
-    }
-
-    /**
-     * Write this item condition into its easyNPC shape.
-     */
-    @Override
-    public void writeEasyNpc(@Nonnull final Writer target) throws IOException {
-        if (data.hasValues()) {
-            target.write(String.format(EASY_CODE_DATA, Integer.toString(item.getItemId()), itemPos.name(),
-                                       operator.getLuaComp(), value.getEasyNPC(), data.getEasyNPC()));
-        } else {
-            target.write(
-                    String.format(EASY_CODE, Integer.toString(item.getItemId()), itemPos.name(), operator.getLuaComp(),
-                                  value.getEasyNPC()));
-        }
     }
 
     /**
