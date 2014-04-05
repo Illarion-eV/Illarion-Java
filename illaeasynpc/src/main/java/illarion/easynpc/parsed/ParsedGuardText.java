@@ -112,7 +112,7 @@ public class ParsedGuardText implements ParsedData {
                 target.write("addHitPlayerText");
                 break;
             default:
-                throw new IllegalStateException("Illegal value for type: " + String.valueOf(type));
+                throw new IllegalStateException("Illegal value for type: " + type);
         }
         target.write("(\"");
         target.write(german);

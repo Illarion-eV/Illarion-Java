@@ -47,7 +47,7 @@ public enum CharacterDirection {
      *
      * @param id the ID representation of this constant.
      */
-    private CharacterDirection(final int id) {
+    CharacterDirection(int id) {
         dirId = id;
     }
 
@@ -65,7 +65,7 @@ public enum CharacterDirection {
      *
      * @param map the map that stores the tokens
      */
-    public static void enlistHighlightedWords(@Nonnull final TokenMap map) {
+    public static void enlistHighlightedWords(@Nonnull TokenMap map) {
         for (CharacterDirection direction : CharacterDirection.values()) {
             map.put(direction.name(), Token.VARIABLE);
         }

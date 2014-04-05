@@ -23,6 +23,7 @@ import illarion.easynpc.grammar.EasyNpcParser;
 import illarion.easynpc.parsed.talk.AdvancedNumber;
 import illarion.easynpc.parsed.talk.consequences.ConsequenceArena;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,11 +40,14 @@ import java.util.Map;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class Utils {
+final class Utils {
     private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
 
+    private Utils() {
+    }
+
     @Nonnull
-    static String getString(@Nullable final TerminalNode node) {
+    static String getString(@Nullable ParseTree node) {
         if (node == null) {
             LOGGER.warn("Node for string not found.");
             return "<null>";
@@ -51,7 +55,7 @@ class Utils {
         return removeQuotes(node.getText());
     }
 
-    static boolean getBoolean(@Nullable final TerminalNode node) {
+    static boolean getBoolean(@Nullable ParseTree node) {
         if (node == null) {
             LOGGER.warn("Node for boolean not found.");
             return false;
@@ -67,7 +71,7 @@ class Utils {
         }
     }
 
-    static int getInteger(@Nullable final TerminalNode node) {
+    static int getInteger(@Nullable ParseTree node) {
         if (node == null) {
             LOGGER.warn("Node for integer not found.");
             return 0;
@@ -80,7 +84,7 @@ class Utils {
         }
     }
 
-    static double getFloat(@Nullable final TerminalNode node) {
+    static double getFloat(@Nullable ParseTree node) {
         if (node == null) {
             LOGGER.warn("Node for floating-point value not found.");
             return 0;
@@ -95,7 +99,7 @@ class Utils {
 
     @Nonnull
     private static <T extends Enum<T>> T getEnumValue(
-            @Nullable final ParserRuleContext node, @Nonnull final Class<T> enumClass, @Nonnull T defaultValue) {
+            @Nullable ParserRuleContext node, @Nonnull Class<T> enumClass, @Nonnull T defaultValue) {
         if (node == null) {
             LOGGER.warn("Expected node for enumerator {} not found.", enumClass.getSimpleName());
             return defaultValue;
@@ -110,7 +114,7 @@ class Utils {
         }
     }
 
-    static ConsequenceArena.Task getArenaTask(@Nullable final EasyNpcParser.ArenaTaskContext node) {
+    static ConsequenceArena.Task getArenaTask(@Nullable EasyNpcParser.ArenaTaskContext node) {
         if (node == null) {
             LOGGER.warn("Expected node for arena task not found.");
             return ConsequenceArena.Task.RequestMonster;
@@ -130,42 +134,42 @@ class Utils {
     }
 
     @Nonnull
-    static CharacterRace getRace(@Nullable final EasyNpcParser.RaceContext node) {
+    static CharacterRace getRace(@Nullable EasyNpcParser.RaceContext node) {
         return getEnumValue(node, CharacterRace.class, CharacterRace.human);
     }
 
     @Nonnull
-    static CharacterSex getSex(@Nullable final EasyNpcParser.GenderContext node) {
+    static CharacterSex getSex(@Nullable EasyNpcParser.GenderContext node) {
         return getEnumValue(node, CharacterSex.class, CharacterSex.male);
     }
 
     @Nonnull
-    static CharacterLanguage getCharacterLanguage(@Nullable final EasyNpcParser.CharLanguageContext node) {
+    static CharacterLanguage getCharacterLanguage(@Nullable EasyNpcParser.CharLanguageContext node) {
         return getEnumValue(node, CharacterLanguage.class, CharacterLanguage.common);
     }
 
     @Nonnull
-    static PlayerLanguage getPlayerLanguage(@Nullable final EasyNpcParser.LanguageContext node) {
+    static PlayerLanguage getPlayerLanguage(@Nullable EasyNpcParser.LanguageContext node) {
         return getEnumValue(node, PlayerLanguage.class, PlayerLanguage.english);
     }
 
     @Nonnull
-    static NpcBaseState getTalkState(@Nullable final EasyNpcParser.TalkstateGetContext node) {
+    static NpcBaseState getTalkState(@Nullable EasyNpcParser.TalkstateGetContext node) {
         return getEnumValue(node, NpcBaseState.class, NpcBaseState.idle);
     }
 
     @Nonnull
-    static NpcBaseStateToggle getTalkState(@Nullable final EasyNpcParser.TalkstateSetContext node) {
+    static NpcBaseStateToggle getTalkState(@Nullable EasyNpcParser.TalkstateSetContext node) {
         return getEnumValue(node, NpcBaseStateToggle.class, NpcBaseStateToggle.begin);
     }
 
     @Nonnull
-    static CharacterDirection getDirection(@Nullable final EasyNpcParser.DirectionContext node) {
+    static CharacterDirection getDirection(@Nullable EasyNpcParser.DirectionContext node) {
         return getEnumValue(node, CharacterDirection.class, CharacterDirection.north);
     }
 
     @Nonnull
-    static Towns getTown(@Nullable final EasyNpcParser.TownContext node) {
+    static Towns getTown(@Nullable EasyNpcParser.TownContext node) {
         if (node == null) {
             LOGGER.warn("Expected node for town not found.");
             return Towns.None;
@@ -181,7 +185,7 @@ class Utils {
     }
 
     @Nonnull
-    static Color getColor(@Nullable final EasyNpcParser.ColorContext node) {
+    static Color getColor(@Nullable EasyNpcParser.ColorContext node) {
         if (node == null) {
             LOGGER.warn("Expected node for color not found.");
             return new Color(0, 0, 0);
@@ -194,12 +198,12 @@ class Utils {
     }
 
     @Nonnull
-    static CharacterAttribute getAttribute(@Nullable final EasyNpcParser.AttributeContext node) {
+    static CharacterAttribute getAttribute(@Nullable EasyNpcParser.AttributeContext node) {
         return getEnumValue(node, CharacterAttribute.class, CharacterAttribute.strength);
     }
 
     @Nonnull
-    static CompareOperators getOperator(@Nullable final EasyNpcParser.CompareContext node) {
+    static CompareOperators getOperator(@Nullable EasyNpcParser.CompareContext node) {
         if (node == null) {
             LOGGER.warn("Expected node for compare not found.");
             return CompareOperators.equal;
@@ -225,7 +229,7 @@ class Utils {
     }
 
     @Nonnull
-    static CalculationOperators getOperator(@Nullable final EasyNpcParser.SetContext node) {
+    static CalculationOperators getOperator(@Nullable EasyNpcParser.SetContext node) {
         if (node == null) {
             LOGGER.warn("Expected node for set not found.");
             return CalculationOperators.set;
@@ -245,7 +249,7 @@ class Utils {
     }
 
     @Nonnull
-    static AdvancedNumber getAdvancedNumber(@Nullable final EasyNpcParser.AdvancedNumberContext node) {
+    static AdvancedNumber getAdvancedNumber(@Nullable EasyNpcParser.AdvancedNumberContext node) {
         if (node == null) {
             LOGGER.warn("Expected node for advanced number not found.");
             return new AdvancedNumber(0);
@@ -272,7 +276,7 @@ class Utils {
     }
 
     @Nullable
-    static Items getItem(@Nullable final EasyNpcParser.TraderComplexItemIdContext node) {
+    static Items getItem(@Nullable EasyNpcParser.TraderComplexItemIdContext node) {
         if (node == null) {
             LOGGER.warn("Expected node for item id not found.");
             return null;
@@ -282,7 +286,7 @@ class Utils {
     }
 
     @Nullable
-    static Items getItem(@Nullable final EasyNpcParser.ItemIdContext node) {
+    static Items getItem(@Nullable EasyNpcParser.ItemIdContext node) {
         if (node == null) {
             LOGGER.warn("Expected node for item id not found.");
             return null;
@@ -299,7 +303,7 @@ class Utils {
     }
 
     @Nonnull
-    static TalkingMode getTalkMode(@Nullable final EasyNpcParser.TalkModeContext node) {
+    static TalkingMode getTalkMode(@Nullable ParseTree node) {
         if (node == null) {
             LOGGER.warn("Expected node for talking mode not found.");
             return TalkingMode.Talk;
@@ -316,16 +320,16 @@ class Utils {
     }
 
     @Nonnull
-    static CharacterMagicType getMagicType(@Nullable final EasyNpcParser.MagictypeContext node) {
+    static CharacterMagicType getMagicType(@Nullable EasyNpcParser.MagictypeContext node) {
         return getEnumValue(node, CharacterMagicType.class, CharacterMagicType.nomagic);
     }
 
     @Nonnull
-    static CharacterMagicType getMagicType(@Nullable final EasyNpcParser.MagictypeWithRunesContext node) {
+    static CharacterMagicType getMagicType(@Nullable EasyNpcParser.MagictypeWithRunesContext node) {
         return getEnumValue(node, CharacterMagicType.class, CharacterMagicType.nomagic);
     }
 
-    static int getQuestId(@Nullable final EasyNpcParser.QuestIdContext node) {
+    static int getQuestId(@Nullable EasyNpcParser.QuestIdContext node) {
         if (node == null) {
             LOGGER.warn("Expected node for quest id not found.");
             return 0;
@@ -334,7 +338,7 @@ class Utils {
     }
 
     @Nullable
-    static Skill getSkill(@Nullable final EasyNpcParser.SkillContext node) {
+    static Skill getSkill(@Nullable EasyNpcParser.SkillContext node) {
         if (node == null) {
             LOGGER.warn("Expected node for skill not found.");
             return null;
@@ -401,7 +405,7 @@ class Utils {
         return getEnumValue(node, ItemPositions.class, ItemPositions.all);
     }
 
-    private static int getColorComponent(@Nullable final EasyNpcParser.ColorComponentContext node) {
+    private static int getColorComponent(@Nullable EasyNpcParser.ColorComponentContext node) {
         if (node == null) {
             LOGGER.warn("Expected node for color component not found.");
             return 0;
@@ -411,7 +415,7 @@ class Utils {
     }
 
     @Nonnull
-    static Location getLocation(@Nullable final EasyNpcParser.LocationContext node) {
+    static Location getLocation(@Nullable EasyNpcParser.LocationContext node) {
         if (node == null) {
             LOGGER.warn("Expected node for location not found.");
             return new Location(0, 0, 0);
@@ -422,7 +426,7 @@ class Utils {
         return new Location(x, y, z);
     }
 
-    static int getLocationComponent(@Nullable final EasyNpcParser.LocationComponentContext node) {
+    static int getLocationComponent(@Nullable EasyNpcParser.LocationComponentContext node) {
         if (node == null) {
             LOGGER.warn("Expected node for location component not found.");
             return 0;
@@ -431,15 +435,15 @@ class Utils {
         EasyNpcParser.UnopContext unaryOperator = node.unop();
 
         int value = getInteger(node.INT());
-        if (unaryOperator != null && unaryOperator.getText().equals("-")) {
+        if ((unaryOperator != null) && "-".equals(unaryOperator.getText())) {
             return -value;
         }
         return value;
     }
 
     @Nonnull
-    private static String removeQuotes(@Nonnull final String string) {
-        if (string.charAt(0) == '"' && string.charAt(string.length() - 1) == '"') {
+    private static String removeQuotes(@Nonnull String string) {
+        if ((string.charAt(0) == '"') && (string.charAt(string.length() - 1) == '"')) {
             return string.substring(1, string.length() - 1);
         }
         return string;

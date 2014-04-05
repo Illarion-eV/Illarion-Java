@@ -16,7 +16,6 @@
 package illarion.easynpc.data;
 
 import javax.annotation.Nonnull;
-import java.util.regex.Pattern;
 
 /**
  * This enumerator contains a list of all possible compare operators that are
@@ -25,38 +24,26 @@ import java.util.regex.Pattern;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public enum CompareOperators {
-    @SuppressWarnings("nls")
-    equal("=", "^\\s*=\\s*$"),
-    @SuppressWarnings("nls")
-    greater(">", "^\\s*>\\s*$"),
-    @SuppressWarnings("nls")
-    greaterEqual("=>", "^\\s*((>=)|(=>))\\s*$"),
-    @SuppressWarnings("nls")
-    lesser("<", "^\\s*<\\s*$"),
-    @SuppressWarnings("nls")
-    lesserEqual("=<", "^\\s*((<=)|(=<))\\s*$"),
-    @SuppressWarnings("nls")
-    notEqual("~=", "^\\s*(([!~]=)|(<>))\\s*$");
+    equal("="),
+    greater(">"),
+    greaterEqual("=>"),
+    lesser("<"),
+    lesserEqual("=<"),
+    notEqual("~=");
 
     /**
      * The lua representation for this comparator.
      */
+    @Nonnull
     private final String luaComp;
-
-    /**
-     * The RegExp pattern to identify comparator in the string.
-     */
-    private final Pattern regexpComp;
 
     /**
      * Constructor for the compare operators.
      *
      * @param lua the LUA representation of this operator
-     * @param regexp the RegExp pattern to identify this operator
      */
-    private CompareOperators(final String lua, @Nonnull final String regexp) {
+    CompareOperators(@Nonnull String lua) {
         luaComp = lua;
-        regexpComp = Pattern.compile(regexp);
     }
 
     /**
@@ -64,17 +51,8 @@ public enum CompareOperators {
      *
      * @return the LUA representation
      */
+    @Nonnull
     public String getLuaComp() {
         return luaComp;
-    }
-
-    /**
-     * Get the RegExp pattern usable to identify the operator in the easyNPC
-     * script.
-     *
-     * @return the pattern to find this operator
-     */
-    public Pattern getRegexpPattern() {
-        return regexpComp;
     }
 }

@@ -30,22 +30,22 @@ public final class SQLBuilder {
             "INSERT INTO \"npc\" (\"npc_type\", \"npc_posx\", \"npc_posy\", \"npc_posz\", \"npc_faceto\", \"npc_name\", \"npc_script\", \"npc_sex\", \"npc_hair\", \"npc_beard\", \"npc_hairred\", \"npc_hairgreen\", \"npc_hairblue\", \"npc_skinred\", \"npc_skingreen\", \"npc_skinblue\") \n" +
                     "VALUES (%1$s, %2$s, %3$s, %4$s, %5$s, '%6$s', %7$s, %8$s, %9$s, %10$s, %11$s, %12$s, %13$s, %14$s, %15$s, %16$s);";
 
-    private int npcBeard = 0;
-    private int npcFaceTo = 0;
-    private int npcHair = 0;
+    private int npcBeard;
+    private int npcFaceTo;
+    private int npcHair;
     private int npcHairBlue = 255;
     private int npcHairGreen = 255;
     private int npcHairRed = 255;
     private String npcName = "no name";
-    private int npcPosX = 0;
-    private int npcPosY = 0;
-    private int npcPosZ = 0;
+    private int npcPosX;
+    private int npcPosY;
+    private int npcPosZ;
     private String npcScript = "null";
-    private int npcSex = 0;
+    private int npcSex;
     private int npcSkinBlue = 255;
     private int npcSkinGreen = 255;
     private int npcSkinRed = 255;
-    private int npcType = 0;
+    private int npcType;
 
     /**
      * Reducing the visibility of the default constructor.
@@ -59,7 +59,7 @@ public final class SQLBuilder {
      *
      * @param newNpcBeard the new ID for the beard of this NPC
      */
-    public void setNpcBeard(final int newNpcBeard) {
+    public void setNpcBeard(int newNpcBeard) {
         npcBeard = newNpcBeard;
     }
 
@@ -68,7 +68,7 @@ public final class SQLBuilder {
      *
      * @param newNpcFaceTo the new face to value for the NPC
      */
-    public void setNpcFaceTo(final int newNpcFaceTo) {
+    public void setNpcFaceTo(int newNpcFaceTo) {
         npcFaceTo = newNpcFaceTo;
     }
 
@@ -77,7 +77,7 @@ public final class SQLBuilder {
      *
      * @param newNpcHair the new ID for the hair of this NPC
      */
-    public void setNpcHair(final int newNpcHair) {
+    public void setNpcHair(int newNpcHair) {
         npcHair = newNpcHair;
     }
 
@@ -88,7 +88,7 @@ public final class SQLBuilder {
      * @param green the green share of the hair color
      * @param blue the blue share of the hair color
      */
-    public void setNpcHairColor(final int red, final int green, final int blue) {
+    public void setNpcHairColor(int red, int green, int blue) {
         npcHairRed = red;
         npcHairGreen = green;
         npcHairBlue = blue;
@@ -99,7 +99,7 @@ public final class SQLBuilder {
      *
      * @param newNpcName the new Name of this NPC
      */
-    public void setNpcName(final String newNpcName) {
+    public void setNpcName(String newNpcName) {
         npcName = newNpcName;
     }
 
@@ -108,7 +108,7 @@ public final class SQLBuilder {
      *
      * @param newNpcPosX the x coordinate of the NPC position
      */
-    public void setNpcPosX(final int newNpcPosX) {
+    public void setNpcPosX(int newNpcPosX) {
         npcPosX = newNpcPosX;
     }
 
@@ -117,7 +117,7 @@ public final class SQLBuilder {
      *
      * @param newNpcPosY the y coordinate of the NPC position
      */
-    public void setNpcPosY(final int newNpcPosY) {
+    public void setNpcPosY(int newNpcPosY) {
         npcPosY = newNpcPosY;
     }
 
@@ -126,7 +126,7 @@ public final class SQLBuilder {
      *
      * @param newNpcPosZ the z coordinate of the NPC position
      */
-    public void setNpcPosZ(final int newNpcPosZ) {
+    public void setNpcPosZ(int newNpcPosZ) {
         npcPosZ = newNpcPosZ;
     }
 
@@ -135,7 +135,7 @@ public final class SQLBuilder {
      *
      * @param newNpcScript the new script of this NPC
      */
-    public void setNpcScript(final String newNpcScript) {
+    public void setNpcScript(String newNpcScript) {
         npcScript = newNpcScript;
     }
 
@@ -144,7 +144,7 @@ public final class SQLBuilder {
      *
      * @param newNpcSex the new sex id of this NPC
      */
-    public void setNpcSex(final int newNpcSex) {
+    public void setNpcSex(int newNpcSex) {
         npcSex = newNpcSex;
     }
 
@@ -155,7 +155,7 @@ public final class SQLBuilder {
      * @param green the green share of the skin color
      * @param blue the blue share of the skin color
      */
-    public void setNpcSkinColor(final int red, final int green, final int blue) {
+    public void setNpcSkinColor(int red, int green, int blue) {
         npcSkinRed = red;
         npcSkinGreen = green;
         npcSkinBlue = blue;
@@ -166,7 +166,7 @@ public final class SQLBuilder {
      *
      * @param newNpcType the new type value for this NPC.
      */
-    public void setNpcType(final int newNpcType) {
+    public void setNpcType(int newNpcType) {
         npcType = newNpcType;
     }
 
@@ -178,8 +178,8 @@ public final class SQLBuilder {
     @SuppressWarnings("nls")
     String getSQL() {
         String npcScriptReal = npcScript;
-        if (!npcScript.equals("null")) {
-            npcScriptReal = "'" + npcScriptReal + "'";
+        if (!"null".equals(npcScript)) {
+            npcScriptReal = '\'' + npcScriptReal + '\'';
         }
         return String
                 .format(queryFormat, Integer.toString(npcType), Integer.toString(npcPosX), Integer.toString(npcPosY),

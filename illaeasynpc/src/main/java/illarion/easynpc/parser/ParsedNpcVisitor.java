@@ -22,7 +22,6 @@ import illarion.easynpc.data.Color;
 import illarion.easynpc.data.EquipmentSlots;
 import illarion.easynpc.data.Items;
 import illarion.easynpc.grammar.EasyNpcBaseVisitor;
-import illarion.easynpc.grammar.EasyNpcParser;
 import illarion.easynpc.parsed.*;
 import illarion.easynpc.parsed.shared.ParsedItemData;
 import illarion.easynpc.parsed.talk.conditions.*;
@@ -122,7 +121,7 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> {
     }
 
     @Override
-    public ParsedNpcVisitor visitColorConfiguration(@NotNull EasyNpcParser.ColorConfigurationContext ctx) {
+    public ParsedNpcVisitor visitColorConfiguration(@NotNull ColorConfigurationContext ctx) {
         Token startToken = ctx.getStart();
 
         Color color = getColor(ctx.color());
@@ -141,7 +140,7 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> {
     }
 
     @Override
-    public ParsedNpcVisitor visitEquipmentConfiguration(@NotNull EasyNpcParser.EquipmentConfigurationContext ctx) {
+    public ParsedNpcVisitor visitEquipmentConfiguration(@NotNull EquipmentConfigurationContext ctx) {
         Token startToken = ctx.getStart();
 
         Items item = getItem(ctx.itemId());
@@ -182,7 +181,7 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> {
     }
 
     @Override
-    public ParsedNpcVisitor visitGuardConfiguration(@NotNull EasyNpcParser.GuardConfigurationContext ctx) {
+    public ParsedNpcVisitor visitGuardConfiguration(@NotNull GuardConfigurationContext ctx) {
         Token startToken = ctx.getStart();
 
         switch (startToken.getText()) {
@@ -204,7 +203,7 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> {
     }
 
     @Override
-    public ParsedNpcVisitor visitHairConfiguration(@NotNull EasyNpcParser.HairConfigurationContext ctx) {
+    public ParsedNpcVisitor visitHairConfiguration(@NotNull HairConfigurationContext ctx) {
         Token startToken = ctx.getStart();
 
         int id = getInteger(ctx.INT());
@@ -223,8 +222,7 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> {
     }
 
     @Override
-    public ParsedNpcVisitor visitTraderComplexConfiguration(
-            @NotNull EasyNpcParser.TraderComplexConfigurationContext ctx) {
+    public ParsedNpcVisitor visitTraderComplexConfiguration(@NotNull TraderComplexConfigurationContext ctx) {
         Token startToken = ctx.getStart();
         AbstractParsedTrade.TradeMode tradeMode;
         switch (startToken.getText()) {
@@ -243,12 +241,6 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> {
                 return super.visitTraderComplexConfiguration(ctx);
         }
 
-        int itemId;
-        String textDe = null;
-        String textEn = null;
-        int price = 0;
-        int stackSize = 0;
-        int quality = 0;
         Map<String, String> data = new HashMap<>();
 
         Items item = getItem(ctx.traderComplexItemId());
@@ -257,8 +249,13 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> {
             LOGGER.warn("Failed to match item id for complex trade entry.");
             return super.visitTraderComplexConfiguration(ctx);
         }
-        itemId = item.getItemId();
+        int itemId = item.getItemId();
 
+        String textDe = null;
+        String textEn = null;
+        int price = 0;
+        int stackSize = 0;
+        int quality = 0;
         for (TraderComplexEntryContext entry : ctx.traderComplexEntry()) {
             switch (entry.getStart().getText()) {
                 case "de":
@@ -294,7 +291,7 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> {
 
     @Override
     public ParsedNpcVisitor visitTraderSimpleConfiguration(
-            @NotNull EasyNpcParser.TraderSimpleConfigurationContext ctx) {
+            @NotNull TraderSimpleConfigurationContext ctx) {
         Token startToken = ctx.getStart();
         AbstractParsedTrade.TradeMode tradeMode;
         switch (startToken.getText()) {
@@ -328,7 +325,7 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> {
     }
 
     @Override
-    public ParsedNpcVisitor visitWalkConfiguration(@NotNull EasyNpcParser.WalkConfigurationContext ctx) {
+    public ParsedNpcVisitor visitWalkConfiguration(@NotNull WalkConfigurationContext ctx) {
         Token startToken = ctx.getStart();
         switch (startToken.getText()) {
             case "radius":
@@ -345,7 +342,7 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> {
     private ParsedTalk currentTalkingLine;
 
     @Override
-    public ParsedNpcVisitor visitTalkCommand(@NotNull EasyNpcParser.TalkCommandContext ctx) {
+    public ParsedNpcVisitor visitTalkCommand(@NotNull TalkCommandContext ctx) {
         currentTalkingLine = new ParsedTalk();
         ParsedNpcVisitor result = super.visitTalkCommand(ctx);
         npc.addNpcData(currentTalkingLine);
@@ -354,7 +351,7 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> {
     }
 
     @Override
-    public ParsedNpcVisitor visitTrigger(@NotNull EasyNpcParser.TriggerContext ctx) {
+    public ParsedNpcVisitor visitTrigger(@NotNull TriggerContext ctx) {
         if (currentTalkingLine == null) {
             LOGGER.error("Visiting trigger while there is no active talking line.");
         } else {
@@ -364,7 +361,7 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> {
     }
 
     @Override
-    public ParsedNpcVisitor visitCondition(@NotNull EasyNpcParser.ConditionContext ctx) {
+    public ParsedNpcVisitor visitCondition(@NotNull ConditionContext ctx) {
         if (currentTalkingLine == null) {
             LOGGER.error("Visiting condition while there is no active talking line.");
             return super.visitCondition(ctx);
@@ -447,7 +444,7 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> {
     }
 
     @Override
-    public ParsedNpcVisitor visitLanguage(@NotNull EasyNpcParser.LanguageContext ctx) {
+    public ParsedNpcVisitor visitLanguage(@NotNull LanguageContext ctx) {
         if (currentTalkingLine != null) {
             currentTalkingLine.addCondition(new ConditionLanguage(getPlayerLanguage(ctx)));
         }
@@ -455,7 +452,7 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> {
     }
 
     @Override
-    public ParsedNpcVisitor visitTalkstateGet(@NotNull EasyNpcParser.TalkstateGetContext ctx) {
+    public ParsedNpcVisitor visitTalkstateGet(@NotNull TalkstateGetContext ctx) {
         if (currentTalkingLine == null) {
             LOGGER.error("Visiting talk state get while there is no active talking line.");
         } else {
@@ -465,7 +462,7 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> {
     }
 
     @Override
-    public ParsedNpcVisitor visitAnswer(@NotNull EasyNpcParser.AnswerContext ctx) {
+    public ParsedNpcVisitor visitAnswer(@NotNull AnswerContext ctx) {
         if (currentTalkingLine == null) {
             LOGGER.error("Visiting consequence while there is no active talking line.");
         } else {
@@ -475,7 +472,7 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> {
     }
 
     @Override
-    public ParsedNpcVisitor visitConsequence(@NotNull EasyNpcParser.ConsequenceContext ctx) {
+    public ParsedNpcVisitor visitConsequence(@NotNull ConsequenceContext ctx) {
         if (currentTalkingLine == null) {
             LOGGER.error("Visiting consequence while there is no active talking line.");
             return defaultResult();
@@ -570,7 +567,7 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> {
     }
 
     @Override
-    public ParsedNpcVisitor visitTalkstateSet(@NotNull EasyNpcParser.TalkstateSetContext ctx) {
+    public ParsedNpcVisitor visitTalkstateSet(@NotNull TalkstateSetContext ctx) {
         if (currentTalkingLine == null) {
             LOGGER.error("Visiting consequence while there is no active talking line.");
             return defaultResult();

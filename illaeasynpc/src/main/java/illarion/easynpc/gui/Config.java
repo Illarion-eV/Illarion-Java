@@ -54,7 +54,6 @@ public final class Config {
     /**
      * The class path of the look and feel that is used by default.
      */
-    @SuppressWarnings("nls")
     public static final String DEFAULT_LOOK_AND_FEEL = "org.pushingpixels.substance.api.skin.OfficeSilver2007Skin";
 
     /**
@@ -65,13 +64,11 @@ public final class Config {
     /**
      * The key in the property file for the auto build flag
      */
-    @SuppressWarnings("nls")
     private static final String AUTO_BUILD_KEY = "autoBuild";
 
     /**
      * The property key value for the easyNPC script folder.
      */
-    @SuppressWarnings("nls")
     private static final String EASY_NPC_FOLDER = "easyNpcFolder";
 
     /**
@@ -82,37 +79,31 @@ public final class Config {
     /**
      * The key of the last files list on the configuration file
      */
-    @SuppressWarnings("nls")
     private static final String LAST_FILES_KEY = "lastFiles";
 
     /**
      * The key for the height of the stored window.
      */
-    @SuppressWarnings("nls")
     private static final String LAST_WINDOW_H = "lastWindowH";
 
     /**
      * The key for the extended state of the stored window.
      */
-    @SuppressWarnings("nls")
     private static final String LAST_WINDOW_STATE = "lastWindowState";
 
     /**
      * The key for the width of the stored window.
      */
-    @SuppressWarnings("nls")
     private static final String LAST_WINDOW_W = "lastWindowW";
 
     /**
      * The key for the x coordinate of the stored window.
      */
-    @SuppressWarnings("nls")
     private static final String LAST_WINDOW_X = "lastWindowX";
 
     /**
      * The key for the y coordinate of the stored window.
      */
-    @SuppressWarnings("nls")
     private static final String LAST_WINDOW_Y = "lastWindowY";
 
     /**
@@ -225,7 +216,7 @@ public final class Config {
             System.exit(-1);
         }
 
-        final Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
         assert userDir != null;
         return userDir;
     }
@@ -235,7 +226,7 @@ public final class Config {
      *
      * @param file the file to prepend
      */
-    public void addLastOpenedFile(@Nonnull final Path file) {
+    public void addLastOpenedFile(@Nonnull Path file) {
         if (cfg == null) {
             LOGGER.error("Configuration system not initialized yet.");
             return;
@@ -245,10 +236,10 @@ public final class Config {
     }
 
     @EventTopicSubscriber(topic = USED_LOOK_AND_FEEL)
-    public void onConfigChanged(@Nonnull final String topic, final ConfigChangedEvent event) {
+    public void onConfigChanged(@Nonnull String topic, ConfigChangedEvent event) {
         if (topic.equals(USED_LOOK_AND_FEEL)) {
             SubstanceLookAndFeel.setSkin(getLookAndFeel());
-            final int count = MainFrame.getInstance().getOpenTabs();
+            int count = MainFrame.getInstance().getOpenTabs();
 
             for (int i = 0; i < count; i++) {
                 MainFrame.getInstance().getScriptEditor(i).resetEditorKit();
@@ -263,7 +254,7 @@ public final class Config {
         if (cfg == null) {
             throw new IllegalStateException("Configuration system not initialized yet.");
         }
-        final ConfigDialog dialog = new ConfigDialog();
+        ConfigDialog dialog = new ConfigDialog();
         dialog.setConfig(cfg);
         dialog.setMessageSource(Lang.getInstance());
 
@@ -294,7 +285,7 @@ public final class Config {
         Collection<String> themeObject = new FastTable<>();
         Collection<String> themeLabel = new FastTable<>();
 
-        for (final Entry<String, SkinInfo> skin : SubstanceLookAndFeel.getAllSkins().entrySet()) {
+        for (Entry<String, SkinInfo> skin : SubstanceLookAndFeel.getAllSkins().entrySet()) {
             themeObject.add(skin.getValue().getClassName());
             themeLabel.add(skin.getValue().getDisplayName());
         }
@@ -331,7 +322,7 @@ public final class Config {
             LOGGER.error("Configuration system not initialized yet.");
             return Paths.get(System.getProperty("user.home")).toString();
         }
-        final Path easyNpcFolderFile = cfg.getPath(EASY_NPC_FOLDER);
+        Path easyNpcFolderFile = cfg.getPath(EASY_NPC_FOLDER);
         if (easyNpcFolderFile == null) {
             return Paths.get(System.getProperty("user.home")).toString();
         }
@@ -362,23 +353,23 @@ public final class Config {
             LOGGER.error("Configuration system not initialized yet.");
             return new Path[LAST_OPEN_FILES_COUNT];
         }
-        final String fetchedListString = cfg.getString(LAST_FILES_KEY);
+        String fetchedListString = cfg.getString(LAST_FILES_KEY);
         if (fetchedListString == null) {
             return new Path[LAST_OPEN_FILES_COUNT];
         }
-        final String[] fetchedList = fetchedListString.split(File.pathSeparator);
-        final Path[] returnList = new Path[LAST_OPEN_FILES_COUNT];
-        final Path[] cleanList = new Path[LAST_OPEN_FILES_COUNT];
+        String[] fetchedList = fetchedListString.split(File.pathSeparator);
+        Path[] returnList = new Path[LAST_OPEN_FILES_COUNT];
+        Path[] cleanList = new Path[LAST_OPEN_FILES_COUNT];
 
         int entryPos = 0;
         for (int i = 0; (i < fetchedList.length) && (i < LAST_OPEN_FILES_COUNT); i++) {
-            final String workString = fetchedList[i];
+            String workString = fetchedList[i];
             if (workString.length() < 5) {
                 continue;
             }
-            final Path createdFile = Paths.get(workString);
+            Path createdFile = Paths.get(workString);
             if (Files.isReadable(createdFile)) {
-                final Path absolutPath = createdFile.toAbsolutePath();
+                Path absolutPath = createdFile.toAbsolutePath();
                 boolean alreadyInsert = false;
                 for (int j = 0; j < entryPos; j++) {
                     if (cleanList[j].equals(absolutPath)) {
@@ -399,7 +390,7 @@ public final class Config {
             return returnList;
         }
 
-        final StringBuilder cleanedResult = new StringBuilder();
+        StringBuilder cleanedResult = new StringBuilder();
         for (int i = 0; i < entryPos; i++) {
             cleanedResult.append(cleanList[i]);
             cleanedResult.append(File.pathSeparator);
@@ -417,43 +408,43 @@ public final class Config {
      *
      * @param comp The window that shall receive the stored settings
      */
-    public void getLastWindowValue(@Nonnull final JFrame comp) {
+    public void getLastWindowValue(@Nonnull JFrame comp) {
         if (cfg == null) {
             LOGGER.error("Configuration system not initialized yet.");
         }
         if ((cfg == null) || (cfg.getInteger(LAST_WINDOW_X) <= 0) || (cfg.getInteger(LAST_WINDOW_Y) <= 0) ||
                 (cfg.getInteger(LAST_WINDOW_W) <= 0) || (cfg.getInteger(LAST_WINDOW_H) <= 0) ||
                 (cfg.getInteger(LAST_WINDOW_STATE) <= 0)) {
-            final Dimension screenSize = comp.getToolkit().getScreenSize();
-            final int width = (screenSize.width * 8) / 10;
-            final int height = (screenSize.height * 8) / 10;
+            Dimension screenSize = comp.getToolkit().getScreenSize();
+            int width = (screenSize.width * 8) / 10;
+            int height = (screenSize.height * 8) / 10;
             comp.setBounds(width / 8, height / 8, width, height);
 
             return;
         }
 
         try {
-            final Rectangle newBounds = new Rectangle();
+            Rectangle newBounds = new Rectangle();
             newBounds.x = cfg.getInteger(LAST_WINDOW_X);
             newBounds.y = cfg.getInteger(LAST_WINDOW_Y);
             newBounds.width = cfg.getInteger(LAST_WINDOW_W);
             newBounds.height = cfg.getInteger(LAST_WINDOW_H);
 
-            final Rectangle testBounds = new Rectangle(new Point(0, 0), comp.getToolkit().getScreenSize());
-            final Rectangle intersectionBounds = newBounds.intersection(testBounds);
+            Rectangle testBounds = new Rectangle(new Point(0, 0), comp.getToolkit().getScreenSize());
+            Rectangle intersectionBounds = newBounds.intersection(testBounds);
 
             if (newBounds.equals(intersectionBounds)) {
                 comp.setBounds(newBounds);
                 comp.setExtendedState(cfg.getInteger(LAST_WINDOW_STATE));
                 return;
             }
-        } catch (@Nonnull final Exception e) {
+        } catch (@Nonnull Exception e) {
             // nothing to do
         }
 
-        final Dimension screenSize = comp.getToolkit().getScreenSize();
-        final int width = (screenSize.width * 8) / 10;
-        final int height = (screenSize.height * 8) / 10;
+        Dimension screenSize = comp.getToolkit().getScreenSize();
+        int width = (screenSize.width * 8) / 10;
+        int height = (screenSize.height * 8) / 10;
         comp.setBounds(width / 8, height / 8, width, height);
     }
 
@@ -468,7 +459,7 @@ public final class Config {
             LOGGER.error("Configuration system not initialized yet.");
             return DEFAULT_LOOK_AND_FEEL;
         }
-        final String lookAndFeel = cfg.getString(USED_LOOK_AND_FEEL);
+        String lookAndFeel = cfg.getString(USED_LOOK_AND_FEEL);
         if (lookAndFeel == null) {
             return DEFAULT_LOOK_AND_FEEL;
         }
@@ -485,7 +476,7 @@ public final class Config {
             LOGGER.error("Configuration system not initialized yet.");
             return Paths.get(System.getProperty("user.home")).toString();
         }
-        final Path luaNpcFolderFile = cfg.getPath(LUA_NPC_FOLDER);
+        Path luaNpcFolderFile = cfg.getPath(LUA_NPC_FOLDER);
         if (luaNpcFolderFile == null) {
             return Paths.get(System.getProperty("user.home")).toString();
         }
@@ -504,7 +495,7 @@ public final class Config {
             LOGGER.error("Configuration system not initialized yet.");
             return new String[0];
         }
-        final String files = cfg.getString(OPEN_FILES);
+        String files = cfg.getString(OPEN_FILES);
         if (files == null) {
             return new String[0];
         }
@@ -521,7 +512,7 @@ public final class Config {
             LOGGER.error("Configuration system not initialized yet.");
             return 0.75;
         }
-        final double value = cfg.getDouble(SPLIT_STATE);
+        double value = cfg.getDouble(SPLIT_STATE);
 
         if ((value >= 0.1) && (value <= 0.9)) {
             return value;
@@ -574,9 +565,9 @@ public final class Config {
      */
     @SuppressWarnings("nls")
     public void init() {
-        final Path folder = checkFolder();
+        Path folder = checkFolder();
 
-        final Path configFile = folder.resolve("easynpceditor.xcfgz");
+        Path configFile = folder.resolve("easynpceditor.xcfgz");
         cfg = new ConfigSystem(configFile);
 
         cfg.setDefault(LAST_FILES_KEY, "");
@@ -617,7 +608,7 @@ public final class Config {
      *
      * @param autobuild the new value for the auto building flag
      */
-    public void setAutoBuild(final boolean autobuild) {
+    public void setAutoBuild(boolean autobuild) {
         if (cfg == null) {
             LOGGER.error("Configuration system not initialized yet.");
             return;
@@ -631,7 +622,7 @@ public final class Config {
      *
      * @param newFolder the folder where to store the easyNPC scripts
      */
-    public void setEasyNpcFolder(@Nonnull final String newFolder) {
+    public void setEasyNpcFolder(@Nonnull String newFolder) {
         if (cfg == null) {
             LOGGER.error("Configuration system not initialized yet.");
             return;
@@ -645,7 +636,7 @@ public final class Config {
      *
      * @param comp the window that is the source for the stored data
      */
-    public void setLastWindowValues(@Nonnull final JFrame comp) {
+    public void setLastWindowValues(@Nonnull JFrame comp) {
         if (cfg == null) {
             LOGGER.error("Configuration system not initialized yet.");
             return;
@@ -663,7 +654,7 @@ public final class Config {
      *
      * @param lookAndFeel the class path of the look and feel
      */
-    public void setLookAndFeel(@Nonnull final String lookAndFeel) {
+    public void setLookAndFeel(@Nonnull String lookAndFeel) {
         if (cfg == null) {
             LOGGER.error("Configuration system not initialized yet.");
             return;
@@ -681,7 +672,7 @@ public final class Config {
      *
      * @param newFolder the folder where to store the easyNPC scripts
      */
-    public void setLuaNpcFolder(@Nonnull final Path newFolder) {
+    public void setLuaNpcFolder(@Nonnull Path newFolder) {
         if (cfg == null) {
             LOGGER.error("Configuration system not initialized yet.");
             return;
@@ -695,13 +686,13 @@ public final class Config {
      *
      * @param files the files to open
      */
-    public void setOldFiles(@Nonnull final Iterable<Path> files) {
+    public void setOldFiles(@Nonnull Iterable<Path> files) {
         if (cfg == null) {
             LOGGER.error("Configuration system not initialized yet.");
             return;
         }
-        final StringBuilder buffer = new StringBuilder();
-        for (final Path file : files) {
+        StringBuilder buffer = new StringBuilder();
+        for (Path file : files) {
             buffer.append(file.toAbsolutePath().toString());
             buffer.append(File.pathSeparator);
         }
@@ -715,7 +706,7 @@ public final class Config {
      *
      * @param state the state of the split pane
      */
-    public void setSplitPaneState(final double state) {
+    public void setSplitPaneState(double state) {
         if (cfg == null) {
             LOGGER.error("Configuration system not initialized yet.");
             return;
@@ -728,7 +719,7 @@ public final class Config {
      *
      * @param count the amount of undo operations that should be stored
      */
-    public void setUndoCount(final int count) {
+    public void setUndoCount(int count) {
         if (cfg == null) {
             LOGGER.error("Configuration system not initialized yet.");
             return;
@@ -744,7 +735,7 @@ public final class Config {
      * @param highlight <code>true</code> in case the editor is expected
      * highlight the syntax.
      */
-    public void setUseSyntaxHighlighting(final boolean highlight) {
+    public void setUseSyntaxHighlighting(boolean highlight) {
         if (cfg == null) {
             LOGGER.error("Configuration system not initialized yet.");
             return;
@@ -763,7 +754,7 @@ public final class Config {
      * @param deco <code>true</code> in case the editor is expected to decorate
      * the window
      */
-    public void setUseWindowDecoration(final boolean deco) {
+    public void setUseWindowDecoration(boolean deco) {
         if (cfg == null) {
             LOGGER.error("Configuration system not initialized yet.");
             return;
@@ -798,7 +789,7 @@ public final class Config {
     }
 
     @EventTopicSubscriber(topic = "autoCheckScript")
-    public void onAutoBuildModeChangedEvent(final String topic, final ActionEvent event) {
+    public void onAutoBuildModeChangedEvent(String topic, ActionEvent event) {
         setAutoBuild(!getAutoBuild());
     }
 }

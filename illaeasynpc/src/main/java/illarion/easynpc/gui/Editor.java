@@ -82,7 +82,7 @@ public final class Editor extends RTextScrollPane {
     @Nullable
     private ParsedNpc parsedVersion;
 
-    private boolean savedSinceLastChange = false;
+    private boolean savedSinceLastChange;
 
     @Nonnull
     private final Timer timer;
@@ -99,13 +99,13 @@ public final class Editor extends RTextScrollPane {
         ((RSyntaxDocument) editor.getDocument()).setSyntaxStyle(new EasyNpcTokenMaker());
         editor.getSyntaxScheme().restoreDefaults(null);
 
-        final MenuElement[] elements = editor.getPopupMenu().getSubElements();
-        for (final MenuElement element : elements) {
-            final AbstractButton button = (AbstractButton) element;
+        MenuElement[] elements = editor.getPopupMenu().getSubElements();
+        for (MenuElement element : elements) {
+            AbstractButton button = (AbstractButton) element;
             if ("Undo".equals(button.getActionCommand()) || "Redo".equals(button.getActionCommand())) {
                 button.addActionListener(new ActionListener() {
                     @Override
-                    public void actionPerformed(final ActionEvent e) {
+                    public void actionPerformed(ActionEvent e) {
                         UndoMonitor.getInstance().updateUndoRedoLater(Editor.this);
                     }
                 });
@@ -117,7 +117,7 @@ public final class Editor extends RTextScrollPane {
         timer = new Timer(1000, new ActionListener() {
             @SuppressWarnings("synthetic-access")
             @Override
-            public void actionPerformed(final ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 if (Config.getInstance().getAutoBuild()) {
                     onCheckScript("checkScript", e);
                 }
@@ -130,18 +130,18 @@ public final class Editor extends RTextScrollPane {
 
         editor.addKeyListener(new KeyListener() {
             @Override
-            public void keyPressed(final KeyEvent e) {
+            public void keyPressed(KeyEvent e) {
                 // nothing to do
             }
 
             @Override
-            public void keyReleased(final KeyEvent e) {
+            public void keyReleased(KeyEvent e) {
                 // nothing to do
             }
 
             @SuppressWarnings("synthetic-access")
             @Override
-            public void keyTyped(final KeyEvent e) {
+            public void keyTyped(KeyEvent e) {
                 clearParsedData();
                 changedText();
                 if (Config.getInstance().getAutoBuild()) {
@@ -201,16 +201,16 @@ public final class Editor extends RTextScrollPane {
      *
      * @param pos the position in the script text that should be focused
      */
-    public void getFocusToPosition(final int pos) {
+    public void getFocusToPosition(int pos) {
         editor.setCaretPosition(pos);
         editor.requestFocusInWindow();
     }
 
-    public void getLineToFocus(final int line) {
-        final JTabbedPane parentPane = getParent();
+    public void getLineToFocus(int line) {
+        JTabbedPane parentPane = getParent();
         parentPane.setSelectedComponent(this);
 
-        final Matcher fullLineMatch = fullLinePattern.matcher(editor.getText());
+        Matcher fullLineMatch = fullLinePattern.matcher(editor.getText());
         boolean lastFind = true;
         for (int i = 0; i < line; i++) {
             lastFind = fullLineMatch.find();
@@ -244,24 +244,24 @@ public final class Editor extends RTextScrollPane {
             return currentData;
         }
 
-        currentData = Parser.getInstance().parse(getScriptText());
+        ParsedNpc newData = Parser.getInstance().parse(getScriptText());
 
-        if (currentData.hasErrors()) {
-            errorNpc = currentData;
+        if (newData.hasErrors()) {
+            errorNpc = newData;
             parsedVersion = null;
             MainFrame.getInstance().getErrorArea().addErrorEditor(this);
             return null;
         }
 
-        parsedVersion = currentData;
+        parsedVersion = newData;
         errorNpc = null;
         MainFrame.getInstance().getErrorArea().removeErrorEditor(this);
-        return currentData;
+        return newData;
     }
 
     /**
      * Get the file name of the script that is load in this editor. Its possible
-     * that this value returns <code>null</code> in case the editor is not
+     * that this value returns {@code null} in case the editor is not
      * assigned to a load script.
      *
      * @return the script file that is load in this editor
@@ -277,7 +277,7 @@ public final class Editor extends RTextScrollPane {
      * @return the text shown in this editor
      */
     public String getScriptText() {
-        final String retText = editor.getText();
+        String retText = editor.getText();
         if (retText == null) {
             return "";
         }
@@ -289,7 +289,7 @@ public final class Editor extends RTextScrollPane {
      *
      * @param script the script to display in this editor
      */
-    public void loadScript(@Nonnull final EasyNpcScript script) {
+    public void loadScript(@Nonnull EasyNpcScript script) {
         setScriptText(script);
         setLoadScriptFile(script.getSourceScriptFile());
         editor.discardAllEdits();
@@ -297,7 +297,7 @@ public final class Editor extends RTextScrollPane {
     }
 
     public void resetEditorKit() {
-        final String text = editor.getText();
+        String text = editor.getText();
         //editor.setEditorKit(new EasyNpcSyntaxKit());
         editor.setText(text);
     }
@@ -306,7 +306,7 @@ public final class Editor extends RTextScrollPane {
         savedSinceLastChange = false;
     }
 
-    public void setLoadScriptFile(@Nullable final Path file) {
+    public void setLoadScriptFile(@Nullable Path file) {
         if (file != null) {
             loadScriptFile = file;
         }
@@ -317,7 +317,7 @@ public final class Editor extends RTextScrollPane {
      *
      * @param text the text that shall be shown in the editor now
      */
-    public void setScriptText(@Nonnull final String text) {
+    public void setScriptText(@Nonnull String text) {
         int oldCaret = editor.getCaretPosition();
         editor.setText(text);
         if (oldCaret > -1) {
@@ -332,10 +332,10 @@ public final class Editor extends RTextScrollPane {
      *
      * @param script the script supplying the text
      */
-    public void setScriptText(@Nonnull final EasyNpcScript script) {
-        final StringBuilder buffer = new StringBuilder();
+    public void setScriptText(@Nonnull EasyNpcScript script) {
+        StringBuilder buffer = new StringBuilder();
 
-        final int count = script.getEntryCount();
+        int count = script.getEntryCount();
         if (count > 0) {
             for (int i = 0; i < count; i++) {
                 buffer.append(script.getEntry(i).getLine());
@@ -363,40 +363,40 @@ public final class Editor extends RTextScrollPane {
      * @return {@code true} in case this editor is currently active
      */
     public boolean isActiveEditor() {
-        return MainFrame.getInstance().getCurrentScriptEditor() == this;
+        return MainFrame.getInstance().getCurrentScriptEditor().equals(this);
     }
 
     @EventTopicSubscriber(topic = "paste")
-    public void onPasteEvent(final String topic, final ActionEvent event) {
+    public void onPasteEvent(String topic, ActionEvent event) {
         if (!isActiveEditor()) {
             return;
         }
 
-        final Clipboard sysClip = Toolkit.getDefaultToolkit().getSystemClipboard();
-        final Transferable transfer = sysClip.getContents(null);
-        final String data;
+        Clipboard sysClip = Toolkit.getDefaultToolkit().getSystemClipboard();
+        Transferable transfer = sysClip.getContents(null);
+        String data;
         try {
             data = (String) transfer.getTransferData(DataFlavor.stringFlavor);
-        } catch (@Nonnull final Exception e1) {
+        } catch (@Nonnull Exception e1) {
             return;
         }
-        final StringBuilder buffer = new StringBuilder(editor.getText());
+        StringBuilder buffer = new StringBuilder(editor.getText());
 
-        final int pos = editor.getCaretPosition();
+        int pos = editor.getCaretPosition();
         buffer.insert(pos, data);
         setScriptText(buffer.toString());
         getFocusToPosition(pos + data.length());
     }
 
     @EventTopicSubscriber(topic = "copy")
-    public void onCopyEvent(final String topic, final ActionEvent event) {
+    public void onCopyEvent(String topic, ActionEvent event) {
         if (!isActiveEditor()) {
             return;
         }
 
-        final Clipboard sysClip = Toolkit.getDefaultToolkit().getSystemClipboard();
+        Clipboard sysClip = Toolkit.getDefaultToolkit().getSystemClipboard();
 
-        final String selText = editor.getSelectedText();
+        String selText = editor.getSelectedText();
         if ((selText == null) || (selText.length() <= 0)) {
             return;
         }
@@ -404,22 +404,22 @@ public final class Editor extends RTextScrollPane {
     }
 
     @EventTopicSubscriber(topic = "cut")
-    public void onCutEvent(final String topic, final ActionEvent event) {
+    public void onCutEvent(String topic, ActionEvent event) {
         if (!isActiveEditor()) {
             return;
         }
 
-        final int selStart = editor.getSelectionStart();
-        final int selEnd = editor.getSelectionEnd();
+        int selStart = editor.getSelectionStart();
+        int selEnd = editor.getSelectionEnd();
 
-        final StringBuilder buffer = new StringBuilder(editor.getText());
+        StringBuilder buffer = new StringBuilder(editor.getText());
         buffer.delete(selStart, selEnd);
         setScriptText(buffer.toString());
         getFocusToPosition(selStart);
     }
 
     @EventTopicSubscriber(topic = "undoLastAction")
-    public void onUndoEvent(final String topic, final ActionEvent event) {
+    public void onUndoEvent(String topic, ActionEvent event) {
         if (!isActiveEditor()) {
             return;
         }
@@ -431,7 +431,7 @@ public final class Editor extends RTextScrollPane {
     }
 
     @EventTopicSubscriber(topic = "redoLastAction")
-    public void onRedoEvent(final String topic, final ActionEvent event) {
+    public void onRedoEvent(String topic, ActionEvent event) {
         if (!isActiveEditor()) {
             return;
         }
@@ -443,14 +443,14 @@ public final class Editor extends RTextScrollPane {
     }
 
     @EventTopicSubscriber(topic = "checkScript")
-    public void onCheckScript(final String topic, final ActionEvent event) {
+    public void onCheckScript(String topic, ActionEvent event) {
         if (!isActiveEditor()) {
             return;
         }
 
         if (parsedVersion == null) {
             final String scriptText = getScriptText();
-            SwingWorker<ParsedNpc, Void> worker = new SwingWorker<ParsedNpc, Void>() {
+            Runnable worker = new SwingWorker<ParsedNpc, Void>() {
                 @Override
                 protected ParsedNpc doInBackground() throws Exception {
                     return Parser.getInstance().parse(scriptText);

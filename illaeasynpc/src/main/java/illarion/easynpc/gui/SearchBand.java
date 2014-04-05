@@ -60,7 +60,7 @@ public final class SearchBand extends JRibbonBand {
         startGroup(Lang.getMsg(SearchBand.class, "fastSearchGroup"));
         final JTextField textBox = new JTextField();
         textBox.setPreferredSize(new Dimension(150, textBox.getPreferredSize().height));
-        final JRibbonComponent ribbonTextBox = new JRibbonComponent(textBox);
+        JRibbonComponent ribbonTextBox = new JRibbonComponent(textBox);
         addRibbonComponent(ribbonTextBox);
 
         ribbonTextBox.setRichTooltip(new RichTooltip(Lang.getMsg(getClass(), "fastSearchTooltipTitle"),
@@ -68,15 +68,15 @@ public final class SearchBand extends JRibbonBand {
 
         textBox.addKeyListener(new KeyListener() {
             @Override
-            public void keyPressed(@Nonnull final KeyEvent e) {
+            public void keyPressed(@Nonnull KeyEvent e) {
                 if (e.getKeyCode() != KeyEvent.VK_ENTER) {
                     return;
                 }
 
-                final Editor scriptEditor = MainFrame.getInstance().getCurrentScriptEditor();
-                final RSyntaxTextArea editor = scriptEditor.getEditor();
+                Editor scriptEditor = MainFrame.getInstance().getCurrentScriptEditor();
+                RSyntaxTextArea editor = scriptEditor.getEditor();
 
-                final SearchContext search = new SearchContext();
+                SearchContext search = new SearchContext();
                 search.setSearchFor(textBox.getText());
                 search.setMatchCase(false);
                 search.setRegularExpression(false);
@@ -86,28 +86,28 @@ public final class SearchBand extends JRibbonBand {
             }
 
             @Override
-            public void keyReleased(final KeyEvent e) {
+            public void keyReleased(KeyEvent e) {
                 // nothing
             }
 
             @Override
-            public void keyTyped(final KeyEvent e) {
+            public void keyTyped(KeyEvent e) {
                 // nothing
             }
         });
 
         startGroup();
 
-        final JCommandButton findButton = new JCommandButton(Lang.getMsg(SearchBand.class, "advancedSearchButton"),
-                                                             Utils.getResizableIconFromResource("find.png"));
+        JCommandButton findButton = new JCommandButton(Lang.getMsg(SearchBand.class, "advancedSearchButton"),
+                                                       Utils.getResizableIconFromResource("find.png"));
         findButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(getClass(), "findButtonTooltipTitle"),
                                                         Lang.getMsg(getClass(), "findButtonTooltip")));
         findButton.addActionListener(new ActionListener() {
             @Nullable
-            private SearchDialog dialog = null;
+            private SearchDialog dialog;
 
             @Override
-            public void actionPerformed(final ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 if (dialog == null) {
                     dialog = new SearchDialog();
                 }
@@ -117,7 +117,7 @@ public final class SearchBand extends JRibbonBand {
 
         addCommandButton(findButton, RibbonElementPriority.TOP);
 
-        final List<RibbonBandResizePolicy> policies = new ArrayList<>();
+        List<RibbonBandResizePolicy> policies = new ArrayList<>();
         policies.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
         policies.add(new CoreRibbonResizePolicies.Mid2Low(getControlPanel()));
         setResizePolicies(policies);

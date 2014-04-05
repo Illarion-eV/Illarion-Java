@@ -35,7 +35,7 @@ public final class Items implements Comparable<Items> {
     /**
      * The table index of the item id in the definition table.
      */
-    protected static final int TB_ID = 0;
+    static final int TB_ID = 0;
 
     /**
      * The list of items that were load.
@@ -49,8 +49,8 @@ public final class Items implements Comparable<Items> {
         new TableLoader("Items", new TableLoaderSink() {
             @Override
             public boolean processRecord(
-                    final int line, @Nonnull final TableLoader loader) {
-                final int itemId = loader.getInt(TB_ID);
+                    int line, @Nonnull TableLoader loader) {
+                int itemId = loader.getInt(TB_ID);
                 itemList.add(itemId);
                 return true;
             }
@@ -73,7 +73,7 @@ public final class Items implements Comparable<Items> {
      *
      * @param id the ID of the item
      */
-    protected Items(final int id) {
+    Items(int id) {
         itemId = id;
     }
 
@@ -93,7 +93,7 @@ public final class Items implements Comparable<Items> {
     }
 
     @Nullable
-    public static Items valueOf(final int id) {
+    public static Items valueOf(int id) {
         if (contains(id)) {
             return new Items(id);
         }
@@ -101,7 +101,7 @@ public final class Items implements Comparable<Items> {
     }
 
     @Nullable
-    public static Items valueOf(@Nullable final ItemId id) {
+    public static Items valueOf(@Nullable ItemId id) {
         if (ItemId.isValidItem(id)) {
             assert id != null;
             return valueOf(id.getValue());
@@ -115,7 +115,7 @@ public final class Items implements Comparable<Items> {
      * @param id the ID of the item to look for
      * @return {@code true} in case the item is found in the list of valid items
      */
-    public static boolean contains(final int id) {
+    public static boolean contains(int id) {
         return Arrays.binarySearch(itemsList, id) >= 0;
     }
 
@@ -129,18 +129,18 @@ public final class Items implements Comparable<Items> {
     }
 
     @Override
-    public int compareTo(@Nonnull final Items o) {
+    public int compareTo(@Nonnull Items o) {
         return Integer.valueOf(itemId).compareTo(o.itemId);
     }
 
     @Override
-    public boolean equals(@Nullable final Object obj) {
+    public boolean equals(@Nullable Object obj) {
         if (super.equals(obj)) {
             return true;
         }
         if (obj instanceof Items) {
             Items objItems = (Items) obj;
-            return (objItems.itemId == itemId);
+            return objItems.itemId == itemId;
         }
         return false;
     }
