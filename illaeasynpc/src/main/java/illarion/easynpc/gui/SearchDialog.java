@@ -20,6 +20,7 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -41,8 +42,8 @@ public final class SearchDialog extends JDialog {
      * The constructor of the dialog that prepares the dialog for proper
      * display.
      */
-    public SearchDialog() {
-        super(MainFrame.getInstance(), Lang.getMsg(SearchDialog.class, "title"), false);
+    public SearchDialog(@Nonnull final MainFrame frame) {
+        super(frame, Lang.getMsg(SearchDialog.class, "title"), false);
 
         final SearchDialog dialog = this;
 
@@ -86,7 +87,7 @@ public final class SearchDialog extends JDialog {
         findNextBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Editor scriptEditor = MainFrame.getInstance().getCurrentScriptEditor();
+                Editor scriptEditor = frame.getCurrentScriptEditor();
                 RSyntaxTextArea editor = scriptEditor.getEditor();
 
                 SearchContext search = new SearchContext();
@@ -102,7 +103,7 @@ public final class SearchDialog extends JDialog {
         replaceOneBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Editor scriptEditor = MainFrame.getInstance().getCurrentScriptEditor();
+                Editor scriptEditor = frame.getCurrentScriptEditor();
                 RSyntaxTextArea editor = scriptEditor.getEditor();
 
                 SearchContext search = new SearchContext();
@@ -119,7 +120,7 @@ public final class SearchDialog extends JDialog {
         replaceAllBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Editor scriptEditor = MainFrame.getInstance().getCurrentScriptEditor();
+                Editor scriptEditor = frame.getCurrentScriptEditor();
                 RSyntaxTextArea editor = scriptEditor.getEditor();
 
                 SearchContext search = new SearchContext();

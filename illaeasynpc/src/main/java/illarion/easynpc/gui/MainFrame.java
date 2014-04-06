@@ -93,6 +93,15 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
     private final JTabbedPane tabbedEditorArea;
 
     /**
+     * This is the instance of the documentation browser that is ready for usage.
+     */
+    @Nullable
+    private DocuBrowser docuBrowser;
+
+    @Nonnull
+    private final UndoMonitor undoMonitor;
+
+    /**
      * Default constructor that creates the window and builds all required
      * elements into this window.
      */
@@ -101,8 +110,10 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
 
         TokenMakerFactory.setDefaultInstance(new EasyNpcTokenMakerFactory());
 
+        undoMonitor = new UndoMonitor(this);
+
         RibbonTask startTask = new RibbonTask(Lang.getMsg(getClass(), "ribbonTaskStart"), new ClipboardBand(),
-                                              new SearchBand(), new CompileBand());
+                                              new SearchBand(this), new CompileBand());
         getRibbon().addTask(startTask);
 
         JCommandButton saveButton = new JCommandButton(Utils.getResizableIconFromResource("filesave.png"));
@@ -111,27 +122,27 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Utils.saveEasyNPC(getCurrentScriptEditor());
+                Utils.saveEasyNPC(MainFrame.this, getCurrentScriptEditor());
             }
         });
         getRibbon().addTaskbarComponent(saveButton);
 
-        getRibbon().addTaskbarComponent(UndoMonitor.getInstance().getUndoButton());
-        getRibbon().addTaskbarComponent(UndoMonitor.getInstance().getRedoButton());
+        getRibbon().addTaskbarComponent(undoMonitor.getUndoButton());
+        getRibbon().addTaskbarComponent(undoMonitor.getRedoButton());
 
-        getRibbon().setApplicationMenu(new MainMenu());
+        getRibbon().setApplicationMenu(new MainMenu(this));
 
         getRibbon().configureHelp(Utils.getResizableIconFromResource("help.png"), new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                DocuBrowser.showDocuBrowser();
+                showDocuBrowser();
             }
         });
 
         JPanel rootPanel = new JPanel(new BorderLayout());
         mainPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         tabbedEditorArea = new JTabbedPane(SwingConstants.TOP);
-        tabbedEditorArea.addChangeListener(UndoMonitor.getInstance());
+        tabbedEditorArea.addChangeListener(undoMonitor);
 
         JTabbedPane footerPane = new JTabbedPane(SwingConstants.TOP);
         errorArea = new ErrorPane();
@@ -150,12 +161,12 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
-                getInstance().dispose();
+                dispose();
             }
 
             @Override
             public void windowClosing(WindowEvent e) {
-                getInstance().closeWindow();
+                closeWindow();
             }
         });
 
@@ -166,7 +177,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
         getRootPane().getActionMap().put("displayHelpWindow", new Action() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                DocuBrowser.showDocuBrowser();
+                showDocuBrowser();
             }
 
             @Override
@@ -237,13 +248,13 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
                                     Lang.getMsg(MainFrame.class, "UnsavedChanges.discardButton"),
                                     Lang.getMsg(MainFrame.class, "UnsavedChanges.cancelButton")};
                 int result = JOptionPane
-                        .showOptionDialog(getInstance(), Lang.getMsg(MainFrame.class, "UnsavedChanges.message"),
+                        .showOptionDialog(MainFrame.this, Lang.getMsg(MainFrame.class, "UnsavedChanges.message"),
                                           Lang.getMsg(MainFrame.class, "UnsavedChanges.title"),
                                           JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options,
                                           options[0]);
 
                 if (result == JOptionPane.YES_OPTION) {
-                    Utils.saveEasyNPC(editor);
+                    Utils.saveEasyNPC(MainFrame.this, editor);
                     return false;
                 }
                 return result == JOptionPane.CANCEL_OPTION;
@@ -287,7 +298,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
      */
     public static void crashEditor(@Nullable String message) {
         if (message != null) {
-            JOptionPane.showMessageDialog(getInstance(), message, Lang.getMsg(MainFrame.class, "crashEditor.Title"),
+            JOptionPane.showMessageDialog(null, message, Lang.getMsg(MainFrame.class, "crashEditor.Title"),
                                           JOptionPane.ERROR_MESSAGE);
             LOGGER.error("Editor crashed! Fatal error: " + message);
         } else {
@@ -322,9 +333,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
                 }
 
                 instance = new MainFrame();
-                getInstance().setVisible(true);
-
-                System.out.println("Startup done.");
+                instance.setVisible(true);
             }
         });
     }
@@ -425,7 +434,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
      */
     @Nonnull
     Editor addNewScript(@Nullable String templateText) {
-        Editor editor = new Editor();
+        Editor editor = new Editor(this, undoMonitor);
         editor.putClientProperty(SubstanceLookAndFeel.TABBED_PANE_CLOSE_BUTTONS_PROPERTY, Boolean.TRUE);
         tabbedEditorArea
                 .insertTab(Lang.getMsg(getClass(), "newScriptTab"), null, editor, null, tabbedEditorArea.getTabCount());
@@ -478,7 +487,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
                 );
 
                 if (result == JOptionPane.YES_OPTION) {
-                    Utils.saveEasyNPC(editor);
+                    Utils.saveEasyNPC(this, editor);
                     fileList.add(editor.getScriptFile());
                 }
             } else {
@@ -520,7 +529,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
     void setCurrentEditorTab(int index) {
         tabbedEditorArea.setSelectedIndex(index);
 
-        UndoMonitor.getInstance().updateUndoRedo(getScriptEditor(index));
+        undoMonitor.updateUndoRedo(getScriptEditor(index));
     }
 
     /**
@@ -547,5 +556,12 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
      */
     private void setTabTitle(int index, String title) {
         tabbedEditorArea.setTitleAt(index, title);
+    }
+
+    private void showDocuBrowser() {
+        if (docuBrowser == null) {
+            docuBrowser = new DocuBrowser(this);
+        }
+        docuBrowser.setVisible(true);
     }
 }

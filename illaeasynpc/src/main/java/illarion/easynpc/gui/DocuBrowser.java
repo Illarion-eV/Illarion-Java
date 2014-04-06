@@ -134,11 +134,6 @@ public final class DocuBrowser extends JDialog {
     }
 
     /**
-     * The instance of the documentation browser once it was created.
-     */
-    private static DocuBrowser instance;
-
-    /**
      * The serialization UID of the dialog.
      */
     private static final long serialVersionUID = 1L;
@@ -164,8 +159,8 @@ public final class DocuBrowser extends JDialog {
     /**
      * The default constructor creating this documentation display.
      */
-    public DocuBrowser() {
-        super(MainFrame.getInstance(), Lang.getMsg(DocuBrowser.class, "title"), false);
+    public DocuBrowser(@Nonnull Frame owner) {
+        super(owner, Lang.getMsg(DocuBrowser.class, "title"), false);
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
@@ -279,19 +274,6 @@ public final class DocuBrowser extends JDialog {
 
         setLocation(((parentDim.width - getWidth()) / 2) + parentPos.x,
                     ((parentDim.height - getHeight()) / 2) + parentPos.y);
-    }
-
-    /**
-     * Display the help browser and create it in case that was not done yet.
-     */
-    public static void showDocuBrowser() {
-        synchronized (DocuBrowser.class) {
-            if (instance == null) {
-                instance = new DocuBrowser();
-            }
-        }
-
-        instance.setVisible(true);
     }
 
     /**

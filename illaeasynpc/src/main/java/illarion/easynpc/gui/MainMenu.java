@@ -48,14 +48,14 @@ final class MainMenu extends RibbonApplicationMenu {
     /**
      * Constructor of the main menu that loads up the menu.
      */
-    public MainMenu() {
+    public MainMenu(@Nonnull final MainFrame frame) {
 
         RibbonApplicationMenuEntryPrimary newScriptEntry = new RibbonApplicationMenuEntryPrimary(
                 Utils.getResizableIconFromResource("filenew.png"), Lang.getMsg(getClass(), "newScriptButton"),
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        MainFrame.getInstance().addNewScript();
+                        frame.addNewScript();
                     }
                 }, CommandButtonKind.ACTION_AND_POPUP_MAIN_ACTION
         );
@@ -65,7 +65,7 @@ final class MainMenu extends RibbonApplicationMenu {
                                                      Lang.getMsg(MainMenu.class, "template1"), new ActionListener() {
                                                  @Override
                                                  public void actionPerformed(ActionEvent e) {
-                                                     MainFrame.getInstance().addNewScript(loadTemplate("template1"));
+                                                     frame.addNewScript(loadTemplate("template1"));
                                                  }
                                              }, CommandButtonKind.ACTION_ONLY
                                              )
@@ -77,7 +77,7 @@ final class MainMenu extends RibbonApplicationMenu {
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        Utils.selectAndOpenScript();
+                        Utils.selectAndOpenScript(frame);
                     }
                 }, CommandButtonKind.ACTION_AND_POPUP_MAIN_ACTION
         );
@@ -97,7 +97,7 @@ final class MainMenu extends RibbonApplicationMenu {
 
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            Utils.openScript(fileToOpen);
+                            Utils.openScript(frame, fileToOpen);
                         }
                     }, CommandButtonKind.ACTION_ONLY
             );
@@ -118,7 +118,7 @@ final class MainMenu extends RibbonApplicationMenu {
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        Utils.saveEasyNPC(MainFrame.getInstance().getCurrentScriptEditor());
+                        Utils.saveEasyNPC(frame, frame.getCurrentScriptEditor());
                     }
                 }, CommandButtonKind.ACTION_ONLY
         );
@@ -129,10 +129,10 @@ final class MainMenu extends RibbonApplicationMenu {
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        int count = MainFrame.getInstance().getOpenTabs();
+                        int count = frame.getOpenTabs();
 
                         for (int i = 0; i < count; i++) {
-                            Utils.saveEasyNPC(MainFrame.getInstance().getScriptEditor(i));
+                            Utils.saveEasyNPC(frame, frame.getScriptEditor(i));
                         }
                     }
                 }, CommandButtonKind.ACTION_ONLY
@@ -144,7 +144,7 @@ final class MainMenu extends RibbonApplicationMenu {
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        Utils.selectAndSaveEasyNPC(MainFrame.getInstance().getCurrentScriptEditor());
+                        Utils.selectAndSaveEasyNPC(frame, frame.getCurrentScriptEditor());
                     }
                 }, CommandButtonKind.ACTION_ONLY
         );
@@ -155,7 +155,7 @@ final class MainMenu extends RibbonApplicationMenu {
                 Lang.getMsg(getClass(), "saveLuaScriptButton"), new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Utils.saveLuaScript(MainFrame.getInstance().getCurrentScriptEditor());
+                Utils.saveLuaScript(frame, frame.getCurrentScriptEditor());
             }
         }, CommandButtonKind.ACTION_ONLY
         );
@@ -166,7 +166,7 @@ final class MainMenu extends RibbonApplicationMenu {
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        Utils.uploadLuaScript(MainFrame.getInstance().getCurrentScriptEditor());
+                        Utils.uploadLuaScript(frame, frame.getCurrentScriptEditor());
                     }
                 }, CommandButtonKind.ACTION_ONLY
         );
@@ -179,7 +179,7 @@ final class MainMenu extends RibbonApplicationMenu {
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        MainFrame.getInstance().closeWindow();
+                        frame.closeWindow();
                     }
                 }, CommandButtonKind.ACTION_ONLY
         );

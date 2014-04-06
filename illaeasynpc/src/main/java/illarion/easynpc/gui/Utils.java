@@ -83,16 +83,16 @@ final class Utils {
      *
      * @param file the file that is the source of this script
      */
-    static void openScript(@Nonnull Path file) {
+    static void openScript(@Nonnull MainFrame frame, @Nonnull Path file) {
         try {
-            int editorIndex = MainFrame.getInstance().alreadyOpen(file);
+            int editorIndex = frame.alreadyOpen(file);
             if (editorIndex > -1) {
-                MainFrame.getInstance().setCurrentEditorTab(editorIndex);
+                frame.setCurrentEditorTab(editorIndex);
                 return;
             }
             EasyNpcScript easyScript = new EasyNpcScript(file);
-            MainFrame.getInstance().addNewScript().loadScript(easyScript);
-            MainFrame.getInstance().setCurrentTabTitle(file.getFileName().toString());
+            frame.addNewScript().loadScript(easyScript);
+            frame.setCurrentTabTitle(file.getFileName().toString());
             Config.getInstance().addLastOpenedFile(file);
         } catch (@Nonnull IOException e1) {
             LOGGER.error("Reading the script failed.", e1); //$NON-NLS-1$
@@ -105,10 +105,10 @@ final class Utils {
      *
      * @param editor the editor that supplies the script text
      */
-    static void saveEasyNPC(@Nonnull Editor editor) {
+    static void saveEasyNPC(@Nonnull MainFrame frame, @Nonnull Editor editor) {
         Path targetFile = editor.getScriptFile();
         if (targetFile == null) {
-            selectAndSaveEasyNPC(editor);
+            selectAndSaveEasyNPC(frame, editor);
             return;
         }
 
@@ -123,10 +123,10 @@ final class Utils {
      *
      * @param editor the editor containing the original script.
      */
-    static void saveLuaScript(@Nonnull Editor editor) {
+    static void saveLuaScript(@Nonnull MainFrame frame, @Nonnull Editor editor) {
         ParsedNpc npc = editor.getParsedData();
         if (npc == null) {
-            JOptionPane.showMessageDialog(MainFrame.getInstance(), Lang.getMsg(Utils.class, "saveLuaErrors"),
+            JOptionPane.showMessageDialog(frame, Lang.getMsg(Utils.class, "saveLuaErrors"),
                                           Lang.getMsg(Utils.class, "saveLuaErrorsTitle"), JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -147,7 +147,7 @@ final class Utils {
         fileDiag.setSelectedFile(
                 new File(Config.getInstance().getLuaNpcFolder() + File.separator + npc.getLuaFilename()));
 
-        int fileReturn = fileDiag.showSaveDialog(MainFrame.getInstance());
+        int fileReturn = fileDiag.showSaveDialog(frame);
         if (fileReturn == JFileChooser.APPROVE_OPTION) {
             File targetFile = fileDiag.getSelectedFile();
             File backupFile = new File(targetFile.getAbsolutePath() + ".bak");
@@ -181,7 +181,7 @@ final class Utils {
      * Display a file selection dialog to allow the player to select a easyNPC
      * script that is load after.
      */
-    static void selectAndOpenScript() {
+    static void selectAndOpenScript(@Nonnull MainFrame frame) {
         JFileChooser fileDiag = new JFileChooser();
         fileDiag.setFileFilter(new FileFilter() {
             @Override
@@ -196,10 +196,10 @@ final class Utils {
         });
         fileDiag.setCurrentDirectory(new File(Config.getInstance().getEasyNpcFolder()));
 
-        int fileReturn = fileDiag.showOpenDialog(MainFrame.getInstance());
+        int fileReturn = fileDiag.showOpenDialog(frame);
         if (fileReturn == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileDiag.getSelectedFile();
-            openScript(selectedFile.toPath());
+            openScript(frame, selectedFile.toPath());
         }
     }
 
@@ -210,7 +210,7 @@ final class Utils {
      *
      * @param editor the editor that supplies the script text
      */
-    static void selectAndSaveEasyNPC(@Nonnull Editor editor) {
+    static void selectAndSaveEasyNPC(@Nonnull MainFrame frame, @Nonnull Editor editor) {
         JFileChooser fileDiag = new JFileChooser();
         fileDiag.setFileFilter(new FileFilter() {
             @Override
@@ -226,7 +226,7 @@ final class Utils {
         fileDiag.setCurrentDirectory(new File(Config.getInstance().getEasyNpcFolder()));
         Path scriptFile = editor.getScriptFile();
         fileDiag.setSelectedFile((scriptFile == null) ? null : scriptFile.toFile());
-        int fileReturn = fileDiag.showSaveDialog(MainFrame.getInstance());
+        int fileReturn = fileDiag.showSaveDialog(frame);
         if (fileReturn == JFileChooser.APPROVE_OPTION) {
             String targetFile = fileDiag.getSelectedFile().getAbsolutePath();
             if (!targetFile.endsWith(".npc")) {
@@ -236,15 +236,15 @@ final class Utils {
             Path realTargetFile = Paths.get(targetFile);
             saveEasyNPCImpl(editor, realTargetFile);
             editor.setLoadScriptFile(realTargetFile);
-            MainFrame.getInstance().setTabTitle(editor, realTargetFile.getFileName().toString());
+            frame.setTabTitle(editor, realTargetFile.getFileName().toString());
         }
         editor.saved();
     }
 
-    static void uploadLuaScript(@Nonnull Editor editor) {
+    static void uploadLuaScript(@Nonnull MainFrame frame, @Nonnull Editor editor) {
         ParsedNpc npc = editor.getParsedData();
         if (npc == null) {
-            JOptionPane.showMessageDialog(MainFrame.getInstance(), Lang.getMsg(Utils.class, "uploadLuaErrors"),
+            JOptionPane.showMessageDialog(frame, Lang.getMsg(Utils.class, "uploadLuaErrors"),
                                           Lang.getMsg(Utils.class, "uploadLuaErrorsTitle"), JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -276,7 +276,7 @@ final class Utils {
 
             input.close();
 
-            JOptionPane.showMessageDialog(MainFrame.getInstance(), Lang.getMsg(Utils.class, "luaUploadInfos"),
+            JOptionPane.showMessageDialog(frame, Lang.getMsg(Utils.class, "luaUploadInfos"),
                                           Lang.getMsg(Utils.class, "luaUploadInfosTitle"),
                                           JOptionPane.INFORMATION_MESSAGE);
         } catch (@Nonnull IOException ex) {

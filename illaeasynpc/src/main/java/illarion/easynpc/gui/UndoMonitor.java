@@ -36,11 +36,6 @@ import javax.swing.event.UndoableEditListener;
  */
 public final class UndoMonitor implements UndoableEditListener, ChangeListener {
     /**
-     * The singleton instance of this class.
-     */
-    private static final UndoMonitor INSTANCE = new UndoMonitor();
-
-    /**
      * The button used for the redo operation.
      */
     @Nonnull
@@ -52,11 +47,16 @@ public final class UndoMonitor implements UndoableEditListener, ChangeListener {
     @Nonnull
     private final JCommandButton undoButton;
 
+    @Nonnull
+    private final MainFrame frame;
+
     /**
      * The private constructor that prepares all values for this monitor to work
      * properly.
      */
-    private UndoMonitor() {
+    UndoMonitor(@Nonnull MainFrame frame) {
+        this.frame = frame;
+
         undoButton = new JCommandButton(Utils.getResizableIconFromResource("undo.png"));
         redoButton = new JCommandButton(Utils.getResizableIconFromResource("redo.png"));
 
@@ -70,16 +70,6 @@ public final class UndoMonitor implements UndoableEditListener, ChangeListener {
 
         undoButton.addActionListener(new EventBusAction());
         redoButton.addActionListener(new EventBusAction());
-    }
-
-    /**
-     * Get the singleton instance of this class.
-     *
-     * @return the singleton instance of this class
-     */
-    @Nonnull
-    public static UndoMonitor getInstance() {
-        return INSTANCE;
     }
 
     /**
@@ -123,10 +113,7 @@ public final class UndoMonitor implements UndoableEditListener, ChangeListener {
      */
     @Override
     public void undoableEditHappened(UndoableEditEvent e) {
-        if (MainFrame.getInstance() == null) {
-            return;
-        }
-        Editor editor = MainFrame.getInstance().getCurrentScriptEditor();
+        Editor editor = frame.getCurrentScriptEditor();
         updateUndoRedo(editor);
     }
 

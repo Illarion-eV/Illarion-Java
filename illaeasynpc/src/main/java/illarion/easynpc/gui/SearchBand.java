@@ -53,7 +53,7 @@ public final class SearchBand extends JRibbonBand {
      * The constructor of the search band that creates all contents of this band
      * properly.
      */
-    public SearchBand() {
+    public SearchBand(@Nonnull final MainFrame frame) {
         super(Lang.getMsg(SearchBand.class, "title"), null);
 
         startGroup(Lang.getMsg(SearchBand.class, "fastSearchGroup"));
@@ -72,7 +72,7 @@ public final class SearchBand extends JRibbonBand {
                     return;
                 }
 
-                Editor scriptEditor = MainFrame.getInstance().getCurrentScriptEditor();
+                Editor scriptEditor = frame.getCurrentScriptEditor();
                 RSyntaxTextArea editor = scriptEditor.getEditor();
 
                 SearchContext search = new SearchContext();
@@ -108,7 +108,7 @@ public final class SearchBand extends JRibbonBand {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (dialog == null) {
-                    dialog = new SearchDialog();
+                    dialog = new SearchDialog(frame);
                 }
                 dialog.setVisible(true);
             }

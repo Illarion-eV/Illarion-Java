@@ -85,11 +85,19 @@ public final class Editor extends RTextScrollPane {
     @Nonnull
     private final Timer timer;
 
+    @Nonnull
+    private final MainFrame frame;
+
+    @Nonnull
+    private final UndoMonitor undoMonitor;
+
     /**
      * The default constructor that prepares the editor for the display.
      */
-    Editor() {
+    Editor(@Nonnull MainFrame frame, @Nonnull final UndoMonitor undoMonitor) {
         super(new RSyntaxTextArea(), true);
+        this.frame = frame;
+        this.undoMonitor = undoMonitor;
 
         editor = getEditor();
         editor.setEditable(true);
@@ -104,7 +112,7 @@ public final class Editor extends RTextScrollPane {
                 button.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        UndoMonitor.getInstance().updateUndoRedoLater(Editor.this);
+                        undoMonitor.updateUndoRedoLater(Editor.this);
                     }
                 });
             }
@@ -123,7 +131,7 @@ public final class Editor extends RTextScrollPane {
         });
         timer.setInitialDelay(1000);
 
-        editor.getDocument().addUndoableEditListener(UndoMonitor.getInstance());
+        editor.getDocument().addUndoableEditListener(undoMonitor);
 
         editor.addKeyListener(new KeyListener() {
             @Override
@@ -163,7 +171,7 @@ public final class Editor extends RTextScrollPane {
      * Clean this editor and remove all references to it.
      */
     public void cleanup() {
-        MainFrame.getInstance().getErrorArea().removeErrorEditor(this);
+        frame.getErrorArea().removeErrorEditor(this);
         parsedVersion = null;
         errorNpc = null;
         editor.discardAllEdits();
@@ -245,13 +253,13 @@ public final class Editor extends RTextScrollPane {
         if (newData.hasErrors()) {
             errorNpc = newData;
             parsedVersion = null;
-            MainFrame.getInstance().getErrorArea().addErrorEditor(this);
+            frame.getErrorArea().addErrorEditor(this);
             return null;
         }
 
         parsedVersion = newData;
         errorNpc = null;
-        MainFrame.getInstance().getErrorArea().removeErrorEditor(this);
+        frame.getErrorArea().removeErrorEditor(this);
         return newData;
     }
 
@@ -366,7 +374,7 @@ public final class Editor extends RTextScrollPane {
      * @return {@code true} in case this editor is currently active
      */
     boolean isActiveEditor() {
-        return MainFrame.getInstance().getCurrentScriptEditor().equals(this);
+        return frame.getCurrentScriptEditor().equals(this);
     }
 
     @EventTopicSubscriber(topic = "paste")
@@ -430,7 +438,7 @@ public final class Editor extends RTextScrollPane {
         if (editor.canUndo()) {
             editor.undoLastAction();
         }
-        UndoMonitor.getInstance().updateUndoRedo(this);
+        undoMonitor.updateUndoRedo(this);
     }
 
     @EventTopicSubscriber(topic = "redoLastAction")
@@ -442,7 +450,7 @@ public final class Editor extends RTextScrollPane {
         if (editor.canRedo()) {
             editor.redoLastAction();
         }
-        UndoMonitor.getInstance().updateUndoRedo(this);
+        undoMonitor.updateUndoRedo(this);
     }
 
     @EventTopicSubscriber(topic = "checkScript")
@@ -466,11 +474,11 @@ public final class Editor extends RTextScrollPane {
                         if (currentData.hasErrors()) {
                             errorNpc = currentData;
                             parsedVersion = null;
-                            MainFrame.getInstance().getErrorArea().addErrorEditor(Editor.this);
+                            frame.getErrorArea().addErrorEditor(Editor.this);
                         } else {
                             parsedVersion = currentData;
                             errorNpc = null;
-                            MainFrame.getInstance().getErrorArea().removeErrorEditor(Editor.this);
+                            frame.getErrorArea().removeErrorEditor(Editor.this);
                         }
                     } catch (InterruptedException | ExecutionException ignored) {
                     }
