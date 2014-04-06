@@ -626,6 +626,7 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> {
         return defaultResult();
     }
 
+    @Nonnull
     public ParsedNpc getParsedNpc() {
         return npc;
     }

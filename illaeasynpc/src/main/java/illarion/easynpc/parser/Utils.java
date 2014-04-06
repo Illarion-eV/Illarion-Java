@@ -114,6 +114,7 @@ final class Utils {
         }
     }
 
+    @Nonnull
     static ConsequenceArena.Task getArenaTask(@Nullable EasyNpcParser.ArenaTaskContext node) {
         if (node == null) {
             LOGGER.warn("Expected node for arena task not found.");
@@ -353,6 +354,7 @@ final class Utils {
         return skill;
     }
 
+    @Nonnull
     static Map<String, String> getItemDataOpt(@Nullable EasyNpcParser.ItemDataListContext node) {
         if (node == null) {
             return Collections.emptyMap();
@@ -360,6 +362,7 @@ final class Utils {
         return getItemData(node);
     }
 
+    @Nonnull
     static Map<String, String> getItemData(@Nullable EasyNpcParser.ItemDataListContext node) {
         if (node == null) {
             LOGGER.warn("Expected node for item data not found.");

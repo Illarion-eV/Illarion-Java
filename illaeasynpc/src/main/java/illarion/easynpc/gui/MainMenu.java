@@ -214,7 +214,7 @@ final class MainMenu extends RibbonApplicationMenu {
                 sb.append(line).append('\n');
             }
             return sb.toString();
-        } catch (URISyntaxException | IOException e) {
+        } catch (@Nonnull URISyntaxException | IOException e) {
             return null;
         }
     }

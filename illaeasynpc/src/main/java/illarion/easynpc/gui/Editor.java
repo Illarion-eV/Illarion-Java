@@ -462,6 +462,7 @@ public final class Editor extends RTextScrollPane {
         if (parsedVersion == null) {
             final String scriptText = getScriptText();
             Runnable worker = new SwingWorker<ParsedNpc, Void>() {
+                @Nonnull
                 @Override
                 protected ParsedNpc doInBackground() throws Exception {
                     return Parser.parse(scriptText);
@@ -480,7 +481,7 @@ public final class Editor extends RTextScrollPane {
                             errorNpc = null;
                             frame.getErrorArea().removeErrorEditor(Editor.this);
                         }
-                    } catch (InterruptedException | ExecutionException ignored) {
+                    } catch (@Nonnull InterruptedException | ExecutionException ignored) {
                     }
                 }
             };

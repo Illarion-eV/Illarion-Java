@@ -289,7 +289,7 @@ public final class LuaWriter {
      * @param stage the stage to check
      * @return {@code true} in case the NPC contains entries in this stage.
      */
-    private static boolean checkStageExists(@Nonnull ParsedNpc source, WritingStage stage) {
+    private static boolean checkStageExists(@Nonnull ParsedNpc source, @Nonnull WritingStage stage) {
         int count = source.getDataCount();
 
         for (int i = 0; i < count; ++i) {
@@ -572,7 +572,7 @@ public final class LuaWriter {
      * @throws IOException thrown in case the writing operations fail
      */
     private static void writeStage(
-            @Nonnull ParsedNpc source, Writer target, WritingStage stage) throws IOException {
+            @Nonnull ParsedNpc source, @Nonnull Writer target, @Nonnull WritingStage stage) throws IOException {
         int count = source.getDataCount();
 
         LuaWritable writeable;

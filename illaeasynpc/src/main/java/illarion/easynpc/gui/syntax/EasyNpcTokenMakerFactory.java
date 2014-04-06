@@ -19,6 +19,7 @@ import org.fife.ui.rsyntaxtextarea.TokenMaker;
 import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Set;
 
@@ -34,6 +35,7 @@ public class EasyNpcTokenMakerFactory extends TokenMakerFactory {
     @Nonnull
     public static final String SYNTAX_STYLE_EASY_NPC = "EasyNPC";
 
+    @Nullable
     @Override
     protected TokenMaker getTokenMakerImpl(String key) {
         if (SYNTAX_STYLE_EASY_NPC.equals(key)) {
@@ -42,6 +44,7 @@ public class EasyNpcTokenMakerFactory extends TokenMakerFactory {
         return null;
     }
 
+    @Nonnull
     @Override
     public Set<String> keySet() {
         return Collections.singleton(SYNTAX_STYLE_EASY_NPC);

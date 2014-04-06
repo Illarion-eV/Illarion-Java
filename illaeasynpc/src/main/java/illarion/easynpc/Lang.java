@@ -111,7 +111,7 @@ public final class Lang implements MessageSource {
      * @return the localized message or the key with surrounding &lt; &gt; in
      * case the key was not found in the storage
      */
-    public static String getMsg(String key) {
+    public static String getMsg(@Nonnull String key) {
         return INSTANCE.getMessage(key);
     }
 
@@ -132,7 +132,7 @@ public final class Lang implements MessageSource {
      * case the key was not found in the storage
      */
     @Override
-    public String getMessage(String key) {
+    public String getMessage(@Nonnull String key) {
         try {
             return messages.getString(key);
         } catch (@Nonnull MissingResourceException e) {
@@ -147,7 +147,7 @@ public final class Lang implements MessageSource {
      * @param key the key that shall be checked
      * @return true in case a message was found
      */
-    public boolean hasMsg(String key) {
+    public boolean hasMsg(@Nonnull String key) {
         try {
             messages.getString(key);
         } catch (@Nonnull MissingResourceException e) {

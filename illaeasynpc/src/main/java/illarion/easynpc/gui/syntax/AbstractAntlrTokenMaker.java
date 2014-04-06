@@ -60,7 +60,7 @@ abstract class AbstractAntlrTokenMaker<T extends Lexer> extends AbstractTokenMak
     }
 
     @Override
-    public Token getTokenList(Segment text, int initialTokenType, int startOffset) {
+    public Token getTokenList(@Nonnull Segment text, int initialTokenType, int startOffset) {
         try (Reader textReader = new CharArrayReader(text.array, text.offset, text.count)) {
             lexer.setInputStream(new ANTLRInputStream(textReader));
             TokenStream tokenStream = new UnbufferedTokenStream(lexer);

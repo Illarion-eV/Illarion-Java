@@ -15,6 +15,7 @@
  */
 package illarion.easynpc.parsed.talk;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -54,6 +55,7 @@ public final class AdvancedNumber {
     /**
      * The type of this number.
      */
+    @Nonnull
     private final AdvancedNumberType type;
 
     /**

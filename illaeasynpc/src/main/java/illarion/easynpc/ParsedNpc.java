@@ -188,6 +188,7 @@ public final class ParsedNpc {
      * The name of the module of the NPC and in the same consequence the name of the file the NPC needs to be stored
      * in.
      */
+    @Nullable
     private String moduleName;
 
     /**
@@ -256,7 +257,7 @@ public final class ParsedNpc {
      * @param message the message describing the error
      */
     @Deprecated
-    public void addError(EasyNpcScript.Line line, String message) {
+    public void addError(@Nonnull EasyNpcScript.Line line, String message) {
         addError(line.getLineNumber(), message);
     }
 
@@ -552,6 +553,7 @@ public final class ParsedNpc {
         return getModuleName() + ".lua";
     }
 
+    @Nullable
     public String getModuleName() {
         if (moduleName == null) {
             return convertToModuleName(getNpcName()).toLowerCase();
@@ -559,6 +561,7 @@ public final class ParsedNpc {
         return moduleName;
     }
 
+    @Nonnull
     public static String convertToModuleName(@Nonnull CharSequence string) {
         return Normalizer.normalize(string, Normalizer.Form.NFC).replaceAll("[^\\p{ASCII}]", "").replace(' ', '_');
     }

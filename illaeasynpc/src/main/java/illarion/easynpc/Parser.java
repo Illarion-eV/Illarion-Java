@@ -116,10 +116,13 @@ public final class Parser implements DocuEntry {
             } else if (Files.isDirectory(sourceFile)) {
                 final ExecutorService executor = Executors.newCachedThreadPool();
                 Files.walkFileTree(sourceFile, EnumSet.noneOf(FileVisitOption.class), 1, new SimpleFileVisitor<Path>() {
+                    @Nonnull
                     @Override
-                    public FileVisitResult visitFile(final Path file, BasicFileAttributes attrs) throws IOException {
+                    public FileVisitResult visitFile(@Nonnull final Path file, BasicFileAttributes attrs)
+                            throws IOException {
                         if (file.toUri().toString().endsWith(".npc")) {
                             executor.submit(new Callable<Void>() {
+                                @Nullable
                                 @Override
                                 public Void call() throws Exception {
                                     parseScript(file);
@@ -140,6 +143,7 @@ public final class Parser implements DocuEntry {
         }
     }
 
+    @Nonnull
     private static ParsedNpc parseScript(@Nonnull CharStream stream) {
         EasyNpcLexer lexer = new EasyNpcLexer(stream);
         EasyNpcParser parser = new EasyNpcParser(new CommonTokenStream(lexer));
@@ -256,7 +260,7 @@ public final class Parser implements DocuEntry {
         }
     }
 
-    public static void enlistHighlightedWords(TokenMap map) {
+    public static void enlistHighlightedWords(@Nonnull TokenMap map) {
         Pattern tokenPattern = Pattern.compile("'([a-zA-Z]+)'");
         for (String token : EasyNpcLexer.tokenNames) {
             Matcher matcher = tokenPattern.matcher(token);

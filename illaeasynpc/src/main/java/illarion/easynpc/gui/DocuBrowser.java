@@ -44,6 +44,7 @@ public final class DocuBrowser extends JDialog {
         @Nonnull
         private final DocuEntry nodeEntry;
         private final DocuTreeNode parentNode;
+        @Nullable
         private final String title;
 
         public DocuTreeNode(@Nonnull DocuEntry entry) {
@@ -127,6 +128,7 @@ public final class DocuBrowser extends JDialog {
             return children == null;
         }
 
+        @Nullable
         @Override
         public String toString() {
             return title;
