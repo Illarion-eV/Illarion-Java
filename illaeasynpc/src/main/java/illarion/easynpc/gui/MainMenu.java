@@ -28,15 +28,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.InputStreamReader;
 import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
 
 /**
  * This class prepares the application menu of the editor that offers access to
@@ -207,14 +203,20 @@ final class MainMenu extends RibbonApplicationMenu {
             if (templateURL == null) {
                 return null;
             }
-            URI template = templateURL.toURI();
-            List<String> lines = Files.readAllLines(Paths.get(template), Charset.forName("ISO-8859-1"));
             StringBuilder sb = new StringBuilder();
-            for (String line : lines) {
-                sb.append(line).append('\n');
+            try (BufferedReader stream = new BufferedReader(
+                    new InputStreamReader(templateURL.openStream(), "ISO-8859-1"))) {
+                String line = stream.readLine();
+                while (line != null) {
+                    sb.append(line);
+                    line = stream.readLine();
+                    if (line != null) {
+                        sb.append('\n');
+                    }
+                }
             }
             return sb.toString();
-        } catch (@Nonnull URISyntaxException | IOException e) {
+        } catch (@Nonnull IOException e) {
             return null;
         }
     }
