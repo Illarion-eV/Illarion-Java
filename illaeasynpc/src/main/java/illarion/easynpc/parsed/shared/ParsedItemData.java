@@ -60,8 +60,8 @@ public final class ParsedItemData {
             return "";
         }
 
-        final StringBuilder sb = new StringBuilder();
-        for (final Map.Entry<String, String> entry : dataValues.entrySet()) {
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, String> entry : dataValues.entrySet()) {
             sb.append('"').append(entry.getKey()).append("\" = \"").append(entry.getValue()).append("\", ");
         }
         sb.setLength(sb.length() - 2);
@@ -79,9 +79,9 @@ public final class ParsedItemData {
             return "nil";
         }
 
-        final StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         sb.append('{');
-        for (final Map.Entry<String, String> entry : dataValues.entrySet()) {
+        for (Map.Entry<String, String> entry : dataValues.entrySet()) {
             sb.append("[\"").append(entry.getKey()).append("\"] = \"").append(entry.getValue()).append("\", ");
         }
         sb.setLength(sb.length() - 2);

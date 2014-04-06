@@ -32,13 +32,11 @@ public final class ConditionLanguage implements TalkCondition {
     /**
      * The LUA code needed for this consequence to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_CODE = "talkEntry:addCondition(%1$s.language(\"%2$s\"));" + LuaWriter.NL;
 
     /**
      * The LUA module required for this condition to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_MODULE = BASE_LUA_MODULE + "language";
 
     /**
@@ -51,7 +49,7 @@ public final class ConditionLanguage implements TalkCondition {
      *
      * @param newLang the language that the player language is tested against
      */
-    public ConditionLanguage(final PlayerLanguage newLang) {
+    public ConditionLanguage(PlayerLanguage newLang) {
         lang = newLang;
     }
 
@@ -68,7 +66,7 @@ public final class ConditionLanguage implements TalkCondition {
      * Write the LUA code needed for this language condition.
      */
     @Override
-    public void writeLua(@Nonnull final Writer target) throws IOException {
+    public void writeLua(@Nonnull Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, lang.name()));
     }
 }

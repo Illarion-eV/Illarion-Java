@@ -32,13 +32,11 @@ public final class ConsequenceTown implements TalkConsequence {
     /**
      * The LUA code needed to be included for a quest status consequence.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.town(\"=\", \"%2$s\"));" + LuaWriter.NL;
 
     /**
      * The LUA module needed for this consequence to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_MODULE = BASE_LUA_MODULE + "town";
 
     /**
@@ -51,7 +49,7 @@ public final class ConsequenceTown implements TalkConsequence {
      *
      * @param newTown the town the player is getting assigned to
      */
-    public ConsequenceTown(final Towns newTown) {
+    public ConsequenceTown(Towns newTown) {
         town = newTown;
     }
 
@@ -68,7 +66,7 @@ public final class ConsequenceTown implements TalkConsequence {
      * Write the LUA code of this consequence.
      */
     @Override
-    public void writeLua(@Nonnull final Writer target) throws IOException {
+    public void writeLua(@Nonnull Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, Integer.toString(town.getFactionId())));
     }
 }

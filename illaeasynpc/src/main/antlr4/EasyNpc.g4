@@ -19,11 +19,11 @@
 grammar EasyNpc;
 
 script
-    : line* EOF
+    : (line EOL)* line EOF
     ;
 
 line
-    : command? COMMENT* ( LINE_COMMENT | EOL )
+    : command? COMMENT* LINE_COMMENT?
     ;
 
 command
@@ -51,18 +51,18 @@ condition
     | 'chance' '(' ( FLOAT | INT ) ')'
     | 'item' '(' itemId ',' itemPos ( ',' itemDataList )? ')' compare advancedNumber
     | language
-    | 'magictype' '=' magictype
+    | 'magictype' EQ magictype
     | 'money' compare advancedNumber
     | '%NUMBER' compare INT
     | 'queststatus' '(' questId ')' compare advancedNumber
-    | 'race' '=' race
+    | 'race' EQ race
     | 'rank' compare advancedNumber
-    | 'sex' '=' gender
+    | 'sex' EQ gender
     | 'skill' '(' skill ')' compare advancedNumber
     | 'state' compare advancedNumber
-    | 'talkMode' '=' talkMode
+    | 'talkMode' EQ talkMode
     | talkstateGet
-    | 'town' '=' town
+    | 'town' EQ town
     ;
 
 consequence
@@ -82,7 +82,7 @@ consequence
     | 'skill' '(' skill ')' set advancedNumber
     | 'state' set advancedNumber
     | talkstateSet
-    | 'town' '=' town
+    | 'town' EQ town
     | 'trade'
     | 'treasure' '(' advancedNumber ')'
     | 'warp' '(' location ')'
@@ -99,49 +99,49 @@ configuration
     ;
 
 basicConfiguration
-    : 'affiliation' '=' town
-    | 'author' '=' STRING
-    | 'autointroduce' '=' BOOLEAN
-    | 'defaultLanguage' '=' charLanguage
-    | 'direction' '=' direction
-    | 'job' '=' STRING
-    | 'language' '=' charLanguage
-    | 'lookatDE' '=' STRING
-    | 'lookatUS' '=' STRING
-    | 'name' '=' STRING
-    | 'position' '=' location
-    | 'race' '=' race
-    | 'sex' '=' gender
-    | 'useMsgDE' '=' STRING
-    | 'useMsgUS' '=' STRING
-    | 'wrongLangDE' '=' STRING
-    | 'wrongLangUS' '=' STRING
+    : 'affiliation' EQ town
+    | 'author' EQ STRING
+    | 'autointroduce' EQ BOOLEAN
+    | 'defaultLanguage' EQ charLanguage
+    | 'direction' EQ direction
+    | 'job' EQ STRING
+    | 'language' EQ charLanguage
+    | 'lookatDE' EQ STRING
+    | 'lookatUS' EQ STRING
+    | 'name' EQ STRING
+    | 'position' EQ location
+    | 'race' EQ race
+    | 'sex' EQ gender
+    | 'useMsgDE' EQ STRING
+    | 'useMsgUS' EQ STRING
+    | 'wrongLangDE' EQ STRING
+    | 'wrongLangUS' EQ STRING
     ;
 
 colorConfiguration
-    : 'colorHair' '=' color
-    | 'colorSkin' '=' color
+    : 'colorHair' EQ color
+    | 'colorSkin' EQ color
     ;
 
 equipmentConfiguration
-    : 'itemChest' '=' itemId
-    | 'itemCoat' '=' itemId
-    | 'itemHands' '=' itemId
-    | 'itemHead' '=' itemId
-    | 'itemMainHand' '=' itemId
-    | 'itemSecondHand' '=' itemId
-    | 'itemShoes' '=' itemId
-    | 'itemTrousers' '=' itemId
+    : 'itemChest' EQ itemId
+    | 'itemCoat' EQ itemId
+    | 'itemHands' EQ itemId
+    | 'itemHead' EQ itemId
+    | 'itemMainHand' EQ itemId
+    | 'itemSecondHand' EQ itemId
+    | 'itemShoes' EQ itemId
+    | 'itemTrousers' EQ itemId
     ;
 
 guardConfiguration
-    : 'guardRange' '=' INT ',' INT ',' INT ',' INT
-    | 'guardWarpTarget' '=' location
+    : 'guardRange' EQ INT ',' INT ',' INT ',' INT
+    | 'guardWarpTarget' EQ location
     ;
 
 hairConfiguration
-    : 'hairID' '=' INT
-    | 'beardID' '=' INT
+    : 'hairID' EQ INT
+    | 'beardID' EQ INT
     ;
 
 traderConfiguration
@@ -150,11 +150,11 @@ traderConfiguration
     ;
 
 traderSimpleConfiguration
-    : ( 'sellItems' | 'buyPrimaryItems' | 'buySecondaryItems' ) '=' itemId ( ',' itemId )*?
+    : ( 'sellItems' | 'buyPrimaryItems' | 'buySecondaryItems' ) EQ itemId ( ',' itemId )*?
     ;
 
 traderComplexConfiguration
-    : ( 'sellItem' | 'buyPrimaryItem' | 'buySecondaryItem' ) '=' traderComplexItemId ( ',' traderComplexEntry )*?
+    : ( 'sellItem' | 'buyPrimaryItem' | 'buySecondaryItem' ) EQ traderComplexItemId ( ',' traderComplexEntry )*?
     ;
 
 traderComplexEntry
@@ -171,7 +171,7 @@ traderComplexItemId
     ;
 
 walkConfiguration
-    : 'radius' '=' INT
+    : 'radius' EQ INT
     ;
 
 textConfiguration
@@ -323,7 +323,7 @@ itemQuality
     ;
 
 itemData
-    : STRING '=' STRING
+    : STRING EQ STRING
     ;
 
 itemDataList
@@ -343,15 +343,15 @@ magictypeWithRunes
     ;
 
 compare
-    : '=' | '<' | '>' | '<=' | '>=' | '~='
+    : EQ | LT | GT | LET | GET | NEQ
     ;
 
 unop
-    : '-'
+    : SUB
     ;
 
 set
-    : '=' | '+' | '-'
+    : EQ | ADD | SUB
     ;
 
 advancedNumber
@@ -375,8 +375,22 @@ luaCalcValue
     ;
 
 luaCalcOp
-    : '+' | '-' | '*' | '/' | '%' | '^'
+    : MUL | DIV | MOD | POW
+    | ADD | SUB
     ;
+
+MUL:    '*';
+DIV:    '/';
+MOD:    '%';
+POW:    '^';
+ADD:    '+';
+SUB:    '-';
+EQ:     '=';
+LT:     '<';
+GT:     '>';
+LET:    '<=';
+GET:    '>=';
+NEQ:    '~=';
 
 BOOLEAN
     : BOOLEAN_TRUE
@@ -407,11 +421,23 @@ NAME
     ;
 
 COMMENT
-    : '--[[' .*? ']]'-> channel(HIDDEN)
+    : '--[' NESTED_STR ']' -> channel(HIDDEN)
+    ;
+
+fragment
+NESTED_STR
+    : '=' NESTED_STR '='
+    | '[' .*? ']'
     ;
 
 LINE_COMMENT
-    : '--' '['? ( ~( '[' | '\r' | '\n' ) ~( '\r' | '\n' )* )? EOL -> channel(HIDDEN)
+    : '--'
+        (                                               // --
+            | '[' '='*                                      // --[==
+            | '[' '='* ~('='|'['|'\r'|'\n') ~('\r'|'\n')*   // --[==AA
+            | ~('['|'\r'|'\n') ~('\r'|'\n')*                // --AAA
+        )
+    -> channel(HIDDEN)
     ;
 
 STRING
@@ -433,5 +459,5 @@ EOL
     ;
 
 WS
-    : [ \t\u000C]+ -> skip
+    : [ \t\u000C]+ -> channel(HIDDEN)
     ;

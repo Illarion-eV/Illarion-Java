@@ -34,7 +34,6 @@ public final class ParsedEquipment implements ParsedData {
     /**
      * The format string for the LUA version of this data type.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_FORMAT = "mainNPC:setEquipment(%1$s, %2$s);";
 
     /**
@@ -53,7 +52,7 @@ public final class ParsedEquipment implements ParsedData {
      * @param itemSlot the slot the item is placed in
      * @param slotItem the item that is placed in the slot
      */
-    public ParsedEquipment(final EquipmentSlots itemSlot, final Items slotItem) {
+    public ParsedEquipment(EquipmentSlots itemSlot, Items slotItem) {
         slot = itemSlot;
         item = slotItem;
     }
@@ -62,7 +61,7 @@ public final class ParsedEquipment implements ParsedData {
      * The equipment data does not effect the query.
      */
     @Override
-    public void buildSQL(@Nonnull final SQLBuilder builder) {
+    public void buildSQL(@Nonnull SQLBuilder builder) {
         // nothing to add to the query
     }
 
@@ -71,7 +70,7 @@ public final class ParsedEquipment implements ParsedData {
      * construct.
      */
     @Override
-    public boolean effectsLuaWritingStage(@Nonnull final LuaWriter.WritingStage stage) {
+    public boolean effectsLuaWritingStage(@Nonnull LuaWriter.WritingStage stage) {
         return stage == LuaWriter.WritingStage.Clothes;
     }
 
@@ -90,7 +89,7 @@ public final class ParsedEquipment implements ParsedData {
      */
     @Override
     public void writeLua(
-            @Nonnull final Writer target, @Nonnull final LuaWriter.WritingStage stage) throws IOException {
+            @Nonnull Writer target, @Nonnull LuaWriter.WritingStage stage) throws IOException {
         if (!effectsLuaWritingStage(stage)) {
             return;
         }

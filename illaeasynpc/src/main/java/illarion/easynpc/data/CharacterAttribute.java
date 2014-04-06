@@ -43,7 +43,7 @@ public enum CharacterAttribute {
      *
      * @param map the map that stores the tokens
      */
-    public static void enlistHighlightedWords(@Nonnull final TokenMap map) {
+    public static void enlistHighlightedWords(@Nonnull TokenMap map) {
         for (CharacterAttribute attribute : CharacterAttribute.values()) {
             map.put(attribute.name(), Token.VARIABLE);
         }

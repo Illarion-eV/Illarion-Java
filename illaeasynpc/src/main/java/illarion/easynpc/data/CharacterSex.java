@@ -48,7 +48,7 @@ public enum CharacterSex {
      *
      * @param id the ID representation of this constant.
      */
-    private CharacterSex(final int id) {
+    CharacterSex(int id) {
         sexId = id;
     }
 
@@ -66,7 +66,7 @@ public enum CharacterSex {
      *
      * @param map the map that stores the tokens
      */
-    public static void enlistHighlightedWords(@Nonnull final TokenMap map) {
+    public static void enlistHighlightedWords(@Nonnull TokenMap map) {
         for (CharacterSex sex : CharacterSex.values()) {
             map.put(sex.name(), Token.VARIABLE);
         }

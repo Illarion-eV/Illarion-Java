@@ -426,7 +426,7 @@ final class Utils {
         return new Location(x, y, z);
     }
 
-    static int getLocationComponent(@Nullable EasyNpcParser.LocationComponentContext node) {
+    private static int getLocationComponent(@Nullable EasyNpcParser.LocationComponentContext node) {
         if (node == null) {
             LOGGER.warn("Expected node for location component not found.");
             return 0;

@@ -34,7 +34,6 @@ public final class AWTCrashHandler {
      * Prepare the crash handler to work properly. This causes that the system
      * property needed for this handler to work is set to this class.
      */
-    @SuppressWarnings("nls")
     public static void init() {
         System.setProperty("sun.awt.exception.handler", AWTCrashHandler.class.getName());
     }
@@ -46,7 +45,7 @@ public final class AWTCrashHandler {
      *
      * @param e the crash informations
      */
-    @SuppressWarnings("nls")
+    @SuppressWarnings({"MethodMayBeStatic", "UnusedDeclaration"})
     public void handle(@Nonnull Throwable e) {
         CrashData data = new CrashData(Parser.APPLICATION, "crash.awt", Thread.currentThread(), e);
         CrashReporter.getInstance().reportCrash(data, true);

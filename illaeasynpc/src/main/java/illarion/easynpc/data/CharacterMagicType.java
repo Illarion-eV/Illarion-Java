@@ -85,8 +85,8 @@ public enum CharacterMagicType {
      * @param name the name of the magic type
      * @param consequence the flag if the magic type can be a consequence or not
      */
-    private CharacterMagicType(
-            final int id, final String name, final boolean consequence) {
+    CharacterMagicType(
+            int id, String name, boolean consequence) {
         magicTypeId = id;
         magicTypeName = name;
         magicTypeConsequence = consequence;
@@ -109,8 +109,8 @@ public enum CharacterMagicType {
      *
      * @param map the map that stores the tokens
      */
-    public static void enlistHighlightedWords(@Nonnull final TokenMap map) {
-        for (final CharacterMagicType magicType : CharacterMagicType.values()) {
+    public static void enlistHighlightedWords(@Nonnull TokenMap map) {
+        for (CharacterMagicType magicType : CharacterMagicType.values()) {
             map.put(magicType.getMagicTypeName(), Token.VARIABLE);
         }
     }

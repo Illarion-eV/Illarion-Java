@@ -39,14 +39,14 @@ public final class ConsequenceAnswer implements TalkConsequence {
      *
      * @param answerText the text of this answer
      */
-    public ConsequenceAnswer(final String answerText) {
+    public ConsequenceAnswer(String answerText) {
         answer = answerText;
     }
 
     /**
      * Get the LUA module required for the answer consequence.
      *
-     * @return <code>null</code> at all time because there is no additional module needed
+     * @return {@code null} at all time because there is no additional module needed
      */
     @Nullable
     @Override
@@ -58,7 +58,7 @@ public final class ConsequenceAnswer implements TalkConsequence {
      * Write the LUA code for this answer consequence to a LUA script.
      */
     @Override
-    public void writeLua(@Nonnull final Writer target) throws IOException {
+    public void writeLua(@Nonnull Writer target) throws IOException {
         target.write("talkEntry:addResponse(\""); //$NON-NLS-1$
         target.write(answer);
         target.write("\");"); //$NON-NLS-1$

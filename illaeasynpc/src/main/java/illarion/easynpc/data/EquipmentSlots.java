@@ -77,7 +77,7 @@ public enum EquipmentSlots {
      *
      * @param id the Id of the slot
      */
-    EquipmentSlots(final int id) {
+    EquipmentSlots(int id) {
         slotId = id;
     }
 
@@ -95,7 +95,7 @@ public enum EquipmentSlots {
      *
      * @param map the map that stores the tokens
      */
-    public static void enlistHighlightedWords(@Nonnull final TokenMap map) {
+    public static void enlistHighlightedWords(@Nonnull TokenMap map) {
         for (EquipmentSlots slot : EquipmentSlots.values()) {
             map.put(slot.name(), Token.VARIABLE);
         }

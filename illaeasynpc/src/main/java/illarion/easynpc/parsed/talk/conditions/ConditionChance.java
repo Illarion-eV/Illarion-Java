@@ -31,13 +31,11 @@ public final class ConditionChance implements TalkCondition {
     /**
      * The LUA code needed for this consequence to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_CODE = "talkEntry:addCondition(%1$s.chance(%2$s));" + LuaWriter.NL;
 
     /**
      * The LUA module required for this condition to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_MODULE = BASE_LUA_MODULE + "chance";
 
     /**
@@ -51,7 +49,7 @@ public final class ConditionChance implements TalkCondition {
      *
      * @param newValue the value that is used for this chance condition
      */
-    public ConditionChance(final double newValue) {
+    public ConditionChance(double newValue) {
         value = newValue;
     }
 
@@ -68,7 +66,7 @@ public final class ConditionChance implements TalkCondition {
      * Write the LUA code needed for this chance condition.
      */
     @Override
-    public void writeLua(@Nonnull final Writer target) throws IOException {
+    public void writeLua(@Nonnull Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, Double.toString(value)));
     }
 }

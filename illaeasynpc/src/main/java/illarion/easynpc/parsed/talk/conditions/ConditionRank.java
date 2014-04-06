@@ -33,13 +33,11 @@ public final class ConditionRank implements TalkCondition {
     /**
      * The LUA code needed for this condition to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_CODE = "talkEntry:addCondition(%1$s.rank(\"%2$s\", %3$s));" + LuaWriter.NL;
 
     /**
      * The LUA module required for this condition to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_MODULE = BASE_LUA_MODULE + "rank";
 
     /**
@@ -58,7 +56,7 @@ public final class ConditionRank implements TalkCondition {
      * @param op the operator that is used to compare the player coins with
      * @param newValue the value the player rank is compared against
      */
-    public ConditionRank(final CompareOperators op, final AdvancedNumber newValue) {
+    public ConditionRank(CompareOperators op, AdvancedNumber newValue) {
         operator = op;
         value = newValue;
     }
@@ -76,7 +74,7 @@ public final class ConditionRank implements TalkCondition {
      * Write the LUA code needed for this rank condition.
      */
     @Override
-    public void writeLua(@Nonnull final Writer target) throws IOException {
+    public void writeLua(@Nonnull Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, operator.getLuaComp(), value.getLua()));
     }
 }

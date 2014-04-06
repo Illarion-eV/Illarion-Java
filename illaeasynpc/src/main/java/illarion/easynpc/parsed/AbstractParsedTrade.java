@@ -53,14 +53,14 @@ public abstract class AbstractParsedTrade implements ParsedData {
     /**
      * The mode of this trading operation.
      */
-    private final AbstractParsedTrade.TradeMode mode;
+    private final TradeMode mode;
 
     /**
      * Default constructor that stores the type of the trade objects in this class.
      *
      * @param tradeMode the trading mode
      */
-    protected AbstractParsedTrade(final AbstractParsedTrade.TradeMode tradeMode) {
+    AbstractParsedTrade(TradeMode tradeMode) {
         mode = tradeMode;
     }
 
@@ -69,12 +69,12 @@ public abstract class AbstractParsedTrade implements ParsedData {
      *
      * @return the selected trading mode
      */
-    protected AbstractParsedTrade.TradeMode getMode() {
+    TradeMode getMode() {
         return mode;
     }
 
     @Override
-    public boolean effectsLuaWritingStage(@Nonnull final LuaWriter.WritingStage stage) {
+    public boolean effectsLuaWritingStage(@Nonnull LuaWriter.WritingStage stage) {
         return stage == LuaWriter.WritingStage.Trading;
     }
 

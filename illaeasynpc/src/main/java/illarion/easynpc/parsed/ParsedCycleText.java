@@ -31,7 +31,6 @@ public final class ParsedCycleText implements ParsedData {
     /**
      * The LUA modules required for this cycle texts to work.
      */
-    @SuppressWarnings("nls")
     private static final String[] LUA_MODULES = {"npc.base.talk"};
 
     /**
@@ -51,7 +50,7 @@ public final class ParsedCycleText implements ParsedData {
      * @param germanText the German version of the cycle text
      * @param englishText the English version of the cycle text
      */
-    public ParsedCycleText(final String germanText, final String englishText) {
+    public ParsedCycleText(String germanText, String englishText) {
         english = englishText;
         german = germanText;
     }
@@ -60,7 +59,7 @@ public final class ParsedCycleText implements ParsedData {
      * Cycle texts do not effect the SQL query.
      */
     @Override
-    public void buildSQL(@Nonnull final SQLBuilder builder) {
+    public void buildSQL(@Nonnull SQLBuilder builder) {
         // nothing to add to the query.
     }
 
@@ -68,7 +67,7 @@ public final class ParsedCycleText implements ParsedData {
      * Check if the selected stage is effected by this cycle text.
      */
     @Override
-    public boolean effectsLuaWritingStage(@Nonnull final LuaWriter.WritingStage stage) {
+    public boolean effectsLuaWritingStage(@Nonnull LuaWriter.WritingStage stage) {
         return stage == LuaWriter.WritingStage.Talking;
     }
 
@@ -86,7 +85,7 @@ public final class ParsedCycleText implements ParsedData {
      */
     @Override
     public void writeLua(
-            @Nonnull final Writer target, @Nonnull final LuaWriter.WritingStage stage) throws IOException {
+            @Nonnull Writer target, @Nonnull LuaWriter.WritingStage stage) throws IOException {
         if (stage == LuaWriter.WritingStage.Talking) {
             target.write("talkingNPC:addCycleText(\""); //$NON-NLS-1$
             target.write(german);

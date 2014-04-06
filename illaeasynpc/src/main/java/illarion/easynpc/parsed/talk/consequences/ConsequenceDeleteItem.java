@@ -36,14 +36,12 @@ public final class ConsequenceDeleteItem implements TalkConsequence {
      * The LUA code needed to be included for a delete item consequence. This code is used in case there is a data
      * value set.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_CODE_DATA =
             "talkEntry:addConsequence(%1$s.deleteitem(%2$s, %3$s, %4$s));" + LuaWriter.NL;
 
     /**
      * The LUA module needed for this consequence.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_MODULE = BASE_LUA_MODULE + "deleteitem";
 
     /**
@@ -69,7 +67,7 @@ public final class ConsequenceDeleteItem implements TalkConsequence {
      * @param newValue the amount of items that is supposed to be deleted
      * @param newData the data value that is used for this delete operation
      */
-    public ConsequenceDeleteItem(final Items newItem, final AdvancedNumber newValue, final ParsedItemData newData) {
+    public ConsequenceDeleteItem(Items newItem, AdvancedNumber newValue, ParsedItemData newData) {
         item = newItem;
         value = newValue;
         data = newData;
@@ -88,7 +86,7 @@ public final class ConsequenceDeleteItem implements TalkConsequence {
      * Write the LUA code of this consequence.
      */
     @Override
-    public void writeLua(@Nonnull final Writer target) throws IOException {
+    public void writeLua(@Nonnull Writer target) throws IOException {
         target.write(String.format(LUA_CODE_DATA, LUA_MODULE, Integer.toString(item.getItemId()), value.getLua(),
                                    data.getLua()));
     }

@@ -46,11 +46,11 @@ public final class DocuBrowser extends JDialog {
         private final DocuTreeNode parentNode;
         private final String title;
 
-        public DocuTreeNode(@Nonnull final DocuEntry entry) {
+        public DocuTreeNode(@Nonnull DocuEntry entry) {
             this(entry, null);
         }
 
-        public DocuTreeNode(@Nonnull final DocuEntry entry, final DocuTreeNode parent) {
+        public DocuTreeNode(@Nonnull DocuEntry entry, DocuTreeNode parent) {
             nodeEntry = entry;
             parentNode = parent;
             title = entry.getTitle();
@@ -86,7 +86,7 @@ public final class DocuBrowser extends JDialog {
 
         @Nullable
         @Override
-        public TreeNode getChildAt(final int childIndex) {
+        public TreeNode getChildAt(int childIndex) {
             if (children == null) {
                 return null;
             }
@@ -105,7 +105,7 @@ public final class DocuBrowser extends JDialog {
         }
 
         @Override
-        public int getIndex(final TreeNode node) {
+        public int getIndex(TreeNode node) {
             if (children == null) {
                 return -1;
             }
@@ -124,7 +124,7 @@ public final class DocuBrowser extends JDialog {
 
         @Override
         public boolean isLeaf() {
-            return (children == null);
+            return children == null;
         }
 
         @Override
@@ -164,28 +164,27 @@ public final class DocuBrowser extends JDialog {
     /**
      * The default constructor creating this documentation display.
      */
-    @SuppressWarnings("nls")
     public DocuBrowser() {
         super(MainFrame.getInstance(), Lang.getMsg(DocuBrowser.class, "title"), false);
 
-        final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
         try {
             setIconImage(ImageIO.read(getClass().getClassLoader().getResourceAsStream("easynpc16.png")));
-        } catch (@Nonnull final IOException e1) {
+        } catch (@Nonnull IOException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
 
-        final JTree contentTree = new JTree(new DocuTreeNode(DocuRoot.getInstance()));
-        final JScrollPane contentScroll = new JScrollPane(contentTree);
+        JTree contentTree = new JTree(new DocuTreeNode(DocuRoot.getInstance()));
+        JScrollPane contentScroll = new JScrollPane(contentTree);
         contentScroll.setMinimumSize(new Dimension(350, 400));
         contentScroll.setPreferredSize(contentScroll.getMinimumSize());
 
-        final JPanel detailsPanel = new JPanel();
+        JPanel detailsPanel = new JPanel();
         detailsPanel.setLayout(new BoxLayout(detailsPanel, BoxLayout.Y_AXIS));
 
-        final JScrollPane detailsScroll = new JScrollPane(detailsPanel);
+        JScrollPane detailsScroll = new JScrollPane(detailsPanel);
         detailsScroll.setMinimumSize(new Dimension(500, 400));
         detailsScroll.setPreferredSize(detailsScroll.getMinimumSize());
 
@@ -194,7 +193,7 @@ public final class DocuBrowser extends JDialog {
 
         contentTree.addTreeSelectionListener(new TreeSelectionListener() {
             @Override
-            public void valueChanged(@Nonnull final TreeSelectionEvent e) {
+            public void valueChanged(@Nonnull TreeSelectionEvent e) {
                 ((DocuTreeNode) e.getPath().getLastPathComponent()).displayNode();
             }
         });
@@ -214,9 +213,9 @@ public final class DocuBrowser extends JDialog {
         exampleContent = new JTextArea();
         exampleContent.setFont(titleLabel.getFont());
 
-        final Font headlineFont = titleLabel.getFont().deriveFont(Font.BOLD, 20.f);
-        final Font subheadlineFont = titleLabel.getFont().deriveFont(Font.BOLD, 18.f);
-        final Font textsubheadlineFont = titleLabel.getFont();
+        Font headlineFont = titleLabel.getFont().deriveFont(Font.BOLD, 20.f);
+        Font subheadlineFont = titleLabel.getFont().deriveFont(Font.BOLD, 18.f);
+        Font textsubheadlineFont = titleLabel.getFont();
 
         titleLabel.setFont(headlineFont);
         descriptionTitle.setFont(subheadlineFont);
@@ -229,7 +228,7 @@ public final class DocuBrowser extends JDialog {
         descriptionContent.setBackground(titleLabel.getBackground());
         descriptionContent.setForeground(titleLabel.getForeground());
 
-        final JPanel descriptionPanel = new JPanel(new BorderLayout());
+        JPanel descriptionPanel = new JPanel(new BorderLayout());
         descriptionPanel.add(descriptionTitle, BorderLayout.NORTH);
         descriptionPanel.add(descriptionContent, BorderLayout.CENTER);
         descriptionPanel.add(Box.createRigidArea(new Dimension(20, 1)), BorderLayout.WEST);
@@ -244,7 +243,7 @@ public final class DocuBrowser extends JDialog {
         syntaxContent.setBackground(titleLabel.getBackground());
         syntaxContent.setForeground(titleLabel.getForeground());
 
-        final JPanel syntaxPanel = new JPanel(new BorderLayout());
+        JPanel syntaxPanel = new JPanel(new BorderLayout());
         syntaxPanel.add(syntaxTitle, BorderLayout.NORTH);
         syntaxPanel.add(syntaxContent, BorderLayout.CENTER);
         syntaxPanel.add(Box.createRigidArea(new Dimension(20, 1)), BorderLayout.WEST);
@@ -259,12 +258,12 @@ public final class DocuBrowser extends JDialog {
         exampleContent.setBackground(titleLabel.getBackground());
         exampleContent.setForeground(titleLabel.getForeground());
 
-        final JPanel examplePanel = new JPanel(new BorderLayout());
+        JPanel examplePanel = new JPanel(new BorderLayout());
         examplePanel.add(exampleTitle, BorderLayout.NORTH);
         examplePanel.add(exampleContent, BorderLayout.CENTER);
         examplePanel.add(Box.createRigidArea(new Dimension(20, 1)), BorderLayout.WEST);
 
-        final JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
         titlePanel.add(titleLabel);
         detailsPanel.add(titlePanel);
         detailsPanel.add(Box.createRigidArea(new Dimension(10, 10)));
@@ -275,8 +274,8 @@ public final class DocuBrowser extends JDialog {
         validate();
         pack();
 
-        final Dimension parentDim = getOwner().getSize();
-        final Point parentPos = getOwner().getLocation();
+        Dimension parentDim = getOwner().getSize();
+        Point parentPos = getOwner().getLocation();
 
         setLocation(((parentDim.width - getWidth()) / 2) + parentPos.x,
                     ((parentDim.height - getHeight()) / 2) + parentPos.y);
@@ -301,22 +300,21 @@ public final class DocuBrowser extends JDialog {
      *
      * @param entry the entry the details shall be displayed from
      */
-    @SuppressWarnings("nls")
-    void updateDetails(@Nullable final DocuEntry entry) {
+    void updateDetails(@Nullable DocuEntry entry) {
         if (entry == null) {
             throw new IllegalArgumentException("Entry must not be NULL");
         }
 
         invalidate();
 
-        final String titleText = entry.getTitle();
+        String titleText = entry.getTitle();
         if (titleText != null) {
             titleLabel.setText(titleText);
         } else {
             titleLabel.setText(null);
         }
 
-        final String descriptionText = entry.getDescription();
+        String descriptionText = entry.getDescription();
         if (descriptionText != null) {
             descriptionTitle.setVisible(true);
             descriptionContent.setText(descriptionText);
@@ -326,7 +324,7 @@ public final class DocuBrowser extends JDialog {
             descriptionContent.setVisible(false);
         }
 
-        final String syntaxText = entry.getSyntax();
+        String syntaxText = entry.getSyntax();
         if (syntaxText != null) {
             syntaxTitle.setVisible(true);
             syntaxContent.setText(syntaxText);
@@ -336,7 +334,7 @@ public final class DocuBrowser extends JDialog {
             syntaxContent.setVisible(false);
         }
 
-        final String exampleText = entry.getExample();
+        String exampleText = entry.getExample();
         if (exampleText != null) {
             exampleTitle.setVisible(true);
             exampleContent.setText(exampleText);

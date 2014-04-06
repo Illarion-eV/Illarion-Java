@@ -33,13 +33,11 @@ public final class ConditionQueststatus implements TalkCondition {
     /**
      * The LUA code needed for this consequence to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_CODE = "talkEntry:addCondition(%1$s.quest(%2$s, \"%3$s\", %4$s));" + LuaWriter.NL;
 
     /**
      * The LUA module required for this condition to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_MODULE = BASE_LUA_MODULE + "quest";
 
     /**
@@ -64,7 +62,7 @@ public final class ConditionQueststatus implements TalkCondition {
      * @param op the operator that is used to compare the quest status with
      * @param newValue the value the quest status is compared against
      */
-    public ConditionQueststatus(final int questId, final CompareOperators op, final AdvancedNumber newValue) {
+    public ConditionQueststatus(int questId, CompareOperators op, AdvancedNumber newValue) {
         operator = op;
         value = newValue;
         id = questId;
@@ -83,7 +81,7 @@ public final class ConditionQueststatus implements TalkCondition {
      * Write the LUA code needed for this quest status condition.
      */
     @Override
-    public void writeLua(@Nonnull final Writer target) throws IOException {
+    public void writeLua(@Nonnull Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, Integer.toString(id), operator.getLuaComp(), value.getLua()));
     }
 }

@@ -39,7 +39,7 @@ public final class ParsedNpc {
      * This support class is used to store all information regarding a error that was found in the script. It stores
      * the position where it was found as well as the description of the error.
      */
-    public static final class Error implements Comparable<ParsedNpc.Error> {
+    public static final class Error implements Comparable<Error> {
         /**
          * The line the error occurred at.
          */
@@ -61,7 +61,7 @@ public final class ParsedNpc {
          * @param problemLine the line that caused this problem
          * @param errorMsg the message of this error
          */
-        Error(final int problemLine, final int problemChar, final String errorMsg) {
+        Error(int problemLine, int problemChar, String errorMsg) {
             lineNumber = problemLine;
             characterNumber = problemChar;
             message = errorMsg;
@@ -71,11 +71,12 @@ public final class ParsedNpc {
          * Compare method used to sort the errors.
          */
         @Override
-        public int compareTo(@Nonnull final ParsedNpc.Error o) {
-            if (lineNumber == o.lineNumber) {
-                return characterNumber - characterNumber;
+        public int compareTo(@Nonnull Error o) {
+            int lineNrCompare = Integer.compare(lineNumber, o.lineNumber);
+            if (lineNrCompare == 0) {
+                return Integer.compare(characterNumber, o.characterNumber);
             }
-            return lineNumber - o.lineNumber;
+            return lineNrCompare;
         }
 
         @Override
@@ -84,14 +85,14 @@ public final class ParsedNpc {
         }
 
         @Override
-        public boolean equals(final Object o) {
+        public boolean equals(Object o) {
             if (super.equals(o)) {
                 return true;
             }
 
-            if (o instanceof ParsedNpc.Error) {
+            if (o instanceof Error) {
                 Error errObj = (Error) o;
-                return errObj.lineNumber == lineNumber && errObj.characterNumber == characterNumber &&
+                return (errObj.lineNumber == lineNumber) && (errObj.characterNumber == characterNumber) &&
                         errObj.message.equals(message);
             }
             return false;
@@ -240,7 +241,7 @@ public final class ParsedNpc {
      *
      * @param author the name of the author to add
      */
-    public void addAuthor(final String author) {
+    public void addAuthor(String author) {
         if (authors == null) {
             authors = new FastTable<>();
         }
@@ -255,7 +256,7 @@ public final class ParsedNpc {
      * @param message the message describing the error
      */
     @Deprecated
-    public void addError(final EasyNpcScript.Line line, final String message) {
+    public void addError(EasyNpcScript.Line line, String message) {
         addError(line.getLineNumber(), message);
     }
 
@@ -266,7 +267,7 @@ public final class ParsedNpc {
      * @param line the line the error occurred at
      * @param message the message describing the error
      */
-    public void addError(final int line, final String message) {
+    void addError(int line, String message) {
         addError(line, 0, message);
     }
 
@@ -277,11 +278,11 @@ public final class ParsedNpc {
      * @param line the line the error occurred at
      * @param message the message describing the error
      */
-    public void addError(final int line, final int charNr, final String message) {
+    public void addError(int line, int charNr, String message) {
         if (errors == null) {
             errors = new FastTable<>();
         }
-        errors.add(new ParsedNpc.Error(line, charNr, message));
+        errors.add(new Error(line, charNr, message));
         errorOrderDirty = true;
     }
 
@@ -290,7 +291,7 @@ public final class ParsedNpc {
      *
      * @param lang the language to add
      */
-    public void addLanguage(final CharacterLanguage lang) {
+    public void addLanguage(CharacterLanguage lang) {
         if (languages == null) {
             languages = new FastTable<>();
         }
@@ -304,7 +305,7 @@ public final class ParsedNpc {
      *
      * @param data the data to add
      */
-    public void addNpcData(final ParsedData data) {
+    public void addNpcData(ParsedData data) {
         if (npcData == null) {
             npcData = new FastTable<>();
         }
@@ -376,7 +377,6 @@ public final class ParsedNpc {
      *
      * @return the message
      */
-    @SuppressWarnings("nls")
     public String getEnglishLookat() {
         if (lookAtUs == null) {
             return "This is a NPC who's developer was too lazy to type in a description.";
@@ -390,7 +390,6 @@ public final class ParsedNpc {
      *
      * @return the message
      */
-    @SuppressWarnings("nls")
     public String getEnglishUse() {
         if (useMsgUs == null) {
             return "Do not touch me!";
@@ -404,7 +403,6 @@ public final class ParsedNpc {
      *
      * @return the message
      */
-    @SuppressWarnings("nls")
     public String getEnglishWrongLang() {
         if (wrongLanguageDe == null) {
             return "#me looks at you confused.";
@@ -418,7 +416,7 @@ public final class ParsedNpc {
      * @param index the index of the error that is requested
      * @return the error stored with this index
      */
-    public ParsedNpc.Error getError(final int index) {
+    public Error getError(int index) {
         if (errors == null) {
             throw new IndexOutOfBoundsException("No errors stored.");
         }
@@ -447,7 +445,6 @@ public final class ParsedNpc {
      *
      * @return the message
      */
-    @SuppressWarnings("nls")
     public String getGermanLookat() {
         if (lookAtDe == null) {
             return "Das ist ein NPC dessen Entwickler zu faul war eine Beschreibung einzutragen.";
@@ -461,7 +458,6 @@ public final class ParsedNpc {
      *
      * @return the message
      */
-    @SuppressWarnings("nls")
     public String getGermanUse() {
         if (useMsgDe == null) {
             return "Fass mich nicht an!";
@@ -475,7 +471,6 @@ public final class ParsedNpc {
      *
      * @return the message
      */
-    @SuppressWarnings("nls")
     public String getGermanWrongLang() {
         if (wrongLanguageDe == null) {
             return "#me schaut dich verwirrt an.";
@@ -528,7 +523,7 @@ public final class ParsedNpc {
                     break;
             }
 
-            final CharacterLanguage[] result = languages.toArray(new CharacterLanguage[languages.size()]);
+            CharacterLanguage[] result = languages.toArray(new CharacterLanguage[languages.size()]);
             languages.clear();
             return result;
         }
@@ -542,7 +537,7 @@ public final class ParsedNpc {
      * @param index the index of the data
      * @return the data at the selected index
      */
-    public LuaWritable getLuaData(final int index) {
+    public LuaWritable getLuaData(int index) {
         return npcData.get(index);
     }
 
@@ -553,7 +548,6 @@ public final class ParsedNpc {
      * @return the correct lua script file
      */
     @Nonnull
-    @SuppressWarnings("nls")
     public String getLuaFilename() {
         return getModuleName() + ".lua";
     }
@@ -565,11 +559,11 @@ public final class ParsedNpc {
         return moduleName;
     }
 
-    public static String convertToModuleName(@Nonnull final String string) {
+    public static String convertToModuleName(@Nonnull CharSequence string) {
         return Normalizer.normalize(string, Normalizer.Form.NFC).replaceAll("[^\\p{ASCII}]", "").replace(' ', '_');
     }
 
-    public void setModuleName(@Nullable final String moduleName) {
+    public void setModuleName(@Nullable String moduleName) {
         this.moduleName = moduleName;
     }
 
@@ -640,7 +634,7 @@ public final class ParsedNpc {
     /**
      * Check if the script contains any errors.
      *
-     * @return <code>true</code> if there are any errors stored in this parseNPC
+     * @return {@code true} if there are any errors stored in this parseNPC
      */
     public boolean hasErrors() {
         return (errors != null) && !errors.isEmpty();
@@ -651,7 +645,7 @@ public final class ParsedNpc {
      *
      * @param aff the affiliation of this NPC
      */
-    public void setAffiliation(final Towns aff) {
+    public void setAffiliation(Towns aff) {
         affiliation = aff;
     }
 
@@ -660,7 +654,7 @@ public final class ParsedNpc {
      *
      * @param newValue the new value for the auto introduce flag
      */
-    public void setAutoIntroduce(final boolean newValue) {
+    public void setAutoIntroduce(boolean newValue) {
         autoIntroduce = newValue;
     }
 
@@ -669,7 +663,7 @@ public final class ParsedNpc {
      *
      * @param lang the language this character is speaking by default
      */
-    public void setDefaultLanguage(@Nullable final CharacterLanguage lang) {
+    public void setDefaultLanguage(@Nullable CharacterLanguage lang) {
         defaultLanguage = lang;
     }
 
@@ -679,7 +673,7 @@ public final class ParsedNpc {
      *
      * @param msg the message
      */
-    public void setEnglishLookAt(final String msg) {
+    public void setEnglishLookAt(String msg) {
         lookAtUs = msg;
     }
 
@@ -689,7 +683,7 @@ public final class ParsedNpc {
      *
      * @param msg the message
      */
-    public void setEnglishUse(final String msg) {
+    public void setEnglishUse(String msg) {
         useMsgUs = msg;
     }
 
@@ -700,7 +694,7 @@ public final class ParsedNpc {
      * @param msg the message
      */
 
-    public void setEnglishWrongLang(final String msg) {
+    public void setEnglishWrongLang(String msg) {
         wrongLanguageUs = msg;
     }
 
@@ -710,7 +704,7 @@ public final class ParsedNpc {
      *
      * @param msg the message
      */
-    public void setGermanLookAt(final String msg) {
+    public void setGermanLookAt(String msg) {
         lookAtDe = msg;
     }
 
@@ -720,7 +714,7 @@ public final class ParsedNpc {
      *
      * @param msg the message
      */
-    public void setGermanUse(final String msg) {
+    public void setGermanUse(String msg) {
         useMsgDe = msg;
     }
 
@@ -730,7 +724,7 @@ public final class ParsedNpc {
      *
      * @param msg the message
      */
-    public void setGermanWrongLang(final String msg) {
+    public void setGermanWrongLang(String msg) {
         wrongLanguageDe = msg;
     }
 
@@ -739,7 +733,7 @@ public final class ParsedNpc {
      *
      * @param newJob the job of this NPC
      */
-    public void setJob(final String newJob) {
+    public void setJob(String newJob) {
         job = newJob;
     }
 
@@ -748,7 +742,7 @@ public final class ParsedNpc {
      *
      * @param newNpcDir the new looking direction of this NPC
      */
-    public void setNpcDir(final CharacterDirection newNpcDir) {
+    public void setNpcDir(CharacterDirection newNpcDir) {
         npcDir = newNpcDir;
     }
 
@@ -757,7 +751,7 @@ public final class ParsedNpc {
      *
      * @param newNpcName the new name of this NPC.
      */
-    public void setNpcName(final String newNpcName) {
+    public void setNpcName(String newNpcName) {
         npcName = newNpcName;
     }
 
@@ -766,7 +760,7 @@ public final class ParsedNpc {
      *
      * @param newNpcPos the new position of this NPC
      */
-    public void setNpcPos(final Location newNpcPos) {
+    public void setNpcPos(Location newNpcPos) {
         npcPos = newNpcPos;
     }
 
@@ -775,7 +769,7 @@ public final class ParsedNpc {
      *
      * @param newNpcRace the race of this NPC
      */
-    public void setNpcRace(final CharacterRace newNpcRace) {
+    public void setNpcRace(CharacterRace newNpcRace) {
         npcRace = newNpcRace;
     }
 
@@ -784,7 +778,7 @@ public final class ParsedNpc {
      *
      * @param newNpcSex the new sex value of the NPC
      */
-    public void setNpcSex(final CharacterSex newNpcSex) {
+    public void setNpcSex(CharacterSex newNpcSex) {
         npcSex = newNpcSex;
     }
 }

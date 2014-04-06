@@ -40,31 +40,30 @@ final class MainMenu extends RibbonApplicationMenu {
      * Constructor of the main menu that loads up the menu.
      */
     public MainMenu() {
-        super();
 
-        final RibbonApplicationMenuEntryPrimary newScriptEntry = new RibbonApplicationMenuEntryPrimary(
+        RibbonApplicationMenuEntryPrimary newScriptEntry = new RibbonApplicationMenuEntryPrimary(
                 Utils.getResizableIconFromResource("filenew.png"), Lang.getMsg(getClass(), "newScriptButton"),
                 new ActionListener() {
                     @Override
-                    public void actionPerformed(final ActionEvent e) {
+                    public void actionPerformed(ActionEvent e) {
                         MainFrame.getInstance().addNewScript();
                     }
                 }, CommandButtonKind.ACTION_ONLY
         );
         addMenuEntry(newScriptEntry);
 
-        final RibbonApplicationMenuEntryPrimary openScriptEntry = new RibbonApplicationMenuEntryPrimary(
+        RibbonApplicationMenuEntryPrimary openScriptEntry = new RibbonApplicationMenuEntryPrimary(
                 Utils.getResizableIconFromResource("fileopen.png"), Lang.getMsg(getClass(), "openScriptButton"),
                 new ActionListener() {
                     @Override
-                    public void actionPerformed(final ActionEvent e) {
+                    public void actionPerformed(ActionEvent e) {
                         Utils.selectAndOpenScript();
                     }
                 }, CommandButtonKind.ACTION_ONLY
         );
 
-        final Path[] oldFiles = Config.getInstance().getLastOpenedFiles();
-        final RibbonApplicationMenuEntrySecondary[] workingEntries = new RibbonApplicationMenuEntrySecondary[oldFiles.length];
+        Path[] oldFiles = Config.getInstance().getLastOpenedFiles();
+        RibbonApplicationMenuEntrySecondary[] workingEntries = new RibbonApplicationMenuEntrySecondary[oldFiles.length];
         int entryIndex = 0;
         for (@Nullable final Path openFile : oldFiles) {
             if (openFile == null) {
@@ -77,7 +76,7 @@ final class MainMenu extends RibbonApplicationMenu {
                         private final Path fileToOpen = openFile;
 
                         @Override
-                        public void actionPerformed(final ActionEvent e) {
+                        public void actionPerformed(ActionEvent e) {
                             Utils.openScript(fileToOpen);
                         }
                     }, CommandButtonKind.ACTION_ONLY
@@ -86,7 +85,7 @@ final class MainMenu extends RibbonApplicationMenu {
         }
 
         if (entryIndex > 0) {
-            final RibbonApplicationMenuEntrySecondary[] entries = new RibbonApplicationMenuEntrySecondary[entryIndex];
+            RibbonApplicationMenuEntrySecondary[] entries = new RibbonApplicationMenuEntrySecondary[entryIndex];
             System.arraycopy(workingEntries, 0, entries, 0, entryIndex);
             openScriptEntry.addSecondaryMenuGroup(Lang.getMsg(getClass(), "oldFilesHead"), entries);
         }
@@ -94,23 +93,23 @@ final class MainMenu extends RibbonApplicationMenu {
 
         addMenuSeparator();
 
-        final RibbonApplicationMenuEntryPrimary saveScript = new RibbonApplicationMenuEntryPrimary(
+        RibbonApplicationMenuEntryPrimary saveScript = new RibbonApplicationMenuEntryPrimary(
                 Utils.getResizableIconFromResource("filesave.png"), Lang.getMsg(getClass(), "saveScriptButton"),
                 new ActionListener() {
                     @Override
-                    public void actionPerformed(final ActionEvent e) {
+                    public void actionPerformed(ActionEvent e) {
                         Utils.saveEasyNPC(MainFrame.getInstance().getCurrentScriptEditor());
                     }
                 }, CommandButtonKind.ACTION_ONLY
         );
         addMenuEntry(saveScript);
 
-        final RibbonApplicationMenuEntryPrimary saveAllScript = new RibbonApplicationMenuEntryPrimary(
+        RibbonApplicationMenuEntryPrimary saveAllScript = new RibbonApplicationMenuEntryPrimary(
                 Utils.getResizableIconFromResource("save_all.png"), Lang.getMsg(getClass(), "saveAllScriptButton"),
                 new ActionListener() {
                     @Override
-                    public void actionPerformed(final ActionEvent e) {
-                        final int count = MainFrame.getInstance().getOpenTabs();
+                    public void actionPerformed(ActionEvent e) {
+                        int count = MainFrame.getInstance().getOpenTabs();
 
                         for (int i = 0; i < count; i++) {
                             Utils.saveEasyNPC(MainFrame.getInstance().getScriptEditor(i));
@@ -120,33 +119,33 @@ final class MainMenu extends RibbonApplicationMenu {
         );
         addMenuEntry(saveAllScript);
 
-        final RibbonApplicationMenuEntryPrimary saveAsScript = new RibbonApplicationMenuEntryPrimary(
+        RibbonApplicationMenuEntryPrimary saveAsScript = new RibbonApplicationMenuEntryPrimary(
                 Utils.getResizableIconFromResource("filesaveas.png"), Lang.getMsg(getClass(), "saveAsScriptButton"),
                 new ActionListener() {
                     @Override
-                    public void actionPerformed(final ActionEvent e) {
+                    public void actionPerformed(ActionEvent e) {
                         Utils.selectAndSaveEasyNPC(MainFrame.getInstance().getCurrentScriptEditor());
                     }
                 }, CommandButtonKind.ACTION_ONLY
         );
         addMenuEntry(saveAsScript);
 
-        final RibbonApplicationMenuEntryPrimary saveLuaScript = new RibbonApplicationMenuEntryPrimary(
+        RibbonApplicationMenuEntryPrimary saveLuaScript = new RibbonApplicationMenuEntryPrimary(
                 Utils.getResizableIconFromResource("filesavecompile.png"),
                 Lang.getMsg(getClass(), "saveLuaScriptButton"), new ActionListener() {
             @Override
-            public void actionPerformed(final ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 Utils.saveLuaScript(MainFrame.getInstance().getCurrentScriptEditor());
             }
         }, CommandButtonKind.ACTION_ONLY
         );
         addMenuEntry(saveLuaScript);
 
-        final RibbonApplicationMenuEntryPrimary uploadLuaScript = new RibbonApplicationMenuEntryPrimary(
+        RibbonApplicationMenuEntryPrimary uploadLuaScript = new RibbonApplicationMenuEntryPrimary(
                 Utils.getResizableIconFromResource("upload.png"), Lang.getMsg(getClass(), "uploadLuaScriptButton"),
                 new ActionListener() {
                     @Override
-                    public void actionPerformed(final ActionEvent e) {
+                    public void actionPerformed(ActionEvent e) {
                         Utils.uploadLuaScript(MainFrame.getInstance().getCurrentScriptEditor());
                     }
                 }, CommandButtonKind.ACTION_ONLY
@@ -155,23 +154,23 @@ final class MainMenu extends RibbonApplicationMenu {
 
         addMenuSeparator();
 
-        final RibbonApplicationMenuEntryPrimary exitButton = new RibbonApplicationMenuEntryPrimary(
+        RibbonApplicationMenuEntryPrimary exitButton = new RibbonApplicationMenuEntryPrimary(
                 Utils.getResizableIconFromResource("exit.png"), Lang.getMsg(getClass(), "exitButton"),
                 new ActionListener() {
                     @Override
-                    public void actionPerformed(final ActionEvent e) {
+                    public void actionPerformed(ActionEvent e) {
                         MainFrame.getInstance().closeWindow();
                     }
                 }, CommandButtonKind.ACTION_ONLY
         );
         addMenuEntry(exitButton);
 
-        final RibbonApplicationMenuEntryFooter settings = new RibbonApplicationMenuEntryFooter(
+        RibbonApplicationMenuEntryFooter settings = new RibbonApplicationMenuEntryFooter(
                 Utils.getResizableIconFromResource("configure.png"), Lang.getMsg(getClass(), "settingsButton"),
                 new ActionListener() {
                     @Override
-                    public void actionPerformed(final ActionEvent e) {
-                        final ConfigDialog dialog = Config.getInstance().createDialog();
+                    public void actionPerformed(ActionEvent e) {
+                        ConfigDialog dialog = Config.getInstance().createDialog();
                         new ConfigDialogSwing(dialog);
                     }
                 }

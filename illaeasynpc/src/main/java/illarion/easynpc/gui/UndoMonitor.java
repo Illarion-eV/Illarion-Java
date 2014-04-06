@@ -56,7 +56,6 @@ public final class UndoMonitor implements UndoableEditListener, ChangeListener {
      * The private constructor that prepares all values for this monitor to work
      * properly.
      */
-    @SuppressWarnings("nls")
     private UndoMonitor() {
         undoButton = new JCommandButton(Utils.getResizableIconFromResource("undo.png"));
         redoButton = new JCommandButton(Utils.getResizableIconFromResource("redo.png"));
@@ -108,9 +107,9 @@ public final class UndoMonitor implements UndoableEditListener, ChangeListener {
      * case its needed to update the state to the new undo manager.
      */
     @Override
-    public void stateChanged(@Nonnull final ChangeEvent e) {
-        final JTabbedPane pane = (JTabbedPane) e.getSource();
-        final Editor editor = (Editor) pane.getSelectedComponent();
+    public void stateChanged(@Nonnull ChangeEvent e) {
+        JTabbedPane pane = (JTabbedPane) e.getSource();
+        Editor editor = (Editor) pane.getSelectedComponent();
         if (editor != null) {
             updateUndoRedo(editor);
         } else {
@@ -123,11 +122,11 @@ public final class UndoMonitor implements UndoableEditListener, ChangeListener {
      * state of the buttons.
      */
     @Override
-    public void undoableEditHappened(final UndoableEditEvent e) {
+    public void undoableEditHappened(UndoableEditEvent e) {
         if (MainFrame.getInstance() == null) {
             return;
         }
-        final Editor editor = MainFrame.getInstance().getCurrentScriptEditor();
+        Editor editor = MainFrame.getInstance().getCurrentScriptEditor();
         updateUndoRedo(editor);
     }
 
@@ -136,9 +135,9 @@ public final class UndoMonitor implements UndoableEditListener, ChangeListener {
      *
      * @param manager the manger that delivers the data for the state of the
      * undo and the redo button, in case the manager is
-     * <code>null</code> the buttons are disabled
+     * {@code null} the buttons are disabled
      */
-    public void updateUndoRedo(@Nullable final Editor manager) {
+    public void updateUndoRedo(@Nullable Editor manager) {
         if (manager == null) {
             redoButton.setEnabled(false);
             undoButton.setEnabled(false);
@@ -153,7 +152,7 @@ public final class UndoMonitor implements UndoableEditListener, ChangeListener {
      *
      * @param manager the manger that delivers the data for the state of the
      * undo and the redo button, in case the manager is
-     * <code>null</code> the buttons are disabled
+     * {@code null} the buttons are disabled
      */
     public void updateUndoRedoLater(final Editor manager) {
         SwingUtilities.invokeLater(new Runnable() {

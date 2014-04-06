@@ -38,7 +38,6 @@ public final class DefaultCrashHandler extends AbstractCrashHandler {
      * instances but the singleton instance.
      */
     private DefaultCrashHandler() {
-        super();
     }
 
     /**
@@ -57,7 +56,6 @@ public final class DefaultCrashHandler extends AbstractCrashHandler {
      * @return the error message
      */
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
     protected String getCrashMessage() {
         return "crash.default";
@@ -68,6 +66,6 @@ public final class DefaultCrashHandler extends AbstractCrashHandler {
      */
     @Override
     protected void restart() {
-        super.crashEditor();
+        crashEditor();
     }
 }

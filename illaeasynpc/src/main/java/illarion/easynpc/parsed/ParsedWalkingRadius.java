@@ -37,7 +37,7 @@ public final class ParsedWalkingRadius implements ParsedData {
     /**
      * Constructor to create new blank instances of this class.
      */
-    public ParsedWalkingRadius(final int newRange) {
+    public ParsedWalkingRadius(int newRange) {
         range = newRange;
     }
 
@@ -45,12 +45,12 @@ public final class ParsedWalkingRadius implements ParsedData {
      * No effect on the SQL query.
      */
     @Override
-    public void buildSQL(@Nonnull final SQLBuilder builder) {
+    public void buildSQL(@Nonnull SQLBuilder builder) {
         // nothing to add to the query.
     }
 
     @Override
-    public boolean effectsLuaWritingStage(@Nonnull final LuaWriter.WritingStage stage) {
+    public boolean effectsLuaWritingStage(@Nonnull LuaWriter.WritingStage stage) {
         return false;
     }
 
@@ -62,7 +62,7 @@ public final class ParsedWalkingRadius implements ParsedData {
 
     @Override
     public void writeLua(
-            @Nonnull final Writer target, @Nonnull final LuaWriter.WritingStage stage) throws IOException {
+            @Nonnull Writer target, @Nonnull LuaWriter.WritingStage stage) throws IOException {
         // not implemented yet.
     }
 }

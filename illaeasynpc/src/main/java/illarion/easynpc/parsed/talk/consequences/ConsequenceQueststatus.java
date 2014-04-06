@@ -33,13 +33,11 @@ public final class ConsequenceQueststatus implements TalkConsequence {
     /**
      * The LUA code needed to be included for a quest status consequence.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.quest(%2$s, \"%3$s\", %4$s));" + LuaWriter.NL;
 
     /**
      * The LUA module needed for this consequence to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_MODULE = BASE_LUA_MODULE + "quest";
 
     /**
@@ -64,7 +62,7 @@ public final class ConsequenceQueststatus implements TalkConsequence {
      * @param op the operator used to change the quest status
      * @param newValue the value used to change the quest status
      */
-    public ConsequenceQueststatus(final int questId, final CalculationOperators op, final AdvancedNumber newValue) {
+    public ConsequenceQueststatus(int questId, CalculationOperators op, AdvancedNumber newValue) {
         operator = op;
         value = newValue;
         id = questId;
@@ -83,7 +81,7 @@ public final class ConsequenceQueststatus implements TalkConsequence {
      * Write the LUA code of this consequence.
      */
     @Override
-    public void writeLua(@Nonnull final Writer target) throws IOException {
+    public void writeLua(@Nonnull Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, Integer.toString(id), operator.getLuaOp(), value.getLua()));
     }
 }

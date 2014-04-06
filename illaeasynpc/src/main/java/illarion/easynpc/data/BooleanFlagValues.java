@@ -28,15 +28,13 @@ import java.util.regex.Pattern;
  */
 public enum BooleanFlagValues {
     /**
-     * The easyNPC representation for <code>false</code>.
+     * The easyNPC representation for {@code false}.
      */
-    @SuppressWarnings("nls")
     off("((off)|(false)|(no))", "off", "false"),
 
     /**
-     * The easyNPC representation for <code>true</code>.
+     * The easyNPC representation for {@code true}.
      */
-    @SuppressWarnings("nls")
     on("((on)|(true)|(yes))", "on", "true");
 
     /**
@@ -61,8 +59,8 @@ public enum BooleanFlagValues {
      * @param easy the easyNPC representation of this flag
      * @param lua the LUa representation of this flag
      */
-    private BooleanFlagValues(
-            @Nonnull final String regex, final String easy, final String lua) {
+    BooleanFlagValues(
+            @Nonnull String regex, String easy, String lua) {
         findPattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         luaString = lua;
         easyString = easy;
@@ -100,7 +98,7 @@ public enum BooleanFlagValues {
      *
      * @param map the map that stores the tokens
      */
-    public static void enlistHighlightedWords(@Nonnull final TokenMap map) {
+    public static void enlistHighlightedWords(@Nonnull TokenMap map) {
         map.put(off.easyString, Token.VARIABLE);
         map.put(on.easyString, Token.VARIABLE);
     }

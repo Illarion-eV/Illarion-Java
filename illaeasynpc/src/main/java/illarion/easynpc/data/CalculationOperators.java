@@ -29,21 +29,18 @@ public enum CalculationOperators {
      * The addition operator with all required data to detect it in a easyNPC
      * script and to write it into a LUA script.
      */
-    @SuppressWarnings("nls")
     add("+", "^\\s*(\\+[=]*)\\s*$"),
 
     /**
      * The set operator with all required data to detect it in a easyNPC
      * script and to write it into a LUA script.
      */
-    @SuppressWarnings("nls")
     set("=", "^\\s*=\\s*$"),
 
     /**
      * The subtraction operator with all required data to detect it in a easyNPC
      * script and to write it into a LUA script.
      */
-    @SuppressWarnings("nls")
     subtract("-", "^\\s*(-[=]*)\\s*$");
 
     /**
@@ -62,7 +59,7 @@ public enum CalculationOperators {
      * @param lua the LUA representation of this operator
      * @param regexp the RegExp pattern to identify this operator
      */
-    private CalculationOperators(final String lua, @Nonnull final String regexp) {
+    CalculationOperators(String lua, @Nonnull String regexp) {
         luaOp = lua;
         regexpOp = Pattern.compile(regexp);
     }

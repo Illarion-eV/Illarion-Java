@@ -123,7 +123,6 @@ final class Utils {
      *
      * @param editor the editor containing the original script.
      */
-    @SuppressWarnings("nls")
     static void saveLuaScript(@Nonnull Editor editor) {
         ParsedNpc npc = editor.getParsedData();
         if (npc == null) {
@@ -242,7 +241,6 @@ final class Utils {
         editor.saved();
     }
 
-    @SuppressWarnings("nls")
     static void uploadLuaScript(@Nonnull Editor editor) {
         ParsedNpc npc = editor.getParsedData();
         if (npc == null) {

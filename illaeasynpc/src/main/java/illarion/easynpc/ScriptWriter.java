@@ -58,7 +58,7 @@ public final class ScriptWriter {
      *
      * @param source the source of this writer
      */
-    public void setSource(final ParsedNpc source) {
+    public void setSource(ParsedNpc source) {
         sourceNPC = source;
     }
 
@@ -67,7 +67,7 @@ public final class ScriptWriter {
      *
      * @param write the writer that receives the script data
      */
-    public void setWritingTarget(final Writer write) {
+    public void setWritingTarget(Writer write) {
         scriptTarget = write;
     }
 

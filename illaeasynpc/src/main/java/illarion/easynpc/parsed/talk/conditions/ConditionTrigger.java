@@ -32,7 +32,6 @@ public final class ConditionTrigger implements TalkCondition {
     /**
      * The LUA code needed for this consequence to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_CODE = "talkEntry:addTrigger(\"%1$s\");" + LuaWriter.NL;
 
     /**
@@ -45,7 +44,7 @@ public final class ConditionTrigger implements TalkCondition {
      *
      * @param newTriggerString the trigger used in this trigger condition.
      */
-    public ConditionTrigger(final String newTriggerString) {
+    public ConditionTrigger(String newTriggerString) {
         triggerString = newTriggerString;
     }
 
@@ -62,8 +61,7 @@ public final class ConditionTrigger implements TalkCondition {
      * Write the LUA code needed for this trigger.
      */
     @Override
-    @SuppressWarnings("nls")
-    public void writeLua(@Nonnull final Writer target) throws IOException {
+    public void writeLua(@Nonnull Writer target) throws IOException {
         target.write(String.format(LUA_CODE, triggerString.replace("%NUMBER", "(%d+)")));
     }
 }

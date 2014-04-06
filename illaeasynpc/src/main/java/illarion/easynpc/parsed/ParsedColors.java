@@ -49,7 +49,7 @@ public final class ParsedColors implements ParsedData {
      * The target of this color.
      */
     @Nonnull
-    private final ParsedColors.ColorTarget colorTarget;
+    private final ColorTarget colorTarget;
 
     /**
      * The actual color value.
@@ -63,7 +63,7 @@ public final class ParsedColors implements ParsedData {
      * @param target the target of the color
      * @param color the color stored in this parsed color
      */
-    public ParsedColors(@Nonnull final ParsedColors.ColorTarget target, @Nonnull final Color color) {
+    public ParsedColors(@Nonnull ColorTarget target, @Nonnull Color color) {
         colorTarget = target;
         this.color = color;
     }
@@ -71,9 +71,8 @@ public final class ParsedColors implements ParsedData {
     /**
      * Insert the needed values into the SQL query.
      */
-    @SuppressWarnings("nls")
     @Override
-    public void buildSQL(@Nonnull final SQLBuilder builder) {
+    public void buildSQL(@Nonnull SQLBuilder builder) {
         switch (colorTarget) {
             case Skin:
                 builder.setNpcSkinColor(color.getRed(), color.getGreen(), color.getBlue());
@@ -90,7 +89,7 @@ public final class ParsedColors implements ParsedData {
      * @return {@code false} at all times
      */
     @Override
-    public boolean effectsLuaWritingStage(@Nonnull final LuaWriter.WritingStage stage) {
+    public boolean effectsLuaWritingStage(@Nonnull LuaWriter.WritingStage stage) {
         return false;
     }
 
@@ -110,7 +109,7 @@ public final class ParsedColors implements ParsedData {
      */
     @Override
     public void writeLua(
-            @Nonnull final Writer target, @Nonnull final LuaWriter.WritingStage stage) throws IOException {
+            @Nonnull Writer target, @Nonnull LuaWriter.WritingStage stage) throws IOException {
         // nothing to do
     }
 }

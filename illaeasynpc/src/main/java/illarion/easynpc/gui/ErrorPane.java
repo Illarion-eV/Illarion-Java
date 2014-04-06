@@ -47,32 +47,30 @@ final class ErrorPane extends JPanel {
         private static final long serialVersionUID = 1L;
         private final List<Editor> errorEditors = new ArrayList<>();
 
-        protected ErrorPaneTableModel() {
+        ErrorPaneTableModel() {
             // nothing
         }
 
-        public void addEditor(final Editor editor) {
+        public void addEditor(Editor editor) {
             if (errorEditors.contains(editor)) {
                 return;
             }
             errorEditors.add(editor);
         }
 
-        public void focusError(final int rowIndex) {
+        public void focusError(int rowIndex) {
             int editorCount = errorEditors.size();
             int errorCount = 0;
-            ParsedNpc problemNpc;
-            int localErrors = 0;
             for (int i = 0; i < editorCount; i++) {
-                problemNpc = errorEditors.get(i).getErrorNpc();
+                ParsedNpc problemNpc = errorEditors.get(i).getErrorNpc();
                 if (problemNpc == null) {
                     errorEditors.remove(i);
                     editorCount--;
                     i--;
                 } else {
-                    localErrors = problemNpc.getErrorCount();
+                    int localErrors = problemNpc.getErrorCount();
                     if ((errorCount + localErrors) >= (rowIndex + 1)) {
-                        final ParsedNpc.Error error = problemNpc.getError(rowIndex - errorCount);
+                        ParsedNpc.Error error = problemNpc.getError(rowIndex - errorCount);
                         errorEditors.get(i).getLineToFocus(error.getLine());
                     }
                     errorCount += localErrors;
@@ -90,7 +88,7 @@ final class ErrorPane extends JPanel {
          */
         @Nullable
         @Override
-        public String getColumnName(final int column) {
+        public String getColumnName(int column) {
             switch (column) {
                 case 0:
                     return Lang.getMsg(getClass(), "description");
@@ -107,7 +105,7 @@ final class ErrorPane extends JPanel {
             int editorCount = errorEditors.size();
             int errorCount = 0;
             for (int i = 0; i < editorCount; i++) {
-                final ParsedNpc problemNpc = errorEditors.get(i).getErrorNpc();
+                ParsedNpc problemNpc = errorEditors.get(i).getErrorNpc();
                 if (problemNpc == null) {
                     errorEditors.remove(i);
                     editorCount--;
@@ -121,26 +119,23 @@ final class ErrorPane extends JPanel {
 
         @Nullable
         @Override
-        public Object getValueAt(final int rowIndex, final int columnIndex) {
-            int editorCount = errorEditors.size();
+        public Object getValueAt(int rowIndex, int columnIndex) {
             int errorCount = 0;
-            ParsedNpc problemNpc;
-            int localErrors = 0;
 
-            final ListIterator<Editor> editorItr = errorEditors.listIterator();
+            ListIterator<Editor> editorItr = errorEditors.listIterator();
 
             while (editorItr.hasNext()) {
-                final Editor editor = editorItr.next();
-                problemNpc = editor.getErrorNpc();
+                Editor editor = editorItr.next();
+                ParsedNpc problemNpc = editor.getErrorNpc();
                 if (problemNpc == null) {
                     editorItr.remove();
                 } else {
-                    localErrors = problemNpc.getErrorCount();
+                    int localErrors = problemNpc.getErrorCount();
                     if ((errorCount + localErrors) >= (rowIndex + 1)) {
                         if (columnIndex == 1) {
                             return editor.getFileName();
                         }
-                        final ParsedNpc.Error error = problemNpc.getError(rowIndex - errorCount);
+                        ParsedNpc.Error error = problemNpc.getError(rowIndex - errorCount);
                         if (columnIndex == 0) {
                             return error.getMessage();
                         }
@@ -155,11 +150,11 @@ final class ErrorPane extends JPanel {
         }
 
         @Override
-        public boolean isCellEditable(final int rowIndex, final int vColIndex) {
+        public boolean isCellEditable(int rowIndex, int vColIndex) {
             return false;
         }
 
-        public void removeEditor(final Editor editor) {
+        public void removeEditor(Editor editor) {
             errorEditors.remove(editor);
         }
     }
@@ -187,46 +182,46 @@ final class ErrorPane extends JPanel {
 
         errorList.addMouseListener(new MouseListener() {
             @Override
-            public void mouseClicked(final MouseEvent e) {
+            public void mouseClicked(MouseEvent e) {
                 tableModel.focusError(errorList.getSelectedRow());
             }
 
             @Override
-            public void mouseEntered(final MouseEvent e) {
+            public void mouseEntered(MouseEvent e) {
                 // TODO Auto-generated method stub
 
             }
 
             @Override
-            public void mouseExited(final MouseEvent e) {
+            public void mouseExited(MouseEvent e) {
                 // TODO Auto-generated method stub
 
             }
 
             @Override
-            public void mousePressed(final MouseEvent e) {
+            public void mousePressed(MouseEvent e) {
                 // TODO Auto-generated method stub
 
             }
 
             @Override
-            public void mouseReleased(final MouseEvent e) {
+            public void mouseReleased(MouseEvent e) {
                 // TODO Auto-generated method stub
 
             }
         });
 
-        final JScrollPane errorListScroll = new JScrollPane(errorList);
+        JScrollPane errorListScroll = new JScrollPane(errorList);
 
-        final Icon errorIcon = UIManager.getIcon("OptionPane.errorIcon");
-        final ComponentColorModel colorModel = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB),
-                                                                       new int[]{8, 8, 8, 8}, true, false,
-                                                                       Transparency.TRANSLUCENT, DataBuffer.TYPE_BYTE);
-        final WritableRaster raster = Raster
+        Icon errorIcon = UIManager.getIcon("OptionPane.errorIcon");
+        ComponentColorModel colorModel = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB),
+                                                                 new int[]{8, 8, 8, 8}, true, false,
+                                                                 Transparency.TRANSLUCENT, DataBuffer.TYPE_BYTE);
+        WritableRaster raster = Raster
                 .createInterleavedRaster(DataBuffer.TYPE_BYTE, errorIcon.getIconWidth(), errorIcon.getIconHeight(), 4,
                                          null);
 
-        final BufferedImage image = new BufferedImage(colorModel, raster, false, new Hashtable<>());
+        BufferedImage image = new BufferedImage(colorModel, raster, false, new Hashtable<>());
         errorIcon.paintIcon(null, image.getGraphics(), 0, 0);
         new ImageIcon(image.getScaledInstance(14, 14, Image.SCALE_SMOOTH));
 
@@ -241,18 +236,18 @@ final class ErrorPane extends JPanel {
         updateErrors();
     }
 
-    public void addErrorEditor(final Editor editor) {
+    public void addErrorEditor(Editor editor) {
         tableModel.addEditor(editor);
         updateErrors();
     }
 
-    public void removeErrorEditor(final Editor editor) {
+    public void removeErrorEditor(Editor editor) {
         tableModel.removeEditor(editor);
         updateErrors();
     }
 
-    public void updateErrors() {
+    void updateErrors() {
         tableModel.fireTableDataChanged();
-        summery.setText(String.format(errorMessage, Integer.valueOf(errorList.getRowCount())));
+        summery.setText(String.format(errorMessage, errorList.getRowCount()));
     }
 }

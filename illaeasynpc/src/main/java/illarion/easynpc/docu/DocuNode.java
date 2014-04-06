@@ -33,7 +33,7 @@ public class DocuNode implements DocuEntry {
     private String docuEx;
     private String docuSyntax;
     @Nonnull
-    private List<DocuEntry> children;
+    private final List<DocuEntry> children;
     @Nonnull
     private final String npcType;
 
@@ -42,11 +42,11 @@ public class DocuNode implements DocuEntry {
      *
      * @param type The type
      */
-    public DocuNode(@Nonnull final String type) {
+    public DocuNode(@Nonnull String type) {
         this(type, false);
     }
 
-    public DocuNode(@Nonnull final String type, boolean example) {
+    public DocuNode(@Nonnull String type, boolean example) {
         children = new ArrayList<>();
         npcType = type;
         docuTitle = String.format("illarion.easynpc.parser.%s.Docu.title", npcType);

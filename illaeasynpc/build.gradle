@@ -56,9 +56,10 @@ dependencies {
     compile group: 'com.github.insubstantial', name: 'substance', version: '7.2.1'
     compile group: 'com.github.insubstantial', name: 'substance-flamingo', version: '7.2.1'
     compile group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '2.5.0'
-    compile group: 'org.antlr', name: 'antlr4-runtime', version: '4.1'
+    compile group: 'com.fifesoft', name: 'autocomplete', version: '2.5.0'
+    compile group: 'org.antlr', name: 'antlr4-runtime', version: '4.2.1'
 
-    antlr4 group: "org.antlr", name: "antlr4", version: "4.1"
+    antlr4 group: "org.antlr", name: "antlr4", version: "4.2.1"
 
     runtime group: 'org.illarion', name: 'rsc_tables', version: project.ext.illarionResourcesVersion
 }
@@ -92,18 +93,18 @@ compileJava {
 jar {
     dependsOn { gitVersion }
     manifest {
-        attributes        \
-               'Main-Class': 'illarion.easynpc.gui.MainFrame',       \
-               'Permissions': 'all-permissions',       \
-               'Codebase': 'illarion.org',       \
-               'Application-Name': 'Illarion easyNPC editor',       \
-               'Application-Library-Allowable-Codebase': 'illarion.org',       \
-               'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),       \
-               'Built-By': System.getProperty('user.name'),        \
-               'Built-JDK': System.getProperty('java.version'),        \
-               'Implementation-Title': 'Illarion easyNPC Editor',        \
-               'Implementation-Vendor': 'Illarion e.V.',       \
-               'Implementation-Version': project.ext.fullVersion
+        attributes         \
+                'Main-Class': 'illarion.easynpc.gui.MainFrame',        \
+                'Permissions': 'all-permissions',        \
+                'Codebase': 'illarion.org',        \
+                'Application-Name': 'Illarion easyNPC editor',        \
+                'Application-Library-Allowable-Codebase': 'illarion.org',        \
+                'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),        \
+                'Built-By': System.getProperty('user.name'),         \
+                'Built-JDK': System.getProperty('java.version'),         \
+                'Implementation-Title': 'Illarion easyNPC Editor',         \
+                'Implementation-Vendor': 'Illarion e.V.',        \
+                'Implementation-Version': project.ext.fullVersion
     }
 }
 

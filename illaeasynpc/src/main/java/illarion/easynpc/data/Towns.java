@@ -38,17 +38,17 @@ public enum Towns {
     private final int id;
 
     /**
-     * This valid contains <code>true</code> in case this constant is usable for rankpoints.
+     * This valid contains {@code true} in case this constant is usable for rankpoints.
      */
     private final boolean rankpt;
 
     /**
      * Default constructor for this groups.
      *
-     * @param rankpoints <code>true</code> in case this constant can be used for
+     * @param rankpoints {@code true} in case this constant can be used for
      * rankpoints
      */
-    Towns(final boolean rankpoints, final int factionId) {
+    Towns(boolean rankpoints, int factionId) {
         rankpt = rankpoints;
         id = factionId;
     }
@@ -65,7 +65,7 @@ public enum Towns {
     /**
      * Check if this constant can be used for rankpoints.
      *
-     * @return <code>true</code> in case this constant can be used for
+     * @return {@code true} in case this constant can be used for
      * rankpoints
      */
     public boolean isValidForRankpoints() {
@@ -77,8 +77,8 @@ public enum Towns {
      *
      * @param map the map that stores the tokens
      */
-    public static void enlistHighlightedWords(@Nonnull final TokenMap map) {
-        for (final Towns town : Towns.values()) {
+    public static void enlistHighlightedWords(@Nonnull TokenMap map) {
+        for (Towns town : Towns.values()) {
             map.put(town.name(), Token.VARIABLE);
         }
     }

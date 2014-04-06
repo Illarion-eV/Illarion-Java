@@ -37,21 +37,18 @@ public final class ConditionItem implements TalkCondition {
      * The code needed for this condition in the easyNPC script. This code uses the additional data parameter this
      * condition can use.
      */
-    @SuppressWarnings("nls")
     private static final String EASY_CODE_DATA = "item(%1$s, %2$s, %5$s) %3$s %4$s";
 
     /**
      * The LUA code needed for this consequence to work. This code uses the additional data parameter this condition
      * can use.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_CODE =
             "talkEntry:addCondition(%1$s.item(%2$s, \"%3$s\", \"%4$s\", %5$s, %6$s));" + LuaWriter.NL;
 
     /**
      * The LUA module required for this condition to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_MODULE = BASE_LUA_MODULE + "item";
 
     /**
@@ -89,11 +86,7 @@ public final class ConditionItem implements TalkCondition {
      * @param newData the data value the search is limited to
      */
     public ConditionItem(
-            final Items newItem,
-            final ItemPositions pos,
-            final CompareOperators op,
-            final AdvancedNumber newValue,
-            final ParsedItemData newData) {
+            Items newItem, ItemPositions pos, CompareOperators op, AdvancedNumber newValue, ParsedItemData newData) {
         item = newItem;
         itemPos = pos;
         operator = op;
@@ -114,7 +107,7 @@ public final class ConditionItem implements TalkCondition {
      * Write the LUA code needed for this item condition.
      */
     @Override
-    public void writeLua(@Nonnull final Writer target) throws IOException {
+    public void writeLua(@Nonnull Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, Integer.toString(item.getItemId()), itemPos.name(),
                                    operator.getLuaComp(), value.getLua(), data.getLua()));
     }

@@ -34,14 +34,12 @@ public final class ConsequenceAttribute implements TalkConsequence {
     /**
      * The LUA code needed to be included for a attribute consequence.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_CODE =
             "talkEntry:addConsequence(%1$s.attribute(\"%2$s\", \"%3$s\", %4$s));" + LuaWriter.NL;
 
     /**
      * The module used to access this attribute consequence.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_MODULE = BASE_LUA_MODULE + "attribute";
 
     /**
@@ -67,7 +65,7 @@ public final class ConsequenceAttribute implements TalkConsequence {
      * @param newValue the value the attribute is changed by
      */
     public ConsequenceAttribute(
-            final CharacterAttribute newAttrib, final CalculationOperators op, final AdvancedNumber newValue) {
+            CharacterAttribute newAttrib, CalculationOperators op, AdvancedNumber newValue) {
         attrib = newAttrib;
         operator = op;
         value = newValue;
@@ -86,7 +84,7 @@ public final class ConsequenceAttribute implements TalkConsequence {
      * Write the LUA code for this line to the target writer.
      */
     @Override
-    public void writeLua(@Nonnull final Writer target) throws IOException {
+    public void writeLua(@Nonnull Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, attrib.name(), operator.getLuaOp(), value.getLua()));
     }
 }

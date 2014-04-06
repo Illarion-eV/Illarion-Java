@@ -43,15 +43,14 @@ final class ClipboardBand extends JRibbonBand {
      * The constructor for this clipboard band that prepares the buttons and all
      * settings needed for the proper display.
      */
-    @SuppressWarnings("nls")
     public ClipboardBand() {
         super(Lang.getMsg(ClipboardBand.class, "title"), null);
 
-        final JCommandButton pasteButton = new JCommandButton(Lang.getMsg(getClass(), "pasteButton"),
+        JCommandButton pasteButton = new JCommandButton(Lang.getMsg(getClass(), "pasteButton"),
                                                               Utils.getResizableIconFromResource("editpaste.png"));
-        final JCommandButton copyButton = new JCommandButton(Lang.getMsg(getClass(), "copyButton"),
+        JCommandButton copyButton = new JCommandButton(Lang.getMsg(getClass(), "copyButton"),
                                                              Utils.getResizableIconFromResource("editcopy.png"));
-        final JCommandButton cutButton = new JCommandButton(Lang.getMsg(getClass(), "cutButton"),
+        JCommandButton cutButton = new JCommandButton(Lang.getMsg(getClass(), "cutButton"),
                                                             Utils.getResizableIconFromResource("editcut.png"));
 
         pasteButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(getClass(), "pasteButtonTooltipTitle"),
@@ -73,7 +72,7 @@ final class ClipboardBand extends JRibbonBand {
         addCommandButton(copyButton, RibbonElementPriority.MEDIUM);
         addCommandButton(cutButton, RibbonElementPriority.MEDIUM);
 
-        final List<RibbonBandResizePolicy> policies = new ArrayList<>();
+        List<RibbonBandResizePolicy> policies = new ArrayList<>();
         policies.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
         policies.add(new CoreRibbonResizePolicies.Mid2Low(getControlPanel()));
         setResizePolicies(policies);

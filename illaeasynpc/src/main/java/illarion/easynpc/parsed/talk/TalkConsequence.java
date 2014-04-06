@@ -29,7 +29,6 @@ public interface TalkConsequence {
     /**
      * The base module of all consequences.
      */
-    @SuppressWarnings("nls")
     String BASE_LUA_MODULE = "npc.base.consequence.";
 
     /**

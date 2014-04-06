@@ -34,14 +34,12 @@ public final class ConsequenceSkill implements TalkConsequence {
     /**
      * The LUA code needed to be included for a skill consequence.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_CODE =
             "talkEntry:addConsequence(%1$s.skill(Character.%2$s, \"%3$s\", %4$s));" + LuaWriter.NL;
 
     /**
      * The LUA module needed for this consequence to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_MODULE = BASE_LUA_MODULE + "skill";
 
     /**
@@ -67,7 +65,7 @@ public final class ConsequenceSkill implements TalkConsequence {
      * @param newValue the value used to change the skill
      */
     public ConsequenceSkill(
-            final Skill newSkill, final CalculationOperators op, final AdvancedNumber newValue) {
+            Skill newSkill, CalculationOperators op, AdvancedNumber newValue) {
         skill = newSkill;
         operator = op;
         value = newValue;
@@ -86,7 +84,7 @@ public final class ConsequenceSkill implements TalkConsequence {
      * Write the LUA code of this consequence.
      */
     @Override
-    public void writeLua(@Nonnull final Writer target) throws IOException {
+    public void writeLua(@Nonnull Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, skill.getName(), operator.getLuaOp(), value.getLua()));
     }
 }

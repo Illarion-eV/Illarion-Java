@@ -52,7 +52,7 @@ public final class ParsedHair implements ParsedData {
     /**
      * The type of the hair.
      */
-    private final ParsedHair.HairType hairType;
+    private final HairType hairType;
 
     /**
      * The constructor for this parsed hair data.
@@ -60,7 +60,7 @@ public final class ParsedHair implements ParsedData {
      * @param type the type of the hair
      * @param id the ID of the hair
      */
-    public ParsedHair(final ParsedHair.HairType type, final int id) {
+    public ParsedHair(HairType type, int id) {
         hairType = type;
         hairId = id;
     }
@@ -69,7 +69,7 @@ public final class ParsedHair implements ParsedData {
      * Add the information about the hair and the beard to the SQL query.
      */
     @Override
-    public void buildSQL(@Nonnull final SQLBuilder builder) {
+    public void buildSQL(@Nonnull SQLBuilder builder) {
         switch (hairType) {
             case Beard:
                 builder.setNpcBeard(hairId);
@@ -84,7 +84,7 @@ public final class ParsedHair implements ParsedData {
      * Hair information are not written into the LUA script. No stage is effected.
      */
     @Override
-    public boolean effectsLuaWritingStage(@Nonnull final LuaWriter.WritingStage stage) {
+    public boolean effectsLuaWritingStage(@Nonnull LuaWriter.WritingStage stage) {
         return false;
     }
 
@@ -102,7 +102,7 @@ public final class ParsedHair implements ParsedData {
      */
     @Override
     public void writeLua(
-            @Nonnull final Writer target, @Nonnull final LuaWriter.WritingStage stage) throws IOException {
+            @Nonnull Writer target, @Nonnull LuaWriter.WritingStage stage) throws IOException {
         // nothing
     }
 }

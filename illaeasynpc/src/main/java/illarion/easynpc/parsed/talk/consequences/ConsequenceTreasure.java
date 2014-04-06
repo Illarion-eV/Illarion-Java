@@ -32,13 +32,11 @@ public final class ConsequenceTreasure implements TalkConsequence {
     /**
      * The LUA code needed to be included for a rune consequence.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.treasure(%2$s));" + LuaWriter.NL;
 
     /**
      * The LUA module needed for this consequence to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_MODULE = BASE_LUA_MODULE + "treasure";
 
     /**
@@ -51,7 +49,7 @@ public final class ConsequenceTreasure implements TalkConsequence {
      *
      * @param newLevel the level of the treasure to create
      */
-    public ConsequenceTreasure(final AdvancedNumber newLevel) {
+    public ConsequenceTreasure(AdvancedNumber newLevel) {
         level = newLevel;
     }
 
@@ -68,7 +66,7 @@ public final class ConsequenceTreasure implements TalkConsequence {
      * Write the LUA code of this consequence.
      */
     @Override
-    public void writeLua(@Nonnull final Writer target) throws IOException {
+    public void writeLua(@Nonnull Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, level.getLua()));
     }
 }

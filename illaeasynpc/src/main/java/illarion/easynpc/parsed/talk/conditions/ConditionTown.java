@@ -32,13 +32,11 @@ public final class ConditionTown implements TalkCondition {
     /**
      * The LUA code needed for this consequence to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_CODE = "talkEntry:addCondition(%1$s.town(%2$s));" + LuaWriter.NL;
 
     /**
      * The LUA module required for this condition to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_MODULE = BASE_LUA_MODULE + "town";
 
     /**
@@ -51,7 +49,7 @@ public final class ConditionTown implements TalkCondition {
      *
      * @param newTown the town the character is expected to be a part of
      */
-    public ConditionTown(final Towns newTown) {
+    public ConditionTown(Towns newTown) {
         town = newTown;
     }
 
@@ -68,7 +66,7 @@ public final class ConditionTown implements TalkCondition {
      * Write the LUA code needed for this town condition.
      */
     @Override
-    public void writeLua(@Nonnull final Writer target) throws IOException {
+    public void writeLua(@Nonnull Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, Integer.toString(town.getFactionId())));
     }
 }

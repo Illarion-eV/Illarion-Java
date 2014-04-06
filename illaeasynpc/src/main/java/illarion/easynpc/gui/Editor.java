@@ -53,7 +53,6 @@ public final class Editor extends RTextScrollPane {
     /**
      * The new line separator used.
      */
-    @SuppressWarnings("nls")
     private static final String NL = "\n";
 
     /**
@@ -115,7 +114,6 @@ public final class Editor extends RTextScrollPane {
         setViewportView(editor);
 
         timer = new Timer(1000, new ActionListener() {
-            @SuppressWarnings("synthetic-access")
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (Config.getInstance().getAutoBuild()) {
@@ -139,7 +137,6 @@ public final class Editor extends RTextScrollPane {
                 // nothing to do
             }
 
-            @SuppressWarnings("synthetic-access")
             @Override
             public void keyTyped(KeyEvent e) {
                 clearParsedData();
@@ -201,7 +198,7 @@ public final class Editor extends RTextScrollPane {
      *
      * @param pos the position in the script text that should be focused
      */
-    public void getFocusToPosition(int pos) {
+    void getFocusToPosition(int pos) {
         editor.setCaretPosition(pos);
         editor.requestFocusInWindow();
     }
@@ -244,7 +241,7 @@ public final class Editor extends RTextScrollPane {
             return currentData;
         }
 
-        ParsedNpc newData = Parser.getInstance().parse(getScriptText());
+        ParsedNpc newData = Parser.parse(getScriptText());
 
         if (newData.hasErrors()) {
             errorNpc = newData;
@@ -317,7 +314,7 @@ public final class Editor extends RTextScrollPane {
      *
      * @param text the text that shall be shown in the editor now
      */
-    public void setScriptText(@Nonnull String text) {
+    void setScriptText(@Nonnull String text) {
         int oldCaret = editor.getCaretPosition();
         editor.setText(text);
         if (oldCaret > -1) {
@@ -332,7 +329,7 @@ public final class Editor extends RTextScrollPane {
      *
      * @param script the script supplying the text
      */
-    public void setScriptText(@Nonnull EasyNpcScript script) {
+    void setScriptText(@Nonnull EasyNpcScript script) {
         StringBuilder buffer = new StringBuilder();
 
         int count = script.getEntryCount();
@@ -362,7 +359,7 @@ public final class Editor extends RTextScrollPane {
      *
      * @return {@code true} in case this editor is currently active
      */
-    public boolean isActiveEditor() {
+    boolean isActiveEditor() {
         return MainFrame.getInstance().getCurrentScriptEditor().equals(this);
     }
 
@@ -453,7 +450,7 @@ public final class Editor extends RTextScrollPane {
             Runnable worker = new SwingWorker<ParsedNpc, Void>() {
                 @Override
                 protected ParsedNpc doInBackground() throws Exception {
-                    return Parser.getInstance().parse(scriptText);
+                    return Parser.parse(scriptText);
                 }
 
                 @Override

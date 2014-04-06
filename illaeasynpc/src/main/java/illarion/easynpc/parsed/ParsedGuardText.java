@@ -74,7 +74,7 @@ public class ParsedGuardText implements ParsedData {
      * @param german the german text
      * @param english the english text
      */
-    public ParsedGuardText(@Nonnull final TextType type, @Nonnull final String german, @Nonnull final String english) {
+    public ParsedGuardText(@Nonnull TextType type, @Nonnull String german, @Nonnull String english) {
         this.type = type;
         this.german = german;
         this.english = english;

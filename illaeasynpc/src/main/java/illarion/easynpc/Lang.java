@@ -31,7 +31,6 @@ import java.util.ResourceBundle;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@SuppressWarnings("nls")
 public final class Lang implements MessageSource {
     /**
      * The string stores in the configuration for English language.
@@ -74,11 +73,7 @@ public final class Lang implements MessageSource {
      */
     private Lang() {
         locale = Locale.getDefault();
-        if (locale.getLanguage().equalsIgnoreCase(Locale.GERMAN.getLanguage())) {
-            locale = Locale.GERMAN;
-        } else {
-            locale = Locale.ENGLISH;
-        }
+        locale = locale.getLanguage().equalsIgnoreCase(Locale.GERMAN.getLanguage()) ? Locale.GERMAN : Locale.ENGLISH;
 
         messages = ResourceBundle.getBundle(MESSAGE_BUNDLE, locale, Lang.class.getClassLoader());
     }
@@ -89,7 +84,7 @@ public final class Lang implements MessageSource {
      * @return the instance of the class
      */
     @Nonnull
-    public static Lang getInstance() {
+    public static MessageSource getInstance() {
         return INSTANCE;
     }
 
@@ -101,8 +96,8 @@ public final class Lang implements MessageSource {
      * @return the localized message or the key with surrounding < > in case the
      * key was not found in the storage
      */
-    public static String getMsg(@Nonnull final Class<?> clazz, final String key) {
-        final TextBuilder builder = new TextBuilder();
+    public static String getMsg(@Nonnull Class<?> clazz, String key) {
+        TextBuilder builder = new TextBuilder();
         builder.append(clazz.getName());
         builder.append('.');
         builder.append(key);
@@ -116,7 +111,7 @@ public final class Lang implements MessageSource {
      * @return the localized message or the key with surrounding &lt; &gt; in
      * case the key was not found in the storage
      */
-    public static String getMsg(final String key) {
+    public static String getMsg(String key) {
         return INSTANCE.getMessage(key);
     }
 
@@ -137,12 +132,12 @@ public final class Lang implements MessageSource {
      * case the key was not found in the storage
      */
     @Override
-    public String getMessage(final String key) {
+    public String getMessage(String key) {
         try {
             return messages.getString(key);
-        } catch (@Nonnull final MissingResourceException e) {
-            LOGGER.warn("Failed searching translated version of: " + key);
-            return "<" + key + ">";
+        } catch (@Nonnull MissingResourceException e) {
+            LOGGER.warn("Failed searching translated version of: {}", key);
+            return '<' + key + '>';
         }
     }
 
@@ -152,10 +147,10 @@ public final class Lang implements MessageSource {
      * @param key the key that shall be checked
      * @return true in case a message was found
      */
-    public boolean hasMsg(final String key) {
+    public boolean hasMsg(String key) {
         try {
             messages.getString(key);
-        } catch (@Nonnull final MissingResourceException e) {
+        } catch (@Nonnull MissingResourceException e) {
             return false;
         }
         return true;
@@ -167,7 +162,7 @@ public final class Lang implements MessageSource {
      * @return true if the language is set to English
      */
     public boolean isEnglish() {
-        return (locale == Locale.ENGLISH);
+        return locale == Locale.ENGLISH;
     }
 
     /**
@@ -176,6 +171,6 @@ public final class Lang implements MessageSource {
      * @return true if the language is set to German
      */
     public boolean isGerman() {
-        return (locale == Locale.GERMAN);
+        return locale == Locale.GERMAN;
     }
 }

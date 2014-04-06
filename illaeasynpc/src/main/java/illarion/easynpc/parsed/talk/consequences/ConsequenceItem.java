@@ -34,20 +34,17 @@ public final class ConsequenceItem implements TalkConsequence {
     /**
      * The easyNPC code (without data) needed for this consequence.
      */
-    @SuppressWarnings("nls")
     private static final String EASY_CODE_NO_DATA = "item(%1$s, %2$s, %3$s)";
 
     /**
      * The LUA code needed to be included for a create item consequence.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_CODE =
             "talkEntry:addConsequence(%1$s.item(%2$s, %3$s, %4$s, %5$s));" + LuaWriter.NL;
 
     /**
      * The LUA module needed for this consequence to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_MODULE = BASE_LUA_MODULE + "item";
 
     /**
@@ -79,7 +76,7 @@ public final class ConsequenceItem implements TalkConsequence {
      * @param newData the data value of the item
      */
     public ConsequenceItem(
-            final Items newItem, final AdvancedNumber newValue, final int newQuality, final ParsedItemData newData) {
+            Items newItem, AdvancedNumber newValue, int newQuality, ParsedItemData newData) {
         item = newItem;
         value = newValue;
         quality = newQuality;
@@ -99,7 +96,7 @@ public final class ConsequenceItem implements TalkConsequence {
      * Write the LUA code of this consequence.
      */
     @Override
-    public void writeLua(@Nonnull final Writer target) throws IOException {
+    public void writeLua(@Nonnull Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, Integer.toString(item.getItemId()), value.getLua(),
                                    Integer.toString(quality), data.getLua()));
     }

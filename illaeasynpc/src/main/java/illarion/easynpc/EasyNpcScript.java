@@ -27,7 +27,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -36,7 +35,6 @@ import java.util.List;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@SuppressWarnings("nls")
 public final class EasyNpcScript {
     /**
      * The default charset that is used to read and write the easyNPC script files.
@@ -71,7 +69,7 @@ public final class EasyNpcScript {
          * @param number the line number
          * @param text the text of the line
          */
-        protected Line(final int number, final String text) {
+        Line(int number, String text) {
             lineNumber = number;
             line = text;
         }
@@ -110,7 +108,7 @@ public final class EasyNpcScript {
      * they are written in the script.
      */
     @Nonnull
-    private final List<EasyNpcScript.Line> entries;
+    private final List<Line> entries;
 
     /**
      * The file that script was load from.
@@ -126,7 +124,7 @@ public final class EasyNpcScript {
      * Create a new, empty EasyNPC Script. This scripts waits to be filled with
      * new entries.
      */
-    public EasyNpcScript() {
+    private EasyNpcScript() {
         entries = new ArrayList<>();
     }
 
@@ -139,7 +137,7 @@ public final class EasyNpcScript {
      * @throws IOException thrown in case anything goes wrong while reading this
      * file.
      */
-    public EasyNpcScript(@Nonnull final Path sourceFile) throws IOException {
+    public EasyNpcScript(@Nonnull Path sourceFile) throws IOException {
         this();
 
         readFromInputStream(sourceFile);
@@ -151,7 +149,7 @@ public final class EasyNpcScript {
      * @param index The index of the entry
      * @return the entry from the script file on the given index
      */
-    public EasyNpcScript.Line getEntry(final int index) {
+    public Line getEntry(int index) {
         return entries.get(index);
     }
 
@@ -197,7 +195,7 @@ public final class EasyNpcScript {
      * @param sourceFile the file that is read
      * @throws IOException error thrown in case reading failed
      */
-    public void readFromInputStream(@Nonnull final Path sourceFile) throws IOException {
+    void readFromInputStream(@Nonnull Path sourceFile) throws IOException {
         if (Files.isDirectory(sourceFile) || !Files.isReadable(sourceFile)) {
             throw new FileNotFoundException(sourceFile.toString());
         }
@@ -215,8 +213,8 @@ public final class EasyNpcScript {
      *
      * @param source The entire script to read
      */
-    public void readNPCScript(@Nonnull final String source) {
-        final String[] lines = source.split("\n");
+    void readNPCScript(@Nonnull String source) {
+        String[] lines = source.split("\n");
 
         readNPCScript(Arrays.asList(lines));
     }
@@ -226,7 +224,7 @@ public final class EasyNpcScript {
      *
      * @param editor the editor that supplies the script data
      */
-    public void readFromEditor(@Nonnull final Editor editor) {
+    public void readFromEditor(@Nonnull Editor editor) {
         sourceEditor = editor;
 
         readNPCScript(editor.getScriptText());
@@ -239,9 +237,9 @@ public final class EasyNpcScript {
      * script
      * @throws IOException thrown in case there is a problem while writing
      */
-    public void writeNPCScript(@Nonnull final Path targetFile) throws IOException {
+    public void writeNPCScript(@Nonnull Path targetFile) throws IOException {
         try (BufferedWriter writer = Files.newBufferedWriter(targetFile, DEFAULT_CHARSET)) {
-            for (final EasyNpcScript.Line line : entries) {
+            for (Line line : entries) {
                 writer.write(line.getLine());
                 writer.newLine();
             }
@@ -253,12 +251,12 @@ public final class EasyNpcScript {
      * Read the easyNPC script from a file.
      *
      * @param sourceFile the file to read
-     * @return <code>true</code> in case everything worked
+     * @return {@code true} in case everything worked
      * @throws IOException thrown in case the reading operation failed
      */
-    private boolean readNPCScript(@Nonnull final Path sourceFile) throws IOException {
+    private boolean readNPCScript(@Nonnull Path sourceFile) {
         try {
-            final List<String> lineList = Files.readAllLines(sourceFile, DEFAULT_CHARSET);
+            List<String> lineList = Files.readAllLines(sourceFile, DEFAULT_CHARSET);
             encoding = DEFAULT_CHARSET;
             readNPCScript(lineList);
             return true;
@@ -268,7 +266,7 @@ public final class EasyNpcScript {
 
         for (Charset set : Charset.availableCharsets().values()) {
             try {
-                final List<String> lineList = Files.readAllLines(sourceFile, set);
+                List<String> lineList = Files.readAllLines(sourceFile, set);
                 encoding = set;
                 readNPCScript(lineList);
                 return true;
@@ -284,43 +282,43 @@ public final class EasyNpcScript {
      *
      * @param lines The array of lines
      */
-    private void readNPCScript(@Nonnull final Collection<String> lines) {
+    private void readNPCScript(@Nonnull Iterable<String> lines) {
         boolean currentlyCommentBlock = false;
         boolean currentlyEmptyBlock = false;
         int lineNumber = 0;
-        for (final String orgLine : lines) {
-            final String line = orgLine.trim();
+        for (String orgLine : lines) {
+            String line = orgLine.trim();
             lineNumber++;
             if (line.isEmpty()) {
                 if (!currentlyEmptyBlock) {
-                    entries.add(new EasyNpcScript.Line(lineNumber, line));
+                    entries.add(new Line(lineNumber, line));
                 }
                 currentlyEmptyBlock = true;
                 currentlyCommentBlock = false;
             } else if (line.startsWith(LUA_COMMENT_LEAD)) {
                 if (currentlyCommentBlock) {
-                    final EasyNpcScript.Line lastLine = entries.remove(entries.size() - 1);
-                    String newLine = lastLine.getLine() + "\n" + line;
+                    Line lastLine = entries.remove(entries.size() - 1);
+                    String newLine = lastLine.getLine() + '\n' + line;
                     if (COPYRIGHT_HEADER.isLicenseText(newLine)) {
                         currentlyCommentBlock = false;
                         currentlyEmptyBlock = false;
                         continue;
                     } else {
-                        entries.add(new EasyNpcScript.Line(lastLine.getLineNumber(), lastLine.getLine() + "\n" + line));
+                        entries.add(new Line(lastLine.getLineNumber(), lastLine.getLine() + '\n' + line));
                     }
                 } else {
-                    entries.add(new EasyNpcScript.Line(lineNumber, line));
+                    entries.add(new Line(lineNumber, line));
                 }
                 currentlyCommentBlock = true;
                 currentlyEmptyBlock = false;
             } else {
-                entries.add(new EasyNpcScript.Line(lineNumber, line));
+                entries.add(new Line(lineNumber, line));
                 currentlyCommentBlock = false;
                 currentlyEmptyBlock = false;
             }
         }
         if (!currentlyEmptyBlock) {
-            entries.add(new EasyNpcScript.Line(lineNumber + 1, ""));
+            entries.add(new Line(lineNumber + 1, ""));
         }
     }
 }

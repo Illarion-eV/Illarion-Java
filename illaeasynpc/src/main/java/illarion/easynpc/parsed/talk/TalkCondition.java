@@ -28,7 +28,6 @@ public interface TalkCondition {
     /**
      * The base module of all condition.
      */
-    @SuppressWarnings("nls")
     String BASE_LUA_MODULE = "npc.base.condition.";
 
     /**

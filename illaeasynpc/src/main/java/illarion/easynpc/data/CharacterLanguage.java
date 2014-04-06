@@ -46,7 +46,7 @@ public enum CharacterLanguage {
      *
      * @param langId the language ID fitting this constant
      */
-    private CharacterLanguage(final int langId) {
+    CharacterLanguage(int langId) {
         id = langId;
     }
 
@@ -64,7 +64,7 @@ public enum CharacterLanguage {
      *
      * @param map the map that stores the tokens
      */
-    public static void enlistHighlightedWords(@Nonnull final TokenMap map) {
+    public static void enlistHighlightedWords(@Nonnull TokenMap map) {
         for (CharacterLanguage language : CharacterLanguage.values()) {
             map.put(language.name(), Token.VARIABLE);
         }

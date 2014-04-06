@@ -32,13 +32,11 @@ public final class ConditionNumber implements TalkCondition {
     /**
      * The LUA code needed for this consequence to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_CODE = "talkEntry:addCondition(%1$s.number(\"%2$s\", %3$s));" + LuaWriter.NL;
 
     /**
      * The LUA module required for this condition to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_MODULE = BASE_LUA_MODULE + "number";
 
     /**
@@ -56,7 +54,7 @@ public final class ConditionNumber implements TalkCondition {
      * @param op the operator used to compare the said number
      * @param newValue the value the said number is compared against
      */
-    public ConditionNumber(final CompareOperators op, final int newValue) {
+    public ConditionNumber(CompareOperators op, int newValue) {
         operator = op;
         value = newValue;
     }
@@ -74,7 +72,7 @@ public final class ConditionNumber implements TalkCondition {
      * Write the LUA code needed for this number condition.
      */
     @Override
-    public void writeLua(@Nonnull final Writer target) throws IOException {
+    public void writeLua(@Nonnull Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, operator.getLuaComp(), Integer.toString(value)));
     }
 }

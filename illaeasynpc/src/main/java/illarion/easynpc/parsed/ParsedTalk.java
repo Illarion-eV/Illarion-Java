@@ -60,7 +60,7 @@ public final class ParsedTalk implements ParsedData {
      *
      * @param con the condition to add
      */
-    public void addCondition(final TalkCondition con) {
+    public void addCondition(TalkCondition con) {
         conditions.add(con);
     }
 
@@ -69,7 +69,7 @@ public final class ParsedTalk implements ParsedData {
      *
      * @param con the consequence to add
      */
-    public void addConsequence(final TalkConsequence con) {
+    public void addConsequence(TalkConsequence con) {
         consequences.add(con);
     }
 
@@ -77,7 +77,7 @@ public final class ParsedTalk implements ParsedData {
      * Talking lines do not effect the SQL query.
      */
     @Override
-    public void buildSQL(@Nonnull final SQLBuilder builder) {
+    public void buildSQL(@Nonnull SQLBuilder builder) {
         // nothing to add to the SQL query
     }
 
@@ -86,7 +86,7 @@ public final class ParsedTalk implements ParsedData {
      * talking lines.
      */
     @Override
-    public boolean effectsLuaWritingStage(@Nonnull final LuaWriter.WritingStage stage) {
+    public boolean effectsLuaWritingStage(@Nonnull LuaWriter.WritingStage stage) {
         return stage == LuaWriter.WritingStage.Talking;
     }
 
@@ -96,17 +96,17 @@ public final class ParsedTalk implements ParsedData {
     @Nonnull
     @Override
     public String[] getRequiredModules() {
-        final Collection<String> moduleList = new FastTable<>();
+        Collection<String> moduleList = new FastTable<>();
 
         for (TalkCondition condition : conditions) {
-            final String module = condition.getLuaModule();
+            String module = condition.getLuaModule();
             if (module != null) {
                 moduleList.add(module);
             }
         }
 
         for (TalkConsequence consequence : consequences) {
-            final String module = consequence.getLuaModule();
+            String module = consequence.getLuaModule();
             if (module != null) {
                 moduleList.add(module);
             }
@@ -125,7 +125,7 @@ public final class ParsedTalk implements ParsedData {
      */
     @Override
     public void writeLua(
-            @Nonnull final Writer target, @Nonnull final LuaWriter.WritingStage stage) throws IOException {
+            @Nonnull Writer target, @Nonnull LuaWriter.WritingStage stage) throws IOException {
 
         if (stage == LuaWriter.WritingStage.Talking) {
             target.write("if (true) then"); //$NON-NLS-1$

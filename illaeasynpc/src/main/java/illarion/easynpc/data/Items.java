@@ -30,12 +30,11 @@ import java.util.Arrays;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@SuppressWarnings("nls")
 public final class Items implements Comparable<Items> {
     /**
      * The table index of the item id in the definition table.
      */
-    static final int TB_ID = 0;
+    private static final int TB_ID = 0;
 
     /**
      * The list of items that were load.
@@ -73,7 +72,7 @@ public final class Items implements Comparable<Items> {
      *
      * @param id the ID of the item
      */
-    Items(int id) {
+    private Items(int id) {
         itemId = id;
     }
 
@@ -115,7 +114,7 @@ public final class Items implements Comparable<Items> {
      * @param id the ID of the item to look for
      * @return {@code true} in case the item is found in the list of valid items
      */
-    public static boolean contains(int id) {
+    private static boolean contains(int id) {
         return Arrays.binarySearch(itemsList, id) >= 0;
     }
 

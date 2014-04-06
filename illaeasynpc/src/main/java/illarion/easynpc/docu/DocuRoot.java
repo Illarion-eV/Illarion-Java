@@ -33,7 +33,7 @@ public class DocuRoot implements DocuEntry {
 
     private DocuRoot() {
         types = new ArrayList<>();
-        DocuLeaf comment = new DocuLeaf("NpcComment");
+        DocuEntry comment = new DocuLeaf("NpcComment");
         types.add(comment);
 
         DocuNode basics = new DocuNode("NpcBasics");
@@ -119,13 +119,13 @@ public class DocuRoot implements DocuEntry {
         talk.addChild(consequences);
         types.add(talk);
 
-        DocuNode empty = new DocuNode("NpcEmpty");
+        DocuEntry empty = new DocuNode("NpcEmpty");
         types.add(empty);
 
-        DocuLeaf cycleText = new DocuLeaf("NpcCycleText");
+        DocuEntry cycleText = new DocuLeaf("NpcCycleText");
         types.add(cycleText);
 
-        DocuLeaf walk = new DocuLeaf("NpcWalk");
+        DocuEntry walk = new DocuLeaf("NpcWalk");
         types.add(walk);
 
         DocuNode tradeComplex = new DocuNode("NpcTradeComplex");
@@ -140,16 +140,16 @@ public class DocuRoot implements DocuEntry {
         tradeSimple.addChild("Buy.Secondary");
         types.add(tradeSimple);
 
-        DocuLeaf tradeText = new DocuLeaf("NpcTradeText");
+        DocuEntry tradeText = new DocuLeaf("NpcTradeText");
         types.add(tradeText);
 
-        DocuLeaf guardRange = new DocuLeaf("NpcGuardRange");
+        DocuEntry guardRange = new DocuLeaf("NpcGuardRange");
         types.add(guardRange);
 
-        DocuLeaf guardWarp = new DocuLeaf("NpcGuardWarpTarget");
+        DocuEntry guardWarp = new DocuLeaf("NpcGuardWarpTarget");
         types.add(guardWarp);
 
-        DocuLeaf guardText = new DocuLeaf("NpcGuardText");
+        DocuEntry guardText = new DocuLeaf("NpcGuardText");
         types.add(guardText);
     }
 

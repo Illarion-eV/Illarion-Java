@@ -620,6 +620,7 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> {
         return super.visitTextConfiguration(ctx);
     }
 
+    @Override
     public ParsedNpcVisitor visitErrorNode(@NotNull ErrorNode node) {
         npc.addError(node.getSymbol().getLine(), node.getSymbol().getCharPositionInLine(), node.getText());
         return defaultResult();

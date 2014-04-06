@@ -59,7 +59,7 @@ public final class Config {
     /**
      * The amount of last opened files that shall be stored.
      */
-    public static final int LAST_OPEN_FILES_COUNT = 10;
+    private static final int LAST_OPEN_FILES_COUNT = 10;
 
     /**
      * The key in the property file for the auto build flag
@@ -114,45 +114,38 @@ public final class Config {
     /**
      * The property key value for the luaNPC script folder.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_NPC_FOLDER = "luaNpcFolder";
 
     /**
      * The property key for the list of files that were open at the last time
      * the editor was running.
      */
-    @SuppressWarnings("nls")
     private static final String OPEN_FILES = "openFiles";
 
     /**
      * The property key of the value that describes the state of the split pane
      * in the editor view.
      */
-    @SuppressWarnings("nls")
     private static final String SPLIT_STATE = "splitState";
 
     /**
      * Get the key that is used to store the amount the undo operations.
      */
-    @SuppressWarnings("nls")
     private static final String UNDO_COUNT_KEY = "undoCount";
 
     /**
      * The property key value for the name of the look and feel shall be used.
      */
-    @SuppressWarnings("nls")
     private static final String USED_LOOK_AND_FEEL = "usedLookAndFeel";
 
     /**
      * The property key for the flag that says of the editor shall use syntax
      * highlighting or not.
      */
-    @SuppressWarnings("nls")
     private static final String USE_SYNTAX_HIGHLIGHT = "useSyntaxHighlight";
     /**
      * The property key value for the use window decoration flag.
      */
-    @SuppressWarnings("nls")
     private static final String USE_WINDOW_DECO = "useWindowDeco";
 
     /**
@@ -169,7 +162,7 @@ public final class Config {
 
     /**
      * The last generated list of opened files. When this is set to
-     * <code>null</code> the list is generated fresh once its requested the next
+     * {@code null} the list is generated fresh once its requested the next
      * time.
      */
     @Nullable
@@ -207,7 +200,6 @@ public final class Config {
      * @return a string with the path to the folder or null in case no folder is
      * set
      */
-    @SuppressWarnings("nls")
     @Nonnull
     private static Path checkFolder() {
         if (!DirectoryManager.getInstance().isDirectorySet(DirectoryManager.Directory.User)) {
@@ -231,7 +223,7 @@ public final class Config {
             LOGGER.error("Configuration system not initialized yet.");
             return;
         }
-        cfg.set(LAST_FILES_KEY, file.toAbsolutePath().toString() + File.pathSeparator + cfg.getString(LAST_FILES_KEY));
+        cfg.set(LAST_FILES_KEY, file.toAbsolutePath() + File.pathSeparator + cfg.getString(LAST_FILES_KEY));
         lastOpenedFilesBuffer = null;
     }
 
@@ -249,7 +241,6 @@ public final class Config {
     }
 
     @Nonnull
-    @SuppressWarnings("nls")
     public ConfigDialog createDialog() {
         if (cfg == null) {
             throw new IllegalStateException("Configuration system not initialized yet.");
@@ -258,8 +249,7 @@ public final class Config {
         dialog.setConfig(cfg);
         dialog.setMessageSource(Lang.getInstance());
 
-        ConfigDialog.Page page;
-        page = new ConfigDialog.Page("illarion.easynpc.gui.config.generalTab");
+        ConfigDialog.Page page = new ConfigDialog.Page("illarion.easynpc.gui.config.generalTab");
         page.addEntry(new ConfigDialog.Entry("illarion.easynpc.gui.config.easyNpcFolderLabel",
                                              new DirectoryEntry(EASY_NPC_FOLDER, null)));
         page.addEntry(new ConfigDialog.Entry("illarion.easynpc.gui.config.luaFolderLabel",
@@ -306,7 +296,7 @@ public final class Config {
     /**
      * Check if auto building is enabled or not.
      *
-     * @return <code>true</code> in case auto building is enabled
+     * @return {@code true} in case auto building is enabled
      */
     public boolean getAutoBuild() {
         return autoBuildState;
@@ -536,9 +526,9 @@ public final class Config {
     /**
      * Get the flag if the editor is supposed to highlight the syntax
      *
-     * @return <code>true</code> in case the syntax shall be highlighted
+     * @return {@code true} in case the syntax shall be highlighted
      */
-    public boolean getUseSyntaxHighlighting() {
+    boolean getUseSyntaxHighlighting() {
         if (cfg == null) {
             LOGGER.error("Configuration system not initialized yet.");
             return true;
@@ -549,7 +539,7 @@ public final class Config {
     /**
      * Get the flag if the editor is supposed to decorate the windows.
      *
-     * @return <code>true</code> in case the editor is expected to decorate the
+     * @return {@code true} in case the editor is expected to decorate the
      * windows
      */
     public boolean getUseWindowDecoration() {
@@ -563,7 +553,6 @@ public final class Config {
     /**
      * Initialize the configuration class and load all configuration values.
      */
-    @SuppressWarnings("nls")
     public void init() {
         Path folder = checkFolder();
 
@@ -693,7 +682,7 @@ public final class Config {
         }
         StringBuilder buffer = new StringBuilder();
         for (Path file : files) {
-            buffer.append(file.toAbsolutePath().toString());
+            buffer.append(file.toAbsolutePath());
             buffer.append(File.pathSeparator);
         }
         buffer.setLength(buffer.length() - 1);
@@ -732,7 +721,7 @@ public final class Config {
     /**
      * Set the flag if the editor is expected to highlight the syntax.
      *
-     * @param highlight <code>true</code> in case the editor is expected
+     * @param highlight {@code true} in case the editor is expected
      * highlight the syntax.
      */
     public void setUseSyntaxHighlighting(boolean highlight) {
@@ -751,7 +740,7 @@ public final class Config {
     /**
      * Set the flag if the editor is expected to decorate the window or not.
      *
-     * @param deco <code>true</code> in case the editor is expected to decorate
+     * @param deco {@code true} in case the editor is expected to decorate
      * the window
      */
     public void setUseWindowDecoration(boolean deco) {
@@ -771,13 +760,11 @@ public final class Config {
      * Check if the application needs to restart due changed settings and
      * display a message in this case.
      */
-    @SuppressWarnings("nls")
     public void showRestartWarning() {
         if (!requireRestart) {
             return;
         }
         SwingUtilities.invokeLater(new Runnable() {
-            @SuppressWarnings("synthetic-access")
             @Override
             public void run() {
                 requireRestart = false;

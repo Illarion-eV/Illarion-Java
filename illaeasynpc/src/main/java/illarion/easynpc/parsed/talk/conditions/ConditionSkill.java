@@ -34,14 +34,12 @@ public final class ConditionSkill implements TalkCondition {
     /**
      * The LUA code needed for this consequence to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_CODE =
             "talkEntry:addCondition(%1$s.skill(Character.%2$s, \"%3$s\", %4$s));" + LuaWriter.NL;
 
     /**
      * The LUA module required for this condition to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_MODULE = BASE_LUA_MODULE + "skill";
 
     /**
@@ -65,7 +63,7 @@ public final class ConditionSkill implements TalkCondition {
      * @param op the compare operator used for the condition
      * @param newValue the value used to compare against
      */
-    public ConditionSkill(final Skill skillData, final CompareOperators op, final AdvancedNumber newValue) {
+    public ConditionSkill(Skill skillData, CompareOperators op, AdvancedNumber newValue) {
         skill = skillData;
         operator = op;
         value = newValue;
@@ -84,7 +82,7 @@ public final class ConditionSkill implements TalkCondition {
      * Write the LUA code needed for this race condition.
      */
     @Override
-    public void writeLua(@Nonnull final Writer target) throws IOException {
+    public void writeLua(@Nonnull Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, skill.getName(), operator.getLuaComp(), value.getLua()));
     }
 }

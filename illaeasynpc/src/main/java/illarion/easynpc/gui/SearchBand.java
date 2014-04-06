@@ -53,7 +53,6 @@ public final class SearchBand extends JRibbonBand {
      * The constructor of the search band that creates all contents of this band
      * properly.
      */
-    @SuppressWarnings("nls")
     public SearchBand() {
         super(Lang.getMsg(SearchBand.class, "title"), null);
 

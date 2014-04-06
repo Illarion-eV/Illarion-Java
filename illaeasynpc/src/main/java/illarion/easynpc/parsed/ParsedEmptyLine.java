@@ -34,24 +34,24 @@ public final class ParsedEmptyLine implements ParsedData {
      * Empty lines do not effect the query.
      */
     @Override
-    public void buildSQL(@Nonnull final SQLBuilder builder) {
+    public void buildSQL(@Nonnull SQLBuilder builder) {
         // nothing to add to the query.
     }
 
     /**
      * Get the stages effected by the free lines.
      *
-     * @return <code>false</code> always because no stages are effected
+     * @return {@code false} always because no stages are effected
      */
     @Override
-    public boolean effectsLuaWritingStage(@Nonnull final LuaWriter.WritingStage stage) {
+    public boolean effectsLuaWritingStage(@Nonnull LuaWriter.WritingStage stage) {
         return false;
     }
 
     /**
      * Get the modules needed by the empty lines.
      *
-     * @return <code>null</code> always
+     * @return {@code null} always
      */
     @Nullable
     @Override
@@ -65,7 +65,7 @@ public final class ParsedEmptyLine implements ParsedData {
      */
     @Override
     public void writeLua(
-            @Nonnull final Writer target, @Nonnull final LuaWriter.WritingStage stage) throws IOException {
+            @Nonnull Writer target, @Nonnull LuaWriter.WritingStage stage) throws IOException {
         // nothing to do
     }
 }

@@ -31,13 +31,11 @@ public final class ConsequenceInform implements TalkConsequence {
     /**
      * The LUA code needed to be included for a inform consequence.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.inform(\"%2$s\"));" + LuaWriter.NL;
 
     /**
      * The LUA module that is required for this consequence to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_MODULE = BASE_LUA_MODULE + "inform";
 
     /**
@@ -50,7 +48,7 @@ public final class ConsequenceInform implements TalkConsequence {
      *
      * @param messageText the text that is send as inform to the player
      */
-    public ConsequenceInform(final String messageText) {
+    public ConsequenceInform(String messageText) {
         message = messageText;
     }
 
@@ -67,7 +65,7 @@ public final class ConsequenceInform implements TalkConsequence {
      * Write the LUA code of this consequence.
      */
     @Override
-    public void writeLua(@Nonnull final Writer target) throws IOException {
+    public void writeLua(@Nonnull Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, message));
     }
 }

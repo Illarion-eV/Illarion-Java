@@ -51,7 +51,7 @@ public enum TalkingMode {
      *
      * @param mode the text that identifies this mode
      */
-    TalkingMode(final String mode) {
+    TalkingMode(String mode) {
         talkMode = mode;
     }
 
@@ -69,7 +69,7 @@ public enum TalkingMode {
      *
      * @param map the map that stores the tokens
      */
-    public static void enlistHighlightedWords(@Nonnull final TokenMap map) {
+    public static void enlistHighlightedWords(@Nonnull TokenMap map) {
         map.put("shout", Token.VARIABLE);
         map.put("yell", Token.VARIABLE);
         map.put("whisper", Token.VARIABLE);

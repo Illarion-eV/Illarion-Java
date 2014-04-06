@@ -32,7 +32,6 @@ public final class ParsedComment implements ParsedData {
     /**
      * The pattern that is used to format the comment correctly for the script.
      */
-    @SuppressWarnings("nls")
     private static final Pattern replacePattern = Pattern.compile("^(.*)$", Pattern.MULTILINE);
 
     /**
@@ -45,7 +44,7 @@ public final class ParsedComment implements ParsedData {
      *
      * @param newComment the comment to store
      */
-    public ParsedComment(final String newComment) {
+    public ParsedComment(String newComment) {
         comment = newComment;
     }
 
@@ -53,7 +52,7 @@ public final class ParsedComment implements ParsedData {
      * Comment data do not effect the query. Nothing to do.
      */
     @Override
-    public void buildSQL(@Nonnull final SQLBuilder builder) {
+    public void buildSQL(@Nonnull SQLBuilder builder) {
         // nothing to add to the query.
     }
 
@@ -61,10 +60,10 @@ public final class ParsedComment implements ParsedData {
      * The comments are never written into the LUA script. So no stage is
      * effected.
      *
-     * @return <code>false</code> in all cases
+     * @return {@code false} in all cases
      */
     @Override
-    public boolean effectsLuaWritingStage(@Nonnull final LuaWriter.WritingStage stage) {
+    public boolean effectsLuaWritingStage(@Nonnull LuaWriter.WritingStage stage) {
         return false;
     }
 
@@ -72,7 +71,7 @@ public final class ParsedComment implements ParsedData {
      * Get the required modules. Comments don't need modules, so nothing
      * returns.
      *
-     * @return <code>null</code> in all cases
+     * @return {@code null} in all cases
      */
     @Nullable
     @Override
@@ -86,7 +85,7 @@ public final class ParsedComment implements ParsedData {
      */
     @Override
     public void writeLua(
-            @Nonnull final Writer target, @Nonnull final LuaWriter.WritingStage stage) {
+            @Nonnull Writer target, @Nonnull LuaWriter.WritingStage stage) {
         // nothing to do here
     }
 }

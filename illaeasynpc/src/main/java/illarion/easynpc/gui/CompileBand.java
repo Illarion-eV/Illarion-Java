@@ -44,14 +44,13 @@ final class CompileBand extends JRibbonBand {
     /**
      * Default constructor that prepares the buttons displayed on this band.
      */
-    @SuppressWarnings("nls")
     CompileBand() {
         super(Lang.getMsg(CompileBand.class, "title"), null);
 
-        final JCommandButton checkScriptButton = new JCommandButton(Lang.getMsg(getClass(), "checkScript"),
+        JCommandButton checkScriptButton = new JCommandButton(Lang.getMsg(getClass(), "checkScript"),
                                                                     Utils.getResizableIconFromResource(
                                                                             "agt_reload.png"));
-        final JCommandToggleButton autoCheckScriptButton = new JCommandToggleButton(
+        JCommandToggleButton autoCheckScriptButton = new JCommandToggleButton(
                 Lang.getMsg(getClass(), "autoCheck"), Utils.getResizableIconFromResource("build.png"));
 
         checkScriptButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(getClass(), "checkScriptButtonTooltipTitle"),
@@ -64,9 +63,9 @@ final class CompileBand extends JRibbonBand {
             autoCheckScriptButton.doActionClick();
         }
 
-        final ActionListener autoCheckScriptAction = new ActionListener() {
+        ActionListener autoCheckScriptAction = new ActionListener() {
             @Override
-            public void actionPerformed(final ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 Config.getInstance().setAutoBuild(!Config.getInstance().getAutoBuild());
             }
         };
@@ -82,7 +81,7 @@ final class CompileBand extends JRibbonBand {
         addCommandButton(checkScriptButton, RibbonElementPriority.TOP);
         addCommandButton(autoCheckScriptButton, RibbonElementPriority.MEDIUM);
 
-        final List<RibbonBandResizePolicy> policies = new ArrayList<>();
+        List<RibbonBandResizePolicy> policies = new ArrayList<>();
         policies.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
         policies.add(new CoreRibbonResizePolicies.Mid2Low(getControlPanel()));
         setResizePolicies(policies);

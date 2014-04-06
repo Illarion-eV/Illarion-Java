@@ -57,7 +57,7 @@ public final class ParsedTradeText implements ParsedData {
     /**
      * The type of this text entry.
      */
-    private final ParsedTradeText.TradeTextType type;
+    private final TradeTextType type;
 
     /**
      * The german text.
@@ -77,19 +77,19 @@ public final class ParsedTradeText implements ParsedData {
      * @param englishText the english text
      */
     public ParsedTradeText(
-            final ParsedTradeText.TradeTextType textType, final String germanText, final String englishText) {
+            TradeTextType textType, String germanText, String englishText) {
         type = textType;
         german = germanText;
         english = englishText;
     }
 
     @Override
-    public void buildSQL(@Nonnull final SQLBuilder builder) {
+    public void buildSQL(@Nonnull SQLBuilder builder) {
         // nothing
     }
 
     @Override
-    public boolean effectsLuaWritingStage(@Nonnull final LuaWriter.WritingStage stage) {
+    public boolean effectsLuaWritingStage(@Nonnull LuaWriter.WritingStage stage) {
         return stage == LuaWriter.WritingStage.Trading;
     }
 
@@ -100,7 +100,7 @@ public final class ParsedTradeText implements ParsedData {
     }
 
     @Override
-    public void writeLua(@Nonnull final Writer target, @Nonnull final LuaWriter.WritingStage stage) throws IOException {
+    public void writeLua(@Nonnull Writer target, @Nonnull LuaWriter.WritingStage stage) throws IOException {
         target.write("tradingNPC:");
         switch (type) {
             case NoMoney:

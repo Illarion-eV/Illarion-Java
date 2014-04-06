@@ -25,7 +25,6 @@ public final class SQLBuilder {
     /**
      * This is the format string used to build the query.
      */
-    @SuppressWarnings("nls")
     private static final String queryFormat =
             "INSERT INTO \"npc\" (\"npc_type\", \"npc_posx\", \"npc_posy\", \"npc_posz\", \"npc_faceto\", \"npc_name\", \"npc_script\", \"npc_sex\", \"npc_hair\", \"npc_beard\", \"npc_hairred\", \"npc_hairgreen\", \"npc_hairblue\", \"npc_skinred\", \"npc_skingreen\", \"npc_skinblue\") \n" +
                     "VALUES (%1$s, %2$s, %3$s, %4$s, %5$s, '%6$s', %7$s, %8$s, %9$s, %10$s, %11$s, %12$s, %13$s, %14$s, %15$s, %16$s);";
@@ -175,7 +174,6 @@ public final class SQLBuilder {
      *
      * @return the generated SQL query.
      */
-    @SuppressWarnings("nls")
     String getSQL() {
         String npcScriptReal = npcScript;
         if (!"null".equals(npcScript)) {

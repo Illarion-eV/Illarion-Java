@@ -32,13 +32,11 @@ public final class ConditionTalkMode implements TalkCondition {
     /**
      * The LUA code needed for this consequence to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_CODE = "talkEntry:addCondition(%1$s.talkmode(\"%2$s\"));" + LuaWriter.NL;
 
     /**
      * The LUA module required for this condition to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_MODULE = BASE_LUA_MODULE + "talkmode";
 
     /**
@@ -51,7 +49,7 @@ public final class ConditionTalkMode implements TalkCondition {
      *
      * @param mode the talking mode expected
      */
-    public ConditionTalkMode(final TalkingMode mode) {
+    public ConditionTalkMode(TalkingMode mode) {
         this.mode = mode;
     }
 
@@ -68,7 +66,7 @@ public final class ConditionTalkMode implements TalkCondition {
      * Write the LUA code needed for this race condition.
      */
     @Override
-    public void writeLua(@Nonnull final Writer target) throws IOException {
+    public void writeLua(@Nonnull Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, mode.getMode()));
     }
 }

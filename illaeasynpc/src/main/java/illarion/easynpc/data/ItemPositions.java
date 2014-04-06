@@ -53,7 +53,7 @@ public enum ItemPositions {
      *
      * @param map the map that stores the tokens
      */
-    public static void enlistHighlightedWords(@Nonnull final TokenMap map) {
+    public static void enlistHighlightedWords(@Nonnull TokenMap map) {
         for (ItemPositions position : ItemPositions.values()) {
             map.put(position.name(), Token.VARIABLE);
         }

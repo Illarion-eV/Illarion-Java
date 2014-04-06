@@ -24,8 +24,8 @@ import illarion.easynpc.grammar.EasyNpcParser;
 import illarion.easynpc.gui.Config;
 import illarion.easynpc.parser.ParsedNpcVisitor;
 import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
@@ -54,7 +54,6 @@ public final class Parser implements DocuEntry {
     /**
      * The identifier of this application.
      */
-    @SuppressWarnings("nls")
     public static final AppIdent APPLICATION = new AppIdent("Illarion easyNPC Editor");
 
     /**
@@ -66,7 +65,6 @@ public final class Parser implements DocuEntry {
      * The private constructor to avoid any instances but the singleton instance. This also prepares the list that
      * are required to work and the registers the parsers working in this parser.
      */
-    @SuppressWarnings("nls")
     private Parser() {
         Crypto crypt = new Crypto();
         crypt.loadPublicKey();
@@ -93,7 +91,6 @@ public final class Parser implements DocuEntry {
      * @param args the path to the script or the folder with the scripts to parse
      * @throws IOException in case the script can't be read
      */
-    @SuppressWarnings("nls")
     public static void main(@Nonnull String[] args) throws IOException {
         Config.getInstance().init();
 
@@ -119,6 +116,7 @@ public final class Parser implements DocuEntry {
             } else if (Files.isDirectory(sourceFile)) {
                 final ExecutorService executor = Executors.newCachedThreadPool();
                 Files.walkFileTree(sourceFile, EnumSet.noneOf(FileVisitOption.class), 1, new SimpleFileVisitor<Path>() {
+                    @Override
                     public FileVisitResult visitFile(final Path file, BasicFileAttributes attrs) throws IOException {
                         if (file.toUri().toString().endsWith(".npc")) {
                             executor.submit(new Callable<Void>() {
@@ -144,7 +142,7 @@ public final class Parser implements DocuEntry {
 
     private static ParsedNpc parseScript(@Nonnull CharStream stream) {
         EasyNpcLexer lexer = new EasyNpcLexer(stream);
-        EasyNpcParser parser = new EasyNpcParser(new BufferedTokenStream(lexer));
+        EasyNpcParser parser = new EasyNpcParser(new CommonTokenStream(lexer));
 
         ParsedNpcVisitor visitor = new ParsedNpcVisitor();
         EasyNpcParser.ScriptContext context = parser.script();
@@ -154,12 +152,12 @@ public final class Parser implements DocuEntry {
         return visitor.getParsedNpc();
     }
 
-    public static void parseScript(@Nonnull Path file) throws IOException {
+    private static void parseScript(@Nonnull Path file) throws IOException {
         try (Reader stream = Files.newBufferedReader(file, EasyNpcScript.DEFAULT_CHARSET)) {
             ParsedNpc parsedNPC = parseScript(new ANTLRInputStream(stream));
 
             StringBuilder output = new StringBuilder();
-            output.append("File \"").append(file.getFileName().toString()).append("\" parsed - Encoding: ")
+            output.append("File \"").append(file.getFileName()).append("\" parsed - Encoding: ")
                     .append(EasyNpcScript.DEFAULT_CHARSET.name()).append(" - Errors: ");
             if (parsedNPC.hasErrors()) {
                 output.append(parsedNPC.getErrorCount()).append('\n');
@@ -171,13 +169,13 @@ public final class Parser implements DocuEntry {
                 }
                 if (!quiet) {
                     output.setLength(output.length() - 1);
-                    System.err.println(output.toString());
+                    System.err.println(output);
                 }
                 System.exit(-1);
             }
             if (verbose) {
                 output.append("done");
-                System.out.println(output.toString());
+                System.out.println(output);
             }
 
             ScriptWriter writer = new ScriptWriter();
@@ -191,7 +189,6 @@ public final class Parser implements DocuEntry {
         }
     }
 
-    @SuppressWarnings("nls")
     @Override
     public DocuEntry getChild(int index) {
         return null;
@@ -202,7 +199,6 @@ public final class Parser implements DocuEntry {
         return 0;
     }
 
-    @SuppressWarnings("nls")
     @Override
     public String getDescription() {
         return Lang.getMsg(getClass(), "Docu.description");
@@ -220,7 +216,6 @@ public final class Parser implements DocuEntry {
         return null;
     }
 
-    @SuppressWarnings("nls")
     @Override
     public String getTitle() {
         return Lang.getMsg(getClass(), "Docu.title");
@@ -233,7 +228,6 @@ public final class Parser implements DocuEntry {
      * @return the parsed version of the NPC
      */
     @Nonnull
-    @SuppressWarnings("nls")
     public static ParsedNpc parse(@Nonnull String source) {
         return parseScript(new ANTLRInputStream(source));
     }
@@ -245,7 +239,6 @@ public final class Parser implements DocuEntry {
      * @return the parsed version of the NPC
      */
     @Nonnull
-    @SuppressWarnings("nls")
     public static ParsedNpc parse(@Nonnull Reader source) throws IOException {
         return parseScript(new ANTLRInputStream(source));
     }
@@ -257,7 +250,6 @@ public final class Parser implements DocuEntry {
      * @return the parsed version of the NPC
      */
     @Nonnull
-    @SuppressWarnings("nls")
     public static ParsedNpc parse(@Nonnull Path source) throws IOException {
         try (Reader reader = Files.newBufferedReader(source, EasyNpcScript.DEFAULT_CHARSET)) {
             return parseScript(new ANTLRInputStream(reader));

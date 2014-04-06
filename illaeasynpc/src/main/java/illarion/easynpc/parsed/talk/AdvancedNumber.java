@@ -47,18 +47,18 @@ public final class AdvancedNumber {
 
     /**
      * The expression stored in this number. This is only used if the type of this number is
-     * {@link AdvancedNumber.AdvancedNumberType#Expression}.
+     * {@link AdvancedNumberType#Expression}.
      */
     private String expression;
 
     /**
      * The type of this number.
      */
-    private AdvancedNumber.AdvancedNumberType type;
+    private final AdvancedNumberType type;
 
     /**
      * The value of this number. This is used in case the type is
-     * {@link {@link AdvancedNumber.AdvancedNumberType#Normal}.
+     * {@link {@link AdvancedNumberType#Normal}.
      */
     private int value;
 
@@ -66,7 +66,7 @@ public final class AdvancedNumber {
      * The default constructor causes this number to be a reference to the number the player spoke last.
      */
     public AdvancedNumber() {
-        type = AdvancedNumber.AdvancedNumberType.SaidNumber;
+        type = AdvancedNumberType.SaidNumber;
     }
 
     /**
@@ -74,8 +74,8 @@ public final class AdvancedNumber {
      *
      * @param number the number value
      */
-    public AdvancedNumber(final int number) {
-        type = AdvancedNumber.AdvancedNumberType.Normal;
+    public AdvancedNumber(int number) {
+        type = AdvancedNumberType.Normal;
         value = number;
     }
 
@@ -84,8 +84,8 @@ public final class AdvancedNumber {
      *
      * @param expressionString the expression string
      */
-    public AdvancedNumber(final String expressionString) {
-        type = AdvancedNumber.AdvancedNumberType.Expression;
+    public AdvancedNumber(String expressionString) {
+        type = AdvancedNumberType.Expression;
         expression = expressionString;
     }
 
@@ -95,7 +95,6 @@ public final class AdvancedNumber {
      * @return the LUA representation of the advanced number
      */
     @Nullable
-    @SuppressWarnings("nls")
     public String getLua() {
         switch (type) {
             case Normal:

@@ -32,13 +32,11 @@ public final class ConsequenceRune implements TalkConsequence {
     /**
      * The LUA code needed to be included for a rune consequence.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.rune(%2$s, %3$s));" + LuaWriter.NL;
 
     /**
      * The LUA module needed for this consequence to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_MODULE = BASE_LUA_MODULE + "rune";
 
     /**
@@ -57,7 +55,7 @@ public final class ConsequenceRune implements TalkConsequence {
      * @param newMagicType the magic type of the rune
      * @param newValue the number of the rune
      */
-    public ConsequenceRune(final CharacterMagicType newMagicType, final int newValue) {
+    public ConsequenceRune(CharacterMagicType newMagicType, int newValue) {
         magicType = newMagicType;
         value = newValue;
     }
@@ -75,7 +73,7 @@ public final class ConsequenceRune implements TalkConsequence {
      * Write the LUA code of this consequence.
      */
     @Override
-    public void writeLua(@Nonnull final Writer target) throws IOException {
+    public void writeLua(@Nonnull Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, Integer.toString(magicType.getMagicTypeId()),
                                    Integer.toString(value)));
     }

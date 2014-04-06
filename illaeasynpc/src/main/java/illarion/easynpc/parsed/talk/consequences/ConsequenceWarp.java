@@ -33,13 +33,11 @@ public final class ConsequenceWarp implements TalkConsequence {
     /**
      * The LUA code needed to be included for a warp consequence.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.warp(%2$s, %3$s, %4$s));" + LuaWriter.NL;
 
     /**
      * The LUA module that is required for this consequence to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_MODULE = BASE_LUA_MODULE + "warp";
 
     /**
@@ -53,7 +51,7 @@ public final class ConsequenceWarp implements TalkConsequence {
      *
      * @param loc the location
      */
-    public ConsequenceWarp(@Nonnull final Location loc) {
+    public ConsequenceWarp(@Nonnull Location loc) {
         this.loc = loc;
     }
 
@@ -70,7 +68,7 @@ public final class ConsequenceWarp implements TalkConsequence {
      * Write the LUA code of this consequence.
      */
     @Override
-    public void writeLua(@Nonnull final Writer target) throws IOException {
+    public void writeLua(@Nonnull Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, loc.getScX(), loc.getScY(), loc.getScZ()));
     }
 }

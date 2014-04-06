@@ -32,13 +32,11 @@ public final class ConditionMagicType implements TalkCondition {
     /**
      * The LUA code needed for this consequence to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_CODE = "talkEntry:addCondition(%1$s.magictype(\"%2$s\"));" + LuaWriter.NL;
 
     /**
      * The LUA module required for this condition to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_MODULE = BASE_LUA_MODULE + "magictype";
 
     /**
@@ -51,7 +49,7 @@ public final class ConditionMagicType implements TalkCondition {
      *
      * @param characterMagicType the magic type expected to be the players magic type
      */
-    public ConditionMagicType(final CharacterMagicType characterMagicType) {
+    public ConditionMagicType(CharacterMagicType characterMagicType) {
         magicType = characterMagicType;
     }
 
@@ -68,7 +66,7 @@ public final class ConditionMagicType implements TalkCondition {
      * Write the LUA code needed for this magic type condition.
      */
     @Override
-    public void writeLua(@Nonnull final Writer target) throws IOException {
+    public void writeLua(@Nonnull Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE, magicType.getMagicTypeName()));
     }
 }

@@ -95,10 +95,10 @@ buildscript {
     }
 }
 
-subprojects {
+subprojects { project ->
     project.group = 'org.illarion'
 
-    plugins.withType(JavaPlugin) {
+    project.plugins.withType(JavaPlugin) {
         project.sourceCompatibility = JavaVersion.VERSION_1_7
         project.targetCompatibility = JavaVersion.VERSION_1_7
         project.tasks.withType(JavaCompile) {

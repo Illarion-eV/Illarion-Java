@@ -44,7 +44,7 @@ public enum CharacterRace {
      *
      * @param id the ID representation of this constant.
      */
-    private CharacterRace(final int id) {
+    CharacterRace(int id) {
         raceId = id;
     }
 
@@ -62,7 +62,7 @@ public enum CharacterRace {
      *
      * @param map the map that stores the tokens
      */
-    public static void enlistHighlightedWords(@Nonnull final TokenMap map) {
+    public static void enlistHighlightedWords(@Nonnull TokenMap map) {
         for (CharacterRace race : CharacterRace.values()) {
             map.put(race.name(), Token.VARIABLE);
         }

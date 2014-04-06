@@ -32,13 +32,11 @@ public final class ConsequenceGemcraft implements TalkConsequence {
     /**
      * The LUA code needed to be included for a gemcraft consequence.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.gemcraft(craftNPC));" + LuaWriter.NL;
 
     /**
      * The LUA module needed for this consequence to work.
      */
-    @SuppressWarnings("nls")
     private static final String LUA_MODULE = BASE_LUA_MODULE + "gemcraft";
 
     /**
@@ -54,7 +52,7 @@ public final class ConsequenceGemcraft implements TalkConsequence {
      * Write the LUA code of this consequence.
      */
     @Override
-    public void writeLua(@Nonnull final Writer target) throws IOException {
+    public void writeLua(@Nonnull Writer target) throws IOException {
         target.write(String.format(LUA_CODE, LUA_MODULE));
     }
 }

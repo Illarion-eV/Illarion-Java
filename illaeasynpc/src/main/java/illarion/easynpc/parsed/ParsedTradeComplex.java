@@ -41,14 +41,14 @@ public class ParsedTradeComplex extends AbstractParsedTrade {
     private final ParsedItemData data;
 
     public ParsedTradeComplex(
-            final AbstractParsedTrade.TradeMode tradeMode,
-            final int tradeItemId,
-            final String itemTextDe,
-            final String itemTextEn,
-            final int tradePrice,
-            final int tradeStackSize,
-            final int itemQuality,
-            final ParsedItemData itemData) {
+            TradeMode tradeMode,
+            int tradeItemId,
+            String itemTextDe,
+            String itemTextEn,
+            int tradePrice,
+            int tradeStackSize,
+            int itemQuality,
+            ParsedItemData itemData) {
         super(tradeMode);
 
         itemId = tradeItemId;
@@ -61,12 +61,12 @@ public class ParsedTradeComplex extends AbstractParsedTrade {
     }
 
     @Override
-    public void buildSQL(@Nonnull final SQLBuilder builder) {
+    public void buildSQL(@Nonnull SQLBuilder builder) {
         // nothing to do
     }
 
     @Override
-    public void writeLua(@Nonnull final Writer target, @Nonnull final LuaWriter.WritingStage stage) throws IOException {
+    public void writeLua(@Nonnull Writer target, @Nonnull LuaWriter.WritingStage stage) throws IOException {
         if (stage == LuaWriter.WritingStage.Trading) {
             target.write("tradingNPC:addItem(npc.base.trade.tradeNPCItem(");
             target.write(Integer.toString(itemId));
