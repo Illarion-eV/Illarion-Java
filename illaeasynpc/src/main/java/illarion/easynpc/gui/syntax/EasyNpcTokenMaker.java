@@ -30,7 +30,7 @@ import javax.annotation.Nullable;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class EasyNpcTokenMaker extends AbstractAntlrTokenMaker<EasyNpcLexer> {
+final class EasyNpcTokenMaker extends AbstractAntlrTokenMaker<EasyNpcLexer> {
     /**
      * Create a new instance of this token maker.
      */

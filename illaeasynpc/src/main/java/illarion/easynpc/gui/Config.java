@@ -334,7 +334,7 @@ public final class Config {
      *
      * @return the list of last opened files
      */
-    @Nullable
+    @Nonnull
     public Path[] getLastOpenedFiles() {
         if (lastOpenedFilesBuffer != null) {
             return lastOpenedFilesBuffer;

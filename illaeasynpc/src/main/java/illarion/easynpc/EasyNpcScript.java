@@ -129,13 +129,11 @@ public final class EasyNpcScript {
     }
 
     /**
-     * Read a EasyNPC Script from a specified file. This writes this script into
-     * the data storage of this class and prepares it to be handled by the
-     * parser.
+     * Read a EasyNPC Script from a specified file. This writes this script into the data storage of this class and
+     * prepares it to be handled by the parser.
      *
      * @param sourceFile the file that is read to get the easyNPC data
-     * @throws IOException thrown in case anything goes wrong while reading this
-     * file.
+     * @throws IOException thrown in case anything goes wrong while reading this file.
      */
     public EasyNpcScript(@Nonnull Path sourceFile) throws IOException {
         this();

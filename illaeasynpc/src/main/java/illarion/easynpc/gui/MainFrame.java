@@ -24,6 +24,8 @@ import illarion.common.util.DirectoryManager;
 import illarion.easynpc.EasyNpcScript;
 import illarion.easynpc.Lang;
 import illarion.easynpc.crash.AWTCrashHandler;
+import illarion.easynpc.gui.syntax.EasyNpcTokenMakerFactory;
+import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.common.RichTooltip;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
@@ -96,6 +98,8 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
      */
     private MainFrame() {
         super("easyNPC Scripteditor");
+
+        TokenMakerFactory.setDefaultInstance(new EasyNpcTokenMakerFactory());
 
         RibbonTask startTask = new RibbonTask(Lang.getMsg(getClass(), "ribbonTaskStart"), new ClipboardBand(),
                                               new SearchBand(), new CompileBand());
@@ -411,11 +415,24 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
      */
     @Nonnull
     Editor addNewScript() {
+        return addNewScript(null);
+    }
+
+    /**
+     * Add a new, empty script to the editors.
+     *
+     * @return the editor that was now just created
+     */
+    @Nonnull
+    Editor addNewScript(@Nullable String templateText) {
         Editor editor = new Editor();
         editor.putClientProperty(SubstanceLookAndFeel.TABBED_PANE_CLOSE_BUTTONS_PROPERTY, Boolean.TRUE);
         tabbedEditorArea
                 .insertTab(Lang.getMsg(getClass(), "newScriptTab"), null, editor, null, tabbedEditorArea.getTabCount());
         tabbedEditorArea.setSelectedIndex(tabbedEditorArea.getTabCount() - 1);
+        if (templateText != null) {
+            editor.setTemplateText(templateText);
+        }
         return editor;
     }
 

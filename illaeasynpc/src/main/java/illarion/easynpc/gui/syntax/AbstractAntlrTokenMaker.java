@@ -33,7 +33,7 @@ import java.io.Reader;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public abstract class AbstractAntlrTokenMaker<T extends Lexer> extends AbstractTokenMaker {
+abstract class AbstractAntlrTokenMaker<T extends Lexer> extends AbstractTokenMaker {
     /**
      * The lexer that provides the data.
      */

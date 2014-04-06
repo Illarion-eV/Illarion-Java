@@ -18,10 +18,9 @@ package illarion.easynpc.gui;
 import illarion.easynpc.EasyNpcScript;
 import illarion.easynpc.ParsedNpc;
 import illarion.easynpc.Parser;
-import illarion.easynpc.gui.syntax.EasyNpcTokenMaker;
+import illarion.easynpc.gui.syntax.EasyNpcTokenMakerFactory;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
-import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
@@ -95,7 +94,7 @@ public final class Editor extends RTextScrollPane {
         editor = getEditor();
         editor.setEditable(true);
         editor.setEnabled(true);
-        ((RSyntaxDocument) editor.getDocument()).setSyntaxStyle(new EasyNpcTokenMaker());
+        editor.setSyntaxEditingStyle(EasyNpcTokenMakerFactory.SYNTAX_STYLE_EASY_NPC);
         editor.getSyntaxScheme().restoreDefaults(null);
 
         MenuElement[] elements = editor.getPopupMenu().getSubElements();
@@ -279,6 +278,13 @@ public final class Editor extends RTextScrollPane {
             return "";
         }
         return retText;
+    }
+
+    public void setTemplateText(@Nonnull String string) {
+        editor.setText(string);
+        editor.setCaretPosition(0);
+        editor.discardAllEdits();
+        saved();
     }
 
     /**

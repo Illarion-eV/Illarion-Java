@@ -24,10 +24,19 @@ import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntryFooter;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntryPrimary;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntrySecondary;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
 /**
  * This class prepares the application menu of the editor that offers access to
@@ -48,7 +57,18 @@ final class MainMenu extends RibbonApplicationMenu {
                     public void actionPerformed(ActionEvent e) {
                         MainFrame.getInstance().addNewScript();
                     }
-                }, CommandButtonKind.ACTION_ONLY
+                }, CommandButtonKind.ACTION_AND_POPUP_MAIN_ACTION
+        );
+        newScriptEntry.addSecondaryMenuGroup(Lang.getMsg(MainMenu.class, "templates"),
+                                             new RibbonApplicationMenuEntrySecondary(
+                                                     Utils.getResizableIconFromResource("source.png"),
+                                                     Lang.getMsg(MainMenu.class, "template1"), new ActionListener() {
+                                                 @Override
+                                                 public void actionPerformed(ActionEvent e) {
+                                                     MainFrame.getInstance().addNewScript(loadTemplate("template1"));
+                                                 }
+                                             }, CommandButtonKind.ACTION_ONLY
+                                             )
         );
         addMenuEntry(newScriptEntry);
 
@@ -59,7 +79,7 @@ final class MainMenu extends RibbonApplicationMenu {
                     public void actionPerformed(ActionEvent e) {
                         Utils.selectAndOpenScript();
                     }
-                }, CommandButtonKind.ACTION_ONLY
+                }, CommandButtonKind.ACTION_AND_POPUP_MAIN_ACTION
         );
 
         Path[] oldFiles = Config.getInstance().getLastOpenedFiles();
@@ -72,7 +92,7 @@ final class MainMenu extends RibbonApplicationMenu {
             workingEntries[entryIndex] = new RibbonApplicationMenuEntrySecondary(
                     Utils.getResizableIconFromResource("source.png"), openFile.getFileName().toString(),
                     new ActionListener() {
-                        @Nullable
+                        @Nonnull
                         private final Path fileToOpen = openFile;
 
                         @Override
@@ -176,5 +196,26 @@ final class MainMenu extends RibbonApplicationMenu {
                 }
         );
         addFooterEntry(settings);
+    }
+
+    @Nullable
+    private static String loadTemplate(@Nonnull String templateName) {
+        String templateFileName = templateName + ".npc";
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        try {
+            URL templateURL = cl.getResource(templateFileName);
+            if (templateURL == null) {
+                return null;
+            }
+            URI template = templateURL.toURI();
+            List<String> lines = Files.readAllLines(Paths.get(template), Charset.forName("ISO-8859-1"));
+            StringBuilder sb = new StringBuilder();
+            for (String line : lines) {
+                sb.append(line).append('\n');
+            }
+            return sb.toString();
+        } catch (URISyntaxException | IOException e) {
+            return null;
+        }
     }
 }
