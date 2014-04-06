@@ -193,9 +193,10 @@ public final class Parser implements DocuEntry {
         }
     }
 
+    @Nonnull
     @Override
     public DocuEntry getChild(int index) {
-        return null;
+        throw new IndexOutOfBoundsException("No child available to display.");
     }
 
     @Override

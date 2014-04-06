@@ -18,6 +18,9 @@ package illarion.easynpc.parsed;
 import illarion.easynpc.writer.LuaWriter;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * This class contains the shared code of the data storage for trading data.
@@ -48,7 +51,7 @@ public abstract class AbstractParsedTrade implements ParsedData {
     /**
      * The modules required for the trader NPC implementation.
      */
-    private static final String[] MODULES = {"npc.base.basic", "npc.base.trade"};
+    private static final List<String> MODULES = Arrays.asList("npc.base.basic", "npc.base.trade");
 
     /**
      * The mode of this trading operation.
@@ -80,7 +83,7 @@ public abstract class AbstractParsedTrade implements ParsedData {
 
     @Nonnull
     @Override
-    public String[] getRequiredModules() {
+    public Collection<String> getRequiredModules() {
         return MODULES;
     }
 }

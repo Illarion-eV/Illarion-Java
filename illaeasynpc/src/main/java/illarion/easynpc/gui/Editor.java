@@ -374,7 +374,7 @@ public final class Editor extends RTextScrollPane {
      * @return {@code true} in case this editor is currently active
      */
     boolean isActiveEditor() {
-        return frame.getCurrentScriptEditor().equals(this);
+        return equals(frame.getCurrentScriptEditor());
     }
 
     @EventTopicSubscriber(topic = "paste")

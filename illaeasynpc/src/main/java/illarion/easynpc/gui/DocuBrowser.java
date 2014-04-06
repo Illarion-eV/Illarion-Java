@@ -70,6 +70,9 @@ public final class DocuBrowser extends JDialog {
         @Nullable
         @Override
         public Enumeration<DocuTreeNode> children() {
+            if (children == null) {
+                return null;
+            }
             return new ArrayEnumeration<>(children);
         }
 
@@ -167,10 +170,9 @@ public final class DocuBrowser extends JDialog {
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
         try {
-            setIconImage(ImageIO.read(getClass().getClassLoader().getResourceAsStream("easynpc16.png")));
-        } catch (@Nonnull IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            setIconImage(ImageIO.read(cl.getResourceAsStream("easynpc16.png")));
+        } catch (@Nonnull IOException ignored) {
         }
 
         JTree contentTree = new JTree(new DocuTreeNode(DocuRoot.getInstance()));

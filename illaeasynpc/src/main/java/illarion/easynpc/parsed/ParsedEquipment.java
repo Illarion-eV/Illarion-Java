@@ -21,9 +21,10 @@ import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * This class stores the parsed equipment data that contains information about what the NPC wears.
@@ -78,10 +79,10 @@ public final class ParsedEquipment implements ParsedData {
      * The equipment of the character is a part of the base NPC. There are no
      * additional modules needed.
      */
-    @Nullable
+    @Nonnull
     @Override
-    public String[] getRequiredModules() {
-        return null;
+    public Collection<String> getRequiredModules() {
+        return Collections.emptyList();
     }
 
     /**

@@ -19,7 +19,6 @@ import illarion.easynpc.parsed.talk.TalkCondition;
 import illarion.easynpc.parsed.talk.TalkConsequence;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
-import javolution.util.FastTable;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -95,8 +94,8 @@ public final class ParsedTalk implements ParsedData {
      */
     @Nonnull
     @Override
-    public String[] getRequiredModules() {
-        Collection<String> moduleList = new FastTable<>();
+    public Collection<String> getRequiredModules() {
+        Collection<String> moduleList = new ArrayList<>();
 
         for (TalkCondition condition : conditions) {
             String module = condition.getLuaModule();
@@ -112,12 +111,9 @@ public final class ParsedTalk implements ParsedData {
             }
         }
 
-        moduleList.add("npc.base.talk"); //$NON-NLS-1$
-        moduleList.add("npc.base.basic"); //$NON-NLS-1$
-
-        String[] result = new String[moduleList.size()];
-        result = moduleList.toArray(result);
-        return result;
+        moduleList.add("npc.base.talk");
+        moduleList.add("npc.base.basic");
+        return moduleList;
     }
 
     /**

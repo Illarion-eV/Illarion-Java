@@ -21,6 +21,8 @@ import illarion.easynpc.writer.SQLBuilder;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * This class is used to store one text line for the trader NPC.
@@ -95,8 +97,8 @@ public final class ParsedTradeText implements ParsedData {
 
     @Nonnull
     @Override
-    public String[] getRequiredModules() {
-        return new String[]{"npc.base.trade"};
+    public Collection<String> getRequiredModules() {
+        return Collections.singleton("npc.base.trade");
     }
 
     @Override

@@ -57,10 +57,13 @@ public class DocuNode implements DocuEntry {
         }
     }
 
-    @Nullable
+    @Nonnull
     @Override
     public DocuEntry getChild(int index) {
-        return children.get(index);
+        if ((index >= 0) && (index < children.size())) {
+            return children.get(index);
+        }
+        throw new IndexOutOfBoundsException("Index is out of range.");
     }
 
     @Override

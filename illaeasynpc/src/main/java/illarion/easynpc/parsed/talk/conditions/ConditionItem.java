@@ -34,12 +34,6 @@ import java.io.Writer;
  */
 public final class ConditionItem implements TalkCondition {
     /**
-     * The code needed for this condition in the easyNPC script. This code uses the additional data parameter this
-     * condition can use.
-     */
-    private static final String EASY_CODE_DATA = "item(%1$s, %2$s, %5$s) %3$s %4$s";
-
-    /**
      * The LUA code needed for this consequence to work. This code uses the additional data parameter this condition
      * can use.
      */

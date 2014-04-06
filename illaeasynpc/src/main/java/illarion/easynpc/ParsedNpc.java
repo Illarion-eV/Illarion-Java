@@ -331,11 +331,11 @@ public final class ParsedNpc {
      * @return a array of the author names
      */
     @Nonnull
-    public String[] getAuthors() {
+    public Collection<String> getAuthors() {
         if (authors == null) {
-            return new String[0];
+            return Collections.emptyList();
         }
-        return authors.toArray(new String[authors.size()]);
+        return Collections.unmodifiableCollection(authors);
     }
 
     /**
@@ -553,7 +553,7 @@ public final class ParsedNpc {
         return getModuleName() + ".lua";
     }
 
-    @Nullable
+    @Nonnull
     public String getModuleName() {
         if (moduleName == null) {
             return convertToModuleName(getNpcName()).toLowerCase();

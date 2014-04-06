@@ -43,7 +43,7 @@ public final class AWTCrashHandler {
      * fetched. It will trigger the CrashReporter so the crash information is
      * send to the Illarion server.
      *
-     * @param e the crash informations
+     * @param e the crash information
      */
     @SuppressWarnings({"MethodMayBeStatic", "UnusedDeclaration"})
     public void handle(@Nonnull Throwable e) {

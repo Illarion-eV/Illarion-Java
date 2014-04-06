@@ -21,6 +21,8 @@ import illarion.easynpc.writer.SQLBuilder;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * This class is used to store a cycle texts of the NPC.
@@ -28,11 +30,6 @@ import java.io.Writer;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class ParsedCycleText implements ParsedData {
-    /**
-     * The LUA modules required for this cycle texts to work.
-     */
-    private static final String[] LUA_MODULES = {"npc.base.talk"};
-
     /**
      * The English cycle text stored in this object.
      */
@@ -76,8 +73,8 @@ public final class ParsedCycleText implements ParsedData {
      */
     @Nonnull
     @Override
-    public String[] getRequiredModules() {
-        return LUA_MODULES;
+    public Collection<String> getRequiredModules() {
+        return Collections.singleton("npc.base.talk");
     }
 
     /**

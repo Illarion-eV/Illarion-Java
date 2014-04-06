@@ -16,9 +16,9 @@
 package illarion.easynpc.writer;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Collection;
 
 /**
  * This implements needs to be implemented in all objects that are able to
@@ -49,8 +49,8 @@ public interface LuaWritable {
      *
      * @return the list of required LUA modules
      */
-    @Nullable
-    String[] getRequiredModules();
+    @Nonnull
+    Collection<String> getRequiredModules();
 
     /**
      * Write the LUA Code fitting into the currently selected writing stage.

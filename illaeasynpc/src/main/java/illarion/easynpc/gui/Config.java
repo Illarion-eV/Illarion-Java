@@ -42,7 +42,9 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map.Entry;
 
 /**
@@ -480,16 +482,16 @@ public final class Config {
      * @return the list of file paths
      */
     @Nonnull
-    public String[] getOldFiles() {
+    public Collection<String> getOldFiles() {
         if (cfg == null) {
             LOGGER.error("Configuration system not initialized yet.");
-            return new String[0];
+            return Collections.emptyList();
         }
         String files = cfg.getString(OPEN_FILES);
         if (files == null) {
-            return new String[0];
+            return Collections.emptyList();
         }
-        return files.split(File.pathSeparator);
+        return Arrays.asList(files.split(File.pathSeparator));
     }
 
     /**

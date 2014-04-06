@@ -163,9 +163,13 @@ public class DocuRoot implements DocuEntry {
         return INSTANCE;
     }
 
+    @Nonnull
     @Override
     public DocuEntry getChild(int index) {
-        return types.get(index);
+        if ((index >= 0) && (index < types.size())) {
+            return types.get(index);
+        }
+        throw new IndexOutOfBoundsException("Index is out of range.");
     }
 
     @Override

@@ -87,6 +87,6 @@ public final class ScriptWriter {
      * @throws IOException thrown in case writing to the assigned target fails
      */
     public void write() throws IOException {
-        LuaWriter.getInstance().write(sourceNPC, scriptTarget, generated);
+        LuaWriter.write(sourceNPC, scriptTarget, generated);
     }
 }

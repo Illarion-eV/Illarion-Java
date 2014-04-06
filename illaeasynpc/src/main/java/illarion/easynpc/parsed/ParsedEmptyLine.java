@@ -19,9 +19,10 @@ import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * This class is used to store a empty line in the parsed NPC. This is needed to ensure to keep the formatting of the
@@ -53,10 +54,10 @@ public final class ParsedEmptyLine implements ParsedData {
      *
      * @return {@code null} always
      */
-    @Nullable
+    @Nonnull
     @Override
-    public String[] getRequiredModules() {
-        return null;
+    public Collection<String> getRequiredModules() {
+        return Collections.emptyList();
     }
 
     /**

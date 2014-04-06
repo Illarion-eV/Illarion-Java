@@ -20,9 +20,10 @@ import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * This parsed color class stores the color values for the NPC.
@@ -98,10 +99,10 @@ public final class ParsedColors implements ParsedData {
      *
      * @return {@code null} at all times
      */
-    @Nullable
+    @Nonnull
     @Override
-    public String[] getRequiredModules() {
-        return null;
+    public Collection<String> getRequiredModules() {
+        return Collections.emptyList();
     }
 
     /**

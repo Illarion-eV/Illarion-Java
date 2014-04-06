@@ -264,8 +264,8 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
 
         setApplicationIcon(Utils.getResizableIconFromResource("easynpc256.png"));
 
-        String[] lastFiles = Config.getInstance().getOldFiles();
-        if (lastFiles.length == 0) {
+        Collection<String> lastFiles = Config.getInstance().getOldFiles();
+        if (lastFiles.isEmpty()) {
             addNewScript();
         } else {
             for (String file : lastFiles) {
@@ -280,7 +280,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
                     addNewScript().loadScript(easyScript);
                     setCurrentTabTitle(easyScript.getSourceScriptFile().getFileName().toString());
                 } catch (@Nonnull IOException e1) {
-                    LOGGER.warn("Originally opened file: " + file + " could not be opened.");
+                    LOGGER.warn("Originally opened file: {} could not be opened.", file);
                 }
             }
         }
@@ -300,7 +300,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
         if (message != null) {
             JOptionPane.showMessageDialog(null, message, Lang.getMsg(MainFrame.class, "crashEditor.Title"),
                                           JOptionPane.ERROR_MESSAGE);
-            LOGGER.error("Editor crashed! Fatal error: " + message);
+            LOGGER.error("Editor crashed! Fatal error: {}", message);
         } else {
             LOGGER.error("Editor crashed!");
         }
@@ -339,6 +339,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
     }
 
     private static void initLogging() {
+        //noinspection UseOfSystemOutOrSystemErr
         System.out.println("Startup done.");
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
@@ -355,8 +356,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
         lc.reset();
         try {
             ci.autoConfig();
-        } catch (JoranException e) {
-            e.printStackTrace();
+        } catch (JoranException ignored) {
         }
         StatusPrinter.printInCaseOfErrorsOrWarnings(lc);
     }

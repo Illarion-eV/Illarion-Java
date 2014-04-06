@@ -32,11 +32,6 @@ import java.io.Writer;
  */
 public final class ConsequenceItem implements TalkConsequence {
     /**
-     * The easyNPC code (without data) needed for this consequence.
-     */
-    private static final String EASY_CODE_NO_DATA = "item(%1$s, %2$s, %3$s)";
-
-    /**
      * The LUA code needed to be included for a create item consequence.
      */
     private static final String LUA_CODE =

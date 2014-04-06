@@ -19,9 +19,10 @@ import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * This is the parsed text that is spoken by a NPC guard upon specific events.
@@ -89,10 +90,10 @@ public class ParsedGuardText implements ParsedData {
         return stage == LuaWriter.WritingStage.Guarding;
     }
 
-    @Nullable
+    @Nonnull
     @Override
-    public String[] getRequiredModules() {
-        return new String[]{"npc.base.guard"};
+    public Collection<String> getRequiredModules() {
+        return Collections.singleton("npc.base.guard");
     }
 
     @Override

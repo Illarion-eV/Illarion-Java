@@ -21,13 +21,10 @@ import illarion.easynpc.Parser;
 import illarion.easynpc.data.CharacterLanguage;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.TreeSet;
 
 /**
  * This is the LUA writer. It writes the data supplied by a parsed NPC to a lua script.
@@ -89,11 +86,6 @@ public final class LuaWriter {
     private static final String commentSepLine = "--------------------------------------------------------------------------------";
 
     /**
-     * The singleton instance of this class.
-     */
-    private static final LuaWriter INSTANCE = new LuaWriter();
-
-    /**
      * The LUA code used for a require module entry.
      */
     private static final String requireCode = "require(\"%1$s\")";
@@ -141,16 +133,6 @@ public final class LuaWriter {
     }
 
     /**
-     * Get the singleton instance of this class.
-     *
-     * @return the singleton instance of this class
-     */
-    @Nonnull
-    public static LuaWriter getInstance() {
-        return INSTANCE;
-    }
-
-    /**
      * Main writing method. This method causes that the NPC is written to a LUA
      * script.
      *
@@ -158,7 +140,7 @@ public final class LuaWriter {
      * @param target the writer that takes the written data
      * @throws IOException thrown in case a writing operation failed
      */
-    public void write(
+    public static void write(
             @Nonnull ParsedNpc source, @Nonnull Writer target, boolean generated) throws IOException {
 
         // first write the header with some basic information in the comment
@@ -241,10 +223,9 @@ public final class LuaWriter {
 
         SQLBuilder builder = new SQLBuilder();
 
-        LuaWritable writeable;
         for (int i = 0; i < count; ++i) {
-            writeable = source.getLuaData(i);
-            writeable.buildSQL(builder);
+            LuaWritable writable = source.getLuaData(i);
+            writable.buildSQL(builder);
         }
 
         builder.setNpcName(source.getNpcName());
@@ -259,27 +240,6 @@ public final class LuaWriter {
         builder.setNpcSex(source.getNpcSex().getId());
 
         return builder.getSQL();
-    }
-
-    /**
-     * Check the modules already added to the list and add another one in case this one is not already a part of the
-     * list.
-     *
-     * @param target the list the modules are stored in
-     * @param module the module to add to the list
-     */
-    private static void checkModuleAndAdd(@Nonnull Collection<String> target, @Nullable String module) {
-        if (module == null) {
-            return;
-        }
-
-        for (String aTarget : target) {
-            if (aTarget.equals(module)) {
-                return;
-            }
-        }
-
-        target.add(module);
     }
 
     /**
@@ -343,7 +303,7 @@ public final class LuaWriter {
      * @param stage the current stage that is supposed to be processed
      * @throws IOException thrown in case the writing operations fail
      */
-    private void writeIntro(
+    private static void writeIntro(
             @Nonnull ParsedNpc source, @Nonnull Writer target, @Nonnull WritingStage stage) throws IOException {
 
         switch (stage) {
@@ -372,17 +332,15 @@ public final class LuaWriter {
 
                 target.write(freeLine);
 
-                String[] authors = source.getAuthors();
+                Collection<String> authors = source.getAuthors();
                 String authorFormat = "-- %1$-10s%2$-64s --%n";
-                if (authors.length == 0) {
+                if (authors.isEmpty()) {
                     target.write(String.format(authorFormat, "Author:", "not set"));
-                } else if (authors.length == 1) {
-                    target.write(String.format(authorFormat, "Author:", authors[0]));
                 } else {
-                    target.write(String.format(authorFormat, "Authors:", authors[0]));
-
-                    for (int i = 1; i < authors.length; ++i) {
-                        target.write(String.format(authorFormat, "", authors[i]));
+                    String authorText = "Author:";
+                    for (String author : authors) {
+                        target.write(String.format(authorFormat, authorText, author));
+                        authorText = "";
                     }
                 }
 
@@ -467,7 +425,6 @@ public final class LuaWriter {
      * text
      */
     private static void writeModuleHeader(@Nonnull ParsedNpc source, @Nonnull Writer target) throws IOException {
-
         target.write("module(\"npc."); //$NON-NLS-1$
         target.write(source.getModuleName());
         target.write("\", package.seeall)"); //$NON-NLS-1$
@@ -485,24 +442,19 @@ public final class LuaWriter {
      * @throws IOException thrown in case the writing operations fail
      */
     private static void writeModules(@Nonnull ParsedNpc source, @Nonnull Writer target) throws IOException {
-        List<String> modules = new ArrayList<>();
+        Collection<String> modules = new TreeSet<>();
 
-        LuaWritable writeable;
         int count = source.getDataCount();
         for (int i = 0; i < count; ++i) {
-            writeable = source.getLuaData(i);
-            String[] partModules = writeable.getRequiredModules();
+            LuaWritable writeable = source.getLuaData(i);
+            Iterable<String> partModules = writeable.getRequiredModules();
 
-            if (partModules != null) {
-                for (String module : partModules) {
-                    checkModuleAndAdd(modules, module);
-                }
+            for (String module : partModules) {
+                modules.add(module);
             }
         }
 
-        checkModuleAndAdd(modules, "npc.base.basic"); //$NON-NLS-1$
-
-        Collections.sort(modules);
+        modules.add("npc.base.basic");
 
         for (String module : modules) {
             target.write(String.format(requireCode, module));
@@ -575,9 +527,8 @@ public final class LuaWriter {
             @Nonnull ParsedNpc source, @Nonnull Writer target, @Nonnull WritingStage stage) throws IOException {
         int count = source.getDataCount();
 
-        LuaWritable writeable;
         for (int i = 0; i < count; ++i) {
-            writeable = source.getLuaData(i);
+            LuaWritable writeable = source.getLuaData(i);
             if (writeable.effectsLuaWritingStage(stage)) {
                 writeable.writeLua(target, stage);
             }

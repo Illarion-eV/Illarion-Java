@@ -15,6 +15,7 @@
  */
 package illarion.easynpc.docu;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -31,7 +32,7 @@ public interface DocuEntry {
      * @param index the index of the child requested
      * @return the requested child
      */
-    @Nullable
+    @Nonnull
     DocuEntry getChild(int index);
 
     /**

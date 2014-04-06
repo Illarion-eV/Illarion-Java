@@ -19,9 +19,10 @@ import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * This class is used to store a walking radius in the parsed NPC.
@@ -54,10 +55,10 @@ public final class ParsedWalkingRadius implements ParsedData {
         return false;
     }
 
-    @Nullable
+    @Nonnull
     @Override
-    public String[] getRequiredModules() {
-        return null;
+    public Collection<String> getRequiredModules() {
+        return Collections.emptyList();
     }
 
     @Override

@@ -47,7 +47,7 @@ public class DocuLeaf implements DocuEntry {
         docuSyntax = String.format("illarion.easynpc.parser.%s.Docu.syntax", type);
     }
 
-    @Nullable
+    @Nonnull
     @Override
     public DocuEntry getChild(int index) {
         throw new IllegalArgumentException("There are no childs to request.");

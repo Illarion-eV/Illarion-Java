@@ -58,7 +58,8 @@ final class Utils {
     public static ResizableIcon getResizableIconFromResource(String resource) {
         Image image;
         try {
-            image = ImageIO.read(Utils.class.getClassLoader().getResource(resource));
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            image = ImageIO.read(cl.getResource(resource));
         } catch (@Nonnull IOException e) {
             LOGGER.error("Failed to read image: \"{}\"", resource);
             return null;
@@ -249,8 +250,6 @@ final class Utils {
             return;
         }
 
-        Writer output = null;
-        Reader input = null;
         try {
             URL url = new URL("http://illarion.org/~nitram/test_npc.php");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -268,34 +267,20 @@ final class Utils {
 
             String query = "script=" + URLEncoder.encode(fixedScript, "UTF-8");
 
-            output = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), "UTF-8"));
-            output.write(query);
-            output.flush();
+            try (Writer output = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream(), "UTF-8"))) {
+                output.write(query);
+                output.flush();
+            }
 
-            input = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-            input.close();
+            try (InputStream input = conn.getInputStream()) {
+                input.close();
+            }
 
             JOptionPane.showMessageDialog(frame, Lang.getMsg(Utils.class, "luaUploadInfos"),
                                           Lang.getMsg(Utils.class, "luaUploadInfosTitle"),
                                           JOptionPane.INFORMATION_MESSAGE);
         } catch (@Nonnull IOException ex) {
             LOGGER.error("Connection to host failed", ex);
-        } finally {
-            if (output != null) {
-                try {
-                    output.close();
-                } catch (@Nonnull IOException e) {
-                    // nothing
-                }
-            }
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (@Nonnull IOException e) {
-                    // nothing
-                }
-            }
         }
     }
 

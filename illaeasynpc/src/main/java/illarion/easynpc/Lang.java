@@ -33,16 +33,6 @@ import java.util.ResourceBundle;
  */
 public final class Lang implements MessageSource {
     /**
-     * The string stores in the configuration for English language.
-     */
-    public static final String LOCALE_CFG_ENGLISH = "en";
-
-    /**
-     * The string stores in the configuration for German language.
-     */
-    public static final String LOCALE_CFG_GERMAN = "de";
-
-    /**
      * The singleton instance of this class.
      */
     private static final Lang INSTANCE = new Lang();
@@ -75,7 +65,8 @@ public final class Lang implements MessageSource {
         locale = Locale.getDefault();
         locale = locale.getLanguage().equalsIgnoreCase(Locale.GERMAN.getLanguage()) ? Locale.GERMAN : Locale.ENGLISH;
 
-        messages = ResourceBundle.getBundle(MESSAGE_BUNDLE, locale, Lang.class.getClassLoader());
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        messages = ResourceBundle.getBundle(MESSAGE_BUNDLE, locale, cl);
     }
 
     /**
@@ -162,7 +153,7 @@ public final class Lang implements MessageSource {
      * @return true if the language is set to English
      */
     public boolean isEnglish() {
-        return locale == Locale.ENGLISH;
+        return Locale.ENGLISH.equals(locale);
     }
 
     /**
@@ -171,6 +162,6 @@ public final class Lang implements MessageSource {
      * @return true if the language is set to German
      */
     public boolean isGerman() {
-        return locale == Locale.GERMAN;
+        return Locale.GERMAN.equals(locale);
     }
 }
