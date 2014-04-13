@@ -189,7 +189,7 @@ public class Location implements Serializable {
      * @param c the column of the map coordinates
      * @param r the row of the map coordinates
      */
-    public Location(final int c, final int r) {
+    public Location(int c, int r) {
         this();
         setMC(c, r);
     }
@@ -201,7 +201,7 @@ public class Location implements Serializable {
      * @param y the y coordinate of the server coordinates of the target position
      * @param z the z coordinate of the server coordinates of the target position
      */
-    public Location(final int x, final int y, final int z) {
+    public Location(int x, int y, int z) {
         this();
         setSC(x, y, z);
     }
@@ -211,7 +211,7 @@ public class Location implements Serializable {
      *
      * @param org the original Location instance
      */
-    public Location(@Nonnull final Location org) {
+    public Location(@Nonnull Location org) {
         this();
         set(org);
     }
@@ -223,7 +223,7 @@ public class Location implements Serializable {
      * @param org the original Location instance
      * @param direction the direction to move the location to
      */
-    public Location(@Nonnull final Location org, final int direction) {
+    public Location(@Nonnull Location org, int direction) {
         this();
         set(org);
         moveSC(direction);
@@ -235,11 +235,11 @@ public class Location implements Serializable {
      * @param reader the reader for the network interface
      * @throws IOException in case reading the location fails
      */
-    public Location(@Nonnull final NetCommReader reader) throws IOException {
+    public Location(@Nonnull NetCommReader reader) throws IOException {
         this();
-        final int x = reader.readShort();
-        final int y = reader.readShort();
-        final int z = reader.readShort();
+        int x = reader.readShort();
+        int y = reader.readShort();
+        int z = reader.readShort();
         setSC(x, y, z);
     }
 
@@ -253,7 +253,7 @@ public class Location implements Serializable {
      * @return the x coordinate of the display coordinates where the object needs to be displayed
      */
     @SuppressWarnings("unused")
-    public static int displayCoordinateX(final float x, final float y, final float z) {
+    public static int displayCoordinateX(float x, float y, float z) {
         return (int) ((x + y) * MapConstants.STEP_X);
     }
 
@@ -266,7 +266,7 @@ public class Location implements Serializable {
      * @param z the z coordinate of the server location that shall be converted
      * @return the y coordinate of the display coordinates where the object needs to be displayed
      */
-    public static int displayCoordinateY(final float x, final float y, final float z) {
+    public static int displayCoordinateY(float x, float y, float z) {
         return (int) (((x - y) * MapConstants.STEP_Y) + (DISPLAY_Z_OFFSET_MOD * z * MapConstants.STEP_Y));
     }
 
@@ -279,7 +279,7 @@ public class Location implements Serializable {
      * @param z the z coordinate of the server location that shall be converted
      * @return the z coordinate of the display coordinates where the object needs to be displayed
      */
-    public static int displayCoordinateZ(final float x, final float y, final float z) {
+    public static int displayCoordinateZ(float x, float y, float z) {
         return (int) ((x - y - (z * Layers.LEVEL)) * Layers.DISTANCE);
     }
 
@@ -289,7 +289,7 @@ public class Location implements Serializable {
      * @param direction the direction the x vector is needed from
      * @return the x part of the direction vector
      */
-    public static int getDirectionVectorX(final int direction) {
+    public static int getDirectionVectorX(int direction) {
         return MOVE8[0][direction];
     }
 
@@ -299,7 +299,7 @@ public class Location implements Serializable {
      * @param direction the direction the y vector is needed from
      * @return the y part of the direction vector
      */
-    public static int getDirectionVectorY(final int direction) {
+    public static int getDirectionVectorY(int direction) {
         return MOVE8[1][direction];
     }
 
@@ -326,7 +326,7 @@ public class Location implements Serializable {
      * @param z the Z-Coordinate of the server coordinates used to calculate the key
      * @return the key of this position
      */
-    public static long getKey(final int x, final int y, final int z) {
+    public static long getKey(int x, int y, int z) {
         return (z * KEY_MOD_Z) + (x * KEY_MOD_X) + (y * KEY_MOD_Y);
     }
 
@@ -337,7 +337,7 @@ public class Location implements Serializable {
      * @param y Value to add to the Y-Coordinate of the display location
      * @param z Value to add to the Z-Coordinate of the display location
      */
-    public void addDC(final int x, final int y, final int z) {
+    public void addDC(int x, int y, int z) {
         if (dirtyDC) {
             toDisplayCoordinates();
         }
@@ -356,7 +356,7 @@ public class Location implements Serializable {
      * @param c Value to add to the column of the map coordinates
      * @param r Value to add to the row of the map coordinates
      */
-    public void addMC(final int c, final int r) {
+    public void addMC(int c, int r) {
         if (dirtyMC) {
             toMapCoordinates();
         }
@@ -375,7 +375,7 @@ public class Location implements Serializable {
      * @param y Value to add to the Y-Coordinate of the server location
      * @param z Value to add to the Z-Coordinate of the server location
      */
-    public void addSC(final int x, final int y, final int z) {
+    public void addSC(int x, int y, int z) {
         if (dirtySC) {
             toServerCoordinates();
         }
@@ -396,14 +396,14 @@ public class Location implements Serializable {
      * @return true in case the server coordinates of this location and the second location are the same.
      */
     @Override
-    public boolean equals(@Nullable final Object obj) {
+    public boolean equals(@Nullable Object obj) {
         if (obj == null) {
             return false;
         }
         if (!(obj instanceof Location)) {
             return false;
         }
-        final Location loc = (Location) obj;
+        Location loc = (Location) obj;
         if (dirtySC) {
             toServerCoordinates();
         }
@@ -421,7 +421,7 @@ public class Location implements Serializable {
      * @param z Y-Coordinate of the server coordinates
      * @return true if the coordinates set as parameters of this function are identical with the current position.
      */
-    public boolean equalsSC(final int x, final int y, final int z) {
+    public boolean equalsSC(int x, int y, int z) {
         if (dirtySC) {
             toServerCoordinates();
         }
@@ -484,15 +484,15 @@ public class Location implements Serializable {
      * @param y Y-Coordinate of the target location
      * @return the direction needed to get from the current location to the target location
      */
-    public int getDirection(final int x, final int y) {
+    public int getDirection(int x, int y) {
         if (dirtySC) {
             toServerCoordinates();
         }
         // Calculate relative movement
         int dirX = x - scX;
         int dirY = y - scY;
-        final int lenX = Math.abs(dirX);
-        final int lenY = Math.abs(dirY);
+        int lenX = Math.abs(dirX);
+        int lenY = Math.abs(dirY);
 
         // normalize distances, just to be sure
         if (dirX != 0) {
@@ -518,7 +518,7 @@ public class Location implements Serializable {
      * @param loc The target location
      * @return the direction needed to get from the current location to the target location
      */
-    public int getDirection(@Nonnull final Location loc) {
+    public int getDirection(@Nonnull Location loc) {
         if (loc.dirtySC) {
             loc.toServerCoordinates();
         }
@@ -532,15 +532,15 @@ public class Location implements Serializable {
      * @return the amount of steps needed to get from the current position to the target position in case there are not
      * blocked tiles on the way
      */
-    public int getDistance(@Nonnull final Location loc) {
+    public int getDistance(@Nonnull Location loc) {
         if (dirtySC) {
             toServerCoordinates();
         }
         if (loc.dirtySC) {
             loc.toServerCoordinates();
         }
-        final int diffX = Math.abs(loc.scX - scX);
-        final int diffY = Math.abs(loc.scY - scY);
+        int diffX = Math.abs(loc.scX - scX);
+        int diffY = Math.abs(loc.scY - scY);
         return Math.max(diffX, diffY);
     }
 
@@ -613,7 +613,7 @@ public class Location implements Serializable {
      * @return the square root distance between the two locations. So the length of a straight line between this
      * location and the target location.
      */
-    public float getSqrtDistance(@Nonnull final Location loc) {
+    public float getSqrtDistance(@Nonnull Location loc) {
         if (dirtySC) {
             toServerCoordinates();
         }
@@ -633,7 +633,11 @@ public class Location implements Serializable {
         if (dirtySC) {
             toServerCoordinates();
         }
-        return (int) ((scX * KEY_MOD_X) + (scY * KEY_MOD_Y));
+        int hash = 23;
+        hash = (hash * 31) + scX;
+        hash = (hash * 31) + scY;
+        hash = (hash * 31) + scZ;
+        return hash;
     }
 
     /**
@@ -654,7 +658,7 @@ public class Location implements Serializable {
      * @param loc the second location
      * @return true in case this location and the second one are touching each other
      */
-    public boolean isNeighbour(@Nonnull final Location loc) {
+    public boolean isNeighbour(@Nonnull Location loc) {
         if (dirtySC) {
             toServerCoordinates();
         }
@@ -669,7 +673,7 @@ public class Location implements Serializable {
      *
      * @param dir The direction the Server coordinates are moved by
      */
-    public void moveSC(final int dir) {
+    public void moveSC(int dir) {
         if (dir == DIR_ZERO) {
             return;
         }
@@ -701,7 +705,7 @@ public class Location implements Serializable {
      *
      * @param loc The source location that is copied to this location
      */
-    public void set(@Nonnull final Location loc) {
+    public void set(@Nonnull Location loc) {
         scX = loc.scX;
         scY = loc.scY;
         scZ = loc.scZ;
@@ -725,7 +729,7 @@ public class Location implements Serializable {
      * @param x X-Coordinate of the display coordinates
      * @param y Y-Coordinate of the display coordinates
      */
-    public void setDC(final int x, final int y) {
+    public void setDC(int x, int y) {
         setDC(x, y, 0);
     }
 
@@ -737,7 +741,7 @@ public class Location implements Serializable {
      * @param y Y-Coordinate of the display coordinates
      * @param z Z-Coordinate of the display coordinates
      */
-    public void setDC(final int x, final int y, final int z) {
+    public void setDC(int x, int y, int z) {
         dcX = x;
         dcY = y;
         dcZ = z;
@@ -752,7 +756,7 @@ public class Location implements Serializable {
      *
      * @param newGap the new gap value
      */
-    public void setGap(final int newGap) {
+    public void setGap(int newGap) {
         gap = newGap;
 
         dirtyDC = true;
@@ -764,7 +768,7 @@ public class Location implements Serializable {
      *
      * @param key the key used to set the server coordinates of the location
      */
-    public void setKey(final long key) {
+    public void setKey(long key) {
         setSC((int) (((key % KEY_MOD_Z) / KEY_MOD_X) - (KEY_MOD_X / 2)), (int) (key % KEY_MOD_Z % KEY_MOD_X),
               (int) ((key / KEY_MOD_Z) - (KEY_MOD_Z / 2)));
     }
@@ -775,7 +779,7 @@ public class Location implements Serializable {
      * @param c Column of the map coordinates
      * @param r Row of the map coordinates
      */
-    public void setMC(final int c, final int r) {
+    public void setMC(int c, int r) {
         col = c;
         row = r;
 
@@ -791,7 +795,7 @@ public class Location implements Serializable {
      * @param x X-Coordinate of the server coordinates
      * @param y Y-Coordinate of the server coordinates
      */
-    public void setSC(final int x, final int y) {
+    public void setSC(int x, int y) {
         setSC(x, y, 0);
     }
 
@@ -803,7 +807,7 @@ public class Location implements Serializable {
      * @param y Y-Coordinate of the server coordinates
      * @param z Z-Coordinate of the server coordinates
      */
-    public void setSC(final int x, final int y, final int z) {
+    public void setSC(int x, int y, int z) {
         scX = x;
         scY = y;
         scZ = z;
