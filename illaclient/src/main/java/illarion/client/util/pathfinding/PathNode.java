@@ -13,19 +13,31 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package illarion.client.util;
+package illarion.client.util.pathfinding;
+
+import illarion.common.types.Location;
+
+import javax.annotation.Nonnull;
 
 /**
- * This interface is used for a class that is able to receive the path
- * calculated by the pathfinder.
+ * This interface represents a node along the calculated path.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface PathReceiver {
+public interface PathNode {
     /**
-     * Handle the generated path.
+     * Get the location this node is assigned to.
      *
-     * @param path use the path that was generated
+     * @return the location of the node
      */
-    void handlePath(Path path);
+    @Nonnull
+    Location getLocation();
+
+    /**
+     * Get the method of movement that is used to reach this node.
+     *
+     * @return get the movement method
+     */
+    @Nonnull
+    PathMovementMethod getMovementMethod();
 }

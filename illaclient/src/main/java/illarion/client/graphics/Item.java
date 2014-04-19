@@ -91,7 +91,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      * @param template the template used to create the new item
      * @param parentTile the tile this item is located on
      */
-    public Item(@Nonnull final ItemTemplate template, @Nonnull final MapTile parentTile) {
+    public Item(@Nonnull ItemTemplate template, @Nonnull MapTile parentTile) {
         super(template);
 
         // an animated item
@@ -115,7 +115,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
 
     @Override
     protected Color getParentLight() {
-        final Tile parentGraphicTile = parentTile.getTile();
+        Tile parentGraphicTile = parentTile.getTile();
         if (parentGraphicTile == null) {
             return null;
         }
@@ -134,9 +134,9 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      */
     @Nonnull
     public static Item create(
-            @Nonnull final ItemId itemID, final int locColumn, final int locRow, @Nonnull final MapTile parent) {
-        final ItemTemplate template = ItemFactory.getInstance().getTemplate(itemID.getValue());
-        final Item item = new Item(template, parent);
+            @Nonnull ItemId itemID, int locColumn, int locRow, @Nonnull MapTile parent) {
+        ItemTemplate template = ItemFactory.getInstance().getTemplate(itemID.getValue());
+        Item item = new Item(template, parent);
         // Set variant and scaling, this functions check on their own if this is allowed
         item.setVariant(locColumn, locRow);
         item.setScale(locColumn, locRow);
@@ -154,7 +154,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      */
     @Nonnull
     public static Item create(
-            @Nonnull final ItemId itemID, @Nonnull final Location loc, @Nonnull final MapTile parent) {
+            @Nonnull ItemId itemID, @Nonnull Location loc, @Nonnull MapTile parent) {
         return create(itemID, loc.getCol(), loc.getRow(), parent);
     }
 
@@ -164,7 +164,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
     }
 
     @Override
-    public void render(@Nonnull final Graphics g) {
+    public void render(@Nonnull Graphics g) {
         super.render(g);
 
         if (showNumber && (number != null)) {
@@ -179,7 +179,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      *
      * @param newShowNumber {@code true} to show the number at this item
      */
-    public void enableNumbers(final boolean newShowNumber) {
+    public void enableNumbers(boolean newShowNumber) {
         showNumber = newShowNumber && getTemplate().getItemInfo().isMovable();
     }
 
@@ -215,13 +215,13 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
 
     @Override
     public boolean isEventProcessed(
-            @Nonnull final GameContainer container, final int delta, @Nonnull final SceneEvent event) {
+            @Nonnull GameContainer container, int delta, @Nonnull SceneEvent event) {
         if (getLocalLight().getAlpha() == 0) {
             return false;
         }
 
         if (event instanceof CurrentMouseLocationEvent) {
-            final CurrentMouseLocationEvent moveEvent = (CurrentMouseLocationEvent) event;
+            CurrentMouseLocationEvent moveEvent = (CurrentMouseLocationEvent) event;
             if (!isMouseInInteractionRect(moveEvent.getX(), moveEvent.getY())) {
                 return false;
             }
@@ -234,7 +234,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         }
 
         if (event instanceof PointOnMapEvent) {
-            final PointOnMapEvent moveEvent = (PointOnMapEvent) event;
+            PointOnMapEvent moveEvent = (PointOnMapEvent) event;
             if (!isMouseInInteractionRect(moveEvent.getX(), moveEvent.getY())) {
                 return false;
             }
@@ -251,7 +251,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         }
 
         if (event instanceof ClickOnMapEvent) {
-            final ClickOnMapEvent moveEvent = (ClickOnMapEvent) event;
+            ClickOnMapEvent moveEvent = (ClickOnMapEvent) event;
             if (moveEvent.getKey() != Button.Left) {
                 return false;
             }
@@ -260,10 +260,11 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
                 return false;
             }
             World.getPlayer().getMovementHandler().walkTo(parentTile.getLocation(), parentTile.getInteractive());
+            return true;
         }
 
         if (event instanceof DoubleClickOnMapEvent) {
-            final DoubleClickOnMapEvent moveEvent = (DoubleClickOnMapEvent) event;
+            DoubleClickOnMapEvent moveEvent = (DoubleClickOnMapEvent) event;
             if (moveEvent.getKey() != Button.Left) {
                 return false;
             }
@@ -283,7 +284,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         }
 
         if (event instanceof PrimaryKeyMapDrag) {
-            final PrimaryKeyMapDrag primKeyDragEvent = (PrimaryKeyMapDrag) event;
+            PrimaryKeyMapDrag primKeyDragEvent = (PrimaryKeyMapDrag) event;
             if (!isMouseInInteractionRect(primKeyDragEvent.getOldX(), primKeyDragEvent.getOldY())) {
                 return false;
             }
@@ -301,7 +302,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      * one a text is displayed next to the item that shown how many
      * items are on the stack
      */
-    public void setCount(final ItemCount newCount) {
+    public void setCount(ItemCount newCount) {
         count = newCount;
 
         // write number to text for display
@@ -332,7 +333,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
     }
 
     @Override
-    public void update(@Nonnull final GameContainer container, final int delta) {
+    public void update(@Nonnull GameContainer container, int delta) {
         super.update(container, delta);
 
         if (showNumber && (number != null)) {
@@ -348,7 +349,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      * @param locX the first part of the coordinate
      * @param locY the second part of the coordinate
      */
-    private void setVariant(final int locX, final int locY) {
+    private void setVariant(int locX, int locY) {
         if (variants) {
             setFrame(MapVariance.getItemFrameVariance(locX, locY, getTemplate().getFrames()));
         }
@@ -361,7 +362,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      * @param locX the first part of the coordinate
      * @param locY the second part of the coordinate
      */
-    private void setScale(final int locX, final int locY) {
+    private void setScale(int locX, int locY) {
         if (getTemplate().getItemInfo().hasVariance()) {
             setScale(MapVariance.getItemScaleVariance(locX, locY, getTemplate().getItemInfo().getVariance()));
         }

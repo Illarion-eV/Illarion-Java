@@ -13,7 +13,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package illarion.client.util;
+package illarion.client.util.pathfinding;
 
 import illarion.common.types.Location;
 
@@ -34,8 +34,10 @@ public final class Path {
     /**
      * Default constructor for a new path.
      */
-    public Path() {
-        // nothing to do
+    public Path(Iterable<PathNode> nodes) {
+        for (PathNode node : nodes) {
+            path.addLast(node);
+        }
     }
 
     /**
@@ -69,16 +71,6 @@ public final class Path {
     }
 
     /**
-     * Add a path node to the very beginning of the path.
-     *
-     * @param newNode the new path node that is added to the beginning of the
-     * path
-     */
-    public void prependStep(final PathNode newNode) {
-        path.addFirst(newNode);
-    }
-
-    /**
      * Create a string representation of this path. Containing the value of the
      * path and the path itself.
      *
@@ -88,6 +80,7 @@ public final class Path {
     @Override
     @SuppressWarnings("nls")
     public String toString() {
-        return "Path: " + path.toString();
+        return "Path from " + path.getFirst().getLocation() + " to " + path.getLast().getLocation() +
+                " with " + path.size() + " steps";
     }
 }
