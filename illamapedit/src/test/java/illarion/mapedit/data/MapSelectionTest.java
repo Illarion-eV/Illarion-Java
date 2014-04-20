@@ -19,6 +19,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 /**
@@ -37,10 +38,10 @@ public class MapSelectionTest {
 
     @Test
     public void testInitialState() {
-        HashMap<MapPosition,MapTile> tiles = mapSelection.getTiles();
+        Collection<MapPosition> selectedPositions = mapSelection.getSelectedPositions();
 
-        Assert.assertNotNull(tiles, "Tiles must not be null");
-        Assert.assertEquals(tiles.size(), 0, "tiles should be empty");
+        Assert.assertNotNull(selectedPositions, "Collection of selected positions must not be null");
+        Assert.assertEquals(selectedPositions.size(), 0, "No position should be selected");
         Assert.assertEquals(mapSelection.getOffsetX(), Integer.MAX_VALUE, "Expected offset equal to max. integer value");
         Assert.assertEquals(mapSelection.getOffsetY(), Integer.MAX_VALUE, "Expected offset equal to max. integer value");
     }
@@ -51,7 +52,7 @@ public class MapSelectionTest {
         int verticalPosition = 7;
         addSelectedTileAt(horizontalPosition, verticalPosition);
 
-        Assert.assertEquals(mapSelection.getTiles().size(), 1);
+        Assert.assertEquals(mapSelection.getSelectedPositions().size(), 1);
         Assert.assertEquals(mapSelection.getOffsetX(), horizontalPosition);
         Assert.assertEquals(mapSelection.getOffsetY(), verticalPosition);
     }
@@ -63,7 +64,7 @@ public class MapSelectionTest {
 
         Assert.assertEquals(mapSelection.getOffsetX(), 5);
         Assert.assertEquals(mapSelection.getOffsetY(), 4);
-        Assert.assertEquals(mapSelection.getTiles().size(), 2);
+        Assert.assertEquals(mapSelection.getSelectedPositions().size(), 2);
     }
 
     @Test
@@ -73,7 +74,7 @@ public class MapSelectionTest {
 
         Assert.assertEquals(mapSelection.getOffsetX(), 4);
         Assert.assertEquals(mapSelection.getOffsetY(), 5);
-        Assert.assertEquals(mapSelection.getTiles().size(), 2);
+        Assert.assertEquals(mapSelection.getSelectedPositions().size(), 2);
     }
 
     @Test
@@ -84,7 +85,7 @@ public class MapSelectionTest {
 
         Assert.assertEquals(mapSelection.getOffsetX(), 4);
         Assert.assertEquals(mapSelection.getOffsetY(), 3);
-        Assert.assertEquals(mapSelection.getTiles().size(), 3);
+        Assert.assertEquals(mapSelection.getSelectedPositions().size(), 3);
     }
 
     private MapTile createTile() {
