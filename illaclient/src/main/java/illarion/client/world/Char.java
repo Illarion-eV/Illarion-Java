@@ -289,7 +289,7 @@ public final class Char implements AnimatedMove {
      * @param attribute the attribute to fetch
      * @return the value of the attribute
      */
-    public int getAttribute(@Nonnull final CharacterAttribute attribute) {
+    public int getAttribute(@Nonnull CharacterAttribute attribute) {
         if (removedCharacter) {
             LOGGER.warn("Fetching the attributes of a removed character.");
         }
@@ -305,7 +305,7 @@ public final class Char implements AnimatedMove {
      * @param attribute the attribute value to update
      * @param value the new value of the attribute
      */
-    public void setAttribute(@Nonnull final CharacterAttribute attribute, final int value) {
+    public void setAttribute(@Nonnull CharacterAttribute attribute, int value) {
         if (removedCharacter) {
             return;
         }
@@ -339,7 +339,7 @@ public final class Char implements AnimatedMove {
      *
      * @param newAliveState set the new alive state. <code>true</code> in case the character is alive.
      */
-    public void setAlive(final boolean newAliveState) {
+    public void setAlive(boolean newAliveState) {
         if (removedCharacter) {
             LOGGER.warn("Trying to update the alive state of a removed character.");
             return;
@@ -378,7 +378,7 @@ public final class Char implements AnimatedMove {
      */
     private int elevationAfterAnimation;
 
-    public void updateElevation(final int newElevation) {
+    public void updateElevation(int newElevation) {
         elevationAfterAnimation = newElevation;
         if (!animationInProgress) {
             updatePosition(newElevation);
@@ -401,7 +401,7 @@ public final class Char implements AnimatedMove {
      * @param ok not in use
      */
     @Override
-    public void animationFinished(final boolean ok) {
+    public void animationFinished(boolean ok) {
         dX = 0;
         dY = 0;
         dZ = 0;
@@ -448,7 +448,7 @@ public final class Char implements AnimatedMove {
         }
 
         // calculate avatar id
-        final int newAvatarId =
+        int newAvatarId =
                 (((appearance * Location.DIR_MOVE8) + direction) * CharAnimations.TOTAL_ANIMATIONS) + animation;
 
         // no change, return
@@ -464,7 +464,7 @@ public final class Char implements AnimatedMove {
             oldAlphaTarget = avatar.getTargetAlpha();
         }
 
-        @Nullable final Avatar newAvatar = Avatar.create(newAvatarId, this);
+        @Nullable Avatar newAvatar = Avatar.create(newAvatarId, this);
 
         if (newAvatar == null) {
             LOGGER.error("Failed to change the avatar as the new ID " + newAvatarId + " is NULL.");
@@ -490,7 +490,7 @@ public final class Char implements AnimatedMove {
         updatePosition(newAvatar, elevation);
         updateLight(newAvatar, LIGHT_SET);
 
-        final Integer healthPoints = attributes.get(CharacterAttribute.HitPoints);
+        Integer healthPoints = attributes.get(CharacterAttribute.HitPoints);
         if (healthPoints == null) {
             newAvatar.setHealthPoints(10000);
         } else {
@@ -511,14 +511,14 @@ public final class Char implements AnimatedMove {
 
         newAvatar.show();
 
-        final Avatar oldAvatar = avatar;
+        Avatar oldAvatar = avatar;
         avatarId = newAvatarId;
         avatar = newAvatar;
         if (oldAvatar != null) {
             oldAvatar.markAsRemoved();
         }
 
-        final MapTile tile = World.getMap().getMapAt(charLocation);
+        MapTile tile = World.getMap().getMapAt(charLocation);
         if (tile != null) {
             tile.updateQuestMarkerElevation();
         }
@@ -530,7 +530,7 @@ public final class Char implements AnimatedMove {
      *
      * @param avatar the avatar that is supposed to be updated
      */
-    private void updatePaperdoll(@Nullable final Avatar avatar) {
+    private void updatePaperdoll(@Nullable Avatar avatar) {
         if (removedCharacter) {
             LOGGER.warn("Trying to update the paperdoll of a removed character.");
             return;
@@ -573,7 +573,7 @@ public final class Char implements AnimatedMove {
      * @return <code>true</code> in case a item is defined and displayable
      */
     @SuppressWarnings("nls")
-    public boolean hasWearingItem(@Nullable final Avatar avatar, final int slot, final int id) {
+    public boolean hasWearingItem(@Nullable Avatar avatar, int slot, int id) {
         if ((slot < 0) || (slot >= AvatarClothManager.GROUP_COUNT)) {
             LOGGER.warn("Wearing item check on invalid slot: " + slot);
             return false;
@@ -582,15 +582,15 @@ public final class Char implements AnimatedMove {
         return (id != 0) && ((avatar == null) || avatar.getTemplate().getClothes().doesClothExists(slot, id));
     }
 
-    private void applyLightValue(final int itemId) {
-        final int light = ItemFactory.getInstance().getTemplate(itemId).getItemInfo().getLight();
+    private void applyLightValue(int itemId) {
+        int light = ItemFactory.getInstance().getTemplate(itemId).getItemInfo().getLight();
 
         if (light > lightValue) {
             lightValue = light;
         }
     }
 
-    private static void applyPaperdollingItem(@Nullable final Avatar avatar, final int slot, final int itemId) {
+    private static void applyPaperdollingItem(@Nullable Avatar avatar, int slot, int itemId) {
         if (avatar != null) {
             if (itemId == 0) {
                 avatar.removeClothItem(slot);
@@ -606,7 +606,7 @@ public final class Char implements AnimatedMove {
      * @param avatar the avatar that is altered
      * @param fix additional position offset for the character, used for the elevation.
      */
-    private void updatePosition(@Nullable final Avatar avatar, final int fix) {
+    private void updatePosition(@Nullable Avatar avatar, int fix) {
         if (removedCharacter) {
             return;
         }
@@ -622,22 +622,22 @@ public final class Char implements AnimatedMove {
      * @param avatar the avatar that is updated
      * @param mode the mode of the update
      */
-    private void updateLight(@Nullable final Avatar avatar, final int mode) {
+    private void updateLight(@Nullable Avatar avatar, int mode) {
         if (removedCharacter) {
             LOGGER.warn("Trying to update the light of a removed character.");
             return;
         }
 
-        final Location lightLoc;
+        Location lightLoc;
         // different handling for own char
-        @Nonnull final Player player = World.getPlayer();
+        @Nonnull Player player = World.getPlayer();
         if (player.isPlayer(charId)) {
             lightLoc = player.getLocation();
         } else {
             lightLoc = charLocation;
         }
 
-        @Nullable final MapTile tile = World.getMap().getMapAt(lightLoc);
+        @Nullable MapTile tile = World.getMap().getMapAt(lightLoc);
 
         if ((avatar != null) && (tile != null)) {
             switch (mode) {
@@ -694,7 +694,7 @@ public final class Char implements AnimatedMove {
      * Release the current avatar and free the resources.
      */
     private void releaseAvatar() {
-        final Avatar localAvatar = avatar;
+        Avatar localAvatar = avatar;
         avatar = null;
         avatarId = -1;
         if (localAvatar != null) {
@@ -710,7 +710,7 @@ public final class Char implements AnimatedMove {
      * @param z Z-Coordinate of the character
      */
     @Override
-    public void setPosition(final int x, final int y, final int z) {
+    public void setPosition(int x, int y, int z) {
         dX = x;
         dY = y;
         dZ = z;
@@ -724,7 +724,7 @@ public final class Char implements AnimatedMove {
      * @param newCharId new ID of the character
      */
     @SuppressWarnings({"nls", "IfStatementWithTooManyBranches"})
-    public void setCharId(@Nonnull final CharacterId newCharId) {
+    public void setCharId(@Nonnull CharacterId newCharId) {
         charId = newCharId;
         if (charId.isHuman()) {
             setNameColor(NAME_COLOR_HUMAN);
@@ -742,7 +742,7 @@ public final class Char implements AnimatedMove {
      *
      * @param color the new color value
      */
-    private void setNameColor(@Nonnull final Color color) {
+    private void setNameColor(@Nonnull Color color) {
         nameColor = color;
 
         if (avatar != null) {
@@ -756,7 +756,7 @@ public final class Char implements AnimatedMove {
      * @param newName the name of the character or null
      */
     @SuppressWarnings("nls")
-    public void setName(@Nonnull final String newName) {
+    public void setName(@Nonnull String newName) {
         name = newName;
 
         if (avatar != null) {
@@ -770,7 +770,7 @@ public final class Char implements AnimatedMove {
      * @param newScale new scale value between 0.5f and 1.2f
      */
     @SuppressWarnings("nls")
-    public void setScale(final float newScale) {
+    public void setScale(float newScale) {
         if ((newScale < MINIMAL_SCALE) || (newScale > MAXIMAL_SCALE)) {
             LOGGER.warn("invalid character scale " + newScale + " ignored for " + charId);
         }
@@ -805,15 +805,15 @@ public final class Char implements AnimatedMove {
      *
      * @return a interactive reference to this character
      */
-    @Nullable
+    @Nonnull
     public InteractiveChar getInteractive() {
         if (interactiveCharRef != null) {
-            @Nullable final InteractiveChar interactiveChar = interactiveCharRef.get();
+            @Nullable InteractiveChar interactiveChar = interactiveCharRef.get();
             if (interactiveChar != null) {
                 return interactiveChar;
             }
         }
-        final InteractiveChar interactiveChar = new InteractiveChar(this);
+        InteractiveChar interactiveChar = new InteractiveChar(this);
         interactiveCharRef = new SoftReference<>(interactiveChar);
         return interactiveChar;
     }
@@ -893,14 +893,14 @@ public final class Char implements AnimatedMove {
      * @param mode the mode of the move
      * @param speed moving speed
      */
-    public void moveTo(@Nonnull final Location newPos, @Nonnull final CharMovementMode mode, final int speed) {
-        final CharacterId characterId = getCharId();
+    public void moveTo(@Nonnull Location newPos, @Nonnull CharMovementMode mode, int speed) {
+        CharacterId characterId = getCharId();
         if (characterId == null) {
             LOGGER.error("Can't move a character without ID around.");
             return;
         }
         // get old position
-        final Location tempLoc = new Location();
+        Location tempLoc = new Location();
         tempLoc.set(charLocation);
         charLocation.set(newPos);
 
@@ -914,7 +914,7 @@ public final class Char implements AnimatedMove {
         setVisible(World.getPlayer().canSee(this));
         if (visible && (avatar != null)) {
             // calculate movement direction
-            final int dir = tempLoc.getDirection(charLocation);
+            int dir = tempLoc.getDirection(charLocation);
 
             // turn only when animating, not when pushed
             if ((mode != CharMovementMode.Push) && (dir != Location.DIR_ZERO)) {
@@ -922,7 +922,7 @@ public final class Char implements AnimatedMove {
             }
 
             // find target elevation
-            final int fromElevation = elevation;
+            int fromElevation = elevation;
             elevation = World.getMap().getElevationAt(charLocation);
             elevationAfterAnimation = elevation;
 
@@ -953,12 +953,12 @@ public final class Char implements AnimatedMove {
             EventBus.publish(new CharMoveEvent(characterId, charLocation));
         }
 
-        final MapTile oldTile = World.getMap().getMapAt(tempLoc);
+        MapTile oldTile = World.getMap().getMapAt(tempLoc);
         if (oldTile != null) {
             oldTile.updateQuestMarkerElevation();
         }
 
-        final MapTile newTile = World.getMap().getMapAt(charLocation);
+        MapTile newTile = World.getMap().getMapAt(charLocation);
         if (newTile != null) {
             newTile.updateQuestMarkerElevation();
         }
@@ -969,7 +969,7 @@ public final class Char implements AnimatedMove {
      *
      * @param newLoc the new location of the light source
      */
-    public void updateLight(@Nonnull final Location newLoc) {
+    public void updateLight(@Nonnull Location newLoc) {
         if (lightSrc != null) {
             lightSrc.getLocation().set(newLoc);
             World.getLights().refreshLight(lightSrc);
@@ -981,14 +981,14 @@ public final class Char implements AnimatedMove {
      *
      * @param visibility the new visibility of the character
      */
-    public void setVisible(final int visibility) {
-        final CharacterId characterId = getCharId();
+    public void setVisible(int visibility) {
+        CharacterId characterId = getCharId();
         if (characterId == null) {
             LOGGER.error("Can't set visibility of a character without ID.");
             return;
         }
 
-        final boolean newVisible = visibility > 0;
+        boolean newVisible = visibility > 0;
         // react only to change
         if ((lastVisibility != visibility) || (newVisible != visible)) {
             lastVisibility = visibility;
@@ -1005,7 +1005,7 @@ public final class Char implements AnimatedMove {
                 avatar.setAlphaTarget(0);
             }
 
-            final MapTile tile = World.getMap().getMapAt(charLocation);
+            MapTile tile = World.getMap().getMapAt(charLocation);
             if (tile != null) {
                 tile.updateQuestMarkerElevation();
             }
@@ -1019,7 +1019,7 @@ public final class Char implements AnimatedMove {
      *
      * @param newDirection the new direction value
      */
-    public void setDirection(final int newDirection) {
+    public void setDirection(int newDirection) {
         direction = newDirection;
         if (!move.isRunning()) {
             updateAvatar();
@@ -1034,7 +1034,7 @@ public final class Char implements AnimatedMove {
      * @param newAnimation the ID of the new animation
      * @param speed the animation speed, the larger the value the slower the animation
      */
-    public void startAnimation(final int newAnimation, final int speed) {
+    public void startAnimation(int newAnimation, int speed) {
         if (removedCharacter) {
             LOGGER.warn("Trying to start a animation of a removed character.");
             return;
@@ -1043,7 +1043,7 @@ public final class Char implements AnimatedMove {
             return; // avatar not ready, discard animation
         }
         if (!avatar.getTemplate().getAvatarInfo().isAnimationAvailable(newAnimation)) {
-            final MapTile tile = World.getMap().getMapAt(getLocation());
+            MapTile tile = World.getMap().getMapAt(getLocation());
             if (tile == null) {
                 return;
             }
@@ -1073,7 +1073,7 @@ public final class Char implements AnimatedMove {
      *
      * @param fix additional position offset for the character, used for the elevation.
      */
-    void updatePosition(final int fix) {
+    void updatePosition(int fix) {
         updatePosition(avatar, fix);
     }
 
@@ -1082,7 +1082,7 @@ public final class Char implements AnimatedMove {
      *
      * @param mode the mode of the update
      */
-    void updateLight(final int mode) {
+    void updateLight(int mode) {
         updateLight(avatar, mode);
     }
 
@@ -1107,7 +1107,7 @@ public final class Char implements AnimatedMove {
      *
      * @param newAppearance the new appearance value
      */
-    public void setAppearance(final int newAppearance) {
+    public void setAppearance(int newAppearance) {
         if (removedCharacter) {
             LOGGER.warn("Trying to update the appearance of a removed character.");
             return;
@@ -1121,7 +1121,7 @@ public final class Char implements AnimatedMove {
      *
      * @param activate <code>true</code> to enable the combat target marker on this character
      */
-    public void setAttackMarker(final boolean activate) {
+    public void setAttackMarker(boolean activate) {
         if (removedCharacter) {
             LOGGER.warn("Trying to access the attack marker of a removed character.");
             return;
@@ -1139,7 +1139,7 @@ public final class Char implements AnimatedMove {
      * @param slot the slot that shall be changed
      * @param color the color this part shall be displayed in
      */
-    public void setClothColor(final int slot, @Nonnull final Color color) {
+    public void setClothColor(int slot, @Nonnull Color color) {
         if (removedCharacter) {
             LOGGER.warn("Trying to change the cloth color of a removed character.");
             return;
@@ -1156,7 +1156,7 @@ public final class Char implements AnimatedMove {
      * @param slot the slot of the inventory
      * @param itemId the item id of the item at this slot
      */
-    public void setInventoryItem(final int slot, @Nonnull final ItemId itemId) {
+    public void setInventoryItem(int slot, @Nonnull ItemId itemId) {
         if (removedCharacter) {
             LOGGER.warn("Trying to update the inventory of a removed character.");
             return;
@@ -1196,7 +1196,7 @@ public final class Char implements AnimatedMove {
      * @param id the ID of the item the character wears
      */
     @SuppressWarnings("nls")
-    public void setWearingItem(final int slot, final int id) {
+    public void setWearingItem(int slot, int id) {
         if (removedCharacter) {
             LOGGER.warn("Trying to update the worn items of a removed character.");
             return;
@@ -1215,12 +1215,12 @@ public final class Char implements AnimatedMove {
      *
      * @param newLoc new location of the character
      */
-    public void setLocation(@Nonnull final Location newLoc) {
+    public void setLocation(@Nonnull Location newLoc) {
         if (removedCharacter) {
             LOGGER.warn("Trying to update the location of a removed character.");
             return;
         }
-        final CharacterId characterId = getCharId();
+        CharacterId characterId = getCharId();
         if (characterId == null) {
             LOGGER.error("Trying to change the location of a character without a ID.");
             return;
@@ -1240,7 +1240,7 @@ public final class Char implements AnimatedMove {
      *
      * @param color the color that is used to color the skin
      */
-    public void setSkinColor(@Nullable final Color color) {
+    public void setSkinColor(@Nullable Color color) {
         if (removedCharacter) {
             LOGGER.warn("Trying to set the skin color of a removed character.");
             return;
@@ -1260,7 +1260,7 @@ public final class Char implements AnimatedMove {
      *
      * @param newVisibilityBonus the new visibility bonus value
      */
-    public void setVisibilityBonus(final int newVisibilityBonus) {
+    public void setVisibilityBonus(int newVisibilityBonus) {
         if (removedCharacter) {
             LOGGER.warn("Trying to set the visibility bonus of a removed character.");
             return;
@@ -1277,7 +1277,7 @@ public final class Char implements AnimatedMove {
             return;
         }
         if (lightValue > 0) {
-            final int tempLightValue = lightValue;
+            int tempLightValue = lightValue;
             resetLight();
             lightSrc = LightSource.createLight(charLocation, tempLightValue);
             World.getLights().add(lightSrc);

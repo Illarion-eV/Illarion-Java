@@ -75,6 +75,10 @@ public class AStar implements PathFindingAlgorithm {
     private static Path buildPath(@Nonnull AStarPathNode lastNode) {
         LinkedList<PathNode> path = new LinkedList<>();
         @Nullable AStarPathNode nextNode = lastNode;
+        if (nextNode.isBlocked()) {
+            /* Skip the last node in case its blocked and walk to the tile next to it. */
+            nextNode = nextNode.getParentNode();
+        }
         while (nextNode != null) {
             path.addFirst(nextNode);
             nextNode = nextNode.getParentNode();
@@ -93,7 +97,8 @@ public class AStar implements PathFindingAlgorithm {
             Location walkTarget = new Location(origin, i);
             if (movementMethods.contains(PathMovementMethod.Walk)) {
                 MapTile walkingTargetTile = map.getMapAt(walkTarget);
-                if ((walkingTargetTile != null) && !walkingTargetTile.isBlocked()) {
+                if ((walkingTargetTile != null) &&
+                        (!walkingTargetTile.isBlocked() || walkingTargetTile.getLocation().equals(end))) {
                     storage.add(new AStarPathNode(nodeToExpand, walkingTargetTile, PathMovementMethod.Walk, i,
                                                   getHeuristic(walkTarget, end)));
                 } else {
@@ -104,16 +109,14 @@ public class AStar implements PathFindingAlgorithm {
                 Location runTarget = new Location(walkTarget, i);
                 MapTile runningTargetTile = map.getMapAt(runTarget);
                 if ((runningTargetTile != null) && !runningTargetTile.isBlocked()) {
-                        storage.add(new AStarPathNode(nodeToExpand, runningTargetTile, PathMovementMethod.Run, i,
-                                                      getHeuristic(runTarget, end)));
+                    storage.add(new AStarPathNode(nodeToExpand, runningTargetTile, PathMovementMethod.Run, i,
+                                                  getHeuristic(runTarget, end)));
                 }
             }
         }
     }
 
-    private static int getHeuristic(
-            @Nonnull Location currentLocation,
-            @Nonnull Location targetLocation) {
+    private static int getHeuristic(@Nonnull Location currentLocation, @Nonnull Location targetLocation) {
         return currentLocation.getDistance(targetLocation) * 2;
     }
 }

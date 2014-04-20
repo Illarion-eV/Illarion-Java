@@ -84,7 +84,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
          * @param draggedElement the dragged element
          * @param returnToElement the element the dragged element needs to return to
          */
-        GameMapDragEndOperation(final Element draggedElement, final Element returnToElement) {
+        GameMapDragEndOperation(Element draggedElement, Element returnToElement) {
             drag = draggedElement;
             returnTo = returnToElement;
         }
@@ -156,9 +156,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
      * Default constructor that takes care to initialize the variables required for this class to work.
      */
     public GameMapHandler(
-            @Nonnull final Input input,
-            final NumberSelectPopupHandler numberSelectPopupHandler,
-            final TooltipHandler tooltip) {
+            @Nonnull Input input, NumberSelectPopupHandler numberSelectPopupHandler, TooltipHandler tooltip) {
         mouseEvent = new NiftyMouseInputEvent();
         numberSelect = numberSelectPopupHandler;
         tooltipHandler = tooltip;
@@ -169,7 +167,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
      * Handle a input event that was published.
      */
     @EventSubscriber(eventClass = ClickOnMapEvent.class)
-    public void handleClickEvent(@Nonnull final SceneEvent event) {
+    public void handleClickEvent(@Nonnull SceneEvent event) {
         World.getMapDisplay().getGameScene().publishEvent(event);
     }
 
@@ -177,7 +175,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
      * Handle a input event that was published.
      */
     @EventSubscriber(eventClass = DoubleClickOnMapEvent.class)
-    public void handleDoubleClick(@Nonnull final SceneEvent event) {
+    public void handleDoubleClick(@Nonnull SceneEvent event) {
         World.getMapDisplay().getGameScene().publishEvent(event);
     }
 
@@ -185,7 +183,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
      * Handle a input event that was published.
      */
     @EventSubscriber(eventClass = DragOnMapEvent.class)
-    public void handleDragging(@Nonnull final DragOnMapEvent data) {
+    public void handleDragging(@Nonnull DragOnMapEvent data) {
         if (World.getInteractionManager().isDragging()) {
             return;
         }
@@ -204,9 +202,9 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
      */
     private void handlePrimaryKeyDrag(@Nonnull final DragOnMapEvent data) {
         if (!World.getPlayer().getMovementHandler().isMouseMovementActive()) {
-            final SceneEvent newEvent = new PrimaryKeyMapDrag(data, new PrimaryKeyMapDrag.PrimaryKeyMapDragCallback() {
+            SceneEvent newEvent = new PrimaryKeyMapDrag(data, new PrimaryKeyMapDrag.PrimaryKeyMapDragCallback() {
                 @Override
-                public boolean startDraggingItemFromTile(@Nonnull final PrimaryKeyMapDrag event, final MapTile tile) {
+                public boolean startDraggingItemFromTile(@Nonnull PrimaryKeyMapDrag event, MapTile tile) {
                     return handleDragOnMap(event, tile);
                 }
 
@@ -222,21 +220,21 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
         moveTowardsMouse(data);
     }
 
-    private boolean handleDragOnMap(@Nonnull final PrimaryKeyMapDrag event, @Nullable final MapTile mapTile) {
+    private boolean handleDragOnMap(@Nonnull PrimaryKeyMapDrag event, @Nullable MapTile mapTile) {
         if (mapTile == null) {
             return false;
         }
-        final InteractiveMapTile targetTile = mapTile.getInteractive();
+        InteractiveMapTile targetTile = mapTile.getInteractive();
 
         if (!targetTile.canDrag()) {
             return false;
         }
 
         if ((activeScreen != null) && (activeNifty != null)) {
-            final Item movedItem = targetTile.getTopItem();
+            Item movedItem = targetTile.getTopItem();
             assert movedItem != null;
-            final int width = movedItem.getTemplate().getGuiTexture().getWidth();
-            final int height = movedItem.getTemplate().getGuiTexture().getHeight();
+            int width = movedItem.getTemplate().getGuiTexture().getWidth();
+            int height = movedItem.getTemplate().getGuiTexture().getHeight();
 
             draggedGraphic.resetLayout();
             draggedGraphic.setConstraintWidth(SizeValue.px(width));
@@ -249,7 +247,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
             draggedImage.setWidth(width);
             draggedImage.setHeight(height);
 
-            final ImageRenderer imgRender = draggedImage.getRenderer(ImageRenderer.class);
+            ImageRenderer imgRender = draggedImage.getRenderer(ImageRenderer.class);
             imgRender.setImage(
                     new NiftyImage(activeNifty.getRenderEngine(), new EntitySlickRenderImage(movedItem.getTemplate())));
 
@@ -274,13 +272,13 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
      *
      * @param event the event that contains the data for the move
      */
-    private void moveTowardsMouse(@Nonnull final DragOnMapEvent event) {
+    private void moveTowardsMouse(@Nonnull DragOnMapEvent event) {
         World.getPlayer().getMovementHandler().walkTowards(event.getNewX(), event.getNewY());
         input.enableForwarding(ForwardingTarget.Mouse);
     }
 
     @EventSubscriber(eventClass = MoveOnMapEvent.class)
-    public void handleMouseMove(@Nonnull final SceneEvent event) {
+    public void handleMouseMove(@Nonnull SceneEvent event) {
         if (World.getInteractionManager().isDragging()) {
             return;
         }
@@ -292,7 +290,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
     }
 
     @EventSubscriber(eventClass = PointOnMapEvent.class)
-    public void handlePointAt(@Nonnull final SceneEvent event) {
+    public void handlePointAt(@Nonnull SceneEvent event) {
         if (World.getInteractionManager().isDragging()) {
             return;
         }
@@ -307,12 +305,12 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
      * Called in case something is dropped on the game map.
      */
     @NiftyEventSubscriber(id = "mapDropTarget")
-    public void dropOnMap(final String topic, @Nonnull final DroppableDroppedEvent data) {
-        final Element droppedElement = data.getDraggable().getElement();
+    public void dropOnMap(String topic, @Nonnull DroppableDroppedEvent data) {
+        Element droppedElement = data.getDraggable().getElement();
         final int dropSpotX = droppedElement.getX() + (droppedElement.getWidth() / 2);
         final int dropSpotY = droppedElement.getY() + (droppedElement.getHeight() / 2);
 
-        final ItemCount amount = World.getInteractionManager().getMovedAmount();
+        ItemCount amount = World.getInteractionManager().getMovedAmount();
         final InteractionManager iManager = World.getInteractionManager();
         if (amount == null) {
             LOGGER.error("Corrupted drag detected!");
@@ -327,7 +325,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
                 }
 
                 @Override
-                public void popupConfirmed(final int value) {
+                public void popupConfirmed(int value) {
                     iManager.dropAtMap(dropSpotX, dropSpotY, ItemCount.getInstance(value));
                 }
             });
@@ -343,7 +341,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
      * @param data the event data
      */
     @NiftyEventSubscriber(id = "toggleRunBtn")
-    public void onToggleRunButtonClicked(final String topic, final ButtonClickedEvent data) {
+    public void onToggleRunButtonClicked(String topic, ButtonClickedEvent data) {
         toggleRunMode();
     }
 
@@ -355,7 +353,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
         if (activeScreen == null) {
             return;
         }
-        @Nullable final Element runBtn = activeScreen.findElementById("toggleRunBtn");
+        @Nullable Element runBtn = activeScreen.findElementById("toggleRunBtn");
         if (runBtn == null) {
             return;
         }
@@ -371,7 +369,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
     }
 
     @Override
-    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
         activeNifty = nifty;
         activeScreen = screen;
         gamePanel = screen.findElementById("gamePanel");
@@ -396,19 +394,19 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
     }
 
     @Override
-    public void showItemTooltip(@Nonnull final Location location, @Nonnull final Tooltip tooltip) {
-        final MapTile targetTile = World.getMap().getMapAt(location);
+    public void showItemTooltip(@Nonnull Location location, @Nonnull Tooltip tooltip) {
+        MapTile targetTile = World.getMap().getMapAt(location);
         if (targetTile == null) {
             return;
         }
 
-        final Item targetItem = targetTile.getTopItem();
+        Item targetItem = targetTile.getTopItem();
         if (targetItem == null) {
             return;
         }
 
-        final Rectangle originalDisplayRect = targetItem.getInteractionRect();
-        final Rectangle fixedRectangle = new Rectangle(originalDisplayRect);
+        Rectangle originalDisplayRect = targetItem.getInteractionRect();
+        Rectangle fixedRectangle = new Rectangle(originalDisplayRect);
         fixedRectangle.move(-Camera.getInstance().getViewportOffsetX(), -Camera.getInstance().getViewportOffsetY());
         tooltipHandler.showToolTip(fixedRectangle, tooltip);
     }

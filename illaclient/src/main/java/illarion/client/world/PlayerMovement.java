@@ -23,11 +23,13 @@ import illarion.client.net.client.TurnCmd;
 import illarion.client.util.ConnectionPerformanceClock;
 import illarion.client.util.pathfinding.*;
 import illarion.client.world.interactive.Usable;
+import illarion.common.config.ConfigChangedEvent;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
 import illarion.common.util.FastMath;
 import illarion.common.util.Timer;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.illarion.engine.input.Input;
 import org.illarion.engine.input.Key;
 import org.slf4j.Logger;
@@ -210,6 +212,8 @@ public final class PlayerMovement implements AnimatedMove {
 
     private final ReadWriteLock autoPathLock = new ReentrantReadWriteLock();
 
+    private boolean allowRunPathModification;
+
     /* START PATH FINDING */
     /**
      * The active path finding algorithm.
@@ -229,6 +233,7 @@ public final class PlayerMovement implements AnimatedMove {
         this.input = input;
         AnnotationProcessor.process(this);
         mouseFollowAutoRun = IllaClient.getCfg().getBoolean("mouseFollowAutoRun");
+        allowRunPathModification = IllaClient.getCfg().getBoolean("runAutoAvoid");
 
         delayedMoveTrigger = new Timer(100, new Runnable() {
             @Override
@@ -243,6 +248,16 @@ public final class PlayerMovement implements AnimatedMove {
         delayedMoveTrigger.setRepeats(false);
     }
 
+    @EventTopicSubscriber(topic = "mouseFollowAutoRun")
+    private void mouseFollowAutoRunChanged(@Nonnull String topic, @Nonnull ConfigChangedEvent configChanged) {
+        mouseFollowAutoRun = configChanged.getConfig().getBoolean("mouseFollowAutoRun");
+    }
+
+    @EventTopicSubscriber(topic = "runAutoAvoid")
+    private void runAutoAvoidChanged(@Nonnull String topic, @Nonnull ConfigChangedEvent configChanged) {
+        allowRunPathModification = IllaClient.getCfg().getBoolean("runAutoAvoid");
+    }
+
     private CharMovementMode getMovingToDirectionMode() {
         if (input.isKeyDown(Key.LeftAlt)) {
             return CharMovementMode.None;
@@ -252,11 +267,7 @@ public final class PlayerMovement implements AnimatedMove {
     }
 
     private CharMovementMode getCharMovementMode() {
-        CharMovementMode mode = CharMovementMode.Run;
-        if (isInWalkMode) {
-            mode = CharMovementMode.Walk;
-        }
-        return mode;
+        return isInWalkMode ? CharMovementMode.Walk : CharMovementMode.Run;
     }
 
     public void startMovingToDirection(int direction) {
@@ -479,8 +490,6 @@ public final class PlayerMovement implements AnimatedMove {
         walkTo(destination, usable);
         usableAction = usable;
     }
-
-    private boolean allowRunPathModification = IllaClient.getCfg().getBoolean("runAutoAvoid");
 
     /**
      * Request a move of the player character. This function will check if there is already a move or not. In case
@@ -883,7 +892,7 @@ public final class PlayerMovement implements AnimatedMove {
     }
 
     /**
-     * Check if the character is currently moved and turned by mouse control.
+     * Check if the character is current<ly moved and turned by mouse control.
      *
      * @return {@code true} in case the character is currently moving by the mouse
      */
@@ -934,8 +943,8 @@ public final class PlayerMovement implements AnimatedMove {
             return;
         }
 
-        float relXOffset = (float) xOffset / (float) distance;
-        float relYOffset = (float) yOffset / (float) distance;
+        float relXOffset = (float) xOffset / distance;
+        float relYOffset = (float) yOffset / distance;
 
         //noinspection IfStatementWithTooManyBranches
         walkTowardsMode = getWalkTowardsMode(distance);

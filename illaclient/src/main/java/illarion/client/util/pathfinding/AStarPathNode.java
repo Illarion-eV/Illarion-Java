@@ -55,18 +55,6 @@ class AStarPathNode extends AbstractPathNode implements Comparable<AStarPathNode
     private final AStarPathNode parentNode;
 
     /**
-     * Create the first node along the path. This node has no parent and represents the first step to be taken.
-     *
-     * @param tile the tile assigned to this node
-     * @param method the movement method to reach this node
-     * @param approachDirection the this tile is approached from
-     * @param heuristic the predicted cost to reach the target from this location
-     */
-    AStarPathNode(@Nonnull MapTile tile, @Nonnull PathMovementMethod method, int approachDirection, int heuristic) {
-        this(null, tile, method, approachDirection, heuristic);
-    }
-
-    /**
      * Create a node on the path.
      *
      * @param parentNode the parent of this node or {@code null} in case this node is the first step on the path.
@@ -108,6 +96,10 @@ class AStarPathNode extends AbstractPathNode implements Comparable<AStarPathNode
      */
     private int getPredictedCost() {
         return heuristic + cost;
+    }
+
+    public boolean isBlocked() {
+        return blocked;
     }
 
     @Nullable
