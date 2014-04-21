@@ -16,6 +16,7 @@
 package illarion.client.graphics;
 
 import illarion.client.input.ClickOnMapEvent;
+import illarion.client.input.CurrentMouseLocationEvent;
 import illarion.client.input.PointOnMapEvent;
 import illarion.client.resources.OverlayFactory;
 import illarion.client.resources.Resource;
@@ -28,6 +29,7 @@ import illarion.client.world.World;
 import illarion.common.graphics.MapVariance;
 import illarion.common.graphics.TileInfo;
 import illarion.common.types.Location;
+import illarion.common.types.Rectangle;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Graphics;
@@ -71,6 +73,13 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
      */
     @Nonnull
     private final MapTile parentTile;
+
+    private int showHighlight;
+
+    @Override
+    public int getHighlight() {
+        return showHighlight;
+    }
 
     /**
      * The instance of the logging class for this class.
@@ -117,6 +126,7 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
         }
 
         super.render(g);
+        showHighlight = 0;
     }
 
     @Override
@@ -193,7 +203,47 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
             World.getPlayer().getMovementHandler().walkTo(parentTile.getLocation());
             return true;
         }
+
+        if (event instanceof CurrentMouseLocationEvent) {
+            CurrentMouseLocationEvent moveEvent = (CurrentMouseLocationEvent) event;
+            if (!isMouseInInteractionRect(moveEvent.getX(), moveEvent.getY())) {
+                return false;
+            }
+
+            showHighlight = 1;
+            return true;
+        }
+
         return false;
+    }
+
+    @Override
+    protected boolean isMouseInInteractionRect(int mouseX, int mouseY) {
+        int mouseXonDisplay = mouseX + Camera.getInstance().getViewportOffsetX();
+        int mouseYonDisplay = mouseY + Camera.getInstance().getViewportOffsetY();
+
+        Rectangle interactionRect = getInteractionRect();
+        if (!interactionRect.isInside(mouseXonDisplay, mouseYonDisplay)) {
+            return false;
+        }
+
+        /* Get the pixel location on the tile. */
+        int mouseXonTile = mouseXonDisplay - interactionRect.getLeft();
+        int mouseYonTile = mouseYonDisplay - interactionRect.getBottom();
+
+        /* Fold the location into one quarter */
+        if (mouseXonTile > 37) {
+            mouseXonTile = 75 - mouseXonTile;
+        }
+        if (mouseYonTile > 18) {
+            mouseYonTile = 36 - mouseYonTile;
+        }
+
+        /*
+         * Check if the mouse is on a opaque pixel. This calculation is only valid as long as the shape of the tiles
+         * does not change.
+         */
+        return (mouseXonTile / 2) >= (18 - mouseYonTile);
     }
 
     /**

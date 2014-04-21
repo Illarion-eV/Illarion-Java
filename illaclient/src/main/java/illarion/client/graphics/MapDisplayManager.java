@@ -68,7 +68,7 @@ public final class MapDisplayManager implements AnimatedMove {
     @Nonnull
     private final Scene gameScene;
 
-    public MapDisplayManager(@Nonnull final Engine engine) {
+    public MapDisplayManager(@Nonnull Engine engine) {
         active = false;
 
         corridor = FadingCorridor.getInstance();
@@ -111,7 +111,7 @@ public final class MapDisplayManager implements AnimatedMove {
      * @param ok
      */
     @Override
-    public void animationFinished(final boolean ok) {
+    public void animationFinished(boolean ok) {
         moveAnimationInProgress = false;
         // move graphical player position to new location
         setLocation(World.getPlayer().getLocation());
@@ -124,21 +124,21 @@ public final class MapDisplayManager implements AnimatedMove {
         return elevation;
     }
 
-    public int getWorldX(final int x) {
+    public int getWorldX(int x) {
         return ((x - getMapCenterX()) + origin.getDcX()) - dX;
     }
 
-    public int getWorldY(final int y) {
+    public int getWorldY(int y) {
         return ((y - getMapCenterY()) + origin.getDcY()) - dY;
     }
 
     private static int getMapCenterX() {
-        final GameContainer window = IllaClient.getInstance().getContainer();
+        GameContainer window = IllaClient.getInstance().getContainer();
         return window.getWidth() >> 1;
     }
 
     private static int getMapCenterY() {
-        final GameContainer window = IllaClient.getInstance().getContainer();
+        GameContainer window = IllaClient.getInstance().getContainer();
         return window.getHeight() >> 1;
     }
 
@@ -147,7 +147,7 @@ public final class MapDisplayManager implements AnimatedMove {
      *
      * @param av
      */
-    public void glueAvatarToOrigin(@Nonnull final Avatar av) {
+    public void glueAvatarToOrigin(@Nonnull Avatar av) {
         av.setScreenPos(origin.getDcX() - dX, (origin.getDcY() - dY) + dL, origin.getDcZ());
     }
 
@@ -161,18 +161,18 @@ public final class MapDisplayManager implements AnimatedMove {
      * @param container the container that holds the game
      * @param delta the time in milliseconds since the last update
      */
-    public void update(@Nonnull final GameContainer container, final int delta) {
+    public void update(@Nonnull GameContainer container, int delta) {
         if (!active) {
             return;
         }
 
-        final int centerX = container.getWidth() >> 1;
-        final int centerY = container.getHeight() >> 1;
+        int centerX = container.getWidth() >> 1;
+        int centerY = container.getHeight() >> 1;
 
-        final int offX = (centerX - origin.getDcX()) + dX;
-        final int offY = (centerY - origin.getDcY()) + dY - dL;
+        int offX = (centerX - origin.getDcX()) + dX;
+        int offY = (centerY - origin.getDcY()) + dY - dL;
 
-        final Avatar av = World.getPlayer().getCharacter().getAvatar();
+        Avatar av = World.getPlayer().getCharacter().getAvatar();
         if (av != null) {
             glueAvatarToOrigin(av);
             corridor.setCorridor(av);
@@ -180,7 +180,7 @@ public final class MapDisplayManager implements AnimatedMove {
 
         Camera.getInstance().setViewport(-offX, -offY, container.getWidth(), container.getHeight());
 
-        final Input engineInput = container.getEngine().getInput();
+        Input engineInput = container.getEngine().getInput();
         gameScene.publishEvent(new CurrentMouseLocationEvent(engineInput.getMouseX(), engineInput.getMouseY()));
         gameScene.update(container, delta);
         updateFog(container);
@@ -202,12 +202,12 @@ public final class MapDisplayManager implements AnimatedMove {
      *
      * @param c the game container
      */
-    private void updateDeadView(@Nonnull final GameContainer c) {
-        final int hitPoints = World.getPlayer().getCharacter().getAttribute(CharacterAttribute.HitPoints);
+    private void updateDeadView(@Nonnull GameContainer c) {
+        int hitPoints = World.getPlayer().getCharacter().getAttribute(CharacterAttribute.HitPoints);
         if (hitPoints == 0) {
             if (!deadViewEnabled) {
                 try {
-                    final GrayScaleEffect effect = c.getEngine().getAssets().getEffectManager()
+                    GrayScaleEffect effect = c.getEngine().getAssets().getEffectManager()
                             .getGrayScaleEffect(true);
                     gameScene.addEffect(effect);
                     deadViewEnabled = true;
@@ -218,7 +218,7 @@ public final class MapDisplayManager implements AnimatedMove {
         } else {
             if (deadViewEnabled) {
                 try {
-                    final GrayScaleEffect effect = c.getEngine().getAssets().getEffectManager()
+                    GrayScaleEffect effect = c.getEngine().getAssets().getEffectManager()
                             .getGrayScaleEffect(true);
                     gameScene.removeEffect(effect);
                     deadViewEnabled = false;
@@ -234,11 +234,11 @@ public final class MapDisplayManager implements AnimatedMove {
      *
      * @param c the game container
      */
-    private void updateFog(@Nonnull final GameContainer c) {
-        final float fog = World.getWeather().getFog();
+    private void updateFog(@Nonnull GameContainer c) {
+        float fog = World.getWeather().getFog();
         if (fog > 0.f) {
             try {
-                final FogEffect effect = c.getEngine().getAssets().getEffectManager().getFogEffect(true);
+                FogEffect effect = c.getEngine().getAssets().getEffectManager().getFogEffect(true);
                 effect.setDensity(fog);
                 if (!fogEnabled) {
                     gameScene.addEffect(effect);
@@ -249,7 +249,7 @@ public final class MapDisplayManager implements AnimatedMove {
             }
         } else if (fogEnabled) {
             try {
-                final FogEffect effect = c.getEngine().getAssets().getEffectManager().getFogEffect(true);
+                FogEffect effect = c.getEngine().getAssets().getEffectManager().getFogEffect(true);
                 gameScene.removeEffect(effect);
                 fogEnabled = false;
             } catch (EngineException e) {
@@ -263,16 +263,16 @@ public final class MapDisplayManager implements AnimatedMove {
      *
      * @param c the game container the map is rendered in
      */
-    public void render(@Nonnull final GameContainer c) {
+    public void render(@Nonnull GameContainer c) {
         if (!active) {
             return;
         }
 
-        final Camera camera = Camera.getInstance();
+        Camera camera = Camera.getInstance();
         gameScene.render(c.getEngine().getGraphics(), camera.getViewportOffsetX(), camera.getViewportOffsetY());
     }
 
-    public void setActive(final boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
     }
 
@@ -281,7 +281,7 @@ public final class MapDisplayManager implements AnimatedMove {
      *
      * @param location
      */
-    public void setLocation(@Nonnull final Location location) {
+    public void setLocation(@Nonnull Location location) {
         origin.set(location);
         elevation = World.getMap().getElevationAt(origin);
         dX = 0;
@@ -298,7 +298,7 @@ public final class MapDisplayManager implements AnimatedMove {
      * @param y
      */
     @Override
-    public void setPosition(final int x, final int y, final int z) {
+    public void setPosition(int x, int y, int z) {
         if ((dX == x) && (dY == y) && (dL == z)) {
             return;
         }

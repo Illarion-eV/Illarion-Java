@@ -67,7 +67,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
          * @param l1 the first listener to get the message
          * @param l2 the second listener to get the message
          */
-        private AlphaChangeListenerMulticast(final AlphaChangeListener l1, final AlphaChangeListener l2) {
+        private AlphaChangeListenerMulticast(AlphaChangeListener l1, AlphaChangeListener l2) {
             listener1 = l1;
             listener2 = l2;
         }
@@ -79,7 +79,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
          * @param to the new alpha value
          */
         @Override
-        public void alphaChanged(final int from, final int to) {
+        public void alphaChanged(int from, int to) {
             listener1.alphaChanged(from, to);
             listener2.alphaChanged(from, to);
         }
@@ -184,7 +184,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
     @Nonnull
     private final T template;
 
-    protected AbstractEntity(@Nonnull final T template) {
+    protected AbstractEntity(@Nonnull T template) {
         this.template = template;
         baseColor = template.getDefaultColor();
         if (baseColor == null) {
@@ -202,7 +202,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
     }
 
     @Override
-    public void addAlphaChangeListener(@Nonnull final AlphaChangeListener listener) {
+    public void addAlphaChangeListener(@Nonnull AlphaChangeListener listener) {
         if (removedEntity) {
             LOGGER.warn("Adding a alpha listener to a removed entity is not allowed.");
             return;
@@ -222,7 +222,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
      * @param finished true in case the animation is really done
      */
     @Override
-    public void animationFinished(final boolean finished) {
+    public void animationFinished(boolean finished) {
         // nothing needs to be done by default
     }
 
@@ -236,7 +236,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
      *
      * @param newBaseColor the new base color of the entity, {@code null} to get the default color
      */
-    public void changeBaseColor(@Nullable final Color newBaseColor) {
+    public void changeBaseColor(@Nullable Color newBaseColor) {
         if (removedEntity) {
             LOGGER.warn("Changing the baseColor of a entity is not allowed after the entity was removed.");
             return;
@@ -276,19 +276,19 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
      * based on the delta time that is supplied to this function.
      */
     @Override
-    public void render(@Nonnull final Graphics g) {
+    public void render(@Nonnull Graphics g) {
         if (getAlpha() == 0) {
             return;
         }
 
-        final int renderLocX = displayX;
-        final int renderLocY = displayY;
+        int renderLocX = displayX;
+        int renderLocY = displayY;
 
         if (!Camera.getInstance().requiresUpdate(displayRect)) {
             return;
         }
 
-        final int highlight = getHighlight();
+        int highlight = getHighlight();
         if ((highlight > 0) && (highlightEffect != null)) {
             if (highlight == 1) {
                 highlightEffect.setHighlightColor(COLOR_HIGHLIGHT_WEAK);
@@ -302,11 +302,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
     }
 
     protected void renderSprite(
-            @Nonnull final Graphics g,
-            final int x,
-            final int y,
-            @Nonnull final Color light,
-            @Nonnull final TextureEffect... effects) {
+            @Nonnull Graphics g, int x, int y, @Nonnull Color light, @Nonnull TextureEffect... effects) {
         g.drawSprite(template.getSprite(), x, y, light, getCurrentFrame(), getScale(), 0.f, effects);
     }
 
@@ -428,13 +424,13 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
      * @param newAlpha the new alpha value of this entity
      */
     @Override
-    public void setAlpha(final int newAlpha) {
+    public void setAlpha(int newAlpha) {
         if (removedEntity) {
             LOGGER.warn("Changing the alpha value of a removed entity is not allowed.");
             return;
         }
         if (getLight().getAlpha() != newAlpha) {
-            final int oldAlpha = getLight().getAlpha();
+            int oldAlpha = getLight().getAlpha();
             getLight().setAlpha(newAlpha);
             if (alphaListener != null) {
                 alphaListener.alphaChanged(oldAlpha, getLight().getAlpha());
@@ -450,7 +446,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
      * @param newAlphaTarget the target of the alpha fading
      */
     @Override
-    public final void setAlphaTarget(final int newAlphaTarget) {
+    public final void setAlphaTarget(int newAlphaTarget) {
         if (removedEntity) {
             LOGGER.warn("Changing the alpha animation target of a entity is not allowed.");
             return;
@@ -463,7 +459,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
      *
      * @param newBaseColor the new base color of the entity
      */
-    public void setBaseColor(@Nullable final Color newBaseColor) {
+    public void setBaseColor(@Nullable Color newBaseColor) {
         if (removedEntity) {
             LOGGER.warn("Changing the base color of a entity is not allowed once the entity was removed.");
             return;
@@ -477,7 +473,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
      * @param frame the index of the frame that is displayed
      */
     @Override
-    public void setFrame(final int frame) {
+    public void setFrame(int frame) {
         if (removedEntity) {
             LOGGER.warn("Changing the frame of a removed entity is not allowed.");
             return;
@@ -493,12 +489,12 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
      *
      * @param light the new light that shall be used by this entity
      */
-    public void setLight(@Nonnull final Color light) {
+    public void setLight(@Nonnull Color light) {
         if (removedEntity) {
             LOGGER.warn("Changing the light of a removed entity is not allowed.");
             return;
         }
-        final float oldAlpha = localLight.getAlphaf();
+        float oldAlpha = localLight.getAlphaf();
         localLight = new Color(light);
         localLight.setAlphaf(oldAlpha);
     }
@@ -508,7 +504,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
      *
      * @param newScale the new scaling value applied to this entity
      */
-    public void setScale(final float newScale) {
+    public void setScale(float newScale) {
         if (removedEntity) {
             LOGGER.warn("Changing the scale of a removed entity is not allowed.");
             return;
@@ -526,7 +522,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
      * @param zLayer the z layer of the coordinate
      * @param typeLayer the global layer of this type of entity.
      */
-    public void setScreenPos(final int dispX, final int dispY, final int zLayer, final int typeLayer) {
+    public void setScreenPos(int dispX, int dispY, int zLayer, int typeLayer) {
         if (removedEntity) {
             LOGGER.warn("Changing the screen position of a removed entity is not allowed.");
             return;
@@ -536,7 +532,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
         displayY = dispY;
 
         if (shown) {
-            final int newLayerZ = zLayer - typeLayer;
+            int newLayerZ = zLayer - typeLayer;
             if (newLayerZ != layerZ) {
                 updateDisplayPosition();
                 layerZ = newLayerZ;
@@ -553,24 +549,24 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
      * @param loc the location of the entity on the map
      * @param typeLayer the global layer of this type of entity.
      */
-    public final void setScreenPos(@Nonnull final Location loc, final int typeLayer) {
+    public final void setScreenPos(@Nonnull Location loc, int typeLayer) {
         setScreenPos(loc.getDcX(), loc.getDcY(), loc.getDcZ(), typeLayer);
     }
 
     @Override
     public boolean isEventProcessed(
-            @Nonnull final GameContainer container, final int delta, @Nonnull final SceneEvent event) {
+            @Nonnull GameContainer container, int delta, @Nonnull SceneEvent event) {
         return false;
     }
 
-    protected boolean isMouseInInteractionRect(final int mouseX, final int mouseY) {
-        final int mouseXonDisplay = mouseX + Camera.getInstance().getViewportOffsetX();
-        final int mouseYonDisplay = mouseY + Camera.getInstance().getViewportOffsetY();
+    protected boolean isMouseInInteractionRect(int mouseX, int mouseY) {
+        int mouseXonDisplay = mouseX + Camera.getInstance().getViewportOffsetX();
+        int mouseYonDisplay = mouseY + Camera.getInstance().getViewportOffsetY();
 
         return getInteractionRect().isInside(mouseXonDisplay, mouseYonDisplay);
     }
 
-    protected boolean isMouseInInteractionRect(@Nonnull final Input input) {
+    protected final boolean isMouseInInteractionRect(@Nonnull Input input) {
         return isMouseInInteractionRect(input.getMouseX(), input.getMouseY());
     }
 
@@ -618,7 +614,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
     }
 
     @Override
-    public void update(@Nonnull final GameContainer container, final int delta) {
+    public void update(@Nonnull GameContainer container, int delta) {
         if (removedEntity) {
             shown = true;
             hide();
@@ -630,15 +626,15 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
             hide();
             return;
         }
-        final Sprite sprite = template.getSprite();
-        final int offS = template.getShadowOffset();
+        Sprite sprite = template.getSprite();
+        int offS = template.getShadowOffset();
 
         sprite.getDisplayArea(displayX, displayY, scale, 0.f, displayRect);
 
-        final int widthNoShadow = displayRect.getWidth() - (int) (offS * scale);
+        int widthNoShadow = displayRect.getWidth() - (int) (offS * scale);
 
         if (fadingCorridorEffect) {
-            final boolean transparent = FadingCorridor.getInstance()
+            boolean transparent = FadingCorridor.getInstance()
                     .isInCorridor(displayRect.getX(), displayRect.getY(), layerZ, widthNoShadow,
                                   displayRect.getHeight());
 
@@ -693,7 +689,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
      */
     @Nonnull
     public Color getLocalLight() {
-        final Color parentLight = getParentLight();
+        Color parentLight = getParentLight();
         if (parentLight == null) {
             return getLight();
         }
@@ -717,7 +713,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
      */
     @Nonnull
     public final Rectangle getInteractionRect() {
-        final int offS = template.getShadowOffset();
+        int offS = template.getShadowOffset();
         if (offS == 0) {
             return displayRect;
         }
@@ -739,7 +735,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
 
     private boolean fadingCorridorEffect;
 
-    public void setFadingCorridorEffectEnabled(final boolean value) {
+    public void setFadingCorridorEffectEnabled(boolean value) {
         fadingCorridorEffect = value;
     }
 
@@ -760,7 +756,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
      *
      * @param delta the time in milliseconds since the last update
      */
-    protected final void updateAlpha(final int delta) {
+    protected final void updateAlpha(int delta) {
         if (getAlpha() != alphaTarget) {
             setAlpha(AnimationUtility.translate(getAlpha(), alphaTarget, FADING_SPEED, 0, 255, delta));
         }
