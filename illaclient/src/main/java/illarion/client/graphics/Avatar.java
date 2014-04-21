@@ -280,7 +280,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
 
         if (event.getKey() == Button.Left) {
             World.getPlayer().getMovementHandler().walkTo(parentChar.getLocation(), parentChar.getInteractive());
-            return false;
+            return true;
         }
 
         return false;
@@ -301,19 +301,11 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
             return false;
         }
 
-        if (!isMouseInInteractiveOrOnTag(event)) {
-            return false;
-        }
-
         if (!isMouseInInteractionRect(event.getX(), event.getY())) {
             return false;
         }
 
         InteractiveChar interactiveChar = parentChar.getInteractive();
-
-        if (interactiveChar == null) {
-            return false;
-        }
 
         if (interactiveChar.isInUseRange()) {
             interactiveChar.use();
