@@ -265,6 +265,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
             } else {
                 World.getPlayer().getMovementHandler().walkTo(parentTile.getLocation());
             }
+            return true;
         }
 
         if (event instanceof DoubleClickOnMapEvent) {
