@@ -15,10 +15,7 @@
  */
 package illarion.client.graphics;
 
-import illarion.client.input.CurrentMouseLocationEvent;
-import illarion.client.input.DoubleClickOnMapEvent;
-import illarion.client.input.PointOnMapEvent;
-import illarion.client.input.PrimaryKeyMapDrag;
+import illarion.client.input.*;
 import illarion.client.resources.ItemFactory;
 import illarion.client.resources.Resource;
 import illarion.client.resources.data.ItemTemplate;
@@ -251,6 +248,23 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
 
         if (!parentTile.isAtPlayerLevel()) {
             return false;
+        }
+
+        if (event instanceof ClickOnMapEvent) {
+            ClickOnMapEvent clickEvent = (ClickOnMapEvent) event;
+            if (clickEvent.getKey() != Button.Left) {
+                return false;
+            }
+
+            if (!isMouseInInteractionRect(clickEvent.getX(), clickEvent.getY())) {
+                return false;
+            }
+
+            if (parentTile.isBlocked()) {
+                World.getPlayer().getMovementHandler().walkTo(parentTile.getLocation(), parentTile.getInteractive());
+            } else {
+                World.getPlayer().getMovementHandler().walkTo(parentTile.getLocation());
+            }
         }
 
         if (event instanceof DoubleClickOnMapEvent) {

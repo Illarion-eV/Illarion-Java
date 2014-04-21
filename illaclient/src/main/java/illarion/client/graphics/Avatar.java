@@ -240,7 +240,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
 
                 showHighlight = 1;
                 InteractiveChar interactiveChar = parentChar.getInteractive();
-                if (interactiveChar != null && interactiveChar.isInUseRange()) {
+                if (interactiveChar.isInUseRange()) {
                     showHighlight = 2;
                 }
                 return true;
