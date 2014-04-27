@@ -259,14 +259,14 @@ class GdxGraphics implements Graphics {
             } else {
                 usedEffect = null;
             }
-            if (usedEffect != null) {
-                usedEffect.setTopLeftCoordinate(tempEngineRectangle.getLeft(), tempEngineRectangle.getTop());
-                usedEffect.setBottomRightCoordinate(tempEngineRectangle.getRight(), tempEngineRectangle.getBottom());
-                usedEffect.activateEffect(spriteBatch);
-            }
             spriteBatch.setColor(tempColor1);
             tempRegion.setRegion(gdxSprite.getFrame(frame).getTextureRegion());
             tempRegion.flip(gdxSprite.isMirrored(), true);
+            if (usedEffect != null) {
+                usedEffect.setTopLeftCoordinate(tempRegion.getU(), tempRegion.getV());
+                usedEffect.setBottomRightCoordinate(tempRegion.getU2(), tempRegion.getV2());
+                usedEffect.activateEffect(spriteBatch);
+            }
             spriteBatch.draw(tempRegion, tempEngineRectangle.getX(), tempEngineRectangle.getY(), (float) centerTransX,
                              (float) centerTransY, tempEngineRectangle.getWidth(), tempEngineRectangle.getHeight(), 1.f,
                              1.f, (float) rotation);

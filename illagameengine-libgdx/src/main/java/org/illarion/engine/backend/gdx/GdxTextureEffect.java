@@ -46,7 +46,7 @@ interface GdxTextureEffect extends TextureEffect {
      * @param x the x coordinate
      * @param y the y coordinate
      */
-    void setTopLeftCoordinate(int x, int y);
+    void setTopLeftCoordinate(float x, float y);
 
     /**
      * Set the bottom right coordinate of the texture that is rendered.
@@ -54,5 +54,5 @@ interface GdxTextureEffect extends TextureEffect {
      * @param x the x coordinate
      * @param y the y coordinate
      */
-    void setBottomRightCoordinate(int x, int y);
+    void setBottomRightCoordinate(float x, float y);
 }

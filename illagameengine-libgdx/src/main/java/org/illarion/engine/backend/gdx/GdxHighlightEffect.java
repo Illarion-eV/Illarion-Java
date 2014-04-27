@@ -65,11 +65,11 @@ class GdxHighlightEffect implements HighlightEffect, GdxTextureEffect {
     }
 
     @Override
-    public void setTopLeftCoordinate(int x, int y) {
+    public void setTopLeftCoordinate(float x, float y) {
     }
 
     @Override
-    public void setBottomRightCoordinate(int x, int y) {
+    public void setBottomRightCoordinate(float x, float y) {
     }
 
     @Override
