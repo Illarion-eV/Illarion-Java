@@ -19,10 +19,7 @@ import com.badlogic.gdx.Files;
 import org.illarion.engine.EngineException;
 import org.illarion.engine.assets.EffectManager;
 import org.illarion.engine.graphic.WorldMap;
-import org.illarion.engine.graphic.effects.FogEffect;
-import org.illarion.engine.graphic.effects.GrayScaleEffect;
-import org.illarion.engine.graphic.effects.HighlightEffect;
-import org.illarion.engine.graphic.effects.MiniMapEffect;
+import org.illarion.engine.graphic.effects.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -64,18 +61,23 @@ class GdxEffectManager implements EffectManager {
     private GdxGrayScaleEffect sharedGrayScaleEffect;
 
     /**
+     * The shared instance of the tile light effect.
+     */
+    @Nullable
+    private GdxTileLightEffect sharedTileLightEffect;
+
+    /**
      * Create a new effect manager.
      *
      * @param files the file system handler that should be used to load the data
      */
-    GdxEffectManager(@Nonnull final Files files) {
+    GdxEffectManager(@Nonnull Files files) {
         this.files = files;
     }
 
     @Nonnull
     @Override
-    public MiniMapEffect getMiniMapEffect(@Nonnull final WorldMap worldMap, final boolean sharedInstance)
-            throws EngineException {
+    public MiniMapEffect getMiniMapEffect(@Nonnull WorldMap worldMap, boolean sharedInstance) throws EngineException {
         if (sharedInstance) {
             if (sharedMiniMapEffect == null) {
                 sharedMiniMapEffect = new GdxMiniMapEffect(files, worldMap);
@@ -87,7 +89,7 @@ class GdxEffectManager implements EffectManager {
 
     @Nonnull
     @Override
-    public HighlightEffect getHighlightEffect(final boolean sharedInstance) throws EngineException {
+    public HighlightEffect getHighlightEffect(boolean sharedInstance) throws EngineException {
         if (sharedInstance) {
             if (sharedHighlightEffect == null) {
                 sharedHighlightEffect = new GdxHighlightEffect(files);
@@ -99,7 +101,7 @@ class GdxEffectManager implements EffectManager {
 
     @Nonnull
     @Override
-    public FogEffect getFogEffect(final boolean sharedInstance) throws EngineException {
+    public FogEffect getFogEffect(boolean sharedInstance) throws EngineException {
         if (sharedInstance) {
             if (sharedFogEffect == null) {
                 sharedFogEffect = new GdxFogEffect(files);
@@ -111,7 +113,7 @@ class GdxEffectManager implements EffectManager {
 
     @Nonnull
     @Override
-    public GrayScaleEffect getGrayScaleEffect(final boolean sharedInstance) throws EngineException {
+    public GrayScaleEffect getGrayScaleEffect(boolean sharedInstance) throws EngineException {
         if (sharedInstance) {
             if (sharedGrayScaleEffect == null) {
                 sharedGrayScaleEffect = new GdxGrayScaleEffect(files);
@@ -119,5 +121,17 @@ class GdxEffectManager implements EffectManager {
             return sharedGrayScaleEffect;
         }
         return new GdxGrayScaleEffect(files);
+    }
+
+    @Nonnull
+    @Override
+    public TileLightEffect getTileLightEffect(boolean sharedInstance) throws EngineException {
+        if (sharedInstance) {
+            if (sharedTileLightEffect == null) {
+                sharedTileLightEffect = new GdxTileLightEffect(files);
+            }
+            return sharedTileLightEffect;
+        }
+        return new GdxTileLightEffect(files);
     }
 }

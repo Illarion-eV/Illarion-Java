@@ -277,28 +277,26 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
      */
     @Override
     public void render(@Nonnull Graphics g) {
-        if (getAlpha() == 0) {
-            return;
-        }
+        if (performRendering()) {
+            int renderLocX = displayX;
+            int renderLocY = displayY;
 
-        int renderLocX = displayX;
-        int renderLocY = displayY;
-
-        if (!Camera.getInstance().requiresUpdate(displayRect)) {
-            return;
-        }
-
-        int highlight = getHighlight();
-        if ((highlight > 0) && (highlightEffect != null)) {
-            if (highlight == 1) {
-                highlightEffect.setHighlightColor(COLOR_HIGHLIGHT_WEAK);
+            int highlight = getHighlight();
+            if ((highlight > 0) && (highlightEffect != null)) {
+                if (highlight == 1) {
+                    highlightEffect.setHighlightColor(COLOR_HIGHLIGHT_WEAK);
+                } else {
+                    highlightEffect.setHighlightColor(COLOR_HIGHLIGHT_STRONG);
+                }
+                renderSprite(g, renderLocX, renderLocY, renderLight, highlightEffect);
             } else {
-                highlightEffect.setHighlightColor(COLOR_HIGHLIGHT_STRONG);
+                renderSprite(g, renderLocX, renderLocY, renderLight);
             }
-            renderSprite(g, renderLocX, renderLocY, renderLight, highlightEffect);
-        } else {
-            renderSprite(g, renderLocX, renderLocY, renderLight);
         }
+    }
+
+    protected boolean performRendering() {
+        return (getAlpha() > 0) && Camera.getInstance().requiresUpdate(displayRect);
     }
 
     protected void renderSprite(
@@ -621,7 +619,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
             return;
         }
         if (!isShown()) {
-            LOGGER.warn(toString() + " Entity that is not shown received update.");
+            LOGGER.warn("{} Entity that is not shown received update.", this);
             shown = true;
             hide();
             return;

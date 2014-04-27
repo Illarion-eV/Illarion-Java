@@ -18,10 +18,7 @@ package org.illarion.engine.backend.slick;
 import org.illarion.engine.EngineException;
 import org.illarion.engine.assets.EffectManager;
 import org.illarion.engine.graphic.WorldMap;
-import org.illarion.engine.graphic.effects.FogEffect;
-import org.illarion.engine.graphic.effects.GrayScaleEffect;
-import org.illarion.engine.graphic.effects.HighlightEffect;
-import org.illarion.engine.graphic.effects.MiniMapEffect;
+import org.illarion.engine.graphic.effects.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -103,5 +100,12 @@ class SlickEffectManager implements EffectManager {
             return grayScaleEffect;
         }
         return new SlickGrayScaleEffect();
+    }
+
+    @Nonnull
+    @Override
+    public TileLightEffect getTileLightEffect(boolean sharedInstance) throws EngineException {
+        // TODO: Implement effect
+        return null;
     }
 }

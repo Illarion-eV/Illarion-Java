@@ -39,4 +39,20 @@ interface GdxTextureEffect extends TextureEffect {
      * @param batch the batch that is now not supposed to render the effect anymore
      */
     void disableEffect(@Nonnull SpriteBatch batch);
+
+    /**
+     * Set the top left coordinate of the texture that is rendered.
+     *
+     * @param x the x coordinate
+     * @param y the y coordinate
+     */
+    void setTopLeftCoordinate(int x, int y);
+
+    /**
+     * Set the bottom right coordinate of the texture that is rendered.
+     *
+     * @param x the x coordinate
+     * @param y the y coordinate
+     */
+    void setBottomRightCoordinate(int x, int y);
 }

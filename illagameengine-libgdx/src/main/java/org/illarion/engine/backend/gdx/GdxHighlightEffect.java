@@ -46,7 +46,7 @@ class GdxHighlightEffect implements HighlightEffect, GdxTextureEffect {
      *
      * @param files the file system handler used to load the effect data
      */
-    GdxHighlightEffect(@Nonnull final Files files) {
+    GdxHighlightEffect(@Nonnull Files files) {
         //noinspection SpellCheckingInspection
         shader = new ShaderProgram(files.internal("org/illarion/engine/backend/gdx/shaders/generic.vert"),
                                    files.internal("org/illarion/engine/backend/gdx/shaders/highlight.frag"));
@@ -54,18 +54,26 @@ class GdxHighlightEffect implements HighlightEffect, GdxTextureEffect {
     }
 
     @Override
-    public void activateEffect(@Nonnull final SpriteBatch batch) {
+    public void activateEffect(@Nonnull SpriteBatch batch) {
         batch.setShader(shader);
         shader.setUniformf("u_colorHighlight", highlightColor);
     }
 
     @Override
-    public void disableEffect(@Nonnull final SpriteBatch batch) {
+    public void disableEffect(@Nonnull SpriteBatch batch) {
         batch.setShader(null);
     }
 
     @Override
-    public void setHighlightColor(@Nonnull final Color color) {
+    public void setTopLeftCoordinate(int x, int y) {
+    }
+
+    @Override
+    public void setBottomRightCoordinate(int x, int y) {
+    }
+
+    @Override
+    public void setHighlightColor(@Nonnull Color color) {
         GdxGraphics.transferColor(color, highlightColor);
     }
 }

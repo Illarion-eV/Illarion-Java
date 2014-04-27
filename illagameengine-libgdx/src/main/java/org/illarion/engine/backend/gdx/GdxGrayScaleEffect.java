@@ -34,34 +34,38 @@ class GdxGrayScaleEffect implements GrayScaleEffect, GdxSceneEffect, GdxTextureE
     @Nonnull
     private final ShaderProgram shader;
 
-    GdxGrayScaleEffect(@Nonnull final Files files) {
+    GdxGrayScaleEffect(@Nonnull Files files) {
         //noinspection SpellCheckingInspection
         shader = new ShaderProgram(files.internal("org/illarion/engine/backend/gdx/shaders/generic.vert"),
                                    files.internal("org/illarion/engine/backend/gdx/shaders/grayScale.frag"));
     }
 
     @Override
-    public void update(final int delta) {
+    public void update(int delta) {
         // nothing to do
     }
 
     @Override
     public void activateEffect(
-            @Nonnull final SpriteBatch batch,
-            final int screenWidth,
-            final int screenHeight,
-            final int textureWidth,
-            final int textureHeight) {
+            @Nonnull SpriteBatch batch, int screenWidth, int screenHeight, int textureWidth, int textureHeight) {
         batch.setShader(shader);
     }
 
     @Override
-    public void activateEffect(@Nonnull final SpriteBatch batch) {
+    public void activateEffect(@Nonnull SpriteBatch batch) {
         batch.setShader(shader);
     }
 
     @Override
-    public void disableEffect(@Nonnull final SpriteBatch batch) {
+    public void disableEffect(@Nonnull SpriteBatch batch) {
         batch.setShader(null);
+    }
+
+    @Override
+    public void setTopLeftCoordinate(int x, int y) {
+    }
+
+    @Override
+    public void setBottomRightCoordinate(int x, int y) {
     }
 }

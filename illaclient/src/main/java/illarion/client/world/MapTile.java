@@ -37,6 +37,7 @@ import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -85,13 +86,49 @@ public final class MapTile implements AlphaChangeListener {
      * The lock used to guard the items table.
      */
     @Nonnull
-    private ReadWriteLock itemsLock = new ReentrantReadWriteLock();
+    private final ReadWriteLock itemsLock = new ReentrantReadWriteLock();
 
     /**
-     * rendered light value on this tile.
+     * Get the light that was calculate from the center color and the ambient light for this tile.
      */
     @Nonnull
     private final Color light = new Color(Color.WHITE);
+
+    /**
+     * Get the light in the center of this tile.
+     */
+    @Nonnull
+    private final Color centerColor = new Color(Color.WHITE);
+
+    /**
+     * The light that was calculated for the tile top left (north) of this tile on the screen.
+     */
+    @Nonnull
+    private final Color topLeftColor = new Color(Color.WHITE);
+
+    /**
+     * The light that was calculated for the tile top right (east) of this tile on the screen.
+     */
+    @Nonnull
+    private final Color topRightColor = new Color(Color.WHITE);
+
+    /**
+     * The light that was calculated for the tile bottom left (west) of this tile on the screen.
+     */
+    @Nonnull
+    private final Color bottomLeftColor = new Color(Color.WHITE);
+
+    /**
+     * The light that was calculated for the tile bottom right (south) of this tile on the screen.
+     */
+    @Nonnull
+    private final Color bottomRightColor = new Color(Color.WHITE);
+
+    /**
+     * The ambient light that is applied to this tile.
+     */
+    @Nonnull
+    private final Color ambientLight = new Color(Color.WHITE);
 
     /**
      * Light Source that is on the tile.
@@ -189,7 +226,7 @@ public final class MapTile implements AlphaChangeListener {
         return questMarkerElevation;
     }
 
-    public void setObstructingTile(@Nonnull final MapTile tile) {
+    public void setObstructingTile(@Nonnull MapTile tile) {
         obstructingTileRef = new WeakReference<>(tile);
     }
 
@@ -198,7 +235,7 @@ public final class MapTile implements AlphaChangeListener {
         if (obstructingTileRef == null) {
             return null;
         }
-        final MapTile obstructingTile = obstructingTileRef.get();
+        MapTile obstructingTile = obstructingTileRef.get();
         if (obstructingTile == null) {
             obstructingTileRef = null;
             return null;
@@ -211,7 +248,7 @@ public final class MapTile implements AlphaChangeListener {
         return obstructingTile;
     }
 
-    public void setMapGroup(@Nonnull final MapGroup group) {
+    public void setMapGroup(@Nonnull MapGroup group) {
         this.group = group;
     }
 
@@ -226,7 +263,7 @@ public final class MapTile implements AlphaChangeListener {
      * @param location the location of this tile
      */
     @SuppressWarnings("nls")
-    public MapTile(@Nonnull final Location location) {
+    public MapTile(@Nonnull Location location) {
         tileLocation = new Location(location);
         tileId = ID_NONE;
         tile = null;
@@ -234,17 +271,90 @@ public final class MapTile implements AlphaChangeListener {
         losDirty = true;
     }
 
-    /**
-     * Get the current rendered light.
-     *
-     * @return the light color on this tile
-     */
     @Nonnull
     public Color getLight() {
         if (removedTile) {
             LOGGER.warn("Fetching light of a removed tile.");
         }
         return light;
+    }
+
+    /**
+     * Get the light in the center of this tile
+     *
+     * @return the light in the center of the tile
+     */
+    @Nonnull
+    public Color getCenterLight() {
+        if (removedTile) {
+            LOGGER.warn("Fetching light of a removed tile.");
+        }
+        return centerColor;
+    }
+
+    /**
+     * Get the light top left of this tile
+     *
+     * @return the light top left of the tile
+     */
+    @Nonnull
+    public Color getTopLeftLight() {
+        if (removedTile) {
+            LOGGER.warn("Fetching light of a removed tile.");
+        }
+        return topLeftColor;
+    }
+
+    /**
+     * Get the light top right of this tile
+     *
+     * @return the light top right of the tile
+     */
+    @Nonnull
+    public Color getTopRightLight() {
+        if (removedTile) {
+            LOGGER.warn("Fetching light of a removed tile.");
+        }
+        return topLeftColor;
+    }
+
+    /**
+     * Get the light bottom left of this tile
+     *
+     * @return the light bottom left of the tile
+     */
+    @Nonnull
+    public Color getBottomLeftLight() {
+        if (removedTile) {
+            LOGGER.warn("Fetching light of a removed tile.");
+        }
+        return bottomLeftColor;
+    }
+
+    /**
+     * Get the light bottom right of this tile
+     *
+     * @return the light bottom right of the tile
+     */
+    @Nonnull
+    public Color getBottomRightLight() {
+        if (removedTile) {
+            LOGGER.warn("Fetching light of a removed tile.");
+        }
+        return bottomRightColor;
+    }
+
+    /**
+     * Get the ambient light of this tile
+     *
+     * @return the light ambient of the tile
+     */
+    @Nonnull
+    public Color getAmbientLight() {
+        if (removedTile) {
+            LOGGER.warn("Fetching light of a removed tile.");
+        }
+        return ambientLight;
     }
 
     /**
@@ -276,7 +386,7 @@ public final class MapTile implements AlphaChangeListener {
      * and displays it, so the tile below the tile that got faded out is visible properly.
      */
     @Override
-    public void alphaChanged(final int from, final int to) {
+    public void alphaChanged(int from, int to) {
         if (removedTile) {
             LOGGER.warn("Updating alpha of a changed tile");
             return;
@@ -318,7 +428,7 @@ public final class MapTile implements AlphaChangeListener {
     public String toString() {
         itemsLock.readLock().lock();
         try {
-            return "MapTile " + tileLocation.toString() + " tile=" + tileId + " items=" +
+            return "MapTile " + tileLocation + " tile=" + tileId + " items=" +
                     ((items != null) ? items.size() : 0);
         } finally {
             itemsLock.readLock().unlock();
@@ -334,7 +444,7 @@ public final class MapTile implements AlphaChangeListener {
      */
     @SuppressWarnings("nls")
     public void changeTopItem(
-            @Nonnull final ItemId oldItemId, @Nonnull final ItemId itemId, @Nonnull final ItemCount count) {
+            @Nonnull ItemId oldItemId, @Nonnull ItemId itemId, @Nonnull ItemCount count) {
         if (removedTile) {
             LOGGER.warn("Changing top item of removed tile requested.");
             return;
@@ -345,7 +455,7 @@ public final class MapTile implements AlphaChangeListener {
                 LOGGER.warn("There are no items on this field. Change top impossible.");
                 return;
             }
-            final int pos = items.size() - 1;
+            int pos = items.size() - 1;
             if (pos < 0) {
                 LOGGER.warn("error: change top item on empty field");
                 return;
@@ -354,8 +464,8 @@ public final class MapTile implements AlphaChangeListener {
             if (items.get(pos).getItemId().equals(oldItemId)) {
                 setItem(pos, itemId, count);
             } else {
-                LOGGER.warn("change top item mismatch. Expected " + oldItemId + " found " +
-                                    items.get(pos).getItemId().getValue());
+                LOGGER.warn("change top item mismatch. Expected {} found {}", oldItemId,
+                            items.get(pos).getItemId().getValue());
             }
         } finally {
             itemsLock.writeLock().unlock();
@@ -379,7 +489,7 @@ public final class MapTile implements AlphaChangeListener {
                 LOGGER.warn("Remove top item on empty field");
                 return;
             }
-            final int pos = items.size() - 1;
+            int pos = items.size() - 1;
             if (pos < 0) {
                 LOGGER.warn("Remove top item on empty field");
                 return;
@@ -391,7 +501,7 @@ public final class MapTile implements AlphaChangeListener {
                 elevationIndex = 0;
             }
 
-            final Item removedItem = items.remove(pos);
+            Item removedItem = items.remove(pos);
             removedItem.markAsRemoved();
             // enable numbers for next top item
             if ((pos - 1) >= 0) {
@@ -411,7 +521,7 @@ public final class MapTile implements AlphaChangeListener {
      * @param itemId the ID of the item that is created
      * @param count the count value of the item that is created
      */
-    public void addItem(@Nonnull final ItemId itemId, @Nonnull final ItemCount count) {
+    public void addItem(@Nonnull ItemId itemId, @Nonnull ItemCount count) {
         if (removedTile) {
             LOGGER.warn("Trying to add a item to a removed tile.");
             return;
@@ -443,8 +553,8 @@ public final class MapTile implements AlphaChangeListener {
      * @param itemCount The new count value of this item
      */
     @SuppressWarnings("nls")
-    private void setItem(final int index, @Nonnull final ItemId itemId, @Nonnull final ItemCount itemCount) {
-        Item item = null;
+    private void setItem(int index, @Nonnull ItemId itemId, @Nonnull ItemCount itemCount) {
+        @Nullable Item item = null;
         // look for present item in map tile
         itemsLock.writeLock().lock();
         try {
@@ -452,7 +562,7 @@ public final class MapTile implements AlphaChangeListener {
                 if (index < items.size()) {
                     item = items.get(index);
                     // just an update of present item
-                    if (item.getItemId() == itemId) {
+                    if (item.getItemId().equals(itemId)) {
                         updateItem(item, itemCount, index);
                     } else {
                         // different item: clear old item
@@ -502,7 +612,7 @@ public final class MapTile implements AlphaChangeListener {
      * @param itemCount the count value of the new item
      * @param index the index of the item within the stack of items on this tile
      */
-    private void updateItem(@Nonnull final Item item, @Nonnull final ItemCount itemCount, final int index) {
+    private void updateItem(@Nonnull Item item, @Nonnull ItemCount itemCount, int index) {
         // set number
         item.setCount(itemCount);
         // calculate offset from items carrying other items
@@ -515,14 +625,14 @@ public final class MapTile implements AlphaChangeListener {
                           Layers.ITEM);
 
         // set the elevation for items that can carry
-        final int level = item.getTemplate().getItemInfo().getLevel();
+        int level = item.getTemplate().getItemInfo().getLevel();
         if (level > 0) {
             // Set elevation only for first suitable item
             if (((elevation == 0) || (elevationIndex == index)) && (elevation != level)) {
                 elevation = level;
                 elevationIndex = index;
 
-                final Char charOnTile = World.getPeople().getCharacterAt(tileLocation);
+                Char charOnTile = World.getPeople().getCharacterAt(tileLocation);
                 if (charOnTile != null) {
                     if (World.getPlayer().isPlayer(charOnTile.getCharId())) {
                         World.getMapDisplay().updateElevation();
@@ -553,22 +663,17 @@ public final class MapTile implements AlphaChangeListener {
      * this tile change.
      */
     public void updateQuestMarkerElevation() {
-        final Char character = World.getPeople().getCharacterAt(tileLocation);
-        @Nullable final Avatar avatar;
-        if ((character == null) || !character.isVisible()) {
-            avatar = null;
-        } else {
-            avatar = character.getAvatar();
-        }
+        Char character = World.getPeople().getCharacterAt(tileLocation);
+        @Nullable Avatar avatar = ((character == null) || !character.isVisible()) ? null : character.getAvatar();
 
         questMarkerElevation = elevation;
         if (avatar == null) {
-            final Item topItem = getTopItem();
+            Item topItem = getTopItem();
             if (elevationIndex == 0) {
                 questMarkerElevation = 0;
             }
             if (topItem != null) {
-                final Sprite topItemSprite = topItem.getTemplate().getSprite();
+                Sprite topItemSprite = topItem.getTemplate().getSprite();
 
                 questMarkerElevation += Math
                         .round((topItemSprite.getOffsetY() + topItemSprite.getHeight()) * topItem.getScale());
@@ -583,11 +688,11 @@ public final class MapTile implements AlphaChangeListener {
      * light sources.
      */
     private void checkLight() {
-        itemsLock.readLock().lock();
         int newLightValue = 0;
+        itemsLock.readLock().lock();
         try {
             if (items != null) {
-                for (final Item item : items) {
+                for (Item item : items) {
                     if (item.getTemplate().getItemInfo().isLight()) {
                         newLightValue = item.getTemplate().getItemInfo().getLight();
                         break;
@@ -621,7 +726,7 @@ public final class MapTile implements AlphaChangeListener {
      *
      * @param color the light that shall be added
      */
-    public void addLight(@Nonnull final Color color) {
+    public void addLight(@Nonnull Color color) {
         if (removedTile) {
             LOGGER.warn("Adding light to a removed tile.");
             return;
@@ -643,7 +748,7 @@ public final class MapTile implements AlphaChangeListener {
             return false;
         }
 
-        final Item topItem = getTopItem();
+        Item topItem = getTopItem();
         return (topItem != null) && topItem.getTemplate().getItemInfo().isMovable();
     }
 
@@ -662,7 +767,7 @@ public final class MapTile implements AlphaChangeListener {
             itemsLock.readLock().lock();
             try {
                 if (items != null) {
-                    for (final Item item : items) {
+                    for (Item item : items) {
                         obstruction += item.getTemplate().getItemInfo().getOpacity();
                     }
                 }
@@ -722,13 +827,13 @@ public final class MapTile implements AlphaChangeListener {
             LOGGER.warn("Request a interactive reference to a removed tile.");
         }
         if (interactiveMapTileRef != null) {
-            @Nullable final InteractiveMapTile interactiveMapTile = interactiveMapTileRef.get();
+            @Nullable InteractiveMapTile interactiveMapTile = interactiveMapTileRef.get();
             if (interactiveMapTile != null) {
                 return interactiveMapTile;
             }
         }
 
-        final InteractiveMapTile interactiveMapTile = new InteractiveMapTile(this);
+        InteractiveMapTile interactiveMapTile = new InteractiveMapTile(this);
         interactiveMapTileRef = new SoftReference<>(interactiveMapTile);
         return interactiveMapTile;
     }
@@ -743,8 +848,8 @@ public final class MapTile implements AlphaChangeListener {
             LOGGER.warn("Checking the movement costs on a removed tile.");
             return Integer.MAX_VALUE;
         }
-        final Tile localTile = tile;
-        if (localTile == null || movementCost == -1) {
+        Tile localTile = tile;
+        if ((localTile == null) || (movementCost == -1)) {
             return Integer.MAX_VALUE;
         }
         return movementCost;
@@ -823,19 +928,19 @@ public final class MapTile implements AlphaChangeListener {
     /**
      * Check if the tile is fully opaque and everything below can be hidden.
      *
-     * @return <code>true</code> in case the tile is opaque and everything below is hidden entirely.
+     * @return {@code true} in case the tile is opaque and everything below is hidden entirely.
      */
     public boolean isOpaque() {
         if (removedTile) {
             LOGGER.warn("Checking opaque value of a removed tile.");
         }
-        final Tile localTile = tile;
+        Tile localTile = tile;
         if (tile == null) {
             return false;
         }
 
-        final boolean opaqueFlag = localTile.getTemplate().getTileInfo().isOpaque();
-        final boolean transparentFlag = localTile.isTransparent();
+        boolean opaqueFlag = localTile.getTemplate().getTileInfo().isOpaque();
+        boolean transparentFlag = localTile.isTransparent();
         return opaqueFlag && !transparentFlag;
     }
 
@@ -843,17 +948,42 @@ public final class MapTile implements AlphaChangeListener {
      * Render the light on this tile, using the ambient light of the weather and a factor how much the tile light
      * modifies the ambient light.
      *
-     * @param factor the factor how much the ambient light is modified by the tile light
      * @param ambientLight the ambient light from the weather
      */
-    public void renderLight(final float factor, @Nonnull final Color ambientLight) {
+    public void renderLight(@Nonnull Color ambientLight) {
         if (removedTile) {
             LOGGER.warn("Render light of a removed tile.");
             return;
         }
-        tmpLight.multiply(factor);
-        tmpLight.add(ambientLight);
+
+        this.ambientLight.setColor(ambientLight);
+        centerColor.setColor(tmpLight);
+
+        int currentX = tileLocation.getScX();
+        int currentY = tileLocation.getScY();
+        int currentZ = tileLocation.getScZ();
+
+        MapTile topLeftTile = World.getMap().getMapAt(currentX, currentY - 1, currentZ); // north
+        MapTile topRightTile = World.getMap().getMapAt(currentX + 1, currentY, currentZ); // east
+        MapTile bottomLeftTile = World.getMap().getMapAt(currentX - 1, currentY, currentZ); // west
+        MapTile bottomRightTile = World.getMap().getMapAt(currentX, currentY + 1, currentZ); // south
+
+        if (topLeftTile != null) {
+            topLeftTile.bottomRightColor.setColor(tmpLight);
+        }
+        if (topRightTile != null) {
+            topRightTile.bottomLeftColor.setColor(tmpLight);
+        }
+        if (bottomLeftTile != null) {
+            bottomLeftTile.topRightColor.setColor(tmpLight);
+        }
+        if (bottomRightTile != null) {
+            bottomRightTile.topLeftColor.setColor(tmpLight);
+        }
+
         light.setColor(tmpLight);
+        light.multiply(1.f - ambientLight.getLuminancef());
+        light.add(ambientLight);
         light.setAlpha(Color.MAX_INT_VALUE);
     }
 
@@ -862,12 +992,12 @@ public final class MapTile implements AlphaChangeListener {
      *
      * @param effectId the ID of the effect
      */
-    public void showEffect(final int effectId) {
+    public void showEffect(int effectId) {
         if (removedTile) {
             LOGGER.warn("Show a graphics effect on a removed tile.");
             return;
         }
-        final Effect effect = Effect.create(effectId);
+        Effect effect = Effect.create(effectId);
         effect.show(tileLocation);
     }
 
@@ -876,7 +1006,7 @@ public final class MapTile implements AlphaChangeListener {
      *
      * @param update the update data the server send
      */
-    public void update(@Nonnull final TileUpdate update) {
+    public void update(@Nonnull TileUpdate update) {
         if (removedTile) {
             LOGGER.warn("Process update of a removed tile.");
             return;
@@ -884,11 +1014,7 @@ public final class MapTile implements AlphaChangeListener {
         // update tile
         setTileId(update.getTileId());
 
-        if (update.isBlocked()) {
-            movementCost = -1;
-        } else {
-            movementCost = update.getMovementCost();
-        }
+        movementCost = update.isBlocked() ? -1 : update.getMovementCost();
         musicId = update.getTileMusic();
 
         // update items
@@ -904,7 +1030,7 @@ public final class MapTile implements AlphaChangeListener {
      *
      * @param id the new ID if the tile
      */
-    public void setTileId(final int id) {
+    public void setTileId(int id) {
         if (removedTile) {
             LOGGER.warn("Change the ID of a removed tile.");
             return;
@@ -959,33 +1085,35 @@ public final class MapTile implements AlphaChangeListener {
      * @param itemId the list of item ids for the items on this tile
      * @param itemCount the list of count values for the items on this tile
      */
-    private void updateItemList(
-            final int number, @Nonnull final List<ItemId> itemId, @Nonnull final List<ItemCount> itemCount) {
-        boolean readLock = false;
-        itemsLock.writeLock().lock();
+    private void updateItemList(int number, @Nonnull List<ItemId> itemId, @Nonnull List<ItemCount> itemCount) {
+        Lock lock = itemsLock.writeLock();
+        lock.lock();
         try {
             try {
                 clampItems(number);
                 for (int i = 0; i < number; i++) {
                     setItem(i, itemId.get(i), itemCount.get(i));
                 }
-                itemsLock.readLock().lock();
-                readLock = true;
             } finally {
-                itemsLock.writeLock().unlock();
+                Lock readLock = itemsLock.readLock();
+                //noinspection LockAcquiredButNotSafelyReleased
+                readLock.lock();
+                try {
+                    lock.unlock();
+                } finally {
+                    lock = readLock;
+                }
             }
 
             // enable numbers for top item
             if (items != null) {
-                final int pos = items.size() - 1;
+                int pos = items.size() - 1;
                 if (pos >= 0) {
                     items.get(pos).enableNumbers(true);
                 }
             }
         } finally {
-            if (readLock) {
-                itemsLock.readLock().unlock();
-            }
+            lock.unlock();
         }
         itemChanged();
     }
@@ -995,7 +1123,7 @@ public final class MapTile implements AlphaChangeListener {
      *
      * @param itemNumber the maximum amount of items that shall remain
      */
-    private void clampItems(final int itemNumber) {
+    private void clampItems(int itemNumber) {
         // reset elevation data when items are updated
         elevation = 0;
         elevationIndex = -1;
@@ -1006,10 +1134,10 @@ public final class MapTile implements AlphaChangeListener {
                 return;
             }
 
-            final int amount = items.size() - itemNumber;
+            int amount = items.size() - itemNumber;
             for (int i = 0; i < amount; i++) {
                 // recycle the removed items
-                final Item item = items.get(itemNumber);
+                Item item = items.get(itemNumber);
                 item.markAsRemoved();
 
                 // keep deleting in the same place as the list becomes shorter
@@ -1033,7 +1161,7 @@ public final class MapTile implements AlphaChangeListener {
      * @param itemCount List of count values for all items
      */
     public void updateItems(
-            final int itemNumber, @Nonnull final List<ItemId> itemId, @Nonnull final List<ItemCount> itemCount) {
+            int itemNumber, @Nonnull List<ItemId> itemId, @Nonnull List<ItemCount> itemCount) {
         if (removedTile) {
             LOGGER.warn("Update items of a removed tile requested.");
             return;

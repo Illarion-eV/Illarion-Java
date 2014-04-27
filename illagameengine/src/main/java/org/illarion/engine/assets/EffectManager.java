@@ -17,10 +17,7 @@ package org.illarion.engine.assets;
 
 import org.illarion.engine.EngineException;
 import org.illarion.engine.graphic.WorldMap;
-import org.illarion.engine.graphic.effects.FogEffect;
-import org.illarion.engine.graphic.effects.GrayScaleEffect;
-import org.illarion.engine.graphic.effects.HighlightEffect;
-import org.illarion.engine.graphic.effects.MiniMapEffect;
+import org.illarion.engine.graphic.effects.*;
 
 import javax.annotation.Nonnull;
 
@@ -70,4 +67,14 @@ public interface EffectManager {
      */
     @Nonnull
     GrayScaleEffect getGrayScaleEffect(boolean sharedInstance) throws EngineException;
+
+    /**
+     * Get the effect that is used to render the light on a tile.
+     *
+     * @param sharedInstance {@code true} to receive the shared instance, {@code false} to create a new one
+     * @return the tile light effect
+     * @throws EngineException in case creating the effect fails
+     */
+    @Nonnull
+    TileLightEffect getTileLightEffect(boolean sharedInstance) throws EngineException;
 }

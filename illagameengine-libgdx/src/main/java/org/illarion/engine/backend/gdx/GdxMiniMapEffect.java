@@ -58,7 +58,7 @@ class GdxMiniMapEffect implements MiniMapEffect, GdxTextureEffect {
      * @param files the file system handler used to load the effect data
      * @param worldMap the world map that is displayed
      */
-    GdxMiniMapEffect(@Nonnull final Files files, @Nonnull final WorldMap worldMap) {
+    GdxMiniMapEffect(@Nonnull Files files, @Nonnull WorldMap worldMap) {
         //noinspection SpellCheckingInspection
         shader = new ShaderProgram(files.internal("org/illarion/engine/backend/gdx/shaders/generic.vert"),
                                    files.internal("org/illarion/engine/backend/gdx/shaders/minimap.frag"));
@@ -66,29 +66,37 @@ class GdxMiniMapEffect implements MiniMapEffect, GdxTextureEffect {
     }
 
     @Override
-    public void activateEffect(@Nonnull final SpriteBatch batch) {
-        final float miniMapCenterX = (float) centerX / (float) WorldMap.WORLD_MAP_WIDTH;
-        final float miniMapCenterY = (float) centerY / (float) WorldMap.WORLD_MAP_HEIGHT;
+    public void activateEffect(@Nonnull SpriteBatch batch) {
+        float miniMapCenterX = (float) centerX / WorldMap.WORLD_MAP_WIDTH;
+        float miniMapCenterY = (float) centerY / WorldMap.WORLD_MAP_HEIGHT;
 
         batch.setShader(shader);
-        shader.setUniformf("u_radius", (float) radius / (float) WorldMap.WORLD_MAP_HEIGHT);
-        shader.setUniformf("u_markerSize", 2.f / (float) WorldMap.WORLD_MAP_HEIGHT);
+        shader.setUniformf("u_radius", (float) radius / WorldMap.WORLD_MAP_HEIGHT);
+        shader.setUniformf("u_markerSize", 2.f / WorldMap.WORLD_MAP_HEIGHT);
         shader.setUniformf("u_center", miniMapCenterX, miniMapCenterY);
     }
 
     @Override
-    public void disableEffect(@Nonnull final SpriteBatch batch) {
+    public void disableEffect(@Nonnull SpriteBatch batch) {
         batch.setShader(null);
     }
 
     @Override
-    public void setCenter(@Nonnull final Location location) {
+    public void setTopLeftCoordinate(int x, int y) {
+    }
+
+    @Override
+    public void setBottomRightCoordinate(int x, int y) {
+    }
+
+    @Override
+    public void setCenter(@Nonnull Location location) {
         centerX = location.getScX() - worldMap.getMapOrigin().getScX();
         centerY = location.getScY() - worldMap.getMapOrigin().getScY();
     }
 
     @Override
-    public void setRadius(final int radius) {
+    public void setRadius(int radius) {
         this.radius = radius;
     }
 }

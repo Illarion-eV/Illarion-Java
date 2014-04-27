@@ -30,11 +30,13 @@ import illarion.common.graphics.MapVariance;
 import illarion.common.graphics.TileInfo;
 import illarion.common.types.Location;
 import illarion.common.types.Rectangle;
+import org.illarion.engine.EngineException;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Graphics;
 import org.illarion.engine.graphic.SceneEvent;
 import org.illarion.engine.graphic.effects.TextureEffect;
+import org.illarion.engine.graphic.effects.TileLightEffect;
 import org.illarion.engine.input.Button;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,18 +122,33 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
      */
     @Override
     public void render(@Nonnull Graphics g) {
-        MapTile obstructingTile = parentTile.getObstructingTile();
-        if ((obstructingTile != null) && obstructingTile.isOpaque()) {
-            return;
-        }
+        if (performRendering()) {
+            MapTile obstructingTile = parentTile.getObstructingTile();
+            if ((obstructingTile != null) && obstructingTile.isOpaque()) {
+                return;
+            }
 
-        super.render(g);
-        showHighlight = 0;
+            if ((showHighlight != 0) || (tileLightEffect == null)) {
+                super.render(g);
+                showHighlight = 0;
+            } else {
+                tileLightEffect.setTopLeftColor(parentTile.getTopLeftLight());
+                tileLightEffect.setTopRightColor(parentTile.getTopRightLight());
+                tileLightEffect.setBottomLeftColor(parentTile.getBottomLeftLight());
+                tileLightEffect.setBottomRightColor(parentTile.getBottomRightLight());
+                tileLightEffect.setCenterColor(parentTile.getCenterLight());
+                renderSprite(g, getDisplayX(), getDisplayY(), parentTile.getAmbientLight(), tileLightEffect);
+            }
+        }
     }
 
     @Override
     protected void renderSprite(
-            @Nonnull Graphics g, int x, int y, @Nonnull Color light, @Nonnull TextureEffect... effects) {
+            @Nonnull Graphics g,
+            int x,
+            int y,
+            @Nonnull Color light,
+            @Nonnull TextureEffect... effects) {
         super.renderSprite(g, x, y, light, effects);
         if (overlay != null) {
             g.drawSprite(overlay.getSprite(), x, y, light, overlayShape, getScale(), 0.f, effects);
@@ -162,8 +179,16 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
         }
     }
 
+    private TileLightEffect tileLightEffect;
+
     @Override
     public void update(@Nonnull GameContainer container, int delta) {
+        if (tileLightEffect == null) {
+            try {
+                tileLightEffect = container.getEngine().getAssets().getEffectManager().getTileLightEffect(true);
+            } catch (EngineException ignored) {
+            }
+        }
         MapGroup group = parentTile.getMapGroup();
         if ((group != null) && group.isHidden()) {
             setAlphaTarget(0);
@@ -255,6 +280,9 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
     @Override
     @Nonnull
     protected Color getParentLight() {
-        return parentTile.getLight();
+        Color tmpColor = new Color(parentTile.getCenterLight());
+        tmpColor.multiply(1.f - tmpColor.getLuminancef());
+        tmpColor.add(parentTile.getAmbientLight());
+        return tmpColor;
     }
 }

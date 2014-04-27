@@ -78,7 +78,7 @@ public class Color {
      * @param blue the blue color component
      * @param alpha the alpha color component
      */
-    public Color(final int red, final int green, final int blue, final int alpha) {
+    public Color(int red, int green, int blue, int alpha) {
         this.red = red;
         this.green = green;
         this.blue = blue;
@@ -93,7 +93,7 @@ public class Color {
      * @param blue the blue color component
      * @param alpha the alpha color component
      */
-    public Color(final float red, final float green, final float blue, final float alpha) {
+    public Color(float red, float green, float blue, float alpha) {
         this(Math.round(red * MAX_INT_VALUE), Math.round(green * MAX_INT_VALUE), Math.round(blue * MAX_INT_VALUE),
              Math.round(alpha * MAX_INT_VALUE));
     }
@@ -105,7 +105,7 @@ public class Color {
      * @param green the green color component
      * @param blue the blue color component
      */
-    public Color(final int red, final int green, final int blue) {
+    public Color(int red, int green, int blue) {
         this(red, green, blue, MAX_INT_VALUE);
     }
 
@@ -116,7 +116,7 @@ public class Color {
      * @param green the green color component
      * @param blue the blue color component
      */
-    public Color(final float red, final float green, final float blue) {
+    public Color(float red, float green, float blue) {
         this(red, green, blue, 1.f);
     }
 
@@ -125,7 +125,7 @@ public class Color {
      *
      * @param org the original color value that is the data provider
      */
-    public Color(@Nonnull final Color org) {
+    public Color(@Nonnull Color org) {
         this(org.red, org.green, org.blue, org.alpha);
     }
 
@@ -134,7 +134,7 @@ public class Color {
      *
      * @param color the color that supplies the new values
      */
-    public void add(@Nonnull final Color color) {
+    public void add(@Nonnull Color color) {
         red += color.red;
         green += color.green;
         blue += color.blue;
@@ -155,7 +155,7 @@ public class Color {
      *
      * @param alpha the alpha component of the color
      */
-    public void setAlpha(final int alpha) {
+    public void setAlpha(int alpha) {
         this.alpha = alpha;
     }
 
@@ -165,7 +165,7 @@ public class Color {
      * @return the alpha color component
      */
     public float getAlphaf() {
-        return (float) alpha / (float) MAX_INT_VALUE;
+        return (float) alpha / MAX_INT_VALUE;
     }
 
     /**
@@ -173,7 +173,7 @@ public class Color {
      *
      * @param fAlpha the alpha component of the color
      */
-    public void setAlphaf(final float fAlpha) {
+    public void setAlphaf(float fAlpha) {
         setAlpha(Math.round(fAlpha * MAX_INT_VALUE));
     }
 
@@ -191,7 +191,7 @@ public class Color {
      *
      * @param blue the blue component of the color
      */
-    public void setBlue(final int blue) {
+    public void setBlue(int blue) {
         this.blue = blue;
     }
 
@@ -201,7 +201,7 @@ public class Color {
      * @return the blue color component
      */
     public float getBluef() {
-        return (float) blue / (float) MAX_INT_VALUE;
+        return (float) blue / MAX_INT_VALUE;
     }
 
     /**
@@ -209,7 +209,7 @@ public class Color {
      *
      * @param fBlue the blue component of the color
      */
-    public void setBluef(final float fBlue) {
+    public void setBluef(float fBlue) {
         setBlue(Math.round(fBlue * MAX_INT_VALUE));
     }
 
@@ -227,7 +227,7 @@ public class Color {
      *
      * @param green the green component of the color
      */
-    public void setGreen(final int green) {
+    public void setGreen(int green) {
         this.green = green;
     }
 
@@ -237,7 +237,7 @@ public class Color {
      * @return the green color component
      */
     public float getGreenf() {
-        return (float) green / (float) MAX_INT_VALUE;
+        return (float) green / MAX_INT_VALUE;
     }
 
     /**
@@ -245,7 +245,7 @@ public class Color {
      *
      * @param fGreen the green component of the color
      */
-    public void setGreenf(final float fGreen) {
+    public void setGreenf(float fGreen) {
         setGreen(Math.round(fGreen * MAX_INT_VALUE));
     }
 
@@ -263,7 +263,7 @@ public class Color {
      *
      * @param red the red component of the color
      */
-    public void setRed(final int red) {
+    public void setRed(int red) {
         this.red = red;
     }
 
@@ -273,7 +273,7 @@ public class Color {
      * @return the red color component
      */
     public float getRedf() {
-        return (float) red / (float) MAX_INT_VALUE;
+        return (float) red / MAX_INT_VALUE;
     }
 
     /**
@@ -281,7 +281,7 @@ public class Color {
      *
      * @param fRed the red component of the color
      */
-    public void setRedf(final float fRed) {
+    public void setRedf(float fRed) {
         setRed(Math.round(fRed * MAX_INT_VALUE));
     }
 
@@ -290,7 +290,7 @@ public class Color {
      *
      * @param org the color instance that supplies the new color values
      */
-    public void setColor(@Nonnull final Color org) {
+    public void setColor(@Nonnull Color org) {
         red = org.red;
         green = org.green;
         blue = org.blue;
@@ -302,7 +302,7 @@ public class Color {
      *
      * @param mul the color that supplies the values multiplied to this color
      */
-    public void multiply(@Nonnull final Color mul) {
+    public void multiply(@Nonnull Color mul) {
         red = (red * mul.red) / MAX_INT_VALUE;
         green = (green * mul.green) / MAX_INT_VALUE;
         blue = (blue * mul.blue) / MAX_INT_VALUE;
@@ -314,7 +314,7 @@ public class Color {
      *
      * @param value the value multiplied to each color component
      */
-    public void multiply(final float value) {
+    public void multiply(float value) {
         red *= value;
         green *= value;
         blue *= value;
@@ -336,7 +336,7 @@ public class Color {
      * @return the luminance level of the color
      */
     public float getLuminancef() {
-        return (red + green + blue) / (float) MAX_INT_VALUE / 3.f;
+        return (red + green + blue) / MAX_INT_VALUE / 3.f;
     }
 
     /**
