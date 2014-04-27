@@ -263,8 +263,24 @@ class GdxGraphics implements Graphics {
             tempRegion.setRegion(gdxSprite.getFrame(frame).getTextureRegion());
             tempRegion.flip(gdxSprite.isMirrored(), true);
             if (usedEffect != null) {
-                usedEffect.setTopLeftCoordinate(tempRegion.getU(), tempRegion.getV());
-                usedEffect.setBottomRightCoordinate(tempRegion.getU2(), tempRegion.getV2());
+                float u, u2;
+                if (tempRegion.isFlipX()) {
+                    u = tempRegion.getU();
+                    u2 = tempRegion.getU2();
+                } else {
+                    u2 = tempRegion.getU();
+                    u = tempRegion.getU2();
+                }
+                float v, v2;
+                if (tempRegion.isFlipY()) {
+                    v = tempRegion.getV();
+                    v2 = tempRegion.getV2();
+                } else {
+                    v2 = tempRegion.getV();
+                    v = tempRegion.getV2();
+                }
+                usedEffect.setTopLeftCoordinate(u2, v2);
+                usedEffect.setBottomRightCoordinate(u, v);
                 usedEffect.activateEffect(spriteBatch);
             }
             spriteBatch.draw(tempRegion, tempEngineRectangle.getX(), tempEngineRectangle.getY(), (float) centerTransX,
