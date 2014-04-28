@@ -136,6 +136,10 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
                 tileLightEffect.setTopRightColor(parentTile.getTopRightLight());
                 tileLightEffect.setBottomLeftColor(parentTile.getBottomLeftLight());
                 tileLightEffect.setBottomRightColor(parentTile.getBottomRightLight());
+                tileLightEffect.setTopColor(parentTile.getTopLight());
+                tileLightEffect.setBottomColor(parentTile.getBottomLight());
+                tileLightEffect.setLeftColor(parentTile.getLeftLight());
+                tileLightEffect.setRightColor(parentTile.getRightLight());
                 tileLightEffect.setCenterColor(parentTile.getCenterLight());
                 renderSprite(g, getDisplayX(), getDisplayY(), parentTile.getAmbientLight(), tileLightEffect);
             }

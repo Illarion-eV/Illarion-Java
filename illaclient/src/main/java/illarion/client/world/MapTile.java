@@ -125,6 +125,30 @@ public final class MapTile implements AlphaChangeListener {
     private final Color bottomRightColor = new Color(Color.WHITE);
 
     /**
+     * The light that was calculated for the tile top of this tile on the screen.
+     */
+    @Nonnull
+    private final Color topColor = new Color(Color.WHITE);
+
+    /**
+     * The light that was calculated for the tile bottom of this tile on the screen.
+     */
+    @Nonnull
+    private final Color bottomColor = new Color(Color.WHITE);
+
+    /**
+     * The light that was calculated for the tile left of this tile on the screen.
+     */
+    @Nonnull
+    private final Color leftColor = new Color(Color.WHITE);
+
+    /**
+     * The light that was calculated for the tile right of this tile on the screen.
+     */
+    @Nonnull
+    private final Color rightColor = new Color(Color.WHITE);
+
+    /**
      * The ambient light that is applied to this tile.
      */
     @Nonnull
@@ -342,6 +366,58 @@ public final class MapTile implements AlphaChangeListener {
             LOGGER.warn("Fetching light of a removed tile.");
         }
         return bottomRightColor;
+    }
+
+    /**
+     * Get the light top of this tile
+     *
+     * @return the light top of the tile
+     */
+    @Nonnull
+    public Color getTopLight() {
+        if (removedTile) {
+            LOGGER.warn("Fetching light of a removed tile.");
+        }
+        return topColor;
+    }
+
+    /**
+     * Get the light bottom of this tile
+     *
+     * @return the light bottom of the tile
+     */
+    @Nonnull
+    public Color getBottomLight() {
+        if (removedTile) {
+            LOGGER.warn("Fetching light of a removed tile.");
+        }
+        return bottomColor;
+    }
+
+    /**
+     * Get the light left of this tile
+     *
+     * @return the light left of the tile
+     */
+    @Nonnull
+    public Color getLeftLight() {
+        if (removedTile) {
+            LOGGER.warn("Fetching light of a removed tile.");
+        }
+        return leftColor;
+    }
+
+    /**
+     * Get the light right of this tile
+     *
+     * @return the light right of the tile
+     */
+    @Nonnull
+    public Color getRightLight() {
+        if (removedTile) {
+            LOGGER.warn("Fetching light of a removed tile.");
+        }
+        return rightColor;
     }
 
     /**
@@ -967,6 +1043,10 @@ public final class MapTile implements AlphaChangeListener {
         MapTile topRightTile = World.getMap().getMapAt(currentX + 1, currentY, currentZ); // east
         MapTile bottomLeftTile = World.getMap().getMapAt(currentX - 1, currentY, currentZ); // west
         MapTile bottomRightTile = World.getMap().getMapAt(currentX, currentY + 1, currentZ); // south
+        MapTile topTile = World.getMap().getMapAt(currentX + 1, currentY - 1, currentZ);
+        MapTile bottomTile = World.getMap().getMapAt(currentX - 1, currentY + 1, currentZ);
+        MapTile leftTile = World.getMap().getMapAt(currentX - 1, currentY - 1, currentZ);
+        MapTile rightTile = World.getMap().getMapAt(currentX + 1, currentY + 1, currentZ);
 
         if (topLeftTile != null) {
             topLeftTile.bottomRightColor.setColor(tmpLight);
@@ -979,6 +1059,18 @@ public final class MapTile implements AlphaChangeListener {
         }
         if (bottomRightTile != null) {
             bottomRightTile.topLeftColor.setColor(tmpLight);
+        }
+        if (topTile != null) {
+            topTile.bottomColor.setColor(tmpLight);
+        }
+        if (bottomTile != null) {
+            bottomTile.topColor.setColor(tmpLight);
+        }
+        if (leftTile != null) {
+            leftTile.rightColor.setColor(tmpLight);
+        }
+        if (rightTile != null) {
+            rightTile.leftColor.setColor(tmpLight);
         }
 
         light.setColor(tmpLight);

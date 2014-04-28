@@ -58,6 +58,30 @@ public class GdxTileLightEffect implements TileLightEffect, GdxTextureEffect {
     private static final String UNIFORM_BOTTOM_RIGHT = "u_bottomRight";
 
     /**
+     * Uniform shader variable name for the top light.
+     */
+    @Nonnull
+    private static final String UNIFORM_TOP = "u_top";
+
+    /**
+     * Uniform shader variable name for the bottom light.
+     */
+    @Nonnull
+    private static final String UNIFORM_BOTTOM = "u_bottom";
+
+    /**
+     * Uniform shader variable name for the left light.
+     */
+    @Nonnull
+    private static final String UNIFORM_LEFT = "u_left";
+
+    /**
+     * Uniform shader variable name for the right light.
+     */
+    @Nonnull
+    private static final String UNIFORM_RIGHT = "u_right";
+
+    /**
      * Uniform shader variable name for the center light.
      */
     @Nonnull
@@ -90,6 +114,14 @@ public class GdxTileLightEffect implements TileLightEffect, GdxTextureEffect {
     @Nonnull
     private final com.badlogic.gdx.graphics.Color bottomRight;
     @Nonnull
+    private final com.badlogic.gdx.graphics.Color top;
+    @Nonnull
+    private final com.badlogic.gdx.graphics.Color bottom;
+    @Nonnull
+    private final com.badlogic.gdx.graphics.Color left;
+    @Nonnull
+    private final com.badlogic.gdx.graphics.Color right;
+    @Nonnull
     private final com.badlogic.gdx.graphics.Color center;
     private final Vector2 topLeftCoord;
     private final Vector2 bottomRightCoord;
@@ -107,6 +139,10 @@ public class GdxTileLightEffect implements TileLightEffect, GdxTextureEffect {
         topRight = new com.badlogic.gdx.graphics.Color();
         bottomLeft = new com.badlogic.gdx.graphics.Color();
         bottomRight = new com.badlogic.gdx.graphics.Color();
+        top = new com.badlogic.gdx.graphics.Color();
+        bottom = new com.badlogic.gdx.graphics.Color();
+        left = new com.badlogic.gdx.graphics.Color();
+        right = new com.badlogic.gdx.graphics.Color();
         center = new com.badlogic.gdx.graphics.Color();
         topLeftCoord = new Vector2();
         bottomRightCoord = new Vector2();
@@ -133,6 +169,26 @@ public class GdxTileLightEffect implements TileLightEffect, GdxTextureEffect {
     }
 
     @Override
+    public void setTopColor(@Nonnull Color color) {
+        GdxGraphics.transferColor(color, top);
+    }
+
+    @Override
+    public void setBottomColor(@Nonnull Color color) {
+        GdxGraphics.transferColor(color, bottom);
+    }
+
+    @Override
+    public void setLeftColor(@Nonnull Color color) {
+        GdxGraphics.transferColor(color, left);
+    }
+
+    @Override
+    public void setRightColor(@Nonnull Color color) {
+        GdxGraphics.transferColor(color, right);
+    }
+
+    @Override
     public void setCenterColor(@Nonnull Color color) {
         GdxGraphics.transferColor(color, center);
     }
@@ -145,6 +201,10 @@ public class GdxTileLightEffect implements TileLightEffect, GdxTextureEffect {
             setUniform(shader, UNIFORM_TOP_RIGHT, topRight);
             setUniform(shader, UNIFORM_BOTTOM_LEFT, bottomLeft);
             setUniform(shader, UNIFORM_BOTTOM_RIGHT, bottomRight);
+            setUniform(shader, UNIFORM_TOP, top);
+            setUniform(shader, UNIFORM_BOTTOM, bottom);
+            setUniform(shader, UNIFORM_LEFT, left);
+            setUniform(shader, UNIFORM_RIGHT, right);
             setUniform(shader, UNIFORM_CENTER, center);
             setUniform(shader, UNIFORM_TOP_LEFT_COORDS, topLeftCoord);
             setUniform(shader, UNIFORM_BOTTOM_RIGHT_COORDS, bottomRightCoord);

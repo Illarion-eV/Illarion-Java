@@ -54,6 +54,34 @@ public interface TileLightEffect extends TextureEffect {
     void setBottomRightColor(@Nonnull Color color);
 
     /**
+     * Set the color of the tile top of the rendered tile.
+     *
+     * @param color the color of the tile
+     */
+    void setTopColor(@Nonnull Color color);
+
+    /**
+     * Set the color of the tile bottom of the rendered tile.
+     *
+     * @param color the color of the tile
+     */
+    void setBottomColor(@Nonnull Color color);
+
+    /**
+     * Set the color of the tile left of the rendered tile.
+     *
+     * @param color the color of the tile
+     */
+    void setLeftColor(@Nonnull Color color);
+
+    /**
+     * Set the color of the tile right of the rendered tile.
+     *
+     * @param color the color of the tile
+     */
+    void setRightColor(@Nonnull Color color);
+
+    /**
      * Set the color in the center of the rendered tile.
      *
      * @param color the color of the tile
