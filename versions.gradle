@@ -14,6 +14,6 @@
  * GNU General Public License for more details.
  */
 ext {
-    slf4jVersion = '1.7.6'
+    slf4jVersion = '1.7.7'
     illarionResourcesVersion = '2.1.14.2-SNAPSHOT'
 }

@@ -19,6 +19,7 @@ import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.testng.annotations.BeforeTest
 import org.testng.annotations.Test
+import org.hamcrest.Matchers
 
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.instanceOf
@@ -41,9 +42,10 @@ class ConvertPluginTest {
         project.plugins.apply(ConvertPlugin)
 
         assertTrue(project.plugins.hasPlugin(ConvertPlugin), "Convert plugin not present")
-        assertThat("Resource task", project.tasks.getByName("convertResources"), is(instanceOf(ResourceConverter)))
+        assertThat("Resource task", project.tasks.getByName("convertResources"),
+                Matchers.is(instanceOf(ResourceConverter)))
         assertThat("Converter convention",
-                project.convention.plugins.get("converter"), is(instanceOf(ConvertPluginConvention)))
+                project.convention.plugins.get("converter"), Matchers.is(instanceOf(ConvertPluginConvention)))
     }
 
     @Test

@@ -17,7 +17,7 @@
 apply plugin: 'idea'
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.10'
+    gradleVersion = '1.11'
 }
 
 idea {
@@ -75,7 +75,7 @@ allprojects { project ->
         task.project.ext.fullVersion = gitVersion
     }
 
-    project.configurations.all {
+    project.configurations.all { config ->
         resolutionStrategy {
             cacheDynamicVersionsFor 10 * 60, 'seconds'
             cacheChangingModulesFor 0, 'seconds'
@@ -89,7 +89,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.sf.proguard', name: 'proguard-gradle', version: '4.10'
+        classpath group: 'net.sf.proguard', name: 'proguard-gradle', version: '4.11'
         classpath group: 'edu.sc.seis.gradle', name: 'launch4j', version: '1.0.6'
         classpath group: 'edu.sc.seis.gradle', name: 'macappbundle', version: '2.0.0'
     }
