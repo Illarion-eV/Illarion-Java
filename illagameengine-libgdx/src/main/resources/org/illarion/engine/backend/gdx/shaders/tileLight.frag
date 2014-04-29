@@ -38,17 +38,17 @@ void main() {
 
 	vec2 topCoords = vec2((u_bottomRightCoords.x + u_topLeftCoords.x) / 2.0, u_topLeftCoords.y);
 	vec2 bottomCoords = vec2((u_bottomRightCoords.x + u_topLeftCoords.x) / 2.0, u_bottomRightCoords.y);
-	vec2 rightCoords = vec2(u_bottomRightCoords.x, (u_bottomRightCoords.y + u_topLeftCoords.y) / 2.0);
 	vec2 leftCoords = vec2(u_topLeftCoords.x, (u_bottomRightCoords.y + u_topLeftCoords.y) / 2.0);
 
 	vec2 leftTopVector = topCoords - leftCoords;
 	vec2 leftBottomVector = bottomCoords - leftCoords;
 	vec2 targetVector = v_texCoords - leftCoords;
 
+    float d = leftTopVector.x * leftBottomVector.y - leftTopVector.y * leftBottomVector.x;
     // project v_texCoords on leftTopVector
-	float weightRight = dot(targetVector, leftTopVector) / dot(leftTopVector, leftTopVector);
+	float weightRight = (targetVector.x * leftBottomVector.y - targetVector.y * leftBottomVector.x) / d;
 	// project v_texCoords on leftBottomVector
-	float weightBottom = dot(targetVector, leftBottomVector) / dot(leftBottomVector, leftBottomVector);
+	float weightBottom = (leftTopVector.x * targetVector.y - leftTopVector.y * targetVector.x) / d;
 
 	vec3 topInterpolation = mix(leftColor, topColor, weightRight);
     vec3 bottomInterpolation = mix(bottomColor, rightColor, weightRight);
