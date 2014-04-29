@@ -36,22 +36,23 @@ void main() {
 	vec3 rightColor = (u_right.rgb + u_topRight.rgb + u_bottomRight.rgb + u_center.rgb) / 4.0;
 	vec3 leftColor = (u_left.rgb + u_bottomLeft.rgb + u_topLeft.rgb + u_center.rgb) / 4.0;
 
-	vec2 topCoords = vec2((u_bottomRightCoords.x - u_topLeftCoords.x) / 2.0, u_topLeftCoords.y);
-	vec2 bottomCoords = vec2((u_bottomRightCoords.x - u_topLeftCoords.x) / 2.0, u_bottomRightCoords.y);
-	vec2 rightCoords = vec2(u_bottomRightCoords.x, (u_bottomRightCoords.y - u_topLeftCoords.y) / 2.0);
-	vec2 leftCoords = vec2(u_topLeftCoords.x, (u_bottomRightCoords.y - u_topLeftCoords.y) / 2.0);
+	vec2 topCoords = vec2((u_bottomRightCoords.x + u_topLeftCoords.x) / 2.0, u_topLeftCoords.y);
+	vec2 bottomCoords = vec2((u_bottomRightCoords.x + u_topLeftCoords.x) / 2.0, u_bottomRightCoords.y);
+	vec2 rightCoords = vec2(u_bottomRightCoords.x, (u_bottomRightCoords.y + u_topLeftCoords.y) / 2.0);
+	vec2 leftCoords = vec2(u_topLeftCoords.x, (u_bottomRightCoords.y + u_topLeftCoords.y) / 2.0);
 
 	vec2 leftTopVector = topCoords - leftCoords;
 	vec2 leftBottomVector = bottomCoords - leftCoords;
+	vec2 targetVector = v_texCoords - leftCoords;
 
     // project v_texCoords on leftTopVector
-	float weightRight = dot(v_texCoords - leftCoords, leftTopVector) / dot(leftTopVector, leftTopVector);
+	float weightRight = dot(targetVector, leftTopVector) / dot(leftTopVector, leftTopVector);
 	// project v_texCoords on leftBottomVector
-	float weightBottom = dot(v_texCoords - leftCoords, leftBottomVector) / dot(leftBottomVector, leftBottomVector);
+	float weightBottom = dot(targetVector, leftBottomVector) / dot(leftBottomVector, leftBottomVector);
 
-	vec3 topInterpolation = weightRight * topColor + (1.0 - weightRight) * leftColor;
-    vec3 bottomInterpolation = weightRight * rightColor + (1.0 - weightRight) * bottomColor;
-    vec3 usedColor = weightBottom * bottomInterpolation + (1.0 - weightBottom) * topInterpolation;
+	vec3 topInterpolation = mix(leftColor, topColor, weightRight);
+    vec3 bottomInterpolation = mix(bottomColor, rightColor, weightRight);
+    vec3 usedColor = mix(topInterpolation, bottomInterpolation, weightBottom);
 
 	// apply the color to the fragment
 	vec3 actualLight = usedColor * ambientFactor + v_color.rgb;
