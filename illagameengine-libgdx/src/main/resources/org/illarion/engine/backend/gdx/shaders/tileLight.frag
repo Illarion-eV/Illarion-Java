@@ -55,6 +55,6 @@ void main() {
     vec3 usedColor = mix(topInterpolation, bottomInterpolation, weightBottom);
 
 	// apply the color to the fragment
-	vec3 actualLight = usedColor * ambientFactor + v_color.rgb;
+	vec3 actualLight = usedColor * (1.0 - ambientFactor) + v_color.rgb;
 	gl_FragColor = vec4(color.rgb * actualLight, color.a);
 }
