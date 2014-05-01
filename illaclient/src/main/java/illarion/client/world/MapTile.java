@@ -339,7 +339,7 @@ public final class MapTile implements AlphaChangeListener {
         if (removedTile) {
             LOGGER.warn("Fetching light of a removed tile.");
         }
-        return topLeftColor;
+        return topRightColor;
     }
 
     /**
