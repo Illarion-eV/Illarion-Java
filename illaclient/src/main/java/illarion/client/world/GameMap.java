@@ -924,9 +924,6 @@ public final class GameMap implements LightingMap, Stoppable {
                 processor.reportUnchecked(locKey);
             }
 
-            // remember real map tile for use with overview map
-            updateData.setMapTile(tile);
-
             if (World.getPlayer().getLocation().equals(tile.getLocation())) {
                 World.getMusicBox().updatePlayerLocation();
             }
