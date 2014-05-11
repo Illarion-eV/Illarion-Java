@@ -64,7 +64,7 @@ public final class Clock {
      * @param hour the hour of the new date
      * @param minute the minute of the new date
      */
-    public void setDateTime(final int year, final int month, final int day, final int hour, final int minute) {
+    public void setDateTime(int year, int month, int day, int hour, int minute) {
         lastSync = System.currentTimeMillis();
         this.year = year;
         this.month = month;
@@ -106,7 +106,7 @@ public final class Clock {
      * @return the current hour
      */
     public int getHour() {
-        final long illaHoursPass = getIllaSecondPass() / 60 / 60;
+        long illaHoursPass = getIllaSecondPass() / 60 / 60;
         return (int) ((hour + illaHoursPass) % 24);
     }
 
@@ -116,7 +116,7 @@ public final class Clock {
      * @return the current minute
      */
     public int getMinute() {
-        final long illaMinutesPass = getIllaSecondPass() / 60;
+        long illaMinutesPass = getIllaSecondPass() / 60;
         return (int) ((minute + illaMinutesPass) % 60);
     }
 
@@ -135,7 +135,7 @@ public final class Clock {
      * @return the elapsed time in Illarion seconds
      */
     private long getIllaSecondPass() {
-        final long secondsPass = (System.currentTimeMillis() - lastSync) / 1000;
+        long secondsPass = (System.currentTimeMillis() - lastSync) / 1000;
         return secondsPass * 3L;
     }
 }

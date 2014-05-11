@@ -132,15 +132,15 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
                 super.render(g);
                 showHighlight = 0;
             } else {
-                tileLightEffect.setTopLeftColor(parentTile.getTopLeftLight());
-                tileLightEffect.setTopRightColor(parentTile.getTopRightLight());
-                tileLightEffect.setBottomLeftColor(parentTile.getBottomLeftLight());
-                tileLightEffect.setBottomRightColor(parentTile.getBottomRightLight());
-                tileLightEffect.setTopColor(parentTile.getTopLight());
-                tileLightEffect.setBottomColor(parentTile.getBottomLight());
-                tileLightEffect.setLeftColor(parentTile.getLeftLight());
-                tileLightEffect.setRightColor(parentTile.getRightLight());
-                tileLightEffect.setCenterColor(parentTile.getCenterLight());
+                tileLightEffect.setTopLeftColor(parentTile.getLight(Location.DIR_NORTH));
+                tileLightEffect.setTopRightColor(parentTile.getLight(Location.DIR_EAST));
+                tileLightEffect.setBottomLeftColor(parentTile.getLight(Location.DIR_WEST));
+                tileLightEffect.setBottomRightColor(parentTile.getLight(Location.DIR_SOUTH));
+                tileLightEffect.setTopColor(parentTile.getLight(Location.DIR_NORTHEAST));
+                tileLightEffect.setBottomColor(parentTile.getLight(Location.DIR_SOUTHWEST));
+                tileLightEffect.setLeftColor(parentTile.getLight(Location.DIR_NORTHWEST));
+                tileLightEffect.setRightColor(parentTile.getLight(Location.DIR_SOUTHEAST));
+                tileLightEffect.setCenterColor(parentTile.getLight(Location.DIR_MOVE8));
                 renderSprite(g, getDisplayX(), getDisplayY(), parentTile.getAmbientLight(), tileLightEffect);
             }
         }
@@ -193,6 +193,7 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
             } catch (EngineException ignored) {
             }
         }
+        parentTile.updateColor(delta);
         MapGroup group = parentTile.getMapGroup();
         if ((group != null) && group.isHidden()) {
             setAlphaTarget(0);
@@ -284,7 +285,7 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
     @Override
     @Nonnull
     protected Color getParentLight() {
-        Color tmpColor = new Color(parentTile.getCenterLight());
+        Color tmpColor = new Color(parentTile.getLight(Location.DIR_MOVE8));
         tmpColor.multiply(1.f - tmpColor.getLuminancef());
         tmpColor.add(parentTile.getAmbientLight());
         return tmpColor;

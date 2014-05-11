@@ -886,6 +886,7 @@ public final class GameMap implements LightingMap, Stoppable {
                 mapLock.writeLock().lock();
                 try {
                     tiles.put(locKey, tile);
+                    setColorLinks(tile);
                     GameMapProcessor2.processTile(tile);
                     if (inactiveQuestTargetLocations.containsKey(updateData.getLocation())) {
                         MiniMapGui.Pointer pointer = inactiveQuestTargetLocations.remove(updateData.getLocation())
@@ -912,5 +913,31 @@ public final class GameMap implements LightingMap, Stoppable {
             }
         }
         miniMap.update(updateData);
+    }
+
+    private MapTile getMapAt(@Nonnull Location origin, int direction) {
+        if ((direction < 0) || (direction >= Location.DIR_MOVE8)) {
+            throw new IllegalArgumentException("Direction is not a valid direction value: " + direction);
+        }
+        int offsetX = Location.getDirectionVectorX(direction);
+        int offsetY = Location.getDirectionVectorY(direction);
+
+        return getMapAt(origin.getScX() + offsetX, origin.getScY() + offsetY, origin.getScZ());
+    }
+
+    /**
+     * This function is used to establish the links between the color values of the different tiles.
+     *
+     * @param tile the new tile that is added
+     */
+    private void setColorLinks(@Nonnull MapTile tile) {
+        Location tileLocation = tile.getLocation();
+
+        for (int dir = 0; dir < Location.DIR_MOVE8; dir++) {
+            MapTile offsetTile = getMapAt(tileLocation, dir);
+            if (offsetTile != null) {
+                tile.linkColors(offsetTile, dir);
+            }
+        }
     }
 }

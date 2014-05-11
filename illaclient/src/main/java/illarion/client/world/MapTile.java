@@ -36,6 +36,8 @@ import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -95,58 +97,16 @@ public final class MapTile implements AlphaChangeListener {
     private final Color light = new Color(Color.WHITE);
 
     /**
-     * Get the light in the center of this tile.
+     * The calculated light in the center of the tile.
      */
     @Nonnull
-    private final Color centerColor = new Color(Color.WHITE);
+    private final Color targetCenterColor;
 
     /**
-     * The light that was calculated for the tile top left (north) of this tile on the screen.
+     * The storage of the color values.
      */
     @Nonnull
-    private final Color topLeftColor = new Color(Color.WHITE);
-
-    /**
-     * The light that was calculated for the tile top right (east) of this tile on the screen.
-     */
-    @Nonnull
-    private final Color topRightColor = new Color(Color.WHITE);
-
-    /**
-     * The light that was calculated for the tile bottom left (west) of this tile on the screen.
-     */
-    @Nonnull
-    private final Color bottomLeftColor = new Color(Color.WHITE);
-
-    /**
-     * The light that was calculated for the tile bottom right (south) of this tile on the screen.
-     */
-    @Nonnull
-    private final Color bottomRightColor = new Color(Color.WHITE);
-
-    /**
-     * The light that was calculated for the tile top of this tile on the screen.
-     */
-    @Nonnull
-    private final Color topColor = new Color(Color.WHITE);
-
-    /**
-     * The light that was calculated for the tile bottom of this tile on the screen.
-     */
-    @Nonnull
-    private final Color bottomColor = new Color(Color.WHITE);
-
-    /**
-     * The light that was calculated for the tile left of this tile on the screen.
-     */
-    @Nonnull
-    private final Color leftColor = new Color(Color.WHITE);
-
-    /**
-     * The light that was calculated for the tile right of this tile on the screen.
-     */
-    @Nonnull
-    private final Color rightColor = new Color(Color.WHITE);
+    private final List<AnimatedColor> colors;
 
     /**
      * The ambient light that is applied to this tile.
@@ -293,6 +253,9 @@ public final class MapTile implements AlphaChangeListener {
         tile = null;
         lightSrc = null;
         losDirty = true;
+        targetCenterColor = new Color(Color.WHITE);
+        colors = Arrays.asList(new AnimatedColor[Location.DIR_MOVE8 + 1]);
+        colors.set(Location.DIR_MOVE8, new AnimatedColor(targetCenterColor));
     }
 
     @Nonnull
@@ -303,121 +266,27 @@ public final class MapTile implements AlphaChangeListener {
         return light;
     }
 
-    /**
-     * Get the light in the center of this tile
-     *
-     * @return the light in the center of the tile
-     */
-    @Nonnull
-    public Color getCenterLight() {
-        if (removedTile) {
-            LOGGER.warn("Fetching light of a removed tile.");
+    public Color getLight(int direction) {
+        if ((direction < 0) || (direction > Location.DIR_MOVE8)) {
+            throw new IllegalArgumentException("Direction argument is out of range. Has to be between 0 and " +
+                                                       Location.DIR_MOVE8 + " (including)");
         }
-        return centerColor;
+        @Nullable AnimatedColor color = colors.get(direction);
+        return (color == null) ? Color.WHITE : color.getCurrentColor();
     }
 
-    /**
-     * Get the light top left of this tile
-     *
-     * @return the light top left of the tile
-     */
-    @Nonnull
-    public Color getTopLeftLight() {
-        if (removedTile) {
-            LOGGER.warn("Fetching light of a removed tile.");
-        }
-        return topLeftColor;
+    public void updateColor(int delta) {
+        colors.get(Location.DIR_MOVE8).update(delta);
     }
 
-    /**
-     * Get the light top right of this tile
-     *
-     * @return the light top right of the tile
-     */
-    @Nonnull
-    public Color getTopRightLight() {
-        if (removedTile) {
-            LOGGER.warn("Fetching light of a removed tile.");
+    void linkColors(@Nonnull MapTile otherTile, int direction) {
+        if ((direction < 0) || (direction >= Location.DIR_MOVE8)) {
+            throw new IllegalArgumentException("Direction is not a valid direction value: " + direction);
         }
-        return topRightColor;
-    }
 
-    /**
-     * Get the light bottom left of this tile
-     *
-     * @return the light bottom left of the tile
-     */
-    @Nonnull
-    public Color getBottomLeftLight() {
-        if (removedTile) {
-            LOGGER.warn("Fetching light of a removed tile.");
-        }
-        return bottomLeftColor;
-    }
-
-    /**
-     * Get the light bottom right of this tile
-     *
-     * @return the light bottom right of the tile
-     */
-    @Nonnull
-    public Color getBottomRightLight() {
-        if (removedTile) {
-            LOGGER.warn("Fetching light of a removed tile.");
-        }
-        return bottomRightColor;
-    }
-
-    /**
-     * Get the light top of this tile
-     *
-     * @return the light top of the tile
-     */
-    @Nonnull
-    public Color getTopLight() {
-        if (removedTile) {
-            LOGGER.warn("Fetching light of a removed tile.");
-        }
-        return topColor;
-    }
-
-    /**
-     * Get the light bottom of this tile
-     *
-     * @return the light bottom of the tile
-     */
-    @Nonnull
-    public Color getBottomLight() {
-        if (removedTile) {
-            LOGGER.warn("Fetching light of a removed tile.");
-        }
-        return bottomColor;
-    }
-
-    /**
-     * Get the light left of this tile
-     *
-     * @return the light left of the tile
-     */
-    @Nonnull
-    public Color getLeftLight() {
-        if (removedTile) {
-            LOGGER.warn("Fetching light of a removed tile.");
-        }
-        return leftColor;
-    }
-
-    /**
-     * Get the light right of this tile
-     *
-     * @return the light right of the tile
-     */
-    @Nonnull
-    public Color getRightLight() {
-        if (removedTile) {
-            LOGGER.warn("Fetching light of a removed tile.");
-        }
-        return rightColor;
+        int reverseDirection = (direction + (Location.DIR_SOUTH - Location.DIR_NORTH)) % Location.DIR_MOVE8;
+        otherTile.colors.set(reverseDirection, colors.get(Location.DIR_MOVE8));
+        colors.set(direction, otherTile.colors.get(Location.DIR_MOVE8));
     }
 
     /**
@@ -1033,45 +902,7 @@ public final class MapTile implements AlphaChangeListener {
         }
 
         this.ambientLight.setColor(ambientLight);
-        centerColor.setColor(tmpLight);
-
-        int currentX = tileLocation.getScX();
-        int currentY = tileLocation.getScY();
-        int currentZ = tileLocation.getScZ();
-
-        MapTile topLeftTile = World.getMap().getMapAt(currentX, currentY - 1, currentZ); // north
-        MapTile topRightTile = World.getMap().getMapAt(currentX + 1, currentY, currentZ); // east
-        MapTile bottomLeftTile = World.getMap().getMapAt(currentX - 1, currentY, currentZ); // west
-        MapTile bottomRightTile = World.getMap().getMapAt(currentX, currentY + 1, currentZ); // south
-        MapTile topTile = World.getMap().getMapAt(currentX + 1, currentY - 1, currentZ);
-        MapTile bottomTile = World.getMap().getMapAt(currentX - 1, currentY + 1, currentZ);
-        MapTile leftTile = World.getMap().getMapAt(currentX - 1, currentY - 1, currentZ);
-        MapTile rightTile = World.getMap().getMapAt(currentX + 1, currentY + 1, currentZ);
-
-        if (topLeftTile != null) {
-            topLeftTile.bottomRightColor.setColor(tmpLight);
-        }
-        if (topRightTile != null) {
-            topRightTile.bottomLeftColor.setColor(tmpLight);
-        }
-        if (bottomLeftTile != null) {
-            bottomLeftTile.topRightColor.setColor(tmpLight);
-        }
-        if (bottomRightTile != null) {
-            bottomRightTile.topLeftColor.setColor(tmpLight);
-        }
-        if (topTile != null) {
-            topTile.bottomColor.setColor(tmpLight);
-        }
-        if (bottomTile != null) {
-            bottomTile.topColor.setColor(tmpLight);
-        }
-        if (leftTile != null) {
-            leftTile.rightColor.setColor(tmpLight);
-        }
-        if (rightTile != null) {
-            rightTile.leftColor.setColor(tmpLight);
-        }
+        targetCenterColor.setColor(tmpLight);
 
         light.setColor(tmpLight);
         light.multiply(1.f - ambientLight.getLuminancef());

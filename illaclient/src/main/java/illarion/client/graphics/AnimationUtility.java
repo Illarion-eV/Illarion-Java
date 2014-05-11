@@ -81,9 +81,9 @@ public final class AnimationUtility {
      * @return {@code true} in case the colors got changed
      */
     public static boolean approach(
-            @Nonnull final Color workingColor,
-            @Nonnull final Color targetColor,
-            final int delta) {
+            @Nonnull Color workingColor,
+            @Nonnull Color targetColor,
+            int delta) {
         if (workingColor.equals(targetColor)) {
             return false;
         }
@@ -113,7 +113,7 @@ public final class AnimationUtility {
      * Call the function again and again with the new value until is
      * reaches the target value to get the full approach calculation
      */
-    public static int approach(final int value, final int target, final int min, final int max, final int delta) {
+    public static int approach(int value, int target, int min, int max, int delta) {
         return approach(value, target, DEFAULT_APPROACH, min, max, delta);
     }
 
@@ -140,18 +140,18 @@ public final class AnimationUtility {
      * reaches the target value to get the full approach calculation
      */
     public static int approach(
-            final int value,
-            final int target,
-            final int factor,
-            final int min,
-            final int max,
-            final int delta) {
-        final int diff = target - value;
+            int value,
+            int target,
+            int factor,
+            int min,
+            int max,
+            int delta) {
+        int diff = target - value;
         if (diff == 0) {
             return value;
         }
 
-        final int dir = FastMath.sign(diff);
+        int dir = FastMath.sign(diff);
         int absDiff = FastMath.abs(diff) / factor;
 
         if (absDiff > MIN_INT_DIFF) {
@@ -160,7 +160,7 @@ public final class AnimationUtility {
             absDiff = FastMath.clamp(absDiff, 1, MIN_INT_DIFF);
         }
 
-        final int newValue = value + (absDiff * dir);
+        int newValue = value + (absDiff * dir);
         return FastMath.clamp(newValue, min, max);
     }
 
@@ -183,15 +183,15 @@ public final class AnimationUtility {
      * @return the new value that is one step closer to the translation target
      */
     public static float translate(
-            final float value,
-            final float target,
-            final float step,
-            final float min,
-            final float max,
-            final int delta) {
+            float value,
+            float target,
+            float step,
+            float min,
+            float max,
+            int delta) {
         float diff = (target - value);
         if (diff != 0) {
-            final int dir = (int) (diff / FastMath.abs(diff));
+            int dir = (int) (diff / FastMath.abs(diff));
             diff = FastMath.abs(diff);
             if (diff <= step) {
                 return target;
@@ -204,7 +204,7 @@ public final class AnimationUtility {
                     diff = MIN_FLOAT_DIFF;
                 }
             }
-            final float newValue = value + (diff * dir);
+            float newValue = value + (diff * dir);
 
             // clamp value against limits
             if (newValue > max) {
@@ -233,7 +233,7 @@ public final class AnimationUtility {
      * of the update speed
      * @return the new value that is one step closer to the translation target
      */
-    public static float translate(final float value, final float target, final float step, final int delta) {
+    public static float translate(float value, float target, float step, int delta) {
         return translate(value, target, step, 0, 1, delta);
     }
 
@@ -257,15 +257,15 @@ public final class AnimationUtility {
      * @return the new value that is one step closer to the translation target
      */
     public static int translate(
-            final int value,
-            final int target,
-            final int step,
-            final int min,
-            final int max,
-            final int delta) {
+            int value,
+            int target,
+            int step,
+            int min,
+            int max,
+            int delta) {
         int diff = (target - value);
         if (diff != 0) {
-            final int dir = FastMath.sign(diff);
+            int dir = FastMath.sign(diff);
             diff = FastMath.abs(diff);
             if (diff < step) {
                 return target;
@@ -278,7 +278,7 @@ public final class AnimationUtility {
                     diff = 1;
                 }
             }
-            final int newValue = value + (diff * dir);
+            int newValue = value + (diff * dir);
 
             // clamp value against limits
             if ((dir == 1) && (newValue > target)) {
@@ -312,7 +312,7 @@ public final class AnimationUtility {
      * of the update speed
      * @return the new value that is one step closer to the translation target
      */
-    public static int translateAlpha(final int value, final int target, final int step, final int delta) {
+    public static int translateAlpha(int value, int target, int step, int delta) {
         return translate(value, target, step, 0, 255, delta);
     }
 }
