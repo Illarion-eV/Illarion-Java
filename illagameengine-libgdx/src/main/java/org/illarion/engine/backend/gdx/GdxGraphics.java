@@ -327,6 +327,13 @@ class GdxGraphics implements Graphics {
         target.clamp();
     }
 
+    static boolean equalColor(@Nonnull Color engineColor, @Nonnull com.badlogic.gdx.graphics.Color gdxColor) {
+        return (Float.compare(engineColor.getRedf(), gdxColor.r) == 0) &&
+                (Float.compare(engineColor.getGreenf(), gdxColor.g) == 0) &&
+                (Float.compare(engineColor.getBluef(), gdxColor.b) == 0) &&
+                (Float.compare(engineColor.getAlphaf(), gdxColor.a) == 0);
+    }
+
     @Override
     public void drawText(
             @Nonnull Font font,

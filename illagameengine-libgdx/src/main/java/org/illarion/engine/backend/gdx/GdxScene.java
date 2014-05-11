@@ -67,17 +67,17 @@ class GdxScene extends AbstractScene<GdxSceneEffect> {
      *
      * @param container the container that displays the scene
      */
-    GdxScene(@Nonnull final GameContainer container) {
+    GdxScene(@Nonnull GameContainer container) {
         this.container = container;
         camera = new OrthographicCamera();
         camera.setToOrtho(true);
     }
 
     @Override
-    public void update(@Nonnull final GameContainer c, final int delta) {
+    public void update(@Nonnull GameContainer c, int delta) {
         updateScene(c, delta);
 
-        final int effectCount = getEffectCount();
+        int effectCount = getEffectCount();
         for (int i = 0; i < effectCount; i++) {
             getEffect(i).update(delta);
         }
@@ -87,14 +87,14 @@ class GdxScene extends AbstractScene<GdxSceneEffect> {
     }
 
     @Override
-    public void render(@Nonnull final Graphics graphics, final int offsetX, final int offsetY) {
+    public void render(@Nonnull Graphics graphics, int offsetX, int offsetY) {
         if (!(graphics instanceof GdxGraphics)) {
             throw new IllegalArgumentException("Illegal graphics implementation.");
         }
 
-        final GdxGraphics gdxGraphics = (GdxGraphics) graphics;
+        GdxGraphics gdxGraphics = (GdxGraphics) graphics;
 
-        final int effectCount = getEffectCount();
+        int effectCount = getEffectCount();
         if (effectCount == 0) {
             gdxGraphics.applyOffset(offsetX, offsetY);
             renderScene(graphics);
@@ -110,7 +110,7 @@ class GdxScene extends AbstractScene<GdxSceneEffect> {
             gdxGraphics.flushAll();
             currentFrameBuffer.end();
 
-            final SpriteBatch renderBatch = gdxGraphics.getSpriteBatch();
+            SpriteBatch renderBatch = gdxGraphics.getSpriteBatch();
             renderBatch.setProjectionMatrix(camera.combined);
             renderBatch.setColor(Color.WHITE);
             FrameBuffer lastFrameBuffer = currentFrameBuffer;
@@ -118,7 +118,7 @@ class GdxScene extends AbstractScene<GdxSceneEffect> {
                 currentFrameBuffer = getNextFrameBuffer(container.getWidth(), container.getHeight());
                 currentFrameBuffer.begin();
                 renderBatch.begin();
-                final GdxSceneEffect effect = getEffect(i);
+                GdxSceneEffect effect = getEffect(i);
                 effect.activateEffect(renderBatch, container.getWidth(), container.getHeight(),
                                       currentFrameBuffer.getColorBufferTexture().getWidth(),
                                       currentFrameBuffer.getColorBufferTexture().getHeight());
@@ -145,7 +145,7 @@ class GdxScene extends AbstractScene<GdxSceneEffect> {
      * @return the image that can be used now
      */
     @Nonnull
-    private FrameBuffer getNextFrameBuffer(final int width, final int height) {
+    private FrameBuffer getNextFrameBuffer(int width, int height) {
         if (lastFrameBuffer == 1) {
             processImage0 = validateFrameBuffer(width, height, processImage0);
             lastFrameBuffer = 0;
@@ -166,9 +166,7 @@ class GdxScene extends AbstractScene<GdxSceneEffect> {
      */
     @Nonnull
     private static FrameBuffer validateFrameBuffer(
-            final int width,
-            final int height,
-            @Nullable final FrameBuffer original) {
+            int width, int height, @Nullable FrameBuffer original) {
         if (original == null) {
             return new FrameBuffer(Pixmap.Format.RGBA8888, width, height, false);
         }

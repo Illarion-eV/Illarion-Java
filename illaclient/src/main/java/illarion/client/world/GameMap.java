@@ -19,7 +19,6 @@ import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.procedure.TLongObjectProcedure;
 import gnu.trove.procedure.TObjectProcedure;
 import illarion.client.IllaClient;
-import illarion.client.crash.MapProcessorCrashHandler;
 import illarion.client.graphics.QuestMarker;
 import illarion.client.gui.MiniMapGui;
 import illarion.client.net.server.TileUpdate;
@@ -221,13 +220,6 @@ public final class GameMap implements LightingMap, Stoppable {
     private final GameMiniMap miniMap;
 
     /**
-     * The map processor of this game map instance. This one handles the clipping and the render optimization of the
-     * map.
-     */
-    @Nullable
-    private GameMapProcessor processor;
-
-    /**
      * A helper class for rendering the light values on all map tiles.
      */
     @Nonnull
@@ -289,7 +281,6 @@ public final class GameMap implements LightingMap, Stoppable {
         mapLock = new ReentrantReadWriteLock();
 
         miniMap = new GameMiniMap(engine);
-        restartMapProcessor();
 
         showQuestsOnMiniMap = IllaClient.getCfg().getBoolean("showQuestsOnMiniMap");
         showQuestsOnGameMap = IllaClient.getCfg().getBoolean("showQuestsOnGameMap");
@@ -545,9 +536,6 @@ public final class GameMap implements LightingMap, Stoppable {
      * Finish a tile update of the game map.
      */
     public void finishTileUpdate() {
-        if (processor != null) {
-            processor.start();
-        }
         GameMapProcessor2.checkInside();
     }
 
@@ -766,27 +754,8 @@ public final class GameMap implements LightingMap, Stoppable {
         }
     }
 
-    /**
-     * Start or restart the map processor.
-     */
-    public void restartMapProcessor() {
-        if (processor != null) {
-            processor.clear();
-            processor.saveShutdown();
-            processor = null;
-        }
-        processor = new GameMapProcessor(this);
-        processor.setUncaughtExceptionHandler(MapProcessorCrashHandler.getInstance());
-        processor.start();
-    }
-
     @Override
     public void saveShutdown() {
-        if (processor != null) {
-            processor.clear();
-            processor.saveShutdown();
-            processor = null;
-        }
         clear();
     }
 
@@ -806,42 +775,32 @@ public final class GameMap implements LightingMap, Stoppable {
     }
 
     /**
-     * Prepare the game map for a tile update.
-     */
-    public void startTileUpdate() {
-        if (processor != null) {
-            processor.pause();
-        }
-    }
-
-    /**
-     * Update the data of a tile. This does nothing but forwarding the location of the tile to the map processor so
-     * it checks the tile again.
-     *
-     * @param tile the tile to check again
-     */
-    public void updateTile(@Nonnull MapTile tile) {
-        if (processor != null) {
-            processor.reportUnchecked(tile.getLocation().getKey());
-        }
-    }
-
-    /**
      * This function sends all tiles to the map processor and causes it to check the tiles again.
      */
     public void updateAllTiles() {
-        if (processor != null) {
-            mapLock.readLock().lock();
-            try {
-                tiles.forEachValue(new TObjectProcedure<MapTile>() {
-                    @Override
-                    public boolean execute(@Nonnull MapTile object) {
-                        updateTile(object);
-                        return true;
+        final Collection<Long> tilesToDelete = new HashSet<>();
+        mapLock.readLock().lock();
+        try {
+            tiles.forEachValue(new TObjectProcedure<MapTile>() {
+                @Override
+                public boolean execute(@Nonnull MapTile object) {
+                    if (GameMapProcessor2.isOutsideOfClipping(object)) {
+                        tilesToDelete.add(object.getLocation().getKey());
                     }
-                });
+                    return true;
+                }
+            });
+        } finally {
+            mapLock.readLock().unlock();
+        }
+        if (!tilesToDelete.isEmpty()) {
+            mapLock.writeLock().lock();
+            try {
+                for (long key : tilesToDelete) {
+                    removeTile(key);
+                }
             } finally {
-                mapLock.readLock().unlock();
+                mapLock.writeLock().unlock();
             }
         }
     }
@@ -903,10 +862,6 @@ public final class GameMap implements LightingMap, Stoppable {
                 }
             }
             World.getLights().notifyChange(updateData.getLocation());
-
-            if (processor != null) {
-                processor.reportUnchecked(locKey);
-            }
 
             if (World.getPlayer().getLocation().equals(tile.getLocation())) {
                 World.getMusicBox().updatePlayerLocation();

@@ -72,10 +72,10 @@ public final class MapStripeMsg extends AbstractReply {
      * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         loc = decodeLocation(reader);
 
-        final Location workLoc = new Location();
+        Location workLoc = new Location();
         workLoc.set(loc);
 
         dir = reader.readUByte();
@@ -101,8 +101,7 @@ public final class MapStripeMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        final GameMap map = World.getMap();
-        map.startTileUpdate();
+        GameMap map = World.getMap();
         map.updateTiles(tiles);
         map.finishTileUpdate();
 

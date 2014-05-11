@@ -83,14 +83,14 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
     }
 
     @Override
-    public int compare(@Nonnull final SceneElement o1, @Nonnull final SceneElement o2) {
+    public int compare(@Nonnull SceneElement o1, @Nonnull SceneElement o2) {
         return FastMath.sign(o2.getOrder() - o1.getOrder());
     }
 
     @Override
-    public final void addElement(@Nonnull final SceneElement element) {
+    public final void addElement(@Nonnull SceneElement element) {
         synchronized (sceneElements) {
-            final int insertIndex = Collections.binarySearch(sceneElements, element, this);
+            int insertIndex = Collections.binarySearch(sceneElements, element, this);
             if (insertIndex < 0) {
                 sceneElements.add(-insertIndex - 1, element);
             } else {
@@ -100,7 +100,7 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
     }
 
     @Override
-    public final void updateElementLocation(@Nonnull final SceneElement element) {
+    public final void updateElementLocation(@Nonnull SceneElement element) {
         synchronized (sceneElements) {
             removeElement(element);
             addElement(element);
@@ -108,7 +108,7 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
     }
 
     @Override
-    public final void removeElement(@Nonnull final SceneElement element) {
+    public final void removeElement(@Nonnull SceneElement element) {
         synchronized (sceneElements) {
             sceneElements.remove(element);
         }
@@ -120,7 +120,7 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
      * @param container the game container that is forwarded to the scene elements
      * @param delta the time since the last update that is reported to the elements
      */
-    protected final void updateScene(@Nonnull final GameContainer container, final int delta) {
+    protected final void updateScene(@Nonnull GameContainer container, int delta) {
         Arrays.fill(workingArray, null);
         synchronized (sceneElements) {
             workingArray = sceneElements.toArray(workingArray);
@@ -131,7 +131,7 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
         while (event != null) {
             boolean notProcessed = true;
             for (int i = workingArraySize - 1; i >= 0; i--) {
-                final SceneElement element = workingArray[i];
+                SceneElement element = workingArray[i];
                 if (element.isEventProcessed(container, delta, event)) {
                     notProcessed = false;
                     break;
@@ -142,9 +142,10 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
             }
             event = eventQueue.poll();
         }
+        long end = System.currentTimeMillis();
 
         for (int i = 0; i < workingArraySize; i++) {
-            final SceneElement element = workingArray[i];
+            SceneElement element = workingArray[i];
             element.update(container, delta);
         }
     }
@@ -154,36 +155,36 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
      *
      * @param graphics the graphics instance that is used to render the game
      */
-    protected final void renderScene(@Nonnull final Graphics graphics) {
+    protected final void renderScene(@Nonnull Graphics graphics) {
         for (int i = 0; i < workingArraySize; i++) {
-            final SceneElement element = workingArray[i];
+            SceneElement element = workingArray[i];
             element.render(graphics);
         }
     }
 
     @Override
-    public final void publishEvent(@Nonnull final SceneEvent event) {
+    public final void publishEvent(@Nonnull SceneEvent event) {
         eventQueue.offer(event);
     }
 
     @Override
-    public void addEffect(@Nonnull final SceneEffect effect) {
+    public void addEffect(@Nonnull SceneEffect effect) {
         try {
-            @SuppressWarnings("unchecked") final T sceneEffect = (T) effect;
+            @SuppressWarnings("unchecked") T sceneEffect = (T) effect;
             if (!sceneEffects.contains(sceneEffect)) {
                 sceneEffects.add(sceneEffect);
             }
-        } catch (@Nonnull final ClassCastException e) {
+        } catch (@Nonnull ClassCastException e) {
             // illegal type
         }
     }
 
     @Override
-    public void removeEffect(@Nonnull final SceneEffect effect) {
+    public void removeEffect(@Nonnull SceneEffect effect) {
         try {
-            @SuppressWarnings("unchecked") final T sceneEffect = (T) effect;
+            @SuppressWarnings("unchecked") T sceneEffect = (T) effect;
             sceneEffects.remove(sceneEffect);
-        } catch (@Nonnull final ClassCastException e) {
+        } catch (@Nonnull ClassCastException e) {
             // illegal type
         }
     }
@@ -199,7 +200,7 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
      * @param index the index of the effect
      * @return the scene effect
      */
-    protected final T getEffect(final int index) {
+    protected final T getEffect(int index) {
         return sceneEffects.get(index);
     }
 

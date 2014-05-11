@@ -30,10 +30,8 @@ import java.util.List;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class GameMapProcessor2 {
-    /**
-     * This singleton instance of this class.
-     */
-    private static final GameMapProcessor2 INSTANCE = new GameMapProcessor2();
+    private GameMapProcessor2() {
+    }
 
     /**
      * Process a single new tile.
@@ -41,11 +39,11 @@ public class GameMapProcessor2 {
      * @param tile the tile to process
      */
     @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
-    public static void processTile(@Nonnull final MapTile tile) {
-        final Location playerLocation = World.getPlayer().getLocation();
+    public static void processTile(@Nonnull MapTile tile) {
+        Location playerLocation = World.getPlayer().getLocation();
 
-        final MapTile tileAbove = getFirstTileAbove(tile.getLocation(), playerLocation.getScZ() + 2, true);
-        final MapTile tileBelow = getFirstTileBelow(tile.getLocation(), playerLocation.getScZ() - 2, true);
+        MapTile tileAbove = getFirstTileAbove(tile.getLocation(), playerLocation.getScZ() + 2, true);
+        MapTile tileBelow = getFirstTileBelow(tile.getLocation(), playerLocation.getScZ() - 2, true);
 
         if (tileAbove != null) {
             tile.setObstructingTile(tileAbove);
@@ -54,8 +52,8 @@ public class GameMapProcessor2 {
             tileBelow.setObstructingTile(tile);
         }
 
-        final List<MapGroup> groups = getSurroundingMapGroups(tile.getLocation());
-        final MapGroup tileGroup;
+        List<MapGroup> groups = getSurroundingMapGroups(tile.getLocation());
+        MapGroup tileGroup;
         if (groups.isEmpty()) {
             tileGroup = new MapGroup();
             tile.setMapGroup(tileGroup);
@@ -67,30 +65,72 @@ public class GameMapProcessor2 {
             }
         }
         if (tileAbove != null) {
-            final MapGroup tileAboveGroup = tileAbove.getMapGroup();
-            final MapGroup tileAboveGroupRoot = (tileAboveGroup == null) ? null : tileAboveGroup.getRootGroup();
+            MapGroup tileAboveGroup = tileAbove.getMapGroup();
+            MapGroup tileAboveGroupRoot = (tileAboveGroup == null) ? null : tileAboveGroup.getRootGroup();
             if (tileAboveGroupRoot != null) {
                 tileAboveGroupRoot.addOverwritingGroup(tileGroup);
             }
         }
         if (tileBelow != null) {
-            final MapGroup tileBelowGroup = tileBelow.getMapGroup();
-            final MapGroup tileBelowGroupRoot = (tileBelowGroup == null) ? null : tileBelowGroup.getRootGroup();
+            MapGroup tileBelowGroup = tileBelow.getMapGroup();
+            MapGroup tileBelowGroupRoot = (tileBelowGroup == null) ? null : tileBelowGroup.getRootGroup();
             if (tileBelowGroupRoot != null) {
                 tileGroup.addOverwritingGroup(tileBelowGroupRoot);
             }
         }
     }
 
+    public static boolean isOutsideOfClipping(@Nonnull MapTile tile) {
+        if (!World.getPlayer().hasValidLocation()) {
+            return false;
+        }
+
+        Location playerLoc = World.getPlayer().getLocation();
+        Location tileLoc = tile.getLocation();
+
+        /*
+         * Start checking the clipping of the tiles. In case a tile is found outside the clipping range, its deleted.
+         */
+        if ((playerLoc.getScZ() + 2) < tileLoc.getScZ()) {
+            return true;
+        }
+
+        if ((playerLoc.getScZ() - 2) > tileLoc.getScZ()) {
+            return true;
+        }
+
+        MapDimensions mapDim = MapDimensions.getInstance();
+
+        if ((playerLoc.getCol() + mapDim.getClippingOffsetLeft()) > tileLoc.getCol()) {
+            return true;
+        }
+
+        if ((playerLoc.getCol() + mapDim.getClippingOffsetRight()) < tileLoc.getCol()) {
+            return true;
+        }
+
+        int level = (Math.abs(tileLoc.getScZ() - playerLoc.getScZ()) * 6) + 1;
+
+        if ((playerLoc.getRow() + mapDim.getClippingOffsetTop()) < (tileLoc.getRow() - level)) {
+            return true;
+        }
+
+        if ((playerLoc.getRow() + mapDim.getClippingOffsetBottom()) > (tileLoc.getRow() + level)) {
+            return true;
+        }
+
+        return false;
+    }
+
     @Nullable
     private static MapGroup lastInsideGroup;
 
     public static void checkInside() {
-        final Location playerLocation = World.getPlayer().getLocation();
+        Location playerLocation = World.getPlayer().getLocation();
 
-        final MapTile tileAbove = getFirstTileAbove(playerLocation, playerLocation.getScZ() + 2, false);
-        final MapGroup realTileAboveGroup = (tileAbove == null) ? null : tileAbove.getMapGroup();
-        final MapGroup tileAboveGroup = (realTileAboveGroup == null) ? null : realTileAboveGroup.getRootGroup();
+        MapTile tileAbove = getFirstTileAbove(playerLocation, playerLocation.getScZ() + 2, false);
+        MapGroup realTileAboveGroup = (tileAbove == null) ? null : tileAbove.getMapGroup();
+        MapGroup tileAboveGroup = (realTileAboveGroup == null) ? null : realTileAboveGroup.getRootGroup();
 
         if (tileAboveGroup == null) {
             if (lastInsideGroup != null) {
@@ -113,7 +153,7 @@ public class GameMapProcessor2 {
 
     @Nullable
     private static MapTile getFirstTileBelow(
-            @Nonnull final Location startLocation, final int zLimit, final boolean perceptiveOffset) {
+            @Nonnull Location startLocation, int zLimit, boolean perceptiveOffset) {
         if (startLocation.getScZ() <= zLimit) {
             return null;
         }
@@ -128,7 +168,7 @@ public class GameMapProcessor2 {
             }
             currentZ--;
 
-            final MapTile tile = World.getMap().getMapAt(currentX, currentY, currentZ);
+            MapTile tile = World.getMap().getMapAt(currentX, currentY, currentZ);
             if (tile != null) {
                 return tile;
             }
@@ -138,11 +178,11 @@ public class GameMapProcessor2 {
 
     @Nonnull
     private static List<MapTile> getAllTilesAbove(
-            final Location startLocation, final int zLimit, final boolean perceptiveOffset) {
-        final List<MapTile> tileList = new ArrayList<>();
+            Location startLocation, int zLimit, boolean perceptiveOffset) {
+        List<MapTile> tileList = new ArrayList<>();
         Location currentLocation = startLocation;
         while (true) {
-            final MapTile currentTile = getFirstTileAbove(currentLocation, zLimit, perceptiveOffset);
+            MapTile currentTile = getFirstTileAbove(currentLocation, zLimit, perceptiveOffset);
             if (currentTile == null) {
                 break;
             }
@@ -154,7 +194,7 @@ public class GameMapProcessor2 {
 
     @Nullable
     private static MapTile getFirstTileAbove(
-            @Nonnull final Location startLocation, final int zLimit, final boolean perceptiveOffset) {
+            @Nonnull Location startLocation, int zLimit, boolean perceptiveOffset) {
         if (startLocation.getScZ() >= zLimit) {
             return null;
         }
@@ -169,7 +209,7 @@ public class GameMapProcessor2 {
             }
             currentZ++;
 
-            final MapTile tile = World.getMap().getMapAt(currentX, currentY, currentZ);
+            MapTile tile = World.getMap().getMapAt(currentX, currentY, currentZ);
             if (tile != null) {
                 return tile;
             }
@@ -178,15 +218,15 @@ public class GameMapProcessor2 {
     }
 
     @Nonnull
-    private static List<MapGroup> getSurroundingMapGroups(@Nonnull final Location startLocation) {
-        final List<MapGroup> groupList = new ArrayList<>();
+    private static List<MapGroup> getSurroundingMapGroups(@Nonnull Location startLocation) {
+        List<MapGroup> groupList = new ArrayList<>();
 
         for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {
                 if ((x == 0) && (y == 0)) {
                     continue;
                 }
-                final MapTile tile = World.getMap()
+                MapTile tile = World.getMap()
                         .getMapAt(startLocation.getScX() + x, startLocation.getScY() + y, startLocation.getScZ());
                 if (tile != null) {
                     MapGroup group = tile.getMapGroup();

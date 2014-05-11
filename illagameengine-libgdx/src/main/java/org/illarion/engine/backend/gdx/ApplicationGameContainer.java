@@ -97,8 +97,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
      * @throws GdxEngineException in case the initialization goes wrong
      */
     public ApplicationGameContainer(
-            final GameListener gameListener, final int width, final int height, final boolean fullScreen)
-            throws GdxEngineException {
+            GameListener gameListener, int width, int height, boolean fullScreen) throws GdxEngineException {
         this.gameListener = gameListener;
         config = new LwjglApplicationConfiguration();
         config.forceExit = false;
@@ -120,13 +119,13 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         config.fullscreen = fullScreen;
     }
 
-    @Nullable
-    private GraphicResolution getFittingFullScreenResolution(final int width, final int height) {
-        final GraphicResolution[] resolutions = getFullScreenResolutions();
+    @Nonnull
+    private GraphicResolution getFittingFullScreenResolution(int width, int height) {
+        GraphicResolution[] resolutions = getFullScreenResolutions();
         int freq = 0;
 
-        GraphicResolution targetDisplayMode = null;
-        for (@Nonnull final GraphicResolution current : resolutions) {
+        @Nullable GraphicResolution targetDisplayMode = null;
+        for (@Nonnull GraphicResolution current : resolutions) {
             if ((current.getWidth() == width) && (current.getHeight() == height)) {
                 if ((targetDisplayMode == null) ||
                         ((current.getRefreshRate() >= freq) && (current.getBPP() > targetDisplayMode.getBPP()))) {
@@ -144,7 +143,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         }
 
         if (targetDisplayMode == null) {
-            final Graphics.DisplayMode mode = LwjglApplicationConfiguration.getDesktopDisplayMode();
+            Graphics.DisplayMode mode = LwjglApplicationConfiguration.getDesktopDisplayMode();
             return new GraphicResolution(mode.width, mode.height, mode.bitsPerPixel, mode.refreshRate);
         }
         return targetDisplayMode;
@@ -176,7 +175,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     }
 
     @Override
-    public void setMouseCursor(@Nullable final MouseCursor cursor) {
+    public void setMouseCursor(@Nullable MouseCursor cursor) {
         if (!Display.isCreated()) {
             throw new IllegalStateException("The game display was not yet created.");
         }
@@ -186,7 +185,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
             } else if (cursor instanceof GdxLwjglCursor) {
                 Mouse.setNativeCursor(((GdxLwjglCursor) cursor).getLwjglCursor());
             }
-        } catch (@Nonnull final LWJGLException ignored) {
+        } catch (@Nonnull LWJGLException ignored) {
             // nothing to do
         }
     }
@@ -222,7 +221,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         return gdxApplication.getGraphics().getFramesPerSecond();
     }
 
-    void setLastFrameRenderCalls(final int calls) {
+    void setLastFrameRenderCalls(int calls) {
         lastFrameRenderCalls = calls;
     }
 
@@ -233,14 +232,14 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     }
 
     @Override
-    public void setIcons(@Nonnull final String[] icons) {
-        for (@Nullable final String icon : icons) {
+    public void setIcons(@Nonnull String[] icons) {
+        for (@Nullable String icon : icons) {
             config.addIcon(icon, Files.FileType.Internal);
         }
     }
 
     @Override
-    public void setTitle(@Nonnull final String title) {
+    public void setTitle(@Nonnull String title) {
         config.title = title;
         if (gdxApplication != null) {
             gdxApplication.getGraphics().setTitle(title);
@@ -248,7 +247,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     }
 
     @Override
-    public void setWindowSize(final int width, final int height) throws GdxEngineException {
+    public void setWindowSize(int width, int height) throws GdxEngineException {
         windowWidth = width;
         windowHeight = height;
         if (!isFullScreen() && (gdxApplication != null)) {
@@ -257,7 +256,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     }
 
     @Override
-    public void setFullScreenResolution(@Nonnull final GraphicResolution resolution) throws GdxEngineException {
+    public void setFullScreenResolution(@Nonnull GraphicResolution resolution) throws GdxEngineException {
         fullScreenResolution = resolution;
         if (isFullScreen() && (gdxApplication != null)) {
             gdxApplication.getGraphics().setDisplayMode(resolution.getWidth(), resolution.getHeight(), true);
@@ -268,9 +267,9 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     @Override
     public GraphicResolution[] getFullScreenResolutions() {
         if (graphicResolutions == null) {
-            final List<GraphicResolution> resultResolutions = new ArrayList<>();
-            final Graphics.DisplayMode[] displayModes;
-            final boolean ignoreRefreshRate;
+            List<GraphicResolution> resultResolutions = new ArrayList<>();
+            Graphics.DisplayMode[] displayModes;
+            boolean ignoreRefreshRate;
             if (gdxApplication == null) {
                 displayModes = LwjglApplicationConfiguration.getDisplayModes();
                 ignoreRefreshRate = true;
@@ -278,7 +277,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
                 displayModes = gdxApplication.getGraphics().getDisplayModes();
                 ignoreRefreshRate = false;
             }
-            for (@Nullable final Graphics.DisplayMode mode : displayModes) {
+            for (@Nullable Graphics.DisplayMode mode : displayModes) {
                 if (mode == null) {
                     continue;
                 }
@@ -305,7 +304,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     }
 
     @Override
-    public void setResizeable(final boolean resizeable) throws GdxEngineException {
+    public void setResizeable(boolean resizeable) throws GdxEngineException {
         if (gdxApplication == null) {
             config.resizable = resizeable;
         }
@@ -317,7 +316,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     }
 
     @Override
-    public void setFullScreen(final boolean fullScreen) throws GdxEngineException {
+    public void setFullScreen(boolean fullScreen) throws GdxEngineException {
         config.fullscreen = fullScreen;
         if (gdxApplication != null) {
             if (fullScreen) {

@@ -310,9 +310,6 @@ public final class MapTile implements AlphaChangeListener {
             LOGGER.warn("Updating alpha of a changed tile");
             return;
         }
-        if (((from == 255) && (to < from)) || ((from < to) && (to == 255))) {
-            World.getMap().updateTile(this);
-        }
     }
 
     /**
