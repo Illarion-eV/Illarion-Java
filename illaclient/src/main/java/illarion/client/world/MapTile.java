@@ -37,7 +37,6 @@ import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -91,12 +90,6 @@ public final class MapTile implements AlphaChangeListener {
     private final ReadWriteLock itemsLock = new ReentrantReadWriteLock();
 
     /**
-     * Get the light that was calculate from the center color and the ambient light for this tile.
-     */
-    @Nonnull
-    private final Color light = new Color(Color.WHITE);
-
-    /**
      * The calculated light in the center of the tile.
      */
     @Nonnull
@@ -107,12 +100,6 @@ public final class MapTile implements AlphaChangeListener {
      */
     @Nonnull
     private final List<AnimatedColor> colors;
-
-    /**
-     * The ambient light that is applied to this tile.
-     */
-    @Nonnull
-    private final Color ambientLight = new Color(Color.WHITE);
 
     /**
      * Light Source that is on the tile.
@@ -263,7 +250,7 @@ public final class MapTile implements AlphaChangeListener {
         if (removedTile) {
             LOGGER.warn("Fetching light of a removed tile.");
         }
-        return light;
+        return getLight(Location.DIR_MOVE8);
     }
 
     public Color getLight(int direction) {
@@ -287,19 +274,6 @@ public final class MapTile implements AlphaChangeListener {
         int reverseDirection = (direction + (Location.DIR_SOUTH - Location.DIR_NORTH)) % Location.DIR_MOVE8;
         otherTile.colors.set(reverseDirection, colors.get(Location.DIR_MOVE8));
         colors.set(direction, otherTile.colors.get(Location.DIR_MOVE8));
-    }
-
-    /**
-     * Get the ambient light of this tile
-     *
-     * @return the light ambient of the tile
-     */
-    @Nonnull
-    public Color getAmbientLight() {
-        if (removedTile) {
-            LOGGER.warn("Fetching light of a removed tile.");
-        }
-        return ambientLight;
     }
 
     /**
@@ -900,14 +874,10 @@ public final class MapTile implements AlphaChangeListener {
             LOGGER.warn("Render light of a removed tile.");
             return;
         }
-
-        this.ambientLight.setColor(ambientLight);
         targetCenterColor.setColor(tmpLight);
-
-        light.setColor(tmpLight);
-        light.multiply(1.f - ambientLight.getLuminancef());
-        light.add(ambientLight);
-        light.setAlpha(Color.MAX_INT_VALUE);
+        targetCenterColor.multiply(1.f - ambientLight.getLuminancef());
+        targetCenterColor.add(ambientLight);
+        targetCenterColor.setAlpha(Color.MAX_INT_VALUE);
     }
 
     /**

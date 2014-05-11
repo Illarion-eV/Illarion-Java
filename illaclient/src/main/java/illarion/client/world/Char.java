@@ -642,7 +642,7 @@ public final class Char implements AnimatedMove {
         if ((avatar != null) && (tile != null)) {
             switch (mode) {
                 case LIGHT_SET:
-                    avatar.setLight(tile.getAmbientLight());
+                    avatar.setLight(tile.getLight());
                     break;
                 case LIGHT_SOFT:
                     avatar.setLightTarget(tile.getLight());

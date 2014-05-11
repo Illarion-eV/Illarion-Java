@@ -27,9 +27,6 @@ void main() {
 	// the color of the texture
 	vec4 color = texture2D(u_texture, v_texCoords.st);
 
-	// the factor of the ambient light
-	float ambientFactor = dot(v_color.rgb, vec3(1.0 / 3.0));
-
 	// used light color for this fragment
 	vec3 topColor = (u_top.rgb + u_topLeft.rgb + u_topRight.rgb + u_center.rgb) / 4.0;
 	vec3 bottomColor = (u_bottom.rgb + u_bottomLeft.rgb + u_bottomRight.rgb + u_center.rgb) / 4.0;
@@ -55,6 +52,5 @@ void main() {
     vec3 usedColor = mix(topInterpolation, bottomInterpolation, weightBottom);
 
 	// apply the color to the fragment
-	vec3 actualLight = usedColor * (1.0 - ambientFactor) + v_color.rgb;
-	gl_FragColor = vec4(color.rgb * actualLight, color.a);
+	gl_FragColor = vec4(color.rgb * usedColor, color.a);
 }

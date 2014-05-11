@@ -140,8 +140,8 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
                 tileLightEffect.setBottomColor(parentTile.getLight(Location.DIR_SOUTHWEST));
                 tileLightEffect.setLeftColor(parentTile.getLight(Location.DIR_NORTHWEST));
                 tileLightEffect.setRightColor(parentTile.getLight(Location.DIR_SOUTHEAST));
-                tileLightEffect.setCenterColor(parentTile.getLight(Location.DIR_MOVE8));
-                renderSprite(g, getDisplayX(), getDisplayY(), parentTile.getAmbientLight(), tileLightEffect);
+                tileLightEffect.setCenterColor(parentTile.getLight());
+                renderSprite(g, getDisplayX(), getDisplayY(), Color.WHITE, tileLightEffect);
             }
         }
     }
@@ -285,9 +285,6 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
     @Override
     @Nonnull
     protected Color getParentLight() {
-        Color tmpColor = new Color(parentTile.getLight(Location.DIR_MOVE8));
-        tmpColor.multiply(1.f - tmpColor.getLuminancef());
-        tmpColor.add(parentTile.getAmbientLight());
-        return tmpColor;
+        return parentTile.getLight();
     }
 }
