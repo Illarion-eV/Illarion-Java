@@ -128,7 +128,7 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
                 return;
             }
 
-            if ((showHighlight != 0) || (tileLightEffect == null)) {
+            if ((showHighlight != 0) || (tileLightEffect == null) || !parentTile.hasLightGradient()) {
                 super.render(g);
                 showHighlight = 0;
             } else {
@@ -148,11 +148,7 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
 
     @Override
     protected void renderSprite(
-            @Nonnull Graphics g,
-            int x,
-            int y,
-            @Nonnull Color light,
-            @Nonnull TextureEffect... effects) {
+            @Nonnull Graphics g, int x, int y, @Nonnull Color light, @Nonnull TextureEffect... effects) {
         super.renderSprite(g, x, y, light, effects);
         if (overlay != null) {
             g.drawSprite(overlay.getSprite(), x, y, light, overlayShape, getScale(), 0.f, effects);
