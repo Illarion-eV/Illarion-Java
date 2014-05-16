@@ -15,7 +15,7 @@
  */
 package org.illarion.engine.backend.gdx;
 
-import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import org.illarion.engine.GameListener;
@@ -28,7 +28,7 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class ListenerApplication implements ApplicationListener {
+class ListenerApplication extends ApplicationAdapter {
     /**
      * This is the game listener of the engine that has to receive the information regarding the game.
      */
@@ -47,7 +47,7 @@ class ListenerApplication implements ApplicationListener {
      * @param listener the listener of the game engine
      * @param container the game container
      */
-    ListenerApplication(@Nonnull final GameListener listener, @Nonnull final ApplicationGameContainer container) {
+    ListenerApplication(@Nonnull GameListener listener, @Nonnull ApplicationGameContainer container) {
         this.listener = listener;
         this.container = container;
     }
@@ -59,7 +59,7 @@ class ListenerApplication implements ApplicationListener {
     }
 
     @Override
-    public void resize(final int width, final int height) {
+    public void resize(int width, int height) {
         listener.resize(container, width, height);
     }
 
@@ -67,13 +67,13 @@ class ListenerApplication implements ApplicationListener {
     public void render() {
         listener.update(container, Math.round(Gdx.graphics.getDeltaTime() * 1000.f));
 
-        final GdxGraphics graphics = container.getEngine().getGraphics();
+        GdxGraphics graphics = container.getEngine().getGraphics();
         graphics.beginFrame();
         container.getEngine().getAssets().getTextureManager().update();
         listener.render(container);
         graphics.endFrame();
 
-        final SpriteBatch batch = container.getEngine().getGraphics().getSpriteBatch();
+        SpriteBatch batch = container.getEngine().getGraphics().getSpriteBatch();
         container.setLastFrameRenderCalls(batch.totalRenderCalls);
         batch.totalRenderCalls = 0;
     }
@@ -85,16 +85,6 @@ class ListenerApplication implements ApplicationListener {
      */
     public boolean isExitAllowed() {
         return listener.isClosingGame();
-    }
-
-    @Override
-    public void pause() {
-        // nothing
-    }
-
-    @Override
-    public void resume() {
-        // nothing
     }
 
     @Override

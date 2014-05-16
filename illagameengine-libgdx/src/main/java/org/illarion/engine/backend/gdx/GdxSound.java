@@ -36,7 +36,7 @@ class GdxSound implements Sound {
      *
      * @param wrappedSound the sound that is wrapped
      */
-    GdxSound(@Nonnull final com.badlogic.gdx.audio.Sound wrappedSound) {
+    GdxSound(@Nonnull com.badlogic.gdx.audio.Sound wrappedSound) {
         this.wrappedSound = wrappedSound;
     }
 

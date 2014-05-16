@@ -32,7 +32,7 @@ class GdxTexture implements Texture {
     @Nonnull
     private final TextureRegion backingTexture;
 
-    GdxTexture(@Nonnull final TextureRegion backingTexture) {
+    GdxTexture(@Nonnull TextureRegion backingTexture) {
         this.backingTexture = backingTexture;
     }
 
@@ -43,7 +43,7 @@ class GdxTexture implements Texture {
 
     @Nonnull
     @Override
-    public Texture getSubTexture(final int x, final int y, final int width, final int height) {
+    public Texture getSubTexture(int x, int y, int width, int height) {
         return new GdxTexture(new TextureRegion(backingTexture, x, y, width, height));
     }
 

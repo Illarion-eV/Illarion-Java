@@ -49,27 +49,27 @@ class GdxSoundsManager extends AbstractSoundsManager {
      * @param files the file system handler used to load the data
      * @param audio the audio interface of libGDX that is supposed to be used
      */
-    GdxSoundsManager(@Nonnull final Files files, @Nonnull final Audio audio) {
+    GdxSoundsManager(@Nonnull Files files, @Nonnull Audio audio) {
         this.files = files;
         this.audio = audio;
     }
 
     @Nullable
     @Override
-    protected Sound loadSound(@Nonnull final String ref) {
+    protected Sound loadSound(@Nonnull String ref) {
         try {
             return new GdxSound(audio.newSound(files.internal(ref)));
-        } catch (@Nonnull final GdxRuntimeException e) {
+        } catch (@Nonnull GdxRuntimeException e) {
             return null;
         }
     }
 
     @Nullable
     @Override
-    protected Music loadMusic(@Nonnull final String ref) {
+    protected Music loadMusic(@Nonnull String ref) {
         try {
             return new GdxMusic(audio.newMusic(files.internal(ref)));
-        } catch (@Nonnull final GdxRuntimeException e) {
+        } catch (@Nonnull GdxRuntimeException e) {
             return null;
         }
     }

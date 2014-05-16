@@ -40,7 +40,7 @@ class GdxLwjglCursor implements MouseCursor {
      *
      * @param lwjglCursor the lwjgl mouse cursor
      */
-    GdxLwjglCursor(@Nonnull final Cursor lwjglCursor) {
+    GdxLwjglCursor(@Nonnull Cursor lwjglCursor) {
         this.lwjglCursor = lwjglCursor;
     }
 

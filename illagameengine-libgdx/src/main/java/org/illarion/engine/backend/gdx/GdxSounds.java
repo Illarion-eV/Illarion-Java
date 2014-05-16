@@ -59,7 +59,7 @@ class GdxSounds implements Sounds {
     }
 
     @Override
-    public void setMusicVolume(final float volume) {
+    public void setMusicVolume(float volume) {
         musicVolume = volume;
         if (currentBackgroundMusic != null) {
             currentBackgroundMusic.setVolume(volume);
@@ -72,30 +72,27 @@ class GdxSounds implements Sounds {
     }
 
     @Override
-    public void setSoundVolume(final float volume) {
+    public void setSoundVolume(float volume) {
         soundVolume = volume;
     }
 
     @Override
-    public float getSoundVolume(@Nonnull final Sound sound, final int handle) {
+    public float getSoundVolume(@Nonnull Sound sound, int handle) {
         return soundVolume;
     }
 
     @Override
-    public boolean isMusicPlaying(@Nonnull final Music music) {
-        if (music instanceof GdxMusic) {
-            return ((GdxMusic) music).getWrappedMusic().isPlaying();
-        }
+    public boolean isMusicPlaying(@Nonnull Music music) {
+        return (music instanceof GdxMusic) && ((GdxMusic) music).getWrappedMusic().isPlaying();
+    }
+
+    @Override
+    public boolean isSoundPlaying(@Nonnull Sound sound, int handle) {
         return false;
     }
 
     @Override
-    public boolean isSoundPlaying(@Nonnull final Sound sound, final int handle) {
-        return false;
-    }
-
-    @Override
-    public void playMusic(@Nonnull final Music music, final int fadeOutTime, final int fadeInTime) {
+    public void playMusic(@Nonnull Music music, int fadeOutTime, int fadeInTime) {
         if (currentBackgroundMusic != null) {
             currentBackgroundMusic.stop();
         }
@@ -108,7 +105,7 @@ class GdxSounds implements Sounds {
     }
 
     @Override
-    public int playSound(@Nonnull final Sound sound, final float volume) {
+    public int playSound(@Nonnull Sound sound, float volume) {
         if (sound instanceof GdxSound) {
             return (int) ((GdxSound) sound).getWrappedSound().play(soundVolume * volume);
         }
@@ -117,11 +114,7 @@ class GdxSounds implements Sounds {
 
     @Override
     public int playSound(
-            @Nonnull final Sound sound,
-            final float volume,
-            final int offsetX,
-            final int offsetY,
-            final int offsetZ) {
+            @Nonnull Sound sound, float volume, int offsetX, int offsetY, int offsetZ) {
         if (sound instanceof GdxSound) {
             return (int) ((GdxSound) sound).getWrappedSound().play(soundVolume * volume);
         }
@@ -129,33 +122,33 @@ class GdxSounds implements Sounds {
     }
 
     @Override
-    public void poll(final int delta) {
+    public void poll(int delta) {
         // nothing
     }
 
     @Override
-    public void setSoundVolume(@Nonnull final Sound sound, final int handle, final float volume) {
+    public void setSoundVolume(@Nonnull Sound sound, int handle, float volume) {
         if (sound instanceof GdxSound) {
             ((GdxSound) sound).getWrappedSound().setVolume(handle, volume);
         }
     }
 
     @Override
-    public void stopMusic(final int fadeOutTime) {
+    public void stopMusic(int fadeOutTime) {
         if (currentBackgroundMusic != null) {
             currentBackgroundMusic.stop();
         }
     }
 
     @Override
-    public void stopSound(@Nonnull final Sound sound, final int handle) {
+    public void stopSound(@Nonnull Sound sound, int handle) {
         if (sound instanceof GdxSound) {
             ((GdxSound) sound).getWrappedSound().stop(handle);
         }
     }
 
     @Override
-    public void stopSound(@Nonnull final Sound sound) {
+    public void stopSound(@Nonnull Sound sound) {
         if (sound instanceof GdxSound) {
             ((GdxSound) sound).getWrappedSound().stop();
         }

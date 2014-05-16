@@ -39,37 +39,32 @@ class GdxFogEffect implements FogEffect, GdxSceneEffect {
      */
     private float density;
 
-    GdxFogEffect(@Nonnull final Files files) {
+    GdxFogEffect(@Nonnull Files files) {
         //noinspection SpellCheckingInspection
         shader = new ShaderProgram(files.internal("org/illarion/engine/backend/gdx/shaders/generic.vert"),
                                    files.internal("org/illarion/engine/backend/gdx/shaders/fog.frag"));
     }
 
     @Override
-    public void setDensity(final float density) {
+    public void setDensity(float density) {
         this.density = density;
     }
 
     @Override
-    public void update(final int delta) {
+    public void update(int delta) {
         // nothing to do
     }
 
     @Override
     public void activateEffect(
-            @Nonnull final SpriteBatch batch,
-            final int screenWidth,
-            final int screenHeight,
-            final int textureWidth,
-            final int textureHeight) {
+            @Nonnull SpriteBatch batch, int screenWidth, int screenHeight, int textureWidth, int textureHeight) {
         batch.setShader(shader);
         shader.setUniformf("u_density", density);
-        shader.setUniformf("u_center", (float) screenWidth / 2.f / (float) textureWidth,
-                           (float) screenHeight / 2.f / (float) textureHeight);
+        shader.setUniformf("u_center", screenWidth / 2.f / textureWidth, screenHeight / 2.f / textureHeight);
     }
 
     @Override
-    public void disableEffect(@Nonnull final SpriteBatch batch) {
+    public void disableEffect(@Nonnull SpriteBatch batch) {
         batch.setShader(null);
     }
 }

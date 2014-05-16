@@ -29,15 +29,15 @@ class GdxEngineException extends EngineException {
         super();
     }
 
-    GdxEngineException(@Nonnull final String message) {
+    GdxEngineException(@Nonnull String message) {
         super(message);
     }
 
-    GdxEngineException(@Nonnull final String message, @Nonnull final Throwable cause) {
+    GdxEngineException(@Nonnull String message, @Nonnull Throwable cause) {
         super(message, cause);
     }
 
-    GdxEngineException(@Nonnull final Throwable cause) {
+    GdxEngineException(@Nonnull Throwable cause) {
         super(cause);
     }
 }

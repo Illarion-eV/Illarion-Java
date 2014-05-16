@@ -75,7 +75,7 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
      */
     private boolean mapDirty;
 
-    GdxWorldMap(@Nonnull final WorldMapDataProvider provider) {
+    GdxWorldMap(@Nonnull WorldMapDataProvider provider) {
         this.provider = provider;
         mapOrigin = new Location();
         playerLocation = new Location();
@@ -104,13 +104,13 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
     }
 
     @Override
-    public void setTile(@Nonnull final Location loc, final int tileId, final int overlayId, final boolean blocked) {
+    public void setTile(@Nonnull Location loc, int tileId, int overlayId, boolean blocked) {
         if (loc.getScZ() != mapOrigin.getScZ()) {
             return;
         }
 
-        final int texPosX = loc.getScX() - mapOrigin.getScX();
-        final int texPosY = loc.getScY() - mapOrigin.getScY();
+        int texPosX = loc.getScX() - mapOrigin.getScX();
+        int texPosY = loc.getScY() - mapOrigin.getScY();
 
         if ((texPosX < 0) || (texPosX >= WORLD_MAP_WIDTH) || (texPosY < 0) || (texPosY >= WORLD_MAP_HEIGHT)) {
             return;
@@ -119,7 +119,7 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
         if (tileId != NO_TILE) {
             GdxGraphics.transferColor(MapColor.getColor(tileId), tempDrawingColor);
             if (overlayId != NO_TILE) {
-                final org.illarion.engine.graphic.Color mapColor = MapColor.getColor(tileId);
+                org.illarion.engine.graphic.Color mapColor = MapColor.getColor(tileId);
                 tempDrawingColor.r += mapColor.getRedf();
                 tempDrawingColor.g += mapColor.getGreenf();
                 tempDrawingColor.b += mapColor.getBluef();
@@ -142,7 +142,7 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
     private boolean cancelFetchingTiles;
 
     @Override
-    public void setTileChanged(@Nonnull final Location location) {
+    public void setTileChanged(@Nonnull Location location) {
         if (cancelFetchingTiles) {
             return;
         }
@@ -160,7 +160,7 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
     @Override
     public void setMapChanged() {
         currentlyFetchingTiles = true;
-        final Location tempLocation = new Location();
+        Location tempLocation = new Location();
         for (int x = 0; x < WorldMap.WORLD_MAP_WIDTH; x++) {
             for (int y = 0; y < WorldMap.WORLD_MAP_HEIGHT; y++) {
                 if (cancelFetchingTiles) {
@@ -177,12 +177,12 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
     }
 
     @Override
-    public void setPlayerLocation(@Nonnull final Location location) {
+    public void setPlayerLocation(@Nonnull Location location) {
         playerLocation.set(location);
     }
 
     @Override
-    public void setMapOrigin(@Nonnull final Location location) {
+    public void setMapOrigin(@Nonnull Location location) {
         mapOrigin.set(location);
         clear();
     }
@@ -195,7 +195,7 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
                 while (currentlyFetchingTiles) {
                     try {
                         wait();
-                    } catch (@Nonnull final InterruptedException ignored) {
+                    } catch (@Nonnull InterruptedException ignored) {
                     }
                 }
             }
@@ -209,7 +209,7 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
     }
 
     @Override
-    public void render(@Nonnull final GameContainer container) {
+    public void render(@Nonnull GameContainer container) {
         if (mapDirty) {
             synchronized (worldMapPixels) {
                 worldMapTexture.getTextureRegion().getTexture().draw(worldMapPixels, 0, 0);

@@ -36,12 +36,7 @@ class GdxSprite extends AbstractSprite<GdxTexture> {
      * @param mirror the mirrored flag
      */
     protected GdxSprite(
-            @Nonnull final GdxTexture[] textures,
-            final int offsetX,
-            final int offsetY,
-            final float centerX,
-            final float centerY,
-            final boolean mirror) {
+            @Nonnull GdxTexture[] textures, int offsetX, int offsetY, float centerX, float centerY, boolean mirror) {
         super(textures, offsetX, offsetY, centerX, centerY, mirror);
     }
 }

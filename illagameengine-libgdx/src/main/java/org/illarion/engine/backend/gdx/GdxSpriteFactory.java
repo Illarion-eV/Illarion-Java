@@ -30,13 +30,8 @@ class GdxSpriteFactory implements SpriteFactory {
     @Nonnull
     @Override
     public Sprite createSprite(
-            @Nonnull final Texture[] textures,
-            final int offsetX,
-            final int offsetY,
-            final float centerX,
-            final float centerY,
-            final boolean mirror) {
-        final GdxTexture[] gdxTextures = new GdxTexture[textures.length];
+            @Nonnull Texture[] textures, int offsetX, int offsetY, float centerX, float centerY, boolean mirror) {
+        GdxTexture[] gdxTextures = new GdxTexture[textures.length];
         for (int i = 0; i < textures.length; i++) {
             if (textures[i] instanceof GdxTexture) {
                 gdxTextures[i] = (GdxTexture) textures[i];

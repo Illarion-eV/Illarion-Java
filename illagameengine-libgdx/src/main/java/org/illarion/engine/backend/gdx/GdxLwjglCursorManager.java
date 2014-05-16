@@ -48,13 +48,13 @@ class GdxLwjglCursorManager extends AbstractCursorManager {
      *
      * @param files the files implementation that is supposed to be used to load the data
      */
-    GdxLwjglCursorManager(@Nonnull final Files files) {
+    GdxLwjglCursorManager(@Nonnull Files files) {
         this.files = files;
     }
 
     @Nullable
     @Override
-    protected MouseCursor loadCursor(@Nonnull final String ref, final int hotspotX, final int hotspotY) {
+    protected MouseCursor loadCursor(@Nonnull String ref, int hotspotX, int hotspotY) {
         try {
             Pixmap cursorPixels = new Pixmap(files.internal(ref));
 
@@ -70,17 +70,17 @@ class GdxLwjglCursorManager extends AbstractCursorManager {
             if ((cursorHeight != cursorPixels.getHeight()) || (cursorWidth != cursorPixels.getWidth()) ||
                     (cursorPixels.getFormat() != Pixmap.Format.RGBA8888)) {
 
-                final Pixmap tempPixMap = new Pixmap(cursorWidth, cursorHeight, Pixmap.Format.RGBA8888);
+                Pixmap tempPixMap = new Pixmap(cursorWidth, cursorHeight, Pixmap.Format.RGBA8888);
                 tempPixMap.drawPixmap(cursorPixels, 0, 0);
                 cursorPixels.dispose();
                 cursorPixels = tempPixMap;
             }
-            final Cursor lwjglCursor = new Cursor(cursorPixels.getWidth(), cursorPixels.getHeight(), hotspotX, hotspotY,
-                                                  1, cursorPixels.getPixels().asIntBuffer(), null);
+            Cursor lwjglCursor = new Cursor(cursorPixels.getWidth(), cursorPixels.getHeight(), hotspotX, hotspotY, 1,
+                                            cursorPixels.getPixels().asIntBuffer(), null);
             return new GdxLwjglCursor(lwjglCursor);
-        } catch (@Nonnull final GdxRuntimeException e) {
+        } catch (@Nonnull GdxRuntimeException e) {
             return null;
-        } catch (@Nonnull final LWJGLException e) {
+        } catch (@Nonnull LWJGLException e) {
             return null;
         }
     }

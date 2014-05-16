@@ -37,7 +37,7 @@ class GdxMusic implements Music {
      *
      * @param wrappedMusic the new music wrapper
      */
-    GdxMusic(@Nonnull final com.badlogic.gdx.audio.Music wrappedMusic) {
+    GdxMusic(@Nonnull com.badlogic.gdx.audio.Music wrappedMusic) {
         this.wrappedMusic = wrappedMusic;
     }
 

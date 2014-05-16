@@ -15,7 +15,7 @@
  */
 package org.illarion.engine.backend.gdx;
 
-import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -133,7 +133,7 @@ class GdxGraphics implements Graphics {
         this.gdxGraphics = gdxGraphics;
         this.engine = engine;
         shapeRenderer = new ShapeRenderer();
-        spriteBatch = new SpriteBatch(1000, 10);
+        spriteBatch = new SpriteBatch();
         tempColor1 = new com.badlogic.gdx.graphics.Color();
         tempColor2 = new com.badlogic.gdx.graphics.Color();
         tempColor3 = new com.badlogic.gdx.graphics.Color();
@@ -183,13 +183,15 @@ class GdxGraphics implements Graphics {
             spriteBatchActive = false;
         }
 
-        gdxGraphics.getGLCommon().glEnable(GL10.GL_BLEND);
+        GL20 gl20 = gdxGraphics.getGL20();
+        gl20.glEnable(GL20.GL_BLEND);
+        assert lastBlendingMode != null;
         switch (lastBlendingMode) {
             case AlphaBlend:
-                gdxGraphics.getGLCommon().glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+                gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
                 break;
             case Multiply:
-                gdxGraphics.getGLCommon().glBlendFunc(GL10.GL_DST_COLOR, GL10.GL_ZERO);
+                gl20.glBlendFunc(GL20.GL_DST_COLOR, GL20.GL_ZERO);
                 break;
         }
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -229,8 +231,9 @@ class GdxGraphics implements Graphics {
 
     @Override
     public void clear() {
-        gdxGraphics.getGLCommon().glClearColor(0.f, 0.f, 0.f, 1.f);
-        gdxGraphics.getGLCommon().glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+        GL20 gl20 = gdxGraphics.getGL20();
+        gl20.glClearColor(0.f, 0.f, 0.f, 1.f);
+        gl20.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
     }
 
     @Override
@@ -300,10 +303,10 @@ class GdxGraphics implements Graphics {
         }
         switch (mode) {
             case AlphaBlend:
-                spriteBatch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+                spriteBatch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
                 break;
             case Multiply:
-                spriteBatch.setBlendFunction(GL10.GL_DST_COLOR, GL10.GL_ZERO);
+                spriteBatch.setBlendFunction(GL20.GL_DST_COLOR, GL20.GL_ZERO);
                 break;
         }
         spriteBatch.enableBlending();
@@ -325,13 +328,6 @@ class GdxGraphics implements Graphics {
     static void transferColor(@Nonnull Color source, @Nonnull com.badlogic.gdx.graphics.Color target) {
         target.set(source.getRedf(), source.getGreenf(), source.getBluef(), source.getAlphaf());
         target.clamp();
-    }
-
-    static boolean equalColor(@Nonnull Color engineColor, @Nonnull com.badlogic.gdx.graphics.Color gdxColor) {
-        return (Float.compare(engineColor.getRedf(), gdxColor.r) == 0) &&
-                (Float.compare(engineColor.getGreenf(), gdxColor.g) == 0) &&
-                (Float.compare(engineColor.getBluef(), gdxColor.b) == 0) &&
-                (Float.compare(engineColor.getAlphaf(), gdxColor.a) == 0);
     }
 
     @Override
@@ -385,7 +381,7 @@ class GdxGraphics implements Graphics {
         transferColor(bottomRightColor, tempColor4);
         shapeRenderer.rect(x, y, width, height, tempColor3, tempColor4, tempColor2, tempColor1);
         shapeRenderer.end();
-        gdxGraphics.getGLCommon().glDisable(GL10.GL_BLEND);
+        gdxGraphics.getGL20().glDisable(GL20.GL_BLEND);
     }
 
     @Override

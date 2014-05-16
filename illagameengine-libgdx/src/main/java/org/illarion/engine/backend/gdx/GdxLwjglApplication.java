@@ -32,7 +32,7 @@ class GdxLwjglApplication extends LwjglApplication {
      * request.
      */
     @Nonnull
-    private ListenerApplication listener;
+    private final ListenerApplication listener;
 
     /**
      * Create a new application.
@@ -40,7 +40,7 @@ class GdxLwjglApplication extends LwjglApplication {
      * @param listener the listener that receives the updates
      * @param config the configuration used to create the application
      */
-    GdxLwjglApplication(@Nonnull final ListenerApplication listener, final LwjglApplicationConfiguration config) {
+    GdxLwjglApplication(@Nonnull ListenerApplication listener, LwjglApplicationConfiguration config) {
         super(listener, config);
         this.listener = listener;
     }

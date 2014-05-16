@@ -38,7 +38,7 @@ class GdxFont implements Font {
      *
      * @param bitmapFont the bitmap font that is wrapped by this instance
      */
-    GdxFont(@Nonnull final BitmapFont bitmapFont) {
+    GdxFont(@Nonnull BitmapFont bitmapFont) {
         this.bitmapFont = bitmapFont;
     }
 
@@ -53,13 +53,13 @@ class GdxFont implements Font {
     }
 
     @Override
-    public int getWidth(@Nonnull final CharSequence text) {
+    public int getWidth(@Nonnull CharSequence text) {
         return Math.round(bitmapFont.getBounds(text).width);
     }
 
     @Override
-    public int getAdvance(final char current, final char next) {
-        @Nullable final BitmapFont.Glyph currentGlyph = bitmapFont.getData().getGlyph(current);
+    public int getAdvance(char current, char next) {
+        @Nullable BitmapFont.Glyph currentGlyph = bitmapFont.getData().getGlyph(current);
         if (currentGlyph == null) {
             return 0;
         }

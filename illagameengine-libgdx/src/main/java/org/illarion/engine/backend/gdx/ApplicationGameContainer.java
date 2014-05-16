@@ -101,7 +101,6 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         this.gameListener = gameListener;
         config = new LwjglApplicationConfiguration();
         config.forceExit = false;
-        config.useGL20 = true;
         config.vSyncEnabled = true;
         config.backgroundFPS = 10;
         config.foregroundFPS = 60;

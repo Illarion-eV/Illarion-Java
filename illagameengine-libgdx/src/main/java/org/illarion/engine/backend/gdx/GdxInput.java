@@ -106,7 +106,7 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
      *
      * @param gdxInput the input provider of libGDX that is supposed to be used
      */
-    GdxInput(@Nonnull final Input gdxInput) {
+    GdxInput(@Nonnull Input gdxInput) {
         this.gdxInput = gdxInput;
         gdxInput.setInputProcessor(this);
         events = new LinkedList<>();
@@ -120,7 +120,7 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
      * @return the engine button or {@code null} in case the mapping failed
      */
     @Nullable
-    private static Button getEngineButton(final int button) {
+    private static Button getEngineButton(int button) {
         switch (button) {
             case Input.Buttons.LEFT:
                 return Button.Left;
@@ -139,7 +139,7 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
      * @param button the button
      * @return the libGDX button code or {@code -1} in case the mapping failed
      */
-    private static int getGdxButton(@Nonnull final Button button) {
+    private static int getGdxButton(@Nonnull Button button) {
         switch (button) {
             case Left:
                 return Input.Buttons.LEFT;
@@ -159,7 +159,7 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
      */
     @SuppressWarnings("SwitchStatementWithTooManyBranches")
     @Nullable
-    private static Key getEngineKey(final int gdxKeyCode) {
+    private static Key getEngineKey(int gdxKeyCode) {
         switch (gdxKeyCode) {
             case Input.Keys.A:
                 return Key.A;
@@ -311,7 +311,7 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
      * @return the libGDX key code or {@link Input.Keys#UNKNOWN} in case the mapping fails
      */
     @SuppressWarnings("SwitchStatementWithTooManyBranches")
-    private static int getGdxKey(@Nonnull final Key key) {
+    private static int getGdxKey(@Nonnull Key key) {
         switch (key) {
             case A:
                 return Input.Keys.A;
@@ -456,7 +456,7 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     }
 
     @Override
-    public boolean keyDown(final int keycode) {
+    public boolean keyDown(int keycode) {
         final Key pressedKey = getEngineKey(keycode);
         if (pressedKey == null) {
             return true;
@@ -472,7 +472,7 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     }
 
     @Override
-    public boolean keyUp(final int keycode) {
+    public boolean keyUp(int keycode) {
         final Key releasedKey = getEngineKey(keycode);
         if (releasedKey == null) {
             return true;
@@ -500,7 +500,7 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     }
 
     @Override
-    public boolean touchDown(final int x, final int y, final int pointer, final int button) {
+    public boolean touchDown(final int x, final int y, int pointer, int button) {
         if (pointer != USED_MOUSE_POINTER) {
             return false;
         }
@@ -525,7 +525,7 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     }
 
     @Override
-    public boolean touchUp(final int x, final int y, final int pointer, final int button) {
+    public boolean touchUp(final int x, final int y, int pointer, int button) {
         if (pointer != USED_MOUSE_POINTER) {
             return false;
         }
@@ -578,7 +578,7 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     }
 
     @Override
-    public boolean touchDragged(final int x, final int y, final int pointer) {
+    public boolean touchDragged(final int x, final int y, int pointer) {
         if (pointer != USED_MOUSE_POINTER) {
             return false;
         }
@@ -630,13 +630,13 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     }
 
     @Override
-    public void setListener(@Nonnull final InputListener listener) {
+    public void setListener(@Nonnull InputListener listener) {
         inputListener = listener;
     }
 
     @Override
-    public boolean isButtonDown(@Nonnull final Button button) {
-        final int buttonCode = getGdxButton(button);
+    public boolean isButtonDown(@Nonnull Button button) {
+        int buttonCode = getGdxButton(button);
         if (buttonCode == -1) {
             return false;
         }
@@ -644,7 +644,7 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     }
 
     @Override
-    public boolean isKeyDown(@Nonnull final Key key) {
+    public boolean isKeyDown(@Nonnull Key key) {
         return gdxInput.isKeyPressed(getGdxKey(key));
     }
 
@@ -654,8 +654,8 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     }
 
     @Override
-    public boolean isAnyButtonDown(@Nonnull final Button... buttons) {
-        for (@Nonnull final Button button : buttons) {
+    public boolean isAnyButtonDown(@Nonnull Button... buttons) {
+        for (@Nonnull Button button : buttons) {
             if (isButtonDown(button)) {
                 return true;
             }
@@ -669,8 +669,8 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     }
 
     @Override
-    public boolean isAnyKeyDown(@Nonnull final Key... keys) {
-        for (@Nonnull final Key key : keys) {
+    public boolean isAnyKeyDown(@Nonnull Key... keys) {
+        for (@Nonnull Key key : keys) {
             if (isKeyDown(key)) {
                 return true;
             }
@@ -689,7 +689,7 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     }
 
     @Override
-    public void setMouseLocation(final int x, final int y) {
+    public void setMouseLocation(int x, int y) {
         gdxInput.setCursorPosition(x, y);
     }
 }

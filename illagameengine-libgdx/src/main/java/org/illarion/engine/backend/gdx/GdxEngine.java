@@ -18,7 +18,6 @@ package org.illarion.engine.backend.gdx;
 import com.badlogic.gdx.Application;
 import org.illarion.engine.Engine;
 import org.illarion.engine.GameContainer;
-import org.lwjgl.Sys;
 
 import javax.annotation.Nonnull;
 
@@ -58,11 +57,7 @@ class GdxEngine implements Engine {
      * @param gdxApplication the active libGDX application
      * @param container the game container that shows the application
      */
-    GdxEngine(@Nonnull final Application gdxApplication, @Nonnull final GameContainer container) {
-        if (!gdxApplication.getGraphics().isGL20Available()) {
-            Sys.alert("Graphic device failure.", "You graphic device does not seem to support the client.");
-            System.exit(-1);
-        }
+    GdxEngine(@Nonnull Application gdxApplication, @Nonnull GameContainer container) {
         assets = new GdxAssets(gdxApplication, container);
         sounds = new GdxSounds();
         graphics = new GdxGraphics(this, gdxApplication.getGraphics());

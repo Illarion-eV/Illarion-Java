@@ -47,7 +47,7 @@ class GdxFontManager extends AbstractFontManager {
      * @param files the file system handler of libGDX that should be used to load the font data
      * @param textureManager the texture manager that supplies the texture data
      */
-    GdxFontManager(@Nonnull final Files files, @Nonnull final GdxTextureManager textureManager) {
+    GdxFontManager(@Nonnull Files files, @Nonnull GdxTextureManager textureManager) {
         this.files = files;
         this.textureManager = textureManager;
     }
@@ -55,13 +55,10 @@ class GdxFontManager extends AbstractFontManager {
     @Nonnull
     @Override
     protected Font buildFont(
-            @Nonnull final String ttfRef,
-            final float size,
-            final int style,
-            @Nonnull final String fntRef,
-            @Nonnull final String imageRoot) throws IOException {
-        final String imageName = getImageName(fntRef);
-        final GdxTexture imageTexture = (GdxTexture) textureManager.getTexture(imageRoot, imageName);
+            @Nonnull String ttfRef, float size, int style, @Nonnull String fntRef, @Nonnull String imageRoot)
+            throws IOException {
+        String imageName = getImageName(fntRef);
+        GdxTexture imageTexture = (GdxTexture) textureManager.getTexture(imageRoot, imageName);
         if (imageTexture == null) {
             throw new IOException("Failed to load required image: " + imageRoot + imageName);
         }

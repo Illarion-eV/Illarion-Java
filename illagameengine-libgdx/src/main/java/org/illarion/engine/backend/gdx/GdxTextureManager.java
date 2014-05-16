@@ -32,24 +32,24 @@ import javax.annotation.Nullable;
  */
 class GdxTextureManager extends AbstractTextureManager<Pixmap> {
     @Override
-    protected Pixmap loadTextureData(@Nonnull final String textureName) {
+    protected Pixmap loadTextureData(@Nonnull String textureName) {
         try {
             return new Pixmap(Gdx.files.internal(textureName));
-        } catch (@Nonnull final Exception ignored) {
+        } catch (@Nonnull Exception ignored) {
             return null;
         }
     }
 
     @Nullable
     @Override
-    protected GdxTexture loadTexture(@Nonnull final String resource, final Pixmap preLoadData) {
+    protected GdxTexture loadTexture(@Nonnull String resource, Pixmap preLoadData) {
         try {
-            final Texture tex = new Texture(preLoadData, false);
+            Texture tex = new Texture(preLoadData, false);
             tex.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
-            final TextureRegion region = new TextureRegion(tex);
+            TextureRegion region = new TextureRegion(tex);
             region.flip(false, false);
             return new GdxTexture(region);
-        } catch (@Nonnull final GdxRuntimeException e) {
+        } catch (@Nonnull GdxRuntimeException e) {
             return null;
         }
     }
