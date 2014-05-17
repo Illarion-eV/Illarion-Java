@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-public final class FrameAnimation extends AbstractAnimation {
+public final class FrameAnimation extends AbstractAnimation<AnimatedFrame> {
     /**
      * Run animation backwards.
      */
@@ -81,7 +81,7 @@ public final class FrameAnimation extends AbstractAnimation {
      *
      * @param target the first target of the animation
      */
-    public FrameAnimation(@Nullable final AnimatedFrame target) {
+    public FrameAnimation(@Nullable AnimatedFrame target) {
         super(target);
     }
 
@@ -93,8 +93,7 @@ public final class FrameAnimation extends AbstractAnimation {
      * @param source the frame animation that supplies the data for the new
      * animation
      */
-    public FrameAnimation(
-            final AnimatedFrame target, @Nonnull final FrameAnimation source) {
+    public FrameAnimation(@Nullable AnimatedFrame target, @Nonnull FrameAnimation source) {
         super(target);
         setup(source.frames, source.stillFrame, source.speed, source.mode);
     }
@@ -114,7 +113,7 @@ public final class FrameAnimation extends AbstractAnimation {
      * last time
      */
     @Override
-    public boolean animate(final int delta) {
+    public boolean animate(int delta) {
         // animation has ended
         if (updateCurrentTime(delta)) {
             // just restart timers and keep going
@@ -157,7 +156,7 @@ public final class FrameAnimation extends AbstractAnimation {
         setFrame(stillFrame);
         lastFrame = stillFrame;
 
-        super.start();
+        start();
     }
 
     /**
@@ -165,7 +164,7 @@ public final class FrameAnimation extends AbstractAnimation {
      * set stillFrame as the currently shown frame for all animation targets.
      * Calling this function will cause that all targets are reported that the
      * animation is finished with the parameter of this function set to
-     * <code>false</code>.
+     * {@code false}.
      */
     @Override
     public void stop() {
@@ -190,8 +189,7 @@ public final class FrameAnimation extends AbstractAnimation {
      * the slower the animation
      * @param animMode the mode of the animation
      */
-    public void setup(
-            final int animFrames, final int animStillFrame, final int animSpeed, final int animMode) {
+    public void setup(int animFrames, int animStillFrame, int animSpeed, int animMode) {
         frames = animFrames;
         stillFrame = animStillFrame;
         mode = animMode;
@@ -209,8 +207,7 @@ public final class FrameAnimation extends AbstractAnimation {
      * the slower the animation
      * @param animMode the mode of the animation
      */
-    protected void start(
-            final int animFrames, final int animStillFrame, final int animSpeed, final int animMode) {
+    void start(int animFrames, int animStillFrame, int animSpeed, int animMode) {
         setup(animFrames, animStillFrame, animSpeed, animMode);
 
         restart();
@@ -221,7 +218,7 @@ public final class FrameAnimation extends AbstractAnimation {
      *
      * @param newMode the new mode of the animation
      */
-    protected void updateMode(final int newMode) {
+    void updateMode(int newMode) {
         mode = newMode;
     }
 
@@ -232,7 +229,7 @@ public final class FrameAnimation extends AbstractAnimation {
      * @param newSpeed the new speed of this animation, the larger the value the
      * slower the animation
      */
-    protected void updateSpeed(final int newSpeed) {
+    void updateSpeed(int newSpeed) {
         if (newSpeed != speed) {
             speed = newSpeed;
             setDuration(newSpeed * ANIMATION_FRAME);
@@ -242,7 +239,7 @@ public final class FrameAnimation extends AbstractAnimation {
     /**
      * Check if the animation runs backwards.
      *
-     * @return <code>true</code> in case the animation runs backwards
+     * @return {@code true} in case the animation runs backwards
      */
     private boolean isBackwards() {
         return (mode & BACKWARDS) != 0;
@@ -252,7 +249,7 @@ public final class FrameAnimation extends AbstractAnimation {
      * Check if the animation runs cyclic, so it sets the {@link #stillFrame}
      * again after the animation is done.
      *
-     * @return <code>true</code> in case the animation shall run cyclic
+     * @return {@code true} in case the animation shall run cyclic
      */
     private boolean isCyclic() {
         return (mode & CYCLIC) != 0;
@@ -261,7 +258,7 @@ public final class FrameAnimation extends AbstractAnimation {
     /**
      * Check if the animation runs in a constant loop and does not stop itself.
      *
-     * @return <code>true</code> if the animation runs in a loop
+     * @return {@code true} if the animation runs in a loop
      */
     private boolean isLooped() {
         return (mode & LOOPED) != 0;
@@ -273,12 +270,12 @@ public final class FrameAnimation extends AbstractAnimation {
      * @param frame the frame that shall value that needs to be reported to
      * every animation target
      */
-    private void setFrame(final int frame) {
-        final int targetCnt = getTargetCount();
+    private void setFrame(int frame) {
+        int targetCnt = getTargetCount();
         for (int i = 0; i < targetCnt; i++) {
-            final Animated target = getAnimationTarget(i);
+            AnimatedFrame target = getAnimationTarget(i);
             if (target != null) {
-                ((AnimatedFrame) target).setFrame(frame);
+                target.setFrame(frame);
             }
         }
     }

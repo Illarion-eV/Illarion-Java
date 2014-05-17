@@ -34,7 +34,7 @@ import java.util.List;
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-abstract class AbstractAnimation {
+abstract class AbstractAnimation<T extends Animated> {
     /**
      * The time in ms one frame is shown. This could be a common frame as in a
      * image, but also how long a movement animation remains at one location.
@@ -69,7 +69,7 @@ abstract class AbstractAnimation {
      * time in a synchronized way.
      */
     @Nonnull
-    private final List<Animated> targets;
+    private final List<T> targets;
 
     /**
      * The constructor for a new animation. It does not start the animation
@@ -80,7 +80,7 @@ abstract class AbstractAnimation {
      * @param firstTarget the first animation target, so the first object that
      * is actually animated
      */
-    protected AbstractAnimation(@Nullable final Animated firstTarget) {
+    protected AbstractAnimation(@Nullable T firstTarget) {
         targets = new ArrayList<>();
         if (firstTarget != null) {
             targets.add(firstTarget);
@@ -98,7 +98,7 @@ abstract class AbstractAnimation {
      * the {@link #restart()} method so this one needs all data to
      * start this animation in case its needed to do so
      */
-    public final void addTarget(final Animated target, final boolean autoStart) {
+    public final void addTarget(T target, boolean autoStart) {
         if (!targets.contains(target)) {
             targets.add(target);
         }
@@ -126,7 +126,7 @@ abstract class AbstractAnimation {
      * means the animation ended
      */
     public final float animationProgress() {
-        return (float) currentTime / (float) duration;
+        return (float) currentTime / duration;
     }
 
     /**
@@ -145,7 +145,7 @@ abstract class AbstractAnimation {
      * @param target the animation target that shall be removed from the target
      * list
      */
-    public final void removeTarget(final Animated target) {
+    public final void removeTarget(T target) {
         targets.remove(target);
 
         // stop animation when last target disappears
@@ -166,7 +166,7 @@ abstract class AbstractAnimation {
      * @param newState the new value for the running state. True means the
      * animation is still running, false means that it stopped
      */
-    public final void setRunning(final boolean newState) {
+    public final void setRunning(boolean newState) {
         running = newState;
     }
 
@@ -192,14 +192,14 @@ abstract class AbstractAnimation {
      *
      * @param finished true in case the animation finished, false if not
      */
-    protected final void animationFinished(final boolean finished) {
-        for (@Nonnull final Animated target : targets) {
+    protected final void animationFinished(boolean finished) {
+        for (@Nonnull Animated target : targets) {
             target.animationFinished(finished);
         }
     }
 
     protected final void animationStarted() {
-        for (@Nonnull final Animated target : targets) {
+        for (@Nonnull Animated target : targets) {
             target.animationStarted();
         }
     }
@@ -213,7 +213,7 @@ abstract class AbstractAnimation {
      * @return the requested target
      */
     @Nullable
-    protected final Animated getAnimationTarget(final int index) {
+    protected final T getAnimationTarget(int index) {
         if (targets.size() <= index) {
             return null;
         }
@@ -234,7 +234,7 @@ abstract class AbstractAnimation {
      *
      * @param newDuration the new value for the duration of this animation
      */
-    protected final void setDuration(final int newDuration) {
+    protected final void setDuration(int newDuration) {
         duration = newDuration;
     }
 
@@ -273,7 +273,7 @@ abstract class AbstractAnimation {
      * @return true in case the animation ended by this update, means the
      * current time reached the total duration of the animation
      */
-    protected final boolean updateCurrentTime(final int delta) {
+    protected final boolean updateCurrentTime(int delta) {
         currentTime += delta;
 
         return currentTime > duration;

@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created: 23.08.2005 23:42:22
  */
-public class MoveAnimation extends AbstractAnimation {
+public class MoveAnimation extends AbstractAnimation<AnimatedMove> {
 
     private int dstX;
     private int dstY;
@@ -34,12 +34,12 @@ public class MoveAnimation extends AbstractAnimation {
     private int srcY;
     private int srcZ;
 
-    public MoveAnimation(final AnimatedMove target) {
+    public MoveAnimation(AnimatedMove target) {
         super(target);
     }
 
     @Override
-    public boolean animate(final int delta) {
+    public boolean animate(int delta) {
         // animation has ended
         if (updateCurrentTime(delta)) {
             setRunning(false);
@@ -48,10 +48,10 @@ public class MoveAnimation extends AbstractAnimation {
         }
 
         // calc values
-        final float animationPos = animationProgress();
-        final int x = srcX + Math.round(animationPos * (dstX - srcX));
-        final int y = srcY + Math.round(animationPos * (dstY - srcY));
-        final int z = srcZ + Math.round(animationPos * (dstZ - srcZ));
+        float animationPos = animationProgress();
+        int x = srcX + Math.round(animationPos * (dstX - srcX));
+        int y = srcY + Math.round(animationPos * (dstY - srcY));
+        int z = srcZ + Math.round(animationPos * (dstZ - srcZ));
 
         // update only for real changes
         if ((x != lastX) || (y != lastY) || (z != lastZ)) {
@@ -86,13 +86,7 @@ public class MoveAnimation extends AbstractAnimation {
      * @param speed
      */
     public void start(
-            final int srcX,
-            final int srcY,
-            final int srcZ,
-            final int dstX,
-            final int dstY,
-            final int dstZ,
-            final int speed) {
+            int srcX, int srcY, int srcZ, int dstX, int dstY, int dstZ, int speed) {
         this.srcX = srcX;
         this.srcY = srcY;
         this.srcZ = srcZ;
@@ -117,16 +111,16 @@ public class MoveAnimation extends AbstractAnimation {
     }
 
     protected void start(
-            final int srcX, final int srcY, final int dstX, final int dstY, final int speed) {
+            int srcX, int srcY, int dstX, int dstY, int speed) {
         start(srcX, srcY, 0, dstX, dstY, 0, speed);
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MoveAnimation.class);
 
-    private void setPosition(final int x, final int y, final int z) {
-        final int targetCnt = getTargetCount();
+    private void setPosition(int x, int y, int z) {
+        int targetCnt = getTargetCount();
         for (int i = 0; i < targetCnt; i++) {
-            final AnimatedMove animation = (AnimatedMove) getAnimationTarget(i);
+            AnimatedMove animation = getAnimationTarget(i);
             if (animation == null) {
                 LOGGER.error("Found NULL animation.");
             } else {
