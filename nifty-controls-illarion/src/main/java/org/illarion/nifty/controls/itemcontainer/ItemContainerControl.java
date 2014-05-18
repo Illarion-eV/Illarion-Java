@@ -55,38 +55,29 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
 
     private Nifty niftyInstance;
 
-    /**
-     * Default constructor.
-     */
-    public ItemContainerControl() {
-    }
-
     @Override
     public void bind(
-            @Nonnull final Nifty nifty,
-            @Nonnull final Screen screen,
-            @Nonnull final Element element,
-            @Nonnull final Parameters parameter) {
+            @Nonnull Nifty nifty, @Nonnull Screen screen, @Nonnull Element element, @Nonnull Parameters parameter) {
         super.bind(nifty, screen, element, parameter);
 
         niftyInstance = nifty;
 
-        final int slotCount;
+        int slotCount;
         if (parameter.isSet("slots")) {
             slotCount = parameter.getAsInteger("slots");
         } else {
             throw new IllegalStateException("Amount of slots not set!!");
         }
 
-        final int columns = (int) Math.ceil(Math.sqrt(slotCount));
+        int columns = (int) Math.ceil(Math.sqrt(slotCount));
 
         containerId = parameter.getAsInteger("containerId");
 
-        final int slotHeight = parameter.getAsInteger("slotHeight", SLOT_DEFAULT_SIZE);
-        final int slotWidth = parameter.getAsInteger("slotWidth", SLOT_DEFAULT_SIZE);
-        final String slotBackground = "gui/containerslot.png";
+        int slotHeight = parameter.getAsInteger("slotHeight", SLOT_DEFAULT_SIZE);
+        int slotWidth = parameter.getAsInteger("slotWidth", SLOT_DEFAULT_SIZE);
+        String slotBackground = "gui/containerslot.png";
 
-        final Element contentPanel = getContent().findElementById("#contentPanel");
+        Element contentPanel = getContent().findElementById("#contentPanel");
 
         SizeValue contentWidth = SizeValue.px((slotWidth + 2) * columns);
 
@@ -94,7 +85,7 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
         contentPanelBuilder.childLayoutVertical();
         contentPanelBuilder.width(contentWidth);
 
-        PanelBuilder currentPanelBuilder = null;
+        @Nullable PanelBuilder currentPanelBuilder = null;
 
         for (int i = 0; i < slotCount; i++) {
             if ((i % columns) == 0) {
@@ -141,12 +132,8 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
      */
     @Nonnull
     private static ControlBuilder buildSlot(
-            final String prefix,
-            final int index,
-            final int height,
-            final int width,
-            @Nullable final String slotBackground) {
-        final InventorySlotBuilder builder = new InventorySlotBuilder(prefix + "#slot" + index);
+            String prefix, int index, int height, int width, @Nullable String slotBackground) {
+        InventorySlotBuilder builder = new InventorySlotBuilder(prefix + "#slot" + index);
         builder.height(SizeValue.px(height));
         builder.width(SizeValue.px(width));
         builder.margin("1px");
@@ -158,7 +145,7 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
     }
 
     @Override
-    public boolean inputEvent(@Nonnull final NiftyInputEvent inputEvent) {
+    public boolean inputEvent(@Nonnull NiftyInputEvent inputEvent) {
         return true;
     }
 
@@ -169,7 +156,7 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
 
     @Nonnull
     @Override
-    public InventorySlot getSlot(final int index) {
+    public InventorySlot getSlot(int index) {
         return slots[index];
     }
 
