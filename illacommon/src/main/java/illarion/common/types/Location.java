@@ -331,6 +331,16 @@ public class Location implements Serializable {
     }
 
     /**
+     * Check if a integer value is a valid direction.
+     *
+     * @param direction the direction value
+     * @return {@code true} if the value is a valid direction
+     */
+    public static boolean isValidDirection(int direction) {
+        return (direction >= 0) && (direction < DIR_MOVE8);
+    }
+
+    /**
      * Add an offset to the display location. The calculation to map and server coordinates is triggered automatically.
      *
      * @param x Value to add to the X-Coordinate of the display location

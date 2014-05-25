@@ -15,23 +15,38 @@
  */
 package illarion.client.world.movement;
 
+import javax.annotation.Nonnull;
+
 /**
- * This kind of movement handler uses keyboard input like event triggering to walk.
+ * The generic shared implementation for the movement handlers.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface KeyboardMovementHandler extends MovementHandler {
-    /**
-     * Start moving towards a direction.
-     *
-     * @param direction the direction
-     */
-    void startMovingTowards(int direction);
+abstract class AbstractMovementHandler implements MovementHandler {
+    @Nonnull
+    private final Movement movement;
 
-    /**
-     * Stop moving towards a direction.
-     *
-     * @param direction the direction
-     */
-    void stopMovingTowards(int direction);
+    protected AbstractMovementHandler(@Nonnull Movement movement) {
+        this.movement = movement;
+    }
+
+    @Nonnull
+    protected final Movement getMovement() {
+        return movement;
+    }
+
+    @Override
+    public boolean isActive() {
+        return movement.isActive(this);
+    }
+
+    @Override
+    public void assumeControl() {
+        movement.activate(this);
+    }
+
+    @Override
+    public void disengage() {
+        movement.disengage(this);
+    }
 }

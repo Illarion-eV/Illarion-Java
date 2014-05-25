@@ -34,10 +34,12 @@ import illarion.client.gui.EntitySlickRenderImage;
 import illarion.client.gui.GameMapGui;
 import illarion.client.gui.Tooltip;
 import illarion.client.input.*;
+import illarion.client.world.CharMovementMode;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.client.world.interactive.InteractionManager;
 import illarion.client.world.interactive.InteractiveMapTile;
+import illarion.client.world.movement.MouseMovementHandler;
 import illarion.common.types.ItemCount;
 import illarion.common.types.Location;
 import illarion.common.types.Rectangle;
@@ -201,7 +203,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
      * @param data the event data
      */
     private void handlePrimaryKeyDrag(@Nonnull final DragOnMapEvent data) {
-        if (!World.getPlayer().getMovementHandler().isMouseMovementActive()) {
+        if (!World.getPlayer().getMovementHandler().getFollowMouseHandler().isActive()) {
             SceneEvent newEvent = new PrimaryKeyMapDrag(data, new PrimaryKeyMapDrag.PrimaryKeyMapDragCallback() {
                 @Override
                 public boolean startDraggingItemFromTile(@Nonnull PrimaryKeyMapDrag event, MapTile tile) {
@@ -273,7 +275,9 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
      * @param event the event that contains the data for the move
      */
     private void moveTowardsMouse(@Nonnull DragOnMapEvent event) {
-        World.getPlayer().getMovementHandler().walkTowards(event.getNewX(), event.getNewY());
+        MouseMovementHandler handler = World.getPlayer().getMovementHandler().getFollowMouseHandler();
+        handler.handleMouse(event.getNewX(), event.getNewY());
+        handler.assumeControl();
         input.enableForwarding(ForwardingTarget.Mouse);
     }
 
@@ -282,7 +286,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
         if (World.getInteractionManager().isDragging()) {
             return;
         }
-        if (World.getPlayer().getMovementHandler().isMouseMovementActive()) {
+        if (World.getPlayer().getMovementHandler().getFollowMouseHandler().isActive()) {
             return;
         }
 
@@ -294,7 +298,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
         if (World.getInteractionManager().isDragging()) {
             return;
         }
-        if (World.getPlayer().getMovementHandler().isMouseMovementActive()) {
+        if (World.getPlayer().getMovementHandler().getFollowMouseHandler().isActive()) {
             return;
         }
 
@@ -349,7 +353,13 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
      * Toggle the pulsing animation of the run button.
      */
     public void toggleRunMode() {
-        World.getPlayer().getMovementHandler().toggleRunWalk();
+        boolean nowWalking = true;
+        if (World.getPlayer().getMovementHandler().getDefaultMovementMode() == CharMovementMode.Run) {
+            World.getPlayer().getMovementHandler().setDefaultMovementMode(CharMovementMode.Walk);
+        } else {
+            World.getPlayer().getMovementHandler().setDefaultMovementMode(CharMovementMode.Run);
+            nowWalking = false;
+        }
         if (activeScreen == null) {
             return;
         }
@@ -357,7 +367,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
         if (runBtn == null) {
             return;
         }
-        if (World.getPlayer().getMovementHandler().isInWalkMode()) {
+        if (nowWalking) {
             runBtn.stopEffect(EffectEventId.onCustom);
         } else {
             runBtn.startEffect(EffectEventId.onCustom, null, "pulse");

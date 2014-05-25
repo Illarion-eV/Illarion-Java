@@ -28,6 +28,7 @@ import illarion.client.world.events.CloseDialogEvent;
 import illarion.client.world.items.Inventory;
 import illarion.client.world.items.ItemContainer;
 import illarion.client.world.items.MerchantList;
+import illarion.client.world.movement.Movement;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
 import illarion.common.util.Bresenham;
@@ -114,7 +115,7 @@ public final class Player {
      * The player movement handler that takes care that the player character is walking around.
      */
     @Nonnull
-    private final PlayerMovement movementHandler;
+    private final Movement movementHandler;
 
     /**
      * The path to the folder of character specific stuff, like the map or the names table.
@@ -167,7 +168,7 @@ public final class Player {
     /**
      * Constructor for the player that receives the character name from the login data automatically.
      */
-    public Player(@Nonnull final Engine engine) {
+    public Player(@Nonnull Engine engine) {
         this(engine, Login.getInstance().getLoginCharacter());
     }
 
@@ -177,7 +178,7 @@ public final class Player {
      * @param charName the character name of the player playing this game
      */
     @SuppressWarnings("nls")
-    public Player(@Nonnull final Engine engine, @Nonnull final String charName) {
+    public Player(@Nonnull Engine engine, @Nonnull String charName) {
         Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
         if (userDir == null) {
             throw new IllegalStateException("User directory is null?!");
@@ -199,7 +200,7 @@ public final class Player {
         character.setName(charName);
 
         combatHandler = new CombatHandler();
-        movementHandler = new PlayerMovement(engine.getInput(), this);
+        movementHandler = new Movement(this, engine.getInput(), World.getMapDisplay());
         inventory = new Inventory();
         containers = new TIntObjectHashMap<>();
         containerLock = new ReentrantReadWriteLock();
@@ -212,7 +213,7 @@ public final class Player {
      *
      * @param id the key of the parameter to remove
      */
-    public void removeContainer(final int id) {
+    public void removeContainer(int id) {
         synchronized (containers) {
             if (containers.containsKey(id)) {
                 containers.remove(id);
@@ -222,14 +223,14 @@ public final class Player {
     }
 
     @EventSubscriber
-    public void onDialogClosedEvent(@Nonnull final CloseDialogEvent event) {
+    public void onDialogClosedEvent(@Nonnull CloseDialogEvent event) {
         if (merchantDialog == null) {
             return;
         }
 
         if (event.isClosingDialogType(CloseDialogEvent.DialogType.Merchant)) {
             if (event.getDialogId() == merchantDialog.getId()) {
-                final MerchantList oldList = merchantDialog;
+                MerchantList oldList = merchantDialog;
                 merchantDialog = null;
                 oldList.closeDialog();
             }
@@ -237,13 +238,13 @@ public final class Player {
     }
 
     @EventSubscriber
-    public void onMerchantDialogOpenedEvent(@Nonnull final DialogMerchantReceivedEvent event) {
-        final MerchantList list = new MerchantList(event.getId(), event.getItemCount());
+    public void onMerchantDialogOpenedEvent(@Nonnull DialogMerchantReceivedEvent event) {
+        MerchantList list = new MerchantList(event.getId(), event.getItemCount());
         for (int i = 0; i < event.getItemCount(); i++) {
             list.setItem(i, event.getItem(i));
         }
 
-        final MerchantList oldList = merchantDialog;
+        MerchantList oldList = merchantDialog;
         merchantDialog = list;
 
         if (oldList != null) {
@@ -252,9 +253,9 @@ public final class Player {
     }
 
     @EventSubscriber
-    public void onOpenContainerEvent(@Nonnull final OpenContainerEvent event) {
-        final ItemContainer container;
-        final int slotCount = event.getSlotCount();
+    public void onOpenContainerEvent(@Nonnull OpenContainerEvent event) {
+        ItemContainer container;
+        int slotCount = event.getSlotCount();
         if (hasContainer(event.getContainerId())) {
             container = getContainer(event.getContainerId());
             if (container == null) {
@@ -271,10 +272,10 @@ public final class Player {
             container = createNewContainer(event.getContainerId(), slotCount);
         }
 
-        final boolean[] updatedSlot = new boolean[slotCount];
+        boolean[] updatedSlot = new boolean[slotCount];
         Arrays.fill(updatedSlot, false);
 
-        final TIntObjectIterator<OpenContainerEvent.Item> itr = event.getItemIterator();
+        TIntObjectIterator<OpenContainerEvent.Item> itr = event.getItemIterator();
         while (itr.hasNext()) {
             itr.advance();
             updatedSlot[itr.key()] = true;
@@ -296,7 +297,7 @@ public final class Player {
      * @param id the ID of the container
      * @return {@code true} in case this container exists
      */
-    public boolean hasContainer(final int id) {
+    public boolean hasContainer(int id) {
         containerLock.readLock().lock();
         try {
             return containers.containsKey(id);
@@ -312,7 +313,7 @@ public final class Player {
      * @return the container assigned to this ID or a newly created container
      */
     @Nullable
-    public ItemContainer getContainer(final int id) {
+    public ItemContainer getContainer(int id) {
         containerLock.readLock().lock();
         try {
             return containers.get(id);
@@ -330,13 +331,13 @@ public final class Player {
      * @throws IllegalArgumentException in case there is already a container with the same ID
      */
     @Nonnull
-    public ItemContainer createNewContainer(final int id, final int slotCount) {
+    public ItemContainer createNewContainer(int id, int slotCount) {
         containerLock.writeLock().lock();
         try {
             if (containers.containsKey(id)) {
                 throw new IllegalArgumentException("Can't create item container that already exists.");
             }
-            final ItemContainer newContainer = new ItemContainer(id, slotCount);
+            ItemContainer newContainer = new ItemContainer(id, slotCount);
             containers.put(id, newContainer);
             return newContainer;
         } finally {
@@ -400,7 +401,7 @@ public final class Player {
      * @return the movement handler
      */
     @Nonnull
-    public PlayerMovement getMovementHandler() {
+    public Movement getMovementHandler() {
         return movementHandler;
     }
 
@@ -440,7 +441,7 @@ public final class Player {
      * @param checkLoc The location that shall be checked
      * @return true if the location is at the same level as the player
      */
-    boolean isBaseLevel(@Nonnull final Location checkLoc) {
+    boolean isBaseLevel(@Nonnull Location checkLoc) {
         return getLocation().getScZ() == checkLoc.getScZ();
     }
 
@@ -450,13 +451,13 @@ public final class Player {
      * @param chara The character that is checked
      * @return the visibility of the character in percent
      */
-    public int canSee(@Nonnull final Char chara) {
+    public int canSee(@Nonnull Char chara) {
         if (isPlayer(chara.getCharId())) {
             return Char.VISIBILITY_MAX;
         }
 
         int visibility = Char.VISIBILITY_MAX;
-        final Avatar avatar = chara.getAvatar();
+        Avatar avatar = chara.getAvatar();
         if (avatar != null) {
             visibility = avatar.getTemplate().getAvatarInfo().getVisibility();
         }
@@ -471,7 +472,7 @@ public final class Player {
      * @param checkId the ID to be checked
      * @return true if it is the player, false if not
      */
-    public boolean isPlayer(@Nullable final CharacterId checkId) {
+    public boolean isPlayer(@Nullable CharacterId checkId) {
         return (playerId != null) && playerId.equals(checkId);
     }
 
@@ -482,30 +483,30 @@ public final class Player {
      * @param limit The maximum value for the visibility
      * @return The visibility of the target location
      */
-    private int getVisibility(@Nonnull final Location targetLoc, final int limit) {
+    private int getVisibility(@Nonnull Location targetLoc, int limit) {
         // target is at same level or above char
-        final boolean visible = targetLoc.getScZ() <= character.getLocation().getScZ();
+        boolean visible = targetLoc.getScZ() <= character.getLocation().getScZ();
         // calculate line-of-sight
         if (visible && (character.getLocation().getDistance(targetLoc) < 30)) {
             // calculate intervening fields.
             // note that the order of fields may be inverted
-            final Bresenham line = Bresenham.getInstance();
+            Bresenham line = Bresenham.getInstance();
             try {
                 line.calculate(playerLocation, targetLoc);
-            } catch (@Nonnull final IllegalStateException ex) {
+            } catch (@Nonnull IllegalStateException ex) {
                 return 0;
             }
             // examine line without start and end point
-            final int length = line.getLength() - 1;
-            final GameMap map = World.getMap();
-            final Point point = new Point();
+            int length = line.getLength() - 1;
+            GameMap map = World.getMap();
+            Point point = new Point();
             int coverage = World.getWeather().getVisiblity() -
                     ((getCharacter().getAttribute(CharacterAttribute.Perception) - PERCEPTION_AVERAGE) *
                             PERCEPTION_COVER_SHARE);
             // skip tile the character is standing on
             for (int i = 1; i < length; i++) {
                 line.getPoint(i, point);
-                final MapTile tile = map.getMapAt(point.x, point.y, playerLocation.getScZ());
+                MapTile tile = map.getMapAt(point.x, point.y, playerLocation.getScZ());
                 if (tile != null) {
                     coverage += tile.getCoverage();
 
@@ -516,7 +517,7 @@ public final class Player {
                 // include distance in calculation 1% per tile
                 coverage++;
             }
-            final int quality = limit - coverage;
+            int quality = limit - coverage;
             if (quality > (Char.VISIBILITY_MAX / 2)) {
                 return Char.VISIBILITY_MAX;
             }
@@ -554,13 +555,13 @@ public final class Player {
      * @param tolerance an additional tolerance added to the default clipping distance
      * @return true if the position is within the clipping distance and the tolerance
      */
-    public boolean isOnScreen(@Nonnull final Location testLoc, final int tolerance) {
+    public boolean isOnScreen(@Nonnull Location testLoc, int tolerance) {
         if (Math.abs(testLoc.getScZ() - playerLocation.getScZ()) > 2) {
             return false;
         }
-        final int width = MapDimensions.getInstance().getStripesWidth() >> 1;
-        final int height = MapDimensions.getInstance().getStripesHeight() >> 1;
-        final int limit = (Math.max(width, height) + tolerance) - 2;
+        int width = MapDimensions.getInstance().getStripesWidth() >> 1;
+        int height = MapDimensions.getInstance().getStripesHeight() >> 1;
+        int limit = (Math.max(width, height) + tolerance) - 2;
 
         return (Math.abs(playerLocation.getScX() - testLoc.getScX()) +
                 Math.abs(playerLocation.getScY() - testLoc.getScY())) < limit;
@@ -573,7 +574,7 @@ public final class Player {
      *
      * @param newLoc new location of the character on the map
      */
-    public void setLocation(@Nonnull final Location newLoc) {
+    public void setLocation(@Nonnull Location newLoc) {
         validLocation = true;
         if (playerLocation.equals(newLoc)) {
             return;
@@ -593,11 +594,9 @@ public final class Player {
         }
 
         // set logical location
-        movementHandler.cancelAutoWalk();
         updateLocation(newLoc);
         character.setLocation(newLoc);
         character.stopAnimation();
-        movementHandler.stopAnimation();
         World.getPlayer().getCombatHandler().standDown();
         World.getMapDisplay().setLocation(newLoc);
 
@@ -620,7 +619,7 @@ public final class Player {
      *
      * @param newLoc the new location of the player
      */
-    public void updateLocation(@Nonnull final Location newLoc) {
+    public void updateLocation(@Nonnull Location newLoc) {
         if (playerLocation.equals(newLoc)) {
             return;
         }
@@ -636,7 +635,7 @@ public final class Player {
      *
      * @param newPlayerId the new ID of the player
      */
-    public void setPlayerId(@Nonnull final CharacterId newPlayerId) {
+    public void setPlayerId(@Nonnull CharacterId newPlayerId) {
         playerId = newPlayerId;
         character.setCharId(playerId);
 
@@ -648,6 +647,5 @@ public final class Player {
      */
     public void shutdown() {
         character.markAsRemoved();
-        movementHandler.shutdown();
     }
 }

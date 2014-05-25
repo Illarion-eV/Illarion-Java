@@ -66,14 +66,14 @@ public final class InputReceiver implements InputListener {
          * @param posX the x coordinate where the click happened
          * @param posY the y coordinate where the click happened
          */
-        public void setInputData(@Nonnull final Button mouseKey, final int posX, final int posY) {
+        public void setInputData(@Nonnull Button mouseKey, int posX, int posY) {
             x = posX;
             y = posY;
             key = mouseKey;
         }
 
         @Override
-        public void executeAction(final int count) {
+        public void executeAction(int count) {
             switch (count) {
                 case 1:
                     EventBus.publish(new ClickOnMapEvent(key, x, y));
@@ -112,13 +112,13 @@ public final class InputReceiver implements InputListener {
          * @param posX the x coordinate where the click happened
          * @param posY the y coordinate where the click happened
          */
-        public void setInputData(final int posX, final int posY) {
+        public void setInputData(int posX, int posY) {
             x = posX;
             y = posY;
         }
 
         @Override
-        public void executeAction(final int count) {
+        public void executeAction(int count) {
             EventBus.publish(new PointOnMapEvent(x, y));
         }
     }
@@ -160,7 +160,7 @@ public final class InputReceiver implements InputListener {
      *
      * @param input the input system this class is receiving its data from
      */
-    public InputReceiver(final Input input) {
+    public InputReceiver(Input input) {
         this.input = input;
         enabled = false;
         keyMapper = new KeyMapper(input);
@@ -171,31 +171,31 @@ public final class InputReceiver implements InputListener {
      *
      * @param value the new enabled flag
      */
-    public void setEnabled(final boolean value) {
+    public void setEnabled(boolean value) {
         enabled = value;
     }
 
     @Override
-    public void keyDown(@Nonnull final Key key) {
+    public void keyDown(@Nonnull Key key) {
         if (enabled) {
             keyMapper.handleKeyPressedInput(key);
         }
     }
 
     @Override
-    public void keyUp(@Nonnull final Key key) {
+    public void keyUp(@Nonnull Key key) {
         if (enabled) {
             keyMapper.handleKeyReleasedInput(key);
         }
     }
 
     @Override
-    public void keyTyped(final char character) {
+    public void keyTyped(char character) {
         // nothing
     }
 
     @Override
-    public void buttonDown(final int mouseX, final int mouseY, @Nonnull final Button button) {
+    public void buttonDown(int mouseX, int mouseY, @Nonnull Button button) {
         if (enabled) {
             buttonMultiClickHelper.setInputData(button, mouseX, mouseY);
             buttonMultiClickHelper.pulse();
@@ -203,20 +203,20 @@ public final class InputReceiver implements InputListener {
     }
 
     @Override
-    public void buttonUp(final int mouseX, final int mouseY, @Nonnull final Button button) {
+    public void buttonUp(int mouseX, int mouseY, @Nonnull Button button) {
         if (enabled) {
-            World.getPlayer().getMovementHandler().stopWalkTowards();
+            World.getPlayer().getMovementHandler().getFollowMouseHandler().disengage();
             input.disableForwarding(ForwardingTarget.Mouse);
         }
     }
 
     @Override
-    public void buttonClicked(final int mouseX, final int mouseY, @Nonnull final Button button, final int count) {
+    public void buttonClicked(int mouseX, int mouseY, @Nonnull Button button, int count) {
         // nothing
     }
 
     @Override
-    public void mouseMoved(final int mouseX, final int mouseY) {
+    public void mouseMoved(int mouseX, int mouseY) {
         if (enabled) {
             pointAtHelper.setInputData(mouseX, mouseY);
             pointAtHelper.pulse();
@@ -226,14 +226,14 @@ public final class InputReceiver implements InputListener {
 
     @Override
     public void mouseDragged(
-            @Nonnull final Button button, final int fromX, final int fromY, final int toX, final int toY) {
+            @Nonnull Button button, int fromX, int fromY, int toX, int toY) {
         if (enabled) {
             EventBus.publish(new DragOnMapEvent(fromX, fromY, toX, toY, button));
         }
     }
 
     @Override
-    public void mouseWheelMoved(final int mouseX, final int mouseY, final int delta) {
+    public void mouseWheelMoved(int mouseX, int mouseY, int delta) {
         // nothing
     }
 }

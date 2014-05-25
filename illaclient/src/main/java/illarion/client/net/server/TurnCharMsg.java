@@ -55,7 +55,7 @@ public final class TurnCharMsg extends AbstractReply {
      * decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         dir = reader.readUByte();
         charId = new CharacterId(reader);
     }
@@ -73,9 +73,9 @@ public final class TurnCharMsg extends AbstractReply {
         }
 
         if (World.getPlayer().isPlayer(charId)) { // turn player
-            World.getPlayer().getMovementHandler().acknowledgeTurn(dir);
+            World.getPlayer().getMovementHandler().getExecutor().handleTurnServerResponse(dir);
         } else { // turn char
-            final Char chara = World.getPeople().getCharacter(charId);
+            Char chara = World.getPeople().getCharacter(charId);
             if (chara != null) {
                 chara.setDirection(dir);
             }
@@ -106,6 +106,6 @@ public final class TurnCharMsg extends AbstractReply {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString(charId.toString() + " to " + dir);
+        return toString(charId + " to " + dir);
     }
 }

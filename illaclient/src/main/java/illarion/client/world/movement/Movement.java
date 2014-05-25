@@ -15,11 +15,21 @@
  */
 package illarion.client.world.movement;
 
+import illarion.client.graphics.AnimatedMove;
+import illarion.client.graphics.MoveAnimation;
+import illarion.client.net.client.MoveCmd;
+import illarion.client.net.client.TurnCmd;
+import illarion.client.world.CharMovementMode;
 import illarion.client.world.Player;
+import illarion.client.world.World;
+import illarion.common.types.CharacterId;
+import illarion.common.types.Location;
+import org.illarion.engine.input.Input;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This is the main controlling class for the movement. It maintains the references to the different handlers and
@@ -37,7 +47,173 @@ public class Movement {
     @Nonnull
     private final Player player;
 
-    public Movement(@Nonnull Player player) {
+    /**
+     * The currently active movement handler.
+     */
+    @Nullable
+    private MovementHandler activeHandler;
+
+    private CharMovementMode defaultMovementMode;
+
+    private boolean stepInProgress;
+
+    @Nonnull
+    private final MovementExecutor executor;
+
+    @Nonnull
+    private final MouseMovementHandler followMouseHandler;
+
+    @Nonnull
+    private final KeyboardMovementHandler keyboardMovementHandler;
+
+    @Nonnull
+    private final TargetMovementHandler targetMovementHandler;
+
+    @Nonnull
+    private final MoveAnimation moveAnimation;
+
+    public Movement(@Nonnull Player player, @Nonnull Input input, @Nonnull AnimatedMove movementReceiver) {
         this.player = player;
+        moveAnimation = new MoveAnimation(movementReceiver);
+        moveAnimation.addTarget(new MovementMonitor(this, moveAnimation), false);
+        defaultMovementMode = CharMovementMode.Walk;
+        stepInProgress = false;
+        executor = new MovementExecutor(this, moveAnimation);
+
+        followMouseHandler = new FollowMouseMovementHandler(this, input);
+        keyboardMovementHandler = new SimpleKeyboardMovementHandler(this, input);
+        targetMovementHandler = new WalkToMovementHandler(this);
+    }
+
+    @Nonnull
+    public MovementExecutor getExecutor() {
+        return executor;
+    }
+
+    public boolean isMoving() {
+        return moveAnimation.isRunning();
+    }
+
+    @Nonnull
+    public MouseMovementHandler getFollowMouseHandler() {
+        return followMouseHandler;
+    }
+
+    @Nonnull
+    public KeyboardMovementHandler getKeyboardHandler() {
+        return keyboardMovementHandler;
+    }
+
+    @Nonnull
+    public TargetMovementHandler getTargetMovementHandler() {
+        return targetMovementHandler;
+    }
+
+    void activate(@Nonnull MovementHandler handler) {
+        if (!isActive(handler)) {
+            MovementHandler oldHandler = activeHandler;
+            if (oldHandler != null) {
+                oldHandler.disengage();
+            }
+            activeHandler = handler;
+            LOGGER.info("New movement handler is assuming control: {}", activeHandler);
+        }
+        update();
+    }
+
+    void disengage(@Nonnull MovementHandler handler) {
+        if (isActive(handler)) {
+            activeHandler = null;
+        } else {
+            LOGGER.warn("Tried to disengage a movement handler ({}) that was not active!", handler);
+        }
+    }
+
+    boolean isActive(@Nonnull MovementHandler handler) {
+        return (activeHandler != null) && handler.equals(activeHandler);
+    }
+
+    @Nonnull
+    Player getPlayer() {
+        return player;
+    }
+
+    public CharMovementMode getDefaultMovementMode() {
+        return defaultMovementMode;
+    }
+
+    public void setDefaultMovementMode(CharMovementMode mode) {
+        defaultMovementMode = mode;
+    }
+
+    /**
+     * Send the movement command to the server.
+     *
+     * @param direction the direction of the requested move
+     * @param mode the mode of the requested move
+     */
+    private void sendMoveToServer(int direction, @Nonnull CharMovementMode mode) {
+        if (!Location.isValidDirection(direction)) {
+            throw new IllegalArgumentException("Direction is out of the valid range.");
+        }
+        CharacterId playerId = player.getPlayerId();
+        if (playerId == null) {
+            LOGGER.error("Send move to server while ID is not known.");
+            return;
+        }
+        World.getNet().sendCommand(new MoveCmd(playerId, mode, direction));
+    }
+
+    private void sendTurnToServer(int direction) {
+        if (!Location.isValidDirection(direction)) {
+            throw new IllegalArgumentException("Direction is out of the valid range.");
+        }
+        if (player.getCharacter().getDirection() != direction) {
+            World.getNet().sendCommand(new TurnCmd(direction));
+        }
+    }
+
+    private void requestNextMove(@Nonnull StepData nextStep) {
+        switch (nextStep.getMovementMode()) {
+            case Walk:
+            case Run:
+                sendTurnToServer(nextStep.getDirection());
+                sendMoveToServer(nextStep.getDirection(), nextStep.getMovementMode());
+                break;
+            default:
+                throw new IllegalStateException("The returned next step did not contain a valid movement mode.");
+        }
+    }
+
+    /**
+     * Notify the handler that a step is now finished.
+     */
+    void reportStepFinished() {
+        LOGGER.info("Step is now finished.");
+        stepInProgress = false;
+        update();
+    }
+
+    /**
+     * This function triggers the lifecycle run of the movement handler. Its executed automatically as the movement
+     * handler sees fit. How ever for special events that might require a action of the movement handler this function
+     * can be triggered.
+     * <p/>
+     * Calling it too often causes no harm. The handler checks internally if any actual operations need to be executed
+     * or not.
+     */
+    public void update() {
+        if (stepInProgress) {
+            return;
+        }
+        MovementHandler handler = activeHandler;
+        if (handler != null) {
+            StepData nextStep = handler.getNextStep();
+            LOGGER.info("Requesting new step data from handler: {}", nextStep);
+            if (nextStep.getMovementMode() != CharMovementMode.None) {
+                stepInProgress = true;
+                requestNextMove(nextStep);
+            }
+        }
     }
 }

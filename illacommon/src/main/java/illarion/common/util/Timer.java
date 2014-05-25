@@ -74,7 +74,7 @@ public final class Timer {
      *
      * @param timerDelay the initial and the between delay time in milliseconds
      */
-    public Timer(final int timerDelay) {
+    public Timer(int timerDelay) {
         this(timerDelay, null);
     }
 
@@ -86,7 +86,7 @@ public final class Timer {
      * @param betweenDelay the delay between two calls in milliseconds
      * @param listener the first listener that is called using this timer
      */
-    public Timer(final int initDelay, final int betweenDelay, @Nullable final Runnable listener) {
+    public Timer(int initDelay, int betweenDelay, @Nullable Runnable listener) {
         delay = betweenDelay;
         initialDelay = initDelay;
         listeners = new FastTable<>();
@@ -103,7 +103,7 @@ public final class Timer {
      * @param timerDelay the initial and the between delay time in milliseconds
      * @param listener the listener that is added as first listener
      */
-    public Timer(final int timerDelay, @Nullable final Runnable listener) {
+    public Timer(int timerDelay, @Nullable Runnable listener) {
         this(timerDelay, timerDelay, listener);
     }
 
@@ -112,7 +112,7 @@ public final class Timer {
      *
      * @param listener the listener to add
      */
-    public void addListener(final Runnable listener) {
+    public void addListener(Runnable listener) {
         listeners.add(listener);
     }
 
@@ -157,7 +157,7 @@ public final class Timer {
      *
      * @param listener the listener to remove
      */
-    public void removeListener(final Runnable listener) {
+    public void removeListener(Runnable listener) {
         listeners.remove(listener);
     }
 
@@ -176,7 +176,7 @@ public final class Timer {
      * @param timerDelay the time between two calls of the timer in milliseconds
      */
     @SuppressWarnings("nls")
-    public void setDelay(final int timerDelay) {
+    public void setDelay(int timerDelay) {
         if (timerDelay < 0) {
             throw new IllegalArgumentException("Invalid delay: " + timerDelay);
         }
@@ -189,7 +189,7 @@ public final class Timer {
      * @param initDelay the initial delay in milliseconds
      */
     @SuppressWarnings("nls")
-    public void setInitialDelay(final int initDelay) {
+    public void setInitialDelay(int initDelay) {
         if (initDelay < 0) {
             throw new IllegalArgumentException("Invalid initial delay: " + initDelay);
         }
@@ -202,7 +202,7 @@ public final class Timer {
      *
      * @param flag {@code true} to have the timer sending more then one event
      */
-    public void setRepeats(final boolean flag) {
+    public void setRepeats(boolean flag) {
         repeats = flag;
     }
 
@@ -253,7 +253,7 @@ public final class Timer {
      * a call.
      */
     synchronized void post() {
-        for (@Nonnull final Runnable listener : listeners) {
+        for (@Nonnull Runnable listener : listeners) {
             listener.run();
         }
     }
@@ -263,7 +263,7 @@ public final class Timer {
      *
      * @param time the time when this timer is supposed to be called next time
      */
-    void setExpirationTime(final long time) {
+    void setExpirationTime(long time) {
         expirationTime = time;
     }
 
@@ -272,7 +272,7 @@ public final class Timer {
      *
      * @param next the next timer in the list
      */
-    void setNextTimer(@Nullable final Timer next) {
+    void setNextTimer(@Nullable Timer next) {
         nextTimer = next;
     }
 }

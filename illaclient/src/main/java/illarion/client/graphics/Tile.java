@@ -26,6 +26,7 @@ import illarion.client.resources.data.TileTemplate;
 import illarion.client.world.MapGroup;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
+import illarion.client.world.movement.TargetMovementHandler;
 import illarion.common.graphics.MapVariance;
 import illarion.common.graphics.TileInfo;
 import illarion.common.types.Location;
@@ -128,6 +129,11 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
                 return;
             }
 
+            super.render(g);
+            showHighlight = 0;
+
+            /* This is the new light based tile. Sadly the performance of this thing is too poor,
+             * so its disabled for now.
             if ((showHighlight != 0) || (tileLightEffect == null) || !parentTile.hasLightGradient()) {
                 super.render(g);
                 showHighlight = 0;
@@ -143,6 +149,7 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
                 tileLightEffect.setCenterColor(parentTile.getLight());
                 renderSprite(g, getDisplayX(), getDisplayY(), Color.WHITE, tileLightEffect);
             }
+            */
         }
     }
 
@@ -226,7 +233,9 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
                 return false;
             }
 
-            World.getPlayer().getMovementHandler().walkTo(parentTile.getLocation());
+            TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
+            handler.walkTo(parentTile.getLocation(), 0);
+            handler.assumeControl();
             return true;
         }
 

@@ -15,23 +15,29 @@
  */
 package illarion.client.world.movement;
 
+import illarion.common.types.Location;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
- * This kind of movement handler uses keyboard input like event triggering to walk.
+ * The purpose of this movement handler is in general to approach a specified target location.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface KeyboardMovementHandler extends MovementHandler {
+public interface TargetMovementHandler extends MovementHandler {
     /**
-     * Start moving towards a direction.
+     * Start moving towards a location until its within the distance specified.
      *
-     * @param direction the direction
+     * @param target the target location
+     * @param distance the distance to the location that is sufficient for the approach
      */
-    void startMovingTowards(int direction);
+    void walkTo(@Nonnull Location target, int distance);
 
     /**
-     * Stop moving towards a direction.
+     * Set the action that is executed once the target of the path is reached.
      *
-     * @param direction the direction
+     * @param action the action
      */
-    void stopMovingTowards(int direction);
+    void setTargetReachedAction(@Nullable Runnable action);
 }

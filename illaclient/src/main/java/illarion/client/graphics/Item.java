@@ -23,6 +23,8 @@ import illarion.client.util.Lang;
 import illarion.client.util.LookAtTracker;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
+import illarion.client.world.interactive.InteractiveMapTile;
+import illarion.client.world.movement.TargetMovementHandler;
 import illarion.common.graphics.MapConstants;
 import illarion.common.graphics.MapVariance;
 import illarion.common.types.ItemCount;
@@ -260,11 +262,13 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
                 return false;
             }
 
+            TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
             if (parentTile.isBlocked()) {
-                World.getPlayer().getMovementHandler().walkTo(parentTile.getLocation(), parentTile.getInteractive());
+                handler.walkTo(parentTile.getLocation(), 1);
             } else {
-                World.getPlayer().getMovementHandler().walkTo(parentTile.getLocation());
+                handler.walkTo(parentTile.getLocation(), 0);
             }
+            handler.assumeControl();
             return true;
         }
 
@@ -281,8 +285,16 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
             if (parentTile.getInteractive().isInUseRange()) {
                 parentTile.getInteractive().use();
             } else {
-                World.getPlayer().getMovementHandler()
-                        .walkToAndUse(parentTile.getLocation(), parentTile.getInteractive());
+                final InteractiveMapTile interactiveMapTile = parentTile.getInteractive();
+                TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
+                handler.walkTo(parentTile.getLocation(), 1);
+                handler.setTargetReachedAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        interactiveMapTile.use();
+                    }
+                });
+                handler.assumeControl();
             }
 
             return true;

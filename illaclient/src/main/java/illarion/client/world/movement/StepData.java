@@ -15,10 +15,29 @@
  */
 package illarion.client.world.movement;
 
+import illarion.client.world.CharMovementMode;
+
+import javax.annotation.Nonnull;
+
 /**
- * This is the shared interface for movement handlers that handle automated movements.
+ * This interface is used to exchange information regarding a single step between the different handlers of the
+ * movement system.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface AutoMovementHandler extends MovementHandler {
+interface StepData {
+    /**
+     * Get the movement method.
+     *
+     * @return the movement method
+     */
+    @Nonnull
+    CharMovementMode getMovementMode();
+
+    /**
+     * Get the direction of the move.
+     *
+     * @return the move direction
+     */
+    int getDirection();
 }

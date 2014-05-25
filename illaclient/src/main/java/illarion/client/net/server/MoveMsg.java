@@ -126,7 +126,7 @@ public final class MoveMsg extends AbstractReply {
                 default:
                     moveMode = CharMovementMode.None;
             }
-            World.getPlayer().getMovementHandler().acknowledgeMove(moveMode, loc, speed);
+            World.getPlayer().getMovementHandler().getExecutor().handleMoveServerResponse(moveMode, loc, speed);
             return true;
         }
 

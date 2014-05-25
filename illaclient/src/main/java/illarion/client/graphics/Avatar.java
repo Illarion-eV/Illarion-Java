@@ -27,6 +27,7 @@ import illarion.client.util.Lang;
 import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.client.world.interactive.InteractiveChar;
+import illarion.client.world.movement.TargetMovementHandler;
 import illarion.common.graphics.Layers;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
@@ -279,7 +280,9 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         }
 
         if (event.getKey() == Button.Left) {
-            World.getPlayer().getMovementHandler().walkTo(parentChar.getLocation(), parentChar.getInteractive());
+            TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
+            handler.walkTo(parentChar.getLocation(), 1);
+            handler.assumeControl();
             return true;
         }
 
@@ -305,12 +308,20 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
             return false;
         }
 
-        InteractiveChar interactiveChar = parentChar.getInteractive();
+        final InteractiveChar interactiveChar = parentChar.getInteractive();
 
         if (interactiveChar.isInUseRange()) {
             interactiveChar.use();
         } else {
-            World.getPlayer().getMovementHandler().walkToAndUse(parentChar.getLocation(), interactiveChar);
+            TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
+            handler.setTargetReachedAction(new Runnable() {
+                @Override
+                public void run() {
+                    interactiveChar.use();
+                }
+            });
+            handler.walkTo(parentChar.getLocation(), 1);
+            handler.assumeControl();
         }
 
         return true;

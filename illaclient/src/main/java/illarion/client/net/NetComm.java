@@ -151,12 +151,12 @@ public final class NetComm {
      * @param len the amount of byte that shall be included to the checksum calculation
      * @return the calculated checksum
      */
-    public static int getCRC(@Nonnull final ByteBuffer buffer, final int len) {
+    public static int getCRC(@Nonnull ByteBuffer buffer, int len) {
         int crc = 0;
         int remain = len;
-        final int pos = buffer.position();
+        int pos = buffer.position();
         while (buffer.hasRemaining() && (remain-- > 0)) {
-            final byte data = buffer.get();
+            byte data = buffer.get();
             crc += data;
             if (data < 0) {
                 crc += 1 << Byte.SIZE;
@@ -174,18 +174,18 @@ public final class NetComm {
      * @param prefix The prefix that shall be written first to the log
      * @param buffer The buffer that contains the values that shall be written
      */
-    static void dump(final String prefix, @Nonnull final ByteBuffer buffer) {
-        final TextBuilder builder = new TextBuilder();
-        final TextBuilder builderText = new TextBuilder();
+    static void dump(String prefix, @Nonnull ByteBuffer buffer) {
+        TextBuilder builder = new TextBuilder();
+        TextBuilder builderText = new TextBuilder();
 
         builder.append(prefix);
         builder.append(' ');
         int bytes = 0;
         while (buffer.hasRemaining()) {
-            final byte bufferValue = buffer.get();
+            byte bufferValue = buffer.get();
             builder.append(String.format(DUMP_FORMAT_BYTES, bufferValue));
 
-            final char c = (char) ((bufferValue + CHAR_MOD) % CHAR_MOD);
+            char c = (char) ((bufferValue + CHAR_MOD) % CHAR_MOD);
             if (c >= FIRST_PRINT_CHAR) {
                 builderText.append(c);
             } else {
@@ -212,10 +212,10 @@ public final class NetComm {
     @SuppressWarnings("nls")
     public boolean connect() {
         try {
-            final Servers usedServer = IllaClient.getInstance().getUsedServer();
+            Servers usedServer = IllaClient.getInstance().getUsedServer();
 
-            final String serverAddress;
-            final int serverPort;
+            String serverAddress;
+            int serverPort;
             if (usedServer == Servers.customserver) {
                 serverAddress = IllaClient.getCfg().getString("serverAddress");
                 serverPort = IllaClient.getCfg().getInteger("serverPort");
@@ -224,7 +224,7 @@ public final class NetComm {
                 serverPort = usedServer.getServerPort();
             }
 
-            final InetSocketAddress address = new InetSocketAddress(serverAddress, serverPort);
+            InetSocketAddress address = new InetSocketAddress(serverAddress, serverPort);
             socket = SelectorProvider.provider().openSocketChannel();
             socket.configureBlocking(true);
             socket.socket().setPerformancePreferences(0, 2, 1);
@@ -234,7 +234,7 @@ public final class NetComm {
                     socket.finishConnect();
                     try {
                         Thread.sleep(1);
-                    } catch (@Nonnull final InterruptedException e) {
+                    } catch (@Nonnull InterruptedException e) {
                         LOGGER.warn("Waiting time for connection finished got interrupted");
                     }
                 }
@@ -262,7 +262,7 @@ public final class NetComm {
             });
             keepAliveTimer.setRepeats(true);
             keepAliveTimer.start();
-        } catch (@Nonnull final IOException e) {
+        } catch (@Nonnull IOException e) {
             LOGGER.error("Connection error");
             return false;
         }
@@ -303,7 +303,7 @@ public final class NetComm {
             // wait for threads to react
             try {
                 Thread.sleep(THREAD_WAIT_TIME);
-            } catch (@Nonnull final InterruptedException e) {
+            } catch (@Nonnull InterruptedException e) {
                 LOGGER.warn("Disconnecting wait got interrupted.");
             }
 
@@ -315,7 +315,7 @@ public final class NetComm {
                 socket.close();
                 socket = null;
             }
-        } catch (@Nonnull final IOException e) {
+        } catch (@Nonnull IOException e) {
             LOGGER.warn("Disconnecting failed.", e);
         }
     }
@@ -326,16 +326,16 @@ public final class NetComm {
      * @param cmd the command that shall be added to the queue
      */
     @SuppressWarnings("nls")
-    public void sendCommand(@Nonnull final AbstractCommand cmd) {
+    public void sendCommand(@Nonnull AbstractCommand cmd) {
         if (IllaClient.isDebug(Debug.protocol)) {
             if (cmd.getId() != CommandList.CMD_KEEPALIVE) {
-                LOGGER.debug("SND: " + cmd.toString());
+                LOGGER.debug("SND: {}", cmd);
             }
         }
 
         try {
             outputQueue.put(cmd);
-        } catch (@Nonnull final InterruptedException e) {
+        } catch (@Nonnull InterruptedException e) {
             LOGGER.error("Got interrupted while trying to add a command to to the queue.");
         }
     }
