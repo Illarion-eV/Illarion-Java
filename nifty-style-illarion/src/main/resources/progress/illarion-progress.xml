@@ -40,7 +40,7 @@
 
     <!-- Hitpoints Bar -->
     <style id="illarion-health-bar">
-        <attributes height="12px" minImageWidth="11"/>
+        <attributes height="24px" minImageWidth="11"/>
     </style>
 
     <style id="illarion-health-bar#background">
@@ -49,7 +49,7 @@
     </style>
 
     <style id="illarion-health-bar#fillArea">
-        <attributes width="100%" height="10px"/>
+        <attributes width="100%" height="22px"/>
     </style>
 
     <style id="illarion-health-bar#fillWrapper">
@@ -63,7 +63,7 @@
 
     <!-- Manapoints Bar -->
     <style id="illarion-mana-bar">
-        <attributes height="12px" minImageWidth="11"/>
+        <attributes height="24px" minImageWidth="11"/>
     </style>
 
     <style id="illarion-mana-bar#background">
@@ -72,7 +72,7 @@
     </style>
 
     <style id="illarion-mana-bar#fillArea">
-        <attributes width="100%" height="10px"/>
+        <attributes width="100%" height="22px"/>
     </style>
 
     <style id="illarion-mana-bar#fillWrapper">
@@ -86,7 +86,7 @@
 
     <!-- Foodpoints Bar -->
     <style id="illarion-food-bar">
-        <attributes height="12px" minImageWidth="11"/>
+        <attributes height="24px" minImageWidth="11"/>
     </style>
 
     <style id="illarion-food-bar#background">
@@ -95,7 +95,7 @@
     </style>
 
     <style id="illarion-food-bar#fillArea">
-        <attributes width="100%" height="10px"/>
+        <attributes width="100%" height="22px"/>
     </style>
 
     <style id="illarion-food-bar#fillWrapper">

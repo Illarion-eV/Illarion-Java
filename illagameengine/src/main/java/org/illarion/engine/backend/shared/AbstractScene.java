@@ -15,7 +15,6 @@
  */
 package org.illarion.engine.backend.shared;
 
-import illarion.common.util.FastMath;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Graphics;
 import org.illarion.engine.graphic.Scene;
@@ -84,7 +83,7 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
 
     @Override
     public int compare(@Nonnull SceneElement o1, @Nonnull SceneElement o2) {
-        return FastMath.sign(o2.getOrder() - o1.getOrder());
+        return Integer.compare(o2.getOrder(), o1.getOrder());
     }
 
     @Override
