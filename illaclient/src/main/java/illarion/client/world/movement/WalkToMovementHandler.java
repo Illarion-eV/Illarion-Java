@@ -71,7 +71,9 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
             return new DefaultStepData(CharMovementMode.None, 0);
         }
         Path activePath = isCurrentPathValid() ? currentPath : calculateNewPath();
-        assert activePath != null;
+        if (activePath == null) {
+            return new DefaultStepData(CharMovementMode.None, 0);
+        }
 
         PathNode node = activePath.nextStep();
         if (node == null) {
@@ -137,6 +139,7 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
         return (destination != null) && destination.equals(targetLocation);
     }
 
+    @Nullable
     private Path calculateNewPath() {
         Location startLocation = getPlayerLocation();
         if (getMovement().getDefaultMovementMode() == CharMovementMode.Walk) {
