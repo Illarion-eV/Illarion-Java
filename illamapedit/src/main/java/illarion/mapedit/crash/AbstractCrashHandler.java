@@ -66,13 +66,13 @@ abstract class AbstractCrashHandler implements Thread.UncaughtExceptionHandler {
      */
     @Override
     @SuppressWarnings("nls")
-    public final void uncaughtException(@Nonnull final Thread t, @Nonnull final Throwable e) {
-        LOGGER.error("Fetched uncaught exception: " + getCrashMessage(), e);
+    public final void uncaughtException(@Nonnull Thread t, @Nonnull Throwable e) {
+        LOGGER.error("Fetched uncaught exception: {}", getCrashMessage(), e);
         if (currentlyCrashing) {
             return;
         }
         currentlyCrashing = true;
-        final long oldLastCrash = lastCrash;
+        long oldLastCrash = lastCrash;
         lastCrash = System.currentTimeMillis();
         if ((lastCrash - oldLastCrash) < TIME_SINCE_LAST_CRASH) {
             crashEditor();
@@ -119,7 +119,8 @@ abstract class AbstractCrashHandler implements Thread.UncaughtExceptionHandler {
      * @param t the thread that crashed
      * @param e the reason of the crash
      */
-    private void reportError(@Nonnull final Thread t, @Nonnull final Throwable e) {
-        CrashReporter.getInstance().reportCrash(new CrashData(MapEditor.APPLICATION, getCrashMessage(), t, e));
+    private void reportError(@Nonnull Thread t, @Nonnull Throwable e) {
+        CrashReporter.getInstance()
+                .reportCrash(new CrashData(MapEditor.APPLICATION, "Mapeditor", getCrashMessage(), t, e));
     }
 }

@@ -117,6 +117,7 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
      * @param e the reason of the crash
      */
     private void reportError(@Nonnull Thread t, @Nonnull Throwable e) {
-        CrashReporter.getInstance().reportCrash(new CrashData(Parser.APPLICATION, getCrashMessage(), t, e));
+        CrashReporter.getInstance()
+                .reportCrash(new CrashData(Parser.APPLICATION, "easyNPC Editor", getCrashMessage(), t, e));
     }
 }

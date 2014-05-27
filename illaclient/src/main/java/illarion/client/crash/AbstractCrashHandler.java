@@ -48,13 +48,13 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
      * This stores if there is currently a crash handled. In this case all other
      * crashes are ignored for now.
      */
-    private boolean currentlyCrashing = false;
+    private boolean currentlyCrashing;
 
     /**
      * The time stored when this crash occurred last time. In case the same part
      * of the client crashes too frequent the entire client is shutdown.
      */
-    private long lastCrash = 0;
+    private long lastCrash;
 
     /**
      * Fetch a uncaught exception that was thrown and try restart the crashed
@@ -65,13 +65,13 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
      */
     @Override
     @SuppressWarnings("nls")
-    public final void uncaughtException(@Nonnull final Thread t, @Nonnull final Throwable e) {
-        LOGGER.error("Fetched uncaught exception: " + getCrashMessage(), e);
+    public final void uncaughtException(@Nonnull Thread t, @Nonnull Throwable e) {
+        LOGGER.error("Fetched uncaught exception: {}", getCrashMessage(), e);
         if (currentlyCrashing) {
             return;
         }
         currentlyCrashing = true;
-        final long oldLastCrash = lastCrash;
+        long oldLastCrash = lastCrash;
         lastCrash = System.currentTimeMillis();
         if ((lastCrash - oldLastCrash) < TIME_SINCE_LAST_CRASH) {
             crashClient();
@@ -92,7 +92,7 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
      */
     @SuppressWarnings("nls")
     protected final void crashClient() {
-        IllaClient.errorExit(Lang.getMsg(getCrashMessage()) + "\n" + Lang.getMsg("crash.fixfailed"));
+        IllaClient.errorExit(Lang.getMsg(getCrashMessage()) + '\n' + Lang.getMsg("crash.fixfailed"));
 
         currentlyCrashing = false;
     }
@@ -110,7 +110,7 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
      * Restart the crashed thread and try to keep the client alive this way.
      * After this function is called the CrashHandler requests a reconnect.
      *
-     * @return <code>true</code> in case reconnecting the client is needed.
+     * @return {@code true} in case reconnecting the client is needed.
      */
     protected abstract boolean restart();
 
@@ -121,7 +121,8 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
      * @param t the thread that crashed
      * @param e the reason of the crash
      */
-    private void reportError(@Nonnull final Thread t, @Nonnull final Throwable e) {
-        CrashReporter.getInstance().reportCrash(new CrashData(IllaClient.APPLICATION, getCrashMessage(), t, e));
+    private void reportError(@Nonnull Thread t, @Nonnull Throwable e) {
+        CrashReporter.getInstance()
+                .reportCrash(new CrashData(IllaClient.APPLICATION, "Client", getCrashMessage(), t, e));
     }
 }

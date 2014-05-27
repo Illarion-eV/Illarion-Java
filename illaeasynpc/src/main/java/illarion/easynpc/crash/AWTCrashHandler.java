@@ -47,7 +47,7 @@ public final class AWTCrashHandler {
      */
     @SuppressWarnings({"MethodMayBeStatic", "UnusedDeclaration"})
     public void handle(@Nonnull Throwable e) {
-        CrashData data = new CrashData(Parser.APPLICATION, "crash.awt", Thread.currentThread(), e);
+        CrashData data = new CrashData(Parser.APPLICATION, "easyNPC Editor", "crash.awt", Thread.currentThread(), e);
         CrashReporter.getInstance().reportCrash(data, true);
     }
 }

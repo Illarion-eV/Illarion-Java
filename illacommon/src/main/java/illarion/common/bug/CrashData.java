@@ -85,6 +85,12 @@ public final class CrashData implements Externalizable {
     private String threadName;
 
     /**
+     * The name of the mantis project this report is supposed to end up in.
+     */
+    @Nonnull
+    private String mantisProject;
+
+    /**
      * The constructor that collects all data for such a crash data object.
      *
      * @param appIdent the application identifier
@@ -94,14 +100,16 @@ public final class CrashData implements Externalizable {
      * @param crashException the exception that caused the crash
      */
     public CrashData(
-            @Nonnull final AppIdent appIdent,
-            @Nonnull final String problemDescription,
-            @Nonnull final Thread crashThread,
-            @Nonnull final Throwable crashException) {
+            @Nonnull AppIdent appIdent,
+            @Nonnull String mantisProject,
+            @Nonnull String problemDescription,
+            @Nonnull Thread crashThread,
+            @Nonnull Throwable crashException) {
         applicationIdentifier = appIdent;
         threadName = crashThread.getName();
+        this.mantisProject = mantisProject;
 
-        final StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder();
 
         Throwable current = crashException;
         while (current != null) {
@@ -112,10 +120,10 @@ public final class CrashData implements Externalizable {
             builder.append('"');
             builder.append(')');
             builder.append(NL);
-            final StackTraceElement[] backtrace = current.getStackTrace();
-            for (final StackTraceElement element : backtrace) {
+            StackTraceElement[] backtrace = current.getStackTrace();
+            for (StackTraceElement element : backtrace) {
                 builder.append(TAB);
-                builder.append(element.toString());
+                builder.append(element);
                 builder.append(NL);
             }
 
@@ -193,8 +201,13 @@ public final class CrashData implements Externalizable {
         return threadName;
     }
 
+    @Nonnull
+    String getMantisProject() {
+        return mantisProject;
+    }
+
     @Override
-    public void writeExternal(@Nonnull final ObjectOutput out) throws IOException {
+    public void writeExternal(@Nonnull ObjectOutput out) throws IOException {
         out.writeLong(serialVersionUID);
         out.writeObject(applicationIdentifier);
         out.writeObject(threadName);
@@ -204,11 +217,11 @@ public final class CrashData implements Externalizable {
     }
 
     @Override
-    public void readExternal(@Nonnull final ObjectInput in) throws IOException, ClassNotFoundException {
-        final long fileVersion = in.readLong();
+    public void readExternal(@Nonnull ObjectInput in) throws IOException, ClassNotFoundException {
+        long fileVersion = in.readLong();
         if (fileVersion == 1L) {
-            final String name = (String) in.readObject();
-            final String version = (String) in.readObject();
+            String name = (String) in.readObject();
+            String version = (String) in.readObject();
             applicationIdentifier = new AppIdent(name, version);
             threadName = (String) in.readObject();
             exception = (String) in.readObject();

@@ -87,7 +87,7 @@ public final class CrashReporter {
         URL result = null;
         try {
             result = new URL("http://illarion.org/mantis/api/soap/mantisconnect.php"); //$NON-NLS-1$
-        } catch (@Nonnull final MalformedURLException e) {
+        } catch (@Nonnull MalformedURLException e) {
             LOGGER.warn("Preparing the crash report target URL failed. Crash reporter not functional."); //$NON-NLS-1$
         }
         CRASH_SERVER = result;
@@ -103,7 +103,7 @@ public final class CrashReporter {
      * The currently displayed report dialog is displayed in this class.
      */
     @Nullable
-    private ReportDialog dialog = null;
+    private ReportDialog dialog;
 
     /**
      * This is the source of the messages that are displayed in the crash report
@@ -145,7 +145,7 @@ public final class CrashReporter {
      *
      * @param dialogFactory the dialog factory
      */
-    public void setDialogFactory(@Nullable final ReportDialogFactory dialogFactory) {
+    public void setDialogFactory(@Nullable ReportDialogFactory dialogFactory) {
         this.dialogFactory = dialogFactory;
     }
 
@@ -155,7 +155,7 @@ public final class CrashReporter {
      *
      * @param crash the data about the crash
      */
-    public void reportCrash(@Nonnull final CrashData crash) {
+    public void reportCrash(@Nonnull CrashData crash) {
         reportCrash(crash, false);
     }
 
@@ -164,11 +164,11 @@ public final class CrashReporter {
      * to do so.
      *
      * @param crash the data about the crash
-     * @param ownThread <code>true</code> in case the crash report is supposed
+     * @param ownThread {@code true} in case the crash report is supposed
      * to be started in a additional thread
      */
     @SuppressWarnings("nls")
-    public void reportCrash(@Nonnull final CrashData crash, final boolean ownThread) {
+    public void reportCrash(@Nonnull final CrashData crash, boolean ownThread) {
         if (ownThread) {
             new Thread(new Runnable() {
                 @Override
@@ -183,7 +183,7 @@ public final class CrashReporter {
                 //noinspection ResultOfMethodCallIgnored
                 Files.createFile(
                         DirectoryManager.getInstance().resolveFile(DirectoryManager.Directory.Data, "corrupted"));
-            } catch (@Nonnull final IOException e) {
+            } catch (@Nonnull IOException e) {
                 LOGGER.error("Failed to mark data as corrupted.");
             }
         }
@@ -209,7 +209,7 @@ public final class CrashReporter {
                 dialog.setMessageSource(messages);
                 dialog.showDialog();
 
-                final int result = dialog.getResult();
+                int result = dialog.getResult();
                 switch (result) {
                     case ReportDialog.SEND_ALWAYS:
                         setMode(MODE_ALWAYS);
@@ -245,7 +245,7 @@ public final class CrashReporter {
      *
      * @param config the new configuration
      */
-    public void setConfig(@Nullable final Config config) {
+    public void setConfig(@Nullable Config config) {
         cfg = config;
         if (config != null) {
             setMode(config.getInteger(CFG_KEY));
@@ -254,13 +254,13 @@ public final class CrashReporter {
 
     /**
      * Set the message source that supplies the messages for the dialog. In case
-     * this is set to <code>null</code> its impossible to display a window
+     * this is set to {@code null} its impossible to display a window
      * asking the user if the error report shall be send or not. In this case no
      * report message will be send.
      *
      * @param source the new source of messages
      */
-    public void setMessageSource(final MessageSource source) {
+    public void setMessageSource(MessageSource source) {
         messages = source;
     }
 
@@ -274,7 +274,7 @@ public final class CrashReporter {
             while (dialog != null) {
                 try {
                     this.wait(100);
-                } catch (@Nonnull final InterruptedException e) {
+                } catch (@Nonnull InterruptedException e) {
                     LOGGER.debug("Wait for report was interrupted!", e); //$NON-NLS-1$
                 }
             }
@@ -293,49 +293,42 @@ public final class CrashReporter {
      * @param data the data that was collected about the crash
      */
     @SuppressWarnings("nls")
-    private static void sendCrashData(@Nonnull final CrashData data) {
+    private static void sendCrashData(@Nonnull CrashData data) {
         if (CRASH_SERVER == null) {
             return;
         }
 
         try {
-            final IMCSession mantisSession = new MCSession(CRASH_SERVER, "Java Reporting System",
+            IMCSession mantisSession = new MCSession(CRASH_SERVER, "Java Reporting System",
                                                            "dA23MvKT1KDm4k0bQmMS");
-            final IProject[] projects = mantisSession.getAccessibleProjects();
-            IProject bugReportProject = null;
-            for (final IProject project : projects) {
-                if (project.getName().equalsIgnoreCase("Bug reports")) {
-                    bugReportProject = project;
+            IProject[] projects = mantisSession.getAccessibleProjects();
+            IProject selectedProject = null;
+            for (IProject project : projects) {
+                if (project.getName().equalsIgnoreCase(data.getMantisProject())) {
+                    selectedProject = project;
                     break;
                 }
             }
-            if (bugReportProject == null) {
-                LOGGER.error("Failed to find bug reports project.");
-                return;
-            }
-
-            final AppIdent application = data.getApplicationIdentifier();
-
-            final IProject selectedProject = bugReportProject.getSubProject(application.getApplicationName());
             if (selectedProject == null) {
-                LOGGER.error("Failed to find " + application.getApplicationName() + " project.");
+                LOGGER.error("Failed to find {} project.", data.getMantisProject());
                 return;
             }
 
-            final String summery = data.getExceptionName() + " in Thread " + data.getThreadName();
+            AppIdent application = data.getApplicationIdentifier();
+            String summery = data.getExceptionName() + " in Thread " + data.getThreadName();
 
-            final String exceptionDescription = "Exception: " + data.getExceptionName() + "\nBacktrace:\n" +
+            String exceptionDescription = "Exception: " + data.getExceptionName() + "\nBacktrace:\n" +
                     data.getStackBacktrace() + "\nDescription: " + data.getDescription();
 
-            final String description = "Application:" + application.getApplicationIdentifier() + "\nThread: " +
+            String description = "Application:" + application.getApplicationIdentifier() + "\nThread: " +
                     data.getThreadName() + '\n' + exceptionDescription;
 
             @Nullable IIssue similarIssue = null;
             @Nullable IIssue possibleDuplicateIssue = null;
             @Nullable IIssue duplicateIssue = null;
 
-            @Nonnull final IIssueHeader[] headers = mantisSession.getProjectIssueHeaders(selectedProject.getId());
-            for (@Nonnull final IIssueHeader header : headers) {
+            @Nonnull IIssueHeader[] headers = mantisSession.getProjectIssueHeaders(selectedProject.getId());
+            for (@Nonnull IIssueHeader header : headers) {
                 if (!CATEGORY.equals(header.getCategory())) {
                     continue;
                 }
@@ -344,7 +337,7 @@ public final class CrashReporter {
                     continue;
                 }
 
-                @Nonnull final IIssue checkedIssue = mantisSession.getIssue(header.getId());
+                @Nonnull IIssue checkedIssue = mantisSession.getIssue(header.getId());
 
                 if (!saveString(checkedIssue.getDescription()).endsWith(exceptionDescription)) {
                     continue;
@@ -375,16 +368,16 @@ public final class CrashReporter {
             }
 
             if (duplicateIssue != null) {
-                final INote note = mantisSession.newNote("Same problem occurred again.");
+                INote note = mantisSession.newNote("Same problem occurred again.");
                 mantisSession.addNote(duplicateIssue.getId(), note);
             } else if (possibleDuplicateIssue != null) {
-                final INote note = mantisSession.newNote("A problem that is by all means very similar occurred:\n" +
+                INote note = mantisSession.newNote("A problem that is by all means very similar occurred:\n" +
                                                                  description + "\nOperating System: " +
                                                                  System.getProperty("os.name") + ' ' +
                                                                  System.getProperty("os.version"));
                 mantisSession.addNote(possibleDuplicateIssue.getId(), note);
             } else {
-                final IIssue issue = mantisSession.newIssue(selectedProject.getId());
+                IIssue issue = mantisSession.newIssue(selectedProject.getId());
                 issue.setCategory(CATEGORY);
                 issue.setSummary(summery);
                 issue.setDescription(description);
@@ -396,8 +389,8 @@ public final class CrashReporter {
                 issue.setPriority(new MCAttribute(PRIORITY_HIGH_NUM, null));
                 issue.setPrivate(false);
 
-                final long id = mantisSession.addIssue(issue);
-                LOGGER.info("Added new Issue #" + id);
+                long id = mantisSession.addIssue(issue);
+                LOGGER.info("Added new Issue #{}", id);
 
                 if (similarIssue != null) {
                     mantisSession
@@ -410,7 +403,7 @@ public final class CrashReporter {
     }
 
     @Nonnull
-    private static String saveString(@Nullable final String input) {
+    private static String saveString(@Nullable String input) {
         if (input == null) {
             return "";
         }
@@ -425,7 +418,7 @@ public final class CrashReporter {
      * @param newMode the new mode value
      * @throws IllegalArgumentException in case the invalid mode value is chosen
      */
-    public void setMode(final int newMode) {
+    public void setMode(int newMode) {
         if ((newMode != MODE_ALWAYS) && (newMode != MODE_ASK) && (newMode != MODE_NEVER)) {
             mode = MODE_ASK;
             return;
