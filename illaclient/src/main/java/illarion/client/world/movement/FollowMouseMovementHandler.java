@@ -25,6 +25,8 @@ import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.illarion.engine.input.Input;
 import org.illarion.engine.input.Key;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
@@ -35,6 +37,8 @@ import javax.annotation.Nonnull;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 class FollowMouseMovementHandler extends AbstractMovementHandler implements MouseMovementHandler {
+    @Nonnull
+    private static final Logger LOGGER = LoggerFactory.getLogger(FollowMouseMovementHandler.class);
     /**
      * This value is the relation of the distance from the character location to the location of the cursor to the
      * plain x or y offset. In case the relation is smaller or equal to this the character will move straight

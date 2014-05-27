@@ -63,9 +63,12 @@ public class MovementExecutor implements AnimatedMove {
     public void handleMoveServerResponse(@Nonnull CharMovementMode mode, @Nonnull Location target, int speed) {
         if (moveAnimation.isRunning()) {
             LOGGER.info("Received new step from server! Stored for later execution, due active animation.");
-            nextMovementMode = mode;
             nextTarget = target;
             nextSpeed = speed;
+            nextMovementMode = mode;
+            if (!moveAnimation.isRunning()) {
+                animationFinished(true);
+            }
         } else {
             LOGGER.info("Received new step from server! Executing right now.");
             performMove(mode, target, speed);
@@ -99,6 +102,8 @@ public class MovementExecutor implements AnimatedMove {
             parentPlayer.updateLocation(target);
             playerCharacter.setLocation(target);
             World.getMapDisplay().animationFinished(true);
+            animationFinished(true);
+            movement.reportStepFinished();
             return;
         }
 
@@ -122,9 +127,10 @@ public class MovementExecutor implements AnimatedMove {
 
     @Override
     public void animationFinished(boolean finished) {
-        if (nextMovementMode != null) {
-            performMove(nextMovementMode, nextTarget, nextSpeed);
-            nextMovementMode = null;
+        CharMovementMode localMode = nextMovementMode;
+        nextMovementMode = null;
+        if (localMode != null) {
+            performMove(localMode, nextTarget, nextSpeed);
         }
     }
 }
