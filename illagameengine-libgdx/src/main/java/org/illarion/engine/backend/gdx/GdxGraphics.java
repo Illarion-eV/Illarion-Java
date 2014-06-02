@@ -24,6 +24,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.utils.Pools;
 import illarion.common.types.Rectangle;
+import lombok.AccessLevel;
+import lombok.Getter;
 import org.illarion.engine.graphic.*;
 import org.illarion.engine.graphic.effects.TextureEffect;
 
@@ -46,6 +48,7 @@ class GdxGraphics implements Graphics {
      * The sprite batch used to perform the batch rendering.
      */
     @Nonnull
+    @Getter(AccessLevel.PACKAGE)
     private final SpriteBatch spriteBatch;
 
     /**
@@ -195,16 +198,6 @@ class GdxGraphics implements Graphics {
                 break;
         }
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-    }
-
-    /**
-     * Get the sprite batch that is used by the graphics device.
-     *
-     * @return the sprite batch
-     */
-    @Nonnull
-    SpriteBatch getSpriteBatch() {
-        return spriteBatch;
     }
 
     /**

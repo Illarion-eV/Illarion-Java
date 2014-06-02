@@ -21,7 +21,6 @@ archivesBaseName = 'illarion_common'
 
 dependencies {
     compile group: 'org.javolution', name: 'javolution-core-java', version: '6.0.0'
-    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.3'
     compile group: 'org.slf4j', name: 'slf4j-api', version: project.ext.slf4jVersion
     compile group: 'org.slf4j', name: 'log4j-over-slf4j', version: project.ext.slf4jVersion
     compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: project.ext.slf4jVersion
@@ -51,16 +50,16 @@ task downloadSkills {
 jar {
     dependsOn { gitVersion }
     manifest {
-        attributes         \
-                'Permissions': 'all-permissions',        \
-                'Codebase': 'illarion.org',        \
-                'Trusted-Library': true,        \
-                'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),        \
-                'Built-By': System.getProperty('user.name'),         \
-                'Built-JDK': System.getProperty('java.version'),         \
-                'Implementation-Title': 'Illarion Common Library',         \
-                'Implementation-Vendor': 'Illarion e.V.',        \
-                'Implementation-Version': project.ext.fullVersion
+        attributes          \
+                 'Permissions': 'all-permissions',         \
+                 'Codebase': 'illarion.org',         \
+                 'Trusted-Library': true,         \
+                 'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),         \
+                 'Built-By': System.getProperty('user.name'),          \
+                 'Built-JDK': System.getProperty('java.version'),          \
+                 'Implementation-Title': 'Illarion Common Library',          \
+                 'Implementation-Vendor': 'Illarion e.V.',         \
+                 'Implementation-Version': project.ext.fullVersion
     }
 }
 

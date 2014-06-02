@@ -16,39 +16,16 @@
 package illarion.client.world.movement;
 
 import illarion.client.world.CharMovementMode;
-import illarion.common.types.Location;
+import lombok.Value;
 
 import javax.annotation.Nonnull;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@Value
 class DefaultStepData implements StepData {
     @Nonnull
-    private final CharMovementMode mode;
+    private final CharMovementMode movementMode;
     private final int direction;
-
-    DefaultStepData(@Nonnull CharMovementMode mode, int direction) {
-        if ((direction < 0) || (direction >= Location.DIR_MOVE8)) {
-            throw new IllegalArgumentException("Direction is out of range: " + direction);
-        }
-        this.mode = mode;
-        this.direction = direction;
-    }
-
-    @Nonnull
-    @Override
-    public CharMovementMode getMovementMode() {
-        return mode;
-    }
-
-    @Override
-    public int getDirection() {
-        return direction;
-    }
-
-    @Override
-    public String toString() {
-        return mode.name() + " Direction: " + direction;
-    }
 }

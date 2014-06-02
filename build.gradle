@@ -81,7 +81,6 @@ allprojects { project ->
             cacheChangingModulesFor 0, 'seconds'
         }
     }
-
 }
 
 buildscript {
@@ -106,6 +105,26 @@ subprojects { project ->
         }
         project.test {
             useTestNG()
+        }
+        project.apply { 'idea' }
+        project.configurations {
+            provided
+        }
+        project.sourceSets {
+            main.compileClasspath += configurations.provided
+            test.compileClasspath += configurations.provided
+            test.runtimeClasspath += configurations.provided
+        }
+        project.dependencies {
+            compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.3'
+            provided group: 'org.projectlombok', name: 'lombok', version: '1.14.0'
+        }
+        idea {
+            module {
+                if (scopes.PROVIDED != null) {
+                    scopes.PROVIDED.plus += configurations.provided
+                }
+            }
         }
     }
 

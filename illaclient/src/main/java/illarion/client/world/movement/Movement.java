@@ -24,9 +24,12 @@ import illarion.client.world.Player;
 import illarion.client.world.World;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.illarion.engine.input.Input;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,14 +40,13 @@ import javax.annotation.Nullable;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@Slf4j
 public class Movement {
-    @Nonnull
-    private static final Logger LOGGER = LoggerFactory.getLogger(Movement.class);
-
     /**
      * The instance of the player that is moved around by this class.
      */
     @Nonnull
+    @Getter(AccessLevel.PACKAGE)
     private final Player player;
 
     /**
@@ -53,20 +55,26 @@ public class Movement {
     @Nullable
     private MovementHandler activeHandler;
 
+    @Nonnull
+    @Getter
+    @Setter
     private CharMovementMode defaultMovementMode;
 
     private boolean stepInProgress;
 
     @Nonnull
-    private final MovementExecutor executor;
+    private final MoveAnimator animator;
 
     @Nonnull
+    @Getter
     private final MouseMovementHandler followMouseHandler;
 
     @Nonnull
-    private final KeyboardMovementHandler keyboardMovementHandler;
+    @Getter
+    private final KeyboardMovementHandler keyboardHandler;
 
     @Nonnull
+    @Getter
     private final TargetMovementHandler targetMovementHandler;
 
     @Nonnull
@@ -75,48 +83,28 @@ public class Movement {
     public Movement(@Nonnull Player player, @Nonnull Input input, @Nonnull AnimatedMove movementReceiver) {
         this.player = player;
         moveAnimation = new MoveAnimation(movementReceiver);
-        moveAnimation.addTarget(new MovementMonitor(this, moveAnimation), false);
         defaultMovementMode = CharMovementMode.Walk;
         stepInProgress = false;
-        executor = new MovementExecutor(this, moveAnimation);
+        animator = new MoveAnimator(this, moveAnimation);
+        moveAnimation.addTarget(animator, false);
 
         followMouseHandler = new FollowMouseMovementHandler(this, input);
-        keyboardMovementHandler = new SimpleKeyboardMovementHandler(this, input);
+        keyboardHandler = new SimpleKeyboardMovementHandler(this, input);
         targetMovementHandler = new WalkToMovementHandler(this);
-    }
-
-    @Nonnull
-    public MovementExecutor getExecutor() {
-        return executor;
     }
 
     public boolean isMoving() {
         return moveAnimation.isRunning();
     }
 
-    @Nonnull
-    public MouseMovementHandler getFollowMouseHandler() {
-        return followMouseHandler;
-    }
-
-    @Nonnull
-    public KeyboardMovementHandler getKeyboardHandler() {
-        return keyboardMovementHandler;
-    }
-
-    @Nonnull
-    public TargetMovementHandler getTargetMovementHandler() {
-        return targetMovementHandler;
-    }
-
     void activate(@Nonnull MovementHandler handler) {
         if (!isActive(handler)) {
-            MovementHandler oldHandler = activeHandler;
+            @val MovementHandler oldHandler = activeHandler;
             if (oldHandler != null) {
                 oldHandler.disengage();
             }
             activeHandler = handler;
-            LOGGER.info("New movement handler is assuming control: {}", activeHandler);
+            log.info("New movement handler is assuming control: {}", activeHandler);
         }
         update();
     }
@@ -125,7 +113,7 @@ public class Movement {
         if (isActive(handler)) {
             activeHandler = null;
         } else {
-            LOGGER.warn("Tried to disengage a movement handler ({}) that was not active!", handler);
+            log.warn("Tried to disengage a movement handler ({}) that was not active!", handler);
         }
     }
 
@@ -133,17 +121,12 @@ public class Movement {
         return (activeHandler != null) && handler.equals(activeHandler);
     }
 
-    @Nonnull
-    Player getPlayer() {
-        return player;
+    public void executeServerRespTurn(int direction) {
+        animator.scheduleTurn(direction);
     }
 
-    public CharMovementMode getDefaultMovementMode() {
-        return defaultMovementMode;
-    }
-
-    public void setDefaultMovementMode(CharMovementMode mode) {
-        defaultMovementMode = mode;
+    public void executeServerRespMove(@Nonnull CharMovementMode mode, @Nonnull Location target, int speed) {
+        animator.scheduleMove(mode, target, speed);
     }
 
     /**
@@ -158,7 +141,7 @@ public class Movement {
         }
         CharacterId playerId = player.getPlayerId();
         if (playerId == null) {
-            LOGGER.error("Send move to server while ID is not known.");
+            log.error("Send move to server while ID is not known.");
             return;
         }
         World.getNet().sendCommand(new MoveCmd(playerId, mode, direction));
@@ -186,10 +169,9 @@ public class Movement {
     }
 
     /**
-     * Notify the handler that a step is now finished.
+     * Notify the handler that everything is ready to request the next step from the server.
      */
-    void reportStepFinished() {
-        LOGGER.info("Step is now finished.");
+    void reportReadyForNextStep() {
         stepInProgress = false;
         update();
     }
@@ -209,7 +191,7 @@ public class Movement {
         MovementHandler handler = activeHandler;
         if (handler != null) {
             StepData nextStep = handler.getNextStep();
-            LOGGER.info("Requesting new step data from handler: {}", nextStep);
+            log.info("Requesting new step data from handler: {}", nextStep);
             if (nextStep.getMovementMode() != CharMovementMode.None) {
                 stepInProgress = true;
                 requestNextMove(nextStep);

@@ -73,7 +73,7 @@ public final class TurnCharMsg extends AbstractReply {
         }
 
         if (World.getPlayer().isPlayer(charId)) { // turn player
-            World.getPlayer().getMovementHandler().getExecutor().handleTurnServerResponse(dir);
+            World.getPlayer().getMovementHandler().executeServerRespTurn(dir);
         } else { // turn char
             Char chara = World.getPeople().getCharacter(charId);
             if (chara != null) {

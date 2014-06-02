@@ -15,6 +15,8 @@
  */
 package illarion.client.world.movement;
 
+import lombok.Getter;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -24,15 +26,11 @@ import javax.annotation.Nonnull;
  */
 abstract class AbstractMovementHandler implements MovementHandler {
     @Nonnull
+    @Getter
     private final Movement movement;
 
     protected AbstractMovementHandler(@Nonnull Movement movement) {
         this.movement = movement;
-    }
-
-    @Nonnull
-    protected final Movement getMovement() {
-        return movement;
     }
 
     @Override

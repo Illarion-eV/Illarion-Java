@@ -45,22 +45,22 @@ public final class MoveMsg extends AbstractReply {
     /**
      * Mode information that a normal move was done.
      */
-    private static final short MODE_MOVE = 0x0B;
+    private static final int MODE_MOVE = 0x0B;
 
     /**
      * Mode information that no move was done.
      */
-    private static final short MODE_NO_MOVE = 0x0A;
+    private static final int MODE_NO_MOVE = 0x0A;
 
     /**
      * Mode information that a push was done.
      */
-    private static final short MODE_PUSH = 0x0C;
+    private static final int MODE_PUSH = 0x0C;
 
     /**
      * Mode information that a running move was done.
      */
-    private static final short MODE_RUN = 0x0D;
+    private static final int MODE_RUN = 0x0D;
 
     /**
      * The ID of the moving character.
@@ -88,10 +88,9 @@ public final class MoveMsg extends AbstractReply {
      *
      * @param reader the receiver that got the data from the server that needs to be decoded
      * @throws IOException thrown in case there was not enough data received to decode the full message
-     * @see illarion.client.net.server.AbstractReply#decode(NetCommReader)
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         charId = new CharacterId(reader);
         loc = decodeLocation(reader);
         mode = reader.readUByte();
@@ -107,12 +106,12 @@ public final class MoveMsg extends AbstractReply {
     @Override
     public boolean executeUpdate() {
         if ((mode != MODE_NO_MOVE) && (mode != MODE_MOVE) && (mode != MODE_PUSH) && (mode != MODE_RUN)) {
-            LOGGER.warn("Move char message called in unknown mode " + mode);
+            LOGGER.warn("Move char message called in unknown mode {}", mode);
             return true;
         }
 
         if (World.getPlayer().isPlayer(charId)) {
-            final CharMovementMode moveMode;
+            CharMovementMode moveMode;
             switch (mode) {
                 case MODE_MOVE:
                     moveMode = CharMovementMode.Walk;
@@ -126,7 +125,7 @@ public final class MoveMsg extends AbstractReply {
                 default:
                     moveMode = CharMovementMode.None;
             }
-            World.getPlayer().getMovementHandler().getExecutor().handleMoveServerResponse(moveMode, loc, speed);
+            World.getPlayer().getMovementHandler().executeServerRespMove(moveMode, loc, speed);
             return true;
         }
 
@@ -136,7 +135,7 @@ public final class MoveMsg extends AbstractReply {
             return true;
         }
 
-        final Char chara = World.getPeople().accessCharacter(charId);
+        Char chara = World.getPeople().accessCharacter(charId);
         switch (mode) {
             case MODE_NO_MOVE:
                 chara.setLocation(loc);
@@ -162,6 +161,6 @@ public final class MoveMsg extends AbstractReply {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("ID: " + charId + " to: " + loc.toString() + " mode: " + mode);
+        return toString("ID: " + charId + " to: " + loc + " mode: " + mode);
     }
 }

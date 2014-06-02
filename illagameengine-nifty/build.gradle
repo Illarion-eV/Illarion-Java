@@ -20,23 +20,22 @@ archivesBaseName = 'illarion_engine_nifty'
 dependencies {
     compile project(':common')
     compile project(':engine')
-    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.3'
     compile group: 'lessvoid', name: 'nifty', version: '1.4.0-SNAPSHOT'
 }
 
 jar {
     dependsOn { gitVersion }
     manifest {
-        attributes       \
-              'Permissions': 'all-permissions',      \
-              'Codebase': 'illarion.org',      \
-              'Trusted-Library': true,      \
-              'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),      \
-              'Built-By': System.getProperty('user.name'),       \
-              'Built-JDK': System.getProperty('java.version'),       \
-              'Implementation-Title': 'Illarion Game Engine - Nifty-GUI Implementation',       \
-              'Implementation-Vendor': 'Illarion e.V.',      \
-              'Implementation-Version': project.ext.fullVersion
+        attributes        \
+               'Permissions': 'all-permissions',       \
+               'Codebase': 'illarion.org',       \
+               'Trusted-Library': true,       \
+               'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),       \
+               'Built-By': System.getProperty('user.name'),        \
+               'Built-JDK': System.getProperty('java.version'),        \
+               'Implementation-Title': 'Illarion Game Engine - Nifty-GUI Implementation',        \
+               'Implementation-Vendor': 'Illarion e.V.',       \
+               'Implementation-Version': project.ext.fullVersion
     }
 }
 
