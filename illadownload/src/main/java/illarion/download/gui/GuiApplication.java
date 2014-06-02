@@ -15,6 +15,9 @@
  */
 package illarion.download.gui;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.util.ContextInitializer;
+import ch.qos.logback.core.joran.spi.JoranException;
 import illarion.common.config.ConfigSystem;
 import illarion.common.util.DirectoryManager;
 import illarion.download.gui.model.GuiModel;
@@ -25,11 +28,13 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.nio.file.Path;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
@@ -68,12 +73,12 @@ public class GuiApplication extends Application implements Storyboard {
         stage.show();
     }
 
-    public void setScene(@Nonnull final Parent sceneContent) {
+    public void setScene(@Nonnull Parent sceneContent) {
         if (stage == null) {
             return;
         }
 
-        final Scene scene = new Scene(sceneContent, SCENE_WIDTH, SCENE_HEIGHT);
+        Scene scene = new Scene(sceneContent, SCENE_WIDTH, SCENE_HEIGHT);
         scene.setFill(null);
         if (sceneContent instanceof SceneUpdater) {
             ((SceneUpdater) sceneContent).updateScene(scene);
@@ -83,7 +88,7 @@ public class GuiApplication extends Application implements Storyboard {
 
     private void loadConfig() {
         if (cfg == null) {
-            final DirectoryManager dm = DirectoryManager.getInstance();
+            DirectoryManager dm = DirectoryManager.getInstance();
             if (dm.isDirectorySet(DirectoryManager.Directory.User)) {
                 cfg = new ConfigSystem(dm.resolveFile(DirectoryManager.Directory.User, "download.xcfgz"));
                 cfg.setDefault("channelClient", 0);
@@ -96,7 +101,7 @@ public class GuiApplication extends Application implements Storyboard {
         }
     }
 
-    public static void main(final String[] args) {
+    public static void main(String[] args) {
         launch(args);
     }
 
@@ -124,10 +129,27 @@ public class GuiApplication extends Application implements Storyboard {
                         }
                         break;
                     case SCENE_MAIN:
+                        initLogs();
                         break;
                 }
                 showNormal();
                 break;
+            }
+        }
+    }
+
+    private void initLogs() {
+        Path dir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        if (dir != null) {
+            System.setProperty("log_dir", dir.toAbsolutePath().toString());
+
+            //Reload:
+            LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+            ContextInitializer ci = new ContextInitializer(lc);
+            lc.reset();
+            try {
+                ci.autoConfig();
+            } catch (JoranException ignored) {
             }
         }
     }
