@@ -16,6 +16,7 @@
 package illarion.download.maven;
 
 import illarion.common.util.ProgressMonitor;
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.aether.RequestTrace;
 import org.eclipse.aether.transfer.TransferCancelledException;
 import org.eclipse.aether.transfer.TransferEvent;
@@ -27,17 +28,21 @@ import javax.annotation.Nullable;
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@Slf4j
 public class MavenTransferListener implements TransferListener {
     @Override
     public void transferInitiated(TransferEvent event) throws TransferCancelledException {
+        log.info(event.toString());
     }
 
     @Override
     public void transferStarted(TransferEvent event) throws TransferCancelledException {
+        log.info(event.toString());
     }
 
     @Override
     public void transferProgressed(@Nonnull TransferEvent event) throws TransferCancelledException {
+        log.info(event.toString());
         @Nullable RequestTrace trace = event.getResource().getTrace();
         while (true) {
             if (trace == null) {
@@ -57,13 +62,16 @@ public class MavenTransferListener implements TransferListener {
 
     @Override
     public void transferCorrupted(TransferEvent event) throws TransferCancelledException {
+        log.info(event.toString());
     }
 
     @Override
     public void transferSucceeded(TransferEvent event) {
+        log.info(event.toString());
     }
 
     @Override
     public void transferFailed(TransferEvent event) {
+        log.info(event.toString());
     }
 }
