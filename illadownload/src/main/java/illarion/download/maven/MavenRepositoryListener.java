@@ -26,17 +26,17 @@ import org.eclipse.aether.RepositoryListener;
 public class MavenRepositoryListener implements RepositoryListener {
     @Override
     public void artifactDescriptorInvalid(RepositoryEvent event) {
-        log.info(event.toString());
+        log.warn(event.toString());
     }
 
     @Override
     public void artifactDescriptorMissing(RepositoryEvent event) {
-        log.info(event.toString());
+        log.warn(event.toString());
     }
 
     @Override
     public void metadataInvalid(RepositoryEvent event) {
-        log.info(event.toString());
+        log.warn(event.toString());
     }
 
     @Override

@@ -62,7 +62,7 @@ public class MavenTransferListener implements TransferListener {
 
     @Override
     public void transferCorrupted(TransferEvent event) throws TransferCancelledException {
-        log.info(event.toString());
+        log.error(event.toString());
     }
 
     @Override
@@ -72,6 +72,6 @@ public class MavenTransferListener implements TransferListener {
 
     @Override
     public void transferFailed(TransferEvent event) {
-        log.info(event.toString());
+        log.error(event.toString());
     }
 }
