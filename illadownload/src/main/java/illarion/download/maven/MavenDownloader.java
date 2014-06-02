@@ -109,7 +109,7 @@ public class MavenDownloader {
      *
      * @param snapshot {@code true} in case the downloader is supposed to use snapshot versions of the main application
      */
-    public MavenDownloader(final boolean snapshot) {
+    public MavenDownloader(boolean snapshot) {
         this.snapshot = snapshot;
 
         serviceLocator = new DefaultServiceLocator();
@@ -119,6 +119,7 @@ public class MavenDownloader {
         session = new DefaultRepositorySystemSession();
 
         session.setTransferListener(new MavenTransferListener());
+        session.setRepositoryListener(new MavenRepositoryListener());
 
         repositories = new ArrayList<>();
         setupRepositories();
@@ -134,19 +135,17 @@ public class MavenDownloader {
      */
     @Nullable
     public Collection<File> downloadArtifact(
-            @Nonnull final String groupId,
-            @Nonnull final String artifactId,
-            @Nullable final MavenDownloaderCallback callback) {
+            @Nonnull String groupId, @Nonnull String artifactId, @Nullable MavenDownloaderCallback callback) {
         Artifact artifact = new DefaultArtifact(groupId, artifactId, "jar", "[1,]");
         try {
             if (callback != null) {
                 callback.reportNewState(MavenDownloaderCallback.State.SearchingNewVersion, null);
             }
-            final VersionRangeResult result = system
+            VersionRangeResult result = system
                     .resolveVersionRange(session, new VersionRangeRequest(artifact, repositories, RUNTIME));
-            final NavigableSet<String> versions = new TreeSet<>(new Comparator<String>() {
+            NavigableSet<String> versions = new TreeSet<>(new Comparator<String>() {
                 @Override
-                public int compare(@Nonnull final String o1, @Nonnull final String o2) {
+                public int compare(@Nonnull String o1, @Nonnull String o2) {
                     String[] versionParts1 = o1.split("[.-]");
                     String[] versionParts2 = o2.split("[.-]");
 
@@ -161,7 +160,7 @@ public class MavenDownloader {
                     return Integer.compare(versionParts1.length, versionParts2.length);
                 }
 
-                public int compareEntry(@Nonnull final String e1, @Nonnull final String e2) {
+                public int compareEntry(@Nonnull String e1, @Nonnull String e2) {
                     if ("SNAPSHOT".equals(e1)) {
                         if ("SNAPSHOT".equals(e2)) {
                             return 0;
@@ -180,7 +179,7 @@ public class MavenDownloader {
                     return e1.compareTo(e2);
                 }
             });
-            for (final Version version : result.getVersions()) {
+            for (Version version : result.getVersions()) {
                 if (snapshot || !version.toString().contains("SNAPSHOT")) {
                     versions.add(version.toString());
                 }
@@ -196,45 +195,45 @@ public class MavenDownloader {
         if (callback != null) {
             callback.reportNewState(MavenDownloaderCallback.State.ResolvingDependencies, null);
         }
-        final Dependency dependency = new Dependency(artifact, RUNTIME, false);
+        Dependency dependency = new Dependency(artifact, RUNTIME, false);
 
-        final List<String> usedScopes = Arrays.asList(COMPILE, RUNTIME, SYSTEM);
-        final DependencySelector selector = new AndDependencySelector(new OptionalDependencySelector(),
+        List<String> usedScopes = Arrays.asList(COMPILE, RUNTIME, SYSTEM);
+        DependencySelector selector = new AndDependencySelector(new OptionalDependencySelector(),
                                                                       new ScopeDependencySelector(usedScopes, null));
         session.setDependencySelector(
                 selector.deriveChildSelector(new DefaultDependencyCollectionContext(session, artifact, dependency)));
 
-        final DependencyFilter filter = DependencyFilterUtils.classpathFilter(RUNTIME, COMPILE);
+        DependencyFilter filter = DependencyFilterUtils.classpathFilter(RUNTIME, COMPILE);
 
-        final CollectRequest collectRequest = new CollectRequest();
+        CollectRequest collectRequest = new CollectRequest();
         collectRequest.setRoot(dependency);
         collectRequest.setRepositories(repositories);
 
         try {
-            final CollectResult collectResult = system.collectDependencies(session, collectRequest);
+            CollectResult collectResult = system.collectDependencies(session, collectRequest);
 
-            final ArtifactRequestBuilder builder = new ArtifactRequestBuilder(null, system, session);
+            ArtifactRequestBuilder builder = new ArtifactRequestBuilder(null, system, session);
             DependencyVisitor visitor = new FilteringDependencyVisitor(builder, filter);
             visitor = new TreeDependencyVisitor(visitor);
             collectResult.getRoot().accept(visitor);
 
-            final List<FutureArtifactRequest> requests = builder.getRequests();
+            List<FutureArtifactRequest> requests = builder.getRequests();
 
             if (callback != null) {
-                final ProgressMonitor progressMonitor = new ProgressMonitor();
-                for (@Nonnull final FutureArtifactRequest request : requests) {
+                ProgressMonitor progressMonitor = new ProgressMonitor();
+                for (@Nonnull FutureArtifactRequest request : requests) {
                     progressMonitor.addChild(request.getProgressMonitor());
                 }
                 callback.reportNewState(MavenDownloaderCallback.State.ResolvingArtifacts, progressMonitor);
             }
 
-            final ExecutorService executorService = Executors.newCachedThreadPool();
-            final List<Future<ArtifactResult>> results = executorService.invokeAll(requests);
+            ExecutorService executorService = Executors.newCachedThreadPool();
+            List<Future<ArtifactResult>> results = executorService.invokeAll(requests);
             executorService.shutdown();
             executorService.awaitTermination(1, TimeUnit.HOURS);
 
-            final List<File> result = new ArrayList<>();
-            for (@Nonnull final Future<ArtifactResult> artifactResult : results) {
+            List<File> result = new ArrayList<>();
+            for (@Nonnull Future<ArtifactResult> artifactResult : results) {
                 result.add(artifactResult.get().getArtifact().getFile());
             }
 
@@ -274,7 +273,7 @@ public class MavenDownloader {
 
     @Nonnull
     private RemoteRepository setupRepository(
-            @Nonnull final String id, @Nonnull final String url, final boolean enableSnapshots) {
+            @Nonnull String id, @Nonnull String url, boolean enableSnapshots) {
         RemoteRepository.Builder repo = new RemoteRepository.Builder(id, "default", url);
         if (enableSnapshots) {
             repo.setSnapshotPolicy(new RepositoryPolicy(true, UPDATE_POLICY_ALWAYS, CHECKSUM_POLICY_FAIL));

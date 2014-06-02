@@ -44,12 +44,12 @@ public class MavenTransferListener implements TransferListener {
                 break;
             }
             if (trace.getData() instanceof ProgressMonitor) {
-                final ProgressMonitor monitor = (ProgressMonitor) trace.getData();
-                final long totalSize = event.getResource().getContentLength();
+                ProgressMonitor monitor = (ProgressMonitor) trace.getData();
+                long totalSize = event.getResource().getContentLength();
                 if (totalSize <= 0) {
                     return;
                 }
-                monitor.setProgress((float) event.getTransferredBytes() / (float) totalSize);
+                monitor.setProgress((float) event.getTransferredBytes() / totalSize);
             }
             trace = trace.getParent();
         }
