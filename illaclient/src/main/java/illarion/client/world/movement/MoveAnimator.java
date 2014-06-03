@@ -106,6 +106,7 @@ class MoveAnimator implements AnimatedMove {
             parentPlayer.updateLocation(target);
             playerCharacter.setLocation(target);
             World.getMapDisplay().animationFinished(true);
+            movement.reportReadyForNextStep();
             executeNext();
             return;
         }
