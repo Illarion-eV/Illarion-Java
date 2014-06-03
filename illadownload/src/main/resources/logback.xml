@@ -27,8 +27,8 @@
                 </rollingPolicy>
                 <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy"/>
             </appender>
-            <root>
-                <appender-ref ref="FILE"/>
+            <root level="error">
+            <appender-ref ref="FILE"/>
             </root>
         </then>
     </if>

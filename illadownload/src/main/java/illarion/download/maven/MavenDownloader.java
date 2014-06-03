@@ -20,6 +20,7 @@ import illarion.common.util.ProgressMonitor;
 import org.apache.maven.model.building.DefaultModelBuilderFactory;
 import org.apache.maven.model.building.ModelBuilder;
 import org.apache.maven.repository.internal.*;
+import org.eclipse.aether.ConfigurationProperties;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.artifact.Artifact;
@@ -120,6 +121,8 @@ public class MavenDownloader {
 
         session.setTransferListener(new MavenTransferListener());
         session.setRepositoryListener(new MavenRepositoryListener());
+        session.setConfigProperty(ConfigurationProperties.CONNECT_TIMEOUT, 10000);
+        session.setConfigProperty(ConfigurationProperties.REQUEST_TIMEOUT, 10000);
 
         repositories = new ArrayList<>();
         setupRepositories();

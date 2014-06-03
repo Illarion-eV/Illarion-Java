@@ -42,7 +42,7 @@ public class MavenTransferListener implements TransferListener {
 
     @Override
     public void transferProgressed(@Nonnull TransferEvent event) throws TransferCancelledException {
-        log.info(event.toString());
+        log.debug(event.toString());
         @Nullable RequestTrace trace = event.getResource().getTrace();
         while (true) {
             if (trace == null) {
@@ -72,6 +72,6 @@ public class MavenTransferListener implements TransferListener {
 
     @Override
     public void transferFailed(TransferEvent event) {
-        log.error(event.toString());
+        log.info(event.toString());
     }
 }
