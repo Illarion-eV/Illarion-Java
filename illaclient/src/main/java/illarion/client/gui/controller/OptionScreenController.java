@@ -69,11 +69,11 @@ public final class OptionScreenController implements ScreenController {
     private CheckBox mouseFollowAutoRun;
 
     @Override
-    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
         this.nifty = nifty;
         this.screen = screen;
 
-        final Element tabRoot = screen.findElementById("tabRoot");
+        Element tabRoot = screen.findElementById("tabRoot");
 
         //charNameLength = screen.findNiftyControl("charNameLength", DropDown.class);
         //charNameLength.addItem("${options-bundle.charNameDisplay.short}");
@@ -110,7 +110,7 @@ public final class OptionScreenController implements ScreenController {
         musicOn = tabRoot.findNiftyControl("musicOn", CheckBox.class);
         musicVolume = tabRoot.findNiftyControl("musicVolume", Slider.class);
 
-        final Element serverTab = tabRoot.findElementById("#serverTab");
+        Element serverTab = tabRoot.findElementById("#serverTab");
         if (serverTab == null) {
             return;
         }
@@ -159,9 +159,9 @@ public final class OptionScreenController implements ScreenController {
     }
 
     @NiftyEventSubscriber(id = "saveButton")
-    public void onSaveButtonClickedEvent(final String topic, final ButtonClickedEvent event) {
+    public void onSaveButtonClickedEvent(String topic, ButtonClickedEvent event) {
         nifty.gotoScreen("login");
-        final Config configSystem = IllaClient.getCfg();
+        Config configSystem = IllaClient.getCfg();
 
         //configSystem.set(People.CFG_NAMEMODE_KEY, charNameLength.getSelectedIndex() + 1);
         //configSystem.set(People.CFG_SHOWID_KEY, showCharId.isChecked());
@@ -209,7 +209,7 @@ public final class OptionScreenController implements ScreenController {
     }
 
     @NiftyEventSubscriber(id = "cancelButton")
-    public void onCancelButtonClickedEvent(final String topic, final ButtonClickedEvent event) {
+    public void onCancelButtonClickedEvent(String topic, ButtonClickedEvent event) {
         nifty.gotoScreen("login");
     }
 
@@ -219,13 +219,13 @@ public final class OptionScreenController implements ScreenController {
 
     @Nonnull
     public static List<String> getResolutionList() {
-        final DesktopGameContainer container = IllaClient.getInstance().getContainer();
+        DesktopGameContainer container = IllaClient.getInstance().getContainer();
 
-        final GraphicResolution[] resolutions = container.getFullScreenResolutions();
+        GraphicResolution[] resolutions = container.getFullScreenResolutions();
 
-        final List<String> resList = new ArrayList<>();
+        List<String> resList = new ArrayList<>();
 
-        for (final GraphicResolution resolution : resolutions) {
+        for (GraphicResolution resolution : resolutions) {
             resList.add(resolution.toString());
         }
 

@@ -78,7 +78,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     public static final Servers DEFAULT_SERVER;
 
     static {
-        final String server = System.getProperty("illarion.server", "realserver");
+        String server = System.getProperty("illarion.server", "realserver");
         switch (server) {
             case "testserver":
                 DEFAULT_SERVER = Servers.testserver;
@@ -185,11 +185,11 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         game = new Game();
 
         GraphicResolution res = null;
-        final String resolutionString = cfg.getString(CFG_RESOLUTION);
+        String resolutionString = cfg.getString(CFG_RESOLUTION);
         if (resolutionString != null) {
             try {
                 res = new GraphicResolution(resolutionString);
-            } catch (@Nonnull final IllegalArgumentException ex) {
+            } catch (@Nonnull IllegalArgumentException ex) {
                 LOGGER.error("Failed to initialize screen resolution. Falling back.");
             }
         }
@@ -198,9 +198,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         }
 
         try {
-            final int requestedWidth;
-            final int requestedHeight;
-            final boolean fullScreenMode;
+            int requestedWidth;
+            int requestedHeight;
+            boolean fullScreenMode;
 
             if (cfg.getBoolean(CFG_FULLSCREEN)) {
                 fullScreenMode = true;
@@ -208,15 +208,15 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
                 requestedWidth = res.getWidth();
             } else {
                 fullScreenMode = false;
-                final int windowedWidth = cfg.getInteger("windowWidth");
-                final int windowedHeight = cfg.getInteger("windowHeight");
+                int windowedWidth = cfg.getInteger("windowWidth");
+                int windowedHeight = cfg.getInteger("windowHeight");
                 requestedHeight = (windowedHeight < 0) ? res.getHeight() : windowedHeight;
                 requestedWidth = (windowedWidth < 0) ? res.getWidth() : windowedWidth;
             }
 
             gameContainer = EngineManager
                     .createDesktopGame(Backend.libGDX, game, requestedWidth, requestedHeight, fullScreenMode);
-        } catch (@Nonnull final EngineException e) {
+        } catch (@Nonnull EngineException e) {
             LOGGER.error("Fatal error creating game screen!!!", e);
             System.exit(-1);
         }
@@ -231,7 +231,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         try {
             gameContainer.setResizeable(true);
             gameContainer.startGame();
-        } catch (@Nonnull final Exception e) {
+        } catch (@Nonnull Exception e) {
             LOGGER.error("Exception while launching game.", e);
             exitGameContainer();
         }
@@ -302,7 +302,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      *
      * @param message the message that shall be displayed
      */
-    public static void sendDisconnectEvent(final String message) {
+    public static void sendDisconnectEvent(String message) {
         LOGGER.warn(message);
         EventBus.publish(new ConnectionLostEvent(message));
     }
@@ -324,7 +324,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      * @return the full path to a file
      */
     @Nonnull
-    public static Path getFile(@Nonnull final String name) {
+    public static Path getFile(@Nonnull String name) {
         Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
         if (userDir == null) {
             throw new IllegalStateException("User directory can't be null.");
@@ -348,7 +348,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      * @param path the path to the object that shall be loaded
      * @return the data stream of the object
      */
-    public static InputStream getResource(final String path) {
+    public static InputStream getResource(String path) {
         return INSTANCE.rscLoader.getResourceAsStream(path);
     }
 
@@ -358,7 +358,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      * @param flag the debug flag that shall be checked
      * @return true in case the flag is enabled, false if not
      */
-    public static boolean isDebug(@Nonnull final Debug flag) {
+    public static boolean isDebug(@Nonnull Debug flag) {
         return (INSTANCE.debugLevel & (1 << flag.ordinal())) > 0;
     }
 
@@ -368,10 +368,10 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      * @param args the arguments handed over to the client
      */
     @SuppressWarnings("nls")
-    public static void main(final String[] args) {
+    public static void main(String[] args) {
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
-        final String folder = checkFolder();
+        String folder = checkFolder();
 
         // Setup the crash reporter so the client is able to crash properly.
         CrashReporter.getInstance().setMessageSource(Lang.getInstance());
@@ -392,7 +392,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      */
     @SuppressWarnings("nls")
     public static void startFinalKiller() {
-        final Timer finalKiller = new Timer("Final Death", true);
+        Timer finalKiller = new Timer("Final Death", true);
         finalKiller.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -408,7 +408,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      *
      * @param newValue the new value for the exitRequested parameter
      */
-    static void setExitRequested(final boolean newValue) {
+    static void setExitRequested(boolean newValue) {
         exitRequested = newValue;
     }
 
@@ -436,7 +436,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
             System.exit(-1);
         }
 
-        final Path userDirectory = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        Path userDirectory = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
         assert userDirectory != null;
         return userDirectory.toAbsolutePath().toString();
     }
@@ -456,7 +456,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     public void quitGame() {
         try {
             World.getNet().sendCommand(new LogoutCmd());
-        } catch (@Nonnull final IllegalStateException ex) {
+        } catch (@Nonnull IllegalStateException ex) {
             // the NET was not launched up yet. This does not really matter.
         }
     }
@@ -466,7 +466,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      *
      * @param server the server that is used to connect with
      */
-    public void setUsedServer(final Servers server) {
+    public void setUsedServer(Servers server) {
         usedServer = server;
     }
 
@@ -540,6 +540,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("serverAddress", Servers.customserver.getServerHost());
         cfg.setDefault("serverPort", Servers.customserver.getServerPort());
         cfg.setDefault("clientVersion", Servers.customserver.getClientVersion());
+        cfg.setDefault("testserverLogin", "Testserver One");
+        cfg.setDefault("testserverPass", "test");
+        cfg.setDefault("testserverPassStore", true);
         cfg.setDefault("serverAccountLogin", true);
         cfg.setDefault("wasdWalk", true);
         cfg.setDefault("classicWalk", false);
@@ -549,30 +552,30 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("walkAsDefault", true);
         cfg.setDefault("mouseFollowAutoRun", false);
 
-        @Nonnull final Toolkit awtDefaultToolkit = Toolkit.getDefaultToolkit();
-        @Nullable final Object doubleClick = awtDefaultToolkit.getDesktopProperty("awt.multiClickInterval");
+        @Nonnull Toolkit awtDefaultToolkit = Toolkit.getDefaultToolkit();
+        @Nullable Object doubleClick = awtDefaultToolkit.getDesktopProperty("awt.multiClickInterval");
         if (doubleClick instanceof Number) {
             cfg.setDefault("doubleClickInterval", ((Number) doubleClick).intValue());
         } else {
             cfg.setDefault("doubleClickInterval", 500);
         }
 
-        final Crypto crypt = new Crypto();
+        Crypto crypt = new Crypto();
         crypt.loadPublicKey();
         TableLoader.setCrypto(crypt);
     }
 
     @Override
-    public void onEvent(final String topic, final ConfigChangedEvent data) {
+    public void onEvent(String topic, ConfigChangedEvent data) {
         if (CFG_RESOLUTION.equals(topic) || CFG_FULLSCREEN.equals(topic)) {
-            final String resolutionString = cfg.getString(CFG_RESOLUTION);
+            String resolutionString = cfg.getString(CFG_RESOLUTION);
             if (resolutionString == null) {
                 LOGGER.error("Failed reading new resolution.");
                 return;
             }
             try {
-                final GraphicResolution res = new GraphicResolution(resolutionString);
-                final boolean fullScreen = cfg.getBoolean(CFG_FULLSCREEN);
+                GraphicResolution res = new GraphicResolution(resolutionString);
+                boolean fullScreen = cfg.getBoolean(CFG_FULLSCREEN);
                 if (fullScreen) {
                     gameContainer.setFullScreenResolution(res);
                     gameContainer.setFullScreen(true);
@@ -584,9 +587,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
                     cfg.set("windowHeight", res.getHeight());
                     cfg.set("windowWidth", res.getWidth());
                 }
-            } catch (@Nonnull final EngineException e) {
+            } catch (@Nonnull EngineException e) {
                 LOGGER.error("Failed to apply graphic mode: " + resolutionString);
-            } catch (@Nonnull final IllegalArgumentException ex) {
+            } catch (@Nonnull IllegalArgumentException ex) {
                 LOGGER.error("Failed to apply graphic mode: " + resolutionString);
             }
         }

@@ -62,12 +62,13 @@ public final class Login {
     public static final int TESTSERVER = 1;
     public static final int GAMESERVER = 2;
     public static final int CUSTOMSERVER = 3;
+    public static final int LOCALSERVER = 4;
 
     public static final class CharEntry {
         private final String charName;
         private final int charStatus;
 
-        public CharEntry(final String name, final int status) {
+        public CharEntry(String name, int status) {
             charName = name;
             charStatus = status;
         }
@@ -86,7 +87,7 @@ public final class Login {
     private String password;
     private Integer server;
     private String loginCharacter;
-    private List<Login.CharEntry> charList;
+    private List<CharEntry> charList;
 
     private Login() {
         charList = new ArrayList<>();
@@ -99,7 +100,7 @@ public final class Login {
         return INSTANCE;
     }
 
-    public void setLoginData(final String name, final String pass) {
+    public void setLoginData(String name, String pass) {
         loginName = name;
         password = pass;
     }
@@ -115,9 +116,7 @@ public final class Login {
         restoreServer();
     }
 
-    public void storeData(final boolean storePasswd) {
-        IllaClient.getCfg().set("lastLogin", loginName);
-        IllaClient.getCfg().set("savePassword", storePasswd);
+    public void storeData(boolean storePasswd) {
 
         if (IllaClient.DEFAULT_SERVER != Servers.realserver) {
             IllaClient.getCfg().set("server", server);
@@ -134,6 +133,9 @@ public final class Login {
                 case CUSTOMSERVER:
                     IllaClient.getInstance().setUsedServer(Servers.customserver);
                     break;
+                case LOCALSERVER:
+                    IllaClient.getInstance().setUsedServer(Servers.localServer);
+                    break;
                 default:
                     IllaClient.getInstance().setUsedServer(Servers.devserver);
                     break;
@@ -142,10 +144,15 @@ public final class Login {
             IllaClient.getInstance().setUsedServer(Servers.realserver);
         }
 
-        if (storePasswd) {
-            storePassword(password);
-        } else {
-            deleteStoredPassword();
+        if (IllaClient.getInstance().getUsedServer() != Servers.localServer) {
+            IllaClient.getCfg().set("lastLogin", loginName);
+            IllaClient.getCfg().set("savePassword", storePasswd);
+
+            if (storePasswd) {
+                storePassword(password);
+            } else {
+                deleteStoredPassword();
+            }
         }
         IllaClient.getCfg().save();
     }
@@ -173,9 +180,9 @@ public final class Login {
     }
 
     private final class RequestCharacterListTask implements Callable<Void> {
-        private final Login.RequestCharListCallback callback;
+        private final RequestCharListCallback callback;
 
-        private RequestCharacterListTask(final Login.RequestCharListCallback callback) {
+        private RequestCharacterListTask(RequestCharListCallback callback) {
             this.callback = callback;
         }
 
@@ -194,53 +201,59 @@ public final class Login {
     }
 
     public boolean isCharacterListRequired() {
-        return (IllaClient.DEFAULT_SERVER == Servers.realserver) ||
-                IllaClient.getCfg().getBoolean("serverAccountLogin");
+        switch (getServer()) {
+            case LOCALSERVER:
+                return false;
+            case CUSTOMSERVER:
+                return IllaClient.getCfg().getBoolean("serverAccountLogin");
+            default:
+                return true;
+        }
     }
 
-    public void requestCharacterList(final Login.RequestCharListCallback resultCallback) {
-        GlobalExecutorService.getService().submit(new Login.RequestCharacterListTask(resultCallback));
+    public void requestCharacterList(RequestCharListCallback resultCallback) {
+        GlobalExecutorService.getService().submit(new RequestCharacterListTask(resultCallback));
     }
 
-    private void requestCharacterListInternal(@Nonnull final Login.RequestCharListCallback resultCallback) {
-        final String serverURI = IllaClient.DEFAULT_SERVER.getServerHost();
+    private void requestCharacterListInternal(@Nonnull RequestCharListCallback resultCallback) {
+        String serverURI = IllaClient.DEFAULT_SERVER.getServerHost();
         try {
-            final URL requestURL = new URL("https://" + serverURI + "/account/xml_charlist.php");
+            URL requestURL = new URL("https://" + serverURI + "/account/xml_charlist.php");
 
-            final StringBuilder queryBuilder = new StringBuilder();
+            StringBuilder queryBuilder = new StringBuilder();
             queryBuilder.append("name=");
             queryBuilder.append(URLEncoder.encode(getLoginName(), "UTF-8"));
             queryBuilder.append("&passwd=");
             queryBuilder.append(URLEncoder.encode(getPassword(), "UTF-8"));
-            final String query = queryBuilder.toString();
+            String query = queryBuilder.toString();
 
-            final HttpsURLConnection conn = (HttpsURLConnection) requestURL.openConnection();
+            HttpsURLConnection conn = (HttpsURLConnection) requestURL.openConnection();
             conn.setDoOutput(true);
             conn.setDoInput(true);
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             conn.setRequestProperty("charset", "utf-8");
-            conn.setRequestProperty("Content-Length", "" + Integer.toString(query.getBytes().length));
+            conn.setRequestProperty("Content-Length", Integer.toString(query.getBytes().length));
             conn.setUseCaches(false);
             conn.setSSLSocketFactory(IllarionSSLSocketFactory.getFactory());
 
             conn.connect();
 
-            final OutputStreamWriter output = new OutputStreamWriter(conn.getOutputStream());
+            OutputStreamWriter output = new OutputStreamWriter(conn.getOutputStream());
 
             output.write(query);
             output.flush();
             output.close();
 
-            final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            final DocumentBuilder db = dbf.newDocumentBuilder();
-            final Document doc = db.parse(conn.getInputStream());
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document doc = db.parse(conn.getInputStream());
 
             readXML(doc, resultCallback);
-        } catch (@Nonnull final UnknownHostException e) {
+        } catch (@Nonnull UnknownHostException e) {
             resultCallback.finishedRequest(2);
             LOGGER.error("Failed to resolve hostname, for fetching the charlist");
-        } catch (@Nonnull final Exception e) {
+        } catch (@Nonnull Exception e) {
             resultCallback.finishedRequest(2);
             LOGGER.error("Loading the charlist from the server failed");
         }
@@ -258,24 +271,24 @@ public final class Login {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(Login.class);
 
-    private void readXML(@Nonnull final Node root, @Nonnull final Login.RequestCharListCallback resultCallback) {
+    private void readXML(@Nonnull Node root, @Nonnull RequestCharListCallback resultCallback) {
         if (!"chars".equals(root.getNodeName()) && !NODE_NAME_ERROR.equals(root.getNodeName())) {
-            final NodeList children = root.getChildNodes();
-            final int count = children.getLength();
+            NodeList children = root.getChildNodes();
+            int count = children.getLength();
             for (int i = 0; i < count; i++) {
                 readXML(children.item(i), resultCallback);
             }
             return;
         }
         if (NODE_NAME_ERROR.equals(root.getNodeName())) {
-            final int error = Integer.parseInt(root.getAttributes().getNamedItem("id").getNodeValue());
+            int error = Integer.parseInt(root.getAttributes().getNamedItem("id").getNodeValue());
             resultCallback.finishedRequest(error);
             return;
         }
-        final NodeList children = root.getChildNodes();
-        final int count = children.getLength();
+        NodeList children = root.getChildNodes();
+        int count = children.getLength();
 
-        final String accLang = root.getAttributes().getNamedItem("lang").getNodeValue();
+        String accLang = root.getAttributes().getNamedItem("lang").getNodeValue();
         if ("de".equals(accLang)) {
             IllaClient.getCfg().set(Lang.LOCALE_CFG, Lang.LOCALE_CFG_GERMAN);
         } else if ("us".equals(accLang)) {
@@ -284,15 +297,16 @@ public final class Login {
 
         charList.clear();
         for (int i = 0; i < count; i++) {
-            final Node charNode = children.item(i);
-            final String charName = charNode.getTextContent();
-            final int status = Integer.parseInt(charNode.getAttributes().getNamedItem("status").getNodeValue());
-            final String charServer = charNode.getAttributes().getNamedItem("server").getNodeValue();
+            Node charNode = children.item(i);
+            String charName = charNode.getTextContent();
+            int status = Integer.parseInt(charNode.getAttributes().getNamedItem("status").getNodeValue());
+            String charServer = charNode.getAttributes().getNamedItem("server").getNodeValue();
 
-            final Login.CharEntry addChar = new Login.CharEntry(charName, status);
+            CharEntry addChar = new CharEntry(charName, status);
 
             switch (IllaClient.getInstance().getUsedServer()) {
                 case customserver:
+                case localServer:
                     charList.add(addChar);
                     break;
                 case testserver:
@@ -316,11 +330,11 @@ public final class Login {
         resultCallback.finishedRequest(0);
     }
 
-    public List<Login.CharEntry> getCharacterList() {
+    public List<CharEntry> getCharacterList() {
         return Collections.unmodifiableList(charList);
     }
 
-    public void setLoginCharacter(final String character) {
+    public void setLoginCharacter(String character) {
         loginCharacter = character;
     }
 
@@ -332,12 +346,12 @@ public final class Login {
     }
 
     public boolean login() {
-        final NetComm netComm = World.getNet();
+        NetComm netComm = World.getNet();
         if (!netComm.connect()) {
             return false;
         }
 
-        final int clientVersion;
+        int clientVersion;
         if (IllaClient.DEFAULT_SERVER != Servers.realserver) {
             clientVersion = IllaClient.getCfg().getInteger("clientVersion");
         } else {
@@ -354,7 +368,7 @@ public final class Login {
      */
     @SuppressWarnings("nls")
     private void restorePassword() {
-        final String encoded = IllaClient.getCfg().getString("fingerprint");
+        String encoded = IllaClient.getCfg().getString("fingerprint");
         if (encoded != null) {
             password = shufflePassword(encoded, true);
         }
@@ -388,20 +402,20 @@ public final class Login {
      */
     @Nonnull
     @SuppressWarnings("nls")
-    private static String shufflePassword(@Nonnull final String pw, final boolean decode) {
+    private static String shufflePassword(@Nonnull String pw, boolean decode) {
 
         try {
-            final Charset usedCharset = Charset.forName("UTF-8");
+            Charset usedCharset = Charset.forName("UTF-8");
             // creating the key
-            final Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+            Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
             if (userDir == null) {
                 throw new IllegalStateException("User directory can't be null.");
             }
-            final DESKeySpec keySpec = new DESKeySpec(userDir.toAbsolutePath().toString().getBytes(usedCharset));
-            final SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
-            final SecretKey key = keyFactory.generateSecret(keySpec);
+            DESKeySpec keySpec = new DESKeySpec(userDir.toAbsolutePath().toString().getBytes(usedCharset));
+            SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
+            SecretKey key = keyFactory.generateSecret(keySpec);
 
-            final Cipher cipher = Cipher.getInstance("DES");
+            Cipher cipher = Cipher.getInstance("DES");
             if (decode) {
                 byte[] encrypedPwdBytes = Base64.decode(pw.getBytes(usedCharset));
                 cipher.init(Cipher.DECRYPT_MODE, key);
@@ -409,17 +423,17 @@ public final class Login {
                 return new String(encrypedPwdBytes, usedCharset);
             }
 
-            final byte[] cleartext = pw.getBytes(usedCharset);
+            byte[] cleartext = pw.getBytes(usedCharset);
             cipher.init(Cipher.ENCRYPT_MODE, key);
             return new String(Base64.encode(cipher.doFinal(cleartext)), usedCharset);
-        } catch (@Nonnull final GeneralSecurityException e) {
+        } catch (@Nonnull GeneralSecurityException e) {
             if (decode) {
                 LOGGER.warn("Decoding the password failed");
             } else {
                 LOGGER.warn("Encoding the password failed");
             }
             return "";
-        } catch (@Nonnull final IllegalArgumentException e) {
+        } catch (@Nonnull IllegalArgumentException e) {
             if (decode) {
                 LOGGER.warn("Decoding the password failed");
             } else {
@@ -435,7 +449,7 @@ public final class Login {
      * @param pw the password that stall be stored to the configuration file
      */
     @SuppressWarnings("nls")
-    private void storePassword(@Nonnull final String pw) {
+    private void storePassword(@Nonnull String pw) {
         IllaClient.getCfg().set("savePassword", true);
         IllaClient.getCfg().set("fingerprint", shufflePassword(pw, false));
     }

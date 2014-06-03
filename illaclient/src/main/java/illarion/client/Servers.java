@@ -15,6 +15,8 @@
  */
 package illarion.client;
 
+import javax.annotation.Nonnull;
+
 /**
  * The definitions of the existing servers. All data needed to connect and
  * identify a server is stored here.
@@ -23,30 +25,29 @@ package illarion.client;
  */
 @SuppressWarnings("nls")
 public enum Servers {
-
     /**
-     * The Gameserver of Illarion. Normal players should connect to this server.
-     * If the selection of the server is disabled this server is chosen as
-     * default server the client will show up as game client and not as
-     * Testclient.
+     * The Gameserver of Illarion. Normal players should connect to this server. If the selection of the server is
+     * disabled this server is chosen as default server the client will show up as game client and not as Testclient.
      */
     realserver("Game server", "illarion.org", 3008, 122),
 
     /**
-     * The Testserver of Illarion. Testers and developers need a client that is
-     * allowed to connect to this server.
+     * The Testserver of Illarion. Testers and developers need a client that is allowed to connect to this server.
      */
     testserver("Test server", realserver.serverAddr, 3011, 122),
 
     /**
-     * The development server of Illarion. Developers need a client that is
-     * allowed to connect to this server.
+     * The development server of Illarion. Developers need a client that is allowed to connect to this server.
      */
     devserver("Dev server", realserver.serverAddr, 3012, 122),
 
     /**
-     * Custom server, only for very special applications. It will connect to a
-     * server running at a user-specified host.
+     * This is the special pre-defined implementation for the local test server.
+     */
+    localServer("Local test server", "localhost", 3012, 122),
+
+    /**
+     * Custom server, only for very special applications. It will connect to a server running at a user-specified host.
      */
     customserver("Custom server", realserver.serverAddr, 3012, 122);
 
@@ -72,8 +73,8 @@ public enum Servers {
     private final int serverPort;
 
     /**
-     * Default ENUM constructor for the enumeration entries. It creates a
-     * definition of a server and stores it to the enumeration constants.
+     * Default ENUM constructor for the enumeration entries. It creates a definition of a server and stores it to the
+     * enumeration constants.
      *
      * @param name    the name of the server
      * @param addr    the host address of the server
@@ -81,8 +82,7 @@ public enum Servers {
      * @param version the version that shall be transfered to the server to
      *                validate the correct client version
      */
-    private Servers(final String name, final String addr, final int port,
-                    final int version) {
+    Servers(@Nonnull String name, @Nonnull String addr, int port, int version) {
         serverName = name;
         serverAddr = addr;
         serverPort = port;
@@ -90,10 +90,9 @@ public enum Servers {
     }
 
     /**
-     * Get the version of the client that need to be transfered to connect to
-     * this server.
+     * Get the version of the client that need to be transferred to connect to this server.
      *
-     * @return the client version that need to be transfered
+     * @return the client version that need to be transferred
      */
     public int getClientVersion() {
         return clientVers;

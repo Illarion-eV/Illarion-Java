@@ -56,12 +56,13 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     /**
      * The text field that contains the login name.
      */
-    @Nullable
+    @Nonnull
     private TextField nameTxt;
 
     /**
      * The text field that contains the password.
      */
+    @Nonnull
     private TextField passwordTxt;
 
     /**
@@ -119,7 +120,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(LoginScreenController.class);
 
-    public LoginScreenController(@Nonnull final Game game, @Nonnull final Engine engine) {
+    public LoginScreenController(@Nonnull Game game, @Nonnull Engine engine) {
         this.game = game;
         this.engine = engine;
     }
@@ -130,12 +131,12 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
      * @param error the error code
      * @return the localized text that describes the error for the player
      */
-    public static String getErrorText(final int error) {
+    public static String getErrorText(int error) {
         return Lang.getMsg("login.error." + Integer.toString(error));
     }
 
     @Override
-    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
         this.nifty = nifty;
         this.screen = screen;
 
@@ -146,14 +147,14 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         nameTxt.getElement().addInputHandler(this);
         passwordTxt.getElement().addInputHandler(this);
 
-        final Login login = Login.getInstance();
+        Login login = Login.getInstance();
         login.restoreLoginData();
         nameTxt.setText(login.getLoginName());
         passwordTxt.setText(login.getPassword());
         savePassword.setChecked(login.storePassword());
 
         if (IllaClient.DEFAULT_SERVER == Servers.realserver) {
-            @Nullable final Element serverPanel = screen.findElementById("serverPanel");
+            @Nullable Element serverPanel = screen.findElementById("serverPanel");
             if (serverPanel != null) {
                 serverPanel.hide();
             } else {
@@ -167,6 +168,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
                 server.addItem("${login-bundle.server.test}");
                 server.addItem("${login-bundle.server.game}");
                 server.addItem("${login-bundle.server.custom}");
+                server.addItem("${login-bundle.server.local}");
                 server.selectItemByIndex(IllaClient.getCfg().getInteger("server"));
             } else {
                 LOGGER.error("Failed to find server drop down on the login screen.");
@@ -193,8 +195,20 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
      * @param event the data of the event
      */
     @NiftyEventSubscriber(id = "loginBtn")
-    public void onLoginButtonClicked(final String topic, final ButtonClickedEvent event) {
+    public void onLoginButtonClicked(String topic, ButtonClickedEvent event) {
         login();
+    }
+
+    @NiftyEventSubscriber(id = "server")
+    public void onServerChangedEvent(String topic, DropDownSelectionChangedEvent<String> event) {
+        if (event.getSelectionItemIndex() == 4) {
+            nameTxt.setText(IllaClient.getCfg().getString("testserverLogin"));
+            passwordTxt.setText(IllaClient.getCfg().getString("testserverPass"));
+        } else {
+            Login login = Login.getInstance();
+            nameTxt.setText(login.getLoginName());
+            passwordTxt.setText(login.getPassword());
+        }
     }
 
     /**
@@ -204,7 +218,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
      * @param event the data of the event
      */
     @NiftyEventSubscriber(id = "exitBtn")
-    public void onExitButtonClicked(final String topic, final ButtonClickedEvent event) {
+    public void onExitButtonClicked(String topic, ButtonClickedEvent event) {
         IllaClient.ensureExit();
     }
 
@@ -215,7 +229,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
      * @param event the data of the event
      */
     @NiftyEventSubscriber(id = "creditsBtn")
-    public void onCreditsButtonClicked(final String topic, final ButtonClickedEvent event) {
+    public void onCreditsButtonClicked(String topic, ButtonClickedEvent event) {
         nifty.gotoScreen("creditsStart");
     }
 
@@ -226,7 +240,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
      * @param event the data of the event
      */
     @NiftyEventSubscriber(id = "optionBtn")
-    public void onOptionsButtonClicked(final String topic, final ButtonClickedEvent event) {
+    public void onOptionsButtonClicked(String topic, ButtonClickedEvent event) {
         options();
     }
 
@@ -237,7 +251,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
      * @param event the data of the event
      */
     @NiftyEventSubscriber(id = "errorButtonClose")
-    public void onCloseErrorButtonClicked(final String topic, final ButtonClickedEvent event) {
+    public void onCloseErrorButtonClicked(String topic, ButtonClickedEvent event) {
         closeError();
     }
 
@@ -246,7 +260,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
      */
     private void login() {
         nifty.showPopup(screen, popupReceiveChars.getId(), null);
-        final Login login = Login.getInstance();
+        Login login = Login.getInstance();
         login.setLoginData(nameTxt.getRealText(), passwordTxt.getRealText());
 
         if (server != null) {
@@ -260,7 +274,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         if (login.isCharacterListRequired()) {
             login.requestCharacterList(new Login.RequestCharListCallback() {
                 @Override
-                public void finishedRequest(final int errorCode) {
+                public void finishedRequest(int errorCode) {
                     lastErrorCode = errorCode;
                     receivedLoginResponse = true;
 
@@ -284,16 +298,16 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         receivedLoginResponse = false;
 
         if (lastErrorCode > 0) {
-            final Label errorText = popupError.findNiftyControl("#errorText", Label.class);
+            Label errorText = popupError.findNiftyControl("#errorText", Label.class);
             errorText.setText(getErrorText(lastErrorCode));
             nifty.showPopup(screen, popupError.getId(), popupError.findElementById("#closeButton"));
             popupIsVisible = true;
         } else {
-            @Nullable final Screen charSelectScreen = nifty.getScreen("charSelect");
+            @Nullable Screen charSelectScreen = nifty.getScreen("charSelect");
             if (charSelectScreen == null) {
                 throw new IllegalStateException("The character select screen was not found! This is bad.");
             }
-            @Nonnull final ScreenController charScreenController = charSelectScreen.getScreenController();
+            @Nonnull ScreenController charScreenController = charSelectScreen.getScreenController();
             if (charScreenController instanceof CharScreenController) {
                 ((CharScreenController) charScreenController).fillMyListBox();
             }
@@ -322,7 +336,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     }
 
     @Override
-    public boolean keyEvent(@Nonnull final NiftyInputEvent inputEvent) {
+    public boolean keyEvent(@Nonnull NiftyInputEvent inputEvent) {
         if (inputEvent == NiftyStandardInputEvent.SubmitText) {
             if (popupIsVisible) {
                 closeError();
