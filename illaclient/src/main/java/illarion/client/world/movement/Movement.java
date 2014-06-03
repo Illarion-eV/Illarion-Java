@@ -24,6 +24,7 @@ import illarion.client.world.Player;
 import illarion.client.world.World;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
+import illarion.common.util.Timer;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -80,6 +81,9 @@ public class Movement {
     @Nonnull
     private final MoveAnimation moveAnimation;
 
+    @Nonnull
+    private final Timer timeoutTimer;
+
     public Movement(@Nonnull Player player, @Nonnull Input input, @Nonnull AnimatedMove movementReceiver) {
         this.player = player;
         moveAnimation = new MoveAnimation(movementReceiver);
@@ -91,6 +95,13 @@ public class Movement {
         followMouseHandler = new FollowMouseMovementHandler(this, input);
         keyboardHandler = new SimpleKeyboardMovementHandler(this, input);
         targetMovementHandler = new WalkToMovementHandler(this);
+
+        timeoutTimer = new Timer(700, new Runnable() {
+            @Override
+            public void run() {
+                reportReadyForNextStep();
+            }
+        });
     }
 
     public boolean isMoving() {
@@ -126,6 +137,7 @@ public class Movement {
     }
 
     public void executeServerRespMove(@Nonnull CharMovementMode mode, @Nonnull Location target, int speed) {
+        timeoutTimer.stop();
         animator.scheduleMove(mode, target, speed);
     }
 
@@ -145,6 +157,8 @@ public class Movement {
             return;
         }
         World.getNet().sendCommand(new MoveCmd(playerId, mode, direction));
+        timeoutTimer.stop();
+        timeoutTimer.start();
     }
 
     private void sendTurnToServer(int direction) {
