@@ -15,9 +15,13 @@
  */
 package illarion.common.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.Closeable;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -33,6 +37,7 @@ import java.util.Map;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@Slf4j
 public final class DirectoryManager {
     /**
      * The enumeration of directories that are managed by this manager.
@@ -60,7 +65,7 @@ public final class DirectoryManager {
         @Nonnull
         private final String defaultDir;
 
-        private Directory(@Nonnull final String header, @Nonnull final String defaultDir) {
+        private Directory(@Nonnull String header, @Nonnull String defaultDir) {
             this.header = header;
             this.defaultDir = defaultDir;
         }
@@ -140,7 +145,7 @@ public final class DirectoryManager {
         if (EnvironmentDetect.isWebstart()) {
             relativeDirectoryPossible = false;
         } else {
-            final Path workingDir = Paths.get(".");
+            Path workingDir = Paths.get(".");
 
             relativeDirectoryPossible = testDirectory(workingDir);
             if (relativeDirectoryPossible) {
@@ -163,11 +168,11 @@ public final class DirectoryManager {
      * application was not launched as applet and not launched as webstart application.
      */
     private void fetchRelativeDirectories() {
-        if (workingDirectory == null || !hasMissingDirectory() || !isRelativeDirectoryPossible()) {
+        if ((workingDirectory == null) || !hasMissingDirectory() || !isRelativeDirectoryPossible()) {
             return;
         }
 
-        final Path settingsFile = workingDirectory.resolve(".illarion");
+        Path settingsFile = workingDirectory.resolve(".illarion");
         fetchDirectories(settingsFile, true);
     }
 
@@ -180,21 +185,21 @@ public final class DirectoryManager {
             return;
         }
 
-        final Path settingsFile = Paths.get(System.getProperty("user.home"), ".illarion");
+        Path settingsFile = Paths.get(System.getProperty("user.home"), ".illarion");
         fetchDirectories(settingsFile, false);
     }
 
-    private void fetchDirectories(@Nonnull final Path settingsFile, final boolean relative) {
+    private void fetchDirectories(@Nonnull Path settingsFile, boolean relative) {
         if (!Files.isRegularFile(settingsFile)) {
             return;
         }
 
         try {
-            final List<String> lines = Files.readAllLines(settingsFile, charSet);
-            for (final String line : lines) {
-                for (final Directory dir : Directory.values()) {
+            List<String> lines = Files.readAllLines(settingsFile, charSet);
+            for (String line : lines) {
+                for (Directory dir : Directory.values()) {
                     if (line.startsWith(dir.getHeader())) {
-                        final Path testDir;
+                        Path testDir;
                         if (relative) {
                             testDir = Paths.get(dir.getDefaultDir());
                         } else {
@@ -210,7 +215,7 @@ public final class DirectoryManager {
                     }
                 }
             }
-        } catch (@Nonnull final IOException ignored) {
+        } catch (@Nonnull IOException ignored) {
         }
     }
 
@@ -219,11 +224,11 @@ public final class DirectoryManager {
      *
      * @param closeable the closeable to close, if this si {@code null} the function does nothing
      */
-    private static void closeSilently(@Nullable final Closeable closeable) {
+    private static void closeSilently(@Nullable Closeable closeable) {
         if (closeable != null) {
             try {
                 closeable.close();
-            } catch (@Nonnull final IOException ignored) {
+            } catch (@Nonnull IOException ignored) {
             }
         }
     }
@@ -245,18 +250,18 @@ public final class DirectoryManager {
      * @return the location of the directory in the local file system or {@code null} in case the directory is not set
      */
     @Nullable
-    public Path getDirectory(@Nonnull final Directory dir) {
+    public Path getDirectory(@Nonnull Directory dir) {
         return directories.get(dir);
     }
 
     @Nonnull
-    public Path resolveFile(@Nonnull final Directory dir, @Nonnull final String... segments) {
-        final Path dirPath = getDirectory(dir);
+    public Path resolveFile(@Nonnull Directory dir, @Nonnull String... segments) {
+        Path dirPath = getDirectory(dir);
         if (dirPath == null) {
             throw new IllegalStateException("Root directory is not yet load.");
         }
         Path result = dirPath;
-        for (final String segment : segments) {
+        for (String segment : segments) {
             result = result.resolve(segment);
         }
         return result;
@@ -278,7 +283,7 @@ public final class DirectoryManager {
      *
      * @param dir the directory to unset
      */
-    public void unsetDirectory(@Nonnull final Directory dir) {
+    public void unsetDirectory(@Nonnull Directory dir) {
         directories.remove(dir);
         relativeDirectory.remove(dir);
         dirty = true;
@@ -290,9 +295,9 @@ public final class DirectoryManager {
      * @param dir the directory
      * @return {@code true} if the directory is set as relative directory
      */
-    public boolean isDirectoryRelative(@Nonnull final Directory dir) {
+    public boolean isDirectoryRelative(@Nonnull Directory dir) {
         if (isRelativeDirectoryPossible()) {
-            final Boolean relative = relativeDirectory.get(dir);
+            Boolean relative = relativeDirectory.get(dir);
             if (relative == null) {
                 return false;
             }
@@ -307,7 +312,7 @@ public final class DirectoryManager {
      * @param dir the directory to check
      * @return {@code true} if the directory is set
      */
-    public boolean isDirectorySet(@Nonnull final Directory dir) {
+    public boolean isDirectorySet(@Nonnull Directory dir) {
         return directories.get(dir) != null;
     }
 
@@ -317,7 +322,7 @@ public final class DirectoryManager {
      * @return {@code true} in case one of the directories is not set
      */
     public boolean hasMissingDirectory() {
-        for (@Nonnull final Directory dir : Directory.values()) {
+        for (@Nonnull Directory dir : Directory.values()) {
             if (!isDirectorySet(dir)) {
                 return true;
             }
@@ -331,16 +336,12 @@ public final class DirectoryManager {
      * @throws IOException in case saving the directory fails for any reason
      */
     private void saveAbsolute() throws IOException {
-        final File settingsFile = new File(System.getProperty("user.home"), ".illarion");
+        Path settingsFile = Paths.get(System.getProperty("user.home"), ".illarion");
 
-        if (settingsFile.exists()) {
-            if (!settingsFile.delete()) {
-                throw new IOException("Failed to remove old settings file.");
-            }
-        }
+        Files.deleteIfExists(settingsFile);
 
         boolean foundAbsoluteDirectory = false;
-        for (@Nonnull final Directory dir : Directory.values()) {
+        for (@Nonnull Directory dir : Directory.values()) {
             if (isDirectorySet(dir) && !isDirectoryRelative(dir)) {
                 foundAbsoluteDirectory = true;
                 break;
@@ -348,11 +349,9 @@ public final class DirectoryManager {
         }
 
         if (foundAbsoluteDirectory) {
-            BufferedWriter writer = null;
-            try {
-                writer = new BufferedWriter(new FileWriter(settingsFile));
+            try (BufferedWriter writer = Files.newBufferedWriter(settingsFile, charSet)) {
 
-                for (@Nonnull final Directory dir : Directory.values()) {
+                for (@Nonnull Directory dir : Directory.values()) {
                     if (isDirectorySet(dir) && !isDirectoryRelative(dir)) {
                         writer.write(dir.getHeader());
                         //null condition checked by isDirectorySet
@@ -362,8 +361,6 @@ public final class DirectoryManager {
                     }
                 }
                 writer.flush();
-            } finally {
-                closeSilently(writer);
             }
         }
     }
@@ -374,15 +371,15 @@ public final class DirectoryManager {
      * @throws IOException in case anything goes wrong at saving this settings
      */
     private void saveRelative() throws IOException {
-        if (workingDirectory == null || !isRelativeDirectoryPossible()) {
+        if ((workingDirectory == null) || !isRelativeDirectoryPossible()) {
             return;
         }
-        final Path settingsFile = workingDirectory.resolve(".illarion");
+        Path settingsFile = workingDirectory.resolve(".illarion");
 
         Files.deleteIfExists(settingsFile);
 
         boolean foundRelativeDirectory = false;
-        for (@Nonnull final Directory dir : Directory.values()) {
+        for (@Nonnull Directory dir : Directory.values()) {
             if (isDirectoryRelative(dir)) {
                 foundRelativeDirectory = true;
                 break;
@@ -391,7 +388,7 @@ public final class DirectoryManager {
 
         if (foundRelativeDirectory) {
             try (BufferedWriter writer = Files.newBufferedWriter(settingsFile, charSet)) {
-                for (@Nonnull final Directory dir : Directory.values()) {
+                for (@Nonnull Directory dir : Directory.values()) {
                     if (isDirectoryRelative(dir)) {
                         writer.write(dir.getHeader());
                         writer.newLine();
@@ -416,7 +413,7 @@ public final class DirectoryManager {
         try {
             saveRelative();
             saveAbsolute();
-        } catch (@Nonnull final Exception e) {
+        } catch (@Nonnull Exception e) {
             return false;
         }
 
@@ -431,7 +428,7 @@ public final class DirectoryManager {
      * @param dir the directory
      * @param location the local of the directory in the local file system
      */
-    public void setDirectory(@Nonnull final Directory dir, @Nonnull final Path location) {
+    public void setDirectory(@Nonnull Directory dir, @Nonnull Path location) {
         if (!location.equals(getDirectory(dir))) {
             if (isNewDirectoryValid(location)) {
                 directories.put(dir, location);
@@ -446,13 +443,13 @@ public final class DirectoryManager {
      *
      * @param dir the directory to handle relative
      */
-    public void setDirectoryRelative(@Nonnull final Directory dir) {
+    public void setDirectoryRelative(@Nonnull Directory dir) {
         if (!isRelativeDirectoryPossible()) {
             throw new IllegalStateException(
                     "Can't set directories relative while relative directories are not possible.");
         }
         if (!isDirectoryRelative(dir)) {
-            final Path testDir = Paths.get(dir.getDefaultDir());
+            Path testDir = Paths.get(dir.getDefaultDir());
             if (isNewDirectoryValid(testDir)) {
                 directories.put(dir, testDir);
                 relativeDirectory.put(dir, Boolean.TRUE);
@@ -461,16 +458,18 @@ public final class DirectoryManager {
         }
     }
 
-    private static boolean isNewDirectoryValid(@Nonnull final Path location) {
+    private static boolean isNewDirectoryValid(@Nonnull Path location) {
         return testDirectory(location) && isValidDataDirectory(location) && createDataDirFile(location);
     }
 
-    private static boolean isValidDataDirectory(@Nullable final Path dir) {
+    private static boolean isValidDataDirectory(@Nullable Path dir) {
         if (dir == null) {
+            log.error("Checking for valid directory failed: Directory was NULL");
             return false;
         }
 
-        if (Files.isDirectory(dir)) {
+        if (!Files.isDirectory(dir)) {
+            log.error("Checking for valid directory failed: Element is no directory.");
             return false;
         }
 
@@ -478,28 +477,35 @@ public final class DirectoryManager {
             boolean emptyDirectory = true;
             for (Path file : dirStream) {
                 emptyDirectory = false;
-                if (file.getFileName().toString().equals("illarionDir")) {
+                if ("illarionDir".equals(file.getFileName().toString())) {
                     return true;
                 }
             }
-            return emptyDirectory;
-        } catch (IOException ignored) {
+            if (!emptyDirectory) {
+                log.error("Checking for valid directory failed: Directory is not empty.");
+                return false;
+            }
+            return true;
+        } catch (@Nonnull IOException e) {
+            log.error("Checking for valid directory failed", e);
             return false;
         }
     }
 
-    private static boolean createDataDirFile(@Nullable final Path dir) {
+    private static boolean createDataDirFile(@Nullable Path dir) {
         if (dir != null) {
-            final Path dataDirFile = dir.resolve("illarionDir");
+            Path dataDirFile = dir.resolve("illarionDir");
             if (Files.isRegularFile(dataDirFile)) {
                 return true;
             }
             try {
                 Files.createFile(dataDirFile);
                 return true;
-            } catch (@Nonnull final IOException ignored) {
+            } catch (@Nonnull IOException e) {
+                log.error("Creating the data directory file failed.", e);
             }
         }
+        log.error("Creating the data directory file failed. Directory was NULL.");
         return false;
     }
 
@@ -510,18 +516,35 @@ public final class DirectoryManager {
      * @param dir the object to test
      * @return {@code true} in case the object points to a existing directory
      */
-    private static boolean testDirectory(@Nullable final Path dir) {
+    private static boolean testDirectory(@Nullable Path dir) {
         if (dir == null) {
+            log.error("Directory test failed: Test directory was NULL");
             return false;
         }
         if (!Files.exists(dir)) {
             try {
                 Files.createDirectories(dir);
             } catch (IOException e) {
+                log.error("Directory test failed: Creating missing directories failed.", e);
                 return false;
             }
         }
 
-        return Files.isDirectory(dir) && Files.isWritable(dir) && Files.isReadable(dir);
+        if (!Files.isDirectory(dir)) {
+            log.error("Directory test failed. Selected element is not a directory.");
+            return false;
+        }
+
+        if (!Files.isWritable(dir)) {
+            log.error("Directory test failed. Selected element is not writable.");
+            return false;
+        }
+
+        if (!Files.isReadable(dir)) {
+            log.error("Directory test failed. Selected element is not readable.");
+            return false;
+        }
+
+        return true;
     }
 }
