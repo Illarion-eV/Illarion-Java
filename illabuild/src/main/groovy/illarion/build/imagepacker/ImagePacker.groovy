@@ -55,7 +55,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
     /**
      * Maximal texture size in both directions in pixel.
      */
-    private static final int MAX_SIZE = 1024
+    private static final int MAX_SIZE = 4096
 
     /**
      * The index for the RGB images in the different image format related arrays.
