@@ -19,7 +19,8 @@ import illarion.client.world.GameMap;
 import illarion.client.world.MapTile;
 import illarion.common.types.Location;
 import illarion.common.util.FastMath;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,8 +31,9 @@ import java.util.*;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@Slf4j
 public class AStar implements PathFindingAlgorithm {
+    private static final Logger log = LoggerFactory.getLogger(AStar.class);
+
     @Nullable
     @Override
     public Path findPath(

@@ -23,11 +23,9 @@ import illarion.client.world.CharMovementMode;
 import illarion.client.world.Player;
 import illarion.client.world.World;
 import illarion.common.types.Location;
-import lombok.RequiredArgsConstructor;
-import lombok.Value;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
+import java.beans.ConstructorProperties;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -37,14 +35,11 @@ import java.util.Queue;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@RequiredArgsConstructor
-@Slf4j
 class MoveAnimator implements AnimatedMove {
     private interface MoveAnimatorTask {
         void execute();
     }
 
-    @Value
     private class MovingTask implements MoveAnimatorTask {
         @Nonnull
         private final CharMovementMode mode;
@@ -52,15 +47,24 @@ class MoveAnimator implements AnimatedMove {
         private final Location target;
         private final int speed;
 
+        private MovingTask(@Nonnull CharMovementMode mode, @Nonnull Location target, int speed) {
+            this.mode = mode;
+            this.target = target;
+            this.speed = speed;
+        }
+
         @Override
         public void execute() {
             executeMove(mode, target, speed);
         }
     }
 
-    @Value
     private class TurningTask implements MoveAnimatorTask {
         private final int direction;
+
+        private TurningTask(int direction) {
+            this.direction = direction;
+        }
 
         @Override
         public void execute() {
@@ -79,6 +83,12 @@ class MoveAnimator implements AnimatedMove {
 
     private boolean animationInProgress;
     private boolean reportingDone;
+
+    @ConstructorProperties({"movement", "moveAnimation"})
+    public MoveAnimator(@Nonnull Movement movement, @Nonnull MoveAnimation moveAnimation) {
+        this.movement = movement;
+        this.moveAnimation = moveAnimation;
+    }
 
     void scheduleMove(@Nonnull CharMovementMode mode, @Nonnull Location target, int speed) {
         taskQueue.offer(new MovingTask(mode, target, speed));

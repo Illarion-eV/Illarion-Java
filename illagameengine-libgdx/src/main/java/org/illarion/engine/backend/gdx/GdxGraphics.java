@@ -24,8 +24,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.utils.Pools;
 import illarion.common.types.Rectangle;
-import lombok.AccessLevel;
-import lombok.Getter;
 import org.illarion.engine.graphic.*;
 import org.illarion.engine.graphic.effects.TextureEffect;
 
@@ -48,7 +46,6 @@ class GdxGraphics implements Graphics {
      * The sprite batch used to perform the batch rendering.
      */
     @Nonnull
-    @Getter(AccessLevel.PACKAGE)
     private final SpriteBatch spriteBatch;
 
     /**
@@ -147,6 +144,11 @@ class GdxGraphics implements Graphics {
         camera = new OrthographicCamera();
         camera.zoom = 1.f;
         camera.setToOrtho(true);
+    }
+
+    @Nonnull
+    SpriteBatch getSpriteBatch() {
+        return spriteBatch;
     }
 
     /**

@@ -16,11 +16,12 @@
 package illarion.download.maven;
 
 import illarion.common.util.ProgressMonitor;
-import lombok.extern.slf4j.Slf4j;
 import org.eclipse.aether.RequestTrace;
 import org.eclipse.aether.transfer.TransferCancelledException;
 import org.eclipse.aether.transfer.TransferEvent;
 import org.eclipse.aether.transfer.TransferListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,8 +29,9 @@ import javax.annotation.Nullable;
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@Slf4j
 public class MavenTransferListener implements TransferListener {
+    private static final Logger log = LoggerFactory.getLogger(MavenTransferListener.class);
+
     @Override
     public void transferInitiated(TransferEvent event) throws TransferCancelledException {
         log.info(event.toString());

@@ -16,9 +16,10 @@
 package org.illarion.engine.backend.shared;
 
 import illarion.common.util.ProgressMonitor;
-import lombok.extern.slf4j.Slf4j;
 import org.illarion.engine.assets.TextureManager;
 import org.illarion.engine.graphic.Texture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
@@ -35,8 +36,8 @@ import java.util.concurrent.Executors;
  *
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
-@Slf4j
 public abstract class AbstractTextureManager<T> implements TextureManager {
+    private static final Logger log = LoggerFactory.getLogger(AbstractTextureManager.class);
 
     /**
      * These are the progress monitors for each directory.
@@ -132,12 +133,10 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
                 continue;
             }
             String directoryName = rootDirectories.get(i);
-            TextureAtlasListXmlLoadingTask<T> task = new TextureAtlasListXmlLoadingTask<>(parserFactory,
-                                                                                                directoryName, this,
-                                                                                                directoryMonitors
-                                                                                                        .get(i),
-                                                                                                loadingExecutor
-            );
+            TextureAtlasListXmlLoadingTask<T> task = new TextureAtlasListXmlLoadingTask<>(parserFactory, directoryName,
+                                                                                          this,
+                                                                                          directoryMonitors.get(i),
+                                                                                          loadingExecutor);
             loadingExecutor.execute(task);
             loadingTasks.addFirst(task);
             directoriesLoaded.set(i, Boolean.TRUE);
@@ -301,12 +300,9 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
             parserFactory.setNamespaceAware(false);
             parserFactory.setValidating(false);
 
-            TextureAtlasListXmlLoadingTask<T> task = new TextureAtlasListXmlLoadingTask<>(parserFactory,
-                                                                                                directoryName, this,
-                                                                                                directoryMonitors
-                                                                                                        .get(directoryIndex),
-                                                                                                null
-            );
+            TextureAtlasListXmlLoadingTask<T> task = new TextureAtlasListXmlLoadingTask<>(parserFactory, directoryName,
+                                                                                          this, directoryMonitors
+                    .get(directoryIndex), null);
             if (loadingTasks == null) {
                 loadingTasks = new ConcurrentLinkedDeque<>();
                 updateTasks = new ConcurrentLinkedQueue<>();

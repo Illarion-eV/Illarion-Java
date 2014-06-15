@@ -15,8 +15,6 @@
  */
 package illarion.easynpc.gui.syntax;
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.TokenStream;
@@ -26,6 +24,7 @@ import org.fife.ui.rsyntaxtextarea.Token;
 
 import javax.annotation.Nonnull;
 import javax.swing.text.Segment;
+import java.beans.ConstructorProperties;
 import java.io.CharArrayReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -35,13 +34,17 @@ import java.io.Reader;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractAntlrTokenMaker<T extends Lexer> extends AbstractTokenMaker {
     /**
      * The lexer that provides the data.
      */
     @Nonnull
     private final T lexer;
+
+    @ConstructorProperties("lexer")
+    protected AbstractAntlrTokenMaker(@Nonnull T lexer) {
+        this.lexer = lexer;
+    }
 
     @Override
     public Token getTokenList(@Nonnull Segment text, int initialTokenType, int startOffset) {

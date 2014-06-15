@@ -15,15 +15,17 @@
  */
 package illarion.download.maven;
 
-import lombok.extern.slf4j.Slf4j;
 import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.RepositoryListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@Slf4j
 public class MavenRepositoryListener implements RepositoryListener {
+    private static final Logger log = LoggerFactory.getLogger(MavenRepositoryListener.class);
+
     @Override
     public void artifactDescriptorInvalid(RepositoryEvent event) {
         log.warn(event.toString());

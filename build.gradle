@@ -17,7 +17,7 @@
 apply plugin: 'idea'
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.11'
+    gradleVersion = '1.12'
 }
 
 idea {
@@ -117,7 +117,6 @@ subprojects { project ->
         }
         project.dependencies {
             compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.3'
-            provided group: 'org.projectlombok', name: 'lombok', version: '1.14.0'
         }
         idea {
             module {

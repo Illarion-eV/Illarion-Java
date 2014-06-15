@@ -15,7 +15,8 @@
  */
 package illarion.common.util;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,8 +38,9 @@ import java.util.Map;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@Slf4j
 public final class DirectoryManager {
+    private static final Logger log = LoggerFactory.getLogger(DirectoryManager.class);
+
     /**
      * The enumeration of directories that are managed by this manager.
      */
@@ -65,13 +67,13 @@ public final class DirectoryManager {
         @Nonnull
         private final String defaultDir;
 
-        private Directory(@Nonnull String header, @Nonnull String defaultDir) {
+        Directory(@Nonnull String header, @Nonnull String defaultDir) {
             this.header = header;
             this.defaultDir = defaultDir;
         }
 
         @Nonnull
-        protected String getHeader() {
+        public String getHeader() {
             return header;
         }
 

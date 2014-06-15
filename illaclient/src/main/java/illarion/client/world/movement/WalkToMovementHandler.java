@@ -19,9 +19,8 @@ import illarion.client.util.pathfinding.*;
 import illarion.client.world.CharMovementMode;
 import illarion.client.world.World;
 import illarion.common.types.Location;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,8 +33,8 @@ import static illarion.client.util.pathfinding.PathMovementMethod.Walk;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@Slf4j
 class WalkToMovementHandler extends AbstractMovementHandler implements TargetMovementHandler {
+    private static final Logger log = LoggerFactory.getLogger(WalkToMovementHandler.class);
     /**
      * The path finder used to calculate the paths towards the target location.
      */
@@ -43,11 +42,9 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
     private final PathFindingAlgorithm pathFindingAlgorithm;
 
     @Nonnull
-    @Getter(AccessLevel.PROTECTED)
     private final Location targetLocation;
     private int targetDistance;
 
-    @Getter(AccessLevel.PROTECTED)
     private boolean targetSet;
 
     @Nullable
@@ -191,5 +188,14 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
     @Override
     public String toString() {
         return "Walk to target movement handler";
+    }
+
+    @Nonnull
+    protected Location getTargetLocation() {
+        return targetLocation;
+    }
+
+    protected boolean isTargetSet() {
+        return targetSet;
     }
 }

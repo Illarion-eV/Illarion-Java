@@ -16,16 +16,32 @@
 package illarion.client.world.movement;
 
 import illarion.client.world.CharMovementMode;
-import lombok.Value;
 
 import javax.annotation.Nonnull;
+import java.beans.ConstructorProperties;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@Value
 class DefaultStepData implements StepData {
     @Nonnull
     private final CharMovementMode movementMode;
     private final int direction;
+
+    @ConstructorProperties({"movementMode", "direction"})
+    public DefaultStepData(@Nonnull CharMovementMode movementMode, int direction) {
+        this.movementMode = movementMode;
+        this.direction = direction;
+    }
+
+    @Override
+    @Nonnull
+    public CharMovementMode getMovementMode() {
+        return movementMode;
+    }
+
+    @Override
+    public int getDirection() {
+        return direction;
+    }
 }

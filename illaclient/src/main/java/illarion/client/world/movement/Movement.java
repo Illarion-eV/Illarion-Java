@@ -25,11 +25,9 @@ import illarion.client.world.World;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
 import illarion.common.util.Timer;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.illarion.engine.input.Input;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -40,13 +38,12 @@ import javax.annotation.Nullable;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@Slf4j
 public class Movement {
+    private static final Logger log = LoggerFactory.getLogger(Movement.class);
     /**
      * The instance of the player that is moved around by this class.
      */
     @Nonnull
-    @Getter(AccessLevel.PACKAGE)
     private final Player player;
 
     /**
@@ -56,8 +53,6 @@ public class Movement {
     private MovementHandler activeHandler;
 
     @Nonnull
-    @Getter
-    @Setter
     private CharMovementMode defaultMovementMode;
 
     private boolean stepInProgress;
@@ -66,19 +61,15 @@ public class Movement {
     private final MoveAnimator animator;
 
     @Nonnull
-    @Getter
     private final MouseMovementHandler followMouseHandler;
 
     @Nonnull
-    @Getter
     private final KeyboardMovementHandler keyboardHandler;
 
     @Nonnull
-    @Getter
     private final TargetMovementHandler targetMovementHandler;
 
     @Nonnull
-    @Getter
     private final TargetMovementHandler targetMouseMovementHandler;
 
     @Nonnull
@@ -229,5 +220,39 @@ public class Movement {
                 requestNextMove(nextStep);
             }
         }
+    }
+
+    @Nonnull
+    Player getPlayer() {
+        return player;
+    }
+
+    @Nonnull
+    public CharMovementMode getDefaultMovementMode() {
+        return defaultMovementMode;
+    }
+
+    @Nonnull
+    public MouseMovementHandler getFollowMouseHandler() {
+        return followMouseHandler;
+    }
+
+    @Nonnull
+    public KeyboardMovementHandler getKeyboardHandler() {
+        return keyboardHandler;
+    }
+
+    @Nonnull
+    public TargetMovementHandler getTargetMovementHandler() {
+        return targetMovementHandler;
+    }
+
+    @Nonnull
+    public TargetMovementHandler getTargetMouseMovementHandler() {
+        return targetMouseMovementHandler;
+    }
+
+    public void setDefaultMovementMode(@Nonnull CharMovementMode defaultMovementMode) {
+        this.defaultMovementMode = defaultMovementMode;
     }
 }

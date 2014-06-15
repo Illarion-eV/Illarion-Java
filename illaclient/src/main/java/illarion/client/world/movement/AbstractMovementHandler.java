@@ -15,8 +15,6 @@
  */
 package illarion.client.world.movement;
 
-import lombok.Getter;
-
 import javax.annotation.Nonnull;
 
 /**
@@ -26,7 +24,6 @@ import javax.annotation.Nonnull;
  */
 abstract class AbstractMovementHandler implements MovementHandler {
     @Nonnull
-    @Getter
     private final Movement movement;
 
     protected AbstractMovementHandler(@Nonnull Movement movement) {
@@ -46,5 +43,10 @@ abstract class AbstractMovementHandler implements MovementHandler {
     @Override
     public void disengage(boolean transferAllowed) {
         movement.disengage(this);
+    }
+
+    @Nonnull
+    public Movement getMovement() {
+        return movement;
     }
 }
