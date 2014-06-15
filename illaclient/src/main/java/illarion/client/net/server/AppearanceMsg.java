@@ -454,6 +454,14 @@ public final class AppearanceMsg extends AbstractGuiMsg {
                 return 108;
             case 111:
                 return 111;
+            case 112: // black dragon
+                return 112;
+            case 113: // rabbit
+                return 113;
+            case 114: // Akaltut (spider thingy)
+                return 114;
+            case 115: // Fairy
+                return 115;
             default:
                 return 1;
         }
