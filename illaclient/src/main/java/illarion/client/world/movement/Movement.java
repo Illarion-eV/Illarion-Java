@@ -219,7 +219,7 @@ public class Movement {
         MovementHandler handler = activeHandler;
         if (handler != null) {
             StepData nextStep = handler.getNextStep(playerLocation);
-            log.info("Requesting new step data from handler: {}", nextStep);
+            log.debug("Requesting new step data from handler: {}", nextStep);
             if (nextStep.getMovementMode() != CharMovementMode.None) {
                 stepInProgress = true;
                 requestNextMove(nextStep);

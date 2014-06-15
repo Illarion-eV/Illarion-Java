@@ -126,6 +126,6 @@ public class AStar implements PathFindingAlgorithm {
     }
 
     private static int getHeuristic(@Nonnull Location currentLocation, @Nonnull Location targetLocation) {
-        return FastMath.floor(currentLocation.getSqrtDistance(targetLocation) * 2.f);
+        return FastMath.floor(currentLocation.getSqrtDistance(targetLocation) * 15.f);
     }
 }
