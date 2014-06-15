@@ -16,6 +16,10 @@
 package illarion.client.util.pathfinding;
 
 import illarion.common.types.Location;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import javax.annotation.Nonnull;
 
@@ -24,6 +28,9 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@Setter
 abstract class AbstractPathNode implements PathNode {
     /**
      * The location of this node.
@@ -36,27 +43,4 @@ abstract class AbstractPathNode implements PathNode {
      */
     @Nonnull
     private final PathMovementMethod movementMethod;
-
-    /**
-     * Constructor that sets the location this node is assigned to.
-     *
-     * @param location the nodes location
-     * @param movementMethod the movement method
-     */
-    protected AbstractPathNode(@Nonnull Location location, @Nonnull PathMovementMethod movementMethod) {
-        this.location = location;
-        this.movementMethod = movementMethod;
-    }
-
-    @Nonnull
-    @Override
-    public Location getLocation() {
-        return location;
-    }
-
-    @Nonnull
-    @Override
-    public PathMovementMethod getMovementMethod() {
-        return movementMethod;
-    }
 }

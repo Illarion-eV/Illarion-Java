@@ -78,7 +78,7 @@ class SimpleKeyboardMovementHandler extends AbstractMovementHandler implements K
 
     @Nonnull
     @Override
-    public StepData getNextStep() {
+    public StepData getNextStep(@Nonnull Location currentLocation) {
         int dir = getMovementDirection();
         if (dir == Location.DIR_ZERO) {
             return new DefaultStepData(CharMovementMode.None, 0);

@@ -18,6 +18,8 @@ package illarion.client.util.pathfinding;
 import illarion.client.world.GameMap;
 import illarion.client.world.MapTile;
 import illarion.common.types.Location;
+import illarion.common.util.FastMath;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,6 +30,7 @@ import java.util.*;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@Slf4j
 public class AStar implements PathFindingAlgorithm {
     @Nullable
     @Override
@@ -38,6 +41,9 @@ public class AStar implements PathFindingAlgorithm {
             int approachDistance,
             @Nonnull PathMovementMethod movementMethod,
             @Nonnull PathMovementMethod... movementMethods) {
+        if (start.equals(end)) {
+            throw new IllegalArgumentException("Start and target location must not be equal.");
+        }
         /* Pre-Checks */
         if (approachDistance < 0) {
             throw new IllegalArgumentException("The approach distance must not be negative.");
@@ -46,6 +52,7 @@ public class AStar implements PathFindingAlgorithm {
             /* Different levels are not supported by this algorithm. */
             return null;
         }
+        log.debug("Searching path from {} to {} getting as close as {} tiles", start, end, approachDistance);
         /* Setting up the data structures. */
         /* Nodes that are in this set were yet not fully processed. */
         NavigableSet<AStarPathNode> openNodes = new TreeSet<>();
@@ -60,7 +67,9 @@ public class AStar implements PathFindingAlgorithm {
             /* Take the unchecked node closest to the target. */
             AStarPathNode currentNode = openNodes.pollFirst();
             if (currentNode.getLocation().getDistance(end) <= approachDistance) {
-                return buildPath(currentNode);
+                Path createdPath = buildPath(currentNode);
+                log.debug("Current node is within range. Building path: {}", createdPath);
+                return createdPath;
             }
             AStarPathNode alternative = knownNodes.get(currentNode.getLocation());
             if ((alternative == null) || (alternative.getCost() > currentNode.getCost())) {
@@ -117,6 +126,6 @@ public class AStar implements PathFindingAlgorithm {
     }
 
     private static int getHeuristic(@Nonnull Location currentLocation, @Nonnull Location targetLocation) {
-        return currentLocation.getDistance(targetLocation) * 2;
+        return FastMath.floor(currentLocation.getSqrtDistance(targetLocation) * 2.f);
     }
 }

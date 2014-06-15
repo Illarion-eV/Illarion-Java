@@ -80,7 +80,7 @@ class FollowMouseMovementHandler extends AbstractMovementHandler implements Mous
 
     @Nonnull
     @Override
-    public StepData getNextStep() {
+    public StepData getNextStep(@Nonnull Location currentLocation) {
         calculateMove();
         return new DefaultStepData(currentMovementMode, walkTowardsDir);
     }

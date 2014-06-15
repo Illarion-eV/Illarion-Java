@@ -19,8 +19,7 @@ import illarion.client.util.pathfinding.*;
 import illarion.client.world.CharMovementMode;
 import illarion.client.world.World;
 import illarion.common.types.Location;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,9 +32,8 @@ import static illarion.client.util.pathfinding.PathMovementMethod.Walk;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@Slf4j
 class WalkToMovementHandler extends AbstractMovementHandler implements TargetMovementHandler {
-    @Nonnull
-    private static final Logger LOGGER = LoggerFactory.getLogger(WalkToMovementHandler.class);
     /**
      * The path finder used to calculate the paths towards the target location.
      */
@@ -61,16 +59,24 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
 
     @Nonnull
     @Override
-    public StepData getNextStep() {
+    public StepData getNextStep(@Nonnull Location currentLocation) {
         if (!targetSet) {
             return new DefaultStepData(CharMovementMode.None, 0);
         }
-        if (getPlayerLocation().getDistance(targetLocation) <= targetDistance) {
+        int remainingDistance = currentLocation.getDistance(targetLocation);
+        log.debug("Remaining distance to target: {} Expected distance: {}", remainingDistance, targetDistance);
+        if (remainingDistance <= targetDistance) {
             targetSet = false;
             executeTargetAction();
             return new DefaultStepData(CharMovementMode.None, 0);
         }
-        Path activePath = isCurrentPathValid() ? currentPath : calculateNewPath();
+        Path activePath;
+        if (isCurrentPathValid()) {
+            activePath = currentPath;
+        } else {
+            activePath = calculateNewPath(currentLocation);
+            currentPath = activePath;
+        }
         if (activePath == null) {
             return new DefaultStepData(CharMovementMode.None, 0);
         }
@@ -81,38 +87,43 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
             executeTargetAction();
             return new DefaultStepData(CharMovementMode.None, 0);
         }
-        if (!isPathNodeValid(node)) {
-            currentPath = calculateNewPath();
+        if (!isPathNodeValid(currentLocation, node)) {
+            currentPath = calculateNewPath(currentLocation);
             node = activePath.nextStep();
             if (node == null) {
                 return new DefaultStepData(CharMovementMode.None, 0);
             }
         }
-        return new DefaultStepData(convertMovementMode(node.getMovementMethod()), getDirection(node.getLocation()));
+        log.debug("Performing step to: {}", node.getLocation());
+        CharMovementMode modeMode = convertMovementMode(node.getMovementMethod());
+        int moveDir = getDirection(currentLocation, node.getLocation());
+        return new DefaultStepData(modeMode, moveDir);
     }
 
     private void executeTargetAction() {
         Runnable action = targetAction;
+        targetAction = null;
         if (action != null) {
-            LOGGER.info("Executing target reached action!");
             action.run();
         }
     }
 
-    private boolean isPathNodeValid(@Nonnull PathNode node) {
-        int distanceToPlayer = getPlayerLocation().getDistance(node.getLocation());
+    private static boolean isPathNodeValid(@Nonnull Location currentLocation, @Nonnull PathNode node) {
+        int distanceToPlayer = currentLocation.getDistance(node.getLocation());
         switch (node.getMovementMethod()) {
             case Walk:
-                return distanceToPlayer == 1;
+                if (distanceToPlayer == 1) {
+                    return true;
+                }
+                break;
             case Run:
-                return distanceToPlayer <= 2;
+                if (distanceToPlayer == 2) {
+                    return true;
+                }
+                break;
         }
+        log.warn("Next path node {} is out of range: {}", node, distanceToPlayer);
         return false;
-    }
-
-    @Nonnull
-    private Location getPlayerLocation() {
-        return getMovement().getPlayer().getLocation();
     }
 
     @Nonnull
@@ -126,32 +137,42 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
         return CharMovementMode.Walk;
     }
 
-    private int getDirection(@Nonnull Location target) {
-        return getPlayerLocation().getDirection(target);
+    private int getDirection(@Nonnull Location currentLocation, @Nonnull Location target) {
+        return currentLocation.getDirection(target);
     }
 
     private boolean isCurrentPathValid() {
         Path path = currentPath;
         if (path == null) {
+            log.debug("Path is not valid: Current path is NULL");
             return false;
         }
         Location destination = path.getDestination();
-        return (destination != null) && destination.equals(targetLocation);
+        if (destination == null) {
+            log.debug("Path is not valid: Path destination is NULL");
+            return false;
+        }
+        if (!destination.equals(targetLocation)) {
+            log.debug("Path is not valid: Destination does not equal the current target location.");
+            return false;
+        }
+        return true;
     }
 
     @Nullable
-    private Path calculateNewPath() {
-        Location startLocation = getPlayerLocation();
+    private Path calculateNewPath(@Nonnull Location currentLocation) {
+        log.info("Calculating a new path to: {}", targetLocation);
+        PathFindingAlgorithm algorithm = pathFindingAlgorithm;
         if (getMovement().getDefaultMovementMode() == CharMovementMode.Walk) {
-            return pathFindingAlgorithm.findPath(World.getMap(), startLocation, targetLocation, targetDistance, Walk);
+            return algorithm.findPath(World.getMap(), currentLocation, targetLocation, targetDistance, Walk);
         } else {
-            return pathFindingAlgorithm
-                    .findPath(World.getMap(), startLocation, targetLocation, targetDistance, Walk, Run);
+            return algorithm.findPath(World.getMap(), currentLocation, targetLocation, targetDistance, Walk, Run);
         }
     }
 
     @Override
     public void walkTo(@Nonnull Location target, int distance) {
+        log.info("Walking to: {} to a range of {} tiles", target, distance);
         setTargetReachedAction(null);
         targetLocation.set(target);
         targetDistance = distance;

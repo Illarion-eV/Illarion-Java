@@ -44,7 +44,7 @@ public final class LocationMsg extends AbstractReply {
      * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         loc = decodeLocation(reader);
     }
 
@@ -55,7 +55,7 @@ public final class LocationMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        World.getPlayer().setLocation(loc);
+        World.getPlayer().getMovementHandler().executeServerLocation(loc);
         return true;
     }
 
@@ -68,6 +68,6 @@ public final class LocationMsg extends AbstractReply {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("to " + loc.toString());
+        return toString("to " + loc);
     }
 }

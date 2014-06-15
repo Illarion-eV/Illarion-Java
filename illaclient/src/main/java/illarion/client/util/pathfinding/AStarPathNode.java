@@ -17,6 +17,7 @@ package illarion.client.util.pathfinding;
 
 import illarion.client.world.MapTile;
 import illarion.common.util.FastMath;
+import lombok.Getter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -36,11 +37,13 @@ class AStarPathNode extends AbstractPathNode implements Comparable<AStarPathNode
     /**
      * The cost to reach this field.
      */
+    @Getter
     private final int cost;
 
     /**
      * This flag stores if the field is blocked or not.
      */
+    @Getter
     private final boolean blocked;
 
     /**
@@ -51,6 +54,7 @@ class AStarPathNode extends AbstractPathNode implements Comparable<AStarPathNode
     /**
      * The node that prepends this node.
      */
+    @Getter
     @Nullable
     private final AStarPathNode parentNode;
 
@@ -85,10 +89,6 @@ class AStarPathNode extends AbstractPathNode implements Comparable<AStarPathNode
         }
     }
 
-    int getCost() {
-        return cost;
-    }
-
     /**
      * Get the predicted cost to reach the target.
      *
@@ -96,15 +96,6 @@ class AStarPathNode extends AbstractPathNode implements Comparable<AStarPathNode
      */
     private int getPredictedCost() {
         return heuristic + cost;
-    }
-
-    public boolean isBlocked() {
-        return blocked;
-    }
-
-    @Nullable
-    AStarPathNode getParentNode() {
-        return parentNode;
     }
 
     @Override

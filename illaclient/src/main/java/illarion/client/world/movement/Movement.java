@@ -84,6 +84,13 @@ public class Movement {
     @Nonnull
     private final Timer timeoutTimer;
 
+    /**
+     * This instance of the player location is kept in sync with the location that was last confirmed by the server
+     * to keep track of where the player REALLY is.
+     */
+    @Nonnull
+    private final Location playerLocation;
+
     public Movement(@Nonnull Player player, @Nonnull Input input, @Nonnull AnimatedMove movementReceiver) {
         this.player = player;
         moveAnimation = new MoveAnimation(movementReceiver);
@@ -102,6 +109,7 @@ public class Movement {
                 reportReadyForNextStep();
             }
         });
+        playerLocation = new Location(player.getLocation());
     }
 
     public boolean isMoving() {
@@ -115,7 +123,7 @@ public class Movement {
                 oldHandler.disengage();
             }
             activeHandler = handler;
-            log.info("New movement handler is assuming control: {}", activeHandler);
+            log.debug("New movement handler is assuming control: {}", activeHandler);
         }
         update();
     }
@@ -138,7 +146,13 @@ public class Movement {
 
     public void executeServerRespMove(@Nonnull CharMovementMode mode, @Nonnull Location target, int speed) {
         timeoutTimer.stop();
+        playerLocation.set(target);
         animator.scheduleMove(mode, target, speed);
+    }
+
+    public void executeServerLocation(@Nonnull Location target) {
+        playerLocation.set(target);
+        World.getPlayer().setLocation(target);
     }
 
     /**
@@ -204,7 +218,7 @@ public class Movement {
         }
         MovementHandler handler = activeHandler;
         if (handler != null) {
-            StepData nextStep = handler.getNextStep();
+            StepData nextStep = handler.getNextStep(playerLocation);
             log.info("Requesting new step data from handler: {}", nextStep);
             if (nextStep.getMovementMode() != CharMovementMode.None) {
                 stepInProgress = true;
