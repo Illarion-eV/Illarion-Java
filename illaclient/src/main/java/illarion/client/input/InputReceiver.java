@@ -205,7 +205,8 @@ public final class InputReceiver implements InputListener {
     @Override
     public void buttonUp(int mouseX, int mouseY, @Nonnull Button button) {
         if (enabled) {
-            World.getPlayer().getMovementHandler().getFollowMouseHandler().disengage();
+            World.getPlayer().getMovementHandler().getTargetMouseMovementHandler().disengage(true);
+            World.getPlayer().getMovementHandler().getFollowMouseHandler().disengage(true);
             input.disableForwarding(ForwardingTarget.Mouse);
         }
     }

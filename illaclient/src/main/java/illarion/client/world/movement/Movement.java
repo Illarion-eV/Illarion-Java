@@ -29,7 +29,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.illarion.engine.input.Input;
 
 import javax.annotation.Nonnull;
@@ -79,6 +78,10 @@ public class Movement {
     private final TargetMovementHandler targetMovementHandler;
 
     @Nonnull
+    @Getter
+    private final TargetMovementHandler targetMouseMovementHandler;
+
+    @Nonnull
     private final MoveAnimation moveAnimation;
 
     @Nonnull
@@ -102,6 +105,7 @@ public class Movement {
         followMouseHandler = new FollowMouseMovementHandler(this, input);
         keyboardHandler = new SimpleKeyboardMovementHandler(this, input);
         targetMovementHandler = new WalkToMovementHandler(this);
+        targetMouseMovementHandler = new WalkToMouseMovementHandler(this);
 
         timeoutTimer = new Timer(700, new Runnable() {
             @Override
@@ -118,9 +122,9 @@ public class Movement {
 
     void activate(@Nonnull MovementHandler handler) {
         if (!isActive(handler)) {
-            @val MovementHandler oldHandler = activeHandler;
+            MovementHandler oldHandler = activeHandler;
             if (oldHandler != null) {
-                oldHandler.disengage();
+                oldHandler.disengage(false);
             }
             activeHandler = handler;
             log.debug("New movement handler is assuming control: {}", activeHandler);
@@ -132,7 +136,7 @@ public class Movement {
         if (isActive(handler)) {
             activeHandler = null;
         } else {
-            log.warn("Tried to disengage a movement handler ({}) that was not active!", handler);
+            log.debug("Tried to disengage a movement handler ({}) that was not active!", handler);
         }
     }
 

@@ -40,11 +40,13 @@ import illarion.client.world.World;
 import illarion.client.world.interactive.InteractionManager;
 import illarion.client.world.interactive.InteractiveMapTile;
 import illarion.client.world.movement.MouseMovementHandler;
+import illarion.common.config.ConfigChangedEvent;
 import illarion.common.types.ItemCount;
 import illarion.common.types.Location;
 import illarion.common.types.Rectangle;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
+import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.illarion.engine.graphic.SceneEvent;
 import org.illarion.engine.input.ForwardingTarget;
 import org.illarion.engine.input.Input;
@@ -154,6 +156,8 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
 
     private final TooltipHandler tooltipHandler;
 
+    private boolean followMouseWithPathFinding;
+
     /**
      * Default constructor that takes care to initialize the variables required for this class to work.
      */
@@ -163,6 +167,9 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
         numberSelect = numberSelectPopupHandler;
         tooltipHandler = tooltip;
         this.input = input;
+
+        AnnotationProcessor.process(this);
+        followMouseWithPathFinding = IllaClient.getCfg().getBoolean("followMousePathFinding");
     }
 
     /**
@@ -269,15 +276,24 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
         return true;
     }
 
+    @EventTopicSubscriber(topic = "followMousePathFinding")
+    private void onFollowMousewithPathFindingCfgChanged(@Nonnull String topic, @Nonnull ConfigChangedEvent event) {
+        followMouseWithPathFinding = event.getConfig().getBoolean("followMousePathFinding");
+    }
+
     /**
      * Calling this function causes the character to walk towards the mouse.
      *
      * @param event the event that contains the data for the move
      */
     private void moveTowardsMouse(@Nonnull DragOnMapEvent event) {
-        MouseMovementHandler handler = World.getPlayer().getMovementHandler().getFollowMouseHandler();
-        handler.handleMouse(event.getNewX(), event.getNewY());
-        handler.assumeControl();
+        if (followMouseWithPathFinding) {
+            World.getPlayer().getMovementHandler().getTargetMouseMovementHandler().assumeControl();
+        } else {
+            MouseMovementHandler handler = World.getPlayer().getMovementHandler().getFollowMouseHandler();
+            handler.handleMouse(event.getNewX(), event.getNewY());
+            handler.assumeControl();
+        }
         input.enableForwarding(ForwardingTarget.Mouse);
     }
 

@@ -244,6 +244,7 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
             if (!isMouseInInteractionRect(moveEvent.getX(), moveEvent.getY())) {
                 return false;
             }
+            World.getPlayer().getMovementHandler().getTargetMouseMovementHandler().walkTo(parentTile.getLocation(), 0);
 
             showHighlight = 1;
             return true;

@@ -15,36 +15,25 @@
  */
 package illarion.client.world.movement;
 
-import lombok.Getter;
+import illarion.client.world.World;
 
 import javax.annotation.Nonnull;
 
 /**
- * The generic shared implementation for the movement handlers.
- *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-abstract class AbstractMovementHandler implements MovementHandler {
-    @Nonnull
-    @Getter
-    private final Movement movement;
-
-    protected AbstractMovementHandler(@Nonnull Movement movement) {
-        this.movement = movement;
-    }
-
-    @Override
-    public boolean isActive() {
-        return movement.isActive(this);
-    }
-
-    @Override
-    public void assumeControl() {
-        movement.activate(this);
+public class WalkToMouseMovementHandler extends WalkToMovementHandler {
+    WalkToMouseMovementHandler(@Nonnull Movement movement) {
+        super(movement);
     }
 
     @Override
     public void disengage(boolean transferAllowed) {
-        movement.disengage(this);
+        super.disengage(transferAllowed);
+        if (transferAllowed && isTargetSet()) {
+            TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
+            handler.walkTo(getTargetLocation(), 0);
+            handler.assumeControl();
+        }
     }
 }

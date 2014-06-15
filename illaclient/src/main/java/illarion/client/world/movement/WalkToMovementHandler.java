@@ -19,6 +19,8 @@ import illarion.client.util.pathfinding.*;
 import illarion.client.world.CharMovementMode;
 import illarion.client.world.World;
 import illarion.common.types.Location;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
@@ -41,8 +43,11 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
     private final PathFindingAlgorithm pathFindingAlgorithm;
 
     @Nonnull
+    @Getter(AccessLevel.PROTECTED)
     private final Location targetLocation;
     private int targetDistance;
+
+    @Getter(AccessLevel.PROTECTED)
     private boolean targetSet;
 
     @Nullable
@@ -172,7 +177,6 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
 
     @Override
     public void walkTo(@Nonnull Location target, int distance) {
-        log.info("Walking to: {} to a range of {} tiles", target, distance);
         setTargetReachedAction(null);
         targetLocation.set(target);
         targetDistance = distance;
