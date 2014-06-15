@@ -15,6 +15,8 @@
  */
 package illarion.easynpc.gui.syntax;
 
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.TokenStream;
@@ -33,31 +35,13 @@ import java.io.Reader;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractAntlrTokenMaker<T extends Lexer> extends AbstractTokenMaker {
     /**
      * The lexer that provides the data.
      */
     @Nonnull
     private final T lexer;
-
-    /**
-     * Create a new instance of this token maker and set the lexer that is used to get the required data.
-     *
-     * @param lexer the lexer that is supposed to provide the data
-     */
-    protected AbstractAntlrTokenMaker(@Nonnull T lexer) {
-        this.lexer = lexer;
-    }
-
-    /**
-     * Get the lexer that is used in this token maker.
-     *
-     * @return the used lexer
-     */
-    @Nonnull
-    protected final T getLexer() {
-        return lexer;
-    }
 
     @Override
     public Token getTokenList(@Nonnull Segment text, int initialTokenType, int startOffset) {

@@ -79,7 +79,7 @@ class GdxAssets implements Assets {
      * @param gdxApplication the libGDX application this asset manager is bound to
      * @param container the game container
      */
-    GdxAssets(@Nonnull final Application gdxApplication, @Nonnull final GameContainer container) {
+    GdxAssets(@Nonnull Application gdxApplication, @Nonnull GameContainer container) {
         this.container = container;
         textureManager = new GdxTextureManager();
         fontManager = new GdxFontManager(gdxApplication.getFiles(), textureManager);
@@ -127,7 +127,7 @@ class GdxAssets implements Assets {
 
     @Nonnull
     @Override
-    public WorldMap createWorldMap(@Nonnull final WorldMapDataProvider provider) throws EngineException {
+    public WorldMap createWorldMap(@Nonnull WorldMapDataProvider provider) throws EngineException {
         return new GdxWorldMap(provider);
     }
 

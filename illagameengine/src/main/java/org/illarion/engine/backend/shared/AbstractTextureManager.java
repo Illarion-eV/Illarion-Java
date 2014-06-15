@@ -16,10 +16,9 @@
 package org.illarion.engine.backend.shared;
 
 import illarion.common.util.ProgressMonitor;
+import lombok.extern.slf4j.Slf4j;
 import org.illarion.engine.assets.TextureManager;
 import org.illarion.engine.graphic.Texture;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
@@ -36,11 +35,8 @@ import java.util.concurrent.Executors;
  *
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
+@Slf4j
 public abstract class AbstractTextureManager<T> implements TextureManager {
-    /**
-     * The logger that provides the logging output of this class.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTextureManager.class);
 
     /**
      * These are the progress monitors for each directory.
@@ -110,7 +106,7 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
             return;
         }
         if (loadingExecutor != null) {
-            LOGGER.warn("Trying to load texture files while loading already in progress.");
+            log.warn("Trying to load texture files while loading already in progress.");
             return;
         }
 
@@ -119,7 +115,7 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
         updateTasks = new ConcurrentLinkedQueue<>();
 
         // Prepare the parser factory for processing the XML files
-        final XmlPullParserFactory parserFactory;
+        XmlPullParserFactory parserFactory;
         try {
             parserFactory = XmlPullParserFactory.newInstance();
         } catch (XmlPullParserException e) {
@@ -130,13 +126,13 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
 
         // Loading starts here. Firing up the executor.
         loadingExecutor = Executors.newCachedThreadPool();
-        final int directoryCount = rootDirectories.size();
+        int directoryCount = rootDirectories.size();
         for (int i = 0; i < directoryCount; i++) {
             if (directoriesLoaded.get(i)) {
                 continue;
             }
-            final String directoryName = rootDirectories.get(i);
-            final TextureAtlasListXmlLoadingTask<T> task = new TextureAtlasListXmlLoadingTask<>(parserFactory,
+            String directoryName = rootDirectories.get(i);
+            TextureAtlasListXmlLoadingTask<T> task = new TextureAtlasListXmlLoadingTask<>(parserFactory,
                                                                                                 directoryName, this,
                                                                                                 directoryMonitors
                                                                                                         .get(i),
@@ -156,10 +152,10 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
             return;
         }
 
-        final long startTime = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
 
         do {
-            final Runnable task = updateTasks.poll();
+            Runnable task = updateTasks.poll();
             if (task == null) {
                 return;
             }
@@ -167,13 +163,13 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
         } while ((System.currentTimeMillis() - startTime) < 100);
     }
 
-    void addLoadingTask(@Nonnull final TextureAtlasTask task) {
+    void addLoadingTask(@Nonnull TextureAtlasTask task) {
         if (loadingTasks != null) {
             loadingTasks.add(task);
         }
     }
 
-    void addUpdateTask(@Nonnull final Runnable task) {
+    void addUpdateTask(@Nonnull Runnable task) {
         if (updateTasks != null) {
             updateTasks.add(task);
         }
@@ -186,7 +182,7 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
     }
 
     @Nonnull
-    private static String cleanTextureName(@Nonnull final String name) {
+    private static String cleanTextureName(@Nonnull String name) {
         if (name.endsWith(".png")) {
             return name.substring(0, name.length() - 4);
         }
@@ -201,7 +197,7 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
      * @return the full path, properly merged
      */
     @Nonnull
-    private static String mergePath(@Nonnull final String directory, @Nonnull final String name) {
+    private static String mergePath(@Nonnull String directory, @Nonnull String name) {
         if (directory.endsWith("/")) {
             return directory + name;
         }
@@ -220,9 +216,9 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
     protected abstract T loadTextureData(@Nonnull String textureName);
 
     @Override
-    public final void addTextureDirectory(@Nonnull final String directory) {
+    public final void addTextureDirectory(@Nonnull String directory) {
         rootDirectories.add(directory);
-        final ProgressMonitor dirProgressMonitor = new ProgressMonitor();
+        ProgressMonitor dirProgressMonitor = new ProgressMonitor();
         directoryMonitors.add(dirProgressMonitor);
         progressMonitor.addChild(dirProgressMonitor);
         directoriesLoaded.add(Boolean.FALSE);
@@ -235,7 +231,7 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
      * @return the index of the root directory or {@code -1} in case the directory could not be assigned to a root
      * directory
      */
-    private int getDirectoryIndex(@Nonnull final String directory) {
+    private int getDirectoryIndex(@Nonnull String directory) {
         if (directory.endsWith("/")) {
             return rootDirectories.indexOf(directory.substring(0, directory.length() - 1));
         }
@@ -248,7 +244,7 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
      * @param name the name of the file
      * @return the index of the directory or {@code -1} in case there is not matching directory
      */
-    protected int getFileDirectoryIndex(@Nonnull final String name) {
+    protected int getFileDirectoryIndex(@Nonnull String name) {
         for (int i = 0; i < rootDirectories.size(); i++) {
             if (name.startsWith(rootDirectories.get(i))) {
                 return i;
@@ -259,8 +255,8 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
 
     @Nullable
     @Override
-    public Texture getTexture(@Nonnull final String name) {
-        final int directoryIndex = getFileDirectoryIndex(name);
+    public Texture getTexture(@Nonnull String name) {
+        int directoryIndex = getFileDirectoryIndex(name);
         if (directoryIndex >= 0) {
             return getTexture(directoryIndex, name);
         }
@@ -268,23 +264,23 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
     }
 
     @Nullable
-    public Texture getTexture(final int directoryIndex, @Nonnull final String name) {
+    public Texture getTexture(int directoryIndex, @Nonnull String name) {
         if (directoryIndex == -1) {
             return null;
         }
 
-        final String cleanName = cleanTextureName(name);
+        String cleanName = cleanTextureName(name);
 
         // Checking if the texture is among already loaded textures.
-        @Nullable final Texture loadedTexture = textures.get(cleanName);
+        @Nullable Texture loadedTexture = textures.get(cleanName);
         if (loadedTexture != null) {
             return loadedTexture;
         }
 
         // Checking if the texture is located on a separated file.
-        @Nullable final T preLoadTextureData = loadTextureData(cleanName + ".png");
+        @Nullable T preLoadTextureData = loadTextureData(cleanName + ".png");
         if (preLoadTextureData != null) {
-            @Nullable final Texture directTexture = loadTexture(cleanName + ".png", preLoadTextureData);
+            @Nullable Texture directTexture = loadTexture(cleanName + ".png", preLoadTextureData);
             if (directTexture != null) {
                 textures.put(cleanName, directTexture);
                 return directTexture;
@@ -294,18 +290,18 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
         // We reached a point where everything just turns to be crappy. The file appears to be on a texture atlas that
         // is not yet loaded.
         if (!directoriesLoaded.get(directoryIndex)) {
-            final String directoryName = rootDirectories.get(directoryIndex);
-            final XmlPullParserFactory parserFactory;
+            String directoryName = rootDirectories.get(directoryIndex);
+            XmlPullParserFactory parserFactory;
             try {
                 parserFactory = XmlPullParserFactory.newInstance();
             } catch (XmlPullParserException e) {
-                LOGGER.error("Failed to create parser factory.", e);
+                log.error("Failed to create parser factory.", e);
                 return null;
             }
             parserFactory.setNamespaceAware(false);
             parserFactory.setValidating(false);
 
-            final TextureAtlasListXmlLoadingTask<T> task = new TextureAtlasListXmlLoadingTask<>(parserFactory,
+            TextureAtlasListXmlLoadingTask<T> task = new TextureAtlasListXmlLoadingTask<>(parserFactory,
                                                                                                 directoryName, this,
                                                                                                 directoryMonitors
                                                                                                         .get(directoryIndex),
@@ -331,7 +327,7 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
 
     @Nullable
     @Override
-    public Texture getTexture(@Nonnull final String directory, @Nonnull final String name) {
+    public Texture getTexture(@Nonnull String directory, @Nonnull String name) {
         return getTexture(getDirectoryIndex(directory), mergePath(directory, name));
     }
 
@@ -346,7 +342,7 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
         }
 
         while (!loadingTasks.isEmpty()) {
-            final TextureAtlasTask task = loadingTasks.peekFirst();
+            TextureAtlasTask task = loadingTasks.peekFirst();
             if (task.isDone()) {
                 loadingTasks.removeFirst();
             } else {
@@ -354,7 +350,7 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
             }
         }
 
-        for (@Nonnull final ProgressMonitor dirMonitor : directoryMonitors) {
+        for (@Nonnull ProgressMonitor dirMonitor : directoryMonitors) {
             dirMonitor.setProgress(1.f);
         }
 
@@ -375,7 +371,7 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
     @Nullable
     protected abstract Texture loadTexture(@Nonnull String resource, T preLoadData);
 
-    protected void addTexture(@Nonnull final String textureName, @Nonnull final Texture texture) {
+    protected void addTexture(@Nonnull String textureName, @Nonnull Texture texture) {
         textures.put(textureName, texture);
     }
 }
