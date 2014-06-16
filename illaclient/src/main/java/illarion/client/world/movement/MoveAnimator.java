@@ -104,6 +104,11 @@ class MoveAnimator implements AnimatedMove {
         }
     }
 
+    void cancelAll() {
+        taskQueue.clear();
+        moveAnimation.stop();
+    }
+
     private void executeTurn(int direction) {
         movement.getPlayer().getCharacter().setDirection(direction);
         executeNext();

@@ -146,6 +146,7 @@ public class Movement {
     }
 
     public void executeServerLocation(@Nonnull Location target) {
+        animator.cancelAll();
         playerLocation.set(target);
         World.getPlayer().setLocation(target);
     }

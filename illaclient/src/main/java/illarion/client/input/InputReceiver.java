@@ -20,8 +20,12 @@ import illarion.client.world.World;
 import illarion.common.gui.AbstractMultiActionHelper;
 import org.bushe.swing.event.EventBus;
 import org.illarion.engine.input.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * This class is used to receive and forward all user input.
@@ -29,6 +33,8 @@ import javax.annotation.Nonnull;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class InputReceiver implements InputListener {
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(InputReceiver.class);
     private static final int MOVE_KEY = 1;
 
     /**
@@ -126,6 +132,7 @@ public final class InputReceiver implements InputListener {
     /**
      * The topic that is in general used to publish input events.
      */
+    @Nonnull
     public static final String EB_TOPIC = "InputEvent";
 
     /**
@@ -137,16 +144,19 @@ public final class InputReceiver implements InputListener {
     /**
      * The instance of the button multi-click helper that is used in this instance of the input receiver.
      */
+    @Nonnull
     private final ButtonMultiClickHelper buttonMultiClickHelper = new ButtonMultiClickHelper();
 
     /**
      * The instance of the point at helper used by this instance of the input receiver.
      */
+    @Nonnull
     private final PointAtHelper pointAtHelper = new PointAtHelper();
 
     /**
      * The input engine.
      */
+    @Nonnull
     private final Input input;
 
     /**
@@ -155,13 +165,17 @@ public final class InputReceiver implements InputListener {
      */
     private boolean enabled;
 
+    @Nonnull
+    private final Set<Button> buttonDownReceived;
+
     /**
      * Create a new instance of the input receiver.
      *
      * @param input the input system this class is receiving its data from
      */
-    public InputReceiver(Input input) {
+    public InputReceiver(@Nonnull Input input) {
         this.input = input;
+        buttonDownReceived = EnumSet.noneOf(Button.class);
         enabled = false;
         keyMapper = new KeyMapper(input);
     }
@@ -197,6 +211,8 @@ public final class InputReceiver implements InputListener {
     @Override
     public void buttonDown(int mouseX, int mouseY, @Nonnull Button button) {
         if (enabled) {
+            buttonDownReceived.add(button);
+            log.debug("Received {} mouse button down at {}, {}", button, mouseX, mouseY);
             buttonMultiClickHelper.setInputData(button, mouseX, mouseY);
             buttonMultiClickHelper.pulse();
         }
@@ -205,15 +221,22 @@ public final class InputReceiver implements InputListener {
     @Override
     public void buttonUp(int mouseX, int mouseY, @Nonnull Button button) {
         if (enabled) {
-            World.getPlayer().getMovementHandler().getTargetMouseMovementHandler().disengage(true);
-            World.getPlayer().getMovementHandler().getFollowMouseHandler().disengage(true);
-            input.disableForwarding(ForwardingTarget.Mouse);
+            if (buttonDownReceived.remove(button)) {
+                log.debug("Received {} mouse button up at {}, {}", button, mouseX, mouseY);
+                World.getPlayer().getMovementHandler().getTargetMouseMovementHandler().disengage(true);
+                World.getPlayer().getMovementHandler().getFollowMouseHandler().disengage(true);
+                input.disableForwarding(ForwardingTarget.Mouse);
+            } else {
+                log.debug("Received {} mouse button up at {}, {} but skipped it.", button, mouseX, mouseY);
+            }
         }
     }
 
     @Override
     public void buttonClicked(int mouseX, int mouseY, @Nonnull Button button, int count) {
-        // nothing
+        if (enabled) {
+            log.debug("Received {} mouse clicked {} times at {}, {}", button, count, mouseX, mouseY);
+        }
     }
 
     @Override
@@ -226,15 +249,22 @@ public final class InputReceiver implements InputListener {
     }
 
     @Override
-    public void mouseDragged(
-            @Nonnull Button button, int fromX, int fromY, int toX, int toY) {
+    public void mouseDragged(@Nonnull Button button, int fromX, int fromY, int toX, int toY) {
         if (enabled) {
-            EventBus.publish(new DragOnMapEvent(fromX, fromY, toX, toY, button));
+            if (buttonDownReceived.contains(button)) {
+                log.debug("Received {} mouse button dragged from {}, {} to {}, {}", button, fromX, fromY, toX, toY);
+                EventBus.publish(new DragOnMapEvent(fromX, fromY, toX, toY, button));
+            } else {
+                log.debug("Received {} mouse button dragged from {}, {} to {}, {} but skipped it.", button, fromX,
+                          fromY, toX, toY);
+            }
         }
     }
 
     @Override
     public void mouseWheelMoved(int mouseX, int mouseY, int delta) {
-        // nothing
+        if (enabled) {
+            log.debug("Received mouse wheel turned by {} at {}, {}", delta, mouseX, mouseY);
+        }
     }
 }

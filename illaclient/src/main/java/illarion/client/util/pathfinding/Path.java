@@ -80,6 +80,9 @@ public final class Path {
     @Override
     @SuppressWarnings("nls")
     public String toString() {
+        if (path.isEmpty()) {
+            return "Empty path.";
+        }
         return "Path from " + path.getFirst().getLocation() + " to " + path.getLast().getLocation() +
                 " with " + path.size() + " steps";
     }
