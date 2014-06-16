@@ -17,8 +17,8 @@ package illarion.client.graphics;
 
 import illarion.client.input.AbstractMouseLocationEvent;
 import illarion.client.input.ClickOnMapEvent;
+import illarion.client.input.CurrentMouseLocationEvent;
 import illarion.client.input.PointOnMapEvent;
-import illarion.client.input.PrimaryKeyMapDrag;
 import illarion.client.resources.OverlayFactory;
 import illarion.client.resources.Resource;
 import illarion.client.resources.TileFactory;
@@ -240,7 +240,7 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
             return true;
         }
 
-        if (event instanceof PrimaryKeyMapDrag) {
+        if (event instanceof CurrentMouseLocationEvent) {
             AbstractMouseLocationEvent moveEvent = (AbstractMouseLocationEvent) event;
             if (!isMouseInInteractionRect(moveEvent.getX(), moveEvent.getY())) {
                 return false;
