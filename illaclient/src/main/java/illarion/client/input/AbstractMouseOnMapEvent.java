@@ -37,7 +37,7 @@ public abstract class AbstractMouseOnMapEvent extends AbstractMouseLocationEvent
      * @param x the x coordinate of the click
      * @param y the y coordinate of the click
      */
-    protected AbstractMouseOnMapEvent(final Button key, final int x, final int y) {
+    protected AbstractMouseOnMapEvent(Button key, int x, int y) {
         super(x, y);
         this.key = key;
     }
@@ -47,7 +47,7 @@ public abstract class AbstractMouseOnMapEvent extends AbstractMouseLocationEvent
      *
      * @param org the original object to copy
      */
-    protected AbstractMouseOnMapEvent(@Nonnull final AbstractMouseOnMapEvent org) {
+    protected AbstractMouseOnMapEvent(@Nonnull AbstractMouseOnMapEvent org) {
         super(org);
         key = org.key;
     }

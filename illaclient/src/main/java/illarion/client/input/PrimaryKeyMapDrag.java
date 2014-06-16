@@ -45,22 +45,18 @@ public final class PrimaryKeyMapDrag extends DragOnMapEvent {
      * @param callback the callback instance for this class
      */
     public PrimaryKeyMapDrag(
-            final int startX,
-            final int startY,
-            final int stopX,
-            final int stopY,
-            final PrimaryKeyMapDragCallback callback) {
+            int startX, int startY, int stopX, int stopY, PrimaryKeyMapDragCallback callback) {
         super(startX, startY, stopX, stopY, Button.Left);
         this.callback = callback;
     }
 
     public PrimaryKeyMapDrag(
-            @Nonnull final DragOnMapEvent org, final PrimaryKeyMapDragCallback callback) {
+            @Nonnull DragOnMapEvent org, PrimaryKeyMapDragCallback callback) {
         super(org);
         this.callback = callback;
     }
 
-    public boolean startDraggingItemFromTile(final MapTile tile) {
+    public boolean startDraggingItemFromTile(MapTile tile) {
         return callback.startDraggingItemFromTile(this, tile);
     }
 

@@ -48,7 +48,7 @@ public abstract class AbstractMultiActionHelper implements Runnable {
      *
      * @param timeoutInMs the timeout value in milliseconds
      */
-    protected AbstractMultiActionHelper(final int timeoutInMs) {
+    protected AbstractMultiActionHelper(int timeoutInMs) {
         this(timeoutInMs, -1);
     }
 
@@ -58,7 +58,7 @@ public abstract class AbstractMultiActionHelper implements Runnable {
      * @param timeoutInMs the timeout value in milliseconds
      * @param limit the amount of clicks allowed at the maximum
      */
-    protected AbstractMultiActionHelper(Integer timeoutInMs, final int limit) {
+    protected AbstractMultiActionHelper(Integer timeoutInMs, int limit) {
         if (timeoutInMs == null) {
             timeoutInMs = 500;
         }

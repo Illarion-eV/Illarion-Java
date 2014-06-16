@@ -40,6 +40,7 @@ import illarion.client.world.World;
 import illarion.client.world.interactive.InteractionManager;
 import illarion.client.world.interactive.InteractiveMapTile;
 import illarion.client.world.movement.MouseMovementHandler;
+import illarion.client.world.movement.Movement;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.types.ItemCount;
 import illarion.common.types.Location;
@@ -210,7 +211,8 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
      * @param data the event data
      */
     private void handlePrimaryKeyDrag(@Nonnull final DragOnMapEvent data) {
-        if (!World.getPlayer().getMovementHandler().getFollowMouseHandler().isActive()) {
+        Movement movement = World.getPlayer().getMovementHandler();
+        if (!movement.getFollowMouseHandler().isActive() && !movement.getTargetMouseMovementHandler().isActive()) {
             SceneEvent newEvent = new PrimaryKeyMapDrag(data, new PrimaryKeyMapDrag.PrimaryKeyMapDragCallback() {
                 @Override
                 public boolean startDraggingItemFromTile(@Nonnull PrimaryKeyMapDrag event, MapTile tile) {
@@ -277,7 +279,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
     }
 
     @EventTopicSubscriber(topic = "followMousePathFinding")
-    private void onFollowMousewithPathFindingCfgChanged(@Nonnull String topic, @Nonnull ConfigChangedEvent event) {
+    private void onFollowMouseWithPathFindingCfgChanged(@Nonnull String topic, @Nonnull ConfigChangedEvent event) {
         followMouseWithPathFinding = event.getConfig().getBoolean("followMousePathFinding");
     }
 

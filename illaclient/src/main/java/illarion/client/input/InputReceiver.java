@@ -213,8 +213,6 @@ public final class InputReceiver implements InputListener {
         if (enabled) {
             buttonDownReceived.add(button);
             log.debug("Received {} mouse button down at {}, {}", button, mouseX, mouseY);
-            buttonMultiClickHelper.setInputData(button, mouseX, mouseY);
-            buttonMultiClickHelper.pulse();
         }
     }
 
@@ -222,6 +220,8 @@ public final class InputReceiver implements InputListener {
     public void buttonUp(int mouseX, int mouseY, @Nonnull Button button) {
         if (enabled) {
             if (buttonDownReceived.remove(button)) {
+                buttonMultiClickHelper.setInputData(button, mouseX, mouseY);
+                buttonMultiClickHelper.pulse();
                 log.debug("Received {} mouse button up at {}, {}", button, mouseX, mouseY);
                 World.getPlayer().getMovementHandler().getTargetMouseMovementHandler().disengage(true);
                 World.getPlayer().getMovementHandler().getFollowMouseHandler().disengage(true);
@@ -251,6 +251,7 @@ public final class InputReceiver implements InputListener {
     @Override
     public void mouseDragged(@Nonnull Button button, int fromX, int fromY, int toX, int toY) {
         if (enabled) {
+            buttonMultiClickHelper.reset();
             if (buttonDownReceived.contains(button)) {
                 log.debug("Received {} mouse button dragged from {}, {} to {}, {}", button, fromX, fromY, toX, toY);
                 EventBus.publish(new DragOnMapEvent(fromX, fromY, toX, toY, button));
