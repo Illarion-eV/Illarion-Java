@@ -161,6 +161,7 @@ public class Movement {
 
     public void executeServerLocation(@Nonnull Location target) {
         animator.cancelAll();
+        stepInProgress = false;
         playerLocation.set(target);
         World.getPlayer().setLocation(target);
     }
