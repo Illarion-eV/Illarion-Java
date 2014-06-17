@@ -28,7 +28,7 @@
                 <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy"/>
             </appender>
             <root level="warn">
-            <appender-ref ref="FILE"/>
+                <appender-ref ref="FILE"/>
             </root>
         </then>
     </if>
@@ -38,8 +38,8 @@
             <pattern>%-5p - %d{ISO8601} - [%t]: %m%n</pattern>
         </encoder>
     </appender>
-    <logger name="org.bushe.swing.event.EventService" level="warn"/>
-    <root level="debug">
-        <appender-ref ref="CONSOLE"/>
+    <logger name="illarion.client.world.movement" level="debug"/>
+    <root level="warn">
+    <appender-ref ref="CONSOLE"/>
     </root>
 </configuration>

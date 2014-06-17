@@ -43,8 +43,8 @@ public abstract class AbstractReply {
      * thrown
      */
     @Nonnull
-    protected static Location decodeLocation(@Nonnull final NetCommReader reader) throws IOException {
-        final Location loc = new Location();
+    protected static Location decodeLocation(@Nonnull NetCommReader reader) throws IOException {
+        Location loc = new Location();
         loc.setSC(reader.readShort(), reader.readShort(), reader.readShort());
         return loc;
     }
@@ -55,7 +55,7 @@ public abstract class AbstractReply {
      * @param reader the receiver that stores the data that shall be decoded in this function
      * @throws IOException In case the function reads over the buffer of the receiver this exception is thrown
      */
-    public abstract void decode(final NetCommReader reader) throws IOException;
+    public abstract void decode(NetCommReader reader) throws IOException;
 
     /**
      * Execute the update and send the decoded data to the rest of the client.
@@ -90,7 +90,7 @@ public abstract class AbstractReply {
      * @return the simple class name of this reply class instance along with the content of parameters
      */
     @Nonnull
-    protected final String toString(final CharSequence param) {
+    protected final String toString(CharSequence param) {
         return getClass().getSimpleName() + '(' + param + ')';
     }
 }

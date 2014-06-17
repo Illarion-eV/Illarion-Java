@@ -112,7 +112,7 @@ final class Receiver extends Thread implements NetCommReader {
      * be decoded
      */
     @SuppressWarnings("nls")
-    Receiver(@Nonnull final BlockingQueue<AbstractReply> inputQueue, @Nonnull final ReadableByteChannel in) {
+    Receiver(@Nonnull BlockingQueue<AbstractReply> inputQueue, @Nonnull ReadableByteChannel in) {
         super("Illarion input thread");
 
         queue = inputQueue;
@@ -175,7 +175,7 @@ final class Receiver extends Thread implements NetCommReader {
     @Override
     @SuppressWarnings("nls")
     public String readString() throws IOException {
-        final int len = readUShort();
+        int len = readUShort();
 
         if (len == 0) {
             return "";
@@ -185,7 +185,7 @@ final class Receiver extends Thread implements NetCommReader {
             throw new IndexOutOfBoundsException("reading beyond receive buffer " + (buffer.remaining() + len));
         }
         decodingBuffer.clear();
-        final int lastLimit = buffer.limit();
+        int lastLimit = buffer.limit();
         buffer.limit(buffer.position() + len);
         decoder.decode(buffer, decodingBuffer, false);
         buffer.limit(lastLimit);
@@ -203,7 +203,7 @@ final class Receiver extends Thread implements NetCommReader {
      */
     @Override
     public short readUByte() throws IOException {
-        final short data = readByte();
+        short data = readByte();
         if (data < 0) {
             return (short) (data + (1 << Byte.SIZE));
         }
@@ -220,7 +220,7 @@ final class Receiver extends Thread implements NetCommReader {
      */
     @Override
     public long readUInt() throws IOException {
-        final long data = readInt();
+        long data = readInt();
         if (data < 0) {
             return data + (1L << Integer.SIZE);
         }
@@ -237,7 +237,7 @@ final class Receiver extends Thread implements NetCommReader {
      */
     @Override
     public int readUShort() throws IOException {
-        final int data = readShort();
+        int data = readShort();
         if (data < 0) {
             return data + (1 << Short.SIZE);
         }
@@ -269,8 +269,8 @@ final class Receiver extends Thread implements NetCommReader {
                         }
 
                         // identify command
-                        final int id = readUByte();
-                        final int xor = readUByte();
+                        int id = readUByte();
+                        int xor = readUByte();
 
                         // valid command id
                         if (id != (xor ^ COMMAND_XOR_MASK)) {
@@ -278,14 +278,14 @@ final class Receiver extends Thread implements NetCommReader {
                             buffer.position(1);
                             buffer.compact();
 
-                            LOGGER.warn("Skipping invalid data [" + id + ']');
+                            LOGGER.warn("Skipping invalid data [{}]", id);
 
                             continue;
                         }
 
                         // read length and CRC
-                        final int len = readUShort();
-                        final int crc = readUShort();
+                        int len = readUShort();
+                        int crc = readUShort();
 
                         // wait for complete data
                         if (!isDataComplete(len)) {
@@ -299,7 +299,7 @@ final class Receiver extends Thread implements NetCommReader {
 
                         // check CRC
                         if (crc != NetComm.getCRC(buffer, len)) {
-                            final int oldLimit = buffer.limit();
+                            int oldLimit = buffer.limit();
                             buffer.limit(len + CommandList.HEADER_SIZE);
                             buffer.position(CommandList.HEADER_SIZE);
                             NetComm.dump("Invalid CRC ", buffer);
@@ -313,12 +313,11 @@ final class Receiver extends Thread implements NetCommReader {
 
                         // decode
                         try {
-                            final AbstractReply rpl = ReplyFactory.getInstance().getReply(id);
+                            AbstractReply rpl = ReplyFactory.getInstance().getReply(id);
                             if (rpl != null) {
                                 rpl.decode(this);
-
-                                if (IllaClient.isDebug(Debug.protocol)) {
-                                    LOGGER.debug("REC: " + rpl.toString());
+                                if (id != CommandList.MSG_KEEP_ALIVE) {
+                                    LOGGER.debug("REC: {}", rpl);
                                 }
 
                                 // put decoded command in input queue
@@ -327,22 +326,22 @@ final class Receiver extends Thread implements NetCommReader {
                                 // throw away the command that was incorrectly decoded
                                 buffer.position(len + CommandList.HEADER_SIZE);
                             }
-                        } catch (@Nonnull final IllegalArgumentException ex) {
-                            LOGGER.error("Invalid command id received " + Integer.toHexString(id));
+                        } catch (@Nonnull IllegalArgumentException ex) {
+                            LOGGER.error("Invalid command id received {}", Integer.toHexString(id));
                         }
 
                         buffer.compact();
                         buffer.flip();
                     }
                 }
-            } catch (@Nonnull final IOException e) {
+            } catch (@Nonnull IOException e) {
                 if (running) {
                     LOGGER.error("The connection to the server is not working anymore.", e);
                     IllaClient.sendDisconnectEvent(Lang.getMsg("error.receiver"));
                     running = false;
                     return;
                 }
-            } catch (@Nonnull final Exception e) {
+            } catch (@Nonnull Exception e) {
                 if (running) {
                     LOGGER.error("General error in the receiver", e);
                     IllaClient.sendDisconnectEvent(Lang.getMsg("error.receiver"));
@@ -357,7 +356,7 @@ final class Receiver extends Thread implements NetCommReader {
      * Shutdown the receiver.
      */
     public void saveShutdown() {
-        LOGGER.info(getName() + ": Shutdown requested!");
+        LOGGER.info("{}: Shutdown requested!", getName());
         running = false;
         interrupt();
     }
@@ -369,7 +368,7 @@ final class Receiver extends Thread implements NetCommReader {
      * @return true in case the command is complete, false if not
      */
     @SuppressWarnings("nls")
-    private boolean isDataComplete(final int len) {
+    private boolean isDataComplete(int len) {
         if (len <= buffer.remaining()) {
             timeOut = 0;
             return true;
@@ -401,11 +400,11 @@ final class Receiver extends Thread implements NetCommReader {
      * @throws IOException In case there is something wrong with the input stream
      */
     @SuppressWarnings("nls")
-    private boolean receiveData(final int neededDataInBuffer) throws IOException {
+    private boolean receiveData(int neededDataInBuffer) throws IOException {
 
         int data = buffer.remaining();
 
-        final int appPos = buffer.limit();
+        int appPos = buffer.limit();
         buffer.clear();
         buffer.position(appPos);
 
@@ -420,7 +419,7 @@ final class Receiver extends Thread implements NetCommReader {
             }
             try {
                 Thread.sleep(2);
-            } catch (@Nonnull final InterruptedException e) {
+            } catch (@Nonnull InterruptedException e) {
                 LOGGER.warn("Interrupted wait time for new data");
             }
         }

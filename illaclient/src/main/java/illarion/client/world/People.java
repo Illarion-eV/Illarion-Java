@@ -46,8 +46,7 @@ public final class People {
      * The logger instance that takes care for the logging output of this class.
      */
     @Nonnull
-    @SuppressWarnings("UnusedDeclaration")
-    private static final Logger LOGGER = LoggerFactory.getLogger(People.class);
+    private static final Logger log = LoggerFactory.getLogger(People.class);
 
     /**
      * This is the format string that is displayed in the {@link #toString()} function.
@@ -92,12 +91,12 @@ public final class People {
      * @return the character that was requested
      */
     @Nonnull
-    public Char accessCharacter(@Nonnull final CharacterId id) {
+    public Char accessCharacter(@Nonnull CharacterId id) {
         if (World.getPlayer().isPlayer(id)) {
             return World.getPlayer().getCharacter();
         }
 
-        final Char chara = getCharacter(id);
+        Char chara = getCharacter(id);
         if (chara == null) {
             return createNewCharacter(id);
         }
@@ -109,7 +108,7 @@ public final class People {
      *
      * @param chara the character that shall be added
      */
-    private void addCharacter(@Nonnull final Char chara) {
+    private void addCharacter(@Nonnull Char chara) {
         if (chara.getCharId() == null) {
             throw new IllegalArgumentException("Adding character without ID is illegal.");
         }
@@ -131,7 +130,7 @@ public final class People {
      *
      * @param removeChar the character that is going to be removed
      */
-    public void addCharacterToRemoveList(@Nonnull final Char removeChar) {
+    public void addCharacterToRemoveList(@Nonnull Char removeChar) {
         if (removeChar.getCharId() == null) {
             throw new IllegalArgumentException("Removing character without ID is illegal.");
         }
@@ -147,7 +146,7 @@ public final class People {
     public void checkVisibility() {
         charsLock.readLock().lock();
         try {
-            for (final Char character : chars.values()) {
+            for (Char character : chars.values()) {
                 character.setVisible(World.getPlayer().canSee(character));
             }
         } finally {
@@ -163,10 +162,10 @@ public final class People {
         charsLock.writeLock().lock();
         try {
             if (!removalList.isEmpty()) {
-                for (final Char removeChar : removalList) {
-                    final CharacterId removeId = removeChar.getCharId();
+                for (Char removeChar : removalList) {
+                    CharacterId removeId = removeChar.getCharId();
                     if (removeId == null) {
-                        LOGGER.error("Character without ID located in remove list.");
+                        log.error("Character without ID located in remove list.");
                         continue;
                     }
                     removeCharacter(removeId);
@@ -188,7 +187,7 @@ public final class People {
         charsLock.writeLock().lock();
         try {
             cleanRemovalList();
-            for (final Char character : chars.values()) {
+            for (Char character : chars.values()) {
                 character.markAsRemoved();
             }
             chars.clear();
@@ -204,8 +203,8 @@ public final class People {
     public void clipCharacters() {
         charsLock.writeLock().lock();
         try {
-            @Nonnull final Player player = World.getPlayer();
-            for (final Char character : chars.values()) {
+            @Nonnull Player player = World.getPlayer();
+            for (Char character : chars.values()) {
                 if (!player.isOnScreen(character.getLocation(), 0)) {
                     addCharacterToRemoveList(character);
                 }
@@ -223,8 +222,9 @@ public final class People {
      * @return the created character
      */
     @Nonnull
-    private Char createNewCharacter(@Nonnull final CharacterId id) {
-        final Char chara = new Char();
+    private Char createNewCharacter(@Nonnull CharacterId id) {
+        log.debug("Creating new character: {}", id);
+        Char chara = new Char();
         chara.setCharId(id);
 
         addCharacter(chara);
@@ -240,7 +240,7 @@ public final class People {
      * @return the character or {@code null} if it does not exist
      */
     @Nullable
-    public Char getCharacter(final CharacterId id) {
+    public Char getCharacter(CharacterId id) {
         if (World.getPlayer().isPlayer(id)) {
             return World.getPlayer().getCharacter();
         }
@@ -260,8 +260,8 @@ public final class People {
      * @return the character or {@code null} if not found
      */
     @Nullable
-    public Char getCharacterAt(@Nonnull final Location loc) {
-        final Char playerChar = World.getPlayer().getCharacter();
+    public Char getCharacterAt(@Nonnull Location loc) {
+        Char playerChar = World.getPlayer().getCharacter();
         if (playerChar.getLocation().equals(loc)) {
             return playerChar;
         }
@@ -269,7 +269,7 @@ public final class People {
         charsLock.readLock().lock();
         try {
 
-            for (final Char character : chars.values()) {
+            for (Char character : chars.values()) {
                 if (character.getLocation().equals(loc)) {
                     return character;
                 }
@@ -287,14 +287,14 @@ public final class People {
      *
      * @param id the ID of the character that shall be removed
      */
-    public void removeCharacter(@Nonnull final CharacterId id) {
+    public void removeCharacter(@Nonnull CharacterId id) {
         if (World.getPlayer().isPlayer(id)) {
             throw new IllegalArgumentException("Removing the player character from the people list is not legal.");
         }
 
         charsLock.writeLock().lock();
         try {
-            final Char chara = chars.get(id);
+            Char chara = chars.get(id);
             if (chara != null) {
                 EventBus.publish(new CharRemovedEvent(id));
                 // cancel attack when character is removed
@@ -332,7 +332,7 @@ public final class People {
         charsLock.readLock().lock();
         try {
             synchronized (GameMap.LIGHT_LOCK) {
-                for (final Char character : chars.values()) {
+                for (Char character : chars.values()) {
                     character.updateLight(Char.LIGHT_UPDATE);
                 }
             }

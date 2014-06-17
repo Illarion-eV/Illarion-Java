@@ -23,6 +23,10 @@ import illarion.client.world.CharMovementMode;
 import illarion.client.world.Player;
 import illarion.client.world.World;
 import illarion.common.types.Location;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import javax.annotation.Nonnull;
 import java.beans.ConstructorProperties;
@@ -36,6 +40,9 @@ import java.util.Queue;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 class MoveAnimator implements AnimatedMove {
+    private static final Logger log = LoggerFactory.getLogger(MoveAnimator.class);
+    private static final Marker marker = MarkerFactory.getMarker("Movement");
+
     private interface MoveAnimatorTask {
         void execute();
     }
@@ -149,10 +156,14 @@ class MoveAnimator implements AnimatedMove {
 
     @Override
     public void setPosition(int posX, int posY, int posZ) {
-        long ping = Math.min(60, (long) (ConnectionPerformanceClock.getNetCommPing() * 1.5));
-        if (!reportingDone && (moveAnimation.timeRemaining() < ping)) {
-            reportingDone = true;
-            movement.reportReadyForNextStep();
+        if (!reportingDone) {
+            long ping = Math.min(60, (long) (ConnectionPerformanceClock.getNetCommPing() * 1.5));
+            int remaining = moveAnimation.timeRemaining();
+            if (remaining < ping) {
+                log.debug(marker, "Requesting next move {}ms before the animation finishes.", remaining);
+                reportingDone = true;
+                movement.reportReadyForNextStep();
+            }
         }
     }
 

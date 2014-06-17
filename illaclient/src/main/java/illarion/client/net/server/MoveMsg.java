@@ -40,7 +40,7 @@ public final class MoveMsg extends AbstractReply {
     /**
      * The instance of the logger that is used to write out the data.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(MoveMsg.class);
+    private static final Logger log = LoggerFactory.getLogger(MoveMsg.class);
 
     /**
      * Mode information that a normal move was done.
@@ -106,7 +106,7 @@ public final class MoveMsg extends AbstractReply {
     @Override
     public boolean executeUpdate() {
         if ((mode != MODE_NO_MOVE) && (mode != MODE_MOVE) && (mode != MODE_PUSH) && (mode != MODE_RUN)) {
-            LOGGER.warn("Move char message called in unknown mode {}", mode);
+            log.warn("Move char message called in unknown mode {}", mode);
             return true;
         }
 

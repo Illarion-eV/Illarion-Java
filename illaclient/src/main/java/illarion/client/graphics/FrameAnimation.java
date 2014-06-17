@@ -152,11 +152,11 @@ public final class FrameAnimation extends AbstractAnimation<AnimatedFrame> {
      */
     @Override
     public void restart() {
+        start();
+
         // set start position immediately
         setFrame(stillFrame);
         lastFrame = stillFrame;
-
-        start();
     }
 
     /**

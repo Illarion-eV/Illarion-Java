@@ -15,7 +15,6 @@
  */
 package illarion.client.net;
 
-import illarion.client.Debug;
 import illarion.client.IllaClient;
 import illarion.client.Servers;
 import illarion.client.crash.NetCommCrashHandler;
@@ -327,10 +326,8 @@ public final class NetComm {
      */
     @SuppressWarnings("nls")
     public void sendCommand(@Nonnull AbstractCommand cmd) {
-        if (IllaClient.isDebug(Debug.protocol)) {
-            if (cmd.getId() != CommandList.CMD_KEEPALIVE) {
-                LOGGER.debug("SND: {}", cmd);
-            }
+        if (cmd.getId() != CommandList.CMD_KEEPALIVE) {
+            LOGGER.debug("SND: {}", cmd);
         }
 
         try {

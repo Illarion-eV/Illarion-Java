@@ -67,13 +67,13 @@ public class MoveAnimation extends AbstractAnimation<AnimatedMove> {
 
     @Override
     public void restart() {
+        start();
+
         // set start position immediately
         setPosition(srcX, srcY, srcZ);
         lastX = srcX;
         lastY = srcY;
         lastZ = srcZ;
-
-        super.start();
     }
 
     /**
@@ -85,8 +85,7 @@ public class MoveAnimation extends AbstractAnimation<AnimatedMove> {
      * @param dstY
      * @param speed
      */
-    public void start(
-            int srcX, int srcY, int srcZ, int dstX, int dstY, int dstZ, int speed) {
+    public void start(int srcX, int srcY, int srcZ, int dstX, int dstY, int dstZ, int speed) {
         this.srcX = srcX;
         this.srcY = srcY;
         this.srcZ = srcZ;

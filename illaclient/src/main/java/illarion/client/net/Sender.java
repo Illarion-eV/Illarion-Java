@@ -101,7 +101,7 @@ final class Sender extends Thread implements NetCommWriter {
      */
     @SuppressWarnings("nls")
     Sender(
-            final BlockingQueue<AbstractCommand> outputQueue, final WritableByteChannel out) {
+            BlockingQueue<AbstractCommand> outputQueue, WritableByteChannel out) {
         super("Illarion output thread");
 
         queue = outputQueue;
@@ -127,11 +127,11 @@ final class Sender extends Thread implements NetCommWriter {
             while (running) {
                 // get first command form out queue
 
-                final AbstractCommand cmd;
+                AbstractCommand cmd;
                 try {
                     cmd = queue.take();
-                } catch (@Nonnull final InterruptedException e) {
-                    LOGGER.info("Thread \"" + getName() + "\" got interrupted.");
+                } catch (@Nonnull InterruptedException e) {
+                    LOGGER.info("Thread \"{}\" got interrupted.", getName());
                     continue;
                 }
 
@@ -140,18 +140,18 @@ final class Sender extends Thread implements NetCommWriter {
                 buffer.put((byte) (cmd.getId() ^ COMMAND_XOR_MASK));
 
                 // keep some space for the length and the CRC
-                final int headerLenCRC = buffer.position();
+                int headerLenCRC = buffer.position();
                 buffer.putShort((short) 0);
                 buffer.putShort((short) 0);
 
-                final int startOfCmd = buffer.position();
+                int startOfCmd = buffer.position();
                 // encode command into net protocol
                 cmd.encode(this);
 
-                final int length = buffer.position() - startOfCmd;
+                int length = buffer.position() - startOfCmd;
                 buffer.flip();
                 buffer.position(startOfCmd);
-                final int crc = NetComm.getCRC(buffer, length);
+                int crc = NetComm.getCRC(buffer, length);
                 buffer.position(headerLenCRC);
                 buffer.putShort((short) length);
                 buffer.putShort((short) crc);
@@ -164,7 +164,7 @@ final class Sender extends Thread implements NetCommWriter {
 
                 outChannel.write(buffer);
             }
-        } catch (@Nonnull final Exception e) {
+        } catch (@Nonnull Exception e) {
             LOGGER.error("General error within the sender", e);
             IllaClient.sendDisconnectEvent(Lang.getMsg("error.sender"));
         }
@@ -174,7 +174,7 @@ final class Sender extends Thread implements NetCommWriter {
      * Shutdown the sender.
      */
     public void saveShutdown() {
-        LOGGER.info(getName() + ": Shutdown requested!");
+        LOGGER.info("{}: Shutdown requested!", getName());
         running = false;
         interrupt();
     }
@@ -185,7 +185,7 @@ final class Sender extends Thread implements NetCommWriter {
      * @param value the signed byte that shall be send to the server
      */
     @Override
-    public void writeByte(final byte value) {
+    public void writeByte(byte value) {
         buffer.put(value);
     }
 
@@ -195,7 +195,7 @@ final class Sender extends Thread implements NetCommWriter {
      * @param value the signed integer that shall be send to the server
      */
     @Override
-    public void writeInt(final int value) {
+    public void writeInt(int value) {
         buffer.putInt(value);
     }
 
@@ -205,7 +205,7 @@ final class Sender extends Thread implements NetCommWriter {
      * @param loc the location that shall be send to the server
      */
     @Override
-    public void writeLocation(@Nonnull final Location loc) {
+    public void writeLocation(@Nonnull Location loc) {
         buffer.putShort((short) loc.getScX());
         buffer.putShort((short) loc.getScY());
         buffer.putShort((short) loc.getScZ());
@@ -217,7 +217,7 @@ final class Sender extends Thread implements NetCommWriter {
      * @param value the signed short that shall be send to the server
      */
     @Override
-    public void writeShort(final short value) {
+    public void writeShort(short value) {
         buffer.putShort(value);
     }
 
@@ -228,8 +228,8 @@ final class Sender extends Thread implements NetCommWriter {
      * @param value the string that shall be send to the server
      */
     @Override
-    public void writeString(@Nonnull final String value) {
-        final int startIndex = buffer.position();
+    public void writeString(@Nonnull String value) {
+        int startIndex = buffer.position();
         buffer.putShort((short) 0);
 
         encodingBuffer.clear();
@@ -237,7 +237,7 @@ final class Sender extends Thread implements NetCommWriter {
         encodingBuffer.flip();
 
         encoder.encode(encodingBuffer, buffer, true);
-        final int lastIndex = buffer.position();
+        int lastIndex = buffer.position();
         buffer.position(startIndex);
         writeUShort(lastIndex - startIndex - 2);
         buffer.position(lastIndex);
@@ -249,7 +249,7 @@ final class Sender extends Thread implements NetCommWriter {
      * @param value the value that shall be send as unsigned byte
      */
     @Override
-    public void writeUByte(final short value) {
+    public void writeUByte(short value) {
         buffer.put((byte) (value % (1 << Byte.SIZE)));
     }
 
@@ -259,7 +259,7 @@ final class Sender extends Thread implements NetCommWriter {
      * @param value the value that shall be send as unsigned integer
      */
     @Override
-    public void writeUInt(final long value) {
+    public void writeUInt(long value) {
         buffer.putInt((int) (value % (1L << Integer.SIZE)));
     }
 
@@ -269,7 +269,7 @@ final class Sender extends Thread implements NetCommWriter {
      * @param value the value that shall be send as unsigned short
      */
     @Override
-    public void writeUShort(final int value) {
+    public void writeUShort(int value) {
         buffer.putShort((short) (value % (1 << Short.SIZE)));
     }
 }
