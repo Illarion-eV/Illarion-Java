@@ -54,6 +54,10 @@ public class AStar implements PathFindingAlgorithm {
             /* Different levels are not supported by this algorithm. */
             return null;
         }
+        if (start.getDistance(end) <= approachDistance) {
+            /* close enough */
+            return null;
+        }
         log.debug("Searching path from {} to {} getting as close as {} tiles", start, end, approachDistance);
         /* Setting up the data structures. */
         /* Nodes that are in this set were yet not fully processed. */
