@@ -314,7 +314,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
             }
 
             if (primKeyDragEvent.startDraggingItemFromTile(parentTile)) {
-                return false;
+                return true;
             }
         }
 
