@@ -46,6 +46,10 @@ import javax.annotation.concurrent.NotThreadSafe;
 @NotThreadSafe
 public abstract class AbstractEntity<T extends AbstractEntityTemplate>
         implements DisplayItem, AlphaHandler, AnimatedFrame {
+    public boolean isCurrentlyEffectedByFadingCorridor() {
+        return currentlyEffectedByFadingCorridor;
+    }
+
     /**
      * This class is used in case more then one alpha change listener is added. It forwards a alpha change message to
      * two other handlers. This way its possible to create a infinite amount of listeners on one entity.
@@ -632,11 +636,11 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
         int widthNoShadow = displayRect.getWidth() - (int) (offS * scale);
 
         if (fadingCorridorEffect) {
-            boolean transparent = FadingCorridor.getInstance()
+            currentlyEffectedByFadingCorridor = FadingCorridor.getInstance()
                     .isInCorridor(displayRect.getX(), displayRect.getY(), layerZ, widthNoShadow,
                                   displayRect.getHeight());
 
-            if (transparent) {
+            if (currentlyEffectedByFadingCorridor) {
                 setAlphaTarget(FADE_OUT_ALPHA);
             } else {
                 setAlphaTarget(255);
@@ -673,6 +677,8 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
             highlightEffect = null;
         }
     }
+
+    private boolean currentlyEffectedByFadingCorridor;
 
     @Nullable
     private HighlightEffect highlightEffect;

@@ -321,6 +321,18 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         return false;
     }
 
+    @Override
+    protected boolean isMouseInInteractionRect(int mouseX, int mouseY) {
+        if (super.isMouseInInteractionRect(mouseX, mouseY)) {
+            if (isCurrentlyEffectedByFadingCorridor()) {
+                Tile tile = parentTile.getTile();
+                return (tile != null) && tile.isMouseInInteractionRect(mouseX, mouseY);
+            }
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Set number of stacked items.
      *
