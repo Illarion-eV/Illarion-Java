@@ -164,6 +164,12 @@ public class Movement {
         stepInProgress = false;
         playerLocation.set(target);
         World.getPlayer().setLocation(target);
+
+        MovementHandler currentHandler = activeHandler;
+        if (currentHandler != null) {
+            currentHandler.disengage(false);
+            currentHandler.assumeControl();
+        }
     }
 
     /**
