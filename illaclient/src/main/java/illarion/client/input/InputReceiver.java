@@ -168,6 +168,9 @@ public final class InputReceiver implements InputListener {
     @Nonnull
     private final Set<Button> buttonDownReceived;
 
+    @Nonnull
+    private final Set<Button> buttonDownDragged;
+
     /**
      * Create a new instance of the input receiver.
      *
@@ -176,6 +179,7 @@ public final class InputReceiver implements InputListener {
     public InputReceiver(@Nonnull Input input) {
         this.input = input;
         buttonDownReceived = EnumSet.noneOf(Button.class);
+        buttonDownDragged = EnumSet.noneOf(Button.class);
         enabled = false;
         keyMapper = new KeyMapper(input);
     }
@@ -211,6 +215,7 @@ public final class InputReceiver implements InputListener {
     @Override
     public void buttonDown(int mouseX, int mouseY, @Nonnull Button button) {
         if (enabled) {
+            buttonDownDragged.remove(button);
             buttonDownReceived.add(button);
             log.debug("Received {} mouse button down at {}, {}", button, mouseX, mouseY);
         }
@@ -220,8 +225,10 @@ public final class InputReceiver implements InputListener {
     public void buttonUp(int mouseX, int mouseY, @Nonnull Button button) {
         if (enabled) {
             if (buttonDownReceived.remove(button)) {
-                buttonMultiClickHelper.setInputData(button, mouseX, mouseY);
-                buttonMultiClickHelper.pulse();
+                if (!buttonDownDragged.contains(button)) {
+                    buttonMultiClickHelper.setInputData(button, mouseX, mouseY);
+                    buttonMultiClickHelper.pulse();
+                }
                 log.debug("Received {} mouse button up at {}, {}", button, mouseX, mouseY);
                 World.getPlayer().getMovementHandler().getTargetMouseMovementHandler().disengage(true);
                 World.getPlayer().getMovementHandler().getFollowMouseHandler().disengage(true);
@@ -253,6 +260,7 @@ public final class InputReceiver implements InputListener {
         if (enabled) {
             buttonMultiClickHelper.reset();
             if (buttonDownReceived.contains(button)) {
+                buttonDownDragged.add(button);
                 log.debug("Received {} mouse button dragged from {}, {} to {}, {}", button, fromX, fromY, toX, toY);
                 EventBus.publish(new DragOnMapEvent(fromX, fromY, toX, toY, button));
             } else {
