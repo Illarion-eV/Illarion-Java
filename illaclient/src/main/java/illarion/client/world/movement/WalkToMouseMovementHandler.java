@@ -29,8 +29,9 @@ public class WalkToMouseMovementHandler extends WalkToMovementHandler {
 
     @Override
     public void disengage(boolean transferAllowed) {
+        boolean targetWasSet = isTargetSet();
         super.disengage(transferAllowed);
-        if (transferAllowed && isTargetSet()) {
+        if (transferAllowed && targetWasSet) {
             TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
             handler.walkTo(getTargetLocation(), 0);
             handler.assumeControl();
