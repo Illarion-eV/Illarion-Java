@@ -25,13 +25,15 @@ import javax.annotation.Nonnull;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class CurrentMouseLocationEvent extends AbstractMouseLocationEvent {
+    private boolean highlightHandled;
+
     /**
      * Create and initialize such an event.
      *
      * @param x the x coordinate of the click
      * @param y the y coordinate of the click
      */
-    public CurrentMouseLocationEvent(final int x, final int y) {
+    public CurrentMouseLocationEvent(int x, int y) {
         super(x, y);
     }
 
@@ -40,7 +42,15 @@ public final class CurrentMouseLocationEvent extends AbstractMouseLocationEvent 
      *
      * @param input the input handler supplying the data
      */
-    public CurrentMouseLocationEvent(@Nonnull final Input input) {
+    public CurrentMouseLocationEvent(@Nonnull Input input) {
         this(input.getMouseX(), input.getMouseY());
+    }
+
+    public boolean isHighlightHandled() {
+        return highlightHandled;
+    }
+
+    public void setHighlightHandled(boolean highlightHandled) {
+        this.highlightHandled = highlightHandled;
     }
 }

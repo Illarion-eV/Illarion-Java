@@ -15,7 +15,6 @@
  */
 package illarion.client.graphics;
 
-import illarion.client.input.AbstractMouseLocationEvent;
 import illarion.client.input.ClickOnMapEvent;
 import illarion.client.input.CurrentMouseLocationEvent;
 import illarion.client.input.PointOnMapEvent;
@@ -241,13 +240,16 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
         }
 
         if (event instanceof CurrentMouseLocationEvent) {
-            AbstractMouseLocationEvent moveEvent = (AbstractMouseLocationEvent) event;
+            CurrentMouseLocationEvent moveEvent = (CurrentMouseLocationEvent) event;
             if (!isMouseInInteractionRect(moveEvent.getX(), moveEvent.getY())) {
                 return false;
             }
             World.getPlayer().getMovementHandler().getTargetMouseMovementHandler().walkTo(parentTile.getLocation(), 0);
 
-            showHighlight = 1;
+            if (!moveEvent.isHighlightHandled()) {
+                showHighlight = 1;
+                moveEvent.setHighlightHandled(true);
+            }
             return true;
         }
 

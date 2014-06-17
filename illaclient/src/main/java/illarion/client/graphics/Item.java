@@ -228,11 +228,18 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
                 return false;
             }
 
-            showHighlight = 1;
-            if (parentTile.getInteractive().isInUseRange()) {
-                showHighlight = 2;
+            if (!moveEvent.isHighlightHandled()) {
+                showHighlight = 1;
+                if (parentTile.getInteractive().isInUseRange()) {
+                    showHighlight = 2;
+                }
+                moveEvent.setHighlightHandled(true);
             }
-            return true;
+            if (!parentTile.isBlocked()) {
+                World.getPlayer().getMovementHandler().getTargetMouseMovementHandler()
+                        .walkTo(parentTile.getLocation(), 0);
+                return true;
+            }
         }
 
         if (event instanceof PointOnMapEvent) {
@@ -306,7 +313,9 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
                 return false;
             }
 
-            return primKeyDragEvent.startDraggingItemFromTile(parentTile);
+            if (primKeyDragEvent.startDraggingItemFromTile(parentTile)) {
+                return false;
+            }
         }
 
         return false;
