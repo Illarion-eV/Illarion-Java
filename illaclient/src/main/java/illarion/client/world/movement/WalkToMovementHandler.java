@@ -21,6 +21,8 @@ import illarion.client.world.World;
 import illarion.common.types.Location;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,6 +37,7 @@ import static illarion.client.util.pathfinding.PathMovementMethod.Walk;
  */
 class WalkToMovementHandler extends AbstractMovementHandler implements TargetMovementHandler {
     private static final Logger log = LoggerFactory.getLogger(WalkToMovementHandler.class);
+    private static final Marker marker = MarkerFactory.getMarker("Movement");
     /**
      * The path finder used to calculate the paths towards the target location.
      */
@@ -66,7 +69,7 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
             return new DefaultStepData(CharMovementMode.None, 0);
         }
         int remainingDistance = currentLocation.getDistance(targetLocation);
-        log.debug("Remaining distance to target: {} Expected distance: {}", remainingDistance, targetDistance);
+        log.debug(marker, "Remaining distance to target: {} Expected distance: {}", remainingDistance, targetDistance);
         if (remainingDistance <= targetDistance) {
             targetSet = false;
             executeTargetAction();
@@ -96,7 +99,7 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
                 return new DefaultStepData(CharMovementMode.None, 0);
             }
         }
-        log.debug("Performing step to: {}", node.getLocation());
+        log.debug(marker, "Performing step to: {}", node.getLocation());
         CharMovementMode modeMode = convertMovementMode(node.getMovementMethod());
         int moveDir = getDirection(currentLocation, node.getLocation());
         return new DefaultStepData(modeMode, moveDir);
@@ -124,7 +127,7 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
                 }
                 break;
         }
-        log.warn("Next path node {} is out of range: {}", node, distanceToPlayer);
+        log.warn(marker, "Next path node {} is out of range: {}", node, distanceToPlayer);
         return false;
     }
 
@@ -146,16 +149,16 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
     private boolean isCurrentPathValid() {
         Path path = currentPath;
         if (path == null) {
-            log.debug("Path is not valid: Current path is NULL");
+            log.debug(marker, "Path is not valid: Current path is NULL");
             return false;
         }
         Location destination = path.getDestination();
         if (destination == null) {
-            log.debug("Path is not valid: Path destination is NULL");
+            log.debug(marker, "Path is not valid: Path destination is NULL");
             return false;
         }
         if (!destination.equals(targetLocation)) {
-            log.debug("Path is not valid: Destination does not equal the current target location.");
+            log.debug(marker, "Path is not valid: Destination does not equal the current target location.");
             return false;
         }
         return true;
@@ -163,13 +166,19 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
 
     @Nullable
     private Path calculateNewPath(@Nonnull Location currentLocation) {
-        log.info("Calculating a new path to: {}", targetLocation);
+        log.info(marker, "Calculating a new path to: {}", targetLocation);
         PathFindingAlgorithm algorithm = pathFindingAlgorithm;
         if (getMovement().getDefaultMovementMode() == CharMovementMode.Walk) {
             return algorithm.findPath(World.getMap(), currentLocation, targetLocation, targetDistance, Walk);
         } else {
             return algorithm.findPath(World.getMap(), currentLocation, targetLocation, targetDistance, Walk, Run);
         }
+    }
+
+    @Override
+    public void disengage(boolean transferAllowed) {
+        super.disengage(transferAllowed);
+        targetSet = false;
     }
 
     @Override

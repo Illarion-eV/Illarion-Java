@@ -28,6 +28,8 @@ import illarion.common.util.Timer;
 import org.illarion.engine.input.Input;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -40,6 +42,8 @@ import javax.annotation.Nullable;
  */
 public class Movement {
     private static final Logger log = LoggerFactory.getLogger(Movement.class);
+    private static final Marker marker = MarkerFactory.getMarker("Movement");
+
     /**
      * The instance of the player that is moved around by this class.
      */
@@ -118,7 +122,7 @@ public class Movement {
                 oldHandler.disengage(false);
             }
             activeHandler = handler;
-            log.debug("New movement handler is assuming control: {}", activeHandler);
+            log.debug(marker, "New movement handler is assuming control: {}", activeHandler);
         }
         update();
     }
@@ -127,7 +131,7 @@ public class Movement {
         if (isActive(handler)) {
             activeHandler = null;
         } else {
-            log.debug("Tried to disengage a movement handler ({}) that was not active!", handler);
+            log.debug(marker, "Tried to disengage a movement handler ({}) that was not active!", handler);
         }
     }
 
@@ -163,7 +167,7 @@ public class Movement {
         }
         CharacterId playerId = player.getPlayerId();
         if (playerId == null) {
-            log.error("Send move to server while ID is not known.");
+            log.error(marker, "Send move to server while ID is not known.");
             return;
         }
         World.getNet().sendCommand(new MoveCmd(playerId, mode, direction));
@@ -215,7 +219,7 @@ public class Movement {
         MovementHandler handler = activeHandler;
         if (handler != null) {
             StepData nextStep = handler.getNextStep(playerLocation);
-            log.debug("Requesting new step data from handler: {}", nextStep);
+            log.debug(marker, "Requesting new step data from handler: {}", nextStep);
             if (nextStep.getMovementMode() != CharMovementMode.None) {
                 stepInProgress = true;
                 requestNextMove(nextStep);
