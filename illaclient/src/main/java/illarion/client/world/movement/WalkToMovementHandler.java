@@ -26,6 +26,7 @@ import org.slf4j.MarkerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 import static illarion.client.util.pathfinding.PathMovementMethod.Run;
 import static illarion.client.util.pathfinding.PathMovementMethod.Walk;
@@ -83,6 +84,8 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
             currentPath = activePath;
         }
         if (activePath == null) {
+            targetSet = false;
+            executeTargetAction();
             return new DefaultStepData(CharMovementMode.None, 0);
         }
 
@@ -93,9 +96,17 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
             return new DefaultStepData(CharMovementMode.None, 0);
         }
         if (!isPathNodeValid(currentLocation, node)) {
-            currentPath = calculateNewPath(currentLocation);
+            activePath = calculateNewPath(currentLocation);
+            currentPath = activePath;
+            if (activePath == null) {
+                targetSet = false;
+                executeTargetAction();
+                return new DefaultStepData(CharMovementMode.None, 0);
+            }
             node = activePath.nextStep();
             if (node == null) {
+                targetSet = false;
+                executeTargetAction();
                 return new DefaultStepData(CharMovementMode.None, 0);
             }
         }
@@ -179,6 +190,7 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
     public void disengage(boolean transferAllowed) {
         super.disengage(transferAllowed);
         targetSet = false;
+        setTargetReachedAction(null);
     }
 
     @Override
@@ -191,7 +203,14 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
 
     @Override
     public void setTargetReachedAction(@Nullable Runnable action) {
-        targetAction = action;
+        if (!Objects.equals(targetAction, action)) {
+            targetAction = action;
+            if (action == null) {
+                log.debug(marker, "Removed target reached action");
+            } else {
+                log.debug(marker, "Set target reached action");
+            }
+        }
     }
 
     @Override

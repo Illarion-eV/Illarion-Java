@@ -194,7 +194,7 @@ public class InteractiveMapTile implements Draggable, DropTarget, Usable {
      */
     @Override
     public boolean isInUseRange() {
-        @Nonnull Location playerLocation = World.getPlayer().getLocation();
+        @Nonnull Location playerLocation = World.getPlayer().getMovementHandler().getServerLocation();
         if (playerLocation.getScZ() == getLocation().getScZ()) {
             return playerLocation.getDistance(getLocation()) <= getUseRange();
         }

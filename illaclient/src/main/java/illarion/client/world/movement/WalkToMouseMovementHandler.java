@@ -36,4 +36,9 @@ public class WalkToMouseMovementHandler extends WalkToMovementHandler {
             handler.assumeControl();
         }
     }
+
+    @Override
+    public String toString() {
+        return "Walk to mouse pointer movement handler";
+    }
 }

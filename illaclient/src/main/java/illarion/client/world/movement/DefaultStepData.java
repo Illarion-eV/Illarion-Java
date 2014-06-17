@@ -44,4 +44,10 @@ class DefaultStepData implements StepData {
     public int getDirection() {
         return direction;
     }
+
+    @Override
+    @Nonnull
+    public String toString() {
+        return "DefaultStepData" + movementMode.name() + " Direction: " + direction;
+    }
 }

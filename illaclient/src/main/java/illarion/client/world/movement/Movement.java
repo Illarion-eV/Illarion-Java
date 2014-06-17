@@ -111,6 +111,16 @@ public class Movement {
         playerLocation = new Location(player.getLocation());
     }
 
+    /**
+     * The location of the player as its known to the server.
+     *
+     * @return the server location of the player
+     */
+    @Nonnull
+    public Location getServerLocation() {
+        return playerLocation;
+    }
+
     public boolean isMoving() {
         return moveAnimation.isRunning();
     }
