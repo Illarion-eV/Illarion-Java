@@ -16,6 +16,7 @@
 package org.illarion.engine.nifty;
 
 import de.lessvoid.nifty.spi.render.MouseCursor;
+import de.lessvoid.nifty.spi.render.RenderDevice;
 
 import javax.annotation.Nonnull;
 
@@ -31,12 +32,16 @@ class IgeMouseCursor implements MouseCursor {
     @Nonnull
     private final org.illarion.engine.MouseCursor cursor;
 
+    @Nonnull
+    private final RenderDevice device;
+
     /**
      * Create a new mouse cursor that wraps the mouse cursor of the engine.
      *
      * @param cursor the wrapped cursor
      */
-    IgeMouseCursor(@Nonnull final org.illarion.engine.MouseCursor cursor) {
+    IgeMouseCursor(@Nonnull RenderDevice device, @Nonnull org.illarion.engine.MouseCursor cursor) {
+        this.device = device;
         this.cursor = cursor;
     }
 
@@ -48,6 +53,16 @@ class IgeMouseCursor implements MouseCursor {
     @Nonnull
     public org.illarion.engine.MouseCursor getCursor() {
         return cursor;
+    }
+
+    @Override
+    public void enable() {
+        device.enableMouseCursor(this);
+    }
+
+    @Override
+    public void disable() {
+        device.disableMouseCursor();
     }
 
     @Override

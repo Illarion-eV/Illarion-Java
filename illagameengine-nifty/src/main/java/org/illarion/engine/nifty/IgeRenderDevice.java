@@ -79,7 +79,7 @@ public class IgeRenderDevice implements RenderDevice {
      * @param container the container the GUI is displayed in
      * @param imageDirectory the directory the GUI is supposed to fetch its images from
      */
-    public IgeRenderDevice(@Nonnull final GameContainer container, @Nonnull final String imageDirectory) {
+    public IgeRenderDevice(@Nonnull GameContainer container, @Nonnull String imageDirectory) {
         this.container = container;
         tempColor1 = new org.illarion.engine.graphic.Color(org.illarion.engine.graphic.Color.WHITE);
         tempColor2 = new org.illarion.engine.graphic.Color(org.illarion.engine.graphic.Color.WHITE);
@@ -88,14 +88,14 @@ public class IgeRenderDevice implements RenderDevice {
     }
 
     @Override
-    public void setResourceLoader(@Nonnull final NiftyResourceLoader niftyResourceLoader) {
+    public void setResourceLoader(@Nonnull NiftyResourceLoader niftyResourceLoader) {
         // nothing to do
     }
 
     @Nullable
     @Override
-    public RenderImage createImage(@Nonnull final String filename, final boolean filterLinear) {
-        final Texture targetTexture = container.getEngine().getAssets().getTextureManager().getTexture(filename);
+    public RenderImage createImage(@Nonnull String filename, boolean filterLinear) {
+        Texture targetTexture = container.getEngine().getAssets().getTextureManager().getTexture(filename);
         if (targetTexture == null) {
             return null;
         }
@@ -104,8 +104,8 @@ public class IgeRenderDevice implements RenderDevice {
 
     @Nullable
     @Override
-    public RenderFont createFont(@Nonnull final String filename) {
-        final Font requestedFont = container.getEngine().getAssets().getFontManager().getFont(filename);
+    public RenderFont createFont(@Nonnull String filename) {
+        Font requestedFont = container.getEngine().getAssets().getFontManager().getFont(filename);
         if (requestedFont == null) {
             return null;
         }
@@ -138,8 +138,8 @@ public class IgeRenderDevice implements RenderDevice {
     }
 
     @Override
-    public void setBlendMode(@Nonnull final BlendMode renderMode) {
-        final Graphics graphics = container.getEngine().getGraphics();
+    public void setBlendMode(@Nonnull BlendMode renderMode) {
+        Graphics graphics = container.getEngine().getGraphics();
         switch (renderMode) {
             case MULIPLY:
                 graphics.setBlendingMode(BlendingMode.Multiply);
@@ -151,38 +151,32 @@ public class IgeRenderDevice implements RenderDevice {
     }
 
     @Override
-    public void renderQuad(final int x, final int y, final int width, final int height, @Nonnull final Color color) {
+    public void renderQuad(int x, int y, int width, int height, @Nonnull Color color) {
         transferColor(color, tempColor1);
         container.getEngine().getGraphics().drawRectangle(x, y, width, height, tempColor1);
     }
 
     @Override
     public void renderQuad(
-            final int x,
-            final int y,
-            final int width,
-            final int height,
-            @Nonnull final Color topLeft,
-            @Nonnull final Color topRight,
-            @Nonnull final Color bottomRight,
-            @Nonnull final Color bottomLeft) {
+            int x,
+            int y,
+            int width,
+            int height,
+            @Nonnull Color topLeft,
+            @Nonnull Color topRight,
+            @Nonnull Color bottomRight,
+            @Nonnull Color bottomLeft) {
         transferColor(topLeft, tempColor1);
         transferColor(topRight, tempColor2);
         transferColor(bottomLeft, tempColor3);
         transferColor(bottomRight, tempColor4);
-        final Graphics g = container.getEngine().getGraphics();
+        Graphics g = container.getEngine().getGraphics();
         g.drawRectangle(x, y, width, height, tempColor1, tempColor2, tempColor3, tempColor4);
     }
 
     @Override
     public void renderImage(
-            @Nonnull final RenderImage image,
-            final int x,
-            final int y,
-            final int width,
-            final int height,
-            @Nonnull final Color color,
-            final float imageScale) {
+            @Nonnull RenderImage image, int x, int y, int width, int height, @Nonnull Color color, float imageScale) {
         if (image instanceof IgeRenderImage) {
             transferColor(color, tempColor1);
             ((IgeRenderImage) image)
@@ -192,19 +186,19 @@ public class IgeRenderDevice implements RenderDevice {
 
     @Override
     public void renderImage(
-            @Nonnull final RenderImage image,
-            final int x,
-            final int y,
-            final int w,
-            final int h,
-            final int srcX,
-            final int srcY,
-            final int srcW,
-            final int srcH,
-            @Nonnull final Color color,
-            final float scale,
-            final int centerX,
-            final int centerY) {
+            @Nonnull RenderImage image,
+            int x,
+            int y,
+            int w,
+            int h,
+            int srcX,
+            int srcY,
+            int srcW,
+            int srcH,
+            @Nonnull Color color,
+            float scale,
+            int centerX,
+            int centerY) {
         if (image instanceof IgeRenderImage) {
             transferColor(color, tempColor1);
             ((IgeRenderImage) image)
@@ -215,15 +209,15 @@ public class IgeRenderDevice implements RenderDevice {
 
     @Override
     public void renderFont(
-            @Nonnull final RenderFont font,
-            @Nonnull final String text,
-            final int x,
-            final int y,
-            @Nonnull final Color fontColor,
-            final float sizeX,
-            final float sizeY) {
+            @Nonnull RenderFont font,
+            @Nonnull String text,
+            int x,
+            int y,
+            @Nonnull Color fontColor,
+            float sizeX,
+            float sizeY) {
         if (font instanceof IgeRenderFont) {
-            final Graphics g = container.getEngine().getGraphics();
+            Graphics g = container.getEngine().getGraphics();
             transferColor(fontColor, tempColor1);
             g.drawText(((IgeRenderFont) font).getFont(), text, tempColor1, x, y, sizeX, sizeY);
         }
@@ -236,7 +230,7 @@ public class IgeRenderDevice implements RenderDevice {
      * @param target the game engine target color
      */
     private static void transferColor(
-            @Nonnull final Color source, @Nonnull final org.illarion.engine.graphic.Color target) {
+            @Nonnull Color source, @Nonnull org.illarion.engine.graphic.Color target) {
         target.setRedf(source.getRed());
         target.setGreenf(source.getGreen());
         target.setBluef(source.getBlue());
@@ -244,7 +238,7 @@ public class IgeRenderDevice implements RenderDevice {
     }
 
     @Override
-    public void enableClip(final int x0, final int y0, final int x1, final int y1) {
+    public void enableClip(int x0, int y0, int x1, int y1) {
         container.getEngine().getGraphics().setClippingArea(x0, y0, x1 - x0, y1 - y0);
     }
 
@@ -255,18 +249,18 @@ public class IgeRenderDevice implements RenderDevice {
 
     @Nullable
     @Override
-    public MouseCursor createMouseCursor(@Nonnull final String filename, final int hotspotX, final int hotspotY)
+    public MouseCursor createMouseCursor(@Nonnull String filename, int hotspotX, int hotspotY)
             throws IOException {
-        final CursorManager cursorManager = container.getEngine().getAssets().getCursorManager();
-        final org.illarion.engine.MouseCursor cursor = cursorManager.getCursor(filename, hotspotX, hotspotY);
+        CursorManager cursorManager = container.getEngine().getAssets().getCursorManager();
+        org.illarion.engine.MouseCursor cursor = cursorManager.getCursor(filename, hotspotX, hotspotY);
         if (cursor == null) {
             return null;
         }
-        return new IgeMouseCursor(cursor);
+        return new IgeMouseCursor(this, cursor);
     }
 
     @Override
-    public void enableMouseCursor(@Nonnull final MouseCursor mouseCursor) {
+    public void enableMouseCursor(@Nonnull MouseCursor mouseCursor) {
         if (mouseCursor instanceof IgeMouseCursor) {
             container.setMouseCursor(((IgeMouseCursor) mouseCursor).getCursor());
         }
