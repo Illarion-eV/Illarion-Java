@@ -133,9 +133,6 @@ subprojects { project ->
             url 'http://illarion.org/media/java/maven'
         }
         maven {
-            url 'http://nifty-gui.sourceforge.net/nifty-maven-repo'
-        }
-        maven {
             url 'http://oss.sonatype.org/content/repositories/releases/'
         }
     }

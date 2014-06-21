@@ -202,7 +202,7 @@ public class MavenDownloader {
 
         List<String> usedScopes = Arrays.asList(COMPILE, RUNTIME, SYSTEM);
         DependencySelector selector = new AndDependencySelector(new OptionalDependencySelector(),
-                                                                      new ScopeDependencySelector(usedScopes, null));
+                                                                new ScopeDependencySelector(usedScopes, null));
         session.setDependencySelector(
                 selector.deriveChildSelector(new DefaultDependencyCollectionContext(session, artifact, dependency)));
 
@@ -261,7 +261,6 @@ public class MavenDownloader {
 
     private void setupRepositories() {
         repositories.add(setupRepository("central", "http://repo1.maven.org/maven2/", true));
-        repositories.add(setupRepository("nifty-gui", "http://nifty-gui.sourceforge.net/nifty-maven-repo", true));
         repositories.add(setupRepository("illarion", "http://illarion.org/media/java/maven", snapshot));
         repositories
                 .add(setupRepository("oss-sonatype", "http://oss.sonatype.org/content/repositories/releases/", true));
