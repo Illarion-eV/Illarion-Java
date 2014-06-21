@@ -39,6 +39,7 @@
         </encoder>
     </appender>
     <logger name="illarion.client.input" level="debug"/>
+    <logger name="illarion.client.graphics" level="debug"/>
     <root level="warn">
         <appender-ref ref="CONSOLE"/>
     </root>

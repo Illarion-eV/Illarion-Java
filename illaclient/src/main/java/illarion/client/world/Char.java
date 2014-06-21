@@ -123,7 +123,7 @@ public final class Char implements AnimatedMove {
     private static final Color NAME_COLOR_NPC = new Color(128, 179, 255);
 
     /**
-     * The alive state of the character. <code>true</code> in case the character is alive.
+     * The alive state of the character. {@code true} in case the character is alive.
      */
     private boolean alive;
 
@@ -337,7 +337,7 @@ public final class Char implements AnimatedMove {
     /**
      * Set the alive state of this character.
      *
-     * @param newAliveState set the new alive state. <code>true</code> in case the character is alive.
+     * @param newAliveState set the new alive state. {@code true} in case the character is alive.
      */
     public void setAlive(boolean newAliveState) {
         if (removedCharacter) {
@@ -467,7 +467,7 @@ public final class Char implements AnimatedMove {
         @Nullable Avatar newAvatar = Avatar.create(newAvatarId, this);
 
         if (newAvatar == null) {
-            LOGGER.error("Failed to change the avatar as the new ID " + newAvatarId + " is NULL.");
+            LOGGER.error("Failed to change the avatar as the new ID {} is NULL.", newAvatarId);
             return;
         }
 
@@ -570,12 +570,12 @@ public final class Char implements AnimatedMove {
      * @param avatar the avatar to update
      * @param slot the slot where the item shall be checked
      * @param id the id of the item that shall be checked
-     * @return <code>true</code> in case a item is defined and displayable
+     * @return {@code true} in case a item is defined and displayable
      */
     @SuppressWarnings("nls")
     public boolean hasWearingItem(@Nullable Avatar avatar, int slot, int id) {
         if ((slot < 0) || (slot >= AvatarClothManager.GROUP_COUNT)) {
-            LOGGER.warn("Wearing item check on invalid slot: " + slot);
+            LOGGER.warn("Wearing item check on invalid slot: {}", slot);
             return false;
         }
 
@@ -733,7 +733,7 @@ public final class Char implements AnimatedMove {
         } else if (charId.isMonster()) {
             setNameColor(NAME_COLOR_MONSTER);
         } else {
-            LOGGER.warn("Failed to detect character type for " + charId.toString());
+            LOGGER.warn("Failed to detect character type for {}", charId.toString());
         }
     }
 
@@ -772,7 +772,7 @@ public final class Char implements AnimatedMove {
     @SuppressWarnings("nls")
     public void setScale(float newScale) {
         if ((newScale < MINIMAL_SCALE) || (newScale > MAXIMAL_SCALE)) {
-            LOGGER.warn("invalid character scale " + newScale + " ignored for " + charId);
+            LOGGER.warn("invalid character scale {} ignored for {}", newScale, charId);
         }
 
         scale = FastMath.clamp(newScale, MINIMAL_SCALE, MAXIMAL_SCALE);
@@ -1119,7 +1119,7 @@ public final class Char implements AnimatedMove {
     /**
      * Set or remove the marker from the character that selects the character as active combat target.
      *
-     * @param activate <code>true</code> to enable the combat target marker on this character
+     * @param activate {@code true} to enable the combat target marker on this character
      */
     public void setAttackMarker(boolean activate) {
         if (removedCharacter) {
@@ -1203,7 +1203,7 @@ public final class Char implements AnimatedMove {
         }
 
         if ((slot < 0) || (slot >= AvatarClothManager.GROUP_COUNT)) {
-            LOGGER.warn("Wearing item set to invalid slot: " + slot);
+            LOGGER.warn("Wearing item set to invalid slot: {}", slot);
             return;
         }
 
@@ -1295,5 +1295,11 @@ public final class Char implements AnimatedMove {
             return;
         }
         updatePaperdoll(avatar);
+    }
+
+    @Override
+    public String toString() {
+        String charIdString = (charId == null) ? "" : (" (" + charId.getValue() + ')');
+        return "Character " + name + charIdString;
     }
 }

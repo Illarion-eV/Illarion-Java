@@ -248,15 +248,22 @@ public final class InputReceiver implements InputListener {
     @Override
     public void buttonClicked(int mouseX, int mouseY, @Nonnull Button button, int count) {
         if (enabled) {
-            log.debug("Received {} mouse clicked {} times at {}, {}", button, count, mouseX, mouseY);
-            switch (count) {
-                case 1:
-                    World.getMapDisplay().getGameScene().publishEvent(new ClickOnMapEvent(button, mouseX, mouseY));
-                    break;
-                case 2:
-                    World.getMapDisplay().getGameScene()
-                            .publishEvent(new DoubleClickOnMapEvent(button, mouseX, mouseY));
-                    break;
+            if (!buttonDownReceived.contains(button) || buttonDownDragged.contains(button)) {
+                log.debug("Received {} mouse clicked {} times at {}, {} but skipped it.", button, count, mouseX,
+                          mouseY);
+            } else {
+                log.debug("Received {} mouse clicked {} times at {}, {}", button, count, mouseX, mouseY);
+                switch (count) {
+                    case 1:
+                        World.getMapDisplay().getGameScene().publishEvent(new ClickOnMapEvent(button, mouseX, mouseY));
+                        break;
+                    case 2:
+                        World.getMapDisplay().getGameScene()
+                                .publishEvent(new DoubleClickOnMapEvent(button, mouseX, mouseY));
+                        break;
+                    default:
+                        log.warn("Too many {} mouse clicks received: {}", button, count);
+                }
             }
         }
     }

@@ -46,7 +46,7 @@ public final class InteractiveChar implements Draggable, DropTarget, Usable {
      *
      * @param parent the character this interactive reference points to
      */
-    public InteractiveChar(@Nonnull final Char parent) {
+    public InteractiveChar(@Nonnull Char parent) {
         parentChar = parent;
     }
 
@@ -54,7 +54,7 @@ public final class InteractiveChar implements Draggable, DropTarget, Usable {
      * Drag one character to another character. Does nothing currently.
      */
     @Override
-    public void dragTo(@Nonnull final InteractiveChar targetChar, @Nonnull final ItemCount count) {
+    public void dragTo(@Nonnull InteractiveChar targetChar, @Nonnull ItemCount count) {
         // nothing
     }
 
@@ -62,7 +62,7 @@ public final class InteractiveChar implements Draggable, DropTarget, Usable {
      * Dragging the character into the inventory does nothing at all.
      */
     @Override
-    public void dragTo(@Nonnull final InteractiveInventorySlot targetSlot, @Nonnull final ItemCount count) {
+    public void dragTo(@Nonnull InteractiveInventorySlot targetSlot, @Nonnull ItemCount count) {
         // nothing
     }
 
@@ -71,12 +71,12 @@ public final class InteractiveChar implements Draggable, DropTarget, Usable {
      * character.
      */
     @Override
-    public void dragTo(@Nonnull final InteractiveMapTile targetTile, @Nonnull final ItemCount count) {
+    public void dragTo(@Nonnull InteractiveMapTile targetTile, @Nonnull ItemCount count) {
         // nothing
     }
 
     @Override
-    public void dragTo(@Nonnull final InteractiveContainerSlot targetSlot, @Nonnull final ItemCount count) {
+    public void dragTo(@Nonnull InteractiveContainerSlot targetSlot, @Nonnull ItemCount count) {
         // nothing
     }
 
@@ -87,8 +87,8 @@ public final class InteractiveChar implements Draggable, DropTarget, Usable {
      * @param screenY the screen Y coordinate
      * @return {@code true} in case the character is at the screen location
      */
-    public boolean isCharOnScreenLoc(final int screenX, final int screenY) {
-        final MapDisplayManager displayManager = World.getMapDisplay();
+    public boolean isCharOnScreenLoc(int screenX, int screenY) {
+        MapDisplayManager displayManager = World.getMapDisplay();
 
         return isCharOnDisplayLoc(displayManager.getWorldX(screenX), displayManager.getWorldY(screenY));
     }
@@ -100,12 +100,9 @@ public final class InteractiveChar implements Draggable, DropTarget, Usable {
      * @param displayY the display Y coordinate
      * @return {@code true} in case the character is at the display location
      */
-    public boolean isCharOnDisplayLoc(final int displayX, final int displayY) {
-        @Nullable final Avatar avatar = parentChar.getAvatar();
-        if (avatar == null) {
-            return false;
-        }
-        return avatar.getDisplayRect().isInside(displayX, displayY);
+    public boolean isCharOnDisplayLoc(int displayX, int displayY) {
+        @Nullable Avatar avatar = parentChar.getAvatar();
+        return (avatar != null) && avatar.getDisplayRect().isInside(displayX, displayY);
     }
 
     /**
@@ -125,7 +122,7 @@ public final class InteractiveChar implements Draggable, DropTarget, Usable {
      */
     @Nullable
     public InteractiveMapTile getInteractiveTile() {
-        @Nullable final MapTile parentTile = getMapTile();
+        @Nullable MapTile parentTile = getMapTile();
         if (parentTile == null) {
             return null;
         }
@@ -148,7 +145,7 @@ public final class InteractiveChar implements Draggable, DropTarget, Usable {
      * @return the display level
      */
     public int getDisplayLevel() {
-        @Nullable final Avatar avatar = parentChar.getAvatar();
+        @Nullable Avatar avatar = parentChar.getAvatar();
         if (avatar == null) {
             return Integer.MAX_VALUE;
         }
@@ -174,15 +171,18 @@ public final class InteractiveChar implements Draggable, DropTarget, Usable {
      */
     @Override
     public boolean isInUseRange() {
-        @Nonnull final Location playerLocation = World.getPlayer().getLocation();
-        if (playerLocation.getScZ() == getLocation().getScZ()) {
-            return playerLocation.getDistance(getLocation()) <= getUseRange();
-        }
-        return false;
+        @Nonnull Location playerLocation = World.getPlayer().getLocation();
+        return (playerLocation.getScZ() == getLocation().getScZ()) &&
+                (playerLocation.getDistance(getLocation()) <= getUseRange());
     }
 
     @Override
     public int getUseRange() {
         return 2;
+    }
+
+    @Override
+    public String toString() {
+        return "Interactive " + parentChar;
     }
 }

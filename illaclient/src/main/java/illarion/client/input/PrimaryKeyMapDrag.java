@@ -50,8 +50,7 @@ public final class PrimaryKeyMapDrag extends DragOnMapEvent {
         this.callback = callback;
     }
 
-    public PrimaryKeyMapDrag(
-            @Nonnull DragOnMapEvent org, PrimaryKeyMapDragCallback callback) {
+    public PrimaryKeyMapDrag(@Nonnull DragOnMapEvent org, PrimaryKeyMapDragCallback callback) {
         super(org);
         this.callback = callback;
     }

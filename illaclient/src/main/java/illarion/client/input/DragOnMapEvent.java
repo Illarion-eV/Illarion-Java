@@ -44,7 +44,7 @@ public class DragOnMapEvent extends AbstractMouseOnMapEvent {
      * @param stopY the Y coordinate where the dragging is currently
      * @param pressedKey the key used for the dragging operation
      */
-    public DragOnMapEvent(int startX, int startY, int stopX, int stopY, Button pressedKey) {
+    public DragOnMapEvent(int startX, int startY, int stopX, int stopY, @Nonnull Button pressedKey) {
         super(pressedKey, stopX, stopY);
         oldX = startX;
         oldY = startY;
