@@ -82,9 +82,15 @@ public final class InputReceiver implements InputListener {
         public void executeAction(int count) {
             switch (count) {
                 case 1:
+                    if (log.isDebugEnabled()) {
+                        log.debug("Raising single click event for {} button at {} {}", key.name(), x, y);
+                    }
                     EventBus.publish(new ClickOnMapEvent(key, x, y));
                     break;
                 case 2:
+                    if (log.isDebugEnabled()) {
+                        log.debug("Raising double click event for {} button at {} {}", key.name(), x, y);
+                    }
                     World.getMapDisplay().getGameScene().publishEvent(new DoubleClickOnMapEvent(key, x, y));
                     break;
             }
@@ -227,7 +233,7 @@ public final class InputReceiver implements InputListener {
             if (buttonDownReceived.remove(button)) {
                 if (!buttonDownDragged.contains(button)) {
                     buttonMultiClickHelper.setInputData(button, mouseX, mouseY);
-                    buttonMultiClickHelper.pulse();
+                    //buttonMultiClickHelper.pulse();
                 }
                 log.debug("Received {} mouse button up at {}, {}", button, mouseX, mouseY);
                 World.getPlayer().getMovementHandler().getTargetMouseMovementHandler().disengage(true);
@@ -243,6 +249,15 @@ public final class InputReceiver implements InputListener {
     public void buttonClicked(int mouseX, int mouseY, @Nonnull Button button, int count) {
         if (enabled) {
             log.debug("Received {} mouse clicked {} times at {}, {}", button, count, mouseX, mouseY);
+            switch (count) {
+                case 1:
+                    World.getMapDisplay().getGameScene().publishEvent(new ClickOnMapEvent(button, mouseX, mouseY));
+                    break;
+                case 2:
+                    World.getMapDisplay().getGameScene()
+                            .publishEvent(new DoubleClickOnMapEvent(button, mouseX, mouseY));
+                    break;
+            }
         }
     }
 
