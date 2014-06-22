@@ -22,13 +22,12 @@ import de.lessvoid.nifty.controls.DraggableDragStartedEvent;
 import de.lessvoid.nifty.controls.DroppableDroppedEvent;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.events.NiftyMouseMovedEvent;
-import de.lessvoid.nifty.elements.events.NiftyMousePrimaryClickedEvent;
+import de.lessvoid.nifty.elements.events.NiftyMousePrimaryMultiClickedEvent;
 import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.procedure.TIntObjectProcedure;
-import illarion.client.IllaClient;
 import illarion.client.gui.ContainerGui;
 import illarion.client.gui.EntitySlickRenderImage;
 import illarion.client.gui.Tooltip;
@@ -46,7 +45,6 @@ import illarion.client.world.items.ContainerSlot;
 import illarion.client.world.items.ItemContainer;
 import illarion.client.world.items.MerchantItem;
 import illarion.client.world.items.MerchantList;
-import illarion.common.gui.AbstractMultiActionHelper;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Rectangle;
@@ -104,71 +102,6 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
         }
     }
 
-    /**
-     * This class is used to handle multiple clicks into a container.
-     *
-     * @author Martin Karing &lt;nitram@illarion.org&gt;
-     */
-    private static final class ContainerClickActionHelper extends AbstractMultiActionHelper {
-        /**
-         * The ID of the slot that was clicked at.
-         */
-        private int slotId;
-
-        /**
-         * The ID of the container that was clicked at.
-         */
-        private int containerId;
-
-        /**
-         * The constructor for this class. The timeout time is set to the system default double click interval.
-         */
-        ContainerClickActionHelper() {
-            super(IllaClient.getCfg().getInteger("doubleClickInterval"), 2);
-        }
-
-        @Override
-        public void executeAction(int count) {
-            ItemContainer container = World.getPlayer().getContainer(containerId);
-            if (container == null) {
-                LOGGER.error("Used container does not exist.");
-                return;
-            }
-            ContainerSlot slot = container.getSlot(slotId);
-
-            if (!slot.containsItem()) {
-                return;
-            }
-
-            switch (count) {
-                case 1:
-                    slot.getInteractive().lookAt();
-                    break;
-                case 2:
-                    if (World.getPlayer().hasMerchantList()) {
-                        slot.getInteractive().sell();
-                    } else //noinspection ConstantConditions
-                        if (slot.getItemTemplate().getItemInfo().isContainer()) {
-                            slot.getInteractive().openContainer();
-                        } else {
-                            slot.getInteractive().use();
-                        }
-                    break;
-            }
-        }
-
-        /**
-         * Set the data that is used for the click operations.
-         *
-         * @param slot the slot that is clicked
-         * @param container the container that is clicked
-         */
-        public void setData(int slot, int container) {
-            slotId = slot;
-            containerId = container;
-        }
-    }
-
     private final class UpdateContainerTask implements UpdateTask {
         private final ItemContainer itemContainer;
 
@@ -186,11 +119,6 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
     }
 
     /**
-     * The click helper that is supposed to be used for handling clicks.
-     */
-    private static final ContainerClickActionHelper clickHelper = new ContainerClickActionHelper();
-
-    /**
      * The pattern to fetch the ID of a slot name.
      */
     private static final Pattern slotPattern = Pattern.compile("slot([0-9]+)");
@@ -200,7 +128,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      */
     private static final Pattern containerPattern = Pattern.compile("container([0-9]+)");
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ContainerHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(ContainerHandler.class);
 
     /**
      * The Nifty-GUI instance that is handling the GUI display currently.
@@ -343,12 +271,32 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      * @param data the event data
      */
     @NiftyEventSubscriber(pattern = ".*container[0-9]+.*slot[0-9]+.*")
-    public void clickInContainer(String topic, NiftyMousePrimaryClickedEvent data) {
+    public void clickInContainer(@Nonnull String topic, @Nonnull NiftyMousePrimaryMultiClickedEvent data) {
         int slotId = getSlotId(topic);
         int containerId = getContainerId(topic);
 
-        clickHelper.setData(slotId, containerId);
-        clickHelper.pulse();
+        ItemContainer container = World.getPlayer().getContainer(containerId);
+        if (container == null) {
+            log.error("Used container {} does not exist.", containerId);
+            return;
+        }
+        ContainerSlot slot = container.getSlot(slotId);
+
+        if (!slot.containsItem()) {
+            return;
+        }
+
+        if (data.getClickCount() == 2) {
+            if (World.getPlayer().hasMerchantList()) {
+                slot.getInteractive().sell();
+            } else {
+                if (slot.getItemTemplate().getItemInfo().isContainer()) {
+                    slot.getInteractive().openContainer();
+                } else {
+                    slot.getInteractive().use();
+                }
+            }
+        }
     }
 
     /**
@@ -424,7 +372,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
         final InteractionManager iManager = World.getInteractionManager();
         ItemCount amount = iManager.getMovedAmount();
         if (amount == null) {
-            LOGGER.error("Corrupted dropping detected.");
+            log.error("Corrupted dropping detected.");
             iManager.cancelDragging();
             return;
         }
@@ -465,7 +413,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
 
         ItemContainer container = World.getPlayer().getContainer(containerId);
         if (container == null) {
-            LOGGER.error("MouseOver action on non-existent container!");
+            log.error("MouseOver action on non-existent container!");
             return;
         }
 
@@ -566,7 +514,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
                     InventorySlot conSlot = itemContainer.getSlot(i);
                     ItemContainer container = World.getPlayer().getContainer(id);
                     if (container == null) {
-                        LOGGER.error("Container in handler was not created for player!");
+                        log.error("Container in handler was not created for player!");
                         return true;
                     }
                     updateMerchantOverlay(conSlot, container.getSlot(i).getItemID());
@@ -618,7 +566,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
         @Nullable org.illarion.nifty.controls.ItemContainer conControl = itemContainerMap
                 .get(itemContainer.getContainerId());
         if (conControl == null) {
-            LOGGER.warn("Updating a container that does not exist.");
+            log.warn("Updating a container that does not exist.");
             return;
         }
 
