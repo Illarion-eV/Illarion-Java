@@ -27,6 +27,7 @@ import org.illarion.engine.input.Input;
 import org.illarion.engine.input.Key;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This is the movement handler that takes care for the follow mouse movement system. As long as this is engaged moves
@@ -74,10 +75,13 @@ class FollowMouseMovementHandler extends AbstractMovementHandler implements Mous
         AnnotationProcessor.process(this);
     }
 
-    @Nonnull
+    @Nullable
     @Override
     public StepData getNextStep(@Nonnull Location currentLocation) {
         calculateMove();
+        if (walkTowardsDir == Location.DIR_ZERO) {
+            return null;
+        }
         return new DefaultStepData(currentMovementMode, walkTowardsDir);
     }
 
@@ -94,6 +98,7 @@ class FollowMouseMovementHandler extends AbstractMovementHandler implements Mous
         int distance = FastMath.sqrt((xOffset * xOffset) + (yOffset * yOffset));
 
         if (distance <= 5) {
+            walkTowardsDir = Location.DIR_ZERO;
             return;
         }
 
