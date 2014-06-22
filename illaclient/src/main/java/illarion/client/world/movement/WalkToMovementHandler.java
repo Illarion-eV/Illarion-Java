@@ -179,10 +179,14 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
     private Path calculateNewPath(@Nonnull Location currentLocation) {
         log.info(marker, "Calculating a new path to: {}", targetLocation);
         PathFindingAlgorithm algorithm = pathFindingAlgorithm;
-        if (getMovementMode() == CharMovementMode.Walk) {
-            return algorithm.findPath(World.getMap(), currentLocation, targetLocation, targetDistance, Walk);
-        } else {
-            return algorithm.findPath(World.getMap(), currentLocation, targetLocation, targetDistance, Walk, Run);
+
+        switch (getMovementMode()) {
+            case Walk:
+                return algorithm.findPath(World.getMap(), currentLocation, targetLocation, targetDistance, Walk);
+            case Run:
+                return algorithm.findPath(World.getMap(), currentLocation, targetLocation, targetDistance, Walk, Run);
+            default:
+                return null;
         }
     }
 

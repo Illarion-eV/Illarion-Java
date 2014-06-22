@@ -74,7 +74,7 @@ public class Movement {
     private final TargetMovementHandler targetMovementHandler;
 
     @Nonnull
-    private final TargetMovementHandler targetMouseMovementHandler;
+    private final MouseTargetMovementHandler targetMouseMovementHandler;
 
     @Nonnull
     private final MoveAnimation moveAnimation;
@@ -100,7 +100,7 @@ public class Movement {
         followMouseHandler = new FollowMouseMovementHandler(this, input);
         keyboardHandler = new SimpleKeyboardMovementHandler(this, input);
         targetMovementHandler = new WalkToMovementHandler(this);
-        targetMouseMovementHandler = new WalkToMouseMovementHandler(this);
+        targetMouseMovementHandler = new WalkToMouseMovementHandler(this, input);
 
         timeoutTimer = new Timer(700, new Runnable() {
             @Override
@@ -266,7 +266,7 @@ public class Movement {
     }
 
     @Nonnull
-    public TargetMovementHandler getTargetMouseMovementHandler() {
+    public MouseTargetMovementHandler getTargetMouseMovementHandler() {
         return targetMouseMovementHandler;
     }
 

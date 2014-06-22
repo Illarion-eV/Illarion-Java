@@ -289,13 +289,15 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
      * @param event the event that contains the data for the move
      */
     private void moveTowardsMouse(@Nonnull DragOnMapEvent event) {
+        MouseMovementHandler handler;
         if (followMouseWithPathFinding) {
-            World.getPlayer().getMovementHandler().getTargetMouseMovementHandler().assumeControl();
+            handler = World.getPlayer().getMovementHandler().getTargetMouseMovementHandler();
         } else {
-            MouseMovementHandler handler = World.getPlayer().getMovementHandler().getFollowMouseHandler();
-            handler.handleMouse(event.getNewX(), event.getNewY());
-            handler.assumeControl();
+            handler = World.getPlayer().getMovementHandler().getFollowMouseHandler();
         }
+        handler.handleMouse(event.getNewX(), event.getNewY());
+        handler.assumeControl();
+
         input.enableForwarding(ForwardingTarget.Mouse);
     }
 
