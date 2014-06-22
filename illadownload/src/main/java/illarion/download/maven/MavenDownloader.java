@@ -15,6 +15,7 @@
  */
 package illarion.download.maven;
 
+import illarion.common.util.AppIdent;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.ProgressMonitor;
 import org.apache.maven.model.building.DefaultModelBuilderFactory;
@@ -68,6 +69,8 @@ import static org.eclipse.aether.util.artifact.JavaScopes.*;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class MavenDownloader {
+    private static final AppIdent APPLICATION = new AppIdent("Illarion Launcher");
+
     /**
      * The list of repositories that are used.
      */
@@ -121,7 +124,7 @@ public class MavenDownloader {
 
         session.setTransferListener(new MavenTransferListener());
         session.setRepositoryListener(new MavenRepositoryListener());
-        session.setConfigProperty(ConfigurationProperties.CONNECT_TIMEOUT, 60000);
+        session.setConfigProperty(ConfigurationProperties.USER_AGENT, APPLICATION.getApplicationIdentifier());
         session.setConfigProperty(ConfigurationProperties.REQUEST_TIMEOUT, 60000);
 
         repositories = new ArrayList<>();
