@@ -284,12 +284,20 @@ public final class InputReceiver implements InputListener {
             if (buttonDownReceived.contains(button)) {
                 buttonDownDragged.add(button);
                 log.debug("Received {} mouse button dragged from {}, {} to {}, {}", button, fromX, fromY, toX, toY);
-                EventBus.publish(new DragOnMapEvent(fromX, fromY, toX, toY, button));
+                EventBus.publish(new DragOnMapEvent(fromX, fromY, toX, toY, button, this));
             } else {
                 log.debug("Received {} mouse button dragged from {}, {} to {}, {} but skipped it.", button, fromX,
                           fromY, toX, toY);
             }
         }
+    }
+
+    /**
+     * Inform the input handler that the GUI took control over the last actions and the input receiver needs to reset.
+     */
+    public void guiTookControl() {
+        buttonDownReceived.clear();
+        buttonDownDragged.clear();
     }
 
     @Override

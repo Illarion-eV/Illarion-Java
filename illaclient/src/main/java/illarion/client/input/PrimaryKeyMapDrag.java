@@ -16,7 +16,6 @@
 package illarion.client.input;
 
 import illarion.client.world.MapTile;
-import org.illarion.engine.input.Button;
 
 import javax.annotation.Nonnull;
 
@@ -34,21 +33,6 @@ public final class PrimaryKeyMapDrag extends DragOnMapEvent {
     }
 
     private final PrimaryKeyMapDragCallback callback;
-
-    /**
-     * Create and initialize such an event.
-     *
-     * @param startX the X coordinate where the dragging starts
-     * @param startY the Y coordinate where the dragging starts
-     * @param stopX the X coordinate where the dragging is currently
-     * @param stopY the Y coordinate where the dragging is currently
-     * @param callback the callback instance for this class
-     */
-    public PrimaryKeyMapDrag(
-            int startX, int startY, int stopX, int stopY, PrimaryKeyMapDragCallback callback) {
-        super(startX, startY, stopX, stopY, Button.Left);
-        this.callback = callback;
-    }
 
     public PrimaryKeyMapDrag(@Nonnull DragOnMapEvent org, PrimaryKeyMapDragCallback callback) {
         super(org);

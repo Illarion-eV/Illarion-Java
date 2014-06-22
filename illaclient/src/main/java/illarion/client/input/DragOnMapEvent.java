@@ -35,6 +35,9 @@ public class DragOnMapEvent extends AbstractMouseOnMapEvent {
      */
     private final int oldY;
 
+    @Nonnull
+    private final InputReceiver inputReceiver;
+
     /**
      * Create and initialize such a event.
      *
@@ -44,16 +47,19 @@ public class DragOnMapEvent extends AbstractMouseOnMapEvent {
      * @param stopY the Y coordinate where the dragging is currently
      * @param pressedKey the key used for the dragging operation
      */
-    public DragOnMapEvent(int startX, int startY, int stopX, int stopY, @Nonnull Button pressedKey) {
+    public DragOnMapEvent(
+            int startX, int startY, int stopX, int stopY, @Nonnull Button pressedKey, @Nonnull InputReceiver receiver) {
         super(pressedKey, stopX, stopY);
         oldX = startX;
         oldY = startY;
+        inputReceiver = receiver;
     }
 
     public DragOnMapEvent(@Nonnull DragOnMapEvent org) {
         super(org);
         oldX = org.oldX;
         oldY = org.oldY;
+        inputReceiver = org.inputReceiver;
     }
 
     /**
@@ -90,5 +96,10 @@ public class DragOnMapEvent extends AbstractMouseOnMapEvent {
      */
     public int getNewY() {
         return getY();
+    }
+
+    @Nonnull
+    public InputReceiver getInputReceiver() {
+        return inputReceiver;
     }
 }

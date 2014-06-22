@@ -240,6 +240,8 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
             return false;
         }
 
+        event.getInputReceiver().guiTookControl();
+
         if ((activeScreen != null) && (activeNifty != null)) {
             Item movedItem = targetTile.getTopItem();
             assert movedItem != null;
