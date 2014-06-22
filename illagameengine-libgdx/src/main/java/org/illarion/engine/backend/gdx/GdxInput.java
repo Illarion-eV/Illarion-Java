@@ -73,6 +73,16 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     /**
      * This variable stores the location where the mouse button was pressed down the last time.
      */
+    private int lastDragRelevantX;
+
+    /**
+     * This variable stores the location where the mouse button was pressed down the last time.
+     */
+    private int lastDragRelevantY;
+
+    /**
+     * This variable stores the location where the mouse button was pressed down the last time.
+     */
     private int touchDownX;
 
     /**
@@ -527,6 +537,8 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
 
         touchDownX = x;
         touchDownY = y;
+        lastDragRelevantX = x;
+        lastDragRelevantY = y;
         touchDownPointer = pointer;
         touchDownButton = pressedButton;
 
@@ -591,13 +603,20 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
         if (pointer != USED_MOUSE_POINTER) {
             return false;
         }
+
+        final int startX = lastDragRelevantX;
+        final int startY = lastDragRelevantY;
+
+        lastDragRelevantX = x;
+        lastDragRelevantY = y;
+
         for (@Nonnull final Button button : Button.values()) {
             if (isButtonDown(button)) {
                 events.offer(new Runnable() {
                     @Override
                     public void run() {
                         assert inputListener != null;
-                        inputListener.mouseDragged(button, x, y, x, y);
+                        inputListener.mouseDragged(button, startX, startY, x, y);
                     }
                 });
             }

@@ -256,6 +256,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
 
             draggedImage.setWidth(width);
             draggedImage.setHeight(height);
+            draggedImage.showWithoutEffects();
 
             ImageRenderer imgRender = draggedImage.getRenderer(ImageRenderer.class);
             imgRender.setImage(
