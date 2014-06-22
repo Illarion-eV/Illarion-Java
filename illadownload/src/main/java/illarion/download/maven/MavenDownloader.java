@@ -121,8 +121,8 @@ public class MavenDownloader {
 
         session.setTransferListener(new MavenTransferListener());
         session.setRepositoryListener(new MavenRepositoryListener());
-        session.setConfigProperty(ConfigurationProperties.CONNECT_TIMEOUT, 10000);
-        session.setConfigProperty(ConfigurationProperties.REQUEST_TIMEOUT, 10000);
+        session.setConfigProperty(ConfigurationProperties.CONNECT_TIMEOUT, 60000);
+        session.setConfigProperty(ConfigurationProperties.REQUEST_TIMEOUT, 60000);
 
         repositories = new ArrayList<>();
         setupRepositories();
