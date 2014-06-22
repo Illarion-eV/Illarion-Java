@@ -275,7 +275,7 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
     }
 
     @NiftyEventSubscriber(pattern = "invslot_.*")
-    public void doubleInventory(@Nonnull String topic, NiftyMousePrimaryMultiClickedEvent data) {
+    public void onDoubleClickInventory(@Nonnull String topic, NiftyMousePrimaryMultiClickedEvent data) {
         int slotId = getSlotNumber(topic);
         log.debug("Clicking {} times in inventory slot {}", data.getClickCount(), slotId);
 

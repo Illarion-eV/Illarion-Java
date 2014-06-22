@@ -271,7 +271,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      * @param data the event data
      */
     @NiftyEventSubscriber(pattern = ".*container[0-9]+.*slot[0-9]+.*")
-    public void clickInContainer(@Nonnull String topic, @Nonnull NiftyMousePrimaryMultiClickedEvent data) {
+    public void onDoubleClickInContainer(@Nonnull String topic, @Nonnull NiftyMousePrimaryMultiClickedEvent data) {
         int slotId = getSlotId(topic);
         int containerId = getContainerId(topic);
 
@@ -305,7 +305,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      * @param key the key of the element
      * @return the extracted ID
      */
-    private static int getSlotId(CharSequence key) {
+    private static int getSlotId(@Nonnull CharSequence key) {
         Matcher matcher = slotPattern.matcher(key);
         if (!matcher.find()) {
             return -1;
@@ -324,7 +324,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      * @param key the key of the element
      * @return the extracted ID
      */
-    private static int getContainerId(CharSequence key) {
+    private static int getContainerId(@Nonnull CharSequence key) {
         Matcher matcher = containerPattern.matcher(key);
         if (!matcher.find()) {
             return -1;
@@ -344,7 +344,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      * @param data the event data
      */
     @NiftyEventSubscriber(pattern = ".*container[0-9]+.*slot[0-9]+.*")
-    public void dragFrom(String topic, @Nonnull DraggableDragStartedEvent data) {
+    public void dragFrom(@Nonnull String topic, @Nonnull DraggableDragStartedEvent data) {
         int slotId = getSlotId(topic);
         int containerId = getContainerId(topic);
 
