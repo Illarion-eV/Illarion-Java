@@ -15,6 +15,7 @@
  */
 package illarion.client.graphics;
 
+import illarion.client.IllaClient;
 import illarion.client.input.*;
 import illarion.client.resources.ItemFactory;
 import illarion.client.resources.Resource;
@@ -27,6 +28,7 @@ import illarion.client.world.interactive.InteractiveMapTile;
 import illarion.client.world.movement.TargetMovementHandler;
 import illarion.common.graphics.MapConstants;
 import illarion.common.graphics.MapVariance;
+import illarion.common.gui.AbstractMultiActionHelper;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
@@ -269,13 +271,28 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
                 return false;
             }
 
+            delayGoToItem.reset();
+
             log.debug("Single clicking item: {}", getItemId());
 
             TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
-            if (parentTile.isBlocked()) {
-                handler.walkTo(parentTile.getLocation(), 1);
+
+            boolean blocked = parentTile.isBlocked();
+            boolean useRange = parentTile.getInteractive().isInUseRange();
+
+            if (useRange) {
+                if (blocked) {
+                    return true;
+                } else {
+                    delayGoToItem.setLocation(parentTile.getLocation());
+                    delayGoToItem.pulse();
+                }
             } else {
-                handler.walkTo(parentTile.getLocation(), 0);
+                if (blocked) {
+                    handler.walkTo(parentTile.getLocation(), 1);
+                } else {
+                    handler.walkTo(parentTile.getLocation(), 0);
+                }
             }
             handler.assumeControl();
             return true;
@@ -290,6 +307,8 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
             if (!isMouseInInteractionRect(moveEvent.getX(), moveEvent.getY())) {
                 return false;
             }
+
+            delayGoToItem.reset();
 
             log.debug("Double clicking item: {}", getItemId());
 
@@ -324,6 +343,31 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
 
         return false;
     }
+
+    private static final class DelayGoToItemHandler extends AbstractMultiActionHelper {
+        @Nullable
+        private Location target;
+
+        DelayGoToItemHandler() {
+            super(IllaClient.getCfg().getInteger("doubleClickInterval"), 2);
+        }
+
+        void setLocation(@Nullable Location target) {
+            this.target = target;
+        }
+
+        @Override
+        public void executeAction(int count) {
+            if ((count == 1) && (target != null)) {
+                TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
+                handler.walkTo(target, 0);
+                handler.assumeControl();
+            }
+        }
+    }
+
+    @Nonnull
+    private static final DelayGoToItemHandler delayGoToItem = new DelayGoToItemHandler();
 
     @Override
     protected boolean isMouseInInteractionRect(int mouseX, int mouseY) {

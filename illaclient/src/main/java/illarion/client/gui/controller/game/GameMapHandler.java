@@ -225,10 +225,9 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
                 }
             });
             World.getMapDisplay().getGameScene().publishEvent(newEvent);
-            return;
+        } else {
+            moveTowardsMouse(data);
         }
-
-        moveTowardsMouse(data);
     }
 
     private boolean handleDragOnMap(@Nonnull PrimaryKeyMapDrag event, @Nullable MapTile mapTile) {
