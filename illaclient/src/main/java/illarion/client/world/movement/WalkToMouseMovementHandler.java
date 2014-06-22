@@ -16,6 +16,8 @@
 package illarion.client.world.movement;
 
 import illarion.client.world.World;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
@@ -23,16 +25,19 @@ import javax.annotation.Nonnull;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 class WalkToMouseMovementHandler extends WalkToMovementHandler {
+    private static final Logger log = LoggerFactory.getLogger(WalkToMouseMovementHandler.class);
+
     WalkToMouseMovementHandler(@Nonnull Movement movement) {
         super(movement);
     }
 
     @Override
     public void disengage(boolean transferAllowed) {
-        boolean targetWasSet = isTargetSet();
+        boolean targetWasSet = isTargetSet() && isActive();
         super.disengage(transferAllowed);
         if (transferAllowed && targetWasSet) {
             TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
+            log.debug("Transferring movement control from {} to {}", this, handler);
             handler.walkTo(getTargetLocation(), 0);
             handler.assumeControl();
         }

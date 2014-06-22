@@ -228,8 +228,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
     }
 
     @Override
-    public boolean isEventProcessed(
-            @Nonnull GameContainer container, int delta, @Nonnull SceneEvent event) {
+    public boolean isEventProcessed(@Nonnull GameContainer container, int delta, @Nonnull SceneEvent event) {
         if (event instanceof ClickOnMapEvent) {
             return isEventProcessed(container, delta, (ClickOnMapEvent) event);
         }
@@ -267,6 +266,10 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
     @SuppressWarnings({"BooleanMethodNameMustStartWithQuestion", "UnusedParameters"})
     private boolean isEventProcessed(
             GameContainer container, int delta, @Nonnull ClickOnMapEvent event) {
+        if (World.getPlayer().isPlayer(parentChar.getCharId())) {
+            return false;
+        }
+
         if (!isMouseInInteractiveOrOnTag(event)) {
             return false;
         }
@@ -281,6 +284,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         }
 
         if (event.getKey() == Button.Left) {
+            log.debug("Walking to the character {}", parentChar);
             TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
             handler.walkTo(parentChar.getLocation(), 1);
             handler.assumeControl();
@@ -302,6 +306,10 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
     private boolean isEventProcessed(
             GameContainer container, int delta, @Nonnull DoubleClickOnMapEvent event) {
         if (event.getKey() != Button.Left) {
+            return false;
+        }
+
+        if (World.getPlayer().isPlayer(parentChar.getCharId())) {
             return false;
         }
 

@@ -213,7 +213,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      * The logging instance that takes care for the logging output of this class.
      */
     @SuppressWarnings("UnusedDeclaration")
-    private static final Logger LOGGER = LoggerFactory.getLogger(Item.class);
+    private static final Logger log = LoggerFactory.getLogger(Item.class);
 
     @Override
     public boolean isEventProcessed(
@@ -269,6 +269,8 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
                 return false;
             }
 
+            log.debug("Single clicking item: {}", getItemId());
+
             TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
             if (parentTile.isBlocked()) {
                 handler.walkTo(parentTile.getLocation(), 1);
@@ -288,6 +290,8 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
             if (!isMouseInInteractionRect(moveEvent.getX(), moveEvent.getY())) {
                 return false;
             }
+
+            log.debug("Double clicking item: {}", getItemId());
 
             if (parentTile.getInteractive().isInUseRange()) {
                 parentTile.getInteractive().use();

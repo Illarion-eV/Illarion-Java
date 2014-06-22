@@ -88,7 +88,7 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
      * The instance of the logging class for this class.
      */
     @SuppressWarnings("UnusedDeclaration")
-    private static final Logger LOGGER = LoggerFactory.getLogger(Tile.class);
+    private static final Logger log = LoggerFactory.getLogger(Tile.class);
 
     public Tile(int tileId, @Nonnull MapTile parentTile) {
         this(TileFactory.getInstance().getTemplate(TileInfo.getBaseID(tileId)), tileId, parentTile);
@@ -232,6 +232,8 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
             if (!isMouseInInteractionRect(clickEvent.getX(), clickEvent.getY())) {
                 return false;
             }
+
+            log.debug("Single click on tile at {}", parentTile.getLocation());
 
             TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
             handler.walkTo(parentTile.getLocation(), 0);
