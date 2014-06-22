@@ -201,18 +201,6 @@ public class Movement {
         }
     }
 
-    private void requestNextMove(@Nonnull StepData nextStep) {
-        switch (nextStep.getMovementMode()) {
-            case Walk:
-            case Run:
-                sendTurnToServer(nextStep.getDirection());
-                sendMoveToServer(nextStep.getDirection(), nextStep.getMovementMode());
-                break;
-            default:
-                throw new IllegalStateException("The returned next step did not contain a valid movement mode.");
-        }
-    }
-
     /**
      * Notify the handler that everything is ready to request the next step from the server.
      */
@@ -237,9 +225,15 @@ public class Movement {
         if (handler != null) {
             StepData nextStep = handler.getNextStep(playerLocation);
             log.debug(marker, "Requesting new step data from handler: {}", nextStep);
-            if (nextStep.getMovementMode() != CharMovementMode.None) {
-                stepInProgress = true;
-                requestNextMove(nextStep);
+            switch (nextStep.getMovementMode()) {
+                case None:
+                    sendTurnToServer(nextStep.getDirection());
+                    break;
+                default:
+                    stepInProgress = true;
+                    sendTurnToServer(nextStep.getDirection());
+                    sendMoveToServer(nextStep.getDirection(), nextStep.getMovementMode());
+                    break;
             }
         }
     }

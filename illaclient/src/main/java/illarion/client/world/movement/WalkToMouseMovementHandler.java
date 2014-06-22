@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class WalkToMouseMovementHandler extends WalkToMovementHandler {
+class WalkToMouseMovementHandler extends WalkToMovementHandler {
     WalkToMouseMovementHandler(@Nonnull Movement movement) {
         super(movement);
     }
