@@ -22,7 +22,6 @@ import de.lessvoid.nifty.controls.Parameters;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.screen.Screen;
-import illarion.common.gui.AbstractMultiActionHelper;
 import org.illarion.nifty.controls.MerchantListEntry;
 
 import javax.annotation.Nonnull;
@@ -35,17 +34,6 @@ import javax.annotation.Nullable;
  */
 @Deprecated
 public final class DialogMerchantEntryControl extends AbstractController {
-    @Nonnull
-    private AbstractMultiActionHelper doubleClickHelper = new AbstractMultiActionHelper(
-            (Integer) java.awt.Toolkit.getDefaultToolkit().getDesktopProperty("awt.multiClickInterval"), 2) {
-        @Override
-        public void executeAction(final int count) {
-            if (count == 2) {
-                merchantControl.buyItem(index);
-            }
-        }
-    };
-
     private int index;
     @Nullable
     private ListBox<MerchantListEntry> listBox;
@@ -56,10 +44,7 @@ public final class DialogMerchantEntryControl extends AbstractController {
     @SuppressWarnings("unchecked")
     @Override
     public void bind(
-            @Nonnull final Nifty nifty,
-            @Nonnull final Screen screen,
-            @Nonnull final Element element,
-            @Nonnull final Parameters parameter) {
+            @Nonnull Nifty nifty, @Nonnull Screen screen, @Nonnull Element element, @Nonnull Parameters parameter) {
         selectable = Boolean.parseBoolean(parameter.get("selectable"));
 
         if (selectable) {
@@ -68,7 +53,7 @@ public final class DialogMerchantEntryControl extends AbstractController {
         }
     }
 
-    private static Element getParent(final Element root, final int grade) {
+    private static Element getParent(Element root, int grade) {
         Element result = root;
         for (int i = 0; i < grade; i++) {
             result = result.getParent();
@@ -78,15 +63,14 @@ public final class DialogMerchantEntryControl extends AbstractController {
 
     @Override
     public void onStartScreen() {
-        doubleClickHelper.reset();
     }
 
     @Override
-    public boolean inputEvent(@Nonnull final NiftyInputEvent inputEvent) {
+    public boolean inputEvent(@Nonnull NiftyInputEvent inputEvent) {
         return false;
     }
 
-    public void setIndex(final int value) {
+    public void setIndex(int value) {
         index = value;
     }
 
@@ -96,9 +80,9 @@ public final class DialogMerchantEntryControl extends AbstractController {
      * @param x the x coordinate of the mouse
      * @param y the y coordinate of the mouse
      */
-    public void onClick(final int x, final int y) {
-        if (selectable) {
-            doubleClickHelper.pulse();
+    public void onMultiClick(int x, int y, int clickCount) {
+        if (selectable && (clickCount == 2) && (merchantControl != null)) {
+            merchantControl.buyItem(index);
         }
     }
 }

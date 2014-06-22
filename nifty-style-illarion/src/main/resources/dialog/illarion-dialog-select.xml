@@ -33,6 +33,7 @@
 
     <style id="illarion-dialog-select-line" base="nifty-listbox-item">
         <attributes height="46px" width="100%" padding="1px" visibleToMouse="true"/>
+        <interact onMultiClick="listBoxItemMultiClicked()"/>
         <effect>
             <onHover name="colorBar" color="#264d1cff" neverStopRendering="true" timeType="infinite"/>
         </effect>

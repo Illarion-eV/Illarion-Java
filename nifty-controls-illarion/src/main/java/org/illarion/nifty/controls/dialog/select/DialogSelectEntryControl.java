@@ -20,7 +20,6 @@ import de.lessvoid.nifty.controls.Parameters;
 import de.lessvoid.nifty.controls.listbox.ListBoxItemController;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
-import illarion.common.gui.AbstractMultiActionHelper;
 import org.illarion.nifty.controls.SelectListEntry;
 
 import javax.annotation.Nonnull;
@@ -34,17 +33,6 @@ import javax.annotation.Nullable;
 @SuppressWarnings("deprecation")
 @Deprecated
 public final class DialogSelectEntryControl extends ListBoxItemController<SelectListEntry> {
-    @Nonnull
-    private AbstractMultiActionHelper doubleClickHelper = new AbstractMultiActionHelper(
-            (Integer) java.awt.Toolkit.getDefaultToolkit().getDesktopProperty("awt.multiClickInterval"), 2) {
-        @Override
-        public void executeAction(final int count) {
-            if (count == 2) {
-                selectDialogControl.selectItem(index);
-            }
-        }
-    };
-
     private int index;
     @Nullable
     private DialogSelectControl selectDialogControl;
@@ -53,10 +41,7 @@ public final class DialogSelectEntryControl extends ListBoxItemController<Select
     @SuppressWarnings("unchecked")
     @Override
     public void bind(
-            @Nonnull final Nifty nifty,
-            @Nonnull final Screen screen,
-            @Nonnull final Element element,
-            @Nonnull final Parameters parameter) {
+            @Nonnull Nifty nifty, @Nonnull Screen screen, @Nonnull Element element, @Nonnull Parameters parameter) {
         super.bind(nifty, screen, element, parameter);
         selectable = Boolean.parseBoolean(parameter.get("selectable"));
 
@@ -65,7 +50,7 @@ public final class DialogSelectEntryControl extends ListBoxItemController<Select
         }
     }
 
-    private static Element getParent(final Element root, final int grade) {
+    private static Element getParent(Element root, int grade) {
         Element result = root;
         for (int i = 0; i < grade; i++) {
             result = result.getParent();
@@ -73,21 +58,14 @@ public final class DialogSelectEntryControl extends ListBoxItemController<Select
         return result;
     }
 
-    @Override
-    public void onStartScreen() {
-        super.onStartScreen();
-        doubleClickHelper.reset();
-    }
-
-    public void setIndex(final int value) {
+    public void setIndex(int value) {
         index = value;
     }
 
-    @Override
-    public void listBoxItemClicked() {
-        super.listBoxItemClicked();
-        if (selectable) {
-            doubleClickHelper.pulse();
+    @SuppressWarnings("UnusedDeclaration")
+    public void listBoxItemMultiClicked(int x, int y, int count) {
+        if (selectable && (count == 2) && (selectDialogControl != null)) {
+            selectDialogControl.selectItem(index);
         }
     }
 }

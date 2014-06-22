@@ -36,7 +36,7 @@
                 </panel>
             </panel>
         </panel>
-        <interact onPrimaryClick="onClick()"/>
+        <interact onMultiClick="onMultiClick()"/>
     </controlDefinition>
 
     <controlDefinition name="dialog-merchant-sell" style="illarion-dialog-merchant-sell">
