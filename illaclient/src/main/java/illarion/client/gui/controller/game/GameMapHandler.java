@@ -251,7 +251,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
             draggedGraphic.setConstraintHeight(SizeValue.px(height));
             draggedGraphic.setConstraintX(SizeValue.px(event.getOldX() - (width / 2)));
             draggedGraphic.setConstraintY(SizeValue.px(event.getOldY() - (height / 2)));
-            draggedGraphic.setVisible(true);
+            draggedGraphic.showWithoutEffects();
             draggedGraphic.reactivate();
 
             draggedImage.setWidth(width);

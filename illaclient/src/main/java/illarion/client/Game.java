@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.Properties;
 
 /**
  * This is the game Illarion. This class takes care for actually building up Illarion. It will maintain the different
@@ -129,6 +130,14 @@ public final class Game implements GameListener {
         nifty = new Nifty(new IgeRenderDevice(container, "gui/"), new IgeSoundDevice(container.getEngine()),
                           new IgeInputSystem(container.getEngine().getInput(), inputReceiver),
                           new AccurateTimeProvider());
+
+        Properties niftyProperties = nifty.getGlobalProperties();
+        if (niftyProperties == null) {
+            niftyProperties = new Properties();
+            nifty.setGlobalProperties(niftyProperties);
+        }
+        niftyProperties.setProperty("MULTI_CLICK_TIME",
+                                    Integer.toString(IllaClient.getCfg().getInteger("doubleClickInterval")));
         nifty.setLocale(Lang.getInstance().getLocale());
         container.getEngine().getInput().addForwardingListener(new ForwardingListener() {
             @Override

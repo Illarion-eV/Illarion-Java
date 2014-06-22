@@ -26,6 +26,7 @@ import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.awt.*;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -49,7 +50,7 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     /**
      * The time in milliseconds between two clicks to recognise them as a double click.
      */
-    private static final long DOUBLE_CLICK_DELAY = 250;
+    private final long doubleClickDelay;
 
     /**
      * The input listener that receives the input data when the polling function is called.
@@ -107,6 +108,14 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
      * @param gdxInput the input provider of libGDX that is supposed to be used
      */
     GdxInput(@Nonnull Input gdxInput) {
+        @Nonnull Toolkit awtDefaultToolkit = Toolkit.getDefaultToolkit();
+        @Nullable Object doubleClick = awtDefaultToolkit.getDesktopProperty("awt.multiClickInterval");
+        if (doubleClick instanceof Number) {
+            doubleClickDelay = ((Number) doubleClick).longValue();
+        } else {
+            doubleClickDelay = 500L;
+        }
+
         this.gdxInput = gdxInput;
         gdxInput.setInputProcessor(this);
         events = new LinkedList<>();
@@ -557,7 +566,7 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     private void publishClick(final int x, final int y, @Nonnull final Button button) {
         if ((clickTimeout == 0) || (clickButton != button) || (System.currentTimeMillis() > clickTimeout)) {
             clickButton = button;
-            clickTimeout = System.currentTimeMillis() + DOUBLE_CLICK_DELAY;
+            clickTimeout = System.currentTimeMillis() + doubleClickDelay;
             events.offer(new Runnable() {
                 @Override
                 public void run() {

@@ -40,12 +40,12 @@ public class PlayingState implements GameState {
     @Nonnull
     private final InputReceiver receiver;
 
-    public PlayingState(@Nonnull final InputReceiver inputReceiver) {
+    public PlayingState(@Nonnull InputReceiver inputReceiver) {
         receiver = inputReceiver;
     }
 
     @Override
-    public void create(@Nonnull final Game game, @Nonnull final GameContainer container, @Nonnull final Nifty nifty) {
+    public void create(@Nonnull Game game, @Nonnull GameContainer container, @Nonnull Nifty nifty) {
         World.initGui(container.getEngine());
         nifty.registerScreenController(World.getGameGui().getScreenController());
 
@@ -57,12 +57,12 @@ public class PlayingState implements GameState {
     }
 
     @Override
-    public void resize(@Nonnull final GameContainer container, final int width, final int height) {
+    public void resize(@Nonnull GameContainer container, int width, int height) {
         MapDimensions.getInstance().reportScreenSize(width, height);
     }
 
     @Override
-    public void update(@Nonnull final GameContainer container, final int delta) {
+    public void update(@Nonnull GameContainer container, int delta) {
         if (World.getGameGui().isReady()) {
             World.getUpdateTaskManager().onUpdateGame(container, delta);
         }
@@ -74,7 +74,7 @@ public class PlayingState implements GameState {
     }
 
     @Override
-    public void render(@Nonnull final GameContainer container) {
+    public void render(@Nonnull GameContainer container) {
         World.getMap().getMiniMap().render(container);
         World.getMapDisplay().render(container);
     }
@@ -86,7 +86,7 @@ public class PlayingState implements GameState {
     }
 
     @Override
-    public void enterState(@Nonnull final GameContainer container, @Nonnull final Nifty nifty) {
+    public void enterState(@Nonnull GameContainer container, @Nonnull Nifty nifty) {
         nifty.gotoScreen("gamescreen");
         receiver.setEnabled(true);
 
@@ -98,7 +98,7 @@ public class PlayingState implements GameState {
     }
 
     @Override
-    public void leaveState(@Nonnull final GameContainer container) {
+    public void leaveState(@Nonnull GameContainer container) {
         receiver.setEnabled(false);
     }
 }
