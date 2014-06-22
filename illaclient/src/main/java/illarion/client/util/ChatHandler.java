@@ -95,9 +95,9 @@ public final class ChatHandler {
          * @param replace the regular expression needed to isolate the actual text
          */
         SpeechMode(
-                final org.illarion.engine.graphic.Color modeColor,
-                @Nullable @RegEx final String findRegexp,
-                @Nullable final String replace) {
+                org.illarion.engine.graphic.Color modeColor,
+                @Nullable @RegEx String findRegexp,
+                @Nullable String replace) {
             color = modeColor;
             if (findRegexp == null) {
                 regexp = null;
@@ -153,16 +153,15 @@ public final class ChatHandler {
      * @param location the location where the text was spoken
      */
     public void handleMessage(
-            @Nonnull final String text, @Nonnull final Location location, @Nonnull final SpeechMode receivedMode) {
-        final Char talkingChar = World.getPeople().getCharacterAt(location);
+            @Nonnull String text, @Nonnull Location location, @Nonnull SpeechMode receivedMode) {
+        Char talkingChar = World.getPeople().getCharacterAt(location);
 
-        final ChatHandler.SpeechMode mode;
-        final String resultText;
+        SpeechMode mode;
+        String resultText;
 
         switch (receivedMode) {
             case Whisper:
-                @SuppressWarnings("ConstantConditions")
-                final Matcher oocMatcher = SpeechMode.Ooc.getRegexp().matcher(text);
+                @SuppressWarnings("ConstantConditions") Matcher oocMatcher = SpeechMode.Ooc.getRegexp().matcher(text);
                 if (oocMatcher.find()) {
                     mode = SpeechMode.Ooc;
                     resultText = oocMatcher.replaceAll(SpeechMode.Ooc.getReplacement()).trim();
@@ -176,8 +175,8 @@ public final class ChatHandler {
                 resultText = text.trim();
                 break;
             default:
-                @SuppressWarnings("ConstantConditions")
-                final Matcher emoteMatcher = SpeechMode.Emote.getRegexp().matcher(text);
+                @SuppressWarnings("ConstantConditions") Matcher emoteMatcher = SpeechMode.Emote.getRegexp()
+                        .matcher(text);
                 if (emoteMatcher.find()) {
                     mode = SpeechMode.Emote;
                     resultText = emoteMatcher.replaceAll(SpeechMode.Emote.getReplacement());
@@ -187,9 +186,9 @@ public final class ChatHandler {
                 }
         }
 
-        final StringBuilder textBuilder = new StringBuilder();
+        StringBuilder textBuilder = new StringBuilder();
 
-        if (mode == ChatHandler.SpeechMode.Emote) {
+        if (mode == SpeechMode.Emote) {
             // we need some kind of name
             if (talkingChar == null) {
                 textBuilder.append(Lang.getMsg("chat.someone"));
@@ -199,7 +198,7 @@ public final class ChatHandler {
 
             textBuilder.append(resultText);
 
-            final String emoteText = textBuilder.toString();
+            String emoteText = textBuilder.toString();
             World.getPlayer().getChatLog().logText(emoteText);
             World.getGameGui().getChatGui().addChatMessage(emoteText, ChatGui.COLOR_EMOTE);
             World.getGameGui().getChatGui().showChatBubble(talkingChar, emoteText, ChatGui.COLOR_EMOTE);
@@ -227,7 +226,7 @@ public final class ChatHandler {
 
             textBuilder.append(':').append(' ');
 
-            final String bubbleText;
+            String bubbleText;
             if (mode == SpeechMode.Ooc) {
                 bubbleText = "((" + resultText + "))";
             } else {
@@ -235,7 +234,7 @@ public final class ChatHandler {
             }
             textBuilder.append(bubbleText);
 
-            final de.lessvoid.nifty.tools.Color color;
+            de.lessvoid.nifty.tools.Color color;
             switch (mode) {
                 case Shout:
                     color = ChatGui.COLOR_SHOUT;
@@ -253,7 +252,7 @@ public final class ChatHandler {
                     color = ChatGui.COLOR_DEFAULT;
             }
 
-            final String talkText = textBuilder.toString();
+            String talkText = textBuilder.toString();
             World.getPlayer().getChatLog().logText(talkText);
             World.getGameGui().getChatGui().addChatMessage(talkText, color);
             World.getGameGui().getChatGui().showChatBubble(talkingChar, bubbleText, color);

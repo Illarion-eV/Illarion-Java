@@ -296,6 +296,7 @@ public final class InputReceiver implements InputListener {
      * Inform the input handler that the GUI took control over the last actions and the input receiver needs to reset.
      */
     public void guiTookControl() {
+        log.debug("GUI is taking over all input. Receiver reset.");
         buttonDownReceived.clear();
         buttonDownDragged.clear();
     }

@@ -68,7 +68,7 @@ public final class Tooltip {
      * @param reader the receiver that stores the data that shall be decoded in this function
      * @throws IOException In case the function reads over the buffer of the receiver this exception is thrown
      */
-    public Tooltip(@Nonnull final NetCommReader reader) throws IOException {
+    public Tooltip(@Nonnull NetCommReader reader) throws IOException {
         name = reader.readString();
         rareness = reader.readUByte();
         description = reader.readString();

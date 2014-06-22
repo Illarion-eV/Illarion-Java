@@ -17,10 +17,10 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.util.ChatHandler;
-import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.Location;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -33,6 +33,7 @@ import java.io.IOException;
  */
 @ReplyMessage(replyId = CommandList.MSG_LOOKAT_TILE)
 public final class LookAtTileMsg extends AbstractReply {
+    private static final Logger log = LoggerFactory.getLogger(LookAtTileMsg.class);
     /**
      * The location of the tile on the server map.
      */
@@ -50,7 +51,7 @@ public final class LookAtTileMsg extends AbstractReply {
      * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         loc = decodeLocation(reader);
         text = reader.readString();
     }
@@ -62,7 +63,7 @@ public final class LookAtTileMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        World.getChatHandler().handleMessage(text, loc, ChatHandler.SpeechMode.Normal);
+        log.warn("Received look at for a tile. That shouldn't happen! Received \"{}\" for {}", text, loc);
 
         return true;
     }
@@ -76,6 +77,6 @@ public final class LookAtTileMsg extends AbstractReply {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("Location: " + loc.toString() + " Message: " + text);
+        return toString("Location: " + loc + " Message: " + text);
     }
 }
