@@ -22,6 +22,7 @@ import org.illarion.engine.input.Input;
 import org.illarion.engine.input.Key;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This keyboard movement handler simply handles the keyboard input to perform the walking operations.
@@ -76,12 +77,12 @@ class SimpleKeyboardMovementHandler extends AbstractMovementHandler implements K
         activeDirections[direction] = false;
     }
 
-    @Nonnull
+    @Nullable
     @Override
     public StepData getNextStep(@Nonnull Location currentLocation) {
         int dir = getMovementDirection();
         if (dir == Location.DIR_ZERO) {
-            return new DefaultStepData(CharMovementMode.None, 0);
+            return null;
         }
         return new DefaultStepData(getMovementMode(), dir);
     }

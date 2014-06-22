@@ -63,18 +63,18 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
         targetLocation = new Location();
     }
 
-    @Nonnull
+    @Nullable
     @Override
     public StepData getNextStep(@Nonnull Location currentLocation) {
         if (!targetSet) {
-            return new DefaultStepData(CharMovementMode.None, 0);
+            return null;
         }
         int remainingDistance = currentLocation.getDistance(targetLocation);
         log.debug(marker, "Remaining distance to target: {} Expected distance: {}", remainingDistance, targetDistance);
         if (remainingDistance <= targetDistance) {
             targetSet = false;
             executeTargetAction();
-            return new DefaultStepData(CharMovementMode.None, 0);
+            return null;
         }
         Path activePath;
         if (isCurrentPathValid()) {
@@ -86,14 +86,14 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
         if (activePath == null) {
             targetSet = false;
             executeTargetAction();
-            return new DefaultStepData(CharMovementMode.None, 0);
+            return null;
         }
 
         PathNode node = activePath.nextStep();
         if (node == null) {
             targetSet = false;
             executeTargetAction();
-            return new DefaultStepData(CharMovementMode.None, 0);
+            return null;
         }
         if (!isPathNodeValid(currentLocation, node)) {
             activePath = calculateNewPath(currentLocation);
@@ -107,7 +107,7 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
             if (node == null) {
                 targetSet = false;
                 executeTargetAction();
-                return new DefaultStepData(CharMovementMode.None, 0);
+                return null;
             }
         }
         log.debug(marker, "Performing step to: {}", node.getLocation());

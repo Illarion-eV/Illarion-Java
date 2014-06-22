@@ -225,15 +225,17 @@ public class Movement {
         if (handler != null) {
             StepData nextStep = handler.getNextStep(playerLocation);
             log.debug(marker, "Requesting new step data from handler: {}", nextStep);
-            switch (nextStep.getMovementMode()) {
-                case None:
-                    sendTurnToServer(nextStep.getDirection());
-                    break;
-                default:
-                    stepInProgress = true;
-                    sendTurnToServer(nextStep.getDirection());
-                    sendMoveToServer(nextStep.getDirection(), nextStep.getMovementMode());
-                    break;
+            if (nextStep != null) {
+                switch (nextStep.getMovementMode()) {
+                    case None:
+                        sendTurnToServer(nextStep.getDirection());
+                        break;
+                    default:
+                        stepInProgress = true;
+                        sendTurnToServer(nextStep.getDirection());
+                        sendMoveToServer(nextStep.getDirection(), nextStep.getMovementMode());
+                        break;
+                }
             }
         }
     }
