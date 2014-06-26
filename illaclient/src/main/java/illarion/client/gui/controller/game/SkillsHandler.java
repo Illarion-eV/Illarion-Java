@@ -42,6 +42,8 @@ import illarion.common.data.SkillGroups;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.engine.GameContainer;
+import org.illarion.nifty.controls.Progress;
+import org.illarion.nifty.controls.progress.builder.ProgressBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -195,6 +197,13 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
                 skillName.textHAlignLeft();
                 skillPanel.control(skillName);
 
+                final ProgressBuilder progress = new ProgressBuilder(skillId + "#progress");
+                progress.width("130px");
+                progress.height("0px");
+                progress.alignRight();
+                progress.valignBottom();
+                skillPanel.control(progress);
+
                 final LabelBuilder skillValue = new LabelBuilder(skillId + "#value");
                 skillValue.label("0");
                 skillValue.width(content.getConstraintWidth().toString());
@@ -221,7 +230,7 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
             public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
-                internalUpdateSkill(skill, value);
+                internalUpdateSkill(skill, value, minor);
             }
         });
     }
@@ -232,9 +241,9 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
      * @param skill the skill that receives the update
      * @param value the new value of the skill
      */
-    private void internalUpdateSkill(@Nonnull final Skill skill, final int value) {
+    private void internalUpdateSkill(@Nonnull final Skill skill, int value, int minor) {
         @Nullable final Element skillPanel = skillWindow.getElement().findElementById("#skill" + skill.getId());
-        int SkillHeight = 18;
+        int SkillHeight = 22;
         if (skillPanel == null) {
             return;
         }
@@ -248,7 +257,7 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
         skillPanelWindow.setConstraintHeight(SizeValue.def());
         skillPanelWindowContent.setConstraintHeight(SizeValue.def());
         skillPanelWindowContent.setMarginBottom(SizeValue.px(5));
-        skillPanelWindowContent.findElementById("#headline").setConstraintHeight(SizeValue.px(24));
+        skillPanelWindowContent.findElementById("#headline").setConstraintHeight(SizeValue.px(28));
 
         skillPanel.setConstraintHeight(SizeValue.px(SkillHeight));
 
@@ -259,6 +268,12 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
         skillChanged = !valueTextRenderer.getOriginalText().equals(newValue);
         valueTextRenderer.setText(newValue);
         valueLabel.setConstraintHeight(SizeValue.px(SkillHeight));
+
+        final Element progressBar = skillPanel.findElementById("#progress");
+        float progress = (value == 100) ? 1.f : (minor / 10000.f);
+        progressBar.getNiftyControl(Progress.class).setProgress(progress);
+        progressBar.setConstraintHeight(SizeValue.px(SkillHeight - 3));
+        progressBar.setMarginRight(SizeValue.px(40));
 
         final Element nameLabel = skillPanel.findElementById("#name");
         nameLabel.setConstraintHeight(SizeValue.px(SkillHeight));
