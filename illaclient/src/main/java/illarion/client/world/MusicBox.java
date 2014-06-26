@@ -171,6 +171,7 @@ public final class MusicBox implements Stoppable {
      * @param id the ID of the sound track to play
      */
     private void setSoundTrack(final int id) {
+        /*
         if (currentMusicId == id) {
             return;
         }
@@ -188,6 +189,7 @@ public final class MusicBox implements Stoppable {
             return;
         }
         engine.getSounds().playMusic(currentMusic, 250, 250);
+        */
     }
 
     /**
