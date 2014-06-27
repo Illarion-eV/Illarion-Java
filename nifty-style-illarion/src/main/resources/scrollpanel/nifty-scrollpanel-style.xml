@@ -16,13 +16,23 @@
   -->
 <nifty-styles>
     <style id="nifty-scrollpanel">
-        <attributes backgroundColor="#000000bf"/>
+        <attributes backgroundColor="#00000000"/>
     </style>
     <style id="nifty-scrollpanel#scrollpanel">
+        <attributes padding="2px"/>
+    </style>
+    <style id="nifty-scrollpanel#bottom-right">
+        <attributes width="16px" height="16px"/>
+    </style>
+
+    <style id="nifty-chatlog">
+        <attributes backgroundColor="#000a"/>
+    </style>
+    <style id="nifty-chatlog#scrollpanel">
         <attributes padding="2px"
                     backgroundImage="gui/blackborder.png" imageMode="resize:1,30,1,1,1,30,1,1,1,30,1,1"/>
     </style>
-    <style id="nifty-scrollpanel#bottom-right">
+    <style id="nifty-chatlog#bottom-right">
         <attributes width="16px" height="16px"/>
     </style>
 </nifty-styles>
