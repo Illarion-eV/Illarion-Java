@@ -44,7 +44,7 @@
                             <control name="textfield" id="chatMsg" style="chat-textfield" maxLength="255"
                                      width="*" height="24px" font="textFont" wrap="true"/>
                             <control name="button" id="expandTextLogBtn" style="nifty-button-text-log" valign="bottom"
-                                     focusable="false" marginLeft="3px"/>
+                                     focusable="false"/>
                         </panel>
                     </panel>
                 </panel>
