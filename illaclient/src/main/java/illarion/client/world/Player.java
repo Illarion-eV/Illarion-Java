@@ -452,18 +452,7 @@ public final class Player {
      * @return the visibility of the character in percent
      */
     public int canSee(@Nonnull Char chara) {
-        if (isPlayer(chara.getCharId())) {
-            return Char.VISIBILITY_MAX;
-        }
-
-        int visibility = Char.VISIBILITY_MAX;
-        Avatar avatar = chara.getAvatar();
-        if (avatar != null) {
-            visibility = avatar.getTemplate().getAvatarInfo().getVisibility();
-        }
-        visibility += chara.getVisibilityBonus();
-
-        return getVisibility(chara.getLocation(), visibility);
+        return Char.VISIBILITY_MAX;
     }
 
     /**
@@ -474,56 +463,6 @@ public final class Player {
      */
     public boolean isPlayer(@Nullable CharacterId checkId) {
         return (playerId != null) && playerId.equals(checkId);
-    }
-
-    /**
-     * Get the visibility of a target location for the players character.
-     *
-     * @param targetLoc The location that is checked for visibility
-     * @param limit The maximum value for the visibility
-     * @return The visibility of the target location
-     */
-    private int getVisibility(@Nonnull Location targetLoc, int limit) {
-        // target is at same level or above char
-        boolean visible = targetLoc.getScZ() <= character.getLocation().getScZ();
-        // calculate line-of-sight
-        if (visible && (character.getLocation().getDistance(targetLoc) < 30)) {
-            // calculate intervening fields.
-            // note that the order of fields may be inverted
-            Bresenham line = Bresenham.getInstance();
-            try {
-                line.calculate(playerLocation, targetLoc);
-            } catch (@Nonnull IllegalStateException ex) {
-                return 0;
-            }
-            // examine line without start and end point
-            int length = line.getLength() - 1;
-            GameMap map = World.getMap();
-            Point point = new Point();
-            int coverage = World.getWeather().getVisiblity() -
-                    ((getCharacter().getAttribute(CharacterAttribute.Perception) - PERCEPTION_AVERAGE) *
-                            PERCEPTION_COVER_SHARE);
-            // skip tile the character is standing on
-            for (int i = 1; i < length; i++) {
-                line.getPoint(i, point);
-                MapTile tile = map.getMapAt(point.x, point.y, playerLocation.getScZ());
-                if (tile != null) {
-                    coverage += tile.getCoverage();
-
-                    if (coverage >= limit) {
-                        return 0;
-                    }
-                }
-                // include distance in calculation 1% per tile
-                coverage++;
-            }
-            int quality = limit - coverage;
-            if (quality > (Char.VISIBILITY_MAX / 2)) {
-                return Char.VISIBILITY_MAX;
-            }
-            return quality * 2;
-        }
-        return 0;
     }
 
     /**
