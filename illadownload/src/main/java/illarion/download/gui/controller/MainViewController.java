@@ -417,17 +417,21 @@ public class MainViewController extends AbstractController implements MavenDownl
     }
 
     @Override
-    public void reportNewState(@Nonnull final State state, @Nullable final ProgressMonitor progress) {
+    public void reportNewState(
+            @Nonnull final State state, @Nullable final ProgressMonitor progress, final boolean offline) {
         if (Platform.isFxApplicationThread()) {
             switch (state) {
                 case SearchingNewVersion:
-                    progressDescription.setText(resourceBundle.getString("searchingNewVersion"));
+                    progressDescription
+                            .setText((offline ? "Offline: " : "") + resourceBundle.getString("searchingNewVersion"));
                     break;
                 case ResolvingDependencies:
-                    progressDescription.setText(resourceBundle.getString("resolvingDependencies"));
+                    progressDescription
+                            .setText((offline ? "Offline: " : "") + resourceBundle.getString("resolvingDependencies"));
                     break;
                 case ResolvingArtifacts:
-                    progressDescription.setText(resourceBundle.getString("resolvingArtifacts"));
+                    progressDescription
+                            .setText((offline ? "Offline: " : "") + resourceBundle.getString("resolvingArtifacts"));
                     break;
             }
             if (progress == null) {
@@ -440,7 +444,7 @@ public class MainViewController extends AbstractController implements MavenDownl
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    reportNewState(state, progress);
+                    reportNewState(state, progress, offline);
                 }
             });
         }

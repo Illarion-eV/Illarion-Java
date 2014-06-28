@@ -64,7 +64,7 @@ public final class JavaLauncher {
      * Construct a new launcher and set the classpath and the class to launch.
      */
     @SuppressWarnings("nls")
-    public JavaLauncher(final boolean snapshot) {
+    public JavaLauncher(boolean snapshot) {
         this.snapshot = snapshot;
 
         launchTimer = new Timer(10000, new Runnable() {
@@ -89,8 +89,8 @@ public final class JavaLauncher {
      * @return {@code true} in case launching the application was successful
      */
     @SuppressWarnings("nls")
-    public boolean launch(@Nonnull final Collection<File> classpath, @Nonnull final String startupClass) {
-        final String classPathString = buildClassPathString(classpath);
+    public boolean launch(@Nonnull Collection<File> classpath, @Nonnull String startupClass) {
+        String classPathString = buildClassPathString(classpath);
 
         Iterable<Path> executablePaths;
         if (OSDetection.isMacOSX()) {
@@ -101,7 +101,7 @@ public final class JavaLauncher {
 
         for (Path executable : executablePaths) {
             if (isJavaExecutableWorking(executable)) {
-                final List<String> callList = new ArrayList<>();
+                List<String> callList = new ArrayList<>();
                 callList.add(escapePath(executable.toString()));
                 callList.add("-classpath");
                 callList.add(classPathString);
@@ -113,7 +113,7 @@ public final class JavaLauncher {
                 if (launchCallList(callList)) {
                     return true;
                 } else {
-                    LOGGER.error("Error while launching application: {}" + errorData);
+                    LOGGER.error("Error while launching application: {}{}", errorData);
                 }
             }
         }
@@ -126,7 +126,7 @@ public final class JavaLauncher {
      * @param executable the path to the executable
      * @return {@code true} in case java meets the required specifications
      */
-    private boolean isJavaExecutableWorking(@Nonnull final Path executable) {
+    private boolean isJavaExecutableWorking(@Nonnull Path executable) {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(executable.toString(), "-version");
             processBuilder.redirectErrorStream(true);
@@ -166,12 +166,12 @@ public final class JavaLauncher {
      * @return the string that represents the class path
      */
     @Nonnull
-    private String buildClassPathString(@Nonnull final Collection<File> classpath) {
+    private String buildClassPathString(@Nonnull Collection<File> classpath) {
         if (classpath.isEmpty()) {
             return "";
         }
-        final StringBuilder builder = new StringBuilder();
-        for (final File classPathFile : classpath) {
+        StringBuilder builder = new StringBuilder();
+        for (File classPathFile : classpath) {
             builder.append(classPathFile.getAbsolutePath());
             builder.append(File.pathSeparatorChar);
         }
@@ -186,7 +186,7 @@ public final class JavaLauncher {
      * @param orgPath the original plain path
      * @return the escaped path
      */
-    private static String escapePath(@Nonnull final String orgPath) {
+    private static String escapePath(@Nonnull String orgPath) {
         if (OSDetection.isWindows()) {
             if (orgPath.contains(" ")) {
                 return '"' + orgPath + '"';
@@ -201,13 +201,13 @@ public final class JavaLauncher {
      *
      * @param callList the call list to print
      */
-    private static void printCallList(@Nonnull final List<String> callList) {
+    private static void printCallList(@Nonnull List<String> callList) {
         if (LOGGER.isDebugEnabled()) {
-            final StringBuilder debugBuilder = new StringBuilder();
+            StringBuilder debugBuilder = new StringBuilder();
             debugBuilder.append("Calling: ");
             debugBuilder.append(System.getProperty("line.separator"));
 
-            for (final String aCallList : callList) {
+            for (String aCallList : callList) {
                 debugBuilder.append(aCallList).append(' ');
             }
             LOGGER.debug(debugBuilder.toString());
@@ -220,19 +220,19 @@ public final class JavaLauncher {
      * @param callList launch the call list
      * @return {@code true} in case the launch was successful
      */
-    private boolean launchCallList(final List<String> callList) {
+    private boolean launchCallList(List<String> callList) {
         try {
-            final ProcessBuilder pBuilder = new ProcessBuilder(callList);
+            ProcessBuilder pBuilder = new ProcessBuilder(callList);
 
             Path workingDirectory = DirectoryManager.getInstance().getWorkingDirectory();
             if (workingDirectory != null) {
                 pBuilder.directory(workingDirectory.toFile());
             }
             pBuilder.redirectErrorStream(true);
-            final Process proc = pBuilder.start();
+            Process proc = pBuilder.start();
             proc.getOutputStream().close();
 
-            final StringBuilder outputBuffer = new StringBuilder();
+            StringBuilder outputBuffer = new StringBuilder();
             outputReader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 
             launchTimer.start();
@@ -242,7 +242,7 @@ public final class JavaLauncher {
                 if (cancelExecution) {
                     throw new IOException("Response Timeout.");
                 }
-                final String line = outputReader.readLine();
+                String line = outputReader.readLine();
                 if (line == null) {
                     errorData = outputBuffer.toString().trim();
                     return false;
@@ -254,9 +254,9 @@ public final class JavaLauncher {
                 outputBuffer.append(line);
                 outputBuffer.append('\n');
             }
-        } catch (@Nonnull final Exception e) {
-            final StringWriter sWriter = new StringWriter();
-            final PrintWriter writer = new PrintWriter(sWriter);
+        } catch (@Nonnull Exception e) {
+            StringWriter sWriter = new StringWriter();
+            PrintWriter writer = new PrintWriter(sWriter);
             e.printStackTrace(writer);
             writer.flush();
             errorData = sWriter.toString();
@@ -265,7 +265,7 @@ public final class JavaLauncher {
             if (outputReader != null) {
                 try {
                     outputReader.close();
-                } catch (@Nonnull final IOException e) {
+                } catch (@Nonnull IOException e) {
                     // nothing
                 }
             }

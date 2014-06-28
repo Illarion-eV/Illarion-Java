@@ -176,7 +176,7 @@ public class MavenDownloader {
         Artifact artifact = new DefaultArtifact(groupId, artifactId, "jar", "[1,]");
         try {
             if (callback != null) {
-                callback.reportNewState(MavenDownloaderCallback.State.SearchingNewVersion, null);
+                callback.reportNewState(MavenDownloaderCallback.State.SearchingNewVersion, null, offline);
             }
             VersionRangeResult result = system
                     .resolveVersionRange(session, new VersionRangeRequest(artifact, repositories, RUNTIME));
@@ -230,7 +230,7 @@ public class MavenDownloader {
         }
 
         if (callback != null) {
-            callback.reportNewState(MavenDownloaderCallback.State.ResolvingDependencies, null);
+            callback.reportNewState(MavenDownloaderCallback.State.ResolvingDependencies, null, offline);
         }
         Dependency dependency = new Dependency(artifact, RUNTIME, false);
 
@@ -261,7 +261,7 @@ public class MavenDownloader {
                 for (@Nonnull FutureArtifactRequest request : requests) {
                     progressMonitor.addChild(request.getProgressMonitor());
                 }
-                callback.reportNewState(MavenDownloaderCallback.State.ResolvingArtifacts, progressMonitor);
+                callback.reportNewState(MavenDownloaderCallback.State.ResolvingArtifacts, progressMonitor, offline);
             }
 
             ExecutorService executorService = Executors.newCachedThreadPool();
