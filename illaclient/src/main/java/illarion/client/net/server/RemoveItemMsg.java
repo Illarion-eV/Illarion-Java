@@ -36,7 +36,9 @@ public final class RemoveItemMsg extends AbstractReply {
     /**
      * The location the top item shall be removed from.
      */
-    private transient Location loc;
+    private Location loc;
+
+    private int newTileMovePoints;
 
     /**
      * Decode the remove top item data the receiver got and prepare it for the execution.
@@ -45,8 +47,9 @@ public final class RemoveItemMsg extends AbstractReply {
      * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         loc = decodeLocation(reader);
+        newTileMovePoints = reader.readUByte();
     }
 
     /**
@@ -56,7 +59,7 @@ public final class RemoveItemMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        final MapTile tile = World.getMap().getMapAt(loc);
+        MapTile tile = World.getMap().getMapAt(loc);
         if (tile != null) {
             tile.removeTopItem();
         }

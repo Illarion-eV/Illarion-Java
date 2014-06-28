@@ -50,6 +50,8 @@ public final class PutItemMsg extends AbstractReply {
      */
     private ItemCount number;
 
+    private int newTileMovePoints;
+
     /**
      * Decode the put item on map data the receiver got and prepare it for the execution.
      *
@@ -57,10 +59,11 @@ public final class PutItemMsg extends AbstractReply {
      * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         loc = decodeLocation(reader);
         itemId = new ItemId(reader);
         number = ItemCount.getInstance(reader);
+        newTileMovePoints = reader.readUByte();
     }
 
     /**
@@ -70,7 +73,7 @@ public final class PutItemMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        final MapTile tile = World.getMap().getMapAt(loc);
+        MapTile tile = World.getMap().getMapAt(loc);
         if (tile != null) {
             tile.addItem(itemId, number);
         }

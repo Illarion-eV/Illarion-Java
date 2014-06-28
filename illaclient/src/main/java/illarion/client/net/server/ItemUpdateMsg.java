@@ -60,7 +60,9 @@ public final class ItemUpdateMsg extends AbstractReply {
     /**
      * Position of the server map that is updated.
      */
-    private transient Location loc;
+    private Location loc;
+
+    private int newTileMovePoints;
 
     /**
      * Decode the items on tile data the receiver got and prepare it for the execution.
@@ -69,7 +71,7 @@ public final class ItemUpdateMsg extends AbstractReply {
      * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         loc = decodeLocation(reader);
 
         itemNumber = reader.readUByte();
@@ -78,6 +80,7 @@ public final class ItemUpdateMsg extends AbstractReply {
             itemId.add(new ItemId(reader));
             itemCount.add(ItemCount.getInstance(reader));
         }
+        newTileMovePoints = reader.readUByte();
     }
 
     /**
@@ -87,7 +90,7 @@ public final class ItemUpdateMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        final MapTile tile = World.getMap().getMapAt(loc);
+        MapTile tile = World.getMap().getMapAt(loc);
         if (tile != null) {
             tile.updateItems(itemNumber, itemId, itemCount);
         }

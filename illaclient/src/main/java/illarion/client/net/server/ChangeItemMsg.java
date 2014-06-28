@@ -43,7 +43,7 @@ public final class ChangeItemMsg extends AbstractReply {
     /**
      * The location on the map this update is performed on.
      */
-    private transient Location loc;
+    private Location loc;
 
     /**
      * The ID of the item after the change.
@@ -55,6 +55,8 @@ public final class ChangeItemMsg extends AbstractReply {
      */
     private ItemId oldItem;
 
+    private int newTileMovePoints;
+
     /**
      * Decode the change item data the receiver got and prepare it for the execution.
      *
@@ -62,11 +64,12 @@ public final class ChangeItemMsg extends AbstractReply {
      * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         loc = decodeLocation(reader);
         oldItem = new ItemId(reader);
         newItem = new ItemId(reader);
         count = ItemCount.getInstance(reader);
+        newTileMovePoints = reader.readUByte();
     }
 
     /**
@@ -76,7 +79,7 @@ public final class ChangeItemMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        final MapTile tile = World.getMap().getMapAt(loc);
+        MapTile tile = World.getMap().getMapAt(loc);
         if (tile != null) {
             tile.changeTopItem(oldItem, newItem, count);
         }
