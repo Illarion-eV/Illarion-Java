@@ -20,6 +20,8 @@ import de.lessvoid.nifty.input.keyboard.KeyboardInputEvent;
 import de.lessvoid.nifty.spi.input.InputSystem;
 import de.lessvoid.nifty.tools.resourceloader.NiftyResourceLoader;
 import org.illarion.engine.input.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,6 +32,8 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class IgeInputSystem implements InputSystem, InputListener {
+    private static final Logger log = LoggerFactory.getLogger(IgeInputSystem.class);
+
     /**
      * This value contains a key that was stalled as key down to properly detect typing events.
      */
@@ -40,12 +44,6 @@ public class IgeInputSystem implements InputSystem, InputListener {
      * The amount of mouse click events that should be consumed by the Nifty-GUI.
      */
     private int consumeClicks;
-
-    /**
-     * This is set {@code true} in case the input system detected a mouse click.
-     */
-    private boolean receivedClick;
-
     /**
      * The input implementation of the engine.
      */
@@ -157,8 +155,8 @@ public class IgeInputSystem implements InputSystem, InputListener {
         } else {
             int buttonKey = getNiftyButtonKey(button);
             if (currentConsumer.processMouseEvent(mouseX, mouseY, 0, buttonKey, true)) {
+                log.debug("Nifty processed event. Consuming next click.");
                 consumeClicks++;
-                receivedClick = false;
             } else {
                 listener.buttonDown(mouseX, mouseY, button);
             }
@@ -174,7 +172,7 @@ public class IgeInputSystem implements InputSystem, InputListener {
             listener.buttonUp(mouseX, mouseY, button);
         } else {
             int buttonKey = getNiftyButtonKey(button);
-            if (!receivedClick) {
+            if (consumeClicks > 0) {
                 consumeClicks--;
             }
             if (!currentConsumer.processMouseEvent(mouseX, mouseY, 0, buttonKey, false)) {
@@ -192,10 +190,10 @@ public class IgeInputSystem implements InputSystem, InputListener {
             listener.buttonClicked(mouseX, mouseY, button, count);
         } else {
             consumeClicks--;
-            receivedClick = true;
             if (count > 1) {
-                consumeClicks++;
                 buttonClicked(mouseX, mouseY, button, count - 1);
+            } else {
+                log.debug("Consumed one click.");
             }
         }
     }

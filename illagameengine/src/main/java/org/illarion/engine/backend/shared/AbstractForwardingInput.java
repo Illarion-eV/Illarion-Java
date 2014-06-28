@@ -20,10 +20,10 @@ import org.illarion.engine.input.ForwardingTarget;
 import org.illarion.engine.input.Input;
 
 import javax.annotation.Nonnull;
-import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 /**
  * This implementation of the input only implements the components required for the forwarding flag.
@@ -35,7 +35,7 @@ public abstract class AbstractForwardingInput implements Input {
      * The internal structure used to store the forwarding flags.
      */
     @Nonnull
-    private final Map<ForwardingTarget, Boolean> forwardingFlags;
+    private final Set<ForwardingTarget> forwardingFlags;
 
     /**
      * The list of forwarding listeners that receive updates in case the forwarding state changed.
@@ -47,61 +47,53 @@ public abstract class AbstractForwardingInput implements Input {
      * Create a new instance and setup the required internal structures.
      */
     protected AbstractForwardingInput() {
-        forwardingFlags = new EnumMap<>(ForwardingTarget.class);
+        forwardingFlags = EnumSet.noneOf(ForwardingTarget.class);
         forwardingListeners = new LinkedList<>();
-        disableForwarding(ForwardingTarget.All);
     }
 
     @Override
-    public boolean isForwardingEnabled(@Nonnull final ForwardingTarget target) {
-        return forwardingFlags.get(ForwardingTarget.All) || forwardingFlags.get(target);
+    public boolean isForwardingEnabled(@Nonnull ForwardingTarget target) {
+        return forwardingFlags.contains(ForwardingTarget.All) || forwardingFlags.contains(target);
     }
 
     @Override
-    public void enableForwarding(@Nonnull final ForwardingTarget target) {
-        boolean changedSomething = false;
+    public void enableForwarding(@Nonnull ForwardingTarget target) {
+        boolean changedSomething;
         if (target == ForwardingTarget.All) {
-            for (@Nonnull final ForwardingTarget currentTarget : ForwardingTarget.values()) {
-                if (Boolean.FALSE.equals(forwardingFlags.put(currentTarget, Boolean.TRUE))) {
-                    changedSomething = true;
-                }
-            }
+            changedSomething = forwardingFlags.addAll(EnumSet.allOf(ForwardingTarget.class));
         } else {
-            changedSomething = Boolean.FALSE.equals(forwardingFlags.put(target, Boolean.TRUE));
+            changedSomething = forwardingFlags.add(target);
         }
         if (changedSomething) {
-            for (@Nonnull final ForwardingListener listener : forwardingListeners) {
+            for (@Nonnull ForwardingListener listener : forwardingListeners) {
                 listener.forwardingEnabledFor(target);
             }
         }
     }
 
     @Override
-    public void disableForwarding(@Nonnull final ForwardingTarget target) {
+    public void disableForwarding(@Nonnull ForwardingTarget target) {
         boolean changedSomething = false;
         if (target == ForwardingTarget.All) {
-            for (@Nonnull final ForwardingTarget currentTarget : ForwardingTarget.values()) {
-                if (Boolean.TRUE.equals(forwardingFlags.put(currentTarget, Boolean.FALSE))) {
-                    changedSomething = true;
-                }
-            }
+            changedSomething = !forwardingFlags.isEmpty();
+            forwardingFlags.clear();
         } else {
-            if (Boolean.TRUE.equals(forwardingFlags.put(ForwardingTarget.All, Boolean.FALSE))) {
+            if (forwardingFlags.remove(ForwardingTarget.All)) {
                 changedSomething = true;
             }
-            if (Boolean.TRUE.equals(forwardingFlags.put(target, Boolean.FALSE))) {
+            if (forwardingFlags.remove(target)) {
                 changedSomething = true;
             }
         }
         if (changedSomething) {
-            for (@Nonnull final ForwardingListener listener : forwardingListeners) {
+            for (@Nonnull ForwardingListener listener : forwardingListeners) {
                 listener.forwardingDisabledFor(target);
             }
         }
     }
 
     @Override
-    public void addForwardingListener(@Nonnull final ForwardingListener listener) {
+    public void addForwardingListener(@Nonnull ForwardingListener listener) {
         forwardingListeners.add(listener);
     }
 }
