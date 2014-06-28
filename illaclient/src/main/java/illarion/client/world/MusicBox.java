@@ -80,7 +80,7 @@ public final class MusicBox implements Stoppable {
     /**
      * This is the constructor that prepares this class for proper operation.
      */
-    MusicBox(@Nonnull final Engine engine) {
+    MusicBox(@Nonnull Engine engine) {
         this.engine = engine;
         overrideSoundId = NO_TRACK;
         fightingMusicPlaying = false;
@@ -92,33 +92,33 @@ public final class MusicBox implements Stoppable {
         updateSettings(null, IllaClient.getCfg());
     }
 
-    private void updateSettings(@Nullable final String setting, @Nonnull final Config cfg) {
+    private void updateSettings(@Nullable String setting, @Nonnull Config cfg) {
         if ((setting == null) || "musicOn".equals(setting)) {
-            final boolean musicEnabled = cfg.getBoolean("musicOn");
+            boolean musicEnabled = cfg.getBoolean("musicOn");
             if (musicEnabled) {
-                final float musicVolume = cfg.getFloat("musicVolume") / Player.MAX_CLIENT_VOL;
+                float musicVolume = cfg.getFloat("musicVolume") / Player.MAX_CLIENT_VOL;
                 engine.getSounds().setMusicVolume(musicVolume);
             } else {
                 engine.getSounds().setMusicVolume(0.f);
             }
         }
         if ((setting == null) || "musicVolume".equals(setting)) {
-            final float musicVolume = cfg.getFloat("musicVolume") / Player.MAX_CLIENT_VOL;
+            float musicVolume = cfg.getFloat("musicVolume") / Player.MAX_CLIENT_VOL;
             if (IllaClient.getCfg().getBoolean("musicOn")) {
                 engine.getSounds().setMusicVolume(musicVolume);
             }
         }
         if ((setting == null) || "soundOn".equals(setting)) {
-            final boolean soundEnabled = cfg.getBoolean("soundOn");
+            boolean soundEnabled = cfg.getBoolean("soundOn");
             if (soundEnabled) {
-                final float soundVolume = cfg.getFloat("soundVolume") / Player.MAX_CLIENT_VOL;
+                float soundVolume = cfg.getFloat("soundVolume") / Player.MAX_CLIENT_VOL;
                 engine.getSounds().setSoundVolume(soundVolume);
             } else {
                 engine.getSounds().setSoundVolume(0.f);
             }
         }
         if ((setting == null) || "soundVolume".equals(setting)) {
-            final float soundVolume = cfg.getFloat("soundVolume") / Player.MAX_CLIENT_VOL;
+            float soundVolume = cfg.getFloat("soundVolume") / Player.MAX_CLIENT_VOL;
             if (IllaClient.getCfg().getBoolean("soundOn")) {
                 engine.getSounds().setSoundVolume(soundVolume);
             }
@@ -126,7 +126,7 @@ public final class MusicBox implements Stoppable {
     }
 
     @EventTopicPatternSubscriber(topicPattern = "((music)|(sound))((On)|(Volume))")
-    public void onUpdateSoundMusicConfig(@Nonnull final String topic, @Nonnull final ConfigChangedEvent data) {
+    public void onUpdateSoundMusicConfig(@Nonnull String topic, @Nonnull ConfigChangedEvent data) {
         updateSettings(topic, data.getConfig());
     }
 
@@ -152,7 +152,7 @@ public final class MusicBox implements Stoppable {
      *
      * @param musicId the ID of the music to play
      */
-    public void playMusicTrack(final int musicId) {
+    public void playMusicTrack(int musicId) {
         if (musicId != overrideSoundId) {
             overrideSoundId = musicId;
         }
@@ -170,8 +170,7 @@ public final class MusicBox implements Stoppable {
      *
      * @param id the ID of the sound track to play
      */
-    private void setSoundTrack(final int id) {
-        /*
+    private void setSoundTrack(int id) {
         if (currentMusicId == id) {
             return;
         }
@@ -183,19 +182,18 @@ public final class MusicBox implements Stoppable {
             return;
         }
 
-        final Music currentMusic = SongFactory.getInstance().getSong(id, engine.getAssets().getSoundsManager());
+        Music currentMusic = SongFactory.getInstance().getSong(id, engine.getAssets().getSoundsManager());
         if (currentMusic == null) {
-            LOGGER.error("Requested music was not found: " + id);
+            log.error("Requested music was not found: {}", id);
             return;
         }
         engine.getSounds().playMusic(currentMusic, 250, 250);
-        */
     }
 
     /**
      * The logging instance that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(MusicBox.class);
+    private static final Logger log = LoggerFactory.getLogger(MusicBox.class);
 
     /**
      * Stop playing the fighting music and fall back to the last sound track played.
@@ -211,15 +209,9 @@ public final class MusicBox implements Stoppable {
      * its needed.
      */
     public void updatePlayerLocation() {
-        final MapTile tile = World.getMap().getMapAt(World.getPlayer().getLocation());
+        MapTile tile = World.getMap().getMapAt(World.getPlayer().getLocation());
 
-        final int newId;
-        if (tile == null) {
-            // in case the tile is not found, stick with the default tracks to prevent the music from acting up
-            newId = currentDefaultTrack;
-        } else {
-            newId = tile.getTileMusic();
-        }
+        int newId = (tile == null) ? currentDefaultTrack : tile.getTileMusic();
         if (newId != currentDefaultTrack) {
             currentDefaultTrack = newId;
         }

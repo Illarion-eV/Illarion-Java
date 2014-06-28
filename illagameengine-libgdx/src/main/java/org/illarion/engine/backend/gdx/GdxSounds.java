@@ -18,6 +18,8 @@ package org.illarion.engine.backend.gdx;
 import org.illarion.engine.sound.Music;
 import org.illarion.engine.sound.Sound;
 import org.illarion.engine.sound.Sounds;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,6 +30,7 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 class GdxSounds implements Sounds {
+    private static final Logger log = LoggerFactory.getLogger(GdxSounds.class);
 
     /**
      * The current global music volume.
@@ -58,11 +61,19 @@ class GdxSounds implements Sounds {
         return musicVolume;
     }
 
+    public boolean isMusicOn() {
+        return getMusicVolume() > 1.e-4;
+    }
+
     @Override
     public void setMusicVolume(float volume) {
         musicVolume = volume;
         if (currentBackgroundMusic != null) {
-            currentBackgroundMusic.setVolume(volume);
+            if (isMusicOn()) {
+                currentBackgroundMusic.setVolume(volume);
+            } else {
+                stopMusic(0);
+            }
         }
     }
 
@@ -81,6 +92,14 @@ class GdxSounds implements Sounds {
         return soundVolume;
     }
 
+    public boolean isSoundOn() {
+        return isSoundOn(getSoundVolume());
+    }
+
+    public static boolean isSoundOn(float volume) {
+        return volume > 1.e-4;
+    }
+
     @Override
     public boolean isMusicPlaying(@Nonnull Music music) {
         return (music instanceof GdxMusic) && ((GdxMusic) music).getWrappedMusic().isPlaying();
@@ -93,10 +112,14 @@ class GdxSounds implements Sounds {
 
     @Override
     public void playMusic(@Nonnull Music music, int fadeOutTime, int fadeInTime) {
+        if (!(music instanceof GdxMusic)) {
+            throw new IllegalArgumentException("Type of music track is wrong: " + music.getClass());
+        }
         if (currentBackgroundMusic != null) {
             currentBackgroundMusic.stop();
         }
-        if (music instanceof GdxMusic) {
+        if (isMusicOn()) {
+            log.info("Now starting to play: {}", music);
             currentBackgroundMusic = ((GdxMusic) music).getWrappedMusic();
             currentBackgroundMusic.setLooping(true);
             currentBackgroundMusic.setVolume(getMusicVolume());
@@ -106,19 +129,18 @@ class GdxSounds implements Sounds {
 
     @Override
     public int playSound(@Nonnull Sound sound, float volume) {
-        if (sound instanceof GdxSound) {
-            return (int) ((GdxSound) sound).getWrappedSound().play(soundVolume * volume);
+        if (!(sound instanceof GdxSound)) {
+            throw new IllegalArgumentException("Type of sound effect is wrong: " + sound.getClass());
+        }
+        if (isSoundOn(getSoundVolume() * volume)) {
+            return (int) ((GdxSound) sound).getWrappedSound().play(getSoundVolume() * volume);
         }
         return -1;
     }
 
     @Override
-    public int playSound(
-            @Nonnull Sound sound, float volume, int offsetX, int offsetY, int offsetZ) {
-        if (sound instanceof GdxSound) {
-            return (int) ((GdxSound) sound).getWrappedSound().play(soundVolume * volume);
-        }
-        return -1;
+    public int playSound(@Nonnull Sound sound, float volume, int offsetX, int offsetY, int offsetZ) {
+        return playSound(sound, volume);
     }
 
     @Override
@@ -128,8 +150,14 @@ class GdxSounds implements Sounds {
 
     @Override
     public void setSoundVolume(@Nonnull Sound sound, int handle, float volume) {
-        if (sound instanceof GdxSound) {
-            ((GdxSound) sound).getWrappedSound().setVolume(handle, volume);
+        if (!(sound instanceof GdxSound)) {
+            throw new IllegalArgumentException("Type of sound effect is wrong: " + sound.getClass());
+        }
+
+        if (isSoundOn(getSoundVolume() * volume)) {
+            ((GdxSound) sound).getWrappedSound().setVolume(handle, getSoundVolume() * volume);
+        } else {
+            stopSound(sound, handle);
         }
     }
 
@@ -137,6 +165,7 @@ class GdxSounds implements Sounds {
     public void stopMusic(int fadeOutTime) {
         if (currentBackgroundMusic != null) {
             currentBackgroundMusic.stop();
+            currentBackgroundMusic = null;
         }
     }
 

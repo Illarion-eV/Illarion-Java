@@ -32,12 +32,16 @@ class GdxMusic implements Music {
     @Nonnull
     private final com.badlogic.gdx.audio.Music wrappedMusic;
 
+    @Nonnull
+    private final String ref;
+
     /**
      * Create a new wrapper for a music track.
      *
      * @param wrappedMusic the new music wrapper
      */
-    GdxMusic(@Nonnull com.badlogic.gdx.audio.Music wrappedMusic) {
+    GdxMusic(@Nonnull String ref, @Nonnull com.badlogic.gdx.audio.Music wrappedMusic) {
+        this.ref = ref;
         this.wrappedMusic = wrappedMusic;
     }
 
@@ -54,5 +58,11 @@ class GdxMusic implements Music {
     @Nonnull
     public com.badlogic.gdx.audio.Music getWrappedMusic() {
         return wrappedMusic;
+    }
+
+    @Nonnull
+    @Override
+    public String toString() {
+        return "GDX Music: " + ref;
     }
 }

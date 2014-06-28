@@ -31,12 +31,16 @@ class GdxSound implements Sound {
     @Nonnull
     private final com.badlogic.gdx.audio.Sound wrappedSound;
 
+    @Nonnull
+    private final String ref;
+
     /**
      * Create a new sound effect wrapper.
      *
      * @param wrappedSound the sound that is wrapped
      */
-    GdxSound(@Nonnull com.badlogic.gdx.audio.Sound wrappedSound) {
+    GdxSound(@Nonnull String ref, @Nonnull com.badlogic.gdx.audio.Sound wrappedSound) {
+        this.ref = ref;
         this.wrappedSound = wrappedSound;
     }
 
@@ -53,5 +57,11 @@ class GdxSound implements Sound {
     @Nonnull
     public com.badlogic.gdx.audio.Sound getWrappedSound() {
         return wrappedSound;
+    }
+
+    @Nonnull
+    @Override
+    public String toString() {
+        return "GDX Sound: " + ref;
     }
 }

@@ -58,7 +58,7 @@ class GdxSoundsManager extends AbstractSoundsManager {
     @Override
     protected Sound loadSound(@Nonnull String ref) {
         try {
-            return new GdxSound(audio.newSound(files.internal(ref)));
+            return new GdxSound(ref, audio.newSound(files.internal(ref)));
         } catch (@Nonnull GdxRuntimeException e) {
             return null;
         }
@@ -68,7 +68,7 @@ class GdxSoundsManager extends AbstractSoundsManager {
     @Override
     protected Music loadMusic(@Nonnull String ref) {
         try {
-            return new GdxMusic(audio.newMusic(files.internal(ref)));
+            return new GdxMusic(ref, audio.newMusic(files.internal(ref)));
         } catch (@Nonnull GdxRuntimeException e) {
             return null;
         }
