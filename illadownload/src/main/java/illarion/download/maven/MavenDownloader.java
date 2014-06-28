@@ -130,13 +130,13 @@ public class MavenDownloader {
             InetAddress inet = InetAddress.getByName("illarion.org");
             while (requestTimeOut > 20) {
                 if (inet.isReachable(requestTimeOut)) {
-                    requestTimeOut /= 5;
+                    requestTimeOut /= 2;
                 } else {
                     break;
                 }
             }
             for (int i = 0; i < attemps; i++) {
-                requestTimeOut *= 5;
+                requestTimeOut *= 3;
             }
         } catch (IOException e) {
             LOGGER.warn("No internet connection. Activating offline mode.");
@@ -155,7 +155,11 @@ public class MavenDownloader {
         session.setConfigProperty(ConfigurationProperties.USER_AGENT, APPLICATION.getApplicationIdentifier());
         session.setConfigProperty(ConfigurationProperties.REQUEST_TIMEOUT, requestTimeOut);
 
-        LOGGER.info("Used request timeout: {}ms", requestTimeOut);
+        if (requestTimeOut > 30000) {
+            LOGGER.warn("Used request timeout level is very high: {}ms", requestTimeOut);
+        } else {
+            LOGGER.info("Used request timeout: {}ms", requestTimeOut);
+        }
 
         repositories = new ArrayList<>();
         setupRepositories();

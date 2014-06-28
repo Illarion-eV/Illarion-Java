@@ -113,7 +113,7 @@ public final class JavaLauncher {
                 if (launchCallList(callList)) {
                     return true;
                 } else {
-                    LOGGER.error("Error while launching application: {}{}", errorData);
+                    LOGGER.error("Error while launching application: {}", errorData);
                 }
             }
         }
