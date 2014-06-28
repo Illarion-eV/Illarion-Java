@@ -58,6 +58,8 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
+import java.io.IOException;
+import java.net.InetAddress;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.*;
@@ -102,6 +104,11 @@ public class MavenDownloader {
     private final boolean snapshot;
 
     /**
+     * This value is set in case the application is running in offline mode.
+     */
+    private final boolean offline;
+
+    /**
      * The logger that takes care for the logging output of this class.
      */
     @Nonnull
@@ -112,9 +119,30 @@ public class MavenDownloader {
      * versions of the main application.
      *
      * @param snapshot {@code true} in case the downloader is supposed to use snapshot versions of the main application
+     * @param attemps the indicator how many times downloading was already tried and failed.
      */
-    public MavenDownloader(boolean snapshot) {
+    public MavenDownloader(boolean snapshot, int attemps) {
         this.snapshot = snapshot;
+
+        boolean offlineFlag = false;
+        int requestTimeOut = 180000; // 3 Minutes
+        try {
+            InetAddress inet = InetAddress.getByName("illarion.org");
+            while (requestTimeOut > 20) {
+                if (inet.isReachable(requestTimeOut)) {
+                    requestTimeOut /= 5;
+                } else {
+                    break;
+                }
+            }
+            for (int i = 0; i < attemps; i++) {
+                requestTimeOut *= 5;
+            }
+        } catch (IOException e) {
+            LOGGER.warn("No internet connection. Activating offline mode.");
+            offlineFlag = true;
+        }
+        offline = offlineFlag;
 
         serviceLocator = new DefaultServiceLocator();
         setupServiceLocator();
@@ -125,7 +153,9 @@ public class MavenDownloader {
         session.setTransferListener(new MavenTransferListener());
         session.setRepositoryListener(new MavenRepositoryListener());
         session.setConfigProperty(ConfigurationProperties.USER_AGENT, APPLICATION.getApplicationIdentifier());
-        session.setConfigProperty(ConfigurationProperties.REQUEST_TIMEOUT, 60000);
+        session.setConfigProperty(ConfigurationProperties.REQUEST_TIMEOUT, requestTimeOut);
+
+        LOGGER.info("Used request timeout: {}ms", requestTimeOut);
 
         repositories = new ArrayList<>();
         setupRepositories();
@@ -141,7 +171,8 @@ public class MavenDownloader {
      */
     @Nullable
     public Collection<File> downloadArtifact(
-            @Nonnull String groupId, @Nonnull String artifactId, @Nullable MavenDownloaderCallback callback) {
+            @Nonnull String groupId, @Nonnull String artifactId, @Nullable MavenDownloaderCallback callback)
+            throws DependencyCollectionException, InterruptedException, ExecutionException {
         Artifact artifact = new DefaultArtifact(groupId, artifactId, "jar", "[1,]");
         try {
             if (callback != null) {
@@ -245,7 +276,7 @@ public class MavenDownloader {
 
             if (result.isEmpty()) {
                 if (callback != null) {
-                    callback.resolvingDone(null);
+                    callback.resolvingDone(Collections.<File>emptyList());
                 }
                 return null;
             }
@@ -253,20 +284,21 @@ public class MavenDownloader {
                 callback.resolvingDone(result);
             }
             return result;
-        } catch (@Nonnull DependencyCollectionException | InterruptedException | ExecutionException e) {
-            LOGGER.error("Failed to download.", e);
+        } catch (Exception e) {
+            if (callback != null) {
+                callback.resolvingFailed(e);
+            }
+            return null;
         }
-        if (callback != null) {
-            callback.resolvingDone(null);
-        }
-        return null;
     }
 
     private void setupRepositories() {
-        repositories.add(setupRepository("central", "http://repo1.maven.org/maven2/", true));
-        repositories.add(setupRepository("illarion", "http://illarion.org/media/java/maven", snapshot));
-        repositories
-                .add(setupRepository("oss-sonatype", "http://oss.sonatype.org/content/repositories/releases/", true));
+        if (!offline) {
+            repositories.add(setupRepository("central", "http://repo1.maven.org/maven2/", true));
+            repositories.add(setupRepository("illarion", "http://illarion.org/media/java/maven", snapshot));
+            repositories.add(setupRepository("oss-sonatype", "http://oss.sonatype.org/content/repositories/releases/",
+                                             true));
+        }
 
         Path localDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.Data);
         if (localDir == null) {

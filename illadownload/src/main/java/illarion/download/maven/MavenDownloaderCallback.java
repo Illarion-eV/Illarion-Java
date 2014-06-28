@@ -56,12 +56,19 @@ public interface MavenDownloaderCallback {
      * @param state the state that is active from now on
      * @param progress the progress of this state, this may be {@code null} in case the progress is not determined
      */
-    void reportNewState(@Nonnull final State state, @Nullable final ProgressMonitor progress);
+    void reportNewState(@Nonnull State state, @Nullable ProgressMonitor progress);
 
     /**
      * Report that the resolving is done.
      *
      * @param classpath the resolved classpath, this may be {@code null} in case the resolving failed
      */
-    void resolvingDone(@Nullable final Collection<File> classpath);
+    void resolvingDone(@Nonnull Collection<File> classpath);
+
+    /**
+     * Report that the resolving has failed and forward the exception that was caused in response.
+     *
+     * @param ex the resolving exception
+     */
+    void resolvingFailed(@Nonnull Exception ex);
 }

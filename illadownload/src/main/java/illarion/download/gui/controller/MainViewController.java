@@ -47,6 +47,7 @@ import javax.annotation.Nullable;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -91,7 +92,7 @@ public class MainViewController extends AbstractController implements MavenDownl
             public void run() {
                 try {
                     readNewsAndQuests();
-                } catch (@Nonnull final XmlPullParserException | IOException | ParseException e) {
+                } catch (@Nonnull XmlPullParserException | IOException | ParseException e) {
                     LOGGER.error("Failed reading news and quests.", e);
                 }
             }
@@ -108,7 +109,7 @@ public class MainViewController extends AbstractController implements MavenDownl
         public final String timeStamp;
         public final URL linkTarget;
 
-        NewsQuestEntry(@Nonnull final String title, @Nonnull final String timeStamp, @Nonnull final URL linkTarget) {
+        NewsQuestEntry(@Nonnull String title, @Nonnull String timeStamp, @Nonnull URL linkTarget) {
             this.title = title;
             this.timeStamp = timeStamp;
             this.linkTarget = linkTarget;
@@ -116,19 +117,19 @@ public class MainViewController extends AbstractController implements MavenDownl
     }
 
     private void readNewsAndQuests() throws XmlPullParserException, IOException, ParseException {
-        final XmlPullParserFactory parserFactory = XmlPullParserFactory.newInstance();
+        XmlPullParserFactory parserFactory = XmlPullParserFactory.newInstance();
         parserFactory.setValidating(false);
         parserFactory.setNamespaceAware(false);
 
-        final XmlPullParser parser = parserFactory.newPullParser();
-        final URL src = new URL("http://illarion.org/data/xml_launcher.php");
+        XmlPullParser parser = parserFactory.newPullParser();
+        URL src = new URL("http://illarion.org/data/xml_launcher.php");
         parser.setInput(new BufferedInputStream(src.openStream()), "UTF-8");
 
-        final Collection<NewsQuestEntry> newsList = new ArrayList<>();
-        final Collection<NewsQuestEntry> questList = new ArrayList<>();
+        Collection<NewsQuestEntry> newsList = new ArrayList<>();
+        Collection<NewsQuestEntry> questList = new ArrayList<>();
 
         int current = parser.nextTag();
-        while (current != XmlPullParser.START_TAG || !"launcher".equals(parser.getName())) {
+        while ((current != XmlPullParser.START_TAG) || !"launcher".equals(parser.getName())) {
             current = parser.nextTag();
         }
         parseLauncherXml(parser, newsList, questList);
@@ -138,9 +139,9 @@ public class MainViewController extends AbstractController implements MavenDownl
     }
 
     private static void parseLauncherXml(
-            @Nonnull final XmlPullParser parser,
-            @Nonnull final Collection<NewsQuestEntry> newsList,
-            @Nonnull final Collection<NewsQuestEntry> questList)
+            @Nonnull XmlPullParser parser,
+            @Nonnull Collection<NewsQuestEntry> newsList,
+            @Nonnull Collection<NewsQuestEntry> questList)
             throws IOException, XmlPullParserException, ParseException {
         while (true) {
             int current = parser.nextToken();
@@ -167,16 +168,16 @@ public class MainViewController extends AbstractController implements MavenDownl
     }
 
     private static void parserNewsXml(
-            @Nonnull final XmlPullParser parser, @Nonnull final Collection<NewsQuestEntry> newsList)
+            @Nonnull XmlPullParser parser, @Nonnull Collection<NewsQuestEntry> newsList)
             throws IOException, XmlPullParserException, ParseException {
-        final boolean useGerman = Locale.getDefault().getLanguage().equals(Locale.GERMAN.getLanguage());
+        boolean useGerman = Locale.getDefault().getLanguage().equals(Locale.GERMAN.getLanguage());
 
         String title = null;
         String timestamp = null;
         URL linkTarget = null;
 
-        final DateFormat parsingFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
-        final DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM);
+        DateFormat parsingFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM);
 
         while (true) {
             int current = parser.nextTag();
@@ -188,7 +189,7 @@ public class MainViewController extends AbstractController implements MavenDownl
                         case "news":
                             return;
                         case "item":
-                            if (title != null && timestamp != null && linkTarget != null) {
+                            if ((title != null) && (timestamp != null) && (linkTarget != null)) {
                                 newsList.add(new NewsQuestEntry(title, timestamp, linkTarget));
                             }
                             break;
@@ -200,8 +201,8 @@ public class MainViewController extends AbstractController implements MavenDownl
                             parser.nextText();
                             break;
                         case "title":
-                            final boolean german = "de".equals(parser.getAttributeValue(null, "lang"));
-                            final String text = parser.nextText();
+                            boolean german = "de".equals(parser.getAttributeValue(null, "lang"));
+                            String text = parser.nextText();
                             if (german == useGerman) {
                                 title = text;
                             }
@@ -210,7 +211,7 @@ public class MainViewController extends AbstractController implements MavenDownl
                             linkTarget = new URL(parser.nextText());
                             break;
                         case "date":
-                            final Date date = parsingFormat.parse(parser.nextText());
+                            Date date = parsingFormat.parse(parser.nextText());
                             timestamp = dateFormat.format(date);
                             break;
                     }
@@ -220,16 +221,16 @@ public class MainViewController extends AbstractController implements MavenDownl
     }
 
     private static void parserQuestXml(
-            @Nonnull final XmlPullParser parser, @Nonnull final Collection<NewsQuestEntry> newsList)
+            @Nonnull XmlPullParser parser, @Nonnull Collection<NewsQuestEntry> newsList)
             throws IOException, XmlPullParserException, ParseException {
-        final boolean useGerman = Locale.getDefault().getLanguage().equals(Locale.GERMAN.getLanguage());
+        boolean useGerman = Locale.getDefault().getLanguage().equals(Locale.GERMAN.getLanguage());
 
         String title = null;
         String timestamp = null;
         URL linkTarget = null;
 
-        final DateFormat parsingFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
-        final DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
+        DateFormat parsingFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
+        DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
 
         while (true) {
             int current = parser.nextTag();
@@ -241,7 +242,7 @@ public class MainViewController extends AbstractController implements MavenDownl
                         case "quests":
                             return;
                         case "item":
-                            if (title != null && timestamp != null && linkTarget != null) {
+                            if ((title != null) && (timestamp != null) && (linkTarget != null)) {
                                 newsList.add(new NewsQuestEntry(title, timestamp, linkTarget));
                             }
                             break;
@@ -253,8 +254,8 @@ public class MainViewController extends AbstractController implements MavenDownl
                             parser.nextText();
                             break;
                         case "title":
-                            final boolean german = "de".equals(parser.getAttributeValue(null, "lang"));
-                            final String text = parser.nextText();
+                            boolean german = "de".equals(parser.getAttributeValue(null, "lang"));
+                            String text = parser.nextText();
                             if (german == useGerman) {
                                 title = text;
                             }
@@ -263,7 +264,7 @@ public class MainViewController extends AbstractController implements MavenDownl
                             linkTarget = new URL(parser.nextText());
                             break;
                         case "date":
-                            final Date date = parsingFormat.parse(parser.nextText());
+                            Date date = parsingFormat.parse(parser.nextText());
                             timestamp = dateFormat.format(date);
                             break;
                     }
@@ -272,7 +273,7 @@ public class MainViewController extends AbstractController implements MavenDownl
         }
     }
 
-    private void showNewsQuestInList(@Nonnull final Collection<NewsQuestEntry> list, @Nonnull final Pane display) {
+    private void showNewsQuestInList(@Nonnull Collection<NewsQuestEntry> list, @Nonnull final Pane display) {
         final VBox storage = new VBox();
         storage.setFillWidth(true);
         AnchorPane.setBottomAnchor(storage, 0.0);
@@ -281,7 +282,7 @@ public class MainViewController extends AbstractController implements MavenDownl
         AnchorPane.setRightAnchor(storage, 3.0);
 
         for (@Nonnull final NewsQuestEntry entry : list) {
-            final BorderPane line = new BorderPane();
+            BorderPane line = new BorderPane();
             line.getStyleClass().add("linkPane");
             line.setLeft(new Label(entry.title));
             line.setRight(new Label(entry.timeStamp));
@@ -291,9 +292,9 @@ public class MainViewController extends AbstractController implements MavenDownl
             line.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent mouseEvent) {
-                    if (mouseEvent.getButton() == MouseButton.PRIMARY &&
-                            mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED &&
-                            mouseEvent.getClickCount() == 1) {
+                    if ((mouseEvent.getButton() == MouseButton.PRIMARY) &&
+                            (mouseEvent.getEventType() == MouseEvent.MOUSE_CLICKED) &&
+                            (mouseEvent.getClickCount() == 1)) {
                         getModel().getHostServices().showDocument(entry.linkTarget.toExternalForm());
                     }
                 }
@@ -310,30 +311,30 @@ public class MainViewController extends AbstractController implements MavenDownl
     }
 
     @FXML
-    public void goToAccount(@Nonnull final ActionEvent actionEvent) {
+    public void goToAccount(@Nonnull ActionEvent actionEvent) {
         getModel().getHostServices().showDocument("http://illarion.org/community/account/index.php");
     }
 
     @FXML
-    public void startEasyNpc(@Nonnull final ActionEvent actionEvent) {
+    public void startEasyNpc(@Nonnull ActionEvent actionEvent) {
         updateLaunchButtons(false, false, true, false, false);
         launch("org.illarion", "easynpc", "illarion.easynpc.gui.MainFrame", "channelEasyNpc");
     }
 
     @FXML
-    public void startEasyQuest(@Nonnull final ActionEvent actionEvent) {
+    public void startEasyQuest(@Nonnull ActionEvent actionEvent) {
         updateLaunchButtons(false, false, false, true, false);
         launch("org.illarion", "easyquest", "illarion.easyquest.gui.MainFrame", "channelEasyQuest");
     }
 
     @FXML
-    public void startMapEdit(@Nonnull final ActionEvent actionEvent) {
+    public void startMapEdit(@Nonnull ActionEvent actionEvent) {
         updateLaunchButtons(false, false, false, false, true);
         launch("org.illarion", "mapeditor", "illarion.mapedit.MapEditor", "channelMapEditor");
     }
 
     @FXML
-    public void launchClient(@Nonnull final ActionEvent actionEvent) {
+    public void launchClient(@Nonnull ActionEvent actionEvent) {
         updateLaunchButtons(false, true, false, false, false);
         launch("org.illarion", "client", "illarion.client.IllaClient", "channelClient");
     }
@@ -373,10 +374,8 @@ public class MainViewController extends AbstractController implements MavenDownl
 
     private void launch(
             @Nonnull final String groupId,
-            @Nonnull final String artifactId,
-            @Nonnull final String launchClass,
-            @Nonnull final String configKey) {
-        final Config cfg = getModel().getConfig();
+            @Nonnull final String artifactId, @Nonnull String launchClass, @Nonnull String configKey) {
+        Config cfg = getModel().getConfig();
         if (cfg == null) {
             throw new IllegalStateException("Can't show options without the config system");
         }
@@ -386,21 +385,35 @@ public class MainViewController extends AbstractController implements MavenDownl
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    final MavenDownloader downloader = new MavenDownloader(useSnapshots);
-                    downloader.downloadArtifact(groupId, artifactId, MainViewController.this);
-                } catch (@Nonnull final Exception e) {
-                    cancelLaunch();
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            progress.setProgress(0.0);
-                            progressDescription.setText(e.getLocalizedMessage());
+                int attempt = 0;
+                while (attempt < 10) {
+                    attempt++;
+                    try {
+                        MavenDownloader downloader = new MavenDownloader(useSnapshots, attempt);
+                        downloader.downloadArtifact(groupId, artifactId, MainViewController.this);
+                    } catch (@Nonnull Exception e) {
+                        if (getInnerExceptionOfTime(SocketTimeoutException.class, e) != null) {
+                            LOGGER.warn("Timeout detected. Restarting download with longer timeout.");
+                            continue;
                         }
-                    });
+                    }
+                    break;
                 }
             }
         }).start();
+    }
+
+    private static <T extends Throwable> T getInnerExceptionOfTime(
+            @Nonnull Class<T> clazz, @Nonnull Throwable search) {
+        @Nullable Throwable currentEx = search;
+        while (currentEx != null) {
+            if (currentEx.getClass().equals(clazz)) {
+                //noinspection unchecked
+                return (T) currentEx;
+            }
+            currentEx = currentEx.getCause();
+        }
+        return null;
     }
 
     @Override
@@ -434,8 +447,8 @@ public class MainViewController extends AbstractController implements MavenDownl
     }
 
     @Override
-    public void resolvingDone(@Nullable final Collection<File> classpath) {
-        if (classpath == null || launchClass == null) {
+    public void resolvingDone(@Nonnull Collection<File> classpath) {
+        if (launchClass == null) {
             cancelLaunch();
             Platform.runLater(new Runnable() {
                 @Override
@@ -463,10 +476,10 @@ public class MainViewController extends AbstractController implements MavenDownl
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        final Cleaner cleaner = new Cleaner(Cleaner.Mode.Maintenance);
+                        Cleaner cleaner = new Cleaner(Cleaner.Mode.Maintenance);
                         cleaner.clean();
                     }
-                }).run();
+                }).start();
             } else {
                 cancelLaunch();
                 Platform.runLater(new Runnable() {
@@ -481,7 +494,21 @@ public class MainViewController extends AbstractController implements MavenDownl
     }
 
     @Override
-    public void updatedProgress(@Nonnull final ProgressMonitor monitor) {
+    public void resolvingFailed(@Nonnull final Exception ex) {
+        if (getInnerExceptionOfTime(SocketTimeoutException.class, ex) != null) {
+            return;
+        }
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                progress.setProgress(1.0);
+                progressDescription.setText(ex.getLocalizedMessage());
+            }
+        });
+    }
+
+    @Override
+    public void updatedProgress(@Nonnull ProgressMonitor monitor) {
         progress.setProgress(monitor.getProgress());
     }
 
@@ -490,18 +517,18 @@ public class MainViewController extends AbstractController implements MavenDownl
     }
 
     @FXML
-    public void showOptions(@Nonnull final ActionEvent actionEvent) {
+    public void showOptions(@Nonnull ActionEvent actionEvent) {
         try {
             getModel().getStoryboard().showOptions();
-        } catch (@Nonnull final IOException ignored) {
+        } catch (@Nonnull IOException ignored) {
         }
     }
 
     @FXML
-    public void uninstall(@Nonnull final ActionEvent actionEvent) {
+    public void uninstall(@Nonnull ActionEvent actionEvent) {
         try {
             getModel().getStoryboard().showUninstall();
-        } catch (@Nonnull final IOException ignored) {
+        } catch (@Nonnull IOException ignored) {
         }
     }
 }
