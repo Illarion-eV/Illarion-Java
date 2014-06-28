@@ -48,26 +48,30 @@ final class ArtifactRequestBuilder implements DependencyVisitor {
     private final RepositorySystem system;
     @Nonnull
     private final RepositorySystemSession session;
+    @Nonnull
+    private final ArtifactRequestTracer requestTracer;
 
     public ArtifactRequestBuilder(
-            @Nullable final RequestTrace trace,
-            @Nonnull final RepositorySystem system,
-            @Nonnull final RepositorySystemSession session) {
+            @Nullable RequestTrace trace,
+            @Nonnull RepositorySystem system,
+            @Nonnull RepositorySystemSession session,
+            @Nonnull ArtifactRequestTracer requestTracer) {
         this.trace = trace;
         this.requests = new ArrayList<>();
         versionScheme = new GenericVersionScheme();
         this.session = session;
         this.system = system;
+        this.requestTracer = requestTracer;
     }
 
     public List<FutureArtifactRequest> getRequests() {
         return requests;
     }
 
-    public boolean visitEnter(@Nonnull final DependencyNode node) {
+    public boolean visitEnter(@Nonnull DependencyNode node) {
         if (node.getDependency() != null) {
-            final Artifact nodeArtifact = node.getDependency().getArtifact();
-            final String classifier = nodeArtifact.getClassifier();
+            Artifact nodeArtifact = node.getDependency().getArtifact();
+            String classifier = nodeArtifact.getClassifier();
             if (classifier.contains("native")) {
                 if (classifier.contains("win") && !OSDetection.isWindows()) {
                     return true;
@@ -81,8 +85,8 @@ final class ArtifactRequestBuilder implements DependencyVisitor {
             }
             boolean noMatch = true;
             for (int i = 0; i < requests.size(); i++) {
-                final ArtifactRequest testRequest = requests.get(i).getRequest();
-                final Artifact testArtifact = testRequest.getArtifact();
+                ArtifactRequest testRequest = requests.get(i).getRequest();
+                Artifact testArtifact = testRequest.getArtifact();
                 if (!testArtifact.getGroupId().equals(nodeArtifact.getGroupId())) {
                     continue;
                 }
@@ -97,8 +101,8 @@ final class ArtifactRequestBuilder implements DependencyVisitor {
                 }
 
                 try {
-                    final Version testVersion = versionScheme.parseVersion(testArtifact.getVersion());
-                    final Version nodeVersion = versionScheme.parseVersion(nodeArtifact.getVersion());
+                    Version testVersion = versionScheme.parseVersion(testArtifact.getVersion());
+                    Version nodeVersion = versionScheme.parseVersion(nodeArtifact.getVersion());
 
                     if (nodeVersion.compareTo(testVersion) > 0) {
                         requests.remove(i);
@@ -114,14 +118,14 @@ final class ArtifactRequestBuilder implements DependencyVisitor {
                 ArtifactRequest request = new ArtifactRequest(node);
                 request.setTrace(trace);
 
-                requests.add(new FutureArtifactRequest(system, session, request));
+                requests.add(new FutureArtifactRequest(system, session, request, requestTracer));
             }
         }
 
         return true;
     }
 
-    public boolean visitLeave(final DependencyNode node) {
+    public boolean visitLeave(DependencyNode node) {
         return true;
     }
 }

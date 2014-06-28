@@ -56,8 +56,10 @@ public interface MavenDownloaderCallback {
      * @param state the state that is active from now on
      * @param progress the progress of this state, this may be {@code null} in case the progress is not determined
      * @param offline indicator that the maven resolver is working in offline mode
+     * @param detail a detailed text for the current state
      */
-    void reportNewState(@Nonnull State state, @Nullable ProgressMonitor progress, boolean offline);
+    void reportNewState(
+            @Nonnull State state, @Nullable ProgressMonitor progress, boolean offline, @Nullable String detail);
 
     /**
      * Report that the resolving is done.

@@ -64,6 +64,8 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.*;
 
+import static illarion.download.maven.MavenDownloaderCallback.State.ResolvingArtifacts;
+import static illarion.download.maven.MavenDownloaderCallback.State.ResolvingDependencies;
 import static org.eclipse.aether.repository.RepositoryPolicy.*;
 import static org.eclipse.aether.util.artifact.JavaScopes.*;
 
@@ -114,6 +116,8 @@ public class MavenDownloader {
     @Nonnull
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenDownloader.class);
 
+    private final MavenRepositoryListener repositoryListener;
+
     /**
      * Create a new instance of the downloader along with the information if its supposed to download snapshot
      * versions of the main application.
@@ -150,8 +154,10 @@ public class MavenDownloader {
         system = serviceLocator.getService(RepositorySystem.class);
         session = new DefaultRepositorySystemSession();
 
+        repositoryListener = new MavenRepositoryListener();
+
         session.setTransferListener(new MavenTransferListener());
-        session.setRepositoryListener(new MavenRepositoryListener());
+        session.setRepositoryListener(repositoryListener);
         session.setConfigProperty(ConfigurationProperties.USER_AGENT, APPLICATION.getApplicationIdentifier());
         session.setConfigProperty(ConfigurationProperties.REQUEST_TIMEOUT, requestTimeOut);
 
@@ -175,12 +181,12 @@ public class MavenDownloader {
      */
     @Nullable
     public Collection<File> downloadArtifact(
-            @Nonnull String groupId, @Nonnull String artifactId, @Nullable MavenDownloaderCallback callback)
+            @Nonnull String groupId, @Nonnull String artifactId, @Nullable final MavenDownloaderCallback callback)
             throws DependencyCollectionException, InterruptedException, ExecutionException {
         Artifact artifact = new DefaultArtifact(groupId, artifactId, "jar", "[1,]");
         try {
             if (callback != null) {
-                callback.reportNewState(MavenDownloaderCallback.State.SearchingNewVersion, null, offline);
+                callback.reportNewState(MavenDownloaderCallback.State.SearchingNewVersion, null, offline, null);
             }
             VersionRangeResult result = system
                     .resolveVersionRange(session, new VersionRangeRequest(artifact, repositories, RUNTIME));
@@ -229,12 +235,13 @@ public class MavenDownloader {
             if (!versions.isEmpty()) {
                 artifact = new DefaultArtifact(groupId, artifactId, "jar", versions.pollLast());
             }
-        } catch (VersionRangeResolutionException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (VersionRangeResolutionException ignored) {
         }
 
         if (callback != null) {
-            callback.reportNewState(MavenDownloaderCallback.State.ResolvingDependencies, null, offline);
+            callback.reportNewState(ResolvingDependencies, null, offline, null);
+            repositoryListener.setCallback(callback);
+            repositoryListener.setOffline(offline);
         }
         Dependency dependency = new Dependency(artifact, RUNTIME, false);
 
@@ -253,7 +260,30 @@ public class MavenDownloader {
         try {
             CollectResult collectResult = system.collectDependencies(session, collectRequest);
 
-            ArtifactRequestBuilder builder = new ArtifactRequestBuilder(null, system, session);
+            final ProgressMonitor progressMonitor = new ProgressMonitor();
+
+            ArtifactRequestBuilder builder = new ArtifactRequestBuilder(null, system, session,
+                                                                        new ArtifactRequestTracer() {
+                                                                            @Override
+                                                                            public void trace(
+                                                                                    @Nonnull ProgressMonitor monitor,
+                                                                                    @Nonnull String artifact,
+                                                                                    long totalSize,
+                                                                                    long transferred) {
+                                                                                if (totalSize >= 0) {
+                                                                                    monitor.setProgress(transferred /
+                                                                                                                (float) totalSize);
+                                                                                }
+                                                                                if (callback != null) {
+                                                                                    callback.reportNewState(
+                                                                                            ResolvingArtifacts,
+                                                                                            progressMonitor, offline,
+                                                                                            humanReadableByteCount(
+                                                                                                    transferred, true) +
+                                                                                                    ' ' + artifact);
+                                                                                }
+                                                                            }
+                                                                        });
             DependencyVisitor visitor = new FilteringDependencyVisitor(builder, filter);
             visitor = new TreeDependencyVisitor(visitor);
             collectResult.getRoot().accept(visitor);
@@ -261,17 +291,20 @@ public class MavenDownloader {
             List<FutureArtifactRequest> requests = builder.getRequests();
 
             if (callback != null) {
-                ProgressMonitor progressMonitor = new ProgressMonitor();
                 for (@Nonnull FutureArtifactRequest request : requests) {
                     progressMonitor.addChild(request.getProgressMonitor());
                 }
-                callback.reportNewState(MavenDownloaderCallback.State.ResolvingArtifacts, progressMonitor, offline);
+            }
+            if (callback != null) {
+                callback.reportNewState(ResolvingArtifacts, progressMonitor, offline, null);
             }
 
-            ExecutorService executorService = Executors.newCachedThreadPool();
+            ExecutorService executorService = Executors.newSingleThreadExecutor();
             List<Future<ArtifactResult>> results = executorService.invokeAll(requests);
             executorService.shutdown();
-            executorService.awaitTermination(1, TimeUnit.HOURS);
+            while (!executorService.awaitTermination(1, TimeUnit.MINUTES)) {
+                LOGGER.info("Downloading is not done yet.");
+            }
 
             List<File> result = new ArrayList<>();
             for (@Nonnull Future<ArtifactResult> artifactResult : results) {
@@ -288,12 +321,22 @@ public class MavenDownloader {
                 callback.resolvingDone(result);
             }
             return result;
-        } catch (Exception e) {
+        } catch (DependencyCollectionException | InterruptedException | ExecutionException e) {
             if (callback != null) {
                 callback.resolvingFailed(e);
             }
-            return null;
+            throw e;
         }
+    }
+
+    public static String humanReadableByteCount(long bytes, boolean si) {
+        int unit = si ? 1000 : 1024;
+        if (bytes < unit) {
+            return bytes + " B";
+        }
+        int exp = (int) (StrictMath.log(bytes) / StrictMath.log(unit));
+        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
+        return String.format("%.1f %sB", bytes / StrictMath.pow(unit, exp), pre);
     }
 
     private void setupRepositories() {

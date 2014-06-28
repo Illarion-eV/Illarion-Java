@@ -39,15 +39,16 @@ class FutureArtifactRequest implements Callable<ArtifactResult> {
     private final ProgressMonitor progressMonitor;
 
     public FutureArtifactRequest(
-            @Nonnull final RepositorySystem system,
-            @Nonnull final RepositorySystemSession session,
-            @Nonnull final ArtifactRequest request) {
+            @Nonnull RepositorySystem system,
+            @Nonnull RepositorySystemSession session,
+            @Nonnull ArtifactRequest request,
+            @Nonnull ArtifactRequestTracer requestTracer) {
         this.request = request;
         this.system = system;
         this.session = session;
         progressMonitor = new ProgressMonitor();
 
-        request.setTrace(new RequestTrace(progressMonitor));
+        request.setTrace(new RequestTrace(new Object[]{requestTracer, progressMonitor}));
     }
 
     @Nonnull
@@ -63,7 +64,7 @@ class FutureArtifactRequest implements Callable<ArtifactResult> {
     @Override
     public ArtifactResult call() throws Exception {
         progressMonitor.setProgress(0.f);
-        final ArtifactResult result = system.resolveArtifact(session, request);
+        ArtifactResult result = system.resolveArtifact(session, request);
         progressMonitor.setProgress(1.f);
         return result;
     }

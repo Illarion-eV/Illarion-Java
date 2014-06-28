@@ -96,6 +96,6 @@ public final class ChangeItemMsg extends AbstractReply {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString(String.valueOf(oldItem) + " to " + newItem + " - count: " + count + " at " + loc);
+        return toString(oldItem + " to " + newItem + " - count: " + count + " at " + loc);
     }
 }

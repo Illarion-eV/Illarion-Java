@@ -20,11 +20,19 @@ import org.eclipse.aether.RepositoryListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
+
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class MavenRepositoryListener implements RepositoryListener {
     private static final Logger log = LoggerFactory.getLogger(MavenRepositoryListener.class);
+
+    private boolean offline;
+    @Nullable
+    private MavenDownloaderCallback callback;
+
+
 
     @Override
     public void artifactDescriptorInvalid(RepositoryEvent event) {
@@ -43,6 +51,10 @@ public class MavenRepositoryListener implements RepositoryListener {
 
     @Override
     public void artifactResolving(RepositoryEvent event) {
+        if ((callback != null) && "pom".equals(event.getArtifact().getExtension())) {
+            callback.reportNewState(MavenDownloaderCallback.State.ResolvingDependencies, null, offline,
+                                    event.getArtifact().getGroupId() + ':' + event.getArtifact().getArtifactId());
+        }
         log.info(event.toString());
     }
 
@@ -119,5 +131,13 @@ public class MavenRepositoryListener implements RepositoryListener {
     @Override
     public void metadataDeployed(RepositoryEvent event) {
         log.info(event.toString());
+    }
+
+    public void setOffline(boolean offline) {
+        this.offline = offline;
+    }
+
+    public void setCallback(@Nullable MavenDownloaderCallback callback) {
+        this.callback = callback;
     }
 }

@@ -40,26 +40,41 @@ public class MavenTransferListener implements TransferListener {
     @Override
     public void transferStarted(TransferEvent event) throws TransferCancelledException {
         log.info(event.toString());
+        @Nullable Object[] dataArray = getTraceObjectArray(event);
+        if (dataArray != null) {
+            reportTrace(dataArray, event);
+        }
     }
 
     @Override
     public void transferProgressed(@Nonnull TransferEvent event) throws TransferCancelledException {
         log.debug(event.toString());
+        @Nullable Object[] dataArray = getTraceObjectArray(event);
+        if (dataArray != null) {
+            reportTrace(dataArray, event);
+        }
+    }
+
+    private void reportTrace(@Nonnull Object[] dataArray, TransferEvent event) {
+        ArtifactRequestTracer requestTracer = (ArtifactRequestTracer) dataArray[0];
+        ProgressMonitor monitor = (ProgressMonitor) dataArray[1];
+        long totalSize = event.getResource().getContentLength();
+        requestTracer.trace(monitor, event.getResource().getResourceName(), totalSize, event.getTransferredBytes());
+    }
+
+    @Nullable
+    private Object[] getTraceObjectArray(@Nonnull TransferEvent event) {
         @Nullable RequestTrace trace = event.getResource().getTrace();
         while (true) {
             if (trace == null) {
                 break;
             }
-            if (trace.getData() instanceof ProgressMonitor) {
-                ProgressMonitor monitor = (ProgressMonitor) trace.getData();
-                long totalSize = event.getResource().getContentLength();
-                if (totalSize <= 0) {
-                    return;
-                }
-                monitor.setProgress((float) event.getTransferredBytes() / totalSize);
+            if (trace.getData() instanceof Object[]) {
+                return (Object[]) trace.getData();
             }
             trace = trace.getParent();
         }
+        return null;
     }
 
     @Override
@@ -70,6 +85,10 @@ public class MavenTransferListener implements TransferListener {
     @Override
     public void transferSucceeded(TransferEvent event) {
         log.info(event.toString());
+        @Nullable Object[] dataArray = getTraceObjectArray(event);
+        if (dataArray != null) {
+            reportTrace(dataArray, event);
+        }
     }
 
     @Override

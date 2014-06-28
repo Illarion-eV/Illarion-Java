@@ -396,6 +396,7 @@ public class MainViewController extends AbstractController implements MavenDownl
                             LOGGER.warn("Timeout detected. Restarting download with longer timeout.");
                             continue;
                         }
+                        LOGGER.error("Error while resolving.", e);
                     }
                     break;
                 }
@@ -418,20 +419,26 @@ public class MainViewController extends AbstractController implements MavenDownl
 
     @Override
     public void reportNewState(
-            @Nonnull final State state, @Nullable final ProgressMonitor progress, final boolean offline) {
+            @Nonnull final State state,
+            @Nullable final ProgressMonitor progress,
+            final boolean offline,
+            @Nullable final String detail) {
         if (Platform.isFxApplicationThread()) {
             switch (state) {
                 case SearchingNewVersion:
                     progressDescription
-                            .setText((offline ? "Offline: " : "") + resourceBundle.getString("searchingNewVersion"));
+                            .setText((offline ? "Offline: " : "") + resourceBundle.getString("searchingNewVersion") +
+                                             ((detail == null) ? "" : (" - " + detail)));
                     break;
                 case ResolvingDependencies:
                     progressDescription
-                            .setText((offline ? "Offline: " : "") + resourceBundle.getString("resolvingDependencies"));
+                            .setText((offline ? "Offline: " : "") + resourceBundle.getString("resolvingDependencies") +
+                                             ((detail == null) ? "" : (" - " + detail)));
                     break;
                 case ResolvingArtifacts:
                     progressDescription
-                            .setText((offline ? "Offline: " : "") + resourceBundle.getString("resolvingArtifacts"));
+                            .setText((offline ? "Offline: " : "") + resourceBundle.getString("resolvingArtifacts") +
+                                             ((detail == null) ? "" : (" - " + detail)));
                     break;
             }
             if (progress == null) {
@@ -444,7 +451,7 @@ public class MainViewController extends AbstractController implements MavenDownl
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    reportNewState(state, progress, offline);
+                    reportNewState(state, progress, offline, detail);
                 }
             });
         }
