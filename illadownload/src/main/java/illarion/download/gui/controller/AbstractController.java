@@ -37,14 +37,14 @@ public abstract class AbstractController implements Controller {
     }
 
     @Override
-    public void setModel(@Nonnull final GuiModel model) {
+    public void setModel(@Nonnull GuiModel model) {
         this.model = model;
     }
 
     @Nonnull
     public GuiModel getModel() {
         if (model == null) {
-            throw new NullPointerException("GUIModel was not set yet.");
+            throw new IllegalStateException("GUIModel was not set yet.");
         }
         return model;
     }

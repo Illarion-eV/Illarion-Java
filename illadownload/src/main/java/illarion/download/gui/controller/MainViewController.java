@@ -30,8 +30,7 @@ import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -97,6 +96,23 @@ public class MainViewController extends AbstractController implements MavenDownl
                 }
             }
         }).start();
+
+        EventHandler<KeyEvent> eventEventHandler = new EventHandler<KeyEvent>() {
+            private final KeyCombination combo = new KeyCodeCombination(KeyCode.ENTER);
+
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if (combo.match(keyEvent)) {
+                    launchClientButton.fire();
+                }
+                keyEvent.consume();
+            }
+        };
+        launchEasyNpcButton.setOnKeyReleased(eventEventHandler);
+        launchEasyQuestButton.setOnKeyReleased(eventEventHandler);
+        launchMapEditButton.setOnKeyReleased(eventEventHandler);
+        uninstallButton.setOnKeyReleased(eventEventHandler);
+        launchClientButton.requestFocus();
     }
 
     @Nullable

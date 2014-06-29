@@ -130,7 +130,8 @@
                 <Button mnemonicParsing="false" text="%launchClient" textAlignment="CENTER"
                         AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                         AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" prefWidth="100"
-                        styleClass="button-green" onAction="#launchClient" fx:id="launchClientButton"/>
+                        styleClass="button-green" onAction="#launchClient" fx:id="launchClientButton"
+                        defaultButton="true"/>
             </AnchorPane>
         </right>
         <center>
