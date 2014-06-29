@@ -38,6 +38,10 @@ import java.io.IOException;
 public final class ShowcaseMsg extends AbstractGuiMsg {
     @Nullable
     private OpenContainerEvent event;
+    @Nullable
+    private String name;
+    @Nullable
+    private String description;
 
     /**
      * Decode the container data the receiver got and prepare it for the execution.
@@ -46,17 +50,19 @@ public final class ShowcaseMsg extends AbstractGuiMsg {
      * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
-        final int containerId = reader.readUByte();
-        final int containerSize = reader.readUShort();
-        final int itemAmount = reader.readUShort();
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
+        int containerId = reader.readUByte();
+        name = reader.readString();
+        description = reader.readString();
+        int containerSize = reader.readUShort();
+        int itemAmount = reader.readUShort();
 
         event = new OpenContainerEvent(containerId, containerSize);
 
         for (int i = 0; i < itemAmount; i++) {
-            final int itemPos = reader.readUShort();
-            final ItemId itemId = new ItemId(reader);
-            final ItemCount itemCount = ItemCount.getInstance(reader);
+            int itemPos = reader.readUShort();
+            ItemId itemId = new ItemId(reader);
+            ItemCount itemCount = ItemCount.getInstance(reader);
 
             event.addItem(itemPos, new OpenContainerEvent.Item(itemId, itemCount));
         }
