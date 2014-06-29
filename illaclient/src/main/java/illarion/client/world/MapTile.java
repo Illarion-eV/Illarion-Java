@@ -917,13 +917,17 @@ public final class MapTile implements AlphaChangeListener {
         // update tile
         setTileId(update.getTileId());
 
-        movementCost = update.isBlocked() ? -1 : update.getMovementCost();
+        setMovementCost(update.isBlocked() ? -1 : update.getMovementCost());
         musicId = update.getTileMusic();
 
         // update items
         updateItemList(update.getItemNumber(), update.getItemId(), update.getItemCount());
 
         itemChanged();
+    }
+
+    public void setMovementCost(int newMovementCost) {
+        movementCost = newMovementCost;
     }
 
     /**

@@ -76,6 +76,11 @@ public final class PutItemMsg extends AbstractReply {
         MapTile tile = World.getMap().getMapAt(loc);
         if (tile != null) {
             tile.addItem(itemId, number);
+            if (newTileMovePoints == 255) {
+                tile.setMovementCost(-1);
+            } else {
+                tile.setMovementCost(newTileMovePoints);
+            }
         }
         return true;
     }

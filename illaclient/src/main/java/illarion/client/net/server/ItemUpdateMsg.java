@@ -93,6 +93,11 @@ public final class ItemUpdateMsg extends AbstractReply {
         MapTile tile = World.getMap().getMapAt(loc);
         if (tile != null) {
             tile.updateItems(itemNumber, itemId, itemCount);
+            if (newTileMovePoints == 255) {
+                tile.setMovementCost(-1);
+            } else {
+                tile.setMovementCost(newTileMovePoints);
+            }
         }
 
         return true;

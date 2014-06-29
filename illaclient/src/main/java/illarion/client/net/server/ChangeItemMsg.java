@@ -82,6 +82,11 @@ public final class ChangeItemMsg extends AbstractReply {
         MapTile tile = World.getMap().getMapAt(loc);
         if (tile != null) {
             tile.changeTopItem(oldItem, newItem, count);
+            if (newTileMovePoints == 255) {
+                tile.setMovementCost(-1);
+            } else {
+                tile.setMovementCost(newTileMovePoints);
+            }
         }
 
         return true;

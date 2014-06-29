@@ -62,6 +62,11 @@ public final class RemoveItemMsg extends AbstractReply {
         MapTile tile = World.getMap().getMapAt(loc);
         if (tile != null) {
             tile.removeTopItem();
+            if (newTileMovePoints == 255) {
+                tile.setMovementCost(-1);
+            } else {
+                tile.setMovementCost(newTileMovePoints);
+            }
         }
 
         return true;
