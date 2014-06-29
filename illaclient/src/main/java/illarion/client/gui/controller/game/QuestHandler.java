@@ -29,12 +29,9 @@ import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.IllaClient;
 import illarion.client.graphics.FontLoader;
 import illarion.client.gui.QuestGui;
-import illarion.client.net.server.events.LoginFinishedEvent;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
 import illarion.common.types.Location;
-import org.bushe.swing.event.annotation.AnnotationProcessor;
-import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.engine.GameContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,11 +89,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
          * @param locations the valid target locations
          */
         QuestEntry(
-                final int questId,
-                final String name,
-                final String description,
-                final boolean finished,
-                @Nonnull final Location... locations) {
+                int questId, String name, String description, boolean finished, @Nonnull Location... locations) {
             this.questId = questId;
             targetLocations = new Location[0];
             updateData(name, description, finished, locations);
@@ -111,10 +104,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
          * @param locations the valid target locations of this quest
          */
         void updateData(
-                final String name,
-                final String description,
-                final boolean finished,
-                @Nonnull final Location... locations) {
+                String name, String description, boolean finished, @Nonnull Location... locations) {
             this.name = name;
             this.description = description;
             this.finished = finished;
@@ -123,7 +113,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
         }
 
         @Override
-        public int compareTo(@Nonnull final QuestEntry o) {
+        public int compareTo(@Nonnull QuestEntry o) {
             if (o.finished && !finished) {
                 return -1;
             }
@@ -135,7 +125,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
         }
 
         @Override
-        public boolean equals(final Object obj) {
+        public boolean equals(Object obj) {
             return super.equals(obj) || obj instanceof QuestEntry && questId == ((QuestEntry) obj).questId;
         }
 
@@ -202,7 +192,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
          * @throws ArrayIndexOutOfBoundsException in case index is {@code < 0} or greater then or equal to the count
          */
         @Nonnull
-        public Location getTargetLocation(final int index) {
+        public Location getTargetLocation(int index) {
             return targetLocations[index];
         }
     }
@@ -252,17 +242,6 @@ public final class QuestHandler implements QuestGui, ScreenController {
      */
     public QuestHandler() {
         hiddenList = new ArrayList<>();
-    }
-
-    /**
-     * This event handler waits for the login done event.
-     *
-     * @param data the event data
-     */
-    @EventSubscriber
-    public void onLoginDoneReceived(final LoginFinishedEvent data) {
-        loginDone = true;
-        updateAllQuests();
     }
 
     @Nullable
@@ -328,7 +307,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
      * @param data the event data
      */
     @NiftyEventSubscriber(id = "openQuestBtn")
-    public void onQuestLogButtonClicked(final String topic, final ButtonClickedEvent data) {
+    public void onQuestLogButtonClicked(String topic, ButtonClickedEvent data) {
         if (isQuestLogVisible()) {
             hideQuestLog();
         } else {
@@ -344,7 +323,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
      */
     @NiftyEventSubscriber(id = "questLog#questList")
     public void onSelectedQuestChanged(
-            @Nonnull final String topic, @Nonnull final ListBoxSelectionChangedEvent<QuestEntry> event) {
+            @Nonnull String topic, @Nonnull ListBoxSelectionChangedEvent<QuestEntry> event) {
         Element descriptionArea = getDescriptionArea();
         if (descriptionArea != null) {
             descriptionArea.hide(new EndNotify() {
@@ -356,17 +335,16 @@ public final class QuestHandler implements QuestGui, ScreenController {
         }
     }
 
-    private void updateAllQuests() {
+    public void updateAllQuests() {
         ListBox<QuestEntry> questList = getQuestList();
         if (questList == null) {
-            LOGGER.error("Updating the quest list failed. GUI element not found!");
             return;
         }
-        final List<QuestEntry> selectedEntries = getQuestList().getItems();
+        List<QuestEntry> selectedEntries = getQuestList().getItems();
         for (QuestEntry selectedEntry : selectedEntries) {
-            final Collection<Location> locationList = new ArrayList<>(selectedEntry.getTargetLocationCount());
+            Collection<Location> locationList = new ArrayList<>(selectedEntry.getTargetLocationCount());
             for (int i = 0; i < selectedEntry.getTargetLocationCount(); i++) {
-                final Location target = selectedEntry.getTargetLocation(i);
+                Location target = selectedEntry.getTargetLocation(i);
                 locationList.add(target);
             }
             World.getMap().applyQuestTargetLocations(locationList);
@@ -374,9 +352,9 @@ public final class QuestHandler implements QuestGui, ScreenController {
     }
 
     private void updateQuest(@Nonnull QuestEntry Quest) {
-        final Collection<Location> locationList = new ArrayList<>(Quest.getTargetLocationCount());
+        Collection<Location> locationList = new ArrayList<>(Quest.getTargetLocationCount());
         for (int i = 0; i < Quest.getTargetLocationCount(); i++) {
-            final Location target = Quest.getTargetLocation(i);
+            Location target = Quest.getTargetLocation(i);
             locationList.add(target);
         }
         World.getMap().removeQuestMarkers(locationList);
@@ -391,21 +369,21 @@ public final class QuestHandler implements QuestGui, ScreenController {
             LOGGER.error("Can't update the quest display as long as the handler is not bound.");
             return;
         }
-        final Element descriptionArea = getDescriptionArea();
+        Element descriptionArea = getDescriptionArea();
         if (descriptionArea == null) {
             LOGGER.error("Can't update displayed quest. Description area not found.");
             return;
         }
-        for (final Element oldChildren : descriptionArea.getChildren()) {
+        for (Element oldChildren : descriptionArea.getChildren()) {
             oldChildren.markForRemoval();
         }
 
-        final QuestEntry selectedEntry = getSelectedQuest();
+        QuestEntry selectedEntry = getSelectedQuest();
         if (selectedEntry == null) {
             return;
         }
 
-        final LabelBuilder titleLabel = new LabelBuilder();
+        LabelBuilder titleLabel = new LabelBuilder();
         titleLabel.label(selectedEntry.getName());
         titleLabel.font(FontLoader.MENU_FONT);
         titleLabel.marginLeft("5px");
@@ -416,7 +394,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
         titleLabel.build(nifty, screen, descriptionArea);
 
         if (!selectedEntry.getDescription().isEmpty()) {
-            final LabelBuilder descriptionLabel = new LabelBuilder();
+            LabelBuilder descriptionLabel = new LabelBuilder();
             descriptionLabel.label(selectedEntry.getDescription());
             descriptionLabel.font(FontLoader.TEXT_FONT);
             descriptionLabel.marginLeft("5px");
@@ -428,7 +406,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
         }
 
         if (selectedEntry.isFinished()) {
-            final LabelBuilder finishedLabel = new LabelBuilder();
+            LabelBuilder finishedLabel = new LabelBuilder();
             finishedLabel.label("${gamescreen-bundle.questFinished}");
             finishedLabel.font(FontLoader.TEXT_FONT);
             finishedLabel.marginLeft("5px");
@@ -470,7 +448,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
         if (questList == null) {
             return null;
         }
-        final List<QuestEntry> selectedEntries = questList.getSelection();
+        List<QuestEntry> selectedEntries = questList.getSelection();
         if (selectedEntries.isEmpty()) {
             return null;
         }
@@ -485,19 +463,19 @@ public final class QuestHandler implements QuestGui, ScreenController {
      * @param event the event data
      */
     @NiftyEventSubscriber(id = "questLog#showFinishedCheckbox")
-    public void onShowFinishedChange(@Nonnull final String topic, @Nonnull final CheckBoxStateChangedEvent event) {
+    public void onShowFinishedChange(@Nonnull String topic, @Nonnull CheckBoxStateChangedEvent event) {
         IllaClient.getCfg().set("questShowFinished", event.isChecked());
         showFinishedQuests = event.isChecked();
 
         if (showFinishedQuests) {
-            for (final QuestEntry hiddenEntry : hiddenList) {
+            for (QuestEntry hiddenEntry : hiddenList) {
                 insertToGuiList(hiddenEntry);
             }
             hiddenList.clear();
         } else {
             ListBox<QuestEntry> questList = getQuestList();
             if (questList != null) {
-                for (final QuestEntry visibleEntry : questList.getItems()) {
+                for (QuestEntry visibleEntry : questList.getItems()) {
                     if (visibleEntry.isFinished() && !hiddenList.contains(visibleEntry)) {
                         hiddenList.add(visibleEntry);
                     }
@@ -513,20 +491,20 @@ public final class QuestHandler implements QuestGui, ScreenController {
      *
      * @param entry the entry to add
      */
-    private void insertToGuiList(@Nonnull final QuestEntry entry) {
-        final ListBox<QuestEntry> guiList = getQuestList();
+    private void insertToGuiList(@Nonnull QuestEntry entry) {
+        ListBox<QuestEntry> guiList = getQuestList();
         if (guiList == null) {
             LOGGER.error("Updating the GUI list failed. GUI element not located.");
             return;
         }
-        final List<QuestEntry> questEntries = guiList.getItems();
+        List<QuestEntry> questEntries = guiList.getItems();
         int currentStart = 0;
         int currentEnd = questEntries.size() - 1;
 
         while (currentStart <= currentEnd) {
-            final int middle = currentStart + ((currentEnd - currentStart) >> 1);
-            final QuestEntry foundItem = questEntries.get(middle);
-            final int compareResult = foundItem.compareTo(entry);
+            int middle = currentStart + ((currentEnd - currentStart) >> 1);
+            QuestEntry foundItem = questEntries.get(middle);
+            int compareResult = foundItem.compareTo(entry);
 
             if (compareResult < 0) {
                 currentStart = middle + 1;
@@ -557,7 +535,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
     }
 
     @Override
-    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
         this.nifty = nifty;
         this.screen = screen;
     }
@@ -567,7 +545,6 @@ public final class QuestHandler implements QuestGui, ScreenController {
         if (nifty != null) {
             nifty.unsubscribeAnnotations(this);
         }
-        AnnotationProcessor.unprocess(this);
 
         Element questWindow = getQuestWindowElement();
         if (questWindow != null) {
@@ -582,14 +559,13 @@ public final class QuestHandler implements QuestGui, ScreenController {
             LOGGER.error("Quest handler is not bound. Can't properly launch.");
         }
         nifty.subscribeAnnotations(this);
-        AnnotationProcessor.process(this);
 
-        final Element questWindowElement = getQuestWindowElement();
+        Element questWindowElement = getQuestWindowElement();
         if (questWindowElement != null) {
             questWindowElement.setConstraintX(new SizeValue(IllaClient.getCfg().getString("questWindowPosX")));
             questWindowElement.setConstraintY(new SizeValue(IllaClient.getCfg().getString("questWindowPosY")));
 
-            final CheckBox showFinished = questWindowElement.findNiftyControl("#showFinishedCheckbox", CheckBox.class);
+            CheckBox showFinished = questWindowElement.findNiftyControl("#showFinishedCheckbox", CheckBox.class);
             if (showFinished != null) {
                 showFinished.setChecked(IllaClient.getCfg().getBoolean("questShowFinished"));
                 showFinishedQuests = showFinished.isChecked();
@@ -601,7 +577,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
     public void removeQuest(final int questId) {
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
-            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
                 removeQuestInternal(questId);
             }
         });
@@ -612,8 +588,8 @@ public final class QuestHandler implements QuestGui, ScreenController {
      *
      * @param questId the ID of the quest
      */
-    private void removeQuestInternal(final int questId) {
-        for (final QuestEntry entry : hiddenList) {
+    private void removeQuestInternal(int questId) {
+        for (QuestEntry entry : hiddenList) {
             if (entry.getQuestId() == questId) {
                 hiddenList.remove(entry);
                 return;
@@ -621,7 +597,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
         }
         ListBox<QuestEntry> questList = getQuestList();
         if (questList != null) {
-            for (final QuestEntry entry : questList.getItems()) {
+            for (QuestEntry entry : questList.getItems()) {
                 if (entry.getQuestId() == questId) {
                     questList.removeItem(entry);
                     return;
@@ -631,10 +607,10 @@ public final class QuestHandler implements QuestGui, ScreenController {
     }
 
     @Override
-    public void setDisplayedQuest(final int questId) {
-        final ListBox<QuestEntry> guiList = getQuestList();
+    public void setDisplayedQuest(int questId) {
+        ListBox<QuestEntry> guiList = getQuestList();
         if (guiList != null) {
-            for (final QuestEntry guiListEntry : guiList.getItems()) {
+            for (QuestEntry guiListEntry : guiList.getItems()) {
                 if (guiListEntry.getQuestId() == questId) {
                     guiList.selectItem(guiListEntry);
                 }
@@ -651,7 +627,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
             @Nonnull final Location... locations) {
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
-            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
                 setQuestInternal(questId, name, description, finished, locations);
             }
         });
@@ -677,22 +653,22 @@ public final class QuestHandler implements QuestGui, ScreenController {
      * @param locations the valid target locations
      */
     private void setQuestInternal(
-            final int questId,
-            @Nonnull final String name,
-            @Nonnull final String description,
-            final boolean finished,
-            @Nonnull final Location... locations) {
-        final QuestEntry oldEntry = findQuest(questId);
-        if (finished && oldEntry != null) {
-            final Collection<Location> locationList = new ArrayList<>(oldEntry.getTargetLocationCount());
+            int questId,
+            @Nonnull String name,
+            @Nonnull String description,
+            boolean finished,
+            @Nonnull Location... locations) {
+        QuestEntry oldEntry = findQuest(questId);
+        if (finished && (oldEntry != null)) {
+            Collection<Location> locationList = new ArrayList<>(oldEntry.getTargetLocationCount());
             for (int i = 0; i < oldEntry.getTargetLocationCount(); i++) {
-                final Location target = oldEntry.getTargetLocation(i);
+                Location target = oldEntry.getTargetLocation(i);
                 locationList.add(target);
             }
             World.getMap().removeQuestMarkers(locationList);
         }
         if (oldEntry == null) {
-            final QuestEntry newEntry = new QuestEntry(questId, name, description, finished, locations);
+            QuestEntry newEntry = new QuestEntry(questId, name, description, finished, locations);
             if (!finished || showFinishedQuests) {
                 insertToGuiList(newEntry);
                 pulseQuestButton();
@@ -700,8 +676,8 @@ public final class QuestHandler implements QuestGui, ScreenController {
                 hiddenList.add(newEntry);
             }
         } else {
-            final boolean changeOrder = (oldEntry.isFinished() != finished) || !oldEntry.getName().equals(name);
-            final boolean wasFinished = oldEntry.isFinished();
+            boolean changeOrder = (oldEntry.isFinished() != finished) || !oldEntry.getName().equals(name);
+            boolean wasFinished = oldEntry.isFinished();
             oldEntry.updateData(name, description, finished, locations);
             pulseQuestButton();
             if (changeOrder) {
@@ -720,7 +696,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
             }
         }
 
-        final QuestEntry selectedEntry = getSelectedQuest();
+        QuestEntry selectedEntry = getSelectedQuest();
         if (selectedEntry == null) {
             return;
         }
@@ -737,8 +713,8 @@ public final class QuestHandler implements QuestGui, ScreenController {
      * @return the quest instance or {@code null} in case its not found
      */
     @Nullable
-    private QuestEntry findQuest(final int questId) {
-        for (final QuestEntry hiddenListEntry : hiddenList) {
+    private QuestEntry findQuest(int questId) {
+        for (QuestEntry hiddenListEntry : hiddenList) {
             if (hiddenListEntry.getQuestId() == questId) {
                 return hiddenListEntry;
             }
@@ -746,7 +722,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
 
         ListBox<QuestEntry> questList = getQuestList();
         if (questList != null) {
-            for (final QuestEntry guiListEntry : questList.getItems()) {
+            for (QuestEntry guiListEntry : questList.getItems()) {
                 if (guiListEntry.getQuestId() == questId) {
                     return guiListEntry;
                 }
@@ -761,7 +737,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
      */
     private void pulseQuestButton() {
         if (loginDone && (screen != null)) {
-            @Nullable final Element questBtn = screen.findElementById("openQuestBtn");
+            @Nullable Element questBtn = screen.findElementById("openQuestBtn");
             if (questBtn != null) {
                 questBtn.startEffect(EffectEventId.onCustom, null, "pulse");
             }

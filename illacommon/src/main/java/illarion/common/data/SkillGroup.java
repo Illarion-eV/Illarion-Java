@@ -41,6 +41,11 @@ public final class SkillGroup {
     private final String nameGerman;
 
     /**
+     * The ID of the group.
+     */
+    private final int groupId;
+
+    /**
      * The list of skills that belong to this group.
      */
     @Nonnull
@@ -52,7 +57,8 @@ public final class SkillGroup {
      * @param german the german name of the group
      * @param english the english name of the group
      */
-    public SkillGroup(@Nonnull final String german, @Nonnull final String english) {
+    public SkillGroup(int id, @Nonnull String german, @Nonnull String english) {
+        groupId = id;
         nameEnglish = english;
         nameGerman = german;
 
@@ -64,7 +70,7 @@ public final class SkillGroup {
      *
      * @param skill the skill that is supposed to be added to the group
      */
-    void addSkill(@Nonnull final Skill skill) {
+    void addSkill(@Nonnull Skill skill) {
         skills.add(skill);
     }
 
@@ -102,5 +108,14 @@ public final class SkillGroup {
     @Override
     public String toString() {
         return "Skill Group: " + nameEnglish;
+    }
+
+    /**
+     * Get the ID of the group of this skill.
+     *
+     * @return the group of the skill
+     */
+    public int getGroupId() {
+        return groupId;
     }
 }

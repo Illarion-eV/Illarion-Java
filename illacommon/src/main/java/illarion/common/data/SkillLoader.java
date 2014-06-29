@@ -58,13 +58,13 @@ public class SkillLoader {
             if (loadingFinished) {
                 return;
             }
-            final ClassLoader ccl = Thread.currentThread().getContextClassLoader();
+            ClassLoader ccl = Thread.currentThread().getContextClassLoader();
 
             try (InputStream skillXmlStream = ccl.getResourceAsStream("skills.xml")) {
                 if (skillXmlStream == null) {
                     throw new IllegalStateException("Skill XML was not found.");
                 }
-                final XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
+                XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
                 parser.setInput(skillXmlStream, "UTF-8");
 
                 parser.nextTag();
@@ -87,9 +87,9 @@ public class SkillLoader {
                     currentTag = parser.nextTag();
                 }
                 parser.require(XmlPullParser.END_TAG, null, "skills");
-            } catch (@Nonnull final XmlPullParserException e) {
+            } catch (@Nonnull XmlPullParserException e) {
                 LOGGER.error("Parsing the XML file failed.", e);
-            } catch (@Nonnull final IOException e) {
+            } catch (@Nonnull IOException e) {
                 LOGGER.error("Reading the XML file failed.", e);
             }
             loadingFinished = true;
@@ -97,34 +97,41 @@ public class SkillLoader {
     }
 
     @Nonnull
-    private static SkillGroup readSkillGroup(@Nonnull final XmlPullParser parser) throws XmlPullParserException {
-        final int count = parser.getAttributeCount();
+    private static SkillGroup readSkillGroup(@Nonnull XmlPullParser parser) throws XmlPullParserException {
+        int count = parser.getAttributeCount();
         String germanName = null;
         String englishName = null;
+        int id = -1;
         for (int i = 0; i < count; i++) {
-            final String name = parser.getAttributeName(i);
-            if ("german".equals(name)) {
-                germanName = parser.getAttributeValue(i);
-            } else if ("english".equals(name)) {
-                englishName = parser.getAttributeValue(i);
+            switch (parser.getAttributeName(i)) {
+                case "german":
+                    germanName = parser.getAttributeValue(i);
+                    break;
+                case "english":
+                    englishName = parser.getAttributeValue(i);
+                    break;
+                case "id":
+                    id = Integer.parseInt(parser.getAttributeValue(i));
+                    break;
+                default:
             }
         }
-        if ((germanName != null) && (englishName != null)) {
-            return new SkillGroup(germanName, englishName);
+        if ((germanName != null) && (englishName != null) && (id > -1)) {
+            return new SkillGroup(id, germanName, englishName);
         }
         throw new XmlPullParserException("Group tag does not contain the required attributes.", parser, null);
     }
 
     @Nonnull
-    private static Skill readSkill(@Nonnull final XmlPullParser parser, @Nonnull final SkillGroup group)
+    private static Skill readSkill(@Nonnull XmlPullParser parser, @Nonnull SkillGroup group)
             throws XmlPullParserException {
-        final int count = parser.getAttributeCount();
+        int count = parser.getAttributeCount();
         String serverName = null;
         String germanName = null;
         String englishName = null;
         int serverId = -1;
         for (int i = 0; i < count; i++) {
-            final String attribName = parser.getAttributeName(i);
+            String attribName = parser.getAttributeName(i);
             switch (attribName) {
                 case "name":
                     serverName = parser.getAttributeValue(i);

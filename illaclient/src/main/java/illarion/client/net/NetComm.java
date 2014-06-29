@@ -210,6 +210,7 @@ public final class NetComm {
      */
     @SuppressWarnings("nls")
     public boolean connect() {
+        setLoginDone(false);
         try {
             Servers usedServer = IllaClient.getInstance().getUsedServer();
 
@@ -278,6 +279,7 @@ public final class NetComm {
      */
     @SuppressWarnings("nls")
     public void disconnect() {
+        setLoginDone(false);
         try {
             if (keepAliveTimer != null) {
                 keepAliveTimer.stop();
@@ -317,6 +319,16 @@ public final class NetComm {
         } catch (@Nonnull IOException e) {
             LOGGER.warn("Disconnecting failed.", e);
         }
+    }
+
+    private boolean loginDone;
+
+    public void setLoginDone(boolean done) {
+        loginDone = done;
+    }
+
+    public boolean isLoginDone() {
+        return loginDone;
     }
 
     /**

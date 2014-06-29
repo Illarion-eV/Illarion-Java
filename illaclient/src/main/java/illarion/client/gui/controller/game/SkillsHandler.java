@@ -31,7 +31,6 @@ import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.IllaClient;
 import illarion.client.gui.SkillGui;
-import illarion.client.net.server.events.LoginFinishedEvent;
 import illarion.client.util.Lang;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.MapTile;
@@ -39,8 +38,6 @@ import illarion.client.world.World;
 import illarion.common.data.Skill;
 import illarion.common.data.SkillGroup;
 import illarion.common.data.SkillGroups;
-import org.bushe.swing.event.annotation.AnnotationProcessor;
-import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.engine.GameContainer;
 import org.illarion.nifty.controls.Progress;
 import org.illarion.nifty.controls.progress.builder.ProgressBuilder;
@@ -72,13 +69,8 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
     @Nullable
     private Window skillWindow;
 
-    /**
-     * This flag is set {@code true} once the login to the server is done.
-     */
-    private boolean loginDone;
-
     @Override
-    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
         this.nifty = nifty;
         this.screen = screen;
 
@@ -94,13 +86,11 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
     @Override
     public void onStartScreen() {
         nifty.subscribeAnnotations(this);
-        AnnotationProcessor.process(this);
     }
 
     @Override
     public void onEndScreen() {
         nifty.unsubscribeAnnotations(this);
-        AnnotationProcessor.unprocess(this);
 
         IllaClient.getCfg().set("skillWindowPosX", Integer.toString(skillWindow.getElement().getX()) + "px");
         IllaClient.getCfg().set("skillWindowPosY", Integer.toString(skillWindow.getElement().getY()) + "px");
@@ -110,7 +100,7 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
     public void showSkillWindow() {
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
-            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
                 if (skillWindow != null) {
                     skillWindow.getElement().show(new EndNotify() {
                         @Override
@@ -127,7 +117,7 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
     public void hideSkillWindow() {
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
-            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
                 if (skillWindow != null) {
                     skillWindow.getElement().hide();
                 }
@@ -137,36 +127,30 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
 
     @Override
     public void toggleSkillWindow() {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
-                if (skillWindow != null) {
-                    if (skillWindow.getElement().isVisible()) {
-                        hideSkillWindow();
-                    } else {
-                        showSkillWindow();
-                    }
-                }
+        if (skillWindow != null) {
+            if (skillWindow.getElement().isVisible()) {
+                hideSkillWindow();
+            } else {
+                showSkillWindow();
             }
-        });
+        }
     }
 
     /**
      * This function creates the entries for every single skill.
      */
     private void createSkillEntries() {
-        final Element content = skillWindow.getElement().findElementById("#textContent");
+        Element content = skillWindow.getElement().findElementById("#textContent");
 
-        int groupCnt = 0;
-        for (final SkillGroup group : SkillGroups.getInstance().getSkillGroups()) {
-            final String groupId = content.getId() + "#group" + Integer.toString(groupCnt++);
-            final PanelBuilder groupPanel = new PanelBuilder(groupId);
+        for (SkillGroup group : SkillGroups.getInstance().getSkillGroups()) {
+            String groupId = content.getId() + "#group" + Integer.toString(group.getGroupId());
+            PanelBuilder groupPanel = new PanelBuilder(groupId);
             groupPanel.childLayoutVertical();
-            groupPanel.height("0px");
+            groupPanel.height(SizeValue.px(0));
             groupPanel.alignCenter();
             groupPanel.valignTop();
 
-            final LabelBuilder headline = new LabelBuilder(groupId + "#headline");
+            LabelBuilder headline = new LabelBuilder(groupId + "#headline");
             headline.font("menuFont");
 
             if (Lang.getInstance().isGerman()) {
@@ -174,17 +158,17 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
             } else {
                 headline.label(group.getNameEnglish());
             }
-            headline.width("*");
-            headline.height("0px");
+            headline.width(SizeValue.wildcard());
+            headline.height(SizeValue.px(0));
             groupPanel.control(headline);
 
-            for (final Skill skill : group.getSkills()) {
-                final String skillId = groupId + "#skill" + Integer.toString(skill.getId());
-                final PanelBuilder skillPanel = new PanelBuilder(skillId);
+            for (Skill skill : group.getSkills()) {
+                String skillId = groupId + "#skill" + Integer.toString(skill.getId());
+                PanelBuilder skillPanel = new PanelBuilder(skillId);
                 skillPanel.childLayoutCenter();
                 skillPanel.width(content.getConstraintWidth().toString());
 
-                final LabelBuilder skillName = new LabelBuilder(skillId + "#name");
+                LabelBuilder skillName = new LabelBuilder(skillId + "#name");
                 if (Lang.getInstance().isGerman()) {
                     skillName.label(skill.getNameGerman());
                 } else {
@@ -192,23 +176,23 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
                 }
                 skillName.font("textFont");
                 skillName.width(content.getConstraintWidth().toString());
-                skillName.height("0px");
+                skillName.height(SizeValue.px(0));
                 skillName.alignLeft();
                 skillName.textHAlignLeft();
                 skillPanel.control(skillName);
 
-                final ProgressBuilder progress = new ProgressBuilder(skillId + "#progress");
-                progress.width("130px");
-                progress.height("0px");
+                ProgressBuilder progress = new ProgressBuilder(skillId + "#progress");
+                progress.width(SizeValue.px(130));
+                progress.height(SizeValue.px(0));
                 progress.alignRight();
                 progress.valignBottom();
                 skillPanel.control(progress);
 
-                final LabelBuilder skillValue = new LabelBuilder(skillId + "#value");
+                LabelBuilder skillValue = new LabelBuilder(skillId + "#value");
                 skillValue.label("0");
                 skillValue.width(content.getConstraintWidth().toString());
                 skillValue.font("textFont");
-                skillValue.height("0px");
+                skillValue.height(SizeValue.px(0));
                 skillValue.alignRight();
                 skillValue.textHAlignRight();
                 skillPanel.control(skillValue);
@@ -229,10 +213,22 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
     public void updateSkill(@Nonnull final Skill skill, final int value, final int minor) {
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
-            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
                 internalUpdateSkill(skill, value, minor);
             }
         });
+    }
+
+    @Nullable
+    private Element getSkillPanel(@Nonnull Skill skill) {
+        if (skillWindow == null) {
+            return null;
+        }
+        @Nullable Element windowElement = skillWindow.getElement();
+        if (windowElement == null) {
+            return null;
+        }
+        return windowElement.findElementById("#skill" + skill.getId());
     }
 
     /**
@@ -241,19 +237,21 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
      * @param skill the skill that receives the update
      * @param value the new value of the skill
      */
-    private void internalUpdateSkill(@Nonnull final Skill skill, int value, int minor) {
-        @Nullable final Element skillPanel = skillWindow.getElement().findElementById("#skill" + skill.getId());
+    private void internalUpdateSkill(@Nonnull Skill skill, int value, int minor) {
+        if (!World.getNet().isLoginDone()) {
+            return;
+        }
+        @Nullable Element skillPanel = skillWindow.getElement().findElementById("#skill" + skill.getId());
         int SkillHeight = 22;
         if (skillPanel == null) {
             return;
         }
 
-        boolean skillChanged = false;
         if (value == 0) {
             SkillHeight = 0;
         }
-        @Nullable final Element skillPanelWindowContent = skillPanel.getParent();
-        @Nullable final Element skillPanelWindow = skillPanelWindowContent.getParent();
+        @Nullable Element skillPanelWindowContent = skillPanel.getParent();
+        @Nullable Element skillPanelWindow = skillPanelWindowContent.getParent();
         skillPanelWindow.setConstraintHeight(SizeValue.def());
         skillPanelWindowContent.setConstraintHeight(SizeValue.def());
         skillPanelWindowContent.setMarginBottom(SizeValue.px(5));
@@ -261,27 +259,27 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
 
         skillPanel.setConstraintHeight(SizeValue.px(SkillHeight));
 
-        final Element valueLabel = skillPanel.findElementById("#value");
-        final TextRenderer valueTextRenderer = valueLabel.getRenderer(TextRenderer.class);
+        Element valueLabel = skillPanel.findElementById("#value");
+        TextRenderer valueTextRenderer = valueLabel.getRenderer(TextRenderer.class);
 
-        final String newValue = Integer.toString(value);
-        skillChanged = !valueTextRenderer.getOriginalText().equals(newValue);
+        String newValue = Integer.toString(value);
+        boolean skillChanged = !valueTextRenderer.getOriginalText().equals(newValue);
         valueTextRenderer.setText(newValue);
         valueLabel.setConstraintHeight(SizeValue.px(SkillHeight));
 
-        final Element progressBar = skillPanel.findElementById("#progress");
+        Element progressBar = skillPanel.findElementById("#progress");
         float progress = (value == 100) ? 1.f : (minor / 10000.f);
         progressBar.getNiftyControl(Progress.class).setProgress(progress);
-        progressBar.setConstraintHeight(SizeValue.px(SkillHeight - 3));
+        progressBar.setConstraintHeight(SizeValue.px(Math.max(SkillHeight - 3, 0)));
         progressBar.setMarginRight(SizeValue.px(40));
 
-        final Element nameLabel = skillPanel.findElementById("#name");
+        Element nameLabel = skillPanel.findElementById("#name");
         nameLabel.setConstraintHeight(SizeValue.px(SkillHeight));
         nameLabel.setMarginLeft(SizeValue.px(5));
 
-        if (loginDone && skillChanged) {
+        if (World.getNet().isLoginDone() && skillChanged) {
             screen.findElementById("openSkillsBtn").startEffect(EffectEventId.onCustom, null, "pulse");
-            final MapTile playerTile = World.getMap().getMapAt(World.getPlayer().getLocation());
+            MapTile playerTile = World.getMap().getMapAt(World.getPlayer().getLocation());
             if (playerTile == null) {
                 LOGGER.error("Tile below the player is NULL?!");
             } else {
@@ -290,48 +288,34 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
         }
 
         layoutDirty = true;
-
-        if (skillWindow.getElement().isVisible()) {
-            toggleSkillWindow();
-            toggleSkillWindow();
-        }
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SkillsHandler.class);
 
     private void updateVisibility() {
-        final Element content = skillWindow.getElement().findElementById("#textContent");
+        Element content = skillWindow.getElement().findElementById("#textContent");
         updateVisibilityOfElement(content);
     }
 
-    private static void updateVisibilityOfElement(@Nonnull final Element target) {
+    private static void updateVisibilityOfElement(@Nonnull Element target) {
         if ("0px".equals(target.getConstraintHeight().toString())) {
             target.setVisible(false);
         } else {
-            for (final Element child : target.getChildren()) {
+            for (Element child : target.getChildren()) {
                 updateVisibilityOfElement(child);
             }
         }
     }
 
     @Override
-    public void update(final GameContainer container, final int delta) {
+    public void update(GameContainer container, int delta) {
         if (layoutDirty) {
             layoutDirty = false;
 
             updateVisibility();
+            skillWindow.getElement().resetLayout();
             skillWindow.getElement().layoutElements();
         }
-    }
-
-    /**
-     * This event handler waits for the login done event.
-     *
-     * @param data the event data
-     */
-    @EventSubscriber
-    public void onLoginDoneReceived(final LoginFinishedEvent data) {
-        loginDone = true;
     }
 
     /**
@@ -341,12 +325,12 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
      * @param event the event data
      */
     @NiftyEventSubscriber(id = "openSkillsBtn")
-    public void onSkillWindowButtonClickedEvent(final String topic, final ButtonClickedEvent event) {
+    public void onSkillWindowButtonClickedEvent(String topic, ButtonClickedEvent event) {
         toggleSkillWindow();
     }
 
     @NiftyEventSubscriber(id = "characterInformation")
-    public void onSkillWindowShowEvent(final String topic, final ElementShowEvent event) {
+    public void onSkillWindowShowEvent(String topic, ElementShowEvent event) {
         updateVisibility();
     }
 }

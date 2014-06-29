@@ -76,4 +76,6 @@ public interface QuestGui {
      * Show the quest log on the screen.
      */
     void showQuestLog();
+
+    void updateAllQuests();
 }

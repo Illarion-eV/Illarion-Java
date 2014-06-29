@@ -60,9 +60,9 @@ public final class GameScreenController implements GameGui, ScreenController {
 
     private boolean ready;
 
-    public GameScreenController(@Nonnull final Input input) {
-        final NumberSelectPopupHandler numberPopupHandler = new NumberSelectPopupHandler();
-        final TooltipHandler tooltipHandler = new TooltipHandler();
+    public GameScreenController(@Nonnull Input input) {
+        NumberSelectPopupHandler numberPopupHandler = new NumberSelectPopupHandler();
+        TooltipHandler tooltipHandler = new TooltipHandler();
 
         childControllers = new ArrayList<>();
         childUpdateControllers = new ArrayList<>();
@@ -100,7 +100,7 @@ public final class GameScreenController implements GameGui, ScreenController {
         addHandler(informHandler);
     }
 
-    private void addHandler(final ScreenController handler) {
+    private void addHandler(ScreenController handler) {
         childControllers.add(handler);
         if (handler instanceof UpdatableHandler) {
             childUpdateControllers.add((UpdatableHandler) handler);
@@ -204,14 +204,14 @@ public final class GameScreenController implements GameGui, ScreenController {
 
     @Override
     public void onEndScreen() {
-        for (final ScreenController childController : childControllers) {
+        for (ScreenController childController : childControllers) {
             childController.onEndScreen();
         }
     }
 
     @Override
     public void onStartScreen() {
-        for (final ScreenController childController : childControllers) {
+        for (ScreenController childController : childControllers) {
             childController.onStartScreen();
         }
     }
@@ -224,16 +224,16 @@ public final class GameScreenController implements GameGui, ScreenController {
      * @param delta the time since the last update call
      */
     @Override
-    public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
-        for (final UpdatableHandler childController : childUpdateControllers) {
+    public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+        for (UpdatableHandler childController : childUpdateControllers) {
             childController.update(container, delta);
         }
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void bind(@Nonnull final Nifty nifty, final Screen screen) {
-        for (final ScreenController childController : childControllers) {
+    public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
+        for (ScreenController childController : childControllers) {
             childController.bind(nifty, screen);
         }
         ready = true;
