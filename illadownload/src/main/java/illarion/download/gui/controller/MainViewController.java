@@ -514,6 +514,7 @@ public class MainViewController extends AbstractController implements MavenDownl
             public void run() {
                 progress.setProgress(1.0);
                 progressDescription.setText(ex.getLocalizedMessage());
+                LOGGER.error("Resolving failed.", ex);
             }
         });
     }
