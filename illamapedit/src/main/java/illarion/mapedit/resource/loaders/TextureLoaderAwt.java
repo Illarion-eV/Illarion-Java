@@ -127,7 +127,7 @@ public final class TextureLoaderAwt extends AbstractTextureManager<BufferedImage
 
     @Nullable
     @Override
-    protected Texture loadTexture(@Nonnull String resource, BufferedImage preLoadData) {
+    protected Texture loadTexture(@Nonnull String resource, @Nonnull BufferedImage preLoadData) {
         return new AwtTexture(preLoadData);
     }
 

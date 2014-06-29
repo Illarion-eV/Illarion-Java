@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -57,11 +58,11 @@ public class TextureAtlasFinalizeTask<T> implements Runnable, TextureAtlasTask {
     private boolean done;
 
     public TextureAtlasFinalizeTask(
-            @Nonnull final FutureTask<T> preLoadTask,
-            @Nonnull final String atlasName,
-            @Nonnull final AbstractTextureManager<T> textureManager,
-            @Nonnull final ProgressMonitor monitor,
-            final float progressToAdd) {
+            @Nonnull FutureTask<T> preLoadTask,
+            @Nonnull String atlasName,
+            @Nonnull AbstractTextureManager<T> textureManager,
+            @Nonnull ProgressMonitor monitor,
+            float progressToAdd) {
         this.preLoadTask = preLoadTask;
         this.atlasName = atlasName;
         this.textureManager = textureManager;
@@ -72,8 +73,8 @@ public class TextureAtlasFinalizeTask<T> implements Runnable, TextureAtlasTask {
     }
 
     public void addSprite(
-            @Nonnull final String name, final int posX, final int posY, final int width, final int height) {
-        final SpriteData data = new SpriteData();
+            @Nonnull String name, int posX, int posY, int width, int height) {
+        SpriteData data = new SpriteData();
         data.spriteName = name;
         data.posX = posX;
         data.posY = posY;
@@ -90,20 +91,24 @@ public class TextureAtlasFinalizeTask<T> implements Runnable, TextureAtlasTask {
     @Override
     public void run() {
         try {
-            final T preLoadData = preLoadTask.get();
-            final Texture atlasTexture = textureManager.loadTexture(atlasName, preLoadData);
-            if (atlasTexture != null) {
-                textureManager.addTexture(atlasName, atlasTexture);
-                for (@Nonnull final SpriteData data : spriteList) {
-                    final Texture spriteTexture = atlasTexture
-                            .getSubTexture(data.posX, data.posY, data.width, data.height);
-                    textureManager.addTexture(data.spriteName, spriteTexture);
+            @Nullable T preLoadData = preLoadTask.get();
+            if (preLoadData == null) {
+                LOGGER.warn("Failed to load texture data for atlas: {}", atlasName);
+            } else {
+                Texture atlasTexture = textureManager.loadTexture(atlasName, preLoadData);
+                if (atlasTexture != null) {
+                    textureManager.addTexture(atlasName, atlasTexture);
+                    for (@Nonnull SpriteData data : spriteList) {
+                        Texture spriteTexture = atlasTexture
+                                .getSubTexture(data.posX, data.posY, data.width, data.height);
+                        textureManager.addTexture(data.spriteName, spriteTexture);
+                    }
                 }
             }
             monitor.setProgress(monitor.getProgress() + progressToAdd);
-        } catch (@Nonnull final InterruptedException e) {
+        } catch (@Nonnull InterruptedException e) {
             LOGGER.error("Loading thread got interrupted.", e);
-        } catch (@Nonnull final ExecutionException e) {
+        } catch (@Nonnull ExecutionException e) {
             LOGGER.error("Failure while loading texture data.", e);
         } finally {
             done = true;

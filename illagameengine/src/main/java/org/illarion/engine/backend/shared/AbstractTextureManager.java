@@ -365,7 +365,7 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
      * @return the texture loaded or {@code null} in case loading is impossible
      */
     @Nullable
-    protected abstract Texture loadTexture(@Nonnull String resource, T preLoadData);
+    protected abstract Texture loadTexture(@Nonnull String resource, @Nonnull T preLoadData);
 
     protected void addTexture(@Nonnull String textureName, @Nonnull Texture texture) {
         textures.put(textureName, texture);

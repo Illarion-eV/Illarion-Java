@@ -36,21 +36,21 @@ import java.io.InputStream;
 class SlickTextureManager extends AbstractTextureManager<ImageData> {
     @Nullable
     @Override
-    protected ImageData loadTextureData(@Nonnull final String textureName) {
-        final LoadableImageData imageData = new PNGImageData();
+    protected ImageData loadTextureData(@Nonnull String textureName) {
+        LoadableImageData imageData = new PNGImageData();
 
         @Nullable InputStream in = null;
         try {
             in = new BufferedInputStream(
                     Thread.currentThread().getContextClassLoader().getResourceAsStream(textureName));
             imageData.loadImage(in);
-        } catch (@Nonnull final IOException e) {
+        } catch (@Nonnull IOException e) {
             return null;
         } finally {
             if (in != null) {
                 try {
                     in.close();
-                } catch (@Nonnull final IOException ignored) {
+                } catch (@Nonnull IOException ignored) {
                 }
             }
         }
@@ -59,7 +59,7 @@ class SlickTextureManager extends AbstractTextureManager<ImageData> {
 
     @Nullable
     @Override
-    protected Texture loadTexture(@Nonnull final String resource, final ImageData preLoadData) {
+    protected Texture loadTexture(@Nonnull String resource, @Nonnull ImageData preLoadData) {
         return new SlickTexture(new Image(preLoadData));
     }
 }

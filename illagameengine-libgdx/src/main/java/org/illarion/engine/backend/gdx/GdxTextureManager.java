@@ -32,6 +32,7 @@ import javax.annotation.Nullable;
  */
 class GdxTextureManager extends AbstractTextureManager<Pixmap> {
     @Override
+    @Nullable
     protected Pixmap loadTextureData(@Nonnull String textureName) {
         try {
             return new Pixmap(Gdx.files.internal(textureName));
@@ -42,7 +43,7 @@ class GdxTextureManager extends AbstractTextureManager<Pixmap> {
 
     @Nullable
     @Override
-    protected GdxTexture loadTexture(@Nonnull String resource, Pixmap preLoadData) {
+    protected GdxTexture loadTexture(@Nonnull String resource, @Nonnull Pixmap preLoadData) {
         try {
             Texture tex = new Texture(preLoadData, false);
             tex.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
