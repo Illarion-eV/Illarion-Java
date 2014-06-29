@@ -1007,9 +1007,9 @@ public final class Char implements AnimatedMove {
                 if (avatar != null) {
                     avatar.setAlphaTarget(VISIBILITY_ALPHA_MOD * visibility);
                 }
-                LOGGER.warn("Showing character: {}", this);
+                LOGGER.info("Showing character: {}", this);
             } else if (avatar != null) {
-                LOGGER.warn("Hiding character: {}", this);
+                LOGGER.info("Hiding character: {}", this);
                 avatar.setAlphaTarget(0);
                 avatar.setAlpha(0);
             }
@@ -1310,5 +1310,10 @@ public final class Char implements AnimatedMove {
     public String toString() {
         String charIdString = (charId == null) ? "" : (" (" + charId.getValue() + ')');
         return "Character " + name + charIdString;
+    }
+
+    @Override
+    public int hashCode() {
+        return (charId == null) ? 0 : charId.hashCode();
     }
 }

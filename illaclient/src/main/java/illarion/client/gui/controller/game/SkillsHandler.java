@@ -242,13 +242,13 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
             return;
         }
         @Nullable Element skillPanel = skillWindow.getElement().findElementById("#skill" + skill.getId());
-        int SkillHeight = 22;
+        int skillHeight = 22;
         if (skillPanel == null) {
             return;
         }
 
         if (value == 0) {
-            SkillHeight = 0;
+            skillHeight = 0;
         }
         @Nullable Element skillPanelWindowContent = skillPanel.getParent();
         @Nullable Element skillPanelWindow = skillPanelWindowContent.getParent();
@@ -257,7 +257,7 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
         skillPanelWindowContent.setMarginBottom(SizeValue.px(5));
         skillPanelWindowContent.findElementById("#headline").setConstraintHeight(SizeValue.px(28));
 
-        skillPanel.setConstraintHeight(SizeValue.px(SkillHeight));
+        skillPanel.setConstraintHeight(SizeValue.px(skillHeight));
 
         Element valueLabel = skillPanel.findElementById("#value");
         TextRenderer valueTextRenderer = valueLabel.getRenderer(TextRenderer.class);
@@ -265,16 +265,16 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
         String newValue = Integer.toString(value);
         boolean skillChanged = !valueTextRenderer.getOriginalText().equals(newValue);
         valueTextRenderer.setText(newValue);
-        valueLabel.setConstraintHeight(SizeValue.px(SkillHeight));
+        valueLabel.setConstraintHeight(SizeValue.px(skillHeight));
 
         Element progressBar = skillPanel.findElementById("#progress");
         float progress = (value == 100) ? 1.f : (minor / 10000.f);
         progressBar.getNiftyControl(Progress.class).setProgress(progress);
-        progressBar.setConstraintHeight(SizeValue.px(Math.max(SkillHeight - 3, 0)));
+        progressBar.setConstraintHeight(SizeValue.px(Math.max(skillHeight - 3, 0)));
         progressBar.setMarginRight(SizeValue.px(40));
 
         Element nameLabel = skillPanel.findElementById("#name");
-        nameLabel.setConstraintHeight(SizeValue.px(SkillHeight));
+        nameLabel.setConstraintHeight(SizeValue.px(skillHeight));
         nameLabel.setMarginLeft(SizeValue.px(5));
 
         if (World.getNet().isLoginDone() && skillChanged) {

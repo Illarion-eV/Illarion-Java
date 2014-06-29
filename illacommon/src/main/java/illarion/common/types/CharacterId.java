@@ -70,7 +70,7 @@ public final class CharacterId implements Serializable, Comparable<CharacterId> 
      * @throws IllegalArgumentException in case the value is less then {@link #MIN_VALUE} or larger then
      * {@link #MAX_VALUE}.
      */
-    public CharacterId(final long value) {
+    public CharacterId(long value) {
         if ((value < MIN_VALUE) || (value > MAX_VALUE)) {
             throw new IllegalArgumentException("value (" + Long.toString(value) + ") is out of range.");
         }
@@ -83,7 +83,7 @@ public final class CharacterId implements Serializable, Comparable<CharacterId> 
      * @param reader the reader
      * @throws IOException in case the reading operation fails for some reason
      */
-    public CharacterId(@Nonnull final NetCommReader reader) throws IOException {
+    public CharacterId(@Nonnull NetCommReader reader) throws IOException {
         value = reader.readInt();
     }
 
@@ -115,7 +115,7 @@ public final class CharacterId implements Serializable, Comparable<CharacterId> 
     }
 
     @Override
-    public boolean equals(@Nullable final Object obj) {
+    public boolean equals(@Nullable Object obj) {
         return super.equals(obj) || ((obj instanceof CharacterId) && equals((CharacterId) obj));
     }
 
@@ -135,7 +135,7 @@ public final class CharacterId implements Serializable, Comparable<CharacterId> 
      *
      * @param writer the writer that receives the value
      */
-    public void encode(@Nonnull final NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) {
         writer.writeInt(value);
     }
 
@@ -145,7 +145,7 @@ public final class CharacterId implements Serializable, Comparable<CharacterId> 
      * @param obj the second instance to check
      * @return {@code true} in case both instances represent the same value
      */
-    public boolean equals(@Nullable final CharacterId obj) {
+    public boolean equals(@Nullable CharacterId obj) {
         return (obj != null) && (value == obj.value);
     }
 
@@ -162,7 +162,7 @@ public final class CharacterId implements Serializable, Comparable<CharacterId> 
     }
 
     @Override
-    public int compareTo(@Nonnull final CharacterId o) {
+    public int compareTo(@Nonnull CharacterId o) {
         if (value == o.value) {
             return 0;
         }
