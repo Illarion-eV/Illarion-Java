@@ -133,7 +133,7 @@ class FollowMouseMovementHandler extends AbstractMovementHandler implements Mous
             return CharMovementMode.None;
         }
 
-        if (mouseFollowAutoRun) {
+        if (!mouseFollowAutoRun) {
             return getMovement().getDefaultMovementMode();
         }
 

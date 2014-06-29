@@ -83,7 +83,7 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
             return CharMovementMode.None;
         }
 
-        if (mouseFollowAutoRun) {
+        if (!mouseFollowAutoRun) {
             return getMovement().getDefaultMovementMode();
         }
 
