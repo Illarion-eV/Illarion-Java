@@ -63,7 +63,7 @@ public final class SkillMsg extends AbstractGuiMsg {
      * decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         skill = reader.readUByte();
         value = reader.readUShort();
         minor = reader.readUShort();
@@ -77,9 +77,9 @@ public final class SkillMsg extends AbstractGuiMsg {
      */
     @Override
     public boolean executeUpdate() {
-        final Skill skill = Skills.getInstance().getSkill(this.skill);
+        Skill skill = Skills.getInstance().getSkill(this.skill);
         if (skill == null) {
-            LOGGER.warn("Unknown skill received! ID: " + Integer.toString(this.skill));
+            LOGGER.warn("Unknown skill received! ID: {}", Integer.toString(this.skill));
             return true;
         }
 

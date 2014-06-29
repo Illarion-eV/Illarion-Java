@@ -41,7 +41,7 @@ public final class MapCompleteMsg extends AbstractReply {
      * decode the full message
      */
     @Override
-    public void decode(final NetCommReader reader) throws IOException {
+    public void decode(NetCommReader reader) throws IOException {
         // nothing to decode
     }
 
@@ -58,7 +58,10 @@ public final class MapCompleteMsg extends AbstractReply {
         World.getLights().refresh();
         World.getMap().checkInside();
         World.getMap().getMiniMap().performFullUpdate();
-        World.getGameGui().getQuestGui().updateAllQuests();
+
+        if (World.getGameGui().isReady()) {
+            World.getGameGui().getQuestGui().updateAllQuests();
+        }
 
         World.getNet().setLoginDone(true);
         return true;
@@ -69,7 +72,6 @@ public final class MapCompleteMsg extends AbstractReply {
      *
      * @return the string that contains the values that were decoded for this
      * message
-     * @see illarion.client.net.server.AbstractReply#toString()
      */
     @Nonnull
     @SuppressWarnings("nls")

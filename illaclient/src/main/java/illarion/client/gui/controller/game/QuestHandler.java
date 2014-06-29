@@ -247,7 +247,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
     @Nullable
     private Window getQuestWindow() {
         if (screen == null) {
-            LOGGER.error("Can't fetch the quest window as long as the quest handler is not bound to a screen.");
+            LOGGER.warn("Can't fetch the quest window as long as the quest handler is not bound to a screen.");
             return null;
         }
         if (questWindow == null) {
