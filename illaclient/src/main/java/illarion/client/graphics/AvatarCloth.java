@@ -41,7 +41,7 @@ public final class AvatarCloth extends AbstractEntity<AvatarClothTemplate> imple
      * @param template the template this new cloth instance is build from
      * @param parentAvatar the parent avatar this cloth belong to
      */
-    public AvatarCloth(@Nonnull final AvatarClothTemplate template, @Nonnull final Avatar parentAvatar) {
+    public AvatarCloth(@Nonnull AvatarClothTemplate template, @Nonnull Avatar parentAvatar) {
         super(template);
         parent = parentAvatar;
     }
@@ -64,5 +64,11 @@ public final class AvatarCloth extends AbstractEntity<AvatarClothTemplate> imple
     @Override
     public void hide() {
         // do nothing
+    }
+
+    @Override
+    @Nonnull
+    public String toString() {
+        return getTemplate() + " of " + parent;
     }
 }

@@ -19,6 +19,7 @@ import illarion.client.resources.data.AbstractEntityTemplate;
 import illarion.client.world.World;
 import illarion.common.types.Location;
 import illarion.common.types.Rectangle;
+import illarion.common.util.FastMath;
 import org.illarion.engine.EngineException;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.*;
@@ -431,9 +432,10 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
             LOGGER.warn("Changing the alpha value of a removed entity is not allowed.");
             return;
         }
-        if (getLight().getAlpha() != newAlpha) {
+        int usedAlpha = FastMath.clamp(newAlpha, 0, Color.MAX_INT_VALUE);
+        if (getLight().getAlpha() != usedAlpha) {
             int oldAlpha = getLight().getAlpha();
-            getLight().setAlpha(newAlpha);
+            getLight().setAlpha(usedAlpha);
             if (alphaListener != null) {
                 alphaListener.alphaChanged(oldAlpha, getLight().getAlpha());
             }
@@ -453,7 +455,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
             LOGGER.warn("Changing the alpha animation target of a entity is not allowed.");
             return;
         }
-        alphaTarget = newAlphaTarget;
+        alphaTarget = FastMath.clamp(newAlphaTarget, 0, Color.MAX_INT_VALUE);
     }
 
     /**
@@ -584,7 +586,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
             return;
         }
         if (shown) {
-            LOGGER.error("Added entity twice.");
+            LOGGER.error("Added entity {} twice.", this);
         } else {
             World.getMapDisplay().getGameScene().addElement(this);
             shown = true;

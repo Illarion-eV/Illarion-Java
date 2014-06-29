@@ -18,12 +18,10 @@ package illarion.client.world;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import illarion.client.Login;
-import illarion.client.graphics.Avatar;
 import illarion.client.net.client.RequestAppearanceCmd;
 import illarion.client.net.server.events.DialogMerchantReceivedEvent;
 import illarion.client.net.server.events.OpenContainerEvent;
 import illarion.client.util.ChatLog;
-import illarion.client.world.characters.CharacterAttribute;
 import illarion.client.world.events.CloseDialogEvent;
 import illarion.client.world.items.Inventory;
 import illarion.client.world.items.ItemContainer;
@@ -31,7 +29,6 @@ import illarion.client.world.items.MerchantList;
 import illarion.client.world.movement.Movement;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
-import illarion.common.util.Bresenham;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.FastMath;
 import org.bushe.swing.event.EventBus;
@@ -45,7 +42,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
-import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -452,6 +448,13 @@ public final class Player {
      * @return the visibility of the character in percent
      */
     public int canSee(@Nonnull Char chara) {
+        if (isPlayer(chara.getCharId())) {
+            return Char.VISIBILITY_MAX;
+        }
+        MapTile tile = World.getMap().getMapAt(chara.getLocation());
+        if ((tile == null) || tile.isHidden()) {
+            return 0;
+        }
         return Char.VISIBILITY_MAX;
     }
 

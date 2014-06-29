@@ -15,6 +15,7 @@
  */
 package illarion.client.resources.data;
 
+import illarion.client.graphics.AvatarClothManager;
 import org.illarion.engine.graphic.Sprite;
 
 import javax.annotation.Nonnull;
@@ -48,8 +49,7 @@ public class AvatarClothTemplate extends AbstractMultiFrameEntityTemplate {
      * @param avatarId the ID of the avatar this cloth belongs to
      * @param clothSlot the ID of the slot this cloth belongs to
      */
-    public AvatarClothTemplate(
-            final int id, @Nonnull final Sprite sprite, final int frames, final int avatarId, final int clothSlot) {
+    public AvatarClothTemplate(int id, @Nonnull Sprite sprite, int frames, int avatarId, int clothSlot) {
         super(id, sprite, frames, 0, null, 0);
 
         this.avatarId = avatarId;
@@ -62,5 +62,11 @@ public class AvatarClothTemplate extends AbstractMultiFrameEntityTemplate {
 
     public int getClothSlot() {
         return clothSlot;
+    }
+
+    @Nonnull
+    @Override
+    public String toString() {
+        return AvatarClothManager.toString(clothSlot);
     }
 }

@@ -124,7 +124,7 @@ public final class AvatarClothManager {
      * @param cloth the definition of the cloth itself
      */
     @SuppressWarnings("nls")
-    public void addCloth(final int group, @Nonnull final AvatarClothTemplate cloth) {
+    public void addCloth(int group, @Nonnull AvatarClothTemplate cloth) {
         if ((group < 0) || (group >= GROUP_COUNT)) {
             throw new IllegalArgumentException("Group needs to be between 0 and " + GROUP_COUNT);
         }
@@ -143,19 +143,19 @@ public final class AvatarClothManager {
      * @return {@code true} in case the cloth item is defined for that location
      */
     @SuppressWarnings("nls")
-    public boolean doesClothExists(final int group, final int itemID) {
+    public boolean doesClothExists(int group, int itemID) {
         if ((group < 0) || (group >= GROUP_COUNT)) {
             throw new IllegalArgumentException("Group needs to be between 0 and " + GROUP_COUNT);
         }
         if (existingClothes[group] == null) {
             return false;
         }
-        final int refID;
+        int refID;
 
         if ((group == GROUP_HAIR) || (group == GROUP_BEARD)) {
             refID = itemID;
         } else {
-            final ItemTemplate refItem = ItemFactory.getInstance().getTemplate(itemID);
+            ItemTemplate refItem = ItemFactory.getInstance().getTemplate(itemID);
             refID = refItem.getPaperdollingId();
         }
         return (refID != 0) && existingClothes[group].hasTemplate(refID);
@@ -166,7 +166,7 @@ public final class AvatarClothManager {
      * called after the loading is done to optimize the internal storage.
      */
     public void finish() {
-        for (final ClothFactory factory : existingClothes) {
+        for (ClothFactory factory : existingClothes) {
             if (factory != null) {
                 factory.loadingFinished();
             }
@@ -184,15 +184,15 @@ public final class AvatarClothManager {
      */
     @Nullable
     @SuppressWarnings("nls")
-    public AvatarCloth getCloth(final int group, final int itemID, @Nonnull final Avatar parentAvatar) {
+    public AvatarCloth getCloth(int group, int itemID, @Nonnull Avatar parentAvatar) {
         if ((group < 0) || (group >= GROUP_COUNT)) {
             throw new IllegalArgumentException("Group needs to be between 0 and " + GROUP_COUNT);
         }
         if (existingClothes[group] == null) {
             return null;
         }
-        final int refID;
-        @Nullable final ItemTemplate refItem;
+        int refID;
+        @Nullable ItemTemplate refItem;
 
         if ((group == GROUP_HAIR) || (group == GROUP_BEARD)) {
             refID = itemID;
@@ -201,19 +201,43 @@ public final class AvatarClothManager {
             refItem = ItemFactory.getInstance().getTemplate(itemID);
             refID = refItem.getPaperdollingId();
         }
-        final AvatarClothTemplate template;
+        AvatarClothTemplate template;
         try {
             template = existingClothes[group].getTemplate(refID);
-        } catch (@Nonnull final IllegalStateException ex) {
+        } catch (@Nonnull IllegalStateException ex) {
             return null;
         }
         if (template.getId() == 0) {
             return null;
         }
-        final AvatarCloth ret = new AvatarCloth(template, parentAvatar);
+        AvatarCloth ret = new AvatarCloth(template, parentAvatar);
         if (refItem != null) {
             ret.setBaseColor(refItem.getPaperdollingColor());
         }
         return ret;
+    }
+
+    public static String toString(int slot) {
+        if (slot == GROUP_BEARD) {
+            return "Beard";
+        } else if (slot == GROUP_CHEST) {
+            return "Chest";
+        } else if (slot == GROUP_COAT) {
+            return "Coat";
+        } else if (slot == GROUP_FIRST_HAND) {
+            return "First Hand";
+        } else if (slot == GROUP_HAIR) {
+            return "Hair";
+        } else if (slot == GROUP_HAT) {
+            return "Hat";
+        } else if (slot == GROUP_SECOND_HAND) {
+            return "Second Hand";
+        } else if (slot == GROUP_SHOES) {
+            return "Shoes";
+        } else if (slot == GROUP_TROUSERS) {
+            return "Hair";
+        } else {
+            return "Unkown Cloth";
+        }
     }
 }

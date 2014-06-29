@@ -123,7 +123,7 @@ public class GameMapProcessor2 {
     }
 
     @Nullable
-    private static MapGroup lastInsideGroup;
+    private static MapGroup lastInsideGroup = null;
 
     public static void checkInside() {
         Location playerLocation = World.getPlayer().getLocation();

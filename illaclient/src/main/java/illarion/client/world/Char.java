@@ -457,11 +457,13 @@ public final class Char implements AnimatedMove {
         }
 
         int oldAlpha = 0;
-        int oldAlphaTarget = 255;
+        int oldAlphaTarget;
 
         if (avatar != null) {
             oldAlpha = avatar.getAlpha();
             oldAlphaTarget = avatar.getTargetAlpha();
+        } else {
+            oldAlphaTarget = World.getPlayer().canSee(this) * VISIBILITY_ALPHA_MOD;
         }
 
         @Nullable Avatar newAvatar = Avatar.create(newAvatarId, this);
@@ -886,6 +888,10 @@ public final class Char implements AnimatedMove {
         return visible;
     }
 
+    public void updateVisibility() {
+        setVisible(World.getPlayer().canSee(this));
+    }
+
     /**
      * Move the character to a new position with animation. This function takes absolute coordinates.
      *
@@ -911,7 +917,7 @@ public final class Char implements AnimatedMove {
         updateLight(charLocation);
 
         // determine general visibility by players
-        setVisible(World.getPlayer().canSee(this));
+        updateVisibility();
         if (visible && (avatar != null)) {
             // calculate movement direction
             int dir = tempLoc.getDirection(charLocation);
@@ -1001,8 +1007,11 @@ public final class Char implements AnimatedMove {
                 if (avatar != null) {
                     avatar.setAlphaTarget(VISIBILITY_ALPHA_MOD * visibility);
                 }
+                LOGGER.warn("Showing character: {}", this);
             } else if (avatar != null) {
+                LOGGER.warn("Hiding character: {}", this);
                 avatar.setAlphaTarget(0);
+                avatar.setAlpha(0);
             }
 
             MapTile tile = World.getMap().getMapAt(charLocation);

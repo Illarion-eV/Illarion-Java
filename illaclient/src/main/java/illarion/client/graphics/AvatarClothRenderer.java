@@ -212,7 +212,7 @@ final class AvatarClothRenderer {
      * @param org the instance of AvatarClothRenderer that shall be copied into
      * a new instance
      */
-    protected AvatarClothRenderer(@Nonnull final AvatarClothRenderer org) {
+    AvatarClothRenderer(@Nonnull AvatarClothRenderer org) {
         this(org.direction, org.parentFrames);
     }
 
@@ -222,7 +222,7 @@ final class AvatarClothRenderer {
      * @param dir the direction this character is looking at.
      * @param frames the amount of frames the parent avatar animation contains
      */
-    protected AvatarClothRenderer(final int dir, final int frames) {
+    AvatarClothRenderer(int dir, int frames) {
         clothLock = new ReentrantReadWriteLock();
         scale = 1.f;
         currentClothes = new AvatarCloth[AvatarClothManager.GROUP_COUNT];
@@ -237,7 +237,7 @@ final class AvatarClothRenderer {
      *
      * @param newAlpha the new alpha value
      */
-    public void setAlpha(final int newAlpha) {
+    public void setAlpha(int newAlpha) {
         if (newAlpha == clothAlpha) {
             return;
         }
@@ -261,14 +261,14 @@ final class AvatarClothRenderer {
      *
      * @param frame the index of the frame that shall be rendered
      */
-    public void setFrame(final int frame) {
+    public void setFrame(int frame) {
         currentFrame = frame;
         clothLock.readLock().lock();
         try {
             for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
-                final AvatarCloth currentCloth = currentClothes[i];
+                AvatarCloth currentCloth = currentClothes[i];
                 if (currentCloth != null) {
-                    final int currentFrames = currentCloth.getTemplate().getFrames();
+                    int currentFrames = currentCloth.getTemplate().getFrames();
                     if (currentFrames == parentFrames) {
                         currentCloth.setFrame(frame);
                     } else if (currentFrames > 1) {
@@ -289,7 +289,7 @@ final class AvatarClothRenderer {
      *
      * @param light the light object that is send to all currently set clothes
      */
-    public void setLight(@Nonnull final Color light) {
+    public void setLight(@Nonnull Color light) {
         currentLight = light;
         clothLock.readLock().lock();
         try {
@@ -310,7 +310,7 @@ final class AvatarClothRenderer {
      * @param newScale the new scaling value to ensure that everything is
      * rendered at the proper size
      */
-    public void setScale(final float newScale) {
+    public void setScale(float newScale) {
         scale = newScale;
         clothLock.readLock().lock();
         try {
@@ -330,7 +330,7 @@ final class AvatarClothRenderer {
      * @param slot the slot that shall be changed
      * @param color the new color that shall be used as base color
      */
-    protected void changeBaseColor(final int slot, final Color color) {
+    protected void changeBaseColor(int slot, Color color) {
         clothLock.readLock().lock();
         try {
             if (currentClothes[slot] != null) {
@@ -344,11 +344,11 @@ final class AvatarClothRenderer {
     /**
      * Render all clothes in the correct order.
      */
-    void render(@Nonnull final Graphics g) {
+    void render(@Nonnull Graphics g) {
         clothLock.readLock().lock();
         try {
             for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
-                final int currentIndex = RENDER_DIR[direction][i];
+                int currentIndex = RENDER_DIR[direction][i];
                 if (currentClothes[currentIndex] != null) {
                     currentClothes[currentIndex].render(g);
                 }
@@ -361,7 +361,7 @@ final class AvatarClothRenderer {
     /**
      * Update all clothes
      */
-    void update(@Nonnull final GameContainer c, final int delta) {
+    void update(@Nonnull GameContainer c, int delta) {
         clothLock.readLock().lock();
         try {
             for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
@@ -384,7 +384,7 @@ final class AvatarClothRenderer {
      * @param item the item that shall be shown itself or {@code null} to
      * remove the item
      */
-    void setCloth(final int group, @Nullable final AvatarCloth item) {
+    void setCloth(int group, @Nullable AvatarCloth item) {
         clothLock.writeLock().lock();
         try {
             if (currentClothes[group] != null) {
@@ -420,7 +420,7 @@ final class AvatarClothRenderer {
      * @param newLayer the global layer of this object
      */
     void setScreenLocation(
-            final int newX, final int newY, final int newZ, final int newLayer) {
+            int newX, int newY, int newZ, int newLayer) {
         avatarPosX = newX;
         avatarPosY = newY;
         avatarPosZ = newZ;

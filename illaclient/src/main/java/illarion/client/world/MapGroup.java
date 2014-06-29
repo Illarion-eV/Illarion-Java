@@ -86,7 +86,7 @@ public final class MapGroup {
      * @return {@code true} in case one of the overwriting groups is hidden
      */
     private boolean isOverwritingGroupHidden() {
-        @Nullable final List<MapGroup> lclList = overwritingGroups;
+        @Nullable List<MapGroup> lclList = overwritingGroups;
         if (lclList != null) {
             int count = lclList.size();
             //noinspection ForLoopReplaceableByForEach
@@ -108,7 +108,7 @@ public final class MapGroup {
      *
      * @param hidden the hidden flag
      */
-    public void setHidden(final boolean hidden) {
+    public void setHidden(boolean hidden) {
         MapGroup other = this;
         while (true) {
             assert other != null;
@@ -139,7 +139,7 @@ public final class MapGroup {
      *
      * @param parent the parent of this group
      */
-    public void setParent(@Nonnull final MapGroup parent) {
+    public void setParent(@Nonnull MapGroup parent) {
         if (parent.parent != null) {
             throw new IllegalArgumentException("Set a parent group that is not a root group is not allowed.");
         }
@@ -157,7 +157,7 @@ public final class MapGroup {
         }
 
         if (overwritingGroups != null) {
-            for (final MapGroup group : overwritingGroups) {
+            for (MapGroup group : overwritingGroups) {
                 parent.addOverwritingGroup(group);
             }
             overwritingGroups = null;
@@ -169,7 +169,7 @@ public final class MapGroup {
      *
      * @param child the child to add
      */
-    private void addChild(@Nonnull final MapGroup child) {
+    private void addChild(@Nonnull MapGroup child) {
         if (children == null) {
             children = new ArrayList<>();
         }
@@ -183,7 +183,7 @@ public final class MapGroup {
      *
      * @param group the group to add to the list of overwriting groups
      */
-    public void addOverwritingGroup(@Nonnull final MapGroup group) {
+    public void addOverwritingGroup(@Nonnull MapGroup group) {
         if (parent != null) {
             throw new IllegalStateException("Adding overwriting groups no non-root groups is not allowed.");
         }

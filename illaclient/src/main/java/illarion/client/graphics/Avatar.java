@@ -368,28 +368,26 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
      */
     @Override
     public void render(@Nonnull Graphics g) {
-        if (getAlpha() == 0) {
-            return;
+        if (performRendering()) {
+            if (isAttackMarkerVisible()) {
+                attackMark.render(g);
+            }
+
+            if (showAttackAvailable) {
+                attackAvailableMark.render(g);
+            }
+
+            // draw the avatar, naked!! :O
+            super.render(g);
+
+            // draw the clothes
+            clothRender.render(g);
+
+            if (renderName) {
+                avatarTextTag.render(g);
+            }
+            showHighlight = 0;
         }
-
-        if (isAttackMarkerVisible()) {
-            attackMark.render(g);
-        }
-
-        if (showAttackAvailable) {
-            attackAvailableMark.render(g);
-        }
-
-        // draw the avatar, naked!! :O
-        super.render(g);
-
-        // draw the clothes
-        clothRender.render(g);
-
-        if (renderName) {
-            avatarTextTag.render(g);
-        }
-        showHighlight = 0;
     }
 
     /**
@@ -582,5 +580,11 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
             attackMark.setAlpha(getAlpha());
             attackMark.update(container, delta);
         }
+    }
+
+    @Override
+    @Nonnull
+    public String toString() {
+        return "Avatar of " + parentChar;
     }
 }

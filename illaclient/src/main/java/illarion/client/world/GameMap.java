@@ -494,6 +494,7 @@ public final class GameMap implements LightingMap, Stoppable {
      */
     public void checkInside() {
         GameMapProcessor2.checkInside();
+        World.getPeople().checkVisibility();
     }
 
     /**

@@ -52,7 +52,7 @@ public final class ClothLoader extends AbstractResourceLoader<AvatarClothTemplat
      *
      * @param assets the assets instance of the game engine that is used to load the data
      */
-    public ClothLoader(@Nonnull final Assets assets) {
+    public ClothLoader(@Nonnull Assets assets) {
         this.assets = assets;
     }
 
@@ -63,7 +63,7 @@ public final class ClothLoader extends AbstractResourceLoader<AvatarClothTemplat
             throw new IllegalStateException("targetFactory not set yet.");
         }
 
-        final ResourceFactory<AvatarClothTemplate> factory = getTargetFactory();
+        ResourceFactory<AvatarClothTemplate> factory = getTargetFactory();
 
         factory.init();
         new TableLoaderClothes(this);
@@ -92,30 +92,30 @@ public final class ClothLoader extends AbstractResourceLoader<AvatarClothTemplat
      */
     @SuppressWarnings("nls")
     @Override
-    public boolean processRecord(final int line, @Nonnull final TableLoaderClothes loader) {
-        final int avatarID = loader.getReferenceCharacterId();
-        final int itemID = loader.getReferenceItemId();
-        final int location = loader.getClothSlot();
-        final String name = loader.getResourceName();
-        final int frames = loader.getFrameCount();
-        final boolean mirror = loader.isMirrored();
+    public boolean processRecord(int line, @Nonnull TableLoaderClothes loader) {
+        int avatarID = loader.getReferenceCharacterId();
+        int itemID = loader.getReferenceItemId();
+        int location = loader.getClothSlot();
+        String name = loader.getResourceName();
+        int frames = loader.getFrameCount();
+        boolean mirror = loader.isMirrored();
 
-        final AvatarTemplate avatarTemplate = CharacterFactory.getInstance().getTemplate(avatarID);
+        AvatarTemplate avatarTemplate = CharacterFactory.getInstance().getTemplate(avatarID);
 
-        final int offsetX = loader.getOffsetX() + avatarTemplate.getSprite().getOffsetX();
-        final int offsetY = loader.getOffsetY() + avatarTemplate.getSprite().getOffsetY();
+        int offsetX = loader.getOffsetX() + avatarTemplate.getSprite().getOffsetX();
+        int offsetY = loader.getOffsetY() + avatarTemplate.getSprite().getOffsetY();
 
-        final Sprite clothSprite = assets.getSpriteFactory()
+        Sprite clothSprite = assets.getSpriteFactory()
                 .createSprite(getTextures(assets.getTextureManager(), CLOTH_PATH, name, frames), offsetX, offsetY,
                               SpriteFactory.CENTER, SpriteFactory.BOTTOM, mirror);
-        final AvatarClothTemplate template = new AvatarClothTemplate(itemID, clothSprite, loader.getFrameCount(),
-                                                                     avatarID, location);
+        AvatarClothTemplate template = new AvatarClothTemplate(itemID, clothSprite, loader.getFrameCount(), avatarID,
+                                                               location);
 
         try {
             getTargetFactory().storeResource(template);
-        } catch (@Nonnull final IllegalStateException e) {
-            LOGGER.error("Error adding paperdolling item to avatar: " + avatarID + " in group: " + location + " to " +
-                                 "item: " + itemID);
+        } catch (@Nonnull IllegalStateException e) {
+            LOGGER.error("Error adding paperdolling item to avatar: {} in group: {} to item: {}", avatarID, location,
+                         itemID);
         }
         return true;
     }
