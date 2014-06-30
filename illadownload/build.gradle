@@ -19,14 +19,16 @@ apply plugin: 'maven-publish'
 apply from: '../javafx.plugin'
 apply from: '../versions.gradle'
 
-if (project.hasProperty('targetDistDir')) {
-    // Launch4j requires a native installment. Has to remain disabled until the server contains this
-    //apply plugin: 'launch4j'
+def hasTargetDistDir = project.hasProperty('targetDistDir')
+def hasInstall4jDir = project.hasProperty('install4jDir')
+def hasInstall4jTargetDir = project.hasProperty('install4jTargetDir')
 
-    // The MacOS bundle plugin is broken to the point where its not usable at all. Its impossible to set the input
-    // files as this plugin receives the from the jar task directly. And those requirements are resolved wrong due
-    // the usage of JavaFX.
-    //apply plugin: 'macAppBundle'
+if (hasInstall4jTargetDir && hasInstall4jDir) {
+    ant.taskdef(name: 'install4j', classname: 'com.install4j.Install4JTask') {
+        classpath {
+            fileset(dir: project.install4jDir, includes: '*.jar')
+        }
+    }
 }
 
 archivesBaseName = 'illarion_download'
@@ -70,14 +72,17 @@ jar {
 
 task publishDownloaderBundle() {}
 
-if (project.hasProperty('targetDistDir')) {
+if (hasTargetDistDir) {
     publish.dependsOn {
         publishDownloader
     }
     publishDownloaderBundle.dependsOn {
         publishBundle
-        //launch4j
-        //publishMacBundle
+    }
+}
+if (hasInstall4jTargetDir) {
+    publishDownloaderBundle.dependsOn {
+        createInstall4j
     }
 }
 
@@ -134,24 +139,7 @@ javafx {
     codebase = 'http://illarion.org/media/java/launcher'
 }
 
-if (project.hasProperty('targetDistDir')) {
-    /*launch4j {
-        mainClassName = project.mainClassName
-        icon = 'icons/windows.ico'
-        outfile = new File(project.targetDistDir, "illarion.exe").absolutePath
-        copyright = '2014 - Illarion e.V'
-    }*/
-    /*macAppBundle {
-        mainClassName = project.mainClassName
-        icon = 'icons/mac.icns'
-        bundleJRE = false
-        javaProperties.put("apple.laf.useScreenMenuBar", "true")
-        jvmVersion = '1.7+'
-        appName = "Illarion"
-        dmgOutputDir = "macApp"
-        dmgName = "illarion.app.zip"
-    }*/
-
+if (hasTargetDistDir) {
     task clearDistDir(type: Delete) {
         delete project.distsDir
     }
@@ -168,15 +156,56 @@ if (project.hasProperty('targetDistDir')) {
         from new File(project.buildDir, "illarion.jar").absolutePath
         into file(project.targetDistDir)
     }
-    /*task publishMacBundle(type: Copy, dependsOn: 'createAppZip') {
-        from new File(project.buildDir, "macApp/illarion.app.zip").absolutePath
-        into file(project.targetDistDir)
-    }*/
+}
+if (hasInstall4jTargetDir) {
+    task assembleForInstall4j(type: Copy) {
+        from new File(project.buildDir, "libs/${project.archivesBaseName}-${project.version}.jar")
+        configurations.runtime.each { File file ->
+            if (!file.absolutePath.startsWith(System.getProperty('java.home'))) {
+                from file
+            }
+        }
+        into new File(project.buildDir, 'install4j')
+    }
+    task createInstall4j() {
+        def sourceDir = new File(project.buildDir, 'install4j')
+        inputs.dir sourceDir
+        inputs.file new File(project.projectDir, 'installer.install4j')
+        outputs.dir project.install4jTargetDir
+    }
+    createInstall4j << {
+        def sourceDir = new File(project.buildDir, 'install4j')
+        sourceDir.mkdirs()
+
+        assembleForInstall4j.execute()
+
+        def keystore = ''
+        def storePass = ''
+        def disableSigning = true
+        if (project.hasProperty('keyFile')) {
+            apply from: project.keyFile
+            keystore = project.ext.keystore
+            storePass = project.ext.storepass
+            disableSigning = false
+        }
+
+        ant.install4j(projectfile: new File(project.projectDir, 'installer.install4j'),
+                release: project.version.toString().replace('-SNAPSHOT', ''),
+                destination: project.install4jTargetDir,
+                winKeystorePassword: storePass, macKeystorePassword: storePass,
+                disableSigning: disableSigning) {
+            variable(name: 'sourceDir', value: sourceDir)
+            variable(name: 'iconsDir', value: new File(project.projectDir, 'icons'))
+            variable(name: 'keyStore', value: keystore)
+        }
+    }
+    createInstall4j.dependsOn {
+        jfxJar
+    }
 }
 
 task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jfxJar') {
-    final def mainFile = new File(project.buildDir, "libs/${project.archivesBaseName}-${project.version}.jar")
-            .absolutePath
+    def mainFile = new File(project.buildDir, "libs/${project.archivesBaseName}-${project.version}.jar").absolutePath
     injars(mainFile)
     configurations.runtime.each { File file ->
         if (file.absolutePath.startsWith(System.getProperty('java.home'))) {
