@@ -19,6 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -38,39 +40,12 @@ public final class DirectoryManager {
         /**
          * The user directory that stores the user related data like log files, character data and settings.
          */
-        User("User:", "usr"),
+        User,
 
         /**
          * The data directory that stores the application binary data required to launch the applications.
          */
-        Data("App:", "bin");
-
-        /**
-         * The header of this directory identifier.
-         */
-        @Nonnull
-        private final String header;
-
-        /**
-         * The default name for the directory.
-         */
-        @Nonnull
-        private final String defaultDir;
-
-        Directory(@Nonnull String header, @Nonnull String defaultDir) {
-            this.header = header;
-            this.defaultDir = defaultDir;
-        }
-
-        @Nonnull
-        public String getHeader() {
-            return header;
-        }
-
-        @Nonnull
-        public String getDefaultDir() {
-            return defaultDir;
-        }
+        Data
     }
 
     /**
@@ -92,6 +67,15 @@ public final class DirectoryManager {
     private DirectoryManager() {
         String installationDir = System.getProperty("org.illarion.install.dir");
         workingDirectory = Paths.get((installationDir == null) ? "." : installationDir);
+
+        Path userDir = getDirectory(Directory.User);
+        if (Files.isRegularFile(userDir)) {
+            try {
+                Files.delete(userDir);
+            } catch (IOException e) {
+                log.error("Failed to delete old .illarion file.", e);
+            }
+        }
     }
 
     /**
@@ -114,7 +98,7 @@ public final class DirectoryManager {
     public Path getDirectory(@Nonnull Directory dir) {
         switch (dir) {
             case User:
-                return Paths.get(System.getProperty("user.home"), "Illarion");
+                return Paths.get(System.getProperty("user.home"), ".illarion");
             case Data:
                 return workingDirectory.resolve("bin");
         }
@@ -123,9 +107,7 @@ public final class DirectoryManager {
 
     @Nonnull
     public Path resolveFile(@Nonnull Directory dir, @Nonnull String... segments) {
-        Path dirPath = getDirectory(dir);
-
-        Path result = dirPath;
+        Path result = getDirectory(dir);
         for (String segment : segments) {
             result = result.resolve(segment);
         }
