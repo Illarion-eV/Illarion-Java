@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="5.1.12" transformSequenceNumber="4">
+  <directoryPresets config="E:/temp" />
   <application name="Illarion Launcher" distributionSourceDir="" applicationId="3082-9459-3479-6191" mediaDir="" mediaFilePattern="${compiler:sys.shortName}-${compiler:sys.version}" compression="9" lzmaCompression="true" pack200Compression="true" excludeSignedFromPacking="true" commonExternalFiles="true" createMd5Sums="true" shrinkRuntime="true" shortName="Illarion" publisher="Illarion e.V." publisherWeb="http://illarion.org" version="2.1.0" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" installerName="" javaMinVersion="1.7" javaMaxVersion="" allowBetaVM="false" jdkMode="jdk" jdkName="JDK 1.7">
     <languages skipLanguageSelection="true" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
@@ -47,7 +48,7 @@
           <versionLine x="20" y="40" text="version ${compiler:sys.version}" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
         </text>
       </splashScreen>
-      <java mainClass="illarion.download.gui.GuiApplication" vmParameters="-Djava.net.preferIPv4Stack=true" arguments="" allowVMPassthroughParameters="false" preferredVM="client" bundleRuntime="true">
+      <java mainClass="illarion.download.gui.GuiApplication" vmParameters="-Djava.net.preferIPv4Stack=true" arguments="" allowVMPassthroughParameters="false" preferredVM="" bundleRuntime="true">
         <classPath>
           <scanDirectory location="lib" failOnError="true" />
         </classPath>
@@ -1194,7 +1195,7 @@ if (context.isUnattended()) {
     </applications>
   </installerGui>
   <mediaSets>
-    <windows name="Windows" id="60" customizedId="" mediaFileName="" installDir="${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreShared="true" directDownload="true" installOnlyIfNecessary="true" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
+    <windows name="Windows" id="60" customizedId="" mediaFileName="" installDir="${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="windows-x86-1.7.0_60" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="true" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
       <excludedLaunchers />
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
@@ -1207,7 +1208,7 @@ if (context.isUnattended()) {
       <excludedComponents />
       <includedDownloadableComponents />
     </windows>
-    <macos name="Mac OS X Single Bundle" id="63" customizedId="" mediaFileName="" installDir="${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" appleJre="false" requiredVmIdPrefix="" customInstallBaseDir="" contentFilesType="1" downloadURL="" signLaunchers="false" launcherId="23">
+    <macos name="Mac OS X Single Bundle" id="63" customizedId="" mediaFileName="" installDir="${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="macosx-amd64-1.7.0_60" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" appleJre="false" requiredVmIdPrefix="" customInstallBaseDir="" contentFilesType="1" downloadURL="" signLaunchers="false" launcherId="23">
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude />
@@ -1281,6 +1282,19 @@ if (context.isUnattended()) {
         <content />
       </postUninstallScript>
     </linuxDeb>
+    <windows name="Windows (x64)" id="226" customizedId="" mediaFileName="${compiler:sys.shortName}-${compiler:sys.version}-x64" installDir="${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="64" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="windows-amd64-1.7.0_60" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="true" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
+      <excludedLaunchers />
+      <excludedBeans />
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude />
+      <variables />
+      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
+        <commentFiles />
+        <customAttributes />
+      </autoUpdate>
+      <excludedComponents />
+      <includedDownloadableComponents />
+    </windows>
   </mediaSets>
   <buildIds buildAll="true" />
   <buildOptions verbose="false" faster="false" disableSigning="false" debug="false" />
