@@ -52,8 +52,8 @@ public final class ShowcaseMsg extends AbstractGuiMsg {
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         int containerId = reader.readUByte();
-        name = reader.readString();
-        description = reader.readString();
+        //name = reader.readString();
+        //description = reader.readString();
         int containerSize = reader.readUShort();
         int itemAmount = reader.readUShort();
 
