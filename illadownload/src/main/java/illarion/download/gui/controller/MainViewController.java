@@ -500,7 +500,7 @@ public class MainViewController extends AbstractController implements MavenDownl
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        Cleaner cleaner = new Cleaner(Cleaner.Mode.Maintenance);
+                        Cleaner cleaner = new Cleaner();
                         cleaner.clean();
                     }
                 }).start();

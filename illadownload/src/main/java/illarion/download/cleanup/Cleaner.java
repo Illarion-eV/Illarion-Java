@@ -16,7 +16,6 @@
 package illarion.download.cleanup;
 
 import illarion.common.util.DirectoryManager;
-import illarion.common.util.EnvironmentDetect;
 import illarion.common.util.ProgressMonitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,11 +24,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -77,25 +74,6 @@ public class Cleaner {
             LOGGER.warn("Failed to cleanup.", e);
         }
         executorService.shutdown();
-    }
-
-    private static void deleteDownloader() throws URISyntaxException {
-        if (EnvironmentDetect.isWebstart()) {
-            return;
-        }
-
-        final Path file = Paths.get(Cleaner.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-        if (Files.isRegularFile(file) && file.getFileName().toString().endsWith(".jar")) {
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                @Override
-                public void run() {
-                    try {
-                        Files.delete(file);
-                    } catch (IOException ignored) {
-                    }
-                }
-            });
-        }
     }
 
     private void deleteFiles(@Nonnull List<Path> files) throws IOException {
