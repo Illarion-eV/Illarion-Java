@@ -42,37 +42,9 @@ import java.util.concurrent.*;
  */
 public class Cleaner {
     /**
-     * These are the modes that can be applied to the cleaner.
-     */
-    public enum Mode {
-        /**
-         * The maintenance mode only removed old snapshots and old artifact version. Nothing that is required to
-         * execute the applications is removed.
-         */
-        Maintenance,
-
-        /**
-         * Remove all binary files. This causes every single file in the data directory to be removed.
-         */
-        RemoveBinaries,
-
-        /**
-         * This mode causes a full cleanup of all data of Illarion. It will remove any and all files in the
-         * directories assigned to Illarion.
-         */
-        RemoveEverything
-    }
-
-    /**
      * The logger that takes care for the logging output of this class.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(Cleaner.class);
-
-    /**
-     * The mode the cleaner is working with
-     */
-    @Nonnull
-    private final Mode selectedMode;
 
     /**
      * The executor service that is used to balance the load to find all required files across multiple threads.
@@ -85,11 +57,8 @@ public class Cleaner {
 
     /**
      * Create the cleaner and set the mode that its supposed to operate in.
-     *
-     * @param mode the cleaner mode
      */
-    public Cleaner(@Nonnull Mode mode) {
-        selectedMode = mode;
+    public Cleaner() {
         monitor = new ProgressMonitor();
     }
 
@@ -108,13 +77,6 @@ public class Cleaner {
             LOGGER.warn("Failed to cleanup.", e);
         }
         executorService.shutdown();
-
-        if ((selectedMode == Mode.RemoveBinaries) || (selectedMode == Mode.RemoveEverything)) {
-            try {
-                deleteDownloader();
-            } catch (URISyntaxException ignored) {
-            }
-        }
     }
 
     private static void deleteDownloader() throws URISyntaxException {
@@ -157,18 +119,13 @@ public class Cleaner {
 
         List<Path> removalList = new ArrayList<>();
 
-        @Nullable FilenameFilter userDirFilter;
-        userDirFilter = selectedMode == Mode.RemoveEverything ? null : new UserDirectoryFilenameFilter();
+        FilenameFilter userDirFilter = new UserDirectoryFilenameFilter();
 
         Path userDir = dm.getDirectory(DirectoryManager.Directory.User);
         removalList.addAll(enlistRecursively(userDir, userDirFilter));
 
         Path dataDir = dm.getDirectory(DirectoryManager.Directory.Data);
-        if ((selectedMode == Mode.RemoveEverything) || (selectedMode == Mode.RemoveBinaries)) {
-            removalList.addAll(enlistRecursively(dataDir, null));
-        } else {
-            removalList.addAll(enlistArtifactsRecursively(dataDir));
-        }
+        removalList.addAll(enlistArtifactsRecursively(dataDir));
 
         printFileList(removalList);
         return removalList;
@@ -361,6 +318,7 @@ public class Cleaner {
                                 return enlistRecursively(contentFile, filter);
                             }
                         }));
+                        removeDirectory = false;
                     } else {
                         if ((filter == null) || filter.accept(rootDir.toFile(), contentFile.getFileName().toString())) {
                             resultList.add(contentFile);
