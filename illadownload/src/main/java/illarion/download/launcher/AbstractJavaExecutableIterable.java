@@ -28,11 +28,6 @@ import java.util.NoSuchElementException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public abstract class AbstractJavaExecutableIterable implements Iterable<Path> {
-    @Nullable
-    String getUsedJreRootDir() {
-        return usedJreRootDir;
-    }
-
     /**
      * The iterator implementation for the that iterates over the data supplies by the java executable iterable.
      */
@@ -59,7 +54,7 @@ public abstract class AbstractJavaExecutableIterable implements Iterable<Path> {
 
         @Override
         public boolean hasNext() {
-            return currentIndex < ((source.getUsedJreRootDir() == null) ? 2 : 3);
+            return currentIndex < ((source.getUsedJreRootDir() == null) ? 1 : 2);
         }
 
         @Override
@@ -96,7 +91,7 @@ public abstract class AbstractJavaExecutableIterable implements Iterable<Path> {
         int usedIndex = index;
         if (usedJreRootDir != null) {
             if (usedIndex == 0) {
-                return Paths.get(usedJreRootDir);
+                return Paths.get(usedJreRootDir, "java");
             } else {
                 usedIndex -= 1;
             }
@@ -109,5 +104,10 @@ public abstract class AbstractJavaExecutableIterable implements Iterable<Path> {
             default:
                 return null;
         }
+    }
+
+    @Nullable
+    String getUsedJreRootDir() {
+        return usedJreRootDir;
     }
 }

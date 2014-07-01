@@ -368,7 +368,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     public static void main(String[] args) {
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
-        String folder = checkFolder();
 
         // Setup the crash reporter so the client is able to crash properly.
         CrashReporter.getInstance().setMessageSource(Lang.getInstance());
@@ -413,19 +412,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      */
     private static boolean getExitRequested() {
         return exitRequested;
-    }
-
-    /**
-     * This function determines the user data directory and requests the folder to store the client data in case it is
-     * needed. It also performs checks to see if the folder is valid.
-     *
-     * @return a string with the path to the folder or null in case no folder is set
-     */
-    @Nonnull
-    @SuppressWarnings("nls")
-    private static String checkFolder() {
-        Path userDirectory = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
-        return userDirectory.toAbsolutePath().toString();
     }
 
     /**
