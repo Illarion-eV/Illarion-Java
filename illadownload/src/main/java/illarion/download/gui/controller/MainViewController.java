@@ -73,8 +73,6 @@ public class MainViewController extends AbstractController implements MavenDownl
     public Button launchMapEditButton;
     @FXML
     public Button launchClientButton;
-    @FXML
-    public Button uninstallButton;
 
     private ResourceBundle resourceBundle;
 
@@ -111,7 +109,6 @@ public class MainViewController extends AbstractController implements MavenDownl
         launchEasyNpcButton.setOnKeyReleased(eventEventHandler);
         launchEasyQuestButton.setOnKeyReleased(eventEventHandler);
         launchMapEditButton.setOnKeyReleased(eventEventHandler);
-        uninstallButton.setOnKeyReleased(eventEventHandler);
         launchClientButton.requestFocus();
     }
 
@@ -157,8 +154,7 @@ public class MainViewController extends AbstractController implements MavenDownl
     private static void parseLauncherXml(
             @Nonnull XmlPullParser parser,
             @Nonnull Collection<NewsQuestEntry> newsList,
-            @Nonnull Collection<NewsQuestEntry> questList)
-            throws IOException, XmlPullParserException, ParseException {
+            @Nonnull Collection<NewsQuestEntry> questList) throws IOException, XmlPullParserException, ParseException {
         while (true) {
             int current = parser.nextToken();
             switch (current) {
@@ -366,7 +362,6 @@ public class MainViewController extends AbstractController implements MavenDownl
             launchMapEditButton.setDisable(!enabled);
             launchEasyQuestButton.setDisable(!enabled);
             launchEasyNpcButton.setDisable(!enabled);
-            uninstallButton.setDisable(!enabled);
             if (enabled) {
                 launchClientButton.setText(resourceBundle.getString("launchClient"));
                 launchMapEditButton.setText(resourceBundle.getString("launchMapEdit"));
@@ -390,7 +385,9 @@ public class MainViewController extends AbstractController implements MavenDownl
 
     private void launch(
             @Nonnull final String groupId,
-            @Nonnull final String artifactId, @Nonnull String launchClass, @Nonnull String configKey) {
+            @Nonnull final String artifactId,
+            @Nonnull String launchClass,
+            @Nonnull String configKey) {
         Config cfg = getModel().getConfig();
         if (cfg == null) {
             throw new IllegalStateException("Can't show options without the config system");
@@ -548,14 +545,6 @@ public class MainViewController extends AbstractController implements MavenDownl
     public void showOptions(@Nonnull ActionEvent actionEvent) {
         try {
             getModel().getStoryboard().showOptions();
-        } catch (@Nonnull IOException ignored) {
-        }
-    }
-
-    @FXML
-    public void uninstall(@Nonnull ActionEvent actionEvent) {
-        try {
-            getModel().getStoryboard().showUninstall();
         } catch (@Nonnull IOException ignored) {
         }
     }

@@ -24,7 +24,6 @@ import illarion.download.gui.model.GuiModel;
 import illarion.download.gui.view.ChannelSelectView;
 import illarion.download.gui.view.MainView;
 import illarion.download.gui.view.SceneUpdater;
-import illarion.download.gui.view.UninstallView;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -138,11 +137,6 @@ public class GuiApplication extends Application implements Storyboard {
     @Override
     public void showOptions() throws IOException {
         setScene(new ChannelSelectView(model));
-    }
-
-    @Override
-    public void showUninstall() throws IOException {
-        setScene(new UninstallView(model));
     }
 
     @Override

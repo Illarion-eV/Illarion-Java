@@ -108,13 +108,6 @@
                             styleClass="button-gray" prefHeight="32.0" onAction="#startMapEdit"
                             fx:id="launchMapEditButton"/>
                 </AnchorPane>
-                <AnchorPane>
-                    <Button mnemonicParsing="false" text="%uninstall" textAlignment="CENTER"
-                            AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                            AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
-                            styleClass="button-red" prefHeight="23.0" onAction="#uninstall"
-                            fx:id="uninstallButton"/>
-                </AnchorPane>
             </VBox>
         </left>
         <padding>
