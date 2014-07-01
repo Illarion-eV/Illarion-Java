@@ -183,8 +183,13 @@ if (hasInstall4jTargetDir) {
             disableSigning = false
         }
 
+        def releaseVersion = project.version.toString().replace('-SNAPSHOT', '')
+        if (project.hasProperty('setupVersion')) {
+            releaseVersion = project.setupVersion
+        }
+
         ant.install4j(projectfile: new File(project.projectDir, 'installer.install4j'),
-                release: project.version.toString().replace('-SNAPSHOT', ''),
+                release: releaseVersion,
                 destination: project.install4jTargetDir,
                 winKeystorePassword: storePass, macKeystorePassword: storePass,
                 disableSigning: disableSigning) {
