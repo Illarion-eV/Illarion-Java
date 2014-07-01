@@ -28,10 +28,15 @@ import java.util.NoSuchElementException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public abstract class AbstractJavaExecutableIterable implements Iterable<Path> {
+    @Nullable
+    String getUsedJreRootDir() {
+        return usedJreRootDir;
+    }
+
     /**
      * The iterator implementation for the that iterates over the data supplies by the java executable iterable.
      */
-    protected abstract class AbstractJavaExecutableIterator implements Iterator<Path> {
+    protected abstract static class AbstractJavaExecutableIterator implements Iterator<Path> {
         /**
          * The original data source.
          */
@@ -54,7 +59,7 @@ public abstract class AbstractJavaExecutableIterable implements Iterable<Path> {
 
         @Override
         public boolean hasNext() {
-            return currentIndex < 2;
+            return currentIndex < ((source.getUsedJreRootDir() == null) ? 2 : 3);
         }
 
         @Override
@@ -73,6 +78,13 @@ public abstract class AbstractJavaExecutableIterable implements Iterable<Path> {
         }
     }
 
+    @Nullable
+    private final String usedJreRootDir;
+
+    protected AbstractJavaExecutableIterable() {
+        usedJreRootDir = System.getProperty("org.illarion.jre");
+    }
+
     /**
      * The the path assigned to the index.
      *
@@ -80,13 +92,22 @@ public abstract class AbstractJavaExecutableIterable implements Iterable<Path> {
      * @return the path
      */
     @Nullable
-    private Path getPath(final int index) {
-        switch (index) {
+    private Path getPath(int index) {
+        int usedIndex = index;
+        if (usedJreRootDir != null) {
+            if (usedIndex == 0) {
+                return Paths.get(usedJreRootDir);
+            } else {
+                usedIndex -= 1;
+            }
+        }
+        switch (usedIndex) {
             case 0:
                 return Paths.get("java");
             case 1:
                 return Paths.get(System.getProperty("java.home"), "bin", "java");
+            default:
+                return null;
         }
-        return null;
     }
 }

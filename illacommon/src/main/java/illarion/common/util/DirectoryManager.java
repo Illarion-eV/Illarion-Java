@@ -108,7 +108,7 @@ public final class DirectoryManager {
     private final Map<Directory, Boolean> relativeDirectory;
 
     /**
-     * This flag is set <code>true</code> in case the directories got changed
+     * This flag is set {@code true} in case the directories got changed
      * and need to be saved.
      */
     private boolean dirty;
@@ -147,7 +147,8 @@ public final class DirectoryManager {
         if (EnvironmentDetect.isWebstart()) {
             relativeDirectoryPossible = false;
         } else {
-            Path workingDir = Paths.get(".");
+            String installationDir = System.getProperty("org.illarion.install.dir");
+            Path workingDir = Paths.get((installationDir == null) ? "." : installationDir);
 
             relativeDirectoryPossible = testDirectory(workingDir);
             if (relativeDirectoryPossible) {
@@ -195,6 +196,10 @@ public final class DirectoryManager {
         if (!Files.isRegularFile(settingsFile)) {
             return;
         }
+        if (relative && (workingDirectory == null)) {
+            throw new IllegalStateException(
+                    "Fetching relative directories while there is no working directory is not" + " working.");
+        }
 
         try {
             List<String> lines = Files.readAllLines(settingsFile, charSet);
@@ -203,7 +208,7 @@ public final class DirectoryManager {
                     if (line.startsWith(dir.getHeader())) {
                         Path testDir;
                         if (relative) {
-                            testDir = Paths.get(dir.getDefaultDir());
+                            testDir = workingDirectory.resolve(dir.getDefaultDir());
                         } else {
                             testDir = Paths.get(line.substring(dir.getHeader().length()));
                         }

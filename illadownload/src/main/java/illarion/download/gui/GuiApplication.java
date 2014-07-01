@@ -35,6 +35,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
@@ -103,6 +104,28 @@ public class GuiApplication extends Application implements Storyboard {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    /**
+     * This function takes care for the initialization of the installer. In special this one loads the default
+     * settings in case the launcher was started by the install4j launcher and is part of the install4j installation.
+     */
+    private void initInstaller() {
+        String installationDir = System.getProperty("org.illarion.install.dir");
+
+        if (installationDir != null) {
+            DirectoryManager dm = DirectoryManager.getInstance();
+            dm.setDirectoryRelative(DirectoryManager.Directory.Data);
+
+            if (!dm.isDirectorySet(DirectoryManager.Directory.User)) {
+                String userHome = System.getProperty("user.home");
+                if (userHome != null) {
+                    Path userStorage = Paths.get(userHome, "Illarion");
+                    dm.setDirectory(DirectoryManager.Directory.User, userStorage);
+                }
+            }
+            dm.save();
+        }
     }
 
     @Override
