@@ -21,7 +21,10 @@ import ch.qos.logback.core.joran.spi.JoranException;
 import illarion.common.config.ConfigSystem;
 import illarion.common.util.DirectoryManager;
 import illarion.download.gui.model.GuiModel;
-import illarion.download.gui.view.*;
+import illarion.download.gui.view.ChannelSelectView;
+import illarion.download.gui.view.MainView;
+import illarion.download.gui.view.SceneUpdater;
+import illarion.download.gui.view.UninstallView;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -35,7 +38,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
@@ -90,42 +92,18 @@ public class GuiApplication extends Application implements Storyboard {
     private void loadConfig() {
         if (cfg == null) {
             DirectoryManager dm = DirectoryManager.getInstance();
-            if (dm.isDirectorySet(DirectoryManager.Directory.User)) {
-                cfg = new ConfigSystem(dm.resolveFile(DirectoryManager.Directory.User, "download.xcfgz"));
-                cfg.setDefault("channelClient", 0);
-                cfg.setDefault("channelEasyNpc", 1);
-                cfg.setDefault("channelEasyQuest", 1);
-                cfg.setDefault("channelMapEditor", 1);
+            cfg = new ConfigSystem(dm.resolveFile(DirectoryManager.Directory.User, "download.xcfgz"));
+            cfg.setDefault("channelClient", 0);
+            cfg.setDefault("channelEasyNpc", 1);
+            cfg.setDefault("channelEasyQuest", 1);
+            cfg.setDefault("channelMapEditor", 1);
 
-                model.setConfig(cfg);
-            }
+            model.setConfig(cfg);
         }
     }
 
     public static void main(String[] args) {
         launch(args);
-    }
-
-    /**
-     * This function takes care for the initialization of the installer. In special this one loads the default
-     * settings in case the launcher was started by the install4j launcher and is part of the install4j installation.
-     */
-    private void initInstaller() {
-        String installationDir = System.getProperty("org.illarion.install.dir");
-
-        if (installationDir != null) {
-            DirectoryManager dm = DirectoryManager.getInstance();
-            dm.setDirectoryRelative(DirectoryManager.Directory.Data);
-
-            if (!dm.isDirectorySet(DirectoryManager.Directory.User)) {
-                String userHome = System.getProperty("user.home");
-                if (userHome != null) {
-                    Path userStorage = Paths.get(userHome, "Illarion");
-                    dm.setDirectory(DirectoryManager.Directory.User, userStorage);
-                }
-            }
-            dm.save();
-        }
     }
 
     @Override
@@ -136,44 +114,24 @@ public class GuiApplication extends Application implements Storyboard {
     @Override
     public void nextScene() throws IOException {
         loadConfig();
+        initLogs();
 
         if (hasNextScene()) {
-            while (true) {
-                currentScene++;
-                switch (currentScene) {
-                    case SCENE_SELECT_DATA:
-                        if (DirectoryManager.getInstance().isDirectorySet(DirectoryManager.Directory.Data)) {
-                            continue;
-                        }
-                        break;
-                    case SCENE_SELECT_USER:
-                        if (DirectoryManager.getInstance().isDirectorySet(DirectoryManager.Directory.User)) {
-                            continue;
-                        }
-                        break;
-                    case SCENE_MAIN:
-                        initLogs();
-                        break;
-                }
-                showNormal();
-                break;
-            }
+            showNormal();
         }
     }
 
-    private void initLogs() {
+    private static void initLogs() {
         Path dir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
-        if (dir != null) {
-            System.setProperty("log_dir", dir.toAbsolutePath().toString());
+        System.setProperty("log_dir", dir.toAbsolutePath().toString());
 
-            //Reload:
-            LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-            ContextInitializer ci = new ContextInitializer(lc);
-            lc.reset();
-            try {
-                ci.autoConfig();
-            } catch (JoranException ignored) {
-            }
+        //Reload:
+        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+        ContextInitializer ci = new ContextInitializer(lc);
+        lc.reset();
+        try {
+            ci.autoConfig();
+        } catch (JoranException ignored) {
         }
     }
 
@@ -189,16 +147,6 @@ public class GuiApplication extends Application implements Storyboard {
 
     @Override
     public void showNormal() throws IOException {
-        switch (currentScene) {
-            case SCENE_SELECT_DATA:
-                setScene(new DataDirSelectView(model));
-                break;
-            case SCENE_SELECT_USER:
-                setScene(new UserDirSelectView(model));
-                break;
-            case SCENE_MAIN:
-                setScene(new MainView(model));
-                break;
-        }
+        setScene(new MainView(model));
     }
 }

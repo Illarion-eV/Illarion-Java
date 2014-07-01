@@ -326,9 +326,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     @Nonnull
     public static Path getFile(@Nonnull String name) {
         Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
-        if (userDir == null) {
-            throw new IllegalStateException("User directory can't be null.");
-        }
         return userDir.resolve(name);
     }
 
@@ -378,9 +375,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
 
         // in case the server is now known, update the files if needed and
         // launch the client.
-        if (folder == null) {
-            return;
-        }
 
         INSTANCE.init();
     }
@@ -430,14 +424,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     @Nonnull
     @SuppressWarnings("nls")
     private static String checkFolder() {
-        if (!DirectoryManager.getInstance().isDirectorySet(DirectoryManager.Directory.User)) {
-            JOptionPane.showMessageDialog(null, "Installation ist fehlerhaft. Bitte neu ausführen.\n\n" +
-                    "Installation is corrupted, please run it again.", "Error", JOptionPane.ERROR_MESSAGE);
-            System.exit(-1);
-        }
-
         Path userDirectory = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
-        assert userDirectory != null;
         return userDirectory.toAbsolutePath().toString();
     }
 
@@ -476,9 +463,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     @SuppressWarnings("nls")
     private static void initLogfiles() throws IOException {
         Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
-        if (userDir == null) {
-            return;
-        }
         System.setProperty("log_dir", userDir.toAbsolutePath().toString());
 
         //Reload:

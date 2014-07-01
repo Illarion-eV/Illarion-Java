@@ -204,15 +204,7 @@ public final class Config {
      */
     @Nonnull
     private static Path checkFolder() {
-        if (!DirectoryManager.getInstance().isDirectorySet(DirectoryManager.Directory.User)) {
-            JOptionPane.showMessageDialog(null, "Installation ist fehlerhaft. Bitte neu ausführen.\n\n" +
-                    "Installation is corrupted, please run it again.", "Error", JOptionPane.ERROR_MESSAGE);
-            System.exit(-1);
-        }
-
-        Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
-        assert userDir != null;
-        return userDir;
+        return DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
     }
 
     /**

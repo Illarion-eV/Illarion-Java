@@ -88,7 +88,7 @@ public class Cleaner {
      *
      * @param mode the cleaner mode
      */
-    public Cleaner(@Nonnull final Mode mode) {
+    public Cleaner(@Nonnull Mode mode) {
         selectedMode = mode;
         monitor = new ProgressMonitor();
     }
@@ -102,29 +102,22 @@ public class Cleaner {
         executorService = Executors.newCachedThreadPool();
         monitor.setProgress(0);
         try {
-            final List<Path> filesToDelete = getRemovalTargets();
+            List<Path> filesToDelete = getRemovalTargets();
             deleteFiles(filesToDelete);
         } catch (IOException e) {
             LOGGER.warn("Failed to cleanup.", e);
         }
         executorService.shutdown();
 
-        if (selectedMode == Mode.RemoveBinaries || selectedMode == Mode.RemoveEverything) {
+        if ((selectedMode == Mode.RemoveBinaries) || (selectedMode == Mode.RemoveEverything)) {
             try {
                 deleteDownloader();
             } catch (URISyntaxException ignored) {
             }
-
-            final DirectoryManager dm = DirectoryManager.getInstance();
-            dm.unsetDirectory(DirectoryManager.Directory.Data);
-            if (selectedMode == Mode.RemoveEverything) {
-                dm.unsetDirectory(DirectoryManager.Directory.User);
-            }
-            dm.save();
         }
     }
 
-    private void deleteDownloader() throws URISyntaxException {
+    private static void deleteDownloader() throws URISyntaxException {
         if (EnvironmentDetect.isWebstart()) {
             return;
         }
@@ -143,12 +136,12 @@ public class Cleaner {
         }
     }
 
-    private void deleteFiles(@Nonnull final List<Path> files) throws IOException {
-        final int count = files.size();
+    private void deleteFiles(@Nonnull List<Path> files) throws IOException {
+        int count = files.size();
         for (int i = 0; i < count; i++) {
-            final Path fileToDelete = files.get(i);
+            Path fileToDelete = files.get(i);
             Files.delete(fileToDelete);
-            monitor.setProgress((float) i / (float) count);
+            monitor.setProgress((float) i / count);
         }
         monitor.setProgress(1.f);
     }
@@ -160,47 +153,39 @@ public class Cleaner {
      */
     @Nonnull
     private List<Path> getRemovalTargets() throws IOException {
-        final DirectoryManager dm = DirectoryManager.getInstance();
+        DirectoryManager dm = DirectoryManager.getInstance();
 
-        final List<Path> removalList = new ArrayList<>();
+        List<Path> removalList = new ArrayList<>();
 
-        final FilenameFilter userDirFilter;
-        if (selectedMode == Mode.RemoveEverything) {
-            userDirFilter = null;
+        @Nullable FilenameFilter userDirFilter;
+        userDirFilter = selectedMode == Mode.RemoveEverything ? null : new UserDirectoryFilenameFilter();
+
+        Path userDir = dm.getDirectory(DirectoryManager.Directory.User);
+        removalList.addAll(enlistRecursively(userDir, userDirFilter));
+
+        Path dataDir = dm.getDirectory(DirectoryManager.Directory.Data);
+        if ((selectedMode == Mode.RemoveEverything) || (selectedMode == Mode.RemoveBinaries)) {
+            removalList.addAll(enlistRecursively(dataDir, null));
         } else {
-            userDirFilter = new UserDirectoryFilenameFilter();
-        }
-
-        final Path userDir = dm.getDirectory(DirectoryManager.Directory.User);
-        if (userDir != null) {
-            removalList.addAll(enlistRecursively(userDir, userDirFilter));
-        }
-
-        final Path dataDir = dm.getDirectory(DirectoryManager.Directory.Data);
-        if (dataDir != null) {
-            if (selectedMode == Mode.RemoveEverything || selectedMode == Mode.RemoveBinaries) {
-                removalList.addAll(enlistRecursively(dataDir, null));
-            } else {
-                removalList.addAll(enlistArtifactsRecursively(dataDir));
-            }
+            removalList.addAll(enlistArtifactsRecursively(dataDir));
         }
 
         printFileList(removalList);
         return removalList;
     }
 
-    private List<Path> enlistArtifactsRecursively(@Nonnull final Path rootDir) throws IOException {
+    private Collection<Path> enlistArtifactsRecursively(@Nonnull Path rootDir) throws IOException {
         if (executorService == null) {
             throw new IllegalStateException("Executor is not ready");
         }
 
-        final List<Path> artifactDirList = new LinkedList<>();
+        List<Path> artifactDirList = new LinkedList<>();
         if (isArtifactComplete(rootDir, artifactDirList)) {
             artifactDirList.add(rootDir);
         }
 
-        final List<Path> resultList = new LinkedList<>();
-        final List<Future<List<Path>>> artifactScans = new LinkedList<>();
+        Collection<Path> resultList = new LinkedList<>();
+        Collection<Future<List<Path>>> artifactScans = new LinkedList<>();
 
         for (@Nonnull final Path artifactDirectory : artifactDirList) {
             artifactScans.add(executorService.submit(new Callable<List<Path>>() {
@@ -211,7 +196,7 @@ public class Cleaner {
             }));
         }
 
-        for (final Future<List<Path>> artifactScan : artifactScans) {
+        for (Future<List<Path>> artifactScan : artifactScans) {
             try {
                 resultList.addAll(artifactScan.get());
             } catch (InterruptedException | ExecutionException e) {
@@ -224,17 +209,17 @@ public class Cleaner {
 
     private final Comparator<Path> versionComparator = new VersionComparator();
 
-    private List<Path> enlistOldArtifacts(@Nonnull final Path artifactDir) throws IOException {
+    private List<Path> enlistOldArtifacts(@Nonnull Path artifactDir) throws IOException {
         if (executorService == null) {
             throw new IllegalStateException("Executor is not ready");
         }
 
-        final List<Path> resultList = new LinkedList<>();
-        final List<Path> releaseList = new LinkedList<>();
+        List<Path> resultList = new LinkedList<>();
+        List<Path> releaseList = new LinkedList<>();
         final List<Path> snapshotList = new LinkedList<>();
 
         try (DirectoryStream<Path> subDirectories = Files.newDirectoryStream(artifactDir)) {
-            for (@Nonnull final Path versionDir : subDirectories) {
+            for (@Nonnull Path versionDir : subDirectories) {
                 if (Files.isDirectory(versionDir)) {
                     if (versionDir.toString().endsWith("SNAPSHOT")) {
                         snapshotList.add(versionDir);
@@ -245,12 +230,12 @@ public class Cleaner {
             }
         }
 
-        final List<Future<List<Path>>> dirScans = new LinkedList<>();
+        Collection<Future<List<Path>>> dirScans = new LinkedList<>();
 
-        final List<List<Path>> versionLists = new ArrayList<>();
+        Collection<List<Path>> versionLists = new ArrayList<>();
         versionLists.add(releaseList);
         versionLists.add(snapshotList);
-        for (@Nonnull final List<Path> versionList : versionLists) {
+        for (@Nonnull List<Path> versionList : versionLists) {
             Collections.sort(versionList, versionComparator);
             while (versionList.size() > 1) {
                 final Path dir = versionList.remove(0);
@@ -275,7 +260,7 @@ public class Cleaner {
             }));
         }
 
-        for (final Future<List<Path>> dirScan : dirScans) {
+        for (Future<List<Path>> dirScan : dirScans) {
             try {
                 resultList.addAll(dirScan.get());
             } catch (InterruptedException | ExecutionException e) {
@@ -286,11 +271,11 @@ public class Cleaner {
         return resultList;
     }
 
-    private List<Path> enlistOldSnapshots(@Nonnull final Path snapshotDir) throws IOException {
-        final List<Path> snapshotJars = enlistFiles(snapshotDir, new DirectoryStream.Filter<Path>() {
+    private static List<Path> enlistOldSnapshots(@Nonnull Path snapshotDir) throws IOException {
+        List<Path> snapshotJars = enlistFiles(snapshotDir, new DirectoryStream.Filter<Path>() {
             @Override
             public boolean accept(Path entry) throws IOException {
-                final String fileName = entry.getFileName().toString();
+                String fileName = entry.getFileName().toString();
                 return fileName.endsWith(".jar") && fileName.contains("SNAPSHOT");
             }
         });
@@ -300,7 +285,7 @@ public class Cleaner {
 
         Collections.sort(snapshotJars);
 
-        final List<String> snapshotNames = new ArrayList<>();
+        final Collection<String> snapshotNames = new ArrayList<>();
         for (Path snapshotJar : snapshotJars) {
             snapshotNames.add(snapshotJar.getFileName().toString().replace(".jar", ""));
         }
@@ -308,8 +293,8 @@ public class Cleaner {
         return enlistFiles(snapshotDir, new DirectoryStream.Filter<Path>() {
             @Override
             public boolean accept(Path entry) throws IOException {
-                final String fileName = entry.getFileName().toString();
-                for (@Nonnull final String baseName : snapshotNames) {
+                String fileName = entry.getFileName().toString();
+                for (@Nonnull String baseName : snapshotNames) {
                     if (fileName.startsWith(baseName)) {
                         return true;
                     }
@@ -320,9 +305,9 @@ public class Cleaner {
     }
 
     @Nonnull
-    private List<Path> enlistFiles(@Nonnull Path rootPath, @Nonnull DirectoryStream.Filter<Path> filter)
+    private static List<Path> enlistFiles(@Nonnull Path rootPath, @Nonnull DirectoryStream.Filter<Path> filter)
             throws IOException {
-        final List<Path> snapshotJars = new ArrayList<>();
+        List<Path> snapshotJars = new ArrayList<>();
         try (DirectoryStream<Path> files = Files.newDirectoryStream(rootPath, filter)) {
             for (Path file : files) {
                 snapshotJars.add(file);
@@ -331,13 +316,13 @@ public class Cleaner {
         return snapshotJars;
     }
 
-    private boolean isArtifactComplete(@Nonnull final Path rootDir, @Nullable final List<Path> artifactDirs)
+    private static boolean isArtifactComplete(@Nonnull Path rootDir, @Nullable List<Path> artifactDirs)
             throws IOException {
         boolean noDirectories = true;
         boolean noJarFiles = true;
 
         try (DirectoryStream<Path> contentFiles = Files.newDirectoryStream(rootDir)) {
-            for (final Path contentFile : contentFiles) {
+            for (Path contentFile : contentFiles) {
                 if (contentFile.toString().endsWith(".jar")) {
                     noJarFiles = false;
                 }
@@ -356,17 +341,17 @@ public class Cleaner {
         return noDirectories && !noJarFiles;
     }
 
-    private List<Path> enlistRecursively(@Nonnull final Path rootDir, @Nullable final FilenameFilter filter)
+    private List<Path> enlistRecursively(@Nonnull Path rootDir, @Nullable final FilenameFilter filter)
             throws IOException {
         if (executorService == null) {
             throw new IllegalStateException("Executor is not ready");
         }
 
-        final List<Path> resultList = new LinkedList<>();
+        List<Path> resultList = new LinkedList<>();
         boolean removeDirectory = true;
 
         if (Files.isDirectory(rootDir)) {
-            final List<Future<List<Path>>> subDirScans = new ArrayList<>();
+            Collection<Future<List<Path>>> subDirScans = new ArrayList<>();
             try (DirectoryStream<Path> files = Files.newDirectoryStream(rootDir)) {
                 for (final Path contentFile : files) {
                     if (Files.isDirectory(contentFile)) {
@@ -377,14 +362,14 @@ public class Cleaner {
                             }
                         }));
                     } else {
-                        if (filter == null || filter.accept(rootDir.toFile(), contentFile.getFileName().toString())) {
+                        if ((filter == null) || filter.accept(rootDir.toFile(), contentFile.getFileName().toString())) {
                             resultList.add(contentFile);
                         } else {
                             removeDirectory = false;
                         }
                     }
                 }
-                for (final Future<List<Path>> subDirScan : subDirScans) {
+                for (Future<List<Path>> subDirScan : subDirScans) {
                     try {
                         resultList.addAll(subDirScan.get());
                     } catch (InterruptedException | ExecutionException e) {
@@ -400,9 +385,9 @@ public class Cleaner {
         return resultList;
     }
 
-    private static void printFileList(@Nonnull final List<Path> files) throws IOException {
+    private static void printFileList(@Nonnull List<Path> files) throws IOException {
         long size = 0L;
-        for (@Nonnull final Path file : files) {
+        for (@Nonnull Path file : files) {
             size += Files.size(file);
             LOGGER.debug(file.toAbsolutePath().toString());
         }

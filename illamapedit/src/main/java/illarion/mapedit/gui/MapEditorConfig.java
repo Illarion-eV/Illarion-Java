@@ -92,11 +92,11 @@ public class MapEditorConfig {
         if (configSystem == null) {
             throw new IllegalStateException("Configuration system not initialized yet.");
         }
-        final ConfigDialog dialog = new ConfigDialog();
+        ConfigDialog dialog = new ConfigDialog();
         dialog.setConfig(configSystem);
         dialog.setMessageSource(Lang.getInstance());
 
-        final ConfigDialog.Page generalPage = new ConfigDialog.Page("gui.config.generalTab");
+        ConfigDialog.Page generalPage = new ConfigDialog.Page("gui.config.generalTab");
         generalPage.addEntry(
                 new ConfigDialog.Entry("gui.config.MapeditFolderLabel", new DirectoryEntry(MAPEDIT_FOLDER, null)));
 
@@ -108,14 +108,14 @@ public class MapEditorConfig {
 
         dialog.addPage(generalPage);
 
-        final ConfigDialog.Page lookAndFeelPage = new ConfigDialog.Page("gui.config.lookAndFeelTab");
+        ConfigDialog.Page lookAndFeelPage = new ConfigDialog.Page("gui.config.lookAndFeelTab");
         lookAndFeelPage
                 .addEntry(new ConfigDialog.Entry("gui.config.useWindowDecoLabel", new CheckEntry(USE_WINDOW_DECO)));
 
-        final Collection<String> themeObject = new FastTable<>();
-        final Collection<String> themeLabel = new FastTable<>();
+        Collection<String> themeObject = new FastTable<>();
+        Collection<String> themeLabel = new FastTable<>();
 
-        for (final Map.Entry<String, SkinInfo> skin : SubstanceLookAndFeel.getAllSkins().entrySet()) {
+        for (Map.Entry<String, SkinInfo> skin : SubstanceLookAndFeel.getAllSkins().entrySet()) {
             themeObject.add(skin.getValue().getClassName());
             themeLabel.add(skin.getValue().getDisplayName());
         }
@@ -142,7 +142,7 @@ public class MapEditorConfig {
             LOGGER.error("Configuration system not initialized yet.");
             return getDefaultLanguage();
         }
-        final String language = configSystem.getString(USED_LANGUAGE);
+        String language = configSystem.getString(USED_LANGUAGE);
         if ((language != null) && language.equals(LANGUAGES[ENGLISH])) {
             return Locale.ENGLISH;
         }
@@ -163,7 +163,7 @@ public class MapEditorConfig {
     }
 
     private static String getDefaultLanguageString() {
-        final Locale locale = Locale.getDefault();
+        Locale locale = Locale.getDefault();
         if (locale.getLanguage().equalsIgnoreCase(Locale.GERMAN.getLanguage())) {
             return LANGUAGES[GERMAN];
         }
@@ -182,7 +182,7 @@ public class MapEditorConfig {
     }
 
     @EventTopicSubscriber(topic = USED_LOOK_AND_FEEL)
-    public void onConfigChanged(@Nonnull final String topic, final ConfigChangedEvent event) {
+    public void onConfigChanged(@Nonnull String topic, ConfigChangedEvent event) {
         if (topic.equals(USED_LOOK_AND_FEEL)) {
             if (MainFrame.getInstance() != null) {
                 SubstanceLookAndFeel.setSkin(getLookAndFeel());
@@ -202,7 +202,7 @@ public class MapEditorConfig {
             LOGGER.error("Configuration system not initialized yet.");
             return DEFAULT_LOOK_AND_FEEL;
         }
-        final String lookAndFeel = configSystem.getString(USED_LOOK_AND_FEEL);
+        String lookAndFeel = configSystem.getString(USED_LOOK_AND_FEEL);
         if (lookAndFeel == null) {
             return DEFAULT_LOOK_AND_FEEL;
         }
@@ -213,7 +213,7 @@ public class MapEditorConfig {
      * Init the config system
      */
     public void init() {
-        final Path userDir = checkFolder();
+        Path userDir = checkFolder();
         configSystem = new ConfigSystem(userDir.resolve("MapEdit.xcfgz"));
 
         configSystem.setDefault(MAPEDIT_FOLDER, Paths.get(System.getProperty("user.home")));
@@ -235,14 +235,7 @@ public class MapEditorConfig {
      */
     @Nonnull
     private static Path checkFolder() {
-        if (!DirectoryManager.getInstance().isDirectorySet(DirectoryManager.Directory.User)) {
-            SplashScreen.getInstance().setVisible(false);
-            JOptionPane.showMessageDialog(null, "Installation ist fehlerhaft. Bitte neu ausführen.\n\n" +
-                    "Installation is corrupted, please run it again.", "Error", JOptionPane.ERROR_MESSAGE);
-            System.exit(-1);
-        }
-
-        final Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
         assert userDir != null;
         return userDir;
     }
@@ -252,7 +245,7 @@ public class MapEditorConfig {
      *
      * @param windowSize size of the window
      */
-    public void setWindowSize(@Nonnull final Dimension windowSize) {
+    public void setWindowSize(@Nonnull Dimension windowSize) {
         if (configSystem == null) {
             LOGGER.error("Configuration system not initialized yet.");
             return;
@@ -307,7 +300,7 @@ public class MapEditorConfig {
             LOGGER.error("Configuration system not initialized yet.");
             return Paths.get(System.getProperty("user.home"));
         }
-        final Path mapFolder = configSystem.getPath(MAPEDIT_FOLDER);
+        Path mapFolder = configSystem.getPath(MAPEDIT_FOLDER);
         if (mapFolder == null) {
             return Paths.get(System.getProperty("user.home"));
         }
@@ -319,7 +312,7 @@ public class MapEditorConfig {
      *
      * @param newFolder the folder where to store the maps
      */
-    public void setMapFolder(@Nonnull final Path newFolder) {
+    public void setMapFolder(@Nonnull Path newFolder) {
         if (configSystem == null) {
             LOGGER.error("Configuration system not initialized yet.");
             return;

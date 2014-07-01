@@ -24,7 +24,6 @@ import illarion.easyquest.Lang;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.swing.*;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -117,15 +116,7 @@ public final class Config {
     @Nonnull
     @SuppressWarnings("nls")
     private static Path checkFolder() {
-        if (!DirectoryManager.getInstance().isDirectorySet(DirectoryManager.Directory.User)) {
-            JOptionPane.showMessageDialog(null, "Installation ist fehlerhaft. Bitte neu ausführen.\n\n" +
-                    "Installation is corrupted, please run it again.", "Error", JOptionPane.ERROR_MESSAGE);
-            System.exit(-1);
-        }
-
-        final Path result = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
-        assert result != null;
-        return result;
+        return DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
     }
 
     /**
@@ -133,7 +124,7 @@ public final class Config {
      *
      * @param file the file to prepend
      */
-    public void addLastOpenedFile(@Nonnull final Path file) {
+    public void addLastOpenedFile(@Nonnull Path file) {
         cfg.set(lastFilesKey, file.toAbsolutePath() + File.pathSeparator + cfg.getString(lastFilesKey));
         lastOpenedFilesBuffer = null;
     }
@@ -141,7 +132,7 @@ public final class Config {
     @Nonnull
     @SuppressWarnings("nls")
     public ConfigDialog createDialog() {
-        final ConfigDialog dialog = new ConfigDialog();
+        ConfigDialog dialog = new ConfigDialog();
         dialog.setConfig(cfg);
         dialog.setMessageSource(Lang.getInstance());
 
@@ -163,7 +154,7 @@ public final class Config {
 
     @Nonnull
     public Path getEasyQuestFolder() {
-        final Path folder = cfg.getPath(easyQuestFolder);
+        Path folder = cfg.getPath(easyQuestFolder);
         assert folder != null;
         return folder;
     }
@@ -173,21 +164,21 @@ public final class Config {
         if (lastOpenedFilesBuffer != null) {
             return lastOpenedFilesBuffer;
         }
-        final String lastFiles = cfg.getString(lastFilesKey);
+        String lastFiles = cfg.getString(lastFilesKey);
         if (lastFiles == null || lastFiles.isEmpty()) {
             lastOpenedFilesBuffer = Collections.emptyList();
             return lastOpenedFilesBuffer;
         }
-        final String[] fetchedList = lastFiles.split(File.pathSeparator);
-        final List<Path> returnList = Arrays.asList(new Path[Math.min(fetchedList.length, LAST_OPEN_FILES_COUNT)]);
+        String[] fetchedList = lastFiles.split(File.pathSeparator);
+        List<Path> returnList = Arrays.asList(new Path[Math.min(fetchedList.length, LAST_OPEN_FILES_COUNT)]);
 
         int entryPos = 0;
         for (int i = 0; (i < fetchedList.length) && (i < LAST_OPEN_FILES_COUNT); i++) {
-            final String workString = fetchedList[i];
+            String workString = fetchedList[i];
             if (workString.length() < 5) {
                 continue;
             }
-            final Path createdFile = Paths.get(workString);
+            Path createdFile = Paths.get(workString);
             if (Files.isRegularFile(createdFile)) {
                 if (returnList.contains(createdFile)) {
                     continue;
@@ -201,7 +192,7 @@ public final class Config {
             return returnList;
         }
 
-        final StringBuilder cleanedResult = new StringBuilder();
+        StringBuilder cleanedResult = new StringBuilder();
         for (int i = 0; i < entryPos; i++) {
             cleanedResult.append(returnList.get(i).toAbsolutePath().toString());
             cleanedResult.append(File.pathSeparator);
@@ -215,7 +206,7 @@ public final class Config {
 
     @Nonnull
     public Path getExportFolder() {
-        final Path folder = cfg.getPath(exportFolder);
+        Path folder = cfg.getPath(exportFolder);
         assert folder != null;
         return folder;
     }
@@ -228,12 +219,12 @@ public final class Config {
      */
     @Nonnull
     public Collection<Path> getOldFiles() {
-        final String openFilesString = cfg.getString(openFiles);
+        String openFilesString = cfg.getString(openFiles);
         if (openFilesString == null || openFilesString.isEmpty()) {
             return Collections.emptyList();
         }
-        final String[] splitFiles = openFilesString.split(File.pathSeparator);
-        final Path[] paths = new Path[splitFiles.length];
+        String[] splitFiles = openFilesString.split(File.pathSeparator);
+        Path[] paths = new Path[splitFiles.length];
         for (int i = 0; i < paths.length; i++) {
             paths[i] = Paths.get(splitFiles[i]);
         }
@@ -245,7 +236,7 @@ public final class Config {
      */
     @SuppressWarnings("nls")
     public void init() {
-        final Path folder = checkFolder();
+        Path folder = checkFolder();
 
         /*
       The file that holds the configuration.
@@ -269,11 +260,11 @@ public final class Config {
         cfg.save();
     }
 
-    public void setEasyQuestFolder(@Nonnull final Path newFolder) {
+    public void setEasyQuestFolder(@Nonnull Path newFolder) {
         cfg.set(easyQuestFolder, newFolder);
     }
 
-    public void setExportFolder(@Nonnull final Path newFolder) {
+    public void setExportFolder(@Nonnull Path newFolder) {
         cfg.set(exportFolder, newFolder);
     }
 
@@ -283,9 +274,9 @@ public final class Config {
      *
      * @param files the files to open
      */
-    public void setOldFiles(@Nonnull final Iterable<Path> files) {
-        final StringBuilder buffer = new StringBuilder();
-        for (final Path file : files) {
+    public void setOldFiles(@Nonnull Iterable<Path> files) {
+        StringBuilder buffer = new StringBuilder();
+        for (Path file : files) {
             buffer.append(file.toAbsolutePath().toString());
             buffer.append(File.pathSeparator);
         }
@@ -293,11 +284,11 @@ public final class Config {
         cfg.set(openFiles, buffer.toString());
     }
 
-    public void setCharacter(@Nonnull final String newCharacter) {
+    public void setCharacter(@Nonnull String newCharacter) {
         cfg.set(character, newCharacter);
     }
 
-    public void setPassword(@Nonnull final String newPassword) {
+    public void setPassword(@Nonnull String newPassword) {
         cfg.set(password, newPassword);
     }
 
