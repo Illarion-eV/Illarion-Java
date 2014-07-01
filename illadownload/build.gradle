@@ -169,6 +169,7 @@ if (hasInstall4jTargetDir) {
     }
     task createInstall4j() {
         def sourceDir = new File(project.buildDir, 'install4j')
+        sourceDir.mkdirs()
         inputs.dir sourceDir
         inputs.file new File(project.projectDir, 'installer.install4j')
         outputs.dir project.install4jTargetDir
