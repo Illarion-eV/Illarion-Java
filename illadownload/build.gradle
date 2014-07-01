@@ -55,18 +55,18 @@ dependencies {
 jar {
     dependsOn { gitVersion }
     manifest {
-        attributes        \
-               'Main-Class': 'illarion.download.gui.GuiApplication',       \
-               'Permissions': 'all-permissions',       \
-               'Codebase': 'illarion.org',       \
-               'Application-Name': 'Illarion Launcher',       \
-               'Application-Library-Allowable-Codebase': 'illarion.org',       \
-               'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),       \
-               'Built-By': System.getProperty('user.name'),        \
-               'Built-JDK': System.getProperty('java.version'),        \
-               'Implementation-Title': 'Illarion Launcher',        \
-               'Implementation-Vendor': 'Illarion e.V.',       \
-               'Implementation-Version': project.ext.fullVersion
+        attributes         \
+                'Main-Class': 'illarion.download.gui.GuiApplication',        \
+                'Permissions': 'all-permissions',        \
+                'Codebase': 'illarion.org',        \
+                'Application-Name': 'Illarion Launcher',        \
+                'Application-Library-Allowable-Codebase': 'illarion.org',        \
+                'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),        \
+                'Built-By': System.getProperty('user.name'),         \
+                'Built-JDK': System.getProperty('java.version'),         \
+                'Implementation-Title': 'Illarion Launcher',         \
+                'Implementation-Vendor': 'Illarion e.V.',        \
+                'Implementation-Version': project.ext.fullVersion
     }
 }
 
@@ -75,9 +75,6 @@ task publishDownloaderBundle() {}
 if (hasTargetDistDir) {
     publish.dependsOn {
         publishDownloader
-    }
-    publishDownloaderBundle.dependsOn {
-        publishBundle
     }
 }
 if (hasInstall4jTargetDir) {
@@ -152,10 +149,6 @@ if (hasTargetDistDir) {
         from project.distsDir
         into file(project.targetDistDir)
     }
-    task publishBundle(type: Copy, dependsOn: 'proguard') {
-        from new File(project.buildDir, "illarion.jar").absolutePath
-        into file(project.targetDistDir)
-    }
 }
 if (hasInstall4jTargetDir) {
     task assembleForInstall4j(type: Copy) {
@@ -203,112 +196,6 @@ if (hasInstall4jTargetDir) {
     createInstall4j.dependsOn {
         jfxJar
     }
-}
-
-task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jfxJar') {
-    def mainFile = new File(project.buildDir, "libs/${project.archivesBaseName}-${project.version}.jar").absolutePath
-    injars(mainFile)
-    configurations.runtime.each { File file ->
-        if (file.absolutePath.startsWith(System.getProperty('java.home'))) {
-            libraryjars file.absolutePath
-        } else {
-            def filter = "!META-INF/*,!META-INF/plexus/*,!META-INF/sisu/*,!META-INF/maven/**,!about.html,!LICENSE," +
-                    "!OSGI-OPT/**,!**/packageinfo,!**.java,!xmlns/**"
-            if (file.absolutePath.contains("xpp3")) {
-                filter += ",!javax/xml/namespace/QName.class"
-            }
-            if (file.absolutePath.contains("javolution-core-java")) {
-                filter += ",!org/osgi/**"
-            }
-            injars([filter: filter], file.absolutePath)
-        }
-    }
-
-    libraryjars files("${System.getProperty('java.home')}/lib/jce.jar")
-    libraryjars files("${System.getProperty('java.home')}/lib/rt.jar")
-
-    outjars new File(project.buildDir, "illarion.jar").absolutePath
-
-    /* Forcing all class files to contain the same codebase level. */
-    target "1.7"
-
-    /* Optimization settings */
-    dontoptimize
-    optimizationpasses 1
-    allowaccessmodification
-    mergeinterfacesaggressively
-
-    /* Obfuscation settings */
-    dontobfuscate
-
-    renamesourcefileattribute "SourceFile"
-    keepattributes "SourceFile,LineNumberTable"
-    keepattributes "*Annotation*"
-
-    keepclasseswithmembers "public class com.javafx.main.Main {" +
-            "public static void main(java.lang.String[]);" +
-            "}"
-
-    keepclasseswithmembers "public class illarion.download.** {" +
-            "public static void main(java.lang.String[]);" +
-            "}"
-
-    keepclasseswithmembernames "class * {" +
-            "native <methods>;" +
-            "}"
-
-    keepclassmembers "class * extends java.lang.Enum {" +
-            "public static **[] values();" +
-            "public static ** valueOf(java.lang.String);" +
-            "}"
-
-    keepclassmembers "class * implements java.io.Serializable {" +
-            "static final long serialVersionUID;" +
-            "static final java.io.ObjectStreamField[] serialPersistentFields;" +
-            "private void writeObject(java.io.ObjectOutputStream);" +
-            "private void readObject(java.io.ObjectInputStream);" +
-            "java.lang.Object writeReplace();" +
-            "java.lang.Object readResolve();" +
-            "}"
-
-    keep "class ch.qos.logback.** { *; }"
-    keep "class illarion.download.gui.controller.*"
-    keep "class org.apache.commons.logging.impl.LogFactoryImpl"
-    keep "class org.apache.commons.logging.impl.SimpleLog"
-    keep "class org.xmlpull.mxp1.MXParserFactory"
-
-    keepclassmembers "class illarion.download.** {" +
-            "@javafx.fxml.FXML *;" +
-            "}"
-
-    keepclasseswithmembers "class * {" +
-            "org.apache.commons.logging.Log getLog(java.lang.String);" +
-            "}"
-
-    dontwarn "javafx.embed.**"
-    dontwarn "com.sun.**"
-    dontwarn "javax.servlet.**"
-    dontwarn "javax.mail.**"
-    dontwarn "javax.jms.**"
-    dontwarn "javax.xml.**"
-    dontnote "javax.xml.**"
-    dontnote "org.apache.log4j.jmx.Agent"
-    dontnote "org.apache.log4j.net.ZeroConfSupport"
-    dontnote "org.apache.log4j.spi.LocationInfo"
-    dontwarn "org.apache.commons.**"
-    dontwarn "org.apache.tools.ant.**"
-    dontwarn "org.apache.axis.**"
-    dontwarn "org.mantisbt.connect.ant.**"
-    dontwarn "org.apache.maven.repository.internal.**"
-    dontwarn "org.eclipse.aether.impl.**"
-    dontwarn "org.eclipse.aether.internal.impl.**"
-    dontwarn "org.eclipse.aether.connector.**"
-    dontwarn "org.eclipse.aether.transport.**"
-    dontwarn "org.osgi.service.**"
-    dontwarn "org.slf4j.**"
-    dontwarn "ch.qos.logback.**"
-    dontwarn "org.codehaus.janino.**"
-    dontwarn "org.apache.log4j.**"
 }
 
 publishing {
