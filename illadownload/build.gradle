@@ -192,7 +192,7 @@ if (hasInstall4jTargetDir) {
                 release: releaseVersion,
                 destination: project.install4jTargetDir,
                 winKeystorePassword: storePass, macKeystorePassword: storePass,
-                disableSigning: disableSigning) {
+                disableSigning: disableSigning, debug: true) {
             variable(name: 'sourceDir', value: sourceDir)
             variable(name: 'iconsDir', value: new File(project.projectDir, 'icons'))
             variable(name: 'keyStore', value: keystore)
