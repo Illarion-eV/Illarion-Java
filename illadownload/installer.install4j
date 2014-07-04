@@ -19,7 +19,8 @@
       <variable name="keyStore" value="" description="The storage for the signing key." category="" />
     </variables>
     <mergedProjects />
-    <codeSigning macEnabled="false" windowsEnabled="true" windowsKeySource="pkcs12" windowsPvkFile="" windowsSpcFile="" windowsPkcs12File="${compiler:keyStore}" />
+    <codeSigning macEnabled="true" macPkcs12File="${compiler:keyStore}" windowsEnabled="true" windowsKeySource="pkcs12" windowsPvkFile=""
+    windowsSpcFile="" windowsPkcs12File="${compiler:keyStore}" />
   </application>
   <files keepModificationTimes="false" missingFilesStrategy="warn" globalExcludeSuffixes="" defaultOverwriteMode="4" defaultUninstallMode="0" launcherOverwriteMode="3" defaultFileMode="644" defaultDirMode="755">
     <filesets />
@@ -56,8 +57,8 @@
       </java>
       <includedFiles />
       <unextractableFiles />
-      <vmOptionsFile mode="none" overwriteMode="2" fileMode="644">
-        <content />
+      <vmOptionsFile mode="content" overwriteMode="2" fileMode="644">
+        <content>-classpath/a ${installer:sys.preferredJre}${installer:sys.fileSeparator}lib${installer:sys.fileSeparator}jfxrt.jar</content>
       </vmOptionsFile>
       <customScript mode="1" file="">
         <content />
@@ -81,6 +82,11 @@
         <serializedBean>
           <java class="java.beans.XMLDecoder">
             <object class="com.install4j.runtime.beans.applications.InstallerApplication">
+              <void property="customHeaderImage">
+                <object class="com.install4j.api.beans.ExternalFile">
+                  <string>${compiler:iconsDir}/general60.png</string>
+                </object>
+              </void>
               <void property="customIconImageFiles">
                 <void method="add">
                   <object class="com.install4j.api.beans.ExternalFile">
@@ -89,7 +95,7 @@
                 </void>
               </void>
               <void property="customWatermarkText">
-                <string>Illarion</string>
+                <string>${compiler:sys.shortName}</string>
               </void>
               <void property="useCustomIcon">
                 <boolean>true</boolean>
@@ -396,25 +402,6 @@
                       </void>
                       <void property="itemName">
                         <string>${compiler:sys.fullName} ${compiler:sys.version}</string>
-                      </void>
-                    </object>
-                  </java>
-                </serializedBean>
-                <condition />
-              </action>
-              <action name="" id="113" customizedId="" beanClass="com.install4j.runtime.beans.actions.misc.ModifyClasspathAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="2" errorMessage="">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.misc.ModifyClasspathAction">
-                      <void property="entries">
-                        <array class="java.lang.String" length="1">
-                          <void index="0">
-                            <string>${installer:sys.preferredJre}/lib/jfxrt.jar</string>
-                          </void>
-                        </array>
-                      </void>
-                      <void property="launcherId">
-                        <string>23</string>
                       </void>
                     </object>
                   </java>
