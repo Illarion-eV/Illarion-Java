@@ -493,6 +493,25 @@
                 </serializedBean>
                 <condition>context.getBooleanVariable("createDesktopLinkAction") &amp;&amp; context.getVariable("sys.symlinkDir") != null</condition>
               </action>
+              <action name="" id="589" customizedId="" beanClass="com.install4j.runtime.beans.actions.misc.ModifyClasspathAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.misc.ModifyClasspathAction">
+                      <void property="entries">
+                        <array class="java.lang.String" length="1">
+                          <void index="0">
+                            <string>${installer:sys.preferredJre}${installer:sys.fileSeparator}lib${installer:sys.fileSeparator}jfxrt.jar</string>
+                          </void>
+                        </array>
+                      </void>
+                      <void property="launcherId">
+                        <string>23</string>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
             </actions>
             <formComponents />
           </screen>
@@ -1546,6 +1565,18 @@ if (context.isUnattended()) {
         <content />
       </installerScript>
     </unixInstaller>
+    <macos name="Mac OS X Single Bundle" id="590" customizedId="" mediaFileName="" installDir="illarion" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="macosx-amd64-1.7.0_60" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" appleJre="false" requiredVmIdPrefix="" customInstallBaseDir="" contentFilesType="1" downloadURL="" signLaunchers="true" launcherId="23">
+      <excludedBeans />
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude />
+      <variables />
+      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
+        <commentFiles />
+        <customAttributes />
+      </autoUpdate>
+      <excludedComponents />
+      <includedDownloadableComponents />
+    </macos>
   </mediaSets>
   <buildIds buildAll="true" />
   <buildOptions verbose="false" faster="false" disableSigning="false" debug="false" />
