@@ -48,7 +48,7 @@
           <versionLine x="20" y="40" text="version ${compiler:sys.version}" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
         </text>
       </splashScreen>
-      <java mainClass="illarion.download.gui.GuiApplication" vmParameters="-Djava.net.preferIPv4Stack=true &quot;-Dorg.illarion.jre=${launcher:sys.jvmHome}&quot; &quot;-Dorg.illarion.install.dir=${launcher:sys.launcherDirectory}&quot;" arguments="" allowVMPassthroughParameters="false" preferredVM="" bundleRuntime="true">
+      <java mainClass="illarion.download.gui.GuiApplication" vmParameters="-Djava.net.preferIPv4Stack=true &quot;-Dorg.illarion.jre=${launcher:sys.jvmHome}&quot; &quot;-Dorg.illarion.install.dir=${launcher:sys.launcherDirectory}&quot; &quot;-J-classpath/a ${launcher:sys.jvmHome}/lib/jfxrt.jar&quot;" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
           <scanDirectory location="lib" failOnError="true" />
         </classPath>
@@ -56,8 +56,8 @@
       </java>
       <includedFiles />
       <unextractableFiles />
-      <vmOptionsFile mode="content" overwriteMode="2" fileMode="644">
-        <content>-classpath/a ${launcher:sys.jvmHome}/lib/jfxrt.jar</content>
+      <vmOptionsFile mode="none" overwriteMode="2" fileMode="644">
+        <content />
       </vmOptionsFile>
       <customScript mode="1" file="">
         <content />
