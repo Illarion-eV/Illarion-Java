@@ -48,9 +48,10 @@
           <versionLine x="20" y="40" text="version ${compiler:sys.version}" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
         </text>
       </splashScreen>
-      <java mainClass="illarion.download.gui.GuiApplication" vmParameters="-Djava.net.preferIPv4Stack=true &quot;-Dorg.illarion.jre=${launcher:sys.jvmHome}&quot; &quot;-Dorg.illarion.install.dir=${launcher:sys.launcherDirectory}&quot; &quot;-J-classpath/a ${launcher:sys.jvmHome}/lib/jfxrt.jar&quot;" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
+      <java mainClass="illarion.download.gui.GuiApplication" vmParameters="-Djava.net.preferIPv4Stack=true &quot;-Dorg.illarion.jre=${launcher:sys.jvmHome}&quot; &quot;-Dorg.illarion.install.dir=${launcher:sys.launcherDirectory}&quot;" arguments="" allowVMPassthroughParameters="false" preferredVM="" bundleRuntime="true">
         <classPath>
           <scanDirectory location="lib" failOnError="true" />
+          <archive location="${launcher:sys.jvmHome}/lib/jfxrt.jar" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
       </java>
@@ -234,6 +235,11 @@
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction">
+                      <void property="file">
+                        <object class="java.io.File">
+                          <string>illarion</string>
+                        </object>
+                      </void>
                       <void property="name">
                         <string>${compiler:sys.shortName}</string>
                       </void>
@@ -254,6 +260,16 @@
                       <void property="description">
                         <string>${compiler:sys.fullName}</string>
                       </void>
+                      <void property="file">
+                        <object class="java.io.File">
+                          <string>illarion</string>
+                        </object>
+                      </void>
+                      <void property="icon">
+                        <object class="com.install4j.api.beans.ExternalFile">
+                          <string>${compiler:iconsDir}/windows.ico</string>
+                        </object>
+                      </void>
                     </object>
                   </java>
                 </serializedBean>
@@ -262,7 +278,13 @@
               <action name="" id="397" customizedId="" beanClass="com.install4j.runtime.beans.actions.desktop.AddToDockAction" enabled="true" commentSet="false" comment="" actionElevationType="none" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.desktop.AddToDockAction" />
+                    <object class="com.install4j.runtime.beans.actions.desktop.AddToDockAction">
+                      <void property="executable">
+                        <object class="java.io.File">
+                          <string>illarion</string>
+                        </object>
+                      </void>
+                    </object>
                   </java>
                 </serializedBean>
                 <condition>context.getBooleanVariable("addToDockAction")</condition>
@@ -471,25 +493,6 @@
                 </serializedBean>
                 <condition>context.getBooleanVariable("createDesktopLinkAction") &amp;&amp; context.getVariable("sys.symlinkDir") != null</condition>
               </action>
-              <action name="" id="590" customizedId="" beanClass="com.install4j.runtime.beans.actions.misc.ModifyClasspathAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.misc.ModifyClasspathAction">
-                      <void property="entries">
-                        <array class="java.lang.String" length="1">
-                          <void index="0">
-                            <string>${installer:sys.preferredJre}${installer:sys.fileSeparator}lib${installer:sys.fileSeparator}jfxrt.jar</string>
-                          </void>
-                        </array>
-                      </void>
-                      <void property="launcherId">
-                        <string>23</string>
-                      </void>
-                    </object>
-                  </java>
-                </serializedBean>
-                <condition />
-              </action>
             </actions>
             <formComponents />
           </screen>
@@ -666,7 +669,7 @@
           </screen>
         </screens>
       </application>
-      <application name="Updater with silent version check" id="24" customizedId="" beanClass="com.install4j.runtime.beans.applications.CustomApplication" enabled="true" commentSet="false" comment="" actionElevationType="none" fileset="" customIcnsFile="${compiler:sys.install4jHome}/resource/macos/updater.icns" customIcoFile="${compiler:sys.install4jHome}/resource/updater.ico" macEntitlementsFile="" automaticLauncherIntegration="true" launchMode="startupAsync" launchInNewProcess="true" launchSchedule="updateSchedule" allLaunchers="true">
+      <application name="Updater with silent version check" id="24" customizedId="" beanClass="com.install4j.runtime.beans.applications.CustomApplication" enabled="true" commentSet="false" comment="" actionElevationType="none" fileset="" customIcnsFile="${compiler:sys.install4jHome}/resource/macos/updater.icns" customIcoFile="${compiler:sys.install4jHome}/resource/updater.ico" macEntitlementsFile="" automaticLauncherIntegration="true" launchMode="startupAsync" launchInNewProcess="true" launchSchedule="always" allLaunchers="true">
         <serializedBean>
           <java class="java.beans.XMLDecoder">
             <object class="com.install4j.runtime.beans.applications.CustomApplication">
