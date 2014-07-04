@@ -51,7 +51,7 @@
       <java mainClass="illarion.download.gui.GuiApplication" vmParameters="-Djava.net.preferIPv4Stack=true &quot;-Dorg.illarion.jre=${launcher:sys.jvmHome}&quot; &quot;-Dorg.illarion.install.dir=${launcher:sys.launcherDirectory}&quot;" arguments="" allowVMPassthroughParameters="false" preferredVM="" bundleRuntime="true">
         <classPath>
           <scanDirectory location="lib" failOnError="true" />
-          <archive location="${launcher:sys.jvmHome}/lib/jfxrt.jar" failOnError="false" />
+          <archive location="&quot;${launcher:sys.jvmHome}/lib/jfxrt.jar&quot;" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
       </java>
