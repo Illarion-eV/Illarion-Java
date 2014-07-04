@@ -57,7 +57,7 @@
       <includedFiles />
       <unextractableFiles />
       <vmOptionsFile mode="content" overwriteMode="2" fileMode="644">
-        <content>-classpath/a ${installer:sys.preferredJre}${installer:sys.fileSeparator}lib${installer:sys.fileSeparator}jfxrt.jar</content>
+        <content>-classpath/a ${launcher:sys.jvmHome}/lib/jfxrt.jar</content>
       </vmOptionsFile>
       <customScript mode="1" file="">
         <content />
