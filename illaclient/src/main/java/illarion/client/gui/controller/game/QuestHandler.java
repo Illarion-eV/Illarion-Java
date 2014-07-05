@@ -126,7 +126,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
 
         @Override
         public boolean equals(Object obj) {
-            return super.equals(obj) || obj instanceof QuestEntry && questId == ((QuestEntry) obj).questId;
+            return super.equals(obj) || ((obj instanceof QuestEntry) && (questId == ((QuestEntry) obj).questId));
         }
 
         @Override
@@ -271,7 +271,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
     @Override
     public boolean isQuestLogVisible() {
         Element questWindow = getQuestWindowElement();
-        return questWindow != null && questWindow.isVisible();
+        return (questWindow != null) && questWindow.isVisible();
     }
 
     @Override
@@ -335,26 +335,31 @@ public final class QuestHandler implements QuestGui, ScreenController {
         }
     }
 
+    @Override
     public void updateAllQuests() {
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
+            @Override
+            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+                updateAllQuestsInternal();
+            }
+        });
+    }
+
+    private void updateAllQuestsInternal() {
         ListBox<QuestEntry> questList = getQuestList();
         if (questList == null) {
             return;
         }
-        List<QuestEntry> selectedEntries = getQuestList().getItems();
+        List<QuestEntry> selectedEntries = questList.getItems();
         for (QuestEntry selectedEntry : selectedEntries) {
-            Collection<Location> locationList = new ArrayList<>(selectedEntry.getTargetLocationCount());
-            for (int i = 0; i < selectedEntry.getTargetLocationCount(); i++) {
-                Location target = selectedEntry.getTargetLocation(i);
-                locationList.add(target);
-            }
-            World.getMap().applyQuestTargetLocations(locationList);
+            updateQuest(selectedEntry);
         }
     }
 
-    private void updateQuest(@Nonnull QuestEntry Quest) {
-        Collection<Location> locationList = new ArrayList<>(Quest.getTargetLocationCount());
-        for (int i = 0; i < Quest.getTargetLocationCount(); i++) {
-            Location target = Quest.getTargetLocation(i);
+    private static void updateQuest(@Nonnull QuestEntry quest) {
+        Collection<Location> locationList = new ArrayList<>(quest.getTargetLocationCount());
+        for (int i = 0; i < quest.getTargetLocationCount(); i++) {
+            Location target = quest.getTargetLocation(i);
             locationList.add(target);
         }
         World.getMap().removeQuestMarkers(locationList);
@@ -365,7 +370,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
      * Update the quest that is currently displayed in the dialog.
      */
     private void updateDisplayedQuest() {
-        if (nifty == null || screen == null) {
+        if ((nifty == null) || (screen == null)) {
             LOGGER.error("Can't update the quest display as long as the handler is not bound.");
             return;
         }
@@ -555,7 +560,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
 
     @Override
     public void onStartScreen() {
-        if (nifty == null || screen == null) {
+        if ((nifty == null) || (screen == null)) {
             LOGGER.error("Quest handler is not bound. Can't properly launch.");
         }
         nifty.subscribeAnnotations(this);
