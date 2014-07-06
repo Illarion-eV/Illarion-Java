@@ -589,5 +589,6 @@ public final class Player {
      */
     public void shutdown() {
         character.markAsRemoved();
+        movementHandler.shutdown();
     }
 }
