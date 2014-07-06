@@ -54,7 +54,7 @@ public final class ItemId implements Comparable<ItemId> {
      * @throws IllegalArgumentException in case the value is less then {@link #MIN_VALUE} or larger then
      * {@link #MAX_VALUE}.
      */
-    public ItemId(final int value) {
+    public ItemId(int value) {
         if ((value < MIN_VALUE) || (value > MAX_VALUE)) {
             throw new IllegalArgumentException("value is out of range.");
         }
@@ -67,7 +67,7 @@ public final class ItemId implements Comparable<ItemId> {
      * @param reader the reader
      * @throws IOException in case the reading operation fails for some reason
      */
-    public ItemId(@Nonnull final NetCommReader reader) throws IOException {
+    public ItemId(@Nonnull NetCommReader reader) throws IOException {
         value = reader.readUShort();
     }
 
@@ -78,12 +78,12 @@ public final class ItemId implements Comparable<ItemId> {
      * @param id the ID to test
      * @return {@code true} in case the id is valid
      */
-    public static boolean isValidItem(@Nullable final ItemId id) {
+    public static boolean isValidItem(@Nullable ItemId id) {
         return (id != null) && (id.getValue() > 0);
     }
 
     @Override
-    public boolean equals(@Nullable final Object obj) {
+    public boolean equals(@Nullable Object obj) {
         return super.equals(obj) || ((obj instanceof ItemId) && equals((ItemId) obj));
     }
 
@@ -103,7 +103,7 @@ public final class ItemId implements Comparable<ItemId> {
      *
      * @param writer the writer that receives the value
      */
-    public void encode(@Nonnull final NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) {
         writer.writeUShort(value);
     }
 
@@ -113,7 +113,7 @@ public final class ItemId implements Comparable<ItemId> {
      * @param obj the second instance to check
      * @return {@code true} in case both instances represent the same value
      */
-    public boolean equals(@Nullable final ItemId obj) {
+    public boolean equals(@Nullable ItemId obj) {
         return (obj != null) && (value == obj.value);
     }
 
@@ -127,7 +127,7 @@ public final class ItemId implements Comparable<ItemId> {
     }
 
     @Override
-    public int compareTo(@Nonnull final ItemId o) {
+    public int compareTo(@Nonnull ItemId o) {
         if (value == o.value) {
             return 0;
         }

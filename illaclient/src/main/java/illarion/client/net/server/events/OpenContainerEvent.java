@@ -15,12 +15,13 @@
  */
 package illarion.client.net.server.events;
 
-import gnu.trove.iterator.TIntObjectIterator;
-import gnu.trove.map.hash.TIntObjectHashMap;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * This event is raised in case the server caused the client to open a new item container.
@@ -46,10 +47,25 @@ public final class OpenContainerEvent implements ServerEvent {
         return slots;
     }
 
+    @Nonnull
+    public String getTitle() {
+        return title;
+    }
+
+    @Nonnull
+    public String getDescription() {
+        return description;
+    }
+
     /**
      * This class represents a single item that is placed in the container.
      */
     public static final class Item {
+        /**
+         * The slot where the item is placed.
+         */
+        private final int slot;
+
         /**
          * The ID of the item.
          */
@@ -63,10 +79,12 @@ public final class OpenContainerEvent implements ServerEvent {
         /**
          * Constructor for a new item.
          *
+         * @param slot the slot of the item
          * @param itemId the item ID
          * @param itemCount the stack count
          */
-        public Item(final ItemId itemId, final ItemCount itemCount) {
+        public Item(int slot, ItemId itemId, ItemCount itemCount) {
+            this.slot = slot;
             id = itemId;
             count = itemCount;
         }
@@ -88,13 +106,17 @@ public final class OpenContainerEvent implements ServerEvent {
         public ItemCount getCount() {
             return count;
         }
+
+        public int getSlot() {
+            return slot;
+        }
     }
 
     /**
      * The items that are stored in the container.
      */
     @Nonnull
-    private final TIntObjectHashMap<OpenContainerEvent.Item> itemMap;
+    private final Collection<Item> items;
 
     /**
      * The amount of slots in this container.
@@ -106,14 +128,24 @@ public final class OpenContainerEvent implements ServerEvent {
      */
     private final int conId;
 
+    @Nonnull
+    private final String title;
+
+    @Nonnull
+    private final String description;
+
     /**
      * Constructor of the container opened event.
      *
      * @param containerId the ID of the container
+     * @param title the title of the container
+     * @param description the description of the container
      * @param slotCount the amount of slots in the container
      */
-    public OpenContainerEvent(final int containerId, final int slotCount) {
-        itemMap = new TIntObjectHashMap<>(15);
+    public OpenContainerEvent(int containerId, @Nonnull String title, @Nonnull String description, int slotCount) {
+        this.title = title;
+        this.description = description;
+        items = new ArrayList<>();
         slots = slotCount;
         conId = containerId;
     }
@@ -121,19 +153,18 @@ public final class OpenContainerEvent implements ServerEvent {
     /**
      * Add a item to this container.
      *
-     * @param slot the slot where the item is located
      * @param item the item to be added
      */
-    public void addItem(final int slot, final OpenContainerEvent.Item item) {
-        itemMap.put(slot, item);
+    public void addItem(@Nonnull Item item) {
+        items.add(item);
     }
 
     /**
-     * Get the iterator over all the items.
+     * Get the list of items stored in this event.
      *
-     * @return the item iterator
+     * @return the items
      */
-    public TIntObjectIterator<OpenContainerEvent.Item> getItemIterator() {
-        return itemMap.iterator();
+    public Collection<Item> getItems() {
+        return Collections.unmodifiableCollection(items);
     }
 }
