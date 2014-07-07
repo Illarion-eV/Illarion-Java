@@ -342,7 +342,7 @@ public class MavenDownloader {
     private void setupRepositories() {
         if (!offline) {
             repositories.add(setupRepository("central", "http://repo1.maven.org/maven2/", false));
-            repositories.add(setupRepository("illarion", "http://illarion.org/media/java/maven", true));
+            repositories.add(setupRepository("illarion", "http://illarion.org/media/java/maven", snapshot));
             repositories.add(setupRepository("oss-sonatype", "http://oss.sonatype.org/content/repositories/releases/",
                                              false));
         }
