@@ -17,7 +17,7 @@
 apply plugin: 'idea'
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.12'
+    gradleVersion = '2.0'
 }
 
 idea {
@@ -89,8 +89,6 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.sf.proguard', name: 'proguard-gradle', version: '4.11'
-        classpath group: 'edu.sc.seis.gradle', name: 'launch4j', version: '1.0.6'
-        classpath group: 'edu.sc.seis.gradle', name: 'macappbundle', version: '2.0.0'
     }
 }
 
