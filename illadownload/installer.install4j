@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="5.1.12" transformSequenceNumber="4">
-  <directoryPresets config="E:/temp" />
+  <directoryPresets config="E:/Downloads/jre1.7.0_60" />
   <application name="Illarion Launcher" distributionSourceDir="" applicationId="3082-9459-3479-6191" mediaDir="" mediaFilePattern="${compiler:sys.shortName}-${compiler:sys.version}" compression="9" lzmaCompression="true" pack200Compression="true" excludeSignedFromPacking="true" commonExternalFiles="true" createMd5Sums="true" shrinkRuntime="true" shortName="Illarion" publisher="Illarion e.V." publisherWeb="http://illarion.org" version="2.1.0" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" installerName="" javaMinVersion="1.7" javaMaxVersion="" allowBetaVM="false" jdkMode="jdk" jdkName="JDK 1.7">
     <languages skipLanguageSelection="true" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
@@ -51,6 +51,7 @@
       <java mainClass="illarion.download.gui.GuiApplication" vmParameters="-Djava.net.preferIPv4Stack=true &quot;-Dorg.illarion.jre=${launcher:sys.jvmHome}&quot; &quot;-Dorg.illarion.install.dir=${launcher:sys.launcherDirectory}&quot;" arguments="" allowVMPassthroughParameters="false" preferredVM="" bundleRuntime="true">
         <classPath>
           <scanDirectory location="lib" failOnError="true" />
+          <archive location="jre/lib/jfxrt.jar" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
       </java>
@@ -81,12 +82,20 @@
         <serializedBean>
           <java class="java.beans.XMLDecoder">
             <object class="com.install4j.runtime.beans.applications.InstallerApplication">
+              <void property="customHeaderImage">
+                <object class="com.install4j.api.beans.ExternalFile">
+                  <string>${compiler:iconsDir}/general60.png</string>
+                </object>
+              </void>
               <void property="customIconImageFiles">
                 <void method="add">
                   <object class="com.install4j.api.beans.ExternalFile">
                     <string>${compiler:iconsDir}/general.png</string>
                   </object>
                 </void>
+              </void>
+              <void property="customWatermarkText">
+                <string>${compiler:sys.shortName}</string>
               </void>
               <void property="useCustomIcon">
                 <boolean>true</boolean>
@@ -212,7 +221,7 @@
               <java class="java.beans.XMLDecoder">
                 <object class="com.install4j.runtime.beans.screens.StandardProgramGroupScreen">
                   <void property="programGroupName">
-                    <string>${compiler:sys.fullName}</string>
+                    <string>${compiler:sys.shortName}</string>
                   </void>
                 </object>
               </java>
@@ -221,8 +230,138 @@
             <validation />
             <preActivation />
             <postActivation />
-            <actions />
+            <actions>
+              <action name="" id="302" customizedId="" beanClass="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction">
+                      <void property="file">
+                        <object class="java.io.File">
+                          <string>illarion</string>
+                        </object>
+                      </void>
+                      <void property="name">
+                        <string>${compiler:sys.shortName}</string>
+                      </void>
+                      <void property="winIconFile">
+                        <object class="com.install4j.api.beans.ExternalFile">
+                          <string>${compiler:iconsDir}/windows.ico</string>
+                        </object>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>context.getBooleanVariable("createDesktopLinkAction")</condition>
+              </action>
+              <action name="" id="395" customizedId="" beanClass="com.install4j.runtime.beans.actions.desktop.CreateQuicklaunchIconAction" enabled="true" commentSet="false" comment="" actionElevationType="none" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.desktop.CreateQuicklaunchIconAction">
+                      <void property="description">
+                        <string>${compiler:sys.fullName}</string>
+                      </void>
+                      <void property="file">
+                        <object class="java.io.File">
+                          <string>illarion</string>
+                        </object>
+                      </void>
+                      <void property="icon">
+                        <object class="com.install4j.api.beans.ExternalFile">
+                          <string>${compiler:iconsDir}/windows.ico</string>
+                        </object>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>context.getBooleanVariable("createQuicklaunchIconAction")</condition>
+              </action>
+              <action name="" id="397" customizedId="" beanClass="com.install4j.runtime.beans.actions.desktop.AddToDockAction" enabled="true" commentSet="false" comment="" actionElevationType="none" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.desktop.AddToDockAction">
+                      <void property="executable">
+                        <object class="java.io.File">
+                          <string>illarion</string>
+                        </object>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>context.getBooleanVariable("addToDockAction")</condition>
+              </action>
+            </actions>
             <formComponents />
+          </screen>
+          <screen name="" id="303" customizedId="" beanClass="com.install4j.runtime.beans.screens.AdditionalConfirmationsScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.AdditionalConfirmationsScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents>
+              <formComponent name="Add a desktop link" id="304" customizedId="" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.formcomponents.CheckboxComponent">
+                      <void property="checkboxText">
+                        <string>${i18n:CreateDesktopIcon}</string>
+                      </void>
+                      <void property="initiallySelected">
+                        <boolean>true</boolean>
+                      </void>
+                      <void property="variableName">
+                        <string>createDesktopLinkAction</string>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <initScript />
+                <visibilityScript />
+              </formComponent>
+              <formComponent name="Create a quick launch icon" id="396" customizedId="" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.formcomponents.CheckboxComponent">
+                      <void property="checkboxText">
+                        <string>${i18n:CreateQuickLaunchIcon}</string>
+                      </void>
+                      <void property="initiallySelected">
+                        <boolean>true</boolean>
+                      </void>
+                      <void property="variableName">
+                        <string>createQuicklaunchIconAction</string>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <initScript />
+                <visibilityScript>Util.isWindows()</visibilityScript>
+              </formComponent>
+              <formComponent name="Add an executable to the dock" id="398" customizedId="" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.formcomponents.CheckboxComponent">
+                      <void property="checkboxText">
+                        <string>${i18n:AddToDock}</string>
+                      </void>
+                      <void property="initiallySelected">
+                        <boolean>true</boolean>
+                      </void>
+                      <void property="variableName">
+                        <string>addToDockAction</string>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <initScript />
+                <visibilityScript>Util.isMacOS()</visibilityScript>
+              </formComponent>
+            </formComponents>
           </screen>
           <screen name="" id="8" customizedId="" beanClass="com.install4j.runtime.beans.screens.InstallationScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="true" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
             <serializedBean>
@@ -247,6 +386,9 @@
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.actions.desktop.CreateProgramGroupAction">
+                      <void property="categories">
+                        <string>Game</string>
+                      </void>
                       <void property="programGroupEntryConfigs">
                         <void method="add">
                           <object class="com.install4j.runtime.beans.screens.components.ProgramGroupUrlConfig">
@@ -281,25 +423,6 @@
                       </void>
                       <void property="itemName">
                         <string>${compiler:sys.fullName} ${compiler:sys.version}</string>
-                      </void>
-                    </object>
-                  </java>
-                </serializedBean>
-                <condition />
-              </action>
-              <action name="" id="113" customizedId="" beanClass="com.install4j.runtime.beans.actions.misc.ModifyClasspathAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.misc.ModifyClasspathAction">
-                      <void property="entries">
-                        <array class="java.lang.String" length="1">
-                          <void index="0">
-                            <string>${installer:sys.preferredJre}/lib/jfxrt.jar</string>
-                          </void>
-                        </array>
-                      </void>
-                      <void property="launcherId">
-                        <string>23</string>
                       </void>
                     </object>
                   </java>
@@ -345,6 +468,44 @@
                       </void>
                       <void property="recursive">
                         <boolean>true</boolean>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+              <action name="" id="497" customizedId="" beanClass="com.install4j.runtime.beans.actions.files.CreateSymlinkAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.files.CreateSymlinkAction">
+                      <void property="file">
+                        <object class="java.io.File">
+                          <string>illarion.desktop</string>
+                        </object>
+                      </void>
+                      <void property="linkFile">
+                        <object class="java.io.File">
+                          <string>${installer:sys.programGroupName}/Illarion.desktop</string>
+                        </object>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>context.getBooleanVariable("createDesktopLinkAction") &amp;&amp; context.getVariable("sys.symlinkDir") != null</condition>
+              </action>
+              <action name="" id="589" customizedId="" beanClass="com.install4j.runtime.beans.actions.misc.ModifyClasspathAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.misc.ModifyClasspathAction">
+                      <void property="entries">
+                        <array class="java.lang.String" length="1">
+                          <void index="0">
+                            <string>${installer:sys.preferredJre}${installer:sys.fileSeparator}lib${installer:sys.fileSeparator}jfxrt.jar</string>
+                          </void>
+                        </array>
+                      </void>
+                      <void property="launcherId">
+                        <string>23</string>
                       </void>
                     </object>
                   </java>
@@ -527,7 +688,7 @@
           </screen>
         </screens>
       </application>
-      <application name="Updater with silent version check" id="24" customizedId="" beanClass="com.install4j.runtime.beans.applications.CustomApplication" enabled="true" commentSet="false" comment="" actionElevationType="none" fileset="" customIcnsFile="${compiler:sys.install4jHome}/resource/macos/updater.icns" customIcoFile="${compiler:sys.install4jHome}/resource/updater.ico" macEntitlementsFile="" automaticLauncherIntegration="false" launchMode="startupFirstWindow" launchInNewProcess="false" launchSchedule="updateSchedule" allLaunchers="true">
+      <application name="Updater with silent version check" id="24" customizedId="" beanClass="com.install4j.runtime.beans.applications.CustomApplication" enabled="true" commentSet="false" comment="" actionElevationType="none" fileset="" customIcnsFile="${compiler:sys.install4jHome}/resource/macos/updater.icns" customIcoFile="${compiler:sys.install4jHome}/resource/updater.ico" macEntitlementsFile="" automaticLauncherIntegration="true" launchMode="startupAsync" launchInNewProcess="true" launchSchedule="always" allLaunchers="true">
         <serializedBean>
           <java class="java.beans.XMLDecoder">
             <object class="com.install4j.runtime.beans.applications.CustomApplication">
@@ -1257,7 +1418,7 @@ if (context.isUnattended()) {
       <excludedComponents />
       <includedDownloadableComponents />
     </windows>
-    <macos name="Mac OS X Single Bundle" id="63" customizedId="" mediaFileName="" installDir="${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="macosx-amd64-1.7.0_60" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" appleJre="false" requiredVmIdPrefix="" customInstallBaseDir="" contentFilesType="1" downloadURL="" signLaunchers="false" launcherId="23">
+    <macosArchive name="Mac OS X Single Bundle Archive" id="580" customizedId="" mediaFileName="illarion-${compiler:sys.version}" installDir="Illarion" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="macosx-amd64-1.7.0_60" manualJREEntry="false" appleJre="false" launcherId="23">
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude />
@@ -1266,10 +1427,8 @@ if (context.isUnattended()) {
         <commentFiles />
         <customAttributes />
       </autoUpdate>
-      <excludedComponents />
-      <includedDownloadableComponents />
-    </macos>
-    <unixInstaller name="Unix Installer" id="64" customizedId="" mediaFileName="" installDir="${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="">
+    </macosArchive>
+    <unixInstaller name="Unix Installer" id="64" customizedId="" mediaFileName="illarion-${compiler:sys.version}" installDir="illarion" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-x86-1.7.0_60" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="">
       <excludedLaunchers />
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
@@ -1285,7 +1444,7 @@ if (context.isUnattended()) {
         <content />
       </installerScript>
     </unixInstaller>
-    <linuxRPM name="Linux RPM" id="65" customizedId="" mediaFileName="" installDir="/opt/illarion" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="" manualJREEntry="false" os="linux" arch="i386">
+    <linuxRPM name="Linux RPM" id="65" customizedId="" mediaFileName="illarion-${compiler:sys.version}" installDir="/opt/illarion" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-x86-1.7.0_60" manualJREEntry="false" os="linux" arch="i386">
       <excludedLaunchers />
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
@@ -1308,7 +1467,7 @@ if (context.isUnattended()) {
         <content />
       </postUninstallScript>
     </linuxRPM>
-    <linuxDeb name="Linux Deb Archive" id="66" customizedId="" mediaFileName="" installDir="/opt/illarion" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="" manualJREEntry="false" bzip="true" description="The Illarion Launcher that is used to download the actual game and start it." dependencies="" maintainerEmail="webmaster@illarion.org" architectureSet="false" architecture="">
+    <linuxDeb name="Linux Deb Archive" id="66" customizedId="" mediaFileName="illarion-${compiler:sys.version}" installDir="/opt/illarion" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-x86-1.7.0_60" manualJREEntry="false" bzip="true" description="The Illarion Launcher that is used to download the actual game and start it." dependencies="" maintainerEmail="webmaster@illarion.org" architectureSet="true" architecture="x86">
       <excludedLaunchers />
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
@@ -1344,6 +1503,80 @@ if (context.isUnattended()) {
       <excludedComponents />
       <includedDownloadableComponents />
     </windows>
+    <linuxDeb name="Linux Deb Archive (x64)" id="411" customizedId="" mediaFileName="illarion-${compiler:sys.version}-amd64" installDir="/opt/illarion" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-amd64-1.7.0_60" manualJREEntry="false" bzip="true" description="The Illarion Launcher that is used to download the actual game and start it." dependencies="" maintainerEmail="webmaster@illarion.org" architectureSet="true" architecture="amd64">
+      <excludedLaunchers />
+      <excludedBeans />
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude />
+      <variables />
+      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
+        <commentFiles />
+        <customAttributes />
+      </autoUpdate>
+      <preInstallScript mode="1" file="">
+        <content />
+      </preInstallScript>
+      <postInstallScript mode="1" file="">
+        <content />
+      </postInstallScript>
+      <preUninstallScript mode="1" file="">
+        <content />
+      </preUninstallScript>
+      <postUninstallScript mode="1" file="">
+        <content />
+      </postUninstallScript>
+    </linuxDeb>
+    <linuxRPM name="Linux RPM (x64)" id="416" customizedId="" mediaFileName="illarion-${compiler:sys.version}-amd64" installDir="/opt/illarion" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-amd64-1.7.0_60" manualJREEntry="false" os="linux" arch="i386">
+      <excludedLaunchers />
+      <excludedBeans />
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude />
+      <variables />
+      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
+        <commentFiles />
+        <customAttributes />
+      </autoUpdate>
+      <preInstallScript mode="1" file="">
+        <content />
+      </preInstallScript>
+      <postInstallScript mode="1" file="">
+        <content />
+      </postInstallScript>
+      <preUninstallScript mode="1" file="">
+        <content />
+      </preUninstallScript>
+      <postUninstallScript mode="1" file="">
+        <content />
+      </postUninstallScript>
+    </linuxRPM>
+    <unixInstaller name="Unix Installer (x64)" id="420" customizedId="" mediaFileName="illarion-${compiler:sys.version}-amd64" installDir="illarion" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-amd64-1.7.0_60" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="">
+      <excludedLaunchers />
+      <excludedBeans />
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude />
+      <variables />
+      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
+        <commentFiles />
+        <customAttributes />
+      </autoUpdate>
+      <excludedComponents />
+      <includedDownloadableComponents />
+      <installerScript mode="1" file="">
+        <content />
+      </installerScript>
+    </unixInstaller>
+    <macos name="Mac OS X Single Bundle" id="590" customizedId="" mediaFileName="illarion-${compiler:sys.version}" installDir="illarion" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="macosx-amd64-1.7.0_60" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" appleJre="false" requiredVmIdPrefix="" customInstallBaseDir="" contentFilesType="1" downloadURL="" signLaunchers="true" launcherId="23">
+      <excludedBeans />
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude />
+      <variables />
+      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
+        <commentFiles />
+        <customAttributes />
+      </autoUpdate>
+      <excludedComponents />
+      <includedDownloadableComponents />
+    </macos>
   </mediaSets>
   <buildIds buildAll="true" />
   <buildOptions verbose="false" faster="false" disableSigning="false" debug="false" />

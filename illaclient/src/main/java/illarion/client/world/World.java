@@ -55,15 +55,12 @@ public final class World {
             StoppableStorage.getInstance().shutdown();
 
             if (INSTANCE.net != null) {
-                //noinspection ConstantConditions
                 INSTANCE.net.disconnect();
             }
             if (INSTANCE.player != null) {
-                //noinspection ConstantConditions
                 INSTANCE.player.shutdown();
             }
             if (INSTANCE.map != null) {
-                //noinspection ConstantConditions
                 INSTANCE.map.getMiniMap().saveAllMaps();
             }
 
@@ -85,7 +82,7 @@ public final class World {
 
     @Nonnull
     public static AnimationManager getAnimationManager() {
-        final AnimationManager instance = INSTANCE.aniManager;
+        AnimationManager instance = INSTANCE.aniManager;
         if (instance == null) {
             throw new IllegalStateException("World is not yet initialized");
         }
@@ -94,7 +91,7 @@ public final class World {
 
     @Nonnull
     public static Clock getClock() {
-        final Clock instance = INSTANCE.clock;
+        Clock instance = INSTANCE.clock;
         if (instance == null) {
             throw new IllegalStateException("World is not yet initialized");
         }
@@ -103,7 +100,7 @@ public final class World {
 
     @Nonnull
     public static ChatHandler getChatHandler() {
-        final ChatHandler instance = INSTANCE.chatHandler;
+        ChatHandler instance = INSTANCE.chatHandler;
         if (instance == null) {
             throw new IllegalStateException("World is not yet initialized");
         }
@@ -112,7 +109,7 @@ public final class World {
 
     @Nonnull
     public static LightTracer getLights() {
-        final LightTracer instance = INSTANCE.lights;
+        LightTracer instance = INSTANCE.lights;
         if (instance == null) {
             throw new IllegalStateException("World is not yet initialized");
         }
@@ -126,7 +123,7 @@ public final class World {
      */
     @Nonnull
     public static GameMap getMap() {
-        final GameMap instance = INSTANCE.map;
+        GameMap instance = INSTANCE.map;
         if (instance == null) {
             throw new IllegalStateException("World is not yet initialized");
         }
@@ -135,7 +132,7 @@ public final class World {
 
     @Nonnull
     public static MapDisplayManager getMapDisplay() {
-        final MapDisplayManager instance = INSTANCE.mapDisplay;
+        MapDisplayManager instance = INSTANCE.mapDisplay;
         if (instance == null) {
             throw new IllegalStateException("World is not yet initialized");
         }
@@ -144,7 +141,7 @@ public final class World {
 
     @Nonnull
     public static MusicBox getMusicBox() {
-        final MusicBox instance = INSTANCE.musicBox;
+        MusicBox instance = INSTANCE.musicBox;
         if (instance == null) {
             throw new IllegalStateException("World is not yet initialized");
         }
@@ -153,7 +150,7 @@ public final class World {
 
     @Nonnull
     public static NetComm getNet() {
-        final NetComm instance = INSTANCE.net;
+        NetComm instance = INSTANCE.net;
         if (instance == null) {
             throw new IllegalStateException("World is not yet initialized");
         }
@@ -162,7 +159,7 @@ public final class World {
 
     @Nonnull
     public static People getPeople() {
-        final People instance = INSTANCE.people;
+        People instance = INSTANCE.people;
         if (instance == null) {
             throw new IllegalStateException("World is not yet initialized");
         }
@@ -171,7 +168,7 @@ public final class World {
 
     @Nonnull
     public static Player getPlayer() {
-        final Player instance = INSTANCE.player;
+        Player instance = INSTANCE.player;
         if (instance == null) {
             throw new IllegalStateException("World is not yet initialized");
         }
@@ -180,7 +177,7 @@ public final class World {
 
     @Nonnull
     public static Weather getWeather() {
-        final Weather instance = INSTANCE.weather;
+        Weather instance = INSTANCE.weather;
         if (instance == null) {
             throw new IllegalStateException("World is not yet initialized");
         }
@@ -189,7 +186,7 @@ public final class World {
 
     @Nonnull
     public static InteractionManager getInteractionManager() {
-        final InteractionManager instance = INSTANCE.interactionManager;
+        InteractionManager instance = INSTANCE.interactionManager;
         if (instance == null) {
             throw new IllegalStateException("World is not yet initialized");
         }
@@ -198,7 +195,7 @@ public final class World {
 
     @Nonnull
     public static UpdateTaskManager getUpdateTaskManager() {
-        final UpdateTaskManager instance = INSTANCE.updateManager;
+        UpdateTaskManager instance = INSTANCE.updateManager;
         if (instance == null) {
             throw new IllegalStateException("World is not yet initialized");
         }
@@ -207,7 +204,7 @@ public final class World {
 
     @Nonnull
     public static GameGui getGameGui() {
-        final GameGui instance = INSTANCE.gameGui;
+        GameGui instance = INSTANCE.gameGui;
         if (instance == null) {
             throw new IllegalStateException("World is not yet initialized");
         }
@@ -315,7 +312,7 @@ public final class World {
      *
      * @param engine the engine that is used to display the game
      */
-    public static synchronized void initWorldComponents(@Nonnull final Engine engine) throws EngineException {
+    public static synchronized void initWorldComponents(@Nonnull Engine engine) throws EngineException {
         if (INSTANCE.init) {
             return;
         }
@@ -343,7 +340,7 @@ public final class World {
      *
      * @param engine the game engine
      */
-    public static synchronized void initGui(@Nonnull final Engine engine) {
+    public static synchronized void initGui(@Nonnull Engine engine) {
         INSTANCE.gameGui = new GameScreenController(engine.getInput());
     }
 }

@@ -16,11 +16,13 @@
 apply plugin: 'java'
 apply plugin: 'maven-publish'
 
+apply from: '../versions.gradle'
+
 archivesBaseName = 'illarion_engine_nifty'
 dependencies {
     compile project(':common')
     compile project(':engine')
-    compile group: 'lessvoid', name: 'nifty', version: '1.4.0-SNAPSHOT'
+    compile group: 'lessvoid', name: 'nifty', version: project.ext.niftyGuiVersion
 }
 
 jar {

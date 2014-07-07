@@ -35,7 +35,7 @@ dependencies {
     compile group: 'org.bushe', name: 'eventbus', version: '1.4'
     compile group: 'com.github.insubstantial', name: 'substance', version: '7.2.1'
     compile group: 'com.github.insubstantial', name: 'substance-flamingo', version: '7.2.1'
-    compile group: 'org.tinyjee.jgraphx', name: 'jgraphx', version: '2.0.0.1'
+    compile group: 'org.tinyjee.jgraphx', name: 'jgraphx', version: '2.3.0.5'
 }
 
 processResources.dependsOn {

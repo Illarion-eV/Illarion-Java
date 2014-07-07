@@ -38,14 +38,24 @@ public final class ItemContainer {
      */
     private final int containerId;
 
+    @Nonnull
+    private final String description;
+
+    @Nonnull
+    private final String title;
+
     /**
      * Create a new container with a specified ID.
      *
      * @param id the ID of the container
+     * @param title the title of the container
+     * @param description the description of the container
      * @param slotCount the amount of slots this container has
      */
-    public ItemContainer(final int id, final int slotCount) {
+    public ItemContainer(int id, @Nonnull String title, @Nonnull String description, int slotCount) {
         containerId = id;
+        this.title = title;
+        this.description = description;
         slots = new ContainerSlot[slotCount];
         for (int i = 0; i < slotCount; i++) {
             slots[i] = new ContainerSlot(containerId, i);
@@ -60,7 +70,7 @@ public final class ItemContainer {
      * @throws IndexOutOfBoundsException in case the {@code slotId} parameter is too small or too large
      */
     @Nonnull
-    public ContainerSlot getSlot(final int slotId) {
+    public ContainerSlot getSlot(int slotId) {
         return slots[slotId];
     }
 
@@ -90,7 +100,7 @@ public final class ItemContainer {
      * @param count the new item count
      * @throws IndexOutOfBoundsException in case the {@code slot} parameter is too small or too large
      */
-    public void setItem(final int slot, @Nullable final ItemId id, @Nullable final ItemCount count) {
+    public void setItem(int slot, @Nullable ItemId id, @Nullable ItemCount count) {
         if ((slot < 0) || (slot >= slots.length)) {
             throw new IndexOutOfBoundsException("Requested slot outside of allowed range: " + slot);
         }
@@ -101,5 +111,15 @@ public final class ItemContainer {
         } else {
             slots[slot].clearSlot();
         }
+    }
+
+    @Nonnull
+    public String getDescription() {
+        return description;
+    }
+
+    @Nonnull
+    public String getTitle() {
+        return title;
     }
 }

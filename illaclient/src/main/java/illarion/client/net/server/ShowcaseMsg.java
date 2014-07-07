@@ -18,10 +18,10 @@ package illarion.client.net.server;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.net.server.events.OpenContainerEvent;
+import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
-import org.bushe.swing.event.EventBus;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,10 +38,6 @@ import java.io.IOException;
 public final class ShowcaseMsg extends AbstractGuiMsg {
     @Nullable
     private OpenContainerEvent event;
-    @Nullable
-    private String name;
-    @Nullable
-    private String description;
 
     /**
      * Decode the container data the receiver got and prepare it for the execution.
@@ -52,19 +48,19 @@ public final class ShowcaseMsg extends AbstractGuiMsg {
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         int containerId = reader.readUByte();
-        //name = reader.readString();
-        //description = reader.readString();
+        String title = reader.readString();
+        String description = reader.readString();
         int containerSize = reader.readUShort();
         int itemAmount = reader.readUShort();
 
-        event = new OpenContainerEvent(containerId, containerSize);
+        event = new OpenContainerEvent(containerId, title, description, containerSize);
 
         for (int i = 0; i < itemAmount; i++) {
             int itemPos = reader.readUShort();
             ItemId itemId = new ItemId(reader);
             ItemCount itemCount = ItemCount.getInstance(reader);
 
-            event.addItem(itemPos, new OpenContainerEvent.Item(itemId, itemCount));
+            event.addItem(new OpenContainerEvent.Item(itemPos, itemId, itemCount));
         }
     }
 
@@ -75,7 +71,10 @@ public final class ShowcaseMsg extends AbstractGuiMsg {
      */
     @Override
     public boolean executeUpdate() {
-        EventBus.publish(event);
+        if (event == null) {
+            throw new IllegalStateException("Executing the update before the decoding happened.");
+        }
+        World.getPlayer().onOpenContainerEvent(event);
         return true;
     }
 

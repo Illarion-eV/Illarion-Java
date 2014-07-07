@@ -20,36 +20,40 @@ import de.lessvoid.nifty.builder.ControlBuilder;
 import javax.annotation.Nonnull;
 
 public class ItemContainerBuilder extends ControlBuilder {
-    public ItemContainerBuilder(@Nonnull final String id, final String title) {
+    public ItemContainerBuilder(@Nonnull String id, String title) {
         super(id, "itemcontainer");
 
         set("title", title);
-        set("closeable", Boolean.TRUE.toString());
-        set("hideOnClose", Boolean.FALSE.toString());
+        set("closeable", Boolean.toString(true));
+        set("hideOnClose", Boolean.toString(false));
     }
 
-    public void slotBackground(final String image) {
+    public void description(String description) {
+        set("description", description);
+    }
+
+    public void slotBackground(String image) {
         set("slotBackground", image);
     }
 
-    public void slots(final int slots) {
+    public void slots(int slots) {
         set("slots", Integer.toString(slots));
     }
 
-    public void slotHeight(final int height) {
+    public void slotHeight(int height) {
         set("slotHeight", Integer.toString(height));
     }
 
-    public void slotWidth(final int width) {
+    public void slotWidth(int width) {
         set("slotWidth", Integer.toString(width));
     }
 
-    public void slotDim(final int height, final int width) {
+    public void slotDim(int height, int width) {
         slotHeight(height);
         slotWidth(width);
     }
 
-    public void containerId(final int id) {
+    public void containerId(int id) {
         set("containerId", Integer.toString(id));
     }
 }

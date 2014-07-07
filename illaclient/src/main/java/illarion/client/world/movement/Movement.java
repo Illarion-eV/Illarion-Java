@@ -273,4 +273,9 @@ public class Movement {
     public void setDefaultMovementMode(@Nonnull CharMovementMode defaultMovementMode) {
         this.defaultMovementMode = defaultMovementMode;
     }
+
+    public void shutdown() {
+        timeoutTimer.stop();
+        activeHandler = null;
+    }
 }

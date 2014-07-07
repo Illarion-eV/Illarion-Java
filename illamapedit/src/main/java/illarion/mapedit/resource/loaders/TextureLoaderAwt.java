@@ -36,7 +36,7 @@ public final class TextureLoaderAwt extends AbstractTextureManager<BufferedImage
     public static final class AwtTexture implements Texture {
         private final BufferedImage image;
 
-        AwtTexture(@Nonnull final BufferedImage image) {
+        AwtTexture(@Nonnull BufferedImage image) {
             this.image = image;
         }
 
@@ -92,22 +92,24 @@ public final class TextureLoaderAwt extends AbstractTextureManager<BufferedImage
     @Nullable
     @Override
     protected BufferedImage loadTextureData(@Nonnull String textureName) {
-        InputStream in = null;
-        try {
-            in = Thread.currentThread().getContextClassLoader().getResourceAsStream(textureName);
-            final BufferedImage orgImage = ImageIO.read(in);
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        try (InputStream in = cl.getResourceAsStream(textureName)) {
+            if (in == null) {
+                return null;
+            }
+            BufferedImage orgImage = ImageIO.read(in);
 
-            final GraphicsConfiguration gfxConfig = GraphicsEnvironment.getLocalGraphicsEnvironment()
+            GraphicsConfiguration gfxConfig = GraphicsEnvironment.getLocalGraphicsEnvironment()
                     .getDefaultScreenDevice().getDefaultConfiguration();
 
             if (orgImage.getColorModel().equals(gfxConfig.getColorModel())) {
                 return orgImage;
             }
 
-            final BufferedImage newImage = gfxConfig
+            BufferedImage newImage = gfxConfig
                     .createCompatibleImage(orgImage.getWidth(), orgImage.getHeight(), orgImage.getTransparency());
 
-            final Graphics2D g2d = (Graphics2D) newImage.getGraphics();
+            Graphics2D g2d = (Graphics2D) newImage.getGraphics();
 
             g2d.drawImage(orgImage, 0, 0, null);
             g2d.dispose();
@@ -115,13 +117,6 @@ public final class TextureLoaderAwt extends AbstractTextureManager<BufferedImage
             return newImage;
         } catch (IOException e) {
             return null;
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ignored) {
-                }
-            }
         }
     }
 

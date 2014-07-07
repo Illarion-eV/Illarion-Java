@@ -16,12 +16,14 @@
 apply plugin: 'java'
 apply plugin: 'maven-publish'
 
+apply from: '../versions.gradle'
+
 archivesBaseName = 'nifty-controls-illarion'
 
 dependencies {
     compile project(':common')
-    compile group: 'lessvoid', name: 'nifty', version: '1.4.0-SNAPSHOT'
-    compile group: 'lessvoid', name: 'nifty-default-controls', version: '1.4.0-SNAPSHOT'
+    compile group: 'lessvoid', name: 'nifty', version: project.ext.niftyGuiVersion
+    compile group: 'lessvoid', name: 'nifty-default-controls', version: project.ext.niftyGuiVersion
 }
 
 jar {

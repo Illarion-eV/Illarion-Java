@@ -489,10 +489,11 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      */
     private void createNewContainer(@Nonnull ItemContainer itemContainer) {
         ItemContainerBuilder builder = new ItemContainerBuilder("container" + itemContainer.getContainerId(),
-                                                                      "${gamescreen-bundle.bag}");
+                                                                itemContainer.getTitle());
         builder.slots(itemContainer.getSlotCount());
         builder.slotDim(35, 35);
         builder.containerId(itemContainer.getContainerId());
+        builder.description(itemContainer.getDescription());
 
         Element container = builder.build(activeNifty, activeScreen, activeScreen.findElementById("windows"));
         org.illarion.nifty.controls.ItemContainer conControl = container

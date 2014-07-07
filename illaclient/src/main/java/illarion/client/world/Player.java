@@ -15,7 +15,6 @@
  */
 package illarion.client.world;
 
-import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import illarion.client.Login;
 import illarion.client.net.client.RequestAppearanceCmd;
@@ -265,17 +264,15 @@ public final class Player {
                 return;
             }
         } else {
-            container = createNewContainer(event.getContainerId(), slotCount);
+            container = createNewContainer(event.getContainerId(), event.getTitle(), event.getDescription(), slotCount);
         }
 
         boolean[] updatedSlot = new boolean[slotCount];
         Arrays.fill(updatedSlot, false);
 
-        TIntObjectIterator<OpenContainerEvent.Item> itr = event.getItemIterator();
-        while (itr.hasNext()) {
-            itr.advance();
-            updatedSlot[itr.key()] = true;
-            container.setItem(itr.key(), itr.value().getItemId(), itr.value().getCount());
+        for (OpenContainerEvent.Item item : event.getItems()) {
+            updatedSlot[item.getSlot()] = true;
+            container.setItem(item.getSlot(), item.getItemId(), item.getCount());
         }
 
         for (int i = 0; i < slotCount; i++) {
@@ -327,13 +324,13 @@ public final class Player {
      * @throws IllegalArgumentException in case there is already a container with the same ID
      */
     @Nonnull
-    public ItemContainer createNewContainer(int id, int slotCount) {
+    public ItemContainer createNewContainer(int id, @Nonnull String title, @Nonnull String description, int slotCount) {
         containerLock.writeLock().lock();
         try {
             if (containers.containsKey(id)) {
                 throw new IllegalArgumentException("Can't create item container that already exists.");
             }
-            ItemContainer newContainer = new ItemContainer(id, slotCount);
+            ItemContainer newContainer = new ItemContainer(id, title, description, slotCount);
             containers.put(id, newContainer);
             return newContainer;
         } finally {
@@ -589,5 +586,6 @@ public final class Player {
      */
     public void shutdown() {
         character.markAsRemoved();
+        movementHandler.shutdown();
     }
 }

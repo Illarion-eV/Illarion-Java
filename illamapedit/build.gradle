@@ -36,32 +36,32 @@ dependencies {
     compile group: 'org.bushe', name: 'eventbus', version: '1.4'
     compile group: 'com.github.insubstantial', name: 'substance', version: '7.2.1'
     compile group: 'com.github.insubstantial', name: 'substance-flamingo', version: '7.2.1'
-    compile group: 'org.swinglabs', name: 'swingx', version: '1.6.1'
+    compile group: 'com.github.insubstantial', name: 'substance-swingx', version: '7.2.1'
     runtime group: 'org.illarion', name: 'rsc_items', version: project.ext.illarionResourcesVersion
     runtime group: 'org.illarion', name: 'rsc_music', version: project.ext.illarionResourcesVersion
     runtime group: 'org.illarion', name: 'rsc_tables', version: project.ext.illarionResourcesVersion
     runtime group: 'org.illarion', name: 'rsc_tiles', version: project.ext.illarionResourcesVersion
-    testCompile group: 'org.testng', name: 'testng', version: '6.8.7'
-    testCompile group: 'org.powermock', name: 'powermock-module-testng', version: '1.5.4'
-    testCompile group: 'org.powermock', name: 'powermock-api-easymock', version: '1.5.4'
+    testCompile group: 'org.testng', name: 'testng', version: '6.8.8'
+    testCompile group: 'org.powermock', name: 'powermock-module-testng', version: '1.5.5'
+    testCompile group: 'org.powermock', name: 'powermock-api-easymock', version: '1.5.5'
     testCompile group: 'org.easymock', name: 'easymock', version: '3.2'
 }
 
 jar {
     dependsOn { gitVersion }
     manifest {
-        attributes          \
-                 'Main-Class': 'illarion.mapedit.MapEditor',        \
-                 'Permissions': 'all-permissions',         \
-                 'Codebase': 'illarion.org',         \
-                 'Application-Name': 'Illarion Mapeditor',         \
-                 'Application-Library-Allowable-Codebase': 'illarion.org',         \
-                 'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),         \
-                 'Built-By': System.getProperty('user.name'),          \
-                 'Built-JDK': System.getProperty('java.version'),          \
-                 'Implementation-Title': 'Illarion Mapeditor',          \
-                 'Implementation-Vendor': 'Illarion e.V.',         \
-                 'Implementation-Version': project.ext.fullVersion
+        attributes           \
+                  'Main-Class': 'illarion.mapedit.MapEditor',         \
+                  'Permissions': 'all-permissions',          \
+                  'Codebase': 'illarion.org',          \
+                  'Application-Name': 'Illarion Mapeditor',          \
+                  'Application-Library-Allowable-Codebase': 'illarion.org',          \
+                  'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),          \
+                  'Built-By': System.getProperty('user.name'),           \
+                  'Built-JDK': System.getProperty('java.version'),           \
+                  'Implementation-Title': 'Illarion Mapeditor',           \
+                  'Implementation-Vendor': 'Illarion e.V.',          \
+                  'Implementation-Version': project.ext.fullVersion
     }
 }
 
