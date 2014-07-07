@@ -242,7 +242,7 @@ public class ResourceConverter extends DefaultTask {
         if (getPrivateKey() != null) {
             try {
                 crypto.loadPrivateKey(new FileInputStream(getPrivateKey()))
-            } catch (@Nonnull final FileNotFoundException ignored) {
+            } catch (final FileNotFoundException ignored) {
                 // did not work
             }
         }
