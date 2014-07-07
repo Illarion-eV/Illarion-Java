@@ -15,7 +15,7 @@
  */
 package illarion.mapedit.data;
 
-import junit.framework.Assert;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
