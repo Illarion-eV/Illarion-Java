@@ -15,6 +15,6 @@
  */
 ext {
     slf4jVersion = '1.7.7'
-    illarionResourcesVersion = '2.1.15-SNAPSHOT'
+    illarionResourcesVersion = '2.1.16'
     niftyGuiVersion = '1.4.0'
 }
