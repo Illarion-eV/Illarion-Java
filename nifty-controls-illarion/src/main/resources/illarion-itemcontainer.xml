@@ -19,7 +19,7 @@
         <control name="window" title="Container" id="#window" visibleToMouse="true">
             <panel childLayout="vertical">
                 <control name="label" id="#description" style="nifty-label" visibleToMouse="true" width="100%"
-                         padding="5px" wrap="true" color="#e0e000ff"/>
+                         padding="5px" wrap="true"/>
                 <panel childLayout="center" visibleToMouse="true" id="#contentPanel"/>
             </panel>
         </control>
