@@ -100,9 +100,24 @@ public final class DirectoryManager {
             case User:
                 return Paths.get(System.getProperty("user.home"), ".illarion");
             case Data:
-                return workingDirectory.resolve("bin");
+                return getBinaryDirectory();
         }
         throw new IllegalArgumentException("Parameter 'dir' was set to an illegal value: " + dir);
+    }
+
+    private Path getBinaryDirectory() {
+        Path firstChoice = workingDirectory.resolve("bin");
+        if (!Files.exists(firstChoice)) {
+            try {
+                return Files.createDirectories(firstChoice);
+            } catch (IOException ignored) {
+                // not accessible
+            }
+        }
+        if (Files.isDirectory(firstChoice) && Files.isWritable(firstChoice) && Files.isReadable(firstChoice)) {
+            return firstChoice;
+        }
+        return getDirectory(Directory.User).resolve("bin");
     }
 
     @Nonnull

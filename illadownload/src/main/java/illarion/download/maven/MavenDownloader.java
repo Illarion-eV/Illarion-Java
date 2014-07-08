@@ -341,23 +341,28 @@ public class MavenDownloader {
 
     private void setupRepositories() {
         if (!offline) {
-            repositories.add(setupRepository("central", "http://repo1.maven.org/maven2/", false));
+            repositories.add(setupRepository("central", "http://repo1.maven.org/maven2/", false,
+                                             setupRepository("ibiblio.org", "http://mirrors.ibiblio.org/maven2/",
+                                                             false), setupRepository("antelink",
+                                                                                     "http://maven.antelink.com/content/repositories/central/",
+                                                                                     false),
+                                             setupRepository("exist", "http://repo.exist.com/maven2/", false),
+                                             setupRepository("ibiblio.net",
+                                                             "http://www.ibiblio.net/pub/packages/maven2/", false),
+                                             setupRepository("central-uk", "http://uk.maven.org/maven2/", false)));
             repositories.add(setupRepository("illarion", "http://illarion.org/media/java/maven", snapshot));
             repositories.add(setupRepository("oss-sonatype", "http://oss.sonatype.org/content/repositories/releases/",
                                              false));
         }
 
         Path localDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.Data);
-        if (localDir == null) {
-            return;
-        }
         LocalRepository localRepo = new LocalRepository(localDir.toFile());
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
     }
 
     @Nonnull
-    private RemoteRepository setupRepository(
-            @Nonnull String id, @Nonnull String url, boolean enableSnapshots) {
+    private static RemoteRepository setupRepository(
+            @Nonnull String id, @Nonnull String url, boolean enableSnapshots, @Nonnull RemoteRepository... mirrors) {
         RemoteRepository.Builder repo = new RemoteRepository.Builder(id, "default", url);
         if (enableSnapshots) {
             repo.setSnapshotPolicy(new RepositoryPolicy(true, UPDATE_POLICY_ALWAYS, CHECKSUM_POLICY_FAIL));
@@ -365,6 +370,11 @@ public class MavenDownloader {
             repo.setSnapshotPolicy(new RepositoryPolicy(false, UPDATE_POLICY_NEVER, CHECKSUM_POLICY_FAIL));
         }
         repo.setReleasePolicy(new RepositoryPolicy(true, UPDATE_POLICY_ALWAYS, CHECKSUM_POLICY_FAIL));
+
+        for (RemoteRepository mirror : mirrors) {
+            repo.addMirroredRepository(mirror);
+        }
+
         return repo.build();
     }
 
