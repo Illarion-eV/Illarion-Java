@@ -74,6 +74,7 @@ import static org.eclipse.aether.util.artifact.JavaScopes.*;
  */
 public class MavenDownloader {
     private static final AppIdent APPLICATION = new AppIdent("Illarion Launcher");
+    private static final Logger log = LoggerFactory.getLogger(MavenDownloader.class);
 
     /**
      * The list of repositories that are used.
@@ -228,6 +229,7 @@ public class MavenDownloader {
             });
             for (Version version : result.getVersions()) {
                 if (snapshot || !version.toString().contains("SNAPSHOT")) {
+                    log.info("Found {}:{}:jar:{}", groupId, artifactId, version);
                     versions.add(version.toString());
                 }
             }
