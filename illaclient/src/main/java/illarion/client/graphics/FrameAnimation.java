@@ -54,12 +54,6 @@ public final class FrameAnimation extends AbstractAnimation<AnimatedFrame> {
     private int mode;
 
     /**
-     * The speed the animation is running with. The higher this value, the
-     * slower the animation itself.
-     */
-    private int speed;
-
-    /**
      * The first and the last frame of this animation.
      */
     private int stillFrame;
@@ -94,8 +88,10 @@ public final class FrameAnimation extends AbstractAnimation<AnimatedFrame> {
      * animation
      */
     public FrameAnimation(@Nullable AnimatedFrame target, @Nonnull FrameAnimation source) {
-        super(target);
-        setup(source.frames, source.stillFrame, source.speed, source.mode);
+        super(target, source);
+        frames = source.frames;
+        stillFrame = source.stillFrame;
+        mode = source.mode;
     }
 
     /**
@@ -185,17 +181,15 @@ public final class FrameAnimation extends AbstractAnimation<AnimatedFrame> {
      *
      * @param animFrames the amount of frames of this animation
      * @param animStillFrame the first and the last frame of the animation
-     * @param animSpeed the speed the animation runs with, the larger the number
-     * the slower the animation
+     * @param duration The time needed for the animation
      * @param animMode the mode of the animation
      */
-    public void setup(int animFrames, int animStillFrame, int animSpeed, int animMode) {
+    public void setup(int animFrames, int animStillFrame, int duration, int animMode) {
         frames = animFrames;
         stillFrame = animStillFrame;
         mode = animMode;
-        speed = animSpeed;
 
-        setDuration(animSpeed * ANIMATION_FRAME);
+        setDuration(duration);
     }
 
     /**
@@ -203,12 +197,11 @@ public final class FrameAnimation extends AbstractAnimation<AnimatedFrame> {
      *
      * @param animFrames the amount of frames of this animation
      * @param animStillFrame the first and the last frame of the animation
-     * @param animSpeed the speed the animation runs with, the larger the number
-     * the slower the animation
+     * @param duration The time needed for the animation
      * @param animMode the mode of the animation
      */
-    void start(int animFrames, int animStillFrame, int animSpeed, int animMode) {
-        setup(animFrames, animStillFrame, animSpeed, animMode);
+    void start(int animFrames, int animStillFrame, int duration, int animMode) {
+        setup(animFrames, animStillFrame, duration, animMode);
 
         restart();
     }
@@ -220,20 +213,6 @@ public final class FrameAnimation extends AbstractAnimation<AnimatedFrame> {
      */
     void updateMode(int newMode) {
         mode = newMode;
-    }
-
-    /**
-     * Change the speed of the animation and update the internal values for
-     * this.
-     *
-     * @param newSpeed the new speed of this animation, the larger the value the
-     * slower the animation
-     */
-    void updateSpeed(int newSpeed) {
-        if (newSpeed != speed) {
-            speed = newSpeed;
-            setDuration(newSpeed * ANIMATION_FRAME);
-        }
     }
 
     /**

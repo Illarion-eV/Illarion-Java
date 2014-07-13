@@ -153,10 +153,10 @@ public class Movement {
         animator.scheduleTurn(direction);
     }
 
-    public void executeServerRespMove(@Nonnull CharMovementMode mode, @Nonnull Location target, int speed) {
+    public void executeServerRespMove(@Nonnull CharMovementMode mode, @Nonnull Location target, int duration) {
         timeoutTimer.stop();
         playerLocation.set(target);
-        animator.scheduleMove(mode, target, speed);
+        animator.scheduleMove(mode, target, duration);
     }
 
     public void executeServerLocation(@Nonnull Location target) {

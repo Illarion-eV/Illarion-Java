@@ -79,9 +79,9 @@ public final class MoveMsg extends AbstractReply {
     private int mode;
 
     /**
-     * The moving speed of the character.
+     * The moving duration of the character (in milliseconds)
      */
-    private int speed;
+    private int duration;
 
     /**
      * Decode the character move data the receiver got and prepare it for the execution.
@@ -94,7 +94,7 @@ public final class MoveMsg extends AbstractReply {
         charId = new CharacterId(reader);
         loc = decodeLocation(reader);
         mode = reader.readUByte();
-        speed = reader.readUByte();
+        duration = reader.readUShort();
     }
 
     /**
@@ -125,7 +125,7 @@ public final class MoveMsg extends AbstractReply {
                 default:
                     moveMode = CharMovementMode.None;
             }
-            World.getPlayer().getMovementHandler().executeServerRespMove(moveMode, loc, speed);
+            World.getPlayer().getMovementHandler().executeServerRespMove(moveMode, loc, duration);
             return true;
         }
 
@@ -141,10 +141,10 @@ public final class MoveMsg extends AbstractReply {
                 chara.setLocation(loc);
                 break;
             case MODE_MOVE:
-                chara.moveTo(loc, CharMovementMode.Walk, speed);
+                chara.moveTo(loc, CharMovementMode.Walk, duration);
                 break;
             case MODE_RUN:
-                chara.moveTo(loc, CharMovementMode.Run, speed);
+                chara.moveTo(loc, CharMovementMode.Run, duration);
                 break;
             default:
                 chara.moveTo(loc, CharMovementMode.Push, 0);

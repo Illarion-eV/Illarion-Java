@@ -53,7 +53,7 @@ public final class CharacterAnimationMsg extends AbstractReply {
      * decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         charId = new CharacterId(reader);
         animationId = reader.readUByte();
     }
@@ -66,7 +66,7 @@ public final class CharacterAnimationMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        final Char ch = World.getPeople().getCharacter(charId);
+        Char ch = World.getPeople().getCharacter(charId);
         if (ch == null) {
             // Update for illegal character
             return true;
@@ -85,6 +85,6 @@ public final class CharacterAnimationMsg extends AbstractReply {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString(charId.toString() + " - Animation ID: " + Integer.toString(animationId));
+        return toString(charId + " - Animation ID: " + Integer.toString(animationId));
     }
 }

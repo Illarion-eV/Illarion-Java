@@ -52,17 +52,17 @@ class MoveAnimator implements AnimatedMove {
         private final CharMovementMode mode;
         @Nonnull
         private final Location target;
-        private final int speed;
+        private final int duration;
 
-        private MovingTask(@Nonnull CharMovementMode mode, @Nonnull Location target, int speed) {
+        private MovingTask(@Nonnull CharMovementMode mode, @Nonnull Location target, int duration) {
             this.mode = mode;
             this.target = target;
-            this.speed = speed;
+            this.duration = duration;
         }
 
         @Override
         public void execute() {
-            executeMove(mode, target, speed);
+            executeMove(mode, target, duration);
         }
     }
 
@@ -97,8 +97,8 @@ class MoveAnimator implements AnimatedMove {
         this.moveAnimation = moveAnimation;
     }
 
-    void scheduleMove(@Nonnull CharMovementMode mode, @Nonnull Location target, int speed) {
-        taskQueue.offer(new MovingTask(mode, target, speed));
+    void scheduleMove(@Nonnull CharMovementMode mode, @Nonnull Location target, int duration) {
+        taskQueue.offer(new MovingTask(mode, target, duration));
         if (!animationInProgress) {
             executeNext();
         }
@@ -121,7 +121,7 @@ class MoveAnimator implements AnimatedMove {
         executeNext();
     }
 
-    private void executeMove(@Nonnull CharMovementMode mode, @Nonnull Location target, int speed) {
+    private void executeMove(@Nonnull CharMovementMode mode, @Nonnull Location target, int duration) {
         Player parentPlayer = movement.getPlayer();
         Char playerCharacter = parentPlayer.getCharacter();
         if ((mode == CharMovementMode.None) || playerCharacter.getLocation().equals(target)) {
@@ -134,12 +134,12 @@ class MoveAnimator implements AnimatedMove {
         }
 
         reportingDone = false;
-        playerCharacter.moveTo(target, mode, speed);
+        playerCharacter.moveTo(target, mode, duration);
         int oldElevation = World.getMapDisplay().getElevation();
         int newElevation = World.getMap().getElevationAt(target);
         int xOffset = parentPlayer.getLocation().getDcX() - target.getDcX();
         int yOffset = parentPlayer.getLocation().getDcY() - target.getDcY();
-        moveAnimation.start(0, 0, -oldElevation, xOffset, yOffset, -newElevation, speed);
+        moveAnimation.start(0, 0, -oldElevation, xOffset, yOffset, -newElevation, duration);
 
         parentPlayer.updateLocation(target);
     }

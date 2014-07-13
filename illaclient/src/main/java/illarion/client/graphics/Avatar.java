@@ -147,7 +147,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
 
         if (template.getFrames() > 1) {
             animation = new FrameAnimation(this);
-            animation.setup(template.getFrames(), template.getStillFrame(), 1, 0);
+            animation.setup(template.getFrames(), template.getStillFrame(), 150, 0);
         } else {
             animation = null;
         }
@@ -187,12 +187,11 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
     /**
      * Start a animation for this avatar.
      *
-     * @param speed the speed of the animation, the larger this value, the
-     * longer the animation takes to finish
+     * @param duration the duration of the animation in milliseconds
      * @param loop true in case the animation shall never stop and rather run
      * forever
      */
-    public void animate(int speed, boolean loop) {
+    public void animate(int duration, boolean loop) {
         if (isMarkedAsRemoved()) {
             LOGGER.warn("Animating a removed avatar is illegal.");
             return;
@@ -201,7 +200,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
             return;
         }
 
-        animation.updateSpeed(speed);
+        animation.setDuration(duration);
         if (loop) {
             animation.updateMode(FrameAnimation.LOOPED | FrameAnimation.CYCLIC);
         } else {

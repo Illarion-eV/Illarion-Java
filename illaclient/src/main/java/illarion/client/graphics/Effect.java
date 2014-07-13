@@ -56,7 +56,7 @@ public final class Effect extends AbstractEntity<EffectTemplate> implements Reso
 
         if (template.getFrames() > 0) {
             animation = new FrameAnimation(this);
-            animation.setup(template.getFrames(), 0, template.getAnimationSpeed(), 0);
+            animation.setup(template.getFrames(), 0, template.getAnimationSpeed() * 150, 0);
         } else {
             animation = null;
         }

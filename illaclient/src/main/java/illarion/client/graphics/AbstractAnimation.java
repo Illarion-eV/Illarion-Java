@@ -36,12 +36,6 @@ import java.util.List;
  */
 abstract class AbstractAnimation<T extends Animated> {
     /**
-     * The time in ms one frame is shown. This could be a common frame as in a
-     * image, but also how long a movement animation remains at one location.
-     */
-    protected static final int ANIMATION_FRAME = 150;
-
-    /**
      * The current time of the animation. This value is always between the 0 and
      * {@link #duration}.
      */
@@ -85,6 +79,20 @@ abstract class AbstractAnimation<T extends Animated> {
         if (firstTarget != null) {
             targets.add(firstTarget);
         }
+    }
+
+    /**
+     * The constructor for a new animation. It does not start the animation
+     * right away it rather prepares the animation and takes the first animation
+     * target. In case there are more animation targets needed use
+     * {@link #addTarget(Animated, boolean)}.
+     *
+     * @param firstTarget the first animation target, so the first object that
+     * is actually animated
+     */
+    protected AbstractAnimation(@Nullable T firstTarget, @Nonnull AbstractAnimation<T> sourceAnimation) {
+        this(firstTarget);
+        duration = sourceAnimation.duration;
     }
 
     /**
@@ -234,7 +242,7 @@ abstract class AbstractAnimation<T extends Animated> {
      *
      * @param newDuration the new value for the duration of this animation
      */
-    protected final void setDuration(int newDuration) {
+    public final void setDuration(int newDuration) {
         duration = newDuration;
     }
 

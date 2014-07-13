@@ -54,7 +54,7 @@ public final class Char implements AnimatedMove {
     /**
      * The speed a animation runs with on default.
      */
-    public static final int DEFAULT_ANIMATION_SPEED = 5;
+    public static final int DEFAULT_ANIMATION_SPEED = 750;
 
     /**
      * The color that is used to show dead characters.
@@ -880,9 +880,9 @@ public final class Char implements AnimatedMove {
      *
      * @param newPos the target location of the move
      * @param mode the mode of the move
-     * @param speed moving speed
+     * @param duration the duration of the animation in milliseconds
      */
-    public void moveTo(@Nonnull Location newPos, @Nonnull CharMovementMode mode, int speed) {
+    public void moveTo(@Nonnull Location newPos, @Nonnull CharMovementMode mode, int duration) {
         CharacterId characterId = getCharId();
         if (characterId == null) {
             LOGGER.error("Can't move a character without ID around.");
@@ -920,15 +920,15 @@ public final class Char implements AnimatedMove {
             }
 
             // start animations only if reasonable distance
-            if ((charLocation.getDistance(tempLoc) <= range) && (speed > 0) && (dir != Location.DIR_ZERO) &&
+            if ((charLocation.getDistance(tempLoc) <= range) && (duration > 0) && (dir != Location.DIR_ZERO) &&
                     (mode != CharMovementMode.Push)) {
                 if (mode == CharMovementMode.Walk) {
-                    startAnimation(CharAnimations.WALK, speed);
+                    startAnimation(CharAnimations.WALK, duration);
                 } else if (mode == CharMovementMode.Run) {
-                    startAnimation(CharAnimations.RUN, speed);
+                    startAnimation(CharAnimations.RUN, duration);
                 }
                 move.start(tempLoc.getDcX() - charLocation.getDcX(),
-                           tempLoc.getDcY() - fromElevation - charLocation.getDcY(), 0, 0, -elevation, 0, speed);
+                           tempLoc.getDcY() - fromElevation - charLocation.getDcY(), 0, 0, -elevation, 0, duration);
             } else {
                 // reset last animation result
                 dX = 0;
@@ -982,9 +982,9 @@ public final class Char implements AnimatedMove {
      * returns to the normal state.
      *
      * @param newAnimation the ID of the new animation
-     * @param speed the animation speed, the larger the value the slower the animation
+     * @param duration the duration of the animation in milliseconds
      */
-    public void startAnimation(int newAnimation, int speed) {
+    public void startAnimation(int newAnimation, int duration) {
         if (removedCharacter) {
             LOGGER.warn("Trying to start a animation of a removed character.");
             return;
@@ -1015,7 +1015,7 @@ public final class Char implements AnimatedMove {
         }
         animation = newAnimation;
         updateAvatar();
-        avatar.animate(speed, false);
+        avatar.animate(duration, false);
     }
 
     /**
