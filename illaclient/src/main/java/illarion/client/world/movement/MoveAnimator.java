@@ -24,6 +24,7 @@ import illarion.client.world.Player;
 import illarion.client.world.World;
 import illarion.common.types.Direction;
 import illarion.common.types.Location;
+import illarion.common.util.FastMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -159,7 +160,7 @@ class MoveAnimator implements AnimatedMove {
     @Override
     public void setPosition(int posX, int posY, int posZ) {
         if (!reportingDone) {
-            long ping = Math.min(60, (long) (ConnectionPerformanceClock.getNetCommPing() * 2.5));
+            long ping = FastMath.clamp((long) (ConnectionPerformanceClock.getNetCommPing() * 2.5), 20, 60);
             int remaining = moveAnimation.timeRemaining();
             if (remaining < ping) {
                 log.debug(marker, "Requesting next move {}ms before the animation finishes.", remaining);

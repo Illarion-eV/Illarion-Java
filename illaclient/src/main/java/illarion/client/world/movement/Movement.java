@@ -218,9 +218,13 @@ public class Movement {
         }
         MovementHandler handler = activeHandler;
         if (handler != null) {
+            long start = System.currentTimeMillis();
             StepData nextStep = handler.getNextStep(playerLocation);
-            log.debug(marker, "Requesting new step data from handler: {}", nextStep);
-            if (nextStep != null) {
+            if (log.isDebugEnabled(marker)) {
+                log.debug(marker, "Requesting new step data from handler: {} (took {} milliseconds)", nextStep,
+                          System.currentTimeMillis() - start);
+            }
+            if ((nextStep != null) && (nextStep.getDirection() != null)) {
                 switch (nextStep.getMovementMode()) {
                     case None:
                         sendTurnToServer(nextStep.getDirection());

@@ -52,7 +52,7 @@ class DefaultStepData implements StepData {
     @Override
     @Nonnull
     public String toString() {
-        return "DefaultStepData" + movementMode.name() + " Direction: " +
+        return "Mode: " + movementMode.name() + " Direction: " +
                 ((direction != null) ? direction.name() : "none");
     }
 }
