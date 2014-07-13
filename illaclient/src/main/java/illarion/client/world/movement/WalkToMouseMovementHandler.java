@@ -35,11 +35,15 @@ import javax.annotation.Nonnull;
  */
 class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseTargetMovementHandler {
     private static final Logger log = LoggerFactory.getLogger(WalkToMouseMovementHandler.class);
-
     /**
      * Always run when moving with the mouse.
      */
     private boolean mouseFollowAutoRun;
+
+    /**
+     * Continue walking after the drag is over (to the last set target)
+     */
+    private boolean continueWalkAfterDragging;
 
     /**
      * The last reported X coordinate of the mouse.
@@ -61,6 +65,7 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
         lastMouseX = -1;
         lastMouseY = -1;
         mouseFollowAutoRun = IllaClient.getCfg().getBoolean("mouseFollowAutoRun");
+        continueWalkAfterDragging = IllaClient.getCfg().getBoolean("continueWalkAfterDragging");
 
         AnnotationProcessor.process(this);
     }
@@ -69,7 +74,7 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
     public void disengage(boolean transferAllowed) {
         boolean targetWasSet = isTargetSet() && isActive();
         super.disengage(transferAllowed);
-        if (transferAllowed && targetWasSet) {
+        if (transferAllowed && targetWasSet && continueWalkAfterDragging) {
             TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
             log.debug("Transferring movement control from {} to {}", this, handler);
             handler.walkTo(getTargetLocation(), 0);
@@ -104,6 +109,12 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
     @EventTopicSubscriber(topic = "mouseFollowAutoRun")
     private void mouseFollowAutoRunChanged(@Nonnull String topic, @Nonnull ConfigChangedEvent configChanged) {
         mouseFollowAutoRun = configChanged.getConfig().getBoolean("mouseFollowAutoRun");
+    }
+
+    @EventTopicSubscriber(topic = "mouseFollowAutoRun")
+    private void continueWalkAfterDraggingChanged(
+            @Nonnull String topic, @Nonnull ConfigChangedEvent configChangedEvent) {
+        continueWalkAfterDragging = configChangedEvent.getConfig().getBoolean("continueWalkAfterDragging");
     }
 
     @Override
