@@ -157,7 +157,7 @@ class MoveAnimator implements AnimatedMove {
     @Override
     public void setPosition(int posX, int posY, int posZ) {
         if (!reportingDone) {
-            long ping = Math.min(60, (long) (ConnectionPerformanceClock.getNetCommPing() * 1.5));
+            long ping = Math.min(60, (long) (ConnectionPerformanceClock.getNetCommPing() * 2.5));
             int remaining = moveAnimation.timeRemaining();
             if (remaining < ping) {
                 log.debug(marker, "Requesting next move {}ms before the animation finishes.", remaining);
