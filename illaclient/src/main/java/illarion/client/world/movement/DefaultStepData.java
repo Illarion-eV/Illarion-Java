@@ -16,8 +16,10 @@
 package illarion.client.world.movement;
 
 import illarion.client.world.CharMovementMode;
+import illarion.common.types.Direction;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.beans.ConstructorProperties;
 
 /**
@@ -26,10 +28,11 @@ import java.beans.ConstructorProperties;
 class DefaultStepData implements StepData {
     @Nonnull
     private final CharMovementMode movementMode;
-    private final int direction;
+    @Nullable
+    private final Direction direction;
 
     @ConstructorProperties({"movementMode", "direction"})
-    public DefaultStepData(@Nonnull CharMovementMode movementMode, int direction) {
+    public DefaultStepData(@Nonnull CharMovementMode movementMode, @Nullable Direction direction) {
         this.movementMode = movementMode;
         this.direction = direction;
     }
@@ -41,13 +44,15 @@ class DefaultStepData implements StepData {
     }
 
     @Override
-    public int getDirection() {
+    @Nullable
+    public Direction getDirection() {
         return direction;
     }
 
     @Override
     @Nonnull
     public String toString() {
-        return "DefaultStepData" + movementMode.name() + " Direction: " + direction;
+        return "DefaultStepData" + movementMode.name() + " Direction: " +
+                ((direction != null) ? direction.name() : "none");
     }
 }

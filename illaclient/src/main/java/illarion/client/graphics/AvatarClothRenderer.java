@@ -15,13 +15,14 @@
  */
 package illarion.client.graphics;
 
-import illarion.common.types.Location;
+import illarion.common.types.Direction;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Graphics;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.EnumMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -39,106 +40,114 @@ final class AvatarClothRenderer {
      * this list.
      */
     @Nonnull
-    private static final int[][] RENDER_DIR;
+    private static final EnumMap<Direction, int[]> RENDER_DIR;
 
     static {
-        RENDER_DIR = new int[Location.DIR_MOVE8][AvatarClothManager.GROUP_COUNT];
+        RENDER_DIR = new EnumMap<>(Direction.class);
 
         int cnt = 0;
-        int group = Location.DIR_NORTH;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_FIRST_HAND;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_TROUSERS;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_SHOES;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_CHEST;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_COAT;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_HAIR;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_BEARD;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_HAT;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_SECOND_HAND;
+        int[] groupArray = new int[AvatarClothManager.GROUP_COUNT];
+        RENDER_DIR.put(Direction.North, groupArray);
+        groupArray[cnt++] = AvatarClothManager.GROUP_FIRST_HAND;
+        groupArray[cnt++] = AvatarClothManager.GROUP_TROUSERS;
+        groupArray[cnt++] = AvatarClothManager.GROUP_SHOES;
+        groupArray[cnt++] = AvatarClothManager.GROUP_CHEST;
+        groupArray[cnt++] = AvatarClothManager.GROUP_COAT;
+        groupArray[cnt++] = AvatarClothManager.GROUP_HAIR;
+        groupArray[cnt++] = AvatarClothManager.GROUP_BEARD;
+        groupArray[cnt++] = AvatarClothManager.GROUP_HAT;
+        groupArray[cnt++] = AvatarClothManager.GROUP_SECOND_HAND;
 
         cnt = 0;
-        group = Location.DIR_NORTHEAST;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_FIRST_HAND;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_SECOND_HAND;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_TROUSERS;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_SHOES;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_CHEST;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_COAT;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_HAIR;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_BEARD;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_HAT;
+        groupArray = new int[AvatarClothManager.GROUP_COUNT];
+        RENDER_DIR.put(Direction.NorthEast, groupArray);
+        groupArray[cnt++] = AvatarClothManager.GROUP_FIRST_HAND;
+        groupArray[cnt++] = AvatarClothManager.GROUP_SECOND_HAND;
+        groupArray[cnt++] = AvatarClothManager.GROUP_TROUSERS;
+        groupArray[cnt++] = AvatarClothManager.GROUP_SHOES;
+        groupArray[cnt++] = AvatarClothManager.GROUP_CHEST;
+        groupArray[cnt++] = AvatarClothManager.GROUP_COAT;
+        groupArray[cnt++] = AvatarClothManager.GROUP_HAIR;
+        groupArray[cnt++] = AvatarClothManager.GROUP_BEARD;
+        groupArray[cnt++] = AvatarClothManager.GROUP_HAT;
 
         cnt = 0;
-        group = Location.DIR_EAST;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_FIRST_HAND;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_TROUSERS;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_SHOES;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_CHEST;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_COAT;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_HAIR;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_BEARD;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_HAT;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_SECOND_HAND;
+        groupArray = new int[AvatarClothManager.GROUP_COUNT];
+        RENDER_DIR.put(Direction.East, groupArray);
+        groupArray[cnt++] = AvatarClothManager.GROUP_FIRST_HAND;
+        groupArray[cnt++] = AvatarClothManager.GROUP_TROUSERS;
+        groupArray[cnt++] = AvatarClothManager.GROUP_SHOES;
+        groupArray[cnt++] = AvatarClothManager.GROUP_CHEST;
+        groupArray[cnt++] = AvatarClothManager.GROUP_COAT;
+        groupArray[cnt++] = AvatarClothManager.GROUP_HAIR;
+        groupArray[cnt++] = AvatarClothManager.GROUP_BEARD;
+        groupArray[cnt++] = AvatarClothManager.GROUP_HAT;
+        groupArray[cnt++] = AvatarClothManager.GROUP_SECOND_HAND;
 
         cnt = 0;
-        group = Location.DIR_SOUTHEAST;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_FIRST_HAND;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_TROUSERS;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_SHOES;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_CHEST;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_COAT;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_HAIR;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_BEARD;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_HAT;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_SECOND_HAND;
+        groupArray = new int[AvatarClothManager.GROUP_COUNT];
+        RENDER_DIR.put(Direction.SouthEast, groupArray);
+        groupArray[cnt++] = AvatarClothManager.GROUP_FIRST_HAND;
+        groupArray[cnt++] = AvatarClothManager.GROUP_TROUSERS;
+        groupArray[cnt++] = AvatarClothManager.GROUP_SHOES;
+        groupArray[cnt++] = AvatarClothManager.GROUP_CHEST;
+        groupArray[cnt++] = AvatarClothManager.GROUP_COAT;
+        groupArray[cnt++] = AvatarClothManager.GROUP_HAIR;
+        groupArray[cnt++] = AvatarClothManager.GROUP_BEARD;
+        groupArray[cnt++] = AvatarClothManager.GROUP_HAT;
+        groupArray[cnt++] = AvatarClothManager.GROUP_SECOND_HAND;
 
         cnt = 0;
-        group = Location.DIR_SOUTH;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_FIRST_HAND;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_COAT;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_TROUSERS;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_SHOES;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_CHEST;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_HAIR;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_BEARD;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_HAT;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_SECOND_HAND;
+        groupArray = new int[AvatarClothManager.GROUP_COUNT];
+        RENDER_DIR.put(Direction.South, groupArray);
+        groupArray[cnt++] = AvatarClothManager.GROUP_FIRST_HAND;
+        groupArray[cnt++] = AvatarClothManager.GROUP_COAT;
+        groupArray[cnt++] = AvatarClothManager.GROUP_TROUSERS;
+        groupArray[cnt++] = AvatarClothManager.GROUP_SHOES;
+        groupArray[cnt++] = AvatarClothManager.GROUP_CHEST;
+        groupArray[cnt++] = AvatarClothManager.GROUP_HAIR;
+        groupArray[cnt++] = AvatarClothManager.GROUP_BEARD;
+        groupArray[cnt++] = AvatarClothManager.GROUP_HAT;
+        groupArray[cnt++] = AvatarClothManager.GROUP_SECOND_HAND;
 
         cnt = 0;
-        group = Location.DIR_SOUTHWEST;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_COAT;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_TROUSERS;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_SHOES;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_CHEST;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_FIRST_HAND;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_SECOND_HAND;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_HAIR;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_BEARD;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_HAT;
+        groupArray = new int[AvatarClothManager.GROUP_COUNT];
+        RENDER_DIR.put(Direction.SouthWest, groupArray);
+        groupArray[cnt++] = AvatarClothManager.GROUP_COAT;
+        groupArray[cnt++] = AvatarClothManager.GROUP_TROUSERS;
+        groupArray[cnt++] = AvatarClothManager.GROUP_SHOES;
+        groupArray[cnt++] = AvatarClothManager.GROUP_CHEST;
+        groupArray[cnt++] = AvatarClothManager.GROUP_FIRST_HAND;
+        groupArray[cnt++] = AvatarClothManager.GROUP_SECOND_HAND;
+        groupArray[cnt++] = AvatarClothManager.GROUP_HAIR;
+        groupArray[cnt++] = AvatarClothManager.GROUP_BEARD;
+        groupArray[cnt++] = AvatarClothManager.GROUP_HAT;
 
         cnt = 0;
-        group = Location.DIR_WEST;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_FIRST_HAND;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_COAT;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_TROUSERS;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_SHOES;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_CHEST;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_HAIR;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_BEARD;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_HAT;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_SECOND_HAND;
+        groupArray = new int[AvatarClothManager.GROUP_COUNT];
+        RENDER_DIR.put(Direction.West, groupArray);
+        groupArray[cnt++] = AvatarClothManager.GROUP_FIRST_HAND;
+        groupArray[cnt++] = AvatarClothManager.GROUP_COAT;
+        groupArray[cnt++] = AvatarClothManager.GROUP_TROUSERS;
+        groupArray[cnt++] = AvatarClothManager.GROUP_SHOES;
+        groupArray[cnt++] = AvatarClothManager.GROUP_CHEST;
+        groupArray[cnt++] = AvatarClothManager.GROUP_HAIR;
+        groupArray[cnt++] = AvatarClothManager.GROUP_BEARD;
+        groupArray[cnt++] = AvatarClothManager.GROUP_HAT;
+        groupArray[cnt++] = AvatarClothManager.GROUP_SECOND_HAND;
 
         cnt = 0;
-        group = Location.DIR_NORTHWEST;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_FIRST_HAND;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_TROUSERS;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_SHOES;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_CHEST;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_COAT;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_HAIR;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_BEARD;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_HAT;
-        RENDER_DIR[group][cnt++] = AvatarClothManager.GROUP_SECOND_HAND;
+        groupArray = new int[AvatarClothManager.GROUP_COUNT];
+        RENDER_DIR.put(Direction.NorthWest, groupArray);
+        groupArray[cnt++] = AvatarClothManager.GROUP_FIRST_HAND;
+        groupArray[cnt++] = AvatarClothManager.GROUP_TROUSERS;
+        groupArray[cnt++] = AvatarClothManager.GROUP_SHOES;
+        groupArray[cnt++] = AvatarClothManager.GROUP_CHEST;
+        groupArray[cnt++] = AvatarClothManager.GROUP_COAT;
+        groupArray[cnt++] = AvatarClothManager.GROUP_HAIR;
+        groupArray[cnt++] = AvatarClothManager.GROUP_BEARD;
+        groupArray[cnt++] = AvatarClothManager.GROUP_HAT;
+        groupArray[cnt++] = AvatarClothManager.GROUP_SECOND_HAND;
     }
 
     /**
@@ -174,10 +183,10 @@ final class AvatarClothRenderer {
     private Color currentLight;
 
     /**
-     * The direction if the parent that defines the order that is used to render
-     * the parts of the clothes.
+     * The direction if the parent that defines the order that is used to render the parts of the clothes.
      */
-    private final int direction;
+    @Nonnull
+    private final Direction direction;
 
     /**
      * The layer this clothes are assigned to.
@@ -222,7 +231,7 @@ final class AvatarClothRenderer {
      * @param dir the direction this character is looking at.
      * @param frames the amount of frames the parent avatar animation contains
      */
-    AvatarClothRenderer(int dir, int frames) {
+    AvatarClothRenderer(@Nonnull Direction dir, int frames) {
         clothLock = new ReentrantReadWriteLock();
         scale = 1.f;
         currentClothes = new AvatarCloth[AvatarClothManager.GROUP_COUNT];
@@ -272,7 +281,7 @@ final class AvatarClothRenderer {
                     if (currentFrames == parentFrames) {
                         currentCloth.setFrame(frame);
                     } else if (currentFrames > 1) {
-                        currentCloth.setFrame((int) (((float) currentFrames * (float) frame) / parentFrames));
+                        currentCloth.setFrame((int) (((float) currentFrames * frame) / parentFrames));
                     }
                 }
             }
@@ -330,7 +339,7 @@ final class AvatarClothRenderer {
      * @param slot the slot that shall be changed
      * @param color the new color that shall be used as base color
      */
-    protected void changeBaseColor(int slot, Color color) {
+    void changeBaseColor(int slot, Color color) {
         clothLock.readLock().lock();
         try {
             if (currentClothes[slot] != null) {
@@ -348,7 +357,7 @@ final class AvatarClothRenderer {
         clothLock.readLock().lock();
         try {
             for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
-                int currentIndex = RENDER_DIR[direction][i];
+                int currentIndex = RENDER_DIR.get(direction)[i];
                 if (currentClothes[currentIndex] != null) {
                     currentClothes[currentIndex].render(g);
                 }

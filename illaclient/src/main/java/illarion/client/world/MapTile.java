@@ -19,6 +19,7 @@ import illarion.client.graphics.*;
 import illarion.client.net.server.TileUpdate;
 import illarion.client.world.interactive.InteractiveMapTile;
 import illarion.common.graphics.Layers;
+import illarion.common.types.Direction;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
@@ -36,8 +37,9 @@ import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -99,7 +101,13 @@ public final class MapTile implements AlphaChangeListener {
      * The storage of the color values.
      */
     @Nonnull
-    private final List<AnimatedColor> colors;
+    private final Map<Direction, AnimatedColor> colors;
+
+    /**
+     * The color on this tile.
+     */
+    @Nonnull
+    private final AnimatedColor localColor;
 
     /**
      * Light Source that is on the tile.
@@ -241,8 +249,8 @@ public final class MapTile implements AlphaChangeListener {
         lightSrc = null;
         losDirty = true;
         targetCenterColor = new Color(Color.WHITE);
-        colors = Arrays.asList(new AnimatedColor[Location.DIR_MOVE8 + 1]);
-        colors.set(Location.DIR_MOVE8, new AnimatedColor(targetCenterColor));
+        localColor = new AnimatedColor(targetCenterColor);
+        colors = new EnumMap<>(Direction.class);
     }
 
     @Nonnull
@@ -250,21 +258,17 @@ public final class MapTile implements AlphaChangeListener {
         if (removedTile) {
             LOGGER.warn("Fetching light of a removed tile.");
         }
-        return getLight(Location.DIR_MOVE8);
+        return localColor.getCurrentColor();
     }
 
-    public Color getLight(int direction) {
-        if ((direction < 0) || (direction > Location.DIR_MOVE8)) {
-            throw new IllegalArgumentException("Direction argument is out of range. Has to be between 0 and " +
-                                                       Location.DIR_MOVE8 + " (including)");
-        }
+    public Color getLight(@Nonnull Direction direction) {
         @Nullable AnimatedColor color = colors.get(direction);
         return (color == null) ? Color.WHITE : color.getCurrentColor();
     }
 
     public boolean hasLightGradient() {
         @Nullable Color lastColor = null;
-        for (@Nullable AnimatedColor testAnimatedColor : colors) {
+        for (@Nullable AnimatedColor testAnimatedColor : colors.values()) {
             Color testColor = (testAnimatedColor == null) ? Color.WHITE : testAnimatedColor.getCurrentColor();
             if (lastColor == null) {
                 lastColor = testColor;
@@ -276,17 +280,13 @@ public final class MapTile implements AlphaChangeListener {
     }
 
     public void updateColor(int delta) {
-        colors.get(Location.DIR_MOVE8).update(delta);
+        localColor.update(delta);
     }
 
-    void linkColors(@Nonnull MapTile otherTile, int direction) {
-        if ((direction < 0) || (direction >= Location.DIR_MOVE8)) {
-            throw new IllegalArgumentException("Direction is not a valid direction value: " + direction);
-        }
-
-        int reverseDirection = (direction + (Location.DIR_SOUTH - Location.DIR_NORTH)) % Location.DIR_MOVE8;
-        otherTile.colors.set(reverseDirection, colors.get(Location.DIR_MOVE8));
-        colors.set(direction, otherTile.colors.get(Location.DIR_MOVE8));
+    void linkColors(@Nonnull MapTile otherTile, @Nonnull Direction direction) {
+        Direction reverseDirection = Direction.getReverse(direction);
+        otherTile.colors.put(reverseDirection, localColor);
+        colors.put(direction, otherTile.localColor);
     }
 
     /**

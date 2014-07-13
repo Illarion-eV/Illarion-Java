@@ -23,6 +23,7 @@ import illarion.client.world.CharMovementMode;
 import illarion.client.world.Player;
 import illarion.client.world.World;
 import illarion.common.types.CharacterId;
+import illarion.common.types.Direction;
 import illarion.common.types.Location;
 import illarion.common.util.Timer;
 import org.illarion.engine.input.Input;
@@ -149,7 +150,7 @@ public class Movement {
         return (activeHandler != null) && handler.equals(activeHandler);
     }
 
-    public void executeServerRespTurn(int direction) {
+    public void executeServerRespTurn(@Nonnull Direction direction) {
         animator.scheduleTurn(direction);
     }
 
@@ -178,10 +179,7 @@ public class Movement {
      * @param direction the direction of the requested move
      * @param mode the mode of the requested move
      */
-    private void sendMoveToServer(int direction, @Nonnull CharMovementMode mode) {
-        if (!Location.isValidDirection(direction)) {
-            throw new IllegalArgumentException("Direction is out of the valid range.");
-        }
+    private void sendMoveToServer(@Nonnull Direction direction, @Nonnull CharMovementMode mode) {
         CharacterId playerId = player.getPlayerId();
         if (playerId == null) {
             log.error(marker, "Send move to server while ID is not known.");
@@ -192,10 +190,7 @@ public class Movement {
         timeoutTimer.start();
     }
 
-    private void sendTurnToServer(int direction) {
-        if (!Location.isValidDirection(direction)) {
-            throw new IllegalArgumentException("Direction is out of the valid range.");
-        }
+    private void sendTurnToServer(@Nonnull Direction direction) {
         if (player.getCharacter().getDirection() != direction) {
             World.getNet().sendCommand(new TurnCmd(direction));
         }

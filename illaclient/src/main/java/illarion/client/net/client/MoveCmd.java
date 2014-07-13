@@ -19,6 +19,7 @@ import illarion.client.net.CommandList;
 import illarion.client.world.CharMovementMode;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.CharacterId;
+import illarion.common.types.Direction;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
@@ -56,7 +57,8 @@ public final class MoveCmd extends AbstractCommand {
     /**
      * The direction the character moves to.
      */
-    private final short direction;
+    @Nonnull
+    private final Direction direction;
 
     /**
      * Set the movement type. Possible values are {@link #MODE_MOVE} and
@@ -67,11 +69,11 @@ public final class MoveCmd extends AbstractCommand {
     /**
      * Default constructor for the move command.
      */
-    public MoveCmd(@Nonnull final CharacterId charId, @Nonnull final CharMovementMode mode, final int direction) {
+    public MoveCmd(@Nonnull CharacterId charId, @Nonnull CharMovementMode mode, @Nonnull Direction direction) {
         super(CommandList.CMD_MOVE);
 
         this.charId = charId;
-        this.direction = (short) direction;
+        this.direction = direction;
         switch (mode) {
             case Walk:
                 this.mode = MODE_MOVE;
@@ -94,9 +96,9 @@ public final class MoveCmd extends AbstractCommand {
      * communication system
      */
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) {
         charId.encode(writer);
-        writer.writeUByte(direction);
+        direction.encode(writer);
         writer.writeByte(mode);
     }
 

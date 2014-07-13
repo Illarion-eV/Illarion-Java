@@ -17,6 +17,7 @@ package illarion.client.util.pathfinding;
 
 import illarion.client.world.GameMap;
 import illarion.client.world.MapTile;
+import illarion.common.types.Direction;
 import illarion.common.types.Location;
 import illarion.common.util.FastMath;
 import org.slf4j.Logger;
@@ -108,23 +109,23 @@ public class AStar implements PathFindingAlgorithm {
             @Nonnull Location origin,
             @Nonnull Collection<PathMovementMethod> movementMethods,
             @Nonnull Collection<AStarPathNode> storage) {
-        for (int i = 0; i < Location.DIR_MOVE8; i++) {
-            Location walkTarget = new Location(origin, i);
+        for (Direction dir : Direction.values()) {
+            Location walkTarget = new Location(origin, dir);
             if (movementMethods.contains(PathMovementMethod.Walk)) {
                 MapTile walkingTargetTile = map.getMapAt(walkTarget);
                 if ((walkingTargetTile != null) &&
                         (!walkingTargetTile.isBlocked() || walkingTargetTile.getLocation().equals(end))) {
-                    storage.add(new AStarPathNode(nodeToExpand, walkingTargetTile, PathMovementMethod.Walk, i,
+                    storage.add(new AStarPathNode(nodeToExpand, walkingTargetTile, PathMovementMethod.Walk, dir,
                                                   getHeuristic(walkTarget, end)));
                 } else {
                     continue;
                 }
             }
             if (movementMethods.contains(PathMovementMethod.Run)) {
-                Location runTarget = new Location(walkTarget, i);
+                Location runTarget = new Location(walkTarget, dir);
                 MapTile runningTargetTile = map.getMapAt(runTarget);
                 if ((runningTargetTile != null) && !runningTargetTile.isBlocked()) {
-                    storage.add(new AStarPathNode(nodeToExpand, runningTargetTile, PathMovementMethod.Run, i,
+                    storage.add(new AStarPathNode(nodeToExpand, runningTargetTile, PathMovementMethod.Run, dir,
                                                   getHeuristic(runTarget, end)));
                 }
             }
@@ -132,6 +133,6 @@ public class AStar implements PathFindingAlgorithm {
     }
 
     private static int getHeuristic(@Nonnull Location currentLocation, @Nonnull Location targetLocation) {
-        return FastMath.floor(currentLocation.getSqrtDistance(targetLocation) * 15.f);
+        return FastMath.floor(currentLocation.getSqrtDistance(targetLocation) * 10.f);
     }
 }

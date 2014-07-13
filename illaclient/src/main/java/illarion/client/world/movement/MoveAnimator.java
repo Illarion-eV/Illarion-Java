@@ -22,6 +22,7 @@ import illarion.client.world.Char;
 import illarion.client.world.CharMovementMode;
 import illarion.client.world.Player;
 import illarion.client.world.World;
+import illarion.common.types.Direction;
 import illarion.common.types.Location;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,9 +68,10 @@ class MoveAnimator implements AnimatedMove {
     }
 
     private class TurningTask implements MoveAnimatorTask {
-        private final int direction;
+        @Nonnull
+        private final Direction direction;
 
-        private TurningTask(int direction) {
+        private TurningTask(@Nonnull Direction direction) {
             this.direction = direction;
         }
 
@@ -104,7 +106,7 @@ class MoveAnimator implements AnimatedMove {
         }
     }
 
-    void scheduleTurn(int direction) {
+    void scheduleTurn(@Nonnull Direction direction) {
         taskQueue.offer(new TurningTask(direction));
         if (!animationInProgress) {
             executeNext();
@@ -116,7 +118,7 @@ class MoveAnimator implements AnimatedMove {
         moveAnimation.stop();
     }
 
-    private void executeTurn(int direction) {
+    private void executeTurn(@Nonnull Direction direction) {
         movement.getPlayer().getCharacter().setDirection(direction);
         executeNext();
     }

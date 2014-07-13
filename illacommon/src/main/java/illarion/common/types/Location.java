@@ -35,55 +35,6 @@ import java.io.Serializable;
 @NotThreadSafe
 public class Location implements Serializable {
     /**
-     * Constant for a move in eastern direction.
-     */
-    public static final int DIR_EAST = 2;
-
-    /**
-     * Directions in the 8 direction system.
-     */
-    public static final int DIR_MOVE8 = 8;
-
-    /**
-     * Constant for a move in northern direction.
-     */
-    public static final int DIR_NORTH = 0;
-
-    /**
-     * Constant for a move in north eastern direction.
-     */
-    public static final int DIR_NORTHEAST = 1;
-    /**
-     * Constant for a move in north western direction.
-     */
-    public static final int DIR_NORTHWEST = 7;
-
-    /**
-     * Constant for a move in southern direction.
-     */
-    public static final int DIR_SOUTH = 4;
-
-    /**
-     * Constant for a move in south eastern direction.
-     */
-    public static final int DIR_SOUTHEAST = 3;
-
-    /**
-     * Constant for a move in south western direction.
-     */
-    public static final int DIR_SOUTHWEST = 5;
-
-    /**
-     * Constant for a move in western direction.
-     */
-    public static final int DIR_WEST = 6;
-
-    /**
-     * Constant for a move in no direction. Means there is no real move at all.
-     */
-    public static final int DIR_ZERO = 0x0A;
-
-    /**
      * Modificator used at the calculation of the display coordinates in case its a tile above or below the level 0.
      */
     public static final int DISPLAY_Z_OFFSET_MOD = 6;
@@ -102,11 +53,6 @@ public class Location implements Serializable {
      * Modificator of the Z-Coordinate of the server coordinates to calculate a key of this position.
      */
     private static final long KEY_MOD_Z = 4294967296L;
-
-    /**
-     * Offset to all fields that can be accessed by a move in 8 directions.
-     */
-    private static final int[][] MOVE8 = {{0, 1, 1, 1, 0, -1, -1, -1}, {-1, -1, 0, 1, 1, 1, 0, -1}};
 
     /**
      * The serialization UID of this location class.
@@ -223,7 +169,7 @@ public class Location implements Serializable {
      * @param org the original Location instance
      * @param direction the direction to move the location to
      */
-    public Location(@Nonnull Location org, int direction) {
+    public Location(@Nonnull Location org, @Nullable Direction direction) {
         this();
         set(org);
         moveSC(direction);
@@ -284,26 +230,6 @@ public class Location implements Serializable {
     }
 
     /**
-     * Get the X part of a direction vector.
-     *
-     * @param direction the direction the x vector is needed from
-     * @return the x part of the direction vector
-     */
-    public static int getDirectionVectorX(int direction) {
-        return MOVE8[0][direction];
-    }
-
-    /**
-     * Get the Y part of a direction vector.
-     *
-     * @param direction the direction the y vector is needed from
-     * @return the y part of the direction vector
-     */
-    public static int getDirectionVectorY(int direction) {
-        return MOVE8[1][direction];
-    }
-
-    /**
      * Get a instance from this location class that is currently not in use. Its proposed to use this one over the
      * usual
      * constructors.
@@ -328,16 +254,6 @@ public class Location implements Serializable {
      */
     public static long getKey(int x, int y, int z) {
         return (z * KEY_MOD_Z) + (x * KEY_MOD_X) + (y * KEY_MOD_Y);
-    }
-
-    /**
-     * Check if a integer value is a valid direction.
-     *
-     * @param direction the direction value
-     * @return {@code true} if the value is a valid direction
-     */
-    public static boolean isValidDirection(int direction) {
-        return (direction >= 0) && (direction < DIR_MOVE8);
     }
 
     /**
@@ -494,31 +410,21 @@ public class Location implements Serializable {
      * @param y Y-Coordinate of the target location
      * @return the direction needed to get from the current location to the target location
      */
-    public int getDirection(int x, int y) {
+    @Nullable
+    public Direction getDirection(int x, int y) {
         if (dirtySC) {
             toServerCoordinates();
         }
         // Calculate relative movement
-        int dirX = x - scX;
-        int dirY = y - scY;
-        int lenX = Math.abs(dirX);
-        int lenY = Math.abs(dirY);
+        int dirX = FastMath.sign(x - scX);
+        int dirY = FastMath.sign(y - scY);
 
-        // normalize distances, just to be sure
-        if (dirX != 0) {
-            dirX /= lenX;
-        }
-        if (dirY != 0) {
-            dirY /= lenY;
-        }
-
-        for (int i = 0; i < MOVE8[0].length; ++i) {
-            if ((MOVE8[0][i] == dirX) && (MOVE8[1][i] == dirY)) {
-                return i;
+        for (Direction dir : Direction.values()) {
+            if ((dir.getDirectionVectorX() == dirX) && (dir.getDirectionVectorY() == dirY)) {
+                return dir;
             }
         }
-
-        return DIR_ZERO;
+        return null;
     }
 
     /**
@@ -528,7 +434,8 @@ public class Location implements Serializable {
      * @param loc The target location
      * @return the direction needed to get from the current location to the target location
      */
-    public int getDirection(@Nonnull Location loc) {
+    @Nullable
+    public Direction getDirection(@Nonnull Location loc) {
         if (loc.dirtySC) {
             loc.toServerCoordinates();
         }
@@ -683,16 +590,16 @@ public class Location implements Serializable {
      *
      * @param dir The direction the Server coordinates are moved by
      */
-    public void moveSC(int dir) {
-        if (dir == DIR_ZERO) {
+    public void moveSC(@Nullable Direction dir) {
+        if (dir == null) {
             return;
         }
         if (dirtySC) {
             toServerCoordinates();
         }
 
-        scX += MOVE8[0][dir];
-        scY += MOVE8[1][dir];
+        scX += dir.getDirectionVectorX();
+        scY += dir.getDirectionVectorY();
 
         dirtySC = false;
         dirtyMC = true;

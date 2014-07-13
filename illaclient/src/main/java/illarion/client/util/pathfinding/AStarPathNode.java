@@ -16,6 +16,7 @@
 package illarion.client.util.pathfinding;
 
 import illarion.client.world.MapTile;
+import illarion.common.types.Direction;
 import illarion.common.util.FastMath;
 
 import javax.annotation.Nonnull;
@@ -67,13 +68,13 @@ class AStarPathNode extends AbstractPathNode implements Comparable<AStarPathNode
             @Nullable AStarPathNode parentNode,
             @Nonnull MapTile tile,
             @Nonnull PathMovementMethod method,
-            int approachDirection,
+            @Nonnull Direction approachDirection,
             int heuristic) {
         super(tile.getLocation(), method);
         blocked = tile.isBlocked();
         this.heuristic = heuristic;
         int tileCost = tile.getMovementCost();
-        if ((approachDirection % 2) == 1) {
+        if (approachDirection.isDiagonal()) {
             tileCost = (int) FastMath.round(tileCost * SQRT2);
         }
         if (parentNode == null) {

@@ -18,6 +18,7 @@ package illarion.client.world.movement;
 import illarion.client.util.pathfinding.*;
 import illarion.client.world.CharMovementMode;
 import illarion.client.world.World;
+import illarion.common.types.Direction;
 import illarion.common.types.Location;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,7 +102,7 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
             if (activePath == null) {
                 targetSet = false;
                 executeTargetAction();
-                return new DefaultStepData(CharMovementMode.None, 0);
+                return new DefaultStepData(CharMovementMode.None, null);
             }
             node = activePath.nextStep();
             if (node == null) {
@@ -112,7 +113,7 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
         }
         log.debug(marker, "Performing step to: {}", node.getLocation());
         CharMovementMode modeMode = convertMovementMode(node.getMovementMethod());
-        int moveDir = getDirection(currentLocation, node.getLocation());
+        Direction moveDir = getDirection(currentLocation, node.getLocation());
         return new DefaultStepData(modeMode, moveDir);
     }
 
@@ -153,7 +154,8 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
         return CharMovementMode.Walk;
     }
 
-    private int getDirection(@Nonnull Location currentLocation, @Nonnull Location target) {
+    @Nullable
+    private static Direction getDirection(@Nonnull Location currentLocation, @Nonnull Location target) {
         return currentLocation.getDirection(target);
     }
 

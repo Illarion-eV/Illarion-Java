@@ -16,8 +16,10 @@
 package illarion.client.world.movement;
 
 import illarion.client.world.CharMovementMode;
+import illarion.common.types.Direction;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This interface is used to exchange information regarding a single step between the different handlers of the
@@ -39,5 +41,6 @@ interface StepData {
      *
      * @return the move direction
      */
-    int getDirection();
+    @Nullable
+    Direction getDirection();
 }

@@ -26,6 +26,7 @@ import illarion.client.world.events.CharMoveEvent;
 import illarion.client.world.interactive.InteractiveChar;
 import illarion.common.graphics.CharAnimations;
 import illarion.common.types.CharacterId;
+import illarion.common.types.Direction;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
 import illarion.common.util.FastMath;
@@ -156,7 +157,8 @@ public final class Char implements AnimatedMove {
     /**
      * Current looking direction of the character.
      */
-    private int direction;
+    @Nonnull
+    private Direction direction;
 
     /**
      * X-Offset for the current move.
@@ -444,8 +446,8 @@ public final class Char implements AnimatedMove {
         }
 
         // calculate avatar id
-        int newAvatarId =
-                (((appearance * Location.DIR_MOVE8) + direction) * CharAnimations.TOTAL_ANIMATIONS) + animation;
+        int newAvatarId = (((appearance * Direction.values().length) + direction.getServerId()) *
+                CharAnimations.TOTAL_ANIMATIONS) + animation;
 
         // no change, return
         if ((avatarId == newAvatarId) && (avatar != null)) {
@@ -794,7 +796,8 @@ public final class Char implements AnimatedMove {
      *
      * @return the direction value
      */
-    public int getDirection() {
+    @Nonnull
+    public Direction getDirection() {
         return direction;
     }
 
@@ -902,10 +905,10 @@ public final class Char implements AnimatedMove {
         // determine general visibility by players
         if (avatar != null) {
             // calculate movement direction
-            int dir = tempLoc.getDirection(charLocation);
+            Direction dir = tempLoc.getDirection(charLocation);
 
             // turn only when animating, not when pushed
-            if ((mode != CharMovementMode.Push) && (dir != Location.DIR_ZERO)) {
+            if ((mode != CharMovementMode.Push) && (dir != null)) {
                 setDirection(dir);
             }
 
@@ -920,7 +923,7 @@ public final class Char implements AnimatedMove {
             }
 
             // start animations only if reasonable distance
-            if ((charLocation.getDistance(tempLoc) <= range) && (duration > 0) && (dir != Location.DIR_ZERO) &&
+            if ((charLocation.getDistance(tempLoc) <= range) && (duration > 0) && (dir != null) &&
                     (mode != CharMovementMode.Push)) {
                 if (mode == CharMovementMode.Walk) {
                     startAnimation(CharAnimations.WALK, duration);
@@ -969,7 +972,7 @@ public final class Char implements AnimatedMove {
      *
      * @param newDirection the new direction value
      */
-    public void setDirection(int newDirection) {
+    public void setDirection(@Nonnull Direction newDirection) {
         direction = newDirection;
         if (!move.isRunning()) {
             updateAvatar();

@@ -505,7 +505,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("questWindowPosX", "100px");
         cfg.setDefault("questWindowPosY", "100px");
         cfg.setDefault("questShowFinished", false);
-        cfg.setDefault("runAutoAvoid", true);
         cfg.setDefault("server", Login.DEVSERVER);
         cfg.setDefault("serverAddress", Servers.customserver.getServerHost());
         cfg.setDefault("serverPort", Servers.customserver.getServerPort());
@@ -521,6 +520,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("showQuestsOnMiniMap", true);
         cfg.setDefault("walkAsDefault", true);
         cfg.setDefault("mouseFollowAutoRun", false);
+        cfg.setDefault("continueWalkAfterDragging", true);
         cfg.set("followMousePathFinding", true);
 
         @Nonnull Toolkit awtDefaultToolkit = Toolkit.getDefaultToolkit();
