@@ -25,6 +25,7 @@ import illarion.client.resources.Resource;
 import illarion.client.resources.data.AvatarTemplate;
 import illarion.client.util.Lang;
 import illarion.client.world.Char;
+import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.client.world.interactive.InteractiveChar;
 import illarion.client.world.movement.TargetMovementHandler;
@@ -170,6 +171,17 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
             // ignored
         }
         return null;
+    }
+
+    @Override
+    public int getTargetAlpha() {
+        MapTile mapTileOfChar = World.getMap().getMapAt(parentChar.getLocation());
+        if (mapTileOfChar == null) {
+            return Color.MAX_INT_VALUE;
+        } else {
+            Tile tileOfChar = mapTileOfChar.getTile();
+            return (tileOfChar == null) ? Color.MAX_INT_VALUE : tileOfChar.getTargetAlpha();
+        }
     }
 
     /**

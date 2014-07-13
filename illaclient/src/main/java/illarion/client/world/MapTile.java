@@ -593,7 +593,7 @@ public final class MapTile implements AlphaChangeListener {
      */
     public void updateQuestMarkerElevation() {
         Char character = World.getPeople().getCharacterAt(tileLocation);
-        @Nullable Avatar avatar = ((character == null) || !character.isVisible()) ? null : character.getAvatar();
+        @Nullable Avatar avatar = (character == null) ? null : character.getAvatar();
 
         questMarkerElevation = elevation;
         if (avatar == null) {

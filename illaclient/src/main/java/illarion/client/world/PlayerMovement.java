@@ -868,8 +868,6 @@ public final class PlayerMovement implements AnimatedMove {
         positionDirty = true;
         Char playerCharacter = parentPlayer.getCharacter();
         playerCharacter.getLocation().set(parentPlayer.getLocation());
-        //playerCharacter.updatePosition(0);
-        World.getPeople().checkVisibility();
         World.getMap().checkInside();
 
         if (lastAllowedMove == Location.DIR_ZERO) {

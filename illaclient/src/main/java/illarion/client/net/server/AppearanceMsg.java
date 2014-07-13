@@ -237,8 +237,6 @@ public final class AppearanceMsg extends AbstractGuiMsg {
         character.setAttribute(CharacterAttribute.HitPoints, hitPoints);
         character.setAlive(!deadFlag);
         character.updateLight();
-
-        character.setVisible(World.getPlayer().canSee(character));
         return true;
     }
 

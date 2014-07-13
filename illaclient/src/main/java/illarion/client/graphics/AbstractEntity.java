@@ -366,7 +366,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
      *
      * @return the current alpha target value
      */
-    public final int getTargetAlpha() {
+    public int getTargetAlpha() {
         return alphaTarget;
     }
 
@@ -417,7 +417,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
      * @return true in case the entity is visible
      */
     public final boolean isVisible() {
-        return (alphaTarget > 0) || (getLight().getAlpha() > 0);
+        return (getTargetAlpha() > 0) || (getLight().getAlpha() > 0);
     }
 
     /**
@@ -763,8 +763,8 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
      * @param delta the time in milliseconds since the last update
      */
     protected final void updateAlpha(int delta) {
-        if (getAlpha() != alphaTarget) {
-            setAlpha(AnimationUtility.translate(getAlpha(), alphaTarget, FADING_SPEED, 0, 255, delta));
+        if (getAlpha() != getTargetAlpha()) {
+            setAlpha(AnimationUtility.translate(getAlpha(), getTargetAlpha(), FADING_SPEED, 0, 255, delta));
         }
     }
 

@@ -521,7 +521,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("showQuestsOnMiniMap", true);
         cfg.setDefault("walkAsDefault", true);
         cfg.setDefault("mouseFollowAutoRun", false);
-        cfg.setDefault("followMousePathFinding", true);
+        cfg.set("followMousePathFinding", true);
 
         @Nonnull Toolkit awtDefaultToolkit = Toolkit.getDefaultToolkit();
         @Nullable Object doubleClick = awtDefaultToolkit.getDesktopProperty("awt.multiClickInterval");

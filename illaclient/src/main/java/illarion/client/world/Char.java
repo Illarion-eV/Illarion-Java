@@ -23,7 +23,6 @@ import illarion.client.resources.ItemFactory;
 import illarion.client.util.Lang;
 import illarion.client.world.characters.CharacterAttribute;
 import illarion.client.world.events.CharMoveEvent;
-import illarion.client.world.events.CharVisibilityEvent;
 import illarion.client.world.interactive.InteractiveChar;
 import illarion.common.graphics.CharAnimations;
 import illarion.common.types.CharacterId;
@@ -237,10 +236,7 @@ public final class Char implements AnimatedMove {
      * Visibility bonus of the character (for large characters).
      */
     private int visibilityBonus;
-    /**
-     * Flag if the character is visible.
-     */
-    private boolean visible;
+
     /**
      * A list of items this avatar wears. This list is send to the avatar at a update.
      */
@@ -443,7 +439,7 @@ public final class Char implements AnimatedMove {
         }
 
         // nothing to do for invisible folks
-        if (!visible || (appearance == 0)) {
+        if (appearance == 0) {
             return;
         }
 
@@ -880,19 +876,6 @@ public final class Char implements AnimatedMove {
     }
 
     /**
-     * Check if the character is visible or not.
-     *
-     * @return true if the character is visible, false if not
-     */
-    public boolean isVisible() {
-        return visible;
-    }
-
-    public void updateVisibility() {
-        setVisible(World.getPlayer().canSee(this));
-    }
-
-    /**
      * Move the character to a new position with animation. This function takes absolute coordinates.
      *
      * @param newPos the target location of the move
@@ -917,8 +900,7 @@ public final class Char implements AnimatedMove {
         updateLight(charLocation);
 
         // determine general visibility by players
-        updateVisibility();
-        if (visible && (avatar != null)) {
+        if (avatar != null) {
             // calculate movement direction
             int dir = tempLoc.getDirection(charLocation);
 
@@ -979,47 +961,6 @@ public final class Char implements AnimatedMove {
         if (lightSrc != null) {
             lightSrc.getLocation().set(newLoc);
             World.getLights().refreshLight(lightSrc);
-        }
-    }
-
-    /**
-     * Set the visibility of a character.
-     *
-     * @param visibility the new visibility of the character
-     */
-    public void setVisible(int visibility) {
-        CharacterId characterId = getCharId();
-        if (characterId == null) {
-            LOGGER.error("Can't set visibility of a character without ID.");
-            return;
-        }
-
-        boolean newVisible = visibility > 0;
-        // react only to change
-        if ((lastVisibility != visibility) || (newVisible != visible)) {
-            lastVisibility = visibility;
-            visible = newVisible;
-
-            // becoming visible
-            if (visible) {
-                updateAvatar();
-                updateLight(LIGHT_SET);
-                if (avatar != null) {
-                    avatar.setAlphaTarget(VISIBILITY_ALPHA_MOD * visibility);
-                }
-                LOGGER.info("Showing character: {}", this);
-            } else if (avatar != null) {
-                LOGGER.info("Hiding character: {}", this);
-                avatar.setAlphaTarget(0);
-                avatar.setAlpha(0);
-            }
-
-            MapTile tile = World.getMap().getMapAt(charLocation);
-            if (tile != null) {
-                tile.updateQuestMarkerElevation();
-            }
-
-            EventBus.publish(new CharVisibilityEvent(characterId, visibility));
         }
     }
 

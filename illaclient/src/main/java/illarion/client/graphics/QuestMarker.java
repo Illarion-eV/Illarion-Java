@@ -79,13 +79,13 @@ public class QuestMarker extends AbstractEntity<MiscImageTemplate> {
      * @param type the type of quest marker that is supposed to be created
      * @param parentTile the parent tile
      */
-    public QuestMarker(@Nonnull final QuestMarkerType type, @Nonnull final MapTile parentTile) {
+    public QuestMarker(@Nonnull QuestMarkerType type, @Nonnull MapTile parentTile) {
         this(getTemplateForType(type), parentTile);
     }
 
     @Nonnull
-    private static MiscImageTemplate getTemplateForType(@Nonnull final QuestMarkerType type) {
-        final int templateId;
+    private static MiscImageTemplate getTemplateForType(@Nonnull QuestMarkerType type) {
+        int templateId;
         switch (type) {
             case Start:
                 templateId = MiscImageFactory.QUEST_MARKER_EXCLAMATION_MARK;
@@ -105,7 +105,7 @@ public class QuestMarker extends AbstractEntity<MiscImageTemplate> {
      * @param template the image template
      * @param parentTile the parent tile
      */
-    public QuestMarker(@Nonnull final MiscImageTemplate template, @Nonnull final MapTile parentTile) {
+    public QuestMarker(@Nonnull MiscImageTemplate template, @Nonnull MapTile parentTile) {
         super(template);
         this.parentTile = parentTile;
 
@@ -116,7 +116,7 @@ public class QuestMarker extends AbstractEntity<MiscImageTemplate> {
 
     @Override
     public int getAlpha() {
-        final Tile parentTileGraphic = parentTile.getTile();
+        Tile parentTileGraphic = parentTile.getTile();
         if (parentTileGraphic == null) {
             return 0;
         }
@@ -125,7 +125,7 @@ public class QuestMarker extends AbstractEntity<MiscImageTemplate> {
 
     @Override
     public void show() {
-        final Location loc = parentTile.getLocation();
+        Location loc = parentTile.getLocation();
         setScreenPos(loc.getDcX(), loc.getDcY(), loc.getDcZ(), Layers.OVERLAYS);
 
         super.show();
@@ -134,22 +134,22 @@ public class QuestMarker extends AbstractEntity<MiscImageTemplate> {
     /**
      * This function is used to update the location of the quest marker on the display.
      */
-    private void updateScreenPosition(final int delta) {
+    private void updateScreenPosition(int delta) {
         appliedOffset = AnimationUtility.approach(appliedOffset, parentTile.getQuestMarkerElevation(), 0, 300, delta);
-        final Location loc = parentTile.getLocation();
+        Location loc = parentTile.getLocation();
         setScreenPos(loc.getDcX(), loc.getDcY(), loc.getDcZ());
     }
 
-    public void setScreenPos(final int dispX, final int dispY, final int zLayer) {
+    public void setScreenPos(int dispX, int dispY, int zLayer) {
         setScreenPos(dispX, dispY, zLayer, Layers.OVERLAYS);
     }
 
-    public void setScreenPos(final int dispX, final int dispY, final int zLayer, final int typeLayer) {
+    public void setScreenPos(int dispX, int dispY, int zLayer, int typeLayer) {
         super.setScreenPos(dispX, dispY - appliedOffset, zLayer, typeLayer);
     }
 
     @Override
-    public void update(@Nonnull final GameContainer container, final int delta) {
+    public void update(@Nonnull GameContainer container, int delta) {
         if (appliedOffset != parentTile.getQuestMarkerElevation()) {
             updateScreenPosition(delta);
         }
@@ -177,7 +177,7 @@ public class QuestMarker extends AbstractEntity<MiscImageTemplate> {
      *
      * @param availability the new availability state
      */
-    public void setAvailability(@Nonnull final QuestMarkerAvailability availability) {
+    public void setAvailability(@Nonnull QuestMarkerAvailability availability) {
         this.availability = availability;
     }
 }

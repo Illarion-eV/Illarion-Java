@@ -34,7 +34,7 @@ public final class Path {
     /**
      * Default constructor for a new path.
      */
-    public Path(Iterable<PathNode> nodes) {
+    public Path(@Nonnull Iterable<PathNode> nodes) {
         for (PathNode node : nodes) {
             path.addLast(node);
         }
