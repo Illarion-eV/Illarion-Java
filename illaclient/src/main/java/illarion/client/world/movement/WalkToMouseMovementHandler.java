@@ -20,6 +20,8 @@ import illarion.client.world.CharMovementMode;
 import illarion.client.world.MapDimensions;
 import illarion.client.world.World;
 import illarion.common.config.ConfigChangedEvent;
+import illarion.common.types.Direction;
+import illarion.common.types.Location;
 import illarion.common.util.FastMath;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
@@ -29,6 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
+import java.util.EnumSet;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
@@ -104,6 +108,32 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
             mode = CharMovementMode.None;
         }
         return mode;
+    }
+
+    @Override
+    protected Collection<Direction> getAllowedDirections() {
+        Location target = getTargetLocation();
+        Direction dir = getMovement().getServerLocation().getDirection(target);
+        Collection<Direction> result = EnumSet.noneOf(Direction.class);
+        if (dir == null) {
+            return result;
+        }
+        for (Direction testDir : Direction.values()) {
+            if (testDir == dir) {
+                result.add(testDir);
+            } else {
+                int testX = testDir.getDirectionVectorX();
+                int testY = testDir.getDirectionVectorY();
+
+                int dirX = dir.getDirectionVectorX();
+                int dirY = dir.getDirectionVectorY();
+
+                if ((Math.abs(testX - dirX) + Math.abs(testY - dirY)) == 1) {
+                    result.add(testDir);
+                }
+            }
+        }
+        return result;
     }
 
     @EventTopicSubscriber(topic = "mouseFollowAutoRun")

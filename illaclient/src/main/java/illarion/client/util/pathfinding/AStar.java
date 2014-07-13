@@ -41,7 +41,7 @@ public class AStar implements PathFindingAlgorithm {
             @Nonnull GameMap map,
             @Nonnull Location start,
             @Nonnull Location end,
-            int approachDistance,
+            int approachDistance, @Nonnull Collection<Direction> allowedDirections,
             @Nonnull PathMovementMethod movementMethod,
             @Nonnull PathMovementMethod... movementMethods) {
         if (start.equals(end)) {
@@ -68,7 +68,7 @@ public class AStar implements PathFindingAlgorithm {
         /* The methods of movement that apply. */
         EnumSet<PathMovementMethod> movementMethodSettings = EnumSet.of(movementMethod, movementMethods);
 
-        expandNode(map, end, null, start, movementMethodSettings, openNodes);
+        expandNode(map, end, null, start, allowedDirections, movementMethodSettings, openNodes);
 
         while (!openNodes.isEmpty()) {
             /* Take the unchecked node closest to the target. */
@@ -81,7 +81,8 @@ public class AStar implements PathFindingAlgorithm {
             AStarPathNode alternative = knownNodes.get(currentNode.getLocation());
             if ((alternative == null) || (alternative.getCost() > currentNode.getCost())) {
                 knownNodes.put(currentNode.getLocation(), currentNode);
-                expandNode(map, end, currentNode, currentNode.getLocation(), movementMethodSettings, openNodes);
+                expandNode(map, end, currentNode, currentNode.getLocation(), allowedDirections, movementMethodSettings,
+                           openNodes);
             }
         }
 
@@ -106,10 +107,10 @@ public class AStar implements PathFindingAlgorithm {
             @Nonnull GameMap map,
             @Nonnull Location end,
             @Nullable AStarPathNode nodeToExpand,
-            @Nonnull Location origin,
+            @Nonnull Location origin, @Nonnull Iterable<Direction> allowedDirections,
             @Nonnull Collection<PathMovementMethod> movementMethods,
             @Nonnull Collection<AStarPathNode> storage) {
-        for (Direction dir : Direction.values()) {
+        for (Direction dir : allowedDirections) {
             Location walkTarget = new Location(origin, dir);
             if (movementMethods.contains(PathMovementMethod.Walk)) {
                 MapTile walkingTargetTile = map.getMapAt(walkTarget);

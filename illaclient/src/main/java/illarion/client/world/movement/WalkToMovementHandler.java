@@ -27,6 +27,9 @@ import org.slf4j.MarkerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Objects;
 
 import static illarion.client.util.pathfinding.PathMovementMethod.Run;
@@ -58,10 +61,14 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
     @Nullable
     private Path currentPath;
 
+    @Nonnull
+    private final Collection<Direction> allowedDirections;
+
     WalkToMovementHandler(@Nonnull Movement movement) {
         super(movement);
         pathFindingAlgorithm = new AStar();
         targetLocation = new Location();
+        allowedDirections = EnumSet.allOf(Direction.class);
     }
 
     @Nullable
@@ -184,9 +191,11 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
 
         switch (getMovementMode()) {
             case Walk:
-                return algorithm.findPath(World.getMap(), currentLocation, targetLocation, targetDistance, Walk);
+                return algorithm.findPath(World.getMap(), currentLocation, targetLocation, targetDistance,
+                                          getAllowedDirections(), Walk);
             case Run:
-                return algorithm.findPath(World.getMap(), currentLocation, targetLocation, targetDistance, Walk, Run);
+                return algorithm.findPath(World.getMap(), currentLocation, targetLocation, targetDistance,
+                                          getAllowedDirections(), Walk, Run);
             default:
                 return null;
         }
@@ -201,6 +210,10 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
         super.disengage(transferAllowed);
         targetSet = false;
         setTargetReachedAction(null);
+    }
+
+    protected Collection<Direction> getAllowedDirections() {
+        return Collections.unmodifiableCollection(allowedDirections);
     }
 
     @Override

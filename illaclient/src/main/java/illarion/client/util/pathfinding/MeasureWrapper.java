@@ -16,12 +16,14 @@
 package illarion.client.util.pathfinding;
 
 import illarion.client.world.GameMap;
+import illarion.common.types.Direction;
 import illarion.common.types.Location;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
 
 /**
  * This is not actually a path finding algorithm, but rather a wrapper around another one used to measure the
@@ -57,14 +59,16 @@ public class MeasureWrapper implements PathFindingAlgorithm {
             @Nonnull GameMap map,
             @Nonnull Location start,
             @Nonnull Location end,
-            int approachDistance,
+            int approachDistance, @Nonnull Collection<Direction> allowedDirections,
             @Nonnull PathMovementMethod movementMethod,
             @Nonnull PathMovementMethod... movementMethods) {
         long startTime = System.currentTimeMillis();
-        Path path = wrappedAlgorithm.findPath(map, start, end, approachDistance, movementMethod, movementMethods);
+        Path path = wrappedAlgorithm
+                .findPath(map, start, end, approachDistance, allowedDirections, movementMethod, movementMethods);
         if (LOGGER.isInfoEnabled()) {
             long timeElapsed = System.currentTimeMillis() - startTime;
-            LOGGER.info("Path finding from {} to {} took {} milliseconds to create {}", start, end, timeElapsed, path);
+            LOGGER.info("Path finding from {} to {} took {} milliseconds to create {} using the directions {}", start,
+                        end, timeElapsed, path, allowedDirections);
         }
 
         return path;

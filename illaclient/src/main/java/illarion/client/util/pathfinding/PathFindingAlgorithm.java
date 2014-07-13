@@ -16,10 +16,12 @@
 package illarion.client.util.pathfinding;
 
 import illarion.client.world.GameMap;
+import illarion.common.types.Direction;
 import illarion.common.types.Location;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
 
 /**
  * This is the shared interface of a algorithm that can be used in path finding.
@@ -37,6 +39,7 @@ public interface PathFindingAlgorithm {
      * finding has to fail
      * @param approachDistance the distance in tiles that is allowed to keep from the target. The path finder will stop
      * once a path to a tile is found that reaches a tile with this distance to the target tile
+     * @param allowedDirections the direction that are allowed to be used for finding the path
      * @param movementMethod the first of the movement methods the pathfinder is expected to use
      * @param movementMethods the additional movement methods the pathfinder is expected to use
      * @return the calculated path or {@code null} in case the path finding failed
@@ -46,7 +49,7 @@ public interface PathFindingAlgorithm {
             @Nonnull GameMap map,
             @Nonnull Location start,
             @Nonnull Location end,
-            int approachDistance,
+            int approachDistance, @Nonnull Collection<Direction> allowedDirections,
             @Nonnull PathMovementMethod movementMethod,
             @Nonnull PathMovementMethod... movementMethods);
 }
