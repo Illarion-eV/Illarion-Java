@@ -10,3 +10,9 @@
 # Source Files
 *.java text
 *.lua text
+*.xml text
+*.install4j text
+*.iml text
+*.a4 text
+*.gradle text
+*.groovy text

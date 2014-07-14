@@ -275,6 +275,7 @@ public final class Char implements AnimatedMove {
         scale = 0;
         animation = CharAnimations.STAND;
         avatarId = -1;
+        direction = Direction.North;
     }
 
     static {
@@ -733,7 +734,7 @@ public final class Char implements AnimatedMove {
         } else if (charId.isMonster()) {
             setNameColor(NAME_COLOR_MONSTER);
         } else {
-            LOGGER.warn("Failed to detect character type for {}", charId.toString());
+            LOGGER.warn("Failed to detect character type for {}", charId);
         }
     }
 
