@@ -117,6 +117,11 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
                 executeTargetAction();
                 return null;
             }
+            if (!isPathNodeValid(currentLocation, node)) {
+                targetSet = false;
+                targetAction = null;
+                return new DefaultStepData(CharMovementMode.None, null);
+            }
         }
         log.debug(marker, "Performing step to: {}", node.getLocation());
         CharMovementMode modeMode = convertMovementMode(node.getMovementMethod());
