@@ -21,6 +21,7 @@ import illarion.client.graphics.AvatarClothManager;
 import illarion.client.graphics.MoveAnimation;
 import illarion.client.resources.ItemFactory;
 import illarion.client.util.Lang;
+import illarion.client.util.UpdateTask;
 import illarion.client.world.characters.CharacterAttribute;
 import illarion.client.world.events.CharMoveEvent;
 import illarion.client.world.interactive.InteractiveChar;
@@ -31,6 +32,7 @@ import illarion.common.types.ItemId;
 import illarion.common.types.Location;
 import illarion.common.util.FastMath;
 import org.bushe.swing.event.EventBus;
+import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.LightSource;
 import org.slf4j.Logger;
@@ -82,7 +84,7 @@ public final class Char implements AnimatedMove {
      * The instance of the logger that is used to write out the data.
      */
     @Nonnull
-    private static final Logger LOGGER = LoggerFactory.getLogger(Char.class);
+    private static final Logger log = LoggerFactory.getLogger(Char.class);
 
     /**
      * Maximal scale value for the character.
@@ -285,8 +287,9 @@ public final class Char implements AnimatedMove {
         attributes = new EnumMap<>(CharacterAttribute.class);
 
         scale = 0;
-        animation = CharAnimations.STAND;
         avatarId = -1;
+        appearance = 0;
+        animation = -1;
         direction = Direction.North;
     }
 
@@ -302,7 +305,7 @@ public final class Char implements AnimatedMove {
      */
     public int getAttribute(@Nonnull CharacterAttribute attribute) {
         if (removedCharacter) {
-            LOGGER.warn("Fetching the attributes of a removed character.");
+            log.warn("Fetching the attributes of a removed character.");
         }
         if (attributes.containsKey(attribute)) {
             return attributes.get(attribute);
@@ -352,7 +355,7 @@ public final class Char implements AnimatedMove {
      */
     public void setAlive(boolean newAliveState) {
         if (removedCharacter) {
-            LOGGER.warn("Trying to update the alive state of a removed character.");
+            log.warn("Trying to update the alive state of a removed character.");
             return;
         }
 
@@ -420,8 +423,18 @@ public final class Char implements AnimatedMove {
         updatePosition(elevation);
         animationInProgress = false;
 
-        if (delayedMove != null) {
-            moveTo(delayedMove.targetLocation, delayedMove.mode, delayedMove.duration);
+        final DelayedMoveData localDelayedMove = delayedMove;
+        delayedMove = null;
+        if (ok && (localDelayedMove != null)) {
+            log.info("{}: Planning delayed move for execution", this);
+            World.getUpdateTaskManager().addTaskForLater(new UpdateTask() {
+                @Override
+                public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+                    log.info("{}: Executing delayed move", Char.this);
+                    moveToInternal(localDelayedMove.targetLocation, localDelayedMove.mode, localDelayedMove.duration);
+                }
+            });
+
         }
     }
 
@@ -438,11 +451,14 @@ public final class Char implements AnimatedMove {
     /**
      * Set the current animation back to its parent, update the avatar and invoke the needed animations.
      */
-    public void resetAnimation() {
-        animation = CharAnimations.STAND;
-        updateAvatar();
-        if (avatar != null) {
-            avatar.animate(DEFAULT_ANIMATION_SPEED, true);
+    public void resetAnimation(boolean finished) {
+        if (finished && (animation != CharAnimations.STAND)) {
+            log.info("{}: Resetting the current animation {}.", this, animation);
+            animation = CharAnimations.STAND;
+            updateAvatar();
+            if (avatar != null) {
+                avatar.animate(DEFAULT_ANIMATION_SPEED, true);
+            }
         }
     }
 
@@ -453,12 +469,12 @@ public final class Char implements AnimatedMove {
     private synchronized void updateAvatar() {
         if (removedCharacter) {
             releaseAvatar();
-            LOGGER.warn("Trying to update the avatar of a removed avatar.");
+            log.warn("Trying to update the avatar of a removed avatar.");
             return;
         }
 
         // nothing to do for invisible folks
-        if (appearance == 0) {
+        if ((appearance == 0) || (animation < 0)) {
             return;
         }
 
@@ -484,7 +500,7 @@ public final class Char implements AnimatedMove {
         @Nullable Avatar newAvatar = Avatar.create(newAvatarId, this);
 
         if (newAvatar == null) {
-            LOGGER.error("Failed to change the avatar as the new ID {} is NULL.", newAvatarId);
+            log.error("Failed to change the avatar as the new ID {} is NULL.", newAvatarId);
             return;
         }
 
@@ -549,7 +565,7 @@ public final class Char implements AnimatedMove {
      */
     private void updatePaperdoll(@Nullable Avatar avatar) {
         if (removedCharacter) {
-            LOGGER.warn("Trying to update the paperdoll of a removed character.");
+            log.warn("Trying to update the paperdoll of a removed character.");
             return;
         }
         if (avatar == null) {
@@ -592,7 +608,7 @@ public final class Char implements AnimatedMove {
     @SuppressWarnings("nls")
     public boolean hasWearingItem(@Nullable Avatar avatar, int slot, int id) {
         if ((slot < 0) || (slot >= AvatarClothManager.GROUP_COUNT)) {
-            LOGGER.warn("Wearing item check on invalid slot: {}", slot);
+            log.warn("Wearing item check on invalid slot: {}", slot);
             return false;
         }
 
@@ -641,7 +657,7 @@ public final class Char implements AnimatedMove {
      */
     private void updateLight(@Nullable Avatar avatar, int mode) {
         if (removedCharacter) {
-            LOGGER.warn("Trying to update the light of a removed character.");
+            log.warn("Trying to update the light of a removed character.");
             return;
         }
 
@@ -672,7 +688,7 @@ public final class Char implements AnimatedMove {
                     }
                     break;
                 default:
-                    LOGGER.warn("Wrong light update mode."); //$NON-NLS-1$
+                    log.warn("Wrong light update mode."); //$NON-NLS-1$
                     break;
             }
         }
@@ -750,7 +766,7 @@ public final class Char implements AnimatedMove {
         } else if (charId.isMonster()) {
             setNameColor(NAME_COLOR_MONSTER);
         } else {
-            LOGGER.warn("Failed to detect character type for {}", charId);
+            log.warn("Failed to detect character type for {}", charId);
         }
     }
 
@@ -789,7 +805,7 @@ public final class Char implements AnimatedMove {
     @SuppressWarnings("nls")
     public void setScale(float newScale) {
         if ((newScale < MINIMAL_SCALE) || (newScale > MAXIMAL_SCALE)) {
-            LOGGER.warn("invalid character scale {} ignored for {}", newScale, charId);
+            log.warn("invalid character scale {} ignored for {}", newScale, charId);
         }
 
         scale = FastMath.clamp(newScale, MINIMAL_SCALE, MAXIMAL_SCALE);
@@ -902,24 +918,42 @@ public final class Char implements AnimatedMove {
      * @param mode the mode of the move
      * @param duration the duration of the animation in milliseconds
      */
-    public void moveTo(@Nonnull Location newPos, @Nonnull CharMovementMode mode, int duration) {
+    public void moveTo(@Nonnull final Location newPos, @Nonnull final CharMovementMode mode, final int duration) {
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
+            @Override
+            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+                moveToInternal(newPos, mode, duration);
+            }
+        });
+    }
+
+    private void moveToInternal(@Nonnull Location newPos, @Nonnull CharMovementMode mode, int duration) {
         CharacterId characterId = getCharId();
         if (characterId == null) {
-            LOGGER.error("Can't move a character without ID around.");
+            log.error("Can't move a character without ID around.");
             return;
         }
 
         if (!World.getPlayer().isPlayer(characterId)) {
-            if (move.isRunning() && (delayedMove == null)) {
-                delayedMove = new DelayedMoveData();
-                delayedMove.duration = duration;
-                delayedMove.mode = mode;
-                delayedMove.targetLocation = new Location(newPos);
-                return;
+            if (move.isRunning()) {
+                if (delayedMove == null) {
+                    delayedMove = new DelayedMoveData();
+                    delayedMove.duration = duration;
+                    delayedMove.mode = mode;
+                    delayedMove.targetLocation = new Location(newPos);
+                    log.info("{}: Scheduled move for later execution.", this);
+                    return;
+                } else {
+                    log.info("{}: Can't delay the move. Spot is already taken. Executing now.", this);
+                }
             }
         }
 
         delayedMove = null;
+
+        if (move.isRunning()) {
+            move.stop();
+        }
 
         // get old position
         Location tempLoc = new Location();
@@ -1019,8 +1053,11 @@ public final class Char implements AnimatedMove {
      */
     public void startAnimation(int newAnimation, int duration) {
         if (removedCharacter) {
-            LOGGER.warn("Trying to start a animation of a removed character.");
+            log.warn("Trying to start a animation of a removed character.");
             return;
+        }
+        if (move.isRunning()) {
+            log.warn("{}: Received new animation {} while move was in progress.", this, newAnimation);
         }
         if (avatar == null) {
             return; // avatar not ready, discard animation
@@ -1047,9 +1084,13 @@ public final class Char implements AnimatedMove {
             return;
         }
         animation = newAnimation;
+        log.info("{}: Starting new animation: {} for {}ms", this, animation, duration);
+        lastStartTime = System.currentTimeMillis();
         updateAvatar();
         avatar.animate(duration, false);
     }
+
+    private long lastStartTime;
 
     /**
      * Update the avatar display position.
@@ -1074,7 +1115,7 @@ public final class Char implements AnimatedMove {
      */
     public void relistLight() {
         if (removedCharacter) {
-            LOGGER.warn("Trying to enlist the light of a removed character again.");
+            log.warn("Trying to enlist the light of a removed character again.");
             return;
         }
         if (lightSrc != null) {
@@ -1092,11 +1133,13 @@ public final class Char implements AnimatedMove {
      */
     public void setAppearance(int newAppearance) {
         if (removedCharacter) {
-            LOGGER.warn("Trying to update the appearance of a removed character.");
+            log.warn("Trying to update the appearance of a removed character.");
             return;
         }
-        appearance = newAppearance;
-        resetAnimation();
+        if (appearance != newAppearance) {
+            appearance = newAppearance;
+            resetAnimation(true);
+        }
     }
 
     /**
@@ -1106,7 +1149,7 @@ public final class Char implements AnimatedMove {
      */
     public void setAttackMarker(boolean activate) {
         if (removedCharacter) {
-            LOGGER.warn("Trying to access the attack marker of a removed character.");
+            log.warn("Trying to access the attack marker of a removed character.");
             return;
         }
         if (avatar == null) {
@@ -1124,7 +1167,7 @@ public final class Char implements AnimatedMove {
      */
     public void setClothColor(int slot, @Nonnull Color color) {
         if (removedCharacter) {
-            LOGGER.warn("Trying to change the cloth color of a removed character.");
+            log.warn("Trying to change the cloth color of a removed character.");
             return;
         }
         wearItemsColors[slot] = new Color(color);
@@ -1141,7 +1184,7 @@ public final class Char implements AnimatedMove {
      */
     public void setInventoryItem(int slot, @Nonnull ItemId itemId) {
         if (removedCharacter) {
-            LOGGER.warn("Trying to update the inventory of a removed character.");
+            log.warn("Trying to update the inventory of a removed character.");
             return;
         }
         switch (slot) {
@@ -1181,12 +1224,12 @@ public final class Char implements AnimatedMove {
     @SuppressWarnings("nls")
     public void setWearingItem(int slot, int id) {
         if (removedCharacter) {
-            LOGGER.warn("Trying to update the worn items of a removed character.");
+            log.warn("Trying to update the worn items of a removed character.");
             return;
         }
 
         if ((slot < 0) || (slot >= AvatarClothManager.GROUP_COUNT)) {
-            LOGGER.warn("Wearing item set to invalid slot: {}", slot);
+            log.warn("Wearing item set to invalid slot: {}", slot);
             return;
         }
 
@@ -1200,12 +1243,12 @@ public final class Char implements AnimatedMove {
      */
     public void setLocation(@Nonnull Location newLoc) {
         if (removedCharacter) {
-            LOGGER.warn("Trying to update the location of a removed character.");
+            log.warn("Trying to update the location of a removed character.");
             return;
         }
         CharacterId characterId = getCharId();
         if (characterId == null) {
-            LOGGER.error("Trying to change the location of a character without a ID.");
+            log.error("Trying to change the location of a character without a ID.");
             return;
         }
         // set logical location
@@ -1225,7 +1268,7 @@ public final class Char implements AnimatedMove {
      */
     public void setSkinColor(@Nullable Color color) {
         if (removedCharacter) {
-            LOGGER.warn("Trying to set the skin color of a removed character.");
+            log.warn("Trying to set the skin color of a removed character.");
             return;
         }
         if (color == null) {
@@ -1245,7 +1288,7 @@ public final class Char implements AnimatedMove {
      */
     public void setVisibilityBonus(int newVisibilityBonus) {
         if (removedCharacter) {
-            LOGGER.warn("Trying to set the visibility bonus of a removed character.");
+            log.warn("Trying to set the visibility bonus of a removed character.");
             return;
         }
         visibilityBonus = newVisibilityBonus;
@@ -1256,7 +1299,7 @@ public final class Char implements AnimatedMove {
      */
     public void updateLight() {
         if (removedCharacter) {
-            LOGGER.warn("Trying to update the light of a removed character.");
+            log.warn("Trying to update the light of a removed character.");
             return;
         }
         if (lightValue > 0) {
@@ -1274,7 +1317,7 @@ public final class Char implements AnimatedMove {
      */
     public void updatePaperdoll() {
         if (removedCharacter) {
-            LOGGER.warn("Trying to update the paperdoll of a removed character.");
+            log.warn("Trying to update the paperdoll of a removed character.");
             return;
         }
         updatePaperdoll(avatar);

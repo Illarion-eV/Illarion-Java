@@ -58,9 +58,9 @@ public final class AnimationManager {
      * @param delta the time since the last update of the animations. Its only
      * needed to update the animations right before a rendering run
      */
-    public void animate(final int delta) {
+    public void animate(int delta) {
         while (!addAnimations.isEmpty()) {
-            final AbstractAnimation ani = addAnimations.remove(0);
+            AbstractAnimation ani = addAnimations.remove(0);
             if (!animations.contains(ani)) {
                 animations.add(ani);
             }
@@ -68,16 +68,19 @@ public final class AnimationManager {
 
         int count = animations.size();
         for (int i = 0; i < count; ++i) {
-            final AbstractAnimation ani = animations.get(i);
+            AbstractAnimation ani = animations.get(i);
             // execute those that are running
-            if (ani == null || !ani.isRunning() || !ani.animate(delta)) {
-                animations.remove(i);
-                if (ani != null) {
-                    ani.animationFinished(true);
-                }
-                --count;
-                --i;
+            if (ani == null) {
+            } else if (!ani.isRunning()) {
+                ani.animationFinished(false);
+            } else if (!ani.animate(delta)) {
+                ani.animationFinished(true);
+            } else {
+                continue;
             }
+            animations.remove(i);
+            --count;
+            --i;
         }
     }
 
@@ -89,7 +92,7 @@ public final class AnimationManager {
      *
      * @param animation the animation that shall be to the animation manager
      */
-    protected void register(final AbstractAnimation animation) {
+    protected void register(AbstractAnimation animation) {
         if (!addAnimations.contains(animation)) {
             addAnimations.add(animation);
         }

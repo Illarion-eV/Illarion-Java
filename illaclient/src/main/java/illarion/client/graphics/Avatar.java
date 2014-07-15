@@ -225,7 +225,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
      */
     @Override
     public void animationFinished(boolean finished) {
-        parentChar.resetAnimation();
+        parentChar.resetAnimation(finished);
     }
 
     /**
@@ -413,9 +413,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
 
     @Override
     public void hide() {
-        if (animation != null) {
-            animation.stop();
-        }
+        stopAnimation();
         super.hide();
     }
 
