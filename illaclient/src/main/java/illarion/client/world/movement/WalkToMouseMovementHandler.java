@@ -50,6 +50,11 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
     private boolean continueWalkAfterDragging;
 
     /**
+     * Limit the path finding to the direction the mouse is pointing at.
+     */
+    private boolean limitPathFindingToMouseDirection;
+
+    /**
      * The last reported X coordinate of the mouse.
      */
     private int lastMouseX;
@@ -70,6 +75,7 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
         lastMouseY = -1;
         mouseFollowAutoRun = IllaClient.getCfg().getBoolean("mouseFollowAutoRun");
         continueWalkAfterDragging = IllaClient.getCfg().getBoolean("continueWalkAfterDragging");
+        limitPathFindingToMouseDirection = IllaClient.getCfg().getBoolean("limitPathFindingToMouseDirection");
 
         AnnotationProcessor.process(this);
     }
@@ -112,28 +118,32 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
 
     @Override
     protected Collection<Direction> getAllowedDirections() {
-        Location target = getTargetLocation();
-        Direction dir = getMovement().getServerLocation().getDirection(target);
-        Collection<Direction> result = EnumSet.noneOf(Direction.class);
-        if (dir == null) {
-            return result;
-        }
-        for (Direction testDir : Direction.values()) {
-            if (testDir == dir) {
-                result.add(testDir);
-            } else {
-                int testX = testDir.getDirectionVectorX();
-                int testY = testDir.getDirectionVectorY();
-
-                int dirX = dir.getDirectionVectorX();
-                int dirY = dir.getDirectionVectorY();
-
-                if ((Math.abs(testX - dirX) + Math.abs(testY - dirY)) == 1) {
+        if (limitPathFindingToMouseDirection) {
+            Location target = getTargetLocation();
+            Direction dir = getMovement().getServerLocation().getDirection(target);
+            Collection<Direction> result = EnumSet.noneOf(Direction.class);
+            if (dir == null) {
+                return result;
+            }
+            for (Direction testDir : Direction.values()) {
+                if (testDir == dir) {
                     result.add(testDir);
+                } else {
+                    int testX = testDir.getDirectionVectorX();
+                    int testY = testDir.getDirectionVectorY();
+
+                    int dirX = dir.getDirectionVectorX();
+                    int dirY = dir.getDirectionVectorY();
+
+                    if ((Math.abs(testX - dirX) + Math.abs(testY - dirY)) == 1) {
+                        result.add(testDir);
+                    }
                 }
             }
+            return result;
+        } else {
+            return super.getAllowedDirections();
         }
-        return result;
     }
 
     @EventTopicSubscriber(topic = "mouseFollowAutoRun")
@@ -145,6 +155,13 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
     private void continueWalkAfterDraggingChanged(
             @Nonnull String topic, @Nonnull ConfigChangedEvent configChangedEvent) {
         continueWalkAfterDragging = configChangedEvent.getConfig().getBoolean("continueWalkAfterDragging");
+    }
+
+    @EventTopicSubscriber(topic = "limitPathFindingToMouseDirection")
+    private void limitPathFindingToMouseDirectionChanged(
+            @Nonnull String topic, @Nonnull ConfigChangedEvent configChangedEvent) {
+        limitPathFindingToMouseDirection = configChangedEvent.getConfig()
+                .getBoolean("limitPathFindingToMouseDirection");
     }
 
     @Override

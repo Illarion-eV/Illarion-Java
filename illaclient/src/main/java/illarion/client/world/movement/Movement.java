@@ -25,7 +25,6 @@ import illarion.client.world.World;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Direction;
 import illarion.common.types.Location;
-import illarion.common.util.Timer;
 import org.illarion.engine.input.Input;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,9 +79,6 @@ public class Movement {
     @Nonnull
     private final MoveAnimation moveAnimation;
 
-    @Nonnull
-    private final Timer timeoutTimer;
-
     /**
      * This instance of the player location is kept in sync with the location that was last confirmed by the server
      * to keep track of where the player REALLY is.
@@ -102,13 +98,6 @@ public class Movement {
         keyboardHandler = new SimpleKeyboardMovementHandler(this, input);
         targetMovementHandler = new WalkToMovementHandler(this);
         targetMouseMovementHandler = new WalkToMouseMovementHandler(this, input);
-
-        timeoutTimer = new Timer(700, new Runnable() {
-            @Override
-            public void run() {
-                reportReadyForNextStep();
-            }
-        });
         playerLocation = new Location(player.getLocation());
     }
 
@@ -155,7 +144,6 @@ public class Movement {
     }
 
     public void executeServerRespMove(@Nonnull CharMovementMode mode, @Nonnull Location target, int duration) {
-        timeoutTimer.stop();
         playerLocation.set(target);
         animator.scheduleMove(mode, target, duration);
     }
@@ -186,8 +174,6 @@ public class Movement {
             return;
         }
         World.getNet().sendCommand(new MoveCmd(playerId, mode, direction));
-        timeoutTimer.stop();
-        timeoutTimer.start();
     }
 
     private void sendTurnToServer(@Nonnull Direction direction) {
@@ -274,7 +260,6 @@ public class Movement {
     }
 
     public void shutdown() {
-        timeoutTimer.stop();
         activeHandler = null;
     }
 }

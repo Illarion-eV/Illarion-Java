@@ -161,6 +161,28 @@ public final class MoveMsg extends AbstractReply {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("ID: " + charId + " to: " + loc + " mode: " + mode);
+        StringBuilder builder = new StringBuilder(charId.toString());
+        builder.append("to ").append(loc);
+        builder.append(" mode: ");
+        switch (mode) {
+            case MODE_MOVE:
+                builder.append("move");
+                break;
+            case MODE_NO_MOVE:
+                builder.append("no move");
+                break;
+            case MODE_PUSH:
+                builder.append("push");
+                break;
+            case MODE_RUN:
+                builder.append("run");
+                break;
+            default:
+                builder.append("unknown");
+                break;
+        }
+        builder.append('(').append(mode).append(')');
+        builder.append(" duration: ").append(duration).append("ms");
+        return toString(builder.toString());
     }
 }

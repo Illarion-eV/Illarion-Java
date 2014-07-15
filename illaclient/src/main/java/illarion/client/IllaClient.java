@@ -521,6 +521,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("walkAsDefault", true);
         cfg.setDefault("mouseFollowAutoRun", false);
         cfg.setDefault("continueWalkAfterDragging", true);
+        cfg.set("limitPathFindingToMouseDirection", true);
         cfg.set("followMousePathFinding", true);
 
         @Nonnull Toolkit awtDefaultToolkit = Toolkit.getDefaultToolkit();

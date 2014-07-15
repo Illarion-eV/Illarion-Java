@@ -16,6 +16,8 @@
 package illarion.client.resources;
 
 import illarion.client.resources.data.ResourceTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
@@ -30,6 +32,8 @@ import java.util.Map;
  */
 @NotThreadSafe
 public abstract class AbstractTemplateFactory<T extends ResourceTemplate> implements ResourceFactory<T> {
+    private static final Logger log = LoggerFactory.getLogger(AbstractTemplateFactory.class);
+
     /**
      * The map that is used to store the resources.
      */
@@ -51,13 +55,16 @@ public abstract class AbstractTemplateFactory<T extends ResourceTemplate> implem
     /**
      * The default constructor.
      */
-    protected AbstractTemplateFactory(final int defaultId) {
+    protected AbstractTemplateFactory(int defaultId) {
         storage = new HashMap<>();
         this.defaultId = defaultId;
     }
 
     @Override
-    public void storeResource(@Nonnull final T resource) {
+    public void storeResource(@Nonnull T resource) {
+        if (storage.containsKey(resource.getTemplateId())) {
+            log.warn("Located duplicated resource template: {}", resource);
+        }
         storage.put(resource.getTemplateId(), resource);
     }
 
@@ -69,15 +76,15 @@ public abstract class AbstractTemplateFactory<T extends ResourceTemplate> implem
     public void init() {
     }
 
-    public boolean hasTemplate(final int templateId) {
-        return storage.get(templateId) != null;
+    public boolean hasTemplate(int templateId) {
+        return storage.containsKey(templateId);
     }
 
     @Nonnull
-    public T getTemplate(final int templateId) {
-        final T object = storage.get(templateId);
+    public T getTemplate(int templateId) {
+        T object = storage.get(templateId);
         if ((object == null) && (defaultId > -1)) {
-            final T defaultObject = storage.get(defaultId);
+            T defaultObject = storage.get(defaultId);
             if (defaultObject == null) {
                 throw new IllegalStateException("Requested object and the default object were not found.");
             }
