@@ -263,6 +263,18 @@ public final class Char implements AnimatedMove {
     @Nullable
     private Reference<InteractiveChar> interactiveCharRef;
 
+    private class DelayedMoveData {
+        public CharMovementMode mode;
+        public int duration;
+        public Location targetLocation;
+    }
+
+    /**
+     * This stores a delayed move in case there is one.
+     */
+    @Nullable
+    private DelayedMoveData delayedMove;
+
     /**
      * Constructor to create a new character.
      */
@@ -407,6 +419,10 @@ public final class Char implements AnimatedMove {
         elevation = elevationAfterAnimation;
         updatePosition(elevation);
         animationInProgress = false;
+
+        if (delayedMove != null) {
+            moveTo(delayedMove.targetLocation, delayedMove.mode, delayedMove.duration);
+        }
     }
 
     /**
@@ -892,6 +908,19 @@ public final class Char implements AnimatedMove {
             LOGGER.error("Can't move a character without ID around.");
             return;
         }
+
+        if (!World.getPlayer().isPlayer(characterId)) {
+            if (move.isRunning() && (delayedMove == null)) {
+                delayedMove = new DelayedMoveData();
+                delayedMove.duration = duration;
+                delayedMove.mode = mode;
+                delayedMove.targetLocation = new Location(newPos);
+                return;
+            }
+        }
+
+        delayedMove = null;
+
         // get old position
         Location tempLoc = new Location();
         tempLoc.set(charLocation);
