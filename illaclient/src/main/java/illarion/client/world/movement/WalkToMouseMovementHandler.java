@@ -16,6 +16,7 @@
 package illarion.client.world.movement;
 
 import illarion.client.IllaClient;
+import illarion.client.util.pathfinding.Path;
 import illarion.client.world.CharMovementMode;
 import illarion.client.world.MapDimensions;
 import illarion.client.world.World;
@@ -31,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.EnumSet;
 
@@ -148,6 +150,21 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
         } else {
             return super.getAllowedDirections();
         }
+    }
+
+    @Override
+    @Nullable
+    protected Path calculateNewPath(@Nonnull Location currentLocation) {
+        int maxDistance = currentLocation.getDistance(getTargetLocation());
+
+        while (getTargetDistance() < maxDistance) {
+            Path result = super.calculateNewPath(currentLocation);
+            if (result != null) {
+                return result;
+            }
+            increaseTargetDistance();
+        }
+        return null;
     }
 
     @EventTopicSubscriber(topic = "mouseFollowAutoRun")

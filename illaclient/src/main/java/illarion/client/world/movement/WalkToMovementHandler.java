@@ -174,6 +174,14 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
         return currentLocation.getDirection(target);
     }
 
+    protected int getTargetDistance() {
+        return targetDistance;
+    }
+
+    protected void increaseTargetDistance() {
+        targetDistance++;
+    }
+
     private boolean isCurrentPathValid() {
         Path path = currentPath;
         if (path == null) {
@@ -193,7 +201,7 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
     }
 
     @Nullable
-    private Path calculateNewPath(@Nonnull Location currentLocation) {
+    protected Path calculateNewPath(@Nonnull Location currentLocation) {
         log.info(marker, "Calculating a new path to: {}", targetLocation);
         PathFindingAlgorithm algorithm = pathFindingAlgorithm;
 
