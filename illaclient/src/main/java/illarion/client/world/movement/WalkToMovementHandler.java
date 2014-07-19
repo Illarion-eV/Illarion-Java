@@ -80,9 +80,7 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
         int remainingDistance = currentLocation.getDistance(targetLocation);
         log.debug(marker, "Remaining distance to target: {} Expected distance: {}", remainingDistance, targetDistance);
         if (remainingDistance <= targetDistance) {
-            targetSet = false;
-            executeTargetAction();
-            return null;
+            return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation));
         }
         Path activePath;
         if (isCurrentPathValid()) {
@@ -92,41 +90,46 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
             currentPath = activePath;
         }
         if (activePath == null) {
-            targetSet = false;
-            executeTargetAction();
-            return null;
+            return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation));
         }
 
         PathNode node = activePath.nextStep();
         if (node == null) {
-            targetSet = false;
-            executeTargetAction();
-            return null;
+            return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation));
         }
         if (!isPathNodeValid(currentLocation, node)) {
             activePath = calculateNewPath(currentLocation);
             currentPath = activePath;
             if (activePath == null) {
-                targetSet = false;
-                executeTargetAction();
-                return new DefaultStepData(CharMovementMode.None, null);
+
+                return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation));
             }
             node = activePath.nextStep();
             if (node == null) {
-                targetSet = false;
-                executeTargetAction();
-                return null;
+                return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation));
             }
             if (!isPathNodeValid(currentLocation, node)) {
                 targetSet = false;
                 targetAction = null;
-                return new DefaultStepData(CharMovementMode.None, null);
+                return new DefaultStepData(CharMovementMode.None, currentLocation.getDirection(targetLocation));
             }
         }
         log.debug(marker, "Performing step to: {}", node.getLocation());
         CharMovementMode modeMode = convertMovementMode(node.getMovementMethod());
         Direction moveDir = getDirection(currentLocation, node.getLocation());
         return new DefaultStepData(modeMode, moveDir);
+    }
+
+    @Nullable
+    private Direction finishMove(@Nonnull Location currentLocation) {
+        Direction direction = null;
+        int remainingDistance = currentLocation.getDistance(targetLocation);
+        if (remainingDistance > 0) {
+            direction = currentLocation.getDirection(targetLocation);
+        }
+        executeTargetAction();
+        targetSet = false;
+        return direction;
     }
 
     private void executeTargetAction() {
