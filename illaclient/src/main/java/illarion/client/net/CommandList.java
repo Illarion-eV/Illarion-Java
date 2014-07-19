@@ -327,6 +327,11 @@ public final class CommandList {
     public static final int MSG_INVENTORY = 0xC1;
 
     /**
+     * Server message that updates the load information of the player character.
+     */
+    public static final int MSG_CARRY_LOAD = 0xB0;
+
+    /**
      * Server message that updates the location of the player character on the game map.
      */
     public static final int MSG_LOCATION = 0xBD;
