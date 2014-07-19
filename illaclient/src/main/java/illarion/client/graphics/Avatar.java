@@ -184,6 +184,12 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         }
     }
 
+    public void changeAnimationDuration(int newDuration) {
+        if ((animation != null) && animation.isRunning()) {
+            animation.setDuration(newDuration);
+        }
+    }
+
     /**
      * Start a animation for this avatar.
      *

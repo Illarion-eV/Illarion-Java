@@ -20,6 +20,7 @@ import illarion.client.graphics.MoveAnimation;
 import illarion.client.net.client.MoveCmd;
 import illarion.client.net.client.TurnCmd;
 import illarion.client.world.CharMovementMode;
+import illarion.client.world.MapTile;
 import illarion.client.world.Player;
 import illarion.client.world.World;
 import illarion.common.types.CharacterId;
@@ -144,8 +145,25 @@ public class Movement {
     }
 
     public void executeServerRespMove(@Nonnull CharMovementMode mode, @Nonnull Location target, int duration) {
+        if (playerLocation.equals(target)) {
+            animator.cancelMove(target);
+        } else {
+            // confirm a move that was started early
+            animator.confirmMove(mode, target, duration);
+        }
         playerLocation.set(target);
-        animator.scheduleMove(mode, target, duration);
+    }
+
+    private void scheduleEarlyTurn(@Nonnull Direction direction) {
+        animator.scheduleTurn(direction);
+    }
+
+    private void scheduleEarlyMove(@Nonnull CharMovementMode mode, @Nonnull Direction direction) {
+        Location target = getTargetLocation(mode, direction);
+        MapTile targetTile = World.getMap().getMapAt(target);
+        if ((targetTile != null) && !targetTile.isBlocked()) {
+            animator.scheduleMove(mode, target, targetTile.getMovementCost() * 100);
+        }
     }
 
     public void executeServerLocation(@Nonnull Location target) {
@@ -214,15 +232,37 @@ public class Movement {
                 switch (nextStep.getMovementMode()) {
                     case None:
                         sendTurnToServer(nextStep.getDirection());
+                        scheduleEarlyTurn(nextStep.getDirection());
                         break;
                     default:
                         stepInProgress = true;
                         sendTurnToServer(nextStep.getDirection());
                         sendMoveToServer(nextStep.getDirection(), nextStep.getMovementMode());
-                        break;
+                        scheduleEarlyTurn(nextStep.getDirection());
+                        scheduleEarlyMove(nextStep.getMovementMode(), nextStep.getDirection());
                 }
             }
         }
+    }
+
+    @Nonnull
+    private Location getTargetLocation(@Nonnull CharMovementMode mode, @Nonnull Direction direction) {
+        Location result = new Location(playerLocation);
+        switch (mode) {
+            case Run:
+                result.moveSC(direction);
+                result.moveSC(direction);
+                break;
+            case Walk:
+                result.moveSC(direction);
+                break;
+            case Push:
+                result.moveSC(direction);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid movement mode for selecting the target location");
+        }
+        return result;
     }
 
     @Nonnull

@@ -31,6 +31,7 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.beans.ConstructorProperties;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -94,6 +95,9 @@ class MoveAnimator implements AnimatedMove {
     private boolean animationInProgress;
     private boolean reportingDone;
 
+    @Nullable
+    private Direction lastRequestedTurn;
+
     @ConstructorProperties({"movement", "moveAnimation"})
     public MoveAnimator(@Nonnull Movement movement, @Nonnull MoveAnimation moveAnimation) {
         this.movement = movement;
@@ -107,16 +111,72 @@ class MoveAnimator implements AnimatedMove {
         }
     }
 
+    /**
+     * Cancel a currently executed move in case there is any.
+     * <br />
+     * In case the currently executed move targets location that is reported, the move is allowed to continue.
+     *
+     * @param allowedTarget allowed target location
+     */
+    void cancelMove(@Nonnull Location allowedTarget) {
+        taskQueue.clear();
+
+        Player parentPlayer = movement.getPlayer();
+        if (!parentPlayer.getLocation().equals(allowedTarget)) {
+            moveAnimation.stop();
+            parentPlayer.setLocation(allowedTarget);
+        }
+    }
+
+    /**
+     * Confirm a move with the specified parameters.
+     *
+     * @param mode the move
+     * @param target the target of the move
+     * @param duration the duration of the move
+     */
+    void confirmMove(@Nonnull CharMovementMode mode, @Nonnull Location target, int duration) {
+        MoveAnimatorTask task = taskQueue.poll();
+        if (task instanceof MovingTask) {
+            /* The move has not started yet. Plan a new one. */
+            scheduleMove(mode, target, duration);
+        } else {
+            if (moveAnimation.isRunning()) {
+                /* We have a active move. Lets check it out. */
+                Player parentPlayer = movement.getPlayer();
+                if (parentPlayer.getLocation().equals(target)) {
+                    /* Okay we are moving to the right place. Lets check if the timing fits. */
+                    if (moveAnimation.getDuration() != duration) {
+                        /* The timing is off. Lets fix that. */
+                        moveAnimation.setDuration(duration);
+                        parentPlayer.getCharacter().updateMoveDuration(duration);
+                    }
+                } else {
+                    /* Crap! We are moving to the wrong place... */
+                    moveAnimation.stop();
+                    parentPlayer.setLocation(target);
+                }
+            } else {
+                /* Nothing moving here. Lets start the action. */
+                scheduleMove(mode, target, duration);
+            }
+        }
+    }
+
     void scheduleTurn(@Nonnull Direction direction) {
-        taskQueue.offer(new TurningTask(direction));
-        if (!animationInProgress) {
-            executeNext();
+        if (lastRequestedTurn != direction) {
+            lastRequestedTurn = direction;
+            taskQueue.offer(new TurningTask(direction));
+            if (!animationInProgress) {
+                executeNext();
+            }
         }
     }
 
     void cancelAll() {
         taskQueue.clear();
         moveAnimation.stop();
+        lastRequestedTurn = null;
     }
 
     private void executeTurn(@Nonnull Direction direction) {

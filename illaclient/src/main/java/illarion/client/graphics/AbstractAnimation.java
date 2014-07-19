@@ -247,6 +247,15 @@ abstract class AbstractAnimation<T extends Animated> {
     }
 
     /**
+     * Get the duration of the animation.
+     *
+     * @return the duration of the animation
+     */
+    public final int getDuration() {
+        return duration;
+    }
+
+    /**
      * Set the timing values of this animation. This sets the start time to the
      * current local time and sets the current time to the start time. The end
      * time is calculated by the start time plus the duration. So the duration

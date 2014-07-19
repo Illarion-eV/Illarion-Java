@@ -434,7 +434,6 @@ public final class Char implements AnimatedMove {
                     moveToInternal(localDelayedMove.targetLocation, localDelayedMove.mode, localDelayedMove.duration);
                 }
             });
-
         }
     }
 
@@ -927,6 +926,24 @@ public final class Char implements AnimatedMove {
         });
     }
 
+    public void updateMoveDuration(final int newDuration) {
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
+            @Override
+            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+                updateMoveDurationInteral(newDuration);
+            }
+        });
+    }
+
+    private void updateMoveDurationInteral(int newDuration) {
+        if (move.isRunning()) {
+            move.setDuration(newDuration);
+            if (avatar != null) {
+                avatar.changeAnimationDuration(newDuration);
+            }
+        }
+    }
+
     private void moveToInternal(@Nonnull Location newPos, @Nonnull CharMovementMode mode, int duration) {
         CharacterId characterId = getCharId();
         if (characterId == null) {
@@ -1037,9 +1054,11 @@ public final class Char implements AnimatedMove {
      * @param newDirection the new direction value
      */
     public void setDirection(@Nonnull Direction newDirection) {
-        direction = newDirection;
-        if (!move.isRunning()) {
-            updateAvatar();
+        if (direction != newDirection) {
+            direction = newDirection;
+            if (!move.isRunning()) {
+                updateAvatar();
+            }
         }
     }
 
