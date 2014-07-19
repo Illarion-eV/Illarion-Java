@@ -16,6 +16,7 @@
 package illarion.client.world.movement;
 
 import illarion.client.world.CharMovementMode;
+import illarion.client.world.World;
 import illarion.common.types.Direction;
 import illarion.common.types.Location;
 import illarion.common.util.FastMath;
@@ -114,6 +115,10 @@ class SimpleKeyboardMovementHandler extends AbstractMovementHandler implements K
     private CharMovementMode getMovementMode() {
         if (input.isKeyDown(Key.LeftAlt)) {
             return CharMovementMode.None;
+        }
+
+        if (!World.getPlayer().getCarryLoad().isRunningPossible()) {
+            return CharMovementMode.Walk;
         }
 
         return getMovement().getDefaultMovementMode();

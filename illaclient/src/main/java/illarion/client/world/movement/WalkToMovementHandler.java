@@ -146,6 +146,9 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
                 }
                 break;
             case Run:
+                if (!World.getPlayer().getCarryLoad().isRunningPossible()) {
+                    return false;
+                }
                 if (distanceToPlayer == 2) {
                     return true;
                 }

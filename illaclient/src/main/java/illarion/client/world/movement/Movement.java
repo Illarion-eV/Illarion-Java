@@ -23,9 +23,11 @@ import illarion.client.world.CharMovementMode;
 import illarion.client.world.MapTile;
 import illarion.client.world.Player;
 import illarion.client.world.World;
+import illarion.client.world.characters.CharacterAttribute;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Direction;
 import illarion.common.types.Location;
+import illarion.common.util.FastMath;
 import org.illarion.engine.input.Input;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -158,11 +160,39 @@ public class Movement {
         animator.scheduleTurn(direction);
     }
 
+    private static final int MAX_WALK_AGI = 20;
+    private static final double MIN_WALK_COST = 300.0;
+    private static final double MAX_WALK_COST = 800.0;
+
     private void scheduleEarlyMove(@Nonnull CharMovementMode mode, @Nonnull Direction direction) {
-        Location target = getTargetLocation(mode, direction);
-        MapTile targetTile = World.getMap().getMapAt(target);
-        if ((targetTile != null) && !targetTile.isBlocked()) {
-            animator.scheduleMove(mode, target, targetTile.getMovementCost() * 100);
+        if (player.getCarryLoad().isWalkingPossible()) {
+            Location target = getTargetLocation(mode, direction);
+            MapTile targetTile = World.getMap().getMapAt(target);
+
+            if ((targetTile != null) && !targetTile.isBlocked()) {
+                double movementDuration = targetTile.getMovementCost() * 100.0;
+                if (mode == CharMovementMode.Run) {
+                    Location walkTarget = getTargetLocation(CharMovementMode.Walk, direction);
+                    MapTile walkTargetTile = World.getMap().getMapAt(walkTarget);
+                    if ((walkTargetTile != null) && !walkTargetTile.isBlocked()) {
+                        movementDuration += walkTargetTile.getMovementCost() * 100.0;
+                    } else {
+                        return;
+                    }
+                }
+                int agility = Math.min(player.getCharacter().getAttribute(CharacterAttribute.Agility), MAX_WALK_AGI);
+                double agilityMod = (10 - agility) / 100.0;
+                double loadMod = (player.getCarryLoad().getLoadFactor() / 10.0) * 3.0;
+                movementDuration += movementDuration * (agilityMod + loadMod);
+                movementDuration = FastMath.clamp(movementDuration, MIN_WALK_COST, MAX_WALK_COST);
+                if (direction.isDiagonal()) {
+                    movementDuration *= 1.4142135623730951; // sqrt(2)
+                }
+                if (mode == CharMovementMode.Run) {
+                    movementDuration *= 0.6;
+                }
+                animator.scheduleMove(mode, target, (int) (movementDuration / 100.0) * 100);
+            }
         }
     }
 
@@ -272,7 +302,10 @@ public class Movement {
 
     @Nonnull
     public CharMovementMode getDefaultMovementMode() {
-        return defaultMovementMode;
+        if (World.getPlayer().getCarryLoad().isRunningPossible()) {
+            return defaultMovementMode;
+        }
+        return CharMovementMode.Walk;
     }
 
     @Nonnull

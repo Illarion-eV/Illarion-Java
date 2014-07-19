@@ -17,6 +17,7 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
+import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 
 import javax.annotation.Nonnull;
@@ -26,7 +27,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_CARRY_LOAD)
-public class CarryLoadMsg extends AbstractGuiMsg {
+public class CarryLoadMsg extends AbstractReply {
     private int currentLoad;
     private int maximumLoad;
 
@@ -38,6 +39,7 @@ public class CarryLoadMsg extends AbstractGuiMsg {
 
     @Override
     public boolean executeUpdate() {
+        World.getPlayer().getCarryLoad().updateLoad(currentLoad, maximumLoad);
         return true;
     }
 

@@ -18,6 +18,7 @@ package illarion.client.world.movement;
 import illarion.client.IllaClient;
 import illarion.client.world.CharMovementMode;
 import illarion.client.world.MapDimensions;
+import illarion.client.world.World;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.types.Direction;
 import illarion.common.types.Location;
@@ -134,6 +135,10 @@ class FollowMouseMovementHandler extends AbstractMovementHandler implements Mous
     private CharMovementMode getWalkTowardsMode(int distance) {
         if (input.isAnyKeyDown(Key.LeftShift, Key.RightShift)) {
             return CharMovementMode.None;
+        }
+
+        if (!World.getPlayer().getCarryLoad().isRunningPossible()) {
+            return CharMovementMode.Walk;
         }
 
         if (!mouseFollowAutoRun) {
