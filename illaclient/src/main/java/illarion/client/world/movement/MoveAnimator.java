@@ -17,14 +17,12 @@ package illarion.client.world.movement;
 
 import illarion.client.graphics.AnimatedMove;
 import illarion.client.graphics.MoveAnimation;
-import illarion.client.util.ConnectionPerformanceClock;
 import illarion.client.world.Char;
 import illarion.client.world.CharMovementMode;
 import illarion.client.world.Player;
 import illarion.client.world.World;
 import illarion.common.types.Direction;
 import illarion.common.types.Location;
-import illarion.common.util.FastMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -32,8 +30,8 @@ import org.slf4j.MarkerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.beans.ConstructorProperties;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Queue;
 
 /**
@@ -45,43 +43,6 @@ import java.util.Queue;
 class MoveAnimator implements AnimatedMove {
     private static final Logger log = LoggerFactory.getLogger(MoveAnimator.class);
     private static final Marker marker = MarkerFactory.getMarker("Movement");
-
-    private interface MoveAnimatorTask {
-        void execute();
-    }
-
-    private class MovingTask implements MoveAnimatorTask {
-        @Nonnull
-        private final CharMovementMode mode;
-        @Nonnull
-        private final Location target;
-        private final int duration;
-
-        private MovingTask(@Nonnull CharMovementMode mode, @Nonnull Location target, int duration) {
-            this.mode = mode;
-            this.target = target;
-            this.duration = duration;
-        }
-
-        @Override
-        public void execute() {
-            executeMove(mode, target, duration);
-        }
-    }
-
-    private class TurningTask implements MoveAnimatorTask {
-        @Nonnull
-        private final Direction direction;
-
-        private TurningTask(@Nonnull Direction direction) {
-            this.direction = direction;
-        }
-
-        @Override
-        public void execute() {
-            executeTurn(direction);
-        }
-    }
 
     @Nonnull
     private final Movement movement;
@@ -98,16 +59,40 @@ class MoveAnimator implements AnimatedMove {
     @Nullable
     private Direction lastRequestedTurn;
 
-    @ConstructorProperties({"movement", "moveAnimation"})
+    /**
+     * Schedule a move task that is not yet confirmed.
+     */
+    @Nullable
+    private MovingTask uncomfirmedMoveTask;
+    @Nullable
+    private MovingTask confirmedMoveTask;
+
+
+
     public MoveAnimator(@Nonnull Movement movement, @Nonnull MoveAnimation moveAnimation) {
         this.movement = movement;
         this.moveAnimation = moveAnimation;
     }
 
-    void scheduleMove(@Nonnull CharMovementMode mode, @Nonnull Location target, int duration) {
-        taskQueue.offer(new MovingTask(mode, target, duration));
+    private void scheduleMove(@Nonnull CharMovementMode mode, @Nonnull Location target, int duration) {
+        scheduleTask(new MovingTask(this, mode, target, duration));
+    }
+
+    private void scheduleTask(@Nonnull MoveAnimatorTask task) {
+        taskQueue.offer(task);
         if (!animationInProgress) {
             executeNext();
+        }
+    }
+
+    void scheduleEarlyMove(@Nonnull CharMovementMode mode, @Nonnull Location target, int duration) {
+        if (uncomfirmedMoveTask != null) {
+            log.warn(marker, "Scheduling another early move is not possible as there is already one set.");
+        } else {
+            log.debug(marker, "Scheduling a early move.");
+            MovingTask task = new MovingTask(this, mode, target, duration);
+            uncomfirmedMoveTask = task;
+            scheduleTask(task);
         }
     }
 
@@ -136,29 +121,51 @@ class MoveAnimator implements AnimatedMove {
      * @param duration the duration of the move
      */
     void confirmMove(@Nonnull CharMovementMode mode, @Nonnull Location target, int duration) {
-        MoveAnimatorTask task = taskQueue.poll();
-        if (task instanceof MovingTask) {
-            /* The move has not started yet. Plan a new one. */
+        MovingTask task = uncomfirmedMoveTask;
+        if (task == null) {
+            log.debug(marker, "No unconfirmed move found. Schedule the move.");
+            confirmedMoveTask = null;
             scheduleMove(mode, target, duration);
         } else {
-            if (moveAnimation.isRunning()) {
-                /* We have a active move. Lets check it out. */
-                Player parentPlayer = movement.getPlayer();
-                if (parentPlayer.getLocation().equals(target)) {
-                    /* Okay we are moving to the right place. Lets check if the timing fits. */
-                    if (moveAnimation.getDuration() != duration) {
-                        /* The timing is off. Lets fix that. */
-                        moveAnimation.setDuration(duration);
-                        parentPlayer.getCharacter().updateMoveDuration(duration);
+            if (task.isExecuted()) {
+                uncomfirmedMoveTask = null;
+                confirmedMoveTask = null;
+                if (moveAnimation.isRunning()) {
+                    /* We have a active move. Lets check it out. */
+                    Player parentPlayer = movement.getPlayer();
+                    if (parentPlayer.getLocation().equals(target)) {
+                        /* Okay we are moving to the right place. Lets check if the timing fits. */
+                        if (moveAnimation.getDuration() != duration) {
+                            if (log.isDebugEnabled()) {
+                                log.debug(marker,
+                                          "Move to the correct place is in progress. Fixing time from {}ms to {}ms",
+                                          moveAnimation.getDuration(), duration);
+                            }
+                            /* The timing is off. Lets fix that. */
+                            moveAnimation.setDuration(duration);
+                            parentPlayer.getCharacter().updateMoveDuration(duration);
+                        } else {
+                            log.debug(marker, "Already running animation with {}ms is correct", duration);
+                        }
+                    } else {
+                        log.debug(marker, "Move to the wrong location. Resetting.");
+                        /* Crap! We are moving to the wrong place... */
+                        moveAnimation.stop();
+                        parentPlayer.setLocation(target);
                     }
                 } else {
-                    /* Crap! We are moving to the wrong place... */
-                    moveAnimation.stop();
-                    parentPlayer.setLocation(target);
+                    log.debug(marker, "The unconfirmed move seems to be done already.");
+                    /* Nothing moving here. Lets start the action. */
+                    scheduleMove(mode, target, duration);
                 }
             } else {
-                /* Nothing moving here. Lets start the action. */
-                scheduleMove(mode, target, duration);
+                if (task.isSetupCorrectly(mode, target, duration)) {
+                    log.debug(marker, "Move is correctly scheduled.");
+                    confirmedMoveTask = task;
+                } else {
+                    log.debug(marker, "Move is not correctly scheduled.");
+                    confirmedMoveTask = new MovingTask(this, mode, target, duration);
+                }
             }
         }
     }
@@ -166,10 +173,7 @@ class MoveAnimator implements AnimatedMove {
     void scheduleTurn(@Nonnull Direction direction) {
         if (lastRequestedTurn != direction) {
             lastRequestedTurn = direction;
-            taskQueue.offer(new TurningTask(direction));
-            if (!animationInProgress) {
-                executeNext();
-            }
+            scheduleTask(new TurningTask(this, direction));
         }
     }
 
@@ -179,12 +183,12 @@ class MoveAnimator implements AnimatedMove {
         lastRequestedTurn = null;
     }
 
-    private void executeTurn(@Nonnull Direction direction) {
+    void executeTurn(@Nonnull Direction direction) {
         movement.getPlayer().getCharacter().setDirection(direction);
         executeNext();
     }
 
-    private void executeMove(@Nonnull CharMovementMode mode, @Nonnull Location target, int duration) {
+    void executeMove(@Nonnull CharMovementMode mode, @Nonnull Location target, int duration) {
         Player parentPlayer = movement.getPlayer();
         Char playerCharacter = parentPlayer.getCharacter();
         if ((mode == CharMovementMode.None) || playerCharacter.getLocation().equals(target)) {
@@ -210,6 +214,19 @@ class MoveAnimator implements AnimatedMove {
     private void executeNext() {
         MoveAnimatorTask task = taskQueue.poll();
         if (task != null) {
+            if (Objects.equals(task, uncomfirmedMoveTask)) {
+                MoveAnimatorTask confirmedTask = confirmedMoveTask;
+                if (confirmedTask != null) {
+                    log.debug("Current move is a unconfirmed move. Using the confirmed version.");
+                    confirmedMoveTask = null;
+                    uncomfirmedMoveTask = null;
+                    // overwrite used task
+                    //noinspection ReuseOfLocalVariable
+                    task = confirmedTask;
+                } else {
+                    log.debug("Current move is a unconfirmed move. No confirmed version present.");
+                }
+            }
             animationInProgress = true;
             task.execute();
         } else {
@@ -220,9 +237,8 @@ class MoveAnimator implements AnimatedMove {
     @Override
     public void setPosition(int posX, int posY, int posZ) {
         if (!reportingDone) {
-            long ping = FastMath.clamp((long) (ConnectionPerformanceClock.getNetCommPing() * 2.5), 20, 60);
             int remaining = moveAnimation.timeRemaining();
-            if (remaining < ping) {
+            if (remaining < 20) {
                 log.debug(marker, "Requesting next move {}ms before the animation finishes.", remaining);
                 reportingDone = true;
                 movement.reportReadyForNextStep();

@@ -191,7 +191,7 @@ public class Movement {
                 if (mode == CharMovementMode.Run) {
                     movementDuration *= 0.6;
                 }
-                animator.scheduleMove(mode, target, (int) (movementDuration / 100.0) * 100);
+                animator.scheduleEarlyMove(mode, target, (int) (movementDuration / 100.0) * 100);
             }
         }
     }

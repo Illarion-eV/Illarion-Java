@@ -452,7 +452,6 @@ public final class Char implements AnimatedMove {
      */
     public void resetAnimation(boolean finished) {
         if (finished && (animation != CharAnimations.STAND)) {
-            log.info("{}: Resetting the current animation {}.", this, animation);
             animation = CharAnimations.STAND;
             updateAvatar();
             if (avatar != null) {
@@ -1103,13 +1102,10 @@ public final class Char implements AnimatedMove {
             return;
         }
         animation = newAnimation;
-        log.info("{}: Starting new animation: {} for {}ms", this, animation, duration);
-        lastStartTime = System.currentTimeMillis();
+        log.debug("{}: Starting new animation: {} for {}ms", this, animation, duration);
         updateAvatar();
         avatar.animate(duration, false);
     }
-
-    private long lastStartTime;
 
     /**
      * Update the avatar display position.
