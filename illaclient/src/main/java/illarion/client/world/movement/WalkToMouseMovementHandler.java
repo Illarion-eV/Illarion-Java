@@ -19,6 +19,7 @@ import illarion.client.IllaClient;
 import illarion.client.util.pathfinding.Path;
 import illarion.client.world.CharMovementMode;
 import illarion.client.world.MapDimensions;
+import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.types.Direction;
@@ -89,7 +90,8 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
         if (transferAllowed && targetWasSet && continueWalkAfterDragging) {
             TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
             log.debug("Transferring movement control from {} to {}", this, handler);
-            handler.walkTo(getTargetLocation(), 0);
+            MapTile targetTile = World.getMap().getMapAt(getTargetLocation());
+            handler.walkTo(getTargetLocation(), ((targetTile != null) && targetTile.isBlocked()) ? 1 : 0);
             handler.assumeControl();
         }
     }

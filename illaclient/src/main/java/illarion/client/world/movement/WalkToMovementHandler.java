@@ -116,6 +116,9 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
         log.debug(marker, "Performing step to: {}", node.getLocation());
         CharMovementMode modeMode = convertMovementMode(node.getMovementMethod());
         Direction moveDir = getDirection(currentLocation, node.getLocation());
+        if (activePath.isEmpty() && (targetDistance == 0) && !targetLocation.equals(node.getLocation())) {
+            targetDistance = 1;
+        }
         return new DefaultStepData(modeMode, moveDir);
     }
 
@@ -196,7 +199,8 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
             return false;
         }
         if (!destination.equals(targetLocation)) {
-            log.debug(marker, "Path is not valid: Destination does not equal the current target location.");
+            log.debug(marker, "Path is not valid: Destination ({}) does not equal the current target location ({}).",
+                      destination, targetLocation);
             return false;
         }
         return true;
