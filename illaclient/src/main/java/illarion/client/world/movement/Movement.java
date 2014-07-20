@@ -161,8 +161,8 @@ public class Movement {
     }
 
     private static final int MAX_WALK_AGI = 20;
-    private static final double MIN_WALK_COST = 300.0;
-    private static final double MAX_WALK_COST = 800.0;
+    private static final int MIN_WALK_COST = 300;
+    private static final int MAX_WALK_COST = 800;
 
     private void scheduleEarlyMove(@Nonnull CharMovementMode mode, @Nonnull Direction direction) {
         if (player.getCarryLoad().isWalkingPossible()) {
@@ -170,30 +170,38 @@ public class Movement {
             MapTile targetTile = World.getMap().getMapAt(target);
 
             if ((targetTile != null) && !targetTile.isBlocked()) {
-                double movementDuration = targetTile.getMovementCost() * 100.0;
+                int agility = Math.min(player.getCharacter().getAttribute(CharacterAttribute.Agility), MAX_WALK_AGI);
+                double agilityMod = (10 - agility) / 100.0;
+                double loadMod = (player.getCarryLoad().getLoadFactor() / 10.0) * 3.0;
+                double mods = agilityMod + loadMod + 1.0;
+
+                int movementDuration = getMovementDuration(targetTile.getMovementCost(), mods, direction.isDiagonal(),
+                                                           mode == CharMovementMode.Run);
                 if (mode == CharMovementMode.Run) {
                     Location walkTarget = getTargetLocation(CharMovementMode.Walk, direction);
                     MapTile walkTargetTile = World.getMap().getMapAt(walkTarget);
                     if ((walkTargetTile != null) && !walkTargetTile.isBlocked()) {
-                        movementDuration += walkTargetTile.getMovementCost() * 100.0;
+                        movementDuration += getMovementDuration(targetTile.getMovementCost(), mods,
+                                                                direction.isDiagonal(), true);
                     } else {
                         return;
                     }
                 }
-                int agility = Math.min(player.getCharacter().getAttribute(CharacterAttribute.Agility), MAX_WALK_AGI);
-                double agilityMod = (10 - agility) / 100.0;
-                double loadMod = (player.getCarryLoad().getLoadFactor() / 10.0) * 3.0;
-                movementDuration += movementDuration * (agilityMod + loadMod);
-                movementDuration = FastMath.clamp(movementDuration, MIN_WALK_COST, MAX_WALK_COST);
-                if (direction.isDiagonal()) {
-                    movementDuration *= 1.4142135623730951; // sqrt(2)
-                }
-                if (mode == CharMovementMode.Run) {
-                    movementDuration *= 0.6;
-                }
-                animator.scheduleEarlyMove(mode, target, (int) (movementDuration / 100.0) * 100);
+                animator.scheduleEarlyMove(mode, target, (movementDuration / 100) * 100);
             }
         }
+    }
+
+    private static int getMovementDuration(int tileMovementCost, double mods, boolean diagonal, boolean running) {
+        int movementDuration = FastMath.clamp((int) ((tileMovementCost * 100) * mods), MIN_WALK_COST, MAX_WALK_COST);
+
+        if (diagonal) {
+            movementDuration = (int) (1.4142135623730951 * movementDuration); // sqrt(2)
+        }
+        if (running) {
+            movementDuration = (int) (0.6 * movementDuration);
+        }
+        return movementDuration;
     }
 
     public void executeServerLocation(@Nonnull Location target) {

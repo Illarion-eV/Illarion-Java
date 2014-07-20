@@ -150,8 +150,7 @@ class MoveAnimator implements AnimatedMove {
                     } else {
                         log.debug(marker, "Move to the wrong location. Resetting.");
                         /* Crap! We are moving to the wrong place... */
-                        moveAnimation.stop();
-                        parentPlayer.setLocation(target);
+                        movement.executeServerLocation(target);
                     }
                 } else {
                     log.debug(marker, "The unconfirmed move seems to be done already.");
@@ -212,9 +211,14 @@ class MoveAnimator implements AnimatedMove {
     }
 
     private void executeNext() {
+        @Nullable MovingTask unconfirmedTask = uncomfirmedMoveTask;
+        if ((unconfirmedTask != null) && unconfirmedTask.isExecuted()) {
+            uncomfirmedMoveTask = null;
+            unconfirmedTask = null;
+        }
         MoveAnimatorTask task = taskQueue.poll();
         if (task != null) {
-            if (Objects.equals(task, uncomfirmedMoveTask)) {
+            if (Objects.equals(task, unconfirmedTask)) {
                 MoveAnimatorTask confirmedTask = confirmedMoveTask;
                 if (confirmedTask != null) {
                     log.debug("Current move is a unconfirmed move. Using the confirmed version.");
