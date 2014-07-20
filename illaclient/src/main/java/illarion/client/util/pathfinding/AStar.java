@@ -110,14 +110,17 @@ public class AStar implements PathFindingAlgorithm {
             @Nonnull Location origin, @Nonnull Iterable<Direction> allowedDirections,
             @Nonnull Collection<PathMovementMethod> movementMethods,
             @Nonnull Collection<AStarPathNode> storage) {
+        if (movementMethods.isEmpty()) {
+            throw new IllegalArgumentException("No movement methods selected. This is not valid.");
+        }
         for (Direction dir : allowedDirections) {
             Location walkTarget = new Location(origin, dir);
+            MapTile walkingTargetTile = map.getMapAt(walkTarget);
             if (movementMethods.contains(PathMovementMethod.Walk)) {
-                MapTile walkingTargetTile = map.getMapAt(walkTarget);
                 if ((walkingTargetTile != null) &&
                         (!walkingTargetTile.isBlocked() || walkingTargetTile.getLocation().equals(end))) {
                     storage.add(new AStarPathNode(nodeToExpand, walkingTargetTile, PathMovementMethod.Walk, dir,
-                                                  getHeuristic(walkTarget, end)));
+                                                  getHeuristic(walkTarget, end), null));
                 } else {
                     continue;
                 }
@@ -127,7 +130,7 @@ public class AStar implements PathFindingAlgorithm {
                 MapTile runningTargetTile = map.getMapAt(runTarget);
                 if ((runningTargetTile != null) && !runningTargetTile.isBlocked()) {
                     storage.add(new AStarPathNode(nodeToExpand, runningTargetTile, PathMovementMethod.Run, dir,
-                                                  getHeuristic(runTarget, end)));
+                                                  getHeuristic(runTarget, end), walkingTargetTile));
                 }
             }
         }

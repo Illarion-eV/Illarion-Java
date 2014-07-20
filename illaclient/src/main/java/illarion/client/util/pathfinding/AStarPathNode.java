@@ -17,7 +17,6 @@ package illarion.client.util.pathfinding;
 
 import illarion.client.world.MapTile;
 import illarion.common.types.Direction;
-import illarion.common.util.FastMath;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -63,26 +62,29 @@ class AStarPathNode extends AbstractPathNode implements Comparable<AStarPathNode
      * @param method the movement method to reach this node
      * @param approachDirection the this tile is approached from
      * @param heuristic the predicted cost to reach the target from this location
+     * @param walkingTile the tile that is stepped over in case running is used as movement
      */
     AStarPathNode(
             @Nullable AStarPathNode parentNode,
             @Nonnull MapTile tile,
             @Nonnull PathMovementMethod method,
-            @Nonnull Direction approachDirection,
-            int heuristic) {
+            @Nonnull Direction approachDirection, int heuristic, @Nullable MapTile walkingTile) {
         super(tile.getLocation(), method);
         blocked = tile.isBlocked();
         this.heuristic = heuristic;
-        int tileCost = tile.getMovementCost();
-        if (approachDirection.isDiagonal()) {
-            tileCost = (int) FastMath.round(tileCost * SQRT2);
-        }
-        if (parentNode == null) {
-            this.parentNode = null;
-            cost = tileCost;
+        this.parentNode = parentNode;
+        if (heuristic > 0) {
+            int tileCost = tile.getMovementCost();
+            if ((method == PathMovementMethod.Run) && (walkingTile != null)) {
+                tileCost += walkingTile.getMovementCost();
+                tileCost = (int) (0.6 * tileCost);
+            }
+            if (approachDirection.isDiagonal()) {
+                tileCost = (int) (SQRT2 * tileCost);
+            }
+            cost = parentNode == null ? tileCost : parentNode.cost + tileCost;
         } else {
-            cost = parentNode.cost + tileCost;
-            this.parentNode = parentNode;
+            cost = 0;
         }
     }
 
