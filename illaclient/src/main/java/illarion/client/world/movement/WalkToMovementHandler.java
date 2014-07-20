@@ -89,7 +89,7 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
             activePath = calculateNewPath(currentLocation);
             currentPath = activePath;
         }
-        if (activePath == null) {
+        if ((activePath == null) || activePath.isEmpty()) {
             return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation));
         }
 
@@ -101,7 +101,6 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
             activePath = calculateNewPath(currentLocation);
             currentPath = activePath;
             if (activePath == null) {
-
                 return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation));
             }
             node = activePath.nextStep();

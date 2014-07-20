@@ -31,12 +31,20 @@ public final class Path {
      */
     private final LinkedList<PathNode> path = new LinkedList<>();
 
+    @Nullable
+    private final Location destination;
+
     /**
      * Default constructor for a new path.
      */
     public Path(@Nonnull Iterable<PathNode> nodes) {
         for (PathNode node : nodes) {
             path.addLast(node);
+        }
+        if (path.isEmpty()) {
+            destination = null;
+        } else {
+            destination = new Location(path.getLast().getLocation());
         }
     }
 
@@ -48,10 +56,7 @@ public final class Path {
      */
     @Nullable
     public Location getDestination() {
-        if (!path.isEmpty()) {
-            return path.getLast().getLocation();
-        }
-        return null;
+        return destination;
     }
 
     /**
@@ -68,6 +73,15 @@ public final class Path {
             node = path.removeFirst();
         }
         return node;
+    }
+
+    /**
+     * Check if the path is now empty.
+     *
+     * @return {@code true} in case the path is empty
+     */
+    public boolean isEmpty() {
+        return path.isEmpty();
     }
 
     /**
