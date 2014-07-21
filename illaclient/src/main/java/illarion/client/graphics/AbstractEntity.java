@@ -538,8 +538,8 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
         if (shown) {
             int newLayerZ = zLayer - typeLayer;
             if (newLayerZ != layerZ) {
-                updateDisplayPosition();
                 layerZ = newLayerZ;
+                updateDisplayPosition();
             }
         } else {
             layerZ = zLayer - typeLayer;

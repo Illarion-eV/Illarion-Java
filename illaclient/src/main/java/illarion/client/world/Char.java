@@ -451,7 +451,8 @@ public final class Char implements AnimatedMove {
      * Set the current animation back to its parent, update the avatar and invoke the needed animations.
      */
     public void resetAnimation(boolean finished) {
-        if (finished && (animation != CharAnimations.STAND)) {
+        log.debug("{}: Resetting the animation. Finished: {}", this, finished);
+        if (finished) {
             animation = CharAnimations.STAND;
             updateAvatar();
             if (avatar != null) {
@@ -467,12 +468,13 @@ public final class Char implements AnimatedMove {
     private synchronized void updateAvatar() {
         if (removedCharacter) {
             releaseAvatar();
-            log.warn("Trying to update the avatar of a removed avatar.");
+            log.warn("{}: Trying to update the avatar of a removed avatar.", this);
             return;
         }
 
         // nothing to do for invisible folks
         if ((appearance == 0) || (animation < 0)) {
+            log.debug("{}: Can't show avatar with appearance {} and animation {}", this, appearance, animation);
             return;
         }
 
@@ -482,6 +484,7 @@ public final class Char implements AnimatedMove {
 
         // no change, return
         if ((avatarId == newAvatarId) && (avatar != null)) {
+            log.debug("{}: Avatar received update but did not change.", this);
             return;
         }
 
@@ -541,6 +544,7 @@ public final class Char implements AnimatedMove {
         }
 
         newAvatar.show();
+        log.debug("{}: Showing new avatar: {}", this, newAvatar);
 
         Avatar oldAvatar = avatar;
         avatarId = newAvatarId;
@@ -725,6 +729,7 @@ public final class Char implements AnimatedMove {
      * Release the current avatar and free the resources.
      */
     private void releaseAvatar() {
+        log.debug("{}: Releasing the avatar.", this);
         Avatar localAvatar = avatar;
         avatar = null;
         avatarId = -1;
@@ -1053,19 +1058,15 @@ public final class Char implements AnimatedMove {
      * @param newDirection the new direction value
      */
     public void setDirection(@Nonnull Direction newDirection) {
-        if (direction != newDirection) {
-            direction = newDirection;
-            if (!move.isRunning()) {
-                updateAvatar();
-            }
+        log.debug("{}: Applying a new direction to the character: {}", this, newDirection);
+        direction = newDirection;
+        if (!move.isRunning()) {
+            updateAvatar();
         }
     }
 
     public boolean isAnimationAvailable(int animation) {
-        if (avatar != null) {
-            return avatar.getTemplate().getAvatarInfo().isAnimationAvailable(animation);
-        }
-        return false;
+        return (avatar != null) && avatar.getTemplate().getAvatarInfo().isAnimationAvailable(animation);
     }
 
     /**
@@ -1085,9 +1086,11 @@ public final class Char implements AnimatedMove {
             log.warn("{}: Received new animation {} while move was in progress.", this, newAnimation);
         }
         if (avatar == null) {
+            log.debug("{}: Starting a new animation is impossible. No avatar!", this);
             return; // avatar not ready, discard animation
         }
         if (!isAnimationAvailable(newAnimation)) {
+            log.debug("{}: Animation {} is not available.", this, animation);
             MapTile tile = World.getMap().getMapAt(getLocation());
             if (tile == null) {
                 return;
@@ -1277,6 +1280,7 @@ public final class Char implements AnimatedMove {
         if (charLocation.equals(newLoc)) {
             return;
         }
+        log.debug("{}: Setting character location to: {}", this, newLoc);
         charLocation.set(newLoc);
         elevation = World.getMap().getElevationAt(charLocation);
         updatePosition(-elevation);

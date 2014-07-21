@@ -538,6 +538,7 @@ public final class Player {
         updateLocation(newLoc);
         character.setLocation(newLoc);
         character.stopAnimation();
+        character.resetAnimation(true);
         World.getPlayer().getCombatHandler().standDown();
         World.getMapDisplay().setLocation(newLoc);
 
