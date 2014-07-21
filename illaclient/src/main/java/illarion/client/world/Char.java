@@ -1061,6 +1061,13 @@ public final class Char implements AnimatedMove {
         }
     }
 
+    public boolean isAnimationAvailable(int animation) {
+        if (avatar != null) {
+            return avatar.getTemplate().getAvatarInfo().isAnimationAvailable(animation);
+        }
+        return false;
+    }
+
     /**
      * Set and start a new animation for this character. The animation is shown and after its done the animation
      * handler
@@ -1080,7 +1087,7 @@ public final class Char implements AnimatedMove {
         if (avatar == null) {
             return; // avatar not ready, discard animation
         }
-        if (!avatar.getTemplate().getAvatarInfo().isAnimationAvailable(newAnimation)) {
+        if (!isAnimationAvailable(newAnimation)) {
             MapTile tile = World.getMap().getMapAt(getLocation());
             if (tile == null) {
                 return;

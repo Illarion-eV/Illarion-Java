@@ -24,6 +24,7 @@ import illarion.client.world.MapTile;
 import illarion.client.world.Player;
 import illarion.client.world.World;
 import illarion.client.world.characters.CharacterAttribute;
+import illarion.common.graphics.CharAnimations;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Direction;
 import illarion.common.types.Location;
@@ -306,6 +307,11 @@ public class Movement {
     @Nonnull
     Player getPlayer() {
         return player;
+    }
+
+    public boolean isMovementModePossible(@Nonnull CharMovementMode mode) {
+        return (mode != CharMovementMode.Run) ||
+                World.getPlayer().getCharacter().isAnimationAvailable(CharAnimations.RUN);
     }
 
     @Nonnull

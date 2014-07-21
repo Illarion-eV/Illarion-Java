@@ -121,7 +121,11 @@ class SimpleKeyboardMovementHandler extends AbstractMovementHandler implements K
             return CharMovementMode.Walk;
         }
 
-        return getMovement().getDefaultMovementMode();
+        CharMovementMode mode = getMovement().getDefaultMovementMode();
+        if (getMovement().isMovementModePossible(mode)) {
+            return mode;
+        }
+        return CharMovementMode.Walk;
     }
 
     @Override

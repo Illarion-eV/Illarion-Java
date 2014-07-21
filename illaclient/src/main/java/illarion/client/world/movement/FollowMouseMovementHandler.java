@@ -151,7 +151,10 @@ class FollowMouseMovementHandler extends AbstractMovementHandler implements Mous
         } else if (distance < 30) {
             mode = CharMovementMode.None;
         }
-        return mode;
+        if (getMovement().isMovementModePossible(mode)) {
+            return mode;
+        }
+        return CharMovementMode.Walk;
     }
 
     @EventTopicSubscriber(topic = "mouseFollowAutoRun")

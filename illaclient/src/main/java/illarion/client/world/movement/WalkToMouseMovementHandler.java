@@ -107,7 +107,7 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
         }
 
         if (!mouseFollowAutoRun) {
-            return getMovement().getDefaultMovementMode();
+            return super.getMovementMode();
         }
 
         MapDimensions mapDimensions = MapDimensions.getInstance();
@@ -121,7 +121,10 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
         } else if (distance < 30) {
             mode = CharMovementMode.None;
         }
-        return mode;
+        if (getMovement().isMovementModePossible(mode)) {
+            return mode;
+        }
+        return CharMovementMode.Walk;
     }
 
     @Override
