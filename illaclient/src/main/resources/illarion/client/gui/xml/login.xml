@@ -22,9 +22,9 @@
     <resourceBundle id="login-bundle" filename="login"/>
 
     <screen id="login" controller="illarion.client.gui.controller.LoginScreenController">
-        <layer childLayout="vertical">
+        <layer childLayout="vertical" visibleToMouse="false">
             <effect>
-                <onStartScreen name="fade" start="#00" end="#ff" length="3000" inherit="true"/>
+                <onStartScreen name="fade" start="#00" end="#ff" length="500" inherit="true"/>
                 <onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true"/>
             </effect>
 
