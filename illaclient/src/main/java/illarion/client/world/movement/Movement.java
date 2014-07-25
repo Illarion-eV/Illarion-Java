@@ -216,7 +216,6 @@ public class Movement {
         MovementHandler currentHandler = activeHandler;
         if (currentHandler != null) {
             currentHandler.disengage(false);
-            currentHandler.assumeControl();
         }
     }
 
