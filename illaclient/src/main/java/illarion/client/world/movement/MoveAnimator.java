@@ -111,6 +111,10 @@ class MoveAnimator implements AnimatedMove {
             moveAnimation.stop();
             parentPlayer.setLocation(allowedTarget);
         }
+        if (!reportingDone) {
+            reportingDone = true;
+            movement.reportReadyForNextStep();
+        }
     }
 
     /**
@@ -257,6 +261,10 @@ class MoveAnimator implements AnimatedMove {
 
     @Override
     public void animationFinished(boolean finished) {
+        if (!reportingDone) {
+            reportingDone = true;
+            movement.reportReadyForNextStep();
+        }
         executeNext();
     }
 }
