@@ -111,10 +111,7 @@ class MoveAnimator implements AnimatedMove {
             moveAnimation.stop();
             parentPlayer.setLocation(allowedTarget);
         }
-        if (!reportingDone) {
-            reportingDone = true;
-            movement.reportReadyForNextStep();
-        }
+        movement.reportReadyForNextStep();
     }
 
     /**

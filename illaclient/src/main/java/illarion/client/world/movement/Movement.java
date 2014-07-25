@@ -148,7 +148,9 @@ public class Movement {
     }
 
     public void executeServerRespMove(@Nonnull CharMovementMode mode, @Nonnull Location target, int duration) {
+        log.debug("Received response from the server! Mode: {} Target: {} Duration {}ms", mode, target, duration);
         if (playerLocation.equals(target)) {
+            log.debug("Current location and target location match. Cancel any pending move.");
             animator.cancelMove(target);
         } else {
             // confirm a move that was started early
@@ -185,16 +187,11 @@ public class Movement {
                         movementDuration += getMovementDuration(targetTile.getMovementCost(), mods,
                                                                 direction.isDiagonal(), true);
                     } else {
-                        reportReadyForNextStep();
                         return;
                     }
                 }
                 animator.scheduleEarlyMove(mode, target, (movementDuration / 100) * 100);
-            } else {
-                reportReadyForNextStep();
             }
-        } else {
-            reportReadyForNextStep();
         }
     }
 
@@ -248,6 +245,7 @@ public class Movement {
      * Notify the handler that everything is ready to request the next step from the server.
      */
     void reportReadyForNextStep() {
+        log.debug("Reported ready for the next step.");
         stepInProgress = false;
         update();
     }
