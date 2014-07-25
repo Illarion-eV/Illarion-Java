@@ -185,11 +185,16 @@ public class Movement {
                         movementDuration += getMovementDuration(targetTile.getMovementCost(), mods,
                                                                 direction.isDiagonal(), true);
                     } else {
+                        reportReadyForNextStep();
                         return;
                     }
                 }
                 animator.scheduleEarlyMove(mode, target, (movementDuration / 100) * 100);
+            } else {
+                reportReadyForNextStep();
             }
+        } else {
+            reportReadyForNextStep();
         }
     }
 
