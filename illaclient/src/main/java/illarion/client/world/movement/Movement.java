@@ -147,6 +147,10 @@ public class Movement {
         animator.scheduleTurn(direction);
     }
 
+    private void scheduleEarlyTurn(@Nonnull Direction direction) {
+        animator.scheduleTurn(direction);
+    }
+
     public void executeServerRespMove(@Nonnull CharMovementMode mode, @Nonnull Location target, int duration) {
         log.debug("Received response from the server! Mode: {} Target: {} Duration {}ms", mode, target, duration);
         if (playerLocation.equals(target)) {
@@ -157,10 +161,6 @@ public class Movement {
             animator.confirmMove(mode, target, duration);
         }
         playerLocation.set(target);
-    }
-
-    private void scheduleEarlyTurn(@Nonnull Direction direction) {
-        animator.scheduleTurn(direction);
     }
 
     private static final int MAX_WALK_AGI = 20;

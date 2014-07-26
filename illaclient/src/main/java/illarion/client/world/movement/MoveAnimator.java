@@ -67,8 +67,6 @@ class MoveAnimator implements AnimatedMove {
     @Nullable
     private MovingTask confirmedMoveTask;
 
-
-
     public MoveAnimator(@Nonnull Movement movement, @Nonnull MoveAnimation moveAnimation) {
         this.movement = movement;
         this.moveAnimation = moveAnimation;

@@ -965,7 +965,7 @@ public final class Char implements AnimatedMove {
                     log.info("{}: Scheduled move for later execution.", this);
                     return;
                 } else {
-                    log.info("{}: Can't delay the move. Spot is already taken. Executing now.", this);
+                    log.warn("{}: Can't delay the move. Spot is already taken. Executing now.", this);
                 }
             }
         }
