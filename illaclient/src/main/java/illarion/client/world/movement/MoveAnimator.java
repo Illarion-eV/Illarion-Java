@@ -256,10 +256,12 @@ class MoveAnimator implements AnimatedMove {
 
     @Override
     public void animationFinished(boolean finished) {
-        if (!reportingDone && (uncomfirmedMoveTask == null)) {
-            reportingDone = true;
-            movement.reportReadyForNextStep();
+        if (uncomfirmedMoveTask == null) {
+            if (!reportingDone) {
+                reportingDone = true;
+                movement.reportReadyForNextStep();
+            }
+            executeNext();
         }
-        executeNext();
     }
 }
