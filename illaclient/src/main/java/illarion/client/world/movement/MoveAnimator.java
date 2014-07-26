@@ -239,7 +239,7 @@ class MoveAnimator implements AnimatedMove {
 
     @Override
     public void setPosition(int posX, int posY, int posZ) {
-        if (!reportingDone && (uncomfirmedMoveTask == null)) {
+        if (!reportingDone) {
             int remaining = moveAnimation.timeRemaining();
             if (remaining < 20) {
                 log.debug(marker, "Requesting next move {}ms before the animation finishes.", remaining);
@@ -256,12 +256,10 @@ class MoveAnimator implements AnimatedMove {
 
     @Override
     public void animationFinished(boolean finished) {
-        if (uncomfirmedMoveTask == null) {
-            if (!reportingDone) {
-                reportingDone = true;
-                movement.reportReadyForNextStep();
-            }
-            executeNext();
+        if (!reportingDone) {
+            reportingDone = true;
+            movement.reportReadyForNextStep();
         }
+        executeNext();
     }
 }
