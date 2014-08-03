@@ -90,6 +90,10 @@ public final class CrashData implements Externalizable {
     @Nonnull
     private String mantisProject;
 
+    /* Used only for deserialization. */
+    public CrashData() {
+    }
+
     /**
      * The constructor that collects all data for such a crash data object.
      *

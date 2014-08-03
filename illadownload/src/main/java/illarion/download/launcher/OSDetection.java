@@ -86,7 +86,7 @@ public final class OSDetection {
      * The private constructor that generates the required values.
      */
     private OSDetection() {
-        final String osName = System.getProperty("os.name"); //$NON-NLS-1$
+        String osName = System.getProperty("os.name"); //$NON-NLS-1$
         if (osName.contains("Windows")) { //$NON-NLS-1$
             os = WINDOWS;
         } else if (osName.contains("Linux")) { //$NON-NLS-1$
@@ -96,18 +96,18 @@ public final class OSDetection {
         } else if (osName.contains("Mac OS X")) { //$NON-NLS-1$
             os = MACOSX;
         } else {
-            LOGGER.error("OS-Detection failed for: " + osName);
+            LOGGER.error("OS-Detection failed for: {}", osName);
             os = UNKNOWN;
         }
 
-        final String archName = System.getProperty("os.arch"); //$NON-NLS-1$
+        String archName = System.getProperty("os.arch"); //$NON-NLS-1$
         if (archName.contains("amd64") || archName.contains("x86_64")) { //$NON-NLS-1$
             arch = BIT64;
         } else if (archName.contains("i386") || archName.contains("i586") || archName.contains("i686") ||
                 archName.contains("x86")) { //$NON-NLS-1$
             arch = BIT32;
         } else {
-            LOGGER.error("Architecture-Detection failed for: " + archName);
+            LOGGER.error("Architecture-Detection failed for: {}", archName);
             arch = UNKNOWN;
         }
     }

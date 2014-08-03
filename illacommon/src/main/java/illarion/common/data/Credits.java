@@ -41,7 +41,8 @@ public final class Credits {
     /**
      * The singleton instance of this credits class.
      */
-    private static Credits instance;
+    @SuppressWarnings("RedundantFieldInitialization")
+    private static volatile Credits instance = null;
 
     /**
      * Get the singleton instance of the credits class.
@@ -71,32 +72,32 @@ public final class Credits {
         singlePosList = new ArrayList<>();
         multiPosList = new ArrayList<>();
 
-        final CreditsList projectManager = new CreditsList("Projektleiter", "Project Manager");
-        final CreditsList chiefContent = new CreditsList("Leitender Entwickler für Spielinhalte",
+        CreditsList projectManager = new CreditsList("Projektleiter", "Project Manager");
+        CreditsList chiefContent = new CreditsList("Leitender Entwickler für Spielinhalte",
                                                          "Chief Game Content Developer");
-        final CreditsList chiefClient = new CreditsList("Leitender Entwickler für den Client",
+        CreditsList chiefClient = new CreditsList("Leitender Entwickler für den Client",
                                                         "Chief Client Developer");
-        final CreditsList chiefGraphics = new CreditsList("Leitender Grafiker", "Chief Graphics Designer");
-        final CreditsList chiefMusic = new CreditsList("Original-Soundtrack", "Original Soundtrack");
-        final CreditsList chiefMap = new CreditsList("Leitender Gestalter für die Karte", "Chief Map Designer");
-        final CreditsList chiefServer = new CreditsList("Leitender Entwickler für den Server",
+        CreditsList chiefGraphics = new CreditsList("Leitender Grafiker", "Chief Graphics Designer");
+        CreditsList chiefMusic = new CreditsList("Original-Soundtrack", "Original Soundtrack");
+        CreditsList chiefMap = new CreditsList("Leitender Gestalter für die Karte", "Chief Map Designer");
+        CreditsList chiefServer = new CreditsList("Leitender Entwickler für den Server",
                                                         "Chief Server Developer");
-        final CreditsList presentedBy = new CreditsList("Präsentiert vom", "Presented by the");
+        CreditsList presentedBy = new CreditsList("Präsentiert vom", "Presented by the");
 
-        final CreditsList gameplay = new CreditsList("Spielmechanik", "Gameplay");
-        final CreditsList content = new CreditsList("Spielinhalte", "Game Content");
-        final CreditsList client = new CreditsList("Client");
-        final CreditsList graphics = new CreditsList("Grafiken", "Graphics");
-        final CreditsList maps = new CreditsList("Karten", "Maps");
-        final CreditsList website = new CreditsList("Website");
-        final CreditsList easyNPC = new CreditsList("easyNPC-Editor", "easyNPC Editor");
-        final CreditsList easyQuest = new CreditsList("easyQuest-Editor", "easyQuest Editor");
-        final CreditsList mapEditor = new CreditsList("Karten-Editor", "Map Editor");
-        final CreditsList server = new CreditsList("Server");
-        final CreditsList gameMaster = new CreditsList("Spielleiter", "Game Master");
-        final CreditsList communityManager = new CreditsList("Community-Manager", "Community Manager");
-        final CreditsList qualityAssurance = new CreditsList("Qualitätsprüfung", "Quality Assurance");
-        final CreditsList specialThanks = new CreditsList("Besonderen Dank", "Special Thanks");
+        CreditsList gameplay = new CreditsList("Spielmechanik", "Gameplay");
+        CreditsList content = new CreditsList("Spielinhalte", "Game Content");
+        CreditsList client = new CreditsList("Client");
+        CreditsList graphics = new CreditsList("Grafiken", "Graphics");
+        CreditsList maps = new CreditsList("Karten", "Maps");
+        CreditsList website = new CreditsList("Website");
+        CreditsList easyNPC = new CreditsList("easyNPC-Editor", "easyNPC Editor");
+        CreditsList easyQuest = new CreditsList("easyQuest-Editor", "easyQuest Editor");
+        CreditsList mapEditor = new CreditsList("Karten-Editor", "Map Editor");
+        CreditsList server = new CreditsList("Server");
+        CreditsList gameMaster = new CreditsList("Spielleiter", "Game Master");
+        CreditsList communityManager = new CreditsList("Community-Manager", "Community Manager");
+        CreditsList qualityAssurance = new CreditsList("Qualitätsprüfung", "Quality Assurance");
+        CreditsList specialThanks = new CreditsList("Besonderen Dank", "Special Thanks");
 
         CreditsPerson
                 .create("Andreas", "Vilarion", "Grob", projectManager, chiefServer, gameplay, client, website, easyNPC,
@@ -203,33 +204,5 @@ public final class Credits {
     @Nonnull
     public Iterator<CreditsList> getMultiLists() {
         return multiPosList.iterator();
-    }
-
-    public static void main(final String[] args) {
-        System.out.println("CREDITS");
-        System.out.println();
-
-        final Credits credits = new Credits();
-        final Iterator<CreditsList> singleCredits = credits.getSingleLists();
-        while (singleCredits.hasNext()) {
-            final CreditsList list = singleCredits.next();
-            System.out.println(list.getNameEnglish());
-            for (final CreditsPerson person : list) {
-                System.out.print("\t");
-                System.out.println(person.getName());
-            }
-            System.out.println();
-        }
-
-        final Iterator<CreditsList> multiCredits = credits.getMultiLists();
-        while (multiCredits.hasNext()) {
-            final CreditsList list = multiCredits.next();
-            System.out.println(list.getNameEnglish());
-            for (final CreditsPerson person : list) {
-                System.out.print("\t");
-                System.out.println(person.getName());
-            }
-            System.out.println();
-        }
     }
 }

@@ -233,7 +233,7 @@ public final class Login {
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             conn.setRequestProperty("charset", "utf-8");
-            conn.setRequestProperty("Content-Length", Integer.toString(query.getBytes().length));
+            conn.setRequestProperty("Content-Length", Integer.toString(query.getBytes("UTF-8").length));
             conn.setUseCaches(false);
             conn.setSSLSocketFactory(IllarionSSLSocketFactory.getFactory());
 

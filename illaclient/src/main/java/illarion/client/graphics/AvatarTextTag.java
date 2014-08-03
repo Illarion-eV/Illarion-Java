@@ -79,11 +79,6 @@ public final class AvatarTextTag {
     private String charName;
 
     /**
-     * This flag is set {@code true} in case the tag got changed.
-     */
-    private boolean dirty;
-
-    /**
      * This flag is set {@code true} in case the dimensions got changed.
      */
     private boolean dimensionsDirty;
@@ -135,14 +130,13 @@ public final class AvatarTextTag {
      * @param x the x coordinate of the location on the screen
      * @param y the y coordinate of the location on the screen
      */
-    public void setDisplayLocation(final int x, final int y) {
+    public void setDisplayLocation(int x, int y) {
         if ((displayX == x) && (displayY == y)) {
             return;
         }
 
         displayX = x;
         displayY = y;
-        dirty = true;
     }
 
     /**
@@ -150,13 +144,12 @@ public final class AvatarTextTag {
      *
      * @param newColor the color that is used to render the characterName tag.
      */
-    public void setCharNameColor(@Nullable final Color newColor) {
+    public void setCharNameColor(@Nullable Color newColor) {
         if ((newColor == null) || newColor.equals(charNameColor)) {
             return;
         }
 
         charNameColor = newColor;
-        dirty = true;
     }
 
     /**
@@ -164,13 +157,12 @@ public final class AvatarTextTag {
      *
      * @param newColor the color that is used to render the characterName tag.
      */
-    public void setHealthStateColor(@Nullable final Color newColor) {
+    public void setHealthStateColor(@Nullable Color newColor) {
         if ((newColor == null) || newColor.equals(healthStateColor)) {
             return;
         }
 
         healthStateColor = newColor;
-        dirty = true;
     }
 
     /**
@@ -178,13 +170,12 @@ public final class AvatarTextTag {
      *
      * @param avaHeight set the height of the avatar this tag is displayed upon
      */
-    public void setAvatarHeight(final int avaHeight) {
+    public void setAvatarHeight(int avaHeight) {
         if (avatarHeight == avaHeight) {
             return;
         }
 
         avatarHeight = avaHeight;
-        dirty = true;
     }
 
     /**
@@ -192,7 +183,7 @@ public final class AvatarTextTag {
      *
      * @param newText the new name of the character that is displayed from now on
      */
-    public void setCharacterName(@Nonnull final String newText) {
+    public void setCharacterName(@Nonnull String newText) {
         if (newText.equals(charName)) {
             return;
         }
@@ -206,7 +197,7 @@ public final class AvatarTextTag {
      *
      * @param newText the new health state text
      */
-    public void setHealthState(@Nullable final String newText) {
+    public void setHealthState(@Nullable String newText) {
         if ((newText == null) && (healthState == null)) {
             return;
         }
@@ -223,8 +214,8 @@ public final class AvatarTextTag {
             return;
         }
 
-        final int nameWidth;
-        final int nameHeight;
+        int nameWidth;
+        int nameHeight;
         if (charName == null) {
             nameWidth = 0;
             nameHeight = 0;
@@ -233,8 +224,8 @@ public final class AvatarTextTag {
             nameHeight = font.getLineHeight();
         }
 
-        final int healthWidth;
-        final int healthHeight;
+        int healthWidth;
+        int healthHeight;
         if (healthState == null) {
             healthWidth = 0;
             healthHeight = 0;
@@ -256,8 +247,6 @@ public final class AvatarTextTag {
         healthStateOffsetY = nameHeight;
 
         displayRect.set(displayX - (getWidth() / 2), displayY - avatarHeight - getHeight() - 5, width, height);
-
-        dirty = true;
     }
 
     private int charNameOffsetX;
@@ -265,7 +254,7 @@ public final class AvatarTextTag {
     private int healthStateOffsetX;
     private int healthStateOffsetY;
 
-    public boolean render(@Nonnull final Graphics g) {
+    public boolean render(@Nonnull Graphics g) {
         if ((charName == null) && (healthState == null)) {
             return true;
         }
@@ -297,7 +286,7 @@ public final class AvatarTextTag {
         return displayRect;
     }
 
-    public void update(@Nonnull final GameContainer container, final int delta) {
+    public void update(@Nonnull GameContainer container, int delta) {
         calculateTextLocations();
     }
 }

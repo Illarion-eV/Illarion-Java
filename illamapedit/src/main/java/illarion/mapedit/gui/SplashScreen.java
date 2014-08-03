@@ -29,29 +29,41 @@ import java.io.IOException;
  * @author Tim
  */
 public class SplashScreen extends JWindow {
-    private static final SplashScreen INSTANCE = new SplashScreen();
     private static final Logger LOGGER = LoggerFactory.getLogger(SplashScreen.class);
     private static final Color TRANSPARENT = new Color(0, 0, 0, 0);
     public static final int HEIGHT_ADJUSTMENT = 30;
     private static final int FONT_SIZE = 20;
     public static final Font FONT = new Font("Arial", Font.BOLD, FONT_SIZE);
+    private static final SplashScreen INSTANCE = new SplashScreen();
     @Nullable
     private final Image background;
-    private Image img;
+    @Nullable
+    private transient Image img;
     private String message;
 
     private SplashScreen() {
+        img = null;
         getContentPane().setBackground(TRANSPARENT);
-        try {
-            img = ImageIO.read(SplashScreen.class.getResource("/mapeditsplash.png"));
-        } catch (IOException e) {
-            LOGGER.warn("Can't read splash image", e);
+        Image img = getImage();
+        if (img != null) {
+            setSize(img.getWidth(null), img.getHeight(null) + HEIGHT_ADJUSTMENT);
+            setLocationRelativeTo(null);
+        } else {
+            LOGGER.warn("Can't read splash image!");
         }
-        setSize(img.getWidth(null), img.getHeight(null) + HEIGHT_ADJUSTMENT);
-        final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setLocationRelativeTo(null);
         background = makeScreenShot();
         message = "Starting..";
+    }
+
+    @Nullable
+    private Image getImage() {
+        if (img == null) {
+            try {
+                img = ImageIO.read(SplashScreen.class.getResource("/mapeditsplash.png"));
+            } catch (IOException ignored) {
+            }
+        }
+        return img;
     }
 
     @Nullable
@@ -70,7 +82,7 @@ public class SplashScreen extends JWindow {
     }
 
     @Override
-    public void paint(@Nonnull final Graphics g) {
+    public void paint(@Nonnull Graphics g) {
         if (background != null) {
             g.drawImage(background, 0, 0, null);
         }
@@ -85,7 +97,7 @@ public class SplashScreen extends JWindow {
         }
     }
 
-    public void setMessage(final String string) {
+    public void setMessage(String string) {
         message = string;
         repaint();
     }

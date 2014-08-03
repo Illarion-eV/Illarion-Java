@@ -39,7 +39,8 @@ public class IllarionSSLSocketFactory {
     /**
      * The singleton instance of this factory.
      */
-    private static final IllarionSSLSocketFactory INSTANCE = new IllarionSSLSocketFactory();
+    @SuppressWarnings("RedundantFieldInitialization")
+    private static volatile IllarionSSLSocketFactory instance = null;
 
     /**
      * Get the factory itself.
@@ -48,7 +49,14 @@ public class IllarionSSLSocketFactory {
      */
     @Nullable
     public static SSLSocketFactory getFactory() {
-        return INSTANCE.sslFactory;
+        if (instance == null) {
+            synchronized (IllarionSSLSocketFactory.class) {
+                if (instance == null) {
+                    instance = new IllarionSSLSocketFactory();
+                }
+            }
+        }
+        return instance.sslFactory;
     }
 
     /**
@@ -64,13 +72,13 @@ public class IllarionSSLSocketFactory {
 
     public IllarionSSLSocketFactory() {
         try {
-            final KeyStore keyStore = KeyStore.getInstance("JKS");
+            KeyStore keyStore = KeyStore.getInstance("JKS");
 
             InputStream keyStoreInput = null;
             try {
                 keyStoreInput = Thread.currentThread().getContextClassLoader().getResourceAsStream("keystore.jks");
                 keyStore.load(keyStoreInput, "jcFv8XQxRN".toCharArray());
-            } catch (@Nonnull final CertificateException | IOException | NoSuchAlgorithmException e) {
+            } catch (@Nonnull CertificateException | IOException | NoSuchAlgorithmException e) {
                 LOGGER.error("Failed to load keystore.", e);
             } finally {
                 if (keyStoreInput != null) {
@@ -78,21 +86,21 @@ public class IllarionSSLSocketFactory {
                 }
             }
 
-            final KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
             kmf.init(keyStore, "jcFv8XQxRN".toCharArray());
-            final TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             tmf.init(keyStore);
 
-            final SSLContext ctx = SSLContext.getInstance("TLS");
+            SSLContext ctx = SSLContext.getInstance("TLS");
             ctx.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
             sslFactory = ctx.getSocketFactory();
-        } catch (@Nonnull final KeyStoreException e) {
+        } catch (@Nonnull KeyStoreException e) {
             LOGGER.error("Failed to read keystore.", e);
-        } catch (@Nonnull final KeyManagementException e) {
+        } catch (@Nonnull KeyManagementException e) {
             LOGGER.error("Failed to use keystore.", e);
-        } catch (@Nonnull final NoSuchAlgorithmException e) {
+        } catch (@Nonnull NoSuchAlgorithmException e) {
             LOGGER.error("Failed to decode keystore.", e);
-        } catch (@Nonnull final IOException e) {
+        } catch (@Nonnull IOException e) {
             LOGGER.error("Failed to load keystore.", e);
         } catch (UnrecoverableKeyException e) {
             LOGGER.error("Failed to open keystore.", e);

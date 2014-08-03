@@ -26,28 +26,29 @@ import java.text.NumberFormat;
 public class IntegerParameter extends JFormattedTextField implements Parameter {
 
     public IntegerParameter() {
-        super();
         NumberFormat format = NumberFormat.getIntegerInstance();
         format.setGroupingUsed(false);
         NumberFormatter formatter = new NumberFormatter(format);
         DefaultFormatterFactory factory = new DefaultFormatterFactory(formatter);
         setFormatterFactory(factory);
         setHorizontalAlignment(JFormattedTextField.RIGHT);
-        setParameter(new Long(0));
+        setParameter(Long.valueOf(0));
     }
 
+    @Override
     public void setParameter(@Nullable Object parameter) {
         if (parameter != null) {
             if (parameter instanceof Long) {
                 setValue(parameter);
             } else {
-                setValue(new Long((String) parameter));
+                setValue(Long.valueOf((String) parameter));
             }
         } else {
-            setValue((long) 0);
+            setValue(0L);
         }
     }
 
+    @Override
     @Nonnull
     public Object getParameter() {
         return getValue();

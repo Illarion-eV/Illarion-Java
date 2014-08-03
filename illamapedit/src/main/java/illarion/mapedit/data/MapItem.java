@@ -56,7 +56,7 @@ public class MapItem {
      * @param itemData The data of this item.
      * @param qualityDurability The qualityDurability of this item.
      */
-    public MapItem(final int itemId, @Nullable final List<String> itemData, final int qualityDurability) {
+    public MapItem(int itemId, @Nullable List<String> itemData, int qualityDurability) {
         this.itemId = itemId;
         setItemData(itemData);
         this.qualityDurability = qualityDurability;
@@ -67,11 +67,11 @@ public class MapItem {
      *
      * @param old the old instance.
      */
-    public MapItem(@Nonnull final MapItem old) {
+    public MapItem(@Nonnull MapItem old) {
         this(old.itemId, old.itemData, old.qualityDurability);
     }
 
-    private void setItemData(@Nullable final List<String> data) {
+    private void setItemData(@Nullable List<String> data) {
         if (data == null || data.isEmpty()) {
             return;
         }
@@ -83,7 +83,7 @@ public class MapItem {
      *
      * @param itemId The item id.
      */
-    public MapItem(final int itemId) {
+    public MapItem(int itemId) {
         this(itemId, new ArrayList<String>(), QUALITY_DEFAULT);
     }
 
@@ -142,7 +142,7 @@ public class MapItem {
      * @param durability the durability to set
      */
     public void setDurability(int durability) {
-        qualityDurability = (getQuality() * 100 + durability);
+        qualityDurability = (getQuality() * 100) + durability;
     }
 
     /**
@@ -159,36 +159,29 @@ public class MapItem {
         return (itemData == null) || itemData.isEmpty();
     }
 
-    public void addItemData(final String data) {
+    public void addItemData(String data) {
         if (itemData == null) {
             itemData = new ArrayList<>();
         }
         itemData.add(data);
     }
 
-    public void addItemData(final int index, final String data) {
+    public void addItemData(int index, String data) {
         if (itemData == null) {
             itemData = new ArrayList<>();
         }
         itemData.set(index, data);
     }
 
-    public void removeItemData(final int index) {
+    public void removeItemData(int index) {
         if (itemData != null) {
             itemData.remove(index);
         }
     }
 
     @Override
-    public boolean equals(@Nullable final Object obj) {
-        if (super.equals(obj)) {
-            return true;
-        }
-
-        if (obj instanceof MapItem) {
-            return ((MapItem) obj).itemId == itemId;
-        }
-        return false;
+    public boolean equals(@Nullable Object obj) {
+        return super.equals(obj) || ((obj instanceof MapItem) && (((MapItem) obj).itemId == itemId));
     }
 
     public boolean hasAnnotation() {
@@ -200,7 +193,7 @@ public class MapItem {
         return itemId;
     }
 
-    public void setAnnotation(final String annotation) {
+    public void setAnnotation(String annotation) {
         this.annotation = annotation;
     }
 
@@ -213,7 +206,7 @@ public class MapItem {
     @Nonnull
     @Override
     public String toString() {
-        final TextBuilder builder = new TextBuilder();
+        TextBuilder builder = new TextBuilder();
         builder.append(itemId).append(';');
         builder.append(qualityDurability);
 
@@ -224,17 +217,17 @@ public class MapItem {
         return builder.toString();
     }
 
-    public static String join(@Nonnull final List<String> itemData, final String joinWith) {
-        String retVal = "";
+    public static String join(@Nonnull Iterable<String> itemData, String joinWith) {
+        StringBuilder retVal = new StringBuilder();
         boolean firstRun = true;
-        for (final String s : itemData) {
+        for (String s : itemData) {
             if (firstRun) {
                 firstRun = false;
             } else {
-                retVal += joinWith;
+                retVal.append(joinWith);
             }
-            retVal += s;
+            retVal.append(s);
         }
-        return retVal;
+        return retVal.toString();
     }
 }

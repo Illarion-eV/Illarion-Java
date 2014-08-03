@@ -16,16 +16,20 @@
 package illarion.download.cleanup;
 
 import javax.annotation.Nonnull;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
+import java.util.regex.Pattern;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class VersionComparator implements Comparator<Path> {
+class VersionComparator implements Comparator<Path>, Serializable {
+    private static final Pattern VERSION_SPLIT_PATTERN = Pattern.compile("\\.");
+
     @Override
-    public int compare(@Nonnull final Path file1, @Nonnull final Path file2) {
+    public int compare(@Nonnull Path file1, @Nonnull Path file2) {
         String version1;
         String version2;
         if (Files.isDirectory(file1)) {
@@ -46,8 +50,8 @@ class VersionComparator implements Comparator<Path> {
             }
         }
 
-        final boolean snapshot1;
-        final boolean snapshot2;
+        boolean snapshot1;
+        boolean snapshot2;
         if (version1.endsWith("-SNAPSHOT")) {
             snapshot1 = true;
             version1 = version1.replace("-SNAPSHOT", "");
@@ -61,21 +65,21 @@ class VersionComparator implements Comparator<Path> {
             snapshot2 = false;
         }
 
-        final String[] version1Parts = version1.split("\\.");
-        final String[] version2Parts = version2.split("\\.");
+        String[] version1Parts = VERSION_SPLIT_PATTERN.split(version1);
+        String[] version2Parts = VERSION_SPLIT_PATTERN.split(version2);
 
-        final int count = Math.min(version1Parts.length, version2Parts.length);
+        int count = Math.min(version1Parts.length, version2Parts.length);
         for (int i = 0; i < count; i++) {
             try {
-                final int value1 = Integer.valueOf(version1Parts[i]);
-                final int value2 = Integer.valueOf(version2Parts[i]);
-                final int compareResult = Integer.compare(value1, value2);
+                int value1 = Integer.parseInt(version1Parts[i]);
+                int value2 = Integer.parseInt(version2Parts[i]);
+                int compareResult = Integer.compare(value1, value2);
                 if (compareResult != 0) {
                     return compareResult;
                 }
             } catch (NumberFormatException ignored) {
             }
-            final int compareResult = version1Parts[i].compareTo(version2Parts[i]);
+            int compareResult = version1Parts[i].compareTo(version2Parts[i]);
             if (compareResult != 0) {
                 return compareResult;
             }
@@ -83,7 +87,8 @@ class VersionComparator implements Comparator<Path> {
 
         if (snapshot1 && !snapshot2) {
             return 1;
-        } else if (!snapshot1 && snapshot2) {
+        }
+        if (!snapshot1 && snapshot2) {
             return -1;
         }
         return 0;
