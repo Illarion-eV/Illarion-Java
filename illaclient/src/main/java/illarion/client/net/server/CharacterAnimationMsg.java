@@ -17,10 +17,12 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
+import illarion.client.util.UpdateTask;
 import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.CharacterId;
+import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -66,12 +68,17 @@ public final class CharacterAnimationMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        Char ch = World.getPeople().getCharacter(charId);
+        final Char ch = World.getPeople().getCharacter(charId);
         if (ch == null) {
             // Update for illegal character
             return true;
         }
-        ch.startAnimation(animationId, Char.DEFAULT_ANIMATION_SPEED);
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
+            @Override
+            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+                ch.startAnimation(animationId, Char.DEFAULT_ANIMATION_SPEED);
+            }
+        });
         return true;
     }
 
