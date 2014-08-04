@@ -1011,9 +1011,9 @@ public final class Char implements AnimatedMove {
             if ((charLocation.getDistance(tempLoc) <= range) && (duration > 0) && (dir != null) &&
                     (mode != CharMovementMode.Push)) {
                 if (mode == CharMovementMode.Walk) {
-                    startAnimation(CharAnimations.WALK, duration);
+                    startAnimation(CharAnimations.WALK, duration, true, dir.isDiagonal() ? FastMath.sqrt(2.f) : 1.f);
                 } else if (mode == CharMovementMode.Run) {
-                    startAnimation(CharAnimations.RUN, duration);
+                    startAnimation(CharAnimations.RUN, duration, true, dir.isDiagonal() ? FastMath.sqrt(2.f) : 1.f);
                 }
                 move.start(tempLoc.getDcX() - charLocation.getDcX(),
                            tempLoc.getDcY() - fromElevation - charLocation.getDcY(), 0, 0, -elevation, 0, duration);
@@ -1078,6 +1078,18 @@ public final class Char implements AnimatedMove {
      * @param duration the duration of the animation in milliseconds
      */
     public void startAnimation(int newAnimation, int duration) {
+        startAnimation(newAnimation, duration, false, 1.f);
+    }
+
+    /**
+     * Set and start a new animation for this character. The animation is shown and after its done the animation
+     * handler
+     * returns to the normal state.
+     *
+     * @param newAnimation the ID of the new animation
+     * @param duration the duration of the animation in milliseconds
+     */
+    private void startAnimation(int newAnimation, int duration, boolean shiftAnimation, float length) {
         if (removedCharacter) {
             log.warn("Trying to start a animation of a removed character.");
             return;
@@ -1114,7 +1126,7 @@ public final class Char implements AnimatedMove {
         animation = newAnimation;
         log.debug("{}: Starting new animation: {} for {}ms", this, animation, duration);
         updateAvatar();
-        avatar.animate(duration, false);
+        avatar.animate(duration, false, shiftAnimation, length);
     }
 
     /**

@@ -198,6 +198,17 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
      * forever
      */
     public void animate(int duration, boolean loop) {
+        animate(duration, loop, false, 1.f);
+    }
+
+    /**
+     * Start a animation for this avatar.
+     *
+     * @param duration the duration of the animation in milliseconds
+     * @param loop true in case the animation shall never stop and rather run
+     * forever
+     */
+    public void animate(int duration, boolean loop, boolean expandStorybook, float length) {
         if (isMarkedAsRemoved()) {
             LOGGER.warn("Animating a removed avatar is illegal.");
             return;
@@ -206,6 +217,11 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
             return;
         }
 
+        if (expandStorybook) {
+            animation.continueStoryboard(length);
+        } else {
+            animation.resetStoryboard();
+        }
         animation.setDuration(duration);
         if (loop) {
             animation.updateMode(FrameAnimation.Mode.Looped, FrameAnimation.Mode.Cyclic);
