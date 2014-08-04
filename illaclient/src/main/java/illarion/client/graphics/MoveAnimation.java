@@ -48,7 +48,7 @@ public class MoveAnimation extends AbstractAnimation<AnimatedMove> {
         }
 
         // calc values
-        float animationPos = animationProgress();
+        float animationPos = getStoryboardProgress(false);
         int x = srcX + Math.round(animationPos * (dstX - srcX));
         int y = srcY + Math.round(animationPos * (dstY - srcY));
         int z = srcZ + Math.round(animationPos * (dstZ - srcZ));

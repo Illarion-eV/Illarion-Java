@@ -147,7 +147,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
 
         if (template.getFrames() > 1) {
             animation = new FrameAnimation(this);
-            animation.setup(template.getFrames(), template.getStillFrame(), 150, 0);
+            animation.setup(template.getFrames(), template.getStillFrame(), 150);
         } else {
             animation = null;
         }
@@ -208,9 +208,9 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
 
         animation.setDuration(duration);
         if (loop) {
-            animation.updateMode(FrameAnimation.LOOPED | FrameAnimation.CYCLIC);
+            animation.updateMode(FrameAnimation.Mode.Looped, FrameAnimation.Mode.Cyclic);
         } else {
-            animation.updateMode(FrameAnimation.CYCLIC);
+            animation.updateMode(FrameAnimation.Mode.Cyclic);
         }
         animation.restart();
     }

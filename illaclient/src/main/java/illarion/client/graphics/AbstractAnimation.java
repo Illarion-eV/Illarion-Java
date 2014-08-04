@@ -65,6 +65,9 @@ abstract class AbstractAnimation<T extends Animated> {
     @Nonnull
     private final List<T> targets;
 
+    private float storyboardStart;
+    private float storyboardEnd;
+
     /**
      * The constructor for a new animation. It does not start the animation
      * right away it rather prepares the animation and takes the first animation
@@ -79,6 +82,8 @@ abstract class AbstractAnimation<T extends Animated> {
         if (firstTarget != null) {
             targets.add(firstTarget);
         }
+        storyboardStart = 0.f;
+        storyboardEnd = 1.f;
     }
 
     /**
@@ -135,6 +140,29 @@ abstract class AbstractAnimation<T extends Animated> {
      */
     public final float animationProgress() {
         return (float) currentTime / duration;
+    }
+
+    protected final float getStoryboardProgress(boolean wrapped) {
+        float animationProgress = animationProgress();
+        float storyboardSpan = storyboardEnd - storyboardStart;
+        float unwrappedStoryboard = (storyboardSpan * animationProgress) + storyboardStart;
+        if (wrapped) {
+            return unwrappedStoryboard % 1.f;
+        }
+        return unwrappedStoryboard;
+    }
+
+    public final void setStoryboard(float start, float end) {
+        storyboardStart = start;
+        storyboardEnd = end;
+    }
+
+    public final void continueStoryboard(float length) {
+        setStoryboard(storyboardEnd, storyboardEnd + length);
+    }
+
+    public final void resetStoryboard() {
+        setStoryboard(0.f, 1.f);
     }
 
     /**

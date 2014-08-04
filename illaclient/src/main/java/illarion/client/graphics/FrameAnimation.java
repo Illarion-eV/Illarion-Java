@@ -17,6 +17,8 @@ package illarion.client.graphics;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.EnumSet;
 
 /**
  * A frame animation is a animation based on different images.
@@ -25,18 +27,22 @@ import javax.annotation.Nullable;
  * @author Nop
  */
 public final class FrameAnimation extends AbstractAnimation<AnimatedFrame> {
-    /**
-     * Run animation backwards.
-     */
-    public static final int BACKWARDS = 1;
-    /**
-     * End animation with same frame as it started.
-     */
-    public static final int CYCLIC = 4;
-    /**
-     * Keep running in an endless loop.
-     */
-    public static final int LOOPED = 2;
+    public enum Mode {
+        /**
+         * Run animation backwards.
+         */
+        Backwards,
+
+        /**
+         * End animation with same frame as it started.
+         */
+        Cyclic,
+
+        /**
+         * Keep running in an endless loop.
+         */
+        Looped
+    }
 
     /**
      * The amount of frames of this animation.
@@ -51,7 +57,7 @@ public final class FrameAnimation extends AbstractAnimation<AnimatedFrame> {
     /**
      * The mode the animation is running in.
      */
-    private int mode;
+    private final EnumSet<Mode> mode;
 
     /**
      * The first and the last frame of this animation.
@@ -61,7 +67,7 @@ public final class FrameAnimation extends AbstractAnimation<AnimatedFrame> {
     /**
      * Create a new frame animation with the default parameters. Note that a animation created by this can't be
      * started with {@link #restart()}. It first needs it running data set with {@link #start(int, int, int,
-     * int)} or {@link #setup(int, int, int, int)}.
+     * Mode...)} or {@link #setup(int, int, int, Mode...)}.
      */
     public FrameAnimation() {
         this(null);
@@ -71,12 +77,13 @@ public final class FrameAnimation extends AbstractAnimation<AnimatedFrame> {
      * Create a new frame animation with the default parameters and a first
      * target. Note that a animation created by this can't be started with
      * {@link #restart()}. It first needs it running data set with
-     * {@link #start(int, int, int, int)} or {@link #setup(int, int, int, int)}.
+     * {@link #start(int, int, int, Mode...)} or {@link #setup(int, int, int, Mode...)}.
      *
      * @param target the first target of the animation
      */
     public FrameAnimation(@Nullable AnimatedFrame target) {
         super(target);
+        mode = EnumSet.noneOf(Mode.class);
     }
 
     /**
@@ -126,7 +133,7 @@ public final class FrameAnimation extends AbstractAnimation<AnimatedFrame> {
         }
 
         // calculate frame
-        int frame = (int) (frames * animationProgress());
+        int frame = (int) (frames * getStoryboardProgress(true));
         // inverse animation
         if (isBackwards()) {
             frame *= -1;
@@ -184,10 +191,10 @@ public final class FrameAnimation extends AbstractAnimation<AnimatedFrame> {
      * @param duration The time needed for the animation
      * @param animMode the mode of the animation
      */
-    public void setup(int animFrames, int animStillFrame, int duration, int animMode) {
+    public void setup(int animFrames, int animStillFrame, int duration, Mode... animMode) {
         frames = animFrames;
         stillFrame = animStillFrame;
-        mode = animMode;
+        updateMode(animMode);
 
         setDuration(duration);
     }
@@ -200,7 +207,7 @@ public final class FrameAnimation extends AbstractAnimation<AnimatedFrame> {
      * @param duration The time needed for the animation
      * @param animMode the mode of the animation
      */
-    void start(int animFrames, int animStillFrame, int duration, int animMode) {
+    void start(int animFrames, int animStillFrame, int duration, Mode... animMode) {
         setup(animFrames, animStillFrame, duration, animMode);
 
         restart();
@@ -209,10 +216,11 @@ public final class FrameAnimation extends AbstractAnimation<AnimatedFrame> {
     /**
      * Change the mode the animation runs with.
      *
-     * @param newMode the new mode of the animation
+     * @param newModes the new mode of the animation
      */
-    void updateMode(int newMode) {
-        mode = newMode;
+    void updateMode(Mode... newModes) {
+        mode.clear();
+        Collections.addAll(mode, newModes);
     }
 
     /**
@@ -221,7 +229,7 @@ public final class FrameAnimation extends AbstractAnimation<AnimatedFrame> {
      * @return {@code true} in case the animation runs backwards
      */
     private boolean isBackwards() {
-        return (mode & BACKWARDS) != 0;
+        return mode.contains(Mode.Backwards);
     }
 
     /**
@@ -231,7 +239,7 @@ public final class FrameAnimation extends AbstractAnimation<AnimatedFrame> {
      * @return {@code true} in case the animation shall run cyclic
      */
     private boolean isCyclic() {
-        return (mode & CYCLIC) != 0;
+        return mode.contains(Mode.Cyclic);
     }
 
     /**
@@ -240,7 +248,7 @@ public final class FrameAnimation extends AbstractAnimation<AnimatedFrame> {
      * @return {@code true} if the animation runs in a loop
      */
     private boolean isLooped() {
-        return (mode & LOOPED) != 0;
+        return mode.contains(Mode.Looped);
     }
 
     /**

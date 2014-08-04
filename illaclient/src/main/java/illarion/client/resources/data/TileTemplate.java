@@ -58,7 +58,7 @@ public class TileTemplate extends AbstractAnimatedEntityTemplate {
         super(id, sprite, frames, 0, speed, null, 0);
         this.tileInfo = tileInfo;
         sharedAnimation = new FrameAnimation(null);
-        sharedAnimation.setup(frames, 0, speed * 150, FrameAnimation.LOOPED);
+        sharedAnimation.setup(frames, 0, speed * 150, FrameAnimation.Mode.Looped);
     }
 
     @Nonnull

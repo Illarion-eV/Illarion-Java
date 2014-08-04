@@ -98,7 +98,7 @@ public class ItemTemplate extends AbstractAnimatedEntityTemplate {
         this.paperdollingId = paperdollingId;
         this.paperdollingColor = paperdollingColor;
         sharedAnimation = new FrameAnimation();
-        sharedAnimation.setup(frames, 0, speed * 150, FrameAnimation.LOOPED);
+        sharedAnimation.setup(frames, 0, speed * 150, FrameAnimation.Mode.Looped);
         this.guiTexture = guiTexture;
     }
 
