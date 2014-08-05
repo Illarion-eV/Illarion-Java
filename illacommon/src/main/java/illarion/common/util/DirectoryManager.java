@@ -114,8 +114,13 @@ public final class DirectoryManager {
                 // not accessible
             }
         }
-        if (Files.isDirectory(firstChoice) && Files.isWritable(firstChoice) && Files.isReadable(firstChoice)) {
-            return firstChoice;
+        if (Files.isDirectory(firstChoice)) {
+            try {
+                Path newTempFile = Files.createTempFile(firstChoice, "writing", ".text");
+                Files.delete(newTempFile);
+                return firstChoice;
+            } catch (IOException ignored) {
+            }
         }
         return getDirectory(Directory.User).resolve("bin");
     }
