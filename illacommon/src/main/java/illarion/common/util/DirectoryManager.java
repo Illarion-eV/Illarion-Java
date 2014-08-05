@@ -131,8 +131,10 @@ public final class DirectoryManager {
                         Files.delete(temporaryTestFile);
                     }
                     Path newTempFile = Files.createFile(temporaryTestFile);
-                    Files.delete(newTempFile);
-                    binaryDirectory = firstChoice;
+                    //Files.delete(newTempFile);
+                    if (temporaryTestFile.equals(newTempFile)) {
+                        binaryDirectory = firstChoice;
+                    }
                 } catch (IOException ignored) {
                 }
             }
