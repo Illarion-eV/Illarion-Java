@@ -127,14 +127,14 @@ public final class DirectoryManager {
             if (Files.isDirectory(firstChoice)) {
                 try {
                     Path temporaryTestFile = firstChoice.resolve("writing.test");
-                    if (Files.exists(temporaryTestFile)) {
+                    if (Files.isRegularFile(temporaryTestFile)) {
                         Files.delete(temporaryTestFile);
                     }
-                    Path newTempFile = Files.createFile(temporaryTestFile);
-                    //Files.delete(newTempFile);
-                    if (temporaryTestFile.equals(newTempFile)) {
+                    Files.createFile(temporaryTestFile);
+                    if (Files.isRegularFile(temporaryTestFile)) {
                         binaryDirectory = firstChoice;
                     }
+                    Files.delete(temporaryTestFile);
                 } catch (IOException ignored) {
                 }
             }
