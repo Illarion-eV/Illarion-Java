@@ -151,7 +151,10 @@ if (hasTargetDistDir) {
     }
 }
 if (hasInstall4jTargetDir) {
-    task assembleForInstall4j(type: Copy) {
+    task cleanUpForInstall4j(type: Delete) {
+        delete new File(project.buildDir, 'install4j')
+    }
+    task assembleForInstall4j(type: Copy, dependsOn: 'cleanUpForInstall4j') {
         from new File(project.buildDir, "libs/${project.archivesBaseName}-${project.version}.jar")
         configurations.runtime.each { File file ->
             if (!file.absolutePath.startsWith(System.getProperty('java.home'))) {
