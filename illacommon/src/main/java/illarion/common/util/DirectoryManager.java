@@ -125,21 +125,41 @@ public final class DirectoryManager {
                 }
             }
             if (Files.isDirectory(firstChoice)) {
+                log.debug("Perform writing test for directory: {}", firstChoice.toAbsolutePath());
                 try {
                     Path temporaryTestFile = firstChoice.resolve("writing.test");
+                    log.debug("Test file will be: {}", temporaryTestFile.toAbsolutePath());
                     if (Files.isRegularFile(temporaryTestFile)) {
+                        log.debug("Detected a old instance of the test file. Trying to delete!");
                         Files.delete(temporaryTestFile);
                     }
-                    Files.createFile(temporaryTestFile);
+                    log.debug("Creating a new test file.");
+                    Path newCreatedFile = Files.createFile(temporaryTestFile);
+                    log.debug("Created the new file at: {}", newCreatedFile.toAbsolutePath());
                     if (Files.isRegularFile(temporaryTestFile)) {
+                        log.debug("Created file {} is valid. Path is good.", newCreatedFile.toAbsolutePath());
                         binaryDirectory = firstChoice;
                     }
-                    Files.delete(temporaryTestFile);
+                    log.debug("Deleting the test file.");
+                    Files.delete(newCreatedFile);
                 } catch (IOException ignored) {
+                    log.debug("Accessing the directory failed: {}", ignored.getMessage());
                 }
             }
             if (binaryDirectory == null) {
-                binaryDirectory = getDirectory(Directory.User).resolve("bin");
+                log.debug("Accessing the binary directory in the launcher directory failed. Using alternative.");
+                Path userDir = getDirectory(Directory.User);
+                log.debug("User directory assigned to: {}", userDir.toAbsolutePath());
+                binaryDirectory = userDir.resolve("bin");
+                log.debug("Setting binary path to: {}", binaryDirectory);
+                assert binaryDirectory != null;
+                if (!Files.exists(binaryDirectory)) {
+                    try {
+                        return Files.createDirectories(binaryDirectory);
+                    } catch (IOException e) {
+                        log.error("Critical error! No possible binary directory.");
+                    }
+                }
             }
         }
         return binaryDirectory;
