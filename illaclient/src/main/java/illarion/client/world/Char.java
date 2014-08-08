@@ -451,6 +451,11 @@ public final class Char implements AnimatedMove {
      * Set the current animation back to its parent, update the avatar and invoke the needed animations.
      */
     public void resetAnimation(boolean finished) {
+        if (skipAnimationReset) {
+            log.debug("{}: Reset of the animation was skipped.", this);
+            skipAnimationReset = false;
+            return;
+        }
         log.debug("{}: Resetting the animation. Finished: {}", this, finished);
         if (finished) {
             animation = CharAnimations.STAND;
@@ -459,6 +464,12 @@ public final class Char implements AnimatedMove {
                 avatar.animate(DEFAULT_ANIMATION_SPEED, true);
             }
         }
+    }
+
+    private boolean skipAnimationReset;
+
+    public void holdBackAnimationReset() {
+        skipAnimationReset = true;
     }
 
     /**
@@ -962,6 +973,7 @@ public final class Char implements AnimatedMove {
                     delayedMove.duration = duration;
                     delayedMove.mode = mode;
                     delayedMove.targetLocation = new Location(newPos);
+                    holdBackAnimationReset();
                     log.info("{}: Scheduled move for later execution.", this);
                     return;
                 } else {
@@ -1090,6 +1102,7 @@ public final class Char implements AnimatedMove {
      * @param duration the duration of the animation in milliseconds
      */
     private void startAnimation(int newAnimation, int duration, boolean shiftAnimation, float length) {
+        skipAnimationReset = false;
         if (removedCharacter) {
             log.warn("Trying to start a animation of a removed character.");
             return;

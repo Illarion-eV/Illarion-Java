@@ -224,9 +224,9 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         }
         animation.setDuration(duration);
         if (loop) {
-            animation.updateMode(FrameAnimation.Mode.Looped, FrameAnimation.Mode.Cyclic);
+            animation.updateMode(FrameAnimation.Mode.Looped);
         } else {
-            animation.updateMode(FrameAnimation.Mode.Cyclic);
+            animation.updateMode();
         }
         animation.restart();
     }
@@ -469,6 +469,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
     public void setFrame(int frame) {
         super.setFrame(frame);
         clothRender.setFrame(frame);
+        log.debug("{}: Now showing animation frame {}", this, frame);
     }
 
     /**

@@ -90,6 +90,7 @@ class MoveAnimator implements AnimatedMove {
             log.debug(marker, "Scheduling a early move.");
             MovingTask task = new MovingTask(this, mode, target, duration);
             uncomfirmedMoveTask = task;
+            movement.getPlayer().getCharacter().holdBackAnimationReset();
             scheduleTask(task);
         }
     }
@@ -105,11 +106,13 @@ class MoveAnimator implements AnimatedMove {
         taskQueue.clear();
 
         Player parentPlayer = movement.getPlayer();
-        if (!parentPlayer.getLocation().equals(allowedTarget)) {
+        parentPlayer.getCharacter().resetAnimation(true);
+        if (parentPlayer.getLocation().equals(allowedTarget)) {
+            movement.reportReadyForNextStep();
+        } else {
             moveAnimation.stop();
             parentPlayer.setLocation(allowedTarget);
         }
-        movement.reportReadyForNextStep();
     }
 
     /**

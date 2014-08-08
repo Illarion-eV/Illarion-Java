@@ -16,6 +16,8 @@
 package illarion.client.graphics;
 
 import illarion.client.world.World;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,6 +37,8 @@ import java.util.List;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 abstract class AbstractAnimation<T extends Animated> {
+    private static final Logger log = LoggerFactory.getLogger(AbstractAnimation.class);
+
     /**
      * The current time of the animation. This value is always between the 0 and
      * {@link #duration}.
@@ -159,6 +163,7 @@ abstract class AbstractAnimation<T extends Animated> {
 
     public final void continueStoryboard(float length) {
         setStoryboard(storyboardEnd, storyboardEnd + length);
+        log.debug("Expanding storyboard from {} to {}", storyboardStart, storyboardEnd);
     }
 
     public final void resetStoryboard() {
