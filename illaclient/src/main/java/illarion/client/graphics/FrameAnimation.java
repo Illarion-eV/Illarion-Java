@@ -158,7 +158,7 @@ public final class FrameAnimation extends AbstractAnimation<AnimatedFrame> {
         start();
 
         // set start position immediately
-        setFrame(stillFrame);
+        animate(0);
         lastFrame = stillFrame;
     }
 
