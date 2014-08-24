@@ -61,7 +61,7 @@ public final class Lang implements MessageSource {
     /**
      * The logger instance that handles the log output of this class.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(Lang.class);
+    private static final Logger log = LoggerFactory.getLogger(Lang.class);
 
     /**
      * The file name of the message bundles the client loads for the language.
@@ -106,12 +106,12 @@ public final class Lang implements MessageSource {
      * @return the localized message or the key with surrounding < > in case the
      * key was not found in the storage
      */
-    public static String getMsg(final String key) {
+    public static String getMsg(String key) {
         return INSTANCE.getMessage(key);
     }
 
     @EventTopicSubscriber(topic = LOCALE_CFG)
-    public void onConfigChanged(final String topic, @Nonnull final ConfigChangedEvent event) {
+    public void onConfigChanged(String topic, @Nonnull ConfigChangedEvent event) {
         recheckLocale(event.getConfig().getString(LOCALE_CFG));
     }
 
@@ -132,12 +132,12 @@ public final class Lang implements MessageSource {
      * case the key was not found in the storage
      */
     @Override
-    public String getMessage(final String key) {
+    public String getMessage(String key) {
         try {
             return messages.getString(key).replace("\\n", "\n");
-        } catch (@Nonnull final MissingResourceException e) {
-            LOGGER.warn("Failed searching translated version of: " + key);
-            return "<" + key + ">";
+        } catch (@Nonnull MissingResourceException e) {
+            log.warn("Failed searching translated version of: {}", key);
+            return '<' + key + '>';
         }
     }
 
@@ -147,10 +147,10 @@ public final class Lang implements MessageSource {
      * @param key the key that shall be checked
      * @return true in case a message was found
      */
-    public boolean hasMsg(final String key) {
+    public boolean hasMsg(String key) {
         try {
             messages.getString(key);
-        } catch (@Nonnull final MissingResourceException e) {
+        } catch (@Nonnull MissingResourceException e) {
             return false;
         }
         return true;
@@ -162,7 +162,7 @@ public final class Lang implements MessageSource {
      * @return true if the language is set to English
      */
     public boolean isEnglish() {
-        return locale == Locale.ENGLISH;
+        return locale.equals(Locale.ENGLISH);
     }
 
     /**
@@ -171,20 +171,20 @@ public final class Lang implements MessageSource {
      * @return true if the language is set to German
      */
     public boolean isGerman() {
-        return locale == Locale.GERMAN;
+        return locale.equals(Locale.GERMAN);
     }
 
     /**
      * Check if the language settings are still correct and reload the messages if needed.
      */
-    public void recheckLocale(@Nullable final String key) {
+    public void recheckLocale(@Nullable String key) {
         if (LOCALE_CFG_GERMAN.equals(key)) {
-            if (locale == Locale.GERMAN) {
+            if (locale.equals(Locale.GERMAN)) {
                 return;
             }
             locale = Locale.GERMAN;
         } else {
-            if (locale == Locale.ENGLISH) {
+            if (locale.equals(Locale.ENGLISH)) {
                 return;
             }
             locale = Locale.ENGLISH;
