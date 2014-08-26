@@ -19,6 +19,7 @@ import illarion.client.graphics.AnimatedMove;
 import illarion.client.graphics.MoveAnimation;
 import illarion.client.net.client.MoveCmd;
 import illarion.client.net.client.TurnCmd;
+import illarion.client.util.UpdateTask;
 import illarion.client.world.CharMovementMode;
 import illarion.client.world.MapTile;
 import illarion.client.world.Player;
@@ -29,6 +30,7 @@ import illarion.common.types.CharacterId;
 import illarion.common.types.Direction;
 import illarion.common.types.Location;
 import illarion.common.util.FastMath;
+import org.illarion.engine.GameContainer;
 import org.illarion.engine.input.Input;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -143,17 +145,40 @@ public class Movement {
         return (activeHandler != null) && handler.equals(activeHandler);
     }
 
-    public void executeServerRespTurn(@Nonnull Direction direction) {
+    public void executeServerRespTurn(@Nonnull final Direction direction) {
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
+            @Override
+            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+                executeServerRespTurnInteral(direction);
+            }
+        });
+    }
+
+    private void executeServerRespTurnInteral(@Nonnull Direction direction) {
         animator.scheduleTurn(direction);
     }
+
 
     private void scheduleEarlyTurn(@Nonnull Direction direction) {
         animator.scheduleTurn(direction);
     }
 
-    public void executeServerRespMove(@Nonnull CharMovementMode mode, @Nonnull Location target, int duration) {
+    public void executeServerRespMove(
+            @Nonnull final CharMovementMode mode, @Nonnull final Location target, final int duration) {
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
+            @Override
+            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+                executeServerRespMoveInternal(mode, target, duration);
+            }
+        });
+    }
+
+    private void executeServerRespMoveInternal(@Nonnull CharMovementMode mode, @Nonnull Location target, int duration) {
         log.debug("Received response from the server! Mode: {} Target: {} Duration {}ms", mode, target, duration);
-        if (playerLocation.equals(target)) {
+        if (isRequestTooEarlyResponse(mode, target)) {
+            log.debug("Response indicates that the request was received too early. A new request is required later.");
+            reportReadyForNextStep();
+        } else if (playerLocation.equals(target)) {
             log.debug("Current location and target location match. Cancel any pending move.");
             animator.cancelMove(target);
         } else {
@@ -161,6 +186,18 @@ public class Movement {
             animator.confirmMove(mode, target, duration);
         }
         playerLocation.set(target);
+    }
+
+    /**
+     * Check if the response data indicates that the request was fired too early.
+     *
+     * @param mode the movement mode
+     * @param target the target of the move
+     * @return {@code true} if the parameters indicate that the move was requested too early from the server and the
+     * request needs to happen again at a later time
+     */
+    private boolean isRequestTooEarlyResponse(@Nonnull CharMovementMode mode, @Nonnull Location target) {
+        return (mode == CharMovementMode.None) && target.equals(playerLocation);
     }
 
     private static final int MAX_WALK_AGI = 20;
@@ -207,7 +244,16 @@ public class Movement {
         return movementDuration;
     }
 
-    public void executeServerLocation(@Nonnull Location target) {
+    public void executeServerLocation(@Nonnull final Location target) {
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
+            @Override
+            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+                executeServerLocationInternal(target);
+            }
+        });
+    }
+
+    private void executeServerLocationInternal(@Nonnull Location target) {
         animator.cancelAll();
         stepInProgress = false;
         playerLocation.set(target);

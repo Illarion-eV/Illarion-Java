@@ -137,7 +137,9 @@ class MoveAnimator implements AnimatedMove {
                     Player parentPlayer = movement.getPlayer();
                     if (parentPlayer.getLocation().equals(target)) {
                         /* Okay we are moving to the right place. Lets check if the timing fits. */
-                        if (moveAnimation.getDuration() != duration) {
+                        if (moveAnimation.getDuration() == duration) {
+                            log.debug(marker, "Already running animation with {}ms is correct", duration);
+                        } else {
                             if (log.isDebugEnabled()) {
                                 log.debug(marker,
                                           "Move to the correct place is in progress. Fixing time from {}ms to {}ms",
@@ -146,8 +148,6 @@ class MoveAnimator implements AnimatedMove {
                             /* The timing is off. Lets fix that. */
                             moveAnimation.setDuration(duration);
                             parentPlayer.getCharacter().updateMoveDuration(duration);
-                        } else {
-                            log.debug(marker, "Already running animation with {}ms is correct", duration);
                         }
                     } else {
                         log.debug(marker, "Move to the wrong location. Resetting.");
@@ -260,6 +260,7 @@ class MoveAnimator implements AnimatedMove {
     @Override
     public void animationFinished(boolean finished) {
         if (!reportingDone) {
+            log.debug(marker, "Requesting next move at the end of the animation.");
             reportingDone = true;
             movement.reportReadyForNextStep();
         }
