@@ -326,7 +326,9 @@ public final class KeyMapper {
 
             case LeftCtrl:
             case RightCtrl:
-                World.getGameGui().getGameMapGui().toggleRunMode();
+                if (!input.isAnyKeyDown(Key.RightAlt)) {
+                    World.getGameGui().getGameMapGui().toggleRunMode();
+                }
                 break;
 
             default:
