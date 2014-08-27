@@ -215,6 +215,7 @@ class MoveAnimator implements AnimatedMove {
     private void executeNext() {
         @Nullable MovingTask unconfirmedTask = uncomfirmedMoveTask;
         if ((unconfirmedTask != null) && unconfirmedTask.isExecuted()) {
+            log.debug("Stopping move execution because a unconfirmed move finished executing.");
             /* Found a executed but not yet confirmed move. Hold everything right here and wait for the confirmation. */
             animationInProgress = false;
             return;
