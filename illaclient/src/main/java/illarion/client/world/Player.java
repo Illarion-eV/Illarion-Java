@@ -522,7 +522,7 @@ public final class Player {
         }
 
         boolean isLongRange = false;
-        if (playerLocation.getSqrtDistance(newLoc) > 4) {
+        if (playerLocation.getSqrtDistance(newLoc) > 10) {
             isLongRange = true;
         }
         if (FastMath.abs(playerLocation.getScZ() - newLoc.getScZ()) > 3) {

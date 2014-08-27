@@ -249,17 +249,7 @@ public class Movement {
         return movementDuration;
     }
 
-    public void executeServerLocation(@Nonnull final Location target) {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                executeServerLocationInternal(target);
-            }
-        });
-        playerLocation.set(target);
-    }
-
-    private void executeServerLocationInternal(@Nonnull Location target) {
+    public void executeServerLocation(@Nonnull Location target) {
         animator.cancelAll();
         stepInProgress = false;
         World.getPlayer().setLocation(target);
@@ -268,6 +258,7 @@ public class Movement {
         if (currentHandler != null) {
             currentHandler.disengage(false);
         }
+        playerLocation.set(target);
     }
 
     /**
