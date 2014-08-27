@@ -165,21 +165,26 @@ public class Movement {
 
     public void executeServerRespMove(
             @Nonnull final CharMovementMode mode, @Nonnull final Location target, final int duration) {
+        final Location playerLocationBeforeMove = new Location(playerLocation);
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
             public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                executeServerRespMoveInternal(mode, target, duration);
+                executeServerRespMoveInternal(playerLocationBeforeMove, mode, target, duration);
             }
         });
         playerLocation.set(target);
     }
 
-    private void executeServerRespMoveInternal(@Nonnull CharMovementMode mode, @Nonnull Location target, int duration) {
+    private void executeServerRespMoveInternal(
+            @Nonnull Location playerLocationBeforeMove,
+            @Nonnull CharMovementMode mode,
+            @Nonnull Location target,
+            int duration) {
         log.debug("Received response from the server! Mode: {} Target: {} Duration {}ms", mode, target, duration);
         if (isRequestTooEarlyResponse(mode, target)) {
             log.debug("Response indicates that the request was received too early. A new request is required later.");
             reportReadyForNextStep();
-        } else if (playerLocation.equals(target)) {
+        } else if (playerLocationBeforeMove.equals(target)) {
             log.debug("Current location and target location match. Cancel any pending move.");
             animator.cancelMove(target);
         } else {

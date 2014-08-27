@@ -150,14 +150,14 @@ class MoveAnimator implements AnimatedMove {
                             parentPlayer.getCharacter().updateMoveDuration(duration);
                         }
                     } else {
-                        log.debug(marker, "Move to the wrong location. Resetting.");
+                        log.warn(marker, "Move to the wrong location. Resetting. Expected location: {} Player " +
+                                "location: {}", target, parentPlayer.getLocation());
                         /* Crap! We are moving to the wrong place... */
                         movement.executeServerLocation(target);
                     }
                 } else {
                     log.debug(marker, "The unconfirmed move seems to be done already.");
-                    /* Nothing moving here. Lets start the action. */
-                    scheduleMove(mode, target, duration);
+                    executeNext();
                 }
             } else {
                 if (task.isSetupCorrectly(mode, target, duration)) {
@@ -215,8 +215,9 @@ class MoveAnimator implements AnimatedMove {
     private void executeNext() {
         @Nullable MovingTask unconfirmedTask = uncomfirmedMoveTask;
         if ((unconfirmedTask != null) && unconfirmedTask.isExecuted()) {
-            uncomfirmedMoveTask = null;
-            unconfirmedTask = null;
+            /* Found a executed but not yet confirmed move. Hold everything right here and wait for the confirmation. */
+            animationInProgress = false;
+            return;
         }
         MoveAnimatorTask task = taskQueue.poll();
         if (task != null) {
