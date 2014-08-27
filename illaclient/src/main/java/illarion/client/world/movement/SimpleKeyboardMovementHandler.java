@@ -15,12 +15,14 @@
  */
 package illarion.client.world.movement;
 
+import illarion.client.util.UpdateTask;
 import illarion.client.world.CharMovementMode;
 import illarion.client.world.World;
 import illarion.common.types.Direction;
 import illarion.common.types.Location;
 import illarion.common.util.FastMath;
 import illarion.common.util.Timer;
+import org.illarion.engine.GameContainer;
 import org.illarion.engine.input.Input;
 import org.illarion.engine.input.Key;
 
@@ -44,6 +46,14 @@ class SimpleKeyboardMovementHandler extends AbstractMovementHandler implements K
     private final Timer delayedMoveTrigger;
     private boolean delayedMove;
 
+    @Nonnull
+    private final UpdateTask updateMovementTask = new UpdateTask() {
+        @Override
+        public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+            getMovement().update();
+        }
+    };
+
     SimpleKeyboardMovementHandler(@Nonnull Movement movement, @Nonnull Input input) {
         super(movement);
         activeDirections = EnumSet.noneOf(Direction.class);
@@ -52,7 +62,7 @@ class SimpleKeyboardMovementHandler extends AbstractMovementHandler implements K
             @Override
             public void run() {
                 delayedMove = false;
-                getMovement().update();
+                World.getUpdateTaskManager().addTask(updateMovementTask);
             }
         });
         delayedMoveTrigger.setRepeats(false);

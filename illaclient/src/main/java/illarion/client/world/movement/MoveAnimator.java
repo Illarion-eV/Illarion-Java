@@ -138,7 +138,7 @@ class MoveAnimator implements AnimatedMove {
                     if (parentPlayer.getLocation().equals(target)) {
                         /* Okay we are moving to the right place. Lets check if the timing fits. */
                         if (moveAnimation.getDuration() == duration) {
-                            log.debug(marker, "Already running animation with {}ms is correct", duration);
+                            log.debug(marker, "Already running animation with {}ms to {} is correct", duration, target);
                         } else {
                             if (log.isDebugEnabled()) {
                                 log.debug(marker,
