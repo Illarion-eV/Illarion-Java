@@ -171,6 +171,7 @@ public class Movement {
                 executeServerRespMoveInternal(mode, target, duration);
             }
         });
+        playerLocation.set(target);
     }
 
     private void executeServerRespMoveInternal(@Nonnull CharMovementMode mode, @Nonnull Location target, int duration) {
@@ -185,7 +186,6 @@ public class Movement {
             // confirm a move that was started early
             animator.confirmMove(mode, target, duration);
         }
-        playerLocation.set(target);
     }
 
     /**
@@ -251,12 +251,12 @@ public class Movement {
                 executeServerLocationInternal(target);
             }
         });
+        playerLocation.set(target);
     }
 
     private void executeServerLocationInternal(@Nonnull Location target) {
         animator.cancelAll();
         stepInProgress = false;
-        playerLocation.set(target);
         World.getPlayer().setLocation(target);
 
         MovementHandler currentHandler = activeHandler;
