@@ -24,6 +24,13 @@ public class CarryLoad {
     private int maximumLoad;
     private int currentLoad;
 
+    /**
+     * Update the current and the maximum load values. This function is supposed to be triggered by the server in
+     * case the load values change due to item movement or attribute change.
+     *
+     * @param current the new current load value
+     * @param maximum the maximum load value
+     */
     public void updateLoad(int current, int maximum) {
         maximumLoad = maximum;
         currentLoad = current;

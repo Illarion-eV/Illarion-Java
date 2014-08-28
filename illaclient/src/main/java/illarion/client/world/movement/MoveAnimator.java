@@ -87,7 +87,7 @@ class MoveAnimator implements AnimatedMove {
         if (uncomfirmedMoveTask != null) {
             log.warn(marker, "Scheduling another early move is not possible as there is already one set.");
         } else {
-            log.debug(marker, "Scheduling a early move.");
+            log.debug(marker, "Scheduling a early move. Mode: {}, Target: {}, Duration: {}ms", mode, target, duration);
             MovingTask task = new MovingTask(this, mode, target, duration);
             uncomfirmedMoveTask = task;
             movement.getPlayer().getCharacter().holdBackAnimationReset();

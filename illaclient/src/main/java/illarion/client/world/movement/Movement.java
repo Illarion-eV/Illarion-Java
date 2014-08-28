@@ -226,7 +226,7 @@ public class Movement {
                     Location walkTarget = getTargetLocation(CharMovementMode.Walk, direction);
                     MapTile walkTargetTile = World.getMap().getMapAt(walkTarget);
                     if ((walkTargetTile != null) && !walkTargetTile.isBlocked()) {
-                        movementDuration += getMovementDuration(targetTile.getMovementCost(), mods,
+                        movementDuration += getMovementDuration(walkTargetTile.getMovementCost(), mods,
                                                                 direction.isDiagonal(), true);
                     } else {
                         return;
@@ -238,7 +238,7 @@ public class Movement {
     }
 
     private static int getMovementDuration(int tileMovementCost, double mods, boolean diagonal, boolean running) {
-        int movementDuration = FastMath.clamp((int) ((tileMovementCost * 100) * mods), MIN_WALK_COST, MAX_WALK_COST);
+        int movementDuration = FastMath.clamp((int) (tileMovementCost * 100.0 * mods), MIN_WALK_COST, MAX_WALK_COST);
 
         if (diagonal) {
             movementDuration = (int) (1.4142135623730951 * movementDuration); // sqrt(2)
