@@ -208,10 +208,10 @@ public final class AppearanceMsg extends AbstractGuiMsg {
         }
 
         character.setAppearance(appearance);
-        character.resetLight();
         character.setWearingItem(AvatarClothManager.GROUP_HAIR, hairID);
         character.setWearingItem(AvatarClothManager.GROUP_BEARD, beardID);
 
+        character.resetLight();
         for (int i = 0; i < itemSlots.length; i++) {
             character.setInventoryItem(i, itemSlots[i]);
         }

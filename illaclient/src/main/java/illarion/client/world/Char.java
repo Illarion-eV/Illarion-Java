@@ -600,9 +600,6 @@ public final class Char implements AnimatedMove {
                                   wearItems[AvatarClothManager.GROUP_FIRST_HAND]);
         }
         for (int i = 0; i < wearItems.length; ++i) {
-            if ((i != AvatarClothManager.GROUP_HAIR) && (i != AvatarClothManager.GROUP_BEARD)) {
-                applyLightValue(wearItems[i]);
-            }
             if ((i == AvatarClothManager.GROUP_FIRST_HAND) || (i == AvatarClothManager.GROUP_SECOND_HAND)) {
                 continue;
             }
@@ -628,11 +625,14 @@ public final class Char implements AnimatedMove {
         return (id != 0) && ((avatar == null) || avatar.getTemplate().getClothes().doesClothExists(slot, id));
     }
 
-    private void applyLightValue(int itemId) {
-        int light = ItemFactory.getInstance().getTemplate(itemId).getItemInfo().getLight();
+    private void applyLightValue(@Nullable ItemId itemId) {
+        if (ItemId.isValidItem(itemId)) {
+            assert itemId != null; /* Verified by isValidItem. */
+            int light = ItemFactory.getInstance().getTemplate(itemId.getValue()).getItemInfo().getLight();
 
-        if (light > lightValue) {
-            lightValue = light;
+            if (light > lightValue) {
+                lightValue = light;
+            }
         }
     }
 
@@ -1237,6 +1237,7 @@ public final class Char implements AnimatedMove {
             log.warn("Trying to update the inventory of a removed character.");
             return;
         }
+        applyLightValue(itemId);
         switch (slot) {
             case 1:
                 setWearingItem(AvatarClothManager.GROUP_HAT, itemId.getValue());
