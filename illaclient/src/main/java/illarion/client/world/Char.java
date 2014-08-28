@@ -584,7 +584,6 @@ public final class Char implements AnimatedMove {
         if (avatar == null) {
             return;
         }
-        lightValue = 0;
         if (hasWearingItem(avatar, AvatarClothManager.GROUP_FIRST_HAND,
                            wearItems[AvatarClothManager.GROUP_FIRST_HAND]) ||
                 hasWearingItem(avatar, AvatarClothManager.GROUP_SECOND_HAND,
