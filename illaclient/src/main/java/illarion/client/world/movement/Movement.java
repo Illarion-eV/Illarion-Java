@@ -163,6 +163,17 @@ public class Movement {
         animator.scheduleTurn(direction);
     }
 
+    public void execureServerRespMoveTooEarly() {
+        World.getUpdateTaskManager().addTaskForLater(new UpdateTask() {
+            @Override
+            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+                log.debug(
+                        "Response indicates that the request was received too early. A new request is required later.");
+                resendMoveToServer();
+            }
+        });
+    }
+
     public void executeServerRespMove(
             @Nonnull final CharMovementMode mode, @Nonnull final Location target, final int duration) {
         final Location playerLocationBeforeMove = new Location(playerLocation);
@@ -181,10 +192,7 @@ public class Movement {
             @Nonnull Location target,
             int duration) {
         log.debug("Received response from the server! Mode: {} Target: {} Duration {}ms", mode, target, duration);
-        if (isRequestTooEarlyResponse(mode, target)) {
-            log.debug("Response indicates that the request was received too early. A new request is required later.");
-            reportReadyForNextStep();
-        } else if (playerLocationBeforeMove.equals(target)) {
+        if (playerLocationBeforeMove.equals(target)) {
             log.debug("Current location and target location match. Cancel any pending move.");
             animator.cancelMove(target);
         } else {
@@ -261,6 +269,9 @@ public class Movement {
         playerLocation.set(target);
     }
 
+    @Nullable
+    private MoveCmd lastSendMoveCommand;
+
     /**
      * Send the movement command to the server.
      *
@@ -273,7 +284,14 @@ public class Movement {
             log.error(marker, "Send move to server while ID is not known.");
             return;
         }
-        World.getNet().sendCommand(new MoveCmd(playerId, mode, direction));
+        lastSendMoveCommand = new MoveCmd(playerId, mode, direction);
+        World.getNet().sendCommand(lastSendMoveCommand);
+    }
+
+    private void resendMoveToServer() {
+        if (lastSendMoveCommand != null) {
+            World.getNet().sendCommand(lastSendMoveCommand);
+        }
     }
 
     private void sendTurnToServer(@Nonnull Direction direction) {

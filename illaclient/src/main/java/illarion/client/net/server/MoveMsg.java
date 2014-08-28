@@ -63,6 +63,12 @@ public final class MoveMsg extends AbstractReply {
     private static final int MODE_RUN = 0x0D;
 
     /**
+     * Mode information that the move request arrived at the server too early. That mode response is only valid in
+     * for move commands related to the player character.
+     */
+    private static final int MODE_TOO_EARLY = 0x09;
+
+    /**
      * The ID of the moving character.
      */
     private CharacterId charId;
@@ -105,7 +111,8 @@ public final class MoveMsg extends AbstractReply {
     @SuppressWarnings("nls")
     @Override
     public boolean executeUpdate() {
-        if ((mode != MODE_NO_MOVE) && (mode != MODE_MOVE) && (mode != MODE_PUSH) && (mode != MODE_RUN)) {
+        if ((mode != MODE_NO_MOVE) && (mode != MODE_MOVE) && (mode != MODE_PUSH) && (mode != MODE_RUN) &&
+                (mode != MODE_TOO_EARLY)) {
             log.warn("Move char message called in unknown mode {}", mode);
             return true;
         }
@@ -122,6 +129,9 @@ public final class MoveMsg extends AbstractReply {
                 case MODE_RUN:
                     moveMode = CharMovementMode.Run;
                     break;
+                case MODE_TOO_EARLY:
+                    World.getPlayer().getMovementHandler().execureServerRespMoveTooEarly();
+                    return true;
                 default:
                     moveMode = CharMovementMode.None;
             }
@@ -146,6 +156,9 @@ public final class MoveMsg extends AbstractReply {
             case MODE_RUN:
                 chara.moveTo(loc, CharMovementMode.Run, duration);
                 break;
+            case MODE_TOO_EARLY:
+                log.warn("Received MODE_TOO_EARLY for a character other then the player character. That is wrong.");
+                return true;
             default:
                 chara.moveTo(loc, CharMovementMode.Push, 0);
         }
