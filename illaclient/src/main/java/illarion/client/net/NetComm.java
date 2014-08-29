@@ -227,7 +227,8 @@ public final class NetComm {
             InetSocketAddress address = new InetSocketAddress(serverAddress, serverPort);
             socket = SelectorProvider.provider().openSocketChannel();
             socket.configureBlocking(true);
-            //socket.socket().setPerformancePreferences(0, 2, 1);
+            socket.socket().setPerformancePreferences(0, 2, 1);
+            socket.socket().setTcpNoDelay(true);
 
             if (!socket.connect(address)) {
                 while (socket.isConnectionPending()) {
