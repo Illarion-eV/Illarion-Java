@@ -149,12 +149,12 @@ public class Movement {
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
             public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                executeServerRespTurnInteral(direction);
+                executeServerRespTurnInternal(direction);
             }
         });
     }
 
-    private void executeServerRespTurnInteral(@Nonnull Direction direction) {
+    private void executeServerRespTurnInternal(@Nonnull Direction direction) {
         animator.scheduleTurn(direction);
     }
 
@@ -163,7 +163,7 @@ public class Movement {
         animator.scheduleTurn(direction);
     }
 
-    public void execureServerRespMoveTooEarly() {
+    public void executeServerRespMoveTooEarly() {
         World.getUpdateTaskManager().addTaskForLater(new UpdateTask() {
             @Override
             public void onUpdateGame(@Nonnull GameContainer container, int delta) {

@@ -130,7 +130,7 @@ public final class MoveMsg extends AbstractReply {
                     moveMode = CharMovementMode.Run;
                     break;
                 case MODE_TOO_EARLY:
-                    World.getPlayer().getMovementHandler().execureServerRespMoveTooEarly();
+                    World.getPlayer().getMovementHandler().executeServerRespMoveTooEarly();
                     return true;
                 default:
                     moveMode = CharMovementMode.None;
