@@ -160,7 +160,6 @@ class MoveAnimator implements AnimatedMove {
                     if (!executeNext()) {
                         log.debug(marker, "No task remains to be executed. Report that we are ready for more.");
                         movement.reportReadyForNextStep();
-                        executeNext();
                     }
                 }
             } else {
