@@ -158,7 +158,6 @@ public class Movement {
         animator.scheduleTurn(direction);
     }
 
-
     private void scheduleEarlyTurn(@Nonnull Direction direction) {
         animator.scheduleTurn(direction);
     }
@@ -332,7 +331,6 @@ public class Movement {
                         break;
                     default:
                         stepInProgress = true;
-                        sendTurnToServer(nextStep.getDirection());
                         sendMoveToServer(nextStep.getDirection(), nextStep.getMovementMode());
                         scheduleEarlyTurn(nextStep.getDirection());
                         scheduleEarlyMove(nextStep.getMovementMode(), nextStep.getDirection());
