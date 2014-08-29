@@ -157,7 +157,9 @@ class MoveAnimator implements AnimatedMove {
                     }
                 } else {
                     log.debug(marker, "The unconfirmed move seems to be done already.");
-                    executeNext();
+                    if (!executeNext()) {
+                        movement.reportReadyForNextStep();
+                    }
                 }
             } else {
                 if (task.isSetupCorrectly(mode, target, duration)) {
@@ -212,13 +214,13 @@ class MoveAnimator implements AnimatedMove {
         parentPlayer.updateLocation(target);
     }
 
-    private void executeNext() {
+    private boolean executeNext() {
         @Nullable MovingTask unconfirmedTask = uncomfirmedMoveTask;
         if ((unconfirmedTask != null) && unconfirmedTask.isExecuted()) {
             log.debug("Stopping move execution because a unconfirmed move finished executing.");
             /* Found a executed but not yet confirmed move. Hold everything right here and wait for the confirmation. */
             animationInProgress = false;
-            return;
+            return false;
         }
         MoveAnimatorTask task = taskQueue.poll();
         if (task != null) {
@@ -237,14 +239,16 @@ class MoveAnimator implements AnimatedMove {
             }
             animationInProgress = true;
             task.execute();
+            return true;
         } else {
             animationInProgress = false;
+            return false;
         }
     }
 
     @Override
     public void setPosition(int posX, int posY, int posZ) {
-        if (!reportingDone) {
+        if (isReportingRequired()) {
             int remaining = moveAnimation.timeRemaining();
             if (remaining < 20) {
                 log.debug(marker, "Requesting next move {}ms before the animation finishes.", remaining);
@@ -254,6 +258,10 @@ class MoveAnimator implements AnimatedMove {
         }
     }
 
+    private boolean isReportingRequired() {
+        return !reportingDone && (uncomfirmedMoveTask == null);
+    }
+
     @Override
     public void animationStarted() {
 
@@ -261,7 +269,7 @@ class MoveAnimator implements AnimatedMove {
 
     @Override
     public void animationFinished(boolean finished) {
-        if (!reportingDone) {
+        if (isReportingRequired()) {
             log.debug(marker, "Requesting next move at the end of the animation.");
             reportingDone = true;
             movement.reportReadyForNextStep();
