@@ -58,4 +58,9 @@ class MovingTask implements MoveAnimatorTask {
     public boolean isExecuted() {
         return executed;
     }
+
+    @Override
+    public String toString() {
+        return "Move Task - Mode: " + mode + " Target " + target + " Duration: " + duration + "ms";
+    }
 }

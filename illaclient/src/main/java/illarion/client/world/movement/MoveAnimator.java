@@ -239,6 +239,7 @@ class MoveAnimator implements AnimatedMove {
                 }
             }
             animationInProgress = true;
+            log.debug(marker, "Movement animator is executing next task: {}", task);
             task.execute();
             return true;
         } else {

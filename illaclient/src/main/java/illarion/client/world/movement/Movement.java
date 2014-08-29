@@ -191,7 +191,7 @@ public class Movement {
             @Nonnull CharMovementMode mode,
             @Nonnull Location target,
             int duration) {
-        log.debug("Received response from the server! Mode: {} Target: {} Duration {}ms", mode, target, duration);
+        log.debug("Received response from the server! Mode: {} Target {} Duration {}ms", mode, target, duration);
         if (playerLocationBeforeMove.equals(target)) {
             log.debug("Current location and target location match. Cancel any pending move.");
             animator.cancelMove(target);
@@ -199,18 +199,6 @@ public class Movement {
             // confirm a move that was started early
             animator.confirmMove(mode, target, duration);
         }
-    }
-
-    /**
-     * Check if the response data indicates that the request was fired too early.
-     *
-     * @param mode the movement mode
-     * @param target the target of the move
-     * @return {@code true} if the parameters indicate that the move was requested too early from the server and the
-     * request needs to happen again at a later time
-     */
-    private boolean isRequestTooEarlyResponse(@Nonnull CharMovementMode mode, @Nonnull Location target) {
-        return (mode == CharMovementMode.None) && target.equals(playerLocation);
     }
 
     private static final int MAX_WALK_AGI = 20;
@@ -284,19 +272,26 @@ public class Movement {
             log.error(marker, "Send move to server while ID is not known.");
             return;
         }
-        lastSendMoveCommand = new MoveCmd(playerId, mode, direction);
-        World.getNet().sendCommand(lastSendMoveCommand);
+        MoveCmd cmd = new MoveCmd(playerId, mode, direction);
+        lastSendMoveCommand = cmd;
+        log.debug(marker, "Sending move command to server: {}", cmd);
+        World.getNet().sendCommand(cmd);
     }
 
     private void resendMoveToServer() {
         if (lastSendMoveCommand != null) {
+            log.debug(marker, "Re-Sending move command to server: {}", lastSendMoveCommand);
             World.getNet().sendCommand(lastSendMoveCommand);
+        } else {
+            log.warn(marker, "Tried to resend a move command to the server, but there was no old move command.");
         }
     }
 
     private void sendTurnToServer(@Nonnull Direction direction) {
         if (player.getCharacter().getDirection() != direction) {
-            World.getNet().sendCommand(new TurnCmd(direction));
+            TurnCmd cmd = new TurnCmd(direction);
+            log.debug(marker, "Sending turn command to server: {}", cmd);
+            World.getNet().sendCommand(cmd);
         }
     }
 
