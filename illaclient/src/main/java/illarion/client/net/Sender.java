@@ -135,6 +135,10 @@ final class Sender extends Thread implements NetCommWriter {
                     continue;
                 }
 
+                if (cmd.getId() != CommandList.CMD_KEEPALIVE) {
+                    LOGGER.debug("SND: {}", cmd);
+                }
+
                 buffer.clear();
                 buffer.put((byte) cmd.getId());
                 buffer.put((byte) (cmd.getId() ^ COMMAND_XOR_MASK));
