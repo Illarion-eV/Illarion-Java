@@ -158,7 +158,9 @@ class MoveAnimator implements AnimatedMove {
                 } else {
                     log.debug(marker, "The unconfirmed move seems to be done already.");
                     if (!executeNext()) {
+                        log.debug(marker, "No task remains to be executed. Report that we are ready for more.");
                         movement.reportReadyForNextStep();
+                        executeNext();
                     }
                 }
             } else {
