@@ -140,10 +140,10 @@ class MoveAnimator implements AnimatedMove {
                         if (moveAnimation.getDuration() == duration) {
                             log.debug(marker, "Already running animation with {}ms to {} is correct", duration, target);
                         } else {
-                            if (log.isDebugEnabled()) {
-                                log.debug(marker,
-                                          "Move to the correct place is in progress. Fixing time from {}ms to {}ms",
-                                          moveAnimation.getDuration(), duration);
+                            if (log.isWarnEnabled()) {
+                                log.warn(marker,
+                                         "Move to the correct place is in progress. Fixing time from {}ms to {}ms",
+                                         moveAnimation.getDuration(), duration);
                             }
                             /* The timing is off. Lets fix that. */
                             moveAnimation.setDuration(duration);

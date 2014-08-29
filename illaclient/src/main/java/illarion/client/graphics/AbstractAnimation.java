@@ -62,6 +62,11 @@ abstract class AbstractAnimation<T extends Animated> {
     private boolean running;
 
     /**
+     * Make the animation skip the next timing update.
+     */
+    private boolean skipNextUpdate;
+
+    /**
      * The animation targets. This contains the objects that are handled by this
      * animation. All targets handled by one animation are updated at the same
      * time in a synchronized way.
@@ -298,6 +303,10 @@ abstract class AbstractAnimation<T extends Animated> {
         currentTime = 0;
     }
 
+    protected final void setSkipNextUpdate(boolean skip) {
+        skipNextUpdate = skip;
+    }
+
     /**
      * Start a animation. That causes that the timing values are set up and the
      * animation is registered to AnimationManager. Before calling this function
@@ -315,16 +324,18 @@ abstract class AbstractAnimation<T extends Animated> {
     }
 
     /**
-     * Increase the current time by a set delta time. The time values are
-     * handled in milliseconds.
+     * Increase the current time by a set delta time. The time values are handled in milliseconds.
      *
-     * @param delta the time in milliseconds that shall be added to the current
-     * time
-     * @return true in case the animation ended by this update, means the
-     * current time reached the total duration of the animation
+     * @param delta the time in milliseconds that shall be added to the current time
+     * @return true in case the animation ended by this update, means the current time reached the total duration of
+     * the animation
      */
     protected final boolean updateCurrentTime(int delta) {
-        currentTime += delta;
+        if (skipNextUpdate) {
+            skipNextUpdate = false;
+        } else {
+            currentTime += delta;
+        }
 
         return currentTime > duration;
     }

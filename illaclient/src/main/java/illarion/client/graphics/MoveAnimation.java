@@ -71,6 +71,7 @@ public class MoveAnimation extends AbstractAnimation<AnimatedMove> {
 
         // set start position immediately
         setPosition(srcX, srcY, srcZ);
+        setSkipNextUpdate(true);
         lastX = srcX;
         lastY = srcY;
         lastZ = srcZ;
