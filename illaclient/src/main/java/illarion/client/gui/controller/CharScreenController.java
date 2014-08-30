@@ -88,14 +88,14 @@ public final class CharScreenController implements ScreenController, KeyInputHan
      *
      * @param game the reference to the game that is required by the controller
      */
-    public CharScreenController(@Nonnull final Game game) {
+    public CharScreenController(@Nonnull Game game) {
         this.game = game;
         AnnotationProcessor.process(this);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
         this.nifty = nifty;
         this.screen = screen;
 
@@ -118,7 +118,7 @@ public final class CharScreenController implements ScreenController, KeyInputHan
      * @param event the actual event data
      */
     @EventTopicSubscriber(topic = Lang.LOCALE_CFG)
-    public void onConfigChanged(final String topic, final ConfigChangedEvent event) {
+    public void onConfigChanged(String topic, ConfigChangedEvent event) {
         showLanguageChangedPopup = true;
     }
 
@@ -150,7 +150,7 @@ public final class CharScreenController implements ScreenController, KeyInputHan
     public void fillMyListBox() {
         if (listBox != null) {
             listBox.clear();
-            for (@Nonnull final Login.CharEntry entry : Login.getInstance().getCharacterList()) {
+            for (@Nonnull Login.CharEntry entry : Login.getInstance().getCharacterList()) {
                 if (entry.getStatus() == 0) {
                     listBox.addItem(entry.getName());
                 }
@@ -181,7 +181,7 @@ public final class CharScreenController implements ScreenController, KeyInputHan
     }
 
     @Override
-    public boolean keyEvent(@Nonnull final NiftyInputEvent inputEvent) {
+    public boolean keyEvent(@Nonnull NiftyInputEvent inputEvent) {
         if (inputEvent == NiftyStandardInputEvent.Activate) {
             play();
             return true;
