@@ -17,11 +17,7 @@
     <controlDefinition name="itemcontainer" visibleToMouse="true"
                        controller="org.illarion.nifty.controls.itemcontainer.ItemContainerControl">
         <control name="window" title="Container" id="#window" visibleToMouse="true">
-            <panel childLayout="vertical">
-                <control name="label" id="#description" style="nifty-label" visibleToMouse="true" width="100%"
-                         padding="5px" wrap="true"/>
-                <panel childLayout="center" visibleToMouse="true" id="#contentPanel"/>
-            </panel>
+            <panel childLayout="center" visibleToMouse="true" id="#contentPanel"/>
         </control>
     </controlDefinition>
 </nifty-controls>

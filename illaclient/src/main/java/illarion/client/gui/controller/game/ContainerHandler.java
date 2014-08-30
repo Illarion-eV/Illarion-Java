@@ -28,6 +28,7 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.procedure.TIntObjectProcedure;
+import illarion.client.graphics.FontLoader;
 import illarion.client.gui.ContainerGui;
 import illarion.client.gui.EntitySlickRenderImage;
 import illarion.client.gui.Tooltip;
@@ -51,6 +52,7 @@ import illarion.common.types.Rectangle;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.engine.GameContainer;
+import org.illarion.engine.graphic.Font;
 import org.illarion.engine.input.Button;
 import org.illarion.engine.input.Input;
 import org.illarion.engine.input.Key;
@@ -489,17 +491,57 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      */
     private void createNewContainer(@Nonnull ItemContainer itemContainer) {
         ItemContainerBuilder builder = new ItemContainerBuilder("container" + itemContainer.getContainerId(),
-                                                                itemContainer.getTitle());
+                                                                buildTitle(itemContainer));
         builder.slots(itemContainer.getSlotCount());
         builder.slotDim(35, 35);
         builder.containerId(itemContainer.getContainerId());
-        builder.description(itemContainer.getDescription());
 
         Element container = builder.build(activeNifty, activeScreen, activeScreen.findElementById("windows"));
         org.illarion.nifty.controls.ItemContainer conControl = container
                 .getNiftyControl(org.illarion.nifty.controls.ItemContainer.class);
 
         itemContainerMap.put(itemContainer.getContainerId(), conControl);
+    }
+
+    private static String buildTitle(@Nonnull ItemContainer container) {
+        String title = container.getTitle();
+
+        String description = container.getDescription();
+        if (description.isEmpty()) {
+            return title;
+        } else {
+            int slotsInRow = (int) Math.sqrt(container.getSlotCount());
+            Font calculationFont = FontLoader.getInstance().getFont(FontLoader.TEXT_FONT);
+            int spaceToUse = (slotsInRow * 35) - 25;
+            spaceToUse -= calculationFont.getWidth(title);
+
+            String shortDescription = getShortenedDescription(description, "...", calculationFont, spaceToUse);
+            if (shortDescription.isEmpty()) {
+                return title;
+            }
+            return title + " (" + shortDescription + ')';
+        }
+    }
+
+    private static String getShortenedDescription(
+            @Nonnull String description, @Nonnull String expansion, @Nonnull Font usedFont, int maxWidth) {
+        if (maxWidth <= 0) {
+            return "";
+        }
+        if (usedFont.getWidth(description) <= maxWidth) {
+            return description;
+        }
+
+        StringBuilder sb = new StringBuilder(description);
+        while (sb.length() > 0) {
+            sb.setLength(sb.length() - 1);
+            sb.append(expansion);
+            if (usedFont.getWidth(sb) <= maxWidth) {
+                return sb.toString();
+            }
+            sb.setLength(sb.length() - 3);
+        }
+        return "";
     }
 
     /**
