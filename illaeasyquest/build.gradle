@@ -33,8 +33,8 @@ dependencies {
     compile group: 'ch.qos.logback', name: 'logback-classic', version: project.ext.logbackVersion
     compile group: 'net.sf.trove4j', name: 'trove4j', version: '3.0.3'
     compile group: 'org.bushe', name: 'eventbus', version: '1.4'
-    compile group: 'com.github.insubstantial', name: 'substance', version: '7.2.1'
-    compile group: 'com.github.insubstantial', name: 'substance-flamingo', version: '7.2.1'
+    compile group: 'com.github.insubstantial', name: 'substance', version: project.ext.insubstantialVersion
+    compile group: 'com.github.insubstantial', name: 'substance-flamingo', version: project.ext.insubstantialVersion
     compile group: 'org.tinyjee.jgraphx', name: 'jgraphx', version: '2.3.0.5'
 }
 

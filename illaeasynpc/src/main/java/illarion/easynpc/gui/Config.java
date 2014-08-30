@@ -225,12 +225,15 @@ public final class Config {
     public void onConfigChanged(@Nonnull String topic, ConfigChangedEvent event) {
         if (topic.equals(USED_LOOK_AND_FEEL)) {
             SubstanceLookAndFeel.setSkin(getLookAndFeel());
-            int count = MainFrame.getInstance().getOpenTabs();
+            MainFrame mainFrame = MainFrame.getInstance();
+            if (mainFrame != null) {
+                int count = mainFrame.getOpenTabs();
 
-            for (int i = 0; i < count; i++) {
-                MainFrame.getInstance().getScriptEditor(i).resetEditorKit();
+                for (int i = 0; i < count; i++) {
+                    mainFrame.getScriptEditor(i).resetEditorKit();
+                }
+                SwingUtilities.updateComponentTreeUI(mainFrame);
             }
-            SwingUtilities.updateComponentTreeUI(MainFrame.getInstance());
         }
     }
 

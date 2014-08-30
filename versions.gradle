@@ -18,4 +18,5 @@ ext {
     logbackVersion = '1.1.2'
     illarionResourcesVersion = '2.1.16-SNAPSHOT'
     niftyGuiVersion = '1.4.0'
+    insubstantialVersion = '7.3'
 }
