@@ -16,7 +16,11 @@
 package illarion.client.world.items;
 
 import illarion.client.util.Lang;
+import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
+import org.illarion.engine.GameContainer;
+
+import javax.annotation.Nonnull;
 
 /**
  * This class stores and maintains the current carry load and provides some methods to easily handle the load values.
@@ -67,7 +71,13 @@ public class CarryLoad {
             }
         }
         if (messageToSend != null) {
-            World.getGameGui().getInformGui().showScriptInform(0, messageToSend);
+            final String finalMessageToSend = messageToSend;
+            World.getUpdateTaskManager().addTask(new UpdateTask() {
+                @Override
+                public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+                    World.getGameGui().getInformGui().showScriptInform(1, finalMessageToSend);
+                }
+            });
         }
     }
 
