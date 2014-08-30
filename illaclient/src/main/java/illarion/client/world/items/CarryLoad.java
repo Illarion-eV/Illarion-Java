@@ -15,6 +15,9 @@
  */
 package illarion.client.world.items;
 
+import illarion.client.util.Lang;
+import illarion.client.world.World;
+
 /**
  * This class stores and maintains the current carry load and provides some methods to easily handle the load values.
  *
@@ -32,15 +35,47 @@ public class CarryLoad {
      * @param maximum the maximum load value
      */
     public void updateLoad(int current, int maximum) {
+        boolean oldRunningPossible = isRunningPossible();
+        boolean oldWalkingPossible = isWalkingPossible();
+        boolean isFirst = (maximumLoad == 0);
+
         maximumLoad = maximum;
         currentLoad = current;
+
+        String messageToSend = null;
+        //noinspection ConstantConditions
+        if (isFirst && !isRunningPossible()) {
+            messageToSend = Lang.getMsg("illarion.client.world.items.CarryLoad.RunningImpossible");
+        }
+        if (oldRunningPossible != isRunningPossible()) {
+            if (oldRunningPossible) {
+                messageToSend = Lang.getMsg("illarion.client.world.items.CarryLoad.RunningImpossible");
+            }
+            if (!isFirst && !oldRunningPossible) {
+                messageToSend = Lang.getMsg("illarion.client.world.items.CarryLoad.RunningPossible");
+            }
+        }
+        if (isFirst && !isWalkingPossible()) {
+            messageToSend = Lang.getMsg("illarion.client.world.items.CarryLoad.WalkingImpossible");
+        }
+        if (oldWalkingPossible != isWalkingPossible()) {
+            if (oldWalkingPossible) {
+                messageToSend = Lang.getMsg("illarion.client.world.items.CarryLoad.WalkingImpossible");
+            }
+            if (!isFirst && !oldWalkingPossible) {
+                messageToSend = Lang.getMsg("illarion.client.world.items.CarryLoad.WalkingPossible");
+            }
+        }
+        if (messageToSend != null) {
+            World.getGameGui().getInformGui().showScriptInform(0, messageToSend);
+        }
     }
 
     public double getLoadFactor() {
         if (maximumLoad == 0) {
             return Double.POSITIVE_INFINITY;
         }
-        return currentLoad / (double) maximumLoad;
+        return (double) currentLoad / maximumLoad;
     }
 
     public boolean isRunningPossible() {
