@@ -977,6 +977,7 @@ public final class Char implements AnimatedMove {
                     return;
                 } else {
                     log.warn("{}: Can't delay the move. Spot is already taken. Executing now.", this);
+                    resetAnimation(true);
                 }
             }
         }
