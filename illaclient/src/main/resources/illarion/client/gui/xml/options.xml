@@ -43,21 +43,6 @@
                             <control name="checkbox" id="wasdWalk"/>
                         </panel>
                         <panel width="100%" childLayout="horizontal">
-                            <control name="label" text="${options-bundle.classicWalk}"/>
-                            <panel width="*"/>
-                            <control name="checkbox" id="classicWalk"/>
-                        </panel>
-                        <panel width="100%" childLayout="horizontal">
-                            <control name="label" text="${options-bundle.mouseFollowAutoRun}"/>
-                            <panel width="*"/>
-                            <control name="checkbox" id="mouseFollowAutoRun"/>
-                        </panel>
-                        <panel width="100%" childLayout="horizontal">
-                            <control name="label" text="${options-bundle.continueWalkAfterDragging}"/>
-                            <panel width="*"/>
-                            <control name="checkbox" id="continueWalkAfterDragging"/>
-                        </panel>
-                        <panel width="100%" childLayout="horizontal">
                             <control name="label" text="${options-bundle.disableChatAfterSending}"/>
                             <panel width="*"/>
                             <control name="checkbox" id="disableChatAfterSending"/>

@@ -43,16 +43,6 @@ import java.util.EnumSet;
 class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseTargetMovementHandler {
     private static final Logger log = LoggerFactory.getLogger(WalkToMouseMovementHandler.class);
     /**
-     * Always run when moving with the mouse.
-     */
-    private boolean mouseFollowAutoRun;
-
-    /**
-     * Continue walking after the drag is over (to the last set target)
-     */
-    private boolean continueWalkAfterDragging;
-
-    /**
      * Limit the path finding to the direction the mouse is pointing at.
      */
     private boolean limitPathFindingToMouseDirection;
@@ -76,8 +66,6 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
         this.input = input;
         lastMouseX = -1;
         lastMouseY = -1;
-        mouseFollowAutoRun = IllaClient.getCfg().getBoolean("mouseFollowAutoRun");
-        continueWalkAfterDragging = IllaClient.getCfg().getBoolean("continueWalkAfterDragging");
         limitPathFindingToMouseDirection = IllaClient.getCfg().getBoolean("limitPathFindingToMouseDirection");
 
         AnnotationProcessor.process(this);
@@ -87,7 +75,7 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
     public void disengage(boolean transferAllowed) {
         boolean targetWasSet = isTargetSet() && isActive();
         super.disengage(transferAllowed);
-        if (transferAllowed && targetWasSet && continueWalkAfterDragging) {
+        if (transferAllowed && targetWasSet) {
             TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
             log.debug("Transferring movement control from {} to {}", this, handler);
             MapTile targetTile = World.getMap().getMapAt(getTargetLocation());
@@ -104,10 +92,6 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
 
         if (!World.getPlayer().getCarryLoad().isRunningPossible()) {
             return CharMovementMode.Walk;
-        }
-
-        if (!mouseFollowAutoRun) {
-            return super.getMovementMode();
         }
 
         MapDimensions mapDimensions = MapDimensions.getInstance();
@@ -170,17 +154,6 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
             increaseTargetDistance();
         }
         return null;
-    }
-
-    @EventTopicSubscriber(topic = "mouseFollowAutoRun")
-    private void mouseFollowAutoRunChanged(@Nonnull String topic, @Nonnull ConfigChangedEvent configChanged) {
-        mouseFollowAutoRun = configChanged.getConfig().getBoolean("mouseFollowAutoRun");
-    }
-
-    @EventTopicSubscriber(topic = "mouseFollowAutoRun")
-    private void continueWalkAfterDraggingChanged(
-            @Nonnull String topic, @Nonnull ConfigChangedEvent configChangedEvent) {
-        continueWalkAfterDragging = configChangedEvent.getConfig().getBoolean("continueWalkAfterDragging");
     }
 
     @EventTopicSubscriber(topic = "limitPathFindingToMouseDirection")

@@ -57,11 +57,8 @@ public final class KeyMapper {
 
     private boolean useWasdWalking;
 
-    private boolean useClassicWasdWalking;
-
     private void applyWasdWalkSettings() {
         useWasdWalking = IllaClient.getCfg().getBoolean("wasdWalk");
-        useClassicWasdWalking = IllaClient.getCfg().getBoolean("classicWalk");
     }
 
     @EventTopicSubscriber(topic = "wasdWalk")
@@ -71,118 +68,67 @@ public final class KeyMapper {
         }
     }
 
-    @EventTopicSubscriber(topic = "classicWalk")
-    public void onClassicSettingsChanged(@Nonnull String configKey, @Nonnull ConfigChangedEvent event) {
-        if ("classicWalk".equals(configKey)) {
-            applyWasdWalkSettings();
-        }
-    }
-
     public void handleKeyReleasedInput(@Nonnull Key key) {
         KeyboardMovementHandler handler = World.getPlayer().getMovementHandler().getKeyboardHandler();
         switch (key) {
             case CursorUp:
             case NumPad8:
-                if (useClassicWasdWalking) {
-                    handler.stopMovingTowards(Direction.North);
-                } else {
-                    handler.stopMovingTowards(Direction.NorthEast);
-                }
+                handler.stopMovingTowards(Direction.NorthEast);
                 break;
             case W:
-                if (useWasdWalking && !useClassicWasdWalking) {
+                if (useWasdWalking) {
                     handler.stopMovingTowards(Direction.NorthEast);
-                }
-                if (useWasdWalking && useClassicWasdWalking) {
-                    handler.stopMovingTowards(Direction.North);
                 }
                 break;
 
             case CursorLeft:
             case NumPad4:
-                if (useClassicWasdWalking) {
-                    handler.stopMovingTowards(Direction.West);
-                } else {
-                    handler.stopMovingTowards(Direction.NorthWest);
-                }
+                handler.stopMovingTowards(Direction.NorthWest);
                 break;
             case A:
-                if (useWasdWalking && !useClassicWasdWalking) {
+                if (useWasdWalking) {
                     handler.stopMovingTowards(Direction.NorthWest);
-                }
-                if (useWasdWalking && useClassicWasdWalking) {
-                    handler.stopMovingTowards(Direction.West);
                 }
                 break;
 
             case CursorDown:
             case NumPad2:
-                if (useClassicWasdWalking) {
-                    handler.stopMovingTowards(Direction.South);
-                } else {
-                    handler.stopMovingTowards(Direction.SouthWest);
-                }
+                handler.stopMovingTowards(Direction.SouthWest);
                 break;
             case S:
-                if (useWasdWalking && !useClassicWasdWalking) {
+                if (useWasdWalking) {
                     handler.stopMovingTowards(Direction.SouthWest);
-                }
-                if (useWasdWalking && useClassicWasdWalking) {
-                    handler.stopMovingTowards(Direction.South);
                 }
                 break;
 
             case CursorRight:
             case NumPad6:
-                if (useClassicWasdWalking) {
-                    handler.stopMovingTowards(Direction.East);
-                } else {
-                    handler.stopMovingTowards(Direction.SouthEast);
-                }
+                handler.stopMovingTowards(Direction.SouthEast);
                 break;
             case D:
-                if (useWasdWalking && !useClassicWasdWalking) {
+                if (useWasdWalking) {
                     handler.stopMovingTowards(Direction.SouthEast);
-                }
-                if (useWasdWalking && useClassicWasdWalking) {
-                    handler.stopMovingTowards(Direction.East);
                 }
                 break;
 
             case NumPad1:
             case End:
-                if (useClassicWasdWalking) {
-                    handler.stopMovingTowards(Direction.SouthWest);
-                } else {
-                    handler.stopMovingTowards(Direction.West);
-                }
+                handler.stopMovingTowards(Direction.West);
                 break;
 
             case NumPad3:
             case PageDown:
-                if (useClassicWasdWalking) {
-                    handler.stopMovingTowards(Direction.SouthEast);
-                } else {
-                    handler.stopMovingTowards(Direction.South);
-                }
+                handler.stopMovingTowards(Direction.South);
                 break;
 
             case NumPad7:
             case Home:
-                if (useClassicWasdWalking) {
-                    handler.stopMovingTowards(Direction.NorthWest);
-                } else {
-                    handler.stopMovingTowards(Direction.North);
-                }
+                handler.stopMovingTowards(Direction.North);
                 break;
 
             case NumPad9:
             case PageUp:
-                if (useClassicWasdWalking) {
-                    handler.stopMovingTowards(Direction.NorthEast);
-                } else {
-                    handler.stopMovingTowards(Direction.East);
-                }
+                handler.stopMovingTowards(Direction.East);
                 break;
         }
     }
@@ -222,106 +168,62 @@ public final class KeyMapper {
 
             case CursorUp:
             case NumPad8:
-                if (useClassicWasdWalking) {
-                    startMovingTowards(Direction.North);
-                } else {
-                    startMovingTowards(Direction.NorthEast);
-                }
+                startMovingTowards(Direction.NorthEast);
                 break;
             case W:
-                if (useWasdWalking && !useClassicWasdWalking) {
+                if (useWasdWalking) {
                     startMovingTowards(Direction.NorthEast);
-                }
-                if (useWasdWalking && useClassicWasdWalking) {
-                    startMovingTowards(Direction.North);
                 }
                 break;
 
             case CursorLeft:
             case NumPad4:
-                if (useClassicWasdWalking) {
-                    startMovingTowards(Direction.West);
-                } else {
-                    startMovingTowards(Direction.NorthWest);
-                }
+                startMovingTowards(Direction.NorthWest);
                 break;
             case A:
-                if (useWasdWalking && !useClassicWasdWalking) {
+                if (useWasdWalking) {
                     startMovingTowards(Direction.NorthWest);
-                }
-                if (useWasdWalking && useClassicWasdWalking) {
-                    startMovingTowards(Direction.West);
                 }
                 break;
 
             case CursorDown:
             case NumPad2:
-                if (useClassicWasdWalking) {
-                    startMovingTowards(Direction.South);
-                } else {
-                    startMovingTowards(Direction.SouthWest);
-                }
+                startMovingTowards(Direction.SouthWest);
                 break;
             case S:
-                if (useWasdWalking && !useClassicWasdWalking) {
+                if (useWasdWalking) {
                     startMovingTowards(Direction.SouthWest);
-                }
-                if (useWasdWalking && useClassicWasdWalking) {
-                    startMovingTowards(Direction.South);
                 }
                 break;
 
             case CursorRight:
             case NumPad6:
-                if (useClassicWasdWalking) {
-                    startMovingTowards(Direction.East);
-                } else {
-                    startMovingTowards(Direction.SouthEast);
-                }
+                startMovingTowards(Direction.SouthEast);
                 break;
             case D:
-                if (useWasdWalking && !useClassicWasdWalking) {
+                if (useWasdWalking) {
                     startMovingTowards(Direction.SouthEast);
-                }
-                if (useWasdWalking && useClassicWasdWalking) {
-                    startMovingTowards(Direction.East);
                 }
                 break;
 
             case NumPad1:
             case End:
-                if (useClassicWasdWalking) {
-                    startMovingTowards(Direction.SouthWest);
-                } else {
-                    startMovingTowards(Direction.West);
-                }
+                startMovingTowards(Direction.West);
                 break;
 
             case NumPad3:
             case PageDown:
-                if (useClassicWasdWalking) {
-                    startMovingTowards(Direction.SouthEast);
-                } else {
-                    startMovingTowards(Direction.South);
-                }
+                startMovingTowards(Direction.South);
                 break;
 
             case NumPad7:
             case Home:
-                if (useClassicWasdWalking) {
-                    startMovingTowards(Direction.NorthWest);
-                } else {
-                    startMovingTowards(Direction.North);
-                }
+                startMovingTowards(Direction.North);
                 break;
 
             case NumPad9:
             case PageUp:
-                if (useClassicWasdWalking) {
-                    startMovingTowards(Direction.NorthEast);
-                } else {
-                    startMovingTowards(Direction.East);
-                }
+                startMovingTowards(Direction.East);
                 break;
 
             case LeftCtrl:

@@ -514,12 +514,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("testserverPassStore", true);
         cfg.setDefault("serverAccountLogin", true);
         cfg.setDefault("wasdWalk", true);
-        cfg.setDefault("classicWalk", false);
         cfg.setDefault("disableChatAfterSending", true);
         cfg.setDefault("showQuestsOnGameMap", true);
         cfg.setDefault("showQuestsOnMiniMap", true);
-        cfg.setDefault("mouseFollowAutoRun", false);
-        cfg.setDefault("continueWalkAfterDragging", true);
         cfg.set("limitPathFindingToMouseDirection", true);
         cfg.set("followMousePathFinding", true);
 

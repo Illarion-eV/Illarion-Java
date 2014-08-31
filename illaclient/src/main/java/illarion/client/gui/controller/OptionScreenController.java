@@ -39,9 +39,7 @@ public final class OptionScreenController implements ScreenController {
 
     //private DropDown<String> charNameLength;
     //private CheckBox showCharId;
-    private CheckBox continueWalkAfterDragging;
     private CheckBox wasdWalk;
-    private CheckBox classicWalk;
     private CheckBox disableChatAfterSending;
     private CheckBox showQuestsOnGameMap;
     private CheckBox showQuestsOnMiniMap;
@@ -63,7 +61,6 @@ public final class OptionScreenController implements ScreenController {
     private TextField clientVersion;
     private CheckBox serverAccountLogin;
     private CheckBox serverResetSettings;
-    private CheckBox mouseFollowAutoRun;
 
     @Override
     public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
@@ -78,10 +75,7 @@ public final class OptionScreenController implements ScreenController {
 
         //showCharId = screen.findNiftyControl("showCharId", CheckBox.class);
 
-        continueWalkAfterDragging = tabRoot.findNiftyControl("continueWalkAfterDragging", CheckBox.class);
         wasdWalk = tabRoot.findNiftyControl("wasdWalk", CheckBox.class);
-        classicWalk = tabRoot.findNiftyControl("classicWalk", CheckBox.class);
-        mouseFollowAutoRun = tabRoot.findNiftyControl("mouseFollowAutoRun", CheckBox.class);
 
         disableChatAfterSending = tabRoot.findNiftyControl("disableChatAfterSending", CheckBox.class);
         showQuestsOnGameMap = tabRoot.findNiftyControl("showQuestsOnGameMap", CheckBox.class);
@@ -125,10 +119,7 @@ public final class OptionScreenController implements ScreenController {
     public void onStartScreen() {
         //charNameLength.selectItemByIndex(IllaClient.getCfg().getInteger(People.CFG_NAMEMODE_KEY) - 1);
         //showCharId.setChecked(IllaClient.getCfg().getBoolean(People.CFG_SHOWID_KEY));
-        continueWalkAfterDragging.setChecked(IllaClient.getCfg().getBoolean("continueWalkAfterDragging"));
         wasdWalk.setChecked(IllaClient.getCfg().getBoolean("wasdWalk"));
-        classicWalk.setChecked(IllaClient.getCfg().getBoolean("classicWalk"));
-        mouseFollowAutoRun.setChecked(IllaClient.getCfg().getBoolean("mouseFollowAutoRun"));
         disableChatAfterSending.setChecked(IllaClient.getCfg().getBoolean("disableChatAfterSending"));
         showQuestsOnGameMap.setChecked(IllaClient.getCfg().getBoolean("showQuestsOnGameMap"));
         showQuestsOnMiniMap.setChecked(IllaClient.getCfg().getBoolean("showQuestsOnMiniMap"));
@@ -160,10 +151,7 @@ public final class OptionScreenController implements ScreenController {
 
         //configSystem.set(People.CFG_NAMEMODE_KEY, charNameLength.getSelectedIndex() + 1);
         //configSystem.set(People.CFG_SHOWID_KEY, showCharId.isChecked());
-        configSystem.set("continueWalkAfterDragging", continueWalkAfterDragging.isChecked());
         configSystem.set("wasdWalk", wasdWalk.isChecked());
-        configSystem.set("classicWalk", classicWalk.isChecked());
-        configSystem.set("mouseFollowAutoRun", mouseFollowAutoRun.isChecked());
         configSystem.set("disableChatAfterSending", disableChatAfterSending.isChecked());
         configSystem.set("showQuestsOnGameMap", showQuestsOnGameMap.isChecked());
         configSystem.set("showQuestsOnMiniMap", showQuestsOnMiniMap.isChecked());

@@ -15,16 +15,13 @@
  */
 package illarion.client.world.movement;
 
-import illarion.client.IllaClient;
 import illarion.client.world.CharMovementMode;
 import illarion.client.world.MapDimensions;
 import illarion.client.world.World;
-import illarion.common.config.ConfigChangedEvent;
 import illarion.common.types.Direction;
 import illarion.common.types.Location;
 import illarion.common.util.FastMath;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
-import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.illarion.engine.input.Input;
 import org.illarion.engine.input.Key;
 
@@ -58,11 +55,6 @@ class FollowMouseMovementHandler extends AbstractMovementHandler implements Mous
      */
     private int lastMouseY;
 
-    /**
-     * Always run when moving with the mouse.
-     */
-    private boolean mouseFollowAutoRun;
-
     private CharMovementMode currentMovementMode;
 
     @Nullable
@@ -73,8 +65,6 @@ class FollowMouseMovementHandler extends AbstractMovementHandler implements Mous
         this.input = input;
         lastMouseX = -1;
         lastMouseY = -1;
-
-        mouseFollowAutoRun = IllaClient.getCfg().getBoolean("mouseFollowAutoRun");
 
         AnnotationProcessor.process(this);
     }
@@ -141,10 +131,6 @@ class FollowMouseMovementHandler extends AbstractMovementHandler implements Mous
             return CharMovementMode.Walk;
         }
 
-        if (!mouseFollowAutoRun) {
-            return getMovement().getDefaultMovementMode();
-        }
-
         CharMovementMode mode = CharMovementMode.Walk;
         if (distance > 200) {
             mode = CharMovementMode.Run;
@@ -155,11 +141,6 @@ class FollowMouseMovementHandler extends AbstractMovementHandler implements Mous
             return mode;
         }
         return CharMovementMode.Walk;
-    }
-
-    @EventTopicSubscriber(topic = "mouseFollowAutoRun")
-    private void mouseFollowAutoRunChanged(@Nonnull String topic, @Nonnull ConfigChangedEvent configChanged) {
-        mouseFollowAutoRun = configChanged.getConfig().getBoolean("mouseFollowAutoRun");
     }
 
     @Override
