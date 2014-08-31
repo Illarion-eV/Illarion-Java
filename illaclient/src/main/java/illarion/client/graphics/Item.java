@@ -403,8 +403,6 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
 
     @Override
     public void show() {
-        // add to display list
-        super.show();
         if (animation != null) {
             animation.addTarget(this, true);
         }
@@ -415,7 +413,6 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         if (animation != null) {
             animation.removeTarget(this);
         }
-        super.hide();
     }
 
     @Override

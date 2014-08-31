@@ -41,7 +41,7 @@ public abstract class AbstractMouseLocationEvent implements SceneEvent {
      * @param x the x coordinate of the click
      * @param y the y coordinate of the click
      */
-    protected AbstractMouseLocationEvent(final int x, final int y) {
+    protected AbstractMouseLocationEvent(int x, int y) {
         this.x = x;
         this.y = y;
     }
@@ -51,7 +51,7 @@ public abstract class AbstractMouseLocationEvent implements SceneEvent {
      *
      * @param org the original object that is copied
      */
-    protected AbstractMouseLocationEvent(@Nonnull final AbstractMouseLocationEvent org) {
+    protected AbstractMouseLocationEvent(@Nonnull AbstractMouseLocationEvent org) {
         x = org.x;
         y = org.y;
     }

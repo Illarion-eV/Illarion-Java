@@ -36,7 +36,6 @@ import javax.annotation.concurrent.NotThreadSafe;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +82,7 @@ public final class MapTile implements AlphaChangeListener {
      */
     @Nullable
     @GuardedBy("itemsLock")
-    private List<Item> items;
+    private ItemStack items;
 
     /**
      * The lock used to guard the items table.
@@ -495,7 +494,6 @@ public final class MapTile implements AlphaChangeListener {
                         updateItem(item, itemCount, index);
                     } else {
                         // different item: clear old item
-                        item.markAsRemoved();
                         item = null;
 
                         // carrying item was removed
@@ -506,7 +504,7 @@ public final class MapTile implements AlphaChangeListener {
                     }
                 }
             } else {
-                items = new ArrayList<>();
+                items = new ItemStack();
             }
             // add a new item
             if (item == null) {
@@ -514,9 +512,6 @@ public final class MapTile implements AlphaChangeListener {
                 item = Item.create(itemId, tileLocation, this);
 
                 updateItem(item, itemCount, index);
-                // display on screen
-
-                item.show();
 
                 // add it to list
                 if (index < items.size()) {
@@ -550,7 +545,7 @@ public final class MapTile implements AlphaChangeListener {
             objectOffset = elevation;
         }
         // position on tile with increasing z-order
-        item.setScreenPos(tileLocation.getDcX(), tileLocation.getDcY() - objectOffset, tileLocation.getDcZ() - index,
+        item.setScreenPos(tileLocation.getDcX(), tileLocation.getDcY() - objectOffset, tileLocation.getDcZ(),
                           Layers.ITEM);
 
         // set the elevation for items that can carry

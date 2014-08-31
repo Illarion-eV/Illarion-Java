@@ -86,12 +86,14 @@ public abstract class AbstractTemplateFactory<T extends ResourceTemplate> implem
         if ((object == null) && (defaultId > -1)) {
             T defaultObject = storage.get(defaultId);
             if (defaultObject == null) {
-                throw new IllegalStateException("Requested object and the default object were not found.");
+                throw new IllegalStateException("Requested template " + templateId + " and the default template " +
+                                                        defaultId + " were not found.");
             }
             return defaultObject;
         }
         if (object == null) {
-            throw new IllegalStateException("Requested object was not found and not default object was declared.");
+            throw new IllegalStateException("Requested template " + templateId +
+                                                    " was not found and not default template was declared.");
         }
         return object;
     }
