@@ -48,11 +48,6 @@
                             <control name="checkbox" id="classicWalk"/>
                         </panel>
                         <panel width="100%" childLayout="horizontal">
-                            <control name="label" text="${options-bundle.walkAsDefault}"/>
-                            <panel width="*"/>
-                            <control name="checkbox" id="walkAsDefault"/>
-                        </panel>
-                        <panel width="100%" childLayout="horizontal">
                             <control name="label" text="${options-bundle.mouseFollowAutoRun}"/>
                             <panel width="*"/>
                             <control name="checkbox" id="mouseFollowAutoRun"/>
@@ -63,7 +58,7 @@
                             <control name="checkbox" id="continueWalkAfterDragging"/>
                         </panel>
                         <panel width="100%" childLayout="horizontal">
-                        <control name="label" text="${options-bundle.disableChatAfterSending}"/>
+                            <control name="label" text="${options-bundle.disableChatAfterSending}"/>
                             <panel width="*"/>
                             <control name="checkbox" id="disableChatAfterSending"/>
                         </panel>

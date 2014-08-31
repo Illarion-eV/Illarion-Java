@@ -63,7 +63,6 @@ public final class OptionScreenController implements ScreenController {
     private TextField clientVersion;
     private CheckBox serverAccountLogin;
     private CheckBox serverResetSettings;
-    private CheckBox walkAsDefault;
     private CheckBox mouseFollowAutoRun;
 
     @Override
@@ -82,7 +81,6 @@ public final class OptionScreenController implements ScreenController {
         continueWalkAfterDragging = tabRoot.findNiftyControl("continueWalkAfterDragging", CheckBox.class);
         wasdWalk = tabRoot.findNiftyControl("wasdWalk", CheckBox.class);
         classicWalk = tabRoot.findNiftyControl("classicWalk", CheckBox.class);
-        walkAsDefault = tabRoot.findNiftyControl("walkAsDefault", CheckBox.class);
         mouseFollowAutoRun = tabRoot.findNiftyControl("mouseFollowAutoRun", CheckBox.class);
 
         disableChatAfterSending = tabRoot.findNiftyControl("disableChatAfterSending", CheckBox.class);
@@ -130,7 +128,6 @@ public final class OptionScreenController implements ScreenController {
         continueWalkAfterDragging.setChecked(IllaClient.getCfg().getBoolean("continueWalkAfterDragging"));
         wasdWalk.setChecked(IllaClient.getCfg().getBoolean("wasdWalk"));
         classicWalk.setChecked(IllaClient.getCfg().getBoolean("classicWalk"));
-        walkAsDefault.setChecked(IllaClient.getCfg().getBoolean("walkAsDefault"));
         mouseFollowAutoRun.setChecked(IllaClient.getCfg().getBoolean("mouseFollowAutoRun"));
         disableChatAfterSending.setChecked(IllaClient.getCfg().getBoolean("disableChatAfterSending"));
         showQuestsOnGameMap.setChecked(IllaClient.getCfg().getBoolean("showQuestsOnGameMap"));
@@ -166,7 +163,6 @@ public final class OptionScreenController implements ScreenController {
         configSystem.set("continueWalkAfterDragging", continueWalkAfterDragging.isChecked());
         configSystem.set("wasdWalk", wasdWalk.isChecked());
         configSystem.set("classicWalk", classicWalk.isChecked());
-        configSystem.set("walkAsDefault", walkAsDefault.isChecked());
         configSystem.set("mouseFollowAutoRun", mouseFollowAutoRun.isChecked());
         configSystem.set("disableChatAfterSending", disableChatAfterSending.isChecked());
         configSystem.set("showQuestsOnGameMap", showQuestsOnGameMap.isChecked());

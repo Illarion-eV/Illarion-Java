@@ -518,7 +518,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("disableChatAfterSending", true);
         cfg.setDefault("showQuestsOnGameMap", true);
         cfg.setDefault("showQuestsOnMiniMap", true);
-        cfg.setDefault("walkAsDefault", true);
         cfg.setDefault("mouseFollowAutoRun", false);
         cfg.setDefault("continueWalkAfterDragging", true);
         cfg.set("limitPathFindingToMouseDirection", true);

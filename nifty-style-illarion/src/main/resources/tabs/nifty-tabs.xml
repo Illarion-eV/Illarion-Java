@@ -38,7 +38,8 @@
     <style id="nifty-tab-button">
         <attributes backgroundImage="gui/tabs/tab.png"
                     imageMode="resize:6,2,6,4,6,2,6,11,6,2,6,2" paddingLeft="8px"
-                    paddingRight="8px" width="100px" height="20px" childLayout="center" visibleToMouse="true"/>
+                    paddingRight="8px" width="100px" height="20px" childLayout="center"
+                    visibleToMouse="true"/>
     </style>
 
     <!-- The style of the text on a tab button that is not the activated one. -->
