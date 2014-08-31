@@ -121,11 +121,12 @@ public final class Parser implements DocuEntry {
                     public FileVisitResult visitFile(@Nonnull final Path file, BasicFileAttributes attrs)
                             throws IOException {
                         if (file.toUri().toString().endsWith(".npc")) {
+                            parseScript(file);
                             executor.submit(new Callable<Void>() {
                                 @Nullable
                                 @Override
                                 public Void call() throws Exception {
-                                    parseScript(file);
+
                                     return null;
                                 }
                             });
@@ -149,6 +150,8 @@ public final class Parser implements DocuEntry {
         EasyNpcParser parser = new EasyNpcParser(new CommonTokenStream(lexer));
 
         ParsedNpcVisitor visitor = new ParsedNpcVisitor();
+        lexer.removeErrorListeners();
+        lexer.addErrorListener(visitor);
         EasyNpcParser.ScriptContext context = parser.script();
 
         context.accept(visitor);

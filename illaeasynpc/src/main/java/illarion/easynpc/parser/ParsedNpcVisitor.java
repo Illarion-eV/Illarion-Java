@@ -26,7 +26,9 @@ import illarion.easynpc.parsed.*;
 import illarion.easynpc.parsed.shared.ParsedItemData;
 import illarion.easynpc.parsed.talk.conditions.*;
 import illarion.easynpc.parsed.talk.consequences.*;
-import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.atn.ATNConfigSet;
+import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -35,10 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static illarion.easynpc.grammar.EasyNpcParser.*;
 import static illarion.easynpc.parsed.ParsedGuardText.TextType.*;
@@ -48,7 +47,7 @@ import static illarion.easynpc.parser.Utils.*;
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> {
+public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> implements ANTLRErrorListener {
     @Nonnull
     private static final Logger LOGGER = LoggerFactory.getLogger(ParsedNpcVisitor.class);
     @Nonnull
@@ -629,5 +628,50 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> {
     @Nonnull
     public ParsedNpc getParsedNpc() {
         return npc;
+    }
+
+    @Override
+    public void syntaxError(
+            @NotNull Recognizer<?, ?> recognizer,
+            @org.antlr.v4.runtime.misc.Nullable Object offendingSymbol,
+            int line,
+            int charPositionInLine,
+            @NotNull String msg,
+            @org.antlr.v4.runtime.misc.Nullable RecognitionException e) {
+        npc.addError(line, charPositionInLine, msg);
+    }
+
+    @Override
+    public void reportAmbiguity(
+            @NotNull Parser recognizer,
+            @NotNull DFA dfa,
+            int startIndex,
+            int stopIndex,
+            boolean exact,
+            @org.antlr.v4.runtime.misc.Nullable BitSet ambigAlts,
+            @NotNull ATNConfigSet configs) {
+
+    }
+
+    @Override
+    public void reportAttemptingFullContext(
+            @NotNull Parser recognizer,
+            @NotNull DFA dfa,
+            int startIndex,
+            int stopIndex,
+            @org.antlr.v4.runtime.misc.Nullable BitSet conflictingAlts,
+            @NotNull ATNConfigSet configs) {
+
+    }
+
+    @Override
+    public void reportContextSensitivity(
+            @NotNull Parser recognizer,
+            @NotNull DFA dfa,
+            int startIndex,
+            int stopIndex,
+            int prediction,
+            @NotNull ATNConfigSet configs) {
+
     }
 }
