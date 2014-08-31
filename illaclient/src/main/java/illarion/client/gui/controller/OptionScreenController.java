@@ -18,7 +18,9 @@ package illarion.client.gui.controller;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.*;
+import de.lessvoid.nifty.controls.checkbox.CheckBoxView;
 import de.lessvoid.nifty.elements.Element;
+import de.lessvoid.nifty.elements.events.ElementShowEvent;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.IllaClient;
@@ -141,6 +143,30 @@ public final class OptionScreenController implements ScreenController {
             clientVersion.setText(Integer.toString(IllaClient.getCfg().getInteger("clientVersion")));
             serverAccountLogin.setChecked(IllaClient.getCfg().getBoolean("serverAccountLogin"));
             serverResetSettings.setChecked(false);
+        }
+    }
+
+    @NiftyEventSubscriber(pattern = "tabRoot#tab-content-panel#[a-z]+Tab")
+    public void updateVisibility(String topic, ElementShowEvent event) {
+        if ("tabRoot#tab-content-panel#generalTab".equals(topic)) {
+            ((CheckBoxView) wasdWalk).update(wasdWalk.isChecked());
+            ((CheckBoxView) disableChatAfterSending).update(disableChatAfterSending.isChecked());
+            ((CheckBoxView) showQuestsOnGameMap).update(showQuestsOnGameMap.isChecked());
+            ((CheckBoxView) showQuestsOnMiniMap).update(showQuestsOnMiniMap.isChecked());
+        }
+
+        if ("tabRoot#tab-content-panel#graphicsTab".equals(topic)) {
+            ((CheckBoxView) showFps).update(showFps.isChecked());
+            ((CheckBoxView) showPing).update(showPing.isChecked());
+        }
+
+        if ("tabRoot#tab-content-panel#soundTab".equals(topic)) {
+            ((CheckBoxView) soundOn).update(soundOn.isChecked());
+            ((CheckBoxView) musicOn).update(musicOn.isChecked());
+        }
+
+        if ("tabRoot#tab-content-panel#serverTab".equals(topic)) {
+            ((CheckBoxView) serverAccountLogin).update(serverAccountLogin.isChecked());
         }
     }
 

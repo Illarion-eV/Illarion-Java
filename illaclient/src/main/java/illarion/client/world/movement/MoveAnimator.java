@@ -107,12 +107,11 @@ class MoveAnimator implements AnimatedMove {
 
         Player parentPlayer = movement.getPlayer();
         parentPlayer.getCharacter().resetAnimation(true);
-        if (parentPlayer.getLocation().equals(allowedTarget)) {
-            movement.reportReadyForNextStep();
-        } else {
+        if (!parentPlayer.getLocation().equals(allowedTarget)) {
             moveAnimation.stop();
             parentPlayer.setLocation(allowedTarget);
         }
+        movement.reportReadyForNextStep();
     }
 
     /**
@@ -154,6 +153,7 @@ class MoveAnimator implements AnimatedMove {
                                 "location: {}", target, parentPlayer.getLocation());
                         /* Crap! We are moving to the wrong place... */
                         movement.executeServerLocation(target);
+                        movement.reportReadyForNextStep();
                     }
                 } else {
                     log.debug(marker, "The unconfirmed move seems to be done already.");
