@@ -28,7 +28,7 @@
                 <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy"/>
             </appender>
             <root level="warn">
-            <appender-ref ref="FILE"/>
+                <appender-ref ref="FILE"/>
             </root>
         </then>
     </if>
@@ -38,7 +38,7 @@
         </encoder>
     </appender>
     <logger name="org.bushe.swing.event.EventService" level="warn"/>
-    <root level="info">
+    <root level="warn">
         <appender-ref ref="CONSOLE"/>
     </root>
 </configuration>

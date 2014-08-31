@@ -15,7 +15,7 @@
  */
 package illarion.easynpc.data;
 
-import illarion.common.types.Location;
+import illarion.common.types.Direction;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
 
@@ -27,28 +27,29 @@ import javax.annotation.Nonnull;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public enum CharacterDirection {
-    east(Location.DIR_EAST),
-    north(Location.DIR_NORTH),
-    northeast(Location.DIR_NORTHEAST),
-    northwest(Location.DIR_NORTHWEST),
-    south(Location.DIR_SOUTH),
-    southeast(Location.DIR_SOUTHEAST),
-    southwest(Location.DIR_SOUTHWEST),
-    west(Location.DIR_WEST);
+    east(Direction.East),
+    north(Direction.North),
+    northeast(Direction.NorthEast),
+    northwest(Direction.NorthWest),
+    south(Direction.South),
+    southeast(Direction.SouthEast),
+    southwest(Direction.SouthWest),
+    west(Direction.West);
 
     /**
      * The ID of this direction value used to identify it in the lua script.
      */
-    private final int dirId;
+    @Nonnull
+    private final Direction dir;
 
     /**
      * The constructor for the NPC constant that stores the string
      * representation of the constants along with.
      *
-     * @param id the ID representation of this constant.
+     * @param dir the ID representation of this constant.
      */
-    CharacterDirection(int id) {
-        dirId = id;
+    CharacterDirection(@Nonnull Direction dir) {
+        this.dir = dir;
     }
 
     /**
@@ -57,7 +58,7 @@ public enum CharacterDirection {
      * @return the ID of this direction representation
      */
     public int getId() {
-        return dirId;
+        return dir.getServerId();
     }
 
     /**

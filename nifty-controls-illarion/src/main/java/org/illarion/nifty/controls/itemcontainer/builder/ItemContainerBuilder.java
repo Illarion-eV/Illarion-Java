@@ -28,10 +28,6 @@ public class ItemContainerBuilder extends ControlBuilder {
         set("hideOnClose", Boolean.toString(false));
     }
 
-    public void description(String description) {
-        set("description", description);
-    }
-
     public void slotBackground(String image) {
         set("slotBackground", image);
     }

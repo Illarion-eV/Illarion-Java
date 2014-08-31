@@ -417,11 +417,6 @@ final class Receiver extends Thread implements NetCommReader {
             if (data >= neededDataInBuffer) {
                 break;
             }
-            try {
-                Thread.sleep(2);
-            } catch (@Nonnull InterruptedException e) {
-                LOGGER.warn("Interrupted wait time for new data");
-            }
         }
 
         buffer.flip();

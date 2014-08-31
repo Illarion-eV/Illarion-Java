@@ -44,7 +44,7 @@ public class SkillLoader {
     /**
      * This value is turned {@code true} once the loading is finished.
      */
-    private static boolean loadingFinished;
+    private static volatile boolean loadingFinished;
 
     /**
      * Load the skills from the XML file.
@@ -54,11 +54,11 @@ public class SkillLoader {
             return;
         }
 
+        ClassLoader ccl = Thread.currentThread().getContextClassLoader();
         synchronized (SkillLoader.class) {
             if (loadingFinished) {
                 return;
             }
-            ClassLoader ccl = Thread.currentThread().getContextClassLoader();
 
             try (InputStream skillXmlStream = ccl.getResourceAsStream("skills.xml")) {
                 if (skillXmlStream == null) {

@@ -51,12 +51,12 @@ public final class Effect extends AbstractEntity<EffectTemplate> implements Reso
      *
      * @param template the template used to create a new item
      */
-    public Effect(@Nonnull final EffectTemplate template) {
+    public Effect(@Nonnull EffectTemplate template) {
         super(template);
 
         if (template.getFrames() > 0) {
             animation = new FrameAnimation(this);
-            animation.setup(template.getFrames(), 0, template.getAnimationSpeed(), 0);
+            animation.setup(template.getFrames(), 0, template.getAnimationSpeed() * 150);
         } else {
             animation = null;
         }
@@ -70,7 +70,7 @@ public final class Effect extends AbstractEntity<EffectTemplate> implements Reso
      * @return the instance of Effect that shall be used
      */
     @Nonnull
-    public static Effect create(final int effectID) {
+    public static Effect create(int effectID) {
         return new Effect(EffectFactory.getInstance().getTemplate(effectID));
     }
 
@@ -81,7 +81,7 @@ public final class Effect extends AbstractEntity<EffectTemplate> implements Reso
      * @param finished true in case the animation is done, false if it got canceled
      */
     @Override
-    public void animationFinished(final boolean finished) {
+    public void animationFinished(boolean finished) {
         hide();
     }
 
@@ -107,7 +107,7 @@ public final class Effect extends AbstractEntity<EffectTemplate> implements Reso
      *
      * @param loc the location on the game map the effect shall be shown on
      */
-    public void show(@Nonnull final Location loc) {
+    public void show(@Nonnull Location loc) {
         setScreenPos(loc, Layers.EFFECTS);
         if (animation != null) {
             animation.restart();

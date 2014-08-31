@@ -505,7 +505,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("questWindowPosX", "100px");
         cfg.setDefault("questWindowPosY", "100px");
         cfg.setDefault("questShowFinished", false);
-        cfg.setDefault("runAutoAvoid", true);
         cfg.setDefault("server", Login.DEVSERVER);
         cfg.setDefault("serverAddress", Servers.customserver.getServerHost());
         cfg.setDefault("serverPort", Servers.customserver.getServerPort());
@@ -515,13 +514,11 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("testserverPassStore", true);
         cfg.setDefault("serverAccountLogin", true);
         cfg.setDefault("wasdWalk", true);
-        cfg.setDefault("classicWalk", false);
         cfg.setDefault("disableChatAfterSending", true);
         cfg.setDefault("showQuestsOnGameMap", true);
         cfg.setDefault("showQuestsOnMiniMap", true);
-        cfg.setDefault("walkAsDefault", true);
-        cfg.setDefault("mouseFollowAutoRun", false);
-        cfg.setDefault("followMousePathFinding", true);
+        cfg.set("limitPathFindingToMouseDirection", true);
+        cfg.set("followMousePathFinding", true);
 
         @Nonnull Toolkit awtDefaultToolkit = Toolkit.getDefaultToolkit();
         @Nullable Object doubleClick = awtDefaultToolkit.getDesktopProperty("awt.multiClickInterval");

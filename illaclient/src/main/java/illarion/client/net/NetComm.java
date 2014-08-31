@@ -87,7 +87,7 @@ public final class NetComm {
     /**
      * The instance of the logger that is used to write out the data.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(NetComm.class);
+    private static final Logger log = LoggerFactory.getLogger(NetComm.class);
 
     /**
      * General time to wait in case its needed that other threads need to react on some input.
@@ -200,7 +200,7 @@ public final class NetComm {
         builder.append(builderText);
         builder.append('>');
 
-        LOGGER.debug(builder.toString());
+        log.debug(builder.toString());
     }
 
     /**
@@ -228,6 +228,7 @@ public final class NetComm {
             socket = SelectorProvider.provider().openSocketChannel();
             socket.configureBlocking(true);
             socket.socket().setPerformancePreferences(0, 2, 1);
+            socket.socket().setTcpNoDelay(true);
 
             if (!socket.connect(address)) {
                 while (socket.isConnectionPending()) {
@@ -235,7 +236,7 @@ public final class NetComm {
                     try {
                         Thread.sleep(1);
                     } catch (@Nonnull InterruptedException e) {
-                        LOGGER.warn("Waiting time for connection finished got interrupted");
+                        log.warn("Waiting time for connection finished got interrupted");
                     }
                 }
             }
@@ -263,7 +264,7 @@ public final class NetComm {
             keepAliveTimer.setRepeats(true);
             keepAliveTimer.start();
         } catch (@Nonnull IOException e) {
-            LOGGER.error("Connection error");
+            log.error("Connection error");
             return false;
         }
         return true;
@@ -305,7 +306,7 @@ public final class NetComm {
             try {
                 Thread.sleep(THREAD_WAIT_TIME);
             } catch (@Nonnull InterruptedException e) {
-                LOGGER.warn("Disconnecting wait got interrupted.");
+                log.warn("Disconnecting wait got interrupted.");
             }
 
             inputQueue.clear();
@@ -317,7 +318,7 @@ public final class NetComm {
                 socket = null;
             }
         } catch (@Nonnull IOException e) {
-            LOGGER.warn("Disconnecting failed.", e);
+            log.warn("Disconnecting failed.", e);
         }
     }
 
@@ -338,14 +339,10 @@ public final class NetComm {
      */
     @SuppressWarnings("nls")
     public void sendCommand(@Nonnull AbstractCommand cmd) {
-        if (cmd.getId() != CommandList.CMD_KEEPALIVE) {
-            LOGGER.debug("SND: {}", cmd);
-        }
-
         try {
             outputQueue.put(cmd);
         } catch (@Nonnull InterruptedException e) {
-            LOGGER.error("Got interrupted while trying to add a command to to the queue.");
+            log.error("Got interrupted while trying to add a command to to the queue.");
         }
     }
 }

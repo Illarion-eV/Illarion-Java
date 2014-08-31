@@ -16,6 +16,8 @@
 package illarion.client.graphics;
 
 import illarion.client.world.World;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,11 +37,7 @@ import java.util.List;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 abstract class AbstractAnimation<T extends Animated> {
-    /**
-     * The time in ms one frame is shown. This could be a common frame as in a
-     * image, but also how long a movement animation remains at one location.
-     */
-    protected static final int ANIMATION_FRAME = 150;
+    private static final Logger log = LoggerFactory.getLogger(AbstractAnimation.class);
 
     /**
      * The current time of the animation. This value is always between the 0 and
@@ -64,12 +62,20 @@ abstract class AbstractAnimation<T extends Animated> {
     private boolean running;
 
     /**
+     * Make the animation skip the next timing update.
+     */
+    private boolean skipNextUpdate;
+
+    /**
      * The animation targets. This contains the objects that are handled by this
      * animation. All targets handled by one animation are updated at the same
      * time in a synchronized way.
      */
     @Nonnull
     private final List<T> targets;
+
+    private float storyboardStart;
+    private float storyboardEnd;
 
     /**
      * The constructor for a new animation. It does not start the animation
@@ -85,6 +91,22 @@ abstract class AbstractAnimation<T extends Animated> {
         if (firstTarget != null) {
             targets.add(firstTarget);
         }
+        storyboardStart = 0.f;
+        storyboardEnd = 1.f;
+    }
+
+    /**
+     * The constructor for a new animation. It does not start the animation
+     * right away it rather prepares the animation and takes the first animation
+     * target. In case there are more animation targets needed use
+     * {@link #addTarget(Animated, boolean)}.
+     *
+     * @param firstTarget the first animation target, so the first object that
+     * is actually animated
+     */
+    protected AbstractAnimation(@Nullable T firstTarget, @Nonnull AbstractAnimation<T> sourceAnimation) {
+        this(firstTarget);
+        duration = sourceAnimation.duration;
     }
 
     /**
@@ -127,6 +149,30 @@ abstract class AbstractAnimation<T extends Animated> {
      */
     public final float animationProgress() {
         return (float) currentTime / duration;
+    }
+
+    protected final float getStoryboardProgress(boolean wrapped) {
+        float animationProgress = animationProgress();
+        float storyboardSpan = storyboardEnd - storyboardStart;
+        float unwrappedStoryboard = (storyboardSpan * animationProgress) + storyboardStart;
+        if (wrapped) {
+            return unwrappedStoryboard % 1.f;
+        }
+        return unwrappedStoryboard;
+    }
+
+    public final void setStoryboard(float start, float end) {
+        storyboardStart = start;
+        storyboardEnd = end;
+    }
+
+    public final void continueStoryboard(float length) {
+        setStoryboard(storyboardEnd, storyboardEnd + length);
+        log.debug("Expanding storyboard from {} to {}", storyboardStart, storyboardEnd);
+    }
+
+    public final void resetStoryboard() {
+        setStoryboard(0.f, 1.f);
     }
 
     /**
@@ -234,8 +280,17 @@ abstract class AbstractAnimation<T extends Animated> {
      *
      * @param newDuration the new value for the duration of this animation
      */
-    protected final void setDuration(int newDuration) {
+    public final void setDuration(int newDuration) {
         duration = newDuration;
+    }
+
+    /**
+     * Get the duration of the animation.
+     *
+     * @return the duration of the animation
+     */
+    public final int getDuration() {
+        return duration;
     }
 
     /**
@@ -246,6 +301,10 @@ abstract class AbstractAnimation<T extends Animated> {
      */
     protected final void setTiming() {
         currentTime = 0;
+    }
+
+    protected final void setSkipNextUpdate(boolean skip) {
+        skipNextUpdate = skip;
     }
 
     /**
@@ -265,16 +324,18 @@ abstract class AbstractAnimation<T extends Animated> {
     }
 
     /**
-     * Increase the current time by a set delta time. The time values are
-     * handled in milliseconds.
+     * Increase the current time by a set delta time. The time values are handled in milliseconds.
      *
-     * @param delta the time in milliseconds that shall be added to the current
-     * time
-     * @return true in case the animation ended by this update, means the
-     * current time reached the total duration of the animation
+     * @param delta the time in milliseconds that shall be added to the current time
+     * @return true in case the animation ended by this update, means the current time reached the total duration of
+     * the animation
      */
     protected final boolean updateCurrentTime(int delta) {
-        currentTime += delta;
+        if (skipNextUpdate) {
+            skipNextUpdate = false;
+        } else {
+            currentTime += delta;
+        }
 
         return currentTime > duration;
     }

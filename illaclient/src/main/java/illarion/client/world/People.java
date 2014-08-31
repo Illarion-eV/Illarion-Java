@@ -141,20 +141,6 @@ public final class People {
     }
 
     /**
-     * Check the visibility for all characters currently on the screen.
-     */
-    public void checkVisibility() {
-        charsLock.readLock().lock();
-        try {
-            for (Char character : chars.values()) {
-                character.setVisible(World.getPlayer().canSee(character));
-            }
-        } finally {
-            charsLock.readLock().unlock();
-        }
-    }
-
-    /**
      * Clean up the removal list. All character from the list of character to remove get removed and recycled. The list
      * is cleared after calling this function.
      */

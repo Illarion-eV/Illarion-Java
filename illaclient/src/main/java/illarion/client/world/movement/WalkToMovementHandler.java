@@ -18,6 +18,7 @@ package illarion.client.world.movement;
 import illarion.client.util.pathfinding.*;
 import illarion.client.world.CharMovementMode;
 import illarion.client.world.World;
+import illarion.common.types.Direction;
 import illarion.common.types.Location;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,9 @@ import org.slf4j.MarkerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Objects;
 
 import static illarion.client.util.pathfinding.PathMovementMethod.Run;
@@ -57,10 +61,14 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
     @Nullable
     private Path currentPath;
 
+    @Nonnull
+    private final Collection<Direction> allowedDirections;
+
     WalkToMovementHandler(@Nonnull Movement movement) {
         super(movement);
         pathFindingAlgorithm = new AStar();
         targetLocation = new Location();
+        allowedDirections = EnumSet.allOf(Direction.class);
     }
 
     @Nullable
@@ -72,9 +80,7 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
         int remainingDistance = currentLocation.getDistance(targetLocation);
         log.debug(marker, "Remaining distance to target: {} Expected distance: {}", remainingDistance, targetDistance);
         if (remainingDistance <= targetDistance) {
-            targetSet = false;
-            executeTargetAction();
-            return null;
+            return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation));
         }
         Path activePath;
         if (isCurrentPathValid()) {
@@ -83,37 +89,49 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
             activePath = calculateNewPath(currentLocation);
             currentPath = activePath;
         }
-        if (activePath == null) {
-            targetSet = false;
-            executeTargetAction();
-            return null;
+        if ((activePath == null) || activePath.isEmpty()) {
+            return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation));
         }
 
         PathNode node = activePath.nextStep();
         if (node == null) {
-            targetSet = false;
-            executeTargetAction();
-            return null;
+            return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation));
         }
         if (!isPathNodeValid(currentLocation, node)) {
             activePath = calculateNewPath(currentLocation);
             currentPath = activePath;
             if (activePath == null) {
-                targetSet = false;
-                executeTargetAction();
-                return new DefaultStepData(CharMovementMode.None, 0);
+                return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation));
             }
             node = activePath.nextStep();
             if (node == null) {
+                return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation));
+            }
+            if (!isPathNodeValid(currentLocation, node)) {
                 targetSet = false;
-                executeTargetAction();
-                return null;
+                targetAction = null;
+                return new DefaultStepData(CharMovementMode.None, currentLocation.getDirection(targetLocation));
             }
         }
         log.debug(marker, "Performing step to: {}", node.getLocation());
         CharMovementMode modeMode = convertMovementMode(node.getMovementMethod());
-        int moveDir = getDirection(currentLocation, node.getLocation());
+        Direction moveDir = getDirection(currentLocation, node.getLocation());
+        if (activePath.isEmpty() && (targetDistance == 0) && !targetLocation.equals(node.getLocation())) {
+            targetDistance = 1;
+        }
         return new DefaultStepData(modeMode, moveDir);
+    }
+
+    @Nullable
+    private Direction finishMove(@Nonnull Location currentLocation) {
+        Direction direction = null;
+        int remainingDistance = currentLocation.getDistance(targetLocation);
+        if (remainingDistance > 0) {
+            direction = currentLocation.getDirection(targetLocation);
+        }
+        executeTargetAction();
+        targetSet = false;
+        return direction;
     }
 
     private void executeTargetAction() {
@@ -133,6 +151,9 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
                 }
                 break;
             case Run:
+                if (!World.getPlayer().getCarryLoad().isRunningPossible()) {
+                    return false;
+                }
                 if (distanceToPlayer == 2) {
                     return true;
                 }
@@ -153,8 +174,17 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
         return CharMovementMode.Walk;
     }
 
-    private int getDirection(@Nonnull Location currentLocation, @Nonnull Location target) {
+    @Nullable
+    private static Direction getDirection(@Nonnull Location currentLocation, @Nonnull Location target) {
         return currentLocation.getDirection(target);
+    }
+
+    protected int getTargetDistance() {
+        return targetDistance;
+    }
+
+    protected void increaseTargetDistance() {
+        targetDistance++;
     }
 
     private boolean isCurrentPathValid() {
@@ -169,29 +199,36 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
             return false;
         }
         if (!destination.equals(targetLocation)) {
-            log.debug(marker, "Path is not valid: Destination does not equal the current target location.");
+            log.debug(marker, "Path is not valid: Destination ({}) does not equal the current target location ({}).",
+                      destination, targetLocation);
             return false;
         }
         return true;
     }
 
     @Nullable
-    private Path calculateNewPath(@Nonnull Location currentLocation) {
+    protected Path calculateNewPath(@Nonnull Location currentLocation) {
         log.info(marker, "Calculating a new path to: {}", targetLocation);
         PathFindingAlgorithm algorithm = pathFindingAlgorithm;
 
         switch (getMovementMode()) {
             case Walk:
-                return algorithm.findPath(World.getMap(), currentLocation, targetLocation, targetDistance, Walk);
+                return algorithm.findPath(World.getMap(), currentLocation, targetLocation, targetDistance,
+                                          getAllowedDirections(), Walk);
             case Run:
-                return algorithm.findPath(World.getMap(), currentLocation, targetLocation, targetDistance, Walk, Run);
+                return algorithm.findPath(World.getMap(), currentLocation, targetLocation, targetDistance,
+                                          getAllowedDirections(), Walk, Run);
             default:
                 return null;
         }
     }
 
     protected CharMovementMode getMovementMode() {
-        return getMovement().getDefaultMovementMode();
+        CharMovementMode mode = getMovement().getDefaultMovementMode();
+        if (getMovement().isMovementModePossible(mode)) {
+            return mode;
+        }
+        return CharMovementMode.Walk;
     }
 
     @Override
@@ -199,6 +236,10 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
         super.disengage(transferAllowed);
         targetSet = false;
         setTargetReachedAction(null);
+    }
+
+    protected Collection<Direction> getAllowedDirections() {
+        return Collections.unmodifiableCollection(allowedDirections);
     }
 
     @Override

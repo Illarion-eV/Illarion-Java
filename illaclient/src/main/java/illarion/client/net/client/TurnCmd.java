@@ -17,7 +17,7 @@ package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
 import illarion.common.net.NetCommWriter;
-import illarion.common.types.Location;
+import illarion.common.types.Direction;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
@@ -35,26 +35,23 @@ public final class TurnCmd extends AbstractCommand {
     /**
      * The direction the character is supposed to turn to.
      */
-    private byte direction;
+    @Nonnull
+    private final Direction direction;
 
     /**
      * Default constructor for the turn message.
      *
      * @param direction the direction to turn to
      */
-    public TurnCmd(final int direction) {
+    public TurnCmd(@Nonnull Direction direction) {
         super(CommandList.CMD_TURN);
 
-        if ((direction < 0) || (direction >= Location.DIR_MOVE8)) {
-            throw new IllegalArgumentException("Direction out of range: " + direction);
-        }
-
-        this.direction = (byte) direction;
+        this.direction = direction;
     }
 
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
-        writer.writeByte(direction);
+    public void encode(@Nonnull NetCommWriter writer) {
+        direction.encode(writer);
     }
 
     @Nonnull

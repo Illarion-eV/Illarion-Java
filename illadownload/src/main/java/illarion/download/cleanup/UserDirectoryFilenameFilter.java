@@ -25,6 +25,11 @@ import java.io.FilenameFilter;
 class UserDirectoryFilenameFilter implements FilenameFilter {
     @Override
     public boolean accept(File dir, @Nonnull String name) {
+        // keep everything in the alternative binary storage
+        if (dir.toString().contains("/bin/") || dir.toString().contains("\\bin\\")) {
+            return false;
+        }
+
         // old map files
         if (name.startsWith("level") && name.endsWith(".map")) {
             return true;

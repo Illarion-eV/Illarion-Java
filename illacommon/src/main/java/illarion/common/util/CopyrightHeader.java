@@ -99,7 +99,7 @@ public class CopyrightHeader {
                 }
             }
         }
-        return licenseTextTemplate;
+        return (licenseTextTemplate == null) ? "" : licenseTextTemplate;
     }
 
     public void writeTo(@Nonnull final OutputStream stream) throws IOException {

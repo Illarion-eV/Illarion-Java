@@ -27,7 +27,7 @@ dependencies {
     compile group: 'commons-cli', name: 'commons-cli', version: '1.2'
     compile group: 'org.slf4j', name: 'slf4j-api', version: project.ext.slf4jVersion
     compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: project.ext.slf4jVersion
-    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.0.13'
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: project.ext.logbackVersion
 }
 
 jar {
@@ -58,7 +58,7 @@ task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jar') {
         } else {
             def filter = "!META-INF/*,!META-INF/plexus/*,!META-INF/sisu/*,!META-INF/maven/**,!about.html,!LICENSE," +
                     "!OSGI-OPT/**,!**/packageinfo,!**.java,!xmlns/**"
-            if (file.absolutePath.contains("xpp3")) {
+            if (file.absolutePath.contains("xpp3") || file.absolutePath.contains("axis-jaxrpc")) {
                 filter += ",!javax/xml/namespace/QName.class"
             }
             if (file.absolutePath.contains("illarion")) {

@@ -17,6 +17,7 @@ package illarion.client.resources.data;
 
 import illarion.client.graphics.AvatarClothManager;
 import illarion.client.graphics.AvatarInfo;
+import illarion.common.types.Direction;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Sprite;
 
@@ -36,7 +37,8 @@ public class AvatarTemplate extends AbstractMultiFrameEntityTemplate {
     /**
      * The direction this avatar is facing.
      */
-    private final int direction;
+    @Nonnull
+    private final Direction direction;
 
     /**
      * The clothes this avatar is able to wear.
@@ -63,22 +65,33 @@ public class AvatarTemplate extends AbstractMultiFrameEntityTemplate {
      * @param avatarInfo the general avatar information object
      */
     public AvatarTemplate(
-            final int id,
-            @Nonnull final Sprite sprite,
-            final int frames,
-            final int stillFrame,
-            @Nullable final Color defaultColor,
-            final int shadowOffset,
-            final int direction,
-            @Nonnull final AvatarInfo avatarInfo) {
+            int id,
+            @Nonnull Sprite sprite,
+            int frames,
+            int stillFrame,
+            @Nullable Color defaultColor,
+            int shadowOffset,
+            int direction,
+            @Nonnull AvatarInfo avatarInfo) {
         super(id, sprite, frames, stillFrame, defaultColor, shadowOffset);
 
-        this.direction = direction;
+        this.direction = getDirection(direction);
         this.avatarInfo = avatarInfo;
         clothes = new AvatarClothManager();
     }
 
-    public int getDirection() {
+    @Nonnull
+    private static Direction getDirection(int dirId) {
+        for (Direction dir : Direction.values()) {
+            if (dir.getServerId() == dirId) {
+                return dir;
+            }
+        }
+        throw new IllegalArgumentException("Invalid direction id");
+    }
+
+    @Nonnull
+    public Direction getDirection() {
         return direction;
     }
 

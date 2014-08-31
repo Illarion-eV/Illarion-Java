@@ -48,7 +48,7 @@ public class MoveAnimation extends AbstractAnimation<AnimatedMove> {
         }
 
         // calc values
-        float animationPos = animationProgress();
+        float animationPos = getStoryboardProgress(false);
         int x = srcX + Math.round(animationPos * (dstX - srcX));
         int y = srcY + Math.round(animationPos * (dstY - srcY));
         int z = srcZ + Math.round(animationPos * (dstZ - srcZ));
@@ -71,6 +71,7 @@ public class MoveAnimation extends AbstractAnimation<AnimatedMove> {
 
         // set start position immediately
         setPosition(srcX, srcY, srcZ);
+        setSkipNextUpdate(true);
         lastX = srcX;
         lastY = srcY;
         lastZ = srcZ;
@@ -83,9 +84,9 @@ public class MoveAnimation extends AbstractAnimation<AnimatedMove> {
      * @param srcY
      * @param dstX
      * @param dstY
-     * @param speed
+     * @param duration
      */
-    public void start(int srcX, int srcY, int srcZ, int dstX, int dstY, int dstZ, int speed) {
+    public void start(int srcX, int srcY, int srcZ, int dstX, int dstY, int dstZ, int duration) {
         this.srcX = srcX;
         this.srcY = srcY;
         this.srcZ = srcZ;
@@ -93,7 +94,7 @@ public class MoveAnimation extends AbstractAnimation<AnimatedMove> {
         this.dstY = dstY;
         this.dstZ = dstZ;
 
-        setDuration(speed * ANIMATION_FRAME);
+        setDuration(duration);
 
         restart();
     }

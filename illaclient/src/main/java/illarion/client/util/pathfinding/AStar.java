@@ -17,6 +17,7 @@ package illarion.client.util.pathfinding;
 
 import illarion.client.world.GameMap;
 import illarion.client.world.MapTile;
+import illarion.common.types.Direction;
 import illarion.common.types.Location;
 import illarion.common.util.FastMath;
 import org.slf4j.Logger;
@@ -40,7 +41,7 @@ public class AStar implements PathFindingAlgorithm {
             @Nonnull GameMap map,
             @Nonnull Location start,
             @Nonnull Location end,
-            int approachDistance,
+            int approachDistance, @Nonnull Collection<Direction> allowedDirections,
             @Nonnull PathMovementMethod movementMethod,
             @Nonnull PathMovementMethod... movementMethods) {
         if (start.equals(end)) {
@@ -67,7 +68,7 @@ public class AStar implements PathFindingAlgorithm {
         /* The methods of movement that apply. */
         EnumSet<PathMovementMethod> movementMethodSettings = EnumSet.of(movementMethod, movementMethods);
 
-        expandNode(map, end, null, start, movementMethodSettings, openNodes);
+        expandNode(map, end, null, start, allowedDirections, movementMethodSettings, openNodes);
 
         while (!openNodes.isEmpty()) {
             /* Take the unchecked node closest to the target. */
@@ -80,7 +81,8 @@ public class AStar implements PathFindingAlgorithm {
             AStarPathNode alternative = knownNodes.get(currentNode.getLocation());
             if ((alternative == null) || (alternative.getCost() > currentNode.getCost())) {
                 knownNodes.put(currentNode.getLocation(), currentNode);
-                expandNode(map, end, currentNode, currentNode.getLocation(), movementMethodSettings, openNodes);
+                expandNode(map, end, currentNode, currentNode.getLocation(), allowedDirections, movementMethodSettings,
+                           openNodes);
             }
         }
 
@@ -105,33 +107,36 @@ public class AStar implements PathFindingAlgorithm {
             @Nonnull GameMap map,
             @Nonnull Location end,
             @Nullable AStarPathNode nodeToExpand,
-            @Nonnull Location origin,
+            @Nonnull Location origin, @Nonnull Iterable<Direction> allowedDirections,
             @Nonnull Collection<PathMovementMethod> movementMethods,
             @Nonnull Collection<AStarPathNode> storage) {
-        for (int i = 0; i < Location.DIR_MOVE8; i++) {
-            Location walkTarget = new Location(origin, i);
+        if (movementMethods.isEmpty()) {
+            throw new IllegalArgumentException("No movement methods selected. This is not valid.");
+        }
+        for (Direction dir : allowedDirections) {
+            Location walkTarget = new Location(origin, dir);
+            MapTile walkingTargetTile = map.getMapAt(walkTarget);
             if (movementMethods.contains(PathMovementMethod.Walk)) {
-                MapTile walkingTargetTile = map.getMapAt(walkTarget);
                 if ((walkingTargetTile != null) &&
                         (!walkingTargetTile.isBlocked() || walkingTargetTile.getLocation().equals(end))) {
-                    storage.add(new AStarPathNode(nodeToExpand, walkingTargetTile, PathMovementMethod.Walk, i,
-                                                  getHeuristic(walkTarget, end)));
+                    storage.add(new AStarPathNode(nodeToExpand, walkingTargetTile, PathMovementMethod.Walk, dir,
+                                                  getHeuristic(walkTarget, end), null));
                 } else {
                     continue;
                 }
             }
             if (movementMethods.contains(PathMovementMethod.Run)) {
-                Location runTarget = new Location(walkTarget, i);
+                Location runTarget = new Location(walkTarget, dir);
                 MapTile runningTargetTile = map.getMapAt(runTarget);
                 if ((runningTargetTile != null) && !runningTargetTile.isBlocked()) {
-                    storage.add(new AStarPathNode(nodeToExpand, runningTargetTile, PathMovementMethod.Run, i,
-                                                  getHeuristic(runTarget, end)));
+                    storage.add(new AStarPathNode(nodeToExpand, runningTargetTile, PathMovementMethod.Run, dir,
+                                                  getHeuristic(runTarget, end), walkingTargetTile));
                 }
             }
         }
     }
 
     private static int getHeuristic(@Nonnull Location currentLocation, @Nonnull Location targetLocation) {
-        return FastMath.floor(currentLocation.getSqrtDistance(targetLocation) * 15.f);
+        return FastMath.floor(currentLocation.getSqrtDistance(targetLocation) * 10.f);
     }
 }

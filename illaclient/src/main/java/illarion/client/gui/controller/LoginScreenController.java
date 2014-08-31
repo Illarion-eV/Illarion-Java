@@ -182,6 +182,12 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     @Override
     public void onStartScreen() {
         engine.getSounds().stopMusic(500);
+
+        if (nameTxt.getDisplayedText().isEmpty()) {
+            passwordTxt.setFocus();
+        } else {
+            nameTxt.setFocus();
+        }
     }
 
     @Override

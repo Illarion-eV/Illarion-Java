@@ -20,22 +20,26 @@ import illarion.common.types.Direction;
 import javax.annotation.Nonnull;
 
 /**
- * This kind of movement handler uses keyboard input like event triggering to walk.
- *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface KeyboardMovementHandler extends MovementHandler {
-    /**
-     * Start moving towards a direction.
-     *
-     * @param direction the direction
-     */
-    void startMovingTowards(@Nonnull Direction direction);
+class TurningTask implements MoveAnimatorTask {
+    @Nonnull
+    private final MoveAnimator moveAnimator;
+    @Nonnull
+    private final Direction direction;
 
-    /**
-     * Stop moving towards a direction.
-     *
-     * @param direction the direction
-     */
-    void stopMovingTowards(@Nonnull Direction direction);
+    TurningTask(@Nonnull MoveAnimator moveAnimator, @Nonnull Direction direction) {
+        this.moveAnimator = moveAnimator;
+        this.direction = direction;
+    }
+
+    @Override
+    public void execute() {
+        moveAnimator.executeTurn(direction);
+    }
+
+    @Override
+    public String toString() {
+        return "Turning Task - Direction: " + direction;
+    }
 }

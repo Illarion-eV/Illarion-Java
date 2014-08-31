@@ -21,9 +21,10 @@ import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.CharacterId;
-import illarion.common.types.Location;
+import illarion.common.types.Direction;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
@@ -43,7 +44,8 @@ public final class TurnCharMsg extends AbstractReply {
     /**
      * The new direction of the character.
      */
-    private short dir;
+    @Nullable
+    private Direction dir;
 
     /**
      * Decode the character turn data the receiver got and prepare it for the
@@ -56,7 +58,7 @@ public final class TurnCharMsg extends AbstractReply {
      */
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
-        dir = reader.readUByte();
+        dir = Direction.decode(reader);
         charId = new CharacterId(reader);
     }
 
@@ -68,7 +70,7 @@ public final class TurnCharMsg extends AbstractReply {
      */
     @Override
     public boolean executeUpdate() {
-        if (dir == Location.DIR_ZERO) {
+        if (dir == null) {
             return true;
         }
 

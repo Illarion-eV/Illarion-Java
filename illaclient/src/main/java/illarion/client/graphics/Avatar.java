@@ -25,6 +25,7 @@ import illarion.client.resources.Resource;
 import illarion.client.resources.data.AvatarTemplate;
 import illarion.client.util.Lang;
 import illarion.client.world.Char;
+import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.client.world.interactive.InteractiveChar;
 import illarion.client.world.movement.TargetMovementHandler;
@@ -146,7 +147,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
 
         if (template.getFrames() > 1) {
             animation = new FrameAnimation(this);
-            animation.setup(template.getFrames(), template.getStillFrame(), 1, 0);
+            animation.setup(template.getFrames(), template.getStillFrame(), 150);
         } else {
             animation = null;
         }
@@ -172,15 +173,42 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         return null;
     }
 
+    @Override
+    public int getTargetAlpha() {
+        MapTile mapTileOfChar = World.getMap().getMapAt(parentChar.getLocation());
+        if (mapTileOfChar == null) {
+            return Color.MAX_INT_VALUE;
+        } else {
+            Tile tileOfChar = mapTileOfChar.getTile();
+            return (tileOfChar == null) ? Color.MAX_INT_VALUE : tileOfChar.getTargetAlpha();
+        }
+    }
+
+    public void changeAnimationDuration(int newDuration) {
+        if ((animation != null) && animation.isRunning()) {
+            animation.setDuration(newDuration);
+        }
+    }
+
     /**
      * Start a animation for this avatar.
      *
-     * @param speed the speed of the animation, the larger this value, the
-     * longer the animation takes to finish
+     * @param duration the duration of the animation in milliseconds
      * @param loop true in case the animation shall never stop and rather run
      * forever
      */
-    public void animate(int speed, boolean loop) {
+    public void animate(int duration, boolean loop) {
+        animate(duration, loop, false, 1.f);
+    }
+
+    /**
+     * Start a animation for this avatar.
+     *
+     * @param duration the duration of the animation in milliseconds
+     * @param loop true in case the animation shall never stop and rather run
+     * forever
+     */
+    public void animate(int duration, boolean loop, boolean expandStorybook, float length) {
         if (isMarkedAsRemoved()) {
             LOGGER.warn("Animating a removed avatar is illegal.");
             return;
@@ -189,11 +217,16 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
             return;
         }
 
-        animation.updateSpeed(speed);
-        if (loop) {
-            animation.updateMode(FrameAnimation.LOOPED | FrameAnimation.CYCLIC);
+        if (expandStorybook) {
+            animation.continueStoryboard(length);
         } else {
-            animation.updateMode(FrameAnimation.CYCLIC);
+            animation.resetStoryboard();
+        }
+        animation.setDuration(duration);
+        if (loop) {
+            animation.updateMode(FrameAnimation.Mode.Looped);
+        } else {
+            animation.updateMode();
         }
         animation.restart();
     }
@@ -214,7 +247,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
      */
     @Override
     public void animationFinished(boolean finished) {
-        parentChar.resetAnimation();
+        parentChar.resetAnimation(finished);
     }
 
     /**
@@ -402,9 +435,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
 
     @Override
     public void hide() {
-        if (animation != null) {
-            animation.stop();
-        }
+        stopAnimation();
         super.hide();
     }
 
@@ -438,6 +469,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
     public void setFrame(int frame) {
         super.setFrame(frame);
         clothRender.setFrame(frame);
+        log.debug("{}: Now showing animation frame {}", this, frame);
     }
 
     /**

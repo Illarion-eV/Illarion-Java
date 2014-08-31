@@ -15,14 +15,13 @@
  */
 package illarion.client.world.movement;
 
-import illarion.client.IllaClient;
 import illarion.client.world.CharMovementMode;
 import illarion.client.world.MapDimensions;
-import illarion.common.config.ConfigChangedEvent;
+import illarion.client.world.World;
+import illarion.common.types.Direction;
 import illarion.common.types.Location;
 import illarion.common.util.FastMath;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
-import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.illarion.engine.input.Input;
 import org.illarion.engine.input.Key;
 
@@ -41,7 +40,7 @@ class FollowMouseMovementHandler extends AbstractMovementHandler implements Mous
      * plain x or y offset. In case the relation is smaller or equal to this the character will move straight
      * horizontal or vertical on the screen. Else it will move diagonal.
      */
-    private static final double MOUSE_ANGLE = StrictMath.cos(Math.PI / Location.DIR_MOVE8);
+    private static final double MOUSE_ANGLE = StrictMath.cos(Math.PI / Direction.values().length);
 
     @Nonnull
     private final Input input;
@@ -56,21 +55,16 @@ class FollowMouseMovementHandler extends AbstractMovementHandler implements Mous
      */
     private int lastMouseY;
 
-    /**
-     * Always run when moving with the mouse.
-     */
-    private boolean mouseFollowAutoRun;
-
     private CharMovementMode currentMovementMode;
-    private int walkTowardsDir;
+
+    @Nullable
+    private Direction walkTowardsDir;
 
     FollowMouseMovementHandler(@Nonnull Movement movement, @Nonnull Input input) {
         super(movement);
         this.input = input;
         lastMouseX = -1;
         lastMouseY = -1;
-
-        mouseFollowAutoRun = IllaClient.getCfg().getBoolean("mouseFollowAutoRun");
 
         AnnotationProcessor.process(this);
     }
@@ -79,7 +73,7 @@ class FollowMouseMovementHandler extends AbstractMovementHandler implements Mous
     @Override
     public StepData getNextStep(@Nonnull Location currentLocation) {
         calculateMove();
-        if (walkTowardsDir == Location.DIR_ZERO) {
+        if (walkTowardsDir == null) {
             return null;
         }
         return new DefaultStepData(currentMovementMode, walkTowardsDir);
@@ -98,7 +92,7 @@ class FollowMouseMovementHandler extends AbstractMovementHandler implements Mous
         int distance = FastMath.sqrt((xOffset * xOffset) + (yOffset * yOffset));
 
         if (distance <= 5) {
-            walkTowardsDir = Location.DIR_ZERO;
+            walkTowardsDir = null;
             return;
         }
 
@@ -110,21 +104,21 @@ class FollowMouseMovementHandler extends AbstractMovementHandler implements Mous
 
         //noinspection IfStatementWithTooManyBranches
         if (relXOffset > MOUSE_ANGLE) {
-            walkTowardsDir = Location.DIR_SOUTHEAST;
+            walkTowardsDir = Direction.SouthEast;
         } else if (relXOffset < -MOUSE_ANGLE) {
-            walkTowardsDir = Location.DIR_NORTHWEST;
+            walkTowardsDir = Direction.NorthWest;
         } else if (relYOffset > MOUSE_ANGLE) {
-            walkTowardsDir = Location.DIR_NORTHEAST;
+            walkTowardsDir = Direction.NorthEast;
         } else if (relYOffset < -MOUSE_ANGLE) {
-            walkTowardsDir = Location.DIR_SOUTHWEST;
+            walkTowardsDir = Direction.SouthWest;
         } else if ((xOffset > 0) && (yOffset > 0)) {
-            walkTowardsDir = Location.DIR_EAST;
+            walkTowardsDir = Direction.East;
         } else if ((xOffset > 0) && (yOffset < 0)) {
-            walkTowardsDir = Location.DIR_SOUTH;
+            walkTowardsDir = Direction.South;
         } else if ((xOffset < 0) && (yOffset < 0)) {
-            walkTowardsDir = Location.DIR_WEST;
+            walkTowardsDir = Direction.West;
         } else if ((xOffset < 0) && (yOffset > 0)) {
-            walkTowardsDir = Location.DIR_NORTH;
+            walkTowardsDir = Direction.North;
         }
     }
 
@@ -133,8 +127,8 @@ class FollowMouseMovementHandler extends AbstractMovementHandler implements Mous
             return CharMovementMode.None;
         }
 
-        if (!mouseFollowAutoRun) {
-            return getMovement().getDefaultMovementMode();
+        if (!World.getPlayer().getCarryLoad().isRunningPossible()) {
+            return CharMovementMode.Walk;
         }
 
         CharMovementMode mode = CharMovementMode.Walk;
@@ -143,12 +137,10 @@ class FollowMouseMovementHandler extends AbstractMovementHandler implements Mous
         } else if (distance < 30) {
             mode = CharMovementMode.None;
         }
-        return mode;
-    }
-
-    @EventTopicSubscriber(topic = "mouseFollowAutoRun")
-    private void mouseFollowAutoRunChanged(@Nonnull String topic, @Nonnull ConfigChangedEvent configChanged) {
-        mouseFollowAutoRun = configChanged.getConfig().getBoolean("mouseFollowAutoRun");
+        if (getMovement().isMovementModePossible(mode)) {
+            return mode;
+        }
+        return CharMovementMode.Walk;
     }
 
     @Override

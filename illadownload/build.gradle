@@ -41,7 +41,7 @@ dependencies {
     compile group: 'org.slf4j', name: 'jul-to-slf4j', version: project.ext.slf4jVersion
     compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: project.ext.slf4jVersion
     compile group: 'org.slf4j', name: 'log4j-over-slf4j', version: project.ext.slf4jVersion
-    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.0.13'
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: project.ext.logbackVersion
     compile group: 'net.sf.trove4j', name: 'trove4j', version: '3.0.3'
     compile group: 'xpp3', name: 'xpp3', version: '1.1.4c'
     compile group: 'org.bushe', name: 'eventbus', version: '1.4'
@@ -49,7 +49,7 @@ dependencies {
     compile group: 'org.eclipse.aether', name: 'aether-transport-http', version: '1.0.0.v20140518'
     compile group: 'org.eclipse.aether', name: 'aether-connector-basic', version: '1.0.0.v20140518'
     compile group: 'org.apache.maven', name: 'maven-aether-provider', version: '3.2.2'
-    runtime group: 'org.codehaus.janino', name: 'janino', version: '2.6.1'
+    runtime group: 'org.codehaus.janino', name: 'janino', version: project.ext.janinoVersion
 }
 
 jar {
@@ -151,6 +151,9 @@ if (hasTargetDistDir) {
     }
 }
 if (hasInstall4jTargetDir) {
+    task cleanUpForInstall4j(type: Delete) {
+        delete new File(project.buildDir, 'install4j')
+    }
     task assembleForInstall4j(type: Copy) {
         from new File(project.buildDir, "libs/${project.archivesBaseName}-${project.version}.jar")
         configurations.runtime.each { File file ->
@@ -168,6 +171,8 @@ if (hasInstall4jTargetDir) {
         outputs.dir project.install4jTargetDir
     }
     createInstall4j << {
+        cleanUpForInstall4j.execute()
+
         def sourceDir = new File(project.buildDir, 'install4j')
         sourceDir.mkdirs()
 

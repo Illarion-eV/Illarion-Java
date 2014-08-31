@@ -16,10 +16,14 @@
 package illarion.client.world.movement;
 
 import illarion.client.IllaClient;
+import illarion.client.util.pathfinding.Path;
 import illarion.client.world.CharMovementMode;
 import illarion.client.world.MapDimensions;
+import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.config.ConfigChangedEvent;
+import illarion.common.types.Direction;
+import illarion.common.types.Location;
 import illarion.common.util.FastMath;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
@@ -29,17 +33,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.EnumSet;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseTargetMovementHandler {
     private static final Logger log = LoggerFactory.getLogger(WalkToMouseMovementHandler.class);
-
     /**
-     * Always run when moving with the mouse.
+     * Limit the path finding to the direction the mouse is pointing at.
      */
-    private boolean mouseFollowAutoRun;
+    private boolean limitPathFindingToMouseDirection;
 
     /**
      * The last reported X coordinate of the mouse.
@@ -60,7 +66,7 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
         this.input = input;
         lastMouseX = -1;
         lastMouseY = -1;
-        mouseFollowAutoRun = IllaClient.getCfg().getBoolean("mouseFollowAutoRun");
+        limitPathFindingToMouseDirection = IllaClient.getCfg().getBoolean("limitPathFindingToMouseDirection");
 
         AnnotationProcessor.process(this);
     }
@@ -72,7 +78,8 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
         if (transferAllowed && targetWasSet) {
             TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
             log.debug("Transferring movement control from {} to {}", this, handler);
-            handler.walkTo(getTargetLocation(), 0);
+            MapTile targetTile = World.getMap().getMapAt(getTargetLocation());
+            handler.walkTo(getTargetLocation(), ((targetTile != null) && targetTile.isBlocked()) ? 1 : 0);
             handler.assumeControl();
         }
     }
@@ -83,8 +90,8 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
             return CharMovementMode.None;
         }
 
-        if (!mouseFollowAutoRun) {
-            return getMovement().getDefaultMovementMode();
+        if (!World.getPlayer().getCarryLoad().isRunningPossible()) {
+            return CharMovementMode.Walk;
         }
 
         MapDimensions mapDimensions = MapDimensions.getInstance();
@@ -98,12 +105,62 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
         } else if (distance < 30) {
             mode = CharMovementMode.None;
         }
-        return mode;
+        if (getMovement().isMovementModePossible(mode)) {
+            return mode;
+        }
+        return CharMovementMode.Walk;
     }
 
-    @EventTopicSubscriber(topic = "mouseFollowAutoRun")
-    private void mouseFollowAutoRunChanged(@Nonnull String topic, @Nonnull ConfigChangedEvent configChanged) {
-        mouseFollowAutoRun = configChanged.getConfig().getBoolean("mouseFollowAutoRun");
+    @Override
+    protected Collection<Direction> getAllowedDirections() {
+        if (limitPathFindingToMouseDirection) {
+            Location target = getTargetLocation();
+            Direction dir = getMovement().getServerLocation().getDirection(target);
+            Collection<Direction> result = EnumSet.noneOf(Direction.class);
+            if (dir == null) {
+                return result;
+            }
+            for (Direction testDir : Direction.values()) {
+                if (testDir == dir) {
+                    result.add(testDir);
+                } else {
+                    int testX = testDir.getDirectionVectorX();
+                    int testY = testDir.getDirectionVectorY();
+
+                    int dirX = dir.getDirectionVectorX();
+                    int dirY = dir.getDirectionVectorY();
+
+                    if ((Math.abs(testX - dirX) + Math.abs(testY - dirY)) == 1) {
+                        result.add(testDir);
+                    }
+                }
+            }
+            return result;
+        } else {
+            return super.getAllowedDirections();
+        }
+    }
+
+    @Override
+    @Nullable
+    protected Path calculateNewPath(@Nonnull Location currentLocation) {
+        int maxDistance = currentLocation.getDistance(getTargetLocation());
+
+        while (getTargetDistance() < maxDistance) {
+            Path result = super.calculateNewPath(currentLocation);
+            if (result != null) {
+                return result;
+            }
+            increaseTargetDistance();
+        }
+        return null;
+    }
+
+    @EventTopicSubscriber(topic = "limitPathFindingToMouseDirection")
+    private void limitPathFindingToMouseDirectionChanged(
+            @Nonnull String topic, @Nonnull ConfigChangedEvent configChangedEvent) {
+        limitPathFindingToMouseDirection = configChangedEvent.getConfig()
+                .getBoolean("limitPathFindingToMouseDirection");
     }
 
     @Override

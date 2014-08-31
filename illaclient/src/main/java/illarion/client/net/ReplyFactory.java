@@ -58,6 +58,7 @@ public final class ReplyFactory {
         register(AttackMsg.class);
         register(AttributeMsg.class);
         register(BookMsg.class);
+        register(CarryLoadMsg.class);
         register(ChangeItemMsg.class);
         register(CharacterAnimationMsg.class);
         register(CloseShowcaseMsg.class);

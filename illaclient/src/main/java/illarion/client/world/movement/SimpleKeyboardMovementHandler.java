@@ -15,14 +15,21 @@
  */
 package illarion.client.world.movement;
 
+import illarion.client.util.UpdateTask;
 import illarion.client.world.CharMovementMode;
+import illarion.client.world.World;
+import illarion.common.types.Direction;
 import illarion.common.types.Location;
+import illarion.common.util.FastMath;
 import illarion.common.util.Timer;
+import org.illarion.engine.GameContainer;
 import org.illarion.engine.input.Input;
 import org.illarion.engine.input.Key;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * This keyboard movement handler simply handles the keyboard input to perform the walking operations.
@@ -33,34 +40,37 @@ class SimpleKeyboardMovementHandler extends AbstractMovementHandler implements K
     @Nonnull
     private final Input input;
 
-    private final boolean[] activeDirections;
+    private final Set<Direction> activeDirections;
 
     @Nonnull
     private final Timer delayedMoveTrigger;
     private boolean delayedMove;
 
+    @Nonnull
+    private final UpdateTask updateMovementTask = new UpdateTask() {
+        @Override
+        public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+            getMovement().update();
+        }
+    };
+
     SimpleKeyboardMovementHandler(@Nonnull Movement movement, @Nonnull Input input) {
         super(movement);
-        activeDirections = new boolean[Location.DIR_MOVE8];
+        activeDirections = EnumSet.noneOf(Direction.class);
         this.input = input;
         delayedMoveTrigger = new Timer(100, new Runnable() {
             @Override
             public void run() {
                 delayedMove = false;
-                getMovement().update();
+                World.getUpdateTaskManager().addTask(updateMovementTask);
             }
         });
         delayedMoveTrigger.setRepeats(false);
     }
 
     @Override
-    public void startMovingTowards(int direction) {
-        if (!Location.isValidDirection(direction)) {
-            throw new IllegalArgumentException("Direction contains invalid value: " + direction);
-        }
-        if (!activeDirections[direction]) {
-            activeDirections[direction] = true;
-
+    public void startMovingTowards(@Nonnull Direction direction) {
+        if (activeDirections.add(direction)) {
             delayedMoveTrigger.stop();
             if (!getMovement().isMoving()) {
                 delayedMoveTrigger.start();
@@ -70,51 +80,46 @@ class SimpleKeyboardMovementHandler extends AbstractMovementHandler implements K
     }
 
     @Override
-    public void stopMovingTowards(int direction) {
-        if (!Location.isValidDirection(direction)) {
-            throw new IllegalArgumentException("Direction contains invalid value: " + direction);
-        }
-        activeDirections[direction] = false;
+    public void stopMovingTowards(@Nonnull Direction direction) {
+        activeDirections.remove(direction);
     }
 
     @Nullable
     @Override
     public StepData getNextStep(@Nonnull Location currentLocation) {
-        int dir = getMovementDirection();
-        if (dir == Location.DIR_ZERO) {
-            return null;
-        }
-        return new DefaultStepData(getMovementMode(), dir);
+        return new DefaultStepData(getMovementMode(), getMovementDirection());
     }
 
-    private int getMovementDirection() {
+    @Nullable
+    private Direction getMovementDirection() {
         if (delayedMove) {
-            return Location.DIR_ZERO;
+            return null;
         }
 
-        int currentDirection = Location.DIR_ZERO;
-        boolean noDirectionSet = true;
-        boolean secondDirectionSet = false;
+        if (activeDirections.isEmpty() || (activeDirections.size() > 2)) {
+            return null;
+        }
 
-        for (int i = 0; i < activeDirections.length; i++) {
-            if (activeDirections[i]) {
-                if (noDirectionSet) {
-                    noDirectionSet = false;
-                    currentDirection = i;
-                } else if (secondDirectionSet) {
-                    return Location.DIR_ZERO;
-                } else {
-                    secondDirectionSet = true;
-                    if ((i - currentDirection) < 4) {
-                        currentDirection += (i - currentDirection) / 2;
-                    } else {
-                        currentDirection += ((i + 8) - currentDirection) / 2;
-                    }
-                    currentDirection %= 8;
-                }
+        return getCombined(activeDirections);
+    }
+
+    @Nullable
+    public static Direction getCombined(@Nonnull Iterable<Direction> activeDirections) {
+        int xVec = 0;
+        int yVec = 0;
+        for (Direction activeDir : activeDirections) {
+            xVec += activeDir.getDirectionVectorX();
+            yVec += activeDir.getDirectionVectorY();
+        }
+        xVec = FastMath.sign(xVec);
+        yVec = FastMath.sign(yVec);
+
+        for (Direction dir : Direction.values()) {
+            if ((dir.getDirectionVectorX() == xVec) && (dir.getDirectionVectorY() == yVec)) {
+                return dir;
             }
         }
-        return currentDirection;
+        return null;
     }
 
     private CharMovementMode getMovementMode() {
@@ -122,7 +127,15 @@ class SimpleKeyboardMovementHandler extends AbstractMovementHandler implements K
             return CharMovementMode.None;
         }
 
-        return getMovement().getDefaultMovementMode();
+        if (!World.getPlayer().getCarryLoad().isRunningPossible()) {
+            return CharMovementMode.Walk;
+        }
+
+        CharMovementMode mode = getMovement().getDefaultMovementMode();
+        if (getMovement().isMovementModePossible(mode)) {
+            return mode;
+        }
+        return CharMovementMode.Walk;
     }
 
     @Override

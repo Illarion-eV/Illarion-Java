@@ -48,15 +48,16 @@ public class OggPlayer extends Thread implements Stoppable {
      * @throws IOException
      * @throws UnsupportedAudioFileException
      */
-    public static void play(final String file) throws IOException, UnsupportedAudioFileException {
-        final ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        final URL songURL = loader.getResource(file);
+    public static void play(String file) throws IOException, UnsupportedAudioFileException {
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        URL songURL = loader.getResource(file);
 
-        if (player != null) {
-            player.saveShutdown();
+        synchronized (OggPlayer.class) {
+            if (player != null) {
+                player.saveShutdown();
+            }
+            player = new OggPlayer();
         }
-
-        player = new OggPlayer();
 
         player.loadStream(songURL);
         player.start();
@@ -69,7 +70,7 @@ public class OggPlayer extends Thread implements Stoppable {
      * @throws IOException
      * @throws UnsupportedAudioFileException
      */
-    public void loadStream(@Nullable final URL songURL) throws IOException, UnsupportedAudioFileException {
+    public void loadStream(@Nullable URL songURL) throws IOException, UnsupportedAudioFileException {
         audioInputStream = AudioSystem.getAudioInputStream(songURL);
         if (audioInputStream != null) {
             AudioFormat baseFormat = audioInputStream.getFormat();

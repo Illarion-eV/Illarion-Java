@@ -66,7 +66,7 @@ final class EasyNpcTokenMaker extends AbstractAntlrTokenMaker<EasyNpcLexer> {
      */
     @Nullable
     @Override
-    public String[] getLineCommentStartAndEnd() {
+    public String[] getLineCommentStartAndEnd(int languageIndex) {
         return new String[]{"--", null};
     }
 

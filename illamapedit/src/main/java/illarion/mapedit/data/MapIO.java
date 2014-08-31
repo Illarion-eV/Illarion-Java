@@ -99,7 +99,7 @@ public class MapIO {
         @Nonnull
         private final Path file;
 
-        private LoadFileCallable(@Nonnull final Path file) {
+        private LoadFileCallable(@Nonnull Path file) {
             this.file = file;
         }
 
@@ -122,7 +122,7 @@ public class MapIO {
         private final List<String> lines;
 
         private LoadMapDataCallable(
-                @Nonnull final DataType type, @Nonnull final Decoder decoder, @Nonnull final List<String> lines) {
+                @Nonnull DataType type, @Nonnull Decoder decoder, @Nonnull List<String> lines) {
             this.type = type;
             this.decoder = decoder;
             this.lines = lines;
@@ -130,7 +130,7 @@ public class MapIO {
 
         @Override
         public Void call() throws Exception {
-            final int size = lines.size();
+            int size = lines.size();
             for (int i = 0; i < size; i++) {
                 decoder.decodeLine(type, lines.get(i), i);
             }
@@ -139,18 +139,18 @@ public class MapIO {
     }
 
     @Nullable
-    public static Map loadMapThread(@Nonnull final Path path, @Nonnull final String name) throws IOException {
+    public static Map loadMapThread(@Nonnull Path path, @Nonnull String name) throws IOException {
         LOGGER.debug("Load map {} at {}", name, path);
         //        Open the streams for all 3 files, containing the map data
-        final Path tileFile = path.resolve(name + EXT_TILE);
-        final Path itemFile = path.resolve(name + EXT_ITEM);
-        final Path warpFile = path.resolve(name + EXT_WARP);
-        final Path annoFile = path.resolve(name + EXT_ANNO);
+        Path tileFile = path.resolve(name + EXT_TILE);
+        Path itemFile = path.resolve(name + EXT_ITEM);
+        Path warpFile = path.resolve(name + EXT_WARP);
+        Path annoFile = path.resolve(name + EXT_ANNO);
 
-        final Future<List<String>> tileLoadFuture = EXECUTOR_SERVICE.submit(new LoadFileCallable(tileFile));
-        final Future<List<String>> itemLoadFuture = EXECUTOR_SERVICE.submit(new LoadFileCallable(itemFile));
-        final Future<List<String>> warpLoadFuture = EXECUTOR_SERVICE.submit(new LoadFileCallable(warpFile));
-        final Future<List<String>> annoLoadFuture = EXECUTOR_SERVICE.submit(new LoadFileCallable(annoFile));
+        Future<List<String>> tileLoadFuture = EXECUTOR_SERVICE.submit(new LoadFileCallable(tileFile));
+        Future<List<String>> itemLoadFuture = EXECUTOR_SERVICE.submit(new LoadFileCallable(itemFile));
+        Future<List<String>> warpLoadFuture = EXECUTOR_SERVICE.submit(new LoadFileCallable(warpFile));
+        Future<List<String>> annoLoadFuture = EXECUTOR_SERVICE.submit(new LoadFileCallable(annoFile));
 
         try {
             List<String> tileLines = tileLoadFuture.get();
@@ -204,7 +204,7 @@ public class MapIO {
      * @param map the map to save
      * @throws IOException
      */
-    public static void saveMap(@Nonnull final Map map) throws IOException {
+    public static void saveMap(@Nonnull Map map) throws IOException {
         saveMap(map, map.getName(), map.getPath());
     }
 
@@ -217,11 +217,11 @@ public class MapIO {
      * @throws IOException
      */
     public static void saveMap(
-            @Nonnull final Map map, @Nonnull final String name, @Nonnull final Path path) throws IOException {
-        final Path tileFile = path.resolve(name + EXT_TILE);
-        final Path itemFile = path.resolve(name + EXT_ITEM);
-        final Path warpFile = path.resolve(name + EXT_WARP);
-        final Path annoFile = path.resolve(name + EXT_ANNO);
+            @Nonnull Map map, @Nonnull String name, @Nonnull Path path) throws IOException {
+        Path tileFile = path.resolve(name + EXT_TILE);
+        Path itemFile = path.resolve(name + EXT_ITEM);
+        Path warpFile = path.resolve(name + EXT_WARP);
+        Path annoFile = path.resolve(name + EXT_ANNO);
 
         try (BufferedWriter tileOutput = Files.newBufferedWriter(tileFile, CHARSET)) {
             try (BufferedWriter itemOutput = Files.newBufferedWriter(itemFile, CHARSET)) {
@@ -241,9 +241,9 @@ public class MapIO {
 
                         MapIterator itr = map.iterator();
                         while (itr.hasNext()) {
-                            final MapTile tile = itr.next();
-                            final int x = itr.getCurrentX();
-                            final int y = itr.getCurrentY();
+                            MapTile tile = itr.next();
+                            int x = itr.getCurrentX();
+                            int y = itr.getCurrentY();
 
                             //        <dx>;<dy>;<tileID>;<musicID>
                             writeLine(tileOutput, String.format("%d;%d;%s", x, y, tile));
@@ -251,7 +251,7 @@ public class MapIO {
                                 writeLine(annoOutput, String.format("%d;%d;0;%s", x, y, tile.getAnnotation()));
                             }
 
-                            final List<MapItem> items = tile.getMapItems();
+                            List<MapItem> items = tile.getMapItems();
                             if (items != null) {
                                 for (int i = 0; i < items.size(); i++) {
                                     //        <dx>;<dy>;<item ID>;<quality>[;<data value>[;...]]
@@ -262,7 +262,7 @@ public class MapIO {
                                     }
                                 }
                             }
-                            final MapWarpPoint warp = tile.getMapWarpPoint();
+                            MapWarpPoint warp = tile.getMapWarpPoint();
                             if (warp != null) {
                                 writeLine(warpOutput, String.format("%d;%d;%s", x, y, warp));
                             }
@@ -273,15 +273,14 @@ public class MapIO {
         }
     }
 
-    private static void writeHeader(@Nonnull final Writer writer, @Nonnull final String header, final int value)
-            throws IOException {
+    private static void writeHeader(@Nonnull Writer writer, @Nonnull String header, int value) throws IOException {
         writer.write(header);
         writer.write(' ');
         writer.write(Integer.toString(value));
         writer.write(NEWLINE);
     }
 
-    private static void writeLine(@Nonnull final BufferedWriter writer, @Nonnull Object... args) throws IOException {
+    private static void writeLine(@Nonnull BufferedWriter writer, @Nonnull Object... args) throws IOException {
         for (int i = 0; i < args.length; ++i) {
             writer.write(args[i].toString());
             if (i < (args.length - 1)) {
@@ -293,7 +292,7 @@ public class MapIO {
         }
     }
 
-    private static void writeLine(@Nonnull final BufferedWriter writer, @Nonnull String str) throws IOException {
+    private static void writeLine(@Nonnull BufferedWriter writer, @Nonnull String str) throws IOException {
         writer.write(str);
         writer.write(NEWLINE);
     }

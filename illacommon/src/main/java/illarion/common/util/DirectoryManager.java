@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -61,12 +62,19 @@ public final class DirectoryManager {
     private final Path workingDirectory;
 
     /**
+     * The binary directory that got selected.
+     */
+    @Nullable
+    private Path binaryDirectory;
+
+    /**
      * Private constructor to ensure that only the singleton instance exists.
      */
     @SuppressWarnings("nls")
     private DirectoryManager() {
         String installationDir = System.getProperty("org.illarion.install.dir");
         workingDirectory = Paths.get((installationDir == null) ? "." : installationDir);
+        binaryDirectory = null;
 
         Path userDir = getDirectory(Directory.User);
         if (Files.isRegularFile(userDir)) {
@@ -100,9 +108,51 @@ public final class DirectoryManager {
             case User:
                 return Paths.get(System.getProperty("user.home"), ".illarion");
             case Data:
-                return workingDirectory.resolve("bin");
+                return getBinaryDirectory();
         }
         throw new IllegalArgumentException("Parameter 'dir' was set to an illegal value: " + dir);
+    }
+
+    @Nonnull
+    private Path getBinaryDirectory() {
+        if (binaryDirectory == null) {
+            Path firstChoice = workingDirectory.resolve("bin");
+            if (!Files.exists(firstChoice)) {
+                try {
+                    return Files.createDirectories(firstChoice);
+                } catch (IOException ignored) {
+                    // not accessible
+                }
+            }
+            if (Files.isDirectory(firstChoice)) {
+                try {
+                    Path temporaryTestFile = firstChoice.resolve("writing.test");
+                    if (Files.isRegularFile(temporaryTestFile)) {
+                        Files.delete(temporaryTestFile);
+                    }
+                    Path newCreatedFile = Files.createFile(temporaryTestFile);
+                    if (Files.isRegularFile(temporaryTestFile)) {
+                        binaryDirectory = firstChoice;
+                    }
+                    Files.delete(newCreatedFile);
+                } catch (IOException e) {
+                    log.info("Accessing the directory failed: {}", e.getMessage());
+                }
+            }
+            if (binaryDirectory == null) {
+                Path userDir = getDirectory(Directory.User);
+                binaryDirectory = userDir.resolve("bin");
+                assert binaryDirectory != null;
+                if (!Files.exists(binaryDirectory)) {
+                    try {
+                        return Files.createDirectories(binaryDirectory);
+                    } catch (IOException e) {
+                        log.error("Critical error! No possible binary directory.");
+                    }
+                }
+            }
+        }
+        return binaryDirectory;
     }
 
     @Nonnull

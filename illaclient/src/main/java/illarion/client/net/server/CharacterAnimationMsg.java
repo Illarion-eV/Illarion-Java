@@ -17,10 +17,12 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
+import illarion.client.util.UpdateTask;
 import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.CharacterId;
+import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -53,7 +55,7 @@ public final class CharacterAnimationMsg extends AbstractReply {
      * decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         charId = new CharacterId(reader);
         animationId = reader.readUByte();
     }
@@ -71,7 +73,12 @@ public final class CharacterAnimationMsg extends AbstractReply {
             // Update for illegal character
             return true;
         }
-        ch.startAnimation(animationId, Char.DEFAULT_ANIMATION_SPEED);
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
+            @Override
+            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+                ch.startAnimation(animationId, Char.DEFAULT_ANIMATION_SPEED);
+            }
+        });
         return true;
     }
 
@@ -85,6 +92,6 @@ public final class CharacterAnimationMsg extends AbstractReply {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString(charId.toString() + " - Animation ID: " + Integer.toString(animationId));
+        return toString(charId + " - Animation ID: " + Integer.toString(animationId));
     }
 }

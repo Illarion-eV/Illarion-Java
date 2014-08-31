@@ -25,6 +25,7 @@ import illarion.client.net.server.TileUpdate;
 import illarion.client.world.interactive.InteractiveMap;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.graphics.ItemInfo;
+import illarion.common.types.Direction;
 import illarion.common.types.Location;
 import illarion.common.util.Stoppable;
 import illarion.common.util.StoppableStorage;
@@ -494,7 +495,6 @@ public final class GameMap implements LightingMap, Stoppable {
      */
     public void checkInside() {
         GameMapProcessor2.checkInside();
-        World.getPeople().checkVisibility();
     }
 
     /**
@@ -871,12 +871,9 @@ public final class GameMap implements LightingMap, Stoppable {
         miniMap.update(updateData);
     }
 
-    private MapTile getMapAt(@Nonnull Location origin, int direction) {
-        if ((direction < 0) || (direction >= Location.DIR_MOVE8)) {
-            throw new IllegalArgumentException("Direction is not a valid direction value: " + direction);
-        }
-        int offsetX = Location.getDirectionVectorX(direction);
-        int offsetY = Location.getDirectionVectorY(direction);
+    private MapTile getMapAt(@Nonnull Location origin, @Nonnull Direction direction) {
+        int offsetX = direction.getDirectionVectorX();
+        int offsetY = direction.getDirectionVectorY();
 
         return getMapAt(origin.getScX() + offsetX, origin.getScY() + offsetY, origin.getScZ());
     }
@@ -889,7 +886,7 @@ public final class GameMap implements LightingMap, Stoppable {
     private void setColorLinks(@Nonnull MapTile tile) {
         Location tileLocation = tile.getLocation();
 
-        for (int dir = 0; dir < Location.DIR_MOVE8; dir++) {
+        for (Direction dir : Direction.values()) {
             MapTile offsetTile = getMapAt(tileLocation, dir);
             if (offsetTile != null) {
                 tile.linkColors(offsetTile, dir);

@@ -15,11 +15,9 @@
  */
 package org.illarion.nifty.controls.itemcontainer;
 
-import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.builder.ControlBuilder;
 import de.lessvoid.nifty.builder.PanelBuilder;
-import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.controls.Parameters;
 import de.lessvoid.nifty.controls.window.WindowControl;
 import de.lessvoid.nifty.elements.Element;
@@ -80,8 +78,6 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
         int slotWidth = parameter.getAsInteger("slotWidth", SLOT_DEFAULT_SIZE);
         String slotBackground = "gui/containerslot.png";
 
-        bindDescription(parameter);
-
         Element contentPanel = getContentPanel();
         if (contentPanel == null) {
             throw new IllegalStateException("Content panel is not set.");
@@ -125,27 +121,6 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
             slots[i] = contentPanel.findNiftyControl("#slot" + i, InventorySlot.class);
         }
         layoutWindow();
-    }
-
-    private void bindDescription(@Nonnull Parameters parameter) {
-        String description = parameter.getWithDefault("description", "");
-
-        if (description.isEmpty()) {
-            Element descriptionElement = getDescriptionElement();
-            if (descriptionElement != null) {
-                descriptionElement.markForRemoval(new EndNotify() {
-                    @Override
-                    public void perform() {
-                        layoutWindow();
-                    }
-                });
-            }
-        } else {
-            Label descriptionLabel = getDescriptionLabel();
-            if (descriptionLabel != null) {
-                descriptionLabel.setText(description);
-            }
-        }
     }
 
     private void layoutWindow() {
@@ -208,23 +183,5 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
             return null;
         }
         return content.findElementById("#contentPanel");
-    }
-
-    @Nullable
-    private Element getDescriptionElement() {
-        Element content = getContent();
-        if (content == null) {
-            return null;
-        }
-        return content.findElementById("#description");
-    }
-
-    @Nullable
-    private Label getDescriptionLabel() {
-        Element labelElement = getDescriptionElement();
-        if (labelElement == null) {
-            return null;
-        }
-        return labelElement.getNiftyControl(Label.class);
     }
 }

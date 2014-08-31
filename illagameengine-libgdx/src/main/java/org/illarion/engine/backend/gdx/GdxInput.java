@@ -23,6 +23,8 @@ import org.illarion.engine.input.Button;
 import org.illarion.engine.input.InputListener;
 import org.illarion.engine.input.Key;
 import org.lwjgl.input.Keyboard;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -36,6 +38,8 @@ import java.util.Queue;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 class GdxInput extends AbstractForwardingInput implements InputProcessor {
+    private static final Logger log = LoggerFactory.getLogger(GdxInput.class);
+
     /**
      * This is the ID of the pointer that is the only one used.
      */
@@ -478,8 +482,10 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     public boolean keyDown(int keycode) {
         final Key pressedKey = getEngineKey(keycode);
         if (pressedKey == null) {
+            log.debug("Received key down with code: {} that failed to translate to a key.", keycode);
             return true;
         }
+        log.debug("Received key down with code: {} that translated to key: {}", keycode, pressedKey);
         events.offer(new Runnable() {
             @Override
             public void run() {
@@ -494,8 +500,10 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     public boolean keyUp(int keycode) {
         final Key releasedKey = getEngineKey(keycode);
         if (releasedKey == null) {
+            log.debug("Received key up with code: {} that failed to translate to a key.", keycode);
             return true;
         }
+        log.debug("Received key up with code: {} that translated to key: {}", keycode, releasedKey);
         events.offer(new Runnable() {
             @Override
             public void run() {
@@ -508,6 +516,7 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
 
     @Override
     public boolean keyTyped(final char character) {
+        log.debug("Received key typed with character: {}", character);
         events.offer(new Runnable() {
             @Override
             public void run() {

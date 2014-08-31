@@ -83,22 +83,22 @@ public class ItemTemplate extends AbstractAnimatedEntityTemplate {
      * @param paperdollingColor the color that is applied to the paperdolling item
      */
     public ItemTemplate(
-            final int id,
-            @Nonnull final Sprite sprite,
-            @Nonnull final Texture guiTexture,
-            final int frames,
-            final int shadowOffset,
-            final int speed,
-            @Nonnull final ItemInfo itemInfo,
-            final int paperdollingId,
-            @Nullable final Color paperdollingColor) {
+            int id,
+            @Nonnull Sprite sprite,
+            @Nonnull Texture guiTexture,
+            int frames,
+            int shadowOffset,
+            int speed,
+            @Nonnull ItemInfo itemInfo,
+            int paperdollingId,
+            @Nullable Color paperdollingColor) {
         super(id, sprite, frames, 0, speed, null, shadowOffset);
 
         this.itemInfo = itemInfo;
         this.paperdollingId = paperdollingId;
         this.paperdollingColor = paperdollingColor;
         sharedAnimation = new FrameAnimation();
-        sharedAnimation.setup(frames, 0, speed, FrameAnimation.LOOPED);
+        sharedAnimation.setup(frames, 0, speed * 150, FrameAnimation.Mode.Looped);
         this.guiTexture = guiTexture;
     }
 

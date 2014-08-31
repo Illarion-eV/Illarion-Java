@@ -19,12 +19,18 @@ import illarion.client.graphics.AnimatedMove;
 import illarion.client.graphics.MoveAnimation;
 import illarion.client.net.client.MoveCmd;
 import illarion.client.net.client.TurnCmd;
+import illarion.client.util.UpdateTask;
 import illarion.client.world.CharMovementMode;
+import illarion.client.world.MapTile;
 import illarion.client.world.Player;
 import illarion.client.world.World;
+import illarion.client.world.characters.CharacterAttribute;
+import illarion.common.graphics.CharAnimations;
 import illarion.common.types.CharacterId;
+import illarion.common.types.Direction;
 import illarion.common.types.Location;
-import illarion.common.util.Timer;
+import illarion.common.util.FastMath;
+import org.illarion.engine.GameContainer;
 import org.illarion.engine.input.Input;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,9 +85,6 @@ public class Movement {
     @Nonnull
     private final MoveAnimation moveAnimation;
 
-    @Nonnull
-    private final Timer timeoutTimer;
-
     /**
      * This instance of the player location is kept in sync with the location that was last confirmed by the server
      * to keep track of where the player REALLY is.
@@ -101,13 +104,6 @@ public class Movement {
         keyboardHandler = new SimpleKeyboardMovementHandler(this, input);
         targetMovementHandler = new WalkToMovementHandler(this);
         targetMouseMovementHandler = new WalkToMouseMovementHandler(this, input);
-
-        timeoutTimer = new Timer(700, new Runnable() {
-            @Override
-            public void run() {
-                reportReadyForNextStep();
-            }
-        });
         playerLocation = new Location(player.getLocation());
     }
 
@@ -149,28 +145,119 @@ public class Movement {
         return (activeHandler != null) && handler.equals(activeHandler);
     }
 
-    public void executeServerRespTurn(int direction) {
+    public void executeServerRespTurn(@Nonnull final Direction direction) {
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
+            @Override
+            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+                executeServerRespTurnInternal(direction);
+            }
+        });
+    }
+
+    private void executeServerRespTurnInternal(@Nonnull Direction direction) {
         animator.scheduleTurn(direction);
     }
 
-    public void executeServerRespMove(@Nonnull CharMovementMode mode, @Nonnull Location target, int speed) {
-        timeoutTimer.stop();
+    private void scheduleEarlyTurn(@Nonnull Direction direction) {
+        animator.scheduleTurn(direction);
+    }
+
+    public void executeServerRespMoveTooEarly() {
+        World.getUpdateTaskManager().addTaskForLater(new UpdateTask() {
+            @Override
+            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+                log.debug(
+                        "Response indicates that the request was received too early. A new request is required later.");
+                resendMoveToServer();
+            }
+        });
+    }
+
+    public void executeServerRespMove(
+            @Nonnull final CharMovementMode mode, @Nonnull final Location target, final int duration) {
+        final Location playerLocationBeforeMove = new Location(playerLocation);
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
+            @Override
+            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+                executeServerRespMoveInternal(playerLocationBeforeMove, mode, target, duration);
+            }
+        });
         playerLocation.set(target);
-        animator.scheduleMove(mode, target, speed);
+    }
+
+    private void executeServerRespMoveInternal(
+            @Nonnull Location playerLocationBeforeMove,
+            @Nonnull CharMovementMode mode,
+            @Nonnull Location target,
+            int duration) {
+        log.debug("Received response from the server! Mode: {} Target {} Duration {}ms", mode, target, duration);
+        if (playerLocationBeforeMove.equals(target)) {
+            log.debug("Current location and target location match. Cancel any pending move.");
+            animator.cancelMove(target);
+        } else {
+            // confirm a move that was started early
+            animator.confirmMove(mode, target, duration);
+        }
+    }
+
+    private static final int MAX_WALK_AGI = 20;
+    private static final int MIN_WALK_COST = 300;
+    private static final int MAX_WALK_COST = 800;
+
+    private void scheduleEarlyMove(@Nonnull CharMovementMode mode, @Nonnull Direction direction) {
+        if (player.getCarryLoad().isWalkingPossible()) {
+            Location target = getTargetLocation(mode, direction);
+            MapTile targetTile = World.getMap().getMapAt(target);
+
+            if ((targetTile != null) && !targetTile.isBlocked()) {
+                int agility = Math.min(player.getCharacter().getAttribute(CharacterAttribute.Agility), MAX_WALK_AGI);
+                double agilityMod = (10 - agility) / 100.0;
+                double loadMod = (player.getCarryLoad().getLoadFactor() / 10.0) * 3.0;
+                double mods = agilityMod + loadMod + 1.0;
+
+                int movementDuration = getMovementDuration(targetTile.getMovementCost(), mods, direction.isDiagonal(),
+                                                           mode == CharMovementMode.Run);
+                if (mode == CharMovementMode.Run) {
+                    Location walkTarget = getTargetLocation(CharMovementMode.Walk, direction);
+                    MapTile walkTargetTile = World.getMap().getMapAt(walkTarget);
+                    if ((walkTargetTile != null) && !walkTargetTile.isBlocked()) {
+                        movementDuration += getMovementDuration(walkTargetTile.getMovementCost(), mods,
+                                                                direction.isDiagonal(), true);
+                    } else {
+                        return;
+                    }
+                }
+                animator.scheduleEarlyMove(mode, target, (movementDuration / 100) * 100);
+            }
+        }
+    }
+
+    private static int getMovementDuration(int tileMovementCost, double mods, boolean diagonal, boolean running) {
+        int movementDuration = FastMath.clamp((int) (tileMovementCost * 100.0 * mods), MIN_WALK_COST, MAX_WALK_COST);
+
+        if (diagonal) {
+            movementDuration = (int) (1.4142135623730951 * movementDuration); // sqrt(2)
+        }
+        if (running) {
+            movementDuration = (int) (0.6 * movementDuration);
+        }
+        return movementDuration;
     }
 
     public void executeServerLocation(@Nonnull Location target) {
         animator.cancelAll();
         stepInProgress = false;
-        playerLocation.set(target);
         World.getPlayer().setLocation(target);
 
         MovementHandler currentHandler = activeHandler;
         if (currentHandler != null) {
             currentHandler.disengage(false);
-            currentHandler.assumeControl();
         }
+        playerLocation.set(target);
     }
+
+    @Nullable
+    private MoveCmd lastSendMoveCommand;
 
     /**
      * Send the movement command to the server.
@@ -178,26 +265,32 @@ public class Movement {
      * @param direction the direction of the requested move
      * @param mode the mode of the requested move
      */
-    private void sendMoveToServer(int direction, @Nonnull CharMovementMode mode) {
-        if (!Location.isValidDirection(direction)) {
-            throw new IllegalArgumentException("Direction is out of the valid range.");
-        }
+    private void sendMoveToServer(@Nonnull Direction direction, @Nonnull CharMovementMode mode) {
         CharacterId playerId = player.getPlayerId();
         if (playerId == null) {
             log.error(marker, "Send move to server while ID is not known.");
             return;
         }
-        World.getNet().sendCommand(new MoveCmd(playerId, mode, direction));
-        timeoutTimer.stop();
-        timeoutTimer.start();
+        MoveCmd cmd = new MoveCmd(playerId, mode, direction);
+        lastSendMoveCommand = cmd;
+        log.debug(marker, "Sending move command to server: {}", cmd);
+        World.getNet().sendCommand(cmd);
     }
 
-    private void sendTurnToServer(int direction) {
-        if (!Location.isValidDirection(direction)) {
-            throw new IllegalArgumentException("Direction is out of the valid range.");
+    private void resendMoveToServer() {
+        if (lastSendMoveCommand != null) {
+            log.debug(marker, "Re-Sending move command to server: {}", lastSendMoveCommand);
+            World.getNet().sendCommand(lastSendMoveCommand);
+        } else {
+            log.warn(marker, "Tried to resend a move command to the server, but there was no old move command.");
         }
+    }
+
+    private void sendTurnToServer(@Nonnull Direction direction) {
         if (player.getCharacter().getDirection() != direction) {
-            World.getNet().sendCommand(new TurnCmd(direction));
+            TurnCmd cmd = new TurnCmd(direction);
+            log.debug(marker, "Sending turn command to server: {}", cmd);
+            World.getNet().sendCommand(cmd);
         }
     }
 
@@ -205,6 +298,7 @@ public class Movement {
      * Notify the handler that everything is ready to request the next step from the server.
      */
     void reportReadyForNextStep() {
+        log.debug("Reported ready for the next step.");
         stepInProgress = false;
         update();
     }
@@ -223,21 +317,46 @@ public class Movement {
         }
         MovementHandler handler = activeHandler;
         if (handler != null) {
+            long start = System.currentTimeMillis();
             StepData nextStep = handler.getNextStep(playerLocation);
-            log.debug(marker, "Requesting new step data from handler: {}", nextStep);
-            if (nextStep != null) {
+            if (log.isDebugEnabled(marker)) {
+                log.debug(marker, "Requesting new step data from handler: {} (took {} milliseconds)", nextStep,
+                          System.currentTimeMillis() - start);
+            }
+            if ((nextStep != null) && (nextStep.getDirection() != null)) {
                 switch (nextStep.getMovementMode()) {
                     case None:
                         sendTurnToServer(nextStep.getDirection());
+                        scheduleEarlyTurn(nextStep.getDirection());
                         break;
                     default:
                         stepInProgress = true;
-                        sendTurnToServer(nextStep.getDirection());
                         sendMoveToServer(nextStep.getDirection(), nextStep.getMovementMode());
-                        break;
+                        scheduleEarlyTurn(nextStep.getDirection());
+                        scheduleEarlyMove(nextStep.getMovementMode(), nextStep.getDirection());
                 }
             }
         }
+    }
+
+    @Nonnull
+    private Location getTargetLocation(@Nonnull CharMovementMode mode, @Nonnull Direction direction) {
+        Location result = new Location(playerLocation);
+        switch (mode) {
+            case Run:
+                result.moveSC(direction);
+                result.moveSC(direction);
+                break;
+            case Walk:
+                result.moveSC(direction);
+                break;
+            case Push:
+                result.moveSC(direction);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid movement mode for selecting the target location");
+        }
+        return result;
     }
 
     @Nonnull
@@ -245,9 +364,17 @@ public class Movement {
         return player;
     }
 
+    public boolean isMovementModePossible(@Nonnull CharMovementMode mode) {
+        return (mode != CharMovementMode.Run) ||
+                World.getPlayer().getCharacter().isAnimationAvailable(CharAnimations.RUN);
+    }
+
     @Nonnull
     public CharMovementMode getDefaultMovementMode() {
-        return defaultMovementMode;
+        if (World.getPlayer().getCarryLoad().isRunningPossible()) {
+            return defaultMovementMode;
+        }
+        return CharMovementMode.Walk;
     }
 
     @Nonnull
@@ -275,7 +402,6 @@ public class Movement {
     }
 
     public void shutdown() {
-        timeoutTimer.stop();
         activeHandler = null;
     }
 }

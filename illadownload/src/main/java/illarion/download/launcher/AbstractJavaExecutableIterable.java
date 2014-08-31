@@ -91,7 +91,7 @@ public abstract class AbstractJavaExecutableIterable implements Iterable<Path> {
         int usedIndex = index;
         if (usedJreRootDir != null) {
             if (usedIndex == 0) {
-                return Paths.get(usedJreRootDir, "java");
+                return Paths.get(usedJreRootDir, "bin", "java");
             } else {
                 usedIndex -= 1;
             }

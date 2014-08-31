@@ -408,9 +408,6 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
         draggedGraphic = gamePanel.findElementById("mapDragObject");
         draggedImage = draggedGraphic.findElementById("mapDragImage");
         endOfDragOp = new GameMapDragEndOperation(draggedGraphic, gamePanel);
-        if (!IllaClient.getCfg().getBoolean("walkAsDefault")) {
-            toggleRunMode();
-        }
     }
 
     @Override

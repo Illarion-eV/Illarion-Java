@@ -1,7 +1,6 @@
-/illacommon/src/main/resources/skills.xml
 /.gradle/
+/illacommon/src/main/resources/skills.xml
 /build
-*/build
 /out
 /classes
 *.log
@@ -10,3 +9,5 @@
 *.iml
 illaeasyquest/src/main/resources/template/*/filelist
 */src/generated
+bin/
+**/build/

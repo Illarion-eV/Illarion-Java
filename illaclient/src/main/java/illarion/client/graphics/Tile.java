@@ -236,7 +236,7 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
             log.debug("Single click on tile at {}", parentTile.getLocation());
 
             TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
-            handler.walkTo(parentTile.getLocation(), 0);
+            handler.walkTo(parentTile.getLocation(), parentTile.isBlocked() ? 1 : 0);
             handler.assumeControl();
             return true;
         }
@@ -246,7 +246,8 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
             if (!isMouseInInteractionRect(moveEvent.getX(), moveEvent.getY())) {
                 return false;
             }
-            World.getPlayer().getMovementHandler().getTargetMouseMovementHandler().walkTo(parentTile.getLocation(), 0);
+            World.getPlayer().getMovementHandler().getTargetMouseMovementHandler()
+                    .walkTo(parentTile.getLocation(), parentTile.isBlocked() ? 1 : 0);
 
             if (!moveEvent.isHighlightHandled()) {
                 showHighlight = 1;

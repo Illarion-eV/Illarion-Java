@@ -22,6 +22,7 @@ import illarion.client.net.server.events.DialogMerchantReceivedEvent;
 import illarion.client.net.server.events.OpenContainerEvent;
 import illarion.client.util.ChatLog;
 import illarion.client.world.events.CloseDialogEvent;
+import illarion.client.world.items.CarryLoad;
 import illarion.client.world.items.Inventory;
 import illarion.client.world.items.ItemContainer;
 import illarion.client.world.items.MerchantList;
@@ -160,6 +161,9 @@ public final class Player {
     @Nonnull
     private final ChatLog chatLog;
 
+    @Nonnull
+    private final CarryLoad carryLoad;
+
     /**
      * Constructor for the player that receives the character name from the login data automatically.
      */
@@ -175,11 +179,9 @@ public final class Player {
     @SuppressWarnings("nls")
     public Player(@Nonnull Engine engine, @Nonnull String charName) {
         Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
-        if (userDir == null) {
-            throw new IllegalStateException("User directory is null?!");
-        }
         path = userDir.resolve(charName);
         chatLog = new ChatLog(path);
+        carryLoad = new CarryLoad();
 
         character = new Char();
         validLocation = false;
@@ -520,7 +522,7 @@ public final class Player {
         }
 
         boolean isLongRange = false;
-        if (playerLocation.getSqrtDistance(newLoc) > 4) {
+        if (playerLocation.getSqrtDistance(newLoc) > 10) {
             isLongRange = true;
         }
         if (FastMath.abs(playerLocation.getScZ() - newLoc.getScZ()) > 3) {
@@ -536,6 +538,7 @@ public final class Player {
         updateLocation(newLoc);
         character.setLocation(newLoc);
         character.stopAnimation();
+        character.resetAnimation(true);
         World.getPlayer().getCombatHandler().standDown();
         World.getMapDisplay().setLocation(newLoc);
 
@@ -587,5 +590,10 @@ public final class Player {
     public void shutdown() {
         character.markAsRemoved();
         movementHandler.shutdown();
+    }
+
+    @Nonnull
+    public CarryLoad getCarryLoad() {
+        return carryLoad;
     }
 }

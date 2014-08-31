@@ -157,13 +157,13 @@ public final class AppearanceMsg extends AbstractGuiMsg {
      * decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         charId = new CharacterId(reader);
         name = reader.readString();
         customName = reader.readString();
 
-        final int race = reader.readUShort();
-        final boolean male = reader.readUByte() == 0;
+        int race = reader.readUShort();
+        boolean male = reader.readUByte() == 0;
         appearance = getAppearance(race, male);
         hitPoints = reader.readUShort();
         size = reader.readUByte();
@@ -192,7 +192,7 @@ public final class AppearanceMsg extends AbstractGuiMsg {
     @SuppressWarnings("nls")
     @Override
     public boolean executeUpdate() {
-        @Nullable final Char character = World.getPeople().getCharacter(charId);
+        @Nullable Char character = World.getPeople().getCharacter(charId);
 
         // Character not found.
         if (character == null) {
@@ -208,10 +208,10 @@ public final class AppearanceMsg extends AbstractGuiMsg {
         }
 
         character.setAppearance(appearance);
-        character.resetLight();
         character.setWearingItem(AvatarClothManager.GROUP_HAIR, hairID);
         character.setWearingItem(AvatarClothManager.GROUP_BEARD, beardID);
 
+        character.resetLight();
         for (int i = 0; i < itemSlots.length; i++) {
             character.setInventoryItem(i, itemSlots[i]);
         }
@@ -237,8 +237,6 @@ public final class AppearanceMsg extends AbstractGuiMsg {
         character.setAttribute(CharacterAttribute.HitPoints, hitPoints);
         character.setAlive(!deadFlag);
         character.updateLight();
-
-        character.setVisible(World.getPlayer().canSee(character));
         return true;
     }
 
@@ -250,7 +248,7 @@ public final class AppearanceMsg extends AbstractGuiMsg {
      * @param male {@code true} in case the character is male
      * @return the appearance ID
      */
-    private static int getAppearance(final int race, final boolean male) {
+    private static int getAppearance(int race, boolean male) {
         switch (race) {
             case 7:
                 return 3;
@@ -326,68 +324,12 @@ public final class AppearanceMsg extends AbstractGuiMsg {
                 return 38;
             case 42:
                 return 39;
-            case 43:
-                return 43;
             case 47:
                 return 111;
-            case 48:
-                return 48;
             case 49:
                 return 44;
             case 50:
                 return 45;
-            case 51:
-                return 51;
-            case 52:
-                return 52;
-            case 53:
-                return 53;
-            case 54:
-                return 54;
-            case 55:
-                return 55;
-            case 56:
-                return 56;
-            case 57:
-                return 57;
-            case 58:
-                return 58;
-            case 59:
-                return 59;
-            case 60:
-                return 60;
-            case 61:
-                return 61;
-            case 62:
-                return 62;
-            case 63:
-                return 63;
-            case 64:
-                return 64;
-            case 65:
-                return 65;
-            case 66:
-                return 66;
-            case 67:
-                return 67;
-            case 68:
-                return 68;
-            case 69:
-                return 69;
-            case 70:
-                return 70;
-            case 71:
-                return 71;
-            case 72:
-                return 72;
-            case 73:
-                return 73;
-            case 74:
-                return 74;
-            case 75:
-                return 75;
-            case 76:
-                return 76;
             case 77:
                 return 91;
             case 78:
@@ -418,52 +360,8 @@ public final class AppearanceMsg extends AbstractGuiMsg {
                 return 89;
             case 91:
                 return 90;
-            case 92:
-                return 92;
-            case 93:
-                return 93;
-            case 94:
-                return 94;
-            case 95:
-                return 95;
-            case 96:
-                return 96;
-            case 97:
-                return 97;
-            case 98:
-                return 98;
-            case 99:
-                return 99;
-            case 100:
-                return 100;
-            case 101:
-                return 101;
-            case 102:
-                return 102;
-            case 103:
-                return 103;
-            case 104:
-                return 104;
-            case 105:
-                return 105;
-            case 106:
-                return 106;
-            case 107:
-                return 107;
-            case 108:
-                return 108;
-            case 111:
-                return 111;
-            case 112: // black dragon
-                return 112;
-            case 113: // rabbit
-                return 113;
-            case 114: // Akaltut (spider thingy)
-                return 114;
-            case 115: // Fairy
-                return 115;
             default:
-                return 1;
+                return race;
         }
     }
 

@@ -63,6 +63,12 @@ public final class MoveMsg extends AbstractReply {
     private static final int MODE_RUN = 0x0D;
 
     /**
+     * Mode information that the move request arrived at the server too early. That mode response is only valid in
+     * for move commands related to the player character.
+     */
+    private static final int MODE_TOO_EARLY = 0x09;
+
+    /**
      * The ID of the moving character.
      */
     private CharacterId charId;
@@ -79,9 +85,9 @@ public final class MoveMsg extends AbstractReply {
     private int mode;
 
     /**
-     * The moving speed of the character.
+     * The moving duration of the character (in milliseconds)
      */
-    private int speed;
+    private int duration;
 
     /**
      * Decode the character move data the receiver got and prepare it for the execution.
@@ -94,7 +100,7 @@ public final class MoveMsg extends AbstractReply {
         charId = new CharacterId(reader);
         loc = decodeLocation(reader);
         mode = reader.readUByte();
-        speed = reader.readUByte();
+        duration = reader.readUShort();
     }
 
     /**
@@ -105,7 +111,8 @@ public final class MoveMsg extends AbstractReply {
     @SuppressWarnings("nls")
     @Override
     public boolean executeUpdate() {
-        if ((mode != MODE_NO_MOVE) && (mode != MODE_MOVE) && (mode != MODE_PUSH) && (mode != MODE_RUN)) {
+        if ((mode != MODE_NO_MOVE) && (mode != MODE_MOVE) && (mode != MODE_PUSH) && (mode != MODE_RUN) &&
+                (mode != MODE_TOO_EARLY)) {
             log.warn("Move char message called in unknown mode {}", mode);
             return true;
         }
@@ -122,10 +129,13 @@ public final class MoveMsg extends AbstractReply {
                 case MODE_RUN:
                     moveMode = CharMovementMode.Run;
                     break;
+                case MODE_TOO_EARLY:
+                    World.getPlayer().getMovementHandler().executeServerRespMoveTooEarly();
+                    return true;
                 default:
                     moveMode = CharMovementMode.None;
             }
-            World.getPlayer().getMovementHandler().executeServerRespMove(moveMode, loc, speed);
+            World.getPlayer().getMovementHandler().executeServerRespMove(moveMode, loc, duration);
             return true;
         }
 
@@ -141,11 +151,14 @@ public final class MoveMsg extends AbstractReply {
                 chara.setLocation(loc);
                 break;
             case MODE_MOVE:
-                chara.moveTo(loc, CharMovementMode.Walk, speed);
+                chara.moveTo(loc, CharMovementMode.Walk, duration);
                 break;
             case MODE_RUN:
-                chara.moveTo(loc, CharMovementMode.Run, speed);
+                chara.moveTo(loc, CharMovementMode.Run, duration);
                 break;
+            case MODE_TOO_EARLY:
+                log.warn("Received MODE_TOO_EARLY for a character other then the player character. That is wrong.");
+                return true;
             default:
                 chara.moveTo(loc, CharMovementMode.Push, 0);
         }
@@ -161,6 +174,28 @@ public final class MoveMsg extends AbstractReply {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("ID: " + charId + " to: " + loc + " mode: " + mode);
+        StringBuilder builder = new StringBuilder(charId.toString());
+        builder.append("to ").append(loc);
+        builder.append(" mode: ");
+        switch (mode) {
+            case MODE_MOVE:
+                builder.append("move");
+                break;
+            case MODE_NO_MOVE:
+                builder.append("no move");
+                break;
+            case MODE_PUSH:
+                builder.append("push");
+                break;
+            case MODE_RUN:
+                builder.append("run");
+                break;
+            default:
+                builder.append("unknown");
+                break;
+        }
+        builder.append('(').append(mode).append(')');
+        builder.append(" duration: ").append(duration).append("ms");
+        return toString(builder.toString());
     }
 }
