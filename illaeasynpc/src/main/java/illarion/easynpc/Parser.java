@@ -121,12 +121,11 @@ public final class Parser implements DocuEntry {
                     public FileVisitResult visitFile(@Nonnull final Path file, BasicFileAttributes attrs)
                             throws IOException {
                         if (file.toUri().toString().endsWith(".npc")) {
-                            parseScript(file);
                             executor.submit(new Callable<Void>() {
                                 @Nullable
                                 @Override
                                 public Void call() throws Exception {
-
+                                    parseScript(file);
                                     return null;
                                 }
                             });
