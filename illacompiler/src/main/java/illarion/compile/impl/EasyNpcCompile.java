@@ -36,15 +36,14 @@ public class EasyNpcCompile extends AbstractCompile {
     private static final Logger LOGGER = LoggerFactory.getLogger(EasyNpcCompile.class);
 
     @Override
-    public int compileFile(@Nonnull final Path file) {
+    public int compileFile(@Nonnull Path file) {
         Objects.requireNonNull(file);
         Path targetDir = Objects.requireNonNull(getTargetDir());
         try {
             ensureTargetDir();
-            ParsedNpc npc = Parser.getInstance().parse(file);
+            ParsedNpc npc = Parser.parse(file);
             if (npc.hasErrors()) {
-                LOGGER.error("Parsing the NPC {} failed with {} errors", file.getFileName().toString(),
-                             npc.getErrorCount());
+                LOGGER.error("Parsing the NPC {} failed with {} errors", file.getFileName(), npc.getErrorCount());
                 for (int i = 0; i < npc.getErrorCount(); i++) {
                     ParsedNpc.Error error = npc.getError(i);
                     LOGGER.error("\t Line {}: {}", error.getLine(), error.getMessage());
@@ -55,7 +54,7 @@ public class EasyNpcCompile extends AbstractCompile {
             String moduleName = ParsedNpc.convertToModuleName(file.getFileName().toString().replace(".npc", ""));
             npc.setModuleName(moduleName);
 
-            final ScriptWriter writer = new ScriptWriter();
+            ScriptWriter writer = new ScriptWriter();
             writer.setSource(npc);
             writer.setGenerated(true);
             try (Writer write = Files.newBufferedWriter(targetDir.resolve(npc.getLuaFilename()), DEFAULT_CHARSET)) {
@@ -85,7 +84,7 @@ public class EasyNpcCompile extends AbstractCompile {
                 }
                 return -1;
             }
-            final ScriptWriter writer = new ScriptWriter();
+            ScriptWriter writer = new ScriptWriter();
             writer.setSource(npc);
             writer.setGenerated(true);
             Writer write = new OutputStreamWriter(out, DEFAULT_CHARSET);

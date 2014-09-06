@@ -40,7 +40,7 @@ public class Compiler {
     private static final Logger LOGGER = LoggerFactory.getLogger(Compiler.class);
     private static Map<CompilerType, Path> storagePaths;
 
-    public static void main(final String[] args) {
+    public static void main(String[] args) {
         ByteArrayOutputStream stdOutBuffer = new ByteArrayOutputStream();
         PrintStream orgStdOut = System.out;
         System.setOut(new PrintStream(stdOutBuffer));
@@ -50,20 +50,20 @@ public class Compiler {
 
         Options options = new Options();
 
-        final Option npcDir = new Option("n", "npc-dir", true, "The place where the compiled NPC files are stored.");
+        Option npcDir = new Option("n", "npc-dir", true, "The place where the compiled NPC files are stored.");
         npcDir.setArgs(1);
         npcDir.setArgName("directory");
         npcDir.setRequired(false);
         options.addOption(npcDir);
 
-        final Option questDir = new Option("q", "quest-dir", true,
+        Option questDir = new Option("q", "quest-dir", true,
                                            "The place where the compiled Quest files are stored.");
         questDir.setArgs(1);
         questDir.setArgName("directory");
         questDir.setRequired(false);
         options.addOption(questDir);
 
-        final Option type = new Option("t", "type", true,
+        Option type = new Option("t", "type", true,
                                        "This option is used to set what kind of parser is supposed to be used in case" +
                                                " the content of standard input is processed."
         );
@@ -86,17 +86,17 @@ public class Compiler {
                 System.setOut(orgStdOut);
                 processStdIn(cmd);
             }
-        } catch (final ParseException e) {
-            final HelpFormatter helpFormatter = new HelpFormatter();
+        } catch (ParseException e) {
+            HelpFormatter helpFormatter = new HelpFormatter();
             helpFormatter.printHelp("java -jar compiler.jar [Options] File", options, true);
             System.exit(-1);
-        } catch (final IOException e) {
+        } catch (IOException e) {
             LOGGER.error(e.getLocalizedMessage());
             System.exit(-1);
         }
     }
 
-    private static void processFileMode(@Nonnull final CommandLine cmd) throws IOException {
+    private static void processFileMode(@Nonnull CommandLine cmd) throws IOException {
         storagePaths = new EnumMap<>(CompilerType.class);
         String npcPath = cmd.getOptionValue('n');
         if (npcPath != null) {
@@ -127,7 +127,7 @@ public class Compiler {
         }
     }
 
-    private static void processStdIn(@Nonnull final CommandLine cmd) throws IOException {
+    private static void processStdIn(@Nonnull CommandLine cmd) throws IOException {
         String dataType = cmd.getOptionValue('t');
 
         CompilerType usedType = null;
@@ -150,7 +150,7 @@ public class Compiler {
         System.exit(compile.compileStream(System.in, System.out));
     }
 
-    private static void processPath(@Nonnull final Path path) throws IOException {
+    private static void processPath(@Nonnull Path path) throws IOException {
         if (Files.isDirectory(path)) {
             return;
         }
