@@ -15,6 +15,7 @@
  */
 package illarion.client.world.items;
 
+import de.lessvoid.nifty.tools.Color;
 import illarion.client.util.Lang;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
@@ -76,6 +77,7 @@ public class CarryLoad {
                 @Override
                 public void onUpdateGame(@Nonnull GameContainer container, int delta) {
                     World.getGameGui().getInformGui().showScriptInform(1, finalMessageToSend);
+                    World.getGameGui().getChatGui().addChatMessage(finalMessageToSend, Color.WHITE);
                 }
             });
         }
