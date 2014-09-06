@@ -39,8 +39,7 @@ public class ItemStack implements DisplayItem, List<Item> {
     private boolean rectangleDirty;
     private final Rectangle interactiveRectangle;
 
-    private static final int NOT_SET = -1;
-
+    private boolean orderNotSet;
     private int order;
 
     public ItemStack() {
@@ -48,7 +47,9 @@ public class ItemStack implements DisplayItem, List<Item> {
         items = new ArrayList<>();
         rectangleDirty = false;
         interactiveRectangle = new Rectangle();
-        order = NOT_SET;
+
+        orderNotSet = true;
+        order = 0;
     }
 
     @Override
@@ -89,12 +90,21 @@ public class ItemStack implements DisplayItem, List<Item> {
     }
 
     private boolean isItemGoodForInsert(@Nonnull SceneElement newItem) {
-        return (order == NOT_SET) || (newItem.getOrder() == order);
+        return orderNotSet || (newItem.getOrder() == order);
+    }
+
+    private void setOrder(int newOrder) {
+        orderNotSet = false;
+        order = newOrder;
+    }
+
+    private void unsetOrder() {
+        orderNotSet = true;
     }
 
     private void postProcessItemInsert(@Nonnull Item newItem) {
-        if (order == NOT_SET) {
-            order = newItem.getOrder();
+        if (orderNotSet) {
+            setOrder(newItem.getOrder());
             show();
         }
         rectangleDirty = true;
@@ -103,7 +113,7 @@ public class ItemStack implements DisplayItem, List<Item> {
 
     private void postProcessItemRemove(@Nonnull Item removedItem) {
         if (items.isEmpty()) {
-            order = NOT_SET;
+            unsetOrder();
             hide();
         }
         rectangleDirty = true;
@@ -112,7 +122,7 @@ public class ItemStack implements DisplayItem, List<Item> {
 
     @Override
     public int getOrder() {
-        return Math.max(0, order);
+        return orderNotSet ? 0 : order;
     }
 
     @Override
@@ -135,7 +145,7 @@ public class ItemStack implements DisplayItem, List<Item> {
     @Override
     public boolean isEventProcessed(
             @Nonnull GameContainer container, int delta, @Nonnull SceneEvent event) {
-        if (order == NOT_SET) {
+        if (orderNotSet) {
             return false;
         }
 
@@ -260,7 +270,7 @@ public class ItemStack implements DisplayItem, List<Item> {
     @Override
     public void clear() {
         items.clear();
-        order = NOT_SET;
+        unsetOrder();
         hide();
     }
 
