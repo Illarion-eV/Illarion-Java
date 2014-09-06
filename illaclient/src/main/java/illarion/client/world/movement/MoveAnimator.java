@@ -164,7 +164,7 @@ class MoveAnimator implements AnimatedMove {
                     log.debug(marker, "Move is correctly scheduled.");
                     confirmedMoveTask = task;
                 } else {
-                    log.debug(marker, "Move is not correctly scheduled.");
+                    log.warn(marker, "Move is not correctly scheduled.");
                     confirmedMoveTask = new MovingTask(this, mode, target, duration);
                 }
             }

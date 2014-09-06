@@ -581,6 +581,10 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
     public void update(@Nonnull GameContainer container, int delta) {
         super.update(container, delta);
 
+        if (!isShown()) {
+            return;
+        }
+
         clothRender.setAlpha(getAlpha());
         clothRender.update(container, delta);
 

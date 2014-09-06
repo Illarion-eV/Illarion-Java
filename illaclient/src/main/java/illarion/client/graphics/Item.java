@@ -381,6 +381,11 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         return false;
     }
 
+    @Override
+    protected boolean isShown() {
+        return true;
+    }
+
     /**
      * Set number of stacked items.
      *
