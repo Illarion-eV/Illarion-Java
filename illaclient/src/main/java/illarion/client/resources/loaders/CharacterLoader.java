@@ -18,6 +18,7 @@ package illarion.client.resources.loaders;
 import illarion.client.graphics.AvatarInfo;
 import illarion.client.resources.ResourceFactory;
 import illarion.client.resources.data.AvatarTemplate;
+import illarion.common.types.Direction;
 import illarion.common.util.TableLoaderCharacters;
 import illarion.common.util.TableLoaderSink;
 import org.illarion.engine.assets.Assets;
@@ -41,7 +42,7 @@ public final class CharacterLoader extends AbstractResourceLoader<AvatarTemplate
     /**
      * The logger that is used to report error messages.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ItemLoader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CharacterLoader.class);
 
     /**
      * The assets of the game engine that are required to load the data needed for the characters.
@@ -54,7 +55,7 @@ public final class CharacterLoader extends AbstractResourceLoader<AvatarTemplate
      *
      * @param assets the assets instance of the game engine that is used to load the data
      */
-    public CharacterLoader(@Nonnull final Assets assets) {
+    public CharacterLoader(@Nonnull Assets assets) {
         this.assets = assets;
     }
 
@@ -65,7 +66,7 @@ public final class CharacterLoader extends AbstractResourceLoader<AvatarTemplate
             throw new IllegalStateException("targetFactory not set yet.");
         }
 
-        final ResourceFactory<AvatarTemplate> factory = getTargetFactory();
+        ResourceFactory<AvatarTemplate> factory = getTargetFactory();
 
         factory.init();
         new TableLoaderCharacters(this);
@@ -84,39 +85,39 @@ public final class CharacterLoader extends AbstractResourceLoader<AvatarTemplate
     private static final String CHAR_PATH = "chars/";
 
     @Override
-    public boolean processRecord(final int line, @Nonnull final TableLoaderCharacters loader) {
-        final int avatarId = loader.getAvatarId();
-        final String name = loader.getResourceName();
-        final int frames = loader.getFrameCount();
-        final int stillFrame = loader.getStillFrame();
-        final int offsetX = loader.getOffsetX();
-        final int offsetY = loader.getOffsetY();
-        final int shadowOffset = loader.getShadowOffset();
-        final boolean mirror = loader.isMirrored();
-        final int direction = loader.getDirection();
-        final int appearance = loader.getAppearance();
-        final int visibleMod = loader.getVisibilityMod();
-        final int animationID = loader.getAnimationId();
-        final int skinRed = loader.getSkinColorRed();
-        final int skinGreen = loader.getSkinColorGreen();
-        final int skinBlue = loader.getSkinColorBlue();
+    public boolean processRecord(int line, @Nonnull TableLoaderCharacters loader) {
+        int avatarId = loader.getAvatarId();
+        String name = loader.getResourceName();
+        int frames = loader.getFrameCount();
+        int stillFrame = loader.getStillFrame();
+        int offsetX = loader.getOffsetX();
+        int offsetY = loader.getOffsetY();
+        int shadowOffset = loader.getShadowOffset();
+        boolean mirror = loader.isMirrored();
+        Direction direction = loader.getDirection();
+        int appearance = loader.getAppearance();
+        int visibleMod = loader.getVisibilityMod();
+        int animationID = loader.getAnimationId();
+        int skinRed = loader.getSkinColorRed();
+        int skinGreen = loader.getSkinColorGreen();
+        int skinBlue = loader.getSkinColorBlue();
 
-        final AvatarInfo info = AvatarInfo.getInstance(appearance, visibleMod);
+        AvatarInfo info = AvatarInfo.getInstance(appearance, visibleMod);
         info.reportAnimation(animationID);
 
-        final Color defaultColor = new Color(skinRed, skinGreen, skinBlue);
+        Color defaultColor = new Color(skinRed, skinGreen, skinBlue);
 
-        final Sprite avatarSprite = assets.getSpriteFactory()
+        Sprite avatarSprite = assets.getSpriteFactory()
                 .createSprite(getTextures(assets.getTextureManager(), CHAR_PATH, name, frames), offsetX, offsetY,
                               SpriteFactory.CENTER, SpriteFactory.BOTTOM, mirror);
 
-        final AvatarTemplate template = new AvatarTemplate(avatarId, avatarSprite, frames, stillFrame, defaultColor,
+        AvatarTemplate template = new AvatarTemplate(avatarId, avatarSprite, frames, stillFrame, defaultColor,
                                                            shadowOffset, direction, info);
 
         try {
             getTargetFactory().storeResource(template);
-        } catch (@Nonnull final IllegalStateException ex) {
-            LOGGER.error("Failed adding avatar to internal factory. ID: " + avatarId + " - Filename: " + name);
+        } catch (@Nonnull IllegalStateException ex) {
+            LOGGER.error("Failed adding avatar to internal factory. ID: {} - Filename: {}", avatarId, name);
         }
 
         return true;

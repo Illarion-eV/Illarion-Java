@@ -70,24 +70,13 @@ public class AvatarTemplate extends AbstractMultiFrameEntityTemplate {
             int frames,
             int stillFrame,
             @Nullable Color defaultColor,
-            int shadowOffset,
-            int direction,
+            int shadowOffset, @Nonnull Direction direction,
             @Nonnull AvatarInfo avatarInfo) {
         super(id, sprite, frames, stillFrame, defaultColor, shadowOffset);
 
-        this.direction = getDirection(direction);
+        this.direction = direction;
         this.avatarInfo = avatarInfo;
         clothes = new AvatarClothManager();
-    }
-
-    @Nonnull
-    private static Direction getDirection(int dirId) {
-        for (Direction dir : Direction.values()) {
-            if (dir.getServerId() == dirId) {
-                return dir;
-            }
-        }
-        throw new IllegalArgumentException("Invalid direction id");
     }
 
     @Nonnull

@@ -15,6 +15,7 @@
  */
 package illarion.common.util;
 
+import illarion.common.types.Direction;
 import illarion.common.types.Location;
 
 import javax.annotation.Nonnull;
@@ -211,8 +212,13 @@ public final class TableLoaderCharacters extends TableLoader {
      * @return the direction the avatar is looking at
      * @see Location
      */
-    public int getDirection() {
-        return getInt(TB_DIRECTION);
+    @Nonnull
+    public Direction getDirection() {
+        Direction dir = Direction.fromServerId(getInt(TB_DIRECTION));
+        if (dir == null) {
+            throw new IllegalStateException("The direction is not valid on this line in the table file.");
+        }
+        return dir;
     }
 
     /**
