@@ -293,7 +293,10 @@ public final class MapTile implements AlphaChangeListener {
             return null;
         }
 
-        return items.getTopItem();
+        if (items.hasItems()) {
+            return items.getTopItem();
+        }
+        return null;
     }
 
     /**

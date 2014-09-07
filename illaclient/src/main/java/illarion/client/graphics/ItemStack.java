@@ -126,7 +126,7 @@ public class ItemStack implements DisplayItem, List<Item> {
         try {
             int count = getItemCount();
             if (count == 0) {
-                throw new IllegalStateException("Requesting the top item of a empty item stack is now valid.");
+                throw new IllegalStateException("Requesting the top item of a empty item stack is not valid.");
             }
             return items.get(count - 1);
         } finally {
