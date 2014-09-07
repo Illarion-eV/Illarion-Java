@@ -25,6 +25,7 @@ import org.illarion.engine.assets.Assets;
 import org.illarion.engine.assets.SpriteFactory;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Sprite;
+import org.illarion.engine.graphic.Texture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,9 +108,15 @@ public final class CharacterLoader extends AbstractResourceLoader<AvatarTemplate
 
         Color defaultColor = new Color(skinRed, skinGreen, skinBlue);
 
+        Texture[] textures = getTextures(assets.getTextureManager(), CHAR_PATH, name, frames);
+        for (Texture texture : textures) {
+            if (texture == null) {
+                LOGGER.error("Failed adding avatar to internal factory. ID: {} - Filename: {}", avatarId, name);
+                return true;
+            }
+        }
         Sprite avatarSprite = assets.getSpriteFactory()
-                .createSprite(getTextures(assets.getTextureManager(), CHAR_PATH, name, frames), offsetX, offsetY,
-                              SpriteFactory.CENTER, SpriteFactory.BOTTOM, mirror);
+                .createSprite(textures, offsetX, offsetY, SpriteFactory.CENTER, SpriteFactory.BOTTOM, mirror);
 
         AvatarTemplate template = new AvatarTemplate(avatarId, avatarSprite, frames, stillFrame, defaultColor,
                                                            shadowOffset, direction, info);
