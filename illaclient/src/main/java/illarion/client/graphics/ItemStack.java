@@ -27,20 +27,28 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class ItemStack implements DisplayItem, List<Item> {
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(ItemStack.class);
     private boolean shown;
+    @Nonnull
     private final List<Item> items;
 
     private boolean rectangleDirty;
+    @Nonnull
     private final Rectangle interactiveRectangle;
 
     private boolean orderNotSet;
     private int order;
+
+    @Nonnull
+    private final ReadWriteLock lock;
 
     public ItemStack() {
         shown = false;
@@ -50,6 +58,12 @@ public class ItemStack implements DisplayItem, List<Item> {
 
         orderNotSet = true;
         order = 0;
+
+        lock = new ReentrantReadWriteLock();
+    }
+
+    public ReadWriteLock getLock() {
+        return lock;
     }
 
     @Override
@@ -76,16 +90,21 @@ public class ItemStack implements DisplayItem, List<Item> {
         }
         rectangleDirty = false;
         interactiveRectangle.reset();
-        for (Item item : items) {
-            Rectangle itemRect = item.getInteractionRect();
-            if (itemRect.isEmpty()) {
-                rectangleDirty = true;
+        lock.readLock().lock();
+        try {
+            for (Item item : items) {
+                Rectangle itemRect = item.getInteractionRect();
+                if (itemRect.isEmpty()) {
+                    rectangleDirty = true;
+                }
+                if (interactiveRectangle.isEmpty()) {
+                    interactiveRectangle.set(itemRect);
+                } else {
+                    interactiveRectangle.add(itemRect);
+                }
             }
-            if (interactiveRectangle.isEmpty()) {
-                interactiveRectangle.set(itemRect);
-            } else {
-                interactiveRectangle.add(itemRect);
-            }
+        } finally {
+            lock.readLock().unlock();
         }
     }
 
@@ -96,6 +115,27 @@ public class ItemStack implements DisplayItem, List<Item> {
     private void setOrder(int newOrder) {
         orderNotSet = false;
         order = newOrder;
+    }
+
+    public int getItemCount() {
+        return items.size();
+    }
+
+    public Item getTopItem() {
+        lock.readLock().lock();
+        try {
+            int count = getItemCount();
+            if (count == 0) {
+                throw new IllegalStateException("Requesting the top item of a empty item stack is now valid.");
+            }
+            return items.get(count - 1);
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    public boolean hasItems() {
+        return !items.isEmpty();
     }
 
     private void unsetOrder() {
@@ -127,24 +167,34 @@ public class ItemStack implements DisplayItem, List<Item> {
 
     @Override
     public void render(@Nonnull Graphics graphics) {
-        for (Item item : items) {
-            item.render(graphics);
+        lock.readLock().lock();
+        try {
+            for (Item item : items) {
+                item.render(graphics);
+            }
+        } finally {
+            lock.readLock().unlock();
         }
     }
 
     @Override
     public void update(@Nonnull GameContainer container, int delta) {
-        int size = items.size();
-        for (int i = 0; i < size; i++) {
-            Item item = items.get(i);
-            item.enableNumbers(i == (size - 1));
-            item.update(container, delta);
+        lock.readLock().lock();
+        try {
+            int size = items.size();
+            for (int i = 0; i < size; i++) {
+                Item item = items.get(i);
+                item.enableNumbers(i == (size - 1));
+                item.enableNumbers(false);
+                item.update(container, delta);
+            }
+        } finally {
+            lock.readLock().unlock();
         }
     }
 
     @Override
-    public boolean isEventProcessed(
-            @Nonnull GameContainer container, int delta, @Nonnull SceneEvent event) {
+    public boolean isEventProcessed(@Nonnull GameContainer container, int delta, @Nonnull SceneEvent event) {
         if (orderNotSet) {
             return false;
         }
@@ -160,12 +210,16 @@ public class ItemStack implements DisplayItem, List<Item> {
                 return false;
             }
         }
-
-        for (int i = items.size() - 1; i >= 0; i--) {
-            Item item = items.get(i);
-            if (item.isEventProcessed(container, delta, event)) {
-                return true;
+        lock.readLock().lock();
+        try {
+            for (int i = items.size() - 1; i >= 0; i--) {
+                Item item = items.get(i);
+                if (item.isEventProcessed(container, delta, event)) {
+                    return true;
+                }
             }
+        } finally {
+            lock.readLock().unlock();
         }
 
         return false;
@@ -195,13 +249,23 @@ public class ItemStack implements DisplayItem, List<Item> {
     @Nonnull
     @Override
     public Object[] toArray() {
-        return items.toArray();
+        lock.readLock().lock();
+        try {
+            return items.toArray();
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     @Nonnull
     @Override
     public <T> T[] toArray(@Nonnull T[] a) {
-        return items.toArray(a);
+        lock.readLock().lock();
+        try {
+            return items.toArray(a);
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     @Override
@@ -209,34 +273,54 @@ public class ItemStack implements DisplayItem, List<Item> {
         if (!isItemGoodForInsert(item)) {
             throw new IllegalArgumentException("Item is not valid in this stack.");
         }
-        if (items.add(item)) {
-            postProcessItemInsert(item);
-            return true;
+        lock.writeLock().lock();
+        try {
+            if (items.add(item)) {
+                postProcessItemInsert(item);
+                return true;
+            }
+        } finally {
+            lock.writeLock().unlock();
         }
         return false;
     }
 
     @Override
     public boolean remove(Object o) {
-        if (items.remove(o)) {
-            postProcessItemRemove((Item) o);
-            return true;
+        lock.writeLock().lock();
+        try {
+            if (items.remove(o)) {
+                postProcessItemRemove((Item) o);
+                return true;
+            }
+        } finally {
+            lock.writeLock().unlock();
         }
         return false;
     }
 
     @Override
     public boolean containsAll(@Nonnull Collection<?> c) {
-        return items.containsAll(c);
+        lock.readLock().lock();
+        try {
+            return items.containsAll(c);
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     @Override
     public boolean addAll(@Nonnull Collection<? extends Item> c) {
         boolean result = false;
-        for (Item item : c) {
-            if (add(item)) {
-                result = true;
+        lock.writeLock().lock();
+        try {
+            for (Item item : c) {
+                if (add(item)) {
+                    result = true;
+                }
             }
+        } finally {
+            lock.writeLock().unlock();
         }
         return result;
     }
@@ -244,9 +328,14 @@ public class ItemStack implements DisplayItem, List<Item> {
     @Override
     public boolean addAll(int index, @Nonnull Collection<? extends Item> c) {
         int indexCounter = index;
-        for (Item item : c) {
-            add(indexCounter, item);
-            indexCounter++;
+        lock.writeLock().lock();
+        try {
+            for (Item item : c) {
+                add(indexCounter, item);
+                indexCounter++;
+            }
+        } finally {
+            lock.writeLock().unlock();
         }
         return indexCounter != index;
     }
@@ -254,10 +343,15 @@ public class ItemStack implements DisplayItem, List<Item> {
     @Override
     public boolean removeAll(@Nonnull Collection<?> c) {
         boolean result = false;
-        for (Object item : c) {
-            if (remove(item)) {
-                result = true;
+        lock.writeLock().lock();
+        try {
+            for (Object item : c) {
+                if (remove(item)) {
+                    result = true;
+                }
             }
+        } finally {
+            lock.writeLock().unlock();
         }
         return result;
     }
@@ -269,14 +363,24 @@ public class ItemStack implements DisplayItem, List<Item> {
 
     @Override
     public void clear() {
-        items.clear();
+        lock.writeLock().lock();
+        try {
+            items.clear();
+        } finally {
+            lock.writeLock().unlock();
+        }
         unsetOrder();
         hide();
     }
 
     @Override
     public Item get(int index) {
-        return items.get(index);
+        lock.readLock().lock();
+        try {
+            return items.get(index);
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     @Override
@@ -284,7 +388,13 @@ public class ItemStack implements DisplayItem, List<Item> {
         if (!isItemGoodForInsert(element)) {
             throw new IllegalArgumentException("Item is not valid in this stack.");
         }
-        Item oldItem = items.set(index, element);
+        Item oldItem;
+        lock.writeLock().lock();
+        try {
+            oldItem = items.set(index, element);
+        } finally {
+            lock.writeLock().unlock();
+        }
         postProcessItemInsert(element);
         postProcessItemRemove(oldItem);
         return oldItem;
@@ -295,25 +405,46 @@ public class ItemStack implements DisplayItem, List<Item> {
         if (!isItemGoodForInsert(element)) {
             throw new IllegalArgumentException("Item is not valid in this stack.");
         }
-        items.add(index, element);
+        lock.writeLock().lock();
+        try {
+            items.add(index, element);
+        } finally {
+            lock.writeLock().unlock();
+        }
         postProcessItemInsert(element);
     }
 
     @Override
     public Item remove(int index) {
-        Item removedItem = items.remove(index);
+        Item removedItem;
+        lock.writeLock().lock();
+        try {
+            removedItem = items.remove(index);
+        } finally {
+            lock.writeLock().unlock();
+        }
         postProcessItemRemove(removedItem);
         return removedItem;
     }
 
     @Override
     public int indexOf(Object o) {
-        return items.indexOf(o);
+        lock.readLock().lock();
+        try {
+            return items.indexOf(o);
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        return items.lastIndexOf(o);
+        lock.readLock().lock();
+        try {
+            return items.lastIndexOf(o);
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     @Nonnull
@@ -331,6 +462,11 @@ public class ItemStack implements DisplayItem, List<Item> {
     @Nonnull
     @Override
     public List<Item> subList(int fromIndex, int toIndex) {
-        return items.subList(fromIndex, toIndex);
+        lock.readLock().lock();
+        try {
+            return items.subList(fromIndex, toIndex);
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 }
