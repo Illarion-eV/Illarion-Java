@@ -103,13 +103,29 @@ class MoveAnimator implements AnimatedMove {
      * @param allowedTarget allowed target location
      */
     void cancelMove(@Nonnull Location allowedTarget) {
-        taskQueue.clear();
-
         Player parentPlayer = movement.getPlayer();
-        parentPlayer.getCharacter().resetAnimation(true);
-        if (!parentPlayer.getLocation().equals(allowedTarget)) {
-            moveAnimation.stop();
+
+        MovingTask task = uncomfirmedMoveTask;
+        if (task == null) {
+            log.debug(marker, "Received cancel move, but there is no unconfirmed move.");
             parentPlayer.setLocation(allowedTarget);
+        } else {
+            taskQueue.clear();
+            if (task.isExecuted()) {
+                uncomfirmedMoveTask = null;
+                confirmedMoveTask = null;
+                if (moveAnimation.isRunning()) {
+                    log.debug(marker, "Received cancel move, move was already in progress. Resetting");
+                    moveAnimation.stop();
+                    parentPlayer.getCharacter().resetAnimation(true);
+                    parentPlayer.setLocation(allowedTarget);
+                } else {
+                    log.debug(marker, "Move seems to be done already.");
+                    parentPlayer.setLocation(allowedTarget);
+                }
+            } else {
+                log.debug(marker, "Move did not start yet. We are good.");
+            }
         }
         movement.reportReadyForNextStep();
     }
