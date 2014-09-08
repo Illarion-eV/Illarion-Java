@@ -144,7 +144,7 @@ public final class CommandList {
     /**
      * Client command to look at a item on a tile.
      */
-    public static final int CMD_LOOKAT_TILE = 0xFF;
+    public static final int CMD_LOOK_AT_MAP_ITEM = 0xFF;
 
     /**
      * Client command to send the map dimensions the client needs.

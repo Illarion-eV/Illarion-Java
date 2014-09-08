@@ -29,9 +29,10 @@ public interface GameMapGui {
      * Show a item tooltip in the GUI.
      *
      * @param location the location of the item on the map
+     * @param stackPosition the position of the referenced item on the stack
      * @param tooltip the tooltip of the item that is supposed to be displayed
      */
-    void showItemTooltip(@Nonnull Location location, @Nonnull Tooltip tooltip);
+    void showItemTooltip(@Nonnull Location location, int stackPosition, @Nonnull Tooltip tooltip);
 
     /**
      * Toggle the pulsing animation of the run button.

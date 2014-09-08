@@ -173,8 +173,12 @@ public class InteractiveMapTile implements Draggable, DropTarget, Usable {
     /**
      * Request a look at on this tile.
      */
-    public void lookAt() {
-        World.getNet().sendCommand(new LookatTileCmd(getLocation()));
+    public void lookAt(@Nonnull Item lookAtItem) {
+        int index = parentTile.getItemIndex(lookAtItem);
+        if (index == -1) {
+            return;
+        }
+        World.getNet().sendCommand(new LookAtMapItemCmd(getLocation(), index));
     }
 
     /**

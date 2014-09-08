@@ -299,6 +299,11 @@ public final class MapTile implements AlphaChangeListener {
         return null;
     }
 
+    @Nonnull
+    public Item getItem(int index) {
+        return items.get(index);
+    }
+
     /**
      * This function receives updates in case the alpha value of the tile changes. Its possible that this happens in
      * case the character is walking past this tile. The effect of this is that the map processor checks the tile again
@@ -1021,5 +1026,9 @@ public final class MapTile implements AlphaChangeListener {
 
     public boolean isHidden() {
         return (group != null) && group.isHidden();
+    }
+
+    public int getItemIndex(@Nonnull Item lookAtItem) {
+        return items.indexOf(lookAtItem);
     }
 }
