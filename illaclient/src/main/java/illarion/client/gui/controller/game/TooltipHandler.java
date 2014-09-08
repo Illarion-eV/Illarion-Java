@@ -79,7 +79,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
     @Nonnull
     private UpdateTask cleanToolTips = new UpdateTask() {
         @Override
-        public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+        public void onUpdateGame(@Nonnull GameContainer container, int delta) {
             for (final Element element : toolTipLayer.getChildren()) {
                 element.hide(new EndNotify() {
                     @Override
@@ -93,7 +93,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
     };
 
     @Override
-    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
         parentNifty = nifty;
         parentScreen = screen;
 
@@ -111,8 +111,8 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
     }
 
     @Override
-    public void update(@Nonnull final GameContainer container, final int delta) {
-        final Input input = container.getEngine().getInput();
+    public void update(@Nonnull GameContainer container, int delta) {
+        Input input = container.getEngine().getInput();
         lastMouseX = input.getMouseX();
         lastMouseY = input.getMouseY();
         if (activeTooltipArea != null) {
@@ -146,7 +146,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
 
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
-            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
                 showToolTipImpl(location, tooltip);
                 activeTooltipArea = location;
             }
@@ -165,8 +165,8 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
      * @param location the tooltip should be place around, the area of this rectangle won't be hidden by the tooltip
      * @param tooltip the tooltip to display
      */
-    private void showToolTipImpl(@Nonnull final Rectangle location, @Nonnull final Tooltip tooltip) {
-        final ToolTipBuilder builder = new ToolTipBuilder("tooltip-" + Long.toString(count++));
+    private void showToolTipImpl(@Nonnull Rectangle location, @Nonnull Tooltip tooltip) {
+        ToolTipBuilder builder = new ToolTipBuilder("tooltip-" + Long.toString(count++));
         builder.title(tooltip.getName());
 
         switch (tooltip.getRareness()) {
@@ -214,7 +214,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
             builder.gemBonus(Integer.toString(tooltip.getBonus()));
         }
 
-        final Element toolTip = builder.build(parentNifty, parentScreen, toolTipLayer);
+        Element toolTip = builder.build(parentNifty, parentScreen, toolTipLayer);
         toolTip.getParent().layoutElements();
 
         if (toolTip.getHeight() == 0) {
@@ -222,11 +222,11 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
             toolTip.getParent().layoutElements();
         }
 
-        final int toolTipWidth = toolTip.getWidth();
-        final int toolTipHeight = toolTip.getHeight();
+        int toolTipWidth = toolTip.getWidth();
+        int toolTipHeight = toolTip.getHeight();
 
-        final boolean topSide = (location.getBottom() - toolTipHeight) > 0;
-        final boolean rightSide = (location.getRight() - toolTipWidth) < 0;
+        boolean topSide = (location.getBottom() - toolTipHeight) > 0;
+        boolean rightSide = (location.getRight() - toolTipWidth) < 0;
 
         if (topSide) {
             toolTip.setConstraintY(SizeValue.px(location.getBottom() - toolTip.getHeight()));

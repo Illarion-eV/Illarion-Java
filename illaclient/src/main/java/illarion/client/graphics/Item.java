@@ -250,8 +250,8 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
                 return false;
             }
 
-            if (!LookAtTracker.isLookAtObject(parentTile)) {
-                LookAtTracker.setLookAtObject(parentTile);
+            if (!LookAtTracker.isLookAtObject(this)) {
+                LookAtTracker.setLookAtObject(this);
                 parentTile.getInteractive().lookAt(this);
             }
             return true;

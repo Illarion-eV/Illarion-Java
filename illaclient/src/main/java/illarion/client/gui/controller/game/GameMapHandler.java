@@ -424,6 +424,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
 
     @Override
     public void showItemTooltip(@Nonnull Location location, int stackPosition, @Nonnull Tooltip tooltip) {
+        LOGGER.debug("Now showing tooltip for {} at stack position {}", location, stackPosition);
         MapTile targetTile = World.getMap().getMapAt(location);
         if (targetTile == null) {
             return;
