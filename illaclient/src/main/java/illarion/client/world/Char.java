@@ -219,6 +219,9 @@ public final class Char implements AnimatedMove {
     @Nullable
     private String name;
 
+    @Nullable
+    private String customName;
+
     /**
      * Color of the name of the character. default, melee fighting, distance fighting, magic
      */
@@ -546,9 +549,7 @@ public final class Char implements AnimatedMove {
         newAvatar.setAlpha(oldAlpha);
         newAvatar.setAlphaTarget(oldAlphaTarget);
         newAvatar.setAttackMarkerVisible(World.getPlayer().getCombatHandler().isAttacking(this));
-        if (name != null) {
-            newAvatar.setName(name);
-        }
+        newAvatar.setName(getName());
 
         if (nameColor != null) {
             newAvatar.setNameColor(nameColor);
@@ -804,9 +805,17 @@ public final class Char implements AnimatedMove {
     @SuppressWarnings("nls")
     public void setName(@Nonnull String newName) {
         name = newName;
+        setAvatarName();
+    }
 
+    public void setCustomName(@Nonnull String customName) {
+        this.customName = customName;
+        setAvatarName();
+    }
+
+    private void setAvatarName() {
         if (avatar != null) {
-            avatar.setName(name);
+            avatar.setName(getName());
         }
     }
 
@@ -882,10 +891,23 @@ public final class Char implements AnimatedMove {
      */
     @Nonnull
     public String getName() {
-        if (name == null) {
-            return Lang.getMsg("chat.someone"); //$NON-NLS-1$
+        if (name == null || name.isEmpty()) {
+            if (customName == null || customName.isEmpty()) {
+                return Lang.getMsg("chat.someone"); //$NON-NLS-1$
+            } else {
+                return "\"" + customName + "\"";
+            }
+        } else {
+            if (customName == null || customName.isEmpty()) {
+                return name;
+            } else {
+                return name + " (" + customName + ")";
+            }
         }
-        return name;
+    }
+
+    public String getCustomName() {
+        return customName;
     }
 
     /**
