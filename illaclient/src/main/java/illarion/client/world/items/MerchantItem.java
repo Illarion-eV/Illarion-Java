@@ -70,7 +70,7 @@ public class MerchantItem {
     /**
      * The type of this item.
      */
-    private final MerchantItem.MerchantItemType type;
+    private final MerchantItemType type;
 
     /**
      * The amount of items sold at once.
@@ -88,12 +88,12 @@ public class MerchantItem {
      * @param amount the amount of items sold at once
      */
     public MerchantItem(
-            final int itemIndex,
-            final MerchantItem.MerchantItemType itemType,
-            final ItemId id,
-            final String itemName,
-            final long itemPrice,
-            final ItemCount amount) {
+            int itemIndex,
+            MerchantItemType itemType,
+            ItemId id,
+            String itemName,
+            long itemPrice,
+            ItemCount amount) {
         index = itemIndex;
         type = itemType;
         itemId = id;
@@ -112,11 +112,11 @@ public class MerchantItem {
      * @param itemPrice the price of the item in copper coins
      */
     public MerchantItem(
-            final int itemIndex,
-            final MerchantItem.MerchantItemType itemType,
-            final ItemId id,
-            final String itemName,
-            final long itemPrice) {
+            int itemIndex,
+            MerchantItemType itemType,
+            ItemId id,
+            String itemName,
+            long itemPrice) {
         this(itemIndex, itemType, id, itemName, itemPrice, ItemCount.getInstance(1));
     }
 
@@ -125,7 +125,7 @@ public class MerchantItem {
      *
      * @param org the original item to be copied
      */
-    public MerchantItem(@Nonnull final MerchantItem org) {
+    public MerchantItem(@Nonnull MerchantItem org) {
         index = org.index;
         type = org.type;
         itemId = org.itemId;
@@ -177,7 +177,7 @@ public class MerchantItem {
      *
      * @return the type of the item
      */
-    public MerchantItem.MerchantItemType getType() {
+    public MerchantItemType getType() {
         return type;
     }
 
@@ -189,5 +189,21 @@ public class MerchantItem {
     @Nonnull
     public ItemCount getBundleSize() {
         return bundleSize;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (super.equals(obj)) {
+            return true;
+        }
+        if (obj instanceof MerchantItem) {
+            MerchantItem item = (MerchantItem) obj;
+            if ((item.getIndex() == getIndex()) && (item.getBundleSize() == item.getBundleSize()) &&
+                    (item.getItemId() == getItemId()) && item.getPrice().equals(getPrice()) &&
+                    (item.getType() == item.getType())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

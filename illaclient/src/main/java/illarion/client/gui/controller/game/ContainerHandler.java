@@ -32,6 +32,7 @@ import gnu.trove.procedure.TIntObjectProcedure;
 import illarion.client.IllaClient;
 import illarion.client.graphics.FontLoader;
 import illarion.client.gui.ContainerGui;
+import illarion.client.gui.DialogType;
 import illarion.client.gui.EntitySlickRenderImage;
 import illarion.client.gui.Tooltip;
 import illarion.client.net.client.CloseShowcaseCmd;
@@ -196,19 +197,8 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      */
     @EventSubscriber
     public void onDialogClosedEvent(@Nonnull CloseDialogEvent event) {
-        switch (event.getDialogType()) {
-            case Message:
-                break;
-            case Input:
-                break;
-            case Any:
-            case Merchant:
-                World.getUpdateTaskManager().addTask(updateMerchantOverlays);
-                break;
-            case Crafting:
-                break;
-            case Selection:
-                break;
+        if (event.isClosingDialogType(DialogType.Merchant)) {
+            World.getUpdateTaskManager().addTask(updateMerchantOverlays);
         }
     }
 

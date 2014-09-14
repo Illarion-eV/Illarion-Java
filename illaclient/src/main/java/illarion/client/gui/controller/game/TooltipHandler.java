@@ -31,6 +31,8 @@ import org.bushe.swing.event.EventBus;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.input.Input;
 import org.illarion.nifty.controls.tooltip.builder.ToolTipBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,6 +43,8 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class TooltipHandler implements ScreenController, UpdatableHandler {
+    private static final Logger log = LoggerFactory.getLogger(TooltipHandler.class);
+
     /**
      * The Nifty that is the parent to this handler.
      */
@@ -77,9 +81,10 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
      * The task that will clean all opened tooltip.
      */
     @Nonnull
-    private UpdateTask cleanToolTips = new UpdateTask() {
+    private final UpdateTask cleanToolTips = new UpdateTask() {
         @Override
         public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+            if (toolTipLayer == null) { return; }
             for (final Element element : toolTipLayer.getChildren()) {
                 element.hide(new EndNotify() {
                     @Override
@@ -139,6 +144,11 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
      */
     public void showToolTip(@Nonnull final Rectangle location, @Nonnull final Tooltip tooltip) {
         hideToolTip();
+
+        if (!tooltip.isValid()) {
+            log.warn("Received a invalid tooltip from the server!");
+            return;
+        }
 
         if (!location.isInside(lastMouseX, lastMouseY)) {
             return;

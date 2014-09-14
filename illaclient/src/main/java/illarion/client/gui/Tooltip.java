@@ -183,4 +183,8 @@ public final class Tooltip {
     public String toString() {
         return "Item Tooltip: " + name;
     }
+
+    public boolean isValid() {
+        return !name.isEmpty();
+    }
 }

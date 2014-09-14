@@ -48,7 +48,7 @@ public final class LookAtCraftIngredientCmd extends AbstractCommand {
      * @param itemIndex the index of the item that is crafted
      * @param ingredientIndex the index of the ingredient to look at
      */
-    public LookAtCraftIngredientCmd(final int dialogId, final int itemIndex, final int ingredientIndex) {
+    public LookAtCraftIngredientCmd(int dialogId, int itemIndex, int ingredientIndex) {
         super(CommandList.CMD_CRAFT_ITEM);
 
         this.dialogId = dialogId;
@@ -57,7 +57,7 @@ public final class LookAtCraftIngredientCmd extends AbstractCommand {
     }
 
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) {
         writer.writeInt(dialogId);
         writer.writeByte((byte) 3);
         writer.writeUByte(itemIndex);

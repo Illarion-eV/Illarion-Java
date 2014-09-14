@@ -53,35 +53,35 @@ public final class DialogMerchantMsg extends AbstractGuiMsg {
     private List<MerchantItem> items;
 
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         title = reader.readString();
         items = new ArrayList<>();
 
-        final int entriesSell = reader.readUByte();
+        int entriesSell = reader.readUByte();
         for (int i = 0; i < entriesSell; i++) {
-            final ItemId itemId = new ItemId(reader);
-            final String name = reader.readString();
-            final long itemValue = reader.readUInt();
-            final ItemCount bundleSize = ItemCount.getInstance(reader);
+            ItemId itemId = new ItemId(reader);
+            String name = reader.readString();
+            long itemValue = reader.readUInt();
+            ItemCount bundleSize = ItemCount.getInstance(reader);
 
             items.add(new MerchantItem(i, MerchantItem.MerchantItemType.SellingItem, itemId, name, itemValue,
                                        bundleSize));
         }
 
-        final int entriesBuyPrimary = reader.readUByte();
+        int entriesBuyPrimary = reader.readUByte();
         for (int i = 0; i < entriesBuyPrimary; i++) {
-            final ItemId itemId = new ItemId(reader);
-            final String name = reader.readString();
-            final long itemValue = reader.readUInt();
+            ItemId itemId = new ItemId(reader);
+            String name = reader.readString();
+            long itemValue = reader.readUInt();
 
             items.add(new MerchantItem(i, MerchantItem.MerchantItemType.BuyingPrimaryItem, itemId, name, itemValue));
         }
 
-        final int entriesBuySecondary = reader.readUByte();
+        int entriesBuySecondary = reader.readUByte();
         for (int i = 0; i < entriesBuySecondary; i++) {
-            final ItemId itemId = new ItemId(reader);
-            final String name = reader.readString();
-            final long itemValue = reader.readUInt();
+            ItemId itemId = new ItemId(reader);
+            String name = reader.readString();
+            long itemValue = reader.readUInt();
 
             items.add(new MerchantItem(i, MerchantItem.MerchantItemType.BuyingSecondaryItem, itemId, name, itemValue));
         }
@@ -95,7 +95,7 @@ public final class DialogMerchantMsg extends AbstractGuiMsg {
             throw new IllegalStateException("Can't execute update before it was decoded.");
         }
 
-        final MerchantItem[] itemArray = new MerchantItem[items.size()];
+        MerchantItem[] itemArray = new MerchantItem[items.size()];
         EventBus.publish(new DialogMerchantReceivedEvent(dialogId, title, items.toArray(itemArray)));
 
         return true;
@@ -104,7 +104,7 @@ public final class DialogMerchantMsg extends AbstractGuiMsg {
     @Nonnull
     @Override
     public String toString() {
-        final TextBuilder builder = new TextBuilder();
+        TextBuilder builder = new TextBuilder();
         builder.append("title: \"").append(title).append("\", ");
         builder.append("items: \"").append(items.size()).append("\", ");
         builder.append("dialog ID: ").append(dialogId);

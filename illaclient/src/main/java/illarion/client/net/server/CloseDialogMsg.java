@@ -15,6 +15,7 @@
  */
 package illarion.client.net.server;
 
+import illarion.client.gui.DialogType;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.events.CloseDialogEvent;
@@ -54,7 +55,7 @@ public final class CloseDialogMsg extends AbstractGuiMsg {
      */
     @Override
     public boolean executeUpdate() {
-        EventBus.publish(new CloseDialogEvent(dialogId, CloseDialogEvent.DialogType.Any));
+        EventBus.publish(new CloseDialogEvent(dialogId));
         return true;
     }
 

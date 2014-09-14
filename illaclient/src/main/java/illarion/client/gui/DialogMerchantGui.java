@@ -13,25 +13,23 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package org.illarion.nifty.controls;
+package illarion.client.gui;
 
-import javax.annotation.concurrent.Immutable;
-import javax.annotation.concurrent.ThreadSafe;
+import javax.annotation.Nonnull;
 
 /**
- * This event is fired in case the player closes the merchant dialog.
+ * This interface defines the access to the crafting dialog GUI.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@ThreadSafe
-@Immutable
-public final class DialogMerchantCloseEvent extends DialogEvent {
+public interface DialogMerchantGui {
     /**
-     * Create a new instance of this event and set the ID of the dialog that was closed.
+     * Show a tooltip for a crafting ingredient.
      *
-     * @param id the ID of the dialog
+     * @param dialogId the ID of the crafting dialog
+     * @param list the used list
+     * @param itemIndex the referenced index of the item
+     * @param tooltip the tooltip
      */
-    public DialogMerchantCloseEvent(int id) {
-        super(id);
-    }
+    void showMerchantListTooltip(int dialogId, int list, int itemIndex, @Nonnull Tooltip tooltip);
 }

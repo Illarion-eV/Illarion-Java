@@ -24,10 +24,7 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.graphics.FontLoader;
-import illarion.client.gui.DialogCraftingGui;
-import illarion.client.gui.DialogInputGui;
-import illarion.client.gui.DialogMessageGui;
-import illarion.client.gui.Tooltip;
+import illarion.client.gui.*;
 import illarion.client.gui.events.TooltipsRemovedEvent;
 import illarion.client.gui.util.NiftyCraftingCategory;
 import illarion.client.gui.util.NiftyCraftingItem;
@@ -36,10 +33,12 @@ import illarion.client.gui.util.NiftySelectItem;
 import illarion.client.net.client.*;
 import illarion.client.net.server.events.*;
 import illarion.client.util.GlobalExecutorService;
+import illarion.client.util.LookAtTracker;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
 import illarion.client.world.events.CloseDialogEvent;
 import illarion.client.world.items.CraftingItem;
+import illarion.client.world.items.MerchantItem;
 import illarion.client.world.items.MerchantList;
 import illarion.client.world.items.SelectionItem;
 import illarion.common.types.ItemCount;
@@ -61,9 +60,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -75,7 +72,9 @@ import java.util.regex.Pattern;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class DialogHandler
-        implements DialogCraftingGui, DialogMessageGui, DialogInputGui, ScreenController, UpdatableHandler {
+        implements DialogGui, DialogCraftingGui, DialogMerchantGui, DialogMessageGui, DialogInputGui,
+        ScreenController, UpdatableHandler {
+
     private static class BuildWrapper {
         private final ControlBuilder builder;
         private final Element parent;
@@ -109,7 +108,7 @@ public final class DialogHandler
         void run(Element createdElement);
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DialogHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(DialogHandler.class);
 
     private static final Pattern dialogNamePattern = Pattern.compile("([a-z]+)Dialog([0-9]+)");
     /**
@@ -219,7 +218,7 @@ public final class DialogHandler
             if ((groupId < 0) || (groupId >= categories.length)) {
                 addedToUnknown = true;
                 unknownCat.addChild(new NiftyCraftingItem(nifty, i, item));
-                LOGGER.warn("Crafting item with illegal group received: {}", Integer.toString(groupId));
+                log.warn("Crafting item with illegal group received: {}", Integer.toString(groupId));
             } else {
                 categories[item.getGroup()].addChild(new NiftyCraftingItem(nifty, i, item));
             }
@@ -256,7 +255,7 @@ public final class DialogHandler
             return;
         }
 
-        craftingDialog.startProgress((double) event.getRequiredTime() / 10.0);
+        craftingDialog.startProgress(event.getRequiredTime() / 10.0);
     }
 
     @EventSubscriber
@@ -348,7 +347,7 @@ public final class DialogHandler
             public void run(@Nonnull Element createdElement) {
                 DialogSelect dialog = createdElement.getNiftyControl(DialogSelect.class);
                 if (dialog == null) {
-                    LOGGER.warn("Newly created dialog was NULL");
+                    log.warn("Newly created dialog was NULL");
                 } else {
                     addSelectItemsToDialog(event, dialog);
                 }
@@ -382,7 +381,7 @@ public final class DialogHandler
             return;
         }
         World.getNet().sendCommand(new CloseDialogCraftingCmd(id));
-        EventBus.publish(new CloseDialogEvent(id, CloseDialogEvent.DialogType.Crafting));
+        EventBus.publish(new CloseDialogEvent(id, DialogType.Crafting));
         openCraftDialog = false;
     }
 
@@ -422,6 +421,33 @@ public final class DialogHandler
         lastCraftingTooltip = -1;
     }
 
+    @NiftyEventSubscriber(id = "merchantDialog")
+    public void handleMerchantLookAtEvent(String topic, @Nonnull DialogMerchantLookAtEvent event) {
+        if (input.isAnyButtonDown(Button.Left, Button.Right) || LookAtTracker.isLookAtObject(event.getItem())) {
+            return;
+        }
+
+        byte listId = -1;
+        switch (event.getItem().getEntryType()) {
+            case Selling:
+                listId = LookAtMerchantItemCmd.LIST_ID_SELL;
+                break;
+            case BuyPrimary:
+                listId = LookAtMerchantItemCmd.LIST_ID_BUY_PRIMARY;
+                break;
+            case BuySecondary:
+                listId = LookAtMerchantItemCmd.LIST_ID_BUY_SECONDARY;
+                break;
+        }
+
+        int dialogId = event.getDialogId();
+        int itemIndex = event.getItem().getIndex();
+
+        LookAtTracker.setLookAtObject(event.getItem());
+
+        World.getNet().sendCommand(new LookAtMerchantItemCmd(dialogId, listId, itemIndex));
+    }
+
     @Override
     public void bind(@Nonnull Nifty parentNifty, @Nonnull Screen parentScreen) {
         nifty = parentNifty;
@@ -441,6 +467,45 @@ public final class DialogHandler
     public void onStartScreen() {
         AnnotationProcessor.process(this);
         nifty.subscribeAnnotations(this);
+    }
+
+    @Override
+    public void showMerchantListTooltip(int dialogId, int list, int itemIndex, @Nonnull Tooltip tooltip) {
+        if ((merchantDialog == null) || (merchantDialog.getDialogId() != dialogId)) {
+            return;
+        }
+
+        MerchantList merchantList = World.getPlayer().getMerchantList();
+        if (merchantList == null) {
+            log.warn("Received tooltip for merchant dialog {} but there is no merchant list.", dialogId);
+            return;
+        }
+        MerchantItem.MerchantItemType expectedItemType;
+        switch (list) {
+            case 0:
+                expectedItemType = MerchantItem.MerchantItemType.SellingItem;
+                break;
+            case 1:
+                expectedItemType = MerchantItem.MerchantItemType.BuyingPrimaryItem;
+                break;
+            case 2:
+                expectedItemType = MerchantItem.MerchantItemType.BuyingSecondaryItem;
+                break;
+            default:
+                log.warn("Received merchant item look-at for unexpected list: {}", list);
+                return;
+        }
+
+        MerchantItem selectedItem = merchantList.getItem(expectedItemType, itemIndex);
+        if (selectedItem == null) {
+            log.warn("Failed to located item index {} in merchant list {} ({}) for dialog {}.", itemIndex,
+                     expectedItemType, list, dialogId);
+            return;
+        }
+        Rectangle renderArea = merchantDialog.getRenderAreaForEntry(new NiftyMerchantItem(nifty, selectedItem));
+        if (!renderArea.isEmpty()) {
+            tooltipHandler.showToolTip(renderArea, tooltip);
+        }
     }
 
     @Override
@@ -532,25 +597,93 @@ public final class DialogHandler
         }
     }
 
-    private void closeDialog(@Nonnull CloseDialogEvent event) {
-        if (merchantDialog == null) {
-            return;
+    @Nullable
+    @Override
+    public DialogType getDialogType(int dialogId) {
+        return getDialogType(dialogId, EnumSet.allOf(DialogType.class));
+    }
+
+    @Nullable
+    @Override
+    public DialogType getDialogType(int dialogId, @Nonnull DialogType firstType, @Nonnull DialogType... moreTypes) {
+        return getDialogType(dialogId, EnumSet.of(firstType, moreTypes));
+    }
+
+    @Nullable
+    public DialogType getDialogType(int dialogId, @Nonnull Collection<DialogType> types) {
+        if (types.contains(DialogType.Merchant)) {
+            if (merchantDialog != null) {
+                if (dialogId == merchantDialog.getDialogId()) {
+                    return DialogType.Merchant;
+                }
+            }
         }
+
+        if (types.contains(DialogType.Crafting)) {
+            if (craftingDialog != null) {
+                if (dialogId == craftingDialog.getDialogId()) {
+                    return DialogType.Crafting;
+                }
+            }
+        }
+
+        Element parentArea = screen.findElementById("windows");
+        if (parentArea == null) {
+            return null;
+        }
+
+        for (final Element child : parentArea.getChildren()) {
+            String childId = child.getId();
+            if (childId == null) {
+                continue;
+            }
+            Matcher matcher = dialogNamePattern.matcher(childId);
+
+            if (!matcher.find()) {
+                continue;
+            }
+
+            try {
+                String type = matcher.group(1);
+                int id = Integer.parseInt(matcher.group(2));
+
+                if (id == dialogId) {
+                    if ("msg".equals(type) && types.contains(DialogType.Message)) {
+                        return DialogType.Message;
+                    }
+                    if ("input".equals(type) && types.contains(DialogType.Input)) {
+                        return DialogType.Input;
+                    }
+                    if ("select".equals(type) && types.contains(DialogType.Selection)) {
+                        return DialogType.Selection;
+                    }
+                }
+            } catch (@Nonnull NumberFormatException ignored) {
+                // nothing
+            }
+        }
+        return null;
+    }
+
+    private void closeDialog(@Nonnull CloseDialogEvent event) {
         Element parentArea = screen.findElementById("windows");
         if (parentArea == null) {
             return;
         }
 
-        if (event.isClosingDialogType(CloseDialogEvent.DialogType.Merchant)) {
-            if (event.getDialogId() == merchantDialog.getDialogId()) {
-                merchantDialog.closeWindow();
-                return;
+        if (event.isClosingDialogType(DialogType.Merchant)) {
+            if (merchantDialog != null) {
+                if ((event.getDialogId() == CloseDialogEvent.ALL_DIALOGS) ||
+                        (event.getDialogId() == merchantDialog.getDialogId())) {
+                    merchantDialog.closeWindow();
+                    return;
+                }
             }
         }
-        if (event.isClosingDialogType(CloseDialogEvent.DialogType.Crafting)) {
-            if (event.getDialogId() == craftingDialog.getDialogId()) {
+        if (event.isClosingDialogType(DialogType.Crafting)) {
+            if ((event.getDialogId() == CloseDialogEvent.ALL_DIALOGS) ||
+                    (event.getDialogId() == craftingDialog.getDialogId())) {
                 craftingDialog.closeWindow();
-                return;
             }
         }
 
@@ -569,42 +702,31 @@ public final class DialogHandler
                 String type = matcher.group(1);
                 int id = Integer.parseInt(matcher.group(2));
 
-                boolean wrongDialogType = false;
-                switch (event.getDialogType()) {
-                    case Any:
-                        break;
-                    case Message:
-                        if (!"msg".equals(type)) {
-                            wrongDialogType = true;
-                        }
-                        break;
-                    case Input:
-                        if (!"input".equals(type)) {
-                            wrongDialogType = true;
-                        }
-                        break;
-                    case Selection:
-                        if (!"select".equals(type)) {
-                            wrongDialogType = true;
-                        }
-                        break;
-                    case Crafting:
-                    case Merchant:
-                        wrongDialogType = true;
-                        break;
-                }
-
-                if (wrongDialogType) {
-                    continue;
-                }
-
-                if ((event.getDialogId() == CloseDialogEvent.ALL_DIALOGS) || (event.getDialogId() == id)) {
-                    child.hide(new EndNotify() {
-                        @Override
-                        public void perform() {
-                            child.markForRemoval();
-                        }
-                    });
+                if ((event.getDialogId() == CloseDialogEvent.ALL_DIALOGS) || (id == event.getDialogId())) {
+                    if ("msg".equals(type) && event.isClosingDialogType(DialogType.Message)) {
+                        child.hide(new EndNotify() {
+                            @Override
+                            public void perform() {
+                                child.markForRemoval();
+                            }
+                        });
+                    }
+                    if ("input".equals(type) && event.isClosingDialogType(DialogType.Input)) {
+                        child.hide(new EndNotify() {
+                            @Override
+                            public void perform() {
+                                child.markForRemoval();
+                            }
+                        });
+                    }
+                    if ("select".equals(type) && event.isClosingDialogType(DialogType.Selection)) {
+                        child.hide(new EndNotify() {
+                            @Override
+                            public void perform() {
+                                child.markForRemoval();
+                            }
+                        });
+                    }
                 }
             } catch (@Nonnull NumberFormatException ignored) {
                 // nothing
@@ -618,7 +740,7 @@ public final class DialogHandler
         final MerchantList list = World.getPlayer().getMerchantList();
 
         if (list == null) {
-            LOGGER.error("Buying event received, but there is not merchant list.");
+            log.error("Buying event received, but there is not merchant list.");
             return;
         }
 
@@ -649,7 +771,7 @@ public final class DialogHandler
     public void handleMerchantCloseEvent(String topic, DialogMerchantCloseEvent event) {
         MerchantList list = World.getPlayer().getMerchantList();
         if (list == null) {
-            LOGGER.error("Close merchant list received, but there is not opened merchant list.");
+            log.error("Close merchant list received, but there is not opened merchant list.");
         } else {
             list.closeDialog();
         }
@@ -675,13 +797,13 @@ public final class DialogHandler
     @NiftyEventSubscriber(pattern = "selectDialog[0-9]+")
     public void handleSelectionCancelEvent(String topic, @Nonnull DialogSelectCancelEvent event) {
         World.getNet().sendCommand(new CloseDialogSelectionCmd(event.getDialogId(), 0, false));
-        EventBus.publish(new CloseDialogEvent(event.getDialogId(), CloseDialogEvent.DialogType.Selection));
+        EventBus.publish(new CloseDialogEvent(event.getDialogId(), DialogType.Selection));
     }
 
     @SuppressWarnings("MethodMayBeStatic")
     @NiftyEventSubscriber(pattern = "selectDialog[0-9]+")
     public void handleSelectionSelectEvent(String topic, @Nonnull DialogSelectSelectEvent event) {
         World.getNet().sendCommand(new CloseDialogSelectionCmd(event.getDialogId(), event.getItemIndex(), true));
-        EventBus.publish(new CloseDialogEvent(event.getDialogId(), CloseDialogEvent.DialogType.Selection));
+        EventBus.publish(new CloseDialogEvent(event.getDialogId(), DialogType.Selection));
     }
 }

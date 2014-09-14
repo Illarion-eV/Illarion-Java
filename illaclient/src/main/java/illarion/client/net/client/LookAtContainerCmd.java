@@ -45,14 +45,14 @@ public final class LookAtContainerCmd extends AbstractCommand {
      * @param containerId the ID of the container
      * @param slot the ID of the slot in the container
      */
-    public LookAtContainerCmd(final int containerId, final int slot) {
+    public LookAtContainerCmd(int containerId, int slot) {
         super(CommandList.CMD_LOOKAT_CONTAINER);
         this.containerId = (short) containerId;
         this.slot = (short) slot;
     }
 
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) {
         writer.writeUByte(containerId);
         writer.writeUByte(slot);
     }

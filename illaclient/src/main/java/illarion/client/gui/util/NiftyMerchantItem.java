@@ -45,7 +45,7 @@ public final class NiftyMerchantItem extends MerchantItem implements MerchantLis
      * @param nifty the instance of the Nifty-GUI used to create the objects for the GUI
      * @param org the original merchant item that contains the actual data
      */
-    public NiftyMerchantItem(@Nonnull final Nifty nifty, @Nonnull final MerchantItem org) {
+    public NiftyMerchantItem(@Nonnull Nifty nifty, @Nonnull MerchantItem org) {
         super(org);
 
         itemImage = new NiftyImage(nifty.getRenderEngine(), new EntitySlickRenderImage(
@@ -61,5 +61,16 @@ public final class NiftyMerchantItem extends MerchantItem implements MerchantLis
     @Override
     public NiftyImage getItemImage() {
         return itemImage;
+    }
+
+    @Nonnull
+    @Override
+    public EntryType getEntryType() {
+        switch (getType()) {
+            case BuyingPrimaryItem: return EntryType.BuyPrimary;
+            case BuyingSecondaryItem: return EntryType.BuySecondary;
+            case SellingItem: return EntryType.Selling;
+        }
+        throw new IllegalStateException("Unknown merchant entry type: " + getType());
     }
 }

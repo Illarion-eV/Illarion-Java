@@ -63,14 +63,14 @@ public class LookAtMerchantItemCmd extends AbstractTradeItemCmd {
      * or {@link #LIST_ID_BUY_SECONDARY}
      * @param slotId the ID of the item slot
      */
-    public LookAtMerchantItemCmd(final int dialogId, final byte listId, final int slotId) {
+    public LookAtMerchantItemCmd(int dialogId, byte listId, int slotId) {
         super(dialogId, SUB_CMD_ID);
         this.listId = listId;
         this.slotId = (byte) slotId;
     }
 
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) {
         super.encode(writer);
         writer.writeUByte(listId);
         writer.writeUByte(slotId);
