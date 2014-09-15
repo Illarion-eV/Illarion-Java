@@ -36,8 +36,7 @@
                 </panel>
             </panel>
         </panel>
-        <interact onMultiClick="onMultiClick()"/>
-        <interact onMouseOver="onMouseOver()"/>
+        <interact onMultiClick="onMultiClick()" onMouseOver="onMouseOver()" onMouseWheel="mouseWheel()"/>
     </controlDefinition>
 
     <controlDefinition name="dialog-merchant-sell" style="illarion-dialog-merchant-sell">

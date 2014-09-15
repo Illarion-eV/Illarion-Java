@@ -20,9 +20,10 @@ import de.lessvoid.nifty.controls.AbstractController;
 import de.lessvoid.nifty.controls.Parameters;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.input.NiftyInputEvent;
-import de.lessvoid.nifty.input.NiftyMouseInputEvent;
 import de.lessvoid.nifty.screen.Screen;
 import org.illarion.nifty.controls.MerchantListEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,6 +35,8 @@ import javax.annotation.Nullable;
  */
 @Deprecated
 public final class DialogMerchantEntryControl extends AbstractController {
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(DialogMerchantEntryControl.class);
     @Nullable
     private MerchantListEntry listEntry;
     @Nullable
@@ -74,6 +77,7 @@ public final class DialogMerchantEntryControl extends AbstractController {
      */
     public void onMultiClick(int x, int y, int clickCount) {
         if (selectable && (clickCount == 2) && (merchantControl != null) && (listEntry != null)) {
+            log.debug("Received double click on item. Sending out a buy request for: {}", listEntry);
             merchantControl.buyItem(listEntry);
         }
     }
@@ -85,7 +89,7 @@ public final class DialogMerchantEntryControl extends AbstractController {
      * <p />
      * This function will initiate the request for a look at.
      */
-    public void onMouseOver(Element hoveredElement, NiftyMouseInputEvent event) {
+    public void onMouseOver() {
         if ((merchantControl != null) && (listEntry != null)) {
             merchantControl.lookAtItem(listEntry);
         }
