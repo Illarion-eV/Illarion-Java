@@ -891,21 +891,22 @@ public final class Char implements AnimatedMove {
      */
     @Nonnull
     public String getName() {
-        if (name == null || name.isEmpty()) {
-            if (customName == null || customName.isEmpty()) {
+        if ((name == null) || name.isEmpty()) {
+            if ((customName == null) || customName.isEmpty()) {
                 return Lang.getMsg("chat.someone"); //$NON-NLS-1$
             } else {
-                return "\"" + customName + "\"";
+                return '"' + customName + '"';
             }
         } else {
-            if (customName == null || customName.isEmpty()) {
+            if ((customName == null) || customName.isEmpty()) {
                 return name;
             } else {
-                return name + " (" + customName + ")";
+                return name + " (" + customName + ')';
             }
         }
     }
 
+    @Nullable
     public String getCustomName() {
         return customName;
     }

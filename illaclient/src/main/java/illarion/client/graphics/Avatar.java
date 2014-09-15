@@ -24,6 +24,7 @@ import illarion.client.resources.MiscImageFactory;
 import illarion.client.resources.Resource;
 import illarion.client.resources.data.AvatarTemplate;
 import illarion.client.util.Lang;
+import illarion.client.util.UpdateTask;
 import illarion.client.world.Char;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
@@ -279,10 +280,10 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
                 }
                 return true;
             }
+        }
 
-            if (event instanceof DoubleClickOnMapEvent) {
-                return isEventProcessed(container, delta, (DoubleClickOnMapEvent) event);
-            }
+        if (event instanceof DoubleClickOnMapEvent) {
+            return isEventProcessed(container, delta, (DoubleClickOnMapEvent) event);
         }
 
         return super.isEventProcessed(container, delta, event);
@@ -350,22 +351,32 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
             return false;
         }
 
-        final InteractiveChar interactiveChar = parentChar.getInteractive();
-
-        if (interactiveChar.isInUseRange()) {
-            log.debug("Using the character {}", interactiveChar);
-            interactiveChar.use();
-        } else {
-            log.debug("Walking to and using the character {}", interactiveChar);
-            TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
-            handler.walkTo(parentChar.getLocation(), 1);
-            handler.setTargetReachedAction(new Runnable() {
+        if (parentChar.isHuman()) {
+            final Char charToName = parentChar;
+            World.getUpdateTaskManager().addTaskForLater(new UpdateTask() {
                 @Override
-                public void run() {
-                    interactiveChar.use();
+                public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+                    World.getGameGui().getDialogInputGui().showNamingDialog(charToName);
                 }
             });
-            handler.assumeControl();
+        } else {
+            final InteractiveChar interactiveChar = parentChar.getInteractive();
+
+            if (interactiveChar.isInUseRange()) {
+                log.debug("Using the character {}", interactiveChar);
+                interactiveChar.use();
+            } else {
+                log.debug("Walking to and using the character {}", interactiveChar);
+                TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
+                handler.walkTo(parentChar.getLocation(), 1);
+                handler.setTargetReachedAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        interactiveChar.use();
+                    }
+                });
+                handler.assumeControl();
+            }
         }
 
         return true;

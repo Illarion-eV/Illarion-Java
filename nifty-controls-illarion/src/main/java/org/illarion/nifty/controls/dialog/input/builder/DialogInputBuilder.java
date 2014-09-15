@@ -31,7 +31,7 @@ public class DialogInputBuilder extends ControlBuilder {
      * @param id the nifty-gui ID of the dialog
      * @param title the title of the dialog
      */
-    public DialogInputBuilder(@Nonnull final String id, @Nonnull final String title) {
+    public DialogInputBuilder(@Nonnull String id, @Nonnull String title) {
         super(id, CreateDialogInputControl.NAME);
         set("title", title);
         set("closeable", "false");
@@ -46,7 +46,7 @@ public class DialogInputBuilder extends ControlBuilder {
      *
      * @param text the text displayed in the left button of this dialog
      */
-    public void buttonLeft(@Nonnull final String text) {
+    public void buttonLeft(@Nonnull String text) {
         set("buttonLeft", text);
     }
 
@@ -55,7 +55,7 @@ public class DialogInputBuilder extends ControlBuilder {
      *
      * @param text the text displayed in the right button of this dialog
      */
-    public void buttonRight(@Nonnull final String text) {
+    public void buttonRight(@Nonnull String text) {
         set("buttonRight", text);
     }
 
@@ -64,7 +64,7 @@ public class DialogInputBuilder extends ControlBuilder {
      *
      * @param id the ID of the dialog
      */
-    public void dialogId(final int id) {
+    public void dialogId(int id) {
         set("dialogId", Integer.toString(id));
     }
 
@@ -73,7 +73,7 @@ public class DialogInputBuilder extends ControlBuilder {
      *
      * @param maxChars the maximal amount of characters allowed in this input dialog
      */
-    public void maxLength(final int maxChars) {
+    public void maxLength(int maxChars) {
         set("maxLength", Integer.toString(maxChars));
     }
 
@@ -82,7 +82,11 @@ public class DialogInputBuilder extends ControlBuilder {
      *
      * @param text the description text
      */
-    public void description(@Nonnull final String text) {
+    public void description(@Nonnull String text) {
         set("description", text);
+    }
+
+    public void initalText(@Nonnull String text) {
+        set("initialText", text);
     }
 }

@@ -34,12 +34,14 @@ import illarion.client.net.client.*;
 import illarion.client.net.server.events.*;
 import illarion.client.util.GlobalExecutorService;
 import illarion.client.util.UpdateTask;
+import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.client.world.events.CloseDialogEvent;
 import illarion.client.world.items.CraftingItem;
 import illarion.client.world.items.MerchantItem;
 import illarion.client.world.items.MerchantList;
 import illarion.client.world.items.SelectionItem;
+import illarion.common.types.CharacterId;
 import illarion.common.types.ItemCount;
 import illarion.common.types.Rectangle;
 import org.bushe.swing.event.EventBus;
@@ -551,7 +553,7 @@ public final class DialogHandler
 
     @Override
     public void showInputDialog(
-            int id, String title, String description, int maxCharacters, boolean multipleLines) {
+            int id, String title, @Nonnull String description, int maxCharacters, boolean multipleLines) {
         Element parentArea = screen.findElementById("windows");
         DialogInputBuilder builder = new DialogInputBuilder("inputDialog" + Integer.toString(id), title);
         builder.description(description);
@@ -564,6 +566,29 @@ public final class DialogHandler
         } else {
             builder.style("illarion-dialog-input-single");
         }
+        builders.add(new BuildWrapper(builder, parentArea, null));
+    }
+
+    @Override
+    public void showNamingDialog(@Nonnull Char chara) {
+        Element parentArea = screen.findElementById("windows");
+        CharacterId charId = chara.getCharId();
+        if ((charId == null) || !charId.isHuman() || World.getPlayer().isPlayer(charId)) {
+            return;
+        }
+        String currentCustomName = chara.getCustomName();
+        String dialogName = "namingDialog" + Long.toString(charId.getValue());
+        if (parentArea.findElementById(dialogName) != null) {
+            return;
+        }
+        DialogInputBuilder builder = new DialogInputBuilder(dialogName, "Name character");
+        builder.description(String.format("What is the nickname of %1$s?", chara.getName()));
+        builder.buttonLeft("OK");
+        builder.buttonRight("Cancel");
+        builder.dialogId(charId.getAsInteger());
+        builder.maxLength(255);
+        builder.initalText((currentCustomName == null) ? "" : currentCustomName);
+        builder.style("illarion-dialog-input-single");
         builders.add(new BuildWrapper(builder, parentArea, null));
     }
 
@@ -795,6 +820,21 @@ public final class DialogHandler
             World.getNet().sendCommand(new CloseDialogInputCmd(event.getDialogId(), "", false));
         }
     }
+
+    @SuppressWarnings("MethodMayBeStatic")
+    @NiftyEventSubscriber(pattern = "namingDialog[-0-9]+")
+    public void handleNamingConfirmedEvent(String topic, @Nonnull DialogInputConfirmedEvent event) {
+        if (event.getPressedButton() == DialogInput.DialogButton.LeftButton) {
+            CharacterId id = new CharacterId(event.getDialogId());
+            String newName = event.getText();
+            World.getNet().sendCommand(new NamePlayerCmd(id, newName));
+            Char character = World.getPeople().getCharacter(id);
+            if (character != null) {
+                character.setCustomName(newName);
+            }
+        }
+    }
+
 
     @SuppressWarnings("MethodMayBeStatic")
     @NiftyEventSubscriber(pattern = "msgDialog[0-9]+")
