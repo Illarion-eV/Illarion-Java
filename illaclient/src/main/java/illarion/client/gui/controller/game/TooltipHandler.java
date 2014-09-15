@@ -122,6 +122,8 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
         lastMouseY = input.getMouseY();
         if (activeTooltipArea != null) {
             if (!activeTooltipArea.isInside(lastMouseX, lastMouseY)) {
+                log.debug("Removing active tooltip. Mouse (x:{} y:{}) is outside of {}", lastMouseX, lastMouseY,
+                          activeTooltipArea);
                 hideToolTip();
                 EventBus.publish(new TooltipsRemovedEvent());
             }
@@ -153,6 +155,8 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
         if (!location.isInside(lastMouseX, lastMouseY)) {
             return;
         }
+
+        log.debug("Showing tooltip {} for {}", tooltip, location);
 
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override

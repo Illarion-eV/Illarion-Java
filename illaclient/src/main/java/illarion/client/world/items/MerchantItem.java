@@ -88,12 +88,7 @@ public class MerchantItem {
      * @param amount the amount of items sold at once
      */
     public MerchantItem(
-            int itemIndex,
-            MerchantItemType itemType,
-            ItemId id,
-            String itemName,
-            long itemPrice,
-            ItemCount amount) {
+            int itemIndex, MerchantItemType itemType, ItemId id, String itemName, long itemPrice, ItemCount amount) {
         index = itemIndex;
         type = itemType;
         itemId = id;
@@ -112,11 +107,7 @@ public class MerchantItem {
      * @param itemPrice the price of the item in copper coins
      */
     public MerchantItem(
-            int itemIndex,
-            MerchantItemType itemType,
-            ItemId id,
-            String itemName,
-            long itemPrice) {
+            int itemIndex, MerchantItemType itemType, ItemId id, String itemName, long itemPrice) {
         this(itemIndex, itemType, id, itemName, itemPrice, ItemCount.getInstance(1));
     }
 
@@ -205,5 +196,10 @@ public class MerchantItem {
             }
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "Merchant Item ID(" + itemId + ") " + name + " at index: " + index;
     }
 }

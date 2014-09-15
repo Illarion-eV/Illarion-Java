@@ -18,10 +18,14 @@ package illarion.client.util;
 import illarion.client.gui.events.TooltipsRemovedEvent;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
+import java.util.Objects;
 
 /**
  * The sole purpose of this class is not monitor the look at events that were invoked in order to prevent that they
@@ -30,9 +34,13 @@ import java.lang.ref.SoftReference;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class LookAtTracker implements EventSubscriber<TooltipsRemovedEvent> {
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(LookAtTracker.class);
+
     /**
      * The instance of this class.
      */
+    @Nonnull
     private static final LookAtTracker INSTANCE = new LookAtTracker();
 
     /**
@@ -54,8 +62,9 @@ public final class LookAtTracker implements EventSubscriber<TooltipsRemovedEvent
      *
      * @param object the object to set als current look at focus
      */
-    public static void setLookAtObject(Object object) {
-        INSTANCE.lookAtObject = new SoftReference<>(object);
+    public static void setLookAtObject(@Nullable Object object) {
+        log.debug("Setting look at tracker to: {}", object);
+        INSTANCE.lookAtObject = object == null ? null : new SoftReference<>(object);
     }
 
     /**
@@ -64,18 +73,19 @@ public final class LookAtTracker implements EventSubscriber<TooltipsRemovedEvent
      * @param testObject the object to test
      * @return {@code true} in case this object is the same object last set with {@link #setLookAtObject(Object)}
      */
-    public static boolean isLookAtObject(Object testObject) {
+    public static boolean isLookAtObject(@Nonnull Object testObject) {
         Reference<Object> reference = INSTANCE.lookAtObject;
-        if (reference == null) {
+        if ((reference != null) && Objects.equals(reference.get(), testObject)) {
+            log.debug("Test for look at object {} successful.", testObject);
+            return true;
+        } else {
+            log.debug("Test for look at object {} failed.", testObject);
             return false;
         }
-
-        Object localLookAtObject = reference.get();
-        return (localLookAtObject != null) && (localLookAtObject == testObject);
     }
 
     @Override
-    public void onEvent(TooltipsRemovedEvent event) {
-        lookAtObject = null;
+    public void onEvent(@Nonnull TooltipsRemovedEvent event) {
+        setLookAtObject(null);
     }
 }

@@ -53,7 +53,7 @@ public class LookAtMerchantItemCmd extends AbstractTradeItemCmd {
     /**
      * The ID of the slot.
      */
-    private final byte slotId;
+    private final short slotId;
 
     /**
      * The constructor for the look at a merchant item command.
@@ -66,7 +66,7 @@ public class LookAtMerchantItemCmd extends AbstractTradeItemCmd {
     public LookAtMerchantItemCmd(int dialogId, byte listId, int slotId) {
         super(dialogId, SUB_CMD_ID);
         this.listId = listId;
-        this.slotId = (byte) slotId;
+        this.slotId = (short) slotId;
     }
 
     @Override

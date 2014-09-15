@@ -33,7 +33,6 @@ import illarion.client.gui.util.NiftySelectItem;
 import illarion.client.net.client.*;
 import illarion.client.net.server.events.*;
 import illarion.client.util.GlobalExecutorService;
-import illarion.client.util.LookAtTracker;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
 import illarion.client.world.events.CloseDialogEvent;
@@ -131,6 +130,8 @@ public final class DialogHandler
     private final TooltipHandler tooltipHandler;
 
     private int lastCraftingTooltip = -2;
+    @Nullable
+    private MerchantListEntry lastMerchantTooltipItem;
 
     public DialogHandler(
             Input input, NumberSelectPopupHandler numberSelectPopupHandler, TooltipHandler tooltipHandler) {
@@ -365,6 +366,7 @@ public final class DialogHandler
     @EventSubscriber
     public void handleTooltipRemovedEvent(TooltipsRemovedEvent event) {
         lastCraftingTooltip = -2;
+        lastMerchantTooltipItem = null;
 
         if (input.isAnyButtonDown(Button.Left, Button.Right)) {
             return;
@@ -423,7 +425,11 @@ public final class DialogHandler
 
     @NiftyEventSubscriber(id = "merchantDialog")
     public void handleMerchantLookAtEvent(String topic, @Nonnull DialogMerchantLookAtEvent event) {
-        if (input.isAnyButtonDown(Button.Left, Button.Right) || LookAtTracker.isLookAtObject(event.getItem())) {
+        if (input.isAnyButtonDown(Button.Left, Button.Right)) {
+            return;
+        }
+
+        if (Objects.equals(lastMerchantTooltipItem, event.getItem())) {
             return;
         }
 
@@ -443,9 +449,11 @@ public final class DialogHandler
         int dialogId = event.getDialogId();
         int itemIndex = event.getItem().getIndex();
 
-        LookAtTracker.setLookAtObject(event.getItem());
+        lastMerchantTooltipItem = event.getItem();
 
-        World.getNet().sendCommand(new LookAtMerchantItemCmd(dialogId, listId, itemIndex));
+        LookAtMerchantItemCmd cmd = new LookAtMerchantItemCmd(dialogId, listId, itemIndex);
+
+        World.getNet().sendCommand(cmd);
     }
 
     @Override
@@ -775,6 +783,7 @@ public final class DialogHandler
         } else {
             list.closeDialog();
         }
+        lastMerchantTooltipItem = null;
     }
 
     @SuppressWarnings("MethodMayBeStatic")
