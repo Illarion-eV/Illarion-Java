@@ -22,6 +22,7 @@ import de.lessvoid.nifty.controls.window.WindowControl;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.input.NiftyStandardInputEvent;
+import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
 import org.bushe.swing.event.EventTopicSubscriber;
@@ -30,7 +31,6 @@ import org.illarion.nifty.controls.DialogInputConfirmedEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Objects;
 
 /**
  * This is the main control class for input dialogs.
@@ -130,17 +130,26 @@ public class DialogInputControl extends WindowControl implements DialogInput, Ev
         element.setConstraintY(SizeValue.px(y));
 
         parent.layoutElements();
-    }
 
-    @Override
-    public boolean inputEvent(@Nonnull NiftyInputEvent inputEvent) {
-        assert niftyInstance != null : "Control was not bound correctly.";
-        if (Objects.equals(inputEvent, NiftyStandardInputEvent.SubmitText)) {
-            niftyInstance.publishEvent(getId(), new DialogInputConfirmedEvent(dialogId, DialogButton.LeftButton,
-                                                                              getInputText()));
-            return true;
-        }
-        return super.inputEvent(inputEvent);
+        element.addInputHandler(new KeyInputHandler() {
+            @Override
+            public boolean keyEvent(@Nonnull NiftyInputEvent inputEvent) {
+                if (inputEvent instanceof NiftyStandardInputEvent) {
+                    switch ((NiftyStandardInputEvent) inputEvent) {
+                        case SubmitText:
+                            fireResponse(DialogButton.LeftButton);
+                            return true;
+                        case Escape:
+                            fireResponse(DialogButton.RightButton);
+                            return true;
+                        default:
+                            return false;
+                    }
+                }
+
+                return false;
+            }
+        });
     }
 
     @Override
@@ -189,19 +198,20 @@ public class DialogInputControl extends WindowControl implements DialogInput, Ev
 
     @Override
     public void onEvent(@Nonnull String topic, ButtonClickedEvent data) {
-        assert niftyInstance != null : "Control was not bound correctly.";
+        if (topic.contains("#buttonLeft")) {
+            fireResponse(DialogButton.LeftButton);
+        } else {
+            fireResponse(DialogButton.RightButton);
+        }
+    }
 
+    private void fireResponse(@Nonnull DialogButton button) {
+        assert niftyInstance != null : "Control was not bound correctly.";
         if (alreadyClosed) {
             return;
         }
 
-        if (topic.contains("#buttonLeft")) {
-            niftyInstance.publishEvent(getId(), new DialogInputConfirmedEvent(dialogId, DialogButton.LeftButton,
-                                                                              getInputText()));
-        } else {
-            niftyInstance.publishEvent(getId(), new DialogInputConfirmedEvent(dialogId, DialogButton.RightButton,
-                                                                              getInputText()));
-        }
+        niftyInstance.publishEvent(getId(), new DialogInputConfirmedEvent(dialogId, button, getInputText()));
         closeWindow();
     }
 

@@ -94,7 +94,7 @@ public final class NumberSelectPopupHandler implements ScreenController {
     private int minNumber;
 
     @Override
-    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
         parentNifty = nifty;
         parentScreen = screen;
     }
@@ -115,7 +115,7 @@ public final class NumberSelectPopupHandler implements ScreenController {
             final int minValue, final int maxValue, @Nonnull final NumberSelectPopupHandler.Callback callback) {
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
-            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
                 internalCreateNewPopup(minValue, maxValue, callback);
             }
         });
@@ -129,7 +129,7 @@ public final class NumberSelectPopupHandler implements ScreenController {
      * @param callback the callback that is called in case the user interacts with the popup
      */
     private void internalCreateNewPopup(
-            final int minValue, final int maxValue, @Nonnull final NumberSelectPopupHandler.Callback callback) {
+            final int minValue, final int maxValue, @Nonnull NumberSelectPopupHandler.Callback callback) {
         cancelActivePopup();
 
         activePopup = parentNifty.createPopup("numberSelect");
@@ -143,15 +143,15 @@ public final class NumberSelectPopupHandler implements ScreenController {
         assert textField != null;
         textField.enableInputFilter(new TextFieldInputCharFilter() {
             @Override
-            public boolean acceptInput(final int index, final char newChar) {
+            public boolean acceptInput(int index, char newChar) {
                 if (!Character.isDigit(newChar)) {
                     return false;
                 }
-                final String currentText = textField.getRealText();
-                final StringBuilder buffer = new StringBuilder(currentText);
+                String currentText = textField.getRealText();
+                StringBuilder buffer = new StringBuilder(currentText);
                 buffer.insert(index, newChar);
 
-                final int value = Integer.parseInt(buffer.toString());
+                int value = Integer.parseInt(buffer.toString());
                 return !((value > maxValue) || (value < minValue));
             }
         });
@@ -160,7 +160,7 @@ public final class NumberSelectPopupHandler implements ScreenController {
             @Nonnull
             @Override
             public CharSequence getDisplaySequence(
-                    @Nonnull final CharSequence original, final int start, final int end) {
+                    @Nonnull CharSequence original, int start, int end) {
                 if (original.length() == 0) {
                     return Integer.toString(minValue);
                 }
@@ -170,7 +170,7 @@ public final class NumberSelectPopupHandler implements ScreenController {
 
         activePopup.addInputHandler(new KeyInputHandler() {
             @Override
-            public boolean keyEvent(@Nonnull final NiftyInputEvent inputEvent) {
+            public boolean keyEvent(@Nonnull NiftyInputEvent inputEvent) {
                 if (!(inputEvent instanceof NiftyStandardInputEvent)) {
                     return false;
                 }
@@ -197,18 +197,18 @@ public final class NumberSelectPopupHandler implements ScreenController {
      * @param event the button pressed event
      */
     @NiftyEventSubscriber(pattern = ".+#numberSelectPopup#buttonRight")
-    public void onButtonRightEvent(final String topic, final ButtonClickedEvent event) {
+    public void onButtonRightEvent(String topic, ButtonClickedEvent event) {
         if (activePopup == null) {
             return;
         }
 
-        final int currentValue = getCurrentValue();
+        int currentValue = getCurrentValue();
         if ((currentValue + 1) > maxNumber) {
             returnFocusToTextField();
             return;
         }
 
-        final TextField textField = getTextField();
+        TextField textField = getTextField();
         assert textField != null;
         textField.setText(Integer.toString(currentValue + 1));
         returnFocusToTextField();
@@ -221,18 +221,18 @@ public final class NumberSelectPopupHandler implements ScreenController {
      * @param event the button pressed event
      */
     @NiftyEventSubscriber(pattern = ".+#numberSelectPopup#buttonLeft")
-    public void onButtonLeftEvent(final String topic, final ButtonClickedEvent event) {
+    public void onButtonLeftEvent(String topic, ButtonClickedEvent event) {
         if (activePopup == null) {
             return;
         }
 
-        final int currentValue = getCurrentValue();
+        int currentValue = getCurrentValue();
         if ((currentValue - 1) < minNumber) {
             returnFocusToTextField();
             return;
         }
 
-        final TextField textField = getTextField();
+        TextField textField = getTextField();
         assert textField != null;
         textField.setText(Integer.toString(currentValue - 1));
         returnFocusToTextField();
@@ -245,7 +245,7 @@ public final class NumberSelectPopupHandler implements ScreenController {
      * @param event the button pressed event
      */
     @NiftyEventSubscriber(pattern = ".+#numberSelectPopup#buttonOkay")
-    public void onButtonOkayEvent(final String topic, final ButtonClickedEvent event) {
+    public void onButtonOkayEvent(String topic, ButtonClickedEvent event) {
         if (activePopup == null) {
             return;
         }
@@ -260,7 +260,7 @@ public final class NumberSelectPopupHandler implements ScreenController {
      * @param event the button pressed event
      */
     @NiftyEventSubscriber(pattern = ".+#numberSelectPopup#buttonCancel")
-    public void onButtonCancelEvent(final String topic, final ButtonClickedEvent event) {
+    public void onButtonCancelEvent(String topic, ButtonClickedEvent event) {
         if (activePopup == null) {
             return;
         }
@@ -284,7 +284,7 @@ public final class NumberSelectPopupHandler implements ScreenController {
             return 0;
         }
 
-        final TextField textField = getTextField();
+        TextField textField = getTextField();
         assert textField != null;
         return Integer.parseInt(textField.getDisplayedText());
     }
@@ -293,7 +293,7 @@ public final class NumberSelectPopupHandler implements ScreenController {
      * Set the focus to the text field and on the last written character.
      */
     private void returnFocusToTextField() {
-        final TextField field = getTextField();
+        TextField field = getTextField();
         if (field != null) {
             field.getElement().setFocus();
             field.setCursorPosition(field.getRealText().length());
