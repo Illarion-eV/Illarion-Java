@@ -20,6 +20,8 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.*;
 import de.lessvoid.nifty.controls.window.WindowControl;
 import de.lessvoid.nifty.elements.Element;
+import de.lessvoid.nifty.input.NiftyInputEvent;
+import de.lessvoid.nifty.input.NiftyStandardInputEvent;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
 import org.bushe.swing.event.EventTopicSubscriber;
@@ -28,6 +30,7 @@ import org.illarion.nifty.controls.DialogInputConfirmedEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 /**
  * This is the main control class for input dialogs.
@@ -123,10 +126,21 @@ public class DialogInputControl extends WindowControl implements DialogInput, Ev
         int x = (parent.getWidth() - element.getWidth()) / 2;
         int y = (parent.getHeight() - element.getHeight()) / 2;
 
-        element.setConstraintX(new SizeValue(Integer.toString(x) + "px"));
-        element.setConstraintY(new SizeValue(Integer.toString(y) + "px"));
+        element.setConstraintX(SizeValue.px(x));
+        element.setConstraintY(SizeValue.px(y));
 
         parent.layoutElements();
+    }
+
+    @Override
+    public boolean inputEvent(@Nonnull NiftyInputEvent inputEvent) {
+        assert niftyInstance != null : "Control was not bound correctly.";
+        if (Objects.equals(inputEvent, NiftyStandardInputEvent.SubmitText)) {
+            niftyInstance.publishEvent(getId(), new DialogInputConfirmedEvent(dialogId, DialogButton.LeftButton,
+                                                                              getInputText()));
+            return true;
+        }
+        return super.inputEvent(inputEvent);
     }
 
     @Override
@@ -151,11 +165,7 @@ public class DialogInputControl extends WindowControl implements DialogInput, Ev
 
     @Override
     public void setMaximalLength(int length) {
-        TextField field = getContent().findNiftyControl("#input", TextField.class);
-        if (field == null) {
-            throw new IllegalArgumentException("Failed to fetch input field.");
-        }
-        field.setMaxLength(length);
+        getTextField().setMaxLength(length);
     }
 
     @Override
@@ -165,6 +175,16 @@ public class DialogInputControl extends WindowControl implements DialogInput, Ev
             throw new IllegalArgumentException("Failed to fetch description label.");
         }
         label.setText(text);
+    }
+
+    @Override
+    public void setFocus() {
+        bringToFront();
+        Element textField = getTextField().getElement();
+        if (textField == null) {
+            throw new IllegalStateException("Element of the text field is null. WTF?!");
+        }
+        textField.setFocus();
     }
 
     @Override
@@ -198,20 +218,25 @@ public class DialogInputControl extends WindowControl implements DialogInput, Ev
 
     @Nonnull
     private String getInputText() {
-        TextField field = getContent().findNiftyControl("#input", TextField.class);
-        if (field == null) {
-            throw new IllegalArgumentException("Failed to fetch input field.");
-        }
-
-        return field.getRealText();
+        return getTextField().getRealText();
     }
 
     private void setInputText(@Nonnull CharSequence text) {
-        TextField field = getContent().findNiftyControl("#input", TextField.class);
-        if (field == null) {
-            throw new IllegalArgumentException("Failed to fetch input field.");
+        getTextField().setText(text);
+    }
+
+    @Nonnull
+    private TextField getTextField() {
+        Element content = getContent();
+        if (content == null) {
+            throw new IllegalStateException("Control doesn't seem to be bound properly. Content is null.");
         }
 
-        field.setText(text);
+        TextField inputArea = content.findNiftyControl("#input", TextField.class);
+        if (inputArea == null) {
+            throw new IllegalStateException("Control is not bound correctly or the underlying object is faulty. Input" +
+                                                    " area not available.");
+        }
+        return inputArea;
     }
 }

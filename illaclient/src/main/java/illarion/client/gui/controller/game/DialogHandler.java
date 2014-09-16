@@ -33,6 +33,7 @@ import illarion.client.gui.util.NiftySelectItem;
 import illarion.client.net.client.*;
 import illarion.client.net.server.events.*;
 import illarion.client.util.GlobalExecutorService;
+import illarion.client.util.Lang;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.Char;
 import illarion.client.world.World;
@@ -581,15 +582,23 @@ public final class DialogHandler
         if (parentArea.findElementById(dialogName) != null) {
             return;
         }
-        DialogInputBuilder builder = new DialogInputBuilder(dialogName, "Name character");
-        builder.description(String.format("What is the nickname of %1$s?", chara.getName()));
-        builder.buttonLeft("OK");
-        builder.buttonRight("Cancel");
+        DialogInputBuilder builder = new DialogInputBuilder(dialogName, Lang.getMsg("gui.dialog.naming.title"));
+        builder.description(String.format(Lang.getMsg("gui.dialog.naming.description"), chara.getName()));
+        builder.buttonLeft(Lang.getMsg("gui.dialog.naming.ok"));
+        builder.buttonRight(Lang.getMsg("gui.dialog.naming.cancel"));
         builder.dialogId(charId.getAsInteger());
         builder.maxLength(255);
         builder.initalText((currentCustomName == null) ? "" : currentCustomName);
         builder.style("illarion-dialog-input-single");
-        builders.add(new BuildWrapper(builder, parentArea, null));
+        builders.add(new BuildWrapper(builder, parentArea, new PostBuildTask() {
+            @Override
+            public void run(Element createdElement) {
+                DialogInput control = createdElement.getNiftyControl(DialogInput.class);
+                if (control != null) {
+                    control.setFocus();
+                }
+            }
+        }));
     }
 
     @Override
