@@ -185,7 +185,7 @@ public class ItemStack implements DisplayItem, List<Item> {
             for (int i = 0; i < size; i++) {
                 Item item = items.get(i);
                 item.enableNumbers(i == (size - 1));
-                item.enableNumbers(false);
+                ;
                 item.update(container, delta);
             }
         } finally {
