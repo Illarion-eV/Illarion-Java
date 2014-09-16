@@ -38,7 +38,7 @@
             <pattern>%-5p - %d{ISO8601} - [%t]: %m%n</pattern>
         </encoder>
     </appender>
-    <root level="error">
-        <appender-ref ref="CONSOLE"/>
+    <root level="warn">
+    <appender-ref ref="CONSOLE"/>
     </root>
 </configuration>

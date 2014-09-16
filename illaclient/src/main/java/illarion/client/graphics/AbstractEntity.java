@@ -719,6 +719,9 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
      */
     @Nonnull
     public final Rectangle getInteractionRect() {
+        if (displayRect.isEmpty()) {
+            return displayRect;
+        }
         int offS = template.getShadowOffset();
         if (offS == 0) {
             return displayRect;

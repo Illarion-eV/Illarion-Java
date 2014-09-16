@@ -78,7 +78,7 @@ public final class LightTracer extends Thread implements Stoppable {
     private final List<LightSource> dirtyLights;
 
     /**
-     * If this variable is set to <code>true</code> the light calculations are
+     * If this variable is set to {@code true} the light calculations are
      * restarted at the next loop of the light tracer thread cycle.
      */
     private volatile boolean doRestart;
@@ -99,7 +99,7 @@ public final class LightTracer extends Thread implements Stoppable {
      */
     private final LightingMap mapSource;
     /**
-     * The running flag that needs to be <code>true</code> as long as the light
+     * The running flag that needs to be {@code true} as long as the light
      * tracer is supposed to calculate the lights.
      */
     private volatile boolean running;
@@ -118,7 +118,7 @@ public final class LightTracer extends Thread implements Stoppable {
      * @param tracerMapSource the map the lights this tracer handles are on
      */
     @SuppressWarnings("nls")
-    public LightTracer(final LightingMap tracerMapSource) {
+    public LightTracer(LightingMap tracerMapSource) {
         super("LightTracer Thread");
 
         mapSource = tracerMapSource;
@@ -134,7 +134,7 @@ public final class LightTracer extends Thread implements Stoppable {
      * @return the pre-calculated rays.
      */
     @SuppressWarnings("nls")
-    public static LightRays getRays(final int size) {
+    public static LightRays getRays(int size) {
         if ((size > 0) && (size <= MAX_RADIUS)) {
             return RAYS[size - 1];
         }
@@ -150,13 +150,15 @@ public final class LightTracer extends Thread implements Stoppable {
      * @param light the light that shall be added to the light tracer and so to
      * the game screen
      */
-    public void add(@Nonnull final LightSource light) {
+    public void add(@Nonnull LightSource light) {
         light.setMapSource(mapSource);
         synchronized (lightsListsLock) {
             if (!dirtyLights.contains(light)) {
                 dirtyLights.add(light);
             }
-            setDirty(true);
+        }
+        setDirty(true);
+        synchronized (lightsListsLock) {
             lightsListsLock.notifyAll();
         }
     }
@@ -171,18 +173,18 @@ public final class LightTracer extends Thread implements Stoppable {
         }
 
         synchronized (lightsListsLock) {
-            final Iterator<LightSource> dirtyItr = dirtyLights.iterator();
-            final Iterator<LightSource> tinyItr = tidyLights.iterator();
+            Iterator<LightSource> dirtyItr = dirtyLights.iterator();
+            Iterator<LightSource> tinyItr = tidyLights.iterator();
 
             mapSource.resetLights();
 
             while (tinyItr.hasNext()) {
-                final LightSource light = tinyItr.next();
+                LightSource light = tinyItr.next();
                 light.apply();
             }
 
             while (dirtyItr.hasNext()) {
-                final LightSource light = dirtyItr.next();
+                LightSource light = dirtyItr.next();
                 dirtyItr.remove();
                 light.calculateShadows();
                 light.apply();
@@ -219,11 +221,11 @@ public final class LightTracer extends Thread implements Stoppable {
      *
      * @param loc the location the change occurred at
      */
-    public void notifyChange(@Nonnull final Location loc) {
+    public void notifyChange(@Nonnull Location loc) {
         boolean changedSomething = false;
 
         synchronized (lightsListsLock) {
-            final Iterator<LightSource> itr = tidyLights.iterator();
+            Iterator<LightSource> itr = tidyLights.iterator();
             LightSource current;
             while (itr.hasNext()) {
                 current = itr.next();
@@ -258,7 +260,7 @@ public final class LightTracer extends Thread implements Stoppable {
      *
      * @param light the light that shall be updated.
      */
-    public void refreshLight(@Nonnull final LightSource light) {
+    public void refreshLight(@Nonnull LightSource light) {
         synchronized (lightsListsLock) {
             if (!tidyLights.contains(light)) {
                 return;
@@ -279,7 +281,7 @@ public final class LightTracer extends Thread implements Stoppable {
      * @return true in case the light got removed, false if this operation
      * failed
      */
-    public boolean remove(final LightSource light) {
+    public boolean remove(LightSource light) {
         synchronized (lightsListsLock) {
             if (dirtyLights.contains(light)) {
                 dirtyLights.remove(light);
@@ -354,7 +356,7 @@ public final class LightTracer extends Thread implements Stoppable {
                 } else {
                     try {
                         lightsListsLock.wait();
-                    } catch (@Nonnull final InterruptedException e) {
+                    } catch (@Nonnull InterruptedException e) {
                         LOGGER.debug("Light tracer woken up for unknown reasons", e);
                     }
                 }
@@ -388,7 +390,7 @@ public final class LightTracer extends Thread implements Stoppable {
      *
      * @param newDirty the new value of the dirty flag
      */
-    private void setDirty(final boolean newDirty) {
+    private void setDirty(boolean newDirty) {
         if (!dirty && newDirty) {
             mapSource.resetLights();
             dirty = true;
@@ -404,9 +406,9 @@ public final class LightTracer extends Thread implements Stoppable {
      * Set the running value to a new state. This is the only way to stop the
      * light tracer thread from calculating stuff.
      *
-     * @param newRunning <code>false</code> to stop the light tracer thread
+     * @param newRunning {@code false} to stop the light tracer thread
      */
-    public void setRunning(final boolean newRunning) {
+    public void setRunning(boolean newRunning) {
         running = newRunning;
     }
 

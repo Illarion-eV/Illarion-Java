@@ -15,6 +15,7 @@
  */
 package illarion.client.world;
 
+import illarion.client.graphics.Avatar;
 import illarion.client.net.client.RequestAppearanceCmd;
 import illarion.client.world.events.CharRemovedEvent;
 import illarion.common.types.CharacterId;
@@ -101,6 +102,31 @@ public final class People {
             return createNewCharacter(id);
         }
         return chara;
+    }
+
+    @Nullable
+    public Char getCharOnScreenLoc(int x, int y) {
+        charsLock.readLock().lock();
+        try {
+            @Nullable Char characterOnScreenLocation = null;
+            for (Char character : chars.values()) {
+                Avatar avatar = character.getAvatar();
+                if ((avatar != null) && character.getInteractive().isCharOnScreenLoc(x, y)) {
+                    if (characterOnScreenLocation == null) {
+                        characterOnScreenLocation = character;
+                    } else {
+                        Avatar otherAvatar = characterOnScreenLocation.getAvatar();
+                        assert otherAvatar != null; /* characterOnScreenLocation can't store a char without avatar */
+                        if (avatar.getOrder() < otherAvatar.getOrder()) {
+                            characterOnScreenLocation = character;
+                        }
+                    }
+                }
+            }
+            return characterOnScreenLocation;
+        } finally {
+            charsLock.readLock().unlock();
+        }
     }
 
     /**

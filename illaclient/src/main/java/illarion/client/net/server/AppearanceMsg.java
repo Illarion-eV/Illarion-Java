@@ -201,11 +201,8 @@ public final class AppearanceMsg extends AbstractGuiMsg {
 
         character.setScale(size / SCALE_MOD);
 
-        if (name.isEmpty()) {
-            character.setName(Lang.getMsg("chat.someone"));
-        } else {
-            character.setName(name);
-        }
+        character.setName(name);
+        character.setCustomName(customName);
 
         character.setAppearance(appearance);
         character.setWearingItem(AvatarClothManager.GROUP_HAIR, hairID);

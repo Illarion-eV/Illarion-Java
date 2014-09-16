@@ -36,13 +36,10 @@ import javax.annotation.concurrent.NotThreadSafe;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * A tile on the map. Contains the tile graphics and items.
@@ -81,15 +78,9 @@ public final class MapTile implements AlphaChangeListener {
     /**
      * List of items on the tile.
      */
-    @Nullable
-    @GuardedBy("itemsLock")
-    private List<Item> items;
-
-    /**
-     * The lock used to guard the items table.
-     */
     @Nonnull
-    private final ReadWriteLock itemsLock = new ReentrantReadWriteLock();
+    @GuardedBy("itemsLock")
+    private final ItemStack items;
 
     /**
      * The calculated light in the center of the tile.
@@ -190,14 +181,14 @@ public final class MapTile implements AlphaChangeListener {
         if (elevation == 0) {
             return null;
         }
-        itemsLock.readLock().lock();
+        items.getLock().readLock().lock();
         try {
-            if ((items == null) || (items.size() <= elevationIndex)) {
+            if (items.size() <= elevationIndex) {
                 return null;
             }
             return items.get(elevationIndex);
         } finally {
-            itemsLock.readLock().unlock();
+            items.getLock().readLock().unlock();
         }
     }
 
@@ -251,6 +242,7 @@ public final class MapTile implements AlphaChangeListener {
         targetCenterColor = new Color(Color.WHITE);
         localColor = new AnimatedColor(targetCenterColor);
         colors = new EnumMap<>(Direction.class);
+        items = new ItemStack();
     }
 
     @Nonnull
@@ -301,15 +293,15 @@ public final class MapTile implements AlphaChangeListener {
             return null;
         }
 
-        itemsLock.readLock().lock();
-        try {
-            if ((items == null) || items.isEmpty()) {
-                return null;
-            }
-            return items.get(items.size() - 1);
-        } finally {
-            itemsLock.readLock().unlock();
+        if (items.hasItems()) {
+            return items.getTopItem();
         }
+        return null;
+    }
+
+    @Nonnull
+    public Item getItem(int index) {
+        return items.get(index);
     }
 
     /**
@@ -355,13 +347,7 @@ public final class MapTile implements AlphaChangeListener {
     @Override
     @Nonnull
     public String toString() {
-        itemsLock.readLock().lock();
-        try {
-            return "MapTile " + tileLocation + " tile=" + tileId + " items=" +
-                    ((items != null) ? items.size() : 0);
-        } finally {
-            itemsLock.readLock().unlock();
-        }
+        return "MapTile " + tileLocation + " tile=" + tileId + " items=" + items.size();
     }
 
     /**
@@ -378,9 +364,9 @@ public final class MapTile implements AlphaChangeListener {
             LOGGER.warn("Changing top item of removed tile requested.");
             return;
         }
-        itemsLock.writeLock().lock();
+        items.getLock().writeLock().lock();
         try {
-            if (items == null) {
+            if (!items.hasItems()) {
                 LOGGER.warn("There are no items on this field. Change top impossible.");
                 return;
             }
@@ -390,14 +376,14 @@ public final class MapTile implements AlphaChangeListener {
                 return;
             }
 
-            if (items.get(pos).getItemId().equals(oldItemId)) {
+            if (items.getTopItem().getItemId().equals(oldItemId)) {
                 setItem(pos, itemId, count);
             } else {
                 LOGGER.warn("change top item mismatch. Expected {} found {}", oldItemId,
-                            items.get(pos).getItemId().getValue());
+                            items.getTopItem().getItemId().getValue());
             }
         } finally {
-            itemsLock.writeLock().unlock();
+            items.getLock().writeLock().unlock();
         }
         itemChanged();
     }
@@ -412,12 +398,8 @@ public final class MapTile implements AlphaChangeListener {
             return;
         }
 
-        itemsLock.writeLock().lock();
+        items.getLock().writeLock().lock();
         try {
-            if (items == null) {
-                LOGGER.warn("Remove top item on empty field");
-                return;
-            }
             int pos = items.size() - 1;
             if (pos < 0) {
                 LOGGER.warn("Remove top item on empty field");
@@ -432,14 +414,8 @@ public final class MapTile implements AlphaChangeListener {
 
             Item removedItem = items.remove(pos);
             removedItem.markAsRemoved();
-            // enable numbers for next top item
-            if ((pos - 1) >= 0) {
-                items.get(pos - 1).enableNumbers(true);
-            } else {
-                items = null;
-            }
         } finally {
-            itemsLock.writeLock().unlock();
+            items.getLock().writeLock().unlock();
         }
         itemChanged();
     }
@@ -455,21 +431,13 @@ public final class MapTile implements AlphaChangeListener {
             LOGGER.warn("Trying to add a item to a removed tile.");
             return;
         }
-        itemsLock.writeLock().lock();
+        items.getLock().writeLock().lock();
         try {
             int pos = 0;
-            if (items != null) {
-                pos = items.size();
-                // disable numbers for old top item
-                if (pos > 0) {
-                    items.get(pos - 1).enableNumbers(false);
-                }
-            }
+            pos = items.getItemCount();
             setItem(pos, itemId, count);
-            // enable numbers for new top item
-            items.get(pos).enableNumbers(true);
         } finally {
-            itemsLock.writeLock().unlock();
+            items.getLock().writeLock().unlock();
         }
         itemChanged();
     }
@@ -485,28 +453,23 @@ public final class MapTile implements AlphaChangeListener {
     private void setItem(int index, @Nonnull ItemId itemId, @Nonnull ItemCount itemCount) {
         @Nullable Item item = null;
         // look for present item in map tile
-        itemsLock.writeLock().lock();
+        items.getLock().writeLock().lock();
         try {
-            if (items != null) {
-                if (index < items.size()) {
-                    item = items.get(index);
-                    // just an update of present item
-                    if (item.getItemId().equals(itemId)) {
-                        updateItem(item, itemCount, index);
-                    } else {
-                        // different item: clear old item
-                        item.markAsRemoved();
-                        item = null;
+            if (index < items.size()) {
+                item = items.get(index);
+                // just an update of present item
+                if (item.getItemId().equals(itemId)) {
+                    updateItem(item, itemCount, index);
+                } else {
+                    // different item: clear old item
+                    item = null;
 
-                        // carrying item was removed
-                        if (index == elevationIndex) {
-                            elevation = 0;
-                            elevationIndex = 0;
-                        }
+                    // carrying item was removed
+                    if (index == elevationIndex) {
+                        elevation = 0;
+                        elevationIndex = 0;
                     }
                 }
-            } else {
-                items = new ArrayList<>();
             }
             // add a new item
             if (item == null) {
@@ -514,9 +477,6 @@ public final class MapTile implements AlphaChangeListener {
                 item = Item.create(itemId, tileLocation, this);
 
                 updateItem(item, itemCount, index);
-                // display on screen
-
-                item.show();
 
                 // add it to list
                 if (index < items.size()) {
@@ -528,7 +488,7 @@ public final class MapTile implements AlphaChangeListener {
                 }
             }
         } finally {
-            itemsLock.writeLock().unlock();
+            items.getLock().writeLock().unlock();
         }
         // temporarily disable all numbers
         item.enableNumbers(false);
@@ -550,7 +510,7 @@ public final class MapTile implements AlphaChangeListener {
             objectOffset = elevation;
         }
         // position on tile with increasing z-order
-        item.setScreenPos(tileLocation.getDcX(), tileLocation.getDcY() - objectOffset, tileLocation.getDcZ() - index,
+        item.setScreenPos(tileLocation.getDcX(), tileLocation.getDcY() - objectOffset, tileLocation.getDcZ(),
                           Layers.ITEM);
 
         // set the elevation for items that can carry
@@ -618,18 +578,16 @@ public final class MapTile implements AlphaChangeListener {
      */
     private void checkLight() {
         int newLightValue = 0;
-        itemsLock.readLock().lock();
+        items.getLock().readLock().lock();
         try {
-            if (items != null) {
-                for (Item item : items) {
-                    if (item.getTemplate().getItemInfo().isLight()) {
-                        newLightValue = item.getTemplate().getItemInfo().getLight();
-                        break;
-                    }
+            for (Item item : items) {
+                if (item.getTemplate().getItemInfo().isLight()) {
+                    newLightValue = item.getTemplate().getItemInfo().getLight();
+                    break;
                 }
             }
         } finally {
-            itemsLock.readLock().unlock();
+            items.getLock().readLock().unlock();
         }
 
         if (lightValue == newLightValue) {
@@ -693,15 +651,13 @@ public final class MapTile implements AlphaChangeListener {
         }
         if (losDirty) {
             obstruction = 0;
-            itemsLock.readLock().lock();
+            items.getLock().readLock().lock();
             try {
-                if (items != null) {
-                    for (Item item : items) {
-                        obstruction += item.getTemplate().getItemInfo().getOpacity();
-                    }
+                for (Item item : items) {
+                    obstruction += item.getTemplate().getItemInfo().getOpacity();
                 }
             } finally {
-                itemsLock.readLock().unlock();
+                items.getLock().readLock().unlock();
             }
             losDirty = false;
         }
@@ -732,16 +688,16 @@ public final class MapTile implements AlphaChangeListener {
             return 0;
         }
         // empty tile accept all light
-        itemsLock.readLock().lock();
+        items.getLock().readLock().lock();
         try {
-            if ((items == null) || items.isEmpty()) {
+            if (items.isEmpty()) {
                 return 0;
             }
 
             // non-movable items are only lit from the front
             return items.get(0).getTemplate().getItemInfo().getFace();
         } finally {
-            itemsLock.readLock().unlock();
+            items.getLock().readLock().unlock();
         }
     }
 
@@ -993,7 +949,7 @@ public final class MapTile implements AlphaChangeListener {
      * @param itemCount the list of count values for the items on this tile
      */
     private void updateItemList(int number, @Nonnull List<ItemId> itemId, @Nonnull List<ItemCount> itemCount) {
-        Lock lock = itemsLock.writeLock();
+        Lock lock = items.getLock().writeLock();
         lock.lock();
         try {
             try {
@@ -1002,7 +958,7 @@ public final class MapTile implements AlphaChangeListener {
                     setItem(i, itemId.get(i), itemCount.get(i));
                 }
             } finally {
-                Lock readLock = itemsLock.readLock();
+                Lock readLock = items.getLock().readLock();
                 //noinspection LockAcquiredButNotSafelyReleased
                 readLock.lock();
                 try {
@@ -1013,11 +969,9 @@ public final class MapTile implements AlphaChangeListener {
             }
 
             // enable numbers for top item
-            if (items != null) {
-                int pos = items.size() - 1;
-                if (pos >= 0) {
-                    items.get(pos).enableNumbers(true);
-                }
+            int pos = items.size() - 1;
+            if (pos >= 0) {
+                items.get(pos).enableNumbers(true);
             }
         } finally {
             lock.unlock();
@@ -1035,11 +989,8 @@ public final class MapTile implements AlphaChangeListener {
         elevation = 0;
         elevationIndex = -1;
 
-        itemsLock.writeLock().lock();
+        items.getLock().writeLock().lock();
         try {
-            if (items == null) {
-                return;
-            }
 
             int amount = items.size() - itemNumber;
             for (int i = 0; i < amount; i++) {
@@ -1050,12 +1001,8 @@ public final class MapTile implements AlphaChangeListener {
                 // keep deleting in the same place as the list becomes shorter
                 items.remove(itemNumber);
             }
-
-            if (items.isEmpty()) {
-                items = null;
-            }
         } finally {
-            itemsLock.writeLock().unlock();
+            items.getLock().writeLock().unlock();
         }
     }
 
@@ -1079,5 +1026,9 @@ public final class MapTile implements AlphaChangeListener {
 
     public boolean isHidden() {
         return (group != null) && group.isHidden();
+    }
+
+    public int getItemIndex(@Nonnull Item lookAtItem) {
+        return items.indexOf(lookAtItem);
     }
 }

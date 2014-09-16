@@ -78,13 +78,22 @@ public final class CharacterId implements Serializable, Comparable<CharacterId> 
     }
 
     /**
+     * Constructor of this class used to set.
+     *
+     * @param value the value of the character ID
+     */
+    public CharacterId(int value) {
+        this.value = value;
+    }
+
+    /**
      * This constructor is used to decode the character ID from the network interface.
      *
      * @param reader the reader
      * @throws IOException in case the reading operation fails for some reason
      */
     public CharacterId(@Nonnull NetCommReader reader) throws IOException {
-        value = reader.readInt();
+        this(reader.readInt());
     }
 
     /**
@@ -158,6 +167,10 @@ public final class CharacterId implements Serializable, Comparable<CharacterId> 
         if (value < 0) {
             return value + (1L << Integer.SIZE);
         }
+        return value;
+    }
+
+    public int getAsInteger() {
         return value;
     }
 

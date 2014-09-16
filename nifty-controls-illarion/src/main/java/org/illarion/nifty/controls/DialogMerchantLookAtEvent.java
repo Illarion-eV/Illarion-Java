@@ -15,23 +15,42 @@
  */
 package org.illarion.nifty.controls;
 
+import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
- * This event is fired in case the player closes the merchant dialog.
+ * This event is fired in case the player want to look at a item in the merchant dialog.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ThreadSafe
 @Immutable
-public final class DialogMerchantCloseEvent extends DialogEvent {
+public final class DialogMerchantLookAtEvent extends DialogEvent {
     /**
-     * Create a new instance of this event and set the ID of the dialog that was closed.
+     * The item that was bought.
+     */
+    @Nonnull
+    private final MerchantListEntry item;
+
+    /**
+     * Create a new instance of this event and set the ID of the dialog that was used to buy items from.
      *
      * @param id the ID of the dialog
+     * @param buyItem the item to buy
      */
-    public DialogMerchantCloseEvent(int id) {
+    public DialogMerchantLookAtEvent(int id, @Nonnull MerchantListEntry buyItem) {
         super(id);
+        item = buyItem;
+    }
+
+    /**
+     * Get the item the player wants to buy.
+     *
+     * @return the item that is bought
+     */
+    @Nonnull
+    public MerchantListEntry getItem() {
+        return item;
     }
 }

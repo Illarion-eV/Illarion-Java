@@ -127,7 +127,19 @@ public final class GameScreenController implements GameGui, ScreenController {
 
     @Nonnull
     @Override
+    public DialogGui getDialogGui() {
+        return dialogHandler;
+    }
+
+    @Nonnull
+    @Override
     public DialogCraftingGui getDialogCraftingGui() {
+        return dialogHandler;
+    }
+
+    @Nonnull
+    @Override
+    public DialogMerchantGui getDialogMerchantGui() {
         return dialogHandler;
     }
 

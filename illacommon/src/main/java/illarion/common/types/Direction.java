@@ -96,10 +96,16 @@ public enum Direction {
         }
     }
 
+    @Nullable
     public static Direction decode(@Nonnull NetCommReader reader) throws IOException {
         int dirId = reader.readUByte();
+        return fromServerId(dirId);
+    }
+
+    @Nullable
+    public static Direction fromServerId(int serverId) {
         for (Direction dir : values()) {
-            if (dir.serverId == dirId) {
+            if (dir.serverId == serverId) {
                 return dir;
             }
         }

@@ -42,7 +42,7 @@ public abstract class AbstractTradeItemCmd extends AbstractCommand {
      * @param dialogId the ID of the dialog to buy the item from
      * @param subCommandId the ID of the sub command
      */
-    public AbstractTradeItemCmd(final int dialogId, final int subCommandId) {
+    public AbstractTradeItemCmd(int dialogId, int subCommandId) {
         super(CommandList.CMD_TRADE_ITEM);
 
         this.dialogId = dialogId;
@@ -50,7 +50,7 @@ public abstract class AbstractTradeItemCmd extends AbstractCommand {
     }
 
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) {
         writer.writeInt(dialogId);
         writer.writeByte(subCommandId);
     }

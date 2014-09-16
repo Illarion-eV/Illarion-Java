@@ -31,6 +31,8 @@ import org.bushe.swing.event.EventBus;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.input.Input;
 import org.illarion.nifty.controls.tooltip.builder.ToolTipBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,6 +43,8 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class TooltipHandler implements ScreenController, UpdatableHandler {
+    private static final Logger log = LoggerFactory.getLogger(TooltipHandler.class);
+
     /**
      * The Nifty that is the parent to this handler.
      */
@@ -77,9 +81,10 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
      * The task that will clean all opened tooltip.
      */
     @Nonnull
-    private UpdateTask cleanToolTips = new UpdateTask() {
+    private final UpdateTask cleanToolTips = new UpdateTask() {
         @Override
-        public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+        public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+            if (toolTipLayer == null) { return; }
             for (final Element element : toolTipLayer.getChildren()) {
                 element.hide(new EndNotify() {
                     @Override
@@ -93,7 +98,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
     };
 
     @Override
-    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
         parentNifty = nifty;
         parentScreen = screen;
 
@@ -111,12 +116,14 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
     }
 
     @Override
-    public void update(@Nonnull final GameContainer container, final int delta) {
-        final Input input = container.getEngine().getInput();
+    public void update(@Nonnull GameContainer container, int delta) {
+        Input input = container.getEngine().getInput();
         lastMouseX = input.getMouseX();
         lastMouseY = input.getMouseY();
         if (activeTooltipArea != null) {
             if (!activeTooltipArea.isInside(lastMouseX, lastMouseY)) {
+                log.debug("Removing active tooltip. Mouse (x:{} y:{}) is outside of {}", lastMouseX, lastMouseY,
+                          activeTooltipArea);
                 hideToolTip();
                 EventBus.publish(new TooltipsRemovedEvent());
             }
@@ -140,13 +147,20 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
     public void showToolTip(@Nonnull final Rectangle location, @Nonnull final Tooltip tooltip) {
         hideToolTip();
 
+        if (!tooltip.isValid()) {
+            log.warn("Received a invalid tooltip from the server!");
+            return;
+        }
+
         if (!location.isInside(lastMouseX, lastMouseY)) {
             return;
         }
 
+        log.debug("Showing tooltip {} for {}", tooltip, location);
+
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
-            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
                 showToolTipImpl(location, tooltip);
                 activeTooltipArea = location;
             }
@@ -165,8 +179,8 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
      * @param location the tooltip should be place around, the area of this rectangle won't be hidden by the tooltip
      * @param tooltip the tooltip to display
      */
-    private void showToolTipImpl(@Nonnull final Rectangle location, @Nonnull final Tooltip tooltip) {
-        final ToolTipBuilder builder = new ToolTipBuilder("tooltip-" + Long.toString(count++));
+    private void showToolTipImpl(@Nonnull Rectangle location, @Nonnull Tooltip tooltip) {
+        ToolTipBuilder builder = new ToolTipBuilder("tooltip-" + Long.toString(count++));
         builder.title(tooltip.getName());
 
         switch (tooltip.getRareness()) {
@@ -214,7 +228,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
             builder.gemBonus(Integer.toString(tooltip.getBonus()));
         }
 
-        final Element toolTip = builder.build(parentNifty, parentScreen, toolTipLayer);
+        Element toolTip = builder.build(parentNifty, parentScreen, toolTipLayer);
         toolTip.getParent().layoutElements();
 
         if (toolTip.getHeight() == 0) {
@@ -222,11 +236,11 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
             toolTip.getParent().layoutElements();
         }
 
-        final int toolTipWidth = toolTip.getWidth();
-        final int toolTipHeight = toolTip.getHeight();
+        int toolTipWidth = toolTip.getWidth();
+        int toolTipHeight = toolTip.getHeight();
 
-        final boolean topSide = (location.getBottom() - toolTipHeight) > 0;
-        final boolean rightSide = (location.getRight() - toolTipWidth) < 0;
+        boolean topSide = (location.getBottom() - toolTipHeight) > 0;
+        boolean rightSide = (location.getRight() - toolTipWidth) < 0;
 
         if (topSide) {
             toolTip.setConstraintY(SizeValue.px(location.getBottom() - toolTip.getHeight()));

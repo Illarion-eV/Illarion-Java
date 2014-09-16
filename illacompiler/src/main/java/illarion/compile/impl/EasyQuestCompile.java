@@ -34,7 +34,7 @@ public class EasyQuestCompile extends AbstractCompile {
     private static final Logger LOGGER = LoggerFactory.getLogger(EasyQuestCompile.class);
 
     @Override
-    public int compileFile(@Nonnull final Path file) {
+    public int compileFile(@Nonnull Path file) {
         try {
             ensureTargetDir();
             mxIGraphModel model = QuestIO.loadGraphModel(file);

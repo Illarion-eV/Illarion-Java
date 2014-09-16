@@ -20,6 +20,9 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.*;
 import de.lessvoid.nifty.controls.window.WindowControl;
 import de.lessvoid.nifty.elements.Element;
+import de.lessvoid.nifty.input.NiftyInputEvent;
+import de.lessvoid.nifty.input.NiftyStandardInputEvent;
+import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
 import org.bushe.swing.event.EventTopicSubscriber;
@@ -81,12 +84,12 @@ public class DialogInputControl extends WindowControl implements DialogInput, Ev
     @Nullable
     private String description;
 
+    @Nonnull
+    private String initialText;
+
     @Override
     public void bind(
-            @Nonnull final Nifty nifty,
-            @Nonnull final Screen screen,
-            @Nonnull final Element element,
-            @Nonnull final Parameters parameter) {
+            @Nonnull Nifty nifty, @Nonnull Screen screen, @Nonnull Element element, @Nonnull Parameters parameter) {
         super.bind(nifty, screen, element, parameter);
         niftyInstance = nifty;
         currentScreen = screen;
@@ -98,6 +101,7 @@ public class DialogInputControl extends WindowControl implements DialogInput, Ev
         maxLength = parameter.getAsInteger("maxLength", 65535);
 
         description = parameter.getWithDefault("description", "");
+        initialText = parameter.getWithDefault("initialText", "");
 
         alreadyClosed = false;
     }
@@ -108,27 +112,48 @@ public class DialogInputControl extends WindowControl implements DialogInput, Ev
         assert buttonLabelRight != null : "Control was not bound correctly";
         assert description != null : "Control was not bound correctly";
 
-        setButtonLabel(DialogInput.DialogButton.LeftButton, buttonLabelLeft);
-        setButtonLabel(DialogInput.DialogButton.RightButton, buttonLabelRight);
+        setButtonLabel(DialogButton.LeftButton, buttonLabelLeft);
+        setButtonLabel(DialogButton.RightButton, buttonLabelRight);
         setDescription(description);
         setMaximalLength(maxLength);
+        setInputText(initialText);
 
         super.onStartScreen();
 
-        final Element element = getElement();
-        final Element parent = element.getParent();
+        Element element = getElement();
+        Element parent = element.getParent();
 
-        final int x = (parent.getWidth() - element.getWidth()) / 2;
-        final int y = (parent.getHeight() - element.getHeight()) / 2;
+        int x = (parent.getWidth() - element.getWidth()) / 2;
+        int y = (parent.getHeight() - element.getHeight()) / 2;
 
-        element.setConstraintX(new SizeValue(Integer.toString(x) + "px"));
-        element.setConstraintY(new SizeValue(Integer.toString(y) + "px"));
+        element.setConstraintX(SizeValue.px(x));
+        element.setConstraintY(SizeValue.px(y));
 
         parent.layoutElements();
+
+        element.addInputHandler(new KeyInputHandler() {
+            @Override
+            public boolean keyEvent(@Nonnull NiftyInputEvent inputEvent) {
+                if (inputEvent instanceof NiftyStandardInputEvent) {
+                    switch ((NiftyStandardInputEvent) inputEvent) {
+                        case SubmitText:
+                            fireResponse(DialogButton.LeftButton);
+                            return true;
+                        case Escape:
+                            fireResponse(DialogButton.RightButton);
+                            return true;
+                        default:
+                            return false;
+                    }
+                }
+
+                return false;
+            }
+        });
     }
 
     @Override
-    public void setButtonLabel(@Nonnull final DialogButton button, @Nonnull final String label) {
+    public void setButtonLabel(@Nonnull DialogButton button, @Nonnull String label) {
         Button buttonControl = null;
         switch (button) {
             case LeftButton:
@@ -148,17 +173,13 @@ public class DialogInputControl extends WindowControl implements DialogInput, Ev
     }
 
     @Override
-    public void setMaximalLength(final int length) {
-        final TextField field = getContent().findNiftyControl("#input", TextField.class);
-        if (field == null) {
-            throw new IllegalArgumentException("Failed to fetch input field.");
-        }
-        field.setMaxLength(length);
+    public void setMaximalLength(int length) {
+        getTextField().setMaxLength(length);
     }
 
     @Override
-    public void setDescription(@Nonnull final String text) {
-        final Label label = getContent().findNiftyControl("#description", Label.class);
+    public void setDescription(@Nonnull String text) {
+        Label label = getContent().findNiftyControl("#description", Label.class);
         if (label == null) {
             throw new IllegalArgumentException("Failed to fetch description label.");
         }
@@ -166,22 +187,31 @@ public class DialogInputControl extends WindowControl implements DialogInput, Ev
     }
 
     @Override
-    public void onEvent(@Nonnull final String topic, final ButtonClickedEvent data) {
-        assert niftyInstance != null : "Control was not bound correctly.";
+    public void setFocus() {
+        bringToFront();
+        Element textField = getTextField().getElement();
+        if (textField == null) {
+            throw new IllegalStateException("Element of the text field is null. WTF?!");
+        }
+        textField.setFocus();
+    }
 
+    @Override
+    public void onEvent(@Nonnull String topic, ButtonClickedEvent data) {
+        if (topic.contains("#buttonLeft")) {
+            fireResponse(DialogButton.LeftButton);
+        } else {
+            fireResponse(DialogButton.RightButton);
+        }
+    }
+
+    private void fireResponse(@Nonnull DialogButton button) {
+        assert niftyInstance != null : "Control was not bound correctly.";
         if (alreadyClosed) {
             return;
         }
 
-        if (topic.contains("#buttonLeft")) {
-            niftyInstance.publishEvent(getId(),
-                                       new DialogInputConfirmedEvent(dialogId, DialogInput.DialogButton.LeftButton,
-                                                                     getInputText()));
-        } else {
-            niftyInstance.publishEvent(getId(),
-                                       new DialogInputConfirmedEvent(dialogId, DialogInput.DialogButton.RightButton,
-                                                                     getInputText()));
-        }
+        niftyInstance.publishEvent(getId(), new DialogInputConfirmedEvent(dialogId, button, getInputText()));
         closeWindow();
     }
 
@@ -196,18 +226,27 @@ public class DialogInputControl extends WindowControl implements DialogInput, Ev
         alreadyClosed = true;
     }
 
-    /**
-     * Get the text that was typed into the input area of this control.
-     *
-     * @return the text of the input area
-     */
     @Nonnull
     private String getInputText() {
-        final TextField field = getContent().findNiftyControl("#input", TextField.class);
-        if (field == null) {
-            throw new IllegalArgumentException("Failed to fetch input field.");
+        return getTextField().getRealText();
+    }
+
+    private void setInputText(@Nonnull CharSequence text) {
+        getTextField().setText(text);
+    }
+
+    @Nonnull
+    private TextField getTextField() {
+        Element content = getContent();
+        if (content == null) {
+            throw new IllegalStateException("Control doesn't seem to be bound properly. Content is null.");
         }
 
-        return field.getRealText();
+        TextField inputArea = content.findNiftyControl("#input", TextField.class);
+        if (inputArea == null) {
+            throw new IllegalStateException("Control is not bound correctly or the underlying object is faulty. Input" +
+                                                    " area not available.");
+        }
+        return inputArea;
     }
 }

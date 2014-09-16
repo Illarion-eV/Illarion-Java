@@ -24,8 +24,8 @@
                 <panel height="5px" width="1px"/>
                 <panel id="#buttons" childLayout="center" visibleToMouse="true" width="380px">
                     <panel childLayout="horizontal" align="center">
-                        <control name="button" id="#buttonLeft" label="OK" width="80px"/>
-                        <control name="button" id="#buttonRight" label="Cancel" width="80px"/>
+                        <control name="button" id="#buttonLeft" label="OK" width="90px" marginRight="5px"/>
+                        <control name="button" id="#buttonRight" label="Cancel" width="90px" marginLeft="5px"/>
                     </panel>
                 </panel>
             </panel>

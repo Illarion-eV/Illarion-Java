@@ -17,6 +17,7 @@ package illarion.client.world;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 import illarion.client.Login;
+import illarion.client.gui.DialogType;
 import illarion.client.net.client.RequestAppearanceCmd;
 import illarion.client.net.server.events.DialogMerchantReceivedEvent;
 import illarion.client.net.server.events.OpenContainerEvent;
@@ -225,7 +226,7 @@ public final class Player {
             return;
         }
 
-        if (event.isClosingDialogType(CloseDialogEvent.DialogType.Merchant)) {
+        if (event.isClosingDialogType(DialogType.Merchant)) {
             if (event.getDialogId() == merchantDialog.getId()) {
                 MerchantList oldList = merchantDialog;
                 merchantDialog = null;
@@ -245,7 +246,7 @@ public final class Player {
         merchantDialog = list;
 
         if (oldList != null) {
-            EventBus.publish(new CloseDialogEvent(oldList.getId(), CloseDialogEvent.DialogType.Merchant));
+            EventBus.publish(new CloseDialogEvent(oldList.getId(), DialogType.Merchant));
         }
     }
 

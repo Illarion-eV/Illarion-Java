@@ -34,21 +34,14 @@ public final class DialogMerchantBuyEvent extends DialogEvent {
     private final MerchantListEntry item;
 
     /**
-     * The index of the item that is bought.
-     */
-    private final int itemIndex;
-
-    /**
      * Create a new instance of this event and set the ID of the dialog that was used to buy items from.
      *
      * @param id the ID of the dialog
      * @param buyItem the item to buy
-     * @param buyIndex the index of the item to buy
      */
-    public DialogMerchantBuyEvent(final int id, @Nonnull final MerchantListEntry buyItem, final int buyIndex) {
+    public DialogMerchantBuyEvent(int id, @Nonnull MerchantListEntry buyItem) {
         super(id);
         item = buyItem;
-        itemIndex = buyIndex;
     }
 
     /**
@@ -59,14 +52,5 @@ public final class DialogMerchantBuyEvent extends DialogEvent {
     @Nonnull
     public MerchantListEntry getItem() {
         return item;
-    }
-
-    /**
-     * Get the index of the item the player buys.
-     *
-     * @return the index of the item
-     */
-    public int getItemIndex() {
-        return itemIndex;
     }
 }

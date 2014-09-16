@@ -20,6 +20,7 @@ import illarion.compile.impl.Compile;
 import javax.annotation.Nonnull;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 
 /**
  * This enumeration contains all the compiler types the compiler knows.
@@ -44,7 +45,7 @@ public enum CompilerType {
 
     CompilerType(@Nonnull String compilerClass, @Nonnull String... extensions) {
         this.compilerClass = compilerClass;
-        this.extensions = extensions;
+        this.extensions = Arrays.copyOf(extensions, extensions.length);
     }
 
     /**
@@ -54,7 +55,7 @@ public enum CompilerType {
      */
     public Compile getImplementation() {
         try {
-            return (Compile) Class.forName(compilerClass).newInstance();
+            return (Compile) Class.forName(compilerClass).getConstructor().newInstance();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -66,7 +67,7 @@ public enum CompilerType {
      * @param file the file to check
      * @return {@code true} in case this file is valid for this compiler
      */
-    public boolean isValidFile(@Nonnull final Path file) {
+    public boolean isValidFile(@Nonnull Path file) {
         if (!Files.isReadable(file)) {
             return false;
         }

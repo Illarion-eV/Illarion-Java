@@ -27,6 +27,9 @@ import javax.annotation.Nonnull;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface MerchantListEntry {
+    enum EntryType {
+        Selling, BuyPrimary, BuySecondary
+    }
     /**
      * Get the image that is supposed to be displayed in the entry.
      *
@@ -65,4 +68,12 @@ public interface MerchantListEntry {
      * @return the index
      */
     int getIndex();
+
+    /**
+     * Get the type of the entry.
+     *
+     * @return the entry type
+     */
+    @Nonnull
+    EntryType getEntryType();
 }

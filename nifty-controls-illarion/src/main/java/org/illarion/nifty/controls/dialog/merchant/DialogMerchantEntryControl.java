@@ -17,12 +17,13 @@ package org.illarion.nifty.controls.dialog.merchant;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.AbstractController;
-import de.lessvoid.nifty.controls.ListBox;
 import de.lessvoid.nifty.controls.Parameters;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.screen.Screen;
 import org.illarion.nifty.controls.MerchantListEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,9 +35,10 @@ import javax.annotation.Nullable;
  */
 @Deprecated
 public final class DialogMerchantEntryControl extends AbstractController {
-    private int index;
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(DialogMerchantEntryControl.class);
     @Nullable
-    private ListBox<MerchantListEntry> listBox;
+    private MerchantListEntry listEntry;
     @Nullable
     private DialogMerchantControl merchantControl;
     private boolean selectable;
@@ -45,12 +47,9 @@ public final class DialogMerchantEntryControl extends AbstractController {
     @Override
     public void bind(
             @Nonnull Nifty nifty, @Nonnull Screen screen, @Nonnull Element element, @Nonnull Parameters parameter) {
+        bind(element);
         selectable = Boolean.parseBoolean(parameter.get("selectable"));
-
-        if (selectable) {
-            listBox = (ListBox<MerchantListEntry>) getParent(element, 4).getNiftyControl(ListBox.class);
-            merchantControl = getParent(element, 12).getNiftyControl(DialogMerchantControl.class);
-        }
+        merchantControl = getParent(element, 12).getNiftyControl(DialogMerchantControl.class);
     }
 
     private static Element getParent(Element root, int grade) {
@@ -70,10 +69,6 @@ public final class DialogMerchantEntryControl extends AbstractController {
         return false;
     }
 
-    public void setIndex(int value) {
-        index = value;
-    }
-
     /**
      * This function is called in case someone clicks on the control entry.
      *
@@ -81,8 +76,31 @@ public final class DialogMerchantEntryControl extends AbstractController {
      * @param y the y coordinate of the mouse
      */
     public void onMultiClick(int x, int y, int clickCount) {
-        if (selectable && (clickCount == 2) && (merchantControl != null)) {
-            merchantControl.buyItem(index);
+        if (selectable && (clickCount == 2) && (merchantControl != null) && (listEntry != null)) {
+            log.debug("Received double click on item. Sending out a buy request for: {}", listEntry);
+            merchantControl.buyItem(listEntry);
         }
+    }
+
+    /**
+     * This function is called in case someone performs a mouse over, over the merchant entry.
+     * <p />
+     * Called by reflection. The reference is in the XML file.
+     * <p />
+     * This function will initiate the request for a look at.
+     */
+    public void onMouseOver() {
+        if ((merchantControl != null) && (listEntry != null)) {
+            merchantControl.lookAtItem(listEntry);
+        }
+    }
+
+    public void setListEntry(@Nullable MerchantListEntry listEntry) {
+        this.listEntry = listEntry;
+    }
+
+    @Nullable
+    public MerchantListEntry getListEntry() {
+        return listEntry;
     }
 }

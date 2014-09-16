@@ -40,9 +40,9 @@ public final class DialogMerchantReceivedEvent extends AbstractDialogReceivedEve
      * @param tradeItems a array of items that can be bought from the NPC
      */
     public DialogMerchantReceivedEvent(
-            final int dialogId,
-            final String dialogTitle,
-            @Nonnull final MerchantItem[] tradeItems) {
+            int dialogId,
+            String dialogTitle,
+            @Nonnull MerchantItem[] tradeItems) {
         super(dialogId, dialogTitle);
         items = Arrays.copyOf(tradeItems, tradeItems.length);
     }
@@ -62,7 +62,7 @@ public final class DialogMerchantReceivedEvent extends AbstractDialogReceivedEve
      * @param index the index of the item
      * @return the merchant item
      */
-    public MerchantItem getItem(final int index) {
+    public MerchantItem getItem(int index) {
         return items[index];
     }
 }

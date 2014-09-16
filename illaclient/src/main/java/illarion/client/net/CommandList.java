@@ -107,6 +107,11 @@ public final class CommandList {
     public static final int CMD_INTRODUCE = 0xF6;
 
     /**
+     * Client command to name a player.
+     */
+    public static final int CMD_NAME_PLAYER = 0xF7;
+
+    /**
      * Client command to tell the server that the connection between client and server is still active.
      */
     public static final int CMD_KEEPALIVE = 0xD8; // NO_UCD
@@ -144,7 +149,7 @@ public final class CommandList {
     /**
      * Client command to look at a item on a tile.
      */
-    public static final int CMD_LOOKAT_TILE = 0xFF;
+    public static final int CMD_LOOK_AT_MAP_ITEM = 0xFF;
 
     /**
      * Client command to send the map dimensions the client needs.

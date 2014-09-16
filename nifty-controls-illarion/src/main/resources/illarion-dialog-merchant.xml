@@ -36,7 +36,7 @@
                 </panel>
             </panel>
         </panel>
-        <interact onMultiClick="onMultiClick()"/>
+        <interact onMultiClick="onMultiClick()" onMouseOver="onMouseOver()" onMouseWheel="mouseWheel()"/>
     </controlDefinition>
 
     <controlDefinition name="dialog-merchant-sell" style="illarion-dialog-merchant-sell">
@@ -52,14 +52,16 @@
     </controlDefinition>
 
     <controlDefinition name="dialog-merchant-buy" style="illarion-dialog-merchant-buy" width="100%">
-        <panel childLayout="vertical">
-            <control name="label" style="nifty-label" wrap="true" width="100%" textHAlign="left"
-                     text="${illarion-dialog-merchant-bundle.buyDescription}" margin="1px"/>
-            <control name="listBox" id="#buyList" vertical="on" horizontal="off"
-                     displayItems="8" selection="Disabled"
-                     viewConverterClass="org.illarion.nifty.controls.dialog.merchant.MerchantItemListViewConverter">
-                <control name="dialog-merchant-list-entry" selectable="false"/>
-            </control>
+        <panel childLayout="center">
+            <panel width="100%" childLayout="vertical">
+                <control name="label" style="nifty-label" wrap="true" width="100%" textHAlign="left"
+                         text="${illarion-dialog-merchant-bundle.buyDescription}" margin="1px"/>
+                <control name="listBox" id="#buyList" vertical="on" horizontal="off"
+                         displayItems="8" selection="Disabled"
+                         viewConverterClass="org.illarion.nifty.controls.dialog.merchant.MerchantItemListViewConverter">
+                    <control name="dialog-merchant-list-entry" selectable="false"/>
+                </control>
+            </panel>
         </panel>
     </controlDefinition>
 

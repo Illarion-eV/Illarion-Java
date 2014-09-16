@@ -35,9 +35,9 @@ import javax.annotation.Nonnull;
 @SuppressWarnings("UnusedDeclaration")
 public final class MerchantItemListViewConverter implements ListBox.ListBoxViewConverter<MerchantListEntry> {
     @Override
-    public void display(@Nonnull final Element listBoxItem, @Nonnull final MerchantListEntry item) {
-        final Element itemImage = listBoxItem.findElementById("#imageDisplay");
-        final NiftyImage itemPicture = item.getItemImage();
+    public void display(@Nonnull Element listBoxItem, @Nonnull MerchantListEntry item) {
+        Element itemImage = listBoxItem.findElementById("#imageDisplay");
+        NiftyImage itemPicture = item.getItemImage();
         itemImage.getRenderer(ImageRenderer.class).setImage(itemPicture);
 
         int imageHeight = itemPicture.getHeight();
@@ -56,13 +56,13 @@ public final class MerchantItemListViewConverter implements ListBox.ListBoxViewC
         itemImage.setConstraintHeight(SizeValue.px(imageHeight));
         itemImage.setConstraintWidth(SizeValue.px(imageWidth));
 
-        final Element title = listBoxItem.findElementById("#itemTitle");
+        Element title = listBoxItem.findElementById("#itemTitle");
         title.getRenderer(TextRenderer.class).setText(item.getName());
 
-        final Money money = item.getPrice();
-        final int gold = money.getGold();
-        final int silver = money.getSilver();
-        final int copper = money.getCopper();
+        Money money = item.getPrice();
+        int gold = money.getGold();
+        int silver = money.getSilver();
+        int copper = money.getCopper();
 
         applyMoneyValues(gold, listBoxItem.findElementById("#moneyGoldCount"),
                          listBoxItem.findElementById("#moneyGoldImage"));
@@ -71,7 +71,7 @@ public final class MerchantItemListViewConverter implements ListBox.ListBoxViewC
         applyMoneyValues(copper, listBoxItem.findElementById("#moneyCopperCount"),
                          listBoxItem.findElementById("#moneyCopperImage"));
 
-        final Element bundleSizeDisplay = listBoxItem.findElementById("#bundleSizeDisplay");
+        Element bundleSizeDisplay = listBoxItem.findElementById("#bundleSizeDisplay");
         if (ItemCount.isGreaterOne(item.getBundleSize())) {
             bundleSizeDisplay.setVisible(true);
             bundleSizeDisplay.getRenderer(TextRenderer.class)
@@ -82,7 +82,7 @@ public final class MerchantItemListViewConverter implements ListBox.ListBoxViewC
 
         listBoxItem.layoutElements();
 
-        listBoxItem.getNiftyControl(DialogMerchantEntryControl.class).setIndex(item.getIndex());
+        listBoxItem.getNiftyControl(DialogMerchantEntryControl.class).setListEntry(item);
     }
 
     /**
@@ -93,7 +93,7 @@ public final class MerchantItemListViewConverter implements ListBox.ListBoxViewC
      * @param imageDisplay the image display for this part of money
      */
     private static void applyMoneyValues(
-            final int money, @Nonnull final Element textDisplay, @Nonnull final Element imageDisplay) {
+            int money, @Nonnull Element textDisplay, @Nonnull Element imageDisplay) {
         if (money > 0) {
             textDisplay.getRenderer(TextRenderer.class).setText(Integer.toString(money));
             textDisplay.showWithoutEffects();
@@ -112,7 +112,7 @@ public final class MerchantItemListViewConverter implements ListBox.ListBoxViewC
     }
 
     @Override
-    public int getWidth(@Nonnull final Element element, @Nonnull final MerchantListEntry item) {
+    public int getWidth(@Nonnull Element element, @Nonnull MerchantListEntry item) {
         return element.getWidth();
     }
 }

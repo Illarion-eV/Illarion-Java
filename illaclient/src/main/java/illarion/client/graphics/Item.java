@@ -250,9 +250,9 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
                 return false;
             }
 
-            if (!LookAtTracker.isLookAtObject(parentTile)) {
-                LookAtTracker.setLookAtObject(parentTile);
-                parentTile.getInteractive().lookAt();
+            if (!LookAtTracker.isLookAtObject(this)) {
+                LookAtTracker.setLookAtObject(this);
+                parentTile.getInteractive().lookAt(this);
             }
             return true;
         }
@@ -381,6 +381,11 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         return false;
     }
 
+    @Override
+    protected boolean isShown() {
+        return true;
+    }
+
     /**
      * Set number of stacked items.
      *
@@ -403,8 +408,6 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
 
     @Override
     public void show() {
-        // add to display list
-        super.show();
         if (animation != null) {
             animation.addTarget(this, true);
         }
@@ -415,7 +418,6 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         if (animation != null) {
             animation.removeTarget(this);
         }
-        super.hide();
     }
 
     @Override

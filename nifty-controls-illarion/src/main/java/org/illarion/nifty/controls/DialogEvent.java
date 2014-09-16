@@ -39,7 +39,7 @@ public class DialogEvent implements NiftyEvent {
      *
      * @param id the ID of the dialog
      */
-    public DialogEvent(final int id) {
+    public DialogEvent(int id) {
         dialogId = id;
     }
 

@@ -181,6 +181,10 @@ public final class Tooltip {
     @Override
     @Nonnull
     public String toString() {
-        return "Item Tooltip: " + name;
+        return "Item Tooltip: " + (isValid() ? name : "(invalid)");
+    }
+
+    public boolean isValid() {
+        return !name.isEmpty();
     }
 }

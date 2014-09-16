@@ -502,6 +502,12 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("bookDisplayPosY", "15px");
         cfg.setDefault("skillWindowPosX", "200px");
         cfg.setDefault("skillWindowPosY", "20px");
+        cfg.setDefault("backpackDisplayPosX", "100px");
+        cfg.setDefault("backpackDisplayPosY", "10px");
+        cfg.setDefault("depotDisplayPosX", "150px");
+        cfg.setDefault("depotDisplayPosY", "15px");
+        cfg.setDefault("bagDisplayPosX", "200px");
+        cfg.setDefault("bagDisplayPosY", "20px");
         cfg.setDefault("questWindowPosX", "100px");
         cfg.setDefault("questWindowPosY", "100px");
         cfg.setDefault("questShowFinished", false);

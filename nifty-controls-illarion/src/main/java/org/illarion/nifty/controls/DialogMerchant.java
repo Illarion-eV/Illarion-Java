@@ -16,10 +16,12 @@
 package org.illarion.nifty.controls;
 
 import de.lessvoid.nifty.controls.Window;
+import illarion.common.types.Rectangle;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -34,14 +36,14 @@ public interface DialogMerchant extends Window {
      *
      * @param entries the list of entries to add to the list of sold items
      */
-    void addAllSellingItems(@Nonnull List<MerchantListEntry> entries);
+    void addAllSellingItems(@Nonnull Collection<MerchantListEntry> entries);
 
     /**
      * Add all items in the supplied list to the list of items bought by the NPC.
      *
      * @param entries the list of entries to add to the list of bought items
      */
-    void addAllBuyingItems(@Nonnull List<MerchantListEntry> entries);
+    void addAllBuyingItems(@Nonnull Collection<MerchantListEntry> entries);
 
     /**
      * Set the ID of the dialog.
@@ -104,4 +106,13 @@ public interface DialogMerchant extends Window {
      * Remove all items from both the buying and the selling list.
      */
     void clearItems();
+
+    /**
+     * Get the render area for a specific merchant list entry.
+     *
+     * @param entry the entry
+     * @return the render area
+     */
+    @Nonnull
+    Rectangle getRenderAreaForEntry(@Nonnull MerchantListEntry entry);
 }

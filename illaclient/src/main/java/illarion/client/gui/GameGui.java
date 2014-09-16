@@ -52,12 +52,28 @@ public interface GameGui {
     ContainerGui getContainerGui();
 
     /**
+     * Get the GUI controller that is used to display the dialogs.
+     *
+     * @return the dialog GUI control
+     */
+    @Nonnull
+    DialogGui getDialogGui();
+
+    /**
      * Get the GUI controller that is used to display the crafting dialogs.
      *
      * @return the crafting dialog GUI control
      */
     @Nonnull
     DialogCraftingGui getDialogCraftingGui();
+
+    /**
+     * Get the GUI controller that is used to display the merchant dialogs.
+     *
+     * @return the crafting dialog GUI control
+     */
+    @Nonnull
+    DialogMerchantGui getDialogMerchantGui();
 
     /**
      * Get the GUI controller that is used to display the input dialogs.

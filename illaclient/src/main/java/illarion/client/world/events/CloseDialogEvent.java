@@ -15,46 +15,19 @@
  */
 package illarion.client.world.events;
 
+import illarion.client.gui.DialogType;
+
+import javax.annotation.Nonnull;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.Enumeration;
+
 /**
  * This event is used to close a specified dialog on the GUI.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class CloseDialogEvent {
-    /**
-     * This enumerator is used to define the type of dialog this event is supposed to close.
-     */
-    public enum DialogType {
-        /**
-         * Ignore the type just close any dialog fitting the search parameters.
-         */
-        Any,
-
-        /**
-         * This event targets a message dialog that is supposed to be closed.
-         */
-        Message,
-
-        /**
-         * This event targets a input dialog that is supposed to be closed.
-         */
-        Input,
-
-        /**
-         * This event targets a merchant dialog that is supposed to be closed.
-         */
-        Merchant,
-
-        /**
-         * The event targets a crafting dialog that is supposed to be closed.
-         */
-        Crafting,
-
-        /**
-         * This event targets a selection dialog that is supposed to be closed.
-         */
-        Selection
-    }
 
     /**
      * This constant is supposed to be used as dialog ID, in case all dialogs if the selected type are supposed to be
@@ -70,17 +43,27 @@ public final class CloseDialogEvent {
     /**
      * The type of the dialog that is supposed to be closed.
      */
-    private final DialogType dialogType;
+    @Nonnull
+    private final Collection<DialogType> dialogTypes;
 
     /**
      * The default constructor of this event.
      *
      * @param id the ID of the dialog that is supposed to be closed or {@link #ALL_DIALOGS}
-     * @param type the type of the dialog that is supposed to be closed
      */
-    public CloseDialogEvent(final int id, final DialogType type) {
+    public CloseDialogEvent(int id) {
         dialogId = id;
-        dialogType = type;
+        dialogTypes = EnumSet.allOf(DialogType.class);
+    }
+
+    /**
+     * The default constructor of this event.
+     *
+     * @param id the ID of the dialog that is supposed to be closed or {@link #ALL_DIALOGS}
+     */
+    public CloseDialogEvent(int id, @Nonnull DialogType firstType, @Nonnull DialogType... moreTypes) {
+        dialogId = id;
+        dialogTypes = EnumSet.of(firstType, moreTypes);
     }
 
     /**
@@ -93,24 +76,12 @@ public final class CloseDialogEvent {
     }
 
     /**
-     * Get the type of the dialog that is supposed to be closed.
-     *
-     * @return the dialog that is supposed to be closed
-     */
-    public DialogType getDialogType() {
-        return dialogType;
-    }
-
-    /**
      * Check if this event is closing the specified dialog type.
      *
      * @param type the type to test
      * @return {@code true} in case the dialog is closing this kind of dialog
      */
-    public boolean isClosingDialogType(final DialogType type) {
-        if (dialogType == DialogType.Any) {
-            return true;
-        }
-        return dialogType == type;
+    public boolean isClosingDialogType(@Nonnull DialogType type) {
+        return dialogTypes.contains(type);
     }
 }

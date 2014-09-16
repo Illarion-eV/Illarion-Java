@@ -17,7 +17,7 @@
 apply plugin: 'idea'
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.0'
+    gradleVersion = '2.1'
 }
 
 idea {
@@ -88,7 +88,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.sf.proguard', name: 'proguard-gradle', version: '4.11'
+        classpath group: 'net.sf.proguard', name: 'proguard-gradle', version: '5.0'
     }
 }
 

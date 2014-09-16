@@ -23,13 +23,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 /**
- * Client Command: Looking at a tile on the map ({@link CommandList#CMD_LOOKAT_TILE}).
+ * Client Command: Looking at a item on the map. ({@link CommandList#CMD_LOOK_AT_MAP_ITEM}).
  *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @Immutable
-public final class LookatTileCmd extends AbstractCommand {
+public final class LookAtMapItemCmd extends AbstractCommand {
     /**
      * The position on the map we are going to look at.
      */
@@ -37,24 +37,35 @@ public final class LookatTileCmd extends AbstractCommand {
     private final Location location;
 
     /**
+     * The position of the item inside the stack.
+     */
+    private final short stackPosition;
+
+    /**
      * Default constructor for the look at tile command.
      *
      * @param tileLocation the location of the tile to look at
+     * @param position the position of the item inside the stack
      */
-    public LookatTileCmd(@Nonnull final Location tileLocation) {
-        super(CommandList.CMD_LOOKAT_TILE);
+    public LookAtMapItemCmd(@Nonnull Location tileLocation, int position) {
+        super(CommandList.CMD_LOOK_AT_MAP_ITEM);
+        if (position < 0) {
+            throw new IllegalArgumentException("Position has to be 0 or more. Got: " + position);
+        }
         location = new Location(tileLocation);
+        stackPosition = (short) position;
     }
 
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) {
         writer.writeLocation(location);
+        writer.writeUByte(stackPosition);
     }
 
     @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("position: " + location.toString());
+        return toString(location + " Stack position: " + stackPosition);
     }
 }

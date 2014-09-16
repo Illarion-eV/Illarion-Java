@@ -15,6 +15,8 @@
  */
 package illarion.client.net.server;
 
+import illarion.client.gui.DialogType;
+import illarion.client.gui.GameGui;
 import illarion.client.gui.Tooltip;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
@@ -39,7 +41,7 @@ public final class LookAtDialogItemMsg extends AbstractGuiMsg {
     private int secondarySlotId;
     private Tooltip tooltip;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LookAtDialogItemMsg.class);
+    private static final Logger log = LoggerFactory.getLogger(LookAtDialogItemMsg.class);
 
     /**
      * Decode the tile look at text data the receiver got and prepare it for the execution.
@@ -48,19 +50,20 @@ public final class LookAtDialogItemMsg extends AbstractGuiMsg {
      * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         dialogId = reader.readInt();
         type = reader.readUByte();
         switch (type) {
             case 0:
                 slotId = reader.readUByte();
+                secondarySlotId = -1;
                 break;
             case 1:
                 slotId = reader.readUByte();
                 secondarySlotId = reader.readUByte();
                 break;
             default:
-                LOGGER.error("Illegal type ID: " + Integer.toString(type));
+                log.error("Illegal type ID: {}", type);
                 return;
         }
 
@@ -74,16 +77,24 @@ public final class LookAtDialogItemMsg extends AbstractGuiMsg {
      */
     @Override
     public boolean executeUpdate() {
+        GameGui gui = World.getGameGui();
         switch (type) {
             case 0:
-                World.getGameGui().getDialogCraftingGui().showCraftItemTooltip(dialogId, slotId, tooltip);
+                gui.getDialogCraftingGui().showCraftItemTooltip(dialogId, slotId, tooltip);
                 break;
             case 1:
-                World.getGameGui().getDialogCraftingGui()
-                        .showCraftIngredientTooltip(dialogId, slotId, secondarySlotId, tooltip);
+                DialogType dialogType = gui.getDialogGui().getDialogType(dialogId, DialogType.Crafting,
+                                                                         DialogType.Merchant);
+                if (dialogType == null) {
+                    log.warn("Failed to assign dialog item look at to a fitting dialog.");
+                } else if (dialogType == DialogType.Crafting) {
+                    gui.getDialogCraftingGui().showCraftIngredientTooltip(dialogId, slotId, secondarySlotId, tooltip);
+                } else if (dialogType == DialogType.Merchant) {
+                    gui.getDialogMerchantGui().showMerchantListTooltip(dialogId, slotId, secondarySlotId, tooltip);
+                }
                 break;
             default:
-                LOGGER.error("Illegal type ID " + Integer.toString(type));
+                log.error("Illegal type ID {}", type);
         }
 
         return true;

@@ -38,6 +38,11 @@ public final class LookAtMapItemMsg extends AbstractGuiMsg {
     private Location location;
 
     /**
+     * The position of the referenced item.
+     */
+    private int stackPosition;
+
+    /**
      * The tooltip that is displayed for the item on the specified location.
      */
     private Tooltip tooltip;
@@ -49,8 +54,9 @@ public final class LookAtMapItemMsg extends AbstractGuiMsg {
      * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         location = decodeLocation(reader);
+        stackPosition = reader.readUByte();
         tooltip = new Tooltip(reader);
     }
 
@@ -61,7 +67,7 @@ public final class LookAtMapItemMsg extends AbstractGuiMsg {
      */
     @Override
     public boolean executeUpdate() {
-        World.getGameGui().getGameMapGui().showItemTooltip(location, tooltip);
+        World.getGameGui().getGameMapGui().showItemTooltip(location, stackPosition, tooltip);
         return true;
     }
 

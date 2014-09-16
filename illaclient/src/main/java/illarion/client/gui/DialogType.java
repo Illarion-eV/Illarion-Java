@@ -13,25 +13,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package org.illarion.nifty.controls;
-
-import javax.annotation.concurrent.Immutable;
-import javax.annotation.concurrent.ThreadSafe;
+package illarion.client.gui;
 
 /**
- * This event is fired in case the player closes the merchant dialog.
- *
- * @author Martin Karing &lt;nitram@illarion.org&gt;
+ * The enum that stores the different values for a dialog type.
  */
-@ThreadSafe
-@Immutable
-public final class DialogMerchantCloseEvent extends DialogEvent {
-    /**
-     * Create a new instance of this event and set the ID of the dialog that was closed.
-     *
-     * @param id the ID of the dialog
-     */
-    public DialogMerchantCloseEvent(int id) {
-        super(id);
-    }
+public enum DialogType {
+    Message,
+    Input,
+    Merchant,
+    Crafting,
+    Selection
 }

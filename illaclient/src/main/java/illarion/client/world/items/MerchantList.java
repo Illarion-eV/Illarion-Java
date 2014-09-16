@@ -15,6 +15,7 @@
  */
 package illarion.client.world.items;
 
+import illarion.client.gui.DialogType;
 import illarion.client.net.client.BuyTradingItem;
 import illarion.client.net.client.CloseDialogTradingCmd;
 import illarion.client.world.World;
@@ -23,6 +24,7 @@ import illarion.common.types.ItemCount;
 import org.bushe.swing.event.EventBus;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This classes are used to store to information about the goods a merchant is trading.
@@ -47,7 +49,7 @@ public final class MerchantList {
      * @param id the ID used to refer to this list
      * @param count the amount of items in this list
      */
-    public MerchantList(final int id, final int count) {
+    public MerchantList(int id, int count) {
         listId = id;
         itemList = new MerchantItem[count];
     }
@@ -58,7 +60,7 @@ public final class MerchantList {
      * @param index the index of the item to set
      * @param item the item to set at this slot
      */
-    public void setItem(final int index, final MerchantItem item) {
+    public void setItem(int index, @Nonnull MerchantItem item) {
         itemList[index] = item;
     }
 
@@ -69,8 +71,23 @@ public final class MerchantList {
      * @return the merchant item at this entry
      * @throws ArrayIndexOutOfBoundsException in case the index is too large or too small
      */
-    public MerchantItem getItem(final int index) {
-        return itemList[index];
+    @Nonnull
+    public MerchantItem getItem(int index) {
+        MerchantItem item = itemList[index];
+        if (item == null) {
+            throw new IllegalStateException("Item on the index " + index + " is not set yet.");
+        }
+        return item;
+    }
+
+    @Nullable
+    public MerchantItem getItem(@Nonnull MerchantItem.MerchantItemType type, int index) {
+        for (MerchantItem item : itemList) {
+            if ((item != null) && (item.getType() == type) && (item.getIndex() == index)) {
+                return item;
+            }
+        }
+        return null;
     }
 
     /**
@@ -96,7 +113,7 @@ public final class MerchantList {
      */
     public void closeDialog() {
         World.getNet().sendCommand(new CloseDialogTradingCmd(listId));
-        EventBus.publish(new CloseDialogEvent(listId, CloseDialogEvent.DialogType.Merchant));
+        EventBus.publish(new CloseDialogEvent(listId, DialogType.Merchant));
     }
 
     /**
@@ -104,7 +121,7 @@ public final class MerchantList {
      *
      * @param item the index of the item to buy
      */
-    public void buyItem(@Nonnull final MerchantItem item) {
+    public void buyItem(@Nonnull MerchantItem item) {
         buyItem(item, item.getBundleSize());
     }
 
@@ -113,8 +130,8 @@ public final class MerchantList {
      *
      * @param item the index of the item to buy
      */
-    public void buyItem(@Nonnull final MerchantItem item, @Nonnull final ItemCount count) {
-        if (itemList[item.getIndex()] != item) {
+    public void buyItem(@Nonnull MerchantItem item, @Nonnull ItemCount count) {
+        if (!itemList[item.getIndex()].equals(item)) {
             throw new IllegalArgumentException("This item is not part of this merchant list");
         }
         buyItem(item.getIndex(), count);
@@ -125,7 +142,7 @@ public final class MerchantList {
      *
      * @param index the index of the item to buy
      */
-    public void buyItem(final int index) {
+    public void buyItem(int index) {
         buyItem(getItem(index));
     }
 
@@ -135,7 +152,7 @@ public final class MerchantList {
      * @param index the index of the item to buy
      * @param count the amount of items to buy
      */
-    public void buyItem(final int index, @Nonnull final ItemCount count) {
+    public void buyItem(int index, @Nonnull ItemCount count) {
         World.getNet().sendCommand(new BuyTradingItem(listId, index, count));
     }
 }

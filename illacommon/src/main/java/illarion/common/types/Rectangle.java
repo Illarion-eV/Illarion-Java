@@ -58,11 +58,11 @@ public final class Rectangle implements Serializable {
         reset();
     }
 
-    public Rectangle(final int x, final int y, final int width, final int height) {
+    public Rectangle(int x, int y, int width, int height) {
         set(x, y, width, height);
     }
 
-    public Rectangle(@Nonnull final Rectangle other) {
+    public Rectangle(@Nonnull Rectangle other) {
         x0 = other.x0;
         x1 = other.x1;
         y0 = other.y0;
@@ -85,7 +85,7 @@ public final class Rectangle implements Serializable {
      *
      * @param other the rectangle that shall be added to the current instance
      */
-    public void add(@Nonnull final Rectangle other) {
+    public void add(@Nonnull Rectangle other) {
         if (isEmpty()) {
             set(other);
             return;
@@ -106,12 +106,12 @@ public final class Rectangle implements Serializable {
      * @return {@code true} in case this rectangle and the other one descripe the same rectangle
      */
     @Override
-    public boolean equals(@Nullable final Object o) {
+    public boolean equals(@Nullable Object o) {
         if (super.equals(o)) {
             return true;
         }
         if (o instanceof Rectangle) {
-            final Rectangle oRect = (Rectangle) o;
+            Rectangle oRect = (Rectangle) o;
             return (oRect.x0 == x0) && (oRect.x1 == x1) && (oRect.y0 == y0) && (oRect.y1 == y1);
         }
         return false;
@@ -230,14 +230,14 @@ public final class Rectangle implements Serializable {
      * @param x the change value for the x coordinate
      * @param y the change value for the y coordinate
      */
-    public void move(final int x, final int y) {
+    public void move(int x, int y) {
         x0 += x;
         x1 += x;
         y0 += y;
         y1 += y;
     }
 
-    public void expand(final int left, final int top, final int right, final int bottom) {
+    public void expand(int left, int top, int right, int bottom) {
         x0 -= left;
         x1 += right;
         y0 -= bottom;
@@ -250,7 +250,7 @@ public final class Rectangle implements Serializable {
      *
      * @param other the other rectangle
      */
-    public void intersect(@Nonnull final Rectangle other) {
+    public void intersect(@Nonnull Rectangle other) {
         x0 = Math.max(x0, other.x0);
         y0 = Math.max(y0, other.y0);
         x1 = Math.min(x1, other.x1);
@@ -267,7 +267,7 @@ public final class Rectangle implements Serializable {
      * @param other the second rectangle
      * @return {@code true} in case there is an intersection
      */
-    public boolean intersects(@Nonnull final Rectangle other) {
+    public boolean intersects(@Nonnull Rectangle other) {
         if ((x0 > other.x1) || (x1 < other.x0)) {
             return false;
         }
@@ -293,7 +293,7 @@ public final class Rectangle implements Serializable {
      * @param y the y coordinate of check
      * @return {@code true} in case the coordinates are inside the the rectangle
      */
-    public boolean isInside(final int x, final int y) {
+    public boolean isInside(int x, int y) {
         return (x >= x0) && (y >= y0) && (x < x1) && (y < y1);
     }
 
@@ -322,7 +322,7 @@ public final class Rectangle implements Serializable {
      * @param width the new width of this rectangle
      * @param height the new height of this rectangle
      */
-    public void set(final int x, final int y, final int width, final int height) {
+    public void set(int x, int y, int width, int height) {
         x0 = x;
         y0 = y;
         x1 = x + Math.max(0, width);
@@ -334,7 +334,7 @@ public final class Rectangle implements Serializable {
      *
      * @param org the rectangle that shall be copied
      */
-    public void set(@Nonnull final Rectangle org) {
+    public void set(@Nonnull Rectangle org) {
         x0 = org.x0;
         x1 = org.x1;
         y0 = org.y0;
@@ -358,5 +358,11 @@ public final class Rectangle implements Serializable {
      */
     public int getArea() {
         return getWidth() * getHeight();
+    }
+
+    @Override
+    @Nonnull
+    public String toString() {
+        return String.format("Rectangle(x:%1$d y:%2$d w:%3$d h:%4$d)", getX(), getY(), getWidth(), getHeight());
     }
 }

@@ -53,7 +53,7 @@ public class InteractiveMapTile implements Draggable, DropTarget, Usable {
      *
      * @param tile the instance that shall be copied
      */
-    public InteractiveMapTile(@Nonnull final InteractiveMapTile tile) {
+    public InteractiveMapTile(@Nonnull InteractiveMapTile tile) {
         parentTile = tile.parentTile;
     }
 
@@ -62,7 +62,7 @@ public class InteractiveMapTile implements Draggable, DropTarget, Usable {
      *
      * @param tile the tile this interactive class refers to
      */
-    public InteractiveMapTile(final MapTile tile) {
+    public InteractiveMapTile(MapTile tile) {
         parentTile = tile;
     }
 
@@ -86,13 +86,13 @@ public class InteractiveMapTile implements Draggable, DropTarget, Usable {
      * Drag something from a map tile to
      */
     @Override
-    public void dragTo(@Nonnull final InteractiveChar targetChar, @Nonnull final ItemCount count) {
+    public void dragTo(@Nonnull InteractiveChar targetChar, @Nonnull ItemCount count) {
         if (!canDrag()) {
             LOGGER.error("Finished dragging of tile that can't be dragged.");
             return;
         }
 
-        final MapTile tile = World.getMap().getMapAt(targetChar.getLocation());
+        MapTile tile = World.getMap().getMapAt(targetChar.getLocation());
         if (tile == null) {
             LOGGER.error("Dragged to a tile that does not exist.");
             return;
@@ -101,13 +101,13 @@ public class InteractiveMapTile implements Draggable, DropTarget, Usable {
     }
 
     @Override
-    public void dragTo(@Nonnull final InteractiveInventorySlot targetSlot, @Nonnull final ItemCount count) {
+    public void dragTo(@Nonnull InteractiveInventorySlot targetSlot, @Nonnull ItemCount count) {
         if (!canDrag()) {
             LOGGER.error("Finished dragging of tile that can't be dragged.");
             return;
         }
 
-        final ItemId topItemId = getTopItemId();
+        ItemId topItemId = getTopItemId();
         assert topItemId != null;
 
         if (!targetSlot.isAcceptingItem(topItemId)) {
@@ -123,7 +123,7 @@ public class InteractiveMapTile implements Draggable, DropTarget, Usable {
      * @param targetTile the tile to drag this tile to
      */
     @Override
-    public void dragTo(@Nonnull final InteractiveMapTile targetTile, @Nonnull final ItemCount count) {
+    public void dragTo(@Nonnull InteractiveMapTile targetTile, @Nonnull ItemCount count) {
         if (!canDrag()) {
             return;
         }
@@ -136,19 +136,19 @@ public class InteractiveMapTile implements Draggable, DropTarget, Usable {
     }
 
     @Override
-    public void dragTo(@Nonnull final InteractiveContainerSlot targetSlot, @Nonnull final ItemCount count) {
+    public void dragTo(@Nonnull InteractiveContainerSlot targetSlot, @Nonnull ItemCount count) {
         if (!canDrag()) {
             return;
         }
 
-        final ItemId topItemId = getTopItemId();
+        ItemId topItemId = getTopItemId();
         assert topItemId != null;
 
         if (!targetSlot.acceptItem(topItemId)) {
             return;
         }
 
-        final ContainerSlot slot = targetSlot.getSlot();
+        ContainerSlot slot = targetSlot.getSlot();
         World.getNet().sendCommand(new DragMapScCmd(getLocation(), slot.getContainerId(), slot.getLocation(), count));
     }
 
@@ -161,7 +161,7 @@ public class InteractiveMapTile implements Draggable, DropTarget, Usable {
             return;
         }
 
-        final Item topItem = getTopItem();
+        Item topItem = getTopItem();
         if ((topItem != null) && topItem.getTemplate().getItemInfo().isContainer()) {
             World.getNet().sendCommand(new OpenOnMapCmd(getLocation()));
             return;
@@ -173,8 +173,12 @@ public class InteractiveMapTile implements Draggable, DropTarget, Usable {
     /**
      * Request a look at on this tile.
      */
-    public void lookAt() {
-        World.getNet().sendCommand(new LookatTileCmd(getLocation()));
+    public void lookAt(@Nonnull Item lookAtItem) {
+        int index = parentTile.getItemIndex(lookAtItem);
+        if (index == -1) {
+            return;
+        }
+        World.getNet().sendCommand(new LookAtMapItemCmd(getLocation(), index));
     }
 
     /**
@@ -223,7 +227,7 @@ public class InteractiveMapTile implements Draggable, DropTarget, Usable {
      */
     @Nullable
     public ItemId getTopItemId() {
-        final Item topItem = getTopItem();
+        Item topItem = getTopItem();
         if (topItem == null) {
             return null;
         }
@@ -239,11 +243,11 @@ public class InteractiveMapTile implements Draggable, DropTarget, Usable {
      * @return the display level
      */
     public int getElevationDisplayLevel() {
-        @Nullable final Tile tile = parentTile.getTile();
+        @Nullable Tile tile = parentTile.getTile();
         if (tile == null) {
             return Integer.MAX_VALUE;
         }
-        @Nullable final Item elevatingItem = parentTile.getElevatingItem();
+        @Nullable Item elevatingItem = parentTile.getElevatingItem();
         if (elevatingItem == null) {
             return tile.getOrder();
         }

@@ -423,20 +423,22 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
     }
 
     @Override
-    public void showItemTooltip(@Nonnull Location location, @Nonnull Tooltip tooltip) {
+    public void showItemTooltip(@Nonnull Location location, int stackPosition, @Nonnull Tooltip tooltip) {
+        LOGGER.debug("Now showing tooltip for {} at stack position {}", location, stackPosition);
         MapTile targetTile = World.getMap().getMapAt(location);
         if (targetTile == null) {
             return;
         }
 
-        Item targetItem = targetTile.getTopItem();
-        if (targetItem == null) {
-            return;
-        }
+        try {
+            Item targetItem = targetTile.getItem(stackPosition);
 
-        Rectangle originalDisplayRect = targetItem.getInteractionRect();
-        Rectangle fixedRectangle = new Rectangle(originalDisplayRect);
-        fixedRectangle.move(-Camera.getInstance().getViewportOffsetX(), -Camera.getInstance().getViewportOffsetY());
-        tooltipHandler.showToolTip(fixedRectangle, tooltip);
+            Rectangle originalDisplayRect = targetItem.getInteractionRect();
+            Rectangle fixedRectangle = new Rectangle(originalDisplayRect);
+            fixedRectangle.move(-Camera.getInstance().getViewportOffsetX(), -Camera.getInstance().getViewportOffsetY());
+            tooltipHandler.showToolTip(fixedRectangle, tooltip);
+        } catch (IndexOutOfBoundsException e) {
+            LOGGER.warn("Error while showing a tooltip: {}", e.getMessage());
+        }
     }
 }

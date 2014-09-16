@@ -26,10 +26,13 @@ import de.lessvoid.nifty.elements.events.NiftyMousePrimaryMultiClickedEvent;
 import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import de.lessvoid.nifty.tools.SizeValue;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.procedure.TIntObjectProcedure;
+import illarion.client.IllaClient;
 import illarion.client.graphics.FontLoader;
 import illarion.client.gui.ContainerGui;
+import illarion.client.gui.DialogType;
 import illarion.client.gui.EntitySlickRenderImage;
 import illarion.client.gui.Tooltip;
 import illarion.client.net.client.CloseShowcaseCmd;
@@ -194,19 +197,8 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      */
     @EventSubscriber
     public void onDialogClosedEvent(@Nonnull CloseDialogEvent event) {
-        switch (event.getDialogType()) {
-            case Message:
-                break;
-            case Input:
-                break;
-            case Any:
-            case Merchant:
-                World.getUpdateTaskManager().addTask(updateMerchantOverlays);
-                break;
-            case Crafting:
-                break;
-            case Selection:
-                break;
+        if (event.isClosingDialogType(DialogType.Merchant)) {
+            World.getUpdateTaskManager().addTask(updateMerchantOverlays);
         }
     }
 
@@ -251,6 +243,9 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
         if (container == null) {
             return;
         }
+        String prefix = getPrefix(id);
+        IllaClient.getCfg().set(prefix + "DisplayPosX", container.getElement().getConstraintX().toString());
+        IllaClient.getCfg().set(prefix + "DisplayPosY", container.getElement().getConstraintY().toString());
 
         container.closeWindow();
     }
@@ -500,7 +495,21 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
         org.illarion.nifty.controls.ItemContainer conControl = container
                 .getNiftyControl(org.illarion.nifty.controls.ItemContainer.class);
 
+        String prefix = getPrefix(itemContainer.getContainerId());
+        container.setConstraintX(new SizeValue(IllaClient.getCfg().getString(prefix + "DisplayPosX")));
+        container.setConstraintY(new SizeValue(IllaClient.getCfg().getString(prefix + "DisplayPosY")));
+
         itemContainerMap.put(itemContainer.getContainerId(), conControl);
+    }
+
+    private String getPrefix(int containerId) {
+        String prefix = "bag";
+        if (containerId == 0) {
+            prefix = "backpack";
+        } else if (containerId < 10) {
+            prefix = "depot";
+        }
+        return prefix;
     }
 
     private static String buildTitle(@Nonnull ItemContainer container) {

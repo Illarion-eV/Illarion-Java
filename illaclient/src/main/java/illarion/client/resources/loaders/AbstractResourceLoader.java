@@ -48,7 +48,7 @@ public abstract class AbstractResourceLoader<T extends Resource> implements Call
      *
      * @param weight the weight value for the progress tracker
      */
-    protected AbstractResourceLoader(final float weight) {
+    protected AbstractResourceLoader(float weight) {
         monitor = new ProgressMonitor(weight);
     }
 
@@ -88,7 +88,7 @@ public abstract class AbstractResourceLoader<T extends Resource> implements Call
      * @param factory the factory that will take the data
      */
     @Nonnull
-    public final AbstractResourceLoader<T> setTarget(@Nonnull final ResourceFactory<T> factory) {
+    public final AbstractResourceLoader<T> setTarget(@Nonnull ResourceFactory<T> factory) {
         if (hasTargetFactory()) {
             throw new IllegalStateException("Changing the target factory once set is not allowed");
         }
@@ -140,11 +140,8 @@ public abstract class AbstractResourceLoader<T extends Resource> implements Call
      */
     @Nonnull
     protected static Texture[] getTextures(
-            @Nonnull final TextureManager textureManager,
-            @Nonnull final String path,
-            @Nonnull final String name,
-            final int frames) {
-        final Texture[] resultTextures = new Texture[frames];
+            @Nonnull TextureManager textureManager, @Nonnull String path, @Nonnull String name, int frames) {
+        Texture[] resultTextures = new Texture[frames];
         if (frames == 1) {
             resultTextures[0] = textureManager.getTexture(path, name);
             if (resultTextures[0] == null) {
