@@ -15,6 +15,7 @@
  */
 package illarion.client.graphics;
 
+import illarion.client.IllaClient;
 import illarion.client.input.AbstractMouseLocationEvent;
 import illarion.client.input.ClickOnMapEvent;
 import illarion.client.input.CurrentMouseLocationEvent;
@@ -31,6 +32,7 @@ import illarion.client.world.World;
 import illarion.client.world.interactive.InteractiveChar;
 import illarion.client.world.movement.TargetMovementHandler;
 import illarion.common.graphics.Layers;
+import illarion.common.gui.AbstractMultiActionHelper;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Graphics;
@@ -153,6 +155,20 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
             animation = null;
         }
         this.parentChar = parentChar;
+
+        if (parentChar.isHuman()) {
+            int interval = IllaClient.getCfg().getInteger("doubleClickInterval");
+            delayedWalkingHandler = new AbstractMultiActionHelper(interval, 2) {
+                @Override
+                public void executeAction(int count) {
+                    if (count == 1) {
+                        walkToCharacter(1);
+                    }
+                }
+            };
+        } else {
+            delayedWalkingHandler = null;
+        }
     }
 
     /**
@@ -261,6 +277,9 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         clothRender.changeBaseColor(slot, color);
     }
 
+    @Nullable
+    private final AbstractMultiActionHelper delayedWalkingHandler;
+
     @Override
     public boolean isEventProcessed(@Nonnull GameContainer container, int delta, @Nonnull SceneEvent event) {
         if (event instanceof ClickOnMapEvent) {
@@ -283,6 +302,9 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         }
 
         if (event instanceof DoubleClickOnMapEvent) {
+            if (delayedWalkingHandler != null) {
+                delayedWalkingHandler.reset();
+            }
             return isEventProcessed(container, delta, (DoubleClickOnMapEvent) event);
         }
 
@@ -318,14 +340,22 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         }
 
         if (event.getKey() == Button.Left) {
-            log.debug("Walking to the character {}", parentChar);
-            TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
-            handler.walkTo(parentChar.getLocation(), 1);
-            handler.assumeControl();
+            if (delayedWalkingHandler != null) {
+                delayedWalkingHandler.pulse();
+            } else {
+                walkToCharacter(1);
+            }
             return true;
         }
 
         return false;
+    }
+
+    private void walkToCharacter(int distance) {
+        log.debug("Walking to the character {}", parentChar);
+        TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
+        handler.walkTo(parentChar.getLocation(), distance);
+        handler.assumeControl();
     }
 
     /**
