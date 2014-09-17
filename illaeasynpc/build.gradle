@@ -72,15 +72,17 @@ task antlrOutputDir {
 task generateGrammarSource(dependsOn: antlrOutputDir, type: JavaExec) {
     description = 'Generates Java sources from ANTLR4 grammars.'
 
-    inputs.dir file(antlr.antlrSource)
-    outputs.dir file(antlr.destinationDir)
-
     def grammars = fileTree(antlr.antlrSource).include('**/*.g4')
+    def pkg = antlr.grammarpackage.replaceAll("\\.", "/")
+    def outputDir = "${antlr.destinationDir}/${pkg}"
+
+    inputs.files grammars.files
+    outputs.dir file(outputDir)
 
     main = 'org.antlr.v4.Tool'
     classpath = configurations.antlr4
-    def pkg = antlr.grammarpackage.replaceAll("\\.", "/")
-    args = ["-o", "${antlr.destinationDir}/${pkg}"/*, "-atn"*/, "-visitor", "-package", antlr.grammarpackage, grammars.files].flatten()
+
+    args = ["-o", "${outputDir}"/*, "-atn"*/, "-visitor", "-package", antlr.grammarpackage, grammars.files].flatten()
 
 }
 
