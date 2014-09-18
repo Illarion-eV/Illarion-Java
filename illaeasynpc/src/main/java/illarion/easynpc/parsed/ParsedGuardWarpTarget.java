@@ -56,7 +56,7 @@ public class ParsedGuardWarpTarget implements ParsedData {
     @Nonnull
     @Override
     public Collection<String> getRequiredModules() {
-        return Collections.singleton("npc.base.guard");
+        return Collections.singleton("npc_base_guard");
     }
 
     @Override

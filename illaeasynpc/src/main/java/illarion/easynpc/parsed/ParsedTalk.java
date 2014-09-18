@@ -111,8 +111,8 @@ public final class ParsedTalk implements ParsedData {
             }
         }
 
-        moduleList.add("npc.base.talk");
-        moduleList.add("npc.base.basic");
+        moduleList.add("npc_base_talk");
+        moduleList.add("npc_base_basic");
         return moduleList;
     }
 
@@ -126,7 +126,7 @@ public final class ParsedTalk implements ParsedData {
         if (stage == LuaWriter.WritingStage.Talking) {
             target.write("if (true) then"); //$NON-NLS-1$
             target.write(LuaWriter.NL);
-            target.write("local talkEntry = npc.base.talk.talkNPCEntry();"); //$NON-NLS-1$
+            target.write("local talkEntry = npc_base_talk.talkNPCEntry();"); //$NON-NLS-1$
             target.write(LuaWriter.NL);
 
             for (TalkCondition condition : conditions) {

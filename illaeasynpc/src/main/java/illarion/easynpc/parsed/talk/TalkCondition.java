@@ -28,7 +28,7 @@ public interface TalkCondition {
     /**
      * The base module of all condition.
      */
-    String BASE_LUA_MODULE = "npc.base.condition.";
+    String BASE_LUA_MODULE = "npc_base_condition_";
 
     /**
      * Get the LUA module needed for this condition.

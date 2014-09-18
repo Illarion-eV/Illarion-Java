@@ -98,7 +98,7 @@ public final class ParsedTradeText implements ParsedData {
     @Nonnull
     @Override
     public Collection<String> getRequiredModules() {
-        return Collections.singleton("npc.base.trade");
+        return Collections.singleton("npc_base_trade");
     }
 
     @Override
