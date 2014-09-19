@@ -88,7 +88,7 @@ public final class LuaWriter {
     /**
      * The LUA code used for a require module entry.
      */
-    private static final String requireCode = "require(\"%1$s\")";
+    private static final String requireCode = "local %2$s = require(\"%1$s\")";
 
     /**
      * The LUA code needed to set the message displayed in case a character is
@@ -276,7 +276,7 @@ public final class LuaWriter {
     private static void introInitPart(@Nonnull Writer target) throws IOException {
         target.write("function initNpc()"); //$NON-NLS-1$
         writeNewLine(target);
-        target.write("mainNPC = npc.base.basic.baseNPC();"); //$NON-NLS-1$
+        target.write("mainNPC = npc_base_basic.baseNPC();"); //$NON-NLS-1$
         writeNewLine(target);
     }
 
@@ -360,15 +360,15 @@ public final class LuaWriter {
 
                 break;
             case Talking:
-                target.write("local talkingNPC = npc.base.talk.talkNPC(mainNPC);");
+                target.write("local talkingNPC = npc_base_talk.talkNPC(mainNPC);");
                 writeNewLine(target);
                 break;
             case Trading:
-                target.write("local tradingNPC = npc.base.trade.tradeNPC(mainNPC);");
+                target.write("local tradingNPC = npc_base_trade.tradeNPC(mainNPC);");
                 writeNewLine(target);
                 break;
             case Guarding:
-                target.write("local guardNPC = npc.base.guard.guardNPC(mainNPC);");
+                target.write("local guardNPC = npc_base_guard.guardNPC(mainNPC);");
                 writeNewLine(target);
                 break;
             case Clothes:
@@ -454,10 +454,10 @@ public final class LuaWriter {
             }
         }
 
-        modules.add("npc.base.basic");
+        modules.add("npc_base_basic");
 
         for (String module : modules) {
-            target.write(String.format(requireCode, module));
+            target.write(String.format(requireCode, module.replaceAll("_", "."), module));
             writeNewLine(target);
         }
     }
