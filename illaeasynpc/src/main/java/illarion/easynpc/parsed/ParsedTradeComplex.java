@@ -16,6 +16,7 @@
 package illarion.easynpc.parsed;
 
 import illarion.easynpc.parsed.shared.ParsedItemData;
+import illarion.easynpc.writer.LuaRequireTable;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
@@ -66,9 +67,9 @@ public class ParsedTradeComplex extends AbstractParsedTrade {
     }
 
     @Override
-    public void writeLua(@Nonnull Writer target, @Nonnull LuaWriter.WritingStage stage) throws IOException {
+    public void writeLua(@Nonnull Writer target, @Nonnull LuaRequireTable requires, @Nonnull LuaWriter.WritingStage stage) throws IOException {
         if (stage == LuaWriter.WritingStage.Trading) {
-            target.write("tradingNPC:addItem(npc_base_trade.tradeNPCItem(");
+            target.write("tradingNPC:addItem(" + requires.getStorage("npc.base.trade") + ".tradeNPCItem(");
             target.write(Integer.toString(itemId));
             target.write(",");
             switch (getMode()) {
@@ -114,7 +115,7 @@ public class ParsedTradeComplex extends AbstractParsedTrade {
             } else {
                 target.write("nil");
             }
-            target.write("));");
+            target.write("))");
             target.write(LuaWriter.NL);
         }
     }

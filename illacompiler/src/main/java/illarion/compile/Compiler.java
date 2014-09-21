@@ -96,7 +96,10 @@ public class Compiler {
         }
     }
 
+    private static int returnCode = 3;
+
     private static void processFileMode(@Nonnull CommandLine cmd) throws IOException {
+        returnCode = 3;
         storagePaths = new EnumMap<>(CompilerType.class);
         String npcPath = cmd.getOptionValue('n');
         if (npcPath != null) {
@@ -115,16 +118,18 @@ public class Compiler {
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                         FileVisitResult result = super.visitFile(file, attrs);
                         if (result == FileVisitResult.CONTINUE) {
-                            processPath(file);
+                            returnCode = Math.min(processPath(file), returnCode);
                             return FileVisitResult.CONTINUE;
                         }
                         return result;
                     }
                 });
             } else {
-                processPath(path);
+                returnCode = Math.min(processPath(path), returnCode);
             }
         }
+
+        System.exit(returnCode);
     }
 
     private static void processStdIn(@Nonnull CommandLine cmd) throws IOException {
@@ -150,9 +155,9 @@ public class Compiler {
         System.exit(compile.compileStream(System.in, System.out));
     }
 
-    private static void processPath(@Nonnull Path path) throws IOException {
+    private static int processPath(@Nonnull Path path) throws IOException {
         if (Files.isDirectory(path)) {
-            return;
+            return 0;
         }
 
         int compileResult = 1;
@@ -193,10 +198,9 @@ public class Compiler {
             case 1:
                 LOGGER.info("Skipped file: {}", path.getFileName());
                 break;
-            case 0:
-                return;
             default:
-                System.exit(compileResult);
+                return compileResult;
         }
+        return -2;
     }
 }

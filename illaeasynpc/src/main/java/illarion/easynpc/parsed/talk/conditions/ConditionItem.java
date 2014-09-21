@@ -21,6 +21,7 @@ import illarion.easynpc.data.Items;
 import illarion.easynpc.parsed.shared.ParsedItemData;
 import illarion.easynpc.parsed.talk.AdvancedNumber;
 import illarion.easynpc.parsed.talk.TalkCondition;
+import illarion.easynpc.writer.LuaRequireTable;
 import illarion.easynpc.writer.LuaWriter;
 
 import javax.annotation.Nonnull;
@@ -38,7 +39,7 @@ public final class ConditionItem implements TalkCondition {
      * can use.
      */
     private static final String LUA_CODE =
-            "talkEntry:addCondition(%1$s.item(%2$s, \"%3$s\", \"%4$s\", %5$s, %6$s));" + LuaWriter.NL;
+            "talkEntry:addCondition(%1$s.item(%2$s, \"%3$s\", \"%4$s\", %5$s, %6$s))" + LuaWriter.NL;
 
     /**
      * The LUA module required for this condition to work.
@@ -101,8 +102,8 @@ public final class ConditionItem implements TalkCondition {
      * Write the LUA code needed for this item condition.
      */
     @Override
-    public void writeLua(@Nonnull Writer target) throws IOException {
-        target.write(String.format(LUA_CODE, LUA_MODULE, Integer.toString(item.getItemId()), itemPos.name(),
-                                   operator.getLuaComp(), value.getLua(), data.getLua()));
+    public void writeLua(@Nonnull Writer target, @Nonnull LuaRequireTable requires) throws IOException {
+        target.write(String.format(LUA_CODE, requires.getStorage(LUA_MODULE), Integer.toString(item.getItemId()),
+                                   itemPos.name(), operator.getLuaComp(), value.getLua(), data.getLua()));
     }
 }

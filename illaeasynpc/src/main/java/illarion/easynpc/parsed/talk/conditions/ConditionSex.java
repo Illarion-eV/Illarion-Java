@@ -17,6 +17,7 @@ package illarion.easynpc.parsed.talk.conditions;
 
 import illarion.easynpc.data.CharacterSex;
 import illarion.easynpc.parsed.talk.TalkCondition;
+import illarion.easynpc.writer.LuaRequireTable;
 import illarion.easynpc.writer.LuaWriter;
 
 import javax.annotation.Nonnull;
@@ -32,7 +33,7 @@ public final class ConditionSex implements TalkCondition {
     /**
      * The LUA code needed for this consequence to work.
      */
-    private static final String LUA_CODE = "talkEntry:addCondition(%1$s.sex(%2$s));" + LuaWriter.NL;
+    private static final String LUA_CODE = "talkEntry:addCondition(%1$s.sex(%2$s))" + LuaWriter.NL;
 
     /**
      * The LUA module required for this condition to work.
@@ -66,7 +67,7 @@ public final class ConditionSex implements TalkCondition {
      * Write the LUA code needed for this race condition.
      */
     @Override
-    public void writeLua(@Nonnull Writer target) throws IOException {
-        target.write(String.format(LUA_CODE, LUA_MODULE, Integer.toString(sex.getId())));
+    public void writeLua(@Nonnull Writer target, @Nonnull LuaRequireTable requires) throws IOException {
+        target.write(String.format(LUA_CODE, requires.getStorage(LUA_MODULE), Integer.toString(sex.getId())));
     }
 }

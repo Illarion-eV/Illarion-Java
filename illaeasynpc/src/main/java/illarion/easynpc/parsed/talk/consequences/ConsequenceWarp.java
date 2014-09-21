@@ -17,6 +17,7 @@ package illarion.easynpc.parsed.talk.consequences;
 
 import illarion.common.types.Location;
 import illarion.easynpc.parsed.talk.TalkConsequence;
+import illarion.easynpc.writer.LuaRequireTable;
 import illarion.easynpc.writer.LuaWriter;
 
 import javax.annotation.Nonnull;
@@ -33,7 +34,7 @@ public final class ConsequenceWarp implements TalkConsequence {
     /**
      * The LUA code needed to be included for a warp consequence.
      */
-    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.warp(%2$s, %3$s, %4$s));" + LuaWriter.NL;
+    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.warp(%2$s, %3$s, %4$s))" + LuaWriter.NL;
 
     /**
      * The LUA module that is required for this consequence to work.
@@ -68,7 +69,8 @@ public final class ConsequenceWarp implements TalkConsequence {
      * Write the LUA code of this consequence.
      */
     @Override
-    public void writeLua(@Nonnull Writer target) throws IOException {
-        target.write(String.format(LUA_CODE, LUA_MODULE, loc.getScX(), loc.getScY(), loc.getScZ()));
+    public void writeLua(@Nonnull Writer target, @Nonnull LuaRequireTable requires) throws IOException {
+        target.write(String.format(LUA_CODE, requires.getStorage(LUA_MODULE), loc.getScX(), loc.getScY(),
+                                   loc.getScZ()));
     }
 }

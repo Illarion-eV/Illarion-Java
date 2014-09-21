@@ -16,6 +16,7 @@
 package illarion.easynpc.parsed.talk.consequences;
 
 import illarion.easynpc.parsed.talk.TalkConsequence;
+import illarion.easynpc.writer.LuaRequireTable;
 import illarion.easynpc.writer.LuaWriter;
 
 import javax.annotation.Nonnull;
@@ -41,16 +42,16 @@ public class ConsequenceArena implements TalkConsequence {
         this.task = task;
     }
 
-    @Nullable
+    @Nonnull
     @Override
     public String getLuaModule() {
         return BASE_LUA_MODULE + "arena";
     }
 
     @Override
-    public void writeLua(@Nonnull Writer target) throws IOException {
+    public void writeLua(@Nonnull Writer target, @Nonnull LuaRequireTable requires) throws IOException {
         target.write("talkEntry:addConsequence(");
-        target.write(getLuaModule() + ".arena(\"");
+        target.write(requires.getStorage(getLuaModule()) + ".arena(\"");
         switch (task) {
             case RequestMonster:
                 target.write("request");
@@ -62,7 +63,7 @@ public class ConsequenceArena implements TalkConsequence {
                 target.write("list");
                 break;
         }
-        target.write("\"));");
+        target.write("\"))");
         target.write(LuaWriter.NL);
     }
 }

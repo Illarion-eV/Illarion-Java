@@ -17,6 +17,7 @@ package illarion.easynpc.parsed;
 
 import illarion.easynpc.data.EquipmentSlots;
 import illarion.easynpc.data.Items;
+import illarion.easynpc.writer.LuaRequireTable;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
@@ -35,7 +36,7 @@ public final class ParsedEquipment implements ParsedData {
     /**
      * The format string for the LUA version of this data type.
      */
-    private static final String LUA_FORMAT = "mainNPC:setEquipment(%1$s, %2$s);";
+    private static final String LUA_FORMAT = "mainNPC:setEquipment(%1$s, %2$s)";
 
     /**
      * The item that is supposed to be placed in this slot.
@@ -90,7 +91,7 @@ public final class ParsedEquipment implements ParsedData {
      */
     @Override
     public void writeLua(
-            @Nonnull Writer target, @Nonnull LuaWriter.WritingStage stage) throws IOException {
+            @Nonnull Writer target, @Nonnull LuaRequireTable requires, @Nonnull LuaWriter.WritingStage stage) throws IOException {
         if (!effectsLuaWritingStage(stage)) {
             return;
         }

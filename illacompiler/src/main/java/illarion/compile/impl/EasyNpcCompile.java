@@ -71,8 +71,6 @@ public class EasyNpcCompile extends AbstractCompile {
 
     @Override
     public int compileStream(@Nonnull InputStream in, @Nonnull OutputStream out) {
-        Objects.requireNonNull(in);
-        Objects.requireNonNull(out);
         try {
             ensureTargetDir();
             ParsedNpc npc = Parser.getInstance().parse(new InputStreamReader(in, DEFAULT_CHARSET));
