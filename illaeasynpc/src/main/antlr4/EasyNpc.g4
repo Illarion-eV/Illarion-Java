@@ -80,6 +80,7 @@ consequence
     | 'repair'
     | 'rune' '(' magictypeWithRunes ',' INT ')'
     | 'skill' '(' skill ')' set advancedNumber
+    | 'spawn' '(' monsterId ',' monsterCount ',' radius ',' location ')'
     | 'state' set advancedNumber
     | talkstateSet
     | 'town' EQ town
@@ -334,12 +335,24 @@ questId
     : INT
     ;
 
+radius
+    : INT
+    ;
+
 magictype
     : magictypeWithRunes | 'nomagic'
     ;
 
 magictypeWithRunes
     : 'bard' | 'druid' | 'mage' | 'priest'
+    ;
+
+monsterId
+    : INT
+    ;
+
+monsterCount
+    : INT
     ;
 
 compare

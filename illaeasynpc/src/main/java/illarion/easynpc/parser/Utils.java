@@ -338,6 +338,33 @@ final class Utils {
         return getInteger(node.INT());
     }
 
+    static int getMonsterId(@Nullable EasyNpcParser.MonsterIdContext node) {
+        if (node == null) {
+            LOGGER.warn("Expected node for item id not found.");
+            return 0;
+        }
+
+        return getInteger(node.INT());
+    }
+
+    static int getMonsterCount(@Nullable EasyNpcParser.MonsterCountContext node) {
+        if (node == null) {
+            LOGGER.warn("Expected node for item id not found.");
+            return 0;
+        }
+
+        return getInteger(node.INT());
+    }
+
+    static int getRadius(@Nullable EasyNpcParser.RadiusContext node) {
+        if (node == null) {
+            LOGGER.warn("Expected node for item id not found.");
+            return 0;
+        }
+
+        return getInteger(node.INT());
+    }
+
     @Nullable
     static Skill getSkill(@Nullable EasyNpcParser.SkillContext node) {
         if (node == null) {
