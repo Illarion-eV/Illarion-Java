@@ -20,7 +20,6 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.builder.EffectBuilder;
 import de.lessvoid.nifty.builder.ElementBuilder;
-import de.lessvoid.nifty.builder.PanelBuilder;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.controls.ScrollPanel;
 import de.lessvoid.nifty.controls.TextField;
@@ -66,7 +65,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
     public void activateChatBox() {
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
-            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
                 if (chatMsg != null) {
                     chatMsg.setFocus();
                 }
@@ -78,7 +77,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
     public void deactivateChatBox(final boolean clear) {
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
-            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
                 if (chatMsg != null) {
                     if (chatMsg.hasFocus()) {
                         assert screen != null;
@@ -99,7 +98,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
      * @param color the color of the message
      */
     @Override
-    public void addChatMessage(@Nonnull final String message, @Nonnull final Color color) {
+    public void addChatMessage(@Nonnull String message, @Nonnull Color color) {
         World.getUpdateTaskManager().addTask(new ChatBoxEntry(message, color));
     }
 
@@ -112,7 +111,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
      */
     @Override
     public void showChatBubble(
-            @Nullable final Char character, @Nonnull final String message, @Nonnull final Color color) {
+            @Nullable Char character, @Nonnull String message, @Nonnull Color color) {
         World.getUpdateTaskManager().addTask(new CharTalkEntry(character, message, color));
     }
 
@@ -138,7 +137,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
          * @param msgText the text stored in the entry
          * @param msgColor the color of the entry
          */
-        ChatBoxEntry(@Nonnull final String msgText, @Nonnull final Color msgColor) {
+        ChatBoxEntry(@Nonnull String msgText, @Nonnull Color msgColor) {
             text = msgText;
             color = msgColor;
         }
@@ -149,7 +148,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         }
 
         @Override
-        public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+        public void onUpdateGame(@Nonnull GameContainer container, int delta) {
             addChatLogText(text, color);
         }
     }
@@ -175,14 +174,14 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
          * @param message the text stored in the entry
          * @param msgColor the color of the entry
          */
-        CharTalkEntry(@Nullable final Char character, @Nonnull final String message, final Color msgColor) {
+        CharTalkEntry(@Nullable Char character, @Nonnull String message, Color msgColor) {
             text = message;
             color = msgColor;
             targetChar = character;
         }
 
         @Override
-        public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+        public void onUpdateGame(@Nonnull GameContainer container, int delta) {
             addMessageBubble(targetChar, text, color);
         }
     }
@@ -267,7 +266,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
     private final Pattern oocPattern = Pattern.compile("^\\s*[/#]o(oc)?\\s*(.*)\\s*$", Pattern.CASE_INSENSITIVE);
 
     @NiftyEventSubscriber(id = "expandTextLogBtn")
-    public void onChatButtonClicked(final String topic, final ButtonClickedEvent data) {
+    public void onChatButtonClicked(String topic, ButtonClickedEvent data) {
         toggleChatLog();
     }
 
@@ -279,7 +278,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
             return;
         }
 
-        final Element chatScroll = screen.findElementById("chatPanel");
+        Element chatScroll = screen.findElementById("chatPanel");
 
         if (chatScroll.getConstraintHeight().equals(CHAT_COLLAPSED_HEIGHT)) {
             chatScroll.setConstraintHeight(CHAT_EXPANDED_HEIGHT);
@@ -294,7 +293,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
     }
 
     @Override
-    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
         this.screen = screen;
         this.nifty = nifty;
 
@@ -310,7 +309,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
      * Receive a Input event from the GUI and send a text in case this event applies.
      */
     @Override
-    public boolean keyEvent(@Nonnull final NiftyInputEvent inputEvent) {
+    public boolean keyEvent(@Nonnull NiftyInputEvent inputEvent) {
         if (inputEvent == NiftyStandardInputEvent.SubmitText) {
             assert chatMsg != null;
             if (chatMsg.hasFocus()) {
@@ -339,32 +338,32 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
      *
      * @param text the text to send
      */
-    private void sendText(@Nonnull final String text) {
+    private void sendText(@Nonnull String text) {
         if (introducePattern.matcher(text).matches()) {
             World.getNet().sendCommand(new IntroduceCmd());
             return;
         }
 
-        final Matcher shoutMatcher = shoutPattern.matcher(text);
+        Matcher shoutMatcher = shoutPattern.matcher(text);
         if (shoutMatcher.find()) {
             cleanAndSendText("", shoutMatcher.group(2), ChatHandler.SpeechMode.Shout);
             return;
         }
 
-        final Matcher whisperMatcher = whisperPattern.matcher(text);
+        Matcher whisperMatcher = whisperPattern.matcher(text);
         if (whisperMatcher.find()) {
             cleanAndSendText("", whisperMatcher.group(2), ChatHandler.SpeechMode.Whisper);
             return;
         }
 
-        final Matcher emoteMatcher = emotePattern.matcher(text);
+        Matcher emoteMatcher = emotePattern.matcher(text);
         if (emoteMatcher.find()) {
-            final String cleanMe = REPEATED_SPACE_PATTERN.matcher(emoteMatcher.group(1)).replaceAll(" ").toLowerCase();
+            String cleanMe = REPEATED_SPACE_PATTERN.matcher(emoteMatcher.group(1)).replaceAll(" ").toLowerCase();
             cleanAndSendText('#' + cleanMe, emoteMatcher.group(2), ChatHandler.SpeechMode.Normal);
             return;
         }
 
-        final Matcher oocMatcher = oocPattern.matcher(text);
+        Matcher oocMatcher = oocPattern.matcher(text);
         if (oocMatcher.find()) {
             cleanAndSendText("#o ", oocMatcher.group(2), ChatHandler.SpeechMode.Whisper);
             return;
@@ -381,8 +380,8 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
      * @param mode the speech mode used to send the command
      */
     private static void cleanAndSendText(
-            final String prefix, @Nonnull final String text, @Nonnull final ChatHandler.SpeechMode mode) {
-        final String cleanText = REPEATED_SPACE_PATTERN.matcher(text.trim()).replaceAll(" ");
+            String prefix, @Nonnull String text, @Nonnull ChatHandler.SpeechMode mode) {
+        String cleanText = REPEATED_SPACE_PATTERN.matcher(text.trim()).replaceAll(" ");
         if (cleanText.isEmpty()) {
             return;
         }
@@ -402,7 +401,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         toggleChatLog();
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
-            public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
                 keyEvent(NiftyStandardInputEvent.SubmitText);
                 keyEvent(NiftyStandardInputEvent.SubmitText);
             }
@@ -413,7 +412,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
     }
 
     @Override
-    public void update(final GameContainer container, final int delta) {
+    public void update(GameContainer container, int delta) {
         cleanupChatLog();
     }
 
@@ -428,11 +427,11 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
 
         dirty = false;
 
-        final Element contentPane = chatLog.getElement().findElementById("chatLog");
+        Element contentPane = chatLog.getElement().findElementById("chatLog");
 
-        final int entryCount = contentPane.getChildren().size();
+        int entryCount = contentPane.getChildren().size();
         for (int i = 0; i < (entryCount - 200); i++) {
-            final Element elementToRemove = contentPane.getChildren().get(i);
+            Element elementToRemove = contentPane.getChildren().get(i);
             if (i == (entryCount - 201)) {
                 elementToRemove.markForRemoval(new EndNotify() {
                     @Override
@@ -457,13 +456,13 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
      * @param text the text to add
      * @param color the color of the text to add
      */
-    private void addChatLogText(@Nonnull final String text, final Color color) {
+    private void addChatLogText(@Nonnull String text, Color color) {
         if (chatLog == null) {
             return;
         }
-        final Element contentPane = chatLog.getElement().findElementById("chatLog");
+        Element contentPane = chatLog.getElement().findElementById("chatLog");
 
-        final LabelBuilder label = new LabelBuilder();
+        LabelBuilder label = new LabelBuilder();
         label.font("chatFont");
         label.text(text);
         label.color(color);
@@ -482,25 +481,22 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
      * @param message the message to display
      * @param color the color to show the text in
      */
-    private void addMessageBubble(@Nullable final Char character, @Nonnull final String message, final Color color) {
+    private void addMessageBubble(@Nullable Char character, @Nonnull String message, Color color) {
         if ((character == null) || (chatLayer == null)) {
             return;
         }
-        final Avatar charAvatar = character.getAvatar();
+        Avatar charAvatar = character.getAvatar();
         if (charAvatar == null) {
             return;
         }
-        final Rectangle charDisplayRect = charAvatar.getDisplayRect();
+        Rectangle charDisplayRect = charAvatar.getDisplayRect();
 
-        final PanelBuilder panelBuilder = new PanelBuilder();
-        panelBuilder.childLayoutHorizontal();
-        panelBuilder.style("nifty-panel-hint");
-
-        final LabelBuilder labelBuilder = new LabelBuilder();
+        LabelBuilder labelBuilder = new LabelBuilder();
         labelBuilder.style("nifty-label");
+        labelBuilder.font(FontLoader.BUBBLE_FONT);
 
-        final Font font = FontLoader.getInstance().getFont(FontLoader.TEXT_FONT);
-        final int textWidth = font.getWidth(message);
+        Font font = FontLoader.getInstance().getFont(FontLoader.TEXT_FONT);
+        int textWidth = font.getWidth(message);
         if (textWidth > 300) {
             labelBuilder.width("300px");
             labelBuilder.wrap(true);
@@ -512,24 +508,22 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         labelBuilder.color(color);
         labelBuilder.text(message);
 
-        panelBuilder.control(labelBuilder);
-
-        final EffectBuilder hideEffectBuilder = new EffectBuilder("fade");
-        hideEffectBuilder.startDelay(5000 + (message.length() * 100));
+        EffectBuilder hideEffectBuilder = new EffectBuilder("fade");
+        hideEffectBuilder.startDelay(4000 + (message.length() * 50));
         hideEffectBuilder.length(200);
         hideEffectBuilder.effectParameter("start", "FF");
         hideEffectBuilder.effectParameter("end", "00");
 
-        panelBuilder.onHideEffect(hideEffectBuilder);
+        labelBuilder.onHideEffect(hideEffectBuilder);
 
-        final Element bubble = panelBuilder.build(nifty, screen, chatLayer);
+        Element bubble = labelBuilder.build(nifty, screen, chatLayer);
 
-        final int charDisplayCenterX = charDisplayRect.getCenterX() - Camera.getInstance().getViewportOffsetX();
-        final int charDisplayY = charDisplayRect.getBottom() - Camera.getInstance().getViewportOffsetY();
+        int charDisplayCenterX = charDisplayRect.getCenterX() - Camera.getInstance().getViewportOffsetX();
+        int charDisplayY = charDisplayRect.getBottom() - Camera.getInstance().getViewportOffsetY();
 
-        final int bubblePosX = FastMath
+        int bubblePosX = FastMath
                 .clamp(charDisplayCenterX - (bubble.getWidth() / 2), 0, chatLayer.getWidth() - bubble.getWidth());
-        final int bubblePosY = FastMath
+        int bubblePosY = FastMath
                 .clamp(charDisplayY - bubble.getHeight() - 5, 0, chatLayer.getHeight() - bubble.getHeight());
 
         bubble.setConstraintX(SizeValue.px(bubblePosX));

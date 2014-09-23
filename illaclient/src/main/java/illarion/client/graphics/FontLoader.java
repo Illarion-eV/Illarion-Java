@@ -66,11 +66,11 @@ public final class FontLoader {
      * @return the font itself
      */
     @Nonnull
-    public org.illarion.engine.graphic.Font getFont(@Nonnull final String cfgName) {
+    public org.illarion.engine.graphic.Font getFont(@Nonnull String cfgName) {
         if (fontManager == null) {
             throw new IllegalStateException("Fonts not loaded yet");
         }
-        final org.illarion.engine.graphic.Font loadedFont = fontManager.getFont(cfgName);
+        org.illarion.engine.graphic.Font loadedFont = fontManager.getFont(cfgName);
         if (loadedFont == null) {
             throw new IllegalStateException("Something is wrong with the fonts!");
         }
@@ -82,6 +82,11 @@ public final class FontLoader {
      */
     @Nullable
     private FontManager fontManager;
+
+    /**
+     * The font that is supposed to be used for chat bubbles.
+     */
+    public static final String BUBBLE_FONT = "bubbleFont";
 
     /**
      * The key for the menu font.
@@ -118,8 +123,9 @@ public final class FontLoader {
     /**
      * This function loads all fonts that where yet not loaded.
      */
-    public void prepareAllFonts(@Nonnull final Assets assets) throws IOException {
+    public void prepareAllFonts(@Nonnull Assets assets) throws IOException {
         fontManager = assets.getFontManager();
+        fontManager.createFont(BUBBLE_FONT, "fonts/Ubuntu.ttf", 16.f, Font.PLAIN, "gui/bubbleFont.fnt", FONT_IMAGE_DIR);
         fontManager
                 .createFont(MENU_FONT, "fonts/BlackChancery.ttf", 24.f, Font.PLAIN, "gui/menuFont.fnt", FONT_IMAGE_DIR);
         fontManager.createFont(CAPTION_FONT, "fonts/BlackChancery.ttf", 18.f, Font.PLAIN, "gui/captionFont.fnt",
