@@ -33,7 +33,7 @@ public final class ConsequenceIntroduce implements TalkConsequence {
     /**
      * The LUA code needed to be included for a introduce consequence.
      */
-    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.introduce())" + LuaWriter.NL;
+    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s())" + LuaWriter.NL;
 
     /**
      * The LUA module needed for this consequence to work.

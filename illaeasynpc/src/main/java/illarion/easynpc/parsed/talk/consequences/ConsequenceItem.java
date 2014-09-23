@@ -36,7 +36,7 @@ public final class ConsequenceItem implements TalkConsequence {
      * The LUA code needed to be included for a create item consequence.
      */
     private static final String LUA_CODE =
-            "talkEntry:addConsequence(%1$s.item(%2$s, %3$s, %4$s, %5$s))" + LuaWriter.NL;
+            "talkEntry:addConsequence(%1$s(%2$s, %3$s, %4$s, %5$s))" + LuaWriter.NL;
 
     /**
      * The LUA module needed for this consequence to work.

@@ -146,7 +146,6 @@ public final class LuaWriter {
 
         // now following the modules
         writeModules(source, requires, target);
-        writeModuleHeader(target);
 
         // now the big bad initialization
         introInitPart(target, requires);
@@ -272,7 +271,7 @@ public final class LuaWriter {
     private static void introInitPart(@Nonnull Writer target, @Nonnull LuaRequireTable requires) throws IOException {
         target.write("local function initNpc()");
         writeNewLine(target);
-        target.write("local mainNPC = " + requires.getStorage("npc.base.basic") + ".baseNPC()");
+        target.write("local mainNPC = " + requires.getStorage("npc.base.basic") + "()");
         writeNewLine(target);
     }
 
@@ -358,15 +357,15 @@ public final class LuaWriter {
 
                 break;
             case Talking:
-                target.write("local talkingNPC = " + requires.getStorage("npc.base.talk") + ".talkNPC(mainNPC)");
+                target.write("local talkingNPC = " + requires.getStorage("npc.base.talk") + "(mainNPC)");
                 writeNewLine(target);
                 break;
             case Trading:
-                target.write("local tradingNPC = " + requires.getStorage("npc.base.trade") + ".tradeNPC(mainNPC)");
+                target.write("local tradingNPC = " + requires.getStorage("npc.base.trade") + "(mainNPC)");
                 writeNewLine(target);
                 break;
             case Guarding:
-                target.write("local guardNPC = " + requires.getStorage("npc.base.guard") + ".guardNPC(mainNPC)");
+                target.write("local guardNPC = " + requires.getStorage("npc.base.guard") + "(mainNPC)");
                 writeNewLine(target);
                 break;
             case Clothes:
@@ -382,13 +381,8 @@ public final class LuaWriter {
      * @throws IOException thrown in case the writing operations fail
      */
     private static void writeLastLines(@Nonnull Writer target) throws IOException {
-        target.write("local mainNPC = initNpc()");
-        writeNewLine(target);
-        target.write("initNpc = nil");
-        writeNewLine(target);
         target.write("return M");
         writeNewLine(target);
-        target.write("-- END");
     }
 
     /**
@@ -398,33 +392,27 @@ public final class LuaWriter {
      * @throws IOException thrown in case the writing operation fails
      */
     private static void writeMainScript(@Nonnull Writer target) throws IOException {
+        target.write("local mNPC = initNpc()");
+        writeNewLine(target);
+        target.write("initNpc = nil");
+        writeNewLine(target);
+        target.write("local M = {}");
+        writeNewLine(target);
         target.write("function M.receiveText(npcChar, texttype, message, speaker) ");
-        target.write("mainNPC:receiveText(npcChar, texttype, speaker, message) ");
+        target.write("mNPC:receiveText(npcChar, texttype, speaker, message) ");
         target.write("end");
         writeNewLine(target);
         target.write("function M.nextCycle(npcChar) ");
-        target.write("mainNPC:nextCycle(npcChar) ");
+        target.write("mNPC:nextCycle(npcChar) ");
         target.write("end");
         writeNewLine(target);
         target.write("function M.lookAtNpc(npcChar, char, mode) ");
-        target.write("mainNPC:lookAt(npcChar, char, mode) ");
+        target.write("mNPC:lookAt(npcChar, char, mode) ");
         target.write("end");
         writeNewLine(target);
         target.write("function M.useNPC(npcChar, char, counter, param) ");
-        target.write("mainNPC:use(npcChar, char) ");
+        target.write("mNPC:use(npcChar, char) ");
         target.write("end");
-        writeNewLine(target);
-    }
-
-    /**
-     * Generate and write the module definition of this script.
-     *
-     * @param target the writer that receives the written text
-     * @throws IOException thrown in case there is a problem with writing the
-     * text
-     */
-    private static void writeModuleHeader(@Nonnull Writer target) throws IOException {
-        target.write("local M = {}");
         writeNewLine(target);
     }
 

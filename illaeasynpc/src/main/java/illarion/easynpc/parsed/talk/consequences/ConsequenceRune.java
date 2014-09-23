@@ -33,7 +33,7 @@ public final class ConsequenceRune implements TalkConsequence {
     /**
      * The LUA code needed to be included for a rune consequence.
      */
-    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.rune(%2$s, %3$s))" + LuaWriter.NL;
+    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s(%2$s, %3$s))" + LuaWriter.NL;
 
     /**
      * The LUA module needed for this consequence to work.

@@ -38,7 +38,7 @@ public final class ConsequenceDeleteItem implements TalkConsequence {
      * value set.
      */
     private static final String LUA_CODE_DATA =
-            "talkEntry:addConsequence(%1$s.deleteitem(%2$s, %3$s, %4$s))" + LuaWriter.NL;
+            "talkEntry:addConsequence(%1$s(%2$s, %3$s, %4$s))" + LuaWriter.NL;
 
     /**
      * The LUA module needed for this consequence.

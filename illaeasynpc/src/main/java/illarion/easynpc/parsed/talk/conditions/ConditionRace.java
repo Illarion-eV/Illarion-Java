@@ -33,7 +33,7 @@ public final class ConditionRace implements TalkCondition {
     /**
      * The LUA code needed for this consequence to work.
      */
-    private static final String LUA_CODE = "talkEntry:addCondition(%1$s.race(%2$s))" + LuaWriter.NL;
+    private static final String LUA_CODE = "talkEntry:addCondition(%1$s(%2$s))" + LuaWriter.NL;
 
     /**
      * The LUA module required for this condition to work.

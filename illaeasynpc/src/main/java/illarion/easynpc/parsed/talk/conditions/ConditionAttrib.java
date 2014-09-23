@@ -36,7 +36,7 @@ public final class ConditionAttrib implements TalkCondition {
      * The LUA code needed for this consequence to work.
      */
     private static final String LUA_CODE =
-            "talkEntry:addCondition(%1$s.attribute(\"%2$s\", \"%3$s\", %4$s))" + LuaWriter.NL;
+            "talkEntry:addCondition(%1$s(\"%2$s\", \"%3$s\", %4$s))" + LuaWriter.NL;
 
     /**
      * The LUA module required for this condition to work.

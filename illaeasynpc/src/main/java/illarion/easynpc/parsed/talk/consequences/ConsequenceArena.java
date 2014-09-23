@@ -51,7 +51,7 @@ public class ConsequenceArena implements TalkConsequence {
     @Override
     public void writeLua(@Nonnull Writer target, @Nonnull LuaRequireTable requires) throws IOException {
         target.write("talkEntry:addConsequence(");
-        target.write(requires.getStorage(getLuaModule()) + ".arena(\"");
+        target.write(requires.getStorage(getLuaModule()) + "(\"");
         switch (task) {
             case RequestMonster:
                 target.write("request");

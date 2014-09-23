@@ -33,7 +33,7 @@ public final class ConsequenceGemcraft implements TalkConsequence {
     /**
      * The LUA code needed to be included for a gemcraft consequence.
      */
-    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.gemcraft(craftNPC))" + LuaWriter.NL;
+    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s(craftNPC))" + LuaWriter.NL;
 
     /**
      * The LUA module needed for this consequence to work.

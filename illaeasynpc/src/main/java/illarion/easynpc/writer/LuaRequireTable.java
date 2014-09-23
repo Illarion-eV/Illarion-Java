@@ -28,24 +28,34 @@ import java.util.Map;
  */
 public class LuaRequireTable {
     @Nonnull
-    private final Map<String, String> requireStoragae;
+    private final Map<String, String> requireStorage;
 
     public LuaRequireTable() {
-        requireStoragae = new HashMap<>();
+        requireStorage = new HashMap<>();
     }
 
     public void registerDependency(@Nonnull String dependency) {
-        if (!requireStoragae.containsKey(dependency)) {
-            String storage = "dep" + requireStoragae.size();
-            requireStoragae.put(dependency, storage);
+        if (!requireStorage.containsKey(dependency)) {
+            String storage;
+            if (dependency.startsWith("npc.base.")) {
+                storage = dependency.substring("npc.base.".length()).replace('.', '_');
+            } else {
+                storage = dependency.replace('.', '_');
+            }
+            String usedStorage = storage;
+            int cnt = 0;
+            while (requireStorage.containsValue(usedStorage)) {
+                usedStorage = storage + Integer.toString(cnt++);
+            }
+            requireStorage.put(dependency, usedStorage);
         }
     }
 
     public void writeDependencies(@Nonnull Writer writer) throws IOException {
-        for (Map.Entry<String, String> entry : requireStoragae.entrySet()){
+        for (Map.Entry<String, String> entry : requireStorage.entrySet()){
             writer.write("local ");
             writer.write(entry.getValue());
-            writer.write("=require(\"");
+            writer.write(" = require(\"");
             writer.write(entry.getKey());
             writer.write("\")");
             writer.write(LuaWriter.NL);
@@ -54,8 +64,8 @@ public class LuaRequireTable {
 
     @Nonnull
     public String getStorage(@Nonnull String dependency) {
-        if (requireStoragae.containsKey(dependency)) {
-            return requireStoragae.get(dependency);
+        if (requireStorage.containsKey(dependency)) {
+            return requireStorage.get(dependency);
         }
         throw new IllegalArgumentException("Dependency \"" + dependency + "\" was never registered.");
     }

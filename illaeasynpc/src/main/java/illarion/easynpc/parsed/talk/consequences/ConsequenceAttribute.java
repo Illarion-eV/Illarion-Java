@@ -36,7 +36,7 @@ public final class ConsequenceAttribute implements TalkConsequence {
      * The LUA code needed to be included for a attribute consequence.
      */
     private static final String LUA_CODE =
-            "talkEntry:addConsequence(%1$s.attribute(\"%2$s\", \"%3$s\", %4$s))" + LuaWriter.NL;
+            "talkEntry:addConsequence(%1$s(\"%2$s\", \"%3$s\", %4$s))" + LuaWriter.NL;
 
     /**
      * The module used to access this attribute consequence.

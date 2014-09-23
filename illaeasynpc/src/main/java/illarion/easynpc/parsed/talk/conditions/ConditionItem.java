@@ -39,7 +39,7 @@ public final class ConditionItem implements TalkCondition {
      * can use.
      */
     private static final String LUA_CODE =
-            "talkEntry:addCondition(%1$s.item(%2$s, \"%3$s\", \"%4$s\", %5$s, %6$s))" + LuaWriter.NL;
+            "talkEntry:addCondition(%1$s(%2$s, \"%3$s\", \"%4$s\", %5$s, %6$s))" + LuaWriter.NL;
 
     /**
      * The LUA module required for this condition to work.

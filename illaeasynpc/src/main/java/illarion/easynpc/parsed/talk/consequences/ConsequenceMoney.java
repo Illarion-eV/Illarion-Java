@@ -34,7 +34,7 @@ public final class ConsequenceMoney implements TalkConsequence {
     /**
      * The LUA code needed to be included for a money consequence.
      */
-    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.money(\"%2$s\", %3$s))" + LuaWriter.NL;
+    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s(\"%2$s\", %3$s))" + LuaWriter.NL;
 
     /**
      * The LUA module that is needed for this consequence to work.

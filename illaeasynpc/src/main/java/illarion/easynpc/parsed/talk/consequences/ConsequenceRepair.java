@@ -36,7 +36,7 @@ public class ConsequenceRepair implements TalkConsequence {
 
     @Override
     public void writeLua(@Nonnull Writer target, @Nonnull LuaRequireTable requires) throws IOException {
-        target.write("talkEntry:addConsequence(" + requires.getStorage(getLuaModule()) + ".repair())");
+        target.write("talkEntry:addConsequence(" + requires.getStorage(getLuaModule()) + "())");
         target.write(LuaWriter.NL);
     }
 }

@@ -32,7 +32,7 @@ public final class ConsequenceInform implements TalkConsequence {
     /**
      * The LUA code needed to be included for a inform consequence.
      */
-    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.inform(\"%2$s\"))" + LuaWriter.NL;
+    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s(\"%2$s\"))" + LuaWriter.NL;
 
     /**
      * The LUA module that is required for this consequence to work.

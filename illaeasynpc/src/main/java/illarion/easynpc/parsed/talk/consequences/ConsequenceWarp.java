@@ -34,7 +34,7 @@ public final class ConsequenceWarp implements TalkConsequence {
     /**
      * The LUA code needed to be included for a warp consequence.
      */
-    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.warp(%2$s, %3$s, %4$s))" + LuaWriter.NL;
+    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s(%2$s, %3$s, %4$s))" + LuaWriter.NL;
 
     /**
      * The LUA module that is required for this consequence to work.

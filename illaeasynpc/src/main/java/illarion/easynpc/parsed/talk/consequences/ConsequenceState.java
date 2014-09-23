@@ -34,7 +34,7 @@ public final class ConsequenceState implements TalkConsequence {
     /**
      * The LUA code needed to be included for a state consequence.
      */
-    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.state(\"%2$s\", %3$s))" + LuaWriter.NL;
+    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s(\"%2$s\", %3$s))" + LuaWriter.NL;
 
     /**
      * The LUA module needed for this consequence to work.
