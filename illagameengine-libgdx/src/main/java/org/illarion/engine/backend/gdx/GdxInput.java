@@ -492,7 +492,6 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
         }
         if (isAnyKeyDown(Key.LeftAlt, Key.RightAlt) && isNumPadNumber(pressedKey)) {
             addKeyToAltKeyCode(pressedKey);
-            return true;
         }
         log.debug("Received key down with code: {} that translated to key: {}", keycode, pressedKey);
         events.offer(new Runnable() {
@@ -558,9 +557,6 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
         if (releasedKey == null) {
             log.debug("Received key up with code: {} that failed to translate to a key.", keycode);
             return true;
-        }
-        if (isAnyKeyDown(Key.LeftAlt, Key.RightAlt) && isNumPadNumber(releasedKey)) {
-            return false;
         }
         log.debug("Received key up with code: {} that translated to key: {}", keycode, releasedKey);
         events.offer(new Runnable() {
