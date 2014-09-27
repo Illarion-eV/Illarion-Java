@@ -20,10 +20,12 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.builder.EffectBuilder;
 import de.lessvoid.nifty.builder.ElementBuilder;
+import de.lessvoid.nifty.builder.HoverEffectBuilder;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.controls.ScrollPanel;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
+import de.lessvoid.nifty.effects.EffectEventId;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.input.NiftyStandardInputEvent;
@@ -51,6 +53,8 @@ import org.illarion.engine.graphic.Font;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -474,6 +478,8 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         dirty = true;
     }
 
+    private final Map<Char, Element> activeBubbles = new HashMap<>();
+
     /**
      * The the Chat bubble of a character talking on the map.
      *
@@ -481,7 +487,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
      * @param message the message to display
      * @param color the color to show the text in
      */
-    private void addMessageBubble(@Nullable Char character, @Nonnull String message, Color color) {
+    private void addMessageBubble(@Nullable final Char character, @Nonnull String message, Color color) {
         if ((character == null) || (chatLayer == null)) {
             return;
         }
@@ -489,13 +495,18 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         if (charAvatar == null) {
             return;
         }
+
+        @Nullable Element oldBubble = activeBubbles.remove(character);
+        if (oldBubble != null) {
+            nifty.removeElement(screen, oldBubble);
+        }
+
         Rectangle charDisplayRect = charAvatar.getDisplayRect();
 
         LabelBuilder labelBuilder = new LabelBuilder();
         labelBuilder.style("nifty-label");
-        labelBuilder.font(FontLoader.BUBBLE_FONT);
 
-        Font font = FontLoader.getInstance().getFont(FontLoader.TEXT_FONT);
+        Font font = FontLoader.getInstance().getFont(FontLoader.BUBBLE_FONT);
         int textWidth = font.getWidth(message);
         if (textWidth > 300) {
             labelBuilder.width("300px");
@@ -504,7 +515,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
             labelBuilder.width(SizeValue.px(textWidth).toString());
             labelBuilder.wrap(false);
         }
-        labelBuilder.font(FontLoader.TEXT_FONT);
+        labelBuilder.font(FontLoader.BUBBLE_FONT);
         labelBuilder.color(color);
         labelBuilder.text(message);
 
@@ -516,7 +527,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
 
         labelBuilder.onHideEffect(hideEffectBuilder);
 
-        Element bubble = labelBuilder.build(nifty, screen, chatLayer);
+        final Element bubble = labelBuilder.build(nifty, screen, chatLayer);
 
         int charDisplayCenterX = charDisplayRect.getCenterX() - Camera.getInstance().getViewportOffsetX();
         int charDisplayY = charDisplayRect.getBottom() - Camera.getInstance().getViewportOffsetY();
@@ -531,6 +542,13 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
 
         chatLayer.layoutElements();
 
-        bubble.hide();
+        bubble.hide(new EndNotify() {
+            @Override
+            public void perform() {
+                nifty.removeElement(screen, bubble);
+                activeBubbles.remove(character);
+            }
+        });
+        activeBubbles.put(character, bubble);
     }
 }
