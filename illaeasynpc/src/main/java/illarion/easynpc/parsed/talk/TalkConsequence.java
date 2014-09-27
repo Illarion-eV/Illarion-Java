@@ -29,7 +29,7 @@ public interface TalkConsequence {
     /**
      * The base module of all consequences.
      */
-    String BASE_LUA_MODULE = "npc.base.consequence.";
+    String BASE_LUA_MODULE = "npc_base_consequence_";
 
     /**
      * Get the LUA module needed for this consequence.
