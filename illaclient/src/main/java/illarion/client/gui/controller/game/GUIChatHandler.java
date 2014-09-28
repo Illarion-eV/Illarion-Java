@@ -512,11 +512,13 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
             nifty.removeElement(screen, oldBubble);
         }
 
+        String usedMessage = character.isHuman() ? message : "...";
+
         LabelBuilder labelBuilder = new LabelBuilder();
         labelBuilder.style("nifty-label");
 
         Font font = FontLoader.getInstance().getFont(FontLoader.BUBBLE_FONT);
-        int textWidth = font.getWidth(message);
+        int textWidth = font.getWidth(usedMessage);
         if (textWidth > 300) {
             labelBuilder.width("300px");
             labelBuilder.wrap(true);
@@ -526,10 +528,14 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         }
         labelBuilder.font(FontLoader.BUBBLE_FONT);
         labelBuilder.color(color);
-        labelBuilder.text(message);
+        labelBuilder.text(usedMessage);
 
         EffectBuilder hideEffectBuilder = new EffectBuilder("fade");
-        hideEffectBuilder.startDelay(4000 + (message.length() * 50));
+        if (character.isHuman()) {
+            hideEffectBuilder.startDelay(4000 + (usedMessage.length() * 50));
+        } else {
+            hideEffectBuilder.startDelay(1000);
+        }
         hideEffectBuilder.length(200);
         hideEffectBuilder.effectParameter("start", "FF");
         hideEffectBuilder.effectParameter("end", "00");
