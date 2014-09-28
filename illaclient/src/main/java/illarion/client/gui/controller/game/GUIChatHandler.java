@@ -20,12 +20,10 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.builder.EffectBuilder;
 import de.lessvoid.nifty.builder.ElementBuilder;
-import de.lessvoid.nifty.builder.HoverEffectBuilder;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.controls.ScrollPanel;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
-import de.lessvoid.nifty.effects.EffectEventId;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.input.NiftyStandardInputEvent;
@@ -418,6 +416,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
     @Override
     public void update(GameContainer container, int delta) {
         cleanupChatLog();
+        updateChatBubbleLocations();
     }
 
     /**
@@ -452,6 +451,22 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         chatLog.getElement().layoutElements();
         chatLog.setAutoScroll(ScrollPanel.AutoScroll.BOTTOM);
         chatLog.setAutoScroll(ScrollPanel.AutoScroll.OFF);
+    }
+
+    private void updateChatBubbleLocations() {
+        if (chatLayer == null) {
+            return;
+        }
+
+        boolean layoutRequired = false;
+        for (Map.Entry<Char, Element> charBubbleEntry : activeBubbles.entrySet()) {
+            if (updateChatBubbleLocation(charBubbleEntry.getKey(), charBubbleEntry.getValue())) {
+                layoutRequired = true;
+            }
+        }
+        if (layoutRequired) {
+            chatLayer.layoutElements();
+        }
     }
 
     /**
@@ -491,17 +506,11 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         if ((character == null) || (chatLayer == null)) {
             return;
         }
-        Avatar charAvatar = character.getAvatar();
-        if (charAvatar == null) {
-            return;
-        }
 
         @Nullable Element oldBubble = activeBubbles.remove(character);
         if (oldBubble != null) {
             nifty.removeElement(screen, oldBubble);
         }
-
-        Rectangle charDisplayRect = charAvatar.getDisplayRect();
 
         LabelBuilder labelBuilder = new LabelBuilder();
         labelBuilder.style("nifty-label");
@@ -529,18 +538,9 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
 
         final Element bubble = labelBuilder.build(nifty, screen, chatLayer);
 
-        int charDisplayCenterX = charDisplayRect.getCenterX() - Camera.getInstance().getViewportOffsetX();
-        int charDisplayY = charDisplayRect.getBottom() - Camera.getInstance().getViewportOffsetY();
-
-        int bubblePosX = FastMath
-                .clamp(charDisplayCenterX - (bubble.getWidth() / 2), 0, chatLayer.getWidth() - bubble.getWidth());
-        int bubblePosY = FastMath
-                .clamp(charDisplayY - bubble.getHeight() - 5, 0, chatLayer.getHeight() - bubble.getHeight());
-
-        bubble.setConstraintX(SizeValue.px(bubblePosX));
-        bubble.setConstraintY(SizeValue.px(bubblePosY));
-
-        chatLayer.layoutElements();
+        if (updateChatBubbleLocation(character, bubble)) {
+            chatLayer.layoutElements();
+        }
 
         bubble.hide(new EndNotify() {
             @Override
@@ -550,5 +550,31 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
             }
         });
         activeBubbles.put(character, bubble);
+    }
+
+    private boolean updateChatBubbleLocation(@Nonnull Char character, @Nonnull Element bubble) {
+        Avatar charAvatar = character.getAvatar();
+        if (charAvatar == null) {
+            return false;
+        }
+
+        Rectangle charDisplayRect = charAvatar.getDisplayRect();
+
+        int charDisplayCenterX = charDisplayRect.getCenterX() - Camera.getInstance().getViewportOffsetX();
+        int charDisplayY = charDisplayRect.getBottom() - Camera.getInstance().getViewportOffsetY();
+
+        int bubblePosX = FastMath
+                .clamp(charDisplayCenterX - (bubble.getWidth() / 2), 0, chatLayer.getWidth() - bubble.getWidth());
+        int bubblePosY = FastMath
+                .clamp(charDisplayY - bubble.getHeight() - 5, 0, chatLayer.getHeight() - bubble.getHeight());
+
+        SizeValue newConstraintX = SizeValue.px(bubblePosX);
+        SizeValue newConstraintY = SizeValue.px(bubblePosY);
+        if (!bubble.getConstraintX().equals(newConstraintX) || !bubble.getConstraintY().equals(newConstraintY)) {
+            bubble.setConstraintX(newConstraintX);
+            bubble.setConstraintY(newConstraintY);
+            return true;
+        }
+        return false;
     }
 }
