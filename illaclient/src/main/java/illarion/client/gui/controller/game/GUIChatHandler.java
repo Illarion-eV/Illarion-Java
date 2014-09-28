@@ -559,6 +559,9 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         }
 
         Rectangle charDisplayRect = charAvatar.getDisplayRect();
+        if (charDisplayRect.isEmpty()) {
+            return false;
+        }
 
         int charDisplayCenterX = charDisplayRect.getCenterX() - Camera.getInstance().getViewportOffsetX();
         int charDisplayY = charDisplayRect.getBottom() - Camera.getInstance().getViewportOffsetY();
