@@ -79,6 +79,10 @@ public class IgeInputSystem implements InputSystem, InputListener {
         if (currentConsumer == null) {
             throw new IllegalStateException("Receiving input data while none was requested");
         }
+        if (stalledKeyDownKey != null) {
+            listener.keyDown(stalledKeyDownKey);
+            stalledKeyDownKey = null;
+        }
         if (input.isForwardingEnabled(ForwardingTarget.Keyboard) || input.isAnyKeyDown(Key.LeftAlt)) {
             listener.keyDown(key);
         } else {
@@ -135,10 +139,10 @@ public class IgeInputSystem implements InputSystem, InputListener {
                 boolean controlDown = input.isAnyKeyDown(Key.LeftCtrl, Key.RightCtrl);
                 KeyboardInputEvent event = new KeyboardInputEvent(KeyboardInputEvent.KEY_NONE, character, true,
                                                                   shiftDown, controlDown);
-                if (stalledKeyDownKey != null) {
-                    listener.keyDown(stalledKeyDownKey);
-                }
                 if (!currentConsumer.processKeyboardEvent(event)) {
+                    if (stalledKeyDownKey != null) {
+                        listener.keyDown(stalledKeyDownKey);
+                    }
                     listener.keyTyped(character);
                 }
             } else {
