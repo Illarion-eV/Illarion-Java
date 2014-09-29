@@ -79,7 +79,7 @@ public class IgeInputSystem implements InputSystem, InputListener {
         if (currentConsumer == null) {
             throw new IllegalStateException("Receiving input data while none was requested");
         }
-        if (input.isForwardingEnabled(ForwardingTarget.Keyboard)) {
+        if (input.isForwardingEnabled(ForwardingTarget.Keyboard) || input.isAnyKeyDown(Key.LeftAlt)) {
             listener.keyDown(key);
         } else {
             int keyCode = getNiftyKeyId(key);
