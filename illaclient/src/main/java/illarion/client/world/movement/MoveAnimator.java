@@ -180,8 +180,9 @@ class MoveAnimator implements AnimatedMove {
                     log.debug(marker, "Move is correctly scheduled.");
                     confirmedMoveTask = task;
                 } else {
-                    log.warn(marker, "Move is not correctly scheduled.");
                     confirmedMoveTask = new MovingTask(this, mode, target, duration);
+                    log.warn(marker, "Move is not correctly scheduled. Scheduled: {}, New: {}", task,
+                             confirmedMoveTask);
                 }
             }
         }

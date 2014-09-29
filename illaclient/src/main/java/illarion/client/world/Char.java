@@ -437,6 +437,15 @@ public final class Char implements AnimatedMove {
                     moveToInternal(localDelayedMove.targetLocation, localDelayedMove.mode, localDelayedMove.duration);
                 }
             });
+        } else if (localDelayedMove != null) {
+            World.getUpdateTaskManager().addTaskForLater(new UpdateTask() {
+                @Override
+                public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+                    log.info("{}: Canceled move received while there still was a delayed more. Fixing the location.",
+                             Char.this);
+                    updateLocation(localDelayedMove.targetLocation);
+                }
+            });
         }
     }
 
@@ -1011,21 +1020,14 @@ public final class Char implements AnimatedMove {
             move.stop();
         }
 
-        // get old position
-        Location tempLoc = new Location();
-        tempLoc.set(charLocation);
-        charLocation.set(newPos);
-
-        if (tempLoc.equals(charLocation)) {
+        if (!updateLocation(newPos)) {
             return;
         }
-
-        updateLight(charLocation);
 
         // determine general visibility by players
         if (avatar != null) {
             // calculate movement direction
-            Direction dir = tempLoc.getDirection(charLocation);
+            Direction dir = newPos.getDirection(charLocation);
 
             // turn only when animating, not when pushed
             if ((mode != CharMovementMode.Push) && (dir != null)) {
@@ -1043,15 +1045,15 @@ public final class Char implements AnimatedMove {
             }
 
             // start animations only if reasonable distance
-            if ((charLocation.getDistance(tempLoc) <= range) && (duration > 0) && (dir != null) &&
+            if ((charLocation.getDistance(newPos) <= range) && (duration > 0) && (dir != null) &&
                     (mode != CharMovementMode.Push)) {
                 if (mode == CharMovementMode.Walk) {
                     startAnimation(CharAnimations.WALK, duration, true, dir.isDiagonal() ? FastMath.sqrt(2.f) : 1.f);
                 } else if (mode == CharMovementMode.Run) {
                     startAnimation(CharAnimations.RUN, duration, true, dir.isDiagonal() ? FastMath.sqrt(2.f) : 1.f);
                 }
-                move.start(tempLoc.getDcX() - charLocation.getDcX(),
-                           tempLoc.getDcY() - fromElevation - charLocation.getDcY(), 0, 0, -elevation, 0, duration);
+                move.start(newPos.getDcX() - charLocation.getDcX(),
+                           newPos.getDcY() - fromElevation - charLocation.getDcY(), 0, 0, -elevation, 0, duration);
             } else {
                 // reset last animation result
                 dX = 0;
@@ -1064,7 +1066,7 @@ public final class Char implements AnimatedMove {
             EventBus.publish(new CharMoveEvent(characterId, charLocation));
         }
 
-        MapTile oldTile = World.getMap().getMapAt(tempLoc);
+        MapTile oldTile = World.getMap().getMapAt(newPos);
         if (oldTile != null) {
             oldTile.updateQuestMarkerElevation();
         }
@@ -1073,6 +1075,20 @@ public final class Char implements AnimatedMove {
         if (newTile != null) {
             newTile.updateQuestMarkerElevation();
         }
+    }
+
+    private boolean updateLocation(@Nonnull Location newLocation) {
+        // get old position
+        Location tempLoc = new Location();
+        tempLoc.set(charLocation);
+        charLocation.set(newLocation);
+
+        if (tempLoc.equals(charLocation)) {
+            return false;
+        }
+
+        updateLight(charLocation);
+        return true;
     }
 
     /**
