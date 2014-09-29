@@ -104,6 +104,10 @@ public class IgeInputSystem implements InputSystem, InputListener {
         if (input.isForwardingEnabled(ForwardingTarget.Keyboard)) {
             listener.keyUp(key);
         } else {
+            if (stalledKeyDownKey != null) {
+                listener.keyDown(stalledKeyDownKey);
+                stalledKeyDownKey = null;
+            }
             int keyCode = getNiftyKeyId(key);
             boolean shiftDown = input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
             boolean controlDown = input.isAnyKeyDown(Key.LeftCtrl, Key.RightCtrl);
@@ -131,8 +135,10 @@ public class IgeInputSystem implements InputSystem, InputListener {
                 boolean controlDown = input.isAnyKeyDown(Key.LeftCtrl, Key.RightCtrl);
                 KeyboardInputEvent event = new KeyboardInputEvent(KeyboardInputEvent.KEY_NONE, character, true,
                                                                   shiftDown, controlDown);
-                if (!currentConsumer.processKeyboardEvent(event) && (stalledKeyDownKey != null)) {
+                if (stalledKeyDownKey != null) {
                     listener.keyDown(stalledKeyDownKey);
+                }
+                if (!currentConsumer.processKeyboardEvent(event)) {
                     listener.keyTyped(character);
                 }
             } else {
