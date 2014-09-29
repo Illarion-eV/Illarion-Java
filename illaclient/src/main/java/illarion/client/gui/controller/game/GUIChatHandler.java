@@ -51,6 +51,8 @@ import org.illarion.engine.graphic.Font;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -464,6 +466,9 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
                 layoutRequired = true;
             }
         }
+        if (cleanOverlappingBubbles()) {
+            layoutRequired = true;
+        }
         if (layoutRequired) {
             chatLayer.layoutElements();
         }
@@ -512,7 +517,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
             nifty.removeElement(screen, oldBubble);
         }
 
-        String usedMessage = character.isHuman() ? message : "...";
+        String usedMessage = (character.isHuman() || (message.length() < 10)) ? message : "...";
 
         LabelBuilder labelBuilder = new LabelBuilder();
         labelBuilder.style("nifty-label");
@@ -559,6 +564,9 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
     }
 
     private boolean updateChatBubbleLocation(@Nonnull Char character, @Nonnull Element bubble) {
+        if (chatLayer == null) {
+            return false;
+        }
         Avatar charAvatar = character.getAvatar();
         if (charAvatar == null) {
             return false;
@@ -585,5 +593,44 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
             return true;
         }
         return false;
+    }
+
+    private boolean cleanOverlappingBubbles() {
+        if ((chatLayer == null) || (nifty == null) || (screen == null)) {
+            return false;
+        }
+
+        int elementCount = chatLayer.getChildrenCount();
+        if (elementCount <= 1) {
+            return false;
+        }
+
+        Collection<Element> elementsToRemove = new ArrayList<>();
+        Collection<Rectangle> coveredAreas = new ArrayList<>();
+        for (int i = elementCount - 1; i >= 0; i--) {
+            Element child = chatLayer.getChildren().get(i);
+            Rectangle elementArea = new Rectangle(child.getConstraintX().getValueAsInt(1.f),
+                                                  child.getConstraintY().getValueAsInt(1.f), child.getWidth(),
+                                                  child.getHeight());
+
+            boolean childWillBeRemoved = false;
+            for (@Nonnull Rectangle coveredArea : coveredAreas) {
+                if (coveredArea.intersects(elementArea)) {
+                    elementsToRemove.add(child);
+                    childWillBeRemoved = true;
+                    break;
+                }
+            }
+
+            if (!childWillBeRemoved) {
+                coveredAreas.add(elementArea);
+            }
+        }
+
+        for (@Nonnull Element elementToRemove : elementsToRemove) {
+            nifty.removeElement(screen, elementToRemove);
+        }
+
+        return !elementsToRemove.isEmpty();
     }
 }
