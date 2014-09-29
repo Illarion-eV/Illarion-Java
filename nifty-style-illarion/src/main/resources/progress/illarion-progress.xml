@@ -56,7 +56,7 @@
         <attributes height="100%"/>
     </style>
 
-    <style id="illarion-progres-yellows#fill">
+    <style id="illarion-progress-yellow#fill">
         <attributes filename="gui/progressbar/progressbar-inner-yellow.png" width="6px"
                     height="100%" imageMode="resize:2,2,2,2,2,2,2,12,2,2,2,2"/>
     </style>
@@ -79,7 +79,7 @@
         <attributes height="100%"/>
     </style>
 
-    <style id="illarion-progres-red#fill">
+    <style id="illarion-progress-red#fill">
         <attributes filename="gui/progressbar/progressbar-inner-red.png" width="6px"
                     height="100%" imageMode="resize:2,2,2,2,2,2,2,12,2,2,2,2"/>
     </style>

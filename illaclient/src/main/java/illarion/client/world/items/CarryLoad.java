@@ -78,6 +78,7 @@ public class CarryLoad {
                 public void onUpdateGame(@Nonnull GameContainer container, int delta) {
                     World.getGameGui().getInformGui().showScriptInform(1, finalMessageToSend);
                     World.getGameGui().getChatGui().addChatMessage(finalMessageToSend, Color.WHITE);
+                    World.getGameGui().getInventoryGui().updateCarryLoad();
                 }
             });
         }
