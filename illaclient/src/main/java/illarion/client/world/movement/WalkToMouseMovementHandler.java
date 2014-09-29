@@ -76,11 +76,18 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
         boolean targetWasSet = isTargetSet() && isActive();
         super.disengage(transferAllowed);
         if (transferAllowed && targetWasSet) {
-            TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
-            log.debug("Transferring movement control from {} to {}", this, handler);
-            MapTile targetTile = World.getMap().getMapAt(getTargetLocation());
-            handler.walkTo(getTargetLocation(), ((targetTile != null) && targetTile.isBlocked()) ? 1 : 0);
-            handler.assumeControl();
+            switch (getMovementMode()) {
+                case Run:
+                case Walk:
+                    TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
+                    log.debug("Transferring movement control from {} to {}", this, handler);
+                    MapTile targetTile = World.getMap().getMapAt(getTargetLocation());
+                    handler.walkTo(getTargetLocation(), ((targetTile != null) && targetTile.isBlocked()) ? 1 : 0);
+                    handler.assumeControl();
+                    break;
+                default:
+                    /* nothing */
+            }
         }
     }
 
