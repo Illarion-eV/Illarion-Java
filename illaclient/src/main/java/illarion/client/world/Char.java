@@ -1020,6 +1020,7 @@ public final class Char implements AnimatedMove {
             move.stop();
         }
 
+        Location oldPos = new Location(charLocation);
         if (!updateLocation(newPos)) {
             return;
         }
@@ -1027,7 +1028,7 @@ public final class Char implements AnimatedMove {
         // determine general visibility by players
         if (avatar != null) {
             // calculate movement direction
-            Direction dir = newPos.getDirection(charLocation);
+            Direction dir = oldPos.getDirection(newPos);
 
             // turn only when animating, not when pushed
             if ((mode != CharMovementMode.Push) && (dir != null)) {
@@ -1036,7 +1037,7 @@ public final class Char implements AnimatedMove {
 
             // find target elevation
             int fromElevation = elevation;
-            elevation = World.getMap().getElevationAt(charLocation);
+            elevation = World.getMap().getElevationAt(newPos);
             elevationAfterAnimation = elevation;
 
             int range = 1;
@@ -1045,15 +1046,15 @@ public final class Char implements AnimatedMove {
             }
 
             // start animations only if reasonable distance
-            if ((charLocation.getDistance(newPos) <= range) && (duration > 0) && (dir != null) &&
+            if ((newPos.getDistance(oldPos) <= range) && (duration > 0) && (dir != null) &&
                     (mode != CharMovementMode.Push)) {
                 if (mode == CharMovementMode.Walk) {
                     startAnimation(CharAnimations.WALK, duration, true, dir.isDiagonal() ? FastMath.sqrt(2.f) : 1.f);
                 } else if (mode == CharMovementMode.Run) {
                     startAnimation(CharAnimations.RUN, duration, true, dir.isDiagonal() ? FastMath.sqrt(2.f) : 1.f);
                 }
-                move.start(newPos.getDcX() - charLocation.getDcX(),
-                           newPos.getDcY() - fromElevation - charLocation.getDcY(), 0, 0, -elevation, 0, duration);
+                move.start(oldPos.getDcX() - newPos.getDcX(), oldPos.getDcY() - fromElevation - newPos.getDcY(), 0, 0,
+                           -elevation, 0, duration);
             } else {
                 // reset last animation result
                 dX = 0;
@@ -1066,12 +1067,12 @@ public final class Char implements AnimatedMove {
             EventBus.publish(new CharMoveEvent(characterId, charLocation));
         }
 
-        MapTile oldTile = World.getMap().getMapAt(newPos);
+        MapTile oldTile = World.getMap().getMapAt(oldPos);
         if (oldTile != null) {
             oldTile.updateQuestMarkerElevation();
         }
 
-        MapTile newTile = World.getMap().getMapAt(charLocation);
+        MapTile newTile = World.getMap().getMapAt(newPos);
         if (newTile != null) {
             newTile.updateQuestMarkerElevation();
         }
@@ -1079,13 +1080,11 @@ public final class Char implements AnimatedMove {
 
     private boolean updateLocation(@Nonnull Location newLocation) {
         // get old position
-        Location tempLoc = new Location();
-        tempLoc.set(charLocation);
-        charLocation.set(newLocation);
 
-        if (tempLoc.equals(charLocation)) {
+        if (newLocation.equals(charLocation)) {
             return false;
         }
+        charLocation.set(newLocation);
 
         updateLight(charLocation);
         return true;
