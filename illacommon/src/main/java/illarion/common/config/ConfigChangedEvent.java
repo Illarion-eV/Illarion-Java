@@ -15,6 +15,8 @@
  */
 package illarion.common.config;
 
+import javax.annotation.Nonnull;
+
 /**
  * This class defines the event that is send to the application using the event bus once a entry of the
  * configuration is altered.
@@ -25,11 +27,13 @@ public final class ConfigChangedEvent {
     /**
      * The configuration that is used.
      */
+    @Nonnull
     private final Config config;
 
     /**
      * The key inside the configuration that was altered.
      */
+    @Nonnull
     private final String key;
 
     /**
@@ -38,7 +42,7 @@ public final class ConfigChangedEvent {
      * @param parentConfig the config that triggered this event
      * @param configKey the key that was changed
      */
-    public ConfigChangedEvent(final Config parentConfig, final String configKey) {
+    public ConfigChangedEvent(@Nonnull Config parentConfig, @Nonnull String configKey) {
         config = parentConfig;
         key = configKey;
     }
@@ -48,6 +52,7 @@ public final class ConfigChangedEvent {
      *
      * @return the configuration that triggered this event
      */
+    @Nonnull
     public Config getConfig() {
         return config;
     }
@@ -57,6 +62,7 @@ public final class ConfigChangedEvent {
      *
      * @return the key that was changed
      */
+    @Nonnull
     public String getKey() {
         return key;
     }

@@ -21,6 +21,7 @@ import illarion.client.net.client.PickUpAllItemsCmd;
 import illarion.client.world.World;
 import illarion.client.world.items.InventorySlot;
 import illarion.client.world.movement.KeyboardMovementHandler;
+import illarion.common.config.Config;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.types.Direction;
 import org.bushe.swing.event.EventBus;
@@ -232,7 +233,9 @@ public final class KeyMapper {
                     World.getGameGui().getGameMapGui().toggleRunMode();
                 }
                 break;
-
+            case F12:
+                cyclePermanentAvatarTag();
+                break;
             default:
                 if (inputMap.containsKey(key)) {
                     EventBus.publish(InputReceiver.EB_TOPIC, inputMap.get(key));
@@ -244,5 +247,10 @@ public final class KeyMapper {
         KeyboardMovementHandler handler = World.getPlayer().getMovementHandler().getKeyboardHandler();
         handler.startMovingTowards(direction);
         handler.assumeControl();
+    }
+
+    private static void cyclePermanentAvatarTag() {
+        Config config = IllaClient.getCfg();
+        config.set("showAvatarTagPermanently", (config.getInteger("showAvatarTagPermanently") + 1) % 3);
     }
 }
