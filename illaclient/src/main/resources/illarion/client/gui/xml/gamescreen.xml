@@ -142,6 +142,8 @@
                                  y="389px"/>
                         <control id="invslot_belt6" name="inventoryslot" height="55px" width="62px" x="161px"
                                  y="389px"/>
+                        <control id="carryLoadLabel" name="label" style="nifty-label" x="0px" y="265px"
+                                 text="${gamescreen-bundle.carryLoad}"/>
                         <control id="carryLoad" name="progress" width="227px" x="0px" y="292px"/>
                     </panel>
                     <control name="button" style="nifty-button" width="227px" label="${gamescreen-bundle.pickUpAll}"
