@@ -34,7 +34,53 @@
     </style>
 
     <style id="illarion-progress#fill">
-        <attributes filename="gui/progressbar/progressbar-inner.png" width="6px"
+        <attributes filename="gui/progressbar/progressbar-inner-green.png" width="6px"
+                    height="100%" imageMode="resize:2,2,2,2,2,2,2,12,2,2,2,2"/>
+    </style>
+
+    <!-- Yellow filled progress bar -->
+    <style id="illarion-progress-yellow">
+        <attributes height="18px" minImageWidth="6"/>
+    </style>
+
+    <style id="illarion-progress-yellow#background">
+        <attributes backgroundImage="gui/progressbar/progressbar-outer.png"
+                    imageMode="resize:8,2,8,9,8,2,8,2,8,2,8,9" padding="2px,3px"/>
+    </style>
+
+    <style id="illarion-progress-yellow#fillArea">
+        <attributes width="100%" height="100%"/>
+    </style>
+
+    <style id="illarion-progress-yellow#fillWrapper">
+        <attributes height="100%"/>
+    </style>
+
+    <style id="illarion-progress-yellow#fill">
+        <attributes filename="gui/progressbar/progressbar-inner-yellow.png" width="6px"
+                    height="100%" imageMode="resize:2,2,2,2,2,2,2,12,2,2,2,2"/>
+    </style>
+
+    <!-- Red filled progress bar -->
+    <style id="illarion-progress-red">
+        <attributes height="18px" minImageWidth="6"/>
+    </style>
+
+    <style id="illarion-progress-red#background">
+        <attributes backgroundImage="gui/progressbar/progressbar-outer.png"
+                    imageMode="resize:8,2,8,9,8,2,8,2,8,2,8,9" padding="2px,3px"/>
+    </style>
+
+    <style id="illarion-progress-red#fillArea">
+        <attributes width="100%" height="100%"/>
+    </style>
+
+    <style id="illarion-progress-red#fillWrapper">
+        <attributes height="100%"/>
+    </style>
+
+    <style id="illarion-progress-red#fill">
+        <attributes filename="gui/progressbar/progressbar-inner-red.png" width="6px"
                     height="100%" imageMode="resize:2,2,2,2,2,2,2,12,2,2,2,2"/>
     </style>
 

@@ -437,6 +437,15 @@ public final class Char implements AnimatedMove {
                     moveToInternal(localDelayedMove.targetLocation, localDelayedMove.mode, localDelayedMove.duration);
                 }
             });
+        } else if (localDelayedMove != null) {
+            World.getUpdateTaskManager().addTaskForLater(new UpdateTask() {
+                @Override
+                public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+                    log.info("{}: Canceled move received while there still was a delayed more. Fixing the location.",
+                             Char.this);
+                    updateLocation(localDelayedMove.targetLocation);
+                }
+            });
         }
     }
 
@@ -1011,21 +1020,15 @@ public final class Char implements AnimatedMove {
             move.stop();
         }
 
-        // get old position
-        Location tempLoc = new Location();
-        tempLoc.set(charLocation);
-        charLocation.set(newPos);
-
-        if (tempLoc.equals(charLocation)) {
+        Location oldPos = new Location(charLocation);
+        if (!updateLocation(newPos)) {
             return;
         }
-
-        updateLight(charLocation);
 
         // determine general visibility by players
         if (avatar != null) {
             // calculate movement direction
-            Direction dir = tempLoc.getDirection(charLocation);
+            Direction dir = oldPos.getDirection(newPos);
 
             // turn only when animating, not when pushed
             if ((mode != CharMovementMode.Push) && (dir != null)) {
@@ -1034,7 +1037,7 @@ public final class Char implements AnimatedMove {
 
             // find target elevation
             int fromElevation = elevation;
-            elevation = World.getMap().getElevationAt(charLocation);
+            elevation = World.getMap().getElevationAt(newPos);
             elevationAfterAnimation = elevation;
 
             int range = 1;
@@ -1043,15 +1046,15 @@ public final class Char implements AnimatedMove {
             }
 
             // start animations only if reasonable distance
-            if ((charLocation.getDistance(tempLoc) <= range) && (duration > 0) && (dir != null) &&
+            if ((newPos.getDistance(oldPos) <= range) && (duration > 0) && (dir != null) &&
                     (mode != CharMovementMode.Push)) {
                 if (mode == CharMovementMode.Walk) {
                     startAnimation(CharAnimations.WALK, duration, true, dir.isDiagonal() ? FastMath.sqrt(2.f) : 1.f);
                 } else if (mode == CharMovementMode.Run) {
                     startAnimation(CharAnimations.RUN, duration, true, dir.isDiagonal() ? FastMath.sqrt(2.f) : 1.f);
                 }
-                move.start(tempLoc.getDcX() - charLocation.getDcX(),
-                           tempLoc.getDcY() - fromElevation - charLocation.getDcY(), 0, 0, -elevation, 0, duration);
+                move.start(oldPos.getDcX() - newPos.getDcX(), oldPos.getDcY() - fromElevation - newPos.getDcY(), 0, 0,
+                           -elevation, 0, duration);
             } else {
                 // reset last animation result
                 dX = 0;
@@ -1064,15 +1067,27 @@ public final class Char implements AnimatedMove {
             EventBus.publish(new CharMoveEvent(characterId, charLocation));
         }
 
-        MapTile oldTile = World.getMap().getMapAt(tempLoc);
+        MapTile oldTile = World.getMap().getMapAt(oldPos);
         if (oldTile != null) {
             oldTile.updateQuestMarkerElevation();
         }
 
-        MapTile newTile = World.getMap().getMapAt(charLocation);
+        MapTile newTile = World.getMap().getMapAt(newPos);
         if (newTile != null) {
             newTile.updateQuestMarkerElevation();
         }
+    }
+
+    private boolean updateLocation(@Nonnull Location newLocation) {
+        // get old position
+
+        if (newLocation.equals(charLocation)) {
+            return false;
+        }
+        charLocation.set(newLocation);
+
+        updateLight(charLocation);
+        return true;
     }
 
     /**

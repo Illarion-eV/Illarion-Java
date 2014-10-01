@@ -104,11 +104,11 @@ public class ConfigSystem implements Config {
      */
     @Deprecated
     @SuppressWarnings("nls")
-    public ConfigSystem(@Nonnull final File source) {
+    public ConfigSystem(@Nonnull File source) {
         this(source.toPath());
     }
 
-    public ConfigSystem(@Nonnull final Path source) {
+    public ConfigSystem(@Nonnull Path source) {
         configFile = source;
 
         configEntries = new HashMap<>();
@@ -125,20 +125,20 @@ public class ConfigSystem implements Config {
      *
      * @param source The configuration file that is supposed to be load
      */
-    public ConfigSystem(@Nonnull final String source) {
+    public ConfigSystem(@Nonnull String source) {
         this(new File(source));
     }
 
     @Override
-    public boolean getBoolean(@Nonnull final String key) {
-        final Object value = getObject(key);
+    public boolean getBoolean(@Nonnull String key) {
+        Object value = getObject(key);
 
         if (value == null) {
             return false;
         }
 
         if (!(value instanceof Boolean)) {
-            LOGGER.warn("Illegal config entry for: " + key);
+            LOGGER.warn("Illegal config entry for: {}", key);
             return false;
         }
 
@@ -146,15 +146,15 @@ public class ConfigSystem implements Config {
     }
 
     @Override
-    public byte getByte(@Nonnull final String key) {
-        final Object value = getObject(key);
+    public byte getByte(@Nonnull String key) {
+        Object value = getObject(key);
 
         if (value == null) {
             return 0;
         }
 
         if (!(value instanceof Byte)) {
-            LOGGER.warn("Illegal config entry for: " + key);
+            LOGGER.warn("Illegal config entry for: {}", key);
             return 0;
         }
 
@@ -162,15 +162,15 @@ public class ConfigSystem implements Config {
     }
 
     @Override
-    public double getDouble(@Nonnull final String key) {
-        final Object value = getObject(key);
+    public double getDouble(@Nonnull String key) {
+        Object value = getObject(key);
 
         if (value == null) {
             return 0.d;
         }
 
         if (!(value instanceof Double)) {
-            LOGGER.warn("Illegal config entry for: " + key);
+            LOGGER.warn("Illegal config entry for: {}", key);
             return 0.d;
         }
 
@@ -180,22 +180,22 @@ public class ConfigSystem implements Config {
     @Nullable
     @Override
     @Deprecated
-    public File getFile(@Nonnull final String key) {
-        final Path path = getPath(key);
+    public File getFile(@Nonnull String key) {
+        Path path = getPath(key);
         return path == null ? null : path.toFile();
     }
 
     @Nullable
     @Override
-    public Path getPath(@Nonnull final String key) {
-        final Object value = getObject(key);
+    public Path getPath(@Nonnull String key) {
+        Object value = getObject(key);
 
         if (value == null) {
             return null;
         }
 
         if (!(value instanceof String)) {
-            LOGGER.warn("Illegal config entry for: " + key);
+            LOGGER.warn("Illegal config entry for: {}", key);
             return null;
         }
 
@@ -203,15 +203,15 @@ public class ConfigSystem implements Config {
     }
 
     @Override
-    public float getFloat(@Nonnull final String key) {
-        final Object value = getObject(key);
+    public float getFloat(@Nonnull String key) {
+        Object value = getObject(key);
 
         if (value == null) {
             return 0.f;
         }
 
         if (!(value instanceof Float)) {
-            LOGGER.warn("Illegal config entry for: " + key);
+            LOGGER.warn("Illegal config entry for: {}", key);
             return 0.f;
         }
 
@@ -219,15 +219,15 @@ public class ConfigSystem implements Config {
     }
 
     @Override
-    public int getInteger(@Nonnull final String key) {
-        final Object value = getObject(key);
+    public int getInteger(@Nonnull String key) {
+        Object value = getObject(key);
 
         if (value == null) {
             return 0;
         }
 
         if (!(value instanceof Integer)) {
-            LOGGER.warn("Illegal config entry for: " + key);
+            LOGGER.warn("Illegal config entry for: {}", key);
             return 0;
         }
 
@@ -235,15 +235,15 @@ public class ConfigSystem implements Config {
     }
 
     @Override
-    public long getLong(@Nonnull final String key) {
-        final Object value = getObject(key);
+    public long getLong(@Nonnull String key) {
+        Object value = getObject(key);
 
         if (value == null) {
             return 0;
         }
 
         if (!(value instanceof Long)) {
-            LOGGER.warn("Illegal config entry for: " + key);
+            LOGGER.warn("Illegal config entry for: {}", key);
             return 0;
         }
 
@@ -251,7 +251,7 @@ public class ConfigSystem implements Config {
     }
 
     @Nullable
-    public Object getObject(final String key) {
+    public Object getObject(String key) {
         lock.readLock().lock();
         Object value;
         try {
@@ -261,7 +261,7 @@ public class ConfigSystem implements Config {
         }
 
         if (value == null) {
-            LOGGER.warn("No config entry found for: " + key);
+            LOGGER.warn("No config entry found for: {}", key);
             return null;
         }
 
@@ -269,15 +269,15 @@ public class ConfigSystem implements Config {
     }
 
     @Override
-    public short getShort(@Nonnull final String key) {
-        final Object value = getObject(key);
+    public short getShort(@Nonnull String key) {
+        Object value = getObject(key);
 
         if (value == null) {
             return 0;
         }
 
         if (!(value instanceof Short)) {
-            LOGGER.warn("Illegal config entry for: " + key);
+            LOGGER.warn("Illegal config entry for: {}", key);
             return 0;
         }
 
@@ -286,15 +286,15 @@ public class ConfigSystem implements Config {
 
     @Nullable
     @Override
-    public String getString(@Nonnull final String key) {
-        final Object value = getObject(key);
+    public String getString(@Nonnull String key) {
+        Object value = getObject(key);
 
         if (value == null) {
             return null;
         }
 
         if (!(value instanceof String)) {
-            LOGGER.warn("Illegal config entry for: " + key);
+            LOGGER.warn("Illegal config entry for: {}", key);
             return null;
         }
 
@@ -302,7 +302,7 @@ public class ConfigSystem implements Config {
     }
 
     @Override
-    public void remove(@Nonnull final String key) {
+    public void remove(@Nonnull String key) {
         configEntries.remove(key);
     }
 
@@ -314,7 +314,7 @@ public class ConfigSystem implements Config {
 
     private abstract static class AbstractConfigTypeConverter implements ConfigTypeConverter {
         @Override
-        public final String getString(@Nonnull final Object object) {
+        public final String getString(@Nonnull Object object) {
             return object.toString();
         }
     }
@@ -322,63 +322,63 @@ public class ConfigSystem implements Config {
     private enum ConfigTypes {
         BooleanEntry("bool", Boolean.class, new AbstractConfigTypeConverter() {
             @Override
-            public Boolean getObject(@Nonnull final String string) {
+            public Boolean getObject(@Nonnull String string) {
                 return Boolean.valueOf(string);
             }
         }),
         ByteEntry("byte", Byte.class, new AbstractConfigTypeConverter() {
             @Override
-            public Byte getObject(@Nonnull final String string) {
+            public Byte getObject(@Nonnull String string) {
                 return Byte.valueOf(string);
             }
         }),
         DoubleEntry("double", Double.class, new AbstractConfigTypeConverter() {
             @Override
-            public Double getObject(@Nonnull final String string) {
+            public Double getObject(@Nonnull String string) {
                 return Double.valueOf(string);
             }
         }),
         FileEntry("file", Path.class, new ConfigTypeConverter() {
             @Nonnull
             @Override
-            public String getString(@Nonnull final Object object) {
+            public String getString(@Nonnull Object object) {
                 return ((Path) object).toAbsolutePath().toString();
             }
 
             @Nonnull
             @Override
-            public Path getObject(@Nonnull final String string) {
+            public Path getObject(@Nonnull String string) {
                 return Paths.get(string);
             }
         }),
         FloatEntry("float", Float.class, new AbstractConfigTypeConverter() {
             @Override
-            public Float getObject(@Nonnull final String string) {
+            public Float getObject(@Nonnull String string) {
                 return Float.valueOf(string);
             }
         }),
         IntegerEntry("int", Integer.class, new AbstractConfigTypeConverter() {
             @Override
-            public Integer getObject(@Nonnull final String string) {
+            public Integer getObject(@Nonnull String string) {
                 return Integer.valueOf(string);
             }
         }),
         LongEntry("long", Long.class, new AbstractConfigTypeConverter() {
             @Override
-            public Long getObject(@Nonnull final String string) {
+            public Long getObject(@Nonnull String string) {
                 return Long.valueOf(string);
             }
         }),
         ShortEntry("short", Short.class, new AbstractConfigTypeConverter() {
             @Override
-            public Short getObject(@Nonnull final String string) {
+            public Short getObject(@Nonnull String string) {
                 return Short.valueOf(string);
             }
         }),
         StringEntry("string", String.class, new AbstractConfigTypeConverter() {
             @Nonnull
             @Override
-            public String getObject(@Nonnull final String string) {
+            public String getObject(@Nonnull String string) {
                 return string;
             }
         });
@@ -388,9 +388,7 @@ public class ConfigSystem implements Config {
         private ConfigTypeConverter converter;
 
         ConfigTypes(
-                @Nonnull final String typeName,
-                @Nonnull final Class<?> typeClass,
-                @Nonnull final ConfigTypeConverter converter) {
+                @Nonnull String typeName, @Nonnull Class<?> typeClass, @Nonnull ConfigTypeConverter converter) {
             this.typeClass = typeClass;
             this.typeName = typeName;
             this.converter = converter;
@@ -424,18 +422,18 @@ public class ConfigSystem implements Config {
         lock.writeLock().lock();
         try (OutputStream out = new GZIPOutputStream(
                 Files.newOutputStream(configFile, CREATE, TRUNCATE_EXISTING, WRITE))) {
-            final XmlSerializer serializer = XmlPullParserFactory.newInstance().newSerializer();
+            XmlSerializer serializer = XmlPullParserFactory.newInstance().newSerializer();
             serializer.setOutput(out, ENCODING);
 
             serializer.startDocument(ENCODING, true);
             serializer.startTag(null, ROOT_NAME);
 
             for (Map.Entry<String, Object> entry : configEntries.entrySet()) {
-                final String key = entry.getKey();
-                final Class<?> valueClass = entry.getValue().getClass();
+                String key = entry.getKey();
+                Class<?> valueClass = entry.getValue().getClass();
                 String value = null;
                 String type = null;
-                for (final ConfigTypes configType : ConfigTypes.values()) {
+                for (ConfigTypes configType : ConfigTypes.values()) {
                     if (configType.getTypeClass().equals(valueClass)) {
                         type = configType.getTypeName();
                         value = configType.getConverter().getString(entry.getValue());
@@ -459,9 +457,9 @@ public class ConfigSystem implements Config {
             serializer.flush();
             out.flush();
             changed = false;
-        } catch (@Nonnull final IOException e) {
+        } catch (@Nonnull IOException e) {
             LOGGER.error("Configuration not saved: error accessing config file.");
-        } catch (@Nonnull final XmlPullParserException e) {
+        } catch (@Nonnull XmlPullParserException e) {
             LOGGER.error("Configuration not saved: Error creating XML serializer");
         } finally {
             lock.writeLock().unlock();
@@ -469,42 +467,42 @@ public class ConfigSystem implements Config {
     }
 
     @Override
-    public void set(@Nonnull final String key, final boolean value) {
+    public void set(@Nonnull String key, boolean value) {
         set(key, Boolean.valueOf(value));
     }
 
     @Override
-    public void set(@Nonnull final String key, final byte value) {
+    public void set(@Nonnull String key, byte value) {
         set(key, Byte.valueOf(value));
     }
 
     @Override
-    public void set(@Nonnull final String key, final double value) {
+    public void set(@Nonnull String key, double value) {
         set(key, Double.valueOf(value));
     }
 
     @Deprecated
     @Override
-    public void set(@Nonnull final String key, @Nonnull final File value) {
+    public void set(@Nonnull String key, @Nonnull File value) {
         set(key, value.toPath());
     }
 
-    public void set(@Nonnull final String key, @Nonnull final Path value) {
+    public void set(@Nonnull String key, @Nonnull Path value) {
         set(key, value.toAbsolutePath().toString());
     }
 
     @Override
-    public void set(@Nonnull final String key, final float value) {
+    public void set(@Nonnull String key, float value) {
         set(key, Float.valueOf(value));
     }
 
     @Override
-    public void set(@Nonnull final String key, final int value) {
+    public void set(@Nonnull String key, int value) {
         set(key, Integer.valueOf(value));
     }
 
     @Override
-    public void set(@Nonnull final String key, final long value) {
+    public void set(@Nonnull String key, long value) {
         set(key, Long.valueOf(value));
     }
 
@@ -515,7 +513,7 @@ public class ConfigSystem implements Config {
      * @param key the key the value is stored with
      * @param value the value that is stored along with the key
      */
-    public void set(final String key, @Nonnull final Object value) {
+    public void set(String key, @Nonnull Object value) {
         lock.writeLock().lock();
         try {
             if (value.equals(configEntries.get(key))) {
@@ -530,12 +528,12 @@ public class ConfigSystem implements Config {
     }
 
     @Override
-    public void set(@Nonnull final String key, final short value) {
+    public void set(@Nonnull String key, short value) {
         set(key, Short.valueOf(value));
     }
 
     @Override
-    public void set(@Nonnull final String key, @Nonnull final String value) {
+    public void set(@Nonnull String key, @Nonnull String value) {
         set(key, (Object) value);
     }
 
@@ -550,7 +548,7 @@ public class ConfigSystem implements Config {
      * @param key the key the value is stored with
      * @param value the value that is stored along with the key
      */
-    public void setDefault(@Nonnull final String key, final boolean value) {
+    public void setDefault(@Nonnull String key, boolean value) {
         if (!(configEntries.get(key) instanceof Boolean)) {
             set(key, value);
         }
@@ -567,7 +565,7 @@ public class ConfigSystem implements Config {
      * @param key the key the value is stored with
      * @param value the value that is stored along with the key
      */
-    public void setDefault(@Nonnull final String key, final byte value) {
+    public void setDefault(@Nonnull String key, byte value) {
         if (!(configEntries.get(key) instanceof Byte)) {
             set(key, value);
         }
@@ -584,7 +582,7 @@ public class ConfigSystem implements Config {
      * @param key the key the value is stored with
      * @param value the value that is stored along with the key
      */
-    public void setDefault(@Nonnull final String key, final double value) {
+    public void setDefault(@Nonnull String key, double value) {
         if (!(configEntries.get(key) instanceof Double)) {
             set(key, value);
         }
@@ -602,7 +600,7 @@ public class ConfigSystem implements Config {
      * @param value the value that is stored along with the key
      */
     @Deprecated
-    public void setDefault(@Nonnull final String key, @Nonnull final File value) {
+    public void setDefault(@Nonnull String key, @Nonnull File value) {
         setDefault(key, value.toPath());
     }
 
@@ -617,7 +615,7 @@ public class ConfigSystem implements Config {
      * @param key the key the value is stored with
      * @param value the value that is stored along with the key
      */
-    public void setDefault(@Nonnull final String key, @Nonnull final Path value) {
+    public void setDefault(@Nonnull String key, @Nonnull Path value) {
         if (!(configEntries.get(key) instanceof String)) {
             set(key, value);
         }
@@ -634,7 +632,7 @@ public class ConfigSystem implements Config {
      * @param key the key the value is stored with
      * @param value the value that is stored along with the key
      */
-    public void setDefault(@Nonnull final String key, final float value) {
+    public void setDefault(@Nonnull String key, float value) {
         if (!(configEntries.get(key) instanceof Float)) {
             set(key, value);
         }
@@ -651,7 +649,7 @@ public class ConfigSystem implements Config {
      * @param key the key the value is stored with
      * @param value the value that is stored along with the key
      */
-    public void setDefault(@Nonnull final String key, final int value) {
+    public void setDefault(@Nonnull String key, int value) {
         if (!(configEntries.get(key) instanceof Integer)) {
             set(key, value);
         }
@@ -668,7 +666,7 @@ public class ConfigSystem implements Config {
      * @param key the key the value is stored with
      * @param value the value that is stored along with the key
      */
-    public void setDefault(@Nonnull final String key, final long value) {
+    public void setDefault(@Nonnull String key, long value) {
         if (!(configEntries.get(key) instanceof Long)) {
             set(key, value);
         }
@@ -685,7 +683,7 @@ public class ConfigSystem implements Config {
      * @param key the key the value is stored with
      * @param value the value that is stored along with the key
      */
-    public void setDefault(@Nonnull final String key, final short value) {
+    public void setDefault(@Nonnull String key, short value) {
         if (!(configEntries.get(key) instanceof Short)) {
             set(key, value);
         }
@@ -702,7 +700,7 @@ public class ConfigSystem implements Config {
      * @param key the key the value is stored with
      * @param value the value that is stored along with the key
      */
-    public void setDefault(@Nonnull final String key, final String value) {
+    public void setDefault(@Nonnull String key, String value) {
         if (!(configEntries.get(key) instanceof String)) {
             set(key, value);
         }
@@ -724,10 +722,10 @@ public class ConfigSystem implements Config {
 
         lock.writeLock().lock();
         try (InputStream in = new GZIPInputStream(Files.newInputStream(configFile, READ))) {
-            final XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
+            XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
             parser.setInput(in, ENCODING);
 
-            final Map<String, Object> loadedMap = new HashMap<>();
+            Map<String, Object> loadedMap = new HashMap<>();
 
             int currentTag = parser.nextToken();
             while (currentTag != XmlPullParser.END_DOCUMENT) {
@@ -735,9 +733,9 @@ public class ConfigSystem implements Config {
                     String key = null;
                     String type = null;
                     String value = null;
-                    final int count = parser.getAttributeCount();
+                    int count = parser.getAttributeCount();
                     for (int i = 0; i < count; i++) {
-                        final String name = parser.getAttributeName(i);
+                        String name = parser.getAttributeName(i);
                         switch (name) {
                             case "key":
                                 key = parser.getAttributeValue(i);
@@ -752,7 +750,7 @@ public class ConfigSystem implements Config {
                     }
                     if ((key != null) && (type != null) && (value != null)) {
                         Object realValue = null;
-                        for (final ConfigTypes configType : ConfigTypes.values()) {
+                        for (ConfigTypes configType : ConfigTypes.values()) {
                             if (type.equals(configType.getTypeName())) {
                                 realValue = configType.getConverter().getObject(value);
                                 break;
@@ -772,13 +770,13 @@ public class ConfigSystem implements Config {
             }
 
             configEntries.putAll(loadedMap);
-        } catch (@Nonnull final FileNotFoundException e) {
+        } catch (@Nonnull FileNotFoundException e) {
             LOGGER.warn("Configuration not loaded: config file disappeared.");
-        } catch (@Nonnull final ClassCastException e) {
+        } catch (@Nonnull ClassCastException e) {
             LOGGER.error("Configuration not loaded: illegal config data.");
-        } catch (@Nonnull final IOException e) {
+        } catch (@Nonnull IOException e) {
             LOGGER.error("Configuration not loaded: error accessing the file system.");
-        } catch (@Nonnull final XmlPullParserException e) {
+        } catch (@Nonnull XmlPullParserException e) {
             LOGGER.error("Error while creating XML pull parser.", e);
         } finally {
             lock.writeLock().unlock();
@@ -792,7 +790,7 @@ public class ConfigSystem implements Config {
      * @param key the key that was changed
      */
     @SuppressWarnings("deprecation")
-    private void reportChangedKey(@Nonnull final String key) {
+    private void reportChangedKey(@Nonnull String key) {
         changed = true;
 
         EventBus.publish(key, new ConfigChangedEvent(this, key));

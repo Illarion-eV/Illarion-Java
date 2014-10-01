@@ -224,6 +224,9 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
     }
 
     protected CharMovementMode getMovementMode() {
+        if (!World.getPlayer().getCarryLoad().isRunningPossible()) {
+            return CharMovementMode.Walk;
+        }
         CharMovementMode mode = getMovement().getDefaultMovementMode();
         if (getMovement().isMovementModePossible(mode)) {
             return mode;

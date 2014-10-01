@@ -371,10 +371,7 @@ public class Movement {
 
     @Nonnull
     public CharMovementMode getDefaultMovementMode() {
-        if (World.getPlayer().getCarryLoad().isRunningPossible()) {
-            return defaultMovementMode;
-        }
-        return CharMovementMode.Walk;
+        return defaultMovementMode;
     }
 
     @Nonnull

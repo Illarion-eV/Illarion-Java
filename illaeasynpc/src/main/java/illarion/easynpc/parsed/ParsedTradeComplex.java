@@ -68,7 +68,7 @@ public class ParsedTradeComplex extends AbstractParsedTrade {
     @Override
     public void writeLua(@Nonnull Writer target, @Nonnull LuaWriter.WritingStage stage) throws IOException {
         if (stage == LuaWriter.WritingStage.Trading) {
-            target.write("tradingNPC:addItem(npc.base.trade.tradeNPCItem(");
+            target.write("tradingNPC:addItem(npc_base_trade.tradeNPCItem(");
             target.write(Integer.toString(itemId));
             target.write(",");
             switch (getMode()) {

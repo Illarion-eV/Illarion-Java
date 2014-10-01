@@ -26,10 +26,13 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.Color;
 import de.lessvoid.nifty.tools.SizeValue;
+import illarion.client.graphics.FontLoader;
 import illarion.client.gui.InformGui;
 import illarion.client.util.UpdateTask;
+import illarion.client.world.MapDimensions;
 import illarion.client.world.World;
 import org.illarion.engine.GameContainer;
+import org.illarion.engine.graphic.Font;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,7 +88,7 @@ public final class InformHandler implements InformGui, ScreenController {
             Element msg = builder.build(parentNifty, parentScreen, parent);
             msg.showWithoutEffects();
             layoutParent.layoutElements();
-            msg.hide(new InformHandler.RemoveEndNotify(msg));
+            msg.hide(new RemoveEndNotify(msg));
         }
     }
 
@@ -110,7 +113,7 @@ public final class InformHandler implements InformGui, ScreenController {
 
         @Override
         public void perform() {
-            target.markForRemoval(new InformHandler.LayoutElementsEndNotify(target.getParent()));
+            target.markForRemoval(new LayoutElementsEndNotify(target.getParent()));
         }
     }
 
@@ -209,7 +212,7 @@ public final class InformHandler implements InformGui, ScreenController {
 
         LabelBuilder labelBuilder = new LabelBuilder();
         labelBuilder.label(message);
-        labelBuilder.font("menuFont");
+        labelBuilder.font(FontLoader.BUBBLE_FONT);
         labelBuilder.invisibleToMouse();
 
         EffectBuilder effectBuilder = new EffectBuilder("hide");
@@ -251,7 +254,7 @@ public final class InformHandler implements InformGui, ScreenController {
         LabelBuilder labelBuilder = new LabelBuilder();
         panelBuilder.control(labelBuilder);
         labelBuilder.label(message);
-        labelBuilder.font("textFont");
+        labelBuilder.font(FontLoader.BUBBLE_FONT);
         switch (priority) {
             case 1:
                 labelBuilder.color(Color.WHITE);
@@ -269,17 +272,21 @@ public final class InformHandler implements InformGui, ScreenController {
         labelBuilder.textHAlignCenter();
         labelBuilder.parameter("wrap", "true");
 
+        int moveUpTime = getScriptInformDisplayTime(message, priority);
+
         EffectBuilder moveEffectBuilder = new EffectBuilder("move");
-        moveEffectBuilder.length(getScriptInformDisplayTime(message, priority));
+        moveEffectBuilder.length(moveUpTime);
         moveEffectBuilder.startDelay(0);
         moveEffectBuilder.effectParameter("mode", "toOffset");
         moveEffectBuilder.effectParameter("direction", "bottom");
         moveEffectBuilder.effectParameter("offsetY", "-80");
         labelBuilder.onHideEffect(moveEffectBuilder);
 
+        int fadeOutTime = moveUpTime / 4;
+
         EffectBuilder fadeOutBuilder = new EffectBuilder("fade");
-        fadeOutBuilder.length(getScriptInformDisplayTime(message, priority));
-        fadeOutBuilder.startDelay(0);
+        fadeOutBuilder.length(fadeOutTime);
+        fadeOutBuilder.startDelay(moveUpTime - fadeOutTime);
         fadeOutBuilder.effectParameter("start", "FF");
         fadeOutBuilder.effectParameter("end", "00");
         labelBuilder.onHideEffect(fadeOutBuilder);
@@ -291,9 +298,9 @@ public final class InformHandler implements InformGui, ScreenController {
 
     private static int getScriptInformDisplayTime(@Nonnull CharSequence text, int priority) {
         if (priority == 0) {
-            return 5000 + (text.length() * 50);
+            return 5000;// + (text.length() * 50);
         }
-        return 8000 + (text.length() * 50);
+        return 8000;// + (text.length() * 50);
     }
 
     @Override
@@ -306,11 +313,18 @@ public final class InformHandler implements InformGui, ScreenController {
         PanelBuilder panelBuilder = new PanelBuilder();
         panelBuilder.childLayoutHorizontal();
 
+        String text = "Server> " + message;
+        Font font = FontLoader.getInstance().getFont(FontLoader.CONSOLE_FONT);
+
         LabelBuilder labelBuilder = new LabelBuilder();
         panelBuilder.control(labelBuilder);
-        labelBuilder.label("Server> " + message);
-        labelBuilder.font("consoleFont");
+        labelBuilder.label(text);
+        labelBuilder.font(FontLoader.CONSOLE_FONT);
         labelBuilder.invisibleToMouse();
+        if (MapDimensions.getInstance().getOnScreenWidth() < font.getWidth(text)) {
+            labelBuilder.wrap(true);
+            labelBuilder.width(SizeValue.px(MapDimensions.getInstance().getOnScreenWidth()));
+        }
 
         EffectBuilder effectBuilder = new EffectBuilder("hide");
         effectBuilder.startDelay(10000 + (message.length() * 50));
@@ -328,7 +342,7 @@ public final class InformHandler implements InformGui, ScreenController {
 
         LabelBuilder labelBuilder = new LabelBuilder();
         labelBuilder.label(message);
-        labelBuilder.font("textFont");
+        labelBuilder.font(FontLoader.BUBBLE_FONT);
         labelBuilder.invisibleToMouse();
 
         EffectBuilder effectBuilder = new EffectBuilder("hide");

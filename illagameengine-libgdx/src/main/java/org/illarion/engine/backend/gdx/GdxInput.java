@@ -117,6 +117,11 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     private long clickTimeout;
 
     /**
+     * The storage for the numbers that were typed in while a alt key was pressed.
+     */
+    private char altKeyCode;
+
+    /**
      * Create a new instance of the libGDX input system.
      *
      * @param gdxInput the input provider of libGDX that is supposed to be used
@@ -485,6 +490,9 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
             log.debug("Received key down with code: {} that failed to translate to a key.", keycode);
             return true;
         }
+        if (isAnyKeyDown(Key.LeftAlt, Key.RightAlt) && isNumPadNumber(pressedKey)) {
+            addKeyToAltKeyCode(pressedKey);
+        }
         log.debug("Received key down with code: {} that translated to key: {}", keycode, pressedKey);
         events.offer(new Runnable() {
             @Override
@@ -494,6 +502,53 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
             }
         });
         return true;
+    }
+
+    private void addKeyToAltKeyCode(@Nonnull Key key) {
+        int newNumber;
+        switch (key) {
+            case NumPad0:
+                newNumber = 0;
+                break;
+            case NumPad1:
+                newNumber = 1;
+                break;
+            case NumPad2:
+                newNumber = 2;
+                break;
+            case NumPad3:
+                newNumber = 3;
+                break;
+            case NumPad4:
+                newNumber = 4;
+                break;
+            case NumPad5:
+                newNumber = 5;
+                break;
+            case NumPad6:
+                newNumber = 6;
+                break;
+            case NumPad7:
+                newNumber = 7;
+                break;
+            case NumPad8:
+                newNumber = 8;
+                break;
+            case NumPad9:
+                newNumber = 9;
+                break;
+            default:
+                throw new IllegalArgumentException("Key is not a valid Numpad key: " + key);
+        }
+
+        altKeyCode *= 10;
+        altKeyCode += newNumber;
+    }
+
+    private boolean isNumPadNumber(@Nonnull Key key) {
+        return (key == Key.NumPad0) || (key == Key.NumPad1) || (key == Key.NumPad2) || (key == Key.NumPad3) ||
+                (key == Key.NumPad4) || (key == Key.NumPad5) || (key == Key.NumPad6) || (key == Key.NumPad7) ||
+                (key == Key.NumPad8) || (key == Key.NumPad9);
     }
 
     @Override
@@ -511,20 +566,28 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
                 inputListener.keyUp(releasedKey);
             }
         });
+        if ((releasedKey == Key.LeftAlt) || (releasedKey == Key.RightAlt)) {
+            keyTyped(altKeyCode);
+            altKeyCode = 0;
+        }
         return true;
     }
 
     @Override
     public boolean keyTyped(final char character) {
-        log.debug("Received key typed with character: {}", character);
-        events.offer(new Runnable() {
-            @Override
-            public void run() {
-                assert inputListener != null;
-                inputListener.keyTyped(character);
-            }
-        });
-        return true;
+        if (Character.isDefined(character) && (character != 0)) {
+            log.debug("Received key typed with character: {}", character);
+            events.offer(new Runnable() {
+                @Override
+                public void run() {
+                    assert inputListener != null;
+                    inputListener.keyTyped(character);
+                }
+            });
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override

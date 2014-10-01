@@ -74,7 +74,7 @@ public final class ParsedCycleText implements ParsedData {
     @Nonnull
     @Override
     public Collection<String> getRequiredModules() {
-        return Collections.singleton("npc.base.talk");
+        return Collections.singleton("npc_base_talk");
     }
 
     /**

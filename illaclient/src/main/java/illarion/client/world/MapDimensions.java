@@ -238,7 +238,7 @@ public final class MapDimensions {
      * @param width the width of the screen in pixels
      * @param height the height of the screen in pixels
      */
-    public void reportScreenSize(final int width, final int height) {
+    public void reportScreenSize(int width, int height) {
         if ((onScreenHeight == height) && (onScreenWidth == width)) {
             return;
         }
@@ -246,8 +246,8 @@ public final class MapDimensions {
         onScreenWidth = width;
         onScreenHeight = height;
 
-        final int heightInTiles = FastMath.ceil(((float) height / (float) MapConstants.TILE_H) * 2.f);
-        final int widthInTiles = FastMath.ceil(((float) width / (float) MapConstants.TILE_W) * 2.f);
+        int heightInTiles = FastMath.ceil(((float) height / (float) MapConstants.TILE_H) * 2.f);
+        int widthInTiles = FastMath.ceil(((float) width / (float) MapConstants.TILE_W) * 2.f);
 
         clippingOffsetTop = FastMath.ceil(heightInTiles / 2.f) + ADD_CLIPPING_RANGE;
         clippingOffsetBottom = -FastMath.ceil(heightInTiles / 2.f) - ADD_CLIPPING_RANGE_BOTTOM;
@@ -260,8 +260,8 @@ public final class MapDimensions {
         offScreenWidth = (stripesWidth * MapConstants.TILE_W) / 2;
         offScreenHeight = (stripesHeight * MapConstants.TILE_H) / 2;
 
-        final int serverMapDimWidth = stripesWidth >> 2;
-        final int serverMapDimHeight = stripesHeight >> 2;
+        int serverMapDimWidth = stripesWidth >> 2;
+        int serverMapDimHeight = stripesHeight >> 2;
 
         if ((serverMapDimHeight != serverMapDimensionHeight) || (serverMapDimWidth != serverMapDimensionWidth)) {
             serverMapDimensionHeight = serverMapDimHeight;
