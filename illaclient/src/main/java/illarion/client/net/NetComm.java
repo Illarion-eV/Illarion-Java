@@ -22,7 +22,6 @@ import illarion.client.net.client.AbstractCommand;
 import illarion.client.net.client.KeepAliveCmd;
 import illarion.client.net.server.AbstractReply;
 import illarion.client.util.ConnectionPerformanceClock;
-import illarion.client.world.World;
 import illarion.common.util.Timer;
 import javolution.text.TextBuilder;
 import org.slf4j.Logger;
@@ -257,7 +256,7 @@ public final class NetComm {
                 public void run() {
                     if (ConnectionPerformanceClock.isReadyForNewPing()) {
                         ConnectionPerformanceClock.notifySendToNetComm();
-                        World.getNet().sendCommand(keepAliveCmd);
+                        sendCommand(keepAliveCmd);
                     }
                 }
             });

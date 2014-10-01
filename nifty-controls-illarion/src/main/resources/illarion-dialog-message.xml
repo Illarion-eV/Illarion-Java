@@ -18,7 +18,7 @@
                        controller="org.illarion.nifty.controls.dialog.message.DialogMessageControl">
         <control name="window" title="Nachricht" id="#window" visibleToMouse="true" width="422px">
             <panel childLayout="vertical" visibleToMouse="true" width="380px">
-                <control name="label" id="#text" text="-" wrap="true" width="380px"/>
+                <control name="label" id="#text" text="-" wrap="true" width="380px" textHAlign="left"/>
                 <panel height="5px" width="1px"/>
                 <panel id="#buttons" childLayout="center" visibleToMouse="true" width="380px">
                     <control name="button" id="#button" label="OK"/>

@@ -15,13 +15,17 @@
  */
 package illarion.client.world;
 
+import illarion.client.IllaClient;
 import illarion.client.graphics.Avatar;
 import illarion.client.net.client.RequestAppearanceCmd;
 import illarion.client.world.events.CharRemovedEvent;
+import illarion.common.config.ConfigChangedEvent;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
 import javolution.util.FastTable;
 import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,6 +79,8 @@ public final class People {
     @Nonnull
     private final List<Char> removalList;
 
+    private int permanentAvatarTagState;
+
     /**
      * Default constructor. Sets up all needed base variables to init the class.
      */
@@ -82,6 +88,32 @@ public final class People {
         removalList = new FastTable<>();
         chars = new HashMap<>();
         charsLock = new ReentrantReadWriteLock();
+
+        permanentAvatarTagState = IllaClient.getCfg().getInteger("showAvatarTagPermanently");
+        AnnotationProcessor.process(this);
+    }
+
+    @EventTopicSubscriber(topic = "showAvatarTagPermanently")
+    public void onQuestMarkerSettingsChanged(@Nonnull String topic, @Nonnull ConfigChangedEvent event) {
+        if ("showAvatarTagPermanently".equals(topic)) {
+            permanentAvatarTagState = event.getConfig().getInteger(topic);
+        }
+    }
+
+    public boolean isAvatarTagShown(@Nullable CharacterId id) {
+        if (id == null) {
+            return false;
+        }
+        switch (permanentAvatarTagState % 3) {
+            case 0:
+                return false;
+            case 1:
+                return id.isHuman() && !World.getPlayer().isPlayer(id);
+            case 2:
+                return !World.getPlayer().isPlayer(id);
+            default:
+                return false;
+        }
     }
 
     /**

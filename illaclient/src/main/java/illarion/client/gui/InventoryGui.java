@@ -72,4 +72,6 @@ public interface InventoryGui {
      * Hide the inventory in case its shown and show it in case its hidden.
      */
     void toggleInventory();
+
+    void updateCarryLoad();
 }

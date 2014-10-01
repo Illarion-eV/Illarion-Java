@@ -75,10 +75,7 @@ public class DialogMessageControl extends WindowControl
 
     @Override
     public void bind(
-            @Nonnull final Nifty nifty,
-            @Nonnull final Screen screen,
-            @Nonnull final Element element,
-            @Nonnull final Parameters parameter) {
+            @Nonnull Nifty nifty, @Nonnull Screen screen, @Nonnull Element element, @Nonnull Parameters parameter) {
         super.bind(nifty, screen, element, parameter);
         niftyInstance = nifty;
         currentScreen = screen;
@@ -98,34 +95,34 @@ public class DialogMessageControl extends WindowControl
 
         super.onStartScreen();
 
-        final Element element = getElement();
-        final Element parent = element.getParent();
+        Element element = getElement();
+        Element parent = element.getParent();
 
-        final int x = (parent.getWidth() - element.getWidth()) / 2;
-        final int y = (parent.getHeight() - element.getHeight()) / 2;
+        int x = (parent.getWidth() - element.getWidth()) / 2;
+        int y = (parent.getHeight() - element.getHeight()) / 2;
 
-        element.setConstraintX(new SizeValue(Integer.toString(x) + "px"));
-        element.setConstraintY(new SizeValue(Integer.toString(y) + "px"));
+        element.setConstraintX(SizeValue.px(x));
+        element.setConstraintY(SizeValue.px(y));
 
         parent.layoutElements();
     }
 
     @Override
-    public void setText(@Nonnull final String text) {
-        final Label label = getContent().findNiftyControl("#text", Label.class);
+    public void setText(@Nonnull String text) {
+        Label label = getContent().findNiftyControl("#text", Label.class);
         label.getElement().getRenderer(TextRenderer.class).setLineWrapping(true);
         label.setText(text);
     }
 
     @Override
-    public void setButton(@Nonnull final String text) {
-        final Button button = getContent().findNiftyControl("#button", Button.class);
+    public void setButton(@Nonnull String text) {
+        Button button = getContent().findNiftyControl("#button", Button.class);
         button.setText(text);
         niftyInstance.subscribe(currentScreen, button.getId(), ButtonClickedEvent.class, this);
     }
 
     @Override
-    public void onEvent(final String topic, final ButtonClickedEvent data) {
+    public void onEvent(String topic, ButtonClickedEvent data) {
         if (alreadyClosed) {
             return;
         }

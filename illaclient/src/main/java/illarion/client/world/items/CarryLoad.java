@@ -81,6 +81,7 @@ public class CarryLoad {
                 }
             });
         }
+        World.getGameGui().getInventoryGui().updateCarryLoad();
     }
 
     public double getLoadFactor() {

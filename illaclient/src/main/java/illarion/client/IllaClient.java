@@ -523,6 +523,12 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("disableChatAfterSending", true);
         cfg.setDefault("showQuestsOnGameMap", true);
         cfg.setDefault("showQuestsOnMiniMap", true);
+        /* Showing the avatar tag on a permanent base.
+         * 0 -> none are shown
+         * 1 -> other players only
+         * 2 -> other players and monsters
+         */
+        cfg.setDefault("showAvatarTagPermanently", 0);
         cfg.set("limitPathFindingToMouseDirection", true);
         cfg.set("followMousePathFinding", true);
 

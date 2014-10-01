@@ -42,6 +42,7 @@ import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
 import illarion.client.world.events.CloseDialogEvent;
 import illarion.client.world.interactive.InteractionManager;
+import illarion.client.world.items.CarryLoad;
 import illarion.client.world.items.Inventory;
 import illarion.client.world.items.MerchantItem;
 import illarion.client.world.items.MerchantList;
@@ -55,6 +56,7 @@ import org.illarion.engine.input.Button;
 import org.illarion.engine.input.Input;
 import org.illarion.engine.input.Key;
 import org.illarion.nifty.controls.InventorySlot;
+import org.illarion.nifty.controls.Progress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -196,6 +198,34 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
         World.getNet().sendCommand(new PickUpAllItemsCmd());
     }
 
+    public void updateCarryLoad() {
+        if ((inventoryWindow != null) && inventoryWindow.isVisible()) {
+            CarryLoad load = World.getPlayer().getCarryLoad();
+            Element carryLoadDisplay = inventoryWindow.findElementById("carryLoad");
+            if (carryLoadDisplay != null) {
+                Element fillElement = carryLoadDisplay.findElementById("#fill");
+                if (fillElement != null) {
+                    if (load.isRunningPossible()) {
+                        carryLoadDisplay.setStyle("illarion-progress");
+                        fillElement.setStyle("illarion-progress#fill");
+                    } else if (load.isWalkingPossible()) {
+                        carryLoadDisplay.setStyle("illarion-progress-yellow");
+                        fillElement.setStyle("illarion-progress-yellow#fill");
+                    } else {
+                        carryLoadDisplay.setStyle("illarion-progress-red");
+                        fillElement.setStyle("illarion-progress-red#fill");
+                    }
+                }
+                Progress carryLoadControl = carryLoadDisplay.getNiftyControl(Progress.class);
+                if (carryLoadControl != null) {
+                    carryLoadControl.setProgress(0.0);
+                    carryLoadControl.setProgress(load.getLoadFactor());
+                }
+                carryLoadDisplay.layoutElements();
+            }
+        }
+    }
+
     @Override
     public void toggleInventory() {
         World.getUpdateTaskManager().addTask(new UpdateTask() {
@@ -233,6 +263,12 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
                     inventoryWindow.show(new EndNotify() {
                         @Override
                         public void perform() {
+                            World.getUpdateTaskManager().addTaskForLater(new UpdateTask() {
+                                @Override
+                                public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+                                    updateCarryLoad();
+                                }
+                            });
                             inventoryWindow.getNiftyControl(Window.class).moveToFront();
                         }
                     });
@@ -389,6 +425,17 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
         inventoryWindow.setConstraintX(new SizeValue(IllaClient.getCfg().getString("inventoryPosX")));
         inventoryWindow.setConstraintY(new SizeValue(IllaClient.getCfg().getString("inventoryPosY")));
         //inventoryWindow.getParent().layoutElements();
+
+        /* Workaround to fix a internal Nifty-GUI problem with changing the styles. */
+        if (inventoryWindow != null) {
+            Element carryLoadDisplay = inventoryWindow.findElementById("carryLoad");
+            if (carryLoadDisplay != null) {
+                Element fillElement = carryLoadDisplay.findElementById("#fill");
+                if (fillElement != null) {
+                    fillElement.setStyle("illarion-progress#fill");
+                }
+            }
+        }
     }
 
     @Override
