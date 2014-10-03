@@ -54,17 +54,17 @@ public final class LoginCmd extends AbstractCommand {
      * @param password the password used to login
      * @param version the version of the client to report to the server
      */
-    public LoginCmd(final String charName, @Nonnull final String password, final int version) {
+    public LoginCmd(String charName, @Nonnull String password, int version) {
         super(CommandList.CMD_LOGIN);
         this.charName = charName;
 
-        final Md5Crypto crypto = new Md5Crypto();
+        Md5Crypto crypto = new Md5Crypto();
         this.password = crypto.crypt(password, "illarion");
         this.version = (short) version;
     }
 
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) {
         writer.writeUByte(version);
         writer.writeString(charName);
         writer.writeString(password);
