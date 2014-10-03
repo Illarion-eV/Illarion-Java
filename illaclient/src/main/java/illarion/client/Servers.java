@@ -42,11 +42,6 @@ public enum Servers {
     devserver("Dev server", realserver.serverAddr, 3012, 122),
 
     /**
-     * This is the special pre-defined implementation for the local test server.
-     */
-    localServer("Local test server", "localhost", 3012, 122),
-
-    /**
      * Custom server, only for very special applications. It will connect to a server running at a user-specified host.
      */
     customserver("Custom server", realserver.serverAddr, 3012, 122);
@@ -76,11 +71,11 @@ public enum Servers {
      * Default ENUM constructor for the enumeration entries. It creates a definition of a server and stores it to the
      * enumeration constants.
      *
-     * @param name    the name of the server
-     * @param addr    the host address of the server
-     * @param port    the port the server is listening for connections
+     * @param name the name of the server
+     * @param addr the host address of the server
+     * @param port the port the server is listening for connections
      * @param version the version that shall be transfered to the server to
-     *                validate the correct client version
+     * validate the correct client version
      */
     Servers(@Nonnull String name, @Nonnull String addr, int port, int version) {
         serverName = name;

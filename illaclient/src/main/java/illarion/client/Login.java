@@ -62,7 +62,6 @@ public final class Login {
     public static final int TESTSERVER = 1;
     public static final int GAMESERVER = 2;
     public static final int CUSTOMSERVER = 3;
-    public static final int LOCALSERVER = 4;
 
     public static final class CharEntry {
         private final String charName;
@@ -133,26 +132,12 @@ public final class Login {
                 case CUSTOMSERVER:
                     IllaClient.getInstance().setUsedServer(Servers.customserver);
                     break;
-                case LOCALSERVER:
-                    IllaClient.getInstance().setUsedServer(Servers.localServer);
-                    break;
                 default:
                     IllaClient.getInstance().setUsedServer(Servers.devserver);
                     break;
             }
         } else {
             IllaClient.getInstance().setUsedServer(Servers.realserver);
-        }
-
-        if (IllaClient.getInstance().getUsedServer() != Servers.localServer) {
-            IllaClient.getCfg().set("lastLogin", loginName);
-            IllaClient.getCfg().set("savePassword", storePasswd);
-
-            if (storePasswd) {
-                storePassword(password);
-            } else {
-                deleteStoredPassword();
-            }
         }
         IllaClient.getCfg().save();
     }
@@ -202,8 +187,6 @@ public final class Login {
 
     public boolean isCharacterListRequired() {
         switch (getServer()) {
-            case LOCALSERVER:
-                return false;
             case CUSTOMSERVER:
                 return IllaClient.getCfg().getBoolean("serverAccountLogin");
             default:
@@ -306,7 +289,6 @@ public final class Login {
 
             switch (IllaClient.getInstance().getUsedServer()) {
                 case customserver:
-                case localServer:
                     charList.add(addChar);
                     break;
                 case testserver:
