@@ -84,7 +84,7 @@ public final class Login {
     @Nullable
     private String loginName;
     private String password;
-    private Integer server;
+    private Servers server;
     private String loginCharacter;
     private List<CharEntry> charList;
 
@@ -104,7 +104,16 @@ public final class Login {
         password = pass;
     }
 
-    public void setServer(Integer server) {
+    public void setServer(int server) {
+        for (Servers serverEntry : Servers.values()) {
+            if (serverEntry.getServerKey() == server) {
+                setServer(serverEntry);
+                return;
+            }
+        }
+    }
+
+    public void setServer(@Nonnull Servers server) {
         this.server = server;
     }
 
@@ -112,33 +121,31 @@ public final class Login {
         restoreLogin();
         restorePassword();
         restoreStorePassword();
-        restoreServer();
     }
 
-    public void storeData(boolean storePasswd) {
-
+    public void storeData(boolean storePassword) {
         if (IllaClient.DEFAULT_SERVER != Servers.realserver) {
-            IllaClient.getCfg().set("server", server);
-            switch (server) {
-                case DEVSERVER:
-                    IllaClient.getInstance().setUsedServer(Servers.devserver);
-                    break;
-                case TESTSERVER:
-                    IllaClient.getInstance().setUsedServer(Servers.testserver);
-                    break;
-                case GAMESERVER:
-                    IllaClient.getInstance().setUsedServer(Servers.realserver);
-                    break;
-                case CUSTOMSERVER:
-                    IllaClient.getInstance().setUsedServer(Servers.customserver);
-                    break;
-                default:
-                    IllaClient.getInstance().setUsedServer(Servers.devserver);
-                    break;
-            }
+            IllaClient.getCfg().set("server", server.getServerKey());
+            IllaClient.getInstance().setUsedServer(server);
         } else {
             IllaClient.getInstance().setUsedServer(Servers.realserver);
         }
+
+        switch (getServer()) {
+            case customserver:
+                IllaClient.getCfg().set("customLastLogin", loginName);
+                IllaClient.getCfg().set("customSavePassword", storePassword);
+                break;
+            default:
+                IllaClient.getCfg().set("lastLogin", loginName);
+                IllaClient.getCfg().set("savePassword", storePassword);
+        }
+        if (storePassword) {
+            storePassword(password);
+        } else {
+            deleteStoredPassword();
+        }
+
         IllaClient.getCfg().save();
     }
 
@@ -156,7 +163,7 @@ public final class Login {
         return password;
     }
 
-    public Integer getServer() {
+    public Servers getServer() {
         return server;
     }
 
@@ -187,7 +194,7 @@ public final class Login {
 
     public boolean isCharacterListRequired() {
         switch (getServer()) {
-            case CUSTOMSERVER:
+            case customserver:
                 return IllaClient.getCfg().getBoolean("serverAccountLogin");
             default:
                 return true;
@@ -222,11 +229,10 @@ public final class Login {
 
             conn.connect();
 
-            OutputStreamWriter output = new OutputStreamWriter(conn.getOutputStream());
-
-            output.write(query);
-            output.flush();
-            output.close();
+            try (OutputStreamWriter output = new OutputStreamWriter(conn.getOutputStream())) {
+                output.write(query);
+                output.flush();
+            }
 
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
@@ -320,6 +326,7 @@ public final class Login {
         loginCharacter = character;
     }
 
+    @Nullable
     public String getLoginCharacter() {
         if (!isCharacterListRequired()) {
             return loginName;
@@ -333,13 +340,20 @@ public final class Login {
             return false;
         }
 
-        int clientVersion;
-        if (IllaClient.DEFAULT_SERVER != Servers.realserver) {
-            clientVersion = IllaClient.getCfg().getInteger("clientVersion");
-        } else {
-            clientVersion = IllaClient.DEFAULT_SERVER.getClientVersion();
+        String loginChar = getLoginCharacter();
+        if (loginChar == null) {
+            return false;
         }
-        World.getNet().sendCommand(new LoginCmd(getLoginCharacter(), password, clientVersion));
+
+        int clientVersion;
+        switch (getServer()) {
+            case customserver:
+                clientVersion = IllaClient.getCfg().getInteger("clientVersion");
+                break;
+            default:
+                clientVersion = getServer().getClientVersion();
+        }
+        World.getNet().sendCommand(new LoginCmd(loginChar, password, clientVersion));
 
         return true;
     }
@@ -350,28 +364,46 @@ public final class Login {
      */
     @SuppressWarnings("nls")
     private void restorePassword() {
-        String encoded = IllaClient.getCfg().getString("fingerprint");
-        if (encoded != null) {
-            password = shufflePassword(encoded, true);
+        String encoded;
+        switch (getServer()) {
+            case customserver:
+                encoded = IllaClient.getCfg().getString("customFingerprint");
+                break;
+            default:
+                encoded = IllaClient.getCfg().getString("fingerprint");
         }
+
+        password = encoded != null ? shufflePassword(encoded, true) : "";
     }
 
     private boolean storePassword;
 
     private void restoreStorePassword() {
-        storePassword = IllaClient.getCfg().getBoolean("savePassword");
+        switch (getServer()) {
+            case customserver:
+                storePassword = IllaClient.getCfg().getBoolean("customSavePassword");
+                break;
+            default:
+                storePassword = IllaClient.getCfg().getBoolean("savePassword");
+        }
     }
 
-    public boolean storePassword() {
+    public boolean getStorePassword() {
         return storePassword;
     }
 
     private void restoreLogin() {
-        loginName = IllaClient.getCfg().getString("lastLogin");
+        switch (getServer()) {
+            case customserver:
+                loginName = IllaClient.getCfg().getString("customLastLogin");
+                break;
+            default:
+                loginName = IllaClient.getCfg().getString("lastLogin");
+        }
     }
 
-    private void restoreServer() {
-        server = IllaClient.getCfg().getInteger("server");
+    public void restoreServer() {
+        setServer(IllaClient.getCfg().getInteger("server"));
     }
 
     /**
@@ -390,9 +422,6 @@ public final class Login {
             Charset usedCharset = Charset.forName("UTF-8");
             // creating the key
             Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
-            if (userDir == null) {
-                throw new IllegalStateException("User directory can't be null.");
-            }
             DESKeySpec keySpec = new DESKeySpec(userDir.toAbsolutePath().toString().getBytes(usedCharset));
             SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
             SecretKey key = keyFactory.generateSecret(keySpec);
@@ -432,15 +461,29 @@ public final class Login {
      */
     @SuppressWarnings("nls")
     private void storePassword(@Nonnull String pw) {
-        IllaClient.getCfg().set("savePassword", true);
-        IllaClient.getCfg().set("fingerprint", shufflePassword(pw, false));
+        switch (getServer()) {
+            case customserver:
+                IllaClient.getCfg().set("customSavePassword", true);
+                IllaClient.getCfg().set("customFingerprint", shufflePassword(pw, false));
+                break;
+            default:
+                IllaClient.getCfg().set("savePassword", true);
+                IllaClient.getCfg().set("fingerprint", shufflePassword(pw, false));
+        }
     }
 
     /**
      * Remove the stored password.
      */
     private void deleteStoredPassword() {
-        IllaClient.getCfg().set("savePassword", false);
-        IllaClient.getCfg().remove("fingerprint");
+        switch (getServer()) {
+            case customserver:
+                IllaClient.getCfg().set("customSavePassword", false);
+                IllaClient.getCfg().remove("customFingerprint");
+                break;
+            default:
+                IllaClient.getCfg().set("savePassword", false);
+                IllaClient.getCfg().remove("fingerprint");
+        }
     }
 }

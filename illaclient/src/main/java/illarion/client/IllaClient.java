@@ -515,9 +515,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("serverAddress", Servers.customserver.getServerHost());
         cfg.setDefault("serverPort", Servers.customserver.getServerPort());
         cfg.setDefault("clientVersion", Servers.customserver.getClientVersion());
-        cfg.setDefault("testserverLogin", "Testserver One");
-        cfg.setDefault("testserverPass", "test");
-        cfg.setDefault("testserverPassStore", true);
         cfg.setDefault("serverAccountLogin", true);
         cfg.setDefault("wasdWalk", true);
         cfg.setDefault("disableChatAfterSending", true);
