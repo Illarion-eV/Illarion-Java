@@ -16,6 +16,7 @@
 package illarion.common.data;
 
 import javax.annotation.Nonnull;
+import java.util.regex.Pattern;
 
 /**
  * This class represents one entry of a book page.
@@ -23,6 +24,16 @@ import javax.annotation.Nonnull;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class BookPageEntry {
+
+    public enum Align {
+        Left,
+        Center,
+        Right
+    }
+
+    private static final Pattern REMOVE_LINE_BREAKS_PATTERN = Pattern.compile("\\s+");
+    private static final Pattern COLLAPSE_SPACE_PATTERN = Pattern.compile("[ \t]+");
+    private static final Pattern LINE_BREAK_PATTERN = Pattern.compile("\n\r?");
     /**
      * In case this flag this {@code true} this entry is a headline and no paragraph.
      */
@@ -31,17 +42,37 @@ public class BookPageEntry {
     /**
      * The text that belongs to this entry.
      */
+    @Nonnull
     private final String text;
+
+    @Nonnull
+    private final Align alignment;
 
     /**
      * Create a new entry for a book page.
      *
      * @param headline {@code true} in case this entry is a headline
      * @param text the text of this entry
+     * @param keepLineBreaks keep the line breaks as is
+     * @param alignment the alignment of the paragraph
      */
-    public BookPageEntry(final boolean headline, @Nonnull final String text) {
+    public BookPageEntry(boolean headline, @Nonnull String text, boolean keepLineBreaks, @Nonnull Align alignment) {
         this.headline = headline;
-        this.text = text.trim().replaceAll("\\s+", " ");
+        this.alignment = alignment;
+        if (keepLineBreaks) {
+            String cleanedText = COLLAPSE_SPACE_PATTERN.matcher(text.trim()).replaceAll(" ");
+            String[] lines = LINE_BREAK_PATTERN.split(cleanedText);
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < lines.length; i++) {
+                if (i > 0) {
+                    sb.append('\n');
+                }
+                sb.append(lines[i].trim());
+            }
+            this.text = sb.toString();
+        } else {
+            this.text = REMOVE_LINE_BREAKS_PATTERN.matcher(text.trim()).replaceAll(" ");
+        }
     }
 
     /**
@@ -58,7 +89,13 @@ public class BookPageEntry {
      *
      * @return the text of this entry
      */
+    @Nonnull
     public String getText() {
         return text;
+    }
+
+    @Nonnull
+    public Align getAlignment() {
+        return alignment;
     }
 }
