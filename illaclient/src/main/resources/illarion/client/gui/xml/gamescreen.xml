@@ -239,7 +239,7 @@
             <panel childLayout="center" width="300px">
                 <panel childLayout="horizontal" width="300px">
                     <control name="button" id="#closeLogoutButton" label="${gamescreen-bundle.logout}" width="90px"
-                             marginRight="10px"/>
+                             marginRight="10px" marginLeft="5px"/>
                     <control name="button" id="#closeExitButton" label="${gamescreen-bundle.exit}" width="90px"
                              marginRight="10px"/>
                     <control name="button" id="#closeCancelButton" label="${gamescreen-bundle.cancel}" width="90px"/>
