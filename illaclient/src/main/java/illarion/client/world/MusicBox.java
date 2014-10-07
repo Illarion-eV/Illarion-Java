@@ -20,7 +20,6 @@ import illarion.client.resources.SongFactory;
 import illarion.common.config.Config;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.util.Stoppable;
-import illarion.common.util.StoppableStorage;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicPatternSubscriber;
 import org.illarion.engine.Engine;
@@ -85,8 +84,6 @@ public final class MusicBox implements Stoppable {
         overrideSoundId = NO_TRACK;
         fightingMusicPlaying = false;
         currentDefaultTrack = NO_TRACK;
-
-        StoppableStorage.getInstance().add(this);
 
         AnnotationProcessor.process(this);
         updateSettings(null, IllaClient.getCfg());

@@ -13,12 +13,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package illarion.client.world.events;
+package illarion.client.gui;
 
 /**
- * This event is fired in case closing the application is requested.
- *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class CloseGameEvent {
+public interface CloseGameGui {
+    void showClosingDialog();
 }

@@ -163,6 +163,9 @@ public interface GameGui {
     @Nonnull
     MiniMapGui getMiniMapGui();
 
+    @Nonnull
+    CloseGameGui getCloseGameGui();
+
     /**
      * Check if the GUI is ready to work.
      *

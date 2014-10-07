@@ -258,6 +258,19 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         INSTANCE.game.enterState(Game.STATE_ENDING);
     }
 
+    public static void performLogout() {
+        LOGGER.info("Logout requested.");
+        getInstance().quitGame();
+        INSTANCE.game.enterState(Game.STATE_LOGOUT);
+    }
+
+    public static void returnToLogin() {
+        LOGGER.info("Returning to login initiated");
+        INSTANCE.game.enterState(Game.STATE_LOGIN);
+        World.cleanEnvironment();
+        getCfg().save();
+    }
+
     public static void exitGameContainer() {
         INSTANCE.gameContainer.exitGame();
 
@@ -394,24 +407,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
                 System.exit(-1);
             }
         }, 10000);
-    }
-
-    /**
-     * This function changes the state of the exit requested parameter.
-     *
-     * @param newValue the new value for the exitRequested parameter
-     */
-    static void setExitRequested(boolean newValue) {
-        exitRequested = newValue;
-    }
-
-    /**
-     * Get if there is currently a exit request pending. Means of the really exit dialog is opened or not.
-     *
-     * @return true in case the exit dialog is currently displayed
-     */
-    private static boolean getExitRequested() {
-        return exitRequested;
     }
 
     /**
@@ -564,10 +559,8 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
                     cfg.set("windowHeight", res.getHeight());
                     cfg.set("windowWidth", res.getWidth());
                 }
-            } catch (@Nonnull EngineException e) {
-                LOGGER.error("Failed to apply graphic mode: " + resolutionString);
-            } catch (@Nonnull IllegalArgumentException ex) {
-                LOGGER.error("Failed to apply graphic mode: " + resolutionString);
+            } catch (@Nonnull EngineException | IllegalArgumentException e) {
+                LOGGER.error("Failed to apply graphic mode: {}", resolutionString);
             }
         }
     }

@@ -21,7 +21,6 @@ import illarion.client.Login;
 import illarion.client.input.InputReceiver;
 import illarion.client.world.MapDimensions;
 import illarion.client.world.World;
-import illarion.client.world.events.CloseGameEvent;
 import illarion.client.world.events.ServerNotFoundEvent;
 import org.bushe.swing.event.EventBus;
 import org.illarion.engine.GameContainer;
@@ -58,7 +57,7 @@ public class PlayingState implements GameState {
 
     @Override
     public void resize(@Nonnull GameContainer container, int width, int height) {
-        MapDimensions.getInstance().reportScreenSize(width, height);
+        MapDimensions.getInstance().reportScreenSize(width, height, false);
     }
 
     @Override
@@ -81,7 +80,7 @@ public class PlayingState implements GameState {
 
     @Override
     public boolean isClosingGame() {
-        EventBus.publish(new CloseGameEvent());
+        World.getGameGui().getCloseGameGui().showClosingDialog();
         return false;
     }
 
@@ -91,7 +90,7 @@ public class PlayingState implements GameState {
         receiver.setEnabled(true);
 
         if (Login.getInstance().login()) {
-            MapDimensions.getInstance().reportScreenSize(container.getWidth(), container.getHeight());
+            MapDimensions.getInstance().reportScreenSize(container.getWidth(), container.getHeight(), true);
         } else {
             EventBus.publish(new ServerNotFoundEvent());
         }

@@ -75,6 +75,11 @@ public final class Game implements GameListener {
      */
     public static final int STATE_ENDING = 3;
 
+    /**
+     * The ID of the ending state. This displays the last screen before the shutdown.
+     */
+    public static final int STATE_LOGOUT = 4;
+
     @Nullable
     private Nifty nifty;
 
@@ -87,13 +92,13 @@ public final class Game implements GameListener {
      * Create the game with the fitting title, showing the name of the application and its version.
      */
     public Game() {
-        gameStates = new GameState[4];
+        gameStates = new GameState[5];
         AnnotationProcessor.process(this);
         showFPS = IllaClient.getCfg().getBoolean("showFps");
         showPing = IllaClient.getCfg().getBoolean("showPing");
     }
 
-    public void enterState(final int stateId) {
+    public void enterState(int stateId) {
         if ((stateId >= -1) && (stateId < gameStates.length)) {
             targetListener = stateId;
         } else {
@@ -112,8 +117,8 @@ public final class Game implements GameListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(Game.class);
 
     @Override
-    public void create(@Nonnull final GameContainer container) {
-        final TextureManager texManager = container.getEngine().getAssets().getTextureManager();
+    public void create(@Nonnull GameContainer container) {
+        TextureManager texManager = container.getEngine().getAssets().getTextureManager();
         texManager.addTextureDirectory("gui");
         texManager.addTextureDirectory("chars");
         texManager.addTextureDirectory("items");
@@ -122,11 +127,11 @@ public final class Game implements GameListener {
 
         try {
             FontLoader.getInstance().prepareAllFonts(container.getEngine().getAssets());
-        } catch (@Nonnull final IOException e) {
+        } catch (@Nonnull IOException e) {
             LOGGER.error("Error while loading fonts!", e);
         }
 
-        final InputReceiver inputReceiver = new InputReceiver(container.getEngine().getInput());
+        InputReceiver inputReceiver = new InputReceiver(container.getEngine().getInput());
         nifty = new Nifty(new IgeRenderDevice(container, "gui/"), new IgeSoundDevice(container.getEngine()),
                           new IgeInputSystem(container.getEngine().getInput(), inputReceiver),
                           new AccurateTimeProvider());
@@ -141,12 +146,12 @@ public final class Game implements GameListener {
         nifty.setLocale(Lang.getInstance().getLocale());
         container.getEngine().getInput().addForwardingListener(new ForwardingListener() {
             @Override
-            public void forwardingEnabledFor(@Nonnull final ForwardingTarget target) {
+            public void forwardingEnabledFor(@Nonnull ForwardingTarget target) {
                 // nothing
             }
 
             @Override
-            public void forwardingDisabledFor(@Nonnull final ForwardingTarget target) {
+            public void forwardingDisabledFor(@Nonnull ForwardingTarget target) {
                 if ((target == ForwardingTarget.Mouse) || (target == ForwardingTarget.All)) {
                     nifty.resetMouseInputEvents();
                 }
@@ -157,8 +162,9 @@ public final class Game implements GameListener {
         gameStates[STATE_LOADING] = new LoadingState();
         gameStates[STATE_PLAYING] = new PlayingState(inputReceiver);
         gameStates[STATE_ENDING] = new EndState();
+        gameStates[STATE_LOGOUT] = new LogoutState();
 
-        final Sounds sounds = container.getEngine().getSounds();
+        Sounds sounds = container.getEngine().getSounds();
         if (IllaClient.getCfg().getBoolean("musicOn")) {
             sounds.setMusicVolume(IllaClient.getCfg().getFloat("musicVolume") / 100.f);
         } else {
@@ -170,7 +176,7 @@ public final class Game implements GameListener {
             sounds.setSoundVolume(0.f);
         }
 
-        for (@Nonnull final GameState listener : gameStates) {
+        for (@Nonnull GameState listener : gameStates) {
             listener.create(this, container, nifty);
         }
 
@@ -181,13 +187,13 @@ public final class Game implements GameListener {
     public void dispose() {
         nifty = null;
 
-        for (@Nonnull final GameState listener : gameStates) {
+        for (@Nonnull GameState listener : gameStates) {
             listener.dispose();
         }
     }
 
     @Override
-    public void resize(@Nonnull final GameContainer container, final int width, final int height) {
+    public void resize(@Nonnull GameContainer container, int width, int height) {
         IllaClient.getCfg().set("windowHeight", height);
         IllaClient.getCfg().set("windowWidth", width);
 
@@ -195,22 +201,22 @@ public final class Game implements GameListener {
             nifty.resolutionChanged();
         }
 
-        final GameState activeListener = getCurrentState();
+        GameState activeListener = getCurrentState();
         if (activeListener != null) {
             activeListener.resize(container, width, height);
         }
     }
 
     @Override
-    public void update(@Nonnull final GameContainer container, final int delta) {
+    public void update(@Nonnull GameContainer container, int delta) {
         assert nifty != null;
         if (targetListener != activeListener) {
-            final GameState activeState = getCurrentState();
+            GameState activeState = getCurrentState();
             if (activeState != null) {
                 activeState.leaveState(container);
             }
             activeListener = targetListener;
-            final GameState newState = getCurrentState();
+            GameState newState = getCurrentState();
             if (newState != null) {
                 newState.enterState(container, nifty);
             }
@@ -219,24 +225,24 @@ public final class Game implements GameListener {
         nifty.update();
         container.getEngine().getSounds().poll(delta);
 
-        final GameState activeListener = getCurrentState();
+        GameState activeListener = getCurrentState();
         if (activeListener != null) {
             activeListener.update(container, delta);
         }
     }
 
     @Override
-    public void render(@Nonnull final GameContainer container) {
+    public void render(@Nonnull GameContainer container) {
         assert nifty != null;
 
-        final GameState activeListener = getCurrentState();
+        GameState activeListener = getCurrentState();
         if (activeListener != null) {
             activeListener.render(container);
         }
         nifty.render(false);
 
         if (showFPS || showPing) {
-            final Font fpsFont = container.getEngine().getAssets().getFontManager().getFont(FontLoader.CONSOLE_FONT);
+            Font fpsFont = container.getEngine().getAssets().getFontManager().getFont(FontLoader.CONSOLE_FONT);
             int renderLine = 10;
             if (fpsFont != null) {
                 if (showFPS) {
@@ -245,7 +251,7 @@ public final class Game implements GameListener {
                     renderLine += fpsFont.getLineHeight();
 
                     if (SHOW_RENDER_DIAGNOSTIC) {
-                        for (final CharSequence line : container.getDiagnosticLines()) {
+                        for (CharSequence line : container.getDiagnosticLines()) {
                             container.getEngine().getGraphics().drawText(fpsFont, line, Color.WHITE, 10, renderLine);
                             renderLine += fpsFont.getLineHeight();
                         }
@@ -253,8 +259,8 @@ public final class Game implements GameListener {
                 }
 
                 if (showPing) {
-                    final long serverPing = ConnectionPerformanceClock.getServerPing();
-                    final long netCommPing = ConnectionPerformanceClock.getNetCommPing();
+                    long serverPing = ConnectionPerformanceClock.getServerPing();
+                    long netCommPing = ConnectionPerformanceClock.getNetCommPing();
                     if (serverPing > -1) {
                         container.getEngine().getGraphics().drawText(fpsFont, "Ping: " + serverPing + '+' +
                                 Math.max(0, netCommPing - serverPing) + " ms", Color.WHITE, 10, renderLine);
@@ -271,18 +277,18 @@ public final class Game implements GameListener {
     private boolean showPing;
 
     @EventTopicSubscriber(topic = "showFps")
-    public void onFpsConfigChanged(@Nonnull final String topic, @Nonnull final ConfigChangedEvent event) {
+    public void onFpsConfigChanged(@Nonnull String topic, @Nonnull ConfigChangedEvent event) {
         showFPS = event.getConfig().getBoolean(event.getKey());
     }
 
     @EventTopicSubscriber(topic = "showPing")
-    public void onPingConfigChanged(@Nonnull final String topic, @Nonnull final ConfigChangedEvent event) {
+    public void onPingConfigChanged(@Nonnull String topic, @Nonnull ConfigChangedEvent event) {
         showPing = event.getConfig().getBoolean(event.getKey());
     }
 
     @Override
     public boolean isClosingGame() {
-        final GameState activeListener = getCurrentState();
+        GameState activeListener = getCurrentState();
         if (activeListener != null) {
             return activeListener.isClosingGame();
         }

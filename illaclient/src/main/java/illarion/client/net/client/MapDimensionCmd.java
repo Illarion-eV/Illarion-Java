@@ -45,14 +45,14 @@ public final class MapDimensionCmd extends AbstractCommand {
      * @param width the half of the needed width in stripes - 1
      * @param height the half of the needed height in stripes - 1
      */
-    public MapDimensionCmd(final int width, final int height) {
+    public MapDimensionCmd(int width, int height) {
         super(CommandList.CMD_MAPDIMENSION);
         mapWidth = (short) width;
         mapHeight = (short) height;
     }
 
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) {
         writer.writeUByte(mapWidth);
         writer.writeUByte(mapHeight);
     }

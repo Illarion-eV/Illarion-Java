@@ -282,6 +282,12 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
             return;
         }
 
+        if (isChatLogExpanded()) {
+            setHeightOfChatLog(CHAT_COLLAPSED_HEIGHT);
+        } else {
+            setHeightOfChatLog(CHAT_EXPANDED_HEIGHT);
+        }
+
         Element chatScroll = screen.findElementById("chatPanel");
 
         if (chatScroll.getConstraintHeight().equals(CHAT_COLLAPSED_HEIGHT)) {
@@ -294,6 +300,34 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         chatScroll.getParent().getParent().getParent().layoutElements();
         chatScroll.getNiftyControl(ScrollPanel.class).setAutoScroll(ScrollPanel.AutoScroll.BOTTOM);
         chatScroll.getNiftyControl(ScrollPanel.class).setAutoScroll(ScrollPanel.AutoScroll.OFF);
+    }
+
+    private boolean isChatLogExpanded() {
+        if (screen == null) {
+            return false;
+        }
+
+        Element chatScroll = screen.findElementById("chatPanel");
+        return (chatScroll != null) && chatScroll.getConstraintHeight().equals(CHAT_EXPANDED_HEIGHT);
+    }
+
+    private void setHeightOfChatLog(@Nonnull SizeValue value) {
+        if (screen == null) {
+            return;
+        }
+        Element chatScroll = screen.findElementById("chatPanel");
+        if (chatScroll == null) {
+            return;
+        }
+        chatScroll.setConstraintHeight(value);
+        chatScroll.getParent().setConstraintHeight(SizeValue.def());
+        chatScroll.getParent().getParent().setConstraintHeight(SizeValue.def());
+        chatScroll.getParent().getParent().getParent().layoutElements();
+        ScrollPanel scrollPanel = chatScroll.getNiftyControl(ScrollPanel.class);
+        if (scrollPanel != null) {
+            scrollPanel.setAutoScroll(ScrollPanel.AutoScroll.BOTTOM);
+            scrollPanel.setAutoScroll(ScrollPanel.AutoScroll.OFF);
+        }
     }
 
     @Override
@@ -398,11 +432,14 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         assert nifty != null;
         nifty.unsubscribeAnnotations(this);
         AnnotationProcessor.unprocess(this);
+
+        clearChatLog();
+        clearChatBubbles();
     }
 
     @Override
     public void onStartScreen() {
-        toggleChatLog();
+        setHeightOfChatLog(CHAT_COLLAPSED_HEIGHT);
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
             public void onUpdateGame(@Nonnull GameContainer container, int delta) {
@@ -419,6 +456,29 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
     public void update(GameContainer container, int delta) {
         cleanupChatLog();
         updateChatBubbleLocations();
+    }
+
+    private void clearChatLog() {
+        if (chatLog == null) {
+            return;
+        }
+        Element chatLogElement = chatLog.getElement();
+        if (chatLogElement != null) {
+            Element contentPane = chatLogElement.findElementById("chatLog");
+            if (contentPane != null) {
+                int entryCount = contentPane.getChildren().size();
+                for (int i = 0; i < entryCount; i++) {
+                    contentPane.getChildren().get(i).markForRemoval();
+                }
+            }
+        }
+    }
+
+    private void clearChatBubbles() {
+        for (Element element : activeBubbles.values()) {
+            element.markForRemoval();
+        }
+        activeBubbles.clear();
     }
 
     /**

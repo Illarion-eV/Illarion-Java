@@ -460,9 +460,7 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
         illarion.client.world.items.InventorySlot invSlot;
         for (int i = 0; i < Inventory.SLOT_COUNT; i++) {
             invSlot = inventory.getItem(i);
-            if (ItemId.isValidItem(invSlot.getItemID())) {
-                setSlotItem(invSlot.getSlot(), invSlot.getItemID(), invSlot.getCount());
-            }
+            setSlotItem(invSlot.getSlot(), invSlot.getItemID(), invSlot.getCount());
         }
     }
 

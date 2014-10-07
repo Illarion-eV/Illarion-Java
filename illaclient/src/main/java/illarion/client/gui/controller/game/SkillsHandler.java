@@ -38,6 +38,7 @@ import illarion.client.world.World;
 import illarion.common.data.Skill;
 import illarion.common.data.SkillGroup;
 import illarion.common.data.SkillGroups;
+import illarion.common.data.Skills;
 import org.illarion.engine.GameContainer;
 import org.illarion.nifty.controls.Progress;
 import org.illarion.nifty.controls.progress.builder.ProgressBuilder;
@@ -94,6 +95,12 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
 
         IllaClient.getCfg().set("skillWindowPosX", Integer.toString(skillWindow.getElement().getX()) + "px");
         IllaClient.getCfg().set("skillWindowPosY", Integer.toString(skillWindow.getElement().getY()) + "px");
+
+        hideSkillWindow();
+
+        for (Skill skill : Skills.getInstance().getSkills()) {
+            internalUpdateSkill(skill, 0, 0);
+        }
     }
 
     @Override

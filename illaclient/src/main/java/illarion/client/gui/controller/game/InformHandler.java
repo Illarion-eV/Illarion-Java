@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
 
 /**
  * This handler is used to show and hide all the temporary inform messages on the screen. It provides the required
@@ -195,7 +196,14 @@ public final class InformHandler implements InformGui, ScreenController {
 
     @Override
     public void onEndScreen() {
-        // nothing to do
+        for (Element panel : Arrays
+                .asList(broadcastParentPanel, serverParentPanel, textToParentPanel, scriptParentPanel)) {
+            if (panel != null) {
+                for (Element child : panel.getChildren()) {
+                    child.markForRemoval();
+                }
+            }
+        }
     }
 
     @Override

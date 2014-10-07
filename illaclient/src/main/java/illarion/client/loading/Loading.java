@@ -61,15 +61,15 @@ public final class Loading {
      *
      * @param gameEngine the game engine
      */
-    public void enlistMissingComponents(@Nonnull final Engine gameEngine) {
+    public void enlistMissingComponents(@Nonnull Engine gameEngine) {
         progressMonitor = new ProgressMonitor();
         if (!loadingDone) {
             addToTaskList(new TextureLoadingTask(gameEngine));
             addToTaskList(new ResourceTableLoading(gameEngine));
             addToTaskList(new SoundLoadingTask(gameEngine));
-            addToTaskList(new GameEnvironmentLoading(gameEngine));
             loadingDone = true;
         }
+        addToTaskList(new GameEnvironmentLoading(gameEngine));
     }
 
     /**
@@ -80,7 +80,7 @@ public final class Loading {
             return;
         }
 
-        final LoadingTask currentTask = tasks.get(0);
+        LoadingTask currentTask = tasks.get(0);
         currentTask.load();
         if (currentTask.isLoadingDone()) {
             tasks.remove(0);
@@ -101,7 +101,7 @@ public final class Loading {
      *
      * @param task the task to add
      */
-    private void addToTaskList(@Nonnull final LoadingTask task) {
+    private void addToTaskList(@Nonnull LoadingTask task) {
         tasks.add(task);
 
         assert progressMonitor != null;

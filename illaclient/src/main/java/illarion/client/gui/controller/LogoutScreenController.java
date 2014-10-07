@@ -20,23 +20,22 @@ import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
-import illarion.client.IllaClient;
 
 import javax.annotation.Nonnull;
 
 /**
- * The controller for the last screen that is displayed before the client goes down.
+ * The controller for the screen that is seen during logout.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class ClientEndScreenController implements ScreenController, KeyInputHandler {
+public final class LogoutScreenController implements ScreenController, KeyInputHandler {
     @Override
     public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
     }
 
     @Override
     public void onStartScreen() {
-        IllaClient.exitGameContainer();
+        // nothing
     }
 
     @Override

@@ -41,7 +41,7 @@ public final class LoadingState implements GameState {
     private final Loading loadingManager = new Loading();
 
     @Override
-    public void create(@Nonnull final Game game, @Nonnull final GameContainer container, @Nonnull final Nifty nifty) {
+    public void create(@Nonnull Game game, @Nonnull GameContainer container, @Nonnull Nifty nifty) {
         controller = new LoadScreenController(game);
         nifty.registerScreenController(controller);
 
@@ -53,15 +53,15 @@ public final class LoadingState implements GameState {
     }
 
     @Override
-    public void resize(@Nonnull final GameContainer container, final int width, final int height) {
+    public void resize(@Nonnull GameContainer container, int width, int height) {
     }
 
     @Override
-    public void update(@Nonnull final GameContainer container, final int delta) {
+    public void update(@Nonnull GameContainer container, int delta) {
     }
 
     @Override
-    public void render(@Nonnull final GameContainer container) {
+    public void render(@Nonnull GameContainer container) {
         loadingManager.load();
         controller.setProgress(loadingManager.getProgress());
 
@@ -76,12 +76,12 @@ public final class LoadingState implements GameState {
     }
 
     @Override
-    public void enterState(@Nonnull final GameContainer container, @Nonnull final Nifty nifty) {
+    public void enterState(@Nonnull GameContainer container, @Nonnull Nifty nifty) {
         loadingManager.enlistMissingComponents(container.getEngine());
         nifty.gotoScreen("loading");
     }
 
     @Override
-    public void leaveState(@Nonnull final GameContainer container) {
+    public void leaveState(@Nonnull GameContainer container) {
     }
 }

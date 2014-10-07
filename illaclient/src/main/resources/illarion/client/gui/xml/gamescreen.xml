@@ -237,10 +237,12 @@
                      wrap="true"/>
             <panel height="10px" width="1px"/>
             <panel childLayout="center" width="300px">
-                <panel childLayout="horizontal" width="200px">
-                    <control name="button" id="#closeYesButton" label="${gamescreen-bundle.yes}" width="95px"
+                <panel childLayout="horizontal" width="300px">
+                    <control name="button" id="#closeLogoutButton" label="${gamescreen-bundle.logout}" width="90px"
                              marginRight="10px"/>
-                    <control name="button" id="#closeNoButton" label="${gamescreen-bundle.no}" width="95px"/>
+                    <control name="button" id="#closeExitButton" label="${gamescreen-bundle.exit}" width="90px"
+                             marginRight="10px"/>
+                    <control name="button" id="#closeCancelButton" label="${gamescreen-bundle.cancel}" width="90px"/>
                 </panel>
             </panel>
         </panel>

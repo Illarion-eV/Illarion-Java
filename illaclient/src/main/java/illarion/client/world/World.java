@@ -23,7 +23,6 @@ import illarion.client.net.NetComm;
 import illarion.client.util.ChatHandler;
 import illarion.client.util.UpdateTaskManager;
 import illarion.client.world.interactive.InteractionManager;
-import illarion.common.util.StoppableStorage;
 import org.illarion.engine.Engine;
 import org.illarion.engine.EngineException;
 import org.illarion.engine.graphic.LightTracer;
@@ -46,14 +45,8 @@ public final class World {
     @Nonnull
     private static final World INSTANCE = new World();
 
-    /**
-     * Shutdown every class that is currently maintained by the world.
-     */
-    @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
-    public static void cleanEnvironment() {
+    public static void shutdownWorld() {
         synchronized (INSTANCE) {
-            StoppableStorage.getInstance().shutdown();
-
             if (INSTANCE.net != null) {
                 INSTANCE.net.disconnect();
             }
@@ -62,7 +55,24 @@ public final class World {
             }
             if (INSTANCE.map != null) {
                 INSTANCE.map.getMiniMap().saveAllMaps();
+                INSTANCE.map.saveShutdown();
             }
+            if (INSTANCE.lights != null) {
+                INSTANCE.lights.saveShutdown();
+            }
+            if (INSTANCE.musicBox != null) {
+                INSTANCE.musicBox.saveShutdown();
+            }
+        }
+    }
+
+    /**
+     * Shutdown every class that is currently maintained by the world.
+     */
+    @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
+    public static void cleanEnvironment() {
+        synchronized (INSTANCE) {
+            shutdownWorld();
 
             INSTANCE.chatHandler = null;
             INSTANCE.aniManager = null;
@@ -77,6 +87,8 @@ public final class World {
             INSTANCE.weather = null;
             INSTANCE.clock = null;
             INSTANCE.updateManager = null;
+
+            INSTANCE.init = false;
         }
     }
 

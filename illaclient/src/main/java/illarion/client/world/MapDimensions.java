@@ -237,9 +237,10 @@ public final class MapDimensions {
      *
      * @param width the width of the screen in pixels
      * @param height the height of the screen in pixels
+     * @param forced send the new size to the server even if it did not change
      */
-    public void reportScreenSize(int width, int height) {
-        if ((onScreenHeight == height) && (onScreenWidth == width)) {
+    public void reportScreenSize(int width, int height, boolean forced) {
+        if (!forced && (onScreenHeight == height) && (onScreenWidth == width)) {
             return;
         }
 
@@ -263,7 +264,8 @@ public final class MapDimensions {
         int serverMapDimWidth = stripesWidth >> 2;
         int serverMapDimHeight = stripesHeight >> 2;
 
-        if ((serverMapDimHeight != serverMapDimensionHeight) || (serverMapDimWidth != serverMapDimensionWidth)) {
+        if (forced || (serverMapDimHeight != serverMapDimensionHeight) ||
+                (serverMapDimWidth != serverMapDimensionWidth)) {
             serverMapDimensionHeight = serverMapDimHeight;
             serverMapDimensionWidth = serverMapDimWidth;
             World.getNet().sendCommand(new MapDimensionCmd(serverMapDimWidth, serverMapDimHeight));

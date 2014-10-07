@@ -114,7 +114,7 @@ public class DocumentationHandler implements DocumentationGui, ScreenController,
     }
 
     @Override
-    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
         this.nifty = nifty;
         this.screen = screen;
 
@@ -132,15 +132,15 @@ public class DocumentationHandler implements DocumentationGui, ScreenController,
         if (documentationWindow == null || documentationWindow.getElement() == null) {
             return;
         }
-        final Element content = documentationWindow.getElement().findElementById("#textContent");
+        Element content = documentationWindow.getElement().findElementById("#textContent");
         if (content == null) {
             return;
         }
 
         int groupCnt = 0;
-        for (final DocuEntry group : DocuRoot.getInstance()) {
-            final String groupId = content.getId() + "#group" + Integer.toString(groupCnt++);
-            final PanelBuilder groupPanel = new PanelBuilder(groupId);
+        for (DocuEntry group : DocuRoot.getInstance()) {
+            String groupId = content.getId() + "#group" + Integer.toString(groupCnt++);
+            PanelBuilder groupPanel = new PanelBuilder(groupId);
             groupPanel.childLayoutVertical();
             groupPanel.height(SizeValue.def());
             groupPanel.marginBottom("10px");
@@ -148,7 +148,7 @@ public class DocumentationHandler implements DocumentationGui, ScreenController,
             groupPanel.alignCenter();
             groupPanel.valignTop();
 
-            final LabelBuilder headline = new LabelBuilder(groupId + "#headline");
+            LabelBuilder headline = new LabelBuilder(groupId + "#headline");
             headline.font("menuFont");
             headline.label(group.getTitle());
             headline.width("*");
@@ -156,14 +156,14 @@ public class DocumentationHandler implements DocumentationGui, ScreenController,
             groupPanel.control(headline);
 
             int entryCnt = 0;
-            for (final DocuEntry child : group) {
-                final String entryId = groupId + "#entry" + Integer.toString(entryCnt++);
-                final PanelBuilder entryPanel = new PanelBuilder(entryId);
+            for (DocuEntry child : group) {
+                String entryId = groupId + "#entry" + Integer.toString(entryCnt++);
+                PanelBuilder entryPanel = new PanelBuilder(entryId);
                 entryPanel.childLayoutCenter();
                 entryPanel.width(content.getConstraintWidth().toString());
                 entryPanel.marginBottom("5px");
 
-                final LabelBuilder entryKey = new LabelBuilder(entryId + "#key");
+                LabelBuilder entryKey = new LabelBuilder(entryId + "#key");
                 entryKey.label(child.getTitle());
                 entryKey.font("textFont");
                 entryKey.width("40%");
@@ -174,7 +174,7 @@ public class DocumentationHandler implements DocumentationGui, ScreenController,
                 entryKey.valignTop();
                 entryPanel.control(entryKey);
 
-                final LabelBuilder entryText = new LabelBuilder(entryId + "#text");
+                LabelBuilder entryText = new LabelBuilder(entryId + "#text");
                 entryText.label(child.getDescription());
                 entryText.width("60%");
                 entryText.font("textFont");
@@ -202,6 +202,7 @@ public class DocumentationHandler implements DocumentationGui, ScreenController,
         nifty.unsubscribeAnnotations(this);
         IllaClient.getCfg().set("docuWindowPosX", Integer.toString(documentationWindow.getElement().getX()) + "px");
         IllaClient.getCfg().set("docuWindowPosY", Integer.toString(documentationWindow.getElement().getY()) + "px");
+        hideDocumentation();
     }
 
     @Override
@@ -210,7 +211,7 @@ public class DocumentationHandler implements DocumentationGui, ScreenController,
     }
 
     @NiftyEventSubscriber(id = "openHelpBtn")
-    public void onInventoryButtonClicked(final String topic, final ButtonClickedEvent data) {
+    public void onInventoryButtonClicked(String topic, ButtonClickedEvent data) {
         toggleDocumentation();
     }
 }
