@@ -35,7 +35,11 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -112,12 +116,6 @@ public final class NetComm {
     private MessageExecutor messageHandler;
 
     /**
-     * The queue of commands that were not yet send but are planned to be send.
-     */
-    @Nonnull
-    private final BlockingQueue<AbstractCommand> outputQueue;
-
-    /**
      * The sender instance that accepts all server client commands that shall be send and forwards the data to this
      * class.
      */
@@ -137,7 +135,6 @@ public final class NetComm {
         ReplyFactory.getInstance();
 
         inputQueue = new LinkedBlockingQueue<>();
-        outputQueue = new LinkedBlockingQueue<>();
     }
 
     /**
@@ -240,14 +237,12 @@ public final class NetComm {
                 }
             }
 
-            sender = new Sender(outputQueue, socket);
-            sender.setUncaughtExceptionHandler(NetCommCrashHandler.getInstance());
+            sender = new Sender(socket);
             inputThread = new Receiver(inputQueue, socket);
             inputThread.setUncaughtExceptionHandler(NetCommCrashHandler.getInstance());
             messageHandler = new MessageExecutor(inputQueue);
             messageHandler.setUncaughtExceptionHandler(NetCommCrashHandler.getInstance());
 
-            sender.start();
             inputThread.start();
             messageHandler.start();
 
@@ -281,13 +276,14 @@ public final class NetComm {
     public void disconnect() {
         setLoginDone(false);
         try {
+            Collection<Future<?>> terminationFutures = new ArrayList<>();
             if (keepAliveTimer != null) {
                 keepAliveTimer.stop();
                 keepAliveTimer = null;
             }
             // stop threads
             if (sender != null) {
-                sender.saveShutdown();
+                terminationFutures.add(sender.saveShutdown());
                 sender = null;
             }
 
@@ -301,6 +297,16 @@ public final class NetComm {
                 messageHandler = null;
             }
 
+            for (Future<?> future : terminationFutures) {
+                try {
+                    future.get();
+                } catch (InterruptedException e) {
+                    log.warn("Problem while shutting down NetComm. Something got interrupted.", e);
+                } catch (ExecutionException e) {
+                    log.warn("Problem while shutting down NetComm. Showdown execution failed.", e);
+                }
+            }
+
             // wait for threads to react
             try {
                 Thread.sleep(THREAD_WAIT_TIME);
@@ -309,7 +315,6 @@ public final class NetComm {
             }
 
             inputQueue.clear();
-            outputQueue.clear();
 
             // close connection
             if (socket != null) {
@@ -331,17 +336,11 @@ public final class NetComm {
         return loginDone;
     }
 
-    /**
-     * Put command in send queue so its send at the next send loop.
-     *
-     * @param cmd the command that shall be added to the queue
-     */
-    @SuppressWarnings("nls")
     public void sendCommand(@Nonnull AbstractCommand cmd) {
-        try {
-            outputQueue.put(cmd);
-        } catch (@Nonnull InterruptedException e) {
-            log.error("Got interrupted while trying to add a command to to the queue.");
+        if (sender != null) {
+            sender.sendCommand(cmd);
+        } else {
+            log.error("Sending {} failed. Sender is nowhere to be found.", cmd);
         }
     }
 }
