@@ -167,7 +167,7 @@ final class Sender implements NetCommWriter {
 
             @Override
             public boolean isDone() {
-                return true;
+                return commandExecutor.isTerminated();
             }
 
             @Override

@@ -87,7 +87,7 @@ final class MessageExecutor {
 
             @Override
             public boolean isDone() {
-                return true;
+                return executorService.isTerminated();
             }
 
             @Override
