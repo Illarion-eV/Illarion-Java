@@ -27,8 +27,11 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.*;
 
 /**
  * This the the main class for the compiler. It determines the kind of compiler required for the set file and performs
@@ -72,6 +75,14 @@ public class Compiler {
         type.setRequired(false);
         options.addOption(type);
 
+        Option jobs = new Option("j", "jobs", true,
+                                 "This option defines how many jobs may run in parallel. Default is 1. 'Auto' is a " +
+                                         "possible value to leave it to the VM how many execution threads are used.");
+        jobs.setArgs(1);
+        jobs.setArgName("jobs");
+        jobs.setRequired(false);
+        options.addOption(jobs);
+
         CommandLineParser parser = new GnuParser();
         try {
             CommandLine cmd = parser.parse(options, args);
@@ -96,10 +107,7 @@ public class Compiler {
         }
     }
 
-    private static int returnCode = 3;
-
     private static void processFileMode(@Nonnull CommandLine cmd) throws IOException {
-        returnCode = 3;
         storagePaths = new EnumMap<>(CompilerType.class);
         String npcPath = cmd.getOptionValue('n');
         if (npcPath != null) {
@@ -110,22 +118,58 @@ public class Compiler {
             storagePaths.put(CompilerType.easyQuest, Paths.get(questPath));
         }
 
+        String jobsOption = cmd.getOptionValue('j');
+        ExecutorService executor;
+        if (jobsOption == null) {
+            executor = Executors.newSingleThreadExecutor();
+        } else if ("auto".equalsIgnoreCase(jobsOption)) {
+            executor = Executors.newCachedThreadPool();
+        } else {
+            try {
+                int numberOfJobs = Integer.parseInt(jobsOption);
+                executor = Executors.newFixedThreadPool(numberOfJobs);
+            } catch (NumberFormatException e) {
+                LOGGER.error("Invalid value for jobs option: {}", jobsOption);
+                executor = Executors.newSingleThreadExecutor();
+            }
+        }
+
+        final List<Future<Integer>> results = new ArrayList<>();
         for (String file : cmd.getArgs()) {
             Path path = Paths.get(file);
             if (Files.isDirectory(path)) {
+                final ExecutorService finalExecutor = executor;
                 Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                         FileVisitResult result = super.visitFile(file, attrs);
                         if (result == FileVisitResult.CONTINUE) {
-                            returnCode = Math.min(processPath(file), returnCode);
+                            results.add(processPath(finalExecutor, file));
                             return FileVisitResult.CONTINUE;
                         }
                         return result;
                     }
                 });
             } else {
-                returnCode = Math.min(processPath(path), returnCode);
+                results.add(processPath(executor, path));
+            }
+        }
+
+        executor.shutdown();
+        try {
+            executor.awaitTermination(1L, TimeUnit.HOURS);
+        } catch (InterruptedException e) {
+            LOGGER.error("Interruption received.", e);
+        }
+
+        int returnCode = 3;
+        for (Future<Integer> result : results) {
+            try {
+                returnCode = Math.min(returnCode, result.get());
+            } catch (InterruptedException e) {
+                LOGGER.error("Interruption received.", e);
+            } catch (ExecutionException e) {
+                LOGGER.error("Error while performing parsing.", e);
             }
         }
 
@@ -155,15 +199,15 @@ public class Compiler {
         System.exit(compile.compileStream(System.in, System.out));
     }
 
-    private static int processPath(@Nonnull Path path) throws IOException {
+    private static Future<Integer> processPath(
+            @Nonnull ExecutorService executor, @Nonnull final Path path) throws IOException {
         if (Files.isDirectory(path)) {
-            return 0;
+            return new CompletedFuture<>(0);
         }
 
-        int compileResult = 1;
         for (CompilerType type : CompilerType.values()) {
             if (type.isValidFile(path)) {
-                Compile compile = type.getImplementation();
+                final Compile compile = type.getImplementation();
                 if (path.isAbsolute()) {
                     if (storagePaths.containsKey(type)) {
                         compile.setTargetDir(storagePaths.get(type));
@@ -187,20 +231,54 @@ public class Compiler {
                         }
                     }
                 }
-                compileResult = compile.compileFile(path.toAbsolutePath());
-                if (compileResult == 0) {
-                    break;
-                }
+
+                return executor.submit(new Callable<Integer>() {
+                    @Override
+                    public Integer call() throws Exception {
+                        int result = compile.compileFile(path.toAbsolutePath());
+                        if (result == 1) {
+                            LOGGER.info("Skipped file: {}", path.getFileName());
+                            return -2;
+                        }
+                        return result;
+                    }
+                });
             }
         }
+        return new CompletedFuture<>(-2);
+    }
 
-        switch (compileResult) {
-            case 1:
-                LOGGER.info("Skipped file: {}", path.getFileName());
-                break;
-            default:
-                return compileResult;
+    private static final class CompletedFuture<T> implements Future<T> {
+        private final T result;
+
+        private CompletedFuture(T result) {
+            this.result = result;
         }
-        return -2;
+
+        @Override
+        public boolean cancel(boolean mayInterruptIfRunning) {
+            return false;
+        }
+
+        @Override
+        public boolean isCancelled() {
+            return false;
+        }
+
+        @Override
+        public boolean isDone() {
+            return false;
+        }
+
+        @Override
+        public T get() throws InterruptedException, ExecutionException {
+            return result;
+        }
+
+        @Override
+        public T get(long timeout, @Nonnull TimeUnit unit)
+                throws InterruptedException, ExecutionException, TimeoutException {
+            return result;
+        }
     }
 }

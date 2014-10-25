@@ -75,7 +75,7 @@ public class EasyNpcCompile extends AbstractCompile {
             ensureTargetDir();
             ParsedNpc npc = Parser.getInstance().parse(new InputStreamReader(in, DEFAULT_CHARSET));
             if (npc.hasErrors()) {
-                LOGGER.error("Parsing the NPC failed with {] errors", npc.getErrorCount());
+                LOGGER.error("Parsing the NPC failed with {} errors", npc.getErrorCount());
                 for (int i = 0; i < npc.getErrorCount(); i++) {
                     ParsedNpc.Error error = npc.getError(i);
                     LOGGER.error("\t Line {}: {}", error.getLine(), error.getMessage());
