@@ -23,8 +23,7 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
- * Servermessage: Look at description of a character (
- * {@link illarion.client.net.CommandList#MSG_LOOKAT_CHAR}).
+ * Servermessage: Look at description of a character ({@link illarion.client.net.CommandList#MSG_LOOKAT_CHAR}).
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
@@ -45,37 +44,30 @@ public final class LookAtCharMsg extends AbstractReply {
      * Decode the character look at text data the receiver got and prepare it
      * for the execution.
      *
-     * @param reader the receiver that got the data from the server that needs
-     * to be decoded
-     * @throws IOException thrown in case there was not enough data received to
-     * decode the full message
+     * @param reader the receiver that got the data from the server that needs to be decoded
+     * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         charId = reader.readUInt();
         text = reader.readString();
     }
 
     /**
-     * Execute the character look at text message and send the decoded data to
-     * the rest of the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
+     * Execute the character look at text message and send the decoded data to the rest of the client.
      */
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         // final Char ch = Game.getPeople().getCharacter(charId);
         // if (ch != null) {
         // ch.showText(text, SpeechMode.normal);
         // }
-        return true;
     }
 
     /**
      * Get the data of this character look at text message as string.
      *
-     * @return the string that contains the values that were decoded for this
-     * message
+     * @return the string that contains the values that were decoded for this message
      */
     @Nonnull
     @SuppressWarnings("nls")

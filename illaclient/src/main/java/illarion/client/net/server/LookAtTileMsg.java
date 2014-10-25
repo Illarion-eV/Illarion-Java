@@ -58,14 +58,10 @@ public final class LookAtTileMsg extends AbstractReply {
 
     /**
      * Execute the tile look at text message and send the decoded data to the rest of the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
      */
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         log.warn("Received look at for a tile. That shouldn't happen! Received \"{}\" for {}", text, loc);
-
-        return true;
     }
 
     /**

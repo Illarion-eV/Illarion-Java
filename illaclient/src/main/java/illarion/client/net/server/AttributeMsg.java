@@ -56,46 +56,38 @@ public final class AttributeMsg extends AbstractGuiMsg {
     private int value;
 
     /**
-     * Decode the attribute data the receiver got and prepare it for the
-     * execution.
+     * Decode the attribute data the receiver got and prepare it for the execution.
      *
-     * @param reader the receiver that got the data from the server that needs
-     * to be decoded
-     * @throws IOException thrown in case there was not enough data received to
-     * decode the full message
+     * @param reader the receiver that got the data from the server that needs to be decoded
+     * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         targetCharacter = new CharacterId(reader);
         attribute = reader.readString();
         value = reader.readUShort();
     }
 
     /**
-     * Execute the attribute message and send the decoded data to the rest of
-     * the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
+     * Execute the attribute message and send the decoded data to the rest of the client.
      */
     @Override
-    public boolean executeUpdate() {
-        for (final CharacterAttribute charAttribute : CharacterAttribute.values()) {
+    public void executeUpdate() {
+        for (CharacterAttribute charAttribute : CharacterAttribute.values()) {
             if (charAttribute.getServerName().equals(attribute)) {
-                final Char character = World.getPeople().getCharacter(targetCharacter);
+                Char character = World.getPeople().getCharacter(targetCharacter);
                 if (character != null) {
                     character.setAttribute(charAttribute, value);
                 }
                 break;
             }
         }
-        return true;
     }
 
     /**
      * Get the data of this attribute message as string.
      *
-     * @return the string that contains the values that were decoded for this
-     * message
+     * @return the string that contains the values that were decoded for this message
      */
     @Nonnull
     @Override

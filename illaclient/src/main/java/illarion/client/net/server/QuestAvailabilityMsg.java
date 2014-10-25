@@ -49,8 +49,8 @@ public class QuestAvailabilityMsg extends AbstractGuiMsg {
     private Location[] availableSoonQuests;
 
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
-        final int availableQuestCount = reader.readUShort();
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
+        int availableQuestCount = reader.readUShort();
         if (availableQuestCount > 0) {
             availableQuests = new Location[availableQuestCount];
             for (int i = 0; i < availableQuestCount; i++) {
@@ -58,7 +58,7 @@ public class QuestAvailabilityMsg extends AbstractGuiMsg {
             }
         }
 
-        final int soonQuestCount = reader.readUShort();
+        int soonQuestCount = reader.readUShort();
         if (soonQuestCount > 0) {
             availableSoonQuests = new Location[soonQuestCount];
             for (int i = 0; i < soonQuestCount; i++) {
@@ -68,15 +68,15 @@ public class QuestAvailabilityMsg extends AbstractGuiMsg {
     }
 
     @Override
-    public boolean executeUpdate() {
-        final Collection<Location> available;
+    public void executeUpdate() {
+        Collection<Location> available;
         if (availableQuests == null) {
             available = Collections.emptyList();
         } else {
             available = new HashSet<>(Arrays.asList(availableQuests));
         }
 
-        final Collection<Location> availableSoon;
+        Collection<Location> availableSoon;
         if (availableSoonQuests == null) {
             availableSoon = Collections.emptyList();
         } else {
@@ -85,7 +85,6 @@ public class QuestAvailabilityMsg extends AbstractGuiMsg {
         availableSoon.removeAll(available);
 
         World.getMap().applyQuestStartLocations(available, availableSoon);
-        return true;
     }
 
     @Nonnull

@@ -15,146 +15,95 @@
  */
 package illarion.client.net;
 
-import illarion.client.Debug;
-import illarion.client.IllaClient;
 import illarion.client.net.server.AbstractReply;
-import illarion.common.util.Stoppable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import javax.annotation.Nonnull;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.*;
 
 /**
  * This class will take care that the messages received from the server are executes properly.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-final class MessageExecutor extends Thread implements Stoppable {
-    /**
-     * The logger instance that takes care for the logging output of this class.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessageExecutor.class);
-
-    /**
-     * This queue contains all tasks that were executed already once and need to be executed a second time.
-     */
+final class MessageExecutor {
     @Nonnull
-    private final Queue<AbstractReply> delayedQueue;
+    private static final Marker NET = MarkerFactory.getMarker("Net");
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(MessageExecutor.class);
 
-    /**
-     * The queue that contains all the tasks that were received from the server and still need to be executed.
-     */
-    private final BlockingQueue<AbstractReply> input;
-
-    /**
-     * This boolean stores if anything was received already from the server.
-     */
-    private boolean receivedAnything = false;
-
-    /**
-     * This reply is to be repeated at the next run.
-     */
-    private AbstractReply repeatReply;
-
-    /**
-     * The running flag. The loop of this thread will keep running until this flag is set to <code>false</code>.
-     */
-    private volatile boolean running;
+    @Nonnull
+    private final ExecutorService executorService;
 
     /**
      * Default constructor for a message executor.
-     *
-     * @param inputQueue the input queue of messages that need to be handled
      */
     @SuppressWarnings("nls")
-    public MessageExecutor(final BlockingQueue<AbstractReply> inputQueue) {
-        super("NetComm MessageExecutor");
-        input = inputQueue;
-        delayedQueue = new LinkedList<>();
+    MessageExecutor() {
+        executorService = Executors.newSingleThreadExecutor();
     }
 
-    @Override
-    public synchronized void start() {
-        running = true;
-        super.start();
+    void scheduleReplyExecution(@Nonnull final AbstractReply reply) {
+        log.debug(NET, "scheduled {}", reply);
+        executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                executeReply(reply);
+            }
+        });
     }
 
-    /**
-     * Check if the client received already anything from the server.
-     *
-     * @return <code>true</code> in case anything was received from server
-     */
-    public boolean hasReceivedAnything() {
-        return receivedAnything;
-    }
+    private void executeReply(@Nonnull AbstractReply reply) {
+        if (reply.processNow()) {
+            log.debug(NET, "executing {}", reply);
 
-    /**
-     * Main loop of the Message Executor. The messages are handled as soon as they appear in the queue.
-     */
-    @SuppressWarnings("nls")
-    @Override
-    public void run() {
-        while (running) {
-            /*
-             * First we handle the delayed stuff in case there is any and it
-             * does not block from executing.
-             */
-            if (!delayedQueue.isEmpty() && delayedQueue.peek().processNow()) {
-                final AbstractReply rpl = delayedQueue.poll();
-                rpl.executeUpdate();
-                continue;
-            }
-
-            AbstractReply rpl;
-
-            if (repeatReply == null) {
-                try {
-                    rpl = input.take();
-                } catch (@Nonnull final InterruptedException e) {
-                    // Got and interrupt, quit the thread right now.
-                    LOGGER.warn("MessageExecutor got interrupted and will exit now!");
-                    return;
-                }
-            } else {
-                rpl = repeatReply;
-            }
-            receivedAnything = true;
-
-            /*
-             * Process the updates or put them into the delayed queue.
-             */
-            if (rpl.processNow()) {
-                if (IllaClient.isDebug(Debug.net)) {
-                    LOGGER.debug("executing " + rpl.toString());
-                }
-
-                if (rpl.executeUpdate()) {
-                    if (IllaClient.isDebug(Debug.net)) {
-                        LOGGER.debug("finished " + rpl.toString());
-                    }
-                } else {
-                    if (IllaClient.isDebug(Debug.net)) {
-                        LOGGER.debug("repeating " + rpl.toString());
-                    }
-
-                    repeatReply = rpl;
-                }
-            } else {
-                delayedQueue.offer(rpl);
-            }
+            reply.executeUpdate();
+            log.debug(NET, "finished {}", reply);
+        } else {
+            log.debug(NET, "delaying {}", reply);
+            scheduleReplyExecution(reply);
         }
     }
 
     /**
-     * Have the thread finishing the current message and shut the thread down after.
+     * Shutdown the sender.
      */
-    @Override
-    public void saveShutdown() {
-        LOGGER.info(getName() + ": Shutdown requested!");
-        running = false;
-        interrupt();
+    public Future<Boolean> saveShutdown() {
+        executorService.shutdown();
+
+        return new Future<Boolean>() {
+            @Override
+            public boolean cancel(boolean mayInterruptIfRunning) {
+                return false;
+            }
+
+            @Override
+            public boolean isCancelled() {
+                return false;
+            }
+
+            @Override
+            public boolean isDone() {
+                return true;
+            }
+
+            @Override
+            public Boolean get() throws InterruptedException, ExecutionException {
+                try {
+                    return get(1, TimeUnit.HOURS);
+                } catch (TimeoutException e) {
+                    throw new ExecutionException(e);
+                }
+            }
+
+            @Override
+            public Boolean get(long timeout, @Nonnull TimeUnit unit)
+                    throws InterruptedException, ExecutionException, TimeoutException {
+                return executorService.awaitTermination(timeout, unit);
+            }
+        };
     }
 }

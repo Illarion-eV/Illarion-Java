@@ -44,10 +44,9 @@ public final class DisconnectMsg extends AbstractReply {
      * for the translation.
      */
     @SuppressWarnings("nls")
-    private static final String[] REASONS = new String[]{null, "old_client", "already_logged_in", "wrong_pw",
-                                                         "server_shutdown", "kicked", null, "no_place", "not_found",
-                                                         null, "unstable", "no_account", "no_skillpack",
-                                                         "corruput_inventory"};
+    private static final String[] REASONS = {null, "old_client", "already_logged_in", "wrong_pw", "server_shutdown",
+                                             "kicked", null, "no_place", "not_found", null, "unstable", "no_account",
+                                             "no_skillpack", "corruput_inventory"};
 
     /**
      * The ID of the logout reason.
@@ -64,7 +63,7 @@ public final class DisconnectMsg extends AbstractReply {
      * decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         reason = reader.readUByte();
     }
 
@@ -76,12 +75,12 @@ public final class DisconnectMsg extends AbstractReply {
      */
     @SuppressWarnings("nls")
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         BUILDER.setLength(0);
         BUILDER.append(Lang.getMsg("logout"));
-        BUILDER.append("\n");
+        BUILDER.append('\n');
         BUILDER.append(Lang.getMsg("logout.reason"));
-        BUILDER.append(" ");
+        BUILDER.append(' ');
 
         if (reason < REASONS.length) {
             BUILDER.append(Lang.getMsg("logout." + REASONS[reason]));
@@ -91,7 +90,6 @@ public final class DisconnectMsg extends AbstractReply {
         }
 
         IllaClient.sendDisconnectEvent(BUILDER.toString());
-        return true;
     }
 
     /**

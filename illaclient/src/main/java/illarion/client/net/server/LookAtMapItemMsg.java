@@ -62,13 +62,10 @@ public final class LookAtMapItemMsg extends AbstractGuiMsg {
 
     /**
      * Execute the tile look at text message and send the decoded data to the rest of the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
      */
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         World.getGameGui().getGameMapGui().showItemTooltip(location, stackPosition, tooltip);
-        return true;
     }
 
     /**

@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -114,16 +115,16 @@ public final class ReplyFactory {
      *
      * @param clazz the class to register as reply.
      */
-    private void register(@Nonnull final Class<? extends AbstractReply> clazz) {
-        final ReplyMessage messageData = clazz.getAnnotation(ReplyMessage.class);
+    private void register(@Nonnull Class<? extends AbstractReply> clazz) {
+        ReplyMessage messageData = clazz.getAnnotation(ReplyMessage.class);
 
         if (messageData == null) {
-            LOGGER.error("Illegal class supplied to register! No annotation: " + clazz.getName());
+            LOGGER.error("Illegal class supplied to register! No annotation: {}", clazz.getName());
             return;
         }
 
         if (replyMap.containsKey(messageData.replyId())) {
-            LOGGER.error("Class with duplicated key: " + clazz.getName());
+            LOGGER.error("Class with duplicated key: {}", clazz.getName());
             return;
         }
 
@@ -138,20 +139,24 @@ public final class ReplyFactory {
      * @return the newly created reply instance
      */
     @Nullable
-    public AbstractReply getReply(final int id) {
-        final Class<? extends AbstractReply> replyClass = replyMap.get(id);
+    public AbstractReply getReply(int id) {
+        Class<? extends AbstractReply> replyClass = replyMap.get(id);
 
         if (replyClass == null) {
-            LOGGER.error("Illegal reply requested. ID: 0x" + Integer.toHexString(id));
+            LOGGER.error("Illegal reply requested. ID: 0x{}", Integer.toHexString(id));
             return null;
         }
 
         try {
-            return replyClass.newInstance();
+            return replyClass.getConstructor().newInstance();
         } catch (InstantiationException e) {
             LOGGER.error("Failed to create instance of reply class!", e);
         } catch (IllegalAccessException e) {
             LOGGER.error("Access to reply class constructor was denied.", e);
+        } catch (NoSuchMethodException e) {
+            LOGGER.error("Failed to locate required constructor.", e);
+        } catch (InvocationTargetException e) {
+            LOGGER.error("Problem while executing the constructor.", e);
         }
         return null;
     }

@@ -105,16 +105,14 @@ public final class MoveMsg extends AbstractReply {
 
     /**
      * Execute the character move message and send the decoded data to the rest of the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
      */
     @SuppressWarnings("nls")
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         if ((mode != MODE_NO_MOVE) && (mode != MODE_MOVE) && (mode != MODE_PUSH) && (mode != MODE_RUN) &&
                 (mode != MODE_TOO_EARLY)) {
             log.warn("Move char message called in unknown mode {}", mode);
-            return true;
+            return;
         }
 
         if (World.getPlayer().isPlayer(charId)) {
@@ -131,18 +129,18 @@ public final class MoveMsg extends AbstractReply {
                     break;
                 case MODE_TOO_EARLY:
                     World.getPlayer().getMovementHandler().executeServerRespMoveTooEarly();
-                    return true;
+                    return;
                 default:
                     moveMode = CharMovementMode.None;
             }
             World.getPlayer().getMovementHandler().executeServerRespMove(moveMode, loc, duration);
-            return true;
+            return;
         }
 
         // other char not on screen, just remove it.
         if (!World.getPlayer().isOnScreen(loc, 1)) {
             World.getPeople().removeCharacter(charId);
-            return true;
+            return;
         }
 
         Char chara = World.getPeople().accessCharacter(charId);
@@ -158,11 +156,10 @@ public final class MoveMsg extends AbstractReply {
                 break;
             case MODE_TOO_EARLY:
                 log.warn("Received MODE_TOO_EARLY for a character other then the player character. That is wrong.");
-                return true;
+                return;
             default:
                 chara.moveTo(loc, CharMovementMode.Push, 0);
         }
-        return true;
     }
 
     /**

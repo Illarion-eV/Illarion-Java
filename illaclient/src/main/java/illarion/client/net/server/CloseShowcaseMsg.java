@@ -44,26 +44,22 @@ public final class CloseShowcaseMsg extends AbstractReply {
      * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         containerId = reader.readUByte();
     }
 
     /**
      * Execute the close container message and send the decoded data to the rest of the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
      */
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         World.getPlayer().removeContainer(containerId);
-        return true;
     }
 
     /**
      * Get the data of this close container message as string.
      *
-     * @return the string that contains the values that were decoded for this
-     * message
+     * @return the string that contains the values that were decoded for this message
      */
     @Nonnull
     @SuppressWarnings("nls")

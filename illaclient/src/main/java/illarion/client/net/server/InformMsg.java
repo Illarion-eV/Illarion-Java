@@ -64,25 +64,25 @@ public final class InformMsg extends AbstractGuiMsg {
     @Nonnull
     @Override
     public String toString() {
-        final TextBuilder builder = new TextBuilder();
+        TextBuilder builder = new TextBuilder();
         builder.append("Type: ").append(informType);
         builder.append(" Text: ").append(informText);
         return toString(builder.toString());
     }
 
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         informType = reader.readUByte();
         informText = reader.readString();
     }
 
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         if (informText == null) {
             throw new IllegalStateException("Executing a inform message while the inform text is not set.");
         }
 
-        final GameGui gui = World.getGameGui();
+        GameGui gui = World.getGameGui();
         switch (informType) {
             case SERVER:
                 gui.getInformGui().showServerInform(informText);
@@ -113,6 +113,5 @@ public final class InformMsg extends AbstractGuiMsg {
                 builder.append("(").append(informText).append(")");
                 LOGGER.warn(builder.toString());
         }
-        return true;
     }
 }

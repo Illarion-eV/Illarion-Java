@@ -38,26 +38,22 @@ public final class AttackMsg extends AbstractReply {
      * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(final NetCommReader reader) throws IOException {
+    public void decode(NetCommReader reader) throws IOException {
         // nothing to decode
     }
 
     /**
      * Execute the simple message and send the decoded data to the rest of the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
      */
     @SuppressWarnings("nls")
     @Override
-    public boolean executeUpdate() {
-        return true;
+    public void executeUpdate() {
     }
 
     /**
      * Get the data of this simple message as string.
      *
      * @return the string that contains the values that were decoded for this  message
-     * @see AbstractReply#toString()
      */
     @Nonnull
     @SuppressWarnings("nls")

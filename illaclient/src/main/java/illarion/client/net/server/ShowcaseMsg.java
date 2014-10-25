@@ -36,15 +36,12 @@ import java.io.IOException;
  */
 @ReplyMessage(replyId = CommandList.MSG_SHOWCASE)
 public final class ShowcaseMsg extends AbstractGuiMsg {
+    /**
+     * The event instance containing all decoded data that is send during the execution using the event bus.
+     */
     @Nullable
     private OpenContainerEvent event;
 
-    /**
-     * Decode the container data the receiver got and prepare it for the execution.
-     *
-     * @param reader the receiver that got the data from the server that needs to be decoded
-     * @throws IOException thrown in case there was not enough data received to decode the full message
-     */
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         int containerId = reader.readUByte();
@@ -64,25 +61,14 @@ public final class ShowcaseMsg extends AbstractGuiMsg {
         }
     }
 
-    /**
-     * Execute the container message and send the decoded data to the rest of the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
-     */
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         if (event == null) {
             throw new IllegalStateException("Executing the update before the decoding happened.");
         }
         World.getPlayer().onOpenContainerEvent(event);
-        return true;
     }
 
-    /**
-     * Get the data of this container message as string.
-     *
-     * @return the string that contains the values that were decoded for this message
-     */
     @Nonnull
     @SuppressWarnings("nls")
     @Override

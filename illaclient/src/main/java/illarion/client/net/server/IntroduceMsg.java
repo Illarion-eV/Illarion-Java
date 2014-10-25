@@ -26,8 +26,7 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
- * Servermessage: Introduce character (
- * {@link illarion.client.net.CommandList#MSG_INTRODUCE}).
+ * Servermessage: Introduce character ({@link illarion.client.net.CommandList#MSG_INTRODUCE}).
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
@@ -45,33 +44,26 @@ public final class IntroduceMsg extends AbstractReply {
     private String text;
 
     /**
-     * Decode the introduce data the receiver got and prepare it for the
-     * execution.
+     * Decode the introduce data the receiver got and prepare it for the execution.
      *
-     * @param reader the receiver that got the data from the server that needs
-     * to be decoded
-     * @throws IOException thrown in case there was not enough data received to
-     * decode the full message
+     * @param reader the receiver that got the data from the server that needs to be decoded
+     * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         charId = new CharacterId(reader);
         text = reader.readString();
     }
 
     /**
-     * Execute the introduce message and send the decoded data to the rest of
-     * the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
+     * Execute the introduce message and send the decoded data to the rest of the client.
      */
     @Override
-    public boolean executeUpdate() {
-        final Char chara = World.getPeople().getCharacter(charId);
+    public void executeUpdate() {
+        Char chara = World.getPeople().getCharacter(charId);
         if (chara != null) {
             chara.setName(text);
         }
-        return true;
     }
 
     /**

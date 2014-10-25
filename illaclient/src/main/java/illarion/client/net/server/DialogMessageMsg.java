@@ -47,23 +47,21 @@ public final class DialogMessageMsg extends AbstractGuiMsg {
     private int dialogId;
 
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         title = reader.readString();
         content = reader.readString();
         dialogId = reader.readInt();
     }
 
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         World.getGameGui().getDialogMessageGui().showMessageDialog(dialogId, title, content);
-
-        return true;
     }
 
     @Nonnull
     @Override
     public String toString() {
-        final TextBuilder builder = new TextBuilder();
+        TextBuilder builder = new TextBuilder();
         builder.append("title: \"").append(title).append("\", ");
         builder.append("message: \"").append(content).append("\", ");
         builder.append("dialog ID: ").append(dialogId);

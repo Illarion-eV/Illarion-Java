@@ -48,24 +48,20 @@ public final class MusicMsg extends AbstractReply {
      * decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         song = reader.readUShort();
     }
 
     /**
-     * Execute the play music message and send the decoded data to the rest of
-     * the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
+     * Execute the play music message and send the decoded data to the rest of the client.
      */
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         if (song == MusicBox.NO_TRACK) {
             World.getMusicBox().playDefaultMusic();
         } else {
             World.getMusicBox().playMusicTrack(song);
         }
-        return true;
     }
 
     /**

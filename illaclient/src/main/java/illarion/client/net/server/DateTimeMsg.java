@@ -63,7 +63,7 @@ public final class DateTimeMsg extends AbstractReply {
     private int year;
 
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         hour = reader.readUByte();
         minute = reader.readUByte();
         day = reader.readUByte();
@@ -72,9 +72,8 @@ public final class DateTimeMsg extends AbstractReply {
     }
 
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         World.getClock().setDateTime(year, month, day, hour, minute);
-        return true;
     }
 
     @Nonnull

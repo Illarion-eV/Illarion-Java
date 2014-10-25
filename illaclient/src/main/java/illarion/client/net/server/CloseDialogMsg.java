@@ -15,7 +15,6 @@
  */
 package illarion.client.net.server;
 
-import illarion.client.gui.DialogType;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.events.CloseDialogEvent;
@@ -44,19 +43,16 @@ public final class CloseDialogMsg extends AbstractGuiMsg {
      * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         dialogId = reader.readInt();
     }
 
     /**
      * Execute the close dialog message and send the decoded data to the rest of the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
      */
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         EventBus.publish(new CloseDialogEvent(dialogId));
-        return true;
     }
 
     @Nonnull

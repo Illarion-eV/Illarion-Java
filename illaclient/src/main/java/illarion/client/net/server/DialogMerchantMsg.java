@@ -90,15 +90,13 @@ public final class DialogMerchantMsg extends AbstractGuiMsg {
     }
 
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         if (items == null) {
             throw new IllegalStateException("Can't execute update before it was decoded.");
         }
 
         MerchantItem[] itemArray = new MerchantItem[items.size()];
         EventBus.publish(new DialogMerchantReceivedEvent(dialogId, title, items.toArray(itemArray)));
-
-        return true;
     }
 
     @Nonnull

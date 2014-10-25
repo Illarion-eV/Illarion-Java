@@ -28,7 +28,7 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
- * Servermessage: Add a item on a map tile ( {@link illarion.client.net.CommandList#MSG_PUT_ITEM}).
+ * Servermessage: Add a item on a map tile ({@link illarion.client.net.CommandList#MSG_PUT_ITEM}).
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
@@ -68,11 +68,9 @@ public final class PutItemMsg extends AbstractReply {
 
     /**
      * Execute the put item on map message and send the decoded data to the rest of the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
      */
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         MapTile tile = World.getMap().getMapAt(loc);
         if (tile != null) {
             tile.addItem(itemId, number);
@@ -82,7 +80,6 @@ public final class PutItemMsg extends AbstractReply {
                 tile.setMovementCost(newTileMovePoints);
             }
         }
-        return true;
     }
 
     /**
@@ -94,6 +91,6 @@ public final class PutItemMsg extends AbstractReply {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("Item: " + itemId + " Count: " + number + " at pos: " + loc.toString());
+        return toString("Item: " + itemId + " Count: " + number + " at pos: " + loc);
     }
 }

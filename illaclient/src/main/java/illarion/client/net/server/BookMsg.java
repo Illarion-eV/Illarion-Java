@@ -36,14 +36,13 @@ public final class BookMsg extends AbstractGuiMsg {
     private int bookId;
 
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         bookId = reader.readUShort();
     }
 
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         World.getGameGui().getBookGui().showBook(bookId);
-        return true;
     }
 
     @Nonnull

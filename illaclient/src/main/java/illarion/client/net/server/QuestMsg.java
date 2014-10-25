@@ -57,7 +57,7 @@ public final class QuestMsg extends AbstractGuiMsg {
     private Location[] targetLocations;
 
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         questId = reader.readUShort();
         title = reader.readString();
         description = reader.readString();
@@ -69,9 +69,8 @@ public final class QuestMsg extends AbstractGuiMsg {
     }
 
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         World.getGameGui().getQuestGui().setQuest(questId, title, description, finished, targetLocations);
-        return true;
     }
 
     @Override

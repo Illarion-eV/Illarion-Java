@@ -55,7 +55,7 @@ public final class LookAtShowcaseMsg extends AbstractGuiMsg {
      * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         containerId = reader.readUByte();
         slot = reader.readUByte();
         tooltip = new Tooltip(reader);
@@ -63,13 +63,10 @@ public final class LookAtShowcaseMsg extends AbstractGuiMsg {
 
     /**
      * Execute the showcase item look at text message and send the decoded data to the rest of the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
      */
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         World.getGameGui().getContainerGui().showTooltip(containerId, slot, tooltip);
-        return true;
     }
 
     /**

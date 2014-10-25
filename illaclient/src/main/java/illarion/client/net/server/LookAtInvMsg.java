@@ -52,20 +52,17 @@ public final class LookAtInvMsg extends AbstractGuiMsg {
      * decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         slot = reader.readUByte();
         tooltip = new Tooltip(reader);
     }
 
     /**
      * Execute the inventory item look at text message and send the decoded data to the rest of the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
      */
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         World.getGameGui().getInventoryGui().showTooltip(slot, tooltip);
-        return true;
     }
 
     /**

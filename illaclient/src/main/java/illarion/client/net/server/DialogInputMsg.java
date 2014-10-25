@@ -63,7 +63,7 @@ public final class DialogInputMsg extends AbstractGuiMsg {
      * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         title = reader.readString();
         description = reader.readString();
         multiLine = reader.readByte() != 0;
@@ -73,14 +73,10 @@ public final class DialogInputMsg extends AbstractGuiMsg {
 
     /**
      * Execute the text request message and send the decoded data to the rest of the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
      */
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         World.getGameGui().getDialogInputGui().showInputDialog(requestId, title, description, maxCharacters, multiLine);
-
-        return true;
     }
 
     /**
@@ -92,7 +88,7 @@ public final class DialogInputMsg extends AbstractGuiMsg {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        final TextBuilder builder = new TextBuilder();
+        TextBuilder builder = new TextBuilder();
         builder.append("title: ").append(title);
         builder.append(" id: ").append(requestId);
         builder.append(" maximal characters: ").append(maxCharacters);

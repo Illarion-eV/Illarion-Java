@@ -18,7 +18,6 @@ package illarion.client.net.server;
 import illarion.client.graphics.AvatarClothManager;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.util.Lang;
 import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.client.world.characters.CharacterAttribute;
@@ -184,19 +183,16 @@ public final class AppearanceMsg extends AbstractGuiMsg {
     }
 
     /**
-     * Execute the message and send the decoded appearance data to the rest of
-     * the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
+     * Execute the message and send the decoded appearance data to the rest of the client.
      */
     @SuppressWarnings("nls")
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         @Nullable Char character = World.getPeople().getCharacter(charId);
 
         // Character not found.
         if (character == null) {
-            return true;
+            return;
         }
 
         character.setScale(size / SCALE_MOD);
@@ -234,7 +230,7 @@ public final class AppearanceMsg extends AbstractGuiMsg {
         character.setAttribute(CharacterAttribute.HitPoints, hitPoints);
         character.setAlive(!deadFlag);
         character.updateLight();
-        return true;
+        return;
     }
 
     /**

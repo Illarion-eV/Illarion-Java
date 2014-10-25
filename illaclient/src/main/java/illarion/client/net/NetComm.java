@@ -20,7 +20,6 @@ import illarion.client.Servers;
 import illarion.client.crash.NetCommCrashHandler;
 import illarion.client.net.client.AbstractCommand;
 import illarion.client.net.client.KeepAliveCmd;
-import illarion.client.net.server.AbstractReply;
 import illarion.client.util.ConnectionPerformanceClock;
 import illarion.common.util.Timer;
 import javolution.text.TextBuilder;
@@ -37,10 +36,8 @@ import java.nio.channels.spi.SelectorProvider;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Network communication interface. All activities like sending and transmitting of messages and commands in handled
@@ -98,12 +95,6 @@ public final class NetComm {
     private static final int THREAD_WAIT_TIME = 100;
 
     /**
-     * List of server messages that got received and decoded but were not yet executed.
-     */
-    @Nonnull
-    private final BlockingQueue<AbstractReply> inputQueue;
-
-    /**
      * The receiver that accepts and decodes data that was received from the server.
      */
     @Nullable
@@ -133,8 +124,6 @@ public final class NetComm {
      */
     public NetComm() {
         ReplyFactory.getInstance();
-
-        inputQueue = new LinkedBlockingQueue<>();
     }
 
     /**
@@ -238,13 +227,10 @@ public final class NetComm {
             }
 
             sender = new Sender(socket);
-            inputThread = new Receiver(inputQueue, socket);
+            messageHandler = new MessageExecutor();
+            inputThread = new Receiver(messageHandler, socket);
             inputThread.setUncaughtExceptionHandler(NetCommCrashHandler.getInstance());
-            messageHandler = new MessageExecutor(inputQueue);
-            messageHandler.setUncaughtExceptionHandler(NetCommCrashHandler.getInstance());
-
             inputThread.start();
-            messageHandler.start();
 
             keepAliveTimer = new Timer(INITIAL_DELAY, KEEP_ALIVE_DELAY, new Runnable() {
                 @Override
@@ -293,7 +279,7 @@ public final class NetComm {
             }
 
             if (messageHandler != null) {
-                messageHandler.saveShutdown();
+                terminationFutures.add(messageHandler.saveShutdown());
                 messageHandler = null;
             }
 
@@ -313,8 +299,6 @@ public final class NetComm {
             } catch (@Nonnull InterruptedException e) {
                 log.warn("Disconnecting wait got interrupted.");
             }
-
-            inputQueue.clear();
 
             // close connection
             if (socket != null) {

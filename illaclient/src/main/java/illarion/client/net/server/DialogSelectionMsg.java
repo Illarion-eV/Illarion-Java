@@ -54,30 +54,28 @@ public final class DialogSelectionMsg extends AbstractGuiMsg {
     private SelectionItem[] items;
 
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         title = reader.readString();
         message = reader.readString();
-        final int itemCount = reader.readByte();
+        int itemCount = reader.readByte();
         items = new SelectionItem[itemCount];
         for (int i = 0; i < itemCount; i++) {
-            final int id = reader.readUShort();
-            final String name = reader.readString();
+            int id = reader.readUShort();
+            String name = reader.readString();
             items[i] = new SelectionItem(i, id, name);
         }
         dialogId = reader.readInt();
     }
 
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         EventBus.publish(new DialogSelectionReceivedEvent(dialogId, title, message, items));
-
-        return true;
     }
 
     @Nonnull
     @Override
     public String toString() {
-        final TextBuilder builder = new TextBuilder();
+        TextBuilder builder = new TextBuilder();
         builder.append("title: \"").append(title).append("\", ");
         builder.append("items: \"").append(items.length).append("\", ");
         builder.append("dialog ID: ").append(dialogId);

@@ -25,8 +25,7 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
- * Servermessage: Remove a character from the map (
- * {@link illarion.client.net.CommandList#MSG_REMOVE_CHAR}).
+ * Servermessage: Remove a character from the map ({@link illarion.client.net.CommandList#MSG_REMOVE_CHAR}).
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
@@ -38,38 +37,16 @@ public final class RemoveCharMsg extends AbstractReply {
      */
     private CharacterId charId;
 
-    /**
-     * Decode the remove character data the receiver got and prepare it for the execution.
-     *
-     * @param reader the receiver that got the data from the server that needs
-     * to be decoded
-     * @throws IOException thrown in case there was not enough data received to
-     * decode the full message
-     */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         charId = new CharacterId(reader);
     }
 
-    /**
-     * Execute the remove character message and send the decoded data to the
-     * rest of the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
-     */
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         World.getPeople().removeCharacter(charId);
-
-        return true;
     }
 
-    /**
-     * Get the data of this remove character message as string.
-     *
-     * @return the string that contains the values that were decoded for this
-     * message
-     */
     @Nonnull
     @SuppressWarnings("nls")
     @Override

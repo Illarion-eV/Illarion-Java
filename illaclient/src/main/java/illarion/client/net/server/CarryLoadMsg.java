@@ -38,9 +38,8 @@ public class CarryLoadMsg extends AbstractReply {
     }
 
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         World.getPlayer().getCarryLoad().updateLoad(currentLoad, maximumLoad);
-        return true;
     }
 
     @Nonnull
