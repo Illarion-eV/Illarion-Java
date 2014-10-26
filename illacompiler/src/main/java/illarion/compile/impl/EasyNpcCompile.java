@@ -43,10 +43,15 @@ public class EasyNpcCompile extends AbstractCompile {
             ensureTargetDir();
             ParsedNpc npc = Parser.parse(file);
             if (npc.hasErrors()) {
-                LOGGER.error("Parsing the NPC {} failed with {} errors", file.getFileName(), npc.getErrorCount());
-                for (int i = 0; i < npc.getErrorCount(); i++) {
-                    ParsedNpc.Error error = npc.getError(i);
-                    LOGGER.error("\t Line {}: {}", error.getLine(), error.getMessage());
+                if (LOGGER.isErrorEnabled()) {
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < npc.getErrorCount(); i++) {
+                        ParsedNpc.Error error = npc.getError(i);
+                        sb.append("\t Line ").append(error.getLine()).append(": ");
+                        sb.append(error.getMessage()).append('\n');
+                    }
+                    LOGGER.error("Parsing the NPC {} failed with {} errors\n{}", file.getFileName(),
+                                 npc.getErrorCount(), sb);
                 }
                 return -1;
             }
