@@ -15,17 +15,27 @@
  */
 package illarion.client.world.events;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author Fredrik K
  */
 public class ConnectionLostEvent {
-    private String message;
+    @Nonnull
+    private final String message;
+    private final boolean tryToReconnect;
 
-    public ConnectionLostEvent(String message) {
+    public ConnectionLostEvent(@Nonnull String message, boolean tryToReconnect) {
         this.message = message;
+        this.tryToReconnect = tryToReconnect;
     }
 
+    @Nonnull
     public String getMessage() {
         return message;
+    }
+
+    public boolean isTryToReconnect() {
+        return tryToReconnect;
     }
 }

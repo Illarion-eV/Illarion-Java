@@ -60,6 +60,7 @@ public class DocuNode implements DocuEntry {
         return children.size();
     }
 
+    @Nullable
     @Override
     public String getDescription() {
         return null;

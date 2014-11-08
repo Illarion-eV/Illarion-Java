@@ -62,6 +62,7 @@ public class ItemStack implements DisplayItem, List<Item> {
         lock = new ReentrantReadWriteLock();
     }
 
+    @Nonnull
     public ReadWriteLock getLock() {
         return lock;
     }
@@ -383,7 +384,7 @@ public class ItemStack implements DisplayItem, List<Item> {
     }
 
     @Override
-    public Item set(int index, Item element) {
+    public Item set(int index, @Nonnull Item element) {
         if (!isItemGoodForInsert(element)) {
             throw new IllegalArgumentException("Item is not valid in this stack.");
         }
@@ -400,7 +401,7 @@ public class ItemStack implements DisplayItem, List<Item> {
     }
 
     @Override
-    public void add(int index, Item element) {
+    public void add(int index, @Nonnull Item element) {
         if (!isItemGoodForInsert(element)) {
             throw new IllegalArgumentException("Item is not valid in this stack.");
         }

@@ -174,6 +174,7 @@ public class ItemTree extends JScrollPane {
             return id;
         }
 
+        @Nonnull
         @Override
         public String toString() {
             return name;

@@ -45,6 +45,7 @@ public enum BooleanFlagValues {
     /**
      * The pattern used to identify the boolean flag.
      */
+    @Nonnull
     private final Pattern findPattern;
 
     /**

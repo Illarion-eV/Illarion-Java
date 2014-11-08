@@ -24,7 +24,7 @@ public class InventorySlotBuilder extends ControlBuilder {
         super(id, "inventoryslot");
     }
 
-    public void background(final String image) {
+    public void background(@Nonnull final String image) {
         set("background", image);
     }
 }

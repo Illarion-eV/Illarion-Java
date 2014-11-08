@@ -181,6 +181,7 @@ public final class InteractiveChar implements Draggable, DropTarget, Usable {
         return 2;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return "Interactive " + parentChar;

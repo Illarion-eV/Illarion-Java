@@ -206,6 +206,7 @@ public final class Parser implements DocuEntry {
         return 0;
     }
 
+    @Nonnull
     @Override
     public String getDescription() {
         return Lang.getMsg(getClass(), "Docu.description");

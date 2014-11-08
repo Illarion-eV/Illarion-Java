@@ -43,6 +43,7 @@ public final class CreditsMultiScreenController implements ScreenController, Key
 
     @Nullable
     private Element displayParent;
+    @Nullable
     private Label titleLabel;
     private Element namesPanel;
 

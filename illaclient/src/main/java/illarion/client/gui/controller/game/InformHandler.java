@@ -171,11 +171,13 @@ public final class InformHandler implements InformGui, ScreenController {
     /**
      * This is the panel that will be parent to all server messages.
      */
+    @Nullable
     private Element serverParentPanel;
 
     /**
      * This is the panel that will be parent to all text to messages.
      */
+    @Nullable
     private Element textToParentPanel;
 
     /**

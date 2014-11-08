@@ -540,7 +540,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
      * @param text the text to add
      * @param color the color of the text to add
      */
-    private void addChatLogText(@Nonnull String text, Color color) {
+    private void addChatLogText(@Nonnull String text, @Nonnull Color color) {
         if (chatLog == null) {
             return;
         }
@@ -567,7 +567,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
      * @param message the message to display
      * @param color the color to show the text in
      */
-    private void addMessageBubble(@Nullable final Char character, @Nonnull String message, Color color) {
+    private void addMessageBubble(@Nullable final Char character, @Nonnull String message, @Nonnull Color color) {
         if ((character == null) || (chatLayer == null)) {
             return;
         }

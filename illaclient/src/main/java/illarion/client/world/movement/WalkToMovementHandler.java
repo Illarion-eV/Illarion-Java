@@ -265,6 +265,7 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
         }
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return "Walk to target movement handler";

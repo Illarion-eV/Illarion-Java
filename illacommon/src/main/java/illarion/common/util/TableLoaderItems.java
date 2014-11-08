@@ -168,7 +168,7 @@ public final class TableLoaderItems extends TableLoader {
         super(table, true, callback, ",");
     }
 
-    public TableLoaderItems(final InputStream resource, @Nonnull final TableLoaderSink<TableLoaderItems> callback) {
+    public TableLoaderItems(@Nonnull final InputStream resource, @Nonnull final TableLoaderSink<TableLoaderItems> callback) {
         super(resource, true, callback, ",");
     }
 

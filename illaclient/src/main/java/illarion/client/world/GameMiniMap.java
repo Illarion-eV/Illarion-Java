@@ -144,6 +144,7 @@ public final class GameMiniMap implements WorldMapDataProvider {
         mapOrigin = new Location();
     }
 
+    @Nonnull
     private static ByteBuffer createMapBuffer() {
         final int size = WorldMap.WORLD_MAP_WIDTH * WorldMap.WORLD_MAP_HEIGHT * BYTES_PER_TILE;
         final ByteBuffer buffer = ByteBuffer.allocate(size);

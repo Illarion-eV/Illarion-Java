@@ -52,7 +52,7 @@ public class DataPanel extends JPanel {
         add(dataPanel);
     }
 
-    public void setAnnotation(final String text) {
+    public void setAnnotation(@Nonnull final String text) {
         itemPanel.setAnnotation(text);
     }
 

@@ -89,7 +89,7 @@ public final class DisconnectMsg extends AbstractReply {
             BUILDER.append(Integer.toHexString(reason));
         }
 
-        IllaClient.sendDisconnectEvent(BUILDER.toString());
+        IllaClient.sendDisconnectEvent(BUILDER.toString(), false);
     }
 
     /**

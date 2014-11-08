@@ -15,6 +15,7 @@
  */
 package illarion.easyquest.quest;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +66,7 @@ public class HandlerTemplate {
         return (title != null) && (parameters.size() > 0);
     }
 
-    @Nullable
+    @Nonnull
     public String toString() {
         return title;
     }

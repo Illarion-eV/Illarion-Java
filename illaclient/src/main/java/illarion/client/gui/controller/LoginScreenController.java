@@ -68,6 +68,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     /**
      * The checkbox that is ticked in case the password is supposed to be saved.
      */
+    @Nullable
     private CheckBox savePassword;
 
     /**
@@ -219,7 +220,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     }
 
     @NiftyEventSubscriber(id = "server")
-    public void onServerChangedEvent(String topic, DropDownSelectionChangedEvent<String> event) {
+    public void onServerChangedEvent(String topic, @Nonnull DropDownSelectionChangedEvent<String> event) {
         if (event.getSelectionItemIndex() == 4) {
             nameTxt.setText(IllaClient.getCfg().getString("testserverLogin"));
             passwordTxt.setText(IllaClient.getCfg().getString("testserverPass"));

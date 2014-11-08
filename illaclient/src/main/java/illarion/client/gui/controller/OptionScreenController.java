@@ -31,6 +31,7 @@ import org.illarion.engine.DesktopGameContainer;
 import org.illarion.engine.graphic.GraphicResolution;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +63,7 @@ public final class OptionScreenController implements ScreenController {
     private TextField serverPort;
     private TextField clientVersion;
     private CheckBox serverAccountLogin;
+    @Nullable
     private CheckBox serverResetSettings;
 
     @Override

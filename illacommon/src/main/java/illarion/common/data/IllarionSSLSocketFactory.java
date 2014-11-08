@@ -39,6 +39,7 @@ public class IllarionSSLSocketFactory {
     /**
      * The singleton instance of this factory.
      */
+    @Nullable
     @SuppressWarnings("RedundantFieldInitialization")
     private static volatile IllarionSSLSocketFactory instance = null;
 
@@ -74,16 +75,11 @@ public class IllarionSSLSocketFactory {
         try {
             KeyStore keyStore = KeyStore.getInstance("JKS");
 
-            InputStream keyStoreInput = null;
-            try {
-                keyStoreInput = Thread.currentThread().getContextClassLoader().getResourceAsStream("keystore.jks");
+            ClassLoader cls = Thread.currentThread().getContextClassLoader();
+            try (InputStream keyStoreInput = cls.getResourceAsStream("keystore.jks")) {
                 keyStore.load(keyStoreInput, "jcFv8XQxRN".toCharArray());
             } catch (@Nonnull CertificateException | IOException | NoSuchAlgorithmException e) {
                 LOGGER.error("Failed to load keystore.", e);
-            } finally {
-                if (keyStoreInput != null) {
-                    keyStoreInput.close();
-                }
             }
 
             KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
@@ -100,8 +96,6 @@ public class IllarionSSLSocketFactory {
             LOGGER.error("Failed to use keystore.", e);
         } catch (@Nonnull NoSuchAlgorithmException e) {
             LOGGER.error("Failed to decode keystore.", e);
-        } catch (@Nonnull IOException e) {
-            LOGGER.error("Failed to load keystore.", e);
         } catch (UnrecoverableKeyException e) {
             LOGGER.error("Failed to open keystore.", e);
         }

@@ -31,7 +31,7 @@ public final class DialogSelectBuilder extends ControlBuilder {
      * @param id the nifty-gui ID of the dialog
      * @param title the title of the dialog
      */
-    public DialogSelectBuilder(@Nonnull final String id, final String title) {
+    public DialogSelectBuilder(@Nonnull final String id, @Nonnull final String title) {
         super(id, CreateDialogSelectControl.NAME);
         set("title", title);
         set("closeable", "true");

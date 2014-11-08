@@ -787,6 +787,7 @@ public final class ParsedNpc implements Iterable<ParsedData> {
         npcSex = newNpcSex;
     }
 
+    @Nonnull
     @Override
     public Iterator<ParsedData> iterator() {
         return npcData.iterator();

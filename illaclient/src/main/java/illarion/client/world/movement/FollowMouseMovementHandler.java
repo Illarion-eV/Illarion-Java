@@ -122,6 +122,7 @@ class FollowMouseMovementHandler extends AbstractMovementHandler implements Mous
         }
     }
 
+    @Nonnull
     private CharMovementMode getWalkTowardsMode(int distance) {
         if (input.isAnyKeyDown(Key.LeftShift, Key.RightShift)) {
             return CharMovementMode.None;
@@ -143,6 +144,7 @@ class FollowMouseMovementHandler extends AbstractMovementHandler implements Mous
         return CharMovementMode.Walk;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return "Follow mouse movement handler";

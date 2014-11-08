@@ -65,7 +65,7 @@ public final class TableLoaderMapGroups extends TableLoader {
      * @param callback the callback that will receive the data of this loader
      */
     public TableLoaderMapGroups(
-            final InputStream resource,
+            @Nonnull final InputStream resource,
             @Nonnull final TableLoaderSink<TableLoaderMapGroups> callback) {
         super(resource, false, callback, ",");
     }

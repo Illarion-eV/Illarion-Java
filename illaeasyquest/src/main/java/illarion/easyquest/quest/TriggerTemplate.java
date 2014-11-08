@@ -140,7 +140,7 @@ public class TriggerTemplate {
                 (entryPoint != null) && (category != null) && (id != null);
     }
 
-    @Nullable
+    @Nonnull
     public String toString() {
         return title;
     }

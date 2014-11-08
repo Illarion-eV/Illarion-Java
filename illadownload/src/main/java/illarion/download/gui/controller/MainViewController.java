@@ -99,7 +99,7 @@ public class MainViewController extends AbstractController implements MavenDownl
             private final KeyCombination combo = new KeyCodeCombination(KeyCode.ENTER);
 
             @Override
-            public void handle(KeyEvent keyEvent) {
+            public void handle(@Nonnull KeyEvent keyEvent) {
                 if (combo.match(keyEvent)) {
                     launchClientButton.fire();
                 }
@@ -119,7 +119,9 @@ public class MainViewController extends AbstractController implements MavenDownl
     private static class NewsQuestEntry {
         @Nonnull
         public final String title;
+        @Nonnull
         public final String timeStamp;
+        @Nonnull
         public final URL linkTarget;
 
         NewsQuestEntry(@Nonnull String title, @Nonnull String timeStamp, @Nonnull URL linkTarget) {

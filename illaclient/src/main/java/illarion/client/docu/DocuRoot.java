@@ -82,6 +82,7 @@ public class DocuRoot implements Iterable<DocuEntry> {
         return INSTANCE;
     }
 
+    @Nonnull
     @Override
     public Iterator<DocuEntry> iterator() {
         return new Iterator<DocuEntry>() {

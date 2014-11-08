@@ -85,7 +85,7 @@ public final class TableLoaderClothes extends TableLoader {
     }
 
     public TableLoaderClothes(
-            final InputStream resource,
+            @Nonnull final InputStream resource,
             final boolean ndsc,
             @Nonnull final TableLoaderSink<TableLoaderClothes> callback,
             final String tableDelim) {

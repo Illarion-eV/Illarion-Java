@@ -117,6 +117,7 @@ public class MavenDownloader {
     @Nonnull
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenDownloader.class);
 
+    @Nonnull
     private final MavenRepositoryListener repositoryListener;
 
     /**
@@ -323,7 +324,7 @@ public class MavenDownloader {
                 callback.resolvingDone(result);
             }
             return result;
-        } catch (DependencyCollectionException | InterruptedException | ExecutionException e) {
+        } catch (@Nonnull DependencyCollectionException | InterruptedException | ExecutionException e) {
             if (callback != null) {
                 callback.resolvingFailed(e);
             }

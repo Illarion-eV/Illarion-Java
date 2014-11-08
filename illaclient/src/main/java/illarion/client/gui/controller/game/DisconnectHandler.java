@@ -102,7 +102,7 @@ public class DisconnectHandler implements ScreenController, UpdatableHandler, Ev
     }
 
     @EventSubscriber
-    public void onConnectionLostEventReceived(final ConnectionLostEvent event) {
+    public void onConnectionLostEventReceived(@Nonnull final ConnectionLostEvent event) {
         if (isActive || popup == null) {
             return;
         }

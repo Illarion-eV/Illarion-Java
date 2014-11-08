@@ -36,7 +36,7 @@ public final class ParsedItemData {
      *
      * @param values the data values
      */
-    public ParsedItemData(Map<? extends String, ? extends String> values) {
+    public ParsedItemData(@Nonnull Map<? extends String, ? extends String> values) {
         dataValues = new HashMap<>(values);
     }
 

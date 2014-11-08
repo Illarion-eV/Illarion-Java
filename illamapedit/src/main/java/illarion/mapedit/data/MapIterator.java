@@ -27,6 +27,7 @@ import java.util.NoSuchElementException;
 public class MapIterator implements Iterator<MapTile> {
     private int currentIndex = -1;
     private final int tileCount;
+    @Nonnull
     private final Map parentMap;
 
     MapIterator(@Nonnull final Map map, final int tileCount) {

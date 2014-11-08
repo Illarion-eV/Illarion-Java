@@ -31,7 +31,7 @@ public final class CreditsEndScreenController implements ScreenController, KeyIn
     private Nifty nifty;
 
     @Override
-    public void bind(final Nifty nifty, final Screen screen) {
+    public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
         this.nifty = nifty;
     }
 
@@ -46,7 +46,7 @@ public final class CreditsEndScreenController implements ScreenController, KeyIn
     }
 
     @Override
-    public boolean keyEvent(@Nonnull final NiftyInputEvent inputEvent) {
+    public boolean keyEvent(@Nonnull NiftyInputEvent inputEvent) {
         if (inputEvent == NiftyStandardInputEvent.Escape) {
             nifty.gotoScreen("login");
             return true;

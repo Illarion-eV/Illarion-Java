@@ -120,6 +120,7 @@ public final class DialogHandler
 
     @Nullable
     private DialogMerchant merchantDialog;
+    @Nullable
     private DialogCrafting craftingDialog;
     private boolean openCraftDialog;
 
@@ -556,7 +557,7 @@ public final class DialogHandler
 
     @Override
     public void showInputDialog(
-            int id, String title, @Nonnull String description, int maxCharacters, boolean multipleLines) {
+            int id, @Nonnull String title, @Nonnull String description, int maxCharacters, boolean multipleLines) {
         Element parentArea = screen.findElementById("windows");
         DialogInputBuilder builder = new DialogInputBuilder("inputDialog" + Integer.toString(id), title);
         builder.description(description);

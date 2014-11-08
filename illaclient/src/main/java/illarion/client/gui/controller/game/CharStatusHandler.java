@@ -43,6 +43,7 @@ public final class CharStatusHandler implements PlayerStatusGui, ScreenControlle
     /**
      * The progress bar that shows the mana points.
      */
+    @Nullable
     private Progress manaPointBar;
 
     /**

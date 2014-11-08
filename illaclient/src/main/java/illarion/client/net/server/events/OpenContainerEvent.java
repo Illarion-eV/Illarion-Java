@@ -164,6 +164,7 @@ public final class OpenContainerEvent implements ServerEvent {
      *
      * @return the items
      */
+    @Nonnull
     public Collection<Item> getItems() {
         return Collections.unmodifiableCollection(items);
     }

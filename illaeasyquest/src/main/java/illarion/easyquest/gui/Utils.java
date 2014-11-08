@@ -35,6 +35,7 @@ import java.nio.file.Path;
 
 public final class Utils {
 
+    @Nullable
     private static final CopyrightHeader COPYRIGHT_HEADER = new CopyrightHeader(80, "<!--", "-->", null, null);
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);

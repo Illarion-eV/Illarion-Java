@@ -121,7 +121,7 @@ public class DialogCraftingControl extends WindowControl
 
     private final class MouseOverIngredientItemEventSubscriber implements EventTopicSubscriber<NiftyMouseMovedEvent> {
         @Override
-        public void onEvent(String topic, NiftyMouseMovedEvent data) {
+        public void onEvent(@Nonnull String topic, NiftyMouseMovedEvent data) {
             CraftingItemEntry selectedItem = getSelectedCraftingItem();
             if (selectedItem == null) {
                 return;

@@ -80,6 +80,12 @@ public final class Game implements GameListener {
      */
     public static final int STATE_LOGOUT = 4;
 
+    /**
+     * The ID of the disconnected state. This state is displayed in case the client lost the connection to the server.
+     * This may happen due to the server shutting down the connection or by the connection being interrupted.
+     */
+    public static final int STATE_DISCONNECT = 5;
+
     @Nullable
     private Nifty nifty;
 
@@ -92,7 +98,7 @@ public final class Game implements GameListener {
      * Create the game with the fitting title, showing the name of the application and its version.
      */
     public Game() {
-        gameStates = new GameState[5];
+        gameStates = new GameState[6];
         AnnotationProcessor.process(this);
         showFPS = IllaClient.getCfg().getBoolean("showFps");
         showPing = IllaClient.getCfg().getBoolean("showPing");
@@ -163,6 +169,7 @@ public final class Game implements GameListener {
         gameStates[STATE_PLAYING] = new PlayingState(inputReceiver);
         gameStates[STATE_ENDING] = new EndState();
         gameStates[STATE_LOGOUT] = new LogoutState();
+        gameStates[STATE_DISCONNECT] = new DisconnectedState();
 
         Sounds sounds = container.getEngine().getSounds();
         if (IllaClient.getCfg().getBoolean("musicOn")) {
@@ -181,6 +188,41 @@ public final class Game implements GameListener {
         }
 
         enterState(STATE_LOGIN);
+    }
+
+    @Nonnull
+    public GameState getState(int index) {
+        if ((index < 0) || (index >= gameStates.length)) {
+            throw new IndexOutOfBoundsException(String.format("Index is expected between 0 and %d, got: %d",
+                    gameStates.length - 1, index));
+        }
+        return gameStates[index];
+    }
+
+    @Nonnull
+    public <T extends GameState> T getState(@Nonnull Class<T> clazz, int index) {
+        GameState state = getState(index);
+        if (clazz.isAssignableFrom(state.getClass())) {
+            //noinspection unchecked
+            return (T) state;
+        }
+        throw new IllegalArgumentException(
+                String.format("Requested state contains the class %s but the expected class was: %s",
+                        state.getClass().getName(), clazz.getName()));
+    }
+
+    @Nonnull
+    public <T extends GameState> T getState(@Nonnull Class<T> clazz) {
+        for (int i = 0; i < gameStates.length; i++) {
+            GameState state = getState(i);
+            if (clazz.isAssignableFrom(state.getClass())) {
+                //noinspection unchecked
+                return (T) state;
+            }
+        }
+        throw new IllegalArgumentException(
+                String.format("Failed to locate any state with the requested class: %s",
+                        clazz.getName()));
     }
 
     @Override
@@ -243,8 +285,8 @@ public final class Game implements GameListener {
 
         if (showFPS || showPing) {
             Font fpsFont = container.getEngine().getAssets().getFontManager().getFont(FontLoader.CONSOLE_FONT);
-            int renderLine = 10;
             if (fpsFont != null) {
+                int renderLine = 10;
                 if (showFPS) {
                     container.getEngine().getGraphics()
                             .drawText(fpsFont, "FPS: " + container.getFPS(), Color.WHITE, 10, renderLine);

@@ -49,6 +49,7 @@ public class DocumentationHandler implements DocumentationGui, ScreenController,
 
     private Nifty nifty;
     private Screen screen;
+    @Nullable
     private Window documentationWindow;
 
     @Override

@@ -40,7 +40,7 @@ class GdxLwjglApplication extends LwjglApplication {
      * @param listener the listener that receives the updates
      * @param config the configuration used to create the application
      */
-    GdxLwjglApplication(@Nonnull ListenerApplication listener, LwjglApplicationConfiguration config) {
+    GdxLwjglApplication(@Nonnull ListenerApplication listener, @Nonnull LwjglApplicationConfiguration config) {
         super(listener, config);
         this.listener = listener;
     }

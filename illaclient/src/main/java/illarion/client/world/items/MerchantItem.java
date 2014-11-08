@@ -198,6 +198,7 @@ public class MerchantItem {
         return false;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return "Merchant Item ID(" + itemId + ") " + name + " at index: " + index;

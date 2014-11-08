@@ -89,7 +89,7 @@ public class ItemDataTableModel extends AbstractTableModel {
     }
 
     @Nonnull
-    private static String[] split(final CharSequence line) {
+    private static String[] split(@Nonnull final CharSequence line) {
         final Matcher regexMatcher = PATTERN_DATA.matcher(line);
         final List<String> matches = new LinkedList<>();
         while (regexMatcher.find()) {

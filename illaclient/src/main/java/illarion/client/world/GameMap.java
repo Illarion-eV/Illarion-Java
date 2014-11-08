@@ -869,6 +869,7 @@ public final class GameMap implements LightingMap, Stoppable {
         miniMap.update(updateData);
     }
 
+    @Nullable
     private MapTile getMapAt(@Nonnull Location origin, @Nonnull Direction direction) {
         int offsetX = direction.getDirectionVectorX();
         int offsetY = direction.getDirectionVectorY();

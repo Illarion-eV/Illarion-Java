@@ -149,6 +149,7 @@ public final class Login {
         IllaClient.getCfg().save();
     }
 
+    @Nullable
     public String getLoginName() {
         if (loginName == null) {
             return "";

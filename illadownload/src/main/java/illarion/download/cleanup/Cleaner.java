@@ -109,6 +109,7 @@ public class Cleaner {
         return removalList;
     }
 
+    @Nonnull
     private Collection<Path> enlistArtifactsRecursively(@Nonnull Path rootDir) throws IOException {
         if (executorService == null) {
             throw new IllegalStateException("Executor is not ready");
@@ -206,6 +207,7 @@ public class Cleaner {
         return resultList;
     }
 
+    @Nonnull
     private static List<Path> enlistOldSnapshots(@Nonnull Path snapshotDir) throws IOException {
         List<Path> snapshotJars = enlistFiles(snapshotDir, new DirectoryStream.Filter<Path>() {
             @Override
@@ -227,7 +229,7 @@ public class Cleaner {
 
         return enlistFiles(snapshotDir, new DirectoryStream.Filter<Path>() {
             @Override
-            public boolean accept(Path entry) throws IOException {
+            public boolean accept(@Nonnull Path entry) throws IOException {
                 String fileName = entry.getFileName().toString();
                 for (@Nonnull String baseName : snapshotNames) {
                     if (fileName.startsWith(baseName)) {

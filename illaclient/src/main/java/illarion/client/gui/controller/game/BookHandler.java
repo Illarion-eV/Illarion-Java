@@ -47,6 +47,7 @@ public final class BookHandler implements BookGui, ScreenController, UpdatableHa
 
     @Nullable
     private Window bookDisplay;
+    @Nullable
     private Element bookTextContent;
     private ScrollPanel bookScrollArea;
     private Label pageNumberLabel;

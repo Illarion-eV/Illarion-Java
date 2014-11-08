@@ -33,12 +33,12 @@ public class MavenTransferListener implements TransferListener {
     private static final Logger log = LoggerFactory.getLogger(MavenTransferListener.class);
 
     @Override
-    public void transferInitiated(TransferEvent event) throws TransferCancelledException {
+    public void transferInitiated(@Nonnull TransferEvent event) throws TransferCancelledException {
         log.info(event.toString());
     }
 
     @Override
-    public void transferStarted(TransferEvent event) throws TransferCancelledException {
+    public void transferStarted(@Nonnull TransferEvent event) throws TransferCancelledException {
         log.info(event.toString());
         @Nullable Object[] dataArray = getTraceObjectArray(event);
         if (dataArray != null) {
@@ -78,7 +78,7 @@ public class MavenTransferListener implements TransferListener {
     }
 
     @Override
-    public void transferCorrupted(TransferEvent event) throws TransferCancelledException {
+    public void transferCorrupted(@Nonnull TransferEvent event) throws TransferCancelledException {
         log.error(event.toString());
     }
 

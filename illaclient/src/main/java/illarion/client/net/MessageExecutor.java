@@ -71,6 +71,7 @@ final class MessageExecutor {
     /**
      * Shutdown the sender.
      */
+    @Nonnull
     public Future<Boolean> saveShutdown() {
         executorService.shutdown();
 

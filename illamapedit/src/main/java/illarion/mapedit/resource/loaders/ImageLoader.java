@@ -85,6 +85,7 @@ public class ImageLoader implements Resource {
         return IMAGES.get(key);
     }
 
+    @Nonnull
     public static ResizableIcon getResizableIcon(final String key) {
         final Image image = getImage(key);
 

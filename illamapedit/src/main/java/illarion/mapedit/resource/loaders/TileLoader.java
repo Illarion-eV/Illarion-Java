@@ -105,7 +105,7 @@ public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
     }
 
     @Nonnull
-    public Image[] getImages(final String name, final int frames) {
+    public Image[] getImages(@Nonnull final String name, final int frames) {
 
         final Image[] imgs = new Image[frames];
         TextureManager manager = TextureLoaderAwt.getInstance();

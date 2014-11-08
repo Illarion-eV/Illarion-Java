@@ -56,6 +56,7 @@ public class DocuLeaf implements DocuEntry {
         return Lang.getMsg(docuTitle);
     }
 
+    @Nullable
     @Override
     public Iterator<DocuEntry> iterator() {
         return new Iterator<DocuEntry>() {

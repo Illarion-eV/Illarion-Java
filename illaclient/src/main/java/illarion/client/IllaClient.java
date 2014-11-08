@@ -291,7 +291,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      * @param message the error message that shall be displayed.
      */
     @SuppressWarnings("nls")
-    public static void errorExit(final String message) {
+    public static void errorExit(@Nonnull final String message) {
         World.cleanEnvironment();
 
         LOGGER.info("Client terminated on user request.");
@@ -315,9 +315,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      *
      * @param message the message that shall be displayed
      */
-    public static void sendDisconnectEvent(String message) {
-        LOGGER.warn(message);
-        EventBus.publish(new ConnectionLostEvent(message));
+    public static void sendDisconnectEvent(@Nonnull String message, boolean tryToReconnect) {
+        LOGGER.warn("Disconnect received: {}", message);
+        EventBus.publish(new ConnectionLostEvent(message, false));
     }
 
     /**

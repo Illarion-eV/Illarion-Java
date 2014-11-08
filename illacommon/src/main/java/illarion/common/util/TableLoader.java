@@ -132,7 +132,7 @@ public class TableLoader {
      */
     @SuppressWarnings("nls")
     public <T extends TableLoader> TableLoader(
-            final InputStream resource,
+            @Nonnull final InputStream resource,
             final boolean ndsc,
             @Nonnull final TableLoaderSink<T> callback,
             final String tableDelim) {
@@ -322,7 +322,7 @@ public class TableLoader {
      */
     @SuppressWarnings({"nls", "unchecked"})
     private <T extends TableLoader> void loadTable(
-            final InputStream rsc, final boolean ndsc, @Nonnull final TableLoaderSink<T> callback) throws IOException {
+            @Nonnull final InputStream rsc, final boolean ndsc, @Nonnull final TableLoaderSink<T> callback) throws IOException {
 
         final InputStreamReader inRead = new InputStreamReader(rsc);
         final BufferedReader in = new BufferedReader(inRead);

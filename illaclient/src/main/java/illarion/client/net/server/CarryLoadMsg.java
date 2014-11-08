@@ -32,7 +32,7 @@ public class CarryLoadMsg extends AbstractReply {
     private int maximumLoad;
 
     @Override
-    public void decode(NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         currentLoad = reader.readUShort();
         maximumLoad = reader.readUShort();
     }

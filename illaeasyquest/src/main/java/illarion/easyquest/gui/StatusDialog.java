@@ -33,6 +33,7 @@ public class StatusDialog extends JDialog {
     private final JTextField name;
     @Nonnull
     private final JCheckBox start;
+    @Nonnull
     private final Box handlerPanels;
     @Nonnull
     private final JButton okay;

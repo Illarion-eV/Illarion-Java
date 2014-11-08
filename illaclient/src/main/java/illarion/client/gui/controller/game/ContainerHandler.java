@@ -363,7 +363,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      * @param data the event data
      */
     @NiftyEventSubscriber(pattern = ".*container[0-9]+.*slot[0-9]+.*")
-    public void dropIn(String topic, @Nonnull DroppableDroppedEvent data) {
+    public void dropIn(@Nonnull String topic, @Nonnull DroppableDroppedEvent data) {
         final int slotId = getSlotId(topic);
         final int containerId = getContainerId(topic);
 

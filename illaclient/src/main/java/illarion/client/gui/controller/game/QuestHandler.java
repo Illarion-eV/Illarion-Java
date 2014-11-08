@@ -134,6 +134,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
             return questId;
         }
 
+        @Nonnull
         @Override
         public String toString() {
             return name;

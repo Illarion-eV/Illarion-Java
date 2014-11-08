@@ -38,6 +38,7 @@ class TurningTask implements MoveAnimatorTask {
         moveAnimator.executeTurn(direction);
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return "Turning Task - Direction: " + direction;

@@ -55,6 +55,7 @@ public enum Servers {
     /**
      * Storage of the server host address the client needs to connect to.
      */
+    @Nonnull
     private final String serverAddr;
 
     /**

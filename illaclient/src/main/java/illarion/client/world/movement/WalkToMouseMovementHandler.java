@@ -91,6 +91,7 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
         }
     }
 
+    @Nonnull
     @Override
     protected CharMovementMode getMovementMode() {
         if (input.isKeyDown(Key.LeftAlt)) {
@@ -170,6 +171,7 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
                 .getBoolean("limitPathFindingToMouseDirection");
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return "Walk to mouse pointer movement handler";

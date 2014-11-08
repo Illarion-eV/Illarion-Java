@@ -41,6 +41,7 @@ public class MapOpenEvent {
         return name;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return name;

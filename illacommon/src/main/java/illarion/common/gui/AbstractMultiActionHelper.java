@@ -18,6 +18,7 @@ package illarion.common.gui;
 import illarion.common.util.Timer;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This class is a helper that enables to GUI to handle things like double clicks.
@@ -58,7 +59,7 @@ public abstract class AbstractMultiActionHelper implements Runnable {
      * @param timeoutInMs the timeout value in milliseconds
      * @param limit the amount of clicks allowed at the maximum
      */
-    protected AbstractMultiActionHelper(Integer timeoutInMs, int limit) {
+    protected AbstractMultiActionHelper(@Nullable Integer timeoutInMs, int limit) {
         if (timeoutInMs == null) {
             timeoutInMs = 500;
         }

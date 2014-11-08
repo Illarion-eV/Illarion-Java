@@ -123,7 +123,9 @@ public class GdxTileLightEffect implements TileLightEffect, GdxTextureEffect {
     private final com.badlogic.gdx.graphics.Color right;
     @Nonnull
     private final com.badlogic.gdx.graphics.Color center;
+    @Nonnull
     private final Vector2 topLeftCoord;
+    @Nonnull
     private final Vector2 bottomRightCoord;
 
     GdxTileLightEffect(@Nonnull Files files) {
