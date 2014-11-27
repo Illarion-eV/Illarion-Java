@@ -25,7 +25,9 @@
                     <maxIndex>5</maxIndex>
                     <FileNamePattern>${log_dir:-}/client.log.%i.gz</FileNamePattern>
                 </rollingPolicy>
-                <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy"/>
+                <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                    <maxFileSize>10MB</maxFileSize>
+                </triggeringPolicy>
             </appender>
             <root level="warn">
                 <appender-ref ref="FILE"/>
@@ -38,7 +40,6 @@
             <pattern>%-5p - %d{ISO8601} - [%t]: %m%n</pattern>
         </encoder>
     </appender>
-    <logger name="illarion.client.net.MessageExecutor" level="debug"/>
     <root level="warn">
         <appender-ref ref="CONSOLE"/>
     </root>
