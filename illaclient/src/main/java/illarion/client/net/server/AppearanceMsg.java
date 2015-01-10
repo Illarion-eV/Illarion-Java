@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -52,12 +52,6 @@ public final class AppearanceMsg extends AbstractGuiMsg {
     private static final float SCALE_MOD = 100.f;
 
     /**
-     * The sprite color instance that is used to send the color values to the
-     * other parts of the client.
-     */
-    private static final Color TEMP_COLOR = new Color(Color.WHITE);
-
-    /**
      * Appearance of the character. This value contains the race and the gender
      * of the character.
      */
@@ -87,20 +81,11 @@ public final class AppearanceMsg extends AbstractGuiMsg {
      * The dead flag of the character. {@code true} is dead, {@code false} is alive.
      */
     private boolean deadFlag;
-    /**
-     * The blue share of the color of the hair.
-     */
-    private short hairColorBlue;
 
     /**
-     * The green share of the color of the hair.
+     * The color of the hair
      */
-    private short hairColorGreen;
-
-    /**
-     * The red share of the color of the hair.
-     */
-    private short hairColorRed;
+    private Color hairColor;
 
     /**
      * The ID of the hair the character has.
@@ -113,19 +98,9 @@ public final class AppearanceMsg extends AbstractGuiMsg {
     private short size;
 
     /**
-     * The blue share of the color of the beard.
+     * The color of the skin
      */
-    private short skinColorBlue;
-
-    /**
-     * The green share of the color of the beard.
-     */
-    private short skinColorGreen;
-
-    /**
-     * The red share of the color of the beard.
-     */
-    private short skinColorRed;
+    private Color skinColor;
 
     /**
      * The hit points of the character.
@@ -167,12 +142,8 @@ public final class AppearanceMsg extends AbstractGuiMsg {
         size = reader.readUByte();
         hairID = reader.readUByte();
         beardID = reader.readUByte();
-        hairColorRed = reader.readUByte();
-        hairColorGreen = reader.readUByte();
-        hairColorBlue = reader.readUByte();
-        skinColorRed = reader.readUByte();
-        skinColorGreen = reader.readUByte();
-        skinColorBlue = reader.readUByte();
+        hairColor = new Color(reader);
+        skinColor = new Color(reader);
 
         for (int i = 0; i < itemSlots.length; i++) {
             itemSlots[i] = new ItemId(reader);
@@ -209,23 +180,14 @@ public final class AppearanceMsg extends AbstractGuiMsg {
         }
         character.updatePaperdoll();
 
-        if ((skinColorRed != Color.MAX_INT_VALUE) || (skinColorGreen != Color.MAX_INT_VALUE) ||
-                (skinColorBlue != Color.MAX_INT_VALUE)) {
-            TEMP_COLOR.setRed(skinColorRed);
-            TEMP_COLOR.setGreen(skinColorGreen);
-            TEMP_COLOR.setBlue(skinColorBlue);
-            TEMP_COLOR.setAlpha(Color.MAX_INT_VALUE);
-            character.setSkinColor(TEMP_COLOR);
-        } else {
+        if (skinColor.equals(Color.WHITE)) {
             character.setSkinColor(null);
+        } else {
+            character.setSkinColor(skinColor);
         }
 
-        TEMP_COLOR.setRed(hairColorRed);
-        TEMP_COLOR.setGreen(hairColorGreen);
-        TEMP_COLOR.setBlue(hairColorBlue);
-        TEMP_COLOR.setAlpha(Color.MAX_INT_VALUE);
-        character.setClothColor(AvatarClothManager.GROUP_HAIR, TEMP_COLOR);
-        character.setClothColor(AvatarClothManager.GROUP_BEARD, TEMP_COLOR);
+        character.setClothColor(AvatarClothManager.GROUP_HAIR, hairColor);
+        character.setClothColor(AvatarClothManager.GROUP_BEARD, hairColor);
         character.setAttribute(CharacterAttribute.HitPoints, hitPoints);
         character.setAlive(!deadFlag);
         character.updateLight();

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -48,7 +48,7 @@ public final class CreditsMultiScreenController implements ScreenController, Key
     private Element namesPanel;
 
     @Override
-    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
         this.nifty = nifty;
         this.screen = screen;
 
@@ -59,7 +59,7 @@ public final class CreditsMultiScreenController implements ScreenController, Key
 
     @Override
     public void onStartScreen() {
-        final Iterator<CreditsList> creditsIterator = Credits.getInstance().getMultiLists();
+        Iterator<CreditsList> creditsIterator = Credits.getInstance().getMultiLists();
         showNextEntry(creditsIterator);
     }
 
@@ -69,19 +69,19 @@ public final class CreditsMultiScreenController implements ScreenController, Key
             return;
         }
 
-        final CreditsList list = iterator.next();
+        CreditsList list = iterator.next();
         if (Lang.getInstance().isGerman()) {
             titleLabel.setText(list.getNameGerman());
         } else {
             titleLabel.setText(list.getNameEnglish());
         }
 
-        for (final Element element : namesPanel.getChildren()) {
+        for (Element element : namesPanel.getChildren()) {
             element.markForRemoval();
         }
 
-        for (final CreditsPerson person : list) {
-            final LabelBuilder entry = new LabelBuilder();
+        for (CreditsPerson person : list) {
+            LabelBuilder entry = new LabelBuilder();
             entry.style("nifty-label");
             entry.font("textFont");
             entry.width("400px");
@@ -115,7 +115,7 @@ public final class CreditsMultiScreenController implements ScreenController, Key
     }
 
     @Override
-    public boolean keyEvent(@Nonnull final NiftyInputEvent inputEvent) {
+    public boolean keyEvent(@Nonnull NiftyInputEvent inputEvent) {
         if (inputEvent == NiftyStandardInputEvent.Escape) {
             nifty.gotoScreen("login");
             return true;
