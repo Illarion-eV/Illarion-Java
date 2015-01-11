@@ -59,7 +59,12 @@ class GdxFont implements Font {
 
     @Override
     public int getWidth(@Nonnull CharSequence text) {
-        return Math.round(bitmapFont.getBounds(text).width);
+        BitmapFont outlineBitmapFont = getOutlineBitmapFont();
+        int width = Math.round(bitmapFont.getBounds(text).width);
+        if (outlineBitmapFont != null) {
+            width = Math.max(width, Math.round(outlineBitmapFont.getBounds(text).width));
+        }
+        return width;
     }
 
     @Override

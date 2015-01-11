@@ -341,6 +341,7 @@ class GdxGraphics implements Graphics {
             BitmapFont outlineFont = gdxFont.getOutlineBitmapFont();
             if (outlineFont != null) {
                 transferColor(Color.BLACK, tempColor1);
+                tempColor1.a = color.getAlphaf();
                 outlineFont.setScale((float) scaleX, (float) scaleY);
                 outlineFont.setColor(tempColor1);
                 outlineFont.draw(spriteBatch, text, x, y - outlineFont.getAscent());
