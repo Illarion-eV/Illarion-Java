@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -52,13 +52,22 @@ public abstract class AbstractFontManager implements FontManager {
     @Nonnull
     @Override
     public final Font createFont(
-            @Nonnull final Object identifier,
-            @Nonnull final String ttfRef,
-            final float size,
-            final int style,
-            @Nonnull final String fntRef,
-            @Nonnull final String imageRoot) throws IOException {
-        final Font font = buildFont(ttfRef, size, style, fntRef, imageRoot);
+            @Nonnull Object identifier,
+            @Nonnull String fntRef,
+            @Nonnull String imageRoot) throws IOException {
+        Font font = buildFont(fntRef, imageRoot, null);
+        loadedFonts.put(identifier, font);
+        return font;
+    }
+
+    @Nonnull
+    @Override
+    public final Font createFont(
+            @Nonnull Object identifier,
+            @Nonnull String fntRef,
+            @Nonnull String imageRoot,
+            @Nonnull Font outlineFont) throws IOException {
+        Font font = buildFont(fntRef, imageRoot, outlineFont);
         loadedFonts.put(identifier, font);
         return font;
     }
@@ -66,23 +75,20 @@ public abstract class AbstractFontManager implements FontManager {
     /**
      * Build a font.
      *
-     * @param ttfRef the reference to the ttf font file
-     * @param size the requested size of the font
-     * @param style the requested style of the font
      * @param fntRef the reference to the angelcode font file
      * @param imageRoot the root directory of the image file
+     * @param outlineFont the font that is rendered as outline
      * @return the created font
      * @throws IOException in case loading the font fails
      */
     @Nonnull
-    protected abstract Font buildFont(
-            @Nonnull String ttfRef, float size, int style, @Nonnull String fntRef, @Nonnull String imageRoot)
+    protected abstract Font buildFont(@Nonnull String fntRef, @Nonnull String imageRoot, @Nullable Font outlineFont)
             throws IOException;
 
     @Nullable
     @Override
-    public final Font getFont(@Nonnull final Object identifier) {
-        @Nullable final Font requestedFont = loadedFonts.get(identifier);
+    public final Font getFont(@Nonnull Object identifier) {
+        @Nullable Font requestedFont = loadedFonts.get(identifier);
         if ((requestedFont == null) && (defaultFontIdentifier != null)) {
             return loadedFonts.get(defaultFontIdentifier);
         }
@@ -90,7 +96,7 @@ public abstract class AbstractFontManager implements FontManager {
     }
 
     @Override
-    public final void setDefaultFont(@Nullable final Object identifier) {
+    public final void setDefaultFont(@Nullable Object identifier) {
         defaultFontIdentifier = identifier;
     }
 
@@ -101,7 +107,7 @@ public abstract class AbstractFontManager implements FontManager {
      * @return the name of the image
      */
     @Nonnull
-    protected static String getImageName(@Nonnull final String fntRef) {
+    protected static String getImageName(@Nonnull String fntRef) {
         return fntRef.substring(fntRef.lastIndexOf('/') + 1).replace(".fnt", "_0.png");
     }
 }

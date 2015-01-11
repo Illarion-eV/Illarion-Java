@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,6 +21,7 @@ import org.illarion.engine.backend.shared.AbstractFontManager;
 import org.illarion.engine.graphic.Font;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
@@ -54,15 +55,15 @@ class GdxFontManager extends AbstractFontManager {
 
     @Nonnull
     @Override
-    protected Font buildFont(
-            @Nonnull String ttfRef, float size, int style, @Nonnull String fntRef, @Nonnull String imageRoot)
+    protected Font buildFont(@Nonnull String fntRef, @Nonnull String imageRoot, @Nullable Font outlineFont)
             throws IOException {
         String imageName = getImageName(fntRef);
         GdxTexture imageTexture = (GdxTexture) textureManager.getTexture(imageRoot, imageName);
         if (imageTexture == null) {
             throw new IOException("Failed to load required image: " + imageRoot + imageName);
         }
+        GdxFont gdxOutlineFont = (outlineFont instanceof GdxFont) ? (GdxFont) outlineFont : null;
 
-        return new GdxFont(new BitmapFont(files.internal(fntRef), imageTexture.getTextureRegion(), true));
+        return new GdxFont(new BitmapFont(files.internal(fntRef), imageTexture.getTextureRegion(), true), gdxOutlineFont);
     }
 }

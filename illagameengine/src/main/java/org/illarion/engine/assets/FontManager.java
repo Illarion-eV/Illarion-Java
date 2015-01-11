@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -29,14 +29,8 @@ import java.io.IOException;
 public interface FontManager {
     /**
      * This is the function to create a new font.
-     * <p/>
-     * This function takes two font definitions. Once the TTF font file with the style information and the angelcode
-     * font definition. The backend is allowed to choose if its using the TTF font or the bitmap based angelcode font.
      *
      * @param identifier the identifier of the font, this is used to retrieve the font later
-     * @param ttfRef the reference to the TTF file that stores the glyphs of the font
-     * @param size the size of the font (applies to the TTF file)
-     * @param style the style of the font (applies to the TTF file)
      * @param fntRef the Angelcode font definition
      * @param imageRoot the root directory where the image for the angelcode font is located
      * @return the newly created font
@@ -46,11 +40,26 @@ public interface FontManager {
     @Nonnull
     Font createFont(
             @Nonnull Object identifier,
-            @Nonnull String ttfRef,
-            float size,
-            int style,
             @Nonnull String fntRef,
             @Nonnull String imageRoot) throws IOException;
+
+    /**
+     * This is the function to create a new font.
+     *
+     * @param identifier  the identifier of the font, this is used to retrieve the font later
+     * @param fntRef      the Angelcode font definition
+     * @param imageRoot   the root directory where the image for the angelcode font is located
+     * @param outlineFont a second font that is rendered on the same spot as the original one
+     * @return the newly created font
+     * @throws IOException              in case loading the font fails
+     * @throws IllegalArgumentException in case the identifier is already used for another font
+     */
+    @Nonnull
+    Font createFont(
+            @Nonnull Object identifier,
+            @Nonnull String fntRef,
+            @Nonnull String imageRoot,
+            @Nonnull Font outlineFont) throws IOException;
 
     /**
      * Fetch a font that was created before.
