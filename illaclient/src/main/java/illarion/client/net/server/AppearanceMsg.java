@@ -215,6 +215,8 @@ public final class AppearanceMsg extends AbstractGuiMsg {
                 return male ? 13 : 18;
             case 5: //lizardman
                 return 7;
+            case 7: // column of resurrection
+                return 3;
             case 9: //forest troll
                 return 21;
             case 10: //mummy
