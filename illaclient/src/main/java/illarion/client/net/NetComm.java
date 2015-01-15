@@ -20,7 +20,6 @@ import illarion.client.Servers;
 import illarion.client.crash.NetCommCrashHandler;
 import illarion.client.net.client.AbstractCommand;
 import illarion.client.net.client.KeepAliveCmd;
-import illarion.client.net.server.AbstractReply;
 import illarion.client.util.ConnectionPerformanceClock;
 import illarion.common.util.Timer;
 import javolution.text.TextBuilder;
@@ -35,8 +34,10 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
 import java.nio.charset.Charset;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * Network communication interface. All activities like sending and transmitting of messages and commands in handled
@@ -94,12 +95,6 @@ public final class NetComm {
     private static final int THREAD_WAIT_TIME = 100;
 
     /**
-     * List of server messages that got received and decoded but were not yet executed.
-     */
-    @Nonnull
-    private final BlockingQueue<AbstractReply> inputQueue;
-
-    /**
      * The receiver that accepts and decodes data that was received from the server.
      */
     @Nullable
@@ -110,12 +105,6 @@ public final class NetComm {
      */
     @Nullable
     private MessageExecutor messageHandler;
-
-    /**
-     * The queue of commands that were not yet send but are planned to be send.
-     */
-    @Nonnull
-    private final BlockingQueue<AbstractCommand> outputQueue;
 
     /**
      * The sender instance that accepts all server client commands that shall be send and forwards the data to this
@@ -135,9 +124,6 @@ public final class NetComm {
      */
     public NetComm() {
         ReplyFactory.getInstance();
-
-        inputQueue = new LinkedBlockingQueue<>();
-        outputQueue = new LinkedBlockingQueue<>();
     }
 
     /**
@@ -240,16 +226,11 @@ public final class NetComm {
                 }
             }
 
-            sender = new Sender(outputQueue, socket);
-            sender.setUncaughtExceptionHandler(NetCommCrashHandler.getInstance());
-            inputThread = new Receiver(inputQueue, socket);
+            sender = new Sender(socket);
+            messageHandler = new MessageExecutor();
+            inputThread = new Receiver(messageHandler, socket);
             inputThread.setUncaughtExceptionHandler(NetCommCrashHandler.getInstance());
-            messageHandler = new MessageExecutor(inputQueue);
-            messageHandler.setUncaughtExceptionHandler(NetCommCrashHandler.getInstance());
-
-            sender.start();
             inputThread.start();
-            messageHandler.start();
 
             keepAliveTimer = new Timer(INITIAL_DELAY, KEEP_ALIVE_DELAY, new Runnable() {
                 @Override
@@ -281,13 +262,14 @@ public final class NetComm {
     public void disconnect() {
         setLoginDone(false);
         try {
+            Collection<Future<?>> terminationFutures = new ArrayList<>();
             if (keepAliveTimer != null) {
                 keepAliveTimer.stop();
                 keepAliveTimer = null;
             }
             // stop threads
             if (sender != null) {
-                sender.saveShutdown();
+                terminationFutures.add(sender.saveShutdown());
                 sender = null;
             }
 
@@ -297,8 +279,18 @@ public final class NetComm {
             }
 
             if (messageHandler != null) {
-                messageHandler.saveShutdown();
+                terminationFutures.add(messageHandler.saveShutdown());
                 messageHandler = null;
+            }
+
+            for (Future<?> future : terminationFutures) {
+                try {
+                    future.get();
+                } catch (InterruptedException e) {
+                    log.warn("Problem while shutting down NetComm. Something got interrupted.", e);
+                } catch (ExecutionException e) {
+                    log.warn("Problem while shutting down NetComm. Showdown execution failed.", e);
+                }
             }
 
             // wait for threads to react
@@ -307,9 +299,6 @@ public final class NetComm {
             } catch (@Nonnull InterruptedException e) {
                 log.warn("Disconnecting wait got interrupted.");
             }
-
-            inputQueue.clear();
-            outputQueue.clear();
 
             // close connection
             if (socket != null) {
@@ -331,17 +320,11 @@ public final class NetComm {
         return loginDone;
     }
 
-    /**
-     * Put command in send queue so its send at the next send loop.
-     *
-     * @param cmd the command that shall be added to the queue
-     */
-    @SuppressWarnings("nls")
     public void sendCommand(@Nonnull AbstractCommand cmd) {
-        try {
-            outputQueue.put(cmd);
-        } catch (@Nonnull InterruptedException e) {
-            log.error("Got interrupted while trying to add a command to to the queue.");
+        if (sender != null) {
+            sender.sendCommand(cmd);
+        } else {
+            log.error("Sending {} failed. Sender is nowhere to be found.", cmd);
         }
     }
 }

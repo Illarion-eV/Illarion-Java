@@ -74,8 +74,8 @@ import java.util.regex.Pattern;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class DialogHandler
-        implements DialogGui, DialogCraftingGui, DialogMerchantGui, DialogMessageGui, DialogInputGui,
-        ScreenController, UpdatableHandler {
+        implements DialogGui, DialogCraftingGui, DialogMerchantGui, DialogMessageGui, DialogInputGui, ScreenController,
+        UpdatableHandler {
 
     private static class BuildWrapper {
         private final ControlBuilder builder;
@@ -120,6 +120,7 @@ public final class DialogHandler
 
     @Nullable
     private DialogMerchant merchantDialog;
+    @Nullable
     private DialogCrafting craftingDialog;
     private boolean openCraftDialog;
 
@@ -287,8 +288,8 @@ public final class DialogHandler
 
     private void addMerchantItemsToDialog(
             @Nonnull DialogMerchantReceivedEvent event, @Nonnull DialogMerchant dialog) {
-        List<MerchantListEntry> sellingList = new ArrayList<>();
-        List<MerchantListEntry> buyingList = new ArrayList<>();
+        Collection<MerchantListEntry> sellingList = new ArrayList<>();
+        Collection<MerchantListEntry> buyingList = new ArrayList<>();
         for (int i = 0; i < event.getItemCount(); i++) {
             NiftyMerchantItem item = new NiftyMerchantItem(nifty, event.getItem(i));
 
@@ -319,7 +320,7 @@ public final class DialogHandler
     private void showSelectDialog(@Nonnull final DialogSelectionReceivedEvent event) {
         Element parentArea = screen.findElementById("windows");
         DialogSelectBuilder builder = new DialogSelectBuilder("selectDialog" + Integer.toString(event.getId()),
-                                                                    event.getTitle());
+                                                              event.getTitle());
         builder.dialogId(event.getId());
         builder.message(event.getMessage());
 
@@ -472,6 +473,8 @@ public final class DialogHandler
     public void onEndScreen() {
         AnnotationProcessor.unprocess(this);
         nifty.unsubscribeAnnotations(this);
+
+        closeDialog(new CloseDialogEvent(CloseDialogEvent.ALL_DIALOGS));
     }
 
     @Override
@@ -554,7 +557,7 @@ public final class DialogHandler
 
     @Override
     public void showInputDialog(
-            int id, String title, @Nonnull String description, int maxCharacters, boolean multipleLines) {
+            int id, @Nonnull String title, @Nonnull String description, int maxCharacters, boolean multipleLines) {
         Element parentArea = screen.findElementById("windows");
         DialogInputBuilder builder = new DialogInputBuilder("inputDialog" + Integer.toString(id), title);
         builder.description(description);
@@ -718,14 +721,15 @@ public final class DialogHandler
                 if ((event.getDialogId() == CloseDialogEvent.ALL_DIALOGS) ||
                         (event.getDialogId() == merchantDialog.getDialogId())) {
                     merchantDialog.closeWindow();
-                    return;
                 }
             }
         }
         if (event.isClosingDialogType(DialogType.Crafting)) {
-            if ((event.getDialogId() == CloseDialogEvent.ALL_DIALOGS) ||
-                    (event.getDialogId() == craftingDialog.getDialogId())) {
-                craftingDialog.closeWindow();
+            if (craftingDialog != null) {
+                if ((event.getDialogId() == CloseDialogEvent.ALL_DIALOGS) ||
+                        (event.getDialogId() == craftingDialog.getDialogId())) {
+                    craftingDialog.closeWindow();
+                }
             }
         }
 
@@ -843,7 +847,6 @@ public final class DialogHandler
             }
         }
     }
-
 
     @SuppressWarnings("MethodMayBeStatic")
     @NiftyEventSubscriber(pattern = "msgDialog[0-9]+")

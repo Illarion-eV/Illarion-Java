@@ -80,7 +80,7 @@ public final class TableLoaderEffects extends TableLoader {
     }
 
     public TableLoaderEffects(
-            final InputStream resource,
+            @Nonnull final InputStream resource,
             final boolean ndsc,
             @Nonnull final TableLoaderSink<TableLoaderEffects> callback,
             final String tableDelim) {

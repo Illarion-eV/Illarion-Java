@@ -543,6 +543,11 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> imple
                 currentTalkingLine.addConsequence(new ConsequenceSkill(getSkill(ctx.skill()), getOperator(ctx.set()),
                                                                        getAdvancedNumber(ctx.advancedNumber())));
                 break;
+            case "spawn":
+                currentTalkingLine.addConsequence(
+                        new ConsequenceSpawn(getMonsterId(ctx.monsterId()), getMonsterCount(ctx.monsterCount()),
+                                             getRadius(ctx.radius()), getLocation(ctx.location())));
+                break;
             case "state":
                 currentTalkingLine.addConsequence(
                         new ConsequenceState(getOperator(ctx.set()), getAdvancedNumber(ctx.advancedNumber())));

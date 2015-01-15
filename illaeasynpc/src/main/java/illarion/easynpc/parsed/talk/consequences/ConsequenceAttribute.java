@@ -19,6 +19,7 @@ import illarion.easynpc.data.CalculationOperators;
 import illarion.easynpc.data.CharacterAttribute;
 import illarion.easynpc.parsed.talk.AdvancedNumber;
 import illarion.easynpc.parsed.talk.TalkConsequence;
+import illarion.easynpc.writer.LuaRequireTable;
 import illarion.easynpc.writer.LuaWriter;
 
 import javax.annotation.Nonnull;
@@ -35,7 +36,7 @@ public final class ConsequenceAttribute implements TalkConsequence {
      * The LUA code needed to be included for a attribute consequence.
      */
     private static final String LUA_CODE =
-            "talkEntry:addConsequence(%1$s.attribute(\"%2$s\", \"%3$s\", %4$s));" + LuaWriter.NL;
+            "talkEntry:addConsequence(%1$s(\"%2$s\", \"%3$s\", %4$s))" + LuaWriter.NL;
 
     /**
      * The module used to access this attribute consequence.
@@ -84,7 +85,8 @@ public final class ConsequenceAttribute implements TalkConsequence {
      * Write the LUA code for this line to the target writer.
      */
     @Override
-    public void writeLua(@Nonnull Writer target) throws IOException {
-        target.write(String.format(LUA_CODE, LUA_MODULE, attrib.name(), operator.getLuaOp(), value.getLua()));
+    public void writeLua(@Nonnull Writer target, @Nonnull LuaRequireTable requires) throws IOException {
+        target.write(String.format(LUA_CODE, requires.getStorage(LUA_MODULE), attrib.name(), operator.getLuaOp(),
+                                   value.getLua()));
     }
 }

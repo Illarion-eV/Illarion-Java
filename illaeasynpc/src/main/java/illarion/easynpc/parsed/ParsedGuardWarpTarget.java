@@ -16,6 +16,7 @@
 package illarion.easynpc.parsed;
 
 import illarion.common.types.Location;
+import illarion.easynpc.writer.LuaRequireTable;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
@@ -56,11 +57,11 @@ public class ParsedGuardWarpTarget implements ParsedData {
     @Nonnull
     @Override
     public Collection<String> getRequiredModules() {
-        return Collections.singleton("npc_base_guard");
+        return Collections.singleton("npc.base.guard");
     }
 
     @Override
-    public void writeLua(@Nonnull Writer target, @Nonnull LuaWriter.WritingStage stage) throws IOException {
+    public void writeLua(@Nonnull Writer target, @Nonnull LuaRequireTable requires, @Nonnull LuaWriter.WritingStage stage) throws IOException {
         if (stage != LuaWriter.WritingStage.Guarding) {
             throw new IllegalArgumentException("This function did not request a call for a stage but guarding.");
         }
@@ -70,7 +71,7 @@ public class ParsedGuardWarpTarget implements ParsedData {
         target.write(Integer.toString(this.target.getScY()));
         target.write(',');
         target.write(Integer.toString(this.target.getScZ()));
-        target.write(");");
+        target.write(")");
         target.write(LuaWriter.NL);
     }
 }

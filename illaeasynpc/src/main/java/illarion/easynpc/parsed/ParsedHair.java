@@ -15,6 +15,7 @@
  */
 package illarion.easynpc.parsed;
 
+import illarion.easynpc.writer.LuaRequireTable;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
@@ -103,7 +104,7 @@ public final class ParsedHair implements ParsedData {
      */
     @Override
     public void writeLua(
-            @Nonnull Writer target, @Nonnull LuaWriter.WritingStage stage) throws IOException {
+            @Nonnull Writer target, @Nonnull LuaRequireTable requires, @Nonnull LuaWriter.WritingStage stage) throws IOException {
         // nothing
     }
 }

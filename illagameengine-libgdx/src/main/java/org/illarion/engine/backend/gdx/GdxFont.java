@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -33,13 +33,18 @@ class GdxFont implements Font {
     @Nonnull
     private final BitmapFont bitmapFont;
 
+    @Nullable
+    private final GdxFont outlineFont;
+
     /**
      * Create a new instance of the libGDX font implementation.
      *
      * @param bitmapFont the bitmap font that is wrapped by this instance
+     * @param outlineFont the outline font in case there is any
      */
-    GdxFont(@Nonnull BitmapFont bitmapFont) {
+    GdxFont(@Nonnull BitmapFont bitmapFont, @Nullable GdxFont outlineFont) {
         this.bitmapFont = bitmapFont;
+        this.outlineFont = outlineFont;
     }
 
     @Override
@@ -54,7 +59,12 @@ class GdxFont implements Font {
 
     @Override
     public int getWidth(@Nonnull CharSequence text) {
-        return Math.round(bitmapFont.getBounds(text).width);
+        BitmapFont outlineBitmapFont = getOutlineBitmapFont();
+        int width = Math.round(bitmapFont.getBounds(text).width);
+        if (outlineBitmapFont != null) {
+            width = Math.max(width, Math.round(outlineBitmapFont.getBounds(text).width));
+        }
+        return width;
     }
 
     @Override
@@ -74,5 +84,13 @@ class GdxFont implements Font {
     @Nonnull
     BitmapFont getBitmapFont() {
         return bitmapFont;
+    }
+
+    @Nullable
+    BitmapFont getOutlineBitmapFont() {
+        if (outlineFont != null) {
+            return outlineFont.getBitmapFont();
+        }
+        return null;
     }
 }

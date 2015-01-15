@@ -31,7 +31,7 @@ public class DialogMessageBuilder extends ControlBuilder {
      * @param id the nifty-gui ID of the dialog
      * @param title the title of the dialog
      */
-    public DialogMessageBuilder(@Nonnull final String id, final String title) {
+    public DialogMessageBuilder(@Nonnull final String id, @Nonnull final String title) {
         super(id, CreateDialogMessageControl.NAME);
         set("title", title);
         set("closeable", "false");
@@ -55,7 +55,7 @@ public class DialogMessageBuilder extends ControlBuilder {
      *
      * @param text the button label in this dialog
      */
-    public void button(final String text) {
+    public void button(@Nonnull final String text) {
         set("button", text);
     }
 

@@ -56,8 +56,10 @@ public interface LuaWritable {
      * Write the LUA Code fitting into the currently selected writing stage.
      *
      * @param target the writer that is supposed to receive the script data
+     * @param requires the storage of registered requires.
      * @param stage the stage that is currently written
      * @throws IOException thrown in case a writing error occurs
      */
-    void writeLua(@Nonnull Writer target, @Nonnull LuaWriter.WritingStage stage) throws IOException;
+    void writeLua(@Nonnull Writer target, @Nonnull LuaRequireTable requires, @Nonnull LuaWriter.WritingStage stage)
+            throws IOException;
 }

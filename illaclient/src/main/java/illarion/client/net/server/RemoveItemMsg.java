@@ -40,25 +40,14 @@ public final class RemoveItemMsg extends AbstractReply {
 
     private int newTileMovePoints;
 
-    /**
-     * Decode the remove top item data the receiver got and prepare it for the execution.
-     *
-     * @param reader the receiver that got the data from the server that needs to be decoded
-     * @throws IOException thrown in case there was not enough data received to decode the full message
-     */
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         loc = decodeLocation(reader);
         newTileMovePoints = reader.readUByte();
     }
 
-    /**
-     * Execute the remove top item message and send the decoded data to the rest of the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
-     */
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         MapTile tile = World.getMap().getMapAt(loc);
         if (tile != null) {
             tile.removeTopItem();
@@ -68,15 +57,8 @@ public final class RemoveItemMsg extends AbstractReply {
                 tile.setMovementCost(newTileMovePoints);
             }
         }
-
-        return true;
     }
 
-    /**
-     * Get the data of this remove top item message as string.
-     *
-     * @return the string that contains the values that were decoded for this message
-     */
     @Nonnull
     @SuppressWarnings("nls")
     @Override

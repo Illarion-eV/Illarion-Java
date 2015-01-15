@@ -31,14 +31,13 @@ import java.io.IOException;
 @ReplyMessage(replyId = CommandList.MSG_KEEP_ALIVE)
 public class KeepAliveMsg extends AbstractReply {
     @Override
-    public void decode(final NetCommReader reader) throws IOException {
+    public void decode(NetCommReader reader) throws IOException {
         ConnectionPerformanceClock.notifyNetCommDecode();
     }
 
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         ConnectionPerformanceClock.notifyPublishToClient();
-        return true;
     }
 
     @Nonnull

@@ -28,7 +28,6 @@ import illarion.common.graphics.ItemInfo;
 import illarion.common.types.Direction;
 import illarion.common.types.Location;
 import illarion.common.util.Stoppable;
-import illarion.common.util.StoppableStorage;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicPatternSubscriber;
 import org.illarion.engine.Engine;
@@ -286,7 +285,6 @@ public final class GameMap implements LightingMap, Stoppable {
         showQuestsOnMiniMap = IllaClient.getCfg().getBoolean("showQuestsOnMiniMap");
         showQuestsOnGameMap = IllaClient.getCfg().getBoolean("showQuestsOnGameMap");
 
-        StoppableStorage.getInstance().add(this);
         AnnotationProcessor.process(this);
     }
 
@@ -871,6 +869,7 @@ public final class GameMap implements LightingMap, Stoppable {
         miniMap.update(updateData);
     }
 
+    @Nullable
     private MapTile getMapAt(@Nonnull Location origin, @Nonnull Direction direction) {
         int offsetX = direction.getDirectionVectorX();
         int offsetY = direction.getDirectionVectorY();

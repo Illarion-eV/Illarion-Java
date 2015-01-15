@@ -19,6 +19,7 @@ import illarion.easynpc.data.Items;
 import illarion.easynpc.parsed.shared.ParsedItemData;
 import illarion.easynpc.parsed.talk.AdvancedNumber;
 import illarion.easynpc.parsed.talk.TalkConsequence;
+import illarion.easynpc.writer.LuaRequireTable;
 import illarion.easynpc.writer.LuaWriter;
 
 import javax.annotation.Nonnull;
@@ -37,7 +38,7 @@ public final class ConsequenceDeleteItem implements TalkConsequence {
      * value set.
      */
     private static final String LUA_CODE_DATA =
-            "talkEntry:addConsequence(%1$s.deleteitem(%2$s, %3$s, %4$s));" + LuaWriter.NL;
+            "talkEntry:addConsequence(%1$s(%2$s, %3$s, %4$s))" + LuaWriter.NL;
 
     /**
      * The LUA module needed for this consequence.
@@ -86,8 +87,8 @@ public final class ConsequenceDeleteItem implements TalkConsequence {
      * Write the LUA code of this consequence.
      */
     @Override
-    public void writeLua(@Nonnull Writer target) throws IOException {
-        target.write(String.format(LUA_CODE_DATA, LUA_MODULE, Integer.toString(item.getItemId()), value.getLua(),
-                                   data.getLua()));
+    public void writeLua(@Nonnull Writer target, @Nonnull LuaRequireTable requires) throws IOException {
+        target.write(String.format(LUA_CODE_DATA, requires.getStorage(LUA_MODULE), Integer.toString(item.getItemId()),
+                                   value.getLua(), data.getLua()));
     }
 }

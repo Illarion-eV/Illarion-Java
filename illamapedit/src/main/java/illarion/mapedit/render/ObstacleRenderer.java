@@ -49,7 +49,7 @@ public class ObstacleRenderer extends AbstractMapRenderer {
     @Override
     public void renderMap(
             @Nonnull final Map map,
-            final Rectangle viewport,
+            @Nonnull final Rectangle viewport,
             final int level,
             @Nonnull final Graphics2D g) {
         final int width = map.getWidth();

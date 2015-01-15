@@ -307,6 +307,7 @@ public class ConfigSystem implements Config {
     }
 
     private interface ConfigTypeConverter {
+        @Nonnull
         String getString(@Nonnull Object object);
 
         Object getObject(@Nonnull String string);
@@ -333,6 +334,7 @@ public class ConfigSystem implements Config {
             }
         }),
         DoubleEntry("double", Double.class, new AbstractConfigTypeConverter() {
+            @Nonnull
             @Override
             public Double getObject(@Nonnull String string) {
                 return Double.valueOf(string);

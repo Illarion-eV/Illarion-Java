@@ -39,36 +39,28 @@ public final class PlayerIdMsg extends AbstractReply {
     private CharacterId playerId;
 
     /**
-     * Decode the player id data the receiver got and prepare it for the
-     * execution.
+     * Decode the player id data the receiver got and prepare it for the execution.
      *
-     * @param reader the receiver that got the data from the server that needs
-     * to be decoded
-     * @throws IOException thrown in case there was not enough data received to
-     * decode the full message
+     * @param reader the receiver that got the data from the server that needs to be decoded
+     * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         playerId = new CharacterId(reader);
     }
 
     /**
-     * Execute the player id message and send the decoded data to the rest of
-     * the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
+     * Execute the player id message and send the decoded data to the rest of the client.
      */
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         World.getPlayer().setPlayerId(playerId);
-        return true;
     }
 
     /**
      * Get the data of this player id message as string.
      *
-     * @return the string that contains the values that were decoded for this
-     * message
+     * @return the string that contains the values that were decoded for this message
      */
     @Nonnull
     @SuppressWarnings("nls")

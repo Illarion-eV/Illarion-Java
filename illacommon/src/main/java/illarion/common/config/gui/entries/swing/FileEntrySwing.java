@@ -21,6 +21,7 @@ import illarion.common.config.gui.entries.SaveableEntry;
 import illarion.common.util.MessageSource;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
@@ -174,6 +175,7 @@ public final class FileEntrySwing extends JPanel implements SaveableEntry {
     /**
      * The current value of this number entry.
      */
+    @Nullable
     private Path currentValue;
 
     /**
@@ -198,7 +200,7 @@ public final class FileEntrySwing extends JPanel implements SaveableEntry {
      * in this entry
      */
     @SuppressWarnings("nls")
-    public FileEntrySwing(final ConfigEntry usedEntry, @Nonnull final MessageSource msgs) {
+    public FileEntrySwing(@Nonnull final ConfigEntry usedEntry, @Nonnull final MessageSource msgs) {
         super(new BorderLayout(10, 0));
         if (!isUsableEntry(usedEntry)) {
             throw new IllegalArgumentException("ConfigEntry type illegal.");

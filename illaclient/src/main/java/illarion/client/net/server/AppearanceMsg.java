@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,7 +18,6 @@ package illarion.client.net.server;
 import illarion.client.graphics.AvatarClothManager;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.util.Lang;
 import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.client.world.characters.CharacterAttribute;
@@ -53,12 +52,6 @@ public final class AppearanceMsg extends AbstractGuiMsg {
     private static final float SCALE_MOD = 100.f;
 
     /**
-     * The sprite color instance that is used to send the color values to the
-     * other parts of the client.
-     */
-    private static final Color TEMP_COLOR = new Color(Color.WHITE);
-
-    /**
      * Appearance of the character. This value contains the race and the gender
      * of the character.
      */
@@ -85,24 +78,14 @@ public final class AppearanceMsg extends AbstractGuiMsg {
     private CharacterId charId;
 
     /**
-     * The dead flag of the character. <code>true</code> is dead,
-     * <code>false</code> is alive.
+     * The dead flag of the character. {@code true} is dead, {@code false} is alive.
      */
     private boolean deadFlag;
-    /**
-     * The blue share of the color of the hair.
-     */
-    private short hairColorBlue;
 
     /**
-     * The green share of the color of the hair.
+     * The color of the hair
      */
-    private short hairColorGreen;
-
-    /**
-     * The red share of the color of the hair.
-     */
-    private short hairColorRed;
+    private Color hairColor;
 
     /**
      * The ID of the hair the character has.
@@ -115,19 +98,9 @@ public final class AppearanceMsg extends AbstractGuiMsg {
     private short size;
 
     /**
-     * The blue share of the color of the beard.
+     * The color of the skin
      */
-    private short skinColorBlue;
-
-    /**
-     * The green share of the color of the beard.
-     */
-    private short skinColorGreen;
-
-    /**
-     * The red share of the color of the beard.
-     */
-    private short skinColorRed;
+    private Color skinColor;
 
     /**
      * The hit points of the character.
@@ -169,12 +142,8 @@ public final class AppearanceMsg extends AbstractGuiMsg {
         size = reader.readUByte();
         hairID = reader.readUByte();
         beardID = reader.readUByte();
-        hairColorRed = reader.readUByte();
-        hairColorGreen = reader.readUByte();
-        hairColorBlue = reader.readUByte();
-        skinColorRed = reader.readUByte();
-        skinColorGreen = reader.readUByte();
-        skinColorBlue = reader.readUByte();
+        hairColor = new Color(reader);
+        skinColor = new Color(reader);
 
         for (int i = 0; i < itemSlots.length; i++) {
             itemSlots[i] = new ItemId(reader);
@@ -184,19 +153,16 @@ public final class AppearanceMsg extends AbstractGuiMsg {
     }
 
     /**
-     * Execute the message and send the decoded appearance data to the rest of
-     * the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
+     * Execute the message and send the decoded appearance data to the rest of the client.
      */
     @SuppressWarnings("nls")
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         @Nullable Char character = World.getPeople().getCharacter(charId);
 
         // Character not found.
         if (character == null) {
-            return true;
+            return;
         }
 
         character.setScale(size / SCALE_MOD);
@@ -214,27 +180,17 @@ public final class AppearanceMsg extends AbstractGuiMsg {
         }
         character.updatePaperdoll();
 
-        if ((skinColorRed != Color.MAX_INT_VALUE) || (skinColorGreen != Color.MAX_INT_VALUE) ||
-                (skinColorBlue != Color.MAX_INT_VALUE)) {
-            TEMP_COLOR.setRed(skinColorRed);
-            TEMP_COLOR.setGreen(skinColorGreen);
-            TEMP_COLOR.setBlue(skinColorBlue);
-            TEMP_COLOR.setAlpha(Color.MAX_INT_VALUE);
-            character.setSkinColor(TEMP_COLOR);
-        } else {
+        if (skinColor.equals(Color.WHITE)) {
             character.setSkinColor(null);
+        } else {
+            character.setSkinColor(skinColor);
         }
 
-        TEMP_COLOR.setRed(hairColorRed);
-        TEMP_COLOR.setGreen(hairColorGreen);
-        TEMP_COLOR.setBlue(hairColorBlue);
-        TEMP_COLOR.setAlpha(Color.MAX_INT_VALUE);
-        character.setClothColor(AvatarClothManager.GROUP_HAIR, TEMP_COLOR);
-        character.setClothColor(AvatarClothManager.GROUP_BEARD, TEMP_COLOR);
+        character.setClothColor(AvatarClothManager.GROUP_HAIR, hairColor);
+        character.setClothColor(AvatarClothManager.GROUP_BEARD, hairColor);
         character.setAttribute(CharacterAttribute.HitPoints, hitPoints);
         character.setAlive(!deadFlag);
         character.updateLight();
-        return true;
     }
 
     /**
@@ -247,117 +203,84 @@ public final class AppearanceMsg extends AbstractGuiMsg {
      */
     private static int getAppearance(int race, boolean male) {
         switch (race) {
-            case 7:
-                return 3;
-            case 0:
+            case 0: //human
                 return male ? 1 : 16;
-            case 5:
-                return 7;
-            case 1:
+            case 1: //dwarf
                 return male ? 12 : 17;
-            case 4:
-                return male ? 13 : 18;
-            case 3:
-                return male ? 20 : 19;
-            case 2:
+            case 2: //halfling
                 return male ? 24 : 25;
-            case 9:
+            case 3: //elf
+                return male ? 20 : 19;
+            case 4: //orc
+                return male ? 13 : 18;
+            case 5: //lizardman
+                return 7;
+            case 7: // column of resurrection
+                return 3;
+            case 9: //forest troll
                 return 21;
-            case 10:
+            case 10: //mummy
                 return 2;
-            case 11:
+            case 11: //skeleton
                 return 5;
-            case 12:
+            case 12: //floating eye
                 return 6;
-            case 13:
-                return 8;
-            case 14:
-                return 14;
-            case 15:
-                return 73;
-            case 17:
-                return 4;
-            case 18:
+            case 18: //sheep
                 return 9;
-            case 19:
+            case 19: //spider
                 return 10;
-            case 20:
-                return 11;
-            case 21:
-                return 110;
-            case 22:
-                return 110;
-            case 23:
-                return 110;
-            case 24:
+            case 24: //pig
                 return 23;
-            case 25:
-                return 47;
-            case 26:
-                return 27;
-            case 27:
+            case 27: //wasp
                 return 28;
-            case 28:
-                return 29;
-            case 30:
+            case 30: //golem
                 return 31;
-            case 31:
-                return 32;
-            case 32:
-                return 33;
-            case 33:
-                return 34;
-            case 34:
-                return 35;
-            case 37:
+            case 37: //cow
                 return 40;
-            case 38:
-                return 36;
-            case 39:
+            case 39: //wolf
                 return 42;
-            case 40:
-                return 37;
-            case 41:
-                return 38;
-            case 42:
-                return 39;
-            case 47:
+            case 51: //bear
+                return 51;
+            case 52: //raptor
+                return 52;
+            case 53: //zombie
+                return 53;
+            case 54: //hellhound
+                return 54;
+            case 55: //imp
+                return 55;
+            case 56: //iron golem
+                return 56;
+            case 57: //ratman
+                return 57;
+            case 58: //dog
+                return 58;
+            case 59: //beetle
+                return 59;
+            case 60: //fox
+                return 60;
+            case 61: //slime
+                return 61;
+            case 62: //chicken
+                return 62;
+            case 63: //bone dragon
+                return 63;
+            case 111: //rat
                 return 111;
-            case 49:
-                return 44;
-            case 50:
-                return 45;
-            case 77:
-                return 91;
-            case 78:
-                return 77;
-            case 79:
-                return 78;
-            case 80:
-                return 79;
-            case 81:
-                return 80;
-            case 82:
-                return 81;
-            case 83:
-                return 82;
-            case 84:
-                return 83;
-            case 85:
-                return 84;
-            case 86:
-                return 85;
-            case 87:
-                return 86;
-            case 88:
-                return 87;
-            case 89:
-                return 88;
-            case 90:
-                return 89;
-            case 91:
-                return 90;
+            case 112: //black dragon
+                return 112;
+            case 113: //rabbit
+                return 113;
+            case 114: //Akaltut
+                return 114;
+            case 115: //fairy
+                return 115;
+            case 116: //deer
+                return 116;
+            case 117: //Ettin
+                return 117;
             default:
+                LOGGER.warn("Unexpected race id {}. Using appearance with the same ID by chance.", race);
                 return race;
         }
     }
@@ -372,6 +295,6 @@ public final class AppearanceMsg extends AbstractGuiMsg {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString(String.valueOf(charId) + " app=" + appearance + " size=" + size);
+        return toString(charId + " app=" + appearance + " size=" + size);
     }
 }

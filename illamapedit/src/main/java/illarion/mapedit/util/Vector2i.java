@@ -86,6 +86,7 @@ public class Vector2i {
         y /= i;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return String.format("( x: %d | y:%d )", x, y);

@@ -20,7 +20,6 @@ import illarion.client.gui.DialogType;
 import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.EnumSet;
-import java.util.Enumeration;
 
 /**
  * This event is used to close a specified dialog on the GUI.

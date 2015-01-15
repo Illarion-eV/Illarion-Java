@@ -47,6 +47,7 @@ public final class BookHandler implements BookGui, ScreenController, UpdatableHa
 
     @Nullable
     private Window bookDisplay;
+    @Nullable
     private Element bookTextContent;
     private ScrollPanel bookScrollArea;
     private Label pageNumberLabel;
@@ -55,7 +56,7 @@ public final class BookHandler implements BookGui, ScreenController, UpdatableHa
     private Screen screen;
 
     @Override
-    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
         this.nifty = nifty;
         this.screen = screen;
 
@@ -83,7 +84,7 @@ public final class BookHandler implements BookGui, ScreenController, UpdatableHa
     }
 
     @Override
-    public void update(final GameContainer container, final int delta) {
+    public void update(GameContainer container, int delta) {
         if (!dirty) {
             return;
         }
@@ -95,15 +96,15 @@ public final class BookHandler implements BookGui, ScreenController, UpdatableHa
             return;
         }
 
-        for (final Element child : bookTextContent.getChildren()) {
+        for (Element child : bookTextContent.getChildren()) {
             child.markForRemoval();
         }
 
         if ((showPage == 0) && showBook.hasTitlePage()) {
-            final BookTitlePage titlePage = showBook.getTitlePage();
+            BookTitlePage titlePage = showBook.getTitlePage();
             pageNumberLabel.setText("");
 
-            final LabelBuilder title = new LabelBuilder();
+            LabelBuilder title = new LabelBuilder();
             title.label(titlePage.getTitle());
             title.font("menuFont");
             title.width(bookTextContent.getConstraintWidth().toString());
@@ -114,7 +115,7 @@ public final class BookHandler implements BookGui, ScreenController, UpdatableHa
             title.build(nifty, screen, bookTextContent);
 
             if (titlePage.hasAuthor()) {
-                final LabelBuilder author = new LabelBuilder();
+                LabelBuilder author = new LabelBuilder();
                 author.label(titlePage.getAuthor());
                 author.font("textFont");
                 author.width(bookTextContent.getConstraintWidth().toString());
@@ -123,12 +124,7 @@ public final class BookHandler implements BookGui, ScreenController, UpdatableHa
                 author.build(nifty, screen, bookTextContent);
             }
         } else {
-            final int realPage;
-            if (showBook.hasTitlePage()) {
-                realPage = showPage - 1;
-            } else {
-                realPage = showPage;
-            }
+            int realPage = showBook.hasTitlePage() ? (showPage - 1) : showPage;
 
             if ((realPage < 0) || (realPage >= getTotalPageCount())) {
                 dirty = true;
@@ -136,10 +132,10 @@ public final class BookHandler implements BookGui, ScreenController, UpdatableHa
                 return;
             }
 
-            final BookPage page = showBook.getPage(realPage);
+            BookPage page = showBook.getPage(realPage);
 
-            for (final BookPageEntry entry : page) {
-                final LabelBuilder entryLabel = new LabelBuilder();
+            for (BookPageEntry entry : page) {
+                LabelBuilder entryLabel = new LabelBuilder();
                 entryLabel.label(entry.getText());
                 if (entry.isHeadline()) {
                     entryLabel.font("menuFont");
@@ -148,10 +144,20 @@ public final class BookHandler implements BookGui, ScreenController, UpdatableHa
                     entryLabel.font("textFont");
                     entryLabel.marginBottom("5px");
                 }
+                switch (entry.getAlignment()) {
+                    case Left:
+                        entryLabel.textHAlignLeft();
+                        break;
+                    case Right:
+                        entryLabel.textHAlignRight();
+                        break;
+                    case Center:
+                        entryLabel.textHAlignCenter();
+                        break;
+                }
                 entryLabel.width(bookTextContent.getConstraintWidth().toString());
                 entryLabel.wrap(true);
                 entryLabel.marginTop("5px");
-                entryLabel.textHAlignLeft();
                 entryLabel.build(nifty, screen, bookTextContent);
             }
 
@@ -160,14 +166,14 @@ public final class BookHandler implements BookGui, ScreenController, UpdatableHa
 
         bookDisplay.getElement().show();
 
-        final Element nextButton = bookDisplay.getElement().findElementById("book#buttonNext");
+        Element nextButton = bookDisplay.getElement().findElementById("book#buttonNext");
         if ((showPage + 1) < getTotalPageCount()) {
             nextButton.show();
         } else {
             nextButton.hide();
         }
 
-        final Element backButton = bookDisplay.getElement().findElementById("book#buttonBack");
+        Element backButton = bookDisplay.getElement().findElementById("book#buttonBack");
         if (showPage > 0) {
             backButton.show();
         } else {
@@ -184,7 +190,7 @@ public final class BookHandler implements BookGui, ScreenController, UpdatableHa
         if (showBook == null) {
             return 0;
         }
-        final int pageCount = showBook.getPageCount();
+        int pageCount = showBook.getPageCount();
         if (showBook.hasTitlePage()) {
             return pageCount + 1;
         }
@@ -192,7 +198,7 @@ public final class BookHandler implements BookGui, ScreenController, UpdatableHa
     }
 
     @NiftyEventSubscriber(id = "book#buttonNext")
-    public void onNextButtonClickedEvent(final String topic, final ButtonClickedEvent data) {
+    public void onNextButtonClickedEvent(String topic, ButtonClickedEvent data) {
         if ((showPage + 1) < getTotalPageCount()) {
             showPage++;
             dirty = true;
@@ -200,7 +206,7 @@ public final class BookHandler implements BookGui, ScreenController, UpdatableHa
     }
 
     @NiftyEventSubscriber(id = "book#buttonBack")
-    public void onBackButtonClickedEvent(final String topic, final ButtonClickedEvent data) {
+    public void onBackButtonClickedEvent(String topic, ButtonClickedEvent data) {
         if (showPage > 0) {
             showPage--;
             dirty = true;
@@ -208,7 +214,7 @@ public final class BookHandler implements BookGui, ScreenController, UpdatableHa
     }
 
     @NiftyEventSubscriber(id = "book")
-    public void onHideWindow(final String topic, final WindowClosedEvent data) {
+    public void onHideWindow(String topic, WindowClosedEvent data) {
         hideBook();
     }
 
@@ -218,8 +224,8 @@ public final class BookHandler implements BookGui, ScreenController, UpdatableHa
      * @param id the id of the book to show
      */
     @Override
-    public void showBook(final int id) {
-        final Book book = BookFactory.getInstance().getBook(id);
+    public void showBook(int id) {
+        Book book = BookFactory.getInstance().getBook(id);
         if (book != null) {
             showBook = book.getLocalisedBook(Lang.getInstance().getLocale());
             showPage = 0;

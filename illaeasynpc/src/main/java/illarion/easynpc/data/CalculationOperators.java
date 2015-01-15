@@ -51,6 +51,7 @@ public enum CalculationOperators {
     /**
      * The RegExp pattern to identify operator in the string.
      */
+    @Nonnull
     private final Pattern regexpOp;
 
     /**

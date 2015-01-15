@@ -31,7 +31,7 @@ public final class DialogMerchantBuilder extends ControlBuilder {
      * @param id the nifty-gui ID of the dialog
      * @param title the title of the dialog
      */
-    public DialogMerchantBuilder(@Nonnull final String id, final String title) {
+    public DialogMerchantBuilder(@Nonnull final String id, @Nonnull final String title) {
         super(id, CreateDialogMerchantControl.NAME);
         set("title", title);
         set("closeable", "true");

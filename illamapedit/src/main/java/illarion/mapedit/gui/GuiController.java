@@ -64,6 +64,7 @@ public class GuiController extends WindowAdapter {
 
     @Nonnull
     private final AnnotationChecker annotationChecker;
+    @Nonnull
     private final HelpDialog helpDialog;
 
     @Nullable

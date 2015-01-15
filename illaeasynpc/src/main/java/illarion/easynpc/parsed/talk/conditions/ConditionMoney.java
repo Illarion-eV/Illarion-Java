@@ -18,6 +18,7 @@ package illarion.easynpc.parsed.talk.conditions;
 import illarion.easynpc.data.CompareOperators;
 import illarion.easynpc.parsed.talk.AdvancedNumber;
 import illarion.easynpc.parsed.talk.TalkCondition;
+import illarion.easynpc.writer.LuaRequireTable;
 import illarion.easynpc.writer.LuaWriter;
 
 import javax.annotation.Nonnull;
@@ -33,7 +34,7 @@ public final class ConditionMoney implements TalkCondition {
     /**
      * The LUA code needed for this consequence to work.
      */
-    private static final String LUA_CODE = "talkEntry:addCondition(%1$s.money(\"%2$s\", %3$s));" + LuaWriter.NL;
+    private static final String LUA_CODE = "talkEntry:addCondition(%1$s(\"%2$s\", %3$s))" + LuaWriter.NL;
 
     /**
      * The LUA module required for this condition to work.
@@ -74,7 +75,7 @@ public final class ConditionMoney implements TalkCondition {
      * Write the LUA code needed for this money condition.
      */
     @Override
-    public void writeLua(@Nonnull Writer target) throws IOException {
-        target.write(String.format(LUA_CODE, LUA_MODULE, operator.getLuaComp(), value.getLua()));
+    public void writeLua(@Nonnull Writer target, @Nonnull LuaRequireTable requires) throws IOException {
+        target.write(String.format(LUA_CODE, requires.getStorage(LUA_MODULE), operator.getLuaComp(), value.getLua()));
     }
 }

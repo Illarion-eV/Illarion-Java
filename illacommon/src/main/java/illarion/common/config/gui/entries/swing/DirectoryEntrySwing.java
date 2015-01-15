@@ -147,6 +147,7 @@ public final class DirectoryEntrySwing extends JPanel implements SaveableEntry {
     /**
      * The current value of this number entry.
      */
+    @Nullable
     private Path currentValue;
 
     /**

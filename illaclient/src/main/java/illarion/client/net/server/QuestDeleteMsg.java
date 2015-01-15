@@ -42,13 +42,12 @@ public final class QuestDeleteMsg extends AbstractGuiMsg {
     }
 
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         questId = reader.readUShort();
     }
 
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         World.getGameGui().getQuestGui().removeQuest(questId);
-        return true;
     }
 }

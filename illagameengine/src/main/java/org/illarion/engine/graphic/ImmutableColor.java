@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -33,7 +33,7 @@ public class ImmutableColor extends Color {
      * @param blue the blue color component
      * @param alpha the alpha color component
      */
-    public ImmutableColor(final int red, final int green, final int blue, final int alpha) {
+    public ImmutableColor(int red, int green, int blue, int alpha) {
         super(red, green, blue, alpha);
     }
 
@@ -45,7 +45,7 @@ public class ImmutableColor extends Color {
      * @param blue the blue color component
      * @param alpha the alpha color component
      */
-    public ImmutableColor(final float red, final float green, final float blue, final float alpha) {
+    public ImmutableColor(float red, float green, float blue, float alpha) {
         super(red, green, blue, alpha);
     }
 
@@ -56,7 +56,7 @@ public class ImmutableColor extends Color {
      * @param green the green color component
      * @param blue the blue color component
      */
-    public ImmutableColor(final int red, final int green, final int blue) {
+    public ImmutableColor(int red, int green, int blue) {
         super(red, green, blue);
     }
 
@@ -67,7 +67,7 @@ public class ImmutableColor extends Color {
      * @param green the green color component
      * @param blue the blue color component
      */
-    public ImmutableColor(final float red, final float green, final float blue) {
+    public ImmutableColor(float red, float green, float blue) {
         super(red, green, blue);
     }
 
@@ -76,7 +76,7 @@ public class ImmutableColor extends Color {
      *
      * @param org the original color value that is the data provider
      */
-    public ImmutableColor(@Nonnull final Color org) {
+    public ImmutableColor(@Nonnull Color org) {
         super(org);
     }
 
@@ -96,7 +96,7 @@ public class ImmutableColor extends Color {
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */
     @Override
-    public void setAlpha(final int alpha) {
+    public void setAlpha(int alpha) {
         throwImmutableException();
     }
 
@@ -106,7 +106,7 @@ public class ImmutableColor extends Color {
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */
     @Override
-    public void setAlphaf(final float fAlpha) {
+    public void setAlphaf(float fAlpha) {
         throwImmutableException();
     }
 
@@ -116,7 +116,7 @@ public class ImmutableColor extends Color {
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */
     @Override
-    public void setBlue(final int blue) {
+    public void setBlue(int blue) {
         throwImmutableException();
     }
 
@@ -126,7 +126,7 @@ public class ImmutableColor extends Color {
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */
     @Override
-    public void setBluef(final float fBlue) {
+    public void setBluef(float fBlue) {
         throwImmutableException();
     }
 
@@ -136,7 +136,7 @@ public class ImmutableColor extends Color {
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */
     @Override
-    public void setGreen(final int green) {
+    public void setGreen(int green) {
         throwImmutableException();
     }
 
@@ -146,7 +146,7 @@ public class ImmutableColor extends Color {
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */
     @Override
-    public void setGreenf(final float fGreen) {
+    public void setGreenf(float fGreen) {
         throwImmutableException();
     }
 
@@ -156,7 +156,7 @@ public class ImmutableColor extends Color {
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */
     @Override
-    public void setRed(final int red) {
+    public void setRed(int red) {
         throwImmutableException();
     }
 
@@ -166,7 +166,7 @@ public class ImmutableColor extends Color {
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */
     @Override
-    public void setRedf(final float fRed) {
+    public void setRedf(float fRed) {
         throwImmutableException();
     }
 
@@ -176,7 +176,7 @@ public class ImmutableColor extends Color {
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */
     @Override
-    public void setColor(@Nonnull final Color org) {
+    public void setColor(@Nonnull Color org) {
         throwImmutableException();
     }
 
@@ -186,7 +186,7 @@ public class ImmutableColor extends Color {
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */
     @Override
-    public void multiply(@Nonnull final Color mul) {
+    public void multiply(@Nonnull Color mul) {
         throwImmutableException();
     }
 
@@ -196,7 +196,7 @@ public class ImmutableColor extends Color {
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */
     @Override
-    public void multiply(final float value) {
+    public void multiply(float value) {
         throwImmutableException();
     }
 
@@ -206,7 +206,7 @@ public class ImmutableColor extends Color {
      * @throws UnsupportedOperationException in any case because changes are not allowed on this immutable class
      */
     @Override
-    public void add(@Nonnull final Color color) {
+    public void add(@Nonnull Color color) {
         throwImmutableException();
     }
 }

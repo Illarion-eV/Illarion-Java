@@ -83,6 +83,7 @@ public class Graph extends mxGraph {
         });
     }
 
+    @Nonnull
     public String getToolTipForCell(Object cell) {
         String tip = "<html>";
 

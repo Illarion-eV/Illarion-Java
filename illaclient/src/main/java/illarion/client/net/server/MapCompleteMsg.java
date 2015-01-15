@@ -32,13 +32,11 @@ import java.io.IOException;
 @ReplyMessage(replyId = CommandList.MSG_MAP_COMPLETE)
 public final class MapCompleteMsg extends AbstractReply {
     /**
-     * Decode the simple data the receiver got and prepare it for the execution.
-     * Since simple messages contain no data, this function does nothing at all.
+     * Decode the simple data the receiver got and prepare it for the execution. Since simple messages contain no
+     * data, this function does nothing at all.
      *
-     * @param reader the receiver that got the data from the server that needs
-     * to be decoded
-     * @throws IOException thrown in case there was not enough data received to
-     * decode the full message
+     * @param reader the receiver that got the data from the server that needs to be decoded
+     * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
     public void decode(NetCommReader reader) throws IOException {
@@ -46,14 +44,11 @@ public final class MapCompleteMsg extends AbstractReply {
     }
 
     /**
-     * Execute the simple message and send the decoded data to the rest of the
-     * client.
-     *
-     * @return true if the execution is done, false if it shall be called again
+     * Execute the simple message and send the decoded data to the rest of the client.
      */
     @SuppressWarnings("nls")
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         World.getMapDisplay().setActive(true);
         World.getLights().refresh();
         World.getMap().checkInside();
@@ -64,7 +59,6 @@ public final class MapCompleteMsg extends AbstractReply {
         }
 
         World.getNet().setLoginDone(true);
-        return true;
     }
 
     /**

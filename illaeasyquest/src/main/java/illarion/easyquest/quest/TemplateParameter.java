@@ -17,6 +17,8 @@ package illarion.easyquest.quest;
 
 import illarion.easyquest.Lang;
 
+import javax.annotation.Nonnull;
+
 public class TemplateParameter {
     private String name;
     private String type;
@@ -36,6 +38,7 @@ public class TemplateParameter {
         return type;
     }
 
+    @Nonnull
     public String getDescription() {
         return Lang.getMsg(description);
     }

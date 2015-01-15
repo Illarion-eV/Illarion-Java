@@ -43,7 +43,9 @@ public final class CreditsSinglesScreenController implements ScreenController, K
 
     @Nullable
     private Element displayParent;
+    @Nullable
     private Label titleLabel;
+    @Nullable
     private Label nameLabel;
 
     @Override

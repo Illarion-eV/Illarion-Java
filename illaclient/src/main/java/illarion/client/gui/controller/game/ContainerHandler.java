@@ -67,6 +67,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -362,7 +363,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      * @param data the event data
      */
     @NiftyEventSubscriber(pattern = ".*container[0-9]+.*slot[0-9]+.*")
-    public void dropIn(String topic, @Nonnull DroppableDroppedEvent data) {
+    public void dropIn(@Nonnull String topic, @Nonnull DroppableDroppedEvent data) {
         final int slotId = getSlotId(topic);
         final int containerId = getContainerId(topic);
 
@@ -449,6 +450,11 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
     public void onEndScreen() {
         AnnotationProcessor.unprocess(this);
         activeNifty.unsubscribeAnnotations(this);
+
+        int[] containerIds = Arrays.copyOf(itemContainerMap.keys(), itemContainerMap.size());
+        for (int id : containerIds) {
+            removeItemContainer(id);
+        }
     }
 
     @Override
@@ -640,7 +646,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
                 ItemTemplate displayedItem = ItemFactory.getInstance().getTemplate(itemId.getValue());
 
                 NiftyImage niftyImage = new NiftyImage(activeNifty.getRenderEngine(),
-                                                             new EntitySlickRenderImage(displayedItem));
+                                                       new EntitySlickRenderImage(displayedItem));
 
                 conSlot.setImage(niftyImage);
                 conSlot.setLabelText(count.getShortText(Lang.getInstance().getLocale()));

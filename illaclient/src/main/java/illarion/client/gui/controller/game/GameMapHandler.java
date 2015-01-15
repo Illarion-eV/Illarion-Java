@@ -138,6 +138,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
     /**
      * The element that is dragged around.
      */
+    @Nullable
     private Element draggedGraphic;
 
     /**

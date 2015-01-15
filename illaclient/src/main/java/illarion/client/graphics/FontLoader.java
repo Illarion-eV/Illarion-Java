@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,12 +17,12 @@ package illarion.client.graphics;
 
 import org.illarion.engine.assets.Assets;
 import org.illarion.engine.assets.FontManager;
+import org.illarion.engine.graphic.Font;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.io.IOException;
 
 /**
@@ -89,6 +89,11 @@ public final class FontLoader {
     public static final String BUBBLE_FONT = "bubbleFont";
 
     /**
+     * The font that is supposed to be used as the out line of the font for chat bubbles.
+     */
+    public static final String BUBBLE_FONT_OUTLINE = "bubbleFontOutline";
+
+    /**
      * The key for the menu font.
      */
     public static final String MENU_FONT = "menuFont";
@@ -125,17 +130,14 @@ public final class FontLoader {
      */
     public void prepareAllFonts(@Nonnull Assets assets) throws IOException {
         fontManager = assets.getFontManager();
-        fontManager.createFont(BUBBLE_FONT, "fonts/Ubuntu.ttf", 16.f, Font.PLAIN, "gui/bubbleFont.fnt", FONT_IMAGE_DIR);
-        fontManager
-                .createFont(MENU_FONT, "fonts/BlackChancery.ttf", 24.f, Font.PLAIN, "gui/menuFont.fnt", FONT_IMAGE_DIR);
-        fontManager.createFont(CAPTION_FONT, "fonts/BlackChancery.ttf", 18.f, Font.PLAIN, "gui/captionFont.fnt",
-                               FONT_IMAGE_DIR);
-        fontManager.createFont(SMALL_FONT, "fonts/Ubuntu.ttf", 14.f, Font.BOLD, "gui/smallFont.fnt", FONT_IMAGE_DIR);
-        fontManager.createFont(TEXT_FONT, "fonts/Ubuntu.ttf", 16.f, Font.PLAIN, "gui/textFont.fnt", FONT_IMAGE_DIR);
-        fontManager.createFont(CHAT_FONT, "fonts/LiberationSansNarrow-Bold.ttf", 16.f, Font.PLAIN, "gui/chatFont.fnt",
-                               FONT_IMAGE_DIR);
-        fontManager.createFont(CONSOLE_FONT, "fonts/Inconsolata.ttf", 14.f, Font.PLAIN, "gui/consoleFont.fnt",
-                               FONT_IMAGE_DIR);
+        Font outline = fontManager.createFont(BUBBLE_FONT_OUTLINE, "gui/bubbleFontOutline.fnt", FONT_IMAGE_DIR);
+        fontManager.createFont(BUBBLE_FONT, "gui/bubbleFont.fnt", FONT_IMAGE_DIR, outline);
+        fontManager.createFont(MENU_FONT, "gui/menuFont.fnt", FONT_IMAGE_DIR);
+        fontManager.createFont(CAPTION_FONT, "gui/captionFont.fnt", FONT_IMAGE_DIR);
+        fontManager.createFont(SMALL_FONT, "gui/smallFont.fnt", FONT_IMAGE_DIR);
+        fontManager.createFont(TEXT_FONT, "gui/textFont.fnt", FONT_IMAGE_DIR);
+        fontManager.createFont(CHAT_FONT, "gui/chatFont.fnt", FONT_IMAGE_DIR);
+        fontManager.createFont(CONSOLE_FONT, "gui/consoleFont.fnt", FONT_IMAGE_DIR);
 
         fontManager.setDefaultFont(TEXT_FONT);
     }

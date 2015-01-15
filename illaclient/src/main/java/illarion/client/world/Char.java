@@ -1413,6 +1413,7 @@ public final class Char implements AnimatedMove {
         updatePaperdoll(avatar);
     }
 
+    @Nonnull
     @Override
     public String toString() {
         String charIdString = (charId == null) ? "" : (" (" + charId.getValue() + ')');

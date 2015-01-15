@@ -50,13 +50,10 @@ public final class LocationMsg extends AbstractReply {
 
     /**
      * Execute the player location message and send the decoded data to the rest of the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
      */
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         World.getPlayer().getMovementHandler().executeServerLocation(loc);
-        return true;
     }
 
     /**

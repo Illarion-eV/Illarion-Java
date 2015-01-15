@@ -106,7 +106,7 @@ public final class TableLoaderTiles extends TableLoader {
     }
 
     public TableLoaderTiles(
-            final InputStream resource,
+            @Nonnull final InputStream resource,
             final boolean ndsc,
             @Nonnull final TableLoaderSink<TableLoaderTiles> callback,
             final String tableDelim) {

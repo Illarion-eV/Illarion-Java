@@ -134,6 +134,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
             return questId;
         }
 
+        @Nonnull
         @Override
         public String toString() {
             return name;
@@ -555,6 +556,12 @@ public final class QuestHandler implements QuestGui, ScreenController {
         if (questWindow != null) {
             IllaClient.getCfg().set("questWindowPosX", questWindow.getX() + "px");
             IllaClient.getCfg().set("questWindowPosY", questWindow.getY() + "px");
+        }
+        hideQuestLog();
+
+        ListBox<QuestEntry> questList = getQuestList();
+        if (questList != null) {
+            questList.clear();
         }
     }
 

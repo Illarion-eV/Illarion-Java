@@ -135,7 +135,7 @@ public class FileTree extends JTree {
 
     private static final DirectoryStream.Filter<Path> MAP_FILE_FILTER = new DirectoryStream.Filter<Path>() {
         @Override
-        public boolean accept(Path entry) throws IOException {
+        public boolean accept(@Nonnull Path entry) throws IOException {
             if (Files.isDirectory(entry)) {
                 return true;
             }
@@ -165,7 +165,7 @@ public class FileTree extends JTree {
         return null;
     }
 
-    private static void sortFiles(final File[] files) {
+    private static void sortFiles(@Nonnull final File[] files) {
         Arrays.sort(files, new Comparator<File>() {
             @Override
             public int compare(@Nonnull final File o1, @Nonnull final File o2) {
@@ -182,6 +182,7 @@ public class FileTree extends JTree {
         });
     }
 
+    @Nullable
     private SwingWorker<MutableTreeNode, Object> currentWorker;
 
     public void setDirectory(@Nonnull final Path file) {

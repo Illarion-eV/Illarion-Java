@@ -95,6 +95,7 @@ public final class Base64 {
      * @param bytes The data to decode.
      * @return Decoded bytes.
      */
+    @Nonnull
     public static byte[] decode(@Nonnull final byte[] bytes) {
         final ByteArrayInputStream in = new ByteArrayInputStream(bytes);
         // calculate the length of the resulting output.
@@ -128,7 +129,7 @@ public final class Base64 {
      * @param out Stream to which to write decoded data.
      * @throws IOException if an IO error occurs.
      */
-    public static void decode(final byte[] bytes, @Nonnull final OutputStream out) throws IOException {
+    public static void decode(@Nonnull final byte[] bytes, @Nonnull final OutputStream out) throws IOException {
         final ByteArrayInputStream in = new ByteArrayInputStream(bytes);
         decode(in, out, false);
     }
@@ -259,6 +260,7 @@ public final class Base64 {
      * @param bytes The data to decode.
      * @return Decoded bytes.
      */
+    @Nonnull
     public static byte[] decodeToBytes(@Nonnull final byte[] bytes) {
         return decode(bytes);
     }
@@ -286,6 +288,7 @@ public final class Base64 {
      * @param string The data to decode.
      * @return decoded data.
      */
+    @Nonnull
     public static byte[] decodeToBytes(@Nonnull final String string) {
         return decode(string.getBytes());
     }
@@ -468,6 +471,7 @@ public final class Base64 {
      * @param bytes The data to encode.
      * @return Encoded bytes.
      */
+    @Nonnull
     public static byte[] encode(@Nonnull final byte[] bytes) {
         return encode(bytes, false);
     }

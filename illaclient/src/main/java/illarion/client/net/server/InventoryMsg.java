@@ -26,8 +26,7 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
- * Servermessage: Update of a inventory item (
- * {@link CommandList#MSG_INVENTORY}).
+ * Servermessage: Update of a inventory item ({@link CommandList#MSG_INVENTORY}).
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
@@ -50,31 +49,24 @@ public final class InventoryMsg extends AbstractReply {
     private short location;
 
     /**
-     * Decode the inventory item data the receiver got and prepare it for the
-     * execution.
+     * Decode the inventory item data the receiver got and prepare it for the execution.
      *
-     * @param reader the receiver that got the data from the server that needs
-     * to be decoded
-     * @throws IOException thrown in case there was not enough data received to
-     * decode the full message
+     * @param reader the receiver that got the data from the server that needs to be decoded
+     * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         location = reader.readUByte();
         itemId = new ItemId(reader);
         count = ItemCount.getInstance(reader);
     }
 
     /**
-     * Execute the inventory item message and send the decoded data to the rest
-     * of the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
+     * Execute the inventory item message and send the decoded data to the rest of the client.
      */
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         World.getPlayer().getInventory().setItem(location, itemId, count);
-        return true;
     }
 
     /**

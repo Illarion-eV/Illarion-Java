@@ -63,7 +63,7 @@ public final class DialogCraftingMsg extends AbstractGuiMsg {
      * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         title = reader.readString();
 
         groups = new String[reader.readUByte()];
@@ -73,17 +73,17 @@ public final class DialogCraftingMsg extends AbstractGuiMsg {
 
         craftItems = new CraftingItem[reader.readUByte()];
         for (int i = 0; i < craftItems.length; i++) {
-            final int itemIndex = reader.readUByte();
-            final int group = reader.readUByte();
-            final ItemId itemId = new ItemId(reader);
-            final String name = reader.readString();
-            final int buildTime = reader.readUShort();
-            final ItemCount craftStackSize = ItemCount.getInstance(reader.readUByte());
+            int itemIndex = reader.readUByte();
+            int group = reader.readUByte();
+            ItemId itemId = new ItemId(reader);
+            String name = reader.readString();
+            int buildTime = reader.readUShort();
+            ItemCount craftStackSize = ItemCount.getInstance(reader.readUByte());
 
-            final CraftingIngredientItem[] ingredients = new CraftingIngredientItem[reader.readUByte()];
+            CraftingIngredientItem[] ingredients = new CraftingIngredientItem[reader.readUByte()];
             for (int k = 0; k < ingredients.length; k++) {
-                final ItemId ingredientId = new ItemId(reader);
-                final ItemCount ingredientCount = ItemCount.getInstance(reader.readUByte());
+                ItemId ingredientId = new ItemId(reader);
+                ItemCount ingredientCount = ItemCount.getInstance(reader.readUByte());
 
                 ingredients[k] = new CraftingIngredientItem(ingredientId, ingredientCount);
             }
@@ -96,14 +96,10 @@ public final class DialogCraftingMsg extends AbstractGuiMsg {
 
     /**
      * Execute the text request message and send the decoded data to the rest of the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
      */
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         EventBus.publish(new DialogCraftingReceivedEvent(requestId, title, groups, craftItems));
-
-        return true;
     }
 
     /**
@@ -115,7 +111,7 @@ public final class DialogCraftingMsg extends AbstractGuiMsg {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        final TextBuilder builder = new TextBuilder();
+        TextBuilder builder = new TextBuilder();
         builder.append("title: ").append(title);
         builder.append(" id: ").append(requestId);
         return toString(builder.toString());

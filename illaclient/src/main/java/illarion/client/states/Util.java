@@ -26,11 +26,14 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class Util {
+final class Util {
     /**
      * The logger that is used for the logging output of this class.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(Util.class);
+
+    private Util() {
+    }
 
     /**
      * Load the XML file after validating its contents.
@@ -38,11 +41,11 @@ class Util {
      * @param nifty the instance of Nifty the files are supposed to be applied to
      * @param xmlFile the XML file that is supposed to be load
      */
-    public static void loadXML(@Nonnull final Nifty nifty, @Nonnull final String xmlFile) {
+    public static void loadXML(@Nonnull Nifty nifty, @Nonnull String xmlFile) {
         try {
             nifty.validateXml(xmlFile);
         } catch (Exception e) {
-            LOGGER.error("Validation of the XML file \"" + xmlFile + "\" failed.", e);
+            LOGGER.error("Validation of the XML file \"{}\" failed.", xmlFile, e);
         }
         nifty.addXml(xmlFile);
     }

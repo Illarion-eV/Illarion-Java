@@ -67,7 +67,7 @@ public class Version2Decoder implements Decoder {
         height = -1;
     }
 
-    public void decodeItemLine(final String line, final int i) throws FormatCorruptedException {
+    public void decodeItemLine(@Nonnull final String line, final int i) throws FormatCorruptedException {
         if (line.startsWith("# ")) {
             return;
         }
@@ -111,7 +111,7 @@ public class Version2Decoder implements Decoder {
         }
     }
 
-    public void decodeTileLine(final String line, final int i) throws FormatCorruptedException {
+    public void decodeTileLine(@Nonnull final String line, final int i) throws FormatCorruptedException {
         if (line.startsWith("# ")) {
             return;
         }
@@ -163,7 +163,7 @@ public class Version2Decoder implements Decoder {
         }
     }
 
-    public void decodeWarpLine(final String line, final int i) throws FormatCorruptedException {
+    public void decodeWarpLine(@Nonnull final String line, final int i) throws FormatCorruptedException {
         if (line.startsWith("# ")) {
             return;
         }
@@ -184,7 +184,7 @@ public class Version2Decoder implements Decoder {
     }
 
     @Override
-    public void decodeLine(DataType type, String line, int i) throws FormatCorruptedException {
+    public void decodeLine(@Nonnull DataType type, String line, int i) throws FormatCorruptedException {
         switch (type) {
             case Tiles:
                 decodeTileLine(line, i);

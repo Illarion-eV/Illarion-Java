@@ -50,23 +50,20 @@ public final class GraphicEffectMsg extends AbstractReply {
      * @throws java.io.IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         loc = decodeLocation(reader);
         effectId = reader.readUShort();
     }
 
     /**
      * Execute the effect message and send the decoded data to the rest of the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
      */
     @Override
-    public boolean executeUpdate() {
-        final MapTile tile = World.getMap().getMapAt(loc);
+    public void executeUpdate() {
+        MapTile tile = World.getMap().getMapAt(loc);
         if (tile != null) {
             tile.showEffect(effectId);
         }
-        return true;
     }
 
     /**

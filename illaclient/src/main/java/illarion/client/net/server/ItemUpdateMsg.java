@@ -85,11 +85,9 @@ public final class ItemUpdateMsg extends AbstractReply {
 
     /**
      * Execute the items on tile message and send the decoded data to the rest of the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
      */
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         MapTile tile = World.getMap().getMapAt(loc);
         if (tile != null) {
             tile.updateItems(itemNumber, itemId, itemCount);
@@ -99,8 +97,6 @@ public final class ItemUpdateMsg extends AbstractReply {
                 tile.setMovementCost(newTileMovePoints);
             }
         }
-
-        return true;
     }
 
     /**
@@ -112,6 +108,6 @@ public final class ItemUpdateMsg extends AbstractReply {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("Loc: " + loc.toString() + " - Items: " + itemId.toString());
+        return toString("Loc: " + loc + " - Items: " + itemId);
     }
 }

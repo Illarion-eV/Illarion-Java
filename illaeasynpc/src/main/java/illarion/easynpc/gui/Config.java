@@ -304,6 +304,7 @@ public final class Config {
      *
      * @return the folder to store the easyNPC scripts
      */
+    @Nonnull
     public String getEasyNpcFolder() {
         if (cfg == null) {
             LOGGER.error("Configuration system not initialized yet.");

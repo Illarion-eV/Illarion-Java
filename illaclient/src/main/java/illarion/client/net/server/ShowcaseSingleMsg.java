@@ -41,40 +41,23 @@ public final class ShowcaseSingleMsg extends AbstractGuiMsg {
     @Nullable
     private ItemCount slotItemCount;
 
-    /**
-     * Decode the container data the receiver got and prepare it for the execution.
-     *
-     * @param reader the receiver that got the data from the server that needs to be decoded
-     * @throws java.io.IOException thrown in case there was not enough data received to decode the full message
-     */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         containerId = reader.readUByte();
         containerSlot = reader.readUShort();
         slotItem = new ItemId(reader);
         slotItemCount = ItemCount.getInstance(reader);
     }
 
-    /**
-     * Execute the container message and send the decoded data to the rest of the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
-     */
     @Override
-    public boolean executeUpdate() {
-        final ItemContainer container = World.getPlayer().getContainer(containerId);
+    public void executeUpdate() {
+        ItemContainer container = World.getPlayer().getContainer(containerId);
         if (container != null) {
             container.setItem(containerSlot, slotItem, slotItemCount);
             World.getGameGui().getContainerGui().showContainer(container);
         }
-        return true;
     }
 
-    /**
-     * Get the data of this container message as string.
-     *
-     * @return the string that contains the values that were decoded for this message
-     */
     @Nonnull
     @SuppressWarnings("nls")
     @Override

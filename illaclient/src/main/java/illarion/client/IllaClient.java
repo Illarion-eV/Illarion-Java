@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -258,6 +258,19 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         INSTANCE.game.enterState(Game.STATE_ENDING);
     }
 
+    public static void performLogout() {
+        LOGGER.info("Logout requested.");
+        getInstance().quitGame();
+        INSTANCE.game.enterState(Game.STATE_LOGOUT);
+    }
+
+    public static void returnToLogin() {
+        LOGGER.info("Returning to login initiated");
+        INSTANCE.game.enterState(Game.STATE_LOGIN);
+        World.cleanEnvironment();
+        getCfg().save();
+    }
+
     public static void exitGameContainer() {
         INSTANCE.gameContainer.exitGame();
 
@@ -278,7 +291,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      * @param message the error message that shall be displayed.
      */
     @SuppressWarnings("nls")
-    public static void errorExit(final String message) {
+    public static void errorExit(@Nonnull final String message) {
         World.cleanEnvironment();
 
         LOGGER.info("Client terminated on user request.");
@@ -302,9 +315,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      *
      * @param message the message that shall be displayed
      */
-    public static void sendDisconnectEvent(String message) {
-        LOGGER.warn(message);
-        EventBus.publish(new ConnectionLostEvent(message));
+    public static void sendDisconnectEvent(@Nonnull String message, boolean tryToReconnect) {
+        LOGGER.warn("Disconnect received: {}", message);
+        EventBus.publish(new ConnectionLostEvent(message, false));
     }
 
     /**
@@ -394,24 +407,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
                 System.exit(-1);
             }
         }, 10000);
-    }
-
-    /**
-     * This function changes the state of the exit requested parameter.
-     *
-     * @param newValue the new value for the exitRequested parameter
-     */
-    static void setExitRequested(boolean newValue) {
-        exitRequested = newValue;
-    }
-
-    /**
-     * Get if there is currently a exit request pending. Means of the really exit dialog is opened or not.
-     *
-     * @return true in case the exit dialog is currently displayed
-     */
-    private static boolean getExitRequested() {
-        return exitRequested;
     }
 
     /**
@@ -515,9 +510,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("serverAddress", Servers.customserver.getServerHost());
         cfg.setDefault("serverPort", Servers.customserver.getServerPort());
         cfg.setDefault("clientVersion", Servers.customserver.getClientVersion());
-        cfg.setDefault("testserverLogin", "Testserver One");
-        cfg.setDefault("testserverPass", "test");
-        cfg.setDefault("testserverPassStore", true);
+        cfg.setDefault("clientVersionOverwrite", false);
         cfg.setDefault("serverAccountLogin", true);
         cfg.setDefault("wasdWalk", true);
         cfg.setDefault("disableChatAfterSending", true);
@@ -567,10 +560,8 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
                     cfg.set("windowHeight", res.getHeight());
                     cfg.set("windowWidth", res.getWidth());
                 }
-            } catch (@Nonnull EngineException e) {
-                LOGGER.error("Failed to apply graphic mode: " + resolutionString);
-            } catch (@Nonnull IllegalArgumentException ex) {
-                LOGGER.error("Failed to apply graphic mode: " + resolutionString);
+            } catch (@Nonnull EngineException | IllegalArgumentException e) {
+                LOGGER.error("Failed to apply graphic mode: {}", resolutionString);
             }
         }
     }

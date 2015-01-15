@@ -15,6 +15,7 @@
  */
 package illarion.easynpc.parsed;
 
+import illarion.easynpc.writer.LuaRequireTable;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
@@ -98,11 +99,11 @@ public final class ParsedTradeText implements ParsedData {
     @Nonnull
     @Override
     public Collection<String> getRequiredModules() {
-        return Collections.singleton("npc_base_trade");
+        return Collections.singleton("npc.base.trade");
     }
 
     @Override
-    public void writeLua(@Nonnull Writer target, @Nonnull LuaWriter.WritingStage stage) throws IOException {
+    public void writeLua(@Nonnull Writer target, @Nonnull LuaRequireTable requires, @Nonnull LuaWriter.WritingStage stage) throws IOException {
         target.write("tradingNPC:");
         switch (type) {
             case NoMoney:
@@ -123,7 +124,7 @@ public final class ParsedTradeText implements ParsedData {
         target.write(german);
         target.write("\", \"");
         target.write(english);
-        target.write("\");");
+        target.write("\")");
         target.write(LuaWriter.NL);
     }
 }

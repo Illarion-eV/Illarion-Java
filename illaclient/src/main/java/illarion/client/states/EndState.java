@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
 public final class EndState implements GameState {
 
     @Override
-    public void create(@Nonnull final Game game, @Nonnull final GameContainer container, @Nonnull final Nifty nifty) {
+    public void create(@Nonnull Game game, @Nonnull GameContainer container, @Nonnull Nifty nifty) {
         Util.loadXML(nifty, "illarion/client/gui/xml/shutdown.xml");
     }
 
@@ -38,15 +38,15 @@ public final class EndState implements GameState {
     }
 
     @Override
-    public void resize(@Nonnull final GameContainer container, final int width, final int height) {
+    public void resize(@Nonnull GameContainer container, int width, int height) {
     }
 
     @Override
-    public void update(@Nonnull final GameContainer container, final int delta) {
+    public void update(@Nonnull GameContainer container, int delta) {
     }
 
     @Override
-    public void render(@Nonnull final GameContainer container) {
+    public void render(@Nonnull GameContainer container) {
     }
 
     @Override
@@ -55,11 +55,11 @@ public final class EndState implements GameState {
     }
 
     @Override
-    public void enterState(@Nonnull final GameContainer container, @Nonnull final Nifty nifty) {
+    public void enterState(@Nonnull GameContainer container, @Nonnull Nifty nifty) {
         nifty.gotoScreen("clientEnd");
     }
 
     @Override
-    public void leaveState(@Nonnull final GameContainer container) {
+    public void leaveState(@Nonnull GameContainer container) {
     }
 }

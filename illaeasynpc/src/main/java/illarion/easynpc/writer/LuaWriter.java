@@ -24,7 +24,6 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Collection;
-import java.util.TreeSet;
 
 /**
  * This is the LUA writer. It writes the data supplied by a parsed NPC to a lua script.
@@ -68,17 +67,17 @@ public final class LuaWriter {
     /**
      * The new line string that is used by default for this scripts.
      */
-    public static final String NL = "\n"; //$NON-NLS-1$
+    public static final String NL = "\n";
 
     /**
      * The code used to add a new language the NPC is able to speak.
      */
-    private static final String addLanguageCode = "mainNPC:addLanguage(%1$s);";
+    private static final String addLanguageCode = "mainNPC:addLanguage(%1$s)";
 
     /**
      * The code used to set the auto introduction mode.
      */
-    private static final String addSetAutoIntro = "mainNPC:setAutoIntroduceMode(%1$s);";
+    private static final String addSetAutoIntro = "mainNPC:setAutoIntroduceMode(%1$s)";
 
     /**
      * The comment separator line used in the comments.
@@ -86,37 +85,32 @@ public final class LuaWriter {
     private static final String commentSepLine = "--------------------------------------------------------------------------------";
 
     /**
-     * The LUA code used for a require module entry.
-     */
-    private static final String requireCode = "local %2$s = require(\"%1$s\")";
-
-    /**
      * The LUA code needed to set the message displayed in case a character is
      * talking in the wrong language.
      */
-    private static final String setConfusedMessageCode = "mainNPC:setConfusedMessage(\"%1$s\", \"%2$s\");";
+    private static final String setConfusedMessageCode = "mainNPC:setConfusedMessage(\"%1$s\", \"%2$s\")";
 
     /**
      * The LUA code needed to set the default language of an NPC.
      */
-    private static final String setDefaultLanguageCode = "mainNPC:setDefaultLanguage(%1$s);";
+    private static final String setDefaultLanguageCode = "mainNPC:setDefaultLanguage(%1$s)";
 
     /**
      * The LUA code needed to set the message displayed when the player performs
      * a look at on the NPC.
      */
-    private static final String setLookatMessageCode = "mainNPC:setLookat(\"%1$s\", \"%2$s\");";
+    private static final String setLookatMessageCode = "mainNPC:setLookat(\"%1$s\", \"%2$s\")";
 
     /**
      * The LUA code needed to set the affiliation of a NPC.
      */
-    private static final String setAffiliationCode = "mainNPC:setAffiliation(%1$s);";
+    private static final String setAffiliationCode = "mainNPC:setAffiliation(%1$s)";
 
     /**
      * The LUA code needed to set the message displayed in case the player uses
      * the NPC.
      */
-    private static final String setUseMessageCode = "mainNPC:setUseMessage(\"%1$s\", \"%2$s\");";
+    private static final String setUseMessageCode = "mainNPC:setUseMessage(\"%1$s\", \"%2$s\")";
 
     /**
      * The copyright header of the LUA writer.
@@ -143,17 +137,18 @@ public final class LuaWriter {
     public static void write(
             @Nonnull ParsedNpc source, @Nonnull Writer target, boolean generated) throws IOException {
 
+        LuaRequireTable requires = new LuaRequireTable();
+
         // first write the header with some basic information in the comment
         if (!generated) {
-            writeIntro(source, target, WritingStage.Header);
+            writeIntro(source, requires, target, WritingStage.Header);
         }
 
         // now following the modules
-        writeModules(source, target);
-        writeModuleHeader(source, target);
+        writeModules(source, requires, target);
 
         // now the big bad initialization
-        introInitPart(target);
+        introInitPart(target, requires);
         writeNpcAffiliation(source, target);
 
         boolean talkingExists = checkStageExists(source, WritingStage.Talking);
@@ -161,31 +156,31 @@ public final class LuaWriter {
         boolean guardingExists = checkStageExists(source, WritingStage.Guarding);
 
         if (talkingExists) {
-            writeIntro(source, target, WritingStage.Talking);
+            writeIntro(source, requires, target, WritingStage.Talking);
         }
         if (tradingExists) {
-            writeIntro(source, target, WritingStage.Trading);
+            writeIntro(source, requires, target, WritingStage.Trading);
         }
         if (guardingExists) {
-            writeIntro(source, target, WritingStage.Guarding);
+            writeIntro(source, requires, target, WritingStage.Guarding);
         }
 
         if (talkingExists) {
-            writeStage(source, target, WritingStage.Talking);
+            writeStage(source, target, requires, WritingStage.Talking);
         }
         if (tradingExists) {
-            writeStage(source, target, WritingStage.Trading);
+            writeStage(source, target, requires, WritingStage.Trading);
         }
         if (guardingExists) {
-            writeStage(source, target, WritingStage.Guarding);
+            writeStage(source, target, requires, WritingStage.Guarding);
         }
 
         writeNpcLanguages(source, target);
         writeNpcSpecialMessages(source, target);
 
         if (checkStageExists(source, WritingStage.Clothes)) {
-            writeIntro(source, target, WritingStage.Clothes);
-            writeStage(source, target, WritingStage.Clothes);
+            writeIntro(source, requires, target, WritingStage.Clothes);
+            writeStage(source, target, requires, WritingStage.Clothes);
         }
 
         autoIntroPart(source, target);
@@ -230,7 +225,7 @@ public final class LuaWriter {
 
         builder.setNpcName(source.getNpcName());
 
-        builder.setNpcScript("npc." + source.getModuleName()); //$NON-NLS-1$
+        builder.setNpcScript("npc." + source.getModuleName());
 
         builder.setNpcFaceTo(source.getNpcDir().getId());
         builder.setNpcPosX(source.getNpcPos().getScX());
@@ -273,10 +268,10 @@ public final class LuaWriter {
      * @throws IOException the exception thrown in case the writing functions
      * fail
      */
-    private static void introInitPart(@Nonnull Writer target) throws IOException {
-        target.write("function initNpc()"); //$NON-NLS-1$
+    private static void introInitPart(@Nonnull Writer target, @Nonnull LuaRequireTable requires) throws IOException {
+        target.write("local function initNpc()");
         writeNewLine(target);
-        target.write("mainNPC = npc_base_basic.baseNPC();"); //$NON-NLS-1$
+        target.write("local mainNPC = " + requires.getStorage("npc.base.basic") + "()");
         writeNewLine(target);
     }
 
@@ -288,10 +283,11 @@ public final class LuaWriter {
      */
     private static void outroInitPart(@Nonnull Writer target) throws IOException {
         writeNewLine(target);
-        target.write("mainNPC:initDone();");
+        target.write("mainNPC:initDone()");
         writeNewLine(target);
-        target.write("end;");
+        target.write("return mainNPC");
         writeNewLine(target);
+        target.write("end");
         writeNewLine(target);
     }
 
@@ -304,7 +300,8 @@ public final class LuaWriter {
      * @throws IOException thrown in case the writing operations fail
      */
     private static void writeIntro(
-            @Nonnull ParsedNpc source, @Nonnull Writer target, @Nonnull WritingStage stage) throws IOException {
+            @Nonnull ParsedNpc source, @Nonnull LuaRequireTable requires, @Nonnull Writer target,
+            @Nonnull WritingStage stage) throws IOException {
 
         switch (stage) {
             case Header:
@@ -360,15 +357,15 @@ public final class LuaWriter {
 
                 break;
             case Talking:
-                target.write("local talkingNPC = npc_base_talk.talkNPC(mainNPC);");
+                target.write("local talkingNPC = " + requires.getStorage("npc.base.talk") + "(mainNPC)");
                 writeNewLine(target);
                 break;
             case Trading:
-                target.write("local tradingNPC = npc_base_trade.tradeNPC(mainNPC);");
+                target.write("local tradingNPC = " + requires.getStorage("npc.base.trade") + "(mainNPC)");
                 writeNewLine(target);
                 break;
             case Guarding:
-                target.write("local guardNPC = npc_base_guard.guardNPC(mainNPC);");
+                target.write("local guardNPC = " + requires.getStorage("npc.base.guard") + "(mainNPC)");
                 writeNewLine(target);
                 break;
             case Clothes:
@@ -384,11 +381,8 @@ public final class LuaWriter {
      * @throws IOException thrown in case the writing operations fail
      */
     private static void writeLastLines(@Nonnull Writer target) throws IOException {
-        target.write("initNpc();"); //$NON-NLS-1$
+        target.write("return M");
         writeNewLine(target);
-        target.write("initNpc = nil;"); //$NON-NLS-1$
-        writeNewLine(target);
-        target.write("-- END"); //$NON-NLS-1$
     }
 
     /**
@@ -398,37 +392,27 @@ public final class LuaWriter {
      * @throws IOException thrown in case the writing operation fails
      */
     private static void writeMainScript(@Nonnull Writer target) throws IOException {
-        target.write("function receiveText(npcChar, texttype, message, speaker) ");
-        target.write("mainNPC:receiveText(npcChar, texttype, speaker, message); ");
-        target.write("end;");
+        target.write("local mNPC = initNpc()");
         writeNewLine(target);
-        target.write("function nextCycle(npcChar) ");
-        target.write("mainNPC:nextCycle(npcChar); ");
-        target.write("end;");
+        target.write("initNpc = nil");
         writeNewLine(target);
-        target.write("function lookAtNpc(npcChar, char, mode) ");
-        target.write("mainNPC:lookAt(npcChar, char, mode); ");
-        target.write("end;");
+        target.write("local M = {}");
         writeNewLine(target);
-        target.write("function useNPC(npcChar, char, counter, param) ");
-        target.write("mainNPC:use(npcChar, char); ");
-        target.write("end;");
+        target.write("function M.receiveText(npcChar, texttype, message, speaker) ");
+        target.write("mNPC:receiveText(npcChar, texttype, speaker, message) ");
+        target.write("end");
         writeNewLine(target);
-    }
-
-    /**
-     * Generate and write the module definition of this script.
-     *
-     * @param source the parsed NPC that supplies the needed data
-     * @param target the writer that receives the written text
-     * @throws IOException thrown in case there is a problem with writing the
-     * text
-     */
-    private static void writeModuleHeader(@Nonnull ParsedNpc source, @Nonnull Writer target) throws IOException {
-        target.write("module(\"npc."); //$NON-NLS-1$
-        target.write(source.getModuleName());
-        target.write("\", package.seeall)"); //$NON-NLS-1$
+        target.write("function M.nextCycle(npcChar) ");
+        target.write("mNPC:nextCycle(npcChar) ");
+        target.write("end");
         writeNewLine(target);
+        target.write("function M.lookAtNpc(npcChar, char, mode) ");
+        target.write("mNPC:lookAt(npcChar, char, mode) ");
+        target.write("end");
+        writeNewLine(target);
+        target.write("function M.useNPC(npcChar, char, counter, param) ");
+        target.write("mNPC:use(npcChar, char) ");
+        target.write("end");
         writeNewLine(target);
     }
 
@@ -441,25 +425,18 @@ public final class LuaWriter {
      * @param target the target writer that receives the written text
      * @throws IOException thrown in case the writing operations fail
      */
-    private static void writeModules(@Nonnull ParsedNpc source, @Nonnull Writer target) throws IOException {
-        Collection<String> modules = new TreeSet<>();
-
-        int count = source.getDataCount();
-        for (int i = 0; i < count; ++i) {
-            LuaWritable writeable = source.getLuaData(i);
-            Iterable<String> partModules = writeable.getRequiredModules();
-
-            for (String module : partModules) {
-                modules.add(module);
+    private static <T extends LuaWritable> void writeModules(
+            @Nonnull Iterable<T> source,
+            @Nonnull LuaRequireTable requires,
+            @Nonnull Writer target) throws IOException {
+        for (LuaWritable writable : source) {
+            for (String module : writable.getRequiredModules()) {
+                requires.registerDependency(module);
             }
         }
 
-        modules.add("npc_base_basic");
-
-        for (String module : modules) {
-            target.write(String.format(requireCode, module.replaceAll("_", "."), module));
-            writeNewLine(target);
-        }
+        requires.registerDependency("npc.base.basic");
+        requires.writeDependencies(target);
     }
 
     /**
@@ -523,14 +500,12 @@ public final class LuaWriter {
      * @param stage the current stage that is supposed to be processed
      * @throws IOException thrown in case the writing operations fail
      */
-    private static void writeStage(
-            @Nonnull ParsedNpc source, @Nonnull Writer target, @Nonnull WritingStage stage) throws IOException {
-        int count = source.getDataCount();
-
-        for (int i = 0; i < count; ++i) {
-            LuaWritable writeable = source.getLuaData(i);
-            if (writeable.effectsLuaWritingStage(stage)) {
-                writeable.writeLua(target, stage);
+    private static <T extends LuaWritable> void writeStage(
+            @Nonnull Iterable<T> source, @Nonnull Writer target, @Nonnull LuaRequireTable requires,
+            @Nonnull WritingStage stage) throws IOException {
+        for (LuaWritable writable : source) {
+            if (writable.effectsLuaWritingStage(stage)) {
+                writable.writeLua(target, requires, stage);
             }
         }
     }

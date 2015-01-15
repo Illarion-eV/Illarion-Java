@@ -16,6 +16,7 @@
 package illarion.easynpc.parsed.talk.consequences;
 
 import illarion.easynpc.parsed.talk.TalkConsequence;
+import illarion.easynpc.writer.LuaRequireTable;
 import illarion.easynpc.writer.LuaWriter;
 
 import javax.annotation.Nonnull;
@@ -58,10 +59,10 @@ public final class ConsequenceAnswer implements TalkConsequence {
      * Write the LUA code for this answer consequence to a LUA script.
      */
     @Override
-    public void writeLua(@Nonnull Writer target) throws IOException {
+    public void writeLua(@Nonnull Writer target, @Nonnull LuaRequireTable requires) throws IOException {
         target.write("talkEntry:addResponse(\""); //$NON-NLS-1$
         target.write(answer);
-        target.write("\");"); //$NON-NLS-1$
+        target.write("\")"); //$NON-NLS-1$
         target.write(LuaWriter.NL);
     }
 }

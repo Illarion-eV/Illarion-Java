@@ -72,19 +72,17 @@ public final class LookAtDialogItemMsg extends AbstractGuiMsg {
 
     /**
      * Execute the tile look at text message and send the decoded data to the rest of the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
      */
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         GameGui gui = World.getGameGui();
         switch (type) {
             case 0:
                 gui.getDialogCraftingGui().showCraftItemTooltip(dialogId, slotId, tooltip);
                 break;
             case 1:
-                DialogType dialogType = gui.getDialogGui().getDialogType(dialogId, DialogType.Crafting,
-                                                                         DialogType.Merchant);
+                DialogType dialogType = gui.getDialogGui()
+                        .getDialogType(dialogId, DialogType.Crafting, DialogType.Merchant);
                 if (dialogType == null) {
                     log.warn("Failed to assign dialog item look at to a fitting dialog.");
                 } else if (dialogType == DialogType.Crafting) {
@@ -96,8 +94,6 @@ public final class LookAtDialogItemMsg extends AbstractGuiMsg {
             default:
                 log.error("Illegal type ID {}", type);
         }
-
-        return true;
     }
 
     /**

@@ -17,6 +17,7 @@ package illarion.easyquest.quest;
 
 import illarion.common.util.CalledByReflection;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.Serializable;
 
@@ -75,6 +76,7 @@ public class Status implements Serializable {
         return handlers;
     }
 
+    @Nonnull
     public final String toString() {
         return getName();
     }

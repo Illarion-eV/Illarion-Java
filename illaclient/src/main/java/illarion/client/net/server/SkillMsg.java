@@ -38,7 +38,7 @@ public final class SkillMsg extends AbstractGuiMsg {
     /**
      * The logger instance of this class.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(SkillMsg.class);
+    private static final Logger log = LoggerFactory.getLogger(SkillMsg.class);
     /**
      * The current minor skill points of that skill.
      */
@@ -54,14 +54,6 @@ public final class SkillMsg extends AbstractGuiMsg {
      */
     private int value;
 
-    /**
-     * Decode the skill data the receiver got and prepare it for the execution.
-     *
-     * @param reader the receiver that got the data from the server that needs
-     * to be decoded
-     * @throws IOException thrown in case there was not enough data received to
-     * decode the full message
-     */
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         skill = reader.readUByte();
@@ -69,35 +61,20 @@ public final class SkillMsg extends AbstractGuiMsg {
         minor = reader.readUShort();
     }
 
-    /**
-     * Execute the skill message and send the decoded data to the rest of the
-     * client.
-     *
-     * @return true if the execution is done, false if it shall be called again
-     */
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         Skill skill = Skills.getInstance().getSkill(this.skill);
         if (skill == null) {
-            LOGGER.warn("Unknown skill received! ID: {}", Integer.toString(this.skill));
-            return true;
+            log.warn("Unknown skill received! ID: {}", Integer.toString(this.skill));
+        } else {
+            World.getGameGui().getSkillGui().updateSkill(skill, value, minor);
         }
-
-        World.getGameGui().getSkillGui().updateSkill(skill, value, minor);
-
-        return true;
     }
 
-    /**
-     * Get the data of this skill message as string.
-     *
-     * @return the string that contains the values that were decoded for this
-     * message
-     */
     @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString(String.valueOf(skill) + ": " + value + " - " + minor);
+        return toString(skill + ": " + value + " - " + minor);
     }
 }

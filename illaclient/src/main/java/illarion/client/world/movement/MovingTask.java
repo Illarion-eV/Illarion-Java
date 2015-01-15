@@ -59,6 +59,7 @@ class MovingTask implements MoveAnimatorTask {
         return executed;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return "Move Task - Mode: " + mode + " Target " + target + " Duration: " + duration + "ms";

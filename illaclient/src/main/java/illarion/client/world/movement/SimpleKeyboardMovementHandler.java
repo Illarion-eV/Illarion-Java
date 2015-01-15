@@ -40,6 +40,7 @@ class SimpleKeyboardMovementHandler extends AbstractMovementHandler implements K
     @Nonnull
     private final Input input;
 
+    @Nonnull
     private final Set<Direction> activeDirections;
 
     @Nonnull
@@ -122,6 +123,7 @@ class SimpleKeyboardMovementHandler extends AbstractMovementHandler implements K
         return null;
     }
 
+    @Nonnull
     private CharMovementMode getMovementMode() {
         if (input.isKeyDown(Key.LeftAlt)) {
             return CharMovementMode.None;
@@ -138,6 +140,7 @@ class SimpleKeyboardMovementHandler extends AbstractMovementHandler implements K
         return CharMovementMode.Walk;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return "Simple keyboard movement handler";

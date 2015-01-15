@@ -128,7 +128,7 @@ public final class TableLoaderCharacters extends TableLoader {
     }
 
     public TableLoaderCharacters(
-            final InputStream resource,
+            @Nonnull final InputStream resource,
             final boolean ndsc,
             @Nonnull final TableLoaderSink<TableLoaderCharacters> callback,
             final String tableDelim) {

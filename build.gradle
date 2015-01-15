@@ -89,6 +89,7 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.sf.proguard', name: 'proguard-gradle', version: '5.0'
+        classpath group: 'de.undercouch', name: 'gradle-download-task', version: '1.0'
     }
 }
 

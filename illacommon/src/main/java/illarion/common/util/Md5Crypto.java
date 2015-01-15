@@ -39,18 +39,18 @@ public class Md5Crypto {
     public Md5Crypto() {
         try {
             md5Digest = MessageDigest.getInstance("MD5");
-        } catch (@Nonnull final NoSuchAlgorithmException e) {
+        } catch (@Nonnull NoSuchAlgorithmException e) {
             throw new IllegalStateException(e);
         }
     }
 
     @Nonnull
-    public String crypt(@Nonnull final String message, @Nonnull final String salt) {
+    public String crypt(@Nonnull String message, @Nonnull String salt) {
         return crypt(message, salt, "$1$");
     }
 
     @Nonnull
-    public String crypt(@Nonnull final String message, @Nonnull final String salt, @Nonnull final String magic) {
+    public String crypt(@Nonnull String message, @Nonnull String salt, @Nonnull String magic) {
         String cleanedSalt;
 
         if (salt.startsWith(magic)) {
@@ -66,16 +66,16 @@ public class Md5Crypto {
             cleanedSalt = cleanedSalt.substring(0, 8);
         }
 
-        final Charset charset = Charset.forName("ISO-8859-1");
-        final byte[] messageBytes = message.getBytes(charset);
-        final byte[] magicBytes = magic.getBytes(charset);
-        final byte[] saltBytes = cleanedSalt.getBytes(charset);
+        Charset charset = Charset.forName("ISO-8859-1");
+        byte[] messageBytes = message.getBytes(charset);
+        byte[] magicBytes = magic.getBytes(charset);
+        byte[] saltBytes = cleanedSalt.getBytes(charset);
 
         md5Digest.reset();
         md5Digest.update(messageBytes);
         md5Digest.update(saltBytes);
         md5Digest.update(messageBytes);
-        final byte[] currentDigest = md5Digest.digest();
+        byte[] currentDigest = md5Digest.digest();
 
         md5Digest.reset();
         md5Digest.update(messageBytes);
@@ -124,7 +124,7 @@ public class Md5Crypto {
             currentEncPassword = md5Digest.digest();
         }
 
-        final byte[] pw = currentEncPassword;
+        byte[] pw = currentEncPassword;
 
         return magic + salt + '$' + to64((bytes2u(pw[0]) << 16) | (bytes2u(pw[6]) << 8) | bytes2u(pw[12]), 4) +
                 to64((bytes2u(pw[1]) << 16) | (bytes2u(pw[7]) << 8) | bytes2u(pw[13]), 4) +
@@ -147,7 +147,7 @@ public class Md5Crypto {
      */
     @Nonnull
     private static String to64(long v, int size) {
-        final StringBuilder result = new StringBuilder(size);
+        StringBuilder result = new StringBuilder(size);
 
         while (--size >= 0) {
             result.append(ITOA_64.charAt((int) (v & 0x3f)));
@@ -163,7 +163,7 @@ public class Md5Crypto {
      * @param inp the byte value
      * @return the unsigned byte value
      */
-    private static int bytes2u(final byte inp) {
+    private static int bytes2u(byte inp) {
         return (int) inp & 0xff;
     }
 }

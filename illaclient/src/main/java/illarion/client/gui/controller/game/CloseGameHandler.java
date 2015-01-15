@@ -21,12 +21,11 @@ import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.IllaClient;
+import illarion.client.gui.CloseGameGui;
 import illarion.client.input.InputReceiver;
-import illarion.client.world.events.CloseGameEvent;
-import org.bushe.swing.event.EventBus;
+import illarion.client.util.UpdateTask;
+import illarion.client.world.World;
 import org.bushe.swing.event.EventTopicSubscriber;
-import org.bushe.swing.event.annotation.AnnotationProcessor;
-import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
@@ -39,7 +38,7 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class CloseGameHandler
-        implements ScreenController, UpdatableHandler, EventTopicSubscriber<ButtonClickedEvent> {
+        implements ScreenController, EventTopicSubscriber<ButtonClickedEvent>, CloseGameGui {
     /**
      * The parent instance of Nifty-GUI.
      */
@@ -57,18 +56,12 @@ public final class CloseGameHandler
     private Element popup;
 
     /**
-     * This variable is toggled to {@code true} in case the handler is supposed to display the close confirmation
-     * dialog.
-     */
-    private boolean showDialog;
-
-    /**
      * This variable is {@code true} as long as the close dialog is active.
      */
     private boolean dialogActive;
 
     @Override
-    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
         parentNifty = nifty;
         parentScreen = screen;
 
@@ -77,50 +70,68 @@ public final class CloseGameHandler
 
     @Override
     public void onStartScreen() {
-        AnnotationProcessor.process(this);
     }
 
     @Override
     public void onEndScreen() {
-        AnnotationProcessor.unprocess(this);
     }
 
-    @Override
-    public void update(final GameContainer container, final int delta) {
-        if (showDialog && !dialogActive) {
+    private void showExitDialog() {
+        if (!dialogActive) {
             parentNifty.showPopup(parentScreen, popup.getId(), null);
-            parentNifty
-                    .subscribe(parentScreen, popup.findElementById("#closeYesButton").getId(), ButtonClickedEvent.class,
-                               this);
-            parentNifty
-                    .subscribe(parentScreen, popup.findElementById("#closeNoButton").getId(), ButtonClickedEvent.class,
-                               this);
+            subscribeButtonClick("#closeLogoutButton");
+            subscribeButtonClick("#closeExitButton");
+            subscribeButtonClick("#closeCancelButton");
+
             dialogActive = true;
-            showDialog = false;
         }
+    }
+
+    public void subscribeButtonClick(@Nonnull String id) {
+        if ((popup == null) || (parentNifty == null) || (parentScreen == null)) {
+            return;
+        }
+
+        Element element = popup.findElementById(id);
+        if (element == null) {
+            return;
+        }
+        String elementId = element.getId();
+        if (elementId == null) {
+            return;
+        }
+
+        parentNifty.subscribe(parentScreen, elementId, ButtonClickedEvent.class, this);
     }
 
     @org.bushe.swing.event.annotation.EventTopicSubscriber(topic = InputReceiver.EB_TOPIC)
-    public void onInputEventReceived(final String topic, final String command) {
+    public void onInputEventReceived(String topic, String command) {
         if ("CloseGame".equals(command)) {
-            EventBus.publish(new CloseGameEvent());
-        }
-    }
-
-    @EventSubscriber
-    public void onCloseGameEventReceived(final CloseGameEvent event) {
-        if (!dialogActive) {
-            showDialog = true;
+            showClosingDialog();
         }
     }
 
     @Override
-    public void onEvent(@Nonnull final String topic, final ButtonClickedEvent data) {
-        if (topic.endsWith("#closeYesButton")) {
+    public void onEvent(@Nonnull String topic, ButtonClickedEvent data) {
+        if (topic.endsWith("#closeExitButton")) {
             IllaClient.ensureExit();
-        } else {
+        } else if (topic.endsWith("#closeLogoutButton")) {
+            parentNifty.closePopup(popup.getId());
+            dialogActive = false;
+            IllaClient.performLogout();
+        } else if (topic.endsWith("#closeCancelButton")) {
             parentNifty.closePopup(popup.getId());
             dialogActive = false;
         }
+    }
+
+    @Override
+    public void showClosingDialog() {
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
+            @Override
+            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+                showExitDialog();
+            }
+        });
     }
 }

@@ -62,6 +62,7 @@ public class MapIO {
     public static final String EXT_ANNO = ".annot.txt";
     private static final char NEWLINE = '\n';
     private static final Pattern VERSION_PATTERN = Pattern.compile("V: (\\d+)");
+    @Nullable
     private static final CopyrightHeader COPYRIGHT_HEADER = new CopyrightHeader(80, null, null, "# ", null);
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
     private static final Charset CHARSET = Charset.forName("ISO-8859-1");
@@ -128,6 +129,7 @@ public class MapIO {
             this.lines = lines;
         }
 
+        @Nullable
         @Override
         public Void call() throws Exception {
             int size = lines.size();
@@ -193,7 +195,7 @@ public class MapIO {
             LOGGER.debug("W={}; H={}; X={}; Y={}; L={};", m.getWidth(), m.getHeight(), m.getX(), m.getY(), m.getZ());
 
             return m;
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (@Nonnull InterruptedException | ExecutionException e) {
             throw new IOException("Error while loading map.", e);
         }
     }

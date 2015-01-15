@@ -105,6 +105,7 @@ public final class Lang implements MessageSource {
      * @return the localized message or the key with surrounding < > in case the
      *         key was not found in the storage
      */
+    @Nonnull
     public static String getMsg(@Nonnull final Class<?> clazz, final String key) {
         final TextBuilder builder = new TextBuilder();
         builder.append(clazz.getName());
@@ -120,6 +121,7 @@ public final class Lang implements MessageSource {
      * @return the localized message or the key with surrounding &lt; &gt; in
      *         case the key was not found in the storage
      */
+    @Nonnull
     public static String getMsg(final String key) {
         return INSTANCE.getMessage(key);
     }
@@ -141,7 +143,7 @@ public final class Lang implements MessageSource {
      *         case the key was not found in the storage
      */
     @Override
-    public String getMessage(final String key) {
+    public String getMessage(@Nonnull final String key) {
         try {
             return messages.getString(key);
         } catch (@Nonnull final MissingResourceException e) {

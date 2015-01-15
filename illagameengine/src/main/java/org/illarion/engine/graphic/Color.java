@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,9 +15,11 @@
  */
 package org.illarion.engine.graphic;
 
+import illarion.common.net.NetCommReader;
 import illarion.common.util.FastMath;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
 
 /**
  * This class is in general used to define a color value. It consists of four color components.
@@ -127,6 +129,16 @@ public class Color {
      */
     public Color(@Nonnull Color org) {
         this(org.red, org.green, org.blue, org.alpha);
+    }
+
+    /**
+     * Create a color instance from the communication interface.
+     *
+     * @param reader the reader used to fetch the color values
+     * @throws IOException in case reading fails
+     */
+    public Color(@Nonnull NetCommReader reader) throws IOException {
+        this(reader.readUByte(), reader.readUByte(), reader.readUByte(), reader.readUByte());
     }
 
     /**

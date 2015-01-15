@@ -31,7 +31,6 @@ import java.nio.ByteOrder;
 import java.nio.CharBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.CharsetDecoder;
-import java.util.concurrent.BlockingQueue;
 
 /**
  * The Receiver class handles all data that is send from the server, decodes the messages and prepares them for
@@ -92,7 +91,7 @@ final class Receiver extends Thread implements NetCommReader {
      * The list that stores the commands there were decoded and prepared for the NetComm for execution.
      */
     @Nonnull
-    private final BlockingQueue<AbstractReply> queue;
+    private final MessageExecutor executor;
 
     /**
      * Indicator if the Receiver is currently running.
@@ -107,15 +106,15 @@ final class Receiver extends Thread implements NetCommReader {
     /**
      * The basic constructor for the receiver that sets up all needed data.
      *
-     * @param inputQueue the list of decoded server messages that need to be executed by NetComm
+     * @param executor the executor that takes care to send the messages to the rest of the client
      * @param in the input stream of the socket connection to the server that contains the data that needs to
      * be decoded
      */
     @SuppressWarnings("nls")
-    Receiver(@Nonnull BlockingQueue<AbstractReply> inputQueue, @Nonnull ReadableByteChannel in) {
+    Receiver(@Nonnull MessageExecutor executor, @Nonnull ReadableByteChannel in) {
         super("Illarion input thread");
 
-        queue = inputQueue;
+        this.executor = executor;
         inChannel = in;
 
         buffer = ByteBuffer.allocateDirect(BUFFER_LENGTH);
@@ -123,8 +122,6 @@ final class Receiver extends Thread implements NetCommReader {
         buffer.limit(0);
 
         decoder = NetComm.SERVER_STRING_ENCODING.newDecoder();
-
-        setPriority(Thread.MIN_PRIORITY);
         setDaemon(true);
     }
 
@@ -321,7 +318,7 @@ final class Receiver extends Thread implements NetCommReader {
                                 }
 
                                 // put decoded command in input queue
-                                queue.put(rpl);
+                                executor.scheduleReplyExecution(rpl);
                             } else {
                                 // throw away the command that was incorrectly decoded
                                 buffer.position(len + CommandList.HEADER_SIZE);
@@ -337,14 +334,14 @@ final class Receiver extends Thread implements NetCommReader {
             } catch (@Nonnull IOException e) {
                 if (running) {
                     LOGGER.error("The connection to the server is not working anymore.", e);
-                    IllaClient.sendDisconnectEvent(Lang.getMsg("error.receiver"));
+                    IllaClient.sendDisconnectEvent(Lang.getMsg("error.receiver"), false);
                     running = false;
                     return;
                 }
             } catch (@Nonnull Exception e) {
                 if (running) {
                     LOGGER.error("General error in the receiver", e);
-                    IllaClient.sendDisconnectEvent(Lang.getMsg("error.receiver"));
+                    IllaClient.sendDisconnectEvent(Lang.getMsg("error.receiver"), false);
                     running = false;
                     return;
                 }

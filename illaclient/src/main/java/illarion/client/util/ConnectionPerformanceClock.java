@@ -15,6 +15,7 @@
  */
 package illarion.client.util;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 /**
@@ -43,6 +44,7 @@ public class ConnectionPerformanceClock {
      */
     private static long lastNetCommTime;
 
+    @Nonnull
     private static long lastServerTimes[] = new long[16];
     private static long lastNetCommTimes[] = new long[16];
     private static int serverTimesCursor;

@@ -15,6 +15,9 @@
  */
 package illarion.easynpc.parsed.talk;
 
+import illarion.easynpc.writer.LuaRequireTable;
+
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Writer;
@@ -28,7 +31,7 @@ public interface TalkCondition {
     /**
      * The base module of all condition.
      */
-    String BASE_LUA_MODULE = "npc_base_condition_";
+    String BASE_LUA_MODULE = "npc.base.condition.";
 
     /**
      * Get the LUA module needed for this condition.
@@ -44,5 +47,5 @@ public interface TalkCondition {
      * @param target the writer that takes the data
      * @throws IOException thrown in case the writing operations fail
      */
-    void writeLua(Writer target) throws IOException;
+    void writeLua(Writer target, @Nonnull LuaRequireTable requires) throws IOException;
 }

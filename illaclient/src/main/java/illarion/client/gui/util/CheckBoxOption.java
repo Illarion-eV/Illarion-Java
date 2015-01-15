@@ -21,6 +21,7 @@ import de.lessvoid.nifty.controls.checkbox.builder.CheckboxBuilder;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -32,7 +33,7 @@ public class CheckBoxOption implements Option<Boolean, CheckBox> {
     private CheckBox control;
     private String key;
 
-    public CheckBoxOption(String name, Element parent, Nifty nifty, Screen screen) {
+    public CheckBoxOption(String name, @Nonnull Element parent, Nifty nifty, Screen screen) {
         key = name;
 
         CheckboxBuilder checkBoxBuilder = new CheckboxBuilder(name + "GUI");
@@ -53,6 +54,7 @@ public class CheckBoxOption implements Option<Boolean, CheckBox> {
         return key;
     }
 
+    @Nullable
     @Override
     public CheckBox getControl() {
         return control;

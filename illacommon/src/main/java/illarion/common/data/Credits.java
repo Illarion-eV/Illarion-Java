@@ -16,6 +16,7 @@
 package illarion.common.data;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -41,6 +42,7 @@ public final class Credits {
     /**
      * The singleton instance of this credits class.
      */
+    @Nullable
     @SuppressWarnings("RedundantFieldInitialization")
     private static volatile Credits instance = null;
 

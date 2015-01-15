@@ -43,7 +43,7 @@ public class MapSelection {
         }
     }
 
-    private void adjustOffsets(MapPosition mapPosition) {
+    private void adjustOffsets(@Nonnull MapPosition mapPosition) {
         adjustHorizontalOffset(mapPosition.getX());
         adjustVerticalOffset(mapPosition.getY());
     }

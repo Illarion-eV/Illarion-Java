@@ -46,27 +46,21 @@ public final class MagicFlagMsg extends AbstractReply {
      * Decode the magic flags data the receiver got and prepare it for the
      * execution.
      *
-     * @param reader the receiver that got the data from the server that needs
-     * to be decoded
-     * @throws IOException thrown in case there was not enough data received to
-     * decode the full message
+     * @param reader the receiver that got the data from the server that needs to be decoded
+     * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         type = reader.readUByte();
         flags = reader.readUInt();
     }
 
     /**
-     * Execute the magic flags message and send the decoded data to the rest of
-     * the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
+     * Execute the magic flags message and send the decoded data to the rest of the client.
      */
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         // Gui.getInstance().getSpellBook().updateMagic(type, flags);
-        return true;
     }
 
     /**

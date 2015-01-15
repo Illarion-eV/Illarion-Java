@@ -46,6 +46,7 @@ public interface DocuEntry extends Iterable<DocuEntry> {
      *
      * @return the description of this documentation entry
      */
+    @Nullable
     String getDescription();
 
     /**

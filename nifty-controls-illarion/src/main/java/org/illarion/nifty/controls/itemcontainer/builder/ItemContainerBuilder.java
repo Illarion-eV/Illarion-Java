@@ -20,7 +20,7 @@ import de.lessvoid.nifty.builder.ControlBuilder;
 import javax.annotation.Nonnull;
 
 public class ItemContainerBuilder extends ControlBuilder {
-    public ItemContainerBuilder(@Nonnull String id, String title) {
+    public ItemContainerBuilder(@Nonnull String id, @Nonnull String title) {
         super(id, "itemcontainer");
 
         set("title", title);
@@ -28,7 +28,7 @@ public class ItemContainerBuilder extends ControlBuilder {
         set("hideOnClose", Boolean.toString(false));
     }
 
-    public void slotBackground(String image) {
+    public void slotBackground(@Nonnull String image) {
         set("slotBackground", image);
     }
 

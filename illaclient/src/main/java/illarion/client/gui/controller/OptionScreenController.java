@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -31,6 +31,7 @@ import org.illarion.engine.DesktopGameContainer;
 import org.illarion.engine.graphic.GraphicResolution;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +63,7 @@ public final class OptionScreenController implements ScreenController {
     private TextField serverPort;
     private TextField clientVersion;
     private CheckBox serverAccountLogin;
+    @Nullable
     private CheckBox serverResetSettings;
 
     @Override
@@ -140,7 +142,11 @@ public final class OptionScreenController implements ScreenController {
         if (serverAddress != null) {
             serverAddress.setText(IllaClient.getCfg().getString("serverAddress"));
             serverPort.setText(Integer.toString(IllaClient.getCfg().getInteger("serverPort")));
-            clientVersion.setText(Integer.toString(IllaClient.getCfg().getInteger("clientVersion")));
+            if (IllaClient.getCfg().getBoolean("clientVersionOverwrite")) {
+                clientVersion.setText(Integer.toString(IllaClient.getCfg().getInteger("clientVersion")));
+            } else {
+                clientVersion.setText(Integer.toString(Servers.customserver.getClientVersion()));
+            }
             serverAccountLogin.setChecked(IllaClient.getCfg().getBoolean("serverAccountLogin"));
             serverResetSettings.setChecked(false);
         }
@@ -204,11 +210,20 @@ public final class OptionScreenController implements ScreenController {
                 configSystem.set("serverAddress", Servers.customserver.getServerHost());
                 configSystem.set("serverPort", Servers.customserver.getServerPort());
                 configSystem.set("clientVersion", Servers.customserver.getClientVersion());
+                configSystem.set("clientVersionOverwrite", false);
                 configSystem.set("serverAccountLogin", true);
             } else {
                 configSystem.set("serverAddress", serverAddress.getRealText());
                 configSystem.set("serverPort", Integer.parseInt(serverPort.getRealText()));
-                configSystem.set("clientVersion", Integer.parseInt(clientVersion.getRealText()));
+
+                int clientVersionNumber = Integer.parseInt(clientVersion.getRealText());
+                if (clientVersionNumber == Servers.customserver.getClientVersion()) {
+                    configSystem.set("clientVersion", Servers.customserver.getClientVersion());
+                    configSystem.set("clientVersionOverwrite", false);
+                } else {
+                    configSystem.set("clientVersion", clientVersionNumber);
+                    configSystem.set("clientVersionOverwrite", true);
+                }
                 configSystem.set("serverAccountLogin", serverAccountLogin.isChecked());
             }
         }

@@ -65,7 +65,7 @@ public final class ChatLog {
      *
      * @param playerPath the path this chat log is supposed to be stored at
      */
-    public ChatLog(final java.nio.file.Path playerPath) {
+    public ChatLog(@Nonnull final java.nio.file.Path playerPath) {
         logActive = IllaClient.getCfg().getBoolean(CFG_TEXTLOG);
 
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();

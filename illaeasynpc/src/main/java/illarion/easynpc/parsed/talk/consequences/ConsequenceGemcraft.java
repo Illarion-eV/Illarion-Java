@@ -16,6 +16,7 @@
 package illarion.easynpc.parsed.talk.consequences;
 
 import illarion.easynpc.parsed.talk.TalkConsequence;
+import illarion.easynpc.writer.LuaRequireTable;
 import illarion.easynpc.writer.LuaWriter;
 
 import javax.annotation.Nonnull;
@@ -32,7 +33,7 @@ public final class ConsequenceGemcraft implements TalkConsequence {
     /**
      * The LUA code needed to be included for a gemcraft consequence.
      */
-    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s.gemcraft(craftNPC));" + LuaWriter.NL;
+    private static final String LUA_CODE = "talkEntry:addConsequence(%1$s(craftNPC))" + LuaWriter.NL;
 
     /**
      * The LUA module needed for this consequence to work.
@@ -52,7 +53,7 @@ public final class ConsequenceGemcraft implements TalkConsequence {
      * Write the LUA code of this consequence.
      */
     @Override
-    public void writeLua(@Nonnull Writer target) throws IOException {
-        target.write(String.format(LUA_CODE, LUA_MODULE));
+    public void writeLua(@Nonnull Writer target, @Nonnull LuaRequireTable requires) throws IOException {
+        target.write(String.format(LUA_CODE, requires.getStorage(LUA_MODULE)));
     }
 }

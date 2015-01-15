@@ -68,6 +68,7 @@ public class QuestIO {
      * The character sets that will be tried to load the file. One by one. The first one in the list is
      * {@link #CHARSET} as this one is the most likely one to be the one used.
      */
+    @Nonnull
     private static final Collection<Charset> CHARSETS;
 
     /**
@@ -99,6 +100,7 @@ public class QuestIO {
      * @return the graph model instance containing the data of the file
      * @throws IOException in case reading the model from the file fails for any reason
      */
+    @Nonnull
     public static mxIGraphModel loadGraphModel(@Nonnull final Path file) throws IOException {
         if (!Files.isReadable(file)) {
             throw new IOException("Can't read the required file.");
@@ -116,6 +118,7 @@ public class QuestIO {
         throw firstException;
     }
 
+    @Nonnull
     public static mxIGraphModel loadGraphModel(@Nonnull final Reader reader) throws IOException {
         try {
             DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();

@@ -59,10 +59,8 @@ public abstract class AbstractReply {
 
     /**
      * Execute the update and send the decoded data to the rest of the client.
-     *
-     * @return true in case the update is done, false in case this function has to be triggered again later.
      */
-    public abstract boolean executeUpdate();
+    public abstract void executeUpdate();
 
     /**
      * Check if the message can be executed right now. The update is not executed now in case this function returns

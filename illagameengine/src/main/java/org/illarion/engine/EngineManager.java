@@ -43,35 +43,34 @@ public final class EngineManager {
      */
     @Nonnull
     public static DesktopGameContainer createDesktopGame(
-            @Nonnull final Backend backend,
-            @Nonnull final GameListener gameListener,
-            final int width,
-            final int height,
-            final boolean fullScreen) throws EngineException {
-        final String engineClassRef = backend.getDesktopContainerClass();
+            @Nonnull Backend backend,
+            @Nonnull GameListener gameListener,
+            int width,
+            int height,
+            boolean fullScreen) throws EngineException {
+        String engineClassRef = backend.getDesktopContainerClass();
         if (engineClassRef == null) {
             throw new EngineException("Selected backend " + backend.name() + " does not support desktop games.");
         }
 
         try {
-            final Class<?> clazz = Class.forName(engineClassRef);
-            final List<Class<?>> interfaces = Arrays.asList(clazz.getInterfaces());
+            Class<?> clazz = Class.forName(engineClassRef);
+            List<Class<?>> interfaces = Arrays.asList(clazz.getInterfaces());
             if (!interfaces.contains(DesktopGameContainer.class)) {
                 throw new EngineException("Backend " + backend.name() + " refers to a illegal class.");
             }
-            @SuppressWarnings("unchecked")
-            final Class<DesktopGameContainer> desktopGameClass = (Class<DesktopGameContainer>) clazz;
+            @SuppressWarnings("unchecked") Class<DesktopGameContainer> desktopGameClass = (Class<DesktopGameContainer>) clazz;
 
-            final Constructor<DesktopGameContainer> constructor = desktopGameClass
+            Constructor<DesktopGameContainer> constructor = desktopGameClass
                     .getConstructor(GameListener.class, int.class, int.class, boolean.class);
             return constructor.newInstance(gameListener, width, height, fullScreen);
-        } catch (@Nonnull final ClassNotFoundException e) {
+        } catch (@Nonnull ClassNotFoundException e) {
             throw new EngineException("Selected backend " + backend.name() + " is not available.", e);
-        } catch (@Nonnull final NoSuchMethodException e) {
+        } catch (@Nonnull NoSuchMethodException e) {
             throw new EngineException("Selected backend " + backend.name() + " doesn't provide suited constructor.", e);
-        } catch (@Nonnull final InvocationTargetException | InstantiationException e) {
+        } catch (@Nonnull InvocationTargetException | InstantiationException e) {
             throw new EngineException("Creation of backend " + backend.name() + " container failed.", e);
-        } catch (@Nonnull final IllegalAccessException e) {
+        } catch (@Nonnull IllegalAccessException e) {
             throw new EngineException("Access to backend " + backend.name() + " constructor was rejected.", e);
         }
     }

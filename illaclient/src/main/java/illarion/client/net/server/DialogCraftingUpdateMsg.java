@@ -76,7 +76,7 @@ public final class DialogCraftingUpdateMsg extends AbstractGuiMsg {
      * @throws java.io.IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         type = reader.readUByte();
         if (type == START) {
             remaining = reader.readUByte();
@@ -87,11 +87,9 @@ public final class DialogCraftingUpdateMsg extends AbstractGuiMsg {
 
     /**
      * Execute the text request message and send the decoded data to the rest of the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
      */
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         switch (type) {
             case START:
                 EventBus.publish(new DialogCraftingUpdateStartReceivedEvent(requestId, remaining, requiredTime));
@@ -102,9 +100,9 @@ public final class DialogCraftingUpdateMsg extends AbstractGuiMsg {
             case ABORTED:
                 EventBus.publish(new DialogCraftingUpdateAbortedReceivedEvent(requestId));
                 break;
+            default:
+                break;
         }
-
-        return true;
     }
 
     /**
@@ -116,7 +114,7 @@ public final class DialogCraftingUpdateMsg extends AbstractGuiMsg {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        final TextBuilder builder = new TextBuilder();
+        TextBuilder builder = new TextBuilder();
         switch (type) {
             case START:
                 builder.append("START");

@@ -89,6 +89,7 @@ public class AStar implements PathFindingAlgorithm {
         return null;
     }
 
+    @Nonnull
     private static Path buildPath(@Nonnull AStarPathNode lastNode) {
         LinkedList<PathNode> path = new LinkedList<>();
         @Nullable AStarPathNode nextNode = lastNode;

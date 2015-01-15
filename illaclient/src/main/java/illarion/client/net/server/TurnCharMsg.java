@@ -47,31 +47,15 @@ public final class TurnCharMsg extends AbstractReply {
     @Nullable
     private Direction dir;
 
-    /**
-     * Decode the character turn data the receiver got and prepare it for the
-     * execution.
-     *
-     * @param reader the receiver that got the data from the server that needs
-     * to be decoded
-     * @throws IOException thrown in case there was not enough data received to
-     * decode the full message
-     */
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         dir = Direction.decode(reader);
         charId = new CharacterId(reader);
     }
-
-    /**
-     * Execute the character turn message and send the decoded data to the rest
-     * of the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
-     */
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         if (dir == null) {
-            return true;
+            return;
         }
 
         if (World.getPlayer().isPlayer(charId)) { // turn player
@@ -82,28 +66,14 @@ public final class TurnCharMsg extends AbstractReply {
                 chara.setDirection(dir);
             }
         }
-
-        return true;
     }
 
-    /**
-     * Check if the character can be executed now, or if its needed to wait and
-     * keep this data to have it executed later.
-     *
-     * @return true to execute the update now, false to execute it later
-     */
     @Override
     public boolean processNow() {
         // no turning while the player is still moving
         return !World.getPlayer().isPlayer(charId) || !World.getPlayer().getMovementHandler().isMoving();
     }
 
-    /**
-     * Get the data of this character turn message as string.
-     *
-     * @return the string that contains the values that were decoded for this
-     * message
-     */
     @Nonnull
     @SuppressWarnings("nls")
     @Override

@@ -15,6 +15,7 @@
  */
 package illarion.easynpc.parsed;
 
+import illarion.easynpc.writer.LuaRequireTable;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
@@ -74,7 +75,7 @@ public final class ParsedCycleText implements ParsedData {
     @Nonnull
     @Override
     public Collection<String> getRequiredModules() {
-        return Collections.singleton("npc_base_talk");
+        return Collections.singleton("npc.base.talk");
     }
 
     /**
@@ -82,13 +83,13 @@ public final class ParsedCycleText implements ParsedData {
      */
     @Override
     public void writeLua(
-            @Nonnull Writer target, @Nonnull LuaWriter.WritingStage stage) throws IOException {
+            @Nonnull Writer target, @Nonnull LuaRequireTable requires, @Nonnull LuaWriter.WritingStage stage) throws IOException {
         if (stage == LuaWriter.WritingStage.Talking) {
             target.write("talkingNPC:addCycleText(\""); //$NON-NLS-1$
             target.write(german);
             target.write("\", \""); //$NON-NLS-1$
             target.write(english);
-            target.write("\");"); //$NON-NLS-1$
+            target.write("\")"); //$NON-NLS-1$
             target.write(LuaWriter.NL);
         }
     }

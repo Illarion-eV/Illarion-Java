@@ -67,6 +67,7 @@ class SlickWorldMap implements WorldMap, WorldMapDataProviderCallback {
     /**
      * Get the Slick2D image the texture is rendered onto.
      */
+    @Nonnull
     private final Image worldMapImage;
 
     /**

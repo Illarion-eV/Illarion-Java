@@ -292,10 +292,12 @@ public final class Config {
         cfg.set(password, newPassword);
     }
 
+    @Nullable
     public String getCharacter() {
         return cfg.getString(character);
     }
 
+    @Nullable
     public String getPassword() {
         return cfg.getString(password);
     }

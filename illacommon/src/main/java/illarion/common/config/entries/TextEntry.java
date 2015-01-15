@@ -72,7 +72,7 @@ public final class TextEntry implements ConfigEntry {
      *
      * @param newValue the new configuration value
      */
-    public void setValue(final String newValue) {
+    public void setValue(@Nonnull final String newValue) {
         cfg.set(configEntry, newValue);
     }
 }

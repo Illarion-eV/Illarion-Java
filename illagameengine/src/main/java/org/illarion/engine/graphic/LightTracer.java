@@ -17,7 +17,6 @@ package org.illarion.engine.graphic;
 
 import illarion.common.types.Location;
 import illarion.common.util.Stoppable;
-import illarion.common.util.StoppableStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -378,8 +377,8 @@ public final class LightTracer extends Thread implements Stoppable {
      */
     @Override
     public void saveShutdown() {
-        running = false;
         synchronized (lightsListsLock) {
+            running = false;
             lightsListsLock.notifyAll();
         }
     }
@@ -424,7 +423,6 @@ public final class LightTracer extends Thread implements Stoppable {
         }
         running = true;
         super.start();
-        StoppableStorage.getInstance().add(this);
     }
 
     /**

@@ -217,6 +217,7 @@ public class MapItem {
         return builder.toString();
     }
 
+    @Nonnull
     public static String join(@Nonnull Iterable<String> itemData, String joinWith) {
         StringBuilder retVal = new StringBuilder();
         boolean firstRun = true;

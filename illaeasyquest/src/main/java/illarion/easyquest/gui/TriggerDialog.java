@@ -38,6 +38,7 @@ public class TriggerDialog extends JDialog {
     private final JTextField name;
     @Nonnull
     private final JComboBox trigger;
+    @Nonnull
     private final Box conditionPanels;
     @Nonnull
     private final JButton okay;

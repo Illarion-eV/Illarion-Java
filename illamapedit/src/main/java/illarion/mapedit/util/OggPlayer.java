@@ -19,6 +19,7 @@ import illarion.common.util.Stoppable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.sound.sampled.*;
 import java.io.IOException;
@@ -119,7 +120,7 @@ public class OggPlayer extends Thread implements Stoppable {
                 }
                 stopPlaying();
             }
-        } catch (LineUnavailableException | IOException e) {
+        } catch (@Nonnull LineUnavailableException | IOException e) {
             LOGGER.error("Failed to read Ogg file.", e);
         }
     }

@@ -217,6 +217,7 @@ public final class AvatarClothManager {
         return ret;
     }
 
+    @Nonnull
     public static String toString(int slot) {
         if (slot == GROUP_BEARD) {
             return "Beard";

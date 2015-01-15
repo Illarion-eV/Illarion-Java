@@ -13,6 +13,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
+import de.undercouch.gradle.tasks.download.Download
+
 apply plugin: 'java'
 apply plugin: 'maven-publish'
 apply from: '../versions.gradle'
@@ -36,15 +38,15 @@ dependencies {
 
 processResources.dependsOn("downloadSkills")
 
-task downloadSkills {
+task downloadSkills(type: Download) {
+    onlyIf { !gradle.startParameter.isOffline() }
     if (rootProject.hasProperty('releaseBuild')) {
-        ant.get(src: 'http://illarion.org/data/xml_skills.php?server=1',
-                dest: 'src/main/resources/skills.xml')
+        src 'http://illarion.org/data/xml_skills.php?server=1'
     } else {
-        ant.get(src: 'http://illarion.org/data/xml_skills.php',
-                dest: 'src/main/resources/skills.xml')
+        src 'http://illarion.org/data/xml_skills.php'
     }
-
+    dest 'src/main/resources/skills.xml'
+    onlyIfNewer true
 }
 
 jar {

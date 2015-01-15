@@ -74,11 +74,9 @@ public final class ChangeItemMsg extends AbstractReply {
 
     /**
      * Execute the change item message and send the decoded data to the rest of the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
      */
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         MapTile tile = World.getMap().getMapAt(loc);
         if (tile != null) {
             tile.changeTopItem(oldItem, newItem, count);
@@ -88,8 +86,6 @@ public final class ChangeItemMsg extends AbstractReply {
                 tile.setMovementCost(newTileMovePoints);
             }
         }
-
-        return true;
     }
 
     /**

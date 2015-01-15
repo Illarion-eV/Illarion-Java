@@ -15,6 +15,9 @@
  */
 package illarion.common.data;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -30,6 +33,7 @@ import java.util.List;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class BookPage implements Iterable<BookPageEntry> {
+    private static final Logger log = LoggerFactory.getLogger(BookPage.class);
     /**
      * The list of entries on this page.
      */
@@ -48,15 +52,41 @@ public final class BookPage implements Iterable<BookPageEntry> {
      *
      * @param source the XML node that supplies the data
      */
-    public BookPage(@Nonnull final Node source) {
+    public BookPage(@Nonnull Node source) {
         this();
-        final NodeList children = source.getChildNodes();
+        NodeList children = source.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
-            final Node child = children.item(i);
-            if ("headline".equals(child.getNodeName())) {
-                entries.add(new BookPageEntry(true, getNodeValue(child.getFirstChild())));
-            } else if ("paragraph".equals(child.getNodeName())) {
-                entries.add(new BookPageEntry(false, getNodeValue(child.getFirstChild())));
+            Node child = children.item(i);
+            switch (child.getNodeName()) {
+                case "headline":
+                    entries.add(new BookPageEntry(true, getNodeValue(child.getFirstChild()), false,
+                                                  BookPageEntry.Align.Center));
+                    break;
+                case "poem":
+                    entries.add(new BookPageEntry(true, getNodeValue(child.getFirstChild()), true,
+                                                  BookPageEntry.Align.Center));
+                    break;
+                case "paragraph":
+                    NamedNodeMap attributes = child.getAttributes();
+                    boolean showLineBreaks = getNodeValueBool(attributes.getNamedItem("showLineBreaks"));
+                    BookPageEntry.Align align;
+                    switch (getNodeValue(attributes.getNamedItem("align"))) {
+                        case "left":
+                            align = BookPageEntry.Align.Left;
+                            break;
+                        case "right":
+                            align = BookPageEntry.Align.Right;
+                            break;
+                        case "center":
+                            align = BookPageEntry.Align.Center;
+                            break;
+                        default:
+                            align = BookPageEntry.Align.Left;
+                    }
+                    entries.add(new BookPageEntry(false, getNodeValue(child.getFirstChild()), showLineBreaks, align));
+                    break;
+                default:
+                    log.error("Unknown page entry type: {}, expected paragraph, poem or headline", child.getNodeName());
             }
         }
     }
@@ -67,15 +97,20 @@ public final class BookPage implements Iterable<BookPageEntry> {
      * @param node the node
      * @return the value of the node or a empty string
      */
-    private static String getNodeValue(@Nullable final Node node) {
+    @Nonnull
+    private static String getNodeValue(@Nullable Node node) {
         if (node == null) {
             return "";
         }
-        final String nodeValue = node.getNodeValue();
+        String nodeValue = node.getNodeValue();
         if (nodeValue == null) {
             return "";
         }
         return nodeValue;
+    }
+
+    private static boolean getNodeValueBool(@Nullable Node node) {
+        return Boolean.parseBoolean(getNodeValue(node));
     }
 
     @Nonnull
@@ -91,7 +126,7 @@ public final class BookPage implements Iterable<BookPageEntry> {
      * @return the book page entry assigned to the index
      * @throws IndexOutOfBoundsException if the index is out of range ({@code index &lt; 0 || index &gt;= size()})
      */
-    public BookPageEntry getEntry(final int index) {
+    public BookPageEntry getEntry(int index) {
         return entries.get(index);
     }
 

@@ -40,11 +40,11 @@
     </style>
 
     <style id="illarion-dialog-input-multi">
-        <attributes width="400px"/>
+        <attributes/>
     </style>
 
     <style id="illarion-dialog-input-multi#input" base="nifty-textfield">
-        <attributes wrap="true" width="*" height="50px" margin="3px"/>
+        <attributes wrap="true" height="100px" margin="3px"/>
     </style>
 
     <style id="illarion-dialog-input-multi#input#panel" base="nifty-textfield#panel"/>

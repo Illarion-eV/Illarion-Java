@@ -61,7 +61,7 @@ public final class MapStripeMsg extends AbstractReply {
     private transient Location loc;
 
     /**
-     * The list of tiles that are inside the update and all containing informations.
+     * The list of tiles that are inside the update and all containing information.
      */
     private final List<TileUpdate> tiles = new LinkedList<>();
 
@@ -95,18 +95,14 @@ public final class MapStripeMsg extends AbstractReply {
 
     /**
      * Execute the map stripe message and send the decoded data to the rest of the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
-     * @see illarion.client.net.server.AbstractReply#executeUpdate()
      */
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         GameMap map = World.getMap();
         map.updateTiles(tiles);
         map.finishTileUpdate();
 
         World.getLights().refresh();
-        return true;
     }
 
     /**

@@ -160,7 +160,7 @@ public class MacOsXJavaExecutableIterable extends AbstractJavaExecutableIterable
                 javaHomeDirectory = extendHomeToExecutable(resultPath);
                 return resultPath;
             }
-        } catch (InterruptedException | IOException e) {
+        } catch (@Nonnull InterruptedException | IOException e) {
             LOGGER.error("Error fetching java home directory.", e);
         }
         return null;
@@ -184,6 +184,7 @@ public class MacOsXJavaExecutableIterable extends AbstractJavaExecutableIterable
         try {
             final Path[] resultFile = new Path[1];
             Files.walkFileTree(home, new SimpleFileVisitor<Path>() {
+                @Nonnull
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     if (file.getFileName().toString().equals("java")) {

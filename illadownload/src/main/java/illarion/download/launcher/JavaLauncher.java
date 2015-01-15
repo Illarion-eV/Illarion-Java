@@ -220,7 +220,7 @@ public final class JavaLauncher {
      * @param callList launch the call list
      * @return {@code true} in case the launch was successful
      */
-    private boolean launchCallList(List<String> callList) {
+    private boolean launchCallList(@Nonnull List<String> callList) {
         try {
             ProcessBuilder pBuilder = new ProcessBuilder(callList);
 

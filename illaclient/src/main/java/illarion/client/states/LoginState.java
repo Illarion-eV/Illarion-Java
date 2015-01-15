@@ -44,7 +44,7 @@ public class LoginState implements GameState {
     private static final Logger LOGGER = LoggerFactory.getLogger(LoginState.class);
 
     @Override
-    public void create(@Nonnull final Game game, @Nonnull final GameContainer container, @Nonnull final Nifty nifty) {
+    public void create(@Nonnull Game game, @Nonnull GameContainer container, @Nonnull Nifty nifty) {
         loginScreenController = new LoginScreenController(game, container.getEngine());
         nifty.registerScreenController(loginScreenController, new CharScreenController(game),
                                        new CreditsStartScreenController(container.getEngine()));
@@ -60,18 +60,18 @@ public class LoginState implements GameState {
     }
 
     @Override
-    public void resize(@Nonnull final GameContainer container, final int width, final int height) {
+    public void resize(@Nonnull GameContainer container, int width, int height) {
     }
 
     @Override
-    public void update(@Nonnull final GameContainer container, final int delta) {
+    public void update(@Nonnull GameContainer container, int delta) {
         if (loginScreenController != null) {
             loginScreenController.update();
         }
     }
 
     @Override
-    public void render(@Nonnull final GameContainer container) {
+    public void render(@Nonnull GameContainer container) {
     }
 
     @Override
@@ -80,11 +80,11 @@ public class LoginState implements GameState {
     }
 
     @Override
-    public void enterState(@Nonnull final GameContainer container, @Nonnull final Nifty nifty) {
+    public void enterState(@Nonnull GameContainer container, @Nonnull Nifty nifty) {
         nifty.gotoScreen("login");
     }
 
     @Override
-    public void leaveState(@Nonnull final GameContainer container) {
+    public void leaveState(@Nonnull GameContainer container) {
     }
 }

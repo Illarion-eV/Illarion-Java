@@ -20,7 +20,10 @@ import ch.qos.logback.classic.util.ContextInitializer;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
 import illarion.common.bug.CrashReporter;
-import illarion.common.util.*;
+import illarion.common.util.AppIdent;
+import illarion.common.util.Crypto;
+import illarion.common.util.DirectoryManager;
+import illarion.common.util.TableLoader;
 import illarion.mapedit.crash.DefaultCrashHandler;
 import illarion.mapedit.crash.exceptions.UnhandlableException;
 import illarion.mapedit.gui.GuiController;
@@ -62,7 +65,7 @@ public final class MapEditor {
      */
     @SuppressWarnings("nls")
     public MapEditor() {
-        final Crypto crypt = new Crypto();
+        Crypto crypt = new Crypto();
         crypt.loadPublicKey();
         TableLoader.setCrypto(crypt);
     }
@@ -72,7 +75,7 @@ public final class MapEditor {
      *
      * @param message the message the editor is supposed to crash with
      */
-    public static void crashEditor(final String message) {
+    public static void crashEditor(String message) {
         LOGGER.error(message);
         System.exit(-1);
     }
@@ -82,7 +85,6 @@ public final class MapEditor {
      */
     public static void exit() {
         MainFrame.getInstance().exit();
-        StoppableStorage.getInstance().shutdown();
         CrashReporter.getInstance().waitForReport();
         MapEditorConfig.getInstance().save();
     }
@@ -92,7 +94,7 @@ public final class MapEditor {
      *
      * @param args the argument of the system call
      */
-    public static void main(final String[] args) {
+    public static void main(String[] args) {
         initLogging();
         MapEditorConfig.getInstance().init();
         initExceptionHandler();
@@ -105,16 +107,14 @@ public final class MapEditor {
         MapEditor instance = new MapEditor();
 
         loadResources();
-        final GuiController controller = new GuiController();
+        GuiController controller = new GuiController();
         controller.initialize();
-
-        Scheduler.getInstance().start();
 
         controller.start();
     }
 
     private static void loadResources() {
-        final ResourceManager resourceManager = ResourceManager.getInstance();
+        ResourceManager resourceManager = ResourceManager.getInstance();
         resourceManager
                 .addResources(ImageLoader.getInstance(), TextureLoaderAwt.getInstance(), TileLoader.getInstance(),
                               ItemNameLoader.getInstance(), ItemLoader.getInstance(), SongLoader.getInstance(),
@@ -122,11 +122,11 @@ public final class MapEditor {
 
         while (resourceManager.hasNextToLoad()) {
             try {
-                LOGGER.debug("Loading " + resourceManager.getNextDescription());
+                LOGGER.debug("Loading {}", resourceManager.getNextDescription());
                 SplashScreen.getInstance().setMessage("Loading " + resourceManager.getNextDescription());
                 resourceManager.loadNext();
             } catch (IOException e) {
-                LOGGER.warn(resourceManager.getPrevDescription() + " failed!");
+                LOGGER.warn("{} failed!", resourceManager.getPrevDescription());
                 //                Crash the editor
                 throw new UnhandlableException("Can't load " + resourceManager.getPrevDescription(), e);
             }

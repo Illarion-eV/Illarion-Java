@@ -15,6 +15,7 @@
  */
 package illarion.easynpc.parsed;
 
+import illarion.easynpc.writer.LuaRequireTable;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
@@ -93,11 +94,11 @@ public class ParsedGuardText implements ParsedData {
     @Nonnull
     @Override
     public Collection<String> getRequiredModules() {
-        return Collections.singleton("npc_base_guard");
+        return Collections.singleton("npc.base.guard");
     }
 
     @Override
-    public void writeLua(@Nonnull Writer target, @Nonnull LuaWriter.WritingStage stage) throws IOException {
+    public void writeLua(@Nonnull Writer target, @Nonnull LuaRequireTable requires, @Nonnull LuaWriter.WritingStage stage) throws IOException {
         if (stage != LuaWriter.WritingStage.Guarding) {
             throw new IllegalArgumentException("This function did not request a call for a stage but guarding.");
         }
@@ -119,7 +120,7 @@ public class ParsedGuardText implements ParsedData {
         target.write(german);
         target.write("\", \"");
         target.write(english);
-        target.write("\");");
+        target.write("\")");
         target.write(LuaWriter.NL);
     }
 }

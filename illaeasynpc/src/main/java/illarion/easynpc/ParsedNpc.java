@@ -26,6 +26,7 @@ import javax.annotation.Nullable;
 import java.text.Normalizer;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -34,7 +35,8 @@ import java.util.List;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class ParsedNpc {
+public final class ParsedNpc implements Iterable<ParsedData> {
+
     /**
      * This support class is used to store all information regarding a error that was found in the script. It stores
      * the position where it was found as well as the description of the error.
@@ -783,5 +785,11 @@ public final class ParsedNpc {
      */
     public void setNpcSex(CharacterSex newNpcSex) {
         npcSex = newNpcSex;
+    }
+
+    @Nonnull
+    @Override
+    public Iterator<ParsedData> iterator() {
+        return npcData.iterator();
     }
 }

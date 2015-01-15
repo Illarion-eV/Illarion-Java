@@ -50,7 +50,7 @@ public class ItemDataFields extends JPanel {
         qualityField.setEnabled(false);
         qualityField.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
-            public void propertyChange(PropertyChangeEvent e) {
+            public void propertyChange(@Nonnull PropertyChangeEvent e) {
                 if (item == null) {
                     return;
                 }
@@ -74,7 +74,7 @@ public class ItemDataFields extends JPanel {
         durabilityField.setEnabled(false);
         durabilityField.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
-            public void propertyChange(PropertyChangeEvent e) {
+            public void propertyChange(@Nonnull PropertyChangeEvent e) {
                 if (item == null) {
                     return;
                 }

@@ -15,6 +15,8 @@
  */
 package illarion.easynpc.parsed.talk;
 
+import illarion.easynpc.writer.LuaRequireTable;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -29,7 +31,7 @@ public interface TalkConsequence {
     /**
      * The base module of all consequences.
      */
-    String BASE_LUA_MODULE = "npc_base_consequence_";
+    String BASE_LUA_MODULE = "npc.base.consequence.";
 
     /**
      * Get the LUA module needed for this consequence.
@@ -45,5 +47,5 @@ public interface TalkConsequence {
      * @param target the writer that takes the data
      * @throws IOException thrown in case the writing operations fail
      */
-    void writeLua(@Nonnull Writer target) throws IOException;
+    void writeLua(@Nonnull Writer target, @Nonnull LuaRequireTable requires) throws IOException;
 }

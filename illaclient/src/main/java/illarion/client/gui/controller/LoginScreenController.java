@@ -68,6 +68,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     /**
      * The checkbox that is ticked in case the password is supposed to be saved.
      */
+    @Nullable
     private CheckBox savePassword;
 
     /**
@@ -148,10 +149,8 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         passwordTxt.getElement().addInputHandler(this);
 
         Login login = Login.getInstance();
-        login.restoreLoginData();
-        nameTxt.setText(login.getLoginName());
-        passwordTxt.setText(login.getPassword());
-        savePassword.setChecked(login.storePassword());
+        login.restoreServer();
+        restoreLoginData();
 
         if (IllaClient.DEFAULT_SERVER == Servers.realserver) {
             @Nullable Element serverPanel = screen.findElementById("serverPanel");
@@ -168,7 +167,6 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
                 server.addItem("${login-bundle.server.test}");
                 server.addItem("${login-bundle.server.game}");
                 server.addItem("${login-bundle.server.custom}");
-                server.addItem("${login-bundle.server.local}");
                 server.selectItemByIndex(IllaClient.getCfg().getInteger("server"));
             } else {
                 LOGGER.error("Failed to find server drop down on the login screen.");
@@ -177,6 +175,22 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
 
         popupError = nifty.createPopup("loginError");
         popupReceiveChars = nifty.createPopup("receivingCharacters");
+
+        nifty.subscribeAnnotations(this);
+    }
+
+    private void restoreLoginData() {
+        Login login = Login.getInstance();
+        login.restoreLoginData();
+        nameTxt.setText(login.getLoginName());
+        passwordTxt.setText(login.getPassword());
+        savePassword.setChecked(login.getStorePassword());
+    }
+
+    @NiftyEventSubscriber(id = "server")
+    public void onServerChanged(@Nonnull String topic, @Nonnull DropDownSelectionChangedEvent<String> data) {
+        Login.getInstance().setServer(server.getSelectedIndex());
+        restoreLoginData();
     }
 
     @Override
@@ -206,7 +220,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     }
 
     @NiftyEventSubscriber(id = "server")
-    public void onServerChangedEvent(String topic, DropDownSelectionChangedEvent<String> event) {
+    public void onServerChangedEvent(String topic, @Nonnull DropDownSelectionChangedEvent<String> event) {
         if (event.getSelectionItemIndex() == 4) {
             nameTxt.setText(IllaClient.getCfg().getString("testserverLogin"));
             passwordTxt.setText(IllaClient.getCfg().getString("testserverPass"));

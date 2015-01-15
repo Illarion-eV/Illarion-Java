@@ -46,13 +46,10 @@ public final class CharacterAnimationMsg extends AbstractReply {
     private CharacterId charId;
 
     /**
-     * Decode the character animation data the receiver got and prepare it for
-     * the execution.
+     * Decode the character animation data the receiver got and prepare it for the execution.
      *
-     * @param reader the receiver that got the data from the server that needs
-     * to be decoded
-     * @throws IOException thrown in case there was not enough data received to
-     * decode the full message
+     * @param reader the receiver that got the data from the server that needs to be decoded
+     * @throws IOException thrown in case there was not enough data received to decode the full message
      */
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
@@ -61,17 +58,13 @@ public final class CharacterAnimationMsg extends AbstractReply {
     }
 
     /**
-     * Execute the message and send the decoded appearance data to the rest of
-     * the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
+     * Execute the message and send the decoded appearance data to the rest of the client.
      */
     @Override
-    public boolean executeUpdate() {
+    public void executeUpdate() {
         final Char ch = World.getPeople().getCharacter(charId);
         if (ch == null) {
-            // Update for illegal character
-            return true;
+            return;
         }
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
@@ -79,14 +72,12 @@ public final class CharacterAnimationMsg extends AbstractReply {
                 ch.startAnimation(animationId, Char.DEFAULT_ANIMATION_SPEED);
             }
         });
-        return true;
     }
 
     /**
      * Get the data of this character animation message as string.
      *
-     * @return the string that contains the values that were decoded for this
-     * message
+     * @return the string that contains the values that were decoded for this message
      */
     @Nonnull
     @SuppressWarnings("nls")

@@ -73,17 +73,8 @@ public final class WeatherMsg extends AbstractReply {
      */
     private byte wind;
 
-    /**
-     * Decode the weather update data the receiver got and prepare it for the
-     * execution.
-     *
-     * @param reader the receiver that got the data from the server that needs
-     * to be decoded
-     * @throws IOException thrown in case there was not enougth data received to
-     * decode the full message
-     */
     @Override
-    public void decode(@Nonnull final NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         clouds = reader.readUByte();
         fog = reader.readUByte();
         wind = reader.readByte();
@@ -94,15 +85,9 @@ public final class WeatherMsg extends AbstractReply {
         temperature = reader.readByte();
     }
 
-    /**
-     * Execute the weather update message and send the decoded data to the rest
-     * of the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
-     */
     @Override
-    public boolean executeUpdate() {
-        final Weather weather = World.getWeather();
+    public void executeUpdate() {
+        Weather weather = World.getWeather();
         weather.setFog(fog);
         weather.setLightning(0); //TODO: lightning);
         weather.setPrecipitation(precType, precipitation);
@@ -110,16 +95,8 @@ public final class WeatherMsg extends AbstractReply {
         weather.setCloud(clouds);
 
         // Gui.getInstance().getClock().setTemperature(temperature);
-
-        return true;
     }
 
-    /**
-     * Get the data of this weather update message as string.
-     *
-     * @return the string that contains the values that were decoded for this
-     * message
-     */
     @Nonnull
     @SuppressWarnings("nls")
     @Override

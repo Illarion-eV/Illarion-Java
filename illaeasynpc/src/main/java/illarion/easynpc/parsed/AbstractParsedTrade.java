@@ -49,11 +49,6 @@ public abstract class AbstractParsedTrade implements ParsedData {
     }
 
     /**
-     * The modules required for the trader NPC implementation.
-     */
-    private static final List<String> MODULES = Arrays.asList("npc_base_basic", "npc_base_trade");
-
-    /**
      * The mode of this trading operation.
      */
     private final TradeMode mode;
@@ -84,6 +79,6 @@ public abstract class AbstractParsedTrade implements ParsedData {
     @Nonnull
     @Override
     public Collection<String> getRequiredModules() {
-        return MODULES;
+        return Arrays.asList("npc.base.basic", "npc.base.trade");
     }
 }

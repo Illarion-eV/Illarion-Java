@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -336,8 +336,19 @@ class GdxGraphics implements Graphics {
             double scaleY) {
         if (font instanceof GdxFont) {
             activateSpriteBatch();
+            GdxFont gdxFont = (GdxFont) font;
+
+            BitmapFont outlineFont = gdxFont.getOutlineBitmapFont();
+            if (outlineFont != null) {
+                transferColor(Color.BLACK, tempColor1);
+                tempColor1.a = color.getAlphaf();
+                outlineFont.setScale((float) scaleX, (float) scaleY);
+                outlineFont.setColor(tempColor1);
+                outlineFont.draw(spriteBatch, text, x, y - outlineFont.getAscent());
+            }
+
             transferColor(color, tempColor1);
-            BitmapFont bitmapFont = ((GdxFont) font).getBitmapFont();
+            BitmapFont bitmapFont = gdxFont.getBitmapFont();
             bitmapFont.setScale((float) scaleX, (float) scaleY);
             bitmapFont.setColor(tempColor1);
             bitmapFont.draw(spriteBatch, text, x, y - bitmapFont.getAscent());

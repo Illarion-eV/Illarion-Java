@@ -131,7 +131,7 @@ public final class DocuBrowser extends JDialog {
             return children == null;
         }
 
-        @Nullable
+        @Nonnull
         @Override
         public String toString() {
             return title;

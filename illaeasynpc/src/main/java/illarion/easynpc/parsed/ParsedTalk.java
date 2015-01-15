@@ -17,6 +17,7 @@ package illarion.easynpc.parsed;
 
 import illarion.easynpc.parsed.talk.TalkCondition;
 import illarion.easynpc.parsed.talk.TalkConsequence;
+import illarion.easynpc.writer.LuaRequireTable;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
 
@@ -111,8 +112,8 @@ public final class ParsedTalk implements ParsedData {
             }
         }
 
-        moduleList.add("npc_base_talk");
-        moduleList.add("npc_base_basic");
+        moduleList.add("npc.base.talk");
+        moduleList.add("npc.base.basic");
         return moduleList;
     }
 
@@ -120,25 +121,23 @@ public final class ParsedTalk implements ParsedData {
      * Write the LUA code needed for this talking line.
      */
     @Override
-    public void writeLua(
-            @Nonnull Writer target, @Nonnull LuaWriter.WritingStage stage) throws IOException {
-
+    public void writeLua(@Nonnull Writer target, @Nonnull LuaRequireTable requires, @Nonnull LuaWriter.WritingStage stage) throws IOException {
         if (stage == LuaWriter.WritingStage.Talking) {
-            target.write("if (true) then"); //$NON-NLS-1$
+            target.write("do"); //$NON-NLS-1$
             target.write(LuaWriter.NL);
-            target.write("local talkEntry = npc_base_talk.talkNPCEntry();"); //$NON-NLS-1$
+            target.write("local talkEntry = " + requires.getStorage("npc.base.talk") + ".talkNPCEntry()");
             target.write(LuaWriter.NL);
 
             for (TalkCondition condition : conditions) {
-                condition.writeLua(target);
+                condition.writeLua(target, requires);
             }
             for (TalkConsequence consequence : consequences) {
-                consequence.writeLua(target);
+                consequence.writeLua(target, requires);
             }
 
-            target.write("talkingNPC:addTalkingEntry(talkEntry);"); //$NON-NLS-1$
+            target.write("talkingNPC:addTalkingEntry(talkEntry)"); //$NON-NLS-1$
             target.write(LuaWriter.NL);
-            target.write("end;"); //$NON-NLS-1$
+            target.write("end"); //$NON-NLS-1$
             target.write(LuaWriter.NL);
         }
     }

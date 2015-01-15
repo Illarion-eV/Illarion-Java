@@ -184,7 +184,7 @@ public class Map implements Iterable<MapTile> {
      *
      * @param mapTile the tile to add.
      */
-    public void setTileAt(final int x, final int y, final MapTile mapTile) {
+    public void setTileAt(final int x, final int y, @Nonnull final MapTile mapTile) {
         setTileAtIndex(mapToIndex(x, y), mapTile);
     }
 
@@ -237,7 +237,7 @@ public class Map implements Iterable<MapTile> {
         return index / width;
     }
 
-    public void setTileAt(@Nonnull final Location loc, final MapTile mapTile) {
+    public void setTileAt(@Nonnull final Location loc, @Nonnull final MapTile mapTile) {
         setTileAt(loc.getScX(), loc.getScY(), mapTile);
     }
 
@@ -440,6 +440,7 @@ public class Map implements Iterable<MapTile> {
         return selectionManager.cut(this);
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return name;

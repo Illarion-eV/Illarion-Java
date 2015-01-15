@@ -253,6 +253,7 @@ public final class MapTile implements AlphaChangeListener {
         return localColor.getCurrentColor();
     }
 
+    @Nonnull
     public Color getLight(@Nonnull Direction direction) {
         @Nullable AnimatedColor color = colors.get(direction);
         return (color == null) ? Color.WHITE : color.getCurrentColor();

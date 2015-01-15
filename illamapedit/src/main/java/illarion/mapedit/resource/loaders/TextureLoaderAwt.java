@@ -34,6 +34,7 @@ import java.io.InputStream;
  */
 public final class TextureLoaderAwt extends AbstractTextureManager<BufferedImage> implements Resource {
     public static final class AwtTexture implements Texture {
+        @Nonnull
         private final BufferedImage image;
 
         AwtTexture(@Nonnull BufferedImage image) {

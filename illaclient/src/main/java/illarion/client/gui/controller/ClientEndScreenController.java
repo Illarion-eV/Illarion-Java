@@ -31,12 +31,11 @@ import javax.annotation.Nonnull;
  */
 public final class ClientEndScreenController implements ScreenController, KeyInputHandler {
     @Override
-    public void bind(final Nifty nifty, final Screen screen) {
+    public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
     }
 
     @Override
     public void onStartScreen() {
-        IllaClient.getCfg().save();
         IllaClient.exitGameContainer();
     }
 
@@ -46,7 +45,7 @@ public final class ClientEndScreenController implements ScreenController, KeyInp
     }
 
     @Override
-    public boolean keyEvent(@Nonnull final NiftyInputEvent inputEvent) {
+    public boolean keyEvent(@Nonnull NiftyInputEvent inputEvent) {
         return false;
     }
 }
