@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -29,22 +29,22 @@ public enum Servers {
      * The Gameserver of Illarion. Normal players should connect to this server. If the selection of the server is
      * disabled this server is chosen as default server the client will show up as game client and not as Testclient.
      */
-    realserver(Login.GAMESERVER, "Game server", "illarion.org", 3008, 122),
+    realserver(Login.GAMESERVER, "Game server", "illarion.org", 3008, 2120),
 
     /**
      * The Testserver of Illarion. Testers and developers need a client that is allowed to connect to this server.
      */
-    testserver(Login.TESTSERVER, "Test server", realserver.serverAddr, 3011, 122),
+    testserver(Login.TESTSERVER, "Test server", realserver.serverAddr, 3011, 2120),
 
     /**
      * The development server of Illarion. Developers need a client that is allowed to connect to this server.
      */
-    devserver(Login.DEVSERVER, "Dev server", realserver.serverAddr, 3012, 122),
+    devserver(Login.DEVSERVER, "Dev server", realserver.serverAddr, 3012, 2120),
 
     /**
      * Custom server, only for very special applications. It will connect to a server running at a user-specified host.
      */
-    customserver(Login.CUSTOMSERVER, "Custom server", realserver.serverAddr, 3012, 122);
+    customserver(Login.CUSTOMSERVER, "Custom server", realserver.serverAddr, 3012, 2120);
 
     /**
      * The client version that needs to be transferred to the server so it accepts the connection and the client shows

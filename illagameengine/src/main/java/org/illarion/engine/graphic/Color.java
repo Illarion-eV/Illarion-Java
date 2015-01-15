@@ -138,7 +138,7 @@ public class Color {
      * @throws IOException in case reading fails
      */
     public Color(@Nonnull NetCommReader reader) throws IOException {
-        this(reader.readUByte(), reader.readUByte(), reader.readUByte(), MAX_INT_VALUE);
+        this(reader.readUByte(), reader.readUByte(), reader.readUByte(), reader.readUByte());
     }
 
     /**
