@@ -29,22 +29,22 @@ public enum Servers {
      * The Gameserver of Illarion. Normal players should connect to this server. If the selection of the server is
      * disabled this server is chosen as default server the client will show up as game client and not as Testclient.
      */
-    realserver(Login.GAMESERVER, "Game server", "illarion.org", 3008, 2120),
+    realserver(Login.GAMESERVER, "Game server", "illarion.org", 3008, 20),
 
     /**
      * The Testserver of Illarion. Testers and developers need a client that is allowed to connect to this server.
      */
-    testserver(Login.TESTSERVER, "Test server", realserver.serverAddr, 3011, 2120),
+    testserver(Login.TESTSERVER, "Test server", realserver.serverAddr, 3011, 20),
 
     /**
      * The development server of Illarion. Developers need a client that is allowed to connect to this server.
      */
-    devserver(Login.DEVSERVER, "Dev server", realserver.serverAddr, 3012, 2120),
+    devserver(Login.DEVSERVER, "Dev server", realserver.serverAddr, 3012, 20),
 
     /**
      * Custom server, only for very special applications. It will connect to a server running at a user-specified host.
      */
-    customserver(Login.CUSTOMSERVER, "Custom server", realserver.serverAddr, 3012, 2120);
+    customserver(Login.CUSTOMSERVER, "Custom server", realserver.serverAddr, 3012, 20);
 
     /**
      * The client version that needs to be transferred to the server so it accepts the connection and the client shows
