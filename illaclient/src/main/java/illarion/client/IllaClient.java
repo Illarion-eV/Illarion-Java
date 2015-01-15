@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -510,6 +510,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("serverAddress", Servers.customserver.getServerHost());
         cfg.setDefault("serverPort", Servers.customserver.getServerPort());
         cfg.setDefault("clientVersion", Servers.customserver.getClientVersion());
+        cfg.setDefault("clientVersionOverwrite", false);
         cfg.setDefault("serverAccountLogin", true);
         cfg.setDefault("wasdWalk", true);
         cfg.setDefault("disableChatAfterSending", true);

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -349,7 +349,11 @@ public final class Login {
         int clientVersion;
         switch (getServer()) {
             case customserver:
-                clientVersion = IllaClient.getCfg().getInteger("clientVersion");
+                if (IllaClient.getCfg().getBoolean("clientVersionOverwrite")) {
+                    clientVersion = IllaClient.getCfg().getInteger("clientVersion");
+                } else {
+                    clientVersion = getServer().getClientVersion();
+                }
                 break;
             default:
                 clientVersion = getServer().getClientVersion();
