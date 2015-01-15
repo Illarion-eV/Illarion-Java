@@ -224,7 +224,6 @@ public final class OptionScreenController implements ScreenController {
                     configSystem.set("clientVersion", clientVersionNumber);
                     configSystem.set("clientVersionOverwrite", true);
                 }
-                configSystem.set("clientVersionOverwrite", false);
                 configSystem.set("serverAccountLogin", serverAccountLogin.isChecked());
             }
         }

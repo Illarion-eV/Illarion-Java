@@ -11,3 +11,4 @@ illaeasyquest/src/main/resources/template/*/filelist
 */src/generated
 bin/
 **/build/
+.settings/
