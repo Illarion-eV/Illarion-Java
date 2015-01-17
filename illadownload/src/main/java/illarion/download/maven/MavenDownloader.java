@@ -235,28 +235,21 @@ public class MavenDownloader {
 
             final ProgressMonitor progressMonitor = new ProgressMonitor();
 
-            ArtifactRequestBuilder builder = new ArtifactRequestBuilder(null, system, session,
-                                                                        new ArtifactRequestTracer() {
-                                                                            @Override
-                                                                            public void trace(
-                                                                                    @Nonnull ProgressMonitor monitor,
-                                                                                    @Nonnull String artifact,
-                                                                                    long totalSize,
-                                                                                    long transferred) {
-                                                                                if (totalSize >= 0) {
-                                                                                    monitor.setProgress(transferred /
-                                                                                                                (float) totalSize);
-                                                                                }
-                                                                                if (callback != null) {
-                                                                                    callback.reportNewState(
-                                                                                            ResolvingArtifacts,
-                                                                                            progressMonitor, offline,
-                                                                                            humanReadableByteCount(
-                                                                                                    transferred, true) +
-                                                                                                    ' ' + artifact);
-                                                                                }
-                                                                            }
-                                                                        });
+            ArtifactRequestTracer tracer = new ArtifactRequestTracer() {
+                @Override
+                public void trace(@Nonnull ProgressMonitor monitor, @Nonnull String artifact,
+                                  long totalSize, long transferred) {
+                    if (totalSize >= 0) {
+                        monitor.setProgress(transferred / (float) totalSize);
+                    }
+                    if (callback != null) {
+                        callback.reportNewState(ResolvingArtifacts, progressMonitor, offline,
+                                humanReadableByteCount(transferred, true) + ' ' + artifact);
+                    }
+                }
+            };
+
+            ArtifactRequestBuilder builder = new ArtifactRequestBuilder(null, system, session, tracer);
             DependencyVisitor visitor = new FilteringDependencyVisitor(builder, filter);
             visitor = new TreeDependencyVisitor(visitor);
             collectResult.getRoot().accept(visitor);
