@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -287,19 +287,6 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         } else {
             setHeightOfChatLog(CHAT_EXPANDED_HEIGHT);
         }
-
-        Element chatScroll = screen.findElementById("chatPanel");
-
-        if (chatScroll.getConstraintHeight().equals(CHAT_COLLAPSED_HEIGHT)) {
-            chatScroll.setConstraintHeight(CHAT_EXPANDED_HEIGHT);
-        } else {
-            chatScroll.setConstraintHeight(CHAT_COLLAPSED_HEIGHT);
-        }
-        chatScroll.getParent().setConstraintHeight(SizeValue.def());
-        chatScroll.getParent().getParent().setConstraintHeight(SizeValue.def());
-        chatScroll.getParent().getParent().getParent().layoutElements();
-        chatScroll.getNiftyControl(ScrollPanel.class).setAutoScroll(ScrollPanel.AutoScroll.BOTTOM);
-        chatScroll.getNiftyControl(ScrollPanel.class).setAutoScroll(ScrollPanel.AutoScroll.OFF);
     }
 
     private boolean isChatLogExpanded() {
