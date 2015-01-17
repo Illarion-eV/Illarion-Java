@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -35,10 +35,10 @@ import illarion.client.util.Lang;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
+import illarion.common.config.Config;
 import illarion.common.data.Skill;
 import illarion.common.data.SkillGroup;
 import illarion.common.data.SkillGroups;
-import illarion.common.data.Skills;
 import org.illarion.engine.GameContainer;
 import org.illarion.nifty.controls.Progress;
 import org.illarion.nifty.controls.progress.builder.ProgressBuilder;
@@ -76,9 +76,6 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
         this.screen = screen;
 
         skillWindow = screen.findNiftyControl("characterInformation", Window.class);
-
-        skillWindow.getElement().setConstraintX(new SizeValue(IllaClient.getCfg().getString("skillWindowPosX")));
-        skillWindow.getElement().setConstraintY(new SizeValue(IllaClient.getCfg().getString("skillWindowPosY")));
         //skillWindow.getElement().getParent().layoutElements();
 
         createSkillEntries();
@@ -86,6 +83,12 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
 
     @Override
     public void onStartScreen() {
+        Element skillWindowElement = getSkillWindowElement();
+        if (skillWindowElement != null) {
+            skillWindowElement.setConstraintX(new SizeValue(IllaClient.getCfg().getString("skillWindowPosX")));
+            skillWindowElement.setConstraintY(new SizeValue(IllaClient.getCfg().getString("skillWindowPosY")));
+        }
+
         nifty.subscribeAnnotations(this);
     }
 
@@ -93,14 +96,15 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
     public void onEndScreen() {
         nifty.unsubscribeAnnotations(this);
 
-        IllaClient.getCfg().set("skillWindowPosX", Integer.toString(skillWindow.getElement().getX()) + "px");
-        IllaClient.getCfg().set("skillWindowPosY", Integer.toString(skillWindow.getElement().getY()) + "px");
-
-        hideSkillWindow();
-
-        for (Skill skill : Skills.getInstance().getSkills()) {
-            internalUpdateSkill(skill, 0, 0);
+        Element skillWindowElement = getSkillWindowElement();
+        if (skillWindowElement != null) {
+            Config cfg = IllaClient.getCfg();
+            cfg.set("skillWindowPosX", Integer.toString(skillWindowElement.getX()) + "px");
+            cfg.set("skillWindowPosY", Integer.toString(skillWindowElement.getY()) + "px");
         }
+
+        internalHideSkillWindow();
+        resetAllEntries();
     }
 
     @Override
@@ -108,16 +112,22 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
             public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                if (skillWindow != null) {
-                    skillWindow.getElement().show(new EndNotify() {
-                        @Override
-                        public void perform() {
-                            skillWindow.moveToFront();
-                        }
-                    });
-                }
+                internalShowSkillWindow();
             }
         });
+    }
+
+    private void internalShowSkillWindow() {
+        Element skillWindowElement = getSkillWindowElement();
+        if (skillWindowElement != null) {
+            assert skillWindow != null;
+            skillWindowElement.show(new EndNotify() {
+                @Override
+                public void perform() {
+                    skillWindow.moveToFront();
+                }
+            });
+        }
     }
 
     @Override
@@ -125,17 +135,23 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
             public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                if (skillWindow != null) {
-                    skillWindow.getElement().hide();
-                }
+                internalHideSkillWindow();
             }
         });
     }
 
+    private void internalHideSkillWindow() {
+        Element skillWindowElement = getSkillWindowElement();
+        if (skillWindowElement != null) {
+            skillWindowElement.hide();
+        }
+    }
+
     @Override
     public void toggleSkillWindow() {
-        if (skillWindow != null) {
-            if (skillWindow.getElement().isVisible()) {
+        Element skillWindowElement = getSkillWindowElement();
+        if (skillWindowElement != null) {
+            if (skillWindowElement.isVisible()) {
                 hideSkillWindow();
             } else {
                 showSkillWindow();
@@ -147,7 +163,10 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
      * This function creates the entries for every single skill.
      */
     private void createSkillEntries() {
-        Element content = skillWindow.getElement().findElementById("#textContent");
+        @Nullable Element content = getContentPanel();
+        if (content == null) {
+            return;
+        }
 
         for (SkillGroup group : SkillGroups.getInstance().getSkillGroups()) {
             String groupId = content.getId() + "#group" + Integer.toString(group.getGroupId());
@@ -227,15 +246,75 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
     }
 
     @Nullable
-    private Element getSkillPanel(@Nonnull Skill skill) {
+    private Element getSkillWindowElement() {
         if (skillWindow == null) {
             return null;
         }
-        @Nullable Element windowElement = skillWindow.getElement();
+        return skillWindow.getElement();
+    }
+
+    @Nullable
+    private Element getContentPanel() {
+        @Nullable Element windowElement = getSkillWindowElement();
         if (windowElement == null) {
             return null;
         }
-        return windowElement.findElementById("#skill" + skill.getId());
+        return windowElement.findElementById("#textContent");
+    }
+
+    @Nullable
+    private Element getSkillGroupPanel(@Nonnull SkillGroup group) {
+        Element contentPanel = getContentPanel();
+        if (contentPanel == null) {
+            return null;
+        }
+
+        String groupId = "#group" + group.getGroupId();
+        for (@Nonnull Element groupPanel : contentPanel.getChildren()) {
+            String panelId = groupPanel.getId();
+            if ((panelId != null) && panelId.endsWith(groupId)) {
+                return groupPanel;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    private Element getSkillPanel(@Nonnull Skill skill) {
+        Element groupPanel = getSkillGroupPanel(skill.getGroup());
+        if (groupPanel == null) {
+            return null;
+        }
+
+        String skillId = "#skill" + skill.getId();
+        for (@Nonnull Element skillPanel : groupPanel.getChildren()) {
+            String panelId = skillPanel.getId();
+            if ((panelId != null) && panelId.endsWith(skillId)) {
+                return skillPanel;
+            }
+        }
+        return null;
+    }
+
+    private void resetAllEntries() {
+        Element content = getContentPanel();
+
+        if (content != null) {
+            SizeValue zero = SizeValue.px(0);
+            for (@Nonnull Element groupPanel : content.getChildren()) {
+                groupPanel.setConstraintHeight(zero);
+                groupPanel.setMarginBottom(zero);
+
+                for (@Nonnull Element groupMember : groupPanel.getChildren()) {
+                    groupMember.setConstraintHeight(zero);
+
+                    for (@Nonnull Element skillEntry : groupMember.getChildren()) {
+                        skillEntry.setConstraintHeight(zero);
+                    }
+                }
+            }
+            layoutDirty = true;
+        }
     }
 
     /**
@@ -248,7 +327,7 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
         if (!World.getNet().isLoginDone()) {
             return;
         }
-        @Nullable Element skillPanel = skillWindow.getElement().findElementById("#skill" + skill.getId());
+        @Nullable Element skillPanel = getSkillPanel(skill);
         int skillHeight = 22;
         if (skillPanel == null) {
             return;
@@ -300,17 +379,25 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
     private static final Logger LOGGER = LoggerFactory.getLogger(SkillsHandler.class);
 
     private void updateVisibility() {
-        Element content = skillWindow.getElement().findElementById("#textContent");
-        updateVisibilityOfElement(content);
+        Element content = getContentPanel();
+        if (content != null) {
+            updateVisibilityOfElement(content);
+        }
     }
 
     private static void updateVisibilityOfElement(@Nonnull Element target) {
-        if ("0px".equals(target.getConstraintHeight().toString())) {
-            target.setVisible(false);
-        } else {
-            for (Element child : target.getChildren()) {
-                updateVisibilityOfElement(child);
+        if (0 == target.getConstraintHeight().getValueAsInt(Float.MAX_VALUE)) {
+            if (target.isVisible()) {
+                target.hide();
             }
+        } else {
+            if (!target.isVisible()) {
+                target.show();
+            }
+        }
+
+        for (Element child : target.getChildren()) {
+            updateVisibilityOfElement(child);
         }
     }
 
@@ -320,8 +407,11 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
             layoutDirty = false;
 
             updateVisibility();
-            skillWindow.getElement().resetLayout();
-            skillWindow.getElement().layoutElements();
+            Element windowElement = getSkillWindowElement();
+            if (windowElement != null) {
+                windowElement.resetLayout();
+                windowElement.layoutElements();
+            }
         }
     }
 
