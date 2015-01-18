@@ -18,18 +18,11 @@ apply plugin: 'application'
 apply plugin: 'maven-publish'
 apply from: '../javafx.plugin'
 apply from: '../versions.gradle'
+apply plugin: 'install4j'
 
 def hasTargetDistDir = project.hasProperty('targetDistDir')
 def hasInstall4jDir = project.hasProperty('install4jDir')
 def hasInstall4jTargetDir = project.hasProperty('install4jTargetDir')
-
-if (hasInstall4jTargetDir && hasInstall4jDir) {
-    ant.taskdef(name: 'install4j', classname: 'com.install4j.Install4JTask') {
-        classpath {
-            fileset(dir: project.install4jDir, includes: '*.jar')
-        }
-    }
-}
 
 archivesBaseName = 'illarion_download'
 mainClassName = 'illarion.download.gui.GuiApplication'
@@ -151,11 +144,19 @@ if (hasTargetDistDir) {
         into file(project.targetDistDir)
     }
 }
-if (hasInstall4jTargetDir) {
+if (hasInstall4jTargetDir && hasInstall4jDir) {
     task cleanUpForInstall4j(type: Delete) {
         delete new File(project.buildDir, 'install4j')
     }
+    task createInstall4jDirectory(dependsOn: cleanUpForInstall4j) {
+        def sourceDir = new File(project.buildDir, 'install4j')
+        sourceDir.mkdirs()
+    }
     task assembleForInstall4j(type: Copy) {
+        dependsOn {
+            jfxJar
+            createInstall4jDirectory
+        }
         from new File(project.buildDir, "libs/${project.archivesBaseName}-${project.version}.jar")
         configurations.runtime.each { File file ->
             if (!file.absolutePath.startsWith(System.getProperty('java.home'))) {
@@ -164,48 +165,49 @@ if (hasInstall4jTargetDir) {
         }
         into new File(project.buildDir, 'install4j')
     }
-    task createInstall4j() {
+
+    if (project.hasProperty('keyFile')) {
+        apply from: project.keyFile
+    }
+
+    install4j {
+        installDir = file(project.install4jDir)
+        faster = false
+        if (project.hasProperty('keyFile')) {
+            disableSigning = false
+            winKeystorePassword = project.ext.storepass
+            macKeystorePassword = project.ext.storepass
+        } else {
+            disableSigning = true
+        }
+    }
+
+    task createInstall4j(type: com.install4j.gradle.Install4jTask) {
+        dependsOn 'assembleForInstall4j'
+
         def sourceDir = new File(project.buildDir, 'install4j')
-        sourceDir.mkdirs()
+
         inputs.dir sourceDir
         inputs.file new File(project.projectDir, 'installer.install4j')
         outputs.dir project.install4jTargetDir
-    }
-    createInstall4j << {
-        cleanUpForInstall4j.execute()
 
-        def sourceDir = new File(project.buildDir, 'install4j')
-        sourceDir.mkdirs()
-
-        assembleForInstall4j.execute()
-
-        def keystore = ''
-        def storePass = ''
-        def disableSigning = true
+        def keyStore = null
         if (project.hasProperty('keyFile')) {
-            apply from: project.keyFile
-            keystore = project.ext.keystore
-            storePass = project.ext.storepass
-            disableSigning = false
+            keyStore = project.ext.keystore
         }
+
+        projectFile = new File(project.projectDir, 'installer.install4j')
+        destination = file(project.install4jTargetDir)
 
         def releaseVersion = project.version.toString().replace('-SNAPSHOT', '')
         if (project.hasProperty('setupVersion')) {
             releaseVersion = project.setupVersion
         }
+        release = releaseVersion
 
-        ant.install4j(projectfile: new File(project.projectDir, 'installer.install4j'),
-                release: releaseVersion,
-                destination: project.install4jTargetDir,
-                winKeystorePassword: storePass, macKeystorePassword: storePass,
-                disableSigning: disableSigning, debug: false) {
-            variable(name: 'sourceDir', value: sourceDir)
-            variable(name: 'iconsDir', value: new File(project.projectDir, 'icons'))
-            variable(name: 'keyStore', value: keystore)
-        }
-    }
-    createInstall4j.dependsOn {
-        jfxJar
+        variables = [sourceDir: sourceDir,
+                     iconsDir : new File(project.projectDir, 'icons'),
+                     keyStore : keyStore]
     }
 }
 
