@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -82,6 +82,13 @@ public final class DirectoryManager {
                 Files.delete(userDir);
             } catch (IOException e) {
                 log.error("Failed to delete old .illarion file.", e);
+            }
+        }
+        if (!Files.isDirectory(userDir)) {
+            try {
+                Files.createDirectories(userDir);
+            } catch (IOException e) {
+                log.error("Failed to create the .illarion directory.", e);
             }
         }
     }
