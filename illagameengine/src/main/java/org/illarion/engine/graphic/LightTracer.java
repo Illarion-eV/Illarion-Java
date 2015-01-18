@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Manager class that handles the light. It stores the pre-calculated light rays
@@ -110,6 +111,9 @@ public final class LightTracer extends Thread implements Stoppable {
     @Nonnull
     private final List<LightSource> tidyLights;
 
+    @Nonnull
+    private final CountDownLatch threadTerminatedLatch;
+
     /**
      * Default constructor of the light tracer. This tracer handles all light
      * sources that are on the map source that is set with the parameter.
@@ -124,6 +128,7 @@ public final class LightTracer extends Thread implements Stoppable {
         dirtyLights = new ArrayList<>();
         tidyLights = new ArrayList<>();
         running = false;
+        threadTerminatedLatch = new CountDownLatch(1);
     }
 
     /**
@@ -370,6 +375,8 @@ public final class LightTracer extends Thread implements Stoppable {
                 setDirty(false);
             }
         }
+
+        threadTerminatedLatch.countDown();
     }
 
     /**
@@ -380,6 +387,12 @@ public final class LightTracer extends Thread implements Stoppable {
         synchronized (lightsListsLock) {
             running = false;
             lightsListsLock.notifyAll();
+        }
+
+        try {
+            threadTerminatedLatch.await();
+        } catch (InterruptedException e) {
+            // ignore
         }
     }
 
