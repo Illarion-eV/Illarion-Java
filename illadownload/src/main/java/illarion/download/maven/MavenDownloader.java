@@ -117,12 +117,6 @@ public class MavenDownloader {
      */
     private final boolean offline;
 
-    /**
-     * The logger that takes care for the logging output of this class.
-     */
-    @Nonnull
-    private static final Logger LOGGER = LoggerFactory.getLogger(MavenDownloader.class);
-
     @Nonnull
     private final MavenRepositoryListener repositoryListener;
 
@@ -134,24 +128,21 @@ public class MavenDownloader {
      * @param attemps the indicator how many times downloading was already tried and failed.
      */
     public MavenDownloader(boolean snapshot, int attemps) {
+        log.trace("Creating Maven Downloader. Attempt number: {}", attemps);
         this.snapshot = snapshot;
 
         boolean offlineFlag = false;
         int requestTimeOut = 60000; // 1 minute
         try {
-            InetAddress inet = InetAddress.getByName("illarion.org");
-            long startTime = System.currentTimeMillis();
-            if (inet.isReachable(requestTimeOut)) {
-                requestTimeOut = (int) (System.currentTimeMillis() - startTime);
-            }
-            for (int i = 0; i < attemps; i++) {
-                requestTimeOut *= 3;
-            }
+            log.trace("Starting connection test.");
+            //noinspection UnusedDeclaration
+            InetAddress iNetAddress = InetAddress.getByName("illarion.org");
         } catch (IOException e) {
-            LOGGER.warn("No internet connection. Activating offline mode.");
+            log.warn("No internet connection. Activating offline mode.");
             offlineFlag = true;
         }
         offline = offlineFlag;
+        log.debug("Setting offline flag: {}", offlineFlag);
 
         serviceLocator = new DefaultServiceLocator();
         setupServiceLocator();
@@ -168,11 +159,7 @@ public class MavenDownloader {
         session.setUpdatePolicy(UPDATE_POLICY_ALWAYS);
         session.setChecksumPolicy(CHECKSUM_POLICY_FAIL);
 
-        if (requestTimeOut > 30000) {
-            LOGGER.warn("Used request timeout level is very high: {}ms", requestTimeOut);
-        } else {
-            LOGGER.info("Used request timeout: {}ms", requestTimeOut);
-        }
+        log.info("Used request timeout: {}ms", requestTimeOut);
 
         repositories = new ArrayList<>();
         setupRepositories();
@@ -195,8 +182,13 @@ public class MavenDownloader {
             if (callback != null) {
                 callback.reportNewState(State.SearchingNewVersion, null, offline, null);
             }
-            VersionRangeResult result = system.resolveVersionRange(session,
-                    new VersionRangeRequest(artifact, Collections.singletonList(illarionRepository), RUNTIME));
+            VersionRangeRequest request = new VersionRangeRequest();
+            request.setArtifact(artifact);
+            if (!offline) {
+                request.setRepositories(Collections.singletonList(illarionRepository));
+            }
+            request.setRequestContext(RUNTIME);
+            VersionRangeResult result = system.resolveVersionRange(session, request);
             NavigableSet<String> versions = new TreeSet<>(new MavenVersionComparator());
             for (Version version : result.getVersions()) {
                 if (snapshot || !version.toString().contains("SNAPSHOT")) {
@@ -226,11 +218,12 @@ public class MavenDownloader {
 
         DependencyFilter filter = DependencyFilterUtils.classpathFilter(RUNTIME, COMPILE);
 
-        CollectRequest collectRequest = new CollectRequest();
-        collectRequest.setRoot(dependency);
-        collectRequest.setRepositories(repositories);
-
         try {
+            CollectRequest collectRequest = new CollectRequest();
+            collectRequest.setRoot(dependency);
+            if (!offline) {
+                collectRequest.setRepositories(repositories);
+            }
             CollectResult collectResult = system.collectDependencies(session, collectRequest);
 
             final ProgressMonitor progressMonitor = new ProgressMonitor();
@@ -269,7 +262,7 @@ public class MavenDownloader {
             List<Future<ArtifactResult>> results = executorService.invokeAll(requests);
             executorService.shutdown();
             while (!executorService.awaitTermination(1, TimeUnit.MINUTES)) {
-                LOGGER.info("Downloading is not done yet.");
+                log.info("Downloading is not done yet.");
             }
 
             List<File> result = new ArrayList<>();
