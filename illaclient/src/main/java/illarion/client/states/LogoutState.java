@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,6 +20,8 @@ import illarion.client.Game;
 import illarion.client.IllaClient;
 import illarion.client.world.World;
 import org.illarion.engine.GameContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
@@ -29,9 +31,14 @@ import javax.annotation.Nonnull;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class LogoutState implements GameState {
+    /**
+     * The logger that is used for the logging output of this class.
+     */
+    private static final Logger log = LoggerFactory.getLogger(LogoutState.class);
 
     @Override
     public void create(@Nonnull Game game, @Nonnull GameContainer container, @Nonnull Nifty nifty) {
+        log.trace("Creating logout state.");
         Util.loadXML(nifty, "illarion/client/gui/xml/logout.xml");
     }
 
@@ -43,7 +50,7 @@ public final class LogoutState implements GameState {
     public void resize(@Nonnull GameContainer container, int width, int height) {
     }
 
-    private int logoutDelay = 0;
+    private int logoutDelay;
 
     @Override
     public void update(@Nonnull GameContainer container, int delta) {

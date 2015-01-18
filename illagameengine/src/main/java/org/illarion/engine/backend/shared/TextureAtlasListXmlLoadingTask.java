@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -38,7 +38,7 @@ public class TextureAtlasListXmlLoadingTask<T> implements Runnable, TextureAtlas
     /**
      * The logger that provides the logging output of this class.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(TextureAtlasListXmlLoadingTask.class);
+    private static final Logger log = LoggerFactory.getLogger(TextureAtlasListXmlLoadingTask.class);
 
     /**
      * The factory required to create the XML parser. Setting up this parser should be done before its assigned to
@@ -88,11 +88,11 @@ public class TextureAtlasListXmlLoadingTask<T> implements Runnable, TextureAtlas
      * @param taskExecutor the executor that takes care for executing further tasks.
      */
     public TextureAtlasListXmlLoadingTask(
-            @Nonnull final XmlPullParserFactory parserFactory,
-            @Nonnull final String atlasName,
-            @Nonnull final AbstractTextureManager<T> textureManager,
-            @Nonnull final ProgressMonitor progressMonitor,
-            @Nullable final Executor taskExecutor) {
+            @Nonnull XmlPullParserFactory parserFactory,
+            @Nonnull String atlasName,
+            @Nonnull AbstractTextureManager<T> textureManager,
+            @Nonnull ProgressMonitor progressMonitor,
+            @Nullable Executor taskExecutor) {
         this.parserFactory = parserFactory;
         this.atlasName = atlasName;
         this.textureManager = textureManager;
@@ -111,9 +111,9 @@ public class TextureAtlasListXmlLoadingTask<T> implements Runnable, TextureAtlas
     public void run() {
         InputStream xmlStream = null;
         try {
-            final XmlPullParser parser = parserFactory.newPullParser();
+            XmlPullParser parser = parserFactory.newPullParser();
 
-            final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             xmlStream = classLoader.getResourceAsStream(atlasName + "-atlas.xml");
             parser.setInput(xmlStream, "UTF-8");
 
@@ -122,7 +122,7 @@ public class TextureAtlasListXmlLoadingTask<T> implements Runnable, TextureAtlas
             @Nullable TextureAtlasFinalizeTask<T> currentTextureTask = null;
             while (currentEvent != XmlPullParser.END_DOCUMENT) {
                 if (currentEvent == XmlPullParser.START_TAG) {
-                    final String tagName = parser.getName();
+                    String tagName = parser.getName();
                     switch (tagName) {
                         case "atlasList":
                             expectedAtlasCount = getExpectedAtlasCount(parser, expectedAtlasCount);
@@ -131,9 +131,9 @@ public class TextureAtlasListXmlLoadingTask<T> implements Runnable, TextureAtlas
                             }
                             break;
                         case "atlas":
-                            @Nullable final String currentAtlasName = getAtlasTextureName(parser);
+                            @Nullable String currentAtlasName = getAtlasTextureName(parser);
                             if (currentAtlasName != null) {
-                                final FutureTask<T> preLoadTask = new FutureTask<>(
+                                FutureTask<T> preLoadTask = new FutureTask<>(
                                         new TextureAtlasPreLoadTask<>(textureManager, currentAtlasName));
                                 if (taskExecutor == null) {
                                     preLoadTask.run();
@@ -141,7 +141,7 @@ public class TextureAtlasListXmlLoadingTask<T> implements Runnable, TextureAtlas
                                     taskExecutor.execute(preLoadTask);
                                 }
 
-                                final float progressToAdd = (expectedAtlasCount == 0) ? 0.f : (1.f /
+                                float progressToAdd = (expectedAtlasCount == 0) ? 0.f : (1.f /
                                         expectedAtlasCount);
                                 currentTextureTask = new TextureAtlasFinalizeTask<>(preLoadTask, currentAtlasName,
                                                                                     textureManager, progressMonitor,
@@ -155,7 +155,7 @@ public class TextureAtlasListXmlLoadingTask<T> implements Runnable, TextureAtlas
                             break;
                     }
                 } else if (currentEvent == XmlPullParser.END_TAG) {
-                    final String tagName = parser.getName();
+                    String tagName = parser.getName();
                     if ("atlas".equals(tagName)) {
                         if (currentTextureTask != null) {
                             textureManager.addUpdateTask(currentTextureTask);
@@ -168,22 +168,22 @@ public class TextureAtlasListXmlLoadingTask<T> implements Runnable, TextureAtlas
                 }
                 currentEvent = parser.nextTag();
             }
-        } catch (@Nonnull final XmlPullParserException e) {
-            LOGGER.error("Failed to load requested texture atlas: " + atlasName, e);
-        } catch (@Nonnull final IOException e) {
-            LOGGER.error("Reading error while loading texture atlas: " + atlasName, e);
+        } catch (@Nonnull XmlPullParserException e) {
+            log.error("Failed to load requested texture atlas: {}", atlasName, e);
+        } catch (@Nonnull IOException e) {
+            log.error("Reading error while loading texture atlas: {}", atlasName, e);
         } finally {
             done = true;
             if (xmlStream != null) {
                 try {
                     xmlStream.close();
-                } catch (@Nonnull final IOException ignored) {
+                } catch (@Nonnull IOException ignored) {
                 }
             }
         }
     }
 
-    private static int getExpectedAtlasCount(@Nonnull final XmlPullParser parser, final int oldCount) {
+    private static int getExpectedAtlasCount(@Nonnull XmlPullParser parser, int oldCount) {
         if (oldCount > 0) {
             return oldCount;
         }
@@ -191,8 +191,8 @@ public class TextureAtlasListXmlLoadingTask<T> implements Runnable, TextureAtlas
             if ("atlasCount".equals(parser.getAttributeName(i))) {
                 try {
                     return Integer.parseInt(parser.getAttributeValue(i));
-                } catch (@Nonnull final NumberFormatException e) {
-                    LOGGER.warn("Found atlas count entry but failed to parse it.");
+                } catch (@Nonnull NumberFormatException e) {
+                    log.warn("Found atlas count entry but failed to parse it.");
                 }
                 break;
             }
@@ -201,10 +201,10 @@ public class TextureAtlasListXmlLoadingTask<T> implements Runnable, TextureAtlas
     }
 
     @Nullable
-    private static String getAtlasTextureName(@Nonnull final XmlPullParser parser) {
+    private static String getAtlasTextureName(@Nonnull XmlPullParser parser) {
         for (int i = 0; i < parser.getAttributeCount(); i++) {
             if ("file".equals(parser.getAttributeName(i))) {
-                final String atlasName = parser.getAttributeValue(i);
+                String atlasName = parser.getAttributeValue(i);
                 if (atlasName.endsWith(".png")) {
                     return atlasName.substring(0, atlasName.length() - 4);
                 }
@@ -215,17 +215,17 @@ public class TextureAtlasListXmlLoadingTask<T> implements Runnable, TextureAtlas
     }
 
     private void transferSpriteData(
-            @Nonnull final XmlPullParser parser, @Nonnull final TextureAtlasFinalizeTask<T> task) {
+            @Nonnull XmlPullParser parser, @Nonnull TextureAtlasFinalizeTask<T> task) {
         @Nullable String name = null;
         int posX = -1;
         int posY = -1;
         int width = -1;
         int height = -1;
 
-        final int attributeCount = parser.getAttributeCount();
+        int attributeCount = parser.getAttributeCount();
         for (int i = 0; i < attributeCount; i++) {
-            @Nonnull final String attributeName = parser.getAttributeName(i);
-            @Nonnull final String attributeValue = parser.getAttributeValue(i);
+            @Nonnull String attributeName = parser.getAttributeName(i);
+            @Nonnull String attributeValue = parser.getAttributeValue(i);
             try {
                 if ("x".equals(attributeName)) {
                     posX = Integer.parseInt(attributeValue);
@@ -238,16 +238,15 @@ public class TextureAtlasListXmlLoadingTask<T> implements Runnable, TextureAtlas
                 } else if ("name".equals(attributeName)) {
                     name = attributeValue;
                 }
-            } catch (@Nonnull final NumberFormatException e) {
-                LOGGER.error("Error while parsing texture atlas sprite: " +
-                                     attributeName + "=\"" + attributeValue + '"');
+            } catch (@Nonnull NumberFormatException e) {
+                log.error("Error while parsing texture atlas sprite: {}=\"{}" + '"', attributeName, attributeValue);
             }
         }
 
         if ((name != null) && (posX > -1) && (posY > -1) && (width > -1) && (height > -1)) {
             task.addSprite(name, posX, posY, width, height);
         } else {
-            LOGGER.error("Unable to receive all required values for sprite definition!");
+            log.error("Unable to receive all required values for sprite definition!");
         }
     }
 }

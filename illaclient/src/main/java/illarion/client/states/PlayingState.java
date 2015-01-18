@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -24,6 +24,8 @@ import illarion.client.world.World;
 import illarion.client.world.events.ServerNotFoundEvent;
 import org.bushe.swing.event.EventBus;
 import org.illarion.engine.GameContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
@@ -39,12 +41,18 @@ public class PlayingState implements GameState {
     @Nonnull
     private final InputReceiver receiver;
 
+    /**
+     * The logger that is used for the logging output of this class.
+     */
+    private static final Logger log = LoggerFactory.getLogger(PlayingState.class);
+
     public PlayingState(@Nonnull InputReceiver inputReceiver) {
         receiver = inputReceiver;
     }
 
     @Override
     public void create(@Nonnull Game game, @Nonnull GameContainer container, @Nonnull Nifty nifty) {
+        log.trace("Creating playing state.");
         World.initGui(container.getEngine());
         nifty.registerScreenController(World.getGameGui().getScreenController());
 
