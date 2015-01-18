@@ -26,9 +26,11 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
@@ -298,8 +300,15 @@ public class MainViewController extends AbstractController implements MavenDownl
         for (@Nonnull final NewsQuestEntry entry : list) {
             BorderPane line = new BorderPane();
             line.getStyleClass().add("linkPane");
-            line.setLeft(new Label(entry.title));
-            line.setRight(new Label(entry.timeStamp));
+
+            Label title = new Label(entry.title);
+            title.setTextOverrun(OverrunStyle.WORD_ELLIPSIS);
+            line.setCenter(title);
+            BorderPane.setAlignment(title, Pos.BOTTOM_LEFT);
+
+            Label timeStamp = new Label(entry.timeStamp);
+            timeStamp.setTextOverrun(OverrunStyle.CLIP);
+            line.setRight(timeStamp);
             line.setCursor(Cursor.HAND);
 
             line.setMouseTransparent(false);
