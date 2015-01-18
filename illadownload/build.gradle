@@ -153,10 +153,8 @@ if (hasInstall4jTargetDir && hasInstall4jDir) {
         sourceDir.mkdirs()
     }
     task assembleForInstall4j(type: Copy) {
-        dependsOn {
-            jfxJar
-            createInstall4jDirectory
-        }
+        dependsOn jfxJar, createInstall4jDirectory
+
         from new File(project.buildDir, "libs/${project.archivesBaseName}-${project.version}.jar")
         configurations.runtime.each { File file ->
             if (!file.absolutePath.startsWith(System.getProperty('java.home'))) {
