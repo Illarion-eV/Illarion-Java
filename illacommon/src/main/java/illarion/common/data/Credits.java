@@ -122,6 +122,7 @@ public final class Credits {
         CreditsPerson.create("Djironnyma", communityManager);
         CreditsPerson.create("Achae Eanstray", communityManager, graphics);
 
+        CreditsPerson.create("Andreas", "Caldarion", "Gahr", gameplay, content, qualityAssurance);
         CreditsPerson.create("Merung", gameplay, content, qualityAssurance);
         CreditsPerson.create("Ardian", gameplay);
         CreditsPerson.create("Esther", "Kadiya", "Sense", gameplay, graphics, website);
