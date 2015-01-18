@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="6.0.1" transformSequenceNumber="5">
-  <directoryPresets config="E:/Downloads/jre1.7.0_60" />
+  <directoryPresets config="C:/Users/Martin Karing/Desktop" />
   <application name="Illarion Launcher" distributionSourceDir="" applicationId="3082-9459-3479-6191" mediaDir="" mediaFilePattern="${compiler:sys.shortName}-${compiler:sys.version}" compression="9" lzmaCompression="true" pack200Compression="true" excludeSignedFromPacking="true" commonExternalFiles="true" createMd5Sums="true" shrinkRuntime="true" shortName="Illarion" publisher="Illarion e.V." publisherWeb="http://illarion.org" version="2.1.0" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" macVolumeId="15386a77f8270a6f" javaMinVersion="1.7" javaMaxVersion="" allowBetaVM="false" jdkMode="jdk" jdkName="JDK 1.7">
     <languages skipLanguageSelection="true" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
@@ -147,7 +147,21 @@
           <screen name="" id="2" customizedId="" beanClass="com.install4j.runtime.beans.screens.WelcomeScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.WelcomeScreen" />
+                <object class="com.install4j.runtime.beans.screens.WelcomeScreen">
+                  <void property="bannerBackground">
+                    <object class="java.awt.Color">
+                      <int>33</int>
+                      <int>16</int>
+                      <int>9</int>
+                      <int>255</int>
+                    </object>
+                  </void>
+                  <void property="bannerImageFile">
+                    <object class="com.install4j.api.beans.ExternalFile">
+                      <string>${compiler:iconsDir}/banner.png</string>
+                    </object>
+                  </void>
+                </object>
               </java>
             </serializedBean>
             <condition />
@@ -560,7 +574,21 @@
           <screen name="" id="12" customizedId="" beanClass="com.install4j.runtime.beans.screens.FinishedScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="true" wizardIndexChangeType="unchanged" wizardIndexKey="">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.FinishedScreen" />
+                <object class="com.install4j.runtime.beans.screens.FinishedScreen">
+                  <void property="bannerBackground">
+                    <object class="java.awt.Color">
+                      <int>33</int>
+                      <int>16</int>
+                      <int>9</int>
+                      <int>255</int>
+                    </object>
+                  </void>
+                  <void property="bannerImageFile">
+                    <object class="com.install4j.api.beans.ExternalFile">
+                      <string>${compiler:iconsDir}/banner.png</string>
+                    </object>
+                  </void>
+                </object>
               </java>
             </serializedBean>
             <condition />
@@ -656,7 +684,21 @@
           <screen name="" id="15" customizedId="" beanClass="com.install4j.runtime.beans.screens.UninstallWelcomeScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.UninstallWelcomeScreen" />
+                <object class="com.install4j.runtime.beans.screens.UninstallWelcomeScreen">
+                  <void property="bannerBackground">
+                    <object class="java.awt.Color">
+                      <int>33</int>
+                      <int>16</int>
+                      <int>9</int>
+                      <int>255</int>
+                    </object>
+                  </void>
+                  <void property="bannerImageFile">
+                    <object class="com.install4j.api.beans.ExternalFile">
+                      <string>${compiler:iconsDir}/banner.png</string>
+                    </object>
+                  </void>
+                </object>
               </java>
             </serializedBean>
             <condition />
@@ -725,7 +767,21 @@
           <screen name="" id="18" customizedId="" beanClass="com.install4j.runtime.beans.screens.UninstallSuccessScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="true" wizardIndexChangeType="unchanged" wizardIndexKey="">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.UninstallSuccessScreen" />
+                <object class="com.install4j.runtime.beans.screens.UninstallSuccessScreen">
+                  <void property="bannerBackground">
+                    <object class="java.awt.Color">
+                      <int>33</int>
+                      <int>16</int>
+                      <int>9</int>
+                      <int>255</int>
+                    </object>
+                  </void>
+                  <void property="bannerImageFile">
+                    <object class="com.install4j.api.beans.ExternalFile">
+                      <string>${compiler:iconsDir}/banner.png</string>
+                    </object>
+                  </void>
+                </object>
               </java>
             </serializedBean>
             <condition />
@@ -1272,6 +1328,19 @@ wizardContext.setCancelButtonVisible(false);</preActivation>
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.screens.BannerFormScreen">
+                      <void property="bannerBackground">
+                        <object class="java.awt.Color">
+                          <int>33</int>
+                          <int>16</int>
+                          <int>9</int>
+                          <int>255</int>
+                        </object>
+                      </void>
+                      <void property="bannerImageFile">
+                        <object class="com.install4j.api.beans.ExternalFile">
+                          <string>${compiler:iconsDir}/banner.png</string>
+                        </object>
+                      </void>
                       <void property="infoText">
                         <string>${i18n:updater.FinishInfoText("${compiler:sys.fullName}")}</string>
                       </void>
