@@ -121,20 +121,28 @@ public class MainViewController extends AbstractController implements MavenDownl
     private static class NewsQuestEntry implements Comparable<NewsQuestEntry> {
         @Nonnull
         public final String title;
-        @Nonnull
+        @Nullable
         public final Date timeStamp;
         @Nonnull
         public final URL linkTarget;
 
-        NewsQuestEntry(@Nonnull String title, @Nonnull Date timeStamp, @Nonnull URL linkTarget) {
+        NewsQuestEntry(@Nonnull String title, @Nullable Date timeStamp, @Nonnull URL linkTarget) {
             this.title = title;
-            this.timeStamp = (Date) timeStamp.clone();
+            this.timeStamp = (timeStamp == null) ? null : (Date) timeStamp.clone();
             this.linkTarget = linkTarget;
         }
 
         @Override
         public int compareTo(NewsQuestEntry o) {
-            int compare = timeStamp.compareTo(o.timeStamp);
+            if ((timeStamp == null) && (o.timeStamp != null)) {
+                return -1;
+            }
+
+            if ((timeStamp != null) && (o.timeStamp == null)) {
+                return 1;
+            }
+
+            int compare = (timeStamp == null) ? 0 : timeStamp.compareTo(o.timeStamp);
             if (compare == 0) {
                 return title.compareTo(o.title);
             }
@@ -214,14 +222,13 @@ public class MainViewController extends AbstractController implements MavenDownl
                         case "quests":
                         case "news":
                             Collections.sort(list);
+                            Collections.reverse(list);
                             return;
                         case "item":
-                            if ((title != null) && (timestamp != null) && (linkTarget != null)) {
-                                list.add(new NewsQuestEntry(title, timestamp, linkTarget));
-                                timestamp = null;
-                                title = null;
-                                linkTarget = null;
-                            }
+                            list.add(new NewsQuestEntry(title, timestamp, linkTarget));
+                            timestamp = null;
+                            title = null;
+                            linkTarget = null;
                             break;
                     }
                     break;
@@ -242,7 +249,10 @@ public class MainViewController extends AbstractController implements MavenDownl
                             linkTarget = new URL(parser.nextText());
                             break;
                         case "date":
-                            timestamp = parsingFormat.parse(parser.nextText());
+                            String textTimeStamp = parser.nextText();
+                            if (!textTimeStamp.isEmpty()) {
+                                timestamp = parsingFormat.parse(textTimeStamp);
+                            }
                             break;
                     }
                     break;
@@ -282,10 +292,12 @@ public class MainViewController extends AbstractController implements MavenDownl
             line.setCenter(title);
             BorderPane.setAlignment(title, Pos.BOTTOM_LEFT);
 
-            Label timeStamp = new Label(dateFormat.format(entry.timeStamp));
-            timeStamp.setTextOverrun(OverrunStyle.CLIP);
-            line.setRight(timeStamp);
-            line.setCursor(Cursor.HAND);
+            if (entry.timeStamp != null) {
+                Label timeStamp = new Label(dateFormat.format(entry.timeStamp));
+                timeStamp.setTextOverrun(OverrunStyle.CLIP);
+                line.setRight(timeStamp);
+                line.setCursor(Cursor.HAND);
+            }
 
             line.setMouseTransparent(false);
             line.setOnMouseClicked(new EventHandler<MouseEvent>() {
