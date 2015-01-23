@@ -113,6 +113,9 @@ public final class DirectoryManager {
     public Path getDirectory(@Nonnull Directory dir) {
         switch (dir) {
             case User:
+                if (System.getProperty("os.name").contains("Mac OS X")) {
+                    return Paths.get(System.getProperty("user.home"), "Illarion");
+                }
                 return Paths.get(System.getProperty("user.home"), ".illarion");
             case Data:
                 return getBinaryDirectory();
