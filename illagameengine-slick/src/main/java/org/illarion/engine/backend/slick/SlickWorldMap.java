@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -111,12 +111,12 @@ class SlickWorldMap implements WorldMap, WorldMapDataProviderCallback {
      * @param provider the provider that supplies the map data
      * @throws SlickEngineException in case creating the world map fails
      */
-    SlickWorldMap(@Nonnull final WorldMapDataProvider provider) throws SlickEngineException {
+    SlickWorldMap(@Nonnull WorldMapDataProvider provider) throws SlickEngineException {
         this.provider = provider;
         try {
             worldMapImage = Image.createOffscreenImage(WORLD_MAP_WIDTH, WORLD_MAP_HEIGHT);
             worldMapTexture = new SlickTexture(worldMapImage);
-        } catch (@Nonnull final SlickException e) {
+        } catch (@Nonnull SlickException e) {
             throw new SlickEngineException(e);
         }
         mapOrigin = new Location();
@@ -143,7 +143,7 @@ class SlickWorldMap implements WorldMap, WorldMapDataProviderCallback {
     }
 
     @Override
-    public void setTile(@Nonnull final Location loc, final int tileId, final int overlayId, final boolean blocked) {
+    public void setTile(@Nonnull Location loc, int tileId, int overlayId, boolean blocked) {
         if (offScreenGraphics == null) {
             throw new IllegalStateException("Callback called while no callback was requested");
         }
@@ -151,8 +151,8 @@ class SlickWorldMap implements WorldMap, WorldMapDataProviderCallback {
             return;
         }
 
-        final int texPosX = loc.getScX() - mapOrigin.getScX();
-        final int texPosY = loc.getScY() - mapOrigin.getScY();
+        int texPosX = loc.getScX() - mapOrigin.getScX();
+        int texPosY = loc.getScY() - mapOrigin.getScY();
 
         if ((texPosX < 0) || (texPosX >= WORLD_MAP_WIDTH) || (texPosY < 0) || (texPosY >= WORLD_MAP_HEIGHT)) {
             return;
@@ -161,7 +161,7 @@ class SlickWorldMap implements WorldMap, WorldMapDataProviderCallback {
         if (tileId != NO_TILE) {
             SlickGraphics.transferColor(MapColor.getColor(tileId), tempDrawingColor);
             if (overlayId != NO_TILE) {
-                final org.illarion.engine.graphic.Color mapColor = MapColor.getColor(tileId);
+                org.illarion.engine.graphic.Color mapColor = MapColor.getColor(tileId);
                 tempDrawingColor.r += mapColor.getRedf();
                 tempDrawingColor.g += mapColor.getGreenf();
                 tempDrawingColor.b += mapColor.getBluef();
@@ -178,7 +178,7 @@ class SlickWorldMap implements WorldMap, WorldMapDataProviderCallback {
     }
 
     @Override
-    public void setTileChanged(@Nonnull final Location location) {
+    public void setTileChanged(@Nonnull Location location) {
         dirtyTiles.offer(new Rectangle(location.getScX(), location.getScY(), 1, 1));
     }
 
@@ -194,7 +194,7 @@ class SlickWorldMap implements WorldMap, WorldMapDataProviderCallback {
     }
 
     @Override
-    public void setPlayerLocation(@Nonnull final Location location) {
+    public void setPlayerLocation(@Nonnull Location location) {
         playerLocation.set(location);
     }
 
@@ -205,7 +205,7 @@ class SlickWorldMap implements WorldMap, WorldMapDataProviderCallback {
     }
 
     @Override
-    public void setMapOrigin(@Nonnull final Location location) {
+    public void setMapOrigin(@Nonnull Location location) {
         mapOrigin.set(location);
         setMapChanged();
     }
@@ -217,7 +217,7 @@ class SlickWorldMap implements WorldMap, WorldMapDataProviderCallback {
     }
 
     @Override
-    public void render(@Nonnull final GameContainer container) {
+    public void render(@Nonnull GameContainer container) {
         try {
             if (clearMap) {
                 clearMap = false;
@@ -235,7 +235,7 @@ class SlickWorldMap implements WorldMap, WorldMapDataProviderCallback {
                 Rectangle dirtyArea = dirtyTiles.poll();
                 int updatedArea = 0;
                 int updateCount = 0;
-                final Location tempLocation = new Location();
+                Location tempLocation = new Location();
                 while (dirtyArea != null) {
                     updatedArea += dirtyArea.getArea();
                     updateCount++;
@@ -251,15 +251,23 @@ class SlickWorldMap implements WorldMap, WorldMapDataProviderCallback {
                     dirtyArea = dirtyTiles.poll();
                 }
 
-                LOGGER.info("Updated " + updateCount + " areas with a total of " + updatedArea + " tiles");
+                LOGGER.info("Updated {} areas with a total of {} tiles", updateCount, updatedArea);
             }
 
             if (offScreenGraphics != null) {
                 offScreenGraphics.flush();
                 offScreenGraphics = null;
             }
-        } catch (@Nonnull final SlickException e) {
+        } catch (@Nonnull SlickException e) {
             // some strange problem
+        }
+    }
+
+    @Override
+    public void dispose() {
+        try {
+            worldMapImage.destroy();
+        } catch (SlickException ignore) {
         }
     }
 }
