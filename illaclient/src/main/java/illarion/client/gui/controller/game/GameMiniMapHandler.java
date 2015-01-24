@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -100,9 +100,6 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
         this.screen = screen;
 
         miniMapPanel = screen.findElementById("miniMapPanel");
-
-        miniMapPanel.findElementById("miniMapImage").getRenderer(ImageRenderer.class)
-                .setImage(new NiftyImage(nifty.getRenderEngine(), World.getMap().getMiniMap().getMiniMap()));
     }
 
     public Pointer createTargetPointer() {
@@ -225,6 +222,9 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
     @Override
     public void onStartScreen() {
         arrowPointerBuffer.clear();
+
+        miniMapPanel.findElementById("miniMapImage").getRenderer(ImageRenderer.class)
+                .setImage(new NiftyImage(nifty.getRenderEngine(), World.getMap().getMiniMap().getMiniMap()));
     }
 
     @Override

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -84,6 +84,13 @@ public final class DirectoryManager {
                 log.error("Failed to delete old .illarion file.", e);
             }
         }
+        if (!Files.isDirectory(userDir)) {
+            try {
+                Files.createDirectories(userDir);
+            } catch (IOException e) {
+                log.error("Failed to create the .illarion directory.", e);
+            }
+        }
     }
 
     /**
@@ -106,6 +113,9 @@ public final class DirectoryManager {
     public Path getDirectory(@Nonnull Directory dir) {
         switch (dir) {
             case User:
+                if (System.getProperty("os.name").contains("Mac OS X")) {
+                    return Paths.get(System.getProperty("user.home"), "Illarion");
+                }
                 return Paths.get(System.getProperty("user.home"), ".illarion");
             case Data:
                 return getBinaryDirectory();

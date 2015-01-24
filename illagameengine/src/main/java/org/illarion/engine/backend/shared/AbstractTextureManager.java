@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -133,10 +133,9 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
                 continue;
             }
             String directoryName = rootDirectories.get(i);
-            TextureAtlasListXmlLoadingTask<T> task = new TextureAtlasListXmlLoadingTask<>(parserFactory, directoryName,
-                                                                                          this,
-                                                                                          directoryMonitors.get(i),
-                                                                                          loadingExecutor);
+            TextureAtlasListXmlLoadingTask<T> task =
+                    new TextureAtlasListXmlLoadingTask<>(parserFactory, directoryName, this,
+                            directoryMonitors.get(i), loadingExecutor);
             loadingExecutor.execute(task);
             loadingTasks.addFirst(task);
             directoriesLoaded.set(i, Boolean.TRUE);
@@ -268,11 +267,16 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
             return null;
         }
 
+        if (log.isTraceEnabled()) {
+            log.trace("Texture {} requested from directory: {}", name, rootDirectories.get(directoryIndex));
+        }
+
         String cleanName = cleanTextureName(name);
 
         // Checking if the texture is among already loaded textures.
         @Nullable Texture loadedTexture = textures.get(cleanName);
         if (loadedTexture != null) {
+            log.trace("Found texture {} among the already loaded texture.", cleanName);
             return loadedTexture;
         }
 
@@ -281,6 +285,7 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
         if (preLoadTextureData != null) {
             @Nullable Texture directTexture = loadTexture(cleanName + ".png", preLoadTextureData);
             if (directTexture != null) {
+                log.trace("Fetched texture {} by direct name.", cleanName);
                 textures.put(cleanName, directTexture);
                 return directTexture;
             }
@@ -290,6 +295,7 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
         // is not yet loaded.
         if (!directoriesLoaded.get(directoryIndex)) {
             String directoryName = rootDirectories.get(directoryIndex);
+            log.trace("Start loading directory: {}", directoryName);
             XmlPullParserFactory parserFactory;
             try {
                 parserFactory = XmlPullParserFactory.newInstance();
@@ -300,9 +306,9 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
             parserFactory.setNamespaceAware(false);
             parserFactory.setValidating(false);
 
-            TextureAtlasListXmlLoadingTask<T> task = new TextureAtlasListXmlLoadingTask<>(parserFactory, directoryName,
-                                                                                          this, directoryMonitors
-                    .get(directoryIndex), null);
+            TextureAtlasListXmlLoadingTask<T> task =
+                    new TextureAtlasListXmlLoadingTask<>(parserFactory, directoryName, this,
+                            directoryMonitors.get(directoryIndex), null);
             if (loadingTasks == null) {
                 loadingTasks = new ConcurrentLinkedDeque<>();
                 updateTasks = new ConcurrentLinkedQueue<>();
@@ -311,11 +317,18 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
             task.run();
             directoriesLoaded.set(directoryIndex, Boolean.TRUE);
 
-            while (!isLoadingDone() && !textures.containsKey(cleanName)) {
+            loadingStarted = true;
+            while (!isLoadingDone()) {
                 update();
             }
+            loadingStarted = false;
 
-            return textures.get(cleanName);
+            log.trace("Loading of directory {} is done.", directoryName);
+            Texture result = textures.get(cleanName);
+            if (result == null) {
+                log.error("Failed to load texture: {} from directory: {}", cleanName, directoryName);
+            }
+            return result;
         }
 
         return null;

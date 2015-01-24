@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -57,7 +57,7 @@ public class IgeMiniMapRenderImage implements IgeRenderImage {
      * @throws EngineException in case the creation of this image fails for any reason
      */
     public IgeMiniMapRenderImage(
-            @Nonnull final Engine engine, @Nonnull final WorldMap map, final int radius) throws EngineException {
+            @Nonnull Engine engine, @Nonnull WorldMap map, int radius) throws EngineException {
         this.map = map;
         this.radius = radius;
         effect = engine.getAssets().getEffectManager().getMiniMapEffect(map, false);
@@ -65,42 +65,42 @@ public class IgeMiniMapRenderImage implements IgeRenderImage {
 
     @Override
     public void renderImage(
-            @Nonnull final Graphics g,
-            final int x,
-            final int y,
-            final int width,
-            final int height,
-            @Nonnull final Color color,
-            final float imageScale) {
+            @Nonnull Graphics g,
+            int x,
+            int y,
+            int width,
+            int height,
+            @Nonnull Color color,
+            float imageScale) {
         renderImage(g, x, y, width, height, 0, 0, getWidth(), getHeight(), color, imageScale, radius, radius);
     }
 
     @Override
     public void renderImage(
-            @Nonnull final Graphics g,
-            final int x,
-            final int y,
-            final int w,
-            final int h,
-            final int srcX,
-            final int srcY,
-            final int srcW,
-            final int srcH,
-            @Nonnull final Color color,
-            final float scale,
-            final int centerX,
-            final int centerY) {
+            @Nonnull Graphics g,
+            int x,
+            int y,
+            int w,
+            int h,
+            int srcX,
+            int srcY,
+            int srcW,
+            int srcH,
+            @Nonnull Color color,
+            float scale,
+            int centerX,
+            int centerY) {
         setupEffect();
 
-        final Location playerLoc = map.getPlayerLocation();
-        final Location origin = map.getMapOrigin();
-        final int miniMapOriginX = playerLoc.getScX() - origin.getScX() - radius;
-        final int miniMapOriginY = playerLoc.getScY() - origin.getScY() - radius;
+        Location playerLoc = map.getPlayerLocation();
+        Location origin = map.getMapOrigin();
+        int miniMapOriginX = playerLoc.getScX() - origin.getScX() - radius;
+        int miniMapOriginY = playerLoc.getScY() - origin.getScY() - radius;
 
-        final int scaledWidth = Math.round(w * scale);
-        final int scaledHeight = Math.round(h * scale);
-        final int fixedX = (int) Math.round(x + ((w - scaledWidth) * ((double) centerX / (double) w)));
-        final int fixedY = (int) Math.round(y + ((h - scaledHeight) * ((double) centerY / (double) h)));
+        int scaledWidth = Math.round(w * scale);
+        int scaledHeight = Math.round(h * scale);
+        int fixedX = (int) Math.round(x + ((w - scaledWidth) * ((double) centerX / (double) w)));
+        int fixedY = (int) Math.round(y + ((h - scaledHeight) * ((double) centerY / (double) h)));
         g.drawTexture(map.getWorldMap(), fixedX, fixedY, scaledWidth, scaledHeight, srcX + miniMapOriginX,
                       srcY + miniMapOriginY, srcW, srcH, centerX - fixedX, centerY - fixedY, -45.f, color, effect);
     }

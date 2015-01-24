@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -41,10 +41,11 @@ public class LoginState implements GameState {
     /**
      * The logger that is used for the logging output of this class.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoginState.class);
+    private static final Logger log = LoggerFactory.getLogger(LoginState.class);
 
     @Override
     public void create(@Nonnull Game game, @Nonnull GameContainer container, @Nonnull Nifty nifty) {
+        log.trace("Creating login state.");
         loginScreenController = new LoginScreenController(game, container.getEngine());
         nifty.registerScreenController(loginScreenController, new CharScreenController(game),
                                        new CreditsStartScreenController(container.getEngine()));

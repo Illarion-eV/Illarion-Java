@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,9 @@ package illarion.download.maven;
 
 import illarion.common.util.AppIdent;
 import illarion.common.util.DirectoryManager;
+import illarion.common.util.DirectoryManager.Directory;
 import illarion.common.util.ProgressMonitor;
+import illarion.download.maven.MavenDownloaderCallback.State;
 import org.apache.maven.model.building.DefaultModelBuilderFactory;
 import org.apache.maven.model.building.ModelBuilder;
 import org.apache.maven.repository.internal.*;
@@ -37,6 +39,7 @@ import org.eclipse.aether.graph.DependencyVisitor;
 import org.eclipse.aether.impl.*;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.repository.RemoteRepository.Builder;
 import org.eclipse.aether.repository.RepositoryPolicy;
 import org.eclipse.aether.resolution.ArtifactResult;
 import org.eclipse.aether.resolution.VersionRangeRequest;
@@ -82,6 +85,9 @@ public class MavenDownloader {
     @Nonnull
     private final List<RemoteRepository> repositories;
 
+    @Nullable
+    private RemoteRepository illarionRepository;
+
     /**
      * The service locator used to link in the required services.
      */
@@ -111,12 +117,6 @@ public class MavenDownloader {
      */
     private final boolean offline;
 
-    /**
-     * The logger that takes care for the logging output of this class.
-     */
-    @Nonnull
-    private static final Logger LOGGER = LoggerFactory.getLogger(MavenDownloader.class);
-
     @Nonnull
     private final MavenRepositoryListener repositoryListener;
 
@@ -128,27 +128,21 @@ public class MavenDownloader {
      * @param attemps the indicator how many times downloading was already tried and failed.
      */
     public MavenDownloader(boolean snapshot, int attemps) {
+        log.trace("Creating Maven Downloader. Attempt number: {}", attemps);
         this.snapshot = snapshot;
 
         boolean offlineFlag = false;
-        int requestTimeOut = 180000; // 3 Minutes
+        int requestTimeOut = 60000; // 1 minute
         try {
-            InetAddress inet = InetAddress.getByName("illarion.org");
-            while (requestTimeOut > 20) {
-                if (inet.isReachable(requestTimeOut)) {
-                    requestTimeOut /= 2;
-                } else {
-                    break;
-                }
-            }
-            for (int i = 0; i < attemps; i++) {
-                requestTimeOut *= 3;
-            }
+            log.trace("Starting connection test.");
+            //noinspection UnusedDeclaration
+            InetAddress iNetAddress = InetAddress.getByName("illarion.org");
         } catch (IOException e) {
-            LOGGER.warn("No internet connection. Activating offline mode.");
+            log.warn("No internet connection. Activating offline mode.");
             offlineFlag = true;
         }
         offline = offlineFlag;
+        log.debug("Setting offline flag: {}", offlineFlag);
 
         serviceLocator = new DefaultServiceLocator();
         setupServiceLocator();
@@ -162,12 +156,10 @@ public class MavenDownloader {
         session.setRepositoryListener(repositoryListener);
         session.setConfigProperty(ConfigurationProperties.USER_AGENT, APPLICATION.getApplicationIdentifier());
         session.setConfigProperty(ConfigurationProperties.REQUEST_TIMEOUT, requestTimeOut);
+        session.setUpdatePolicy(UPDATE_POLICY_ALWAYS);
+        session.setChecksumPolicy(CHECKSUM_POLICY_FAIL);
 
-        if (requestTimeOut > 30000) {
-            LOGGER.warn("Used request timeout level is very high: {}ms", requestTimeOut);
-        } else {
-            LOGGER.info("Used request timeout: {}ms", requestTimeOut);
-        }
+        log.info("Used request timeout: {}ms", requestTimeOut);
 
         repositories = new ArrayList<>();
         setupRepositories();
@@ -188,46 +180,16 @@ public class MavenDownloader {
         Artifact artifact = new DefaultArtifact(groupId, artifactId, "jar", "[1,]");
         try {
             if (callback != null) {
-                callback.reportNewState(MavenDownloaderCallback.State.SearchingNewVersion, null, offline, null);
+                callback.reportNewState(State.SearchingNewVersion, null, offline, null);
             }
-            VersionRangeResult result = system
-                    .resolveVersionRange(session, new VersionRangeRequest(artifact, repositories, RUNTIME));
-            NavigableSet<String> versions = new TreeSet<>(new Comparator<String>() {
-                @Override
-                public int compare(@Nonnull String o1, @Nonnull String o2) {
-                    String[] versionParts1 = o1.split("[.-]");
-                    String[] versionParts2 = o2.split("[.-]");
-
-                    int count = Math.min(versionParts1.length, versionParts2.length);
-                    for (int i = 0; i < count; i++) {
-                        int cmpResult = compareEntry(versionParts1[i], versionParts2[i]);
-                        if (cmpResult != 0) {
-                            return cmpResult;
-                        }
-                    }
-
-                    return Integer.compare(versionParts1.length, versionParts2.length);
-                }
-
-                public int compareEntry(@Nonnull String e1, @Nonnull String e2) {
-                    if ("SNAPSHOT".equals(e1)) {
-                        if ("SNAPSHOT".equals(e2)) {
-                            return 0;
-                        }
-                        return -1;
-                    } else if ("SNAPSHOT".equals(e2)) {
-                        return 1;
-                    }
-                    try {
-                        int version1 = Integer.parseInt(e1);
-                        int version2 = Integer.parseInt(e2);
-                        return Integer.compare(version1, version2);
-                    } catch (NumberFormatException e) {
-                        // illegal formatted number
-                    }
-                    return e1.compareTo(e2);
-                }
-            });
+            VersionRangeRequest request = new VersionRangeRequest();
+            request.setArtifact(artifact);
+            if (!offline) {
+                request.setRepositories(Collections.singletonList(illarionRepository));
+            }
+            request.setRequestContext(RUNTIME);
+            VersionRangeResult result = system.resolveVersionRange(session, request);
+            NavigableSet<String> versions = new TreeSet<>(new MavenVersionComparator());
             for (Version version : result.getVersions()) {
                 if (snapshot || !version.toString().contains("SNAPSHOT")) {
                     log.info("Found {}:{}:jar:{}", groupId, artifactId, version);
@@ -256,37 +218,31 @@ public class MavenDownloader {
 
         DependencyFilter filter = DependencyFilterUtils.classpathFilter(RUNTIME, COMPILE);
 
-        CollectRequest collectRequest = new CollectRequest();
-        collectRequest.setRoot(dependency);
-        collectRequest.setRepositories(repositories);
-
         try {
+            CollectRequest collectRequest = new CollectRequest();
+            collectRequest.setRoot(dependency);
+            if (!offline) {
+                collectRequest.setRepositories(repositories);
+            }
             CollectResult collectResult = system.collectDependencies(session, collectRequest);
 
             final ProgressMonitor progressMonitor = new ProgressMonitor();
 
-            ArtifactRequestBuilder builder = new ArtifactRequestBuilder(null, system, session,
-                                                                        new ArtifactRequestTracer() {
-                                                                            @Override
-                                                                            public void trace(
-                                                                                    @Nonnull ProgressMonitor monitor,
-                                                                                    @Nonnull String artifact,
-                                                                                    long totalSize,
-                                                                                    long transferred) {
-                                                                                if (totalSize >= 0) {
-                                                                                    monitor.setProgress(transferred /
-                                                                                                                (float) totalSize);
-                                                                                }
-                                                                                if (callback != null) {
-                                                                                    callback.reportNewState(
-                                                                                            ResolvingArtifacts,
-                                                                                            progressMonitor, offline,
-                                                                                            humanReadableByteCount(
-                                                                                                    transferred, true) +
-                                                                                                    ' ' + artifact);
-                                                                                }
-                                                                            }
-                                                                        });
+            ArtifactRequestTracer tracer = new ArtifactRequestTracer() {
+                @Override
+                public void trace(@Nonnull ProgressMonitor monitor, @Nonnull String artifact,
+                                  long totalSize, long transferred) {
+                    if (totalSize >= 0) {
+                        monitor.setProgress(transferred / (float) totalSize);
+                    }
+                    if (callback != null) {
+                        callback.reportNewState(ResolvingArtifacts, progressMonitor, offline,
+                                humanReadableByteCount(transferred, true) + ' ' + artifact);
+                    }
+                }
+            };
+
+            ArtifactRequestBuilder builder = new ArtifactRequestBuilder(null, system, session, tracer);
             DependencyVisitor visitor = new FilteringDependencyVisitor(builder, filter);
             visitor = new TreeDependencyVisitor(visitor);
             collectResult.getRoot().accept(visitor);
@@ -306,7 +262,7 @@ public class MavenDownloader {
             List<Future<ArtifactResult>> results = executorService.invokeAll(requests);
             executorService.shutdown();
             while (!executorService.awaitTermination(1, TimeUnit.MINUTES)) {
-                LOGGER.info("Downloading is not done yet.");
+                log.info("Downloading is not done yet.");
             }
 
             List<File> result = new ArrayList<>();
@@ -346,19 +302,21 @@ public class MavenDownloader {
         if (!offline) {
             repositories.add(setupRepository("central", "http://repo1.maven.org/maven2/", false,
                                              setupRepository("ibiblio.org", "http://mirrors.ibiblio.org/maven2/",
-                                                             false), setupRepository("antelink",
-                                                                                     "http://maven.antelink.com/content/repositories/central/",
-                                                                                     false),
+                                                     false),
+                    setupRepository("antelink",
+                            "http://maven.antelink.com/content/repositories/central/", false),
                                              setupRepository("exist", "http://repo.exist.com/maven2/", false),
                                              setupRepository("ibiblio.net",
                                                              "http://www.ibiblio.net/pub/packages/maven2/", false),
                                              setupRepository("central-uk", "http://uk.maven.org/maven2/", false)));
-            repositories.add(setupRepository("illarion", "http://illarion.org/media/java/maven", snapshot));
+
+            illarionRepository = setupRepository("illarion", "http://illarion.org/media/java/maven", snapshot);
+            repositories.add(illarionRepository);
             repositories.add(setupRepository("oss-sonatype", "http://oss.sonatype.org/content/repositories/releases/",
                                              false));
         }
 
-        Path localDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.Data);
+        Path localDir = DirectoryManager.getInstance().getDirectory(Directory.Data);
         LocalRepository localRepo = new LocalRepository(localDir.toFile());
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
     }
@@ -366,7 +324,7 @@ public class MavenDownloader {
     @Nonnull
     private static RemoteRepository setupRepository(
             @Nonnull String id, @Nonnull String url, boolean enableSnapshots, @Nonnull RemoteRepository... mirrors) {
-        RemoteRepository.Builder repo = new RemoteRepository.Builder(id, "default", url);
+        Builder repo = new Builder(id, "default", url);
         if (enableSnapshots) {
             repo.setSnapshotPolicy(new RepositoryPolicy(true, UPDATE_POLICY_ALWAYS, CHECKSUM_POLICY_FAIL));
         } else {
@@ -395,4 +353,5 @@ public class MavenDownloader {
 
         serviceLocator.setServices(ModelBuilder.class, new DefaultModelBuilderFactory().newInstance());
     }
+
 }

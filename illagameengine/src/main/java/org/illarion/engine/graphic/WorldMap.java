@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,6 +16,7 @@
 package org.illarion.engine.graphic;
 
 import illarion.common.types.Location;
+import org.illarion.engine.Disposable;
 import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
@@ -25,7 +26,7 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface WorldMap {
+public interface WorldMap extends Disposable {
     /**
      * This constant is used to define that a specific tile is empty.
      */

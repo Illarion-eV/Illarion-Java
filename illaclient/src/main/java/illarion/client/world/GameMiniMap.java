@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,6 +20,7 @@ import illarion.client.resources.TileFactory;
 import illarion.client.util.GlobalExecutorService;
 import illarion.common.graphics.TileInfo;
 import illarion.common.types.Location;
+import illarion.common.util.Stoppable;
 import org.illarion.engine.Engine;
 import org.illarion.engine.EngineException;
 import org.illarion.engine.GameContainer;
@@ -57,7 +58,7 @@ import java.util.zip.GZIPOutputStream;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @NotThreadSafe
-public final class GameMiniMap implements WorldMapDataProvider {
+public final class GameMiniMap implements WorldMapDataProvider, Stoppable {
     /**
      * The height of the world map in tiles.
      */
@@ -135,7 +136,7 @@ public final class GameMiniMap implements WorldMapDataProvider {
     /**
      * Constructor of the game map that sets up all instance variables.
      */
-    public GameMiniMap(@Nonnull final Engine engine) throws EngineException {
+    public GameMiniMap(@Nonnull Engine engine) throws EngineException {
         worldMap = engine.getAssets().createWorldMap(this);
         miniMapImage = new IgeMiniMapRenderImage(engine, worldMap, MINI_RADIUS);
 
@@ -146,8 +147,8 @@ public final class GameMiniMap implements WorldMapDataProvider {
 
     @Nonnull
     private static ByteBuffer createMapBuffer() {
-        final int size = WorldMap.WORLD_MAP_WIDTH * WorldMap.WORLD_MAP_HEIGHT * BYTES_PER_TILE;
-        final ByteBuffer buffer = ByteBuffer.allocate(size);
+        int size = WorldMap.WORLD_MAP_WIDTH * WorldMap.WORLD_MAP_HEIGHT * BYTES_PER_TILE;
+        ByteBuffer buffer = ByteBuffer.allocate(size);
         buffer.order(ByteOrder.nativeOrder());
         return buffer;
     }
@@ -179,7 +180,7 @@ public final class GameMiniMap implements WorldMapDataProvider {
      * @see #getMapOrigin()
      */
     @Nonnull
-    public Location getMapOrigin(@Nonnull final Location loc) {
+    public Location getMapOrigin(@Nonnull Location loc) {
         loc.set(mapOrigin);
         return loc;
     }
@@ -229,7 +230,7 @@ public final class GameMiniMap implements WorldMapDataProvider {
     /**
      * Update the world map texture.
      */
-    public void render(@Nonnull final GameContainer container) {
+    public void render(@Nonnull GameContainer container) {
         worldMap.render(container);
     }
 
@@ -241,13 +242,13 @@ public final class GameMiniMap implements WorldMapDataProvider {
      * @return the index of the location in the map data buffer
      * @throws IllegalArgumentException in case either x or y is out of the local range
      */
-    private int encodeLocation(final int x, final int y) {
-        final int mapOriginY = getMapOriginY();
+    private int encodeLocation(int x, int y) {
+        int mapOriginY = getMapOriginY();
         if ((y < mapOriginY) || (y >= (mapOriginY + WORLDMAP_HEIGHT))) {
             throw new IllegalArgumentException("y out of range");
         }
 
-        final int mapOriginX = getMapOriginX();
+        int mapOriginX = getMapOriginX();
         if ((x < mapOriginX) || (x >= (mapOriginX + WORLDMAP_WIDTH))) {
             throw new IllegalArgumentException("x out of range");
         }
@@ -263,18 +264,18 @@ public final class GameMiniMap implements WorldMapDataProvider {
      * @param z the z coordinate
      * @return {@code true} in case both coordinates are inside the legal range for the currently load maps.
      */
-    private boolean isLocationOnMap(final int x, final int y, final int z) {
-        final int mapOriginZ = getMapLevel();
+    private boolean isLocationOnMap(int x, int y, int z) {
+        int mapOriginZ = getMapLevel();
         if ((z < (mapOriginZ - 2)) || (z > (mapOriginZ + 2))) {
             return false;
         }
 
-        final int mapOriginY = getMapOriginY();
+        int mapOriginY = getMapOriginY();
         if ((y < mapOriginY) || (y >= (mapOriginY + WORLDMAP_HEIGHT))) {
             return false;
         }
 
-        final int mapOriginX = getMapOriginX();
+        int mapOriginX = getMapOriginX();
         return !((x < mapOriginX) || (x >= (mapOriginX + WORLDMAP_WIDTH)));
     }
 
@@ -284,7 +285,7 @@ public final class GameMiniMap implements WorldMapDataProvider {
      * @param loc the location
      * @return {@code true} in case both coordinates are inside the legal range for the currently load maps.
      */
-    private boolean isLocationOnMap(@Nonnull final Location loc) {
+    private boolean isLocationOnMap(@Nonnull Location loc) {
         return isLocationOnMap(loc.getScX(), loc.getScY(), loc.getScZ());
     }
 
@@ -294,8 +295,8 @@ public final class GameMiniMap implements WorldMapDataProvider {
      *
      * @param origin the origin location of the map.
      */
-    private void weakenMapDataStorage(@Nonnull final Location origin) {
-        final ByteBuffer mapData = getMapDataStorage(origin);
+    private void weakenMapDataStorage(@Nonnull Location origin) {
+        ByteBuffer mapData = getMapDataStorage(origin);
         if (mapData == null) {
             mapDataStorage.remove(origin);
         } else {
@@ -310,12 +311,12 @@ public final class GameMiniMap implements WorldMapDataProvider {
      * @return the map data or {@code null} in case the data for this map is not load
      */
     @Nullable
-    private ByteBuffer getMapDataStorage(@Nonnull final Location mapOrigin) {
-        @Nullable final Reference<ByteBuffer> mapDataRef = mapDataStorage.get(mapOrigin);
+    private ByteBuffer getMapDataStorage(@Nonnull Location mapOrigin) {
+        @Nullable Reference<ByteBuffer> mapDataRef = mapDataStorage.get(mapOrigin);
         if (mapDataRef == null) {
             return null;
         }
-        @Nullable final ByteBuffer mapData = mapDataRef.get();
+        @Nullable ByteBuffer mapData = mapDataRef.get();
         return mapData;
     }
 
@@ -326,10 +327,10 @@ public final class GameMiniMap implements WorldMapDataProvider {
      * @return the list that contains the five origin locations
      */
     @Nonnull
-    private static List<Location> getOriginsList(@Nonnull final Location origin) {
-        final List<Location> list = new ArrayList<>(5);
+    private static List<Location> getOriginsList(@Nonnull Location origin) {
+        List<Location> list = new ArrayList<>(5);
         for (int i = -2; i <= 2; i++) {
-            final Location loc = new Location();
+            Location loc = new Location();
             loc.setSC(origin.getScX(), origin.getScY(), origin.getScZ() + i);
             list.add(loc);
         }
@@ -342,7 +343,7 @@ public final class GameMiniMap implements WorldMapDataProvider {
      * @param newOrigin the new origin
      * @return {@code true} in case the origin has changed and updates are required
      */
-    public boolean hasOriginChanged(@Nonnull final Location newOrigin) {
+    public boolean hasOriginChanged(@Nonnull Location newOrigin) {
         return !(newOrigin.equals(mapOrigin) && firstTimeSet);
     }
 
@@ -351,16 +352,16 @@ public final class GameMiniMap implements WorldMapDataProvider {
      *
      * @param newOrigin the new origin that should be applied
      */
-    private void changeOrigin(@Nonnull final Location newOrigin) {
+    private void changeOrigin(@Nonnull Location newOrigin) {
         if (!hasOriginChanged(newOrigin)) {
             return;
         }
-        final Location oldOrigin = new Location(mapOrigin);
+        Location oldOrigin = new Location(mapOrigin);
         mapOrigin.set(newOrigin);
 
         if (!firstTimeSet) {
-            final List<Location> loadList = getOriginsList(newOrigin);
-            for (@Nonnull final Location loc : loadList) {
+            List<Location> loadList = getOriginsList(newOrigin);
+            for (@Nonnull Location loc : loadList) {
                 strengthenOrLoadMap(loc);
             }
             firstTimeSet = true;
@@ -368,19 +369,19 @@ public final class GameMiniMap implements WorldMapDataProvider {
         }
 
         /* Find out what origins turn in active and what new ones get active. */
-        final List<Location> oldActive = getOriginsList(oldOrigin);
-        final List<Location> newActive = getOriginsList(newOrigin);
+        List<Location> oldActive = getOriginsList(oldOrigin);
+        List<Location> newActive = getOriginsList(newOrigin);
 
-        @Nonnull final Iterator<Location> oldActiveItr = oldActive.iterator();
+        @Nonnull Iterator<Location> oldActiveItr = oldActive.iterator();
         while (oldActiveItr.hasNext()) {
-            final Location checkedOrigin = oldActiveItr.next();
+            Location checkedOrigin = oldActiveItr.next();
             if (newActive.contains(checkedOrigin)) {
                 newActive.remove(checkedOrigin);
                 oldActiveItr.remove();
             }
         }
 
-        final Collection<Callable<Void>> updateList = new ArrayList<>();
+        Collection<Callable<Void>> updateList = new ArrayList<>();
 
         /* Save all the old data to the file system and weaken the storage of each map. */
         for (@Nonnull final Location loc : oldActive) {
@@ -412,7 +413,7 @@ public final class GameMiniMap implements WorldMapDataProvider {
             executionInProgress = false;
             try {
                 GlobalExecutorService.getService().invokeAll(updateList);
-            } catch (@Nonnull final InterruptedException ignored) {
+            } catch (@Nonnull InterruptedException ignored) {
                 executionInProgress = true;
             }
         }
@@ -434,27 +435,27 @@ public final class GameMiniMap implements WorldMapDataProvider {
     private static final int MASK_BLOCKED = 0x400;
 
     @Override
-    public void requestTile(@Nonnull final Location location, @Nonnull final WorldMapDataProviderCallback callback) {
+    public void requestTile(@Nonnull Location location, @Nonnull WorldMapDataProviderCallback callback) {
         if ((location.getScZ() != getMapLevel()) || !isLocationOnMap(location)) {
             callback.setTile(location, WorldMap.NO_TILE, WorldMap.NO_TILE, false);
             return;
         }
-        final ByteBuffer mapData = getMapDataStorage(mapOrigin);
+        ByteBuffer mapData = getMapDataStorage(mapOrigin);
         if (mapData == null) {
             callback.setTile(location, WorldMap.NO_TILE, WorldMap.NO_TILE, false);
             return;
         }
-        final int tileData = mapData.getShort(encodeLocation(location));
+        int tileData = mapData.getShort(encodeLocation(location));
 
         if (tileData == 0) {
             callback.setTile(location, WorldMap.NO_TILE, WorldMap.NO_TILE, false);
         } else {
-            final int tileId = tileData & MASK_TILE_ID;
-            final int overlayId = tileData & MASK_OVERLAY_ID;
-            final boolean blocked = (tileData & MASK_BLOCKED) > 0;
+            int tileId = tileData & MASK_TILE_ID;
+            int overlayId = tileData & MASK_OVERLAY_ID;
+            boolean blocked = (tileData & MASK_BLOCKED) > 0;
 
-            final int tileMapColor;
-            final int overlayMapColor;
+            int tileMapColor;
+            int overlayMapColor;
             if (TileFactory.getInstance().hasTemplate(tileId)) {
                 tileMapColor = TileFactory.getInstance().getTemplate(tileId).getTileInfo().getMapColor();
                 if (TileFactory.getInstance().hasTemplate(overlayId)) {
@@ -472,17 +473,17 @@ public final class GameMiniMap implements WorldMapDataProvider {
     }
 
     @Nonnull
-    private static Location getOriginLocation(@Nonnull final Location playerLoc) {
-        final int newMapLevel = playerLoc.getScZ();
+    private static Location getOriginLocation(@Nonnull Location playerLoc) {
+        int newMapLevel = playerLoc.getScZ();
 
-        final int newMapOriginX;
+        int newMapOriginX;
         if (playerLoc.getScX() >= 0) {
             newMapOriginX = (playerLoc.getScX() / WORLDMAP_WIDTH) * WORLDMAP_WIDTH;
         } else {
             newMapOriginX = ((playerLoc.getScX() / WORLDMAP_WIDTH) * WORLDMAP_WIDTH) - WORLDMAP_WIDTH;
         }
 
-        final int newMapOriginY;
+        int newMapOriginY;
         if (playerLoc.getScY() >= 0) {
             newMapOriginY = (playerLoc.getScY() / WORLDMAP_HEIGHT) * WORLDMAP_HEIGHT;
         } else {
@@ -497,8 +498,8 @@ public final class GameMiniMap implements WorldMapDataProvider {
      *
      * @param playerLoc the location of the player
      */
-    public void setPlayerLocation(@Nonnull final Location playerLoc) {
-        @Nonnull final Location newOrigin = getOriginLocation(playerLoc);
+    public void setPlayerLocation(@Nonnull Location playerLoc) {
+        @Nonnull Location newOrigin = getOriginLocation(playerLoc);
         if (hasOriginChanged(newOrigin)) {
             changeOrigin(newOrigin);
             worldMap.setMapOrigin(newOrigin);
@@ -510,8 +511,8 @@ public final class GameMiniMap implements WorldMapDataProvider {
      * Save all maps that are currently load to the hard disk.
      */
     public void saveAllMaps() {
-        final List<Location> origins = getOriginsList(mapOrigin);
-        for (@Nonnull final Location loc : origins) {
+        List<Location> origins = getOriginsList(mapOrigin);
+        for (@Nonnull Location loc : origins) {
             saveMap(loc);
         }
     }
@@ -520,17 +521,17 @@ public final class GameMiniMap implements WorldMapDataProvider {
      * Save the current map to its file.
      */
     @SuppressWarnings("nls")
-    private void saveMap(@Nonnull final Location origin) {
-        @Nullable final Reference<ByteBuffer> mapDataRef = mapDataStorage.get(origin);
+    private void saveMap(@Nonnull Location origin) {
+        @Nullable Reference<ByteBuffer> mapDataRef = mapDataStorage.get(origin);
         if (mapDataRef == null) {
             return;
         }
-        @Nullable final ByteBuffer mapData = mapDataRef.get();
+        @Nullable ByteBuffer mapData = mapDataRef.get();
         if (mapData == null) {
             return;
         }
 
-        final Path mapFile = getMapFilename(origin);
+        Path mapFile = getMapFilename(origin);
         if (Files.exists(mapFile) && !Files.isWritable(mapFile)) {
             LOGGER.error("The map file is not accessible. Can't write anything.");
             return;
@@ -546,9 +547,9 @@ public final class GameMiniMap implements WorldMapDataProvider {
                     toWrite -= outChannel.write(mapData);
                 }
             }
-        } catch (@Nonnull final FileNotFoundException e) {
+        } catch (@Nonnull FileNotFoundException e) {
             LOGGER.error("Target file not found", e);
-        } catch (@Nonnull final IOException e) {
+        } catch (@Nonnull IOException e) {
             LOGGER.error("Error while writing minimap file", e);
         }
     }
@@ -562,8 +563,8 @@ public final class GameMiniMap implements WorldMapDataProvider {
      */
     @SuppressWarnings("nls")
     @Nonnull
-    private static Path getMapFilename(@Nonnull final Location mapOrigin) {
-        final StringBuilder builder = new StringBuilder();
+    private static Path getMapFilename(@Nonnull Location mapOrigin) {
+        StringBuilder builder = new StringBuilder();
         builder.setLength(0);
         builder.append("map");
         builder.append(mapOrigin.getScX() / WORLDMAP_WIDTH);
@@ -579,16 +580,16 @@ public final class GameMiniMap implements WorldMapDataProvider {
      *
      * @param mapOrigin the origin of the map
      */
-    private void strengthenOrLoadMap(@Nonnull final Location mapOrigin) {
+    private void strengthenOrLoadMap(@Nonnull Location mapOrigin) {
         /* First check if the map is still around. */
-        final ByteBuffer existingMapData = getMapDataStorage(mapOrigin);
+        ByteBuffer existingMapData = getMapDataStorage(mapOrigin);
         if (existingMapData != null) {
             strongMapDataStorage.add(existingMapData);
             return;
         }
 
-        @Nonnull final ByteBuffer mapData = createMapBuffer();
-        final Path mapFile = getMapFilename(mapOrigin);
+        @Nonnull ByteBuffer mapData = createMapBuffer();
+        Path mapFile = getMapFilename(mapOrigin);
 
         mapDataStorage.put(mapOrigin, new SoftReference<>(mapData));
         strongMapDataStorage.add(mapData);
@@ -610,7 +611,7 @@ public final class GameMiniMap implements WorldMapDataProvider {
             }
 
             performFullUpdate();
-        } catch (@Nonnull final IOException e) {
+        } catch (@Nonnull IOException e) {
             LOGGER.error("Failed loading the map data from its file.", e);
             //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (mapData) {
@@ -639,8 +640,8 @@ public final class GameMiniMap implements WorldMapDataProvider {
      *
      * @param updateData the data that is needed for the update
      */
-    public void update(@Nonnull final TileUpdate updateData) {
-        final Location tileLoc = updateData.getLocation();
+    public void update(@Nonnull TileUpdate updateData) {
+        Location tileLoc = updateData.getLocation();
 
         if (isLocationOnMap(tileLoc)) {
             if (saveTile(tileLoc, updateData.getTileId(), updateData.isBlocked())) {
@@ -659,11 +660,11 @@ public final class GameMiniMap implements WorldMapDataProvider {
      * this way
      */
     @SuppressWarnings("BooleanMethodNameMustStartWithQuestion")
-    private boolean saveTile(@Nonnull final Location loc, final int tileID, final boolean blocked) {
-        final int index = encodeLocation(loc);
+    private boolean saveTile(@Nonnull Location loc, int tileID, boolean blocked) {
+        int index = encodeLocation(loc);
 
-        final Location origin = getOriginLocation(loc);
-        final ByteBuffer mapData = getMapDataStorage(origin);
+        Location origin = getOriginLocation(loc);
+        ByteBuffer mapData = getMapDataStorage(origin);
         if (mapData == null) {
             return false;
         }
@@ -701,7 +702,12 @@ public final class GameMiniMap implements WorldMapDataProvider {
      * @param loc the server location that shall be encoded
      * @return the index of the location in the map data buffer
      */
-    private int encodeLocation(@Nonnull final Location loc) {
+    private int encodeLocation(@Nonnull Location loc) {
         return encodeLocation(loc.getScX(), loc.getScY());
+    }
+
+    @Override
+    public void saveShutdown() {
+        worldMap.dispose();
     }
 }
