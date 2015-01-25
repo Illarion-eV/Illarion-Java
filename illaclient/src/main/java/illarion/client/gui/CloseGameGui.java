@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,5 +19,8 @@ package illarion.client.gui;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface CloseGameGui {
+    boolean isClosingDialogShown();
+
+    void hideClosingDialog();
     void showClosingDialog();
 }

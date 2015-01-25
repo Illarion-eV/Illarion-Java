@@ -19,9 +19,10 @@ import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.builder.EffectBuilder;
-import de.lessvoid.nifty.builder.ElementBuilder;
+import de.lessvoid.nifty.builder.ElementBuilder.Align;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.controls.ScrollPanel;
+import de.lessvoid.nifty.controls.ScrollPanel.AutoScroll;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
 import de.lessvoid.nifty.elements.Element;
@@ -39,7 +40,7 @@ import illarion.client.graphics.FontLoader;
 import illarion.client.gui.ChatGui;
 import illarion.client.net.client.IntroduceCmd;
 import illarion.client.net.client.SayCmd;
-import illarion.client.util.ChatHandler;
+import illarion.client.util.ChatHandler.SpeechMode;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.Char;
 import illarion.client.world.World;
@@ -55,6 +56,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -93,6 +95,11 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
                 }
             }
         });
+    }
+
+    @Override
+    public boolean isChatBoxActive() {
+        return (chatMsg != null) && chatMsg.hasFocus();
     }
 
     /**
@@ -312,8 +319,8 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         chatScroll.getParent().getParent().getParent().layoutElements();
         ScrollPanel scrollPanel = chatScroll.getNiftyControl(ScrollPanel.class);
         if (scrollPanel != null) {
-            scrollPanel.setAutoScroll(ScrollPanel.AutoScroll.BOTTOM);
-            scrollPanel.setAutoScroll(ScrollPanel.AutoScroll.OFF);
+            scrollPanel.setAutoScroll(AutoScroll.BOTTOM);
+            scrollPanel.setAutoScroll(AutoScroll.OFF);
         }
     }
 
@@ -371,30 +378,30 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
 
         Matcher shoutMatcher = shoutPattern.matcher(text);
         if (shoutMatcher.find()) {
-            cleanAndSendText("", shoutMatcher.group(2), ChatHandler.SpeechMode.Shout);
+            cleanAndSendText("", shoutMatcher.group(2), SpeechMode.Shout);
             return;
         }
 
         Matcher whisperMatcher = whisperPattern.matcher(text);
         if (whisperMatcher.find()) {
-            cleanAndSendText("", whisperMatcher.group(2), ChatHandler.SpeechMode.Whisper);
+            cleanAndSendText("", whisperMatcher.group(2), SpeechMode.Whisper);
             return;
         }
 
         Matcher emoteMatcher = emotePattern.matcher(text);
         if (emoteMatcher.find()) {
             String cleanMe = REPEATED_SPACE_PATTERN.matcher(emoteMatcher.group(1)).replaceAll(" ").toLowerCase();
-            cleanAndSendText('#' + cleanMe, emoteMatcher.group(2), ChatHandler.SpeechMode.Normal);
+            cleanAndSendText('#' + cleanMe, emoteMatcher.group(2), SpeechMode.Normal);
             return;
         }
 
         Matcher oocMatcher = oocPattern.matcher(text);
         if (oocMatcher.find()) {
-            cleanAndSendText("#o ", oocMatcher.group(2), ChatHandler.SpeechMode.Whisper);
+            cleanAndSendText("#o ", oocMatcher.group(2), SpeechMode.Whisper);
             return;
         }
 
-        cleanAndSendText("", text, ChatHandler.SpeechMode.Normal);
+        cleanAndSendText("", text, SpeechMode.Normal);
     }
 
     /**
@@ -405,7 +412,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
      * @param mode the speech mode used to send the command
      */
     private static void cleanAndSendText(
-            String prefix, @Nonnull String text, @Nonnull ChatHandler.SpeechMode mode) {
+            String prefix, @Nonnull String text, @Nonnull SpeechMode mode) {
         String cleanText = REPEATED_SPACE_PATTERN.matcher(text.trim()).replaceAll(" ");
         if (cleanText.isEmpty()) {
             return;
@@ -498,8 +505,8 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
 
         contentPane.setConstraintHeight(SizeValue.def());
         chatLog.getElement().layoutElements();
-        chatLog.setAutoScroll(ScrollPanel.AutoScroll.BOTTOM);
-        chatLog.setAutoScroll(ScrollPanel.AutoScroll.OFF);
+        chatLog.setAutoScroll(AutoScroll.BOTTOM);
+        chatLog.setAutoScroll(AutoScroll.OFF);
     }
 
     private void updateChatBubbleLocations() {
@@ -508,7 +515,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         }
 
         boolean layoutRequired = false;
-        for (Map.Entry<Char, Element> charBubbleEntry : activeBubbles.entrySet()) {
+        for (Entry<Char, Element> charBubbleEntry : activeBubbles.entrySet()) {
             if (updateChatBubbleLocation(charBubbleEntry.getKey(), charBubbleEntry.getValue())) {
                 layoutRequired = true;
             }
@@ -537,7 +544,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         label.font("chatFont");
         label.text(text);
         label.color(color);
-        label.textHAlign(ElementBuilder.Align.Left);
+        label.textHAlign(Align.Left);
         label.wrap(true);
         label.width(contentPane.getConstraintWidth().toString());
         label.build(nifty, screen, contentPane);

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -85,4 +85,11 @@ public interface ChatGui {
      * @param color the color of the message
      */
     void showChatBubble(@Nullable Char character, @Nonnull String message, @Nonnull Color color);
+
+    /**
+     * Check if the chat box is currently activated.
+     *
+     * @return {@code true} in case the chat box is currently active
+     */
+    boolean isChatBoxActive();
 }
