@@ -55,6 +55,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -444,6 +445,12 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     @SuppressWarnings("nls")
     private static void initLogfiles() throws IOException {
         Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        if (!Files.isDirectory(userDir)) {
+            if (Files.exists(userDir)) {
+                Files.delete(userDir);
+            }
+            Files.createDirectories(userDir);
+        }
         System.setProperty("log_dir", userDir.toAbsolutePath().toString());
 
         //Reload:
