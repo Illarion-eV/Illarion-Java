@@ -2,7 +2,7 @@
 <!--
   ~ This file is part of the Illarion project.
   ~
-  ~ Copyright © 2014 - Illarion e.V.
+  ~ Copyright © 2015 - Illarion e.V.
   ~
   ~ Illarion is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU Affero General Public License as published by
@@ -15,9 +15,6 @@
   ~ GNU General Public License for more details.
   -->
 <nifty-styles>
-    <!-- The Tabs require the Nifty-Panel to be displayed properly. -->
-    <useStyles filename="panel/nifty-panel.xml"/>
-
     <!-- This style is applied to the panel that holds the content of each tab. -->
     <style id="nifty-tabs#panel">
         <attributes width="100%" padding="8px,16px,24px,16px" backgroundImage="gui/tabs/tab_area.png"

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -44,7 +44,7 @@ final class Util {
     public static void loadXML(@Nonnull Nifty nifty, @Nonnull String xmlFile) {
         try {
             nifty.validateXml(xmlFile);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             LOGGER.error("Validation of the XML file \"{}\" failed.", xmlFile, e);
         }
         nifty.addXml(xmlFile);
