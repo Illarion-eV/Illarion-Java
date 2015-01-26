@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -447,7 +447,7 @@ public final class Player {
      * @param chara The character that is checked
      * @return the visibility of the character in percent
      */
-    public int canSee(@Nonnull Char chara) {
+    public float canSee(@Nonnull Char chara) {
         if (isPlayer(chara.getCharId())) {
             return Char.VISIBILITY_MAX;
         }
