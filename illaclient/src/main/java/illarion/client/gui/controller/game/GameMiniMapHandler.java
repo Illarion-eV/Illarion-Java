@@ -146,7 +146,7 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
     }
 
     @Override
-    public void releasePointer(@Nonnull Pointer pointer) {
+    public void releasePointer(@Nullable Pointer pointer) {
         if (pointer instanceof MiniMapArrowPointer) {
             final MiniMapArrowPointer arrowPointer = (MiniMapArrowPointer) pointer;
 
