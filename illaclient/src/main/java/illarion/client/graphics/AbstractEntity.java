@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -766,8 +766,10 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
      * @param delta the time in milliseconds since the last update
      */
     protected final void updateAlpha(int delta) {
-        if (getAlpha() != getTargetAlpha()) {
-            setAlpha(AnimationUtility.translate(getAlpha(), getTargetAlpha(), FADING_SPEED, 0, 255, delta));
+        int currentAlpha = getAlpha();
+        int targetAlpha = getTargetAlpha();
+        if (currentAlpha != targetAlpha) {
+            setAlpha(AnimationUtility.translate(currentAlpha, targetAlpha, FADING_SPEED, 0, 255, delta));
         }
     }
 

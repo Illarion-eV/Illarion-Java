@@ -19,6 +19,7 @@ import illarion.common.net.NetCommReader;
 import illarion.common.util.FastMath;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
@@ -359,5 +360,23 @@ public class Color {
         green = FastMath.clamp(green, 0, MAX_INT_VALUE);
         blue = FastMath.clamp(blue, 0, MAX_INT_VALUE);
         alpha = FastMath.clamp(alpha, 0, MAX_INT_VALUE);
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        return (obj instanceof Color) && equals((Color) obj);
+    }
+
+    public boolean equals(@Nonnull Color color) {
+        return (red == color.red) && (green == color.green) && (blue == color.blue) && (alpha == color.alpha);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = alpha;
+        result = (31 * result) + blue;
+        result = (31 * result) + green;
+        result = (31 * result) + red;
+        return result;
     }
 }

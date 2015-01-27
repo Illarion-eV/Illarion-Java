@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -626,7 +626,9 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
             return;
         }
 
-        clothRender.setAlpha(getAlpha());
+        int usedAlpha = getAlpha();
+
+        clothRender.setAlpha(usedAlpha);
         clothRender.update(container, delta);
 
         Color locLight = getLight();
@@ -634,6 +636,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
             targetLight = locLight;
             animateLight = false;
         }
+        locLight.setAlpha(usedAlpha);
 
         Input input = container.getEngine().getInput();
 
@@ -646,7 +649,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
 
         if (isMouseInInteractionRect(input) && World.getPlayer().getCombatHandler().canBeAttacked(parentChar)) {
             showAttackAvailable = true;
-            attackAvailableMark.setAlpha(getAlpha());
+            attackAvailableMark.setAlpha(usedAlpha);
             attackAvailableMark.update(container, delta);
         } else {
             showAttackAvailable = false;
@@ -658,7 +661,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         }
 
         if (isAttackMarkerVisible()) {
-            attackMark.setAlpha(getAlpha());
+            attackMark.setAlpha(usedAlpha);
             attackMark.update(container, delta);
         }
     }
