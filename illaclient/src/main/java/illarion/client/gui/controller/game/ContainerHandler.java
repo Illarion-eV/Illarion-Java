@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -502,10 +502,23 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
                 .getNiftyControl(org.illarion.nifty.controls.ItemContainer.class);
 
         String prefix = getPrefix(itemContainer.getContainerId());
-        container.setConstraintX(new SizeValue(IllaClient.getCfg().getString(prefix + "DisplayPosX")));
-        container.setConstraintY(new SizeValue(IllaClient.getCfg().getString(prefix + "DisplayPosY")));
+        container.setConstraintX(getSizeValueFromConfig(prefix + "DisplayPosX"));
+        container.setConstraintY(getSizeValueFromConfig(prefix + "DisplayPosY"));
 
         itemContainerMap.put(itemContainer.getContainerId(), conControl);
+    }
+
+    @Nonnull
+    private static SizeValue getSizeValueFromConfig(@Nonnull String key) {
+        String configEntry = IllaClient.getCfg().getString(key);
+        if (configEntry == null) {
+            return SizeValue.def();
+        }
+        try {
+            return new SizeValue(configEntry);
+        } catch (IllegalArgumentException e) {
+            return SizeValue.def();
+        }
     }
 
     private String getPrefix(int containerId) {
