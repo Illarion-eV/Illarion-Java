@@ -1046,8 +1046,11 @@ public final class Char implements AnimatedMove {
                 } else if (mode == CharMovementMode.Run) {
                     startAnimation(CharAnimations.RUN, duration, true, dir.isDiagonal() ? FastMath.sqrt(2.f) : 1.f);
                 }
-                move.start(oldPos.getDcX() - newPos.getDcX(), oldPos.getDcY() - fromElevation - newPos.getDcY(), 0, 0,
-                           -elevation, 0, duration);
+                int zDelta = Math.min(oldPos.getDcZ() - newPos.getDcZ(), 0);
+                move.start(oldPos.getDcX() - newPos.getDcX(),
+                        oldPos.getDcY() - fromElevation - newPos.getDcY(),
+                        zDelta,
+                        0, -elevation, zDelta, duration);
             } else {
                 // reset last animation result
                 dX = 0;
