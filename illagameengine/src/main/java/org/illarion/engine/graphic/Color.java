@@ -367,8 +367,9 @@ public class Color {
         return (obj instanceof Color) && equals((Color) obj);
     }
 
-    public boolean equals(@Nonnull Color color) {
-        return (red == color.red) && (green == color.green) && (blue == color.blue) && (alpha == color.alpha);
+    public boolean equals(@Nullable Color color) {
+        return (color != null) && (red == color.red) && (green == color.green) && (blue == color.blue) &&
+                (alpha == color.alpha);
     }
 
     @Override
