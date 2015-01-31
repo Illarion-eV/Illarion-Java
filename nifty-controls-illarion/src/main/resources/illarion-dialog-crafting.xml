@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!--
   ~ This file is part of the Illarion project.
   ~
-  ~ Copyright © 2014 - Illarion e.V.
+  ~ Copyright © 2015 - Illarion e.V.
   ~
   ~ Illarion is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU Affero General Public License as published by
@@ -43,12 +43,14 @@
                 </control>
                 <panel style="#buttonLine">
                     <panel style="#buttonWrapper">
-                        <control name="button" id="#buttonAmountDown" label="-" width="30px"/>
-                        <control name="textfield" id="#amountInput" filter="digits" width="60px"/>
-                        <control name="button" id="#buttonAmountUp" label="+" width="30px" marginRight="5px"/>
+                        <control name="button" id="#buttonAmountDown" label="-" width="30px" focusable="false" />
+                        <control name="textfield" id="#amountInput" filter="digits" width="60px" />
+                        <control name="button" id="#buttonAmountUp" label="+" width="30px" marginRight="5px"
+                                 focusable="false" />
                         <control name="button" label="${illarion-dialog-crafting-bundle.craft}" id="#craftButton"
-                                 marginRight="5px"/>
-                        <control name="button" label="${illarion-dialog-crafting-bundle.cancel}" id="#cancelButton"/>
+                                 marginRight="5px" focusable="false" />
+                        <control name="button" label="${illarion-dialog-crafting-bundle.cancel}" id="#cancelButton"
+                                 focusable="false" />
                     </panel>
                 </panel>
             </panel>
