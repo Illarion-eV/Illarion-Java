@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,6 +16,7 @@
 package illarion.common.util;
 
 import javolution.util.FastTable;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,7 +28,7 @@ import java.util.List;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@SuppressWarnings("ClassNamingConvention")
+@SuppressWarnings({"ClassNamingConvention", "UnusedDeclaration"})
 public final class Timer {
     /**
      * The delay in milliseconds between two calls of the listeners. This time only applies in case the timer is in
@@ -69,16 +70,6 @@ public final class Timer {
     private boolean running;
 
     /**
-     * This creates a new timer with a initial and between delay time. Before this timer can be used properly its
-     * needed to add at least one listener in addition to this timer using {@link #addListener(Runnable)}.
-     *
-     * @param timerDelay the initial and the between delay time in milliseconds
-     */
-    public Timer(int timerDelay) {
-        this(timerDelay, null);
-    }
-
-    /**
      * This creates a new timer with a separated set initial and between time delay. Also the first listener is added
      * right away using this constructor.
      *
@@ -112,7 +103,7 @@ public final class Timer {
      *
      * @param listener the listener to add
      */
-    public void addListener(Runnable listener) {
+    public void addListener(@Nonnull Runnable listener) {
         listeners.add(listener);
     }
 
@@ -121,6 +112,7 @@ public final class Timer {
      *
      * @return the between-event delay time
      */
+    @Contract(pure = true)
     public int getDelay() {
         return delay;
     }
@@ -130,6 +122,7 @@ public final class Timer {
      *
      * @return the initial delay in milliseconds
      */
+    @Contract(pure = true)
     public int getInitialDelay() {
         return initialDelay;
     }
@@ -139,6 +132,7 @@ public final class Timer {
      *
      * @return {@code true} in case the timer is repeating and will send keep sending events
      */
+    @Contract(pure = true)
     public boolean isRepeats() {
         return repeats;
     }
@@ -148,6 +142,7 @@ public final class Timer {
      *
      * @return {@code true} if this timer is currently running and firing updates
      */
+    @Contract(pure = true)
     public boolean isRunning() {
         return running;
     }
@@ -157,7 +152,7 @@ public final class Timer {
      *
      * @param listener the listener to remove
      */
-    public void removeListener(Runnable listener) {
+    public void removeListener(@Nonnull Runnable listener) {
         listeners.remove(listener);
     }
 
@@ -175,7 +170,6 @@ public final class Timer {
      *
      * @param timerDelay the time between two calls of the timer in milliseconds
      */
-    @SuppressWarnings("nls")
     public void setDelay(int timerDelay) {
         if (timerDelay < 0) {
             throw new IllegalArgumentException("Invalid delay: " + timerDelay);
@@ -188,7 +182,6 @@ public final class Timer {
      *
      * @param initDelay the initial delay in milliseconds
      */
-    @SuppressWarnings("nls")
     public void setInitialDelay(int initDelay) {
         if (initDelay < 0) {
             throw new IllegalArgumentException("Invalid initial delay: " + initDelay);
@@ -233,6 +226,7 @@ public final class Timer {
      *
      * @return the time when this timer is supposed to be called next time
      */
+    @Contract(pure = true)
     long getExpirationTime() {
         return expirationTime;
     }
@@ -243,6 +237,7 @@ public final class Timer {
      * @return the next timer
      */
     @Nullable
+    @Contract(pure = true)
     Timer getNextTimer() {
         return nextTimer;
     }

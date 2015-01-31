@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -62,20 +62,6 @@ public final class CharacterId implements Serializable, Comparable<CharacterId> 
      * The item count.
      */
     private final int value;
-
-    /**
-     * Constructor of this class used to set.
-     *
-     * @param value the value of the character ID
-     * @throws IllegalArgumentException in case the value is less then {@link #MIN_VALUE} or larger then
-     * {@link #MAX_VALUE}.
-     */
-    public CharacterId(long value) {
-        if ((value < MIN_VALUE) || (value > MAX_VALUE)) {
-            throw new IllegalArgumentException("value (" + Long.toString(value) + ") is out of range.");
-        }
-        this.value = (int) (value % ((1L << Integer.SIZE) - 1));
-    }
 
     /**
      * Constructor of this class used to set.

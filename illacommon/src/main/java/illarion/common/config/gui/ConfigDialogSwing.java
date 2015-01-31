@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,13 +16,13 @@
 package illarion.common.config.gui;
 
 import illarion.common.config.ConfigDialog;
+import illarion.common.config.ConfigDialog.Entry;
+import illarion.common.config.ConfigDialog.Page;
 import illarion.common.config.entries.ConfigEntry;
-import illarion.common.config.gui.entries.SaveableEntry;
+import illarion.common.config.gui.entries.SavableEntry;
 import illarion.common.config.gui.entries.swing.*;
 import illarion.common.util.MessageSource;
 import javolution.util.FastTable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.swing.*;
@@ -49,6 +49,7 @@ public final class ConfigDialogSwing extends JDialog {
          * The parent dialog that is supposed to be closed once the action is
          * performed.
          */
+        @Nonnull
         private final JDialog parentDialog;
 
         /**
@@ -59,7 +60,7 @@ public final class ConfigDialogSwing extends JDialog {
          * @param parent the parent dialog that is closed once this action is
          * performed
          */
-        public CancelButtonListener(final JDialog parent) {
+        public CancelButtonListener(@Nonnull JDialog parent) {
             parentDialog = parent;
         }
 
@@ -68,43 +69,40 @@ public final class ConfigDialogSwing extends JDialog {
          * pressed. In case its called the parent dialog is closed.
          */
         @Override
-        public void actionPerformed(final ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {
             parentDialog.setVisible(false);
             parentDialog.dispose();
         }
     }
 
     /**
-     * The listener of the save button for this dialog. It causes all elements
-     * to be saved and the dialog to be closed.
+     * The listener of the save button for this dialog. It causes all elements to be saved and the dialog to be closed.
      *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
     private static final class SaveButtonListener implements ActionListener {
         /**
-         * The parent dialog that is supposed to be closed once the action is
-         * performed.
+         * The parent dialog that is supposed to be closed once the action is performed.
          */
+        @Nonnull
         private final JDialog parentDialog;
 
         /**
-         * The list that stores all save able items of this dialog. When the
-         * action is performed all this items are saved.
+         * The list that stores all save able items of this dialog. When the action is performed all this items are
+         * saved.
          */
-        private final List<SaveableEntry> todoList;
+        @Nonnull
+        private final List<SavableEntry> todoList;
 
         /**
-         * The public constructor of this class that allows the parent class to
-         * create a proper instance and that takes all data needed for this
-         * object to work properly.
+         * The public constructor of this class that allows the parent class to create a proper instance and that
+         * takes all data needed for this object to work properly.
          *
-         * @param saveList the list of objects saved in case this action is
-         * performed
-         * @param parent the parent dialog that is closed once this action is
-         * performed
+         * @param saveList the list of objects saved in case this action is performed
+         * @param parent the parent dialog that is closed once this action is performed
          */
-        public SaveButtonListener(
-                final List<SaveableEntry> saveList, final JDialog parent) {
+        public SaveButtonListener(@Nonnull List<SavableEntry> saveList, @Nonnull JDialog parent) {
+            //noinspection AssignmentToCollectionOrArrayFieldFromParameter
             todoList = saveList;
             parentDialog = parent;
         }
@@ -115,20 +113,14 @@ public final class ConfigDialogSwing extends JDialog {
          * dialog is closed.
          */
         @Override
-        public void actionPerformed(final ActionEvent e) {
-            final int count = todoList.size();
-            for (SaveableEntry aTodoList : todoList) {
+        public void actionPerformed(ActionEvent e) {
+            for (SavableEntry aTodoList : todoList) {
                 aTodoList.save();
             }
             parentDialog.setVisible(false);
             parentDialog.dispose();
         }
     }
-
-    /**
-     * The logger instance that takes care for the logging output of this class.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigDialogSwing.class);
 
     /**
      * The serialization UID of this dialog.
@@ -141,49 +133,43 @@ public final class ConfigDialogSwing extends JDialog {
      *
      * @param dialog the configuration dialog that is needed to be displayed
      */
-    @SuppressWarnings("nls")
-    public ConfigDialogSwing(@Nonnull final ConfigDialog dialog) {
+    public ConfigDialogSwing(@Nonnull ConfigDialog dialog) {
         super((JDialog) null, dialog.getMessageSource().getMessage("illarion.common.config.gui.Title"), true);
 
-        final MessageSource msgs = dialog.getMessageSource();
+        MessageSource msgs = dialog.getMessageSource();
 
-        final FastTable<SaveableEntry> contentList = new FastTable<>();
+        FastTable<SavableEntry> contentList = new FastTable<>();
 
-        final JPanel content = new JPanel(new BorderLayout(5, 5));
+        JPanel content = new JPanel(new BorderLayout(5, 5));
         add(content);
 
-        {
-            final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
-            content.add(buttonPanel, BorderLayout.SOUTH);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
+        content.add(buttonPanel, BorderLayout.SOUTH);
 
-            final JButton saveButton = new JButton(msgs.getMessage("illarion.common.config.gui.Save"));
-            saveButton.addActionListener(new SaveButtonListener(contentList.unmodifiable(), this));
-            saveButton.setPreferredSize(new Dimension(100, 25));
-            buttonPanel.add(saveButton);
+        JButton saveButton = new JButton(msgs.getMessage("illarion.common.config.gui.Save"));
+        saveButton.addActionListener(new SaveButtonListener(contentList.unmodifiable(), this));
+        saveButton.setPreferredSize(new Dimension(100, 25));
+        buttonPanel.add(saveButton);
 
-            final JButton cancelButton = new JButton(msgs.getMessage("illarion.common.config.gui.Cancel"));
-            cancelButton.addActionListener(new CancelButtonListener(this));
-            cancelButton.setPreferredSize(new Dimension(100, 25));
-            buttonPanel.add(cancelButton);
-        }
+        JButton cancelButton = new JButton(msgs.getMessage("illarion.common.config.gui.Cancel"));
+        cancelButton.addActionListener(new CancelButtonListener(this));
+        cancelButton.setPreferredSize(new Dimension(100, 25));
+        buttonPanel.add(cancelButton);
 
-        final JTabbedPane tabs = new JTabbedPane();
+        JTabbedPane tabs = new JTabbedPane();
         content.add(tabs, BorderLayout.CENTER);
 
-        final int pageCount = dialog.getPageCount();
-        ConfigDialog.Page currentPage;
-        JPanel currentPanel;
+        int pageCount = dialog.getPageCount();
         for (int i = 0; i < pageCount; i++) {
-            currentPage = dialog.getPage(i);
-            currentPanel = new JPanel(new GridBagLayout());
+            Page currentPage = dialog.getPage(i);
+            JPanel currentPanel = new JPanel(new GridBagLayout());
             currentPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             tabs.addTab(msgs.getMessage(currentPage.getTitle()), currentPanel);
 
-            final GridBagConstraints con = new GridBagConstraints();
-            final int entryCount = currentPage.getEntryCount();
-            ConfigDialog.Entry entry;
+            GridBagConstraints con = new GridBagConstraints();
+            int entryCount = currentPage.getEntryCount();
             for (int k = 0; k < entryCount; k++) {
-                entry = currentPage.getEntry(k);
+                Entry entry = currentPage.getEntry(k);
 
                 con.gridwidth = GridBagConstraints.RELATIVE;
                 con.gridheight = 1;
@@ -203,29 +189,29 @@ public final class ConfigDialogSwing extends JDialog {
                 con.insets.left = 5;
                 con.weightx = 0.5;
 
-                final ConfigEntry configEntry = entry.getConfigEntry();
+                ConfigEntry configEntry = entry.getConfigEntry();
                 if (CheckEntrySwing.isUsableEntry(configEntry)) {
-                    final CheckEntrySwing swingEntry = new CheckEntrySwing(configEntry);
+                    CheckEntrySwing swingEntry = new CheckEntrySwing(configEntry);
                     currentPanel.add(swingEntry, con);
                     contentList.add(swingEntry);
                 } else if (DirectoryEntrySwing.isUsableEntry(configEntry)) {
-                    final DirectoryEntrySwing swingEntry = new DirectoryEntrySwing(configEntry, msgs);
+                    DirectoryEntrySwing swingEntry = new DirectoryEntrySwing(configEntry, msgs);
                     currentPanel.add(swingEntry, con);
                     contentList.add(swingEntry);
                 } else if (FileEntrySwing.isUsableEntry(configEntry)) {
-                    final FileEntrySwing swingEntry = new FileEntrySwing(configEntry, msgs);
+                    FileEntrySwing swingEntry = new FileEntrySwing(configEntry, msgs);
                     currentPanel.add(swingEntry, con);
                     contentList.add(swingEntry);
                 } else if (NumberEntrySwing.isUsableEntry(configEntry)) {
-                    final NumberEntrySwing swingEntry = new NumberEntrySwing(configEntry);
+                    NumberEntrySwing swingEntry = new NumberEntrySwing(configEntry);
                     currentPanel.add(swingEntry, con);
                     contentList.add(swingEntry);
                 } else if (SelectEntrySwing.isUsableEntry(configEntry)) {
-                    final SelectEntrySwing swingEntry = new SelectEntrySwing(configEntry);
+                    SelectEntrySwing swingEntry = new SelectEntrySwing(configEntry);
                     currentPanel.add(swingEntry, con);
                     contentList.add(swingEntry);
                 } else if (TextEntrySwing.isUsableEntry(configEntry)) {
-                    final TextEntrySwing swingEntry = new TextEntrySwing(configEntry);
+                    TextEntrySwing swingEntry = new TextEntrySwing(configEntry);
                     currentPanel.add(swingEntry, con);
                     contentList.add(swingEntry);
                 }

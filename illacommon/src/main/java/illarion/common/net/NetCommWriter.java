@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -48,13 +48,6 @@ public interface NetCommWriter {
     void writeLocation(@Nonnull Location loc);
 
     /**
-     * Write 2 byte as signed value to the network.
-     *
-     * @param value the signed short that shall be send to the server
-     */
-    void writeShort(short value);
-
-    /**
      * Write a string to the network.
      *
      * @param value the string that shall be send to the server
@@ -67,13 +60,6 @@ public interface NetCommWriter {
      * @param value the value that shall be send as unsigned byte
      */
     void writeUByte(short value);
-
-    /**
-     * Write 4 byte as unsigned value to the network.
-     *
-     * @param value the value that shall be send as unsigned integer
-     */
-    void writeUInt(long value);
 
     /**
      * Write 2 byte as unsigned value to the network.

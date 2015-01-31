@@ -53,6 +53,7 @@ public final class Credits {
      *
      * @return the credits instance
      */
+    @Nullable
     public static Credits getInstance() {
         if (instance == null) {
             synchronized (Credits.class) {

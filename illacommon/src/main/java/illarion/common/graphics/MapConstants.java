@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,18 +22,6 @@ package illarion.common.graphics;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class MapConstants {
-    /**
-     * Bitmask to filter the base tile id from a tile ID.
-     */
-    public static final int BASE_MASK = 0x001F;
-    /**
-     * Bitmask to filter the overlay tile id from a tile ID.
-     */
-    public static final int OVERLAY_MASK = 0x03E0;
-    /**
-     * Bitmask to filter the overlay shape id from a tile ID.
-     */
-    public static final int SHAPE_MASK = 0xFC00;
     /**
      * Step size in X direction. Means how much pixels the map as to scroll to
      * reach the next tile. Since the tiles on one row are optical half shifted

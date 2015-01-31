@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,6 +19,10 @@ import illarion.common.config.Config;
 import illarion.common.util.FastMath;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Objects;
 
 /**
  * This is a configuration entry that is used to display a combo box in the
@@ -43,28 +47,31 @@ public final class SelectEntry implements ConfigEntry {
      * This is the message displayed in case the storage mode is set to a
      * illegal value.
      */
-    @SuppressWarnings("nls")
+    @Nonnull
     private static final String ERROR_STORE_TYPE = "Illegal store type chosen.";
 
     /**
      * The configuration that is controlled by this text entry.
      */
+    @Nullable
     private Config cfg;
 
     /**
      * The key in the configuration that is handled by this configuration.
      */
+    @Nonnull
     private final String configEntry;
 
     /**
      * The texts that are displayed for each entry.
      */
+    @Nonnull
     private final String[] labels;
 
     /**
-     * The options that are select able by the ComboBox described with this
-     * entry.
+     * The options that are select able by the ComboBox described with this entry.
      */
+    @Nonnull
     private final Object[] options;
 
     /**
@@ -79,11 +86,10 @@ public final class SelectEntry implements ConfigEntry {
      * @param store the method used to store the values in the configuration
      * @param option the options to be displayed in this entry
      */
-    public SelectEntry(
-            final String entry, final int store, final Object[] option) {
+    public SelectEntry(@Nonnull String entry, int store, @Nonnull Object... option) {
         configEntry = entry;
         storeValue = store;
-        options = option;
+        options = Arrays.copyOf(option, option.length);
 
         labels = new String[options.length];
         for (int i = 0; i < options.length; i++) {
@@ -99,34 +105,12 @@ public final class SelectEntry implements ConfigEntry {
      * @param option the options to be displayed in this entry
      * @param label the texts displayed for each entry
      */
-    public SelectEntry(
-            final String entry, final int store, final Object[] option, final String[] label) {
+    @SuppressWarnings("MethodCanBeVariableArityMethod")
+    public SelectEntry(@Nonnull String entry, int store, @Nonnull Object[] option, @Nonnull String[] label) {
         configEntry = entry;
         storeValue = store;
-        options = option;
-        labels = label;
-    }
-
-    /**
-     * Create a new configuration entry that is handled by this entry.
-     *
-     * @param entry the configuration key that is handled by this text entry
-     * @param option the options to be displayed in this entry
-     */
-    public SelectEntry(final String entry, final Object... option) {
-        this(entry, STORE_INDEX, option);
-    }
-
-    /**
-     * Create a new configuration entry that is handled by this entry.
-     *
-     * @param entry the configuration key that is handled by this text entry
-     * @param option the options to be displayed in this entry
-     * @param label the texts displayed for each entry
-     */
-    public SelectEntry(
-            final String entry, final Object[] option, final String[] label) {
-        this(entry, STORE_INDEX, option, label);
+        options = Arrays.copyOf(option, option.length);
+        labels = Arrays.copyOf(label, label.length);
     }
 
     /**
@@ -135,11 +119,14 @@ public final class SelectEntry implements ConfigEntry {
      * @return the index that is stored in the GUI currently.
      */
     public int getIndex() {
+        if (cfg == null) {
+            throw new IllegalStateException("The reference to the config system was not set.");
+        }
         switch (storeValue) {
             case STORE_INDEX:
                 return FastMath.clamp(cfg.getInteger(configEntry), 0, options.length - 1);
             case STORE_VALUE:
-                final String value = cfg.getString(configEntry);
+                String value = cfg.getString(configEntry);
                 for (int i = 0; i < options.length; i++) {
                     if (options[i].toString().equals(value)) {
                         return i;
@@ -156,8 +143,9 @@ public final class SelectEntry implements ConfigEntry {
      *
      * @return a array of all possible values
      */
-    public Object[] getItems() {
-        return options;
+    @Nonnull
+    public Collection<Object> getItems() {
+        return Arrays.asList(options);
     }
 
     /**
@@ -165,18 +153,22 @@ public final class SelectEntry implements ConfigEntry {
      *
      * @return the label that is supposed to be displayed currently.
      */
+    @Nonnull
     public String getLabel() {
+        if (cfg == null) {
+            throw new IllegalStateException("The reference to the config system was not set.");
+        }
         switch (storeValue) {
             case STORE_INDEX:
                 return labels[FastMath.clamp(cfg.getInteger(configEntry), 0, options.length - 1)];
             case STORE_VALUE:
-                final String value = cfg.getString(configEntry);
+                String value = cfg.getString(configEntry);
                 for (int i = 0; i < options.length; i++) {
                     if (options[i].toString().equals(value)) {
                         return labels[i];
                     }
                 }
-                return labels[0];
+                return Objects.requireNonNull(labels[0]);
             default:
                 throw new IllegalStateException(ERROR_STORE_TYPE);
         }
@@ -187,8 +179,9 @@ public final class SelectEntry implements ConfigEntry {
      *
      * @return a array of all possible values
      */
-    public String[] getLabels() {
-        return labels;
+    @Nonnull
+    public Collection<String> getLabels() {
+        return Arrays.asList(labels);
     }
 
     /**
@@ -196,18 +189,22 @@ public final class SelectEntry implements ConfigEntry {
      *
      * @return the configuration stored for this check entry
      */
+    @Nonnull
     public Object getValue() {
+        if (cfg == null) {
+            throw new IllegalStateException("The reference to the config system was not set.");
+        }
         switch (storeValue) {
             case STORE_INDEX:
                 return options[FastMath.clamp(cfg.getInteger(configEntry), 0, options.length - 1)];
             case STORE_VALUE:
-                final String value = cfg.getString(configEntry);
-                for (final Object option : options) {
+                String value = cfg.getString(configEntry);
+                for (Object option : options) {
                     if (option.toString().equals(value)) {
                         return option;
                     }
                 }
-                return options[0];
+                return Objects.requireNonNull(options[0]);
             default:
                 throw new IllegalStateException(ERROR_STORE_TYPE);
         }
@@ -220,7 +217,7 @@ public final class SelectEntry implements ConfigEntry {
      * configuration entry
      */
     @Override
-    public void setConfig(@Nonnull final Config config) {
+    public void setConfig(@Nonnull Config config) {
         cfg = config;
     }
 
@@ -229,7 +226,10 @@ public final class SelectEntry implements ConfigEntry {
      *
      * @param newValue the new configuration value
      */
-    public void setValue(final int newValue) {
+    public void setValue(int newValue) {
+        if (cfg == null) {
+            throw new IllegalStateException("The reference to the config system was not set.");
+        }
         switch (storeValue) {
             case STORE_INDEX:
                 cfg.set(configEntry, newValue);
@@ -247,7 +247,10 @@ public final class SelectEntry implements ConfigEntry {
      *
      * @param newValue the new configuration value
      */
-    public void setValue(@Nonnull final Object newValue) {
+    public void setValue(@Nonnull Object newValue) {
+        if (cfg == null) {
+            throw new IllegalStateException("The reference to the config system was not set.");
+        }
         switch (storeValue) {
             case STORE_INDEX:
                 for (int i = 0; i < options.length; i++) {

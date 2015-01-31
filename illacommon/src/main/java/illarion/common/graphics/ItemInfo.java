@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,9 +16,9 @@
 package illarion.common.graphics;
 
 import illarion.common.util.FastMath;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -61,8 +61,8 @@ public final class ItemInfo {
      * The buffer storage that is used to save the created item info instances to compare them during the loading
      * time so a minimal amount of instances is created.
      */
-    @Nullable
-    private static Collection<ItemInfo> buffer = new ArrayList<>();
+    @Nonnull
+    private static final Collection<ItemInfo> BUFFER = new ArrayList<>();
 
     /**
      * The special item value in case the item is a container.
@@ -132,32 +132,24 @@ public final class ItemInfo {
     /**
      * Create a new instance of a ItemInfo object.
      *
-     * @param facing The facing flag that contains the information from what direction the item accepts light.
-     * The possible values are {@link #FACE_ALL}, {@link #FACE_SW}, {@link #FACE_S},
-     * {@link #FACE_W}.
+     * @param facing The facing flag that contains the information from what direction the item accepts light. The
+     *               possible values are {@link #FACE_ALL}, {@link #FACE_SW}, {@link #FACE_S}, {@link #FACE_W}.
      * @param itemMovable the movable flag that stores if the item can be moved or not
-     * @param specialFlag the special flag that indicates of the item is a normal item or a container,
-     * a book or a Jesus item.
-     * @param itemObstacle the obstacle flag determines if the characters can walk over this item or not,
-     * more exactly it blocks the way for the automated pathfinder
+     * @param specialFlag the special flag that indicates of the item is a normal item or a container, a book or a
+     *                    Jesus item.
+     * @param itemObstacle the obstacle flag determines if the characters can walk over this item or not,  more
+     *                     exactly it blocks the way for the automated pathfinder
      * @param varianceRange the variance of the item in since, if this variable stores a value larger then 0 the item
-     * is scaled up and down by the percent value handed over in this variable
+     *                      is scaled up and down by the percent value handed over in this variable
      * @param itemOpacity the opacity of this object so the value in percent this item blocks the line of sight
-     * @param surfaceLevel the offset of the surface level of the item relative to the origin of the item,
-     * this is used to add a additional offset to the item in case there are additional items upon
-     * this item, so it looks like the other line lies on this item
+     * @param surfaceLevel the offset of the surface level of the item relative to the origin of the item, this is
+     *                     used to add a additional offset to the item in case there are additional items upon this
+     *                     item, so it looks like the other line lies on this item
      * @param lightSource the encoded value of the light of this item, any value greater then 0 causes this item to
-     * be a light source emitting constantly light on the map
+     *                    be a light source emitting constantly light on the map
      */
-    private ItemInfo(
-            final int facing,
-            final boolean itemMovable,
-            final int specialFlag,
-            final boolean itemObstacle,
-            final float varianceRange,
-            final int itemOpacity,
-            final int surfaceLevel,
-            final int lightSource) {
+    private ItemInfo(int facing, boolean itemMovable, int specialFlag, boolean itemObstacle, float varianceRange,
+                     int itemOpacity, int surfaceLevel, int lightSource) {
         face = facing;
         movable = itemMovable;
         special = specialFlag;
@@ -175,49 +167,32 @@ public final class ItemInfo {
     }
 
     /**
-     * Cleanup the buffer that is created to support the loading of the items. This should be done after all items
-     * are loaded up.
-     */
-    public static void cleanup() {
-        buffer.clear();
-        buffer = null;
-    }
-
-    /**
      * Create a new instance of a ItemInfo object. This instance also checks if there is already a object of this
      * kind with exactly the same values as the new one that is going to be created and returns this one rather then
      * a new one.
      *
-     * @param facing The facing flag that contains the information from what direction the item accepts light.
-     * The possible values are {@link #FACE_ALL}, {@link #FACE_SW}, {@link #FACE_S},
-     * {@link #FACE_W}.
+     * @param facing The facing flag that contains the information from what direction the item accepts light. The
+     *               possible values are {@link #FACE_ALL}, {@link #FACE_SW}, {@link #FACE_S}, {@link #FACE_W}.
      * @param movable the movable flag that stores if the item can be moved or not
-     * @param special the special flag that indicates of the item is a normal item or a container,
-     * a book or a Jesus item.
-     * @param obstacle the obstacle flag determines if the characters can walk over this item or not,
-     * more exactly it blocks the way for the automated pathfinder
-     * @param variance the variance of the item in since, if this variable stores a value larger then 0 the item
-     * is scaled up and down by the percent value handed over in this variable
+     * @param special the special flag that indicates of the item is a normal item or a container, a book or a Jesus
+     *                item.
+     * @param obstacle the obstacle flag determines if the characters can walk over this item or not, more exactly it
+     *                 blocks the way for the automated pathfinder
+     * @param variance the variance of the item in since, if this variable stores a value larger then 0 the item is
+     *                 scaled up and down by the percent value handed over in this variable
      * @param opacity the opacity of this object so the value in percent this item blocks the line of sight
-     * @param level the offset of the surface level of the item relative to the origin of the item,
-     * this is used to add a additional offset to the item in case there are additional items upon
-     * this item, so it looks like the other line lies on this item
+     * @param level the offset of the surface level of the item relative to the origin of the item, this is used to
+     *              add a additional offset to the item in case there are additional items upon this item, so it
+     *              looks like the other line lies on this item
      * @param lightSource the encoded value of the light of this item, any value greater then 0 causes this item to
-     * be a light source emitting constantly light on the map
+     *                    be a light source emitting constantly light on the map
      * @return the ItemInfo object, either a newly created one, or one that was loaded from the buffer
      */
     @Nonnull
-    public static ItemInfo create(
-            final int facing,
-            final boolean movable,
-            final int special,
-            final boolean obstacle,
-            final int variance,
-            final int opacity,
-            final int level,
-            final int lightSource) {
-        final float prepVariance = variance / VARIANCE_MOD;
-        for (final ItemInfo testItemInfo : buffer) {
+    public static ItemInfo create(int facing, boolean movable, int special, boolean obstacle, int variance, int opacity,
+                                  int level, int lightSource) {
+        float prepVariance = variance / VARIANCE_MOD;
+        for (ItemInfo testItemInfo : BUFFER) {
             if (testItemInfo.face != facing) {
                 continue;
             }
@@ -245,9 +220,8 @@ public final class ItemInfo {
             return testItemInfo;
         }
 
-        final ItemInfo retInfo = new ItemInfo(facing, movable, special, obstacle, prepVariance, opacity, level,
-                                              lightSource);
-        buffer.add(retInfo);
+        ItemInfo retInfo = new ItemInfo(facing, movable, special, obstacle, prepVariance, opacity, level, lightSource);
+        BUFFER.add(retInfo);
         return retInfo;
     }
 
@@ -260,6 +234,7 @@ public final class ItemInfo {
      * @see #FACE_SW
      * @see #FACE_W
      */
+    @Contract(pure = true)
     public int getFace() {
         return face;
     }
@@ -270,6 +245,7 @@ public final class ItemInfo {
      *
      * @return the amount of pixels the next item offset has to move up
      */
+    @Contract(pure = true)
     public int getLevel() {
         return level;
     }
@@ -279,6 +255,7 @@ public final class ItemInfo {
      *
      * @return the encodes parameters of the light source of this item
      */
+    @Contract(pure = true)
     public int getLight() {
         return light;
     }
@@ -289,6 +266,7 @@ public final class ItemInfo {
      * @return the percent value how much of the line of sight is blocked by
      * this item
      */
+    @Contract(pure = true)
     public int getOpacity() {
         return opacity;
     }
@@ -298,6 +276,7 @@ public final class ItemInfo {
      *
      * @return the modification value of the default scaling to decrease or increase the default scaling by
      */
+    @Contract(pure = true)
     public float getVariance() {
         return variance;
     }
@@ -307,6 +286,7 @@ public final class ItemInfo {
      *
      * @return {@code true} in case the item is able to use scale variances
      */
+    @Contract(pure = true)
     public boolean hasVariance() {
         return hasVariance;
     }
@@ -316,6 +296,7 @@ public final class ItemInfo {
      *
      * @return {@code true} in case the item is a book
      */
+    @Contract(pure = true)
     public boolean isBook() {
         return special == BOOK;
     }
@@ -325,6 +306,7 @@ public final class ItemInfo {
      *
      * @return {@code true} in case the item is a container
      */
+    @Contract(pure = true)
     public boolean isContainer() {
         return special == CONTAINER;
     }
@@ -334,6 +316,7 @@ public final class ItemInfo {
      *
      * @return {@code true} in case the item is a Jesus item
      */
+    @Contract(pure = true)
     public boolean isJesus() {
         return special == JESUS;
     }
@@ -343,6 +326,7 @@ public final class ItemInfo {
      *
      * @return {@code true} in case the item is a source of light
      */
+    @Contract(pure = true)
     public boolean isLight() {
         return light > 0;
     }
@@ -352,6 +336,7 @@ public final class ItemInfo {
      *
      * @return {@code true} in case the player can move the item around
      */
+    @Contract(pure = true)
     public boolean isMovable() {
         return movable;
     }
@@ -362,6 +347,7 @@ public final class ItemInfo {
      * @return {@code true} if the item is obstacle and the pathfinder has
      * to search a way around it
      */
+    @Contract(pure = true)
     public boolean isObstacle() {
         return obstacle;
     }

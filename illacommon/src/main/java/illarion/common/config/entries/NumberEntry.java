@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,8 +18,10 @@ package illarion.common.config.entries;
 import illarion.common.config.Config;
 import illarion.common.types.Range;
 import illarion.common.util.FastMath;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This is a configuration entry that is used to display a number range entry in
@@ -31,11 +33,13 @@ public final class NumberEntry implements ConfigEntry {
     /**
      * The configuration that is controlled by this text entry.
      */
+    @Nullable
     private Config cfg;
 
     /**
      * The key in the configuration that is handled by this configuration.
      */
+    @Nonnull
     private final String configEntry;
 
     /**
@@ -48,20 +52,10 @@ public final class NumberEntry implements ConfigEntry {
      * Create a new configuration entry that is handled by this entry.
      *
      * @param entry the configuration key that is handled by this text entry
-     */
-    public NumberEntry(final String entry) {
-        this(entry, Integer.MIN_VALUE, Integer.MAX_VALUE);
-    }
-
-    /**
-     * Create a new configuration entry that is handled by this entry.
-     *
-     * @param entry the configuration key that is handled by this text entry
      * @param minLimit the minimal value that is allowed for this entry
      * @param maxLimit the maximal value that is allowed for this entry
      */
-    public NumberEntry(
-            final String entry, final int minLimit, final int maxLimit) {
+    public NumberEntry(@Nonnull String entry, int minLimit, int maxLimit) {
         configEntry = entry;
         range = new Range(minLimit, maxLimit);
     }
@@ -72,6 +66,7 @@ public final class NumberEntry implements ConfigEntry {
      * @return the range of this number entry
      */
     @Nonnull
+    @Contract(pure = true)
     public Range getRange() {
         return range;
     }
@@ -81,7 +76,11 @@ public final class NumberEntry implements ConfigEntry {
      *
      * @return the configuration stored for this check entry
      */
+    @Contract(pure = true)
     public int getValue() {
+        if (cfg == null) {
+            throw new IllegalStateException("Reference to configuration system is not set.");
+        }
         return FastMath.clamp(cfg.getInteger(configEntry), range);
     }
 
@@ -92,7 +91,7 @@ public final class NumberEntry implements ConfigEntry {
      * configuration entry
      */
     @Override
-    public void setConfig(@Nonnull final Config config) {
+    public void setConfig(@Nonnull Config config) {
         cfg = config;
     }
 
@@ -101,7 +100,10 @@ public final class NumberEntry implements ConfigEntry {
      *
      * @param newValue the new configuration value
      */
-    public void setValue(final int newValue) {
+    public void setValue(int newValue) {
+        if (cfg == null) {
+            throw new IllegalStateException("Reference to configuration system is not set.");
+        }
         cfg.set(configEntry, FastMath.clamp(newValue, range));
     }
 }

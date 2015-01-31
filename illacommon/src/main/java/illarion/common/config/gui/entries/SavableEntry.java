@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,7 +20,7 @@ package illarion.common.config.gui.entries;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface SaveableEntry {
+public interface SavableEntry {
     /**
      * Save the values stored in this entry.
      */

@@ -32,6 +32,7 @@ import illarion.client.world.Player;
 import illarion.client.world.World;
 import illarion.client.world.events.ConnectionLostEvent;
 import illarion.common.bug.CrashReporter;
+import illarion.common.bug.ReportDialogFactorySwing;
 import illarion.common.config.Config;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.config.ConfigSystem;
@@ -174,6 +175,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         if (DEFAULT_SERVER != Servers.realserver) {
             CrashReporter.getInstance().setMode(CrashReporter.MODE_NEVER);
         }
+        CrashReporter.getInstance().setDialogFactory(new ReportDialogFactorySwing());
 
         // Preload sound and music
         try {

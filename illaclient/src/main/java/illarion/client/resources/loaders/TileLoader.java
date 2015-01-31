@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -40,7 +40,8 @@ public final class TileLoader extends AbstractResourceLoader<TileTemplate>
     /**
      * The logger that is used to report error messages.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ItemLoader.class);
+    @Nonnull
+    private static final Logger LOGGER = LoggerFactory.getLogger(TileLoader.class);
 
     /**
      * The assets of the game engine that are required to load the data needed for the tiles.
@@ -53,7 +54,7 @@ public final class TileLoader extends AbstractResourceLoader<TileTemplate>
      *
      * @param assets the assets instance of the game engine that is used to load the data
      */
-    public TileLoader(@Nonnull final Assets assets) {
+    public TileLoader(@Nonnull Assets assets) {
         this.assets = assets;
     }
 
@@ -67,7 +68,7 @@ public final class TileLoader extends AbstractResourceLoader<TileTemplate>
             throw new IllegalStateException("targetFactory not set yet.");
         }
 
-        final ResourceFactory<TileTemplate> factory = getTargetFactory();
+        ResourceFactory<TileTemplate> factory = getTargetFactory();
 
         factory.init();
         new TableLoaderTiles(this);
@@ -84,40 +85,43 @@ public final class TileLoader extends AbstractResourceLoader<TileTemplate>
      * Handle a single line of the resource table.
      */
     @Override
-    public boolean processRecord(final int line, @Nonnull final TableLoaderTiles loader) {
-        final int id = loader.getTileId();
-        final int mode = loader.getTileMode();
-        final String name = loader.getResourceName();
-        final TileInfo info = new TileInfo(loader.getTileColor(), loader.getMovementCost(), loader.isOpaque());
+    public boolean processRecord(int line, @Nonnull TableLoaderTiles loader) {
+        int id = loader.getTileId();
+        int mode = loader.getTileMode();
+        String name = loader.getResourceName();
+        TileInfo info = new TileInfo(loader.getTileColor(), loader.isOpaque());
 
-        final int frames;
-        final int speed;
+        int frames;
+        int speed;
         switch (mode) {
             case TableLoaderTiles.TILE_MODE_ANIMATED:
                 frames = loader.getFrameCount();
                 speed = loader.getAnimationSpeed();
                 break;
-
             case TableLoaderTiles.TILE_MODE_VARIANT:
                 frames = loader.getFrameCount();
                 speed = 0;
                 break;
-
+            case TableLoaderTiles.TILE_MODE_SIMPLE:
+                frames = 1;
+                speed = 0;
+                break;
             default:
+                LOGGER.error("Unknown mode {} for tile {}", mode, id);
                 frames = 1;
                 speed = 0;
                 break;
         }
 
-        final Sprite tileSprite = assets.getSpriteFactory()
+        Sprite tileSprite = assets.getSpriteFactory()
                 .createSprite(getTextures(assets.getTextureManager(), TILE_PATH, name, frames), 0, 0,
                               SpriteFactory.CENTER, SpriteFactory.CENTER, false);
 
         try {
-            final TileTemplate template = new TileTemplate(id, tileSprite, frames, speed, info);
+            TileTemplate template = new TileTemplate(id, tileSprite, frames, speed, info);
             getTargetFactory().storeResource(template);
-        } catch (@Nonnull final IllegalStateException ex) {
-            LOGGER.error("Failed adding tile to internal factory. ID: " + id + " - Filename: " + name);
+        } catch (@Nonnull IllegalStateException ex) {
+            LOGGER.error("Failed adding tile to internal factory. ID: {} - Filename: {}", id, name);
         }
 
         return true;

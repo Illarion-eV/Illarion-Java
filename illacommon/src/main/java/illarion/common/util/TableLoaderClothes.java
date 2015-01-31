@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,9 +15,9 @@
  */
 package illarion.common.util;
 
+import org.jetbrains.annotations.Contract;
+
 import javax.annotation.Nonnull;
-import java.io.File;
-import java.io.InputStream;
 
 /**
  * This is a special implementation of the table loader that targets the clothes table file.
@@ -65,39 +65,8 @@ public final class TableLoaderClothes extends TableLoader {
      */
     private static final int TB_REF_ITEM_ID = 6;
 
-    public TableLoaderClothes(@Nonnull final TableLoaderSink<TableLoaderClothes> callback) {
+    public TableLoaderClothes(@Nonnull TableLoaderSink<TableLoaderClothes> callback) {
         super("Cloth", callback);
-    }
-
-    public TableLoaderClothes(@Nonnull final File table, @Nonnull final TableLoaderSink<TableLoaderClothes> callback) {
-        super(table, callback);
-    }
-
-    public TableLoaderClothes(final String table, @Nonnull final TableLoaderSink<TableLoaderClothes> callback) {
-        super(table, callback);
-    }
-
-    public TableLoaderClothes(
-            @Nonnull final File table,
-            @Nonnull final TableLoaderSink<TableLoaderClothes> callback,
-            final String tableDelim) {
-        super(table, callback, tableDelim);
-    }
-
-    public TableLoaderClothes(
-            @Nonnull final InputStream resource,
-            final boolean ndsc,
-            @Nonnull final TableLoaderSink<TableLoaderClothes> callback,
-            final String tableDelim) {
-        super(resource, ndsc, callback, tableDelim);
-    }
-
-    public TableLoaderClothes(
-            final String table,
-            final boolean ndsc,
-            @Nonnull final TableLoaderSink<TableLoaderClothes> callback,
-            final String tableDelim) {
-        super(table, ndsc, callback, tableDelim);
     }
 
     /**
@@ -105,6 +74,7 @@ public final class TableLoaderClothes extends TableLoader {
      *
      * @return the frame count of the avatar
      */
+    @Contract(pure = true)
     public int getFrameCount() {
         return getInt(TB_FRAME);
     }
@@ -114,6 +84,7 @@ public final class TableLoaderClothes extends TableLoader {
      *
      * @return the offset component that needs to be applied to the cloth graphics
      */
+    @Contract(pure = true)
     public int getOffsetX() {
         return getInt(TB_OFFSET_X);
     }
@@ -123,6 +94,7 @@ public final class TableLoaderClothes extends TableLoader {
      *
      * @return the offset component that needs to be applied to the cloth graphics
      */
+    @Contract(pure = true)
     public int getOffsetY() {
         return getInt(TB_OFFSET_Y);
     }
@@ -132,6 +104,7 @@ public final class TableLoaderClothes extends TableLoader {
      *
      * @return {@code true} in case the graphics are supposed to be rendered mirrored
      */
+    @Contract(pure = true)
     public boolean isMirrored() {
         return getBoolean(TB_MIRROR);
     }
@@ -142,6 +115,8 @@ public final class TableLoaderClothes extends TableLoader {
      *
      * @return the resource name of this effect
      */
+    @Nonnull
+    @Contract(pure = true)
     public String getResourceName() {
         return getString(TB_NAME);
     }
@@ -151,6 +126,7 @@ public final class TableLoaderClothes extends TableLoader {
      *
      * @return the ID of character this clothes belong to
      */
+    @Contract(pure = true)
     public int getReferenceCharacterId() {
         return getInt(TB_REF_CHAR_ID);
     }
@@ -160,6 +136,7 @@ public final class TableLoaderClothes extends TableLoader {
      *
      * @return the ID of the item connected to this piece of cloth
      */
+    @Contract(pure = true)
     public int getReferenceItemId() {
         return getInt(TB_REF_ITEM_ID);
     }
@@ -169,6 +146,7 @@ public final class TableLoaderClothes extends TableLoader {
      *
      * @return the slot on the body this cloth belong to
      */
+    @Contract(pure = true)
     public int getClothSlot() {
         return getInt(TB_LOCATION);
     }

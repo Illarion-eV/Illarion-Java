@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,6 +15,7 @@
  */
 package illarion.common.data;
 
+import org.jetbrains.annotations.Contract;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -44,8 +45,8 @@ public final class Book {
      * Create a new book.
      */
     public Book() {
-        germanBook = new BookLanguage(Locale.GERMAN);
-        englishBook = new BookLanguage(Locale.ENGLISH);
+        germanBook = new BookLanguage();
+        englishBook = new BookLanguage();
     }
 
     /**
@@ -53,7 +54,7 @@ public final class Book {
      *
      * @param source the XML node that is the source of the book data
      */
-    public Book(@Nonnull final Node source) {
+    public Book(@Nonnull Node source) {
         this();
         loadData(source);
     }
@@ -63,25 +64,33 @@ public final class Book {
      *
      * @param source the source node
      */
-    public void loadData(@Nonnull final Node source) {
+    public void loadData(@Nonnull Node source) {
         if (!"book".equals(source.getNodeName())) {
             if (source.hasChildNodes()) {
-                final NodeList children = source.getChildNodes();
+                NodeList children = source.getChildNodes();
                 for (int i = 0; i < children.getLength(); i++) {
-                    loadData(children.item(i));
+                    Node child = children.item(i);
+                    if (child != null) {
+                        loadData(child);
+                    }
                 }
             }
             return;
         }
-        final NodeList children = source.getChildNodes();
+        NodeList children = source.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
-            final Node child = children.item(i);
-            if ("language".equals(child.getNodeName())) {
-                final NamedNodeMap attributes = child.getAttributes();
-                if ("de".equals(attributes.getNamedItem("id").getNodeValue())) {
-                    germanBook.loadData(child);
-                } else if ("en".equals(attributes.getNamedItem("id").getNodeValue())) {
-                    englishBook.loadData(child);
+            Node child = children.item(i);
+            if (child != null) {
+                if ("language".equals(child.getNodeName())) {
+                    NamedNodeMap attributes = child.getAttributes();
+                    Node idAttribute = (attributes != null) ? attributes.getNamedItem("id") : null;
+                    if (idAttribute != null) {
+                        if ("de".equals(idAttribute.getNodeValue())) {
+                            germanBook.loadData(child);
+                        } else if ("en".equals(idAttribute.getNodeValue())) {
+                            englishBook.loadData(child);
+                        }
+                    }
                 }
             }
         }
@@ -93,6 +102,7 @@ public final class Book {
      * @return the german version of the book
      */
     @Nonnull
+    @Contract(pure = true)
     public BookLanguage getGermanBook() {
         return germanBook;
     }
@@ -103,6 +113,7 @@ public final class Book {
      * @return the english version of the book
      */
     @Nonnull
+    @Contract(pure = true)
     public BookLanguage getEnglishBook() {
         return englishBook;
     }
@@ -114,11 +125,8 @@ public final class Book {
      * @return the localised version of the book
      */
     @Nonnull
-    public BookLanguage getLocalisedBook(final Locale locale) {
-        if (Locale.GERMAN.equals(locale)) {
-            return getGermanBook();
-        } else {
-            return getEnglishBook();
-        }
+    @Contract(pure = true)
+    public BookLanguage getLocalisedBook(@Nonnull Locale locale) {
+        return Locale.GERMAN.equals(locale) ? getGermanBook() : getEnglishBook();
     }
 }

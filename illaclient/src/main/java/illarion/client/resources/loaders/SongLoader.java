@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -36,7 +36,8 @@ public final class SongLoader extends AbstractResourceLoader<IdWrapper<String>>
     /**
      * The logger that is used to report error messages.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ItemLoader.class);
+    @Nonnull
+    private static final Logger LOGGER = LoggerFactory.getLogger(SongLoader.class);
 
     /**
      * Trigger the loading sequence for this loader.
@@ -48,7 +49,7 @@ public final class SongLoader extends AbstractResourceLoader<IdWrapper<String>>
             throw new IllegalStateException("targetFactory not set yet.");
         }
 
-        final ResourceFactory<IdWrapper<String>> factory = getTargetFactory();
+        ResourceFactory<IdWrapper<String>> factory = getTargetFactory();
 
         factory.init();
         new TableLoaderMusic(this);
@@ -63,14 +64,14 @@ public final class SongLoader extends AbstractResourceLoader<IdWrapper<String>>
      * Handle a single line of the resource table.
      */
     @Override
-    public boolean processRecord(final int line, @Nonnull final TableLoaderMusic loader) {
-        final int clipID = loader.getSongId();
-        final String filename = loader.getSongFile();
+    public boolean processRecord(int line, @Nonnull TableLoaderMusic loader) {
+        int clipID = loader.getSongId();
+        String filename = loader.getSongFile();
 
         try {
             getTargetFactory().storeResource(new IdWrapper<>(clipID, filename));
-        } catch (@Nonnull final IllegalStateException ex) {
-            LOGGER.error("Failed adding song to internal factory. ID: " + clipID + " - Filename: " + filename);
+        } catch (@Nonnull IllegalStateException ex) {
+            LOGGER.error("Failed adding song to internal factory. ID: {} - Filename: {}", clipID, filename);
         }
 
         return true;

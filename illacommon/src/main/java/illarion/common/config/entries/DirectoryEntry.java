@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,10 +16,12 @@
 package illarion.common.config.entries;
 
 import illarion.common.config.Config;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.nio.file.Path;
+import java.util.Objects;
 
 /**
  * This is a configuration entry that is used to set a directory select entry in
@@ -33,17 +35,19 @@ public final class DirectoryEntry implements ConfigEntry {
     /**
      * The configuration that is controlled by this directory entry.
      */
+    @Nullable
     private Config cfg;
 
     /**
      * The key in the configuration that is handled by this configuration.
      */
+    @Nonnull
     private final String configEntry;
 
     /**
      * The directory that is displayed by default.
      */
-    @Nullable
+    @Nonnull
     private final String dir;
 
     /**
@@ -53,14 +57,9 @@ public final class DirectoryEntry implements ConfigEntry {
      * @param defaultDir the default directory that is opened in case no file is
      * selected
      */
-    @SuppressWarnings("nls")
-    public DirectoryEntry(final String entry, @Nullable final String defaultDir) {
+    public DirectoryEntry(@Nonnull String entry, @Nullable String defaultDir) {
         configEntry = entry;
-        if (defaultDir == null) {
-            dir = System.getProperty("user.home");
-        } else {
-            dir = defaultDir;
-        }
+        dir = Objects.requireNonNull((defaultDir == null) ? System.getProperty("user.home") : defaultDir);
     }
 
     /**
@@ -68,7 +67,8 @@ public final class DirectoryEntry implements ConfigEntry {
      *
      * @return the directory displayed by default
      */
-    @Nullable
+    @Nonnull
+    @Contract(pure = true)
     public String getDefaultDir() {
         return dir;
     }
@@ -79,7 +79,11 @@ public final class DirectoryEntry implements ConfigEntry {
      * @return the configuration stored for this text entry
      */
     @Nullable
+    @Contract(pure = true)
     public Path getValue() {
+        if (cfg == null) {
+            throw new IllegalStateException("There is no reference to the configuration system set.");
+        }
         return cfg.getPath(configEntry);
     }
 
@@ -90,7 +94,7 @@ public final class DirectoryEntry implements ConfigEntry {
      * configuration entry
      */
     @Override
-    public void setConfig(@Nonnull final Config config) {
+    public void setConfig(@Nonnull Config config) {
         cfg = config;
     }
 
@@ -99,7 +103,10 @@ public final class DirectoryEntry implements ConfigEntry {
      *
      * @param newValue the new configuration value
      */
-    public void setValue(@Nonnull final Path newValue) {
+    public void setValue(@Nonnull Path newValue) {
+        if (cfg == null) {
+            throw new IllegalStateException("There is no reference to the configuration system set.");
+        }
         cfg.set(configEntry, newValue);
     }
 }

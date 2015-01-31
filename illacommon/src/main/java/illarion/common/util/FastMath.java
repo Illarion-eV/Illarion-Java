@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,6 +16,7 @@
 package illarion.common.util;
 
 import illarion.common.types.Range;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import java.util.Random;
@@ -27,6 +28,7 @@ import java.util.Random;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@SuppressWarnings({"NonReproducibleMathCall", "UnusedDeclaration"})
 public final class FastMath {
     /**
      * A "close to zero" double epsilon value for use.
@@ -92,12 +94,14 @@ public final class FastMath {
     /**
      * The used random value generator.
      */
+    @Nonnull
     private static final Random RANDOM = new Random();
 
     /**
      * Lookup table for the fast square root table function.
      */
-    private final static int[] SQRT_TABLE = {0, 16, 22, 27, 32, 35, 39, 42, 45, 48, 50, 53, 55, 57, 59, 61, 64, 65, 67,
+    @Nonnull
+    private static final int[] SQRT_TABLE = {0, 16, 22, 27, 32, 35, 39, 42, 45, 48, 50, 53, 55, 57, 59, 61, 64, 65, 67,
                                              69, 71, 73, 75, 76, 78, 80, 81, 83, 84, 86, 87, 89, 90, 91, 93, 94, 96, 97,
                                              98, 99, 101, 102, 103, 104, 106, 107, 108, 109, 110, 112, 113, 114, 115,
                                              116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 128, 128, 129, 130,
@@ -137,7 +141,8 @@ public final class FastMath {
      * @see #abs(long)
      * @see #abs(short)
      */
-    public static byte abs(final byte value) {
+    @Contract(pure = true)
+    public static byte abs(byte value) {
         return (byte) ((value ^ (value >> 7)) - (value >> 7));
     }
 
@@ -154,7 +159,8 @@ public final class FastMath {
      * @see #abs(long)
      * @see #abs(short)
      */
-    public static double abs(final double value) {
+    @Contract(pure = true)
+    public static double abs(double value) {
         if (value < 0.d) {
             return -value;
         }
@@ -174,7 +180,8 @@ public final class FastMath {
      * @see #abs(long)
      * @see #abs(short)
      */
-    public static float abs(final float value) {
+    @Contract(pure = true)
+    public static float abs(float value) {
         if (value < 0.f) {
             return -value;
         }
@@ -196,7 +203,8 @@ public final class FastMath {
      * @see #abs(long)
      * @see #abs(short)
      */
-    public static int abs(final int value) {
+    @Contract(pure = true)
+    public static int abs(int value) {
         return (value ^ (value >> 31)) - (value >> 31);
     }
 
@@ -215,7 +223,8 @@ public final class FastMath {
      * @see #abs(int)
      * @see #abs(short)
      */
-    public static long abs(final long value) {
+    @Contract(pure = true)
+    public static long abs(long value) {
         return (value ^ (value >> 63L)) - (value >> 63L);
     }
 
@@ -232,7 +241,8 @@ public final class FastMath {
      * @see #abs(int)
      * @see #abs(long)
      */
-    public static short abs(final short value) {
+    @Contract(pure = true)
+    public static short abs(short value) {
         return (short) ((value ^ (value >> 15)) - (value >> 15));
     }
 
@@ -245,8 +255,9 @@ public final class FastMath {
      * @param value the value whose arc cosine is to be returned
      * @return the arc cosine of the argument
      */
-    @SuppressWarnings({"nls", "unused"})
-    public static byte acos(final byte value) {
+    @SuppressWarnings({"unused"})
+    @Contract(value = "_ -> fail", pure = true)
+    public static byte acos(byte value) {
         throw new OutOfCoffeeException("A arc cosine from a byte value? No point in that.");
     }
 
@@ -261,7 +272,8 @@ public final class FastMath {
      * @param value the value whose arc cosine is to be returned
      * @return the arc cosine of the argument
      */
-    public static double acos(final double value) {
+    @Contract(pure = true)
+    public static double acos(double value) {
         if (Double.isNaN(value)) {
             return Double.NaN;
         }
@@ -286,7 +298,8 @@ public final class FastMath {
      * @param value the value whose arc cosine is to be returned
      * @return the arc cosine of the argument
      */
-    public static float acos(final float value) {
+    @Contract(pure = true)
+    public static float acos(float value) {
         if (Float.isNaN(value)) {
             return Float.NaN;
         }
@@ -309,8 +322,9 @@ public final class FastMath {
      * @param value the value whose arc cosine is to be returned
      * @return the arc cosine of the argument
      */
-    @SuppressWarnings({"nls", "unused"})
-    public static int acos(final int value) {
+    @SuppressWarnings({"unused"})
+    @Contract(value = "_ -> fail", pure = true)
+    public static int acos(int value) {
         throw new OutOfCoffeeException("A arc cosine from a integer value? No point in that.");
     }
 
@@ -323,8 +337,9 @@ public final class FastMath {
      * @param value the value whose arc cosine is to be returned
      * @return the arc cosine of the argument
      */
-    @SuppressWarnings({"nls", "unused"})
-    public static long acos(final long value) {
+    @SuppressWarnings({"unused"})
+    @Contract(value = "_ -> fail", pure = true)
+    public static long acos(long value) {
         throw new OutOfCoffeeException("A arc cosine from a long value? No point in that.");
     }
 
@@ -337,8 +352,9 @@ public final class FastMath {
      * @param value the value whose arc cosine is to be returned
      * @return the arc cosine of the argument
      */
-    @SuppressWarnings({"nls", "unused"})
-    public static short acos(final short value) {
+    @SuppressWarnings({"unused"})
+    @Contract(value = "_ -> fail", pure = true)
+    public static short acos(short value) {
         throw new OutOfCoffeeException("A arc cosine from a short value? No point in that.");
     }
 
@@ -351,8 +367,9 @@ public final class FastMath {
      * @param value the value whose arc sine is to be returned
      * @return the arc sine of the argument
      */
-    @SuppressWarnings({"nls", "unused"})
-    public static byte asin(final byte value) {
+    @SuppressWarnings({"unused"})
+    @Contract(value = "_ -> fail", pure = true)
+    public static byte asin(byte value) {
         throw new OutOfCoffeeException("A arc sine from a byte value? No point in that.");
     }
 
@@ -369,7 +386,8 @@ public final class FastMath {
      * @param value the value whose arc sine is to be returned
      * @return the arc sine of the argument
      */
-    public static double asin(final double value) {
+    @Contract(pure = true)
+    public static double asin(double value) {
         if (!isNumber(value)) {
             return Double.NaN;
         }
@@ -397,7 +415,8 @@ public final class FastMath {
      * @param value the value whose arc sine is to be returned
      * @return the arc sine of the argument
      */
-    public static float asin(final float value) {
+    @Contract(pure = true)
+    public static float asin(float value) {
         if (!isNumber(value)) {
             return Float.NaN;
         }
@@ -421,8 +440,9 @@ public final class FastMath {
      * @param value the value whose arc sine is to be returned
      * @return the arc sine of the argument
      */
-    @SuppressWarnings({"nls", "unused"})
-    public static int asin(final int value) {
+    @SuppressWarnings({"unused"})
+    @Contract(value = "_ -> fail", pure = true)
+    public static int asin(int value) {
         throw new OutOfCoffeeException("A arc sine from a integer value? No point in that.");
     }
 
@@ -435,8 +455,9 @@ public final class FastMath {
      * @param value the value whose arc sine is to be returned
      * @return the arc sine of the argument
      */
-    @SuppressWarnings({"nls", "unused"})
-    public static long asin(final long value) {
+    @SuppressWarnings({"unused"})
+    @Contract(value = "_ -> fail", pure = true)
+    public static long asin(long value) {
         throw new OutOfCoffeeException("A arc sine from a long value? No point in that.");
     }
 
@@ -449,8 +470,9 @@ public final class FastMath {
      * @param value the value whose arc sine is to be returned
      * @return the arc sine of the argument
      */
-    @SuppressWarnings({"nls", "unused"})
-    public static short asin(final short value) {
+    @SuppressWarnings({"unused"})
+    @Contract(value = "_ -> fail", pure = true)
+    public static short asin(short value) {
         throw new OutOfCoffeeException("A arc sine from a short value? No point in that.");
     }
 
@@ -461,7 +483,8 @@ public final class FastMath {
      * @param value the value whose arc tangent is to be returned
      * @return the arc tangent of the argument
      */
-    public static float atan(final byte value) {
+    @Contract(pure = true)
+    public static float atan(byte value) {
         return (float) Math.atan(value);
     }
 
@@ -478,7 +501,8 @@ public final class FastMath {
      * @param value the value whose arc tangent is to be returned
      * @return the arc tangent of the argument
      */
-    public static double atan(final double value) {
+    @Contract(pure = true)
+    public static double atan(double value) {
         return Math.atan(value);
     }
 
@@ -495,7 +519,8 @@ public final class FastMath {
      * @param value the value whose arc tangent is to be returned
      * @return the arc tangent of the argument
      */
-    public static float atan(final float value) {
+    @Contract(pure = true)
+    public static float atan(float value) {
         return (float) Math.atan(value);
     }
 
@@ -507,7 +532,8 @@ public final class FastMath {
      * @param value the value whose arc tangent is to be returned
      * @return the arc tangent of the argument
      */
-    public static float atan(final int value) {
+    @Contract(pure = true)
+    public static float atan(int value) {
         return (float) Math.atan(value);
     }
 
@@ -518,7 +544,8 @@ public final class FastMath {
      * @param value the value whose arc tangent is to be returned
      * @return the arc tangent of the argument
      */
-    public static double atan(final long value) {
+    @Contract(pure = true)
+    public static double atan(long value) {
         return Math.atan(value);
     }
 
@@ -530,7 +557,8 @@ public final class FastMath {
      * @param value the value whose arc tangent is to be returned
      * @return the arc tangent of the argument
      */
-    public static float atan(final short value) {
+    @Contract(pure = true)
+    public static float atan(short value) {
         return (float) Math.atan(value);
     }
 
@@ -543,8 +571,9 @@ public final class FastMath {
      * @param value the value that needs to be rounded
      * @return the next larger short of the argument
      */
-    @SuppressWarnings({"nls", "unused"})
-    public static byte ceil(final byte value) {
+    @SuppressWarnings({"unused"})
+    @Contract(value = "_ -> fail", pure = true)
+    public static byte ceil(byte value) {
         throw new OutOfCoffeeException("Rounding up a byte value? Seriously?");
     }
 
@@ -558,7 +587,8 @@ public final class FastMath {
      * @param value the value that needs to be rounded
      * @return the next larger long of the argument
      */
-    public static long ceil(final double value) {
+    @Contract(pure = true)
+    public static long ceil(double value) {
         if (!isNumber(value)) {
             return 0L;
         }
@@ -583,7 +613,8 @@ public final class FastMath {
      * @param value the value that needs to be rounded
      * @return the next larger integer of the argument
      */
-    public static int ceil(final float value) {
+    @Contract(pure = true)
+    public static int ceil(float value) {
         if (!isNumber(value)) {
             return 0;
         }
@@ -606,8 +637,9 @@ public final class FastMath {
      * @param value the value that needs to be rounded
      * @return the next larger integer of the argument
      */
-    @SuppressWarnings({"nls", "unused"})
-    public static int ceil(final int value) {
+    @SuppressWarnings({"unused"})
+    @Contract(value = "_ -> fail", pure = true)
+    public static int ceil(int value) {
         throw new OutOfCoffeeException("Rounding up a integer value? Seriously?");
     }
 
@@ -620,8 +652,9 @@ public final class FastMath {
      * @param value the value that needs to be rounded
      * @return the next larger long of the argument
      */
-    @SuppressWarnings({"nls", "unused"})
-    public static long ceil(final long value) {
+    @SuppressWarnings({"unused"})
+    @Contract(value = "_ -> fail", pure = true)
+    public static long ceil(long value) {
         throw new OutOfCoffeeException("Rounding up a long value? Seriously?");
     }
 
@@ -634,8 +667,9 @@ public final class FastMath {
      * @param value the value that needs to be rounded
      * @return the next larger short of the argument
      */
-    @SuppressWarnings({"nls", "unused"})
-    public static short ceil(final short value) {
+    @SuppressWarnings({"unused"})
+    @Contract(value = "_ -> fail", pure = true)
+    public static short ceil(short value) {
         throw new OutOfCoffeeException("Rounding up a short value? Seriously?");
     }
 
@@ -651,8 +685,8 @@ public final class FastMath {
      * @return the input value clamped between the minimal and the maximal
      * allowed value
      */
-    @SuppressWarnings("nls")
-    public static byte clamp(final byte value, final byte min, final byte max) {
+    @Contract(pure = true)
+    public static byte clamp(byte value, byte min, byte max) {
         if (max < min) {
             throw new IllegalArgumentException("Minimal value must not be greater then the maximal value.");
         }
@@ -680,9 +714,9 @@ public final class FastMath {
      * @return the input value clamped between the minimal and the maximal
      * allowed value
      */
-    @SuppressWarnings("nls")
+    @Contract(pure = true)
     public static double clamp(
-            final double value, final double min, final double max) {
+            double value, double min, double max) {
         if (Double.isNaN(value)) {
             return Double.NaN;
         }
@@ -716,9 +750,9 @@ public final class FastMath {
      * @return the input value clamped between the minimal and the maximal
      * allowed value
      */
-    @SuppressWarnings("nls")
+    @Contract(pure = true)
     public static float clamp(
-            final float value, final float min, final float max) {
+            float value, float min, float max) {
         if (Float.isNaN(value)) {
             return Float.NaN;
         }
@@ -749,8 +783,8 @@ public final class FastMath {
      * @return the input value clamped between the minimal and the maximal
      * allowed value
      */
-    @SuppressWarnings("nls")
-    public static int clamp(final int value, final int min, final int max) {
+    @Contract(pure = true)
+    public static int clamp(int value, int min, int max) {
         if (max < min) {
             throw new IllegalArgumentException("Minimal value must not be greater then the maximal value.");
         }
@@ -774,7 +808,8 @@ public final class FastMath {
      * @return the input value clamped between the minimal and the maximal
      * allowed value
      */
-    public static int clamp(final int value, @Nonnull final Range range) {
+    @Contract(pure = true)
+    public static int clamp(int value, @Nonnull Range range) {
         return clamp(value, range.getMin(), range.getMax());
     }
 
@@ -790,8 +825,8 @@ public final class FastMath {
      * @return the input value clamped between the minimal and the maximal
      * allowed value
      */
-    @SuppressWarnings("nls")
-    public static long clamp(final long value, final long min, final long max) {
+    @Contract(pure = true)
+    public static long clamp(long value, long min, long max) {
         if (max < min) {
             throw new IllegalArgumentException("Minimal value must not be greater then the maximal value.");
         }
@@ -816,18 +851,16 @@ public final class FastMath {
      * @return the input value clamped between the minimal and the maximal
      * allowed value
      */
-    @SuppressWarnings("nls")
+    @Contract(pure = true)
     public static short clamp(
-            final short value, final short min, final short max) {
+            short value, short min, short max) {
         if (max < min) {
             throw new IllegalArgumentException("Minimal value must not be greater then the maximal value.");
         }
         if (value >= max) {
             return max;
-        } else if (value <= min) {
-            return min;
         } else {
-            return value;
+            return (value <= min) ? min : value;
         }
     }
 
@@ -840,7 +873,8 @@ public final class FastMath {
      * @return a value with the magnitude of the argument x and the sign of the
      * argument y
      */
-    public static byte copySign(final byte magnitude, final byte sign) {
+    @Contract(pure = true)
+    public static byte copySign(byte magnitude, byte sign) {
         if (((magnitude < 0) && (sign > 0)) || ((magnitude > 0) && (sign < 0))) {
             return (byte) -magnitude;
         }
@@ -856,7 +890,8 @@ public final class FastMath {
      * @return a value with the magnitude of the argument x and the sign of the
      * argument y
      */
-    public static double copySign(final double magnitude, final double sign) {
+    @Contract(pure = true)
+    public static double copySign(double magnitude, double sign) {
         if (Double.isNaN(magnitude) || Double.isNaN(sign)) {
             return Double.NaN;
         }
@@ -875,7 +910,8 @@ public final class FastMath {
      * @return a value with the magnitude of the argument x and the sign of the
      * argument y
      */
-    public static float copySign(final float magnitude, final float sign) {
+    @Contract(pure = true)
+    public static float copySign(float magnitude, float sign) {
         if (Float.isNaN(magnitude) || Float.isNaN(sign)) {
             return Float.NaN;
         }
@@ -894,7 +930,8 @@ public final class FastMath {
      * @return a value with the magnitude of the argument x and the sign of the
      * argument y
      */
-    public static int copySign(final int magnitude, final int sign) {
+    @Contract(pure = true)
+    public static int copySign(int magnitude, int sign) {
         if (((magnitude < 0) && (sign > 0)) || ((magnitude > 0) && (sign < 0))) {
             return -magnitude;
         }
@@ -910,7 +947,8 @@ public final class FastMath {
      * @return a value with the magnitude of the argument x and the sign of the
      * argument y
      */
-    public static long copySign(final long magnitude, final long sign) {
+    @Contract(pure = true)
+    public static long copySign(long magnitude, long sign) {
         if (((magnitude < 0L) && (sign > 0L)) || ((magnitude > 0L) && (sign < 0L))) {
             return -magnitude;
         }
@@ -926,7 +964,8 @@ public final class FastMath {
      * @return a value with the magnitude of the argument x and the sign of the
      * argument y
      */
-    public static short copySign(final short magnitude, final short sign) {
+    @Contract(pure = true)
+    public static short copySign(short magnitude, short sign) {
         if (((magnitude < 0) && (sign > 0)) || ((magnitude > 0) && (sign < 0))) {
             return (short) -magnitude;
         }
@@ -939,7 +978,8 @@ public final class FastMath {
      * @param fValue The value to cosine, in radians.
      * @return the cosine of the value
      */
-    public static float cos(final float fValue) {
+    @Contract(pure = true)
+    public static float cos(float fValue) {
         return sin(fValue + HALF_PI);
     }
 
@@ -948,9 +988,10 @@ public final class FastMath {
      *
      * @param value1 the first value
      * @param value2 the second value
-     * @return <code>true</code> if both values are equal
+     * @return {@code true} if both values are equal
      */
-    public static boolean equals(final int value1, final int value2) {
+    @Contract(pure = true)
+    public static boolean equals(int value1, int value2) {
         return value1 == value2;
     }
 
@@ -963,8 +1004,9 @@ public final class FastMath {
      * @return <code>true<code> if the difference between both values is less
      * or equal then delta
      */
+    @Contract(pure = true)
     public static boolean equals(
-            final int value1, final int value2, final int delta) {
+            int value1, int value2, int delta) {
         return abs(value1 - value2) <= delta;
     }
 
@@ -977,8 +1019,8 @@ public final class FastMath {
      * @return <code>true<code> if the difference between both values is less
      * or equal then delta
      */
-    public static boolean equals(
-            final float value1, final float value2, final float delta) {
+    @Contract(pure = true)
+    public static boolean equals(float value1, float value2, float delta) {
         return abs(value1 - value2) <= delta;
     }
 
@@ -988,7 +1030,8 @@ public final class FastMath {
      * @param fValue Value to raise to a power
      * @return the e^fValue calculation result
      */
-    public static float exp(final float fValue) {
+    @Contract(pure = true)
+    public static float exp(float fValue) {
         return (float) Math.exp(fValue);
     }
 
@@ -998,7 +1041,8 @@ public final class FastMath {
      * @param value The value to round
      * @return The given number rounded down
      */
-    public static long floor(final double value) {
+    @Contract(pure = true)
+    public static long floor(double value) {
         if (!isNumber(value)) {
             return 0;
         }
@@ -1011,7 +1055,8 @@ public final class FastMath {
      * @param value The value to round
      * @return The given number rounded down
      */
-    public static int floor(final float value) {
+    @Contract(pure = true)
+    public static int floor(float value) {
         if (!isNumber(value)) {
             return 0;
         }
@@ -1024,7 +1069,8 @@ public final class FastMath {
      * @param fValue The value to process.
      * @return the inverted square root value of the parameter
      */
-    public static float invSqrt(final float fValue) {
+    @Contract(pure = true)
+    public static float invSqrt(float fValue) {
         return (float) (1.f / Math.sqrt(fValue));
     }
 
@@ -1033,9 +1079,10 @@ public final class FastMath {
      * infinite.
      *
      * @param dValue the double value to check
-     * @return <code>true</code> in case this float value is a real number
+     * @return {@code true} in case this float value is a real number
      */
-    public static boolean isNumber(final double dValue) {
+    @Contract(pure = true)
+    public static boolean isNumber(double dValue) {
         return !Double.isInfinite(dValue) && !Double.isNaN(dValue);
     }
 
@@ -1044,9 +1091,10 @@ public final class FastMath {
      * infinite.
      *
      * @param fValue the float value to check
-     * @return <code>true</code> in case this float value is a real number
+     * @return {@code true} in case this float value is a real number
      */
-    public static boolean isNumber(final float fValue) {
+    @Contract(pure = true)
+    public static boolean isNumber(float fValue) {
         return !Float.isInfinite(fValue) && !Float.isNaN(fValue);
     }
 
@@ -1055,9 +1103,10 @@ public final class FastMath {
      * and so on.
      *
      * @param number The number to test.
-     * @return <code>true</code> in case the number is a power of two
+     * @return {@code true} in case the number is a power of two
      */
-    public static boolean isPowerOfTwo(final int number) {
+    @Contract(pure = true)
+    public static boolean isPowerOfTwo(int number) {
         return (number > 0) && ((number & (number - 1)) == 0);
     }
 
@@ -1070,11 +1119,8 @@ public final class FastMath {
      * @param endValue ending value. 100% of f
      * @return The interpolated value between startValue and endValue.
      */
-    public static float LERP(
-            final float percent, final float startValue, final float endValue) {
-        if (startValue == endValue) {
-            return startValue;
-        }
+    @Contract(pure = true)
+    public static float LERP(float percent, float startValue, float endValue) {
         return ((1.f - percent) * startValue) + (percent * endValue);
     }
 
@@ -1084,7 +1130,8 @@ public final class FastMath {
      * @param fValue The value to log
      * @return The log of fValue base E
      */
-    public static float log(final float fValue) {
+    @Contract(pure = true)
+    public static float log(float fValue) {
         return (float) Math.log(fValue);
     }
 
@@ -1096,7 +1143,8 @@ public final class FastMath {
      * @param base Base of logarithm
      * @return The logarithm of value with given base
      */
-    public static float log(final float value, final float base) {
+    @Contract(pure = true)
+    public static float log(float value, float base) {
         return (float) (Math.log(value) / Math.log(base));
     }
 
@@ -1107,7 +1155,8 @@ public final class FastMath {
      * number shall start at
      * @return the found power of two number
      */
-    public static int nearestPowerOfTwo(final int number) {
+    @Contract(pure = true)
+    public static int nearestPowerOfTwo(int number) {
         return (int) Math.pow(2, Math.ceil(Math.log(number) / Math.log(2)));
     }
 
@@ -1138,8 +1187,7 @@ public final class FastMath {
      * @param max the maximal value of the random number range (exclusive)
      * @return the generated random number
      */
-    @SuppressWarnings("nls")
-    public static int nextRandomInt(final int min, final int max) {
+    public static int nextRandomInt(int min, int max) {
         if (min == max) {
             return min;
         }
@@ -1157,9 +1205,9 @@ public final class FastMath {
      * @param max the top value of te range the value has to be in
      * @return the normalized value
      */
-    @SuppressWarnings("nls")
+    @Contract(pure = true)
     public static float normalize(
-            final float val, final float min, final float max) {
+            float val, float min, float max) {
         if (Float.isInfinite(val) || Float.isNaN(val)) {
             return 0f;
         }
@@ -1168,7 +1216,7 @@ public final class FastMath {
             throw new IllegalArgumentException(
                     "The minimal and the maximal border must not be NAN or infinite values.");
         }
-        final float range = max - min;
+        float range = max - min;
 
         if (range < FLT_EPSILON) {
             throw new IllegalArgumentException("Range between min and max is too small.");
@@ -1190,7 +1238,8 @@ public final class FastMath {
      * @param fExponent The exponent value
      * @return base raised to exponent
      */
-    public static float pow(final float fBase, final float fExponent) {
+    @Contract(pure = true)
+    public static float pow(float fBase, float fExponent) {
         return (float) Math.pow(fBase, fExponent);
     }
 
@@ -1209,14 +1258,15 @@ public final class FastMath {
      * @param value the value the closest integer is needed
      * @return the closest integer to the argument
      */
-    public static long round(final double value) {
+    @Contract(pure = true)
+    public static long round(double value) {
         if (Double.isNaN(value)) {
             return 0;
         }
-        if ((value == Double.POSITIVE_INFINITY) || (value > Long.MAX_VALUE)) {
+        if (value > Long.MAX_VALUE) {
             return Long.MAX_VALUE;
         }
-        if ((value == Double.NEGATIVE_INFINITY) || (value < Long.MIN_VALUE)) {
+        if (value < Long.MIN_VALUE) {
             return Long.MIN_VALUE;
         }
         return (long) (value + 0.5d);
@@ -1237,14 +1287,15 @@ public final class FastMath {
      * @param value the value the closest integer is needed
      * @return the closest integer to the argument
      */
-    public static int round(final float value) {
+    @Contract(pure = true)
+    public static int round(float value) {
         if (Float.isNaN(value)) {
             return 0;
         }
-        if ((value == Float.POSITIVE_INFINITY) || (value > Integer.MAX_VALUE)) {
+        if (value > Integer.MAX_VALUE) {
             return Integer.MAX_VALUE;
         }
-        if ((value == Float.NEGATIVE_INFINITY) || (value < Integer.MIN_VALUE)) {
+        if (value < Integer.MIN_VALUE) {
             return Integer.MIN_VALUE;
         }
 
@@ -1261,7 +1312,8 @@ public final class FastMath {
      * @param fValue The float to examine
      * @return The float's sign
      */
-    public static float sign(final float fValue) {
+    @Contract(pure = true)
+    public static float sign(float fValue) {
         return Math.signum(fValue);
     }
 
@@ -1272,7 +1324,8 @@ public final class FastMath {
      * @param iValue The integer to examine
      * @return The integer's sign
      */
-    public static int sign(final int iValue) {
+    @Contract(pure = true)
+    public static int sign(int iValue) {
         if (iValue > 0) {
             return 1;
         }
@@ -1290,8 +1343,9 @@ public final class FastMath {
      * @param fValue the value to sine, in radians.
      * @return the sine of the value
      */
-    public static float sin(final float fValue) {
-        final float value = reduceSinAngle(fValue);
+    @Contract(pure = true)
+    public static float sin(float fValue) {
+        float value = reduceSinAngle(fValue);
         if (abs(value) <= QUARTER_PI) {
             return (float) Math.sin(value);
         }
@@ -1305,7 +1359,8 @@ public final class FastMath {
      * @param fValue The value to square.
      * @return The square of the given value.
      */
-    public static float sqr(final float fValue) {
+    @Contract(pure = true)
+    public static float sqr(float fValue) {
         return fValue * fValue;
     }
 
@@ -1315,7 +1370,8 @@ public final class FastMath {
      * @param iValue The value to square.
      * @return The square of the given value.
      */
-    public static int sqr(final int iValue) {
+    @Contract(pure = true)
+    public static int sqr(int iValue) {
         return iValue * iValue;
     }
 
@@ -1325,54 +1381,58 @@ public final class FastMath {
      * @param fValue The value to square root
      * @return The square root of the given value
      */
-    public static float sqrt(final float fValue) {
+    @Contract(pure = true)
+    public static float sqrt(float fValue) {
         return (float) Math.sqrt(fValue);
     }
 
     /**
      * Returns the integer square root of a integer value. It acts like
-     * <code>(int) Math.sqrt(int)</code> for values lower then 289, and for
+     * {@code (int) Math.sqrt(int)} for values lower then 289, and for
      * values above it returns values close to the real results.
      *
      * @param iValue the value the square root is needed from
      * @return the square root of the value
      */
-    @SuppressWarnings("nls")
-    public static int sqrt(final int iValue) {
+    @SuppressWarnings({"IfMayBeConditional", "OverlyComplexMethod"})
+    @Contract(pure = true)
+    public static int sqrt(int iValue) {
         if (iValue >= 0x10000) {
             if (iValue >= 0x1000000) {
                 if (iValue >= 0x10000000) {
                     if (iValue >= 0x40000000) {
-                        return (SQRT_TABLE[iValue >> 24] << 8);
+                        return SQRT_TABLE[iValue >> 24] << 8;
                     }
-                    return (SQRT_TABLE[iValue >> 22] << 7);
+                    return SQRT_TABLE[iValue >> 22] << 7;
                 } else if (iValue >= 0x4000000) {
-                    return (SQRT_TABLE[iValue >> 20] << 6);
+                    return SQRT_TABLE[iValue >> 20] << 6;
                 } else {
-                    return (SQRT_TABLE[iValue >> 18] << 5);
+                    return SQRT_TABLE[iValue >> 18] << 5;
                 }
             } else if (iValue >= 0x100000) {
                 if (iValue >= 0x400000) {
-                    return (SQRT_TABLE[iValue >> 16] << 4);
+                    return SQRT_TABLE[iValue >> 16] << 4;
                 }
-                return (SQRT_TABLE[iValue >> 14] << 3);
+                return SQRT_TABLE[iValue >> 14] << 3;
             } else if (iValue >= 0x40000) {
-                return (SQRT_TABLE[iValue >> 12] << 2);
+                return SQRT_TABLE[iValue >> 12] << 2;
             } else {
-                return (SQRT_TABLE[iValue >> 10] << 1);
+                return SQRT_TABLE[iValue >> 10] << 1;
             }
-        } else if (iValue >= 0x100) {
+        }
+        if (iValue >= 0x100) {
             if (iValue >= 0x1000) {
                 if (iValue >= 0x4000) {
-                    return (SQRT_TABLE[iValue >> 8]);
+                    return SQRT_TABLE[iValue >> 8];
                 }
-                return (SQRT_TABLE[iValue >> 6] >> 1);
+                return SQRT_TABLE[iValue >> 6] >> 1;
             } else if (iValue >= 0x400) {
-                return (SQRT_TABLE[iValue >> 4] >> 2);
+                return SQRT_TABLE[iValue >> 4] >> 2;
             } else {
-                return (SQRT_TABLE[iValue >> 2] >> 3);
+                return SQRT_TABLE[iValue >> 2] >> 3;
             }
-        } else if (iValue >= 0) {
+        }
+        if (iValue >= 0) {
             return SQRT_TABLE[iValue] >> 4;
         }
         throw new IllegalArgumentException("Can't get the square root of a negative number.");
@@ -1384,7 +1444,8 @@ public final class FastMath {
      * @param fValue The value to tangent, in radians
      * @return The tangent of fValue
      */
-    public static float tan(final float fValue) {
+    @Contract(pure = true)
+    public static float tan(float fValue) {
         return (float) Math.tan(fValue);
     }
 
@@ -1394,7 +1455,8 @@ public final class FastMath {
      * @param radians the value in radians
      * @return the value in degrees
      */
-    public static float toDegree(final float radians) {
+    @Contract(pure = true)
+    public static float toDegree(float radians) {
         return radians * RAD_TO_DEG;
     }
 
@@ -1404,7 +1466,8 @@ public final class FastMath {
      * @param degree the value in degrees
      * @return the value in radians
      */
-    public static float toRadians(final float degree) {
+    @Contract(pure = true)
+    public static float toRadians(float degree) {
         return degree * DEG_TO_RAD;
     }
 
@@ -1418,11 +1481,12 @@ public final class FastMath {
      * @param radians the original angle
      * @return the angle within the save limits
      */
-    private static float reduceSinAngle(final float radians) {
+    @Contract(pure = true)
+    private static float reduceSinAngle(float radians) {
         float rad = (int) (radians / TWO_PI); // put us in -2PI to +2PI space
         rad = radians - (rad * TWO_PI);
         if (abs(rad) > PI) { // put us in -PI to +PI space
-            rad = rad - TWO_PI;
+            rad -= TWO_PI;
         }
         if (abs(rad) > HALF_PI) {// put us in -PI/2 to +PI/2 space
             rad = PI - rad;

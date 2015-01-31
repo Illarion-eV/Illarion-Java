@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,14 +15,15 @@
  */
 package illarion.common.data;
 
+import org.jetbrains.annotations.Contract;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * This class presents a entire book in the game in one language.
@@ -31,13 +32,9 @@ import java.util.Locale;
  */
 public final class BookLanguage implements Iterable<BookPage> {
     /**
-     * The locale of this book.
-     */
-    private final Locale locale;
-
-    /**
      * The title page of the book in this language.
      */
+    @Nullable
     private BookTitlePage titlePage;
 
     /**
@@ -48,11 +45,8 @@ public final class BookLanguage implements Iterable<BookPage> {
 
     /**
      * Create a new instance of the book language that represents a single locale.
-     *
-     * @param bookLocale the locale of this book
      */
-    public BookLanguage(final Locale bookLocale) {
-        locale = bookLocale;
+    public BookLanguage() {
         pages = new ArrayList<>();
     }
 
@@ -61,33 +55,27 @@ public final class BookLanguage implements Iterable<BookPage> {
      *
      * @param source the XML node that supplies the data
      */
-    public void loadData(@Nonnull final Node source) {
+    public void loadData(@Nonnull Node source) {
         if (!"language".equals(source.getNodeName())) {
             return;
         }
 
-        final NodeList children = source.getChildNodes();
+        NodeList children = source.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
-            final Node child = children.item(i);
-            if ("titlepage".equals(child.getNodeName())) {
-                if (titlePage == null) {
-                    titlePage = new BookTitlePage(child);
-                } else {
-                    throw new IllegalStateException("Duplicated title page.");
+            Node child = children.item(i);
+            if (child != null) {
+                //noinspection SpellCheckingInspection
+                if ("titlepage".equals(child.getNodeName())) {
+                    if (titlePage == null) {
+                        titlePage = new BookTitlePage(child);
+                    } else {
+                        throw new IllegalStateException("Duplicated title page.");
+                    }
+                } else if ("page".equals(child.getNodeName())) {
+                    pages.add(new BookPage(child));
                 }
-            } else if ("page".equals(child.getNodeName())) {
-                pages.add(new BookPage(child));
             }
         }
-    }
-
-    /**
-     * Get the locale of this book.
-     *
-     * @return the book locale
-     */
-    public Locale getLocale() {
-        return locale;
     }
 
     /**
@@ -95,6 +83,7 @@ public final class BookLanguage implements Iterable<BookPage> {
      *
      * @return {@code true} in case this book has a title page
      */
+    @Contract(pure = true)
     public boolean hasTitlePage() {
         return titlePage != null;
     }
@@ -104,6 +93,8 @@ public final class BookLanguage implements Iterable<BookPage> {
      *
      * @return the title page or {@code null} in case there is none
      */
+    @Nullable
+    @Contract(pure = true)
     public BookTitlePage getTitlePage() {
         return titlePage;
     }
@@ -113,6 +104,7 @@ public final class BookLanguage implements Iterable<BookPage> {
      *
      * @return the amount of normal pages in this book
      */
+    @Contract(pure = true)
     public int getPageCount() {
         return pages.size();
     }
@@ -124,8 +116,14 @@ public final class BookLanguage implements Iterable<BookPage> {
      * @return the book page assigned to the index
      * @throws IndexOutOfBoundsException if the index is out of range ({@code index &lt; 0 || index &gt;= size()})
      */
-    public BookPage getPage(final int index) {
-        return pages.get(index);
+    @Nonnull
+    @Contract(pure = true)
+    public BookPage getPage(int index) {
+        BookPage page = pages.get(index);
+        if (page == null) {
+            throw new IllegalStateException("There is a illegal page inside a book");
+        }
+        return page;
     }
 
     @Nonnull

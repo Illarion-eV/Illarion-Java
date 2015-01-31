@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,8 +18,7 @@ package illarion.common.config;
 import illarion.common.config.entries.ConfigEntry;
 import illarion.common.util.MessageSource;
 import javolution.util.FastTable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -46,34 +45,33 @@ public final class ConfigDialog {
          * The configuration entry that is displayed next to the title.
          */
         @Nonnull
-        private ConfigEntry entry;
+        private final ConfigEntry entry;
 
         /**
          * The title of the entry.
          */
         @Nonnull
-        private String title;
+        private final String title;
 
         /**
          * Create a new entry with preset values.
          *
-         * @param entryTitle the title of that entry that is displayed as name
-         * of this entry
-         * @param configEntry the configuration entry that defines what value is
-         * controlled how
+         * @param entryTitle the title of that entry that is displayed as name of this entry
+         * @param configEntry the configuration entry that defines what value is controlled how
          */
-        public Entry(@Nonnull final String entryTitle, @Nonnull final ConfigEntry configEntry) {
+        public Entry(@Nonnull String entryTitle, @Nonnull ConfigEntry configEntry) {
             title = entryTitle;
             entry = configEntry;
         }
 
         /**
-         * Get the configuration entry that is set to this entry and that
-         * defines what configuration element is controlled and how.
+         * Get the configuration entry that is set to this entry and that defines what configuration element is
+         * controlled and how.
          *
          * @return the configuration entry of this entry
          */
         @Nonnull
+        @Contract(pure = true)
         public ConfigEntry getConfigEntry() {
             return entry;
         }
@@ -84,33 +82,15 @@ public final class ConfigDialog {
          * @return The title of this entry
          */
         @Nonnull
+        @Contract(pure = true)
         public String getTitle() {
             return title;
-        }
-
-        /**
-         * Set the entry that is displayed next to the title.
-         *
-         * @param configEntry the entry that is displayed
-         */
-        public void setEntry(@Nonnull final ConfigEntry configEntry) {
-            entry = configEntry;
-        }
-
-        /**
-         * Set the title of this entry.
-         *
-         * @param entryTitle the title of the entry
-         */
-        public void setTitle(@Nonnull final String entryTitle) {
-            title = entryTitle;
         }
     }
 
     /**
-     * This class describes a page of the configuration dialog. Each page is
-     * displayed as a tab in the dialog. Each page contains a title that is
-     * displayed in the tab and a list of entries.
+     * This class describes a page of the configuration dialog. Each page is displayed as a tab in the dialog. Each
+     * page contains a title that is displayed in the tab and a list of entries.
      *
      * @author Martin Karing &lt;nitram@illarion.org&gt;
      */
@@ -126,14 +106,14 @@ public final class ConfigDialog {
          * page.
          */
         @Nonnull
-        private String title;
+        private final String title;
 
         /**
          * Initialize the page with a title but without any entries.
          *
          * @param pageTitle the title of the page that is displayed in the tab
          */
-        public Page(@Nonnull final String pageTitle) {
+        public Page(@Nonnull String pageTitle) {
             lines = new FastTable<>();
             title = pageTitle;
         }
@@ -143,7 +123,7 @@ public final class ConfigDialog {
          *
          * @param entry the entry that is supposed to be added to this page
          */
-        public void addEntry(@Nonnull final Entry entry) {
+        public void addEntry(@Nonnull Entry entry) {
             lines.add(entry);
         }
 
@@ -156,8 +136,12 @@ public final class ConfigDialog {
          * {@link #getEntryCount()}
          */
         @Nonnull
-        public Entry getEntry(final int index) {
-            return lines.get(index);
+        public Entry getEntry(int index) {
+            Entry entry = lines.get(index);
+            if (entry == null) {
+                throw new IllegalStateException("Entry of a config dialog contained a illegal value. Null?!");
+            }
+            return entry;
         }
 
         /**
@@ -165,42 +149,29 @@ public final class ConfigDialog {
          *
          * @return the amount of entries on this page
          */
+        @Contract(pure = true)
         public int getEntryCount() {
             return lines.size();
         }
 
         /**
-         * Get the title of this page. The title is displayed as name of the tab
-         * for this page.
+         * Get the title of this page. The title is displayed as name of the tab for this page.
          *
          * @return the title of this page
          */
         @Nonnull
+        @Contract(pure = true)
         public String getTitle() {
             return title;
         }
 
-        /**
-         * Set the title of this page. The title is displayed in the tab.
-         *
-         * @param pageTitle the title of this page
-         */
-        public void setTitle(@Nonnull final String pageTitle) {
-            title = pageTitle;
-        }
-
         @Nonnull
         @Override
+        @Contract(pure = true)
         public Iterator<Entry> iterator() {
             return lines.iterator();
         }
     }
-
-    /**
-     * The logger instance that takes care for the logging output of this class.
-     */
-    @Nonnull
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigDialog.class);
 
     /**
      * The configuration that is used as data source for the entries. Also this
@@ -234,10 +205,10 @@ public final class ConfigDialog {
      *
      * @param page the page to add to this dialog
      */
-    public void addPage(@Nonnull final Page page) {
+    public void addPage(@Nonnull Page page) {
         pages.add(page);
         if (cfg != null) {
-            for (@Nonnull final Entry entry : page) {
+            for (@Nonnull Entry entry : page) {
                 entry.getConfigEntry().setConfig(cfg);
             }
         }
@@ -248,11 +219,16 @@ public final class ConfigDialog {
      *
      * @param index the index of the page requested
      * @return the page at the specified index
-     * @throws IndexOutOfBoundsException in case the index is lesser then 0 or
-     * greater or equal then {@link #getPageCount()}
+     * @throws IndexOutOfBoundsException in case the index is lesser then 0 or greater or equal then
+     * {@link #getPageCount()}
      */
-    public Page getPage(final int index) {
-        return pages.get(index);
+    @Nonnull
+    public Page getPage(int index) {
+        Page result = pages.get(index);
+        if (result == null) {
+            throw new IllegalStateException("Config dialog page contained illegal data. Null?!");
+        }
+        return result;
     }
 
     /**
@@ -271,11 +247,11 @@ public final class ConfigDialog {
      *
      * @param config the configuration
      */
-    public void setConfig(@Nullable final Config config) {
+    public void setConfig(@Nullable Config config) {
         cfg = config;
         if (config != null) {
-            for (@Nonnull final Page page : pages) {
-                for (@Nonnull final Entry entry : page) {
+            for (@Nonnull Page page : pages) {
+                for (@Nonnull Entry entry : page) {
                     entry.getConfigEntry().setConfig(config);
                 }
             }
@@ -285,13 +261,14 @@ public final class ConfigDialog {
     /**
      * Set the message source of this configuration dialog.
      *
-     * @param msgs the message source of this configuration dialog
+     * @param msgSource the message source of this configuration dialog
      */
-    public void setMessageSource(@Nonnull final MessageSource msgs) {
-        messages = msgs;
+    public void setMessageSource(@Nonnull MessageSource msgSource) {
+        messages = msgSource;
     }
 
     @Nullable
+    @Contract(pure = true)
     public MessageSource getMessageSource() {
         return messages;
     }

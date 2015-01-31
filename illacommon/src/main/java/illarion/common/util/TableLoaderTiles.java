@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,10 +16,9 @@
 package illarion.common.util;
 
 import illarion.common.graphics.TileInfo;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
-import java.io.File;
-import java.io.InputStream;
 
 /**
  * This is a special implementation of the table loader that targets the tile table file.
@@ -86,39 +85,8 @@ public final class TableLoaderTiles extends TableLoader {
      */
     private static final int TB_SPEED = 4;
 
-    public TableLoaderTiles(@Nonnull final TableLoaderSink<TableLoaderTiles> callback) {
+    public TableLoaderTiles(@Nonnull TableLoaderSink<TableLoaderTiles> callback) {
         super("Tiles", callback);
-    }
-
-    public TableLoaderTiles(@Nonnull final File table, @Nonnull final TableLoaderSink<TableLoaderTiles> callback) {
-        super(table, callback);
-    }
-
-    public TableLoaderTiles(final String table, @Nonnull final TableLoaderSink<TableLoaderTiles> callback) {
-        super(table, callback);
-    }
-
-    public TableLoaderTiles(
-            @Nonnull final File table,
-            @Nonnull final TableLoaderSink<TableLoaderTiles> callback,
-            final String tableDelim) {
-        super(table, callback, tableDelim);
-    }
-
-    public TableLoaderTiles(
-            @Nonnull final InputStream resource,
-            final boolean ndsc,
-            @Nonnull final TableLoaderSink<TableLoaderTiles> callback,
-            final String tableDelim) {
-        super(resource, ndsc, callback, tableDelim);
-    }
-
-    public TableLoaderTiles(
-            final String table,
-            final boolean ndsc,
-            @Nonnull final TableLoaderSink<TableLoaderTiles> callback,
-            final String tableDelim) {
-        super(table, ndsc, callback, tableDelim);
     }
 
     /**
@@ -126,6 +94,7 @@ public final class TableLoaderTiles extends TableLoader {
      *
      * @return the animation speed of the item
      */
+    @Contract(pure = true)
     public int getAnimationSpeed() {
         return getInt(TB_SPEED);
     }
@@ -135,6 +104,7 @@ public final class TableLoaderTiles extends TableLoader {
      *
      * @return the frame count of the tile
      */
+    @Contract(pure = true)
     public int getFrameCount() {
         return getInt(TB_FRAME);
     }
@@ -145,6 +115,7 @@ public final class TableLoaderTiles extends TableLoader {
      *
      * @return the movement cost for this tile
      */
+    @Contract(pure = true)
     public int getMovementCost() {
         return getInt(TB_COST);
     }
@@ -154,6 +125,8 @@ public final class TableLoaderTiles extends TableLoader {
      *
      * @return the english tile name
      */
+    @Nonnull
+    @Contract(pure = true)
     public String getNameEnglish() {
         return getString(TB_COMMENT);
     }
@@ -163,6 +136,8 @@ public final class TableLoaderTiles extends TableLoader {
      *
      * @return the german tile name
      */
+    @Nonnull
+    @Contract(pure = true)
     public String getNameGerman() {
         return getString(TB_COMMENT);
     }
@@ -173,6 +148,8 @@ public final class TableLoaderTiles extends TableLoader {
      *
      * @return the resource name of this tile
      */
+    @Nonnull
+    @Contract(pure = true)
     public String getResourceName() {
         return getString(TB_NAME);
     }
@@ -183,6 +160,7 @@ public final class TableLoaderTiles extends TableLoader {
      * @return the color index
      * @see TileInfo#getMapColor()
      */
+    @Contract(pure = true)
     public int getTileColor() {
         return getInt(TB_COLOR);
     }
@@ -192,6 +170,7 @@ public final class TableLoaderTiles extends TableLoader {
      *
      * @return the tile ID
      */
+    @Contract(pure = true)
     public int getTileId() {
         return getInt(TB_GROUND_ID);
     }
@@ -205,6 +184,7 @@ public final class TableLoaderTiles extends TableLoader {
      * @see #TILE_MODE_ANIMATED
      * @see #TILE_MODE_VARIANT
      */
+    @Contract(pure = true)
     public int getTileMode() {
         return getInt(TB_MODE);
     }
@@ -214,6 +194,7 @@ public final class TableLoaderTiles extends TableLoader {
      *
      * @return {@code true} in case the item is opaque
      */
+    @Contract(pure = true)
     public boolean isOpaque() {
         return getBoolean(TB_OPAQUE);
     }

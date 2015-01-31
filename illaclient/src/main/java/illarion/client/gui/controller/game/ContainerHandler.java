@@ -454,7 +454,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
         activeNifty = nifty;
         activeScreen = screen;
 
-        /* Lets build two new containers for the cache, so Merung is not crying that the container open to slowly. */
+        /* Lets build some new containers for the cache, so Merung is not crying that the container open to0 slowly. */
         int preLoadBagCount = IllaClient.getCfg().getInteger("preLoadBagCount");
         for (int i = 0; i < preLoadBagCount; i++) {
             itemContainerCache.add(buildNewContainer(100));

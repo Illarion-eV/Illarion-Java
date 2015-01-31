@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,6 +19,7 @@ import illarion.common.graphics.Layers;
 import illarion.common.graphics.MapConstants;
 import illarion.common.net.NetCommReader;
 import illarion.common.util.FastMath;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,24 +34,25 @@ import java.io.Serializable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @NotThreadSafe
+@SuppressWarnings({"unused", "OverlyComplexClass"})
 public class Location implements Serializable {
     /**
-     * Modificator used at the calculation of the display coordinates in case its a tile above or below the level 0.
+     * Modifier used at the calculation of the display coordinates in case its a tile above or below the level 0.
      */
     public static final int DISPLAY_Z_OFFSET_MOD = 6;
 
     /**
-     * Modificator of the X-Coordinate of the server coordinates to calculate a key of this position.
+     * Modifier of the X-Coordinate of the server coordinates to calculate a key of this position.
      */
     private static final long KEY_MOD_X = 65536L;
 
     /**
-     * Modificator of the Y-Coordinate of the server coordinates to calculate a key of this position.
+     * Modifier of the Y-Coordinate of the server coordinates to calculate a key of this position.
      */
     private static final long KEY_MOD_Y = 1L;
 
     /**
-     * Modificator of the Z-Coordinate of the server coordinates to calculate a key of this position.
+     * Modifier of the Z-Coordinate of the server coordinates to calculate a key of this position.
      */
     private static final long KEY_MOD_Z = 4294967296L;
 
@@ -96,11 +98,6 @@ public class Location implements Serializable {
      * True if the server coordinates need to be calculated.
      */
     private boolean dirtySC;
-
-    /**
-     * Distance between the tiles. Needed for display coordinate calculation.
-     */
-    private int gap;
 
     /**
      * Row of map tiles on the client map.
@@ -198,7 +195,7 @@ public class Location implements Serializable {
      * @param z the z coordinate of the server location that shall be converted
      * @return the x coordinate of the display coordinates where the object needs to be displayed
      */
-    @SuppressWarnings("unused")
+    @Contract(pure = true)
     public static int displayCoordinateX(float x, float y, float z) {
         return (int) ((x + y) * MapConstants.STEP_X);
     }
@@ -212,6 +209,7 @@ public class Location implements Serializable {
      * @param z the z coordinate of the server location that shall be converted
      * @return the y coordinate of the display coordinates where the object needs to be displayed
      */
+    @Contract(pure = true)
     public static int displayCoordinateY(float x, float y, float z) {
         return (int) (((x - y) * MapConstants.STEP_Y) + (DISPLAY_Z_OFFSET_MOD * z * MapConstants.STEP_Y));
     }
@@ -225,21 +223,9 @@ public class Location implements Serializable {
      * @param z the z coordinate of the server location that shall be converted
      * @return the z coordinate of the display coordinates where the object needs to be displayed
      */
+    @Contract(pure = true)
     public static int displayCoordinateZ(float x, float y, float z) {
         return (int) ((x - y - (z * Layers.LEVEL)) * Layers.DISTANCE);
-    }
-
-    /**
-     * Get a instance from this location class that is currently not in use. Its proposed to use this one over the
-     * usual
-     * constructors.
-     *
-     * @return the unused location instance
-     */
-    @Deprecated
-    @Nonnull
-    public static Location getInstance() {
-        return new Location();
     }
 
     /**
@@ -252,6 +238,7 @@ public class Location implements Serializable {
      * @param z the Z-Coordinate of the server coordinates used to calculate the key
      * @return the key of this position
      */
+    @Contract(pure = true)
     public static long getKey(int x, int y, int z) {
         return (z * KEY_MOD_Z) + (x * KEY_MOD_X) + (y * KEY_MOD_Y);
     }
@@ -322,6 +309,7 @@ public class Location implements Serializable {
      * @return true in case the server coordinates of this location and the second location are the same.
      */
     @Override
+    @Contract(value = "null -> false", pure = true)
     public boolean equals(@Nullable Object obj) {
         if (obj == null) {
             return false;
@@ -347,6 +335,7 @@ public class Location implements Serializable {
      * @param z Y-Coordinate of the server coordinates
      * @return true if the coordinates set as parameters of this function are identical with the current position.
      */
+    @Contract(pure = true)
     public boolean equalsSC(int x, int y, int z) {
         if (dirtySC) {
             toServerCoordinates();
@@ -359,6 +348,7 @@ public class Location implements Serializable {
      *
      * @return the column on the client map
      */
+    @Contract(pure = true)
     public int getCol() {
         if (dirtyMC) {
             toMapCoordinates();
@@ -371,6 +361,7 @@ public class Location implements Serializable {
      *
      * @return X-Coordinate of the Display Coordinates
      */
+    @Contract(pure = true)
     public int getDcX() {
         if (dirtyDC) {
             toDisplayCoordinates();
@@ -383,6 +374,7 @@ public class Location implements Serializable {
      *
      * @return Y-Coordinate of the Display Coordinates
      */
+    @Contract(pure = true)
     public int getDcY() {
         if (dirtyDC) {
             toDisplayCoordinates();
@@ -395,6 +387,7 @@ public class Location implements Serializable {
      *
      * @return Z-Coordinate of the Display Coordinates
      */
+    @Contract(pure = true)
     public int getDcZ() {
         if (dirtyDC) {
             toDisplayCoordinates();
@@ -411,6 +404,7 @@ public class Location implements Serializable {
      * @return the direction needed to get from the current location to the target location
      */
     @Nullable
+    @Contract(pure = true)
     public Direction getDirection(int x, int y) {
         if (dirtySC) {
             toServerCoordinates();
@@ -419,6 +413,7 @@ public class Location implements Serializable {
         int dirX = FastMath.sign(x - scX);
         int dirY = FastMath.sign(y - scY);
 
+        //noinspection ConstantConditions
         for (Direction dir : Direction.values()) {
             if ((dir.getDirectionVectorX() == dirX) && (dir.getDirectionVectorY() == dirY)) {
                 return dir;
@@ -435,6 +430,7 @@ public class Location implements Serializable {
      * @return the direction needed to get from the current location to the target location
      */
     @Nullable
+    @Contract(pure = true)
     public Direction getDirection(@Nonnull Location loc) {
         if (loc.dirtySC) {
             loc.toServerCoordinates();
@@ -449,6 +445,7 @@ public class Location implements Serializable {
      * @return the amount of steps needed to get from the current position to the target position in case there are not
      * blocked tiles on the way
      */
+    @Contract(pure = true)
     public int getDistance(@Nonnull Location loc) {
         if (dirtySC) {
             toServerCoordinates();
@@ -467,6 +464,7 @@ public class Location implements Serializable {
      *
      * @return the key of this position
      */
+    @Contract(pure = true)
     public long getKey() {
         if (dirtySC) {
             toServerCoordinates();
@@ -480,6 +478,7 @@ public class Location implements Serializable {
      *
      * @return the row on the client map
      */
+    @Contract(pure = true)
     public int getRow() {
         if (dirtyMC) {
             toMapCoordinates();
@@ -492,6 +491,7 @@ public class Location implements Serializable {
      *
      * @return X-Coordinate of the Server Coordinates
      */
+    @Contract(pure = true)
     public int getScX() {
         if (dirtySC) {
             toServerCoordinates();
@@ -504,6 +504,7 @@ public class Location implements Serializable {
      *
      * @return Y-Coordinate of the Server Coordinates
      */
+    @Contract(pure = true)
     public int getScY() {
         if (dirtySC) {
             toServerCoordinates();
@@ -516,6 +517,7 @@ public class Location implements Serializable {
      *
      * @return Z-Coordinate of the Server Coordinates
      */
+    @Contract(pure = true)
     public int getScZ() {
         if (dirtySC) {
             toServerCoordinates();
@@ -530,6 +532,7 @@ public class Location implements Serializable {
      * @return the square root distance between the two locations. So the length of a straight line between this
      * location and the target location.
      */
+    @Contract(pure = true)
     public float getSqrtDistance(@Nonnull Location loc) {
         if (dirtySC) {
             toServerCoordinates();
@@ -546,6 +549,7 @@ public class Location implements Serializable {
      * @return the hash code
      */
     @Override
+    @Contract(pure = true)
     public int hashCode() {
         if (dirtySC) {
             toServerCoordinates();
@@ -562,6 +566,7 @@ public class Location implements Serializable {
      *
      * @return true if all 3 components of the server coordinate are 0
      */
+    @Contract(pure = true)
     public boolean isEmpty() {
         if (dirtySC) {
             toServerCoordinates();
@@ -575,6 +580,7 @@ public class Location implements Serializable {
      * @param loc the second location
      * @return true in case this location and the second one are touching each other
      */
+    @Contract(pure = true)
     public boolean isNeighbour(@Nonnull Location loc) {
         if (dirtySC) {
             toServerCoordinates();
@@ -606,15 +612,10 @@ public class Location implements Serializable {
         dirtyDC = true;
     }
 
-    @Deprecated
-    public void recycle() {
-    }
-
     public void reset() {
         dirtyDC = true;
         dirtyMC = true;
         dirtySC = true;
-        gap = 0;
     }
 
     /**
@@ -669,19 +670,8 @@ public class Location implements Serializable {
     }
 
     /**
-     * Set distance between tiles on screen. Default is no gap.
-     *
-     * @param newGap the new gap value
-     */
-    public void setGap(int newGap) {
-        gap = newGap;
-
-        dirtyDC = true;
-    }
-
-    /**
-     * Set the server coordinates over a key that was created by the {@link #getKey()} or the {@link #getKey(int, int,
-     * int)} method.
+     * Set the server coordinates over a key that was created by the {@link #getKey()} or the
+     * {@link #getKey(int, int, int)} method.
      *
      * @param key the key used to set the server coordinates of the location
      */
@@ -740,7 +730,6 @@ public class Location implements Serializable {
      * @return the string of the server coordinates
      */
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
     public String toString() {
         if (dirtySC) {
@@ -757,14 +746,14 @@ public class Location implements Serializable {
             return;
         }
         if (!dirtySC) {
-            dcX = (scX + scY) * (MapConstants.STEP_X + gap);
-            dcY = -(((scX - scY) * (MapConstants.STEP_Y + gap)) + (DISPLAY_Z_OFFSET_MOD * scZ * MapConstants.STEP_Y));
+            dcX = (scX + scY) * MapConstants.STEP_X;
+            dcY = -(((scX - scY) * MapConstants.STEP_Y) + (DISPLAY_Z_OFFSET_MOD * scZ * MapConstants.STEP_Y));
             dcZ = (scX - scY - (scZ * Layers.LEVEL)) * Layers.DISTANCE;
 
             dirtyDC = false;
         } else if (!dirtyMC) {
-            dcX = col * (MapConstants.STEP_X + gap);
-            dcY = -row * (MapConstants.STEP_Y + gap);
+            dcX = col * MapConstants.STEP_X;
+            dcY = -row * MapConstants.STEP_Y;
             dcZ = row * Layers.DISTANCE;
 
             dirtyDC = false;
@@ -784,8 +773,8 @@ public class Location implements Serializable {
 
             dirtyMC = false;
         } else if (!dirtyDC) {
-            col = FastMath.round(dcX / (float) (MapConstants.STEP_X + gap));
-            row = FastMath.round(-dcY / (float) (MapConstants.STEP_Y + gap));
+            col = FastMath.round(dcX / (float) MapConstants.STEP_X);
+            row = FastMath.round(-dcY / (float) MapConstants.STEP_Y);
 
             dirtyMC = false;
         }
@@ -805,10 +794,10 @@ public class Location implements Serializable {
 
             dirtySC = false;
         } else if (!dirtyDC) {
-            scX = FastMath.round(((-dcY / (float) (MapConstants.STEP_Y + gap)) +
-                    (dcX / (float) (MapConstants.STEP_X + gap))) / 2.f);
-            scY = FastMath.round(((dcX / (float) (MapConstants.STEP_X + gap)) -
-                    (-dcY / (float) (MapConstants.STEP_Y + gap))) / 2.f);
+            scX = FastMath.round(((-dcY / (float) MapConstants.STEP_Y) +
+                    (dcX / (float) MapConstants.STEP_X)) / 2.f);
+            scY = FastMath.round(((dcX / (float) MapConstants.STEP_X) -
+                    (-dcY / (float) MapConstants.STEP_Y)) / 2.f);
             scZ = 0;
 
             dirtySC = false;

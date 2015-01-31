@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -35,11 +35,12 @@ import java.io.InputStream;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @NotThreadSafe
-public class SkillLoader {
+public final class SkillLoader {
     /**
      * The logger instance of this class.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(SkillLoader.class);
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(SkillLoader.class);
 
     /**
      * This value is turned {@code true} once the loading is finished.
@@ -88,9 +89,9 @@ public class SkillLoader {
                 }
                 parser.require(XmlPullParser.END_TAG, null, "skills");
             } catch (@Nonnull XmlPullParserException e) {
-                LOGGER.error("Parsing the XML file failed.", e);
+                log.error("Parsing the XML file failed.", e);
             } catch (@Nonnull IOException e) {
-                LOGGER.error("Reading the XML file failed.", e);
+                log.error("Reading the XML file failed.", e);
             }
             loadingFinished = true;
         }
@@ -131,8 +132,8 @@ public class SkillLoader {
         String englishName = null;
         int serverId = -1;
         for (int i = 0; i < count; i++) {
-            String attribName = parser.getAttributeName(i);
-            switch (attribName) {
+            String attributeName = parser.getAttributeName(i);
+            switch (attributeName) {
                 case "name":
                     serverName = parser.getAttributeValue(i);
                     break;

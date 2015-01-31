@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,6 +16,7 @@
 package illarion.common.config;
 
 import org.bushe.swing.event.EventBus;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xmlpull.v1.XmlPullParser;
@@ -31,6 +32,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.zip.GZIPInputStream;
@@ -103,7 +105,6 @@ public class ConfigSystem implements Config {
      * @param source The configuration file that is supposed to be load
      */
     @Deprecated
-    @SuppressWarnings("nls")
     public ConfigSystem(@Nonnull File source) {
         this(source.toPath());
     }
@@ -117,16 +118,6 @@ public class ConfigSystem implements Config {
 
         loadConfig();
         changed = false;
-    }
-
-    /**
-     * Create a configuration object with a file as source. The configuration
-     * system will try to load the data from this source.
-     *
-     * @param source The configuration file that is supposed to be load
-     */
-    public ConfigSystem(@Nonnull String source) {
-        this(new File(source));
     }
 
     @Override
@@ -146,22 +137,6 @@ public class ConfigSystem implements Config {
     }
 
     @Override
-    public byte getByte(@Nonnull String key) {
-        Object value = getObject(key);
-
-        if (value == null) {
-            return 0;
-        }
-
-        if (!(value instanceof Byte)) {
-            LOGGER.warn("Illegal config entry for: {}", key);
-            return 0;
-        }
-
-        return (Byte) value;
-    }
-
-    @Override
     public double getDouble(@Nonnull String key) {
         Object value = getObject(key);
 
@@ -175,14 +150,6 @@ public class ConfigSystem implements Config {
         }
 
         return (Double) value;
-    }
-
-    @Nullable
-    @Override
-    @Deprecated
-    public File getFile(@Nonnull String key) {
-        Path path = getPath(key);
-        return path == null ? null : path.toFile();
     }
 
     @Nullable
@@ -234,26 +201,10 @@ public class ConfigSystem implements Config {
         return (Integer) value;
     }
 
-    @Override
-    public long getLong(@Nonnull String key) {
-        Object value = getObject(key);
-
-        if (value == null) {
-            return 0;
-        }
-
-        if (!(value instanceof Long)) {
-            LOGGER.warn("Illegal config entry for: {}", key);
-            return 0;
-        }
-
-        return (Long) value;
-    }
-
     @Nullable
     public Object getObject(String key) {
-        lock.readLock().lock();
         Object value;
+        lock.readLock().lock();
         try {
             value = configEntries.get(key);
         } finally {
@@ -266,22 +217,6 @@ public class ConfigSystem implements Config {
         }
 
         return value;
-    }
-
-    @Override
-    public short getShort(@Nonnull String key) {
-        Object value = getObject(key);
-
-        if (value == null) {
-            return 0;
-        }
-
-        if (!(value instanceof Short)) {
-            LOGGER.warn("Illegal config entry for: {}", key);
-            return 0;
-        }
-
-        return (Short) value;
     }
 
     @Nullable
@@ -314,6 +249,7 @@ public class ConfigSystem implements Config {
     }
 
     private abstract static class AbstractConfigTypeConverter implements ConfigTypeConverter {
+        @Nonnull
         @Override
         public final String getString(@Nonnull Object object) {
             return object.toString();
@@ -354,6 +290,7 @@ public class ConfigSystem implements Config {
             }
         }),
         FloatEntry("float", Float.class, new AbstractConfigTypeConverter() {
+            @Nonnull
             @Override
             public Float getObject(@Nonnull String string) {
                 return Float.valueOf(string);
@@ -385,32 +322,39 @@ public class ConfigSystem implements Config {
             }
         });
 
-        private String typeName;
-        private Class<?> typeClass;
-        private ConfigTypeConverter converter;
+        @Nonnull
+        private final String typeName;
+        @Nonnull
+        private final Class<?> typeClass;
+        @Nonnull
+        private final ConfigTypeConverter converter;
 
-        ConfigTypes(
-                @Nonnull String typeName, @Nonnull Class<?> typeClass, @Nonnull ConfigTypeConverter converter) {
+        ConfigTypes(@Nonnull String typeName, @Nonnull Class<?> typeClass, @Nonnull ConfigTypeConverter converter) {
             this.typeClass = typeClass;
             this.typeName = typeName;
             this.converter = converter;
         }
 
+        @Nonnull
+        @Contract(pure = true)
         public String getTypeName() {
             return typeName;
         }
 
+        @Nonnull
+        @Contract(pure = true)
         public Class<?> getTypeClass() {
             return typeClass;
         }
 
+        @Nonnull
+        @Contract(pure = true)
         public ConfigTypeConverter getConverter() {
             return converter;
         }
     }
 
     @Override
-    @SuppressWarnings("nls")
     public void save() {
         if (!changed) {
             return; // no changes applied
@@ -430,11 +374,12 @@ public class ConfigSystem implements Config {
             serializer.startDocument(ENCODING, true);
             serializer.startTag(null, ROOT_NAME);
 
-            for (Map.Entry<String, Object> entry : configEntries.entrySet()) {
+            for (Entry<String, Object> entry : configEntries.entrySet()) {
                 String key = entry.getKey();
-                Class<?> valueClass = entry.getValue().getClass();
+                @SuppressWarnings("ConstantConditions") Class<?> valueClass = entry.getValue().getClass();
                 String value = null;
                 String type = null;
+                //noinspection ConstantConditions
                 for (ConfigTypes configType : ConfigTypes.values()) {
                     if (configType.getTypeClass().equals(valueClass)) {
                         type = configType.getTypeName();
@@ -443,7 +388,7 @@ public class ConfigSystem implements Config {
                     }
                 }
 
-                if (value == null || type == null) {
+                if (value == null) {
                     continue;
                 }
 
@@ -474,21 +419,11 @@ public class ConfigSystem implements Config {
     }
 
     @Override
-    public void set(@Nonnull String key, byte value) {
-        set(key, Byte.valueOf(value));
-    }
-
-    @Override
     public void set(@Nonnull String key, double value) {
         set(key, Double.valueOf(value));
     }
 
-    @Deprecated
     @Override
-    public void set(@Nonnull String key, @Nonnull File value) {
-        set(key, value.toPath());
-    }
-
     public void set(@Nonnull String key, @Nonnull Path value) {
         set(key, value.toAbsolutePath().toString());
     }
@@ -503,19 +438,13 @@ public class ConfigSystem implements Config {
         set(key, Integer.valueOf(value));
     }
 
-    @Override
-    public void set(@Nonnull String key, long value) {
-        set(key, Long.valueOf(value));
-    }
-
     /**
-     * Set one entry of the configuration file to a new value. In this case the
-     * value is a Object value.
+     * Set one entry of the configuration file to a new value. In this case the value is a Object value.
      *
      * @param key the key the value is stored with
      * @param value the value that is stored along with the key
      */
-    public void set(String key, @Nonnull Object value) {
+    public void set(@Nonnull String key, @Nonnull Object value) {
         lock.writeLock().lock();
         try {
             if (value.equals(configEntries.get(key))) {
@@ -530,19 +459,13 @@ public class ConfigSystem implements Config {
     }
 
     @Override
-    public void set(@Nonnull String key, short value) {
-        set(key, Short.valueOf(value));
-    }
-
-    @Override
     public void set(@Nonnull String key, @Nonnull String value) {
         set(key, (Object) value);
     }
 
     /**
-     * Set the default value for a key. In this case the value is a boolean
-     * value. Setting default values does basically the same as setting the
-     * normal values, but only in case the key has no value yet.
+     * Set the default value for a key. In this case the value is a boolean value. Setting default values does
+     * basically the same as setting the normal values, but only in case the key has no value yet.
      * <p>
      * <b>Note:</b> This method is not exposed by the {@link Config} interface.
      * </p>
@@ -557,26 +480,8 @@ public class ConfigSystem implements Config {
     }
 
     /**
-     * Set the default value for a key. In this case the value is a byte value.
-     * Setting default values does basically the same as setting the normal
-     * values, but only in case the key has no value yet.
-     * <p>
-     * <b>Note:</b> This method is not exposed by the {@link Config} interface.
-     * </p>
-     *
-     * @param key the key the value is stored with
-     * @param value the value that is stored along with the key
-     */
-    public void setDefault(@Nonnull String key, byte value) {
-        if (!(configEntries.get(key) instanceof Byte)) {
-            set(key, value);
-        }
-    }
-
-    /**
-     * Set the default value for a key. In this case the value is a double
-     * value. Setting default values does basically the same as setting the
-     * normal values, but only in case the key has no value yet.
+     * Set the default value for a key. In this case the value is a double value. Setting default values does
+     * basically the same as setting the normal values, but only in case the key has no value yet.
      * <p>
      * <b>Note:</b> This method is not exposed by the {@link Config} interface.
      * </p>
@@ -591,25 +496,8 @@ public class ConfigSystem implements Config {
     }
 
     /**
-     * Set the default value for a key. In this case the value is a File value.
-     * Setting default values does basically the same as setting the normal
-     * values, but only in case the key has no value yet.
-     * <p>
-     * <b>Note:</b> This method is not exposed by the {@link Config} interface.
-     * </p>
-     *
-     * @param key the key the value is stored with
-     * @param value the value that is stored along with the key
-     */
-    @Deprecated
-    public void setDefault(@Nonnull String key, @Nonnull File value) {
-        setDefault(key, value.toPath());
-    }
-
-    /**
-     * Set the default value for a key. In this case the value is a Path value.
-     * Setting default values does basically the same as setting the normal
-     * values, but only in case the key has no value yet.
+     * Set the default value for a key. In this case the value is a Path value. Setting default values does basically
+     * the same as setting the normal values, but only in case the key has no value yet.
      * <p>
      * <b>Note:</b> This method is not exposed by the {@link Config} interface.
      * </p>
@@ -624,9 +512,8 @@ public class ConfigSystem implements Config {
     }
 
     /**
-     * Set the default value for a key. In this case the value is a float value.
-     * Setting default values does basically the same as setting the normal
-     * values, but only in case the key has no value yet.
+     * Set the default value for a key. In this case the value is a float value. Setting default values does
+     * basically the same as setting the normal values, but only in case the key has no value yet.
      * <p>
      * <b>Note:</b> This method is not exposed by the {@link Config} interface.
      * </p>
@@ -641,9 +528,8 @@ public class ConfigSystem implements Config {
     }
 
     /**
-     * Set the default value for a key. In this case the value is a integer
-     * value. Setting default values does basically the same as setting the
-     * normal values, but only in case the key has no value yet.
+     * Set the default value for a key. In this case the value is a integer value. Setting default values does
+     * basically the same as setting the normal values, but only in case the key has no value yet.
      * <p>
      * <b>Note:</b> This method is not exposed by the {@link Config} interface.
      * </p>
@@ -658,9 +544,8 @@ public class ConfigSystem implements Config {
     }
 
     /**
-     * Set the default value for a key. In this case the value is a long value.
-     * Setting default values does basically the same as setting the normal
-     * values, but only in case the key has no value yet.
+     * Set the default value for a key. In this case the value is a String value. Setting default values does
+     * basically the same as setting the normal values, but only in case the key has no value yet.
      * <p>
      * <b>Note:</b> This method is not exposed by the {@link Config} interface.
      * </p>
@@ -668,41 +553,7 @@ public class ConfigSystem implements Config {
      * @param key the key the value is stored with
      * @param value the value that is stored along with the key
      */
-    public void setDefault(@Nonnull String key, long value) {
-        if (!(configEntries.get(key) instanceof Long)) {
-            set(key, value);
-        }
-    }
-
-    /**
-     * Set the default value for a key. In this case the value is a short value.
-     * Setting default values does basically the same as setting the normal
-     * values, but only in case the key has no value yet.
-     * <p>
-     * <b>Note:</b> This method is not exposed by the {@link Config} interface.
-     * </p>
-     *
-     * @param key the key the value is stored with
-     * @param value the value that is stored along with the key
-     */
-    public void setDefault(@Nonnull String key, short value) {
-        if (!(configEntries.get(key) instanceof Short)) {
-            set(key, value);
-        }
-    }
-
-    /**
-     * Set the default value for a key. In this case the value is a String
-     * value. Setting default values does basically the same as setting the
-     * normal values, but only in case the key has no value yet.
-     * <p>
-     * <b>Note:</b> This method is not exposed by the {@link Config} interface.
-     * </p>
-     *
-     * @param key the key the value is stored with
-     * @param value the value that is stored along with the key
-     */
-    public void setDefault(@Nonnull String key, String value) {
+    public void setDefault(@Nonnull String key, @Nonnull String value) {
         if (!(configEntries.get(key) instanceof String)) {
             set(key, value);
         }
@@ -711,7 +562,6 @@ public class ConfigSystem implements Config {
     /**
      * Load the configuration from the file system.
      */
-    @SuppressWarnings("nls")
     private void loadConfig() {
         if (!Files.exists(configFile)) {
             return;
@@ -731,13 +581,14 @@ public class ConfigSystem implements Config {
 
             int currentTag = parser.nextToken();
             while (currentTag != XmlPullParser.END_DOCUMENT) {
-                if (currentTag == XmlPullParser.START_TAG && parser.getName().equals("entry")) {
+                if ((currentTag == XmlPullParser.START_TAG) && "entry".equals(parser.getName())) {
                     String key = null;
                     String type = null;
                     String value = null;
                     int count = parser.getAttributeCount();
                     for (int i = 0; i < count; i++) {
                         String name = parser.getAttributeName(i);
+                        //noinspection SwitchStatementWithoutDefaultBranch
                         switch (name) {
                             case "key":
                                 key = parser.getAttributeValue(i);
@@ -752,6 +603,7 @@ public class ConfigSystem implements Config {
                     }
                     if ((key != null) && (type != null) && (value != null)) {
                         Object realValue = null;
+                        //noinspection ConstantConditions
                         for (ConfigTypes configType : ConfigTypes.values()) {
                             if (type.equals(configType.getTypeName())) {
                                 realValue = configType.getConverter().getObject(value);
@@ -791,7 +643,6 @@ public class ConfigSystem implements Config {
      *
      * @param key the key that was changed
      */
-    @SuppressWarnings("deprecation")
     private void reportChangedKey(@Nonnull String key) {
         changed = true;
 

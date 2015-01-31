@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,6 +14,8 @@
  * GNU General Public License for more details.
  */
 package illarion.common.types;
+
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,20 +31,9 @@ import javax.annotation.concurrent.ThreadSafe;
 @Immutable
 public final class Range {
     /**
-     * The value for the interpolation function that will cause the top border value to be the result of the function.
-     */
-    public static final int INTERPOLATE_MAX = 100;
-
-    /**
-     * This is the same value as interpolate just as float.
-     */
-    private static final float INTERPOLATE_MAX_F = INTERPOLATE_MAX;
-
-    /**
      * The format of the string that is returned with the {@link #toString()} function.
      */
     @Nonnull
-    @SuppressWarnings("nls")
     private static final String TO_STRING_FORMAT = "r(%s$1; %s$2)";
 
     /**
@@ -69,7 +60,7 @@ public final class Range {
      * @param min the bottom border of the range
      * @param max the top border of the range
      */
-    public Range(final int min, final int max) {
+    public Range(int min, int max) {
         minValue = min;
         maxValue = max;
     }
@@ -79,7 +70,7 @@ public final class Range {
      *
      * @param org the range object that shall be copied
      */
-    public Range(@Nonnull final Range org) {
+    public Range(@Nonnull Range org) {
         minValue = org.minValue;
         maxValue = org.maxValue;
     }
@@ -90,10 +81,10 @@ public final class Range {
      *
      * @param o the object this instance of Range shall be compared with
      * @return the result of the comparing
-     * @see Object#equals(Object)
      */
     @Override
-    public boolean equals(@Nullable final Object o) {
+    @Contract(value = "null -> false", pure = true)
+    public boolean equals(@Nullable Object o) {
         if (super.equals(o)) {
             return true;
         }
@@ -102,29 +93,8 @@ public final class Range {
             return false;
         }
 
-        final Range compRange = (Range) o;
+        Range compRange = (Range) o;
         return (compRange.minValue == minValue) && (compRange.maxValue == maxValue);
-    }
-
-    /**
-     * Get the difference between the maximum and the minimum value.
-     *
-     * @return the difference between both values
-     */
-    public int getDifference() {
-        return maxValue - minValue;
-    }
-
-    /**
-     * Get a interpolated value. This function returns the same as {@link #getMin()} in case 0 is set for the parameter
-     * and it returns {@link #getMax()} in case {@link #INTERPOLATE_MAX} is set for the parameter. For values between 0
-     * and {@link #INTERPOLATE_MAX} it will return a linear interpolated value between the borders.
-     *
-     * @param location the interpolation value
-     * @return the interpolated value from the range
-     */
-    public int getInterpolated(final int location) {
-        return (int) (((maxValue - minValue) * location) / INTERPOLATE_MAX_F) + minValue;
     }
 
     /**
@@ -132,6 +102,7 @@ public final class Range {
      *
      * @return the top border value
      */
+    @Contract(pure = true)
     public int getMax() {
         return maxValue;
     }
@@ -141,6 +112,7 @@ public final class Range {
      *
      * @return the bottom border value
      */
+    @Contract(pure = true)
     public int getMin() {
         return minValue;
     }
@@ -151,9 +123,9 @@ public final class Range {
      * the borders are the same.
      *
      * @return the generated hashcode
-     * @see Object#hashCode()
      */
     @Override
+    @Contract(pure = true)
     public int hashCode() {
         return (minValue * maxValue) % Integer.MAX_VALUE;
     }
@@ -162,10 +134,10 @@ public final class Range {
      * Create a string representation of this range object. It shows the borders of this range.
      *
      * @return the generated string
-     * @see Object#toString()
      */
     @Nonnull
     @Override
+    @Contract(pure = true)
     public String toString() {
         return String.format(TO_STRING_FORMAT, Integer.toString(minValue), Integer.toString(maxValue));
     }

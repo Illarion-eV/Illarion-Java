@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,10 @@
  */
 package illarion.common.util;
 
+import org.jetbrains.annotations.Contract;
+
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.NotThreadSafe;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -26,6 +29,7 @@ import java.util.Arrays;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@NotThreadSafe
 public class Md5Crypto {
     /**
      * This is the digest used to calculate the MD5 stuff.
@@ -49,15 +53,12 @@ public class Md5Crypto {
         return crypt(message, salt, "$1$");
     }
 
+    @SuppressWarnings("OverlyComplexMethod")
     @Nonnull
     public String crypt(@Nonnull String message, @Nonnull String salt, @Nonnull String magic) {
         String cleanedSalt;
 
-        if (salt.startsWith(magic)) {
-            cleanedSalt = salt.substring(magic.length());
-        } else {
-            cleanedSalt = salt;
-        }
+        cleanedSalt = salt.startsWith(magic) ? salt.substring(magic.length()) : salt;
 
         if (cleanedSalt.indexOf('$') != -1) {
             cleanedSalt = cleanedSalt.substring(0, cleanedSalt.indexOf('$'));
@@ -136,6 +137,7 @@ public class Md5Crypto {
     /**
      * This is the string of characters used to perform the ITOA 64 encoding of a value.
      */
+    @Nonnull
     private static final String ITOA_64 = "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
     /**
@@ -146,6 +148,7 @@ public class Md5Crypto {
      * @return the generated text
      */
     @Nonnull
+    @Contract(pure = true)
     private static String to64(long v, int size) {
         StringBuilder result = new StringBuilder(size);
 
@@ -163,7 +166,8 @@ public class Md5Crypto {
      * @param inp the byte value
      * @return the unsigned byte value
      */
+    @Contract(pure = true)
     private static int bytes2u(byte inp) {
-        return (int) inp & 0xff;
+        return inp & 0xff;
     }
 }

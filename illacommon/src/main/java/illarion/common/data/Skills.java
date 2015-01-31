@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -67,7 +67,7 @@ public final class Skills {
      *
      * @param skill the skill to add
      */
-    void addSkill(@Nonnull final Skill skill) {
+    void addSkill(@Nonnull Skill skill) {
         skillMap.put(skill.getId(), skill);
     }
 
@@ -78,7 +78,7 @@ public final class Skills {
      * @return the skill
      */
     @Nullable
-    public Skill getSkill(final int id) {
+    public Skill getSkill(int id) {
         return skillMap.get(id);
     }
 
@@ -89,31 +89,13 @@ public final class Skills {
      * @return the matched skill
      */
     @Nullable
-    public Skill getSkill(@Nonnull final String name) {
-        final String cleanName = name.trim().toLowerCase();
+    public Skill getSkill(@Nonnull String name) {
+        String cleanName = name.trim().toLowerCase();
 
-        for (final Skill skill : skillMap.values()) {
-            if (cleanName.equalsIgnoreCase(skill.getName()) || cleanName.equalsIgnoreCase(skill.getNameGerman()) ||
-                    cleanName.equalsIgnoreCase(skill.getNameEnglish())) {
+        for (Skill skill : skillMap.values()) {
+            if (cleanName.equalsIgnoreCase(skill.getName())) {
                 return skill;
             }
-        }
-
-        if ("lumberjacking".equalsIgnoreCase(cleanName)) {
-            return getSkill("woodcutting");
-        }
-
-        if ("peasantry".equalsIgnoreCase(cleanName)) {
-            return getSkill("farming");
-        }
-
-        if ((cleanName.contains("baking") || cleanName.contains("cooking")) &&
-                !"cookingAndBaking".equalsIgnoreCase(cleanName)) {
-            return getSkill("cookingAndBaking");
-        }
-
-        if (cleanName.contains(" ")) {
-            return getSkill(cleanName.replace(" ", ""));
         }
 
         return null;

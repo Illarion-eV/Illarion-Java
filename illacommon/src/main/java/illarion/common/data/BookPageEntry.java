@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -31,8 +31,11 @@ public class BookPageEntry {
         Right
     }
 
+    @Nonnull
     private static final Pattern REMOVE_LINE_BREAKS_PATTERN = Pattern.compile("\\s+");
+    @Nonnull
     private static final Pattern COLLAPSE_SPACE_PATTERN = Pattern.compile("[ \t]+");
+    @Nonnull
     private static final Pattern LINE_BREAK_PATTERN = Pattern.compile("\n\r?");
     /**
      * In case this flag this {@code true} this entry is a headline and no paragraph.

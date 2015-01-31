@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -220,16 +220,6 @@ final class Sender implements NetCommWriter {
     }
 
     /**
-     * Write 2 byte as signed value to the network.
-     *
-     * @param value the signed short that shall be send to the server
-     */
-    @Override
-    public void writeShort(short value) {
-        buffer.putShort(value);
-    }
-
-    /**
      * Write a string to the network. The length header of the string is written
      * automatically and its encoded to the correct CharSet automatically.
      *
@@ -259,16 +249,6 @@ final class Sender implements NetCommWriter {
     @Override
     public void writeUByte(short value) {
         buffer.put((byte) (value % (1 << Byte.SIZE)));
-    }
-
-    /**
-     * Write 4 byte as unsigned value to the network.
-     *
-     * @param value the value that shall be send as unsigned integer
-     */
-    @Override
-    public void writeUInt(long value) {
-        buffer.putInt((int) (value % (1L << Integer.SIZE)));
     }
 
     /**

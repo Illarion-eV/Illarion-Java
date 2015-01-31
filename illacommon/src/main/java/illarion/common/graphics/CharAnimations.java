@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -24,7 +24,6 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@SuppressWarnings("nls")
 public final class CharAnimations {
     /**
      * The array of the names of the animations.
@@ -111,9 +110,8 @@ public final class CharAnimations {
     public static final int STAND_IDLE = 4;
 
     /**
-     * The total count of animations that are allowed to be defined. Changing
-     * this value results in a change of the IDs of the avatars and require a
-     * full rebuild of the avatar and cloth lists.
+     * The total count of animations that are allowed to be defined. Changing this value results in a change of the
+     * IDs of the avatars and require a full rebuild of the avatar and cloth lists.
      */
     public static final int TOTAL_ANIMATIONS = 50;
 

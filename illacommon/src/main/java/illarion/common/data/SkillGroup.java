@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,6 +14,8 @@
  * GNU General Public License for more details.
  */
 package illarion.common.data;
+
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
@@ -80,6 +82,7 @@ public final class SkillGroup {
      * @return the english name
      */
     @Nonnull
+    @Contract(pure = true)
     public String getNameEnglish() {
         return nameEnglish;
     }
@@ -90,6 +93,7 @@ public final class SkillGroup {
      * @return the german name
      */
     @Nonnull
+    @Contract(pure = true)
     public String getNameGerman() {
         return nameGerman;
     }
@@ -100,12 +104,14 @@ public final class SkillGroup {
      * @return the list of skills that is part of this group
      */
     @Nonnull
+    @Contract(pure = true)
     public List<Skill> getSkills() {
         return Collections.unmodifiableList(skills);
     }
 
     @Nonnull
     @Override
+    @Contract(pure = true)
     public String toString() {
         return "Skill Group: " + nameEnglish;
     }
@@ -115,6 +121,7 @@ public final class SkillGroup {
      *
      * @return the group of the skill
      */
+    @Contract(pure = true)
     public int getGroupId() {
         return groupId;
     }

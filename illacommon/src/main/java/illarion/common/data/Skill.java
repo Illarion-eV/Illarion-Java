@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -66,11 +66,11 @@ public final class Skill {
      * @param skillGroup the group this skill belong to
      */
     Skill(
-            final int skillId,
-            @Nonnull final String skillName,
-            @Nonnull final String german,
-            @Nonnull final String english,
-            @Nonnull final SkillGroup skillGroup) {
+            int skillId,
+            @Nonnull String skillName,
+            @Nonnull String german,
+            @Nonnull String english,
+            @Nonnull SkillGroup skillGroup) {
         id = skillId;
         name = skillName;
         nameEnglish = english;

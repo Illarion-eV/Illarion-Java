@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,10 +16,7 @@
 package illarion.common.data;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * This is a list as part of the credits.
@@ -30,11 +27,13 @@ public final class CreditsList implements Iterable<CreditsPerson> {
     /**
      * The german name of this list.
      */
+    @Nonnull
     private final String nameGerman;
 
     /**
      * The english name of this list.
      */
+    @Nonnull
     private final String nameEnglish;
 
     /**
@@ -53,7 +52,7 @@ public final class CreditsList implements Iterable<CreditsPerson> {
      *
      * @param name the name of the list
      */
-    public CreditsList(final String name) {
+    public CreditsList(@Nonnull String name) {
         this(name, name);
     }
 
@@ -63,7 +62,7 @@ public final class CreditsList implements Iterable<CreditsPerson> {
      * @param nameGerman the german name of the list
      * @param nameEnglish the english name of the list
      */
-    public CreditsList(final String nameGerman, final String nameEnglish) {
+    public CreditsList(@Nonnull String nameGerman, @Nonnull String nameEnglish) {
         this.nameGerman = nameGerman;
         this.nameEnglish = nameEnglish;
 
@@ -75,7 +74,7 @@ public final class CreditsList implements Iterable<CreditsPerson> {
      *
      * @param person the person to add to the list
      */
-    public void addMember(final CreditsPerson person) {
+    public void addMember(@Nonnull CreditsPerson person) {
         members.add(person);
         listDirty = true;
     }
@@ -97,6 +96,7 @@ public final class CreditsList implements Iterable<CreditsPerson> {
      *
      * @return the german name
      */
+    @Nonnull
     public String getNameGerman() {
         return nameGerman;
     }
@@ -106,6 +106,7 @@ public final class CreditsList implements Iterable<CreditsPerson> {
      *
      * @return the english name
      */
+    @Nonnull
     public String getNameEnglish() {
         return nameEnglish;
     }
@@ -122,8 +123,9 @@ public final class CreditsList implements Iterable<CreditsPerson> {
      *
      * @return the first list member
      */
+    @Nonnull
     public CreditsPerson getFirst() {
         sortList();
-        return members.get(0);
+        return Objects.requireNonNull(members.get(0));
     }
 }
