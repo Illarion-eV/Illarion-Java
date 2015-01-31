@@ -577,6 +577,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
     /**
      * The logging instance of this class.
      */
+    @Nonnull
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractEntity.class);
 
     @Override

@@ -441,8 +441,9 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
 
     @Override
     public int getTargetAlpha() {
-        Tile tileOfChar = parentTile.getTile();
-        return (tileOfChar == null) ? Color.MAX_INT_VALUE : tileOfChar.getTargetAlpha();
+        Tile tileOfItem = parentTile.getTile();
+        int alphaOfTile = (tileOfItem == null) ? Color.MAX_INT_VALUE : tileOfItem.getTargetAlpha();
+        return Math.min(super.getTargetAlpha(), alphaOfTile);
     }
 
     /**
