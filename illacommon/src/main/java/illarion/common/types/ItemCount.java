@@ -17,6 +17,7 @@ package illarion.common.types;
 
 import illarion.common.net.NetCommReader;
 import illarion.common.net.NetCommWriter;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -70,6 +71,7 @@ public final class ItemCount implements Comparable<ItemCount> {
      * {@link #MAX_VALUE}.
      */
     @Nonnull
+    @Contract(pure = true)
     public static ItemCount getInstance(int value) {
         switch (value) {
             case 0:
@@ -109,26 +111,31 @@ public final class ItemCount implements Comparable<ItemCount> {
         this.value = value;
     }
 
+    @Contract(value = "null -> false", pure = true)
     public static boolean isGreaterZero(@Nullable ItemCount count) {
         return (count != null) && (count.getValue() > 0);
     }
 
+    @Contract(value = "null -> false", pure = true)
     public static boolean isGreaterOne(@Nullable ItemCount count) {
         return (count != null) && (count.getValue() > 1);
     }
 
     @Override
+    @Contract(value = "null -> false", pure = true)
     public boolean equals(@Nullable Object obj) {
         return super.equals(obj) || ((obj instanceof ItemCount) && equals((ItemCount) obj));
     }
 
     @Override
+    @Contract(pure = true)
     public int hashCode() {
         return value;
     }
 
     @Nonnull
     @Override
+    @Contract(pure = true)
     public String toString() {
         return "Item count: " + Integer.toString(value);
     }
@@ -140,6 +147,7 @@ public final class ItemCount implements Comparable<ItemCount> {
      * @return the string
      */
     @Nonnull
+    @Contract(pure = true)
     public String getShortText(@Nonnull Locale locale) {
         if (value < 1000) {
             return Integer.toString(value);
@@ -168,6 +176,7 @@ public final class ItemCount implements Comparable<ItemCount> {
      * @param obj the second instance to check
      * @return {@code true} in case both instances represent the same value
      */
+    @Contract(value = "null -> false", pure = true)
     public boolean equals(@Nullable ItemCount obj) {
         return (obj != null) && (value == obj.value);
     }
@@ -177,18 +186,16 @@ public final class ItemCount implements Comparable<ItemCount> {
      *
      * @return the item count value
      */
+    @Contract(pure = true)
     public int getValue() {
         return value;
     }
 
     @Override
-    public int compareTo(@Nonnull ItemCount o) {
-        if (value == o.value) {
-            return 0;
-        }
-        if (getValue() < o.getValue()) {
-            return -1;
-        }
-        return 1;
+    @Contract(pure = true)
+    public int compareTo(@Nullable ItemCount o) {
+        int value = getValue();
+        int otherValue = (o == null) ? 0 : o.getValue();
+        return Integer.compare(value, otherValue);
     }
 }

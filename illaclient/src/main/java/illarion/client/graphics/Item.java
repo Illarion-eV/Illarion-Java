@@ -37,6 +37,7 @@ import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Graphics;
 import org.illarion.engine.graphic.SceneEvent;
 import org.illarion.engine.input.Button;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +62,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      * The amount of items that are represented by this item instance. So in case the number is larger then 1 this
      * item represents a stack of items of the same kind.
      */
+    @Nullable
     private ItemCount count;
 
     /**
@@ -163,6 +165,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
     }
 
     @Override
+    @Contract(pure = true)
     public int getHighlight() {
         return showHighlight;
     }
@@ -197,6 +200,8 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      * @return the number of items on the stack or 1 in case there is just one
      * item
      */
+    @Nullable
+    @Contract(pure = true)
     public ItemCount getCount() {
         return count;
     }
@@ -216,7 +221,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
     /**
      * The logging instance that takes care for the logging output of this class.
      */
-    @SuppressWarnings("UnusedDeclaration")
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(Item.class);
 
     @Override
@@ -395,11 +400,11 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      * one a text is displayed next to the item that shown how many
      * items are on the stack
      */
-    public void setCount(ItemCount newCount) {
+    public void setCount(@Nullable ItemCount newCount) {
         count = newCount;
 
         // write number to text for display
-        if (count.getValue() > 1) {
+        if (ItemCount.isGreaterOne(count)) {
             number = new TextTag(count.getShortText(Lang.getInstance().getLocale()), Color.YELLOW);
             number.setOffset((MapConstants.TILE_W / 2) - number.getHeight() - number.getWidth(),
                              -number.getHeight() / 2);
@@ -413,6 +418,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         if (animation != null) {
             animation.addTarget(this, true);
         }
+        super.show();
     }
 
     @Override
@@ -420,6 +426,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         if (animation != null) {
             animation.removeTarget(this);
         }
+        super.hide();
     }
 
     @Override
