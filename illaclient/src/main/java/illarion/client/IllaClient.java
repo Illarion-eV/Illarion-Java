@@ -305,7 +305,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         new Thread(new Runnable() {
             @Override
             public void run() {
-                JOptionPane.showMessageDialog(null, Lang.getMsg(message), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
                 startFinalKiller();
             }
         }).start();

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -66,7 +66,7 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
     @Override
     @SuppressWarnings("nls")
     public final void uncaughtException(@Nonnull Thread t, @Nonnull Throwable e) {
-        LOGGER.error("Fetched uncaught exception: {}", getCrashMessage(), e);
+        LOGGER.error("Fetched uncaught exception: {}", getCrashMessage(t, e), e);
         if (currentlyCrashing) {
             return;
         }
@@ -74,15 +74,12 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
         long oldLastCrash = lastCrash;
         lastCrash = System.currentTimeMillis();
         if ((lastCrash - oldLastCrash) < TIME_SINCE_LAST_CRASH) {
-            crashClient();
+            crashClient(t, e);
             return;
         }
 
         reportError(t, e);
-
-        if (restart()) {
-            IllaClient.sendDisconnectEvent(getCrashMessage(), true);
-        }
+        restart(t, e);
         currentlyCrashing = false;
     }
 
@@ -91,8 +88,8 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
      * in case there is no chance in keeping the client running.
      */
     @SuppressWarnings("nls")
-    protected final void crashClient() {
-        IllaClient.errorExit(Lang.getMsg(getCrashMessage()) + '\n' + Lang.getMsg("crash.fixfailed"));
+    protected final void crashClient(@Nonnull Thread t, @Nonnull Throwable e) {
+        IllaClient.errorExit(getCrashMessage(t, e) + '\n' + Lang.getMsg("crash.fixfailed"));
 
         currentlyCrashing = false;
     }
@@ -104,15 +101,13 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
      * @return the error message for this problem
      */
     @Nonnull
-    protected abstract String getCrashMessage();
+    protected abstract String getCrashMessage(@Nonnull Thread t, @Nonnull Throwable e);
 
     /**
      * Restart the crashed thread and try to keep the client alive this way.
      * After this function is called the CrashHandler requests a reconnect.
-     *
-     * @return {@code true} in case reconnecting the client is needed.
      */
-    protected abstract boolean restart();
+    protected abstract void restart(@Nonnull Thread t, @Nonnull Throwable e);
 
     /**
      * Send the data about a crash to the Illarion server so some developer is
@@ -123,6 +118,6 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
      */
     private void reportError(@Nonnull Thread t, @Nonnull Throwable e) {
         CrashReporter.getInstance()
-                .reportCrash(new CrashData(IllaClient.APPLICATION, "Client", getCrashMessage(), t, e));
+                .reportCrash(new CrashData(IllaClient.APPLICATION, "Client", getCrashMessage(t, e), t, e));
     }
 }
