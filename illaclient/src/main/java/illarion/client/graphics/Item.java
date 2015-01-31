@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -169,12 +169,14 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
 
     @Override
     public void render(@Nonnull Graphics g) {
-        super.render(g);
+        if (performRendering()) {
+            super.render(g);
 
-        if (showNumber && (number != null)) {
-            number.render(g);
+            if (showNumber && (number != null)) {
+                number.render(g);
+            }
+
         }
-
         showHighlight = 0;
     }
 
@@ -381,10 +383,10 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         return false;
     }
 
-    @Override
+   /* @Override
     protected boolean isShown() {
         return true;
-    }
+    }*/
 
     /**
      * Set number of stacked items.
@@ -428,6 +430,12 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
             number.addToCamera(getDisplayX(), getDisplayY());
             number.update(container, delta);
         }
+    }
+
+    @Override
+    public int getTargetAlpha() {
+        Tile tileOfChar = parentTile.getTile();
+        return (tileOfChar == null) ? Color.MAX_INT_VALUE : tileOfChar.getTargetAlpha();
     }
 
     /**
