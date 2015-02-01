@@ -17,6 +17,7 @@ package illarion.common.types;
 
 import illarion.common.net.NetCommReader;
 import illarion.common.net.NetCommWriter;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,11 +35,6 @@ import java.io.Serializable;
 @ThreadSafe
 public final class CharacterId implements Serializable, Comparable<CharacterId> {
     /**
-     * The maximal value that is valid for the character ID
-     */
-    public static final long MAX_VALUE = (1L << 32) - 1L;
-
-    /**
      * This is the mask used to find out the type of the character that is represented by this ID.
      */
     private static final int TYPE_MASK = 0xFF000000;
@@ -52,11 +48,6 @@ public final class CharacterId implements Serializable, Comparable<CharacterId> 
      * In case the character ID fits this mask, the character is a monster.
      */
     private static final int MONSTER_MASK = 0xFE000000;
-
-    /**
-     * The minimal value that is valid for the character ID
-     */
-    public static final long MIN_VALUE = 0;
 
     /**
      * The item count.
@@ -87,6 +78,7 @@ public final class CharacterId implements Serializable, Comparable<CharacterId> 
      *
      * @return {@code true} in case this ID marks a NPC
      */
+    @Contract(pure = true)
     public boolean isNPC() {
         return (value & TYPE_MASK) == NPC_MASK;
     }
@@ -96,6 +88,7 @@ public final class CharacterId implements Serializable, Comparable<CharacterId> 
      *
      * @return {@code true} in case this ID marks a monster
      */
+    @Contract(pure = true)
     public boolean isMonster() {
         return (value & TYPE_MASK) == MONSTER_MASK;
     }
@@ -105,22 +98,26 @@ public final class CharacterId implements Serializable, Comparable<CharacterId> 
      *
      * @return {@code true} in case this ID marks a human controlled character
      */
+    @Contract(pure = true)
     public boolean isHuman() {
         return !isNPC() && !isMonster();
     }
 
     @Override
+    @Contract(value = "null->false", pure = true)
     public boolean equals(@Nullable Object obj) {
         return super.equals(obj) || ((obj instanceof CharacterId) && equals((CharacterId) obj));
     }
 
     @Override
+    @Contract(pure = true)
     public int hashCode() {
         return value;
     }
 
     @Nonnull
     @Override
+    @Contract(pure = true)
     public String toString() {
         return "character ID: " + Long.toString(getValue());
     }
@@ -140,6 +137,7 @@ public final class CharacterId implements Serializable, Comparable<CharacterId> 
      * @param obj the second instance to check
      * @return {@code true} in case both instances represent the same value
      */
+    @Contract(value = "null->false", pure = true)
     public boolean equals(@Nullable CharacterId obj) {
         return (obj != null) && (value == obj.value);
     }
@@ -149,6 +147,7 @@ public final class CharacterId implements Serializable, Comparable<CharacterId> 
      *
      * @return the item count value
      */
+    @Contract(pure = true)
     public long getValue() {
         if (value < 0) {
             return value + (1L << Integer.SIZE);
@@ -156,11 +155,13 @@ public final class CharacterId implements Serializable, Comparable<CharacterId> 
         return value;
     }
 
+    @Contract(pure = true)
     public int getAsInteger() {
         return value;
     }
 
     @Override
+    @Contract(pure = true)
     public int compareTo(@Nonnull CharacterId o) {
         if (value == o.value) {
             return 0;

@@ -26,6 +26,7 @@ import javolution.util.FastTable;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,6 +101,7 @@ public final class People {
         }
     }
 
+    @Contract(value = "null->false", pure = true)
     public boolean isAvatarTagShown(@Nullable CharacterId id) {
         if (id == null) {
             return false;

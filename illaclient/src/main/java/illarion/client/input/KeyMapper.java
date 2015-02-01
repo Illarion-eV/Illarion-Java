@@ -19,6 +19,7 @@ import illarion.client.IllaClient;
 import illarion.client.gui.GameGui;
 import illarion.client.net.client.CloseShowcaseCmd;
 import illarion.client.net.client.PickUpAllItemsCmd;
+import illarion.client.util.Lang;
 import illarion.client.world.World;
 import illarion.client.world.items.InventorySlot;
 import illarion.client.world.movement.KeyboardMovementHandler;
@@ -256,6 +257,22 @@ public final class KeyMapper {
 
     private static void cyclePermanentAvatarTag() {
         Config config = IllaClient.getCfg();
-        config.set("showAvatarTagPermanently", (config.getInteger("showAvatarTagPermanently") + 1) % 3);
+        int currentEntry = config.getInteger("showAvatarTagPermanently");
+        int newEntry = (currentEntry + 1) % 3;
+
+        switch (newEntry) {
+            case 0:
+                World.getGameGui().getInformGui().showServerInform(Lang.getMsg("info.nameDisplay.noNames"));
+                break;
+            case 1:
+                World.getGameGui().getInformGui().showServerInform(Lang.getMsg("info.nameDisplay.humanNames"));
+                break;
+            case 2:
+                World.getGameGui().getInformGui().showServerInform(Lang.getMsg("info.nameDisplay.allNames"));
+                break;
+            default:
+                break;
+        }
+        config.set("showAvatarTagPermanently", newEntry);
     }
 }
