@@ -29,7 +29,9 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.channels.WritableByteChannel;
+import java.nio.charset.CharacterCodingException;
 import java.nio.charset.CharsetEncoder;
+import java.nio.charset.CoderResult;
 import java.util.concurrent.*;
 
 /**
@@ -51,6 +53,7 @@ final class Sender implements NetCommWriter {
     /**
      * The instance of the logger that is used to write out the data.
      */
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(Sender.class);
 
     /**
@@ -62,24 +65,28 @@ final class Sender implements NetCommWriter {
      * Length of the byte buffer used to store the data before its send to the
      * server.
      */
+    @Nonnull
     private final ByteBuffer buffer = ByteBuffer.allocateDirect(MAX_COMMAND_SIZE);
 
     /**
      * The string encoder that is used to encode the strings before they are
      * send to the server.
      */
+    @Nonnull
     private final CharsetEncoder encoder;
 
     /**
      * The buffer that is used to temporary store the decoded characters that
      * were send to the player.
      */
+    @Nonnull
     private final CharBuffer encodingBuffer = CharBuffer.allocate(65535);
 
     /**
      * The output stream of the socket connection to the server. The encoded
      * data is written on this stream to be send to the server.
      */
+    @Nonnull
     private final WritableByteChannel outChannel;
 
     @Nonnull
@@ -92,7 +99,7 @@ final class Sender implements NetCommWriter {
      * data to the server
      */
     @SuppressWarnings("nls")
-    Sender(WritableByteChannel out) {
+    Sender(@Nonnull WritableByteChannel out) {
         commandExecutor = Executors.newSingleThreadExecutor();
         outChannel = out;
 
@@ -171,6 +178,7 @@ final class Sender implements NetCommWriter {
             }
 
             @Override
+            @Nonnull
             public Boolean get() throws InterruptedException, ExecutionException {
                 try {
                     return get(1, TimeUnit.HOURS);
@@ -180,6 +188,7 @@ final class Sender implements NetCommWriter {
             }
 
             @Override
+            @Nonnull
             public Boolean get(long timeout, @Nonnull TimeUnit unit)
                     throws InterruptedException, ExecutionException, TimeoutException {
                 return commandExecutor.awaitTermination(timeout, unit);
@@ -226,7 +235,7 @@ final class Sender implements NetCommWriter {
      * @param value the string that shall be send to the server
      */
     @Override
-    public void writeString(@Nonnull String value) {
+    public void writeString(@Nonnull String value) throws CharacterCodingException {
         int startIndex = buffer.position();
         buffer.putShort((short) 0);
 
@@ -234,7 +243,19 @@ final class Sender implements NetCommWriter {
         encodingBuffer.put(value, 0, Math.min(encodingBuffer.capacity(), value.length()));
         encodingBuffer.flip();
 
-        encoder.encode(encodingBuffer, buffer, true);
+        do {
+            CoderResult encodingResult = encoder.encode(encodingBuffer, buffer, true);
+            if (!encodingResult.isError()) {
+                break;
+            }
+            if (encodingResult.isUnmappable()) {
+                log.warn("Found a character that failed to encode for the transfer to the server: {} - SKIP",
+                        encodingBuffer.get());
+            } else {
+                encodingResult.throwException();
+            }
+        } while (encodingBuffer.hasRemaining());
+
         int lastIndex = buffer.position();
         buffer.position(startIndex);
         writeUShort(lastIndex - startIndex - 2);

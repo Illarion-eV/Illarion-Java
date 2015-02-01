@@ -18,6 +18,7 @@ package illarion.common.net;
 import illarion.common.types.Location;
 
 import javax.annotation.Nonnull;
+import java.nio.charset.CharacterCodingException;
 
 /**
  * This interface offers the possibility to write on a connection handled by the network communication class of
@@ -52,7 +53,7 @@ public interface NetCommWriter {
      *
      * @param value the string that shall be send to the server
      */
-    void writeString(@Nonnull String value);
+    void writeString(@Nonnull String value) throws CharacterCodingException;
 
     /**
      * Write 1 byte as unsigned value to the network.

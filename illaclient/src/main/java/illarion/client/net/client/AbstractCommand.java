@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.NotThreadSafe;
+import java.io.IOException;
 
 /**
  * Default super class for all commands that get send to a server.
@@ -71,7 +72,7 @@ public abstract class AbstractCommand {
      *
      * @param writer the byte buffer the values are added to from index 0 on
      */
-    public abstract void encode(@Nonnull NetCommWriter writer);
+    public abstract void encode(@Nonnull NetCommWriter writer) throws IOException;
 
     /**
      * Get the ID of this client command.

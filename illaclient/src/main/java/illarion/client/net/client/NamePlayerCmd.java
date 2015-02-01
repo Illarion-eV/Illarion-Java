@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,13 +16,12 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
-import illarion.client.world.CharMovementMode;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.CharacterId;
-import illarion.common.types.Direction;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
+import java.io.IOException;
 
 /**
  * Client Command: Name a player with custom name ({@link illarion.client.net.CommandList#CMD_NAME_PLAYER}).
@@ -51,7 +50,7 @@ public final class NamePlayerCmd extends AbstractCommand {
      * communication system
      */
     @Override
-    public void encode(@Nonnull NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) throws IOException {
         playerId.encode(writer);
         writer.writeString(customName);
     }

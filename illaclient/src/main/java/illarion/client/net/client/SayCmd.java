@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,11 +16,12 @@
 package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
-import illarion.client.util.ChatHandler;
+import illarion.client.util.ChatHandler.SpeechMode;
 import illarion.common.net.NetCommWriter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
+import java.io.IOException;
 
 /**
  * Client Command: Send a spoken text or a emote or a text command (
@@ -40,7 +41,7 @@ public final class SayCmd extends AbstractCommand {
     /**
      * Default constructor for the say text command.
      */
-    public SayCmd(@Nonnull final ChatHandler.SpeechMode mode, @Nonnull final String text) {
+    public SayCmd(@Nonnull SpeechMode mode, @Nonnull String text) {
         super(getCommandId(mode));
 
         this.text = text;
@@ -51,10 +52,10 @@ public final class SayCmd extends AbstractCommand {
      *
      * @param mode the speech mode
      * @return the command id
-     * @throws IllegalArgumentException in case {@code mode} is not {@link ChatHandler.SpeechMode#Normal} or
-     * {@link ChatHandler.SpeechMode#Shout} or {@link ChatHandler.SpeechMode#Whisper}
+     * @throws IllegalArgumentException in case {@code mode} is not {@link SpeechMode#Normal} or
+     * {@link SpeechMode#Shout} or {@link SpeechMode#Whisper}
      */
-    private static int getCommandId(@Nonnull final ChatHandler.SpeechMode mode) {
+    private static int getCommandId(@Nonnull SpeechMode mode) {
         switch (mode) {
             case Normal:
                 return CommandList.CMD_SAY;
@@ -68,7 +69,7 @@ public final class SayCmd extends AbstractCommand {
     }
 
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) throws IOException {
         writer.writeString(text);
     }
 
