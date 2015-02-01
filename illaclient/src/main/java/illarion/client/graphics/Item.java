@@ -25,6 +25,7 @@ import illarion.client.util.LookAtTracker;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.client.world.interactive.InteractiveMapTile;
+import illarion.client.world.movement.MouseTargetMovementHandler;
 import illarion.client.world.movement.TargetMovementHandler;
 import illarion.common.graphics.MapConstants;
 import illarion.common.graphics.MapVariance;
@@ -224,44 +225,129 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
     @Nonnull
     private static final Logger log = LoggerFactory.getLogger(Item.class);
 
+    private boolean isEventProcessed(@Nonnull CurrentMouseLocationEvent event) {
+        if (!isMouseInInteractionRect(event.getX(), event.getY())) {
+            return false;
+        }
+
+        if (!event.isHighlightHandled()) {
+            showHighlight = 1;
+            if (parentTile.getInteractive().isInUseRange()) {
+                showHighlight = 2;
+            }
+            event.setHighlightHandled(true);
+        }
+        if (!parentTile.isBlocked()) {
+            MouseTargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMouseMovementHandler();
+            handler.walkTo(parentTile.getLocation(), 0);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isEventProcessed(@Nonnull PointOnMapEvent event) {
+        if (!isMouseInInteractionRect(event.getX(), event.getY())) {
+            return false;
+        }
+
+        if (!LookAtTracker.isLookAtObject(this)) {
+            LookAtTracker.setLookAtObject(this);
+            parentTile.getInteractive().lookAt(this);
+        }
+        return true;
+    }
+
+    private boolean isEventProcessed(@Nonnull ClickOnMapEvent event) {
+        if (event.getKey() != Button.Left) {
+            return false;
+        }
+
+        if (!isMouseInInteractionRect(event.getX(), event.getY())) {
+            return false;
+        }
+
+        delayGoToItem.reset();
+
+        log.debug("Single clicking item: {}", getItemId());
+
+        TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
+
+        boolean blocked = parentTile.isBlocked();
+        boolean useRange = parentTile.getInteractive().isInUseRange();
+
+        if (useRange) {
+            log.trace("Clicked item {} is inside of use range.", getItemId());
+            if (blocked) {
+                return true;
+            } else {
+                log.trace("Clicked item {} allows walking to. Delaying move to accept double click.", getItemId());
+                delayGoToItem.setLocation(parentTile.getLocation());
+                delayGoToItem.pulse();
+            }
+        } else {
+            log.trace("Clicked item {} is outside of use range.", getItemId());
+            if (blocked) {
+                handler.walkTo(parentTile.getLocation(), 1);
+            } else {
+                handler.walkTo(parentTile.getLocation(), 0);
+            }
+        }
+        handler.assumeControl();
+        return true;
+    }
+
+    private boolean isEventProcessed(@Nonnull DoubleClickOnMapEvent event) {
+        if (event.getKey() != Button.Left) {
+            return false;
+        }
+
+        if (!isMouseInInteractionRect(event.getX(), event.getY())) {
+            return false;
+        }
+
+        delayGoToItem.reset();
+
+        log.debug("Double clicking item: {}", getItemId());
+
+        if (parentTile.getInteractive().isInUseRange()) {
+            log.trace("Item {} is within use range. Using it!", getItemId());
+            parentTile.getInteractive().use();
+        } else {
+            log.trace("Item {} is outside of the use range. Walking to it.", getItemId());
+            final InteractiveMapTile interactiveMapTile = parentTile.getInteractive();
+            TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
+            handler.walkTo(parentTile.getLocation(), 1);
+            handler.setTargetReachedAction(new Runnable() {
+                @Override
+                public void run() {
+                    interactiveMapTile.use();
+                }
+            });
+            handler.assumeControl();
+        }
+
+        return true;
+    }
+
+    private boolean isEventProcessed(@Nonnull PrimaryKeyMapDrag event) {
+        return isMouseInInteractionRect(event.getOldX(), event.getOldY()) &&
+                event.startDraggingItemFromTile(parentTile);
+
+    }
+
+    @SuppressWarnings("SimplifiableIfStatement")
     @Override
-    public boolean isEventProcessed(
-            @Nonnull GameContainer container, int delta, @Nonnull SceneEvent event) {
-        if (getLocalLight().getAlpha() == 0) {
+    public boolean isEventProcessed(@Nonnull GameContainer container, int delta, @Nonnull SceneEvent event) {
+        if (getAlpha() == 0) {
             return false;
         }
 
         if (event instanceof CurrentMouseLocationEvent) {
-            CurrentMouseLocationEvent moveEvent = (CurrentMouseLocationEvent) event;
-            if (!isMouseInInteractionRect(moveEvent.getX(), moveEvent.getY())) {
-                return false;
-            }
-
-            if (!moveEvent.isHighlightHandled()) {
-                showHighlight = 1;
-                if (parentTile.getInteractive().isInUseRange()) {
-                    showHighlight = 2;
-                }
-                moveEvent.setHighlightHandled(true);
-            }
-            if (!parentTile.isBlocked()) {
-                World.getPlayer().getMovementHandler().getTargetMouseMovementHandler()
-                        .walkTo(parentTile.getLocation(), 0);
-                return true;
-            }
+            return isEventProcessed((CurrentMouseLocationEvent) event);
         }
 
         if (event instanceof PointOnMapEvent) {
-            PointOnMapEvent moveEvent = (PointOnMapEvent) event;
-            if (!isMouseInInteractionRect(moveEvent.getX(), moveEvent.getY())) {
-                return false;
-            }
-
-            if (!LookAtTracker.isLookAtObject(this)) {
-                LookAtTracker.setLookAtObject(this);
-                parentTile.getInteractive().lookAt(this);
-            }
-            return true;
+            return isEventProcessed((PointOnMapEvent) event);
         }
 
         if (!parentTile.isAtPlayerLevel()) {
@@ -269,83 +355,15 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         }
 
         if (event instanceof ClickOnMapEvent) {
-            ClickOnMapEvent clickEvent = (ClickOnMapEvent) event;
-            if (clickEvent.getKey() != Button.Left) {
-                return false;
-            }
-
-            if (!isMouseInInteractionRect(clickEvent.getX(), clickEvent.getY())) {
-                return false;
-            }
-
-            delayGoToItem.reset();
-
-            log.debug("Single clicking item: {}", getItemId());
-
-            TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
-
-            boolean blocked = parentTile.isBlocked();
-            boolean useRange = parentTile.getInteractive().isInUseRange();
-
-            if (useRange) {
-                if (blocked) {
-                    return true;
-                } else {
-                    delayGoToItem.setLocation(parentTile.getLocation());
-                    delayGoToItem.pulse();
-                }
-            } else {
-                if (blocked) {
-                    handler.walkTo(parentTile.getLocation(), 1);
-                } else {
-                    handler.walkTo(parentTile.getLocation(), 0);
-                }
-            }
-            handler.assumeControl();
-            return true;
+            return isEventProcessed((ClickOnMapEvent) event);
         }
 
         if (event instanceof DoubleClickOnMapEvent) {
-            DoubleClickOnMapEvent moveEvent = (DoubleClickOnMapEvent) event;
-            if (moveEvent.getKey() != Button.Left) {
-                return false;
-            }
-
-            if (!isMouseInInteractionRect(moveEvent.getX(), moveEvent.getY())) {
-                return false;
-            }
-
-            delayGoToItem.reset();
-
-            log.debug("Double clicking item: {}", getItemId());
-
-            if (parentTile.getInteractive().isInUseRange()) {
-                parentTile.getInteractive().use();
-            } else {
-                final InteractiveMapTile interactiveMapTile = parentTile.getInteractive();
-                TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
-                handler.walkTo(parentTile.getLocation(), 1);
-                handler.setTargetReachedAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        interactiveMapTile.use();
-                    }
-                });
-                handler.assumeControl();
-            }
-
-            return true;
+            return isEventProcessed((DoubleClickOnMapEvent) event);
         }
 
         if (event instanceof PrimaryKeyMapDrag) {
-            PrimaryKeyMapDrag primKeyDragEvent = (PrimaryKeyMapDrag) event;
-            if (!isMouseInInteractionRect(primKeyDragEvent.getOldX(), primKeyDragEvent.getOldY())) {
-                return false;
-            }
-
-            if (primKeyDragEvent.startDraggingItemFromTile(parentTile)) {
-                return true;
-            }
+            return isEventProcessed((PrimaryKeyMapDrag) event);
         }
 
         return false;
@@ -388,11 +406,6 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         return false;
     }
 
-   /* @Override
-    protected boolean isShown() {
-        return true;
-    }*/
-
     /**
      * Set number of stacked items.
      *
@@ -413,20 +426,36 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         }
     }
 
-    @Override
-    public void show() {
+    @Nullable
+    private ItemStack parentStack;
+
+    public void show(@Nonnull ItemStack stack) {
+        //noinspection AssignmentToCollectionOrArrayFieldFromParameter
+        parentStack = stack;
         if (animation != null) {
             animation.addTarget(this, true);
         }
-        super.show();
+    }
+
+    @Override
+    @Contract("->fail")
+    public void show() {
+        throw new IllegalStateException("Calling show directly is not permitted for items.");
     }
 
     @Override
     public void hide() {
+        parentStack = null;
         if (animation != null) {
             animation.removeTarget(this);
         }
-        super.hide();
+    }
+
+    @Override
+    @Contract(pure = true)
+    public boolean isShown() {
+        ItemStack localStack = parentStack;
+        return (localStack != null) && localStack.isShown();
     }
 
     @Override

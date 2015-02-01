@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -32,6 +32,7 @@ import illarion.common.types.Location;
 import illarion.common.util.FastMath;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.input.Input;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -47,7 +48,9 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class Movement {
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(Movement.class);
+    @Nonnull
     private static final Marker marker = MarkerFactory.getMarker("Movement");
 
     /**
@@ -340,6 +343,7 @@ public class Movement {
     }
 
     @Nonnull
+    @Contract(pure = true)
     private Location getTargetLocation(@Nonnull CharMovementMode mode, @Nonnull Direction direction) {
         Location result = new Location(playerLocation);
         switch (mode) {
@@ -360,36 +364,43 @@ public class Movement {
     }
 
     @Nonnull
+    @Contract(pure = true)
     Player getPlayer() {
         return player;
     }
 
+    @Contract(pure = true)
     public boolean isMovementModePossible(@Nonnull CharMovementMode mode) {
         return (mode != CharMovementMode.Run) ||
                 World.getPlayer().getCharacter().isAnimationAvailable(CharAnimations.RUN);
     }
 
     @Nonnull
+    @Contract(pure = true)
     public CharMovementMode getDefaultMovementMode() {
         return defaultMovementMode;
     }
 
     @Nonnull
+    @Contract(pure = true)
     public MouseMovementHandler getFollowMouseHandler() {
         return followMouseHandler;
     }
 
     @Nonnull
+    @Contract(pure = true)
     public KeyboardMovementHandler getKeyboardHandler() {
         return keyboardHandler;
     }
 
     @Nonnull
+    @Contract(pure = true)
     public TargetMovementHandler getTargetMovementHandler() {
         return targetMovementHandler;
     }
 
     @Nonnull
+    @Contract(pure = true)
     public MouseTargetMovementHandler getTargetMouseMovementHandler() {
         return targetMouseMovementHandler;
     }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,6 +16,7 @@
 package illarion.client.input;
 
 import illarion.client.world.MapTile;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 
@@ -27,19 +28,21 @@ import javax.annotation.Nonnull;
  */
 public final class PrimaryKeyMapDrag extends DragOnMapEvent {
     public interface PrimaryKeyMapDragCallback {
-        boolean startDraggingItemFromTile(PrimaryKeyMapDrag event, MapTile tile);
+        boolean startDraggingItemFromTile(@Nonnull PrimaryKeyMapDrag event, @Nonnull MapTile tile);
 
         void notHandled();
     }
 
+    @Nonnull
     private final PrimaryKeyMapDragCallback callback;
 
-    public PrimaryKeyMapDrag(@Nonnull DragOnMapEvent org, PrimaryKeyMapDragCallback callback) {
+    public PrimaryKeyMapDrag(@Nonnull DragOnMapEvent org, @Nonnull PrimaryKeyMapDragCallback callback) {
         super(org);
         this.callback = callback;
     }
 
-    public boolean startDraggingItemFromTile(MapTile tile) {
+    @Contract(pure = false)
+    public boolean startDraggingItemFromTile(@Nonnull MapTile tile) {
         return callback.startDraggingItemFromTile(this, tile);
     }
 
