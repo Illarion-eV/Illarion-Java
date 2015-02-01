@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,6 +20,7 @@ import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.util.Lang;
 import illarion.common.net.NetCommReader;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -34,16 +35,11 @@ import java.io.IOException;
 @ReplyMessage(replyId = CommandList.MSG_DISCONNECT)
 public final class DisconnectMsg extends AbstractReply {
     /**
-     * String Builder that supports to build the needed error string for the
-     * logout.
-     */
-    private static final StringBuilder BUILDER = new StringBuilder();
-
-    /**
      * The list of the reasons for the logout from the server. This are the keys
      * for the translation.
      */
     @SuppressWarnings("nls")
+    @Nonnull
     private static final String[] REASONS = {null, "old_client", "already_logged_in", "wrong_pw", "server_shutdown",
                                              "kicked", null, "no_place", "not_found", null, "unstable", "no_account",
                                              "no_skillpack", "corruput_inventory"};
@@ -68,28 +64,25 @@ public final class DisconnectMsg extends AbstractReply {
     }
 
     /**
-     * Execute the disconnect message and send the decoded data to the rest of
-     * the client.
-     *
-     * @return true if the execution is done, false if it shall be called again
+     * Execute the disconnect message and send the decoded data to the rest of the client.
      */
     @SuppressWarnings("nls")
     @Override
     public void executeUpdate() {
-        BUILDER.setLength(0);
-        BUILDER.append(Lang.getMsg("logout"));
-        BUILDER.append('\n');
-        BUILDER.append(Lang.getMsg("logout.reason"));
-        BUILDER.append(' ');
+        StringBuilder builder = new StringBuilder();
+        builder.append(Lang.getMsg("logout"));
+        builder.append('\n');
+        builder.append(Lang.getMsg("logout.reason"));
+        builder.append(' ');
 
         if (reason < REASONS.length) {
-            BUILDER.append(Lang.getMsg("logout." + REASONS[reason]));
+            builder.append(Lang.getMsg("logout." + REASONS[reason]));
         } else {
-            BUILDER.append(Lang.getMsg("logout.unknown"));
-            BUILDER.append(Integer.toHexString(reason));
+            builder.append(Lang.getMsg("logout.unknown"));
+            builder.append(Integer.toHexString(reason));
         }
 
-        IllaClient.sendDisconnectEvent(BUILDER.toString(), false);
+        IllaClient.sendDisconnectEvent(builder.toString(), true);
     }
 
     /**
@@ -101,6 +94,7 @@ public final class DisconnectMsg extends AbstractReply {
     @Nonnull
     @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
         return toString("Reason: " + Integer.toHexString(reason));
     }

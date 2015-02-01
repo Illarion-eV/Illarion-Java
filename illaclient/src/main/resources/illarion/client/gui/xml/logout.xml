@@ -15,9 +15,6 @@
   ~ GNU General Public License for more details.
   -->
 <nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
-    <!--<useStyles filename="nifty-illarion-style.xml"/>
-    <useControls filename="nifty-default-controls.xml"/>-->
-
     <screen id="clientLogout" controller="illarion.client.gui.controller.LogoutScreenController"
             inputMapping="de.lessvoid.nifty.input.mapping.DefaultScreenMapping">
         <layer childLayout="vertical">

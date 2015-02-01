@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -334,14 +334,14 @@ final class Receiver extends Thread implements NetCommReader {
             } catch (@Nonnull IOException e) {
                 if (running) {
                     LOGGER.error("The connection to the server is not working anymore.", e);
-                    IllaClient.sendDisconnectEvent(Lang.getMsg("error.receiver"), false);
+                    IllaClient.sendDisconnectEvent(Lang.getMsg("error.receiver"), true);
                     running = false;
                     return;
                 }
             } catch (@Nonnull Exception e) {
                 if (running) {
                     LOGGER.error("General error in the receiver", e);
-                    IllaClient.sendDisconnectEvent(Lang.getMsg("error.receiver"), false);
+                    IllaClient.sendDisconnectEvent(Lang.getMsg("error.receiver"), true);
                     running = false;
                     return;
                 }

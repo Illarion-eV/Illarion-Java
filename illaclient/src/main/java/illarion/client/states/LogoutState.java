@@ -34,6 +34,7 @@ public final class LogoutState implements GameState {
     /**
      * The logger that is used for the logging output of this class.
      */
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(LogoutState.class);
 
     @Override

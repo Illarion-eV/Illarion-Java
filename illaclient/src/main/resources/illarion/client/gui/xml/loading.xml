@@ -15,8 +15,6 @@
   ~ GNU General Public License for more details.
   -->
 <nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
-    <!--<useStyles filename="nifty-illarion-style.xml"/>
-    <useControls filename="nifty-default-controls.xml"/>-->
     <useControls filename="illarion-progress.xml"/>
 
     <!-- loading screen -->

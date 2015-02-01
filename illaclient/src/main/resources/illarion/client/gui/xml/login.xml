@@ -15,8 +15,6 @@
   ~ GNU General Public License for more details.
   -->
 <nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
-    <useControls filename="illarion-gamecontrols.xml"/>
-
     <resourceBundle id="login-bundle" filename="login"/>
 
     <screen id="login" controller="illarion.client.gui.controller.LoginScreenController">

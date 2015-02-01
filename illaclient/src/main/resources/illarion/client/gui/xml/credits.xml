@@ -15,9 +15,6 @@
   ~ GNU General Public License for more details.
   -->
 <nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
-    <!--<useStyles filename="nifty-illarion-style.xml"/>
-    <useControls filename="nifty-default-controls.xml"/>-->
-
     <screen id="creditsStart" controller="illarion.client.gui.controller.CreditsStartScreenController"
             inputMapping="de.lessvoid.nifty.input.mapping.DefaultScreenMapping">
         <layer childLayout="vertical">

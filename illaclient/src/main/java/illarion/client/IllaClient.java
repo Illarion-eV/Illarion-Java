@@ -55,7 +55,6 @@ import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Timer;
@@ -97,7 +96,8 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     /**
      * The error and debug logger of the client.
      */
-    static final Logger LOGGER = LoggerFactory.getLogger(IllaClient.class);
+    @Nonnull
+    private static final Logger LOGGER = LoggerFactory.getLogger(IllaClient.class);
 
     /**
      * Stores if there currently is a exit requested to avoid that the question area is opened multiple times.
@@ -320,7 +320,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      */
     public static void sendDisconnectEvent(@Nonnull String message, boolean tryToReconnect) {
         LOGGER.warn("Disconnect received: {}", message);
-        EventBus.publish(new ConnectionLostEvent(message, false));
+        EventBus.publish(new ConnectionLostEvent(message, tryToReconnect));
     }
 
     /**
@@ -353,16 +353,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     @Nonnull
     public static IllaClient getInstance() {
         return INSTANCE;
-    }
-
-    /**
-     * Load a resource as stream via the basic class loader.
-     *
-     * @param path the path to the object that shall be loaded
-     * @return the data stream of the object
-     */
-    public static InputStream getResource(String path) {
-        return INSTANCE.rscLoader.getResourceAsStream(path);
     }
 
     /**
