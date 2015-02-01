@@ -16,6 +16,7 @@
 package illarion.client.net.client;
 
 import illarion.common.net.NetCommWriter;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,7 +43,7 @@ public abstract class AbstractCommand {
      *
      * @param commId the ID of the command
      */
-    protected AbstractCommand(final int commId) {
+    protected AbstractCommand(int commId) {
         id = commId;
     }
 
@@ -54,7 +55,8 @@ public abstract class AbstractCommand {
      * @return the string that contains the simple class name and the parameters
      */
     @Nonnull
-    protected final String toString(@Nullable final String param) {
+    @Contract(pure = true)
+    protected final String toString(@Nullable String param) {
         return getClass().getSimpleName() + '(' + ((param == null) ? "" : param) + ')';
     }
 
@@ -65,6 +67,7 @@ public abstract class AbstractCommand {
      */
     @Override
     @Nonnull
+    @Contract(pure = true)
     public abstract String toString();
 
     /**
@@ -79,6 +82,7 @@ public abstract class AbstractCommand {
      *
      * @return the ID of the client command that is currently set.
      */
+    @Contract(pure = true)
     public final int getId() {
         return id;
     }
