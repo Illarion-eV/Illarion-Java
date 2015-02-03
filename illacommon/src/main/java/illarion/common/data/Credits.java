@@ -112,7 +112,7 @@ public final class Credits {
                 chiefGraphics, gameplay, client, graphics, website, easyNPC, easyQuest, server, qualityAssurance);
         CreditsPerson.create("Oganalp", "Canatan", chiefMusic);
         CreditsPerson.create("Marvin", "Kopp", chiefMusic);
-        CreditsPerson.create("Zot", chiefMap, content, graphics, maps, qualityAssurance);
+        CreditsPerson.create("Zot", content, graphics, maps, qualityAssurance);
 
         CreditsPerson.create("Teflon", gameMaster);
         CreditsPerson.create("Silverwing", qualityAssurance, gameMaster);
@@ -163,7 +163,7 @@ public final class Credits {
         CreditsPerson.create("Cindy", "Elynah", "Ludwig", qualityAssurance);
         CreditsPerson.create("Mesha", maps);
         CreditsPerson.create("Oliver", "Herzog", maps);
-        CreditsPerson.create("Evie", content, maps);
+        CreditsPerson.create("Evie", chiefMap, content, maps);
         CreditsPerson.create("Quirkily", content, maps);
         CreditsPerson.create("Arien Edhel", specialThanks);
         CreditsPerson.create("Jan", "Alatar", "Falke", specialThanks);
