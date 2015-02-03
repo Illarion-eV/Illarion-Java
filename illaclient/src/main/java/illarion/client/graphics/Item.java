@@ -262,7 +262,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
             return false;
         }
 
-        if (!isMouseInInteractionRect(event.getX(), event.getY())) {
+        if (!parentTile.isAtPlayerLevel()) {
             return false;
         }
 
@@ -301,7 +301,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
             return false;
         }
 
-        if (!isMouseInInteractionRect(event.getX(), event.getY())) {
+        if (!parentTile.isAtPlayerLevel()) {
             return false;
         }
 
@@ -330,8 +330,10 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
     }
 
     private boolean isEventProcessed(@Nonnull PrimaryKeyMapDrag event) {
-        return isMouseInInteractionRect(event.getOldX(), event.getOldY()) &&
-                event.startDraggingItemFromTile(parentTile);
+        if (!isMouseInInteractionRect(event.getOldX(), event.getOldY()) || !parentTile.isAtPlayerLevel()) {
+            return false;
+        }
+        return event.startDraggingItemFromTile(parentTile);
 
     }
 
@@ -342,29 +344,30 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
             return false;
         }
 
-        if (event instanceof CurrentMouseLocationEvent) {
-            return isEventProcessed((CurrentMouseLocationEvent) event);
+        if (event instanceof AbstractMouseLocationEvent) {
+            AbstractMouseLocationEvent locationEvent = (AbstractMouseLocationEvent) event;
+            if (isMouseInInteractionRect(locationEvent.getX(), locationEvent.getY())) {
+                if (event instanceof CurrentMouseLocationEvent) {
+                    return isEventProcessed((CurrentMouseLocationEvent) event);
+                }
+
+                if (event instanceof PointOnMapEvent) {
+                    return isEventProcessed((PointOnMapEvent) event);
+                }
+
+                if (event instanceof ClickOnMapEvent) {
+                    return isEventProcessed((ClickOnMapEvent) event);
+                }
+
+                if (event instanceof DoubleClickOnMapEvent) {
+                    return isEventProcessed((DoubleClickOnMapEvent) event);
+                }
+            }
+            if (event instanceof PrimaryKeyMapDrag) {
+                return isEventProcessed((PrimaryKeyMapDrag) event);
+            }
         }
 
-        if (event instanceof PointOnMapEvent) {
-            return isEventProcessed((PointOnMapEvent) event);
-        }
-
-        if (!parentTile.isAtPlayerLevel()) {
-            return false;
-        }
-
-        if (event instanceof ClickOnMapEvent) {
-            return isEventProcessed((ClickOnMapEvent) event);
-        }
-
-        if (event instanceof DoubleClickOnMapEvent) {
-            return isEventProcessed((DoubleClickOnMapEvent) event);
-        }
-
-        if (event instanceof PrimaryKeyMapDrag) {
-            return isEventProcessed((PrimaryKeyMapDrag) event);
-        }
 
         return false;
     }

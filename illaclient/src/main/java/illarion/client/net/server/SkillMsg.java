@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -38,6 +38,7 @@ public final class SkillMsg extends AbstractGuiMsg {
     /**
      * The logger instance of this class.
      */
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(SkillMsg.class);
     /**
      * The current minor skill points of that skill.
@@ -65,7 +66,7 @@ public final class SkillMsg extends AbstractGuiMsg {
     public void executeUpdate() {
         Skill skill = Skills.getInstance().getSkill(this.skill);
         if (skill == null) {
-            log.warn("Unknown skill received! ID: {}", Integer.toString(this.skill));
+            log.warn("Unknown skill received! ID: {}", this.skill);
         } else {
             World.getGameGui().getSkillGui().updateSkill(skill, value, minor);
         }
