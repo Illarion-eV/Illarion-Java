@@ -2,7 +2,7 @@
 <!--
   ~ This file is part of the Illarion project.
   ~
-  ~ Copyright © 2014 - Illarion e.V.
+  ~ Copyright © 2015 - Illarion e.V.
   ~
   ~ Illarion is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU Affero General Public License as published by
@@ -16,26 +16,31 @@
   -->
 <nifty-styles>
     <useStyles filename="fonts.xml"/>
+    <useStyles filename="cursors.xml" />
+
     <useStyles filename="panel/nifty-panel.xml"/>
+    <useStyles filename="label/nifty-label.xml" />
     <useStyles filename="button/nifty-button.xml"/>
+    <useStyles filename="textfield/nifty-textfield.xml" />
+    <useStyles filename="checkbox/nifty-checkbox.xml" />
+    <useStyles filename="radiobutton/nifty-radiobutton.xml" />
+    <useStyles filename="scrollbar/nifty-scrollbar-style.xml" />
+    <useStyles filename="slider/nifty-slider-style.xml" />
+
+    <useStyles filename="listbox/nifty-listbox-style.xml" />
+    <useStyles filename="treebox/nifty-treebox.xml" />
+    <useStyles filename="scrollpanel/nifty-scrollpanel-style.xml" />
+    <useStyles filename="imageselect/nifty-image-select.xml" />
+    <useStyles filename="dropdown/nifty-drop-down.xml" />
+    <useStyles filename="hint/nifty-hint.xml" />
+    <useStyles filename="tabs/nifty-tabs.xml" />
+
+    <useStyles filename="menu/nifty-menu-style.xml" />
+    <useStyles filename="console/nifty-console-style.xml" />
+    <useStyles filename="window/nifty-window.xml" />
+    <useStyles filename="messagebox/nifty-messagebox.xml" />
+
     <useStyles filename="tab/illarion-tab.xml"/>
-    <useStyles filename="label/nifty-label.xml"/>
-    <useStyles filename="textfield/nifty-textfield.xml"/>
-    <useStyles filename="dropdown/nifty-drop-down.xml"/>
-    <useStyles filename="imageselect/nifty-image-select.xml"/>
-    <useStyles filename="checkbox/nifty-checkbox.xml"/>
-    <useStyles filename="radiobutton/nifty-radiobutton.xml"/>
-    <useStyles filename="scrollbar/nifty-scrollbar-style.xml"/>
-    <useStyles filename="slider/nifty-slider-style.xml"/>
-    <useStyles filename="scrollpanel/nifty-scrollpanel-style.xml"/>
-    <useStyles filename="console/nifty-console-style.xml"/>
-    <useStyles filename="menu/nifty-menu-style.xml"/>
-    <useStyles filename="listbox/nifty-listbox-style.xml"/>
-    <useStyles filename="window/nifty-window.xml"/>
-    <useStyles filename="hint/nifty-hint.xml"/>
-    <useStyles filename="tabs/nifty-tabs.xml"/>
-    <useStyles filename="treebox/nifty-treebox.xml"/>
-    <useStyles filename="messagebox/nifty-messagebox.xml"/>
     <useStyles filename="dialog/illarion-dialog-crafting.xml"/>
     <useStyles filename="dialog/illarion-dialog-input.xml"/>
     <useStyles filename="dialog/illarion-dialog-merchant.xml"/>

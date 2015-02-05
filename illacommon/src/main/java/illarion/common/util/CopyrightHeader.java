@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,8 +18,14 @@ package illarion.common.util;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;
+import java.nio.charset.Charset;
+import java.util.regex.Pattern;
 
 public class CopyrightHeader {
+    @Nonnull
+    private static final Pattern LINE_BREAK_PATTERN = Pattern.compile("\n\r|\n|\r");
+    @Nonnull
+    private static final Pattern TRIM_LINES_PATTERN = Pattern.compile("[ ]*\n[ ]*");
     /**
      * The width of a line. The width of the text is limited to this length.
      */
@@ -55,6 +61,9 @@ public class CopyrightHeader {
     @Nullable
     private String licenseTextTemplate;
 
+    @Nonnull
+    private static final Charset TEMPLATE_CHARSET = Charset.forName("UTF-8");
+
     public CopyrightHeader(
             int lineWidth,
             @Nullable String commentIntro,
@@ -75,15 +84,15 @@ public class CopyrightHeader {
         }
 
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        @Nullable InputStream in = cl.getResourceAsStream("agpl_template.txt");
-        if (in != null) {
-            try {
+        try (InputStream in = cl.getResourceAsStream("agpl_template.txt")) {
+            if (in != null) {
                 StringBuilder resultBuilder = new StringBuilder();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    resultBuilder.append(line.trim());
-                    resultBuilder.append(' ');
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(in, TEMPLATE_CHARSET))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        resultBuilder.append(line.trim());
+                        resultBuilder.append(' ');
+                    }
                 }
                 resultBuilder.setLength(resultBuilder.length() - 1);
                 int index;
@@ -91,23 +100,14 @@ public class CopyrightHeader {
                     resultBuilder.replace(index, index + 4, "\n");
                 }
 
-                licenseTextTemplate = resultBuilder.toString().replaceAll("[ ]*\n[ ]*", "\n");
-            } finally {
-                try {
-                    in.close();
-                } catch (IOException ignored) {
-                }
+                licenseTextTemplate = TRIM_LINES_PATTERN.matcher(resultBuilder.toString()).replaceAll("\n");
             }
+            return (licenseTextTemplate == null) ? "" : licenseTextTemplate;
         }
-        return (licenseTextTemplate == null) ? "" : licenseTextTemplate;
     }
 
-    public void writeTo(@Nonnull final OutputStream stream) throws IOException {
-        writeTo(new OutputStreamWriter(stream));
-    }
-
-    public void writeTo(@Nonnull final Writer writer) throws IOException {
-        final BufferedWriter bw = new BufferedWriter(writer);
+    public void writeTo(@Nonnull Writer writer) throws IOException {
+        BufferedWriter bw = new BufferedWriter(writer);
 
         if (commentIntro != null) {
             bw.write(commentIntro);
@@ -124,14 +124,15 @@ public class CopyrightHeader {
 
         String[] lines = getLicenseTextTemplate().split("\n");
         for (String line : lines) {
+            String localLine = line;
             while (true) {
-                if (line.length() < textWidth) {
-                    writeLine(bw, line, textWidth);
+                if (localLine.length() < textWidth) {
+                    writeLine(bw, localLine, textWidth);
                     break;
                 } else {
-                    int lastSpaceIndex = line.lastIndexOf(' ', textWidth);
-                    writeLine(bw, line.substring(0, lastSpaceIndex), textWidth);
-                    line = line.substring(lastSpaceIndex + 1);
+                    int lastSpaceIndex = localLine.lastIndexOf(' ', textWidth);
+                    writeLine(bw, localLine.substring(0, lastSpaceIndex), textWidth);
+                    localLine = localLine.substring(lastSpaceIndex + 1);
                 }
             }
         }
@@ -144,7 +145,7 @@ public class CopyrightHeader {
     }
 
     private void writeLine(
-            @Nonnull final Writer writer, @Nonnull final String line, final int padding) throws IOException {
+            @Nonnull Writer writer, @Nonnull String line, int padding) throws IOException {
         if (commentLineStart != null) {
             writer.write(commentLineStart);
         }
@@ -164,17 +165,20 @@ public class CopyrightHeader {
      * @param text the license text
      * @return {@code true} if the text fits the license text
      */
-    public boolean isLicenseText(@Nonnull final String text) {
-        String[] textParts = text.split("\n\r|\n|\r");
-        if (commentIntro != null && !textParts[0].equals(commentIntro)) {
+    public boolean isLicenseText(@Nonnull CharSequence text) {
+        String[] textParts = LINE_BREAK_PATTERN.split(text);
+        if (textParts.length == 0) {
             return false;
         }
-        if (commentOutro != null && !textParts[textParts.length - 1].equals(commentOutro)) {
+        if ((commentIntro != null) && !textParts[0].equals(commentIntro)) {
+            return false;
+        }
+        if ((commentOutro != null) && !textParts[textParts.length - 1].equals(commentOutro)) {
             return false;
         }
 
-        int textStartIndex = commentIntro == null ? 0 : 1;
-        int textEndIndex = commentOutro == null ? textParts.length : textParts.length - 1;
+        int textStartIndex = (commentIntro == null) ? 0 : 1;
+        int textEndIndex = (commentOutro == null) ? textParts.length : (textParts.length - 1);
 
         StringBuilder licenseText = new StringBuilder();
         for (int i = textStartIndex; i < textEndIndex; i++) {

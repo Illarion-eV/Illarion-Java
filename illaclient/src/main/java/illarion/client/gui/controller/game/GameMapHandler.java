@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -33,7 +33,9 @@ import illarion.client.graphics.Item;
 import illarion.client.gui.EntitySlickRenderImage;
 import illarion.client.gui.GameMapGui;
 import illarion.client.gui.Tooltip;
+import illarion.client.gui.controller.game.NumberSelectPopupHandler.Callback;
 import illarion.client.input.*;
+import illarion.client.input.PrimaryKeyMapDrag.PrimaryKeyMapDragCallback;
 import illarion.client.world.CharMovementMode;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
@@ -214,9 +216,9 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
     private void handlePrimaryKeyDrag(@Nonnull final DragOnMapEvent data) {
         Movement movement = World.getPlayer().getMovementHandler();
         if (!movement.getFollowMouseHandler().isActive() && !movement.getTargetMouseMovementHandler().isActive()) {
-            SceneEvent newEvent = new PrimaryKeyMapDrag(data, new PrimaryKeyMapDrag.PrimaryKeyMapDragCallback() {
+            SceneEvent newEvent = new PrimaryKeyMapDrag(data, new PrimaryKeyMapDragCallback() {
                 @Override
-                public boolean startDraggingItemFromTile(@Nonnull PrimaryKeyMapDrag event, MapTile tile) {
+                public boolean startDraggingItemFromTile(@Nonnull PrimaryKeyMapDrag event, @Nonnull MapTile tile) {
                     return handleDragOnMap(event, tile);
                 }
 
@@ -345,7 +347,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
             return;
         }
         if (ItemCount.isGreaterOne(amount) && isShiftPressed()) {
-            numberSelect.requestNewPopup(1, amount.getValue(), new NumberSelectPopupHandler.Callback() {
+            numberSelect.requestNewPopup(1, amount.getValue(), new Callback() {
                 @Override
                 public void popupCanceled() {
                     // nothing

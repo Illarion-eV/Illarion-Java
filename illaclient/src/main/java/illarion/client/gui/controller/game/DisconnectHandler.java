@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -44,6 +44,7 @@ public class DisconnectHandler implements ScreenController, UpdatableHandler, Ev
     private Nifty parentNifty;
     @Nullable
     private Screen parentScreen;
+    private boolean tryToReconnect;
 
     public DisconnectHandler() {
         AnnotationProcessor.process(this);
@@ -66,7 +67,7 @@ public class DisconnectHandler implements ScreenController, UpdatableHandler, Ev
 
     @Override
     public void update(GameContainer container, int delta) {
-        if (isVisible && !isActive && parentNifty != null && parentScreen != null && popup != null) {
+        if (isVisible && !isActive && (parentNifty != null) && (parentScreen != null) && (popup != null)) {
             String id = popup.getId();
             if (id == null) {
                 return;
@@ -95,23 +96,24 @@ public class DisconnectHandler implements ScreenController, UpdatableHandler, Ev
     }
 
     @EventSubscriber
-    public void onCloseGameEventReceived(final ServerNotFoundEvent event) {
+    public void onCloseGameEventReceived(ServerNotFoundEvent event) {
         if (!isActive) {
             isVisible = true;
         }
     }
 
     @EventSubscriber
-    public void onConnectionLostEventReceived(@Nonnull final ConnectionLostEvent event) {
-        if (isActive || popup == null) {
+    public void onConnectionLostEventReceived(@Nonnull ConnectionLostEvent event) {
+        if (isActive || (popup == null)) {
             return;
         }
+        tryToReconnect = event.isTryToReconnect();
         isVisible = true;
-        final Element msgLabel = popup.findElementById("#closeMsg");
+        Element msgLabel = popup.findElementById("#closeMsg");
         if (msgLabel == null) {
             return;
         }
-        final TextRenderer valueTextRenderer = msgLabel.getRenderer(TextRenderer.class);
+        TextRenderer valueTextRenderer = msgLabel.getRenderer(TextRenderer.class);
         if (valueTextRenderer == null) {
             return;
         }
@@ -119,7 +121,10 @@ public class DisconnectHandler implements ScreenController, UpdatableHandler, Ev
     }
 
     @Override
-    public void onEvent(String topic, ButtonClickedEvent data) {
-        IllaClient.ensureExit();
+    public void onEvent(@Nonnull String topic, @Nonnull ButtonClickedEvent data) {
+        //if (tryToReconnect) {
+        //    //IllaClient.returnToLogin();
+        //}
+        IllaClient.returnToLogin();
     }
 }

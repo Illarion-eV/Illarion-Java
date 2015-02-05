@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,11 +15,10 @@
  */
 package illarion.common.util;
 
-import illarion.common.types.Location;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.awt.*;
+import java.util.Arrays;
 
 /**
  * Line calculation by Bresenham. This class is used to calculate a line between
@@ -30,37 +29,33 @@ import java.awt.*;
  */
 public final class Bresenham {
     /**
-     * The maximum length of the line states how many points one line could
-     * contain. If a longer line is calculated, the calculation is canceled.
+     * The maximum length of the line states how many points one line could contain. If a longer line is calculated,
+     * the calculation is canceled.
      */
-    protected static final int MAX_LINE_LENGTH = 100;
-
-    /**
-     * The logger instance that takes care for the logging output of this class.
-     */
-    // private static final Logger LOGGER = LoggerFactory.getLogger(Bresenham.class);
+    private static final int MAX_LINE_LENGTH = 100;
 
     /**
      * The singleton instance of this class.
      */
+    @Nonnull
     private static final Bresenham INSTANCE = new Bresenham();
 
     /**
      * The length of the line that was created latest.
      */
-    protected int length = 0;
+    private int length;
 
     /**
-     * The list of x-coordinates that were calculated due the last line
-     * calculation.
+     * The list of x-coordinates that were calculated due the last line calculation.
      */
-    protected final int[] x = new int[MAX_LINE_LENGTH];
+    @Nonnull
+    private final int[] x = new int[MAX_LINE_LENGTH];
 
     /**
-     * The list of y-coordinates that were calculated due the last line
-     * calculation.
+     * The list of y-coordinates that were calculated due the last line calculation.
      */
-    protected final int[] y = new int[MAX_LINE_LENGTH];
+    @Nonnull
+    private final int[] y = new int[MAX_LINE_LENGTH];
 
     /**
      * Get the singleton instance of this class.
@@ -68,6 +63,7 @@ public final class Bresenham {
      * @return the singleton instance
      */
     @Nonnull
+    @Contract(pure = true)
     public static Bresenham getInstance() {
         return INSTANCE;
     }
@@ -78,19 +74,18 @@ public final class Bresenham {
      * @param sx x coordinate of the expected starting point
      * @param sy y coordinate of the expected starting point
      */
-    public void adjustStart(final int sx, final int sy) {
+    public void adjustStart(int sx, int sy) {
         if ((x[0] != sx) || (y[0] != sy)) {
             int i = 0;
             int j = length - 1;
-            int tmp;
             while (i < j) {
-                tmp = x[i];
+                int tmp = x[i];
                 x[i] = x[j];
                 x[j] = tmp;
 
-                tmp = y[i];
+                int tmp2 = y[i];
                 y[i] = y[j];
-                y[j] = tmp;
+                y[j] = tmp2;
 
                 ++i;
                 --j;
@@ -99,38 +94,36 @@ public final class Bresenham {
     }
 
     /**
-     * Calculate a line between 2 locations using the Bresenham algorithms. The
-     * last line that was calculated is overwritten by calling this function. So
-     * this line calculation is removed also instantly as the next calculation
-     * is performed. So ensure to copy the data of this lines in oder to store
-     * them and do not just save the references to the arrays.
+     * Calculate a line between 2 locations using the Bresenham algorithms. The last line that was calculated is
+     * overwritten by calling this function. So this line calculation is removed also instantly as the next calculation
+     * is performed. So ensure to copy the data of this lines in oder to store them and do not just save the
+     * references to the arrays.
      *
      * @param x0 the x coordinate of the start location of the line
      * @param y0 the y coordinate of the start location of the line
      * @param x1 the x coordinate of the target location of the line
      * @param y1 the y coordinate of the target location of the line
      */
-    public void calculate(
-            final int x0, final int y0, final int x1, final int y1) {
+    public void calculate(int x0, int y0, int x1, int y1) {
         length = 0;
 
         int currX = x0;
         int currY = y0;
         int dy = y1 - y0;
         int dx = x1 - x0;
-        int stepx, stepy;
+        int stepX, stepY;
 
         if (dy < 0) {
             dy = -dy;
-            stepy = -1;
+            stepY = -1;
         } else {
-            stepy = 1;
+            stepY = 1;
         }
         if (dx < 0) {
             dx = -dx;
-            stepx = -1;
+            stepX = -1;
         } else {
-            stepx = 1;
+            stepX = 1;
         }
         dy <<= 1; // dy is now 2*dy
         dx <<= 1; // dx is now 2*dx
@@ -140,10 +133,10 @@ public final class Bresenham {
             int fraction = dy - (dx >> 1); // same as 2*dy - dx
             while (currX != x1) {
                 if (fraction >= 0) {
-                    currY += stepy;
+                    currY += stepY;
                     fraction -= dx; // same as fraction -= 2*dx
                 }
-                currX += stepx;
+                currX += stepX;
                 fraction += dy; // same as fraction -= 2*dy
                 addPoint(currX, currY);
             }
@@ -151,10 +144,10 @@ public final class Bresenham {
             int fraction = dx - (dy >> 1);
             while (currY != y1) {
                 if (fraction >= 0) {
-                    currX += stepx;
+                    currX += stepX;
                     fraction -= dy;
                 }
-                currY += stepy;
+                currY += stepY;
                 fraction += dx;
                 addPoint(currX, currY);
             }
@@ -162,102 +155,52 @@ public final class Bresenham {
     }
 
     /**
-     * Calculate a line between the two locations.
-     *
-     * @param loc0 the start location of the calculation
-     * @param loc1 the target location of the calculation
-     * @see #calculate(int, int, int, int)
-     */
-    @SuppressWarnings("nls")
-    public void calculate(@Nullable final Location loc0, @Nullable final Location loc1) {
-        if (loc0 == null) {
-            throw new IllegalArgumentException("Start location (loc0) must not be null.");
-        }
-        if (loc1 == null) {
-            throw new IllegalArgumentException("Start location (loc1) must not be null.");
-        }
-        calculate(loc0.getScX(), loc0.getScY(), loc1.getScX(), loc1.getScY());
-    }
-
-    /**
      * Get the length of the line that was calculated at the last run.
      *
      * @return the length of the line
      */
+    @Contract(pure = true)
     public int getLength() {
         return length;
     }
 
     /**
-     * Get a point out of the list of points that were calculated at the last
-     * run of this function.
-     *
-     * @param index the index of the point in the list of points
-     * @param point the object the point data is stored in
-     * @return true in case the index was valid and the point data got stored in
-     * the object, false if the index was smaller then 0 or larger then
-     * the length of the calculated line
-     */
-    @SuppressWarnings("nls")
-    public boolean getPoint(final int index, @Nullable final Point point) {
-        if (point == null) {
-            throw new IllegalArgumentException("Point must not be NULL");
-        }
-        if ((index < 0) || (index >= length)) {
-            return false;
-        }
-
-        point.x = x[index];
-        point.y = y[index];
-        return true;
-    }
-
-    /**
-     * Get the list of x coordinates that were calculated last time. This list
-     * is only valid for the line until a new line is calculated. Its
-     * overwritten then. Do also not perform any writing actions on this list
-     * from outside of this class in order to prevent maleforming this list.
+     * Get the list of x coordinates that were calculated last time.
      *
      * @return the list of x coordinates
      */
     @Nonnull
+    @Contract(pure = true)
     public int[] getX() {
-        return x;
+        return Arrays.copyOf(x, x.length);
     }
 
     /**
-     * Get the list of y coordinates that were calculated last time. This list
-     * is only valid for the line until a new line is calculated. Its
-     * overwritten then. Do also not perform any writing actions on this list
-     * from outside of this class in order to prevent maleforming this list.
+     * Get the list of y coordinates that were calculated last time.
      *
      * @return the list of y coordinates
      */
     @Nonnull
+    @Contract(pure = true)
     public int[] getY() {
-        return y;
+        return Arrays.copyOf(y, y.length);
     }
 
-    /**
-     * Get the name of this class. This is used to identify the Bresenham
-     * implementation human readable.
-     */
     @Nonnull
     @Override
-    @SuppressWarnings("nls")
+    @Contract(pure = true)
     public String toString() {
-        return "Bresenham Linetracer";
+        return "Bresenham Line Tracer";
     }
 
     /**
-     * Add a point to the list of points that were calculated. The length of the
-     * line in automatically increased by one after calling this function.
+     * Add a point to the list of points that were calculated. The length of the line in automatically increased by
+     * one after calling this function.
      *
      * @param px the x-coordinate of the point that shall be added
      * @param py the y-coordinate of the point that shall be added
      */
-    @SuppressWarnings("nls")
-    private void addPoint(final int px, final int py) {
+    private void addPoint(int px, int py) {
         if (length > (MAX_LINE_LENGTH - 1)) {
             throw new IllegalStateException("Bresenham line is getting too long.");
         }

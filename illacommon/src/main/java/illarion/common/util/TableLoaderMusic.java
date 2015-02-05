@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,6 +14,8 @@
  * GNU General Public License for more details.
  */
 package illarion.common.util;
+
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 
@@ -39,7 +41,7 @@ public class TableLoaderMusic extends TableLoader {
      * @param callback the callback sink that receives the data
      * @param <T> the type of the table loader used
      */
-    public <T extends TableLoader> TableLoaderMusic(@Nonnull final TableLoaderSink<T> callback) {
+    public <T extends TableLoader> TableLoaderMusic(@Nonnull TableLoaderSink<T> callback) {
         super("Songs", callback);
     }
 
@@ -50,6 +52,7 @@ public class TableLoaderMusic extends TableLoader {
      *
      * @return the ID of the song
      */
+    @Contract(pure = true)
     public int getSongId() {
         return getInt(TB_ID);
     }
@@ -59,6 +62,8 @@ public class TableLoaderMusic extends TableLoader {
      *
      * @return the song file
      */
+    @Nonnull
+    @Contract(pure = true)
     public String getSongFile() {
         return getString(TB_NAME);
     }

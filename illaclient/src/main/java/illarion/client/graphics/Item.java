@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -25,6 +25,7 @@ import illarion.client.util.LookAtTracker;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.client.world.interactive.InteractiveMapTile;
+import illarion.client.world.movement.MouseTargetMovementHandler;
 import illarion.client.world.movement.TargetMovementHandler;
 import illarion.common.graphics.MapConstants;
 import illarion.common.graphics.MapVariance;
@@ -37,6 +38,7 @@ import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Graphics;
 import org.illarion.engine.graphic.SceneEvent;
 import org.illarion.engine.input.Button;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +63,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      * The amount of items that are represented by this item instance. So in case the number is larger then 1 this
      * item represents a stack of items of the same kind.
      */
+    @Nullable
     private ItemCount count;
 
     /**
@@ -163,18 +166,21 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
     }
 
     @Override
+    @Contract(pure = true)
     public int getHighlight() {
         return showHighlight;
     }
 
     @Override
     public void render(@Nonnull Graphics g) {
-        super.render(g);
+        if (performRendering()) {
+            super.render(g);
 
-        if (showNumber && (number != null)) {
-            number.render(g);
+            if (showNumber && (number != null)) {
+                number.render(g);
+            }
+
         }
-
         showHighlight = 0;
     }
 
@@ -195,6 +201,8 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      * @return the number of items on the stack or 1 in case there is just one
      * item
      */
+    @Nullable
+    @Contract(pure = true)
     public ItemCount getCount() {
         return count;
     }
@@ -214,132 +222,152 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
     /**
      * The logging instance that takes care for the logging output of this class.
      */
-    @SuppressWarnings("UnusedDeclaration")
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(Item.class);
 
-    @Override
-    public boolean isEventProcessed(
-            @Nonnull GameContainer container, int delta, @Nonnull SceneEvent event) {
-        if (getLocalLight().getAlpha() == 0) {
+    private boolean isEventProcessed(@Nonnull CurrentMouseLocationEvent event) {
+        if (!isMouseInInteractionRect(event.getX(), event.getY())) {
             return false;
         }
 
-        if (event instanceof CurrentMouseLocationEvent) {
-            CurrentMouseLocationEvent moveEvent = (CurrentMouseLocationEvent) event;
-            if (!isMouseInInteractionRect(moveEvent.getX(), moveEvent.getY())) {
-                return false;
+        if (!event.isHighlightHandled()) {
+            showHighlight = 1;
+            if (parentTile.getInteractive().isInUseRange()) {
+                showHighlight = 2;
             }
+            event.setHighlightHandled(true);
+        }
+        if (!parentTile.isBlocked()) {
+            MouseTargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMouseMovementHandler();
+            handler.walkTo(parentTile.getLocation(), 0);
+            return true;
+        }
+        return false;
+    }
 
-            if (!moveEvent.isHighlightHandled()) {
-                showHighlight = 1;
-                if (parentTile.getInteractive().isInUseRange()) {
-                    showHighlight = 2;
-                }
-                moveEvent.setHighlightHandled(true);
-            }
-            if (!parentTile.isBlocked()) {
-                World.getPlayer().getMovementHandler().getTargetMouseMovementHandler()
-                        .walkTo(parentTile.getLocation(), 0);
-                return true;
-            }
+    private boolean isEventProcessed(@Nonnull PointOnMapEvent event) {
+        if (!isMouseInInteractionRect(event.getX(), event.getY())) {
+            return false;
         }
 
-        if (event instanceof PointOnMapEvent) {
-            PointOnMapEvent moveEvent = (PointOnMapEvent) event;
-            if (!isMouseInInteractionRect(moveEvent.getX(), moveEvent.getY())) {
-                return false;
-            }
+        if (!LookAtTracker.isLookAtObject(this)) {
+            LookAtTracker.setLookAtObject(this);
+            parentTile.getInteractive().lookAt(this);
+        }
+        return true;
+    }
 
-            if (!LookAtTracker.isLookAtObject(this)) {
-                LookAtTracker.setLookAtObject(this);
-                parentTile.getInteractive().lookAt(this);
-            }
-            return true;
+    private boolean isEventProcessed(@Nonnull ClickOnMapEvent event) {
+        if (event.getKey() != Button.Left) {
+            return false;
         }
 
         if (!parentTile.isAtPlayerLevel()) {
             return false;
         }
 
-        if (event instanceof ClickOnMapEvent) {
-            ClickOnMapEvent clickEvent = (ClickOnMapEvent) event;
-            if (clickEvent.getKey() != Button.Left) {
-                return false;
-            }
+        delayGoToItem.reset();
 
-            if (!isMouseInInteractionRect(clickEvent.getX(), clickEvent.getY())) {
-                return false;
-            }
+        log.debug("Single clicking item: {}", getItemId());
 
-            delayGoToItem.reset();
+        TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
 
-            log.debug("Single clicking item: {}", getItemId());
+        boolean blocked = parentTile.isBlocked();
+        boolean useRange = parentTile.getInteractive().isInUseRange();
 
-            TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
-
-            boolean blocked = parentTile.isBlocked();
-            boolean useRange = parentTile.getInteractive().isInUseRange();
-
-            if (useRange) {
-                if (blocked) {
-                    return true;
-                } else {
-                    delayGoToItem.setLocation(parentTile.getLocation());
-                    delayGoToItem.pulse();
-                }
-            } else {
-                if (blocked) {
-                    handler.walkTo(parentTile.getLocation(), 1);
-                } else {
-                    handler.walkTo(parentTile.getLocation(), 0);
-                }
-            }
-            handler.assumeControl();
-            return true;
-        }
-
-        if (event instanceof DoubleClickOnMapEvent) {
-            DoubleClickOnMapEvent moveEvent = (DoubleClickOnMapEvent) event;
-            if (moveEvent.getKey() != Button.Left) {
-                return false;
-            }
-
-            if (!isMouseInInteractionRect(moveEvent.getX(), moveEvent.getY())) {
-                return false;
-            }
-
-            delayGoToItem.reset();
-
-            log.debug("Double clicking item: {}", getItemId());
-
-            if (parentTile.getInteractive().isInUseRange()) {
-                parentTile.getInteractive().use();
-            } else {
-                final InteractiveMapTile interactiveMapTile = parentTile.getInteractive();
-                TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
-                handler.walkTo(parentTile.getLocation(), 1);
-                handler.setTargetReachedAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        interactiveMapTile.use();
-                    }
-                });
-                handler.assumeControl();
-            }
-
-            return true;
-        }
-
-        if (event instanceof PrimaryKeyMapDrag) {
-            PrimaryKeyMapDrag primKeyDragEvent = (PrimaryKeyMapDrag) event;
-            if (!isMouseInInteractionRect(primKeyDragEvent.getOldX(), primKeyDragEvent.getOldY())) {
-                return false;
-            }
-
-            if (primKeyDragEvent.startDraggingItemFromTile(parentTile)) {
+        if (useRange) {
+            log.trace("Clicked item {} is inside of use range.", getItemId());
+            if (blocked) {
                 return true;
+            } else {
+                log.trace("Clicked item {} allows walking to. Delaying move to accept double click.", getItemId());
+                delayGoToItem.setLocation(parentTile.getLocation());
+                delayGoToItem.pulse();
+            }
+        } else {
+            log.trace("Clicked item {} is outside of use range.", getItemId());
+            if (blocked) {
+                handler.walkTo(parentTile.getLocation(), 1);
+            } else {
+                handler.walkTo(parentTile.getLocation(), 0);
             }
         }
+        handler.assumeControl();
+        return true;
+    }
+
+    private boolean isEventProcessed(@Nonnull DoubleClickOnMapEvent event) {
+        if (event.getKey() != Button.Left) {
+            return false;
+        }
+
+        if (!parentTile.isAtPlayerLevel()) {
+            return false;
+        }
+
+        delayGoToItem.reset();
+
+        log.debug("Double clicking item: {}", getItemId());
+
+        if (parentTile.getInteractive().isInUseRange()) {
+            log.trace("Item {} is within use range. Using it!", getItemId());
+            parentTile.getInteractive().use();
+        } else {
+            log.trace("Item {} is outside of the use range. Walking to it.", getItemId());
+            final InteractiveMapTile interactiveMapTile = parentTile.getInteractive();
+            TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
+            handler.walkTo(parentTile.getLocation(), 1);
+            handler.setTargetReachedAction(new Runnable() {
+                @Override
+                public void run() {
+                    interactiveMapTile.use();
+                }
+            });
+            handler.assumeControl();
+        }
+
+        return true;
+    }
+
+    private boolean isEventProcessed(@Nonnull PrimaryKeyMapDrag event) {
+        if (!isMouseInInteractionRect(event.getOldX(), event.getOldY()) || !parentTile.isAtPlayerLevel()) {
+            return false;
+        }
+        return event.startDraggingItemFromTile(parentTile);
+
+    }
+
+    @SuppressWarnings("SimplifiableIfStatement")
+    @Override
+    public boolean isEventProcessed(@Nonnull GameContainer container, int delta, @Nonnull SceneEvent event) {
+        if (getAlpha() == 0) {
+            return false;
+        }
+
+        if (event instanceof AbstractMouseLocationEvent) {
+            AbstractMouseLocationEvent locationEvent = (AbstractMouseLocationEvent) event;
+            if (isMouseInInteractionRect(locationEvent.getX(), locationEvent.getY())) {
+                if (event instanceof CurrentMouseLocationEvent) {
+                    return isEventProcessed((CurrentMouseLocationEvent) event);
+                }
+
+                if (event instanceof PointOnMapEvent) {
+                    return isEventProcessed((PointOnMapEvent) event);
+                }
+
+                if (event instanceof ClickOnMapEvent) {
+                    return isEventProcessed((ClickOnMapEvent) event);
+                }
+
+                if (event instanceof DoubleClickOnMapEvent) {
+                    return isEventProcessed((DoubleClickOnMapEvent) event);
+                }
+            }
+            if (event instanceof PrimaryKeyMapDrag) {
+                return isEventProcessed((PrimaryKeyMapDrag) event);
+            }
+        }
+
 
         return false;
     }
@@ -381,11 +409,6 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         return false;
     }
 
-    @Override
-    protected boolean isShown() {
-        return true;
-    }
-
     /**
      * Set number of stacked items.
      *
@@ -393,11 +416,11 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      * one a text is displayed next to the item that shown how many
      * items are on the stack
      */
-    public void setCount(ItemCount newCount) {
+    public void setCount(@Nullable ItemCount newCount) {
         count = newCount;
 
         // write number to text for display
-        if (count.getValue() > 1) {
+        if (ItemCount.isGreaterOne(count)) {
             number = new TextTag(count.getShortText(Lang.getInstance().getLocale()), Color.YELLOW);
             number.setOffset((MapConstants.TILE_W / 2) - number.getHeight() - number.getWidth(),
                              -number.getHeight() / 2);
@@ -406,18 +429,36 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         }
     }
 
-    @Override
-    public void show() {
+    @Nullable
+    private ItemStack parentStack;
+
+    public void show(@Nonnull ItemStack stack) {
+        //noinspection AssignmentToCollectionOrArrayFieldFromParameter
+        parentStack = stack;
         if (animation != null) {
             animation.addTarget(this, true);
         }
     }
 
     @Override
+    @Contract("->fail")
+    public void show() {
+        throw new IllegalStateException("Calling show directly is not permitted for items.");
+    }
+
+    @Override
     public void hide() {
+        parentStack = null;
         if (animation != null) {
             animation.removeTarget(this);
         }
+    }
+
+    @Override
+    @Contract(pure = true)
+    public boolean isShown() {
+        ItemStack localStack = parentStack;
+        return (localStack != null) && localStack.isShown();
     }
 
     @Override
@@ -428,6 +469,13 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
             number.addToCamera(getDisplayX(), getDisplayY());
             number.update(container, delta);
         }
+    }
+
+    @Override
+    public int getTargetAlpha() {
+        Tile tileOfItem = parentTile.getTile();
+        int alphaOfTile = (tileOfItem == null) ? Color.MAX_INT_VALUE : tileOfItem.getTargetAlpha();
+        return Math.min(super.getTargetAlpha(), alphaOfTile);
     }
 
     /**

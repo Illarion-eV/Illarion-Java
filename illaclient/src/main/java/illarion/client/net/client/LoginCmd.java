@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,9 +18,11 @@ package illarion.client.net.client;
 import illarion.client.net.CommandList;
 import illarion.common.net.NetCommWriter;
 import illarion.common.util.Md5Crypto;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
+import java.io.IOException;
 
 /**
  * Client Command: Send login information to the server ({@link CommandList#CMD_LOGIN}).
@@ -33,6 +35,7 @@ public final class LoginCmd extends AbstractCommand {
     /**
      * The name of the character that shall log in.
      */
+    @Nonnull
     private final String charName;
 
     /**
@@ -54,7 +57,7 @@ public final class LoginCmd extends AbstractCommand {
      * @param password the password used to login
      * @param version the version of the client to report to the server
      */
-    public LoginCmd(String charName, @Nonnull String password, int version) {
+    public LoginCmd(@Nonnull String charName, @Nonnull String password, int version) {
         super(CommandList.CMD_LOGIN);
         this.charName = charName;
 
@@ -64,7 +67,7 @@ public final class LoginCmd extends AbstractCommand {
     }
 
     @Override
-    public void encode(@Nonnull NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) throws IOException {
         writer.writeUByte(version);
         writer.writeString(charName);
         writer.writeString(password);
@@ -73,6 +76,7 @@ public final class LoginCmd extends AbstractCommand {
     @Nonnull
     @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
         return toString("Char: " + charName + " Client: " + version);
     }

@@ -220,6 +220,8 @@ public class MainViewController extends AbstractController implements MavenDownl
                 case XmlPullParser.END_TAG:
                     switch (parser.getName()) {
                         case "quests":
+                            Collections.sort(list);
+                            return;
                         case "news":
                             Collections.sort(list);
                             Collections.reverse(list);

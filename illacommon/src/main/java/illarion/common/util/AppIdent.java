@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -28,6 +28,7 @@ import java.util.jar.Manifest;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@SuppressWarnings("ALL")
 public class AppIdent implements Externalizable {
     /**
      * Serialization UID.
@@ -53,7 +54,7 @@ public class AppIdent implements Externalizable {
      * @param appName the name of the application
      * @param appVersion the version of the application
      */
-    public AppIdent(@Nonnull final String appName, @Nonnull final String appVersion) {
+    public AppIdent(@Nonnull String appName, @Nonnull String appVersion) {
         this.appName = appName;
         this.appVersion = appVersion;
     }
@@ -70,37 +71,37 @@ public class AppIdent implements Externalizable {
      *
      * @param appName the name of the application
      */
-    public AppIdent(@Nonnull final String appName) {
+    public AppIdent(@Nonnull String appName) {
         this.appName = appName;
 
         @Nullable String foundVersion = null;
 
         try {
-            final Enumeration<URL> resources = AppIdent.class.getClassLoader().getResources("META-INF/MANIFEST.MF");
+            Enumeration<URL> resources = AppIdent.class.getClassLoader().getResources("META-INF/MANIFEST.MF");
             while (resources.hasMoreElements()) {
                 InputStream stream = null;
                 try {
-                    final URL currentResource = resources.nextElement();
+                    URL currentResource = resources.nextElement();
                     stream = currentResource.openStream();
-                    final Manifest manifest = new Manifest(currentResource.openStream());
-                    final Attributes mainAttribs = manifest.getMainAttributes();
+                    Manifest manifest = new Manifest(currentResource.openStream());
+                    Attributes mainAttribs = manifest.getMainAttributes();
                     if (appName.equals(mainAttribs.getValue("Implementation-Title"))) {
                         foundVersion = mainAttribs.getValue("Implementation-Version");
                         break;
                     }
-                } catch (@Nonnull final IOException ex) {
+                } catch (@Nonnull IOException ex) {
                     // nothing
                 } finally {
                     if (stream != null) {
                         try {
                             stream.close();
-                        } catch (@Nonnull final IOException ex) {
+                        } catch (@Nonnull IOException ex) {
                             // nothing
                         }
                     }
                 }
             }
-        } catch (@Nonnull final IOException ex) {
+        } catch (@Nonnull IOException ex) {
             // nothing
         }
 
@@ -138,7 +139,7 @@ public class AppIdent implements Externalizable {
      */
     @Nonnull
     public String getApplicationRootVersion() {
-        final int indexOfSeparator = appVersion.indexOf('-');
+        int indexOfSeparator = appVersion.indexOf('-');
         if (indexOfSeparator == -1) {
             return appVersion;
         }
@@ -151,17 +152,17 @@ public class AppIdent implements Externalizable {
      * @return the commit count
      */
     public int getCommitCount() {
-        final int indexOfSeparator = appVersion.indexOf('-');
+        int indexOfSeparator = appVersion.indexOf('-');
         if (indexOfSeparator == -1) {
             return 0;
         }
-        final int indexSecondSeparator = appVersion.indexOf('-', indexOfSeparator + 1);
+        int indexSecondSeparator = appVersion.indexOf('-', indexOfSeparator + 1);
         if (indexSecondSeparator == -1) {
             return 0;
         }
         try {
             return Integer.parseInt(appVersion.substring(indexOfSeparator + 1, indexSecondSeparator));
-        } catch (@Nonnull final NumberFormatException e) {
+        } catch (@Nonnull NumberFormatException e) {
             return 0;
         }
     }
@@ -180,15 +181,15 @@ public class AppIdent implements Externalizable {
     }
 
     @Override
-    public void writeExternal(@Nonnull final ObjectOutput out) throws IOException {
+    public void writeExternal(@Nonnull ObjectOutput out) throws IOException {
         out.writeLong(serialVersionUID);
         out.writeObject(appName);
         out.writeObject(appVersion);
     }
 
     @Override
-    public void readExternal(@Nonnull final ObjectInput in) throws IOException, ClassNotFoundException {
-        final long version = in.readLong();
+    public void readExternal(@Nonnull ObjectInput in) throws IOException, ClassNotFoundException {
+        long version = in.readLong();
         if (version == 1L) {
             appName = in.readObject().toString();
             appVersion = in.readObject().toString();

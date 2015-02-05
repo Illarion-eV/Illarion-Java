@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,9 +16,9 @@
 package illarion.common.util;
 
 import illarion.common.graphics.ItemInfo;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
-import java.io.InputStream;
 
 /**
  * This is a special implementation of the table loader that targets the item table file.
@@ -160,16 +160,8 @@ public final class TableLoaderItems extends TableLoader {
      */
     private static final int TB_VARIANCE = 13;
 
-    public TableLoaderItems(@Nonnull final TableLoaderSink<TableLoaderItems> callback) {
-        this("Items", callback);
-    }
-
-    public TableLoaderItems(final String table, @Nonnull final TableLoaderSink<TableLoaderItems> callback) {
-        super(table, true, callback, ",");
-    }
-
-    public TableLoaderItems(@Nonnull final InputStream resource, @Nonnull final TableLoaderSink<TableLoaderItems> callback) {
-        super(resource, true, callback, ",");
+    public TableLoaderItems(@Nonnull TableLoaderSink<TableLoaderItems> callback) {
+        super("Items", callback);
     }
 
     /**
@@ -177,6 +169,7 @@ public final class TableLoaderItems extends TableLoader {
      *
      * @return the animation speed of the item
      */
+    @Contract(pure = true)
     public int getAnimationSpeed() {
         return getInt(TB_SPEED);
     }
@@ -187,6 +180,7 @@ public final class TableLoaderItems extends TableLoader {
      *
      * @return the color value as values between {@code 0} and {@code 255}
      */
+    @Contract(pure = true)
     public int getColorModAlpha() {
         return getInt(TB_COLORMOD_ALPHA);
     }
@@ -197,6 +191,7 @@ public final class TableLoaderItems extends TableLoader {
      *
      * @return the color value as values between {@code 0} and {@code 255}
      */
+    @Contract(pure = true)
     public int getColorModBlue() {
         return getInt(TB_COLORMOD_BLUE);
     }
@@ -207,6 +202,7 @@ public final class TableLoaderItems extends TableLoader {
      *
      * @return the color value as values between {@code 0} and {@code 255}
      */
+    @Contract(pure = true)
     public int getColorModGreen() {
         return getInt(TB_COLORMOD_GREEN);
     }
@@ -217,6 +213,7 @@ public final class TableLoaderItems extends TableLoader {
      *
      * @return the color value as values between {@code 0} and {@code 255}
      */
+    @Contract(pure = true)
     public int getColorModRed() {
         return getInt(TB_COLORMOD_RED);
     }
@@ -228,6 +225,7 @@ public final class TableLoaderItems extends TableLoader {
      * @return the facing value of this item
      * @see ItemInfo#getFace()
      */
+    @Contract(pure = true)
     public int getFace() {
         return getInt(TB_FACE);
     }
@@ -237,6 +235,7 @@ public final class TableLoaderItems extends TableLoader {
      *
      * @return the frame count of this item
      */
+    @Contract(pure = true)
     public int getFrameCount() {
         return getInt(TB_FRAME);
     }
@@ -246,6 +245,7 @@ public final class TableLoaderItems extends TableLoader {
      *
      * @return the item ID
      */
+    @Contract(pure = true)
     public int getItemId() {
         return getInt(TB_ID);
     }
@@ -256,6 +256,7 @@ public final class TableLoaderItems extends TableLoader {
      * @return the light emitted by this item
      * @see ItemInfo#getLight()
      */
+    @Contract(pure = true)
     public int getItemLight() {
         return getInt(TB_LIGHT);
     }
@@ -268,6 +269,7 @@ public final class TableLoaderItems extends TableLoader {
      * @see #ITEM_MODE_SIMPLE
      * @see #ITEM_MODE_VARIANCES
      */
+    @Contract(pure = true)
     public int getItemMode() {
         return getInt(TB_MODE);
     }
@@ -277,6 +279,7 @@ public final class TableLoaderItems extends TableLoader {
      *
      * @return the map editor group ID
      */
+    @Contract(pure = true)
     public int getMapEditorGroup() {
         return getInt(TB_MAP_EDITOR_GROUP);
     }
@@ -286,6 +289,7 @@ public final class TableLoaderItems extends TableLoader {
      *
      * @return the offset component that needs to be applied to the item graphics
      */
+    @Contract(pure = true)
     public int getOffsetX() {
         return getInt(TB_OFFX);
     }
@@ -295,6 +299,7 @@ public final class TableLoaderItems extends TableLoader {
      *
      * @return the offset component that needs to be applied to the item graphics
      */
+    @Contract(pure = true)
     public int getOffsetY() {
         return getInt(TB_OFFY);
     }
@@ -304,6 +309,7 @@ public final class TableLoaderItems extends TableLoader {
      *
      * @return the opacity of the item
      */
+    @Contract(pure = true)
     public int getOpacity() {
         return getInt(TB_OPACITY);
     }
@@ -313,6 +319,7 @@ public final class TableLoaderItems extends TableLoader {
      *
      * @return the ID of the paperdolling item
      */
+    @Contract(pure = true)
     public int getPaperdollingItemId() {
         return getInt(TB_PAPERDOLL_REF_ID);
     }
@@ -323,6 +330,8 @@ public final class TableLoaderItems extends TableLoader {
      *
      * @return the name of the resources assigned to this item
      */
+    @Nonnull
+    @Contract(pure = true)
     public String getResourceName() {
         return getString(TB_NAME);
     }
@@ -333,6 +342,7 @@ public final class TableLoaderItems extends TableLoader {
      *
      * @return the width of the item shadow
      */
+    @Contract(pure = true)
     public int getShadowOffset() {
         return getInt(TB_SHADOW);
     }
@@ -342,6 +352,7 @@ public final class TableLoaderItems extends TableLoader {
      *
      * @return the size variance of the item
      */
+    @Contract(pure = true)
     public int getSizeVariance() {
         return getInt(TB_VARIANCE);
     }
@@ -354,6 +365,7 @@ public final class TableLoaderItems extends TableLoader {
      * @see ItemInfo#isContainer()
      * @see ItemInfo#isJesus()
      */
+    @Contract(pure = true)
     public int getSpecialFlag() {
         return getInt(TB_SPECIAL);
     }
@@ -364,6 +376,7 @@ public final class TableLoaderItems extends TableLoader {
      *
      * @return the surface level of the item
      */
+    @Contract(pure = true)
     public int getSurfaceLevel() {
         return getInt(TB_LEVEL);
     }
@@ -373,6 +386,7 @@ public final class TableLoaderItems extends TableLoader {
      *
      * @return {@code true} in case the player can move the item
      */
+    @Contract(pure = true)
     public boolean isMovable() {
         return getBoolean(TB_MOVABLE);
     }
@@ -382,6 +396,7 @@ public final class TableLoaderItems extends TableLoader {
      *
      * @return {@code true} if the item is a obstacle
      */
+    @Contract(pure = true)
     public boolean isObstacle() {
         return getBoolean(TB_OBSTACLE);
     }

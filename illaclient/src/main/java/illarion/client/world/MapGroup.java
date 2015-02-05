@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -111,7 +111,6 @@ public final class MapGroup {
     public void setHidden(boolean hidden) {
         MapGroup other = this;
         while (true) {
-            assert other != null;
             if (other.parent == null) {
                 other.hidden = hidden;
                 other.sendHiddenToChildren();

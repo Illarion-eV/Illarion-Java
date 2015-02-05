@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,7 @@ package illarion.common.config.gui.entries.swing;
 
 import illarion.common.config.entries.ConfigEntry;
 import illarion.common.config.entries.NumberEntry;
-import illarion.common.config.gui.entries.SaveableEntry;
+import illarion.common.config.gui.entries.SavableEntry;
 import illarion.common.util.FastMath;
 
 import javax.annotation.Nonnull;
@@ -34,7 +34,7 @@ import java.awt.event.AdjustmentListener;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class NumberEntrySwing extends JPanel implements SaveableEntry {
+public final class NumberEntrySwing extends JPanel implements SavableEntry {
     /**
      * This listener is used to monitor any actions done to the scroll bar and
      * update the display of the scroll bar according to this.
@@ -54,7 +54,7 @@ public final class NumberEntrySwing extends JPanel implements SaveableEntry {
          *
          * @param parent the class that is updated by this listener
          */
-        public NumberEntryScrollListener(final NumberEntrySwing parent) {
+        public NumberEntryScrollListener(NumberEntrySwing parent) {
             parentInstance = parent;
         }
 
@@ -63,7 +63,7 @@ public final class NumberEntrySwing extends JPanel implements SaveableEntry {
          * due user interaction.
          */
         @Override
-        public void adjustmentValueChanged(@Nonnull final AdjustmentEvent e) {
+        public void adjustmentValueChanged(@Nonnull AdjustmentEvent e) {
             parentInstance.setCurrentValue(e.getValue());
         }
     }
@@ -97,8 +97,7 @@ public final class NumberEntrySwing extends JPanel implements SaveableEntry {
      * @param usedEntry the entry used to setup this class, the entry needs to
      * pass the check with the static method
      */
-    @SuppressWarnings("nls")
-    public NumberEntrySwing(final ConfigEntry usedEntry) {
+    public NumberEntrySwing(ConfigEntry usedEntry) {
         super(new BorderLayout(10, 0));
 
         if (!isUsableEntry(usedEntry)) {
@@ -109,12 +108,12 @@ public final class NumberEntrySwing extends JPanel implements SaveableEntry {
         currentValue = entry.getValue();
 
         display = new JLabel(Integer.toString(currentValue));
-        final Dimension d = display.getPreferredSize();
+        Dimension d = display.getPreferredSize();
         display.setPreferredSize(new Dimension(d.width + 15, d.height));
         display.setHorizontalAlignment(SwingConstants.RIGHT);
         add(display, BorderLayout.EAST);
 
-        final JScrollBar scroll = new JScrollBar();
+        JScrollBar scroll = new JScrollBar();
         scroll.setOrientation(Adjustable.HORIZONTAL);
         scroll.setValues(currentValue, 1, entry.getRange().getMin(), entry.getRange().getMax() + 1);
         scroll.addAdjustmentListener(new NumberEntryScrollListener(this));
@@ -127,10 +126,10 @@ public final class NumberEntrySwing extends JPanel implements SaveableEntry {
      * Text a entry if it is usable with this class or not.
      *
      * @param entry the entry to test
-     * @return <code>true</code> in case this entry is usable with this class
+     * @return {@code true} in case this entry is usable with this class
      */
-    public static boolean isUsableEntry(final ConfigEntry entry) {
-        return (entry instanceof NumberEntry);
+    public static boolean isUsableEntry(ConfigEntry entry) {
+        return entry instanceof NumberEntry;
     }
 
     /**
@@ -147,7 +146,7 @@ public final class NumberEntrySwing extends JPanel implements SaveableEntry {
      *
      * @param val the value the current value is supposed to be set to
      */
-    void setCurrentValue(final int val) {
+    void setCurrentValue(int val) {
         currentValue = FastMath.clamp(val, entry.getRange());
         display.setText(Integer.toString(currentValue));
     }

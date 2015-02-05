@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -48,7 +48,7 @@ public final class MapVariance {
      * @return the frame to be displayed
      */
     public static int getItemFrameVariance(
-            final int locX, final int locY, final int frames) {
+            int locX, int locY, int frames) {
         rnd.setSeed(((locX * 2876325137L) + (locY * 5979635807L)) * 1853493027);
         rnd.nextInt();
         rnd.nextInt();
@@ -64,7 +64,7 @@ public final class MapVariance {
      * @return the new variance to be used
      */
     public static float getItemScaleVariance(
-            final int locX, final int locY, final float variance) {
+            int locX, int locY, float variance) {
         rnd.setSeed(((locX * 1586337181L) + (locY * 6110869557L)) * 3251474107L);
         rnd.nextInt();
         rnd.nextInt();
@@ -83,7 +83,7 @@ public final class MapVariance {
      * @return the frame to be displayed
      */
     public static int getTileFrameVariance(
-            final int locX, final int locY, final int frames) {
+            int locX, int locY, int frames) {
         if ((frames != 4) && (frames != 9) && (frames != 16) && (frames != 25)) {
             rnd.setSeed(((locX * 5133879561L) + (locY * 4154745775L)) * 1256671499);
             rnd.nextInt();

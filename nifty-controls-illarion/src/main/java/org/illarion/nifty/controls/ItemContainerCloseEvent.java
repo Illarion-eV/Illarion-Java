@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -25,29 +25,8 @@ import javax.annotation.concurrent.ThreadSafe;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@SuppressWarnings("EmptyClass")
 @ThreadSafe
 @Immutable
 public final class ItemContainerCloseEvent implements NiftyEvent {
-    /**
-     * The ID of the container to close.
-     */
-    private final int id;
-
-    /**
-     * Create a new instance of this event and set the ID of the container that was closed.
-     *
-     * @param containerId the ID of the container
-     */
-    public ItemContainerCloseEvent(final int containerId) {
-        id = containerId;
-    }
-
-    /**
-     * Get the ID of the container that is closed.
-     *
-     * @return the ID of the container
-     */
-    public int getContainerId() {
-        return id;
-    }
 }

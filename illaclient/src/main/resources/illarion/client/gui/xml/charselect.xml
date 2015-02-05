@@ -2,7 +2,7 @@
 <!--
   ~ This file is part of the Illarion project.
   ~
-  ~ Copyright © 2014 - Illarion e.V.
+  ~ Copyright © 2015 - Illarion e.V.
   ~
   ~ Illarion is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU Affero General Public License as published by
@@ -15,9 +15,6 @@
   ~ GNU General Public License for more details.
   -->
 <nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
-    <useStyles filename="nifty-illarion-style.xml"/>
-    <useControls filename="nifty-default-controls.xml"/>
-
     <resourceBundle id="charselect-bundle" filename="charselect"/>
 
     <screen id="charSelect" controller="illarion.client.gui.controller.CharScreenController">

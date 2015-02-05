@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,6 +18,7 @@ package illarion.common.config.entries;
 import illarion.common.config.Config;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This is a configuration entry that is used to display a checkbox in the
@@ -29,11 +30,13 @@ public final class CheckEntry implements ConfigEntry {
     /**
      * The configuration that is controlled by this text entry.
      */
+    @Nullable
     private Config cfg;
 
     /**
      * The key in the configuration that is handled by this configuration.
      */
+    @Nonnull
     private final String configEntry;
 
     /**
@@ -41,7 +44,7 @@ public final class CheckEntry implements ConfigEntry {
      *
      * @param entry the configuration key that is handled by this text entry
      */
-    public CheckEntry(final String entry) {
+    public CheckEntry(@Nonnull String entry) {
         configEntry = entry;
     }
 
@@ -51,6 +54,9 @@ public final class CheckEntry implements ConfigEntry {
      * @return the configuration stored for this check entry
      */
     public boolean getValue() {
+        if (cfg == null) {
+            throw new IllegalStateException("There is no reference to the configuration system set.");
+        }
         return cfg.getBoolean(configEntry);
     }
 
@@ -61,7 +67,7 @@ public final class CheckEntry implements ConfigEntry {
      * configuration entry
      */
     @Override
-    public void setConfig(@Nonnull final Config config) {
+    public void setConfig(@Nonnull Config config) {
         cfg = config;
     }
 
@@ -70,7 +76,10 @@ public final class CheckEntry implements ConfigEntry {
      *
      * @param newValue the new configuration value
      */
-    public void setValue(final boolean newValue) {
+    public void setValue(boolean newValue) {
+        if (cfg == null) {
+            throw new IllegalStateException("There is no reference to the configuration system set.");
+        }
         cfg.set(configEntry, newValue);
     }
 }

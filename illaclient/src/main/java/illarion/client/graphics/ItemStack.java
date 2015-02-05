@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,6 +22,7 @@ import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Graphics;
 import org.illarion.engine.graphic.SceneElement;
 import org.illarion.engine.graphic.SceneEvent;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,6 +84,11 @@ public class ItemStack implements DisplayItem, List<Item> {
             World.getMapDisplay().getGameScene().addElement(this);
             shown = true;
         }
+    }
+
+    @Contract(pure = true)
+    public boolean isShown() {
+        return shown;
     }
 
     private void updateInteractiveRectangle() {
@@ -149,7 +155,7 @@ public class ItemStack implements DisplayItem, List<Item> {
             show();
         }
         rectangleDirty = true;
-        newItem.show();
+        newItem.show(this);
     }
 
     private void postProcessItemRemove(@Nonnull Item removedItem) {

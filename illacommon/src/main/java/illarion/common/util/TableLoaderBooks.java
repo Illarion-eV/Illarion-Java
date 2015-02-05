@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -39,7 +39,7 @@ public class TableLoaderBooks extends TableLoader {
      * @param callback the callback sink that receives the data
      * @param <T> the type of the table loader used
      */
-    public <T extends TableLoader> TableLoaderBooks(@Nonnull final TableLoaderSink<T> callback) {
+    public <T extends TableLoader> TableLoaderBooks(@Nonnull TableLoaderSink<T> callback) {
         super("Books", callback);
     }
 

@@ -91,12 +91,14 @@ public final class LightTracer extends Thread implements Stoppable {
     /**
      * Object for the synchronized access on the light lists.
      */
+    @Nonnull
     private final Object lightsListsLock = new Object();
 
     /**
      * The lighting map that is the data source and the target for the light
      * calculating results for all light sources handled by this light tracer.
      */
+    @Nonnull
     private final LightingMap mapSource;
     /**
      * The running flag that needs to be {@code true} as long as the light
@@ -121,7 +123,7 @@ public final class LightTracer extends Thread implements Stoppable {
      * @param tracerMapSource the map the lights this tracer handles are on
      */
     @SuppressWarnings("nls")
-    public LightTracer(LightingMap tracerMapSource) {
+    public LightTracer(@Nonnull LightingMap tracerMapSource) {
         super("LightTracer Thread");
 
         mapSource = tracerMapSource;

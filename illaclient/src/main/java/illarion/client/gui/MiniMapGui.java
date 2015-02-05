@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,6 +20,7 @@ import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.ImmutableColor;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This interface is used to control the mini map.
@@ -71,7 +72,7 @@ public interface MiniMapGui {
      *
      * @param pointer the pointer to release
      */
-    void releasePointer(@Nonnull Pointer pointer);
+    void releasePointer(@Nullable Pointer pointer);
 
     /**
      * Add the pointer to the mini map.

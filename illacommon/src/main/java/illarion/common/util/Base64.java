@@ -26,10 +26,12 @@ import java.nio.charset.Charset;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@SuppressWarnings("SpellCheckingInspection")
 public final class Base64 {
     /**
      * Table of the sixty-four characters that are used as the Base64 alphabet: [a-z0-9A-Z+/]
      */
+    @Nonnull
     private static final byte[] base64Chars = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
             'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b',
             'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
@@ -37,9 +39,9 @@ public final class Base64 {
             '4', '5', '6', '7', '8', '9', '+', '/',};
 
     /**
-     * Reverse lookup table for the Base64 alphabet. reversebase64Chars[byte] gives n for the n th Base64 character
-     * or negative if a character is not a Base64 character.
+     * Reverse lookup table for the Base64 alphabet.
      */
+    @Nonnull
     private static final byte[] reverseBase64Chars = new byte[0x100];
 
     /**
@@ -271,6 +273,7 @@ public final class Base64 {
      * the output.
      * @return Encoded bytes.
      */
+    @Nonnull
     public static byte[] encode(@Nonnull byte[] bytes, boolean lineBreaks) {
         ByteArrayInputStream in = new ByteArrayInputStream(bytes);
         // calculate the length of the resulting output.

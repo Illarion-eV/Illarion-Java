@@ -50,6 +50,9 @@ public class LoginState implements GameState {
         nifty.registerScreenController(loginScreenController, new CharScreenController(game),
                                        new CreditsStartScreenController(container.getEngine()));
 
+        nifty.loadStyleFile("nifty-illarion-style.xml");
+        nifty.loadControlFile("nifty-default-controls.xml");
+        nifty.loadControlFile("illarion-gamecontrols.xml");
         Util.loadXML(nifty, "illarion/client/gui/xml/login.xml");
         Util.loadXML(nifty, "illarion/client/gui/xml/charselect.xml");
         Util.loadXML(nifty, "illarion/client/gui/xml/options.xml");

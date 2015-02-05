@@ -70,7 +70,6 @@ public final class DirectoryManager {
     /**
      * Private constructor to ensure that only the singleton instance exists.
      */
-    @SuppressWarnings("nls")
     private DirectoryManager() {
         String installationDir = System.getProperty("org.illarion.install.dir");
         workingDirectory = Paths.get((installationDir == null) ? "." : installationDir);
@@ -114,7 +113,7 @@ public final class DirectoryManager {
         switch (dir) {
             case User:
                 if (System.getProperty("os.name").contains("Mac OS X")) {
-                    return Paths.get(System.getProperty("user.home"), "Illarion");
+                    return Paths.get(System.getProperty("user.home"), "Library", "org.illarion");
                 }
                 return Paths.get(System.getProperty("user.home"), ".illarion");
             case Data:

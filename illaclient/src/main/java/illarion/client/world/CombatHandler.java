@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -64,7 +64,7 @@ public final class CombatHandler {
      *
      * @param character the character to start or stop attacking
      */
-    public void toggleAttackOnCharacter(@Nonnull final Char character) {
+    public void toggleAttackOnCharacter(@Nonnull Char character) {
         if (isAttacking(character)) {
             standDown();
         } else {
@@ -78,7 +78,7 @@ public final class CombatHandler {
      * @param testChar the char to check if he is the current target
      * @return <code>true</code> in case the character is the current target
      */
-    public boolean isAttacking(@Nonnull final Char testChar) {
+    public boolean isAttacking(@Nonnull Char testChar) {
         synchronized (this) {
             return isAttacking() && testChar.equals(attackedChar);
         }
@@ -121,7 +121,7 @@ public final class CombatHandler {
      *
      * @param character the character that is now attacked
      */
-    public void setAttackTarget(@Nonnull final Char character) {
+    public void setAttackTarget(@Nonnull Char character) {
         synchronized (this) {
             if (character == attackedChar) {
                 return;
@@ -129,7 +129,7 @@ public final class CombatHandler {
 
             standDown();
 
-            final CharacterId characterId = character.getCharId();
+            CharacterId characterId = character.getCharId();
             if (characterId == null) {
                 LOGGER.error("Trying to attack a character without character ID.");
                 return;
@@ -150,7 +150,7 @@ public final class CombatHandler {
      * @param character the character to check
      * @return {@code true} in case the character is not the player and not a NPC.
      */
-    public boolean canBeAttacked(@Nonnull final Char character) {
+    public boolean canBeAttacked(@Nonnull Char character) {
         return !World.getPlayer().isPlayer(character.getCharId()) && !character.isNPC();
     }
 
@@ -159,7 +159,7 @@ public final class CombatHandler {
      *
      * @param id the ID of the character to fight
      */
-    private static void sendAttackToServer(@Nonnull final CharacterId id) {
+    private static void sendAttackToServer(@Nonnull CharacterId id) {
         World.getNet().sendCommand(new AttackCmd(id));
     }
 }

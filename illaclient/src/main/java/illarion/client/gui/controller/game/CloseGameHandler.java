@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,7 +22,6 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.IllaClient;
 import illarion.client.gui.CloseGameGui;
-import illarion.client.input.InputReceiver;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
 import org.bushe.swing.event.EventTopicSubscriber;
@@ -87,6 +86,14 @@ public final class CloseGameHandler
         }
     }
 
+    private void hideExitDialog() {
+        if (dialogActive) {
+            parentNifty.closePopup(popup.getId());
+
+            dialogActive = false;
+        }
+    }
+
     public void subscribeButtonClick(@Nonnull String id) {
         if ((popup == null) || (parentNifty == null) || (parentScreen == null)) {
             return;
@@ -104,13 +111,6 @@ public final class CloseGameHandler
         parentNifty.subscribe(parentScreen, elementId, ButtonClickedEvent.class, this);
     }
 
-    @org.bushe.swing.event.annotation.EventTopicSubscriber(topic = InputReceiver.EB_TOPIC)
-    public void onInputEventReceived(String topic, String command) {
-        if ("CloseGame".equals(command)) {
-            showClosingDialog();
-        }
-    }
-
     @Override
     public void onEvent(@Nonnull String topic, ButtonClickedEvent data) {
         if (topic.endsWith("#closeExitButton")) {
@@ -120,9 +120,23 @@ public final class CloseGameHandler
             dialogActive = false;
             IllaClient.performLogout();
         } else if (topic.endsWith("#closeCancelButton")) {
-            parentNifty.closePopup(popup.getId());
-            dialogActive = false;
+            hideExitDialog();
         }
+    }
+
+    @Override
+    public boolean isClosingDialogShown() {
+        return dialogActive;
+    }
+
+    @Override
+    public void hideClosingDialog() {
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
+            @Override
+            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+                hideExitDialog();
+            }
+        });
     }
 
     @Override

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -54,12 +54,6 @@ public final class Layers {
      * level below or above the player character.
      */
     public static final int LEVEL = 500;
-
-    /**
-     * The marker layer. Means using or attacking markers. They are rendered right on top of the tiles but below
-     * everything else.
-     */
-    public static final int MARKER = 301;
 
     /**
      * The tile layer. Since there is nothing below the tiles, the tiles get the lowest layer number.

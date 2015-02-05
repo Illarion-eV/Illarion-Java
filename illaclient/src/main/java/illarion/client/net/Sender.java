@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -29,7 +29,9 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.channels.WritableByteChannel;
+import java.nio.charset.CharacterCodingException;
 import java.nio.charset.CharsetEncoder;
+import java.nio.charset.CoderResult;
 import java.util.concurrent.*;
 
 /**
@@ -51,6 +53,7 @@ final class Sender implements NetCommWriter {
     /**
      * The instance of the logger that is used to write out the data.
      */
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(Sender.class);
 
     /**
@@ -62,24 +65,28 @@ final class Sender implements NetCommWriter {
      * Length of the byte buffer used to store the data before its send to the
      * server.
      */
+    @Nonnull
     private final ByteBuffer buffer = ByteBuffer.allocateDirect(MAX_COMMAND_SIZE);
 
     /**
      * The string encoder that is used to encode the strings before they are
      * send to the server.
      */
+    @Nonnull
     private final CharsetEncoder encoder;
 
     /**
      * The buffer that is used to temporary store the decoded characters that
      * were send to the player.
      */
+    @Nonnull
     private final CharBuffer encodingBuffer = CharBuffer.allocate(65535);
 
     /**
      * The output stream of the socket connection to the server. The encoded
      * data is written on this stream to be send to the server.
      */
+    @Nonnull
     private final WritableByteChannel outChannel;
 
     @Nonnull
@@ -92,7 +99,7 @@ final class Sender implements NetCommWriter {
      * data to the server
      */
     @SuppressWarnings("nls")
-    Sender(WritableByteChannel out) {
+    Sender(@Nonnull WritableByteChannel out) {
         commandExecutor = Executors.newSingleThreadExecutor();
         outChannel = out;
 
@@ -171,6 +178,7 @@ final class Sender implements NetCommWriter {
             }
 
             @Override
+            @Nonnull
             public Boolean get() throws InterruptedException, ExecutionException {
                 try {
                     return get(1, TimeUnit.HOURS);
@@ -180,6 +188,7 @@ final class Sender implements NetCommWriter {
             }
 
             @Override
+            @Nonnull
             public Boolean get(long timeout, @Nonnull TimeUnit unit)
                     throws InterruptedException, ExecutionException, TimeoutException {
                 return commandExecutor.awaitTermination(timeout, unit);
@@ -220,23 +229,13 @@ final class Sender implements NetCommWriter {
     }
 
     /**
-     * Write 2 byte as signed value to the network.
-     *
-     * @param value the signed short that shall be send to the server
-     */
-    @Override
-    public void writeShort(short value) {
-        buffer.putShort(value);
-    }
-
-    /**
      * Write a string to the network. The length header of the string is written
      * automatically and its encoded to the correct CharSet automatically.
      *
      * @param value the string that shall be send to the server
      */
     @Override
-    public void writeString(@Nonnull String value) {
+    public void writeString(@Nonnull String value) throws CharacterCodingException {
         int startIndex = buffer.position();
         buffer.putShort((short) 0);
 
@@ -244,7 +243,19 @@ final class Sender implements NetCommWriter {
         encodingBuffer.put(value, 0, Math.min(encodingBuffer.capacity(), value.length()));
         encodingBuffer.flip();
 
-        encoder.encode(encodingBuffer, buffer, true);
+        do {
+            CoderResult encodingResult = encoder.encode(encodingBuffer, buffer, true);
+            if (!encodingResult.isError()) {
+                break;
+            }
+            if (encodingResult.isUnmappable()) {
+                log.warn("Found a character that failed to encode for the transfer to the server: {} - SKIP",
+                        encodingBuffer.get());
+            } else {
+                encodingResult.throwException();
+            }
+        } while (encodingBuffer.hasRemaining());
+
         int lastIndex = buffer.position();
         buffer.position(startIndex);
         writeUShort(lastIndex - startIndex - 2);
@@ -259,16 +270,6 @@ final class Sender implements NetCommWriter {
     @Override
     public void writeUByte(short value) {
         buffer.put((byte) (value % (1 << Byte.SIZE)));
-    }
-
-    /**
-     * Write 4 byte as unsigned value to the network.
-     *
-     * @param value the value that shall be send as unsigned integer
-     */
-    @Override
-    public void writeUInt(long value) {
-        buffer.putInt((int) (value % (1L << Integer.SIZE)));
     }
 
     /**

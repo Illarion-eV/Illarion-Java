@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,6 +22,7 @@ package illarion.common.util;
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@SuppressWarnings("UnusedDeclaration")
 public final class NoResourceException extends RuntimeException {
     /**
      * The serialization unique ID.
@@ -32,7 +33,6 @@ public final class NoResourceException extends RuntimeException {
      * Default constructor that creates this exception without any message.
      */
     public NoResourceException() {
-        super();
     }
 
     /**
@@ -40,7 +40,7 @@ public final class NoResourceException extends RuntimeException {
      *
      * @param message the exception message
      */
-    public NoResourceException(final String message) {
+    public NoResourceException(String message) {
         super(message);
     }
 
@@ -50,7 +50,7 @@ public final class NoResourceException extends RuntimeException {
      * @param message the exception message
      * @param cause the exception this newly created exception was caused by
      */
-    public NoResourceException(final String message, final Throwable cause) {
+    public NoResourceException(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -60,7 +60,7 @@ public final class NoResourceException extends RuntimeException {
      *
      * @param cause the exception this newly created exception was caused by
      */
-    public NoResourceException(final Throwable cause) {
+    public NoResourceException(Throwable cause) {
         super(cause);
     }
 }

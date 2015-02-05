@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -50,14 +50,17 @@ public class IllarionSSLSocketFactory {
      */
     @Nullable
     public static SSLSocketFactory getFactory() {
-        if (instance == null) {
+        IllarionSSLSocketFactory ref = instance;
+        if (ref == null) {
             synchronized (IllarionSSLSocketFactory.class) {
                 if (instance == null) {
-                    instance = new IllarionSSLSocketFactory();
+                    ref = new IllarionSSLSocketFactory();
+                    instance = ref;
                 }
             }
         }
-        return instance.sslFactory;
+        assert ref != null;
+        return ref.sslFactory;
     }
 
     /**

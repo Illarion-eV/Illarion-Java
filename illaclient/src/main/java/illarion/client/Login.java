@@ -23,6 +23,7 @@ import illarion.client.world.World;
 import illarion.common.data.IllarionSSLSocketFactory;
 import illarion.common.util.Base64;
 import illarion.common.util.DirectoryManager;
+import illarion.common.util.DirectoryManager.Directory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -36,6 +37,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.OutputStreamWriter;
@@ -45,6 +47,7 @@ import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.security.GeneralSecurityException;
+import java.security.spec.KeySpec;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -83,10 +86,14 @@ public final class Login {
 
     @Nullable
     private String loginName;
+    @Nullable
     private String password;
+    @Nullable
     private Servers server;
+    @Nullable
     private String loginCharacter;
-    private List<CharEntry> charList;
+    @Nonnull
+    private final List<CharEntry> charList;
 
     private Login() {
         charList = new ArrayList<>();
@@ -124,24 +131,24 @@ public final class Login {
     }
 
     public void storeData(boolean storePassword) {
-        if (IllaClient.DEFAULT_SERVER != Servers.realserver) {
-            IllaClient.getCfg().set("server", server.getServerKey());
-            IllaClient.getInstance().setUsedServer(server);
-        } else {
+        if (IllaClient.DEFAULT_SERVER == Servers.realserver) {
             IllaClient.getInstance().setUsedServer(Servers.realserver);
+        } else {
+            IllaClient.getCfg().set("server", getServer().getServerKey());
+            IllaClient.getInstance().setUsedServer(getServer());
         }
 
         switch (getServer()) {
             case customserver:
-                IllaClient.getCfg().set("customLastLogin", loginName);
+                IllaClient.getCfg().set("customLastLogin", getLoginName());
                 IllaClient.getCfg().set("customSavePassword", storePassword);
                 break;
             default:
-                IllaClient.getCfg().set("lastLogin", loginName);
+                IllaClient.getCfg().set("lastLogin", getLoginName());
                 IllaClient.getCfg().set("savePassword", storePassword);
         }
         if (storePassword) {
-            storePassword(password);
+            storePassword(getPassword());
         } else {
             deleteStoredPassword();
         }
@@ -149,7 +156,7 @@ public final class Login {
         IllaClient.getCfg().save();
     }
 
-    @Nullable
+    @Nonnull
     public String getLoginName() {
         if (loginName == null) {
             return "";
@@ -157,6 +164,7 @@ public final class Login {
         return loginName;
     }
 
+    @Nonnull
     public String getPassword() {
         if (password == null) {
             return "";
@@ -164,7 +172,11 @@ public final class Login {
         return password;
     }
 
+    @Nonnull
     public Servers getServer() {
+        if (server == null) {
+            return Servers.realserver;
+        }
         return server;
     }
 
@@ -226,11 +238,15 @@ public final class Login {
             conn.setRequestProperty("charset", "utf-8");
             conn.setRequestProperty("Content-Length", Integer.toString(query.getBytes("UTF-8").length));
             conn.setUseCaches(false);
-            conn.setSSLSocketFactory(IllarionSSLSocketFactory.getFactory());
+
+            SSLSocketFactory sslSocketFactory = IllarionSSLSocketFactory.getFactory();
+            if (sslSocketFactory != null) {
+                conn.setSSLSocketFactory(sslSocketFactory);
+            }
 
             conn.connect();
 
-            try (OutputStreamWriter output = new OutputStreamWriter(conn.getOutputStream())) {
+            try (OutputStreamWriter output = new OutputStreamWriter(conn.getOutputStream(), "UTF-8")) {
                 output.write(query);
                 output.flush();
             }
@@ -323,7 +339,7 @@ public final class Login {
         return Collections.unmodifiableList(charList);
     }
 
-    public void setLoginCharacter(String character) {
+    public void setLoginCharacter(@Nonnull String character) {
         loginCharacter = character;
     }
 
@@ -358,7 +374,7 @@ public final class Login {
             default:
                 clientVersion = getServer().getClientVersion();
         }
-        World.getNet().sendCommand(new LoginCmd(loginChar, password, clientVersion));
+        World.getNet().sendCommand(new LoginCmd(loginChar, getPassword(), clientVersion));
 
         return true;
     }
@@ -378,7 +394,7 @@ public final class Login {
                 encoded = IllaClient.getCfg().getString("fingerprint");
         }
 
-        password = encoded != null ? shufflePassword(encoded, true) : "";
+        password = (encoded != null) ? shufflePassword(encoded, true) : "";
     }
 
     private boolean storePassword;
@@ -426,8 +442,8 @@ public final class Login {
         try {
             Charset usedCharset = Charset.forName("UTF-8");
             // creating the key
-            Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
-            DESKeySpec keySpec = new DESKeySpec(userDir.toAbsolutePath().toString().getBytes(usedCharset));
+            Path userDir = DirectoryManager.getInstance().getDirectory(Directory.User);
+            KeySpec keySpec = new DESKeySpec(userDir.toAbsolutePath().toString().getBytes(usedCharset));
             SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
             SecretKey key = keyFactory.generateSecret(keySpec);
 

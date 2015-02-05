@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,6 +15,8 @@
  */
 package illarion.common.graphics;
 
+import org.jetbrains.annotations.Contract;
+
 /**
  * This interfaces defines the file constructs that are load by the texture loader implementations.
  *
@@ -23,18 +25,11 @@ package illarion.common.graphics;
  */
 public interface TextureAtlas<T> {
     /**
-     * Check if this texture atlas contains the specified image.
-     *
-     * @param texture the name of the texture to look for
-     * @return {@code true} in case the atlas contains the texture
-     */
-    boolean containsTexture(String texture);
-
-    /**
      * Get the texture assigned to a specified name.
      *
      * @param texture the name of the texture to look for
      * @return the texture or {@code null} in case the texture was not found in this object
      */
+    @Contract(pure = true)
     T getTexture(String texture);
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,6 @@ package illarion.common.config;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.File;
 import java.nio.file.Path;
 
 /**
@@ -32,43 +31,24 @@ public interface Config {
      * Get one entry of the configuration file. In this case the value is read as a boolean value.
      *
      * @param key the key of that value
-     * @return the value that was read from the configuration or <code>false</code> in case no value is set
+     * @return the value that was read from the configuration or {@code false} in case no value is set
      */
     boolean getBoolean(@Nonnull String key);
-
-    /**
-     * Get one entry of the configuration file. In this case the value is read as a byte value.
-     *
-     * @param key the key of the value
-     * @return the value that was read from the configuration file or 0 in case there is no value set for this key
-     */
-    byte getByte(@Nonnull String key);
 
     /**
      * Get one entry of the configuration file. In this case the value is read as a double value.
      *
      * @param key the key of the value
-     * @return the value that was read from the configuration file or <code>0</code> in case there is no value set
+     * @return the value that was read from the configuration file or {@code 0} in case there is no value set
      * for this key
      */
     double getDouble(@Nonnull String key);
 
     /**
-     * Get one entry of the configuration file. In this case the value is read as a File value.
-     *
-     * @param key the key of the value
-     * @return the value that was read from the configuration file or <code>null</code> in case there is no value set
-     * for this key
-     */
-    @Deprecated
-    @Nullable
-    File getFile(@Nonnull String key);
-
-    /**
      * Get one entry of the configuration file. In this case the value is read as a Path value.
      *
      * @param key the key of the value
-     * @return the value that was read from the configuration file or <code>null</code> in case there is no value set
+     * @return the value that was read from the configuration file or {@code null} in case there is no value set
      * for this key
      */
     @Nullable
@@ -78,7 +58,7 @@ public interface Config {
      * Get one entry of the configuration file. In this case the value is read as a float value.
      *
      * @param key the key of the value
-     * @return the value that was read from the configuration file or <code>0</code> in case there is no value set
+     * @return the value that was read from the configuration file or {@code 0} in case there is no value set
      * for this key
      */
     float getFloat(@Nonnull String key);
@@ -87,34 +67,16 @@ public interface Config {
      * Get one entry of the configuration file. In this case the value is read as a integer value.
      *
      * @param key the key of the value
-     * @return the value that was read from the configuration file or <code>0</code> in case there is no value set
+     * @return the value that was read from the configuration file or {@code 0} in case there is no value set
      * for this key
      */
     int getInteger(@Nonnull String key);
 
     /**
-     * Get one entry of the configuration file. In this case the value is read as a long value.
-     *
-     * @param key the key of the value
-     * @return the value that was read from the configuration file or <code>0</code> in case there is no value set
-     * for this key
-     */
-    long getLong(@Nonnull String key);
-
-    /**
-     * Get one entry of the configuration file. In this case the value is read as a short value.
-     *
-     * @param key the key of the value
-     * @return the value that was read from the configuration file or <code>0</code> in case there is no value set
-     * for this key
-     */
-    short getShort(@Nonnull String key);
-
-    /**
      * Get one entry of the configuration file. In this case the value is read as a String value.
      *
      * @param key the key of the value
-     * @return the value that was read from the configuration file or <code>null</code> in case there is no value set
+     * @return the value that was read from the configuration file or {@code null} in case there is no value set
      * for this key
      */
     @Nullable
@@ -143,29 +105,12 @@ public interface Config {
     void set(@Nonnull String key, boolean value);
 
     /**
-     * Set one entry of the configuration file to a new value. In this case the value is a byte value.
-     *
-     * @param key the key the value is stored with
-     * @param value the value that is stored along with the key
-     */
-    void set(@Nonnull String key, byte value);
-
-    /**
      * Set one entry of the configuration file to a new value. In this case the value is a double value.
      *
      * @param key the key the value is stored with
      * @param value the value that is stored along with the key
      */
     void set(@Nonnull String key, double value);
-
-    /**
-     * Set one entry of the configuration file to a new value. In this case the value is a file.
-     *
-     * @param key the key the value is stored with
-     * @param value the value that is stored along with the key
-     */
-    @Deprecated
-    void set(@Nonnull String key, @Nonnull File value);
 
     /**
      * Set one entry of the configuration file to a new value. In this case the value is a path.
@@ -190,22 +135,6 @@ public interface Config {
      * @param value the value that is stored along with the key
      */
     void set(@Nonnull String key, int value);
-
-    /**
-     * Set one entry of the configuration file to a new value. In this case the value is a long value.
-     *
-     * @param key the key the value is stored with
-     * @param value the value that is stored along with the key
-     */
-    void set(@Nonnull String key, long value);
-
-    /**
-     * Set one entry of the configuration file to a new value. In this case the value is a short value.
-     *
-     * @param key the key the value is stored with
-     * @param value the value that is stored along with the key
-     */
-    void set(@Nonnull String key, short value);
 
     /**
      * Set one entry of the configuration file to a new value. In this case the value is a String value.

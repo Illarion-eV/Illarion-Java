@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -42,6 +42,7 @@ public final class ItemLoader extends AbstractResourceLoader<ItemTemplate>
     /**
      * The logger that is used to report error messages.
      */
+    @Nonnull
     private static final Logger LOGGER = LoggerFactory.getLogger(ItemLoader.class);
 
     /**
@@ -69,7 +70,7 @@ public final class ItemLoader extends AbstractResourceLoader<ItemTemplate>
      *
      * @param assets the assets instance of the game engine that is used to load the data
      */
-    public ItemLoader(@Nonnull final Assets assets) {
+    public ItemLoader(@Nonnull Assets assets) {
         this.assets = assets;
     }
 
@@ -80,12 +81,11 @@ public final class ItemLoader extends AbstractResourceLoader<ItemTemplate>
             throw new IllegalStateException("targetFactory not set yet.");
         }
 
-        final ResourceFactory<ItemTemplate> factory = getTargetFactory();
+        ResourceFactory<ItemTemplate> factory = getTargetFactory();
 
         factory.init();
         new TableLoaderItems(this);
         factory.loadingFinished();
-        ItemInfo.cleanup();
 
         loadingDone();
 
@@ -93,42 +93,42 @@ public final class ItemLoader extends AbstractResourceLoader<ItemTemplate>
     }
 
     @Override
-    public boolean processRecord(final int line, @Nonnull final TableLoaderItems loader) {
-        final String name = loader.getResourceName();
+    public boolean processRecord(int line, @Nonnull TableLoaderItems loader) {
+        String name = loader.getResourceName();
 
-        final int colorRed = loader.getColorModRed();
-        final int colorGreen = loader.getColorModGreen();
-        final int colorBlue = loader.getColorModBlue();
-        final int colorAlpha = loader.getColorModAlpha();
+        int colorRed = loader.getColorModRed();
+        int colorGreen = loader.getColorModGreen();
+        int colorBlue = loader.getColorModBlue();
+        int colorAlpha = loader.getColorModAlpha();
 
-        final Color paperdollingColor;
+        Color paperdollingColor;
         if ((colorRed >= 0) && (colorGreen >= 0) && (colorBlue >= 0) && (colorAlpha >= 0)) {
             paperdollingColor = new Color(colorRed, colorGreen, colorBlue, colorAlpha);
         } else {
             paperdollingColor = null;
         }
 
-        final int mode = loader.getItemMode();
-        final int itemID = loader.getItemId();
-        final int face = loader.getFace();
-        final boolean moveable = loader.isMovable();
-        final int specialFlag = loader.getSpecialFlag();
-        final boolean obstacle = loader.isObstacle();
-        final int variance = loader.getSizeVariance();
-        final int opacity = loader.getOpacity();
-        final int surfaceLevel = loader.getSurfaceLevel();
-        final int itemLight = loader.getItemLight();
-        final int offsetX = loader.getOffsetX();
-        final int offsetY = loader.getOffsetY();
-        final int offsetShadow = loader.getShadowOffset();
+        int mode = loader.getItemMode();
+        int itemID = loader.getItemId();
+        int face = loader.getFace();
+        boolean moveable = loader.isMovable();
+        int specialFlag = loader.getSpecialFlag();
+        boolean obstacle = loader.isObstacle();
+        int variance = loader.getSizeVariance();
+        int opacity = loader.getOpacity();
+        int surfaceLevel = loader.getSurfaceLevel();
+        int itemLight = loader.getItemLight();
+        int offsetX = loader.getOffsetX();
+        int offsetY = loader.getOffsetY();
+        int offsetShadow = loader.getShadowOffset();
 
-        final int paperdollingRef = loader.getPaperdollingItemId();
+        int paperdollingRef = loader.getPaperdollingItemId();
 
-        final ItemInfo info = ItemInfo
+        ItemInfo info = ItemInfo
                 .create(face, moveable, specialFlag, obstacle, variance, opacity, surfaceLevel, itemLight);
 
-        final int frames;
-        final int speed;
+        int frames;
+        int speed;
 
         if (mode == TableLoaderItems.ITEM_MODE_ANIMATION) {
             frames = loader.getFrameCount();
@@ -136,36 +136,40 @@ public final class ItemLoader extends AbstractResourceLoader<ItemTemplate>
         } else if (mode == TableLoaderItems.ITEM_MODE_VARIANCES) {
             frames = loader.getFrameCount();
             speed = 0;
+        } else if (mode == TableLoaderItems.ITEM_MODE_SIMPLE) {
+            frames = 1;
+            speed = 0;
         } else {
+            LOGGER.error("Unknown mode for item: {}", mode);
             frames = 1;
             speed = 0;
         }
 
-        final Sprite itemSprite;
+        Sprite itemSprite;
         try {
             itemSprite = assets.getSpriteFactory()
                     .createSprite(getTextures(assets.getTextureManager(), ITEM_PATH, name, frames), offsetX, offsetY,
                                   SpriteFactory.CENTER, SpriteFactory.BOTTOM, false);
-        } catch (@Nonnull final IllegalArgumentException e) {
+        } catch (@Nonnull IllegalArgumentException e) {
             LOGGER.error("Failed to fetch graphics for item {} (ID: {}) because: {}", name, itemID, e.getMessage());
             return true;
         }
 
-        final Texture guiTexture = assets.getTextureManager().getTexture(GUI_PATH, "items/" + name);
-        final Texture usedGuiTexture;
+        Texture guiTexture = assets.getTextureManager().getTexture(GUI_PATH, "items/" + name);
+        Texture usedGuiTexture;
         if (guiTexture == null) {
             usedGuiTexture = itemSprite.getFrame(0);
         } else {
             usedGuiTexture = guiTexture;
         }
 
-        final ItemTemplate template = new ItemTemplate(itemID, itemSprite, usedGuiTexture, frames, offsetShadow, speed,
+        ItemTemplate template = new ItemTemplate(itemID, itemSprite, usedGuiTexture, frames, offsetShadow, speed,
                                                        info, paperdollingRef, paperdollingColor);
 
         // register item with factory
         try {
             getTargetFactory().storeResource(template);
-        } catch (@Nonnull final IllegalStateException e) {
+        } catch (@Nonnull IllegalStateException e) {
             LOGGER.error("Failed to register item {} in factory due a duplicated ID: {}", name, itemID);
         }
 

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,6 +19,7 @@ import illarion.common.config.ConfigChangedEvent;
 import illarion.common.util.MessageSource;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,42 +42,50 @@ public final class Lang implements MessageSource {
      * The string that is the key of the language settings in the configuration
      * file.
      */
+    @Nonnull
     public static final String LOCALE_CFG = "locale";
 
     /**
      * The string stores in the configuration for English language.
      */
+    @Nonnull
     public static final String LOCALE_CFG_ENGLISH = "en";
 
     /**
      * The string stores in the configuration for German language.
      */
+    @Nonnull
     public static final String LOCALE_CFG_GERMAN = "de";
 
     /**
      * The singleton instance of this class.
      */
+    @Nonnull
     private static final Lang INSTANCE = new Lang();
 
     /**
      * The logger instance that handles the log output of this class.
      */
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(Lang.class);
 
     /**
      * The file name of the message bundles the client loads for the language.
      */
+    @Nonnull
     private static final String MESSAGE_BUNDLE = "messages";
 
     /**
      * The current local settings.
      */
+    @Nonnull
     private Locale locale;
 
     /**
      * The storage of the localized messages. Holds the key for the string and
      * the localized full message.
      */
+    @Nonnull
     private ResourceBundle messages;
 
     /**
@@ -95,6 +104,7 @@ public final class Lang implements MessageSource {
      * @return the instance of the class
      */
     @Nonnull
+    @Contract(pure = true)
     public static Lang getInstance() {
         return INSTANCE;
     }
@@ -106,6 +116,8 @@ public final class Lang implements MessageSource {
      * @return the localized message or the key with surrounding < > in case the
      * key was not found in the storage
      */
+    @Nonnull
+    @Contract(pure = true)
     public static String getMsg(@Nonnull String key) {
         return INSTANCE.getMessage(key);
     }
@@ -120,6 +132,8 @@ public final class Lang implements MessageSource {
      *
      * @return the local object of the chosen local settings
      */
+    @Nonnull
+    @Contract(pure = true)
     public Locale getLocale() {
         return locale;
     }
@@ -132,6 +146,8 @@ public final class Lang implements MessageSource {
      * case the key was not found in the storage
      */
     @Override
+    @Nonnull
+    @Contract(pure = true)
     public String getMessage(@Nonnull String key) {
         try {
             return messages.getString(key).replace("\\n", "\n");
@@ -147,6 +163,7 @@ public final class Lang implements MessageSource {
      * @param key the key that shall be checked
      * @return true in case a message was found
      */
+    @Contract(pure = true)
     public boolean hasMsg(@Nonnull String key) {
         try {
             messages.getString(key);
@@ -161,6 +178,7 @@ public final class Lang implements MessageSource {
      *
      * @return true if the language is set to English
      */
+    @Contract(pure = true)
     public boolean isEnglish() {
         return locale.equals(Locale.ENGLISH);
     }
@@ -170,6 +188,7 @@ public final class Lang implements MessageSource {
      *
      * @return true if the language is set to German
      */
+    @Contract(pure = true)
     public boolean isGerman() {
         return locale.equals(Locale.GERMAN);
     }

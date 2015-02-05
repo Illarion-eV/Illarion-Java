@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -42,7 +42,7 @@ public final class TextEntry implements ConfigEntry {
      *
      * @param entry the configuration key that is handled by this text entry
      */
-    public TextEntry(final String entry) {
+    public TextEntry(String entry) {
         configEntry = entry;
     }
 
@@ -63,7 +63,7 @@ public final class TextEntry implements ConfigEntry {
      * configuration entry
      */
     @Override
-    public void setConfig(@Nonnull final Config config) {
+    public void setConfig(@Nonnull Config config) {
         cfg = config;
     }
 
@@ -72,7 +72,7 @@ public final class TextEntry implements ConfigEntry {
      *
      * @param newValue the new configuration value
      */
-    public void setValue(@Nonnull final String newValue) {
+    public void setValue(@Nonnull String newValue) {
         cfg.set(configEntry, newValue);
     }
 }

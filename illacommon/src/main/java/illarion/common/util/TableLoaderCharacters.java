@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,10 +17,9 @@ package illarion.common.util;
 
 import illarion.common.types.Direction;
 import illarion.common.types.Location;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
-import java.io.File;
-import java.io.InputStream;
 
 /**
  * This is a special implementation of the table loader that targets the characters table file.
@@ -106,41 +105,8 @@ public final class TableLoaderCharacters extends TableLoader {
      */
     private static final int TB_VISIBLE = 10;
 
-    public TableLoaderCharacters(@Nonnull final TableLoaderSink<TableLoaderCharacters> callback) {
+    public TableLoaderCharacters(@Nonnull TableLoaderSink<TableLoaderCharacters> callback) {
         super("Chars", callback);
-    }
-
-    public TableLoaderCharacters(
-            @Nonnull final File table,
-            @Nonnull final TableLoaderSink<TableLoaderCharacters> callback) {
-        super(table, callback);
-    }
-
-    public TableLoaderCharacters(final String table, @Nonnull final TableLoaderSink<TableLoaderCharacters> callback) {
-        super(table, callback);
-    }
-
-    public TableLoaderCharacters(
-            @Nonnull final File table,
-            @Nonnull final TableLoaderSink<TableLoaderCharacters> callback,
-            final String tableDelim) {
-        super(table, callback, tableDelim);
-    }
-
-    public TableLoaderCharacters(
-            @Nonnull final InputStream resource,
-            final boolean ndsc,
-            @Nonnull final TableLoaderSink<TableLoaderCharacters> callback,
-            final String tableDelim) {
-        super(resource, ndsc, callback, tableDelim);
-    }
-
-    public TableLoaderCharacters(
-            final String table,
-            final boolean ndsc,
-            @Nonnull final TableLoaderSink<TableLoaderCharacters> callback,
-            final String tableDelim) {
-        super(table, ndsc, callback, tableDelim);
     }
 
     /**
@@ -148,6 +114,7 @@ public final class TableLoaderCharacters extends TableLoader {
      *
      * @return the ID of the avatar
      */
+    @Contract(pure = true)
     public int getAvatarId() {
         return getInt(TB_ID);
     }
@@ -157,6 +124,7 @@ public final class TableLoaderCharacters extends TableLoader {
      *
      * @return the frame count of the avatar
      */
+    @Contract(pure = true)
     public int getFrameCount() {
         return getInt(TB_FRAME);
     }
@@ -166,6 +134,7 @@ public final class TableLoaderCharacters extends TableLoader {
      *
      * @return the frame count of the effect
      */
+    @Contract(pure = true)
     public int getStillFrame() {
         return getInt(TB_STILL);
     }
@@ -175,6 +144,7 @@ public final class TableLoaderCharacters extends TableLoader {
      *
      * @return the offset component that needs to be applied to the avatar graphics
      */
+    @Contract(pure = true)
     public int getOffsetX() {
         return getInt(TB_OFFX);
     }
@@ -184,6 +154,7 @@ public final class TableLoaderCharacters extends TableLoader {
      *
      * @return the offset component that needs to be applied to the avatar graphics
      */
+    @Contract(pure = true)
     public int getOffsetY() {
         return getInt(TB_OFFY);
     }
@@ -193,6 +164,7 @@ public final class TableLoaderCharacters extends TableLoader {
      *
      * @return this offset is the amount of pixels that reduces the interactive area of this avatar
      */
+    @Contract(pure = true)
     public int getShadowOffset() {
         return getInt(TB_SHADOW);
     }
@@ -202,6 +174,7 @@ public final class TableLoaderCharacters extends TableLoader {
      *
      * @return {@code true} in case the graphics are supposed to be rendered mirrored
      */
+    @Contract(pure = true)
     public boolean isMirrored() {
         return getBoolean(TB_MIRROR);
     }
@@ -213,6 +186,7 @@ public final class TableLoaderCharacters extends TableLoader {
      * @see Location
      */
     @Nonnull
+    @Contract(pure = true)
     public Direction getDirection() {
         Direction dir = Direction.fromServerId(getInt(TB_DIRECTION));
         if (dir == null) {
@@ -226,6 +200,7 @@ public final class TableLoaderCharacters extends TableLoader {
      *
      * @return the avatar appearance
      */
+    @Contract(pure = true)
     public int getAppearance() {
         return getInt(TB_APPEARANCE);
     }
@@ -235,6 +210,7 @@ public final class TableLoaderCharacters extends TableLoader {
      *
      * @return the visibility modifier
      */
+    @Contract(pure = true)
     public int getVisibilityMod() {
         return getInt(TB_VISIBLE);
     }
@@ -244,6 +220,7 @@ public final class TableLoaderCharacters extends TableLoader {
      *
      * @return the animation ID
      */
+    @Contract(pure = true)
     public int getAnimationId() {
         return getInt(TB_ANIMATION);
     }
@@ -253,6 +230,7 @@ public final class TableLoaderCharacters extends TableLoader {
      *
      * @return the red skin color component
      */
+    @Contract(pure = true)
     public int getSkinColorRed() {
         return getInt(TB_RED);
     }
@@ -262,6 +240,7 @@ public final class TableLoaderCharacters extends TableLoader {
      *
      * @return the green skin color component
      */
+    @Contract(pure = true)
     public int getSkinColorGreen() {
         return getInt(TB_GREEN);
     }
@@ -271,6 +250,7 @@ public final class TableLoaderCharacters extends TableLoader {
      *
      * @return the blue skin color component
      */
+    @Contract(pure = true)
     public int getSkinColorBlue() {
         return getInt(TB_BLUE);
     }
@@ -281,6 +261,8 @@ public final class TableLoaderCharacters extends TableLoader {
      *
      * @return the resource name of this effect
      */
+    @Nonnull
+    @Contract(pure = true)
     public String getResourceName() {
         return getString(TB_NAME);
     }

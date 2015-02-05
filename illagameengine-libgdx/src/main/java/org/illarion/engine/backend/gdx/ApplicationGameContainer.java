@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -104,6 +104,8 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         config.vSyncEnabled = true;
         config.backgroundFPS = 10;
         config.foregroundFPS = 60;
+        config.useGL30 = false;
+        config.depth = 0;
 
         windowHeight = height;
         windowWidth = width;

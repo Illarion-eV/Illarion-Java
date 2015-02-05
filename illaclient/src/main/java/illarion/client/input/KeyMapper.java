@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,23 +16,22 @@
 package illarion.client.input;
 
 import illarion.client.IllaClient;
+import illarion.client.gui.GameGui;
 import illarion.client.net.client.CloseShowcaseCmd;
 import illarion.client.net.client.PickUpAllItemsCmd;
+import illarion.client.util.Lang;
 import illarion.client.world.World;
 import illarion.client.world.items.InventorySlot;
 import illarion.client.world.movement.KeyboardMovementHandler;
 import illarion.common.config.Config;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.types.Direction;
-import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.illarion.engine.input.Input;
 import org.illarion.engine.input.Key;
 
 import javax.annotation.Nonnull;
-import java.util.EnumMap;
-import java.util.Map;
 
 /**
  * This class is used to generate events based on keys that got pressed.
@@ -40,16 +39,9 @@ import java.util.Map;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class KeyMapper {
-    @Nonnull
-    private final Map<Key, String> inputMap;
-
     private final Input input;
 
     public KeyMapper(Input input) {
-        inputMap = new EnumMap<>(Key.class);
-
-        inputMap.put(Key.Escape, "CloseGame");
-
         this.input = input;
 
         applyWasdWalkSettings();
@@ -236,10 +228,24 @@ public final class KeyMapper {
             case F12:
                 cyclePermanentAvatarTag();
                 break;
-            default:
-                if (inputMap.containsKey(key)) {
-                    EventBus.publish(InputReceiver.EB_TOPIC, inputMap.get(key));
-                }
+            case Escape:
+                handleEscape();
+                break;
+        }
+    }
+
+    private static void handleEscape() {
+        GameGui gameGui = World.getGameGui();
+
+        if (gameGui.getChatGui().isChatBoxActive()) {
+            gameGui.getChatGui().deactivateChatBox(false);
+            return;
+        }
+
+        if (gameGui.getCloseGameGui().isClosingDialogShown()) {
+            gameGui.getCloseGameGui().hideClosingDialog();
+        } else {
+            gameGui.getCloseGameGui().showClosingDialog();
         }
     }
 
@@ -251,6 +257,22 @@ public final class KeyMapper {
 
     private static void cyclePermanentAvatarTag() {
         Config config = IllaClient.getCfg();
-        config.set("showAvatarTagPermanently", (config.getInteger("showAvatarTagPermanently") + 1) % 3);
+        int currentEntry = config.getInteger("showAvatarTagPermanently");
+        int newEntry = (currentEntry + 1) % 3;
+
+        switch (newEntry) {
+            case 0:
+                World.getGameGui().getInformGui().showServerInform(Lang.getMsg("info.nameDisplay.noNames"));
+                break;
+            case 1:
+                World.getGameGui().getInformGui().showServerInform(Lang.getMsg("info.nameDisplay.humanNames"));
+                break;
+            case 2:
+                World.getGameGui().getInformGui().showServerInform(Lang.getMsg("info.nameDisplay.allNames"));
+                break;
+            default:
+                break;
+        }
+        config.set("showAvatarTagPermanently", newEntry);
     }
 }

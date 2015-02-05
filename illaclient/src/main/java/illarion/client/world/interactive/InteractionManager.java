@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,6 +23,7 @@ import illarion.client.world.items.ContainerSlot;
 import illarion.client.world.items.InventorySlot;
 import illarion.client.world.items.ItemContainer;
 import illarion.common.types.ItemCount;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +42,7 @@ public final class InteractionManager {
     /**
      * The logger instance of this class.
      */
+    @Nonnull
     private static final Logger LOGGER = LoggerFactory.getLogger(InteractionManager.class);
     /**
      * The object that is currently dragged around.
@@ -71,6 +73,7 @@ public final class InteractionManager {
      * @return the amount of items moved around or {@code null} in case there is currently no dragging operation
      */
     @Nullable
+    @Contract(pure = true)
     public ItemCount getMovedAmount() {
         return amount;
     }

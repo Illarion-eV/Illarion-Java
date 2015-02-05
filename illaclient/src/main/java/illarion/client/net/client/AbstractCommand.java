@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,11 +16,13 @@
 package illarion.client.net.client;
 
 import illarion.common.net.NetCommWriter;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.NotThreadSafe;
+import java.io.IOException;
 
 /**
  * Default super class for all commands that get send to a server.
@@ -41,7 +43,7 @@ public abstract class AbstractCommand {
      *
      * @param commId the ID of the command
      */
-    protected AbstractCommand(final int commId) {
+    protected AbstractCommand(int commId) {
         id = commId;
     }
 
@@ -53,7 +55,8 @@ public abstract class AbstractCommand {
      * @return the string that contains the simple class name and the parameters
      */
     @Nonnull
-    protected final String toString(@Nullable final String param) {
+    @Contract(pure = true)
+    protected final String toString(@Nullable String param) {
         return getClass().getSimpleName() + '(' + ((param == null) ? "" : param) + ')';
     }
 
@@ -64,6 +67,7 @@ public abstract class AbstractCommand {
      */
     @Override
     @Nonnull
+    @Contract(pure = true)
     public abstract String toString();
 
     /**
@@ -71,13 +75,14 @@ public abstract class AbstractCommand {
      *
      * @param writer the byte buffer the values are added to from index 0 on
      */
-    public abstract void encode(@Nonnull NetCommWriter writer);
+    public abstract void encode(@Nonnull NetCommWriter writer) throws IOException;
 
     /**
      * Get the ID of this client command.
      *
      * @return the ID of the client command that is currently set.
      */
+    @Contract(pure = true)
     public final int getId() {
         return id;
     }

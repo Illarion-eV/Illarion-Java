@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,6 +14,8 @@
  * GNU General Public License for more details.
  */
 package illarion.common.types;
+
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
@@ -47,7 +49,7 @@ public final class Money implements Comparable<Money> {
      *
      * @param copper the copper coins
      */
-    public Money(final long copper) {
+    public Money(long copper) {
         copperCoins = copper;
     }
 
@@ -58,7 +60,7 @@ public final class Money implements Comparable<Money> {
      * @param silver the silver coins
      * @param copper the copper coins
      */
-    public Money(final int gold, final int silver, final int copper) {
+    public Money(int gold, int silver, int copper) {
         this((gold * COPPER_TO_GOLD) + (silver * COPPER_TO_SILVER) + copper);
     }
 
@@ -67,6 +69,7 @@ public final class Money implements Comparable<Money> {
      *
      * @return the copper coin component
      */
+    @Contract(pure = true)
     public int getCopper() {
         return (int) (copperCoins % COPPER_TO_SILVER);
     }
@@ -76,6 +79,7 @@ public final class Money implements Comparable<Money> {
      *
      * @return the silver coin component
      */
+    @Contract(pure = true)
     public int getSilver() {
         return (int) ((copperCoins % COPPER_TO_GOLD) / COPPER_TO_SILVER);
     }
@@ -85,6 +89,7 @@ public final class Money implements Comparable<Money> {
      *
      * @return the gold coin component
      */
+    @Contract(pure = true)
     public int getGold() {
         return (int) (copperCoins / COPPER_TO_GOLD);
     }
@@ -94,6 +99,7 @@ public final class Money implements Comparable<Money> {
      *
      * @return the money in copper coins
      */
+    @Contract(pure = true)
     public long getTotalCopper() {
         return copperCoins;
     }
@@ -103,6 +109,8 @@ public final class Money implements Comparable<Money> {
      *
      * @return the money in silver coins
      */
+    @SuppressWarnings("UnusedDeclaration")
+    @Contract(pure = true)
     public long getTotalSilver() {
         return copperCoins / COPPER_TO_SILVER;
     }
@@ -112,31 +120,34 @@ public final class Money implements Comparable<Money> {
      *
      * @return the money in gold coins
      */
+    @SuppressWarnings("UnusedDeclaration")
+    @Contract(pure = true)
     public long getTotalGold() {
         return copperCoins / COPPER_TO_GOLD;
     }
 
     @Override
-    public boolean equals(@Nonnull final Object o) {
+    @Contract(value = "null -> false", pure = true)
+    public boolean equals(@Nonnull Object o) {
         return super.equals(o) || ((o instanceof Money) && (copperCoins == ((Money) o).copperCoins));
     }
 
     @Override
+    @Contract(pure = true)
     public int hashCode() {
         return Long.valueOf(copperCoins).hashCode();
     }
 
     @Override
-    public int compareTo(@Nonnull final Money o) {
-        if (copperCoins == o.copperCoins) {
-            return (copperCoins < o.copperCoins) ? -1 : 0;
-        }
-        return (copperCoins < o.copperCoins) ? -1 : 1;
+    @Contract(pure = true)
+    public int compareTo(@Nonnull Money o) {
+        return Long.compare(copperCoins, o.copperCoins);
     }
 
     @Nonnull
     @Override
+    @Contract(pure = true)
     public String toString() {
-        return String.valueOf(getGold()) + "g " + getSilver() + "s " + getCopper() + "c";
+        return getGold() + "g " + getSilver() + "s " + getCopper() + 'c';
     }
 }

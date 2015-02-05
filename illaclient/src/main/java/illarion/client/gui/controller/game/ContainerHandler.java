@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -27,14 +27,13 @@ import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
-import gnu.trove.map.hash.TIntObjectHashMap;
-import gnu.trove.procedure.TIntObjectProcedure;
 import illarion.client.IllaClient;
 import illarion.client.graphics.FontLoader;
 import illarion.client.gui.ContainerGui;
 import illarion.client.gui.DialogType;
 import illarion.client.gui.EntitySlickRenderImage;
 import illarion.client.gui.Tooltip;
+import illarion.client.gui.controller.game.NumberSelectPopupHandler.Callback;
 import illarion.client.net.client.CloseShowcaseCmd;
 import illarion.client.net.server.events.DialogMerchantReceivedEvent;
 import illarion.client.resources.ItemFactory;
@@ -60,14 +59,17 @@ import org.illarion.engine.input.Button;
 import org.illarion.engine.input.Input;
 import org.illarion.engine.input.Key;
 import org.illarion.nifty.controls.InventorySlot;
+import org.illarion.nifty.controls.InventorySlot.MerchantBuyLevel;
 import org.illarion.nifty.controls.ItemContainerCloseEvent;
 import org.illarion.nifty.controls.itemcontainer.builder.ItemContainerBuilder;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
+import java.util.*;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -109,9 +111,10 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
     }
 
     private final class UpdateContainerTask implements UpdateTask {
+        @Nonnull
         private final ItemContainer itemContainer;
 
-        UpdateContainerTask(ItemContainer container) {
+        UpdateContainerTask(@Nonnull ItemContainer container) {
             itemContainer = container;
         }
 
@@ -127,44 +130,59 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
     /**
      * The pattern to fetch the ID of a slot name.
      */
+    @Nonnull
     private static final Pattern slotPattern = Pattern.compile("slot([0-9]+)");
 
     /**
      * The pattern to fetch the ID of a container name.
      */
+    @Nonnull
     private static final Pattern containerPattern = Pattern.compile("container([0-9]+)");
 
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(ContainerHandler.class);
 
     /**
      * The Nifty-GUI instance that is handling the GUI display currently.
      */
+    @Nullable
     private Nifty activeNifty;
 
     /**
      * The screen that takes care for the display currently.
      */
+    @Nullable
     private Screen activeScreen;
 
     /**
      * The select popup handler that is used to receive money input from the user.
      */
+    @Nonnull
     private final NumberSelectPopupHandler numberSelect;
 
     /**
      * The tooltip handler that is used to show the tooltips of this container.
      */
+    @Nonnull
     private final TooltipHandler tooltipHandler;
 
     /**
      * The list of item containers that are currently displayed.
      */
     @Nonnull
-    private final TIntObjectHashMap<org.illarion.nifty.controls.ItemContainer> itemContainerMap;
+    private final Map<Integer, org.illarion.nifty.controls.ItemContainer> itemContainerMap;
+
+    /**
+     * Creating new item containers in a extremely expensive operation. It is in all cases better to reuse existing
+     * instances of the containers if possible.
+     */
+    @Nonnull
+    private final Collection<org.illarion.nifty.controls.ItemContainer> itemContainerCache;
 
     /**
      * The task that is executed to update the merchant overlays.
      */
+    @Nonnull
     private final UpdateTask updateMerchantOverlays = new UpdateTask() {
         @Override
         public void onUpdateGame(@Nonnull GameContainer container, int delta) {
@@ -175,6 +193,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
     /**
      * The input system that is used to query the state of the keyboard.
      */
+    @Nonnull
     private final Input input;
 
     /**
@@ -183,9 +202,10 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      * @param numberSelectPopupHandler the number select handler
      * @param tooltip the tooltip handler
      */
-    public ContainerHandler(
-            Input input, NumberSelectPopupHandler numberSelectPopupHandler, TooltipHandler tooltip) {
-        itemContainerMap = new TIntObjectHashMap<>();
+    public ContainerHandler(@Nonnull Input input, @Nonnull NumberSelectPopupHandler numberSelectPopupHandler,
+                            @Nonnull TooltipHandler tooltip) {
+        itemContainerMap = new HashMap<>();
+        itemContainerCache = new ArrayList<>();
         numberSelect = numberSelectPopupHandler;
         tooltipHandler = tooltip;
         this.input = input;
@@ -221,11 +241,12 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      * @param data the event data
      */
     @NiftyEventSubscriber(pattern = ".*container[0-9]+.*")
-    public void onItemContainerClose(String topic, @Nonnull ItemContainerCloseEvent data) {
-        World.getPlayer().removeContainer(data.getContainerId());
-        if (isContainerCreated(data.getContainerId())) {
-            removeItemContainer(data.getContainerId());
-            World.getNet().sendCommand(new CloseShowcaseCmd(data.getContainerId()));
+    public void onItemContainerClose(@Nonnull String topic, @Nonnull ItemContainerCloseEvent data) {
+        int containerId = getContainerId(topic);
+        World.getPlayer().removeContainer(containerId);
+        if (isContainerCreated(containerId)) {
+            removeItemContainer(containerId);
+            World.getNet().sendCommand(new CloseShowcaseCmd(containerId));
         }
     }
 
@@ -249,6 +270,8 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
         IllaClient.getCfg().set(prefix + "DisplayPosY", container.getElement().getConstraintY().toString());
 
         container.closeWindow();
+
+        itemContainerCache.add(container);
     }
 
     /**
@@ -322,7 +345,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      * @param key the key of the element
      * @return the extracted ID
      */
-    private static int getContainerId(@Nonnull CharSequence key) {
+    private int getContainerId(@Nonnull CharSequence key) {
         Matcher matcher = containerPattern.matcher(key);
         if (!matcher.find()) {
             return -1;
@@ -332,7 +355,20 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
             return -1;
         }
 
-        return Integer.parseInt(matcher.group(1));
+        int nameId = Integer.parseInt(matcher.group(1));
+        String fullName = "container" + nameId;
+
+        for (Entry<Integer, org.illarion.nifty.controls.ItemContainer> entry : itemContainerMap.entrySet()) {
+            Element containerElement = entry.getValue().getElement();
+            if (containerElement != null) {
+                String containerId = containerElement.getId();
+                if ((containerId != null) && containerId.contains(fullName)) {
+                    return entry.getKey();
+                }
+            }
+        }
+
+        return -1;
     }
 
     /**
@@ -375,7 +411,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
             return;
         }
         if (ItemCount.isGreaterOne(amount) && isShiftPressed()) {
-            numberSelect.requestNewPopup(1, amount.getValue(), new NumberSelectPopupHandler.Callback() {
+            numberSelect.requestNewPopup(1, amount.getValue(), new Callback() {
                 @Override
                 public void popupCanceled() {
                     // nothing
@@ -397,7 +433,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      * @return {@code true} in case the shift key on the keyboard
      */
     private boolean isShiftPressed() {
-        return (input != null) && input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
+        return input.isAnyKeyDown(Key.LeftShift, Key.RightShift);
     }
 
     @NiftyEventSubscriber(pattern = ".*container[0-9]+.*slot[0-9]+.*")
@@ -427,6 +463,13 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
     public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
         activeNifty = nifty;
         activeScreen = screen;
+
+        /* Lets build some new containers for the cache, so Merung is not crying that the container open to0 slowly. */
+        int preLoadBagCount = IllaClient.getCfg().getInteger("preLoadBagCount");
+        for (int i = 0; i < preLoadBagCount; i++) {
+            itemContainerCache.add(buildNewContainer(100));
+        }
+
     }
 
     @Override
@@ -449,9 +492,12 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
     @Override
     public void onEndScreen() {
         AnnotationProcessor.unprocess(this);
-        activeNifty.unsubscribeAnnotations(this);
 
-        int[] containerIds = Arrays.copyOf(itemContainerMap.keys(), itemContainerMap.size());
+        if (activeNifty != null) {
+            activeNifty.unsubscribeAnnotations(this);
+        }
+
+        Iterable<Integer> containerIds = new HashSet<>(itemContainerMap.keySet());
         for (int id : containerIds) {
             removeItemContainer(id);
         }
@@ -460,7 +506,11 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
     @Override
     public void onStartScreen() {
         AnnotationProcessor.process(this);
-        activeNifty.subscribeAnnotations(this);
+        if (activeNifty != null) {
+            activeNifty.subscribeAnnotations(this);
+        } else {
+            log.error("Initialization of ContainerHandler failed. No nifty instance. Container will not work.");
+        }
     }
 
     @Override
@@ -485,30 +535,81 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
         }
     }
 
+    private int lastContainerId = -1;
+
     /**
      * Create a new container.
      *
      * @param itemContainer the item container the GUI is supposed to display
      */
     private void createNewContainer(@Nonnull ItemContainer itemContainer) {
-        ItemContainerBuilder builder = new ItemContainerBuilder("container" + itemContainer.getContainerId(),
-                                                                buildTitle(itemContainer));
-        builder.slots(itemContainer.getSlotCount());
-        builder.slotDim(35, 35);
-        builder.containerId(itemContainer.getContainerId());
+        /* First try to retrieve a existing container from the cache. */
 
-        Element container = builder.build(activeNifty, activeScreen, activeScreen.findElementById("windows"));
-        org.illarion.nifty.controls.ItemContainer conControl = container
-                .getNiftyControl(org.illarion.nifty.controls.ItemContainer.class);
+        org.illarion.nifty.controls.ItemContainer conControl = null;
+        for (org.illarion.nifty.controls.ItemContainer cacheContainer : itemContainerCache) {
+            if (cacheContainer.getSlotCount() == itemContainer.getSlotCount()) {
+                conControl = cacheContainer;
+                itemContainerCache.remove(cacheContainer);
+                break;
+            }
+        }
+
+        if (conControl == null) {
+            conControl = buildNewContainer(itemContainer.getSlotCount());
+        }
+
+        Element container = conControl.getElement();
+        conControl.setTitle(buildTitle(itemContainer));
 
         String prefix = getPrefix(itemContainer.getContainerId());
-        container.setConstraintX(new SizeValue(IllaClient.getCfg().getString(prefix + "DisplayPosX")));
-        container.setConstraintY(new SizeValue(IllaClient.getCfg().getString(prefix + "DisplayPosY")));
+        container.setConstraintX(getSizeValueFromConfig(prefix + "DisplayPosX"));
+        container.setConstraintY(getSizeValueFromConfig(prefix + "DisplayPosY"));
+
+        if (!container.isVisible()) {
+            container.show();
+            conControl.moveToFront();
+        }
 
         itemContainerMap.put(itemContainer.getContainerId(), conControl);
     }
 
-    private String getPrefix(int containerId) {
+    @Nonnull
+    private org.illarion.nifty.controls.ItemContainer buildNewContainer(int slotCount) {
+        String containerId = "container" + Integer.toString(++lastContainerId);
+        ItemContainerBuilder builder = new ItemContainerBuilder(containerId, "NoTitle");
+        builder.slots(slotCount);
+        builder.slotDim(35, 35);
+        builder.hideOnClose(true);
+        builder.visible(false);
+
+        Element container = builder.build(activeNifty, activeScreen, activeScreen.findElementById("windows"));
+        return container.getNiftyControl(org.illarion.nifty.controls.ItemContainer.class);
+    }
+
+    @Nonnull
+    private static SizeValue getSizeValueFromConfig(@Nonnull String key) {
+        String configEntry = IllaClient.getCfg().getString(key);
+        if (configEntry == null) {
+            return SizeValue.def();
+        }
+        try {
+            return new SizeValue(configEntry);
+        } catch (IllegalArgumentException e) {
+            if (configEntry.endsWith("px")) {
+                try {
+                    float value = Float.parseFloat(configEntry.substring(0, configEntry.length() - 2));
+                    return SizeValue.px((int) value);
+                } catch (NumberFormatException e1) {
+                    // failed!
+                }
+            }
+            return SizeValue.def();
+        }
+    }
+
+    @Nonnull
+    @Contract(pure = true)
+    private static String getPrefix(int containerId) {
         String prefix = "bag";
         if (containerId == 0) {
             prefix = "backpack";
@@ -518,6 +619,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
         return prefix;
     }
 
+    @Nonnull
     private static String buildTitle(@Nonnull ItemContainer container) {
         String title = container.getTitle();
 
@@ -538,6 +640,8 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
         }
     }
 
+    @Nonnull
+    @Contract(pure = true)
     private static String getShortenedDescription(
             @Nonnull String description, @Nonnull String expansion, @Nonnull Font usedFont, int maxWidth) {
         if (maxWidth <= 0) {
@@ -563,23 +667,20 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      * Update the merchant overlays of all active items.
      */
     private void updateAllMerchantOverlays() {
-        itemContainerMap.forEachEntry(new TIntObjectProcedure<org.illarion.nifty.controls.ItemContainer>() {
-            @Override
-            public boolean execute(
-                    int id, @Nonnull org.illarion.nifty.controls.ItemContainer itemContainer) {
-                int slotCount = itemContainer.getSlotCount();
-                for (int i = 0; i < slotCount; i++) {
-                    InventorySlot conSlot = itemContainer.getSlot(i);
-                    ItemContainer container = World.getPlayer().getContainer(id);
-                    if (container == null) {
-                        log.error("Container in handler was not created for player!");
-                        return true;
-                    }
-                    updateMerchantOverlay(conSlot, container.getSlot(i).getItemID());
-                }
-                return true;
+        for (Entry<Integer, org.illarion.nifty.controls.ItemContainer> entry : itemContainerMap.entrySet()) {
+            int id = entry.getKey();
+            org.illarion.nifty.controls.ItemContainer itemContainer = entry.getValue();
+            int slotCount = itemContainer.getSlotCount();
+            ItemContainer container = World.getPlayer().getContainer(id);
+            if (container == null) {
+                log.error("Container in handler was not created for player!");
+                continue;
             }
-        });
+            for (int i = 0; i < slotCount; i++) {
+                InventorySlot conSlot = itemContainer.getSlot(i);
+                updateMerchantOverlay(conSlot, container.getSlot(i).getItemID());
+            }
+        }
     }
 
     /**
@@ -601,10 +702,10 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
                 if (item.getItemId().equals(itemId)) {
                     switch (item.getType()) {
                         case BuyingPrimaryItem:
-                            slot.showMerchantOverlay(InventorySlot.MerchantBuyLevel.Gold);
+                            slot.showMerchantOverlay(MerchantBuyLevel.Gold);
                             return;
                         case BuyingSecondaryItem:
-                            slot.showMerchantOverlay(InventorySlot.MerchantBuyLevel.Silver);
+                            slot.showMerchantOverlay(MerchantBuyLevel.Silver);
                             return;
                         case SellingItem:
                             break;
@@ -641,8 +742,6 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
             ItemCount count = containerSlot.getCount();
 
             if (ItemId.isValidItem(itemId) && ItemCount.isGreaterZero(count)) {
-                assert itemId != null;
-                assert count != null;
                 ItemTemplate displayedItem = ItemFactory.getInstance().getTemplate(itemId.getValue());
 
                 NiftyImage niftyImage = new NiftyImage(activeNifty.getRenderEngine(),

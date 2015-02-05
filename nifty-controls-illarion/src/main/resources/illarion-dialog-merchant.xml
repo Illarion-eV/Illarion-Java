@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!--
   ~ This file is part of the Illarion project.
   ~
-  ~ Copyright © 2014 - Illarion e.V.
+  ~ Copyright © 2015 - Illarion e.V.
   ~
   ~ Illarion is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU Affero General Public License as published by
@@ -78,8 +78,8 @@
                     </control>
                 </control>
                 <panel childLayout="center" visibleToMouse="true" width="100%" style="#buttons">
-                    <control name="button" id="#button" label="${illarion-dialog-merchant-bundle.close}"
-                             marginTop="5px"/>
+                    <control name="button" id="#button" label="${illarion-dialog-merchant-bundle.close}" marginTop="5px"
+                             focusable="false" />
                 </panel>
             </panel>
         </control>

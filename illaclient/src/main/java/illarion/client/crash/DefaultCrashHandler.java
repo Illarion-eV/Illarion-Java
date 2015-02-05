@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,6 +14,8 @@
  * GNU General Public License for more details.
  */
 package illarion.client.crash;
+
+import illarion.client.util.Lang;
 
 import javax.annotation.Nonnull;
 
@@ -38,7 +40,6 @@ public final class DefaultCrashHandler extends AbstractCrashHandler {
      * instances but the singleton instance.
      */
     private DefaultCrashHandler() {
-        super();
     }
 
     /**
@@ -59,19 +60,15 @@ public final class DefaultCrashHandler extends AbstractCrashHandler {
     @Nonnull
     @SuppressWarnings("nls")
     @Override
-    protected String getCrashMessage() {
-        return "crash.default";
+    protected String getCrashMessage(@Nonnull Thread t, @Nonnull Throwable e) {
+        return Lang.getMsg("crash.default") + '\n' + e.getLocalizedMessage();
     }
 
     /**
      * Crash the client right away, since there is no specific thing to do here.
-     *
-     * @return <code>true</code> in case a restart of the connection is needed
      */
     @Override
-    protected boolean restart() {
-        super.crashClient();
-
-        return false;
+    protected void restart(@Nonnull Thread t, @Nonnull Throwable e) {
+        crashClient(t, e);
     }
 }

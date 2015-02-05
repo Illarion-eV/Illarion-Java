@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,6 +20,7 @@ import ch.qos.logback.classic.util.ContextInitializer;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
 import illarion.common.bug.CrashReporter;
+import illarion.common.bug.ReportDialogFactorySwing;
 import illarion.common.util.AppIdent;
 import illarion.common.util.Crypto;
 import illarion.common.util.DirectoryManager;
@@ -136,6 +137,7 @@ public final class MapEditor {
     private static void initExceptionHandler() {
         CrashReporter.getInstance().setConfig(MapEditorConfig.getInstance().getInternalCfg());
         CrashReporter.getInstance().setMessageSource(Lang.getInstance());
+        CrashReporter.getInstance().setDialogFactory(new ReportDialogFactorySwing());
         Thread.setDefaultUncaughtExceptionHandler(DefaultCrashHandler.getInstance());
         Thread.currentThread().setUncaughtExceptionHandler(DefaultCrashHandler.getInstance());
         SwingUtilities.invokeLater(new Runnable() {

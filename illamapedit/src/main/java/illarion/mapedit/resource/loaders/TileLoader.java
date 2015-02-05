@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,6 +21,7 @@ import illarion.common.util.TableLoaderSink;
 import illarion.common.util.TableLoaderTiles;
 import illarion.mapedit.resource.Resource;
 import illarion.mapedit.resource.TileImg;
+import illarion.mapedit.resource.loaders.TextureLoaderAwt.AwtTexture;
 import org.illarion.engine.assets.TextureManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +50,7 @@ public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
 
     @Override
     public void load() throws IOException {
-        new TableLoaderTiles("Tiles", this);
+        new TableLoaderTiles(this);
     }
 
     @Nonnull
@@ -62,12 +63,12 @@ public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
      * Handle a single line of the resource table.
      */
     @Override
-    public boolean processRecord(final int line, @Nonnull final TableLoaderTiles loader) {
-        final int id = loader.getTileId();
-        final int mode = loader.getTileMode();
-        final String name = loader.getResourceName();
-        final TileImg tile;
-        final TileInfo info = new TileInfo(loader.getTileColor(), loader.getMovementCost(), loader.isOpaque());
+    public boolean processRecord(int line, @Nonnull TableLoaderTiles loader) {
+        int id = loader.getTileId();
+        int mode = loader.getTileMode();
+        String name = loader.getResourceName();
+        TileImg tile;
+        TileInfo info = new TileInfo(loader.getTileColor(), loader.isOpaque());
         switch (mode) {
             case TableLoaderTiles.TILE_MODE_ANIMATED:
 
@@ -105,25 +106,25 @@ public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
     }
 
     @Nonnull
-    public Image[] getImages(@Nonnull final String name, final int frames) {
+    public Image[] getImages(@Nonnull String name, int frames) {
 
-        final Image[] imgs = new Image[frames];
+        Image[] imgs = new Image[frames];
         TextureManager manager = TextureLoaderAwt.getInstance();
         if (frames > 1) {
             for (int i = 0; i < frames; ++i) {
-                TextureLoaderAwt.AwtTexture texture = (TextureLoaderAwt.AwtTexture) manager
+                AwtTexture texture = (AwtTexture) manager
                         .getTexture(DIR_IMG_TILES, name + '-' + i);
                 imgs[i] = texture == null ? null : texture.getImage();
             }
         } else {
-            TextureLoaderAwt.AwtTexture texture = (TextureLoaderAwt.AwtTexture) manager.getTexture(DIR_IMG_TILES, name);
+            AwtTexture texture = (AwtTexture) manager.getTexture(DIR_IMG_TILES, name);
             imgs[0] = texture == null ? null : texture.getImage();
         }
         return imgs;
     }
 
     @Nullable
-    public TileImg getTileFromId(final int id) {
+    public TileImg getTileFromId(int id) {
         if (tiles.contains(id)) {
             return tiles.get(id);
         }
@@ -140,7 +141,7 @@ public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
     }
 
     public TileImg[] getTiles() {
-        final TileImg[] t = tiles.values(new TileImg[tiles.size()]);
+        TileImg[] t = tiles.values(new TileImg[tiles.size()]);
         return t;
     }
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -51,8 +51,6 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
      */
     private InventorySlot[] slots;
 
-    private int containerId;
-
     private Nifty niftyInstance;
 
     @Override
@@ -68,11 +66,6 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
         }
 
         int columns = (int) Math.ceil(Math.sqrt(slotCount));
-
-        containerId = parameter.getAsInteger("containerId", -1);
-        if (containerId == -1) {
-            throw new IllegalStateException("Container ID is not set.");
-        }
 
         int slotHeight = parameter.getAsInteger("slotHeight", SLOT_DEFAULT_SIZE);
         int slotWidth = parameter.getAsInteger("slotWidth", SLOT_DEFAULT_SIZE);
@@ -173,7 +166,10 @@ public class ItemContainerControl extends WindowControl implements ItemContainer
     @Override
     public void closeWindow() {
         super.closeWindow();
-        niftyInstance.publishEvent(getId(), new ItemContainerCloseEvent(containerId));
+        String id = getId();
+        if (id != null) {
+            niftyInstance.publishEvent(id, new ItemContainerCloseEvent());
+        }
     }
 
     @Nullable

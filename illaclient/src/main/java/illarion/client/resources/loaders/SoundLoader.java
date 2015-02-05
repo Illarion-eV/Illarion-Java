@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -34,19 +34,10 @@ import javax.annotation.Nonnull;
 public final class SoundLoader extends AbstractResourceLoader<IdWrapper<String>>
         implements TableLoaderSink<TableLoaderSound> {
     /**
-     * The index in the table record of the sound id.
-     */
-    private static final int TB_ID = 0;
-
-    /**
-     * The index in the table record of the sound filename.
-     */
-    private static final int TB_NAME = 1;
-
-    /**
      * The logger that is used to report error messages.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ItemLoader.class);
+    @Nonnull
+    private static final Logger LOGGER = LoggerFactory.getLogger(SoundLoader.class);
 
     /**
      * Trigger the loading sequence for this loader.
@@ -58,7 +49,7 @@ public final class SoundLoader extends AbstractResourceLoader<IdWrapper<String>>
             throw new IllegalStateException("targetFactory not set yet.");
         }
 
-        final ResourceFactory<IdWrapper<String>> factory = getTargetFactory();
+        ResourceFactory<IdWrapper<String>> factory = getTargetFactory();
 
         factory.init();
         new TableLoaderSound(this);
@@ -73,14 +64,14 @@ public final class SoundLoader extends AbstractResourceLoader<IdWrapper<String>>
      * Handle a single line of the resource table.
      */
     @Override
-    public boolean processRecord(final int line, @Nonnull final TableLoaderSound loader) {
-        final int clipID = loader.getInt(TB_ID);
-        final String filename = loader.getString(TB_NAME);
+    public boolean processRecord(int line, @Nonnull TableLoaderSound loader) {
+        int clipID = loader.getSoundId();
+        String filename = loader.getSoundFile();
 
         try {
             getTargetFactory().storeResource(new IdWrapper<>(clipID, filename));
-        } catch (@Nonnull final IllegalStateException ex) {
-            LOGGER.error("Failed adding sound to internal factory. ID: " + clipID + " - Filename: " + filename);
+        } catch (@Nonnull IllegalStateException ex) {
+            LOGGER.error("Failed adding sound to internal factory. ID: {} - Filename: {}", clipID, filename);
         }
 
         return true;

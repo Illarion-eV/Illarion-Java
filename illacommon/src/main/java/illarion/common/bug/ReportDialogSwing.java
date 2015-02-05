@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,7 +16,10 @@
 package illarion.common.bug;
 
 import illarion.common.util.MessageSource;
+import org.jetbrains.annotations.Contract;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.Dialog.ModalityType;
@@ -41,6 +44,7 @@ public final class ReportDialogSwing implements ReportDialog {
         /**
          * The dialog that is closed upon calling this listener.
          */
+        @Nonnull
         private final JDialog closingDialog;
 
         /**
@@ -56,7 +60,7 @@ public final class ReportDialogSwing implements ReportDialog {
          * @param dialog the dialog that is closed upon calling this listener
          * @param setResult the result value that is supposed to be set
          */
-        public ButtonListener(final JDialog dialog, final int setResult) {
+        public ButtonListener(@Nonnull JDialog dialog, int setResult) {
             resultValue = setResult;
             closingDialog = dialog;
         }
@@ -65,7 +69,7 @@ public final class ReportDialogSwing implements ReportDialog {
          * The action performed when the button is pressed.
          */
         @Override
-        public void actionPerformed(final ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {
             setResult(resultValue);
             closingDialog.setVisible(false);
         }
@@ -74,28 +78,30 @@ public final class ReportDialogSwing implements ReportDialog {
     /**
      * The newline string that is used in the dialog.
      */
-    @SuppressWarnings("nls")
     private static final String NL = "\n";
 
     /**
      * The data about the crash.
      */
+    @Nullable
     private CrashData crashData;
 
     /**
      * The source of the messages displayed in the dialog.
      */
+    @Nullable
     private MessageSource messages;
 
     /**
      * The result received from the displayed dialog.
      */
-    private int result = 0;
+    private int result;
 
     /**
      * Get the result of the dialog.
      */
     @Override
+    @Contract(pure = true)
     public int getResult() {
         return result;
     }
@@ -104,7 +110,7 @@ public final class ReportDialogSwing implements ReportDialog {
      * Set the crash data that is displayed in this dialog.
      */
     @Override
-    public void setCrashData(final CrashData data) {
+    public void setCrashData(@Nullable CrashData data) {
         crashData = data;
     }
 
@@ -112,7 +118,7 @@ public final class ReportDialogSwing implements ReportDialog {
      * Set the source of the messages displayed in this dialog.
      */
     @Override
-    public void setMessageSource(final MessageSource source) {
+    public void setMessageSource(MessageSource source) {
         messages = source;
     }
 
@@ -120,22 +126,21 @@ public final class ReportDialogSwing implements ReportDialog {
      * Create and show the dialog. This method blocks until the dialog is
      * closed.
      */
-    @SuppressWarnings("nls")
     @Override
     public void showDialog() {
         if ((messages == null) || (crashData == null)) {
             throw new IllegalStateException("The message source and the crash data needs to be set.");
         }
-        final JDialog dialog = new JDialog();
+        JDialog dialog = new JDialog();
 
         dialog.setModalityType(ModalityType.APPLICATION_MODAL);
         dialog.setTitle(messages.getMessage("illarion.common.bug.Title"));
         dialog.setAlwaysOnTop(true);
 
-        final JPanel mainPanel = new JPanel(new BorderLayout(5, 5));
+        JPanel mainPanel = new JPanel(new BorderLayout(5, 5));
         dialog.getContentPane().add(mainPanel);
 
-        final JTextArea introText = new JTextArea(messages.getMessage(crashData.getDescription()));
+        JTextArea introText = new JTextArea(messages.getMessage(crashData.getDescription()));
         introText.setMargin(new Insets(10, 10, 10, 10));
         introText.setEditable(false);
         introText.setCursor(null);
@@ -143,7 +148,7 @@ public final class ReportDialogSwing implements ReportDialog {
         introText.setFocusable(false);
         mainPanel.add(introText, BorderLayout.NORTH);
 
-        final JTextArea detailsText = new JTextArea(messages.getMessage("illarion.common.bug.details.Intro") + NL + NL +
+        JTextArea detailsText = new JTextArea(messages.getMessage("illarion.common.bug.details.Intro") + NL + NL +
                                                             messages.getMessage(
                                                                     "illarion.common.bug.details.Application") + ' ' +
                                                             crashData.getApplicationIdentifier().getApplicationName() +
@@ -161,16 +166,16 @@ public final class ReportDialogSwing implements ReportDialog {
         detailsText.setOpaque(false);
         detailsText.setFocusable(false);
 
-        final JScrollPane detailsScroll = new JScrollPane(detailsText);
+        JScrollPane detailsScroll = new JScrollPane(detailsText);
         mainPanel.add(detailsScroll, BorderLayout.CENTER);
 
-        final JPanel buttonPanel = new JPanel(new GridLayout(1, 4, 5, 5));
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 4, 5, 5));
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        final JButton alwaysButton = new JButton(messages.getMessage("illarion.common.bug.buttons.always"));
-        final JButton onceButton = new JButton(messages.getMessage("illarion.common.bug.buttons.once"));
-        final JButton notButton = new JButton(messages.getMessage("illarion.common.bug.buttons.not"));
-        final JButton neverButton = new JButton(messages.getMessage("illarion.common.bug.buttons.never"));
+        JButton alwaysButton = new JButton(messages.getMessage("illarion.common.bug.buttons.always"));
+        JButton onceButton = new JButton(messages.getMessage("illarion.common.bug.buttons.once"));
+        JButton notButton = new JButton(messages.getMessage("illarion.common.bug.buttons.not"));
+        JButton neverButton = new JButton(messages.getMessage("illarion.common.bug.buttons.never"));
 
         alwaysButton.addActionListener(new ButtonListener(dialog, SEND_ALWAYS));
         onceButton.addActionListener(new ButtonListener(dialog, SEND_ONCE));
@@ -200,7 +205,7 @@ public final class ReportDialogSwing implements ReportDialog {
      *
      * @param newResult the new result value
      */
-    void setResult(final int newResult) {
+    void setResult(int newResult) {
         result = newResult;
     }
 }

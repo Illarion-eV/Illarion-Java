@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,6 +21,7 @@ import illarion.common.net.NetCommWriter;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.NotThreadSafe;
+import java.io.IOException;
 
 /**
  * Client Command: Send a text that was requested by the server and typed in by the player
@@ -54,7 +55,7 @@ public final class CloseDialogInputCmd extends AbstractCommand {
      * @param text the text that contains the response
      * @param success {@code true} in case the dialog was confirmed
      */
-    public CloseDialogInputCmd(final int dialogID, @Nonnull final String text, final boolean success) {
+    public CloseDialogInputCmd(int dialogID, @Nonnull String text, boolean success) {
         super(CommandList.CMD_CLOSE_DIALOG_INPUT);
         this.dialogID = dialogID;
         this.text = text;
@@ -62,7 +63,7 @@ public final class CloseDialogInputCmd extends AbstractCommand {
     }
 
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) throws IOException {
         writer.writeInt(dialogID);
         if (success) {
             writer.writeUByte((byte) 0xFF);

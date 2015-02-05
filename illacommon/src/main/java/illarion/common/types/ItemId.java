@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,6 +17,7 @@ package illarion.common.types;
 
 import illarion.common.net.NetCommReader;
 import illarion.common.net.NetCommWriter;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -78,22 +79,26 @@ public final class ItemId implements Comparable<ItemId> {
      * @param id the ID to test
      * @return {@code true} in case the id is valid
      */
+    @Contract(value = "null -> false", pure = true)
     public static boolean isValidItem(@Nullable ItemId id) {
         return (id != null) && (id.getValue() > 0);
     }
 
     @Override
+    @Contract(value = "null -> false", pure = true)
     public boolean equals(@Nullable Object obj) {
         return super.equals(obj) || ((obj instanceof ItemId) && equals((ItemId) obj));
     }
 
     @Override
+    @Contract(pure = true)
     public int hashCode() {
         return value;
     }
 
     @Nonnull
     @Override
+    @Contract(pure = true)
     public String toString() {
         return "Item ID: " + Integer.toString(value);
     }
@@ -113,6 +118,7 @@ public final class ItemId implements Comparable<ItemId> {
      * @param obj the second instance to check
      * @return {@code true} in case both instances represent the same value
      */
+    @Contract(value = "null -> false", pure = true)
     public boolean equals(@Nullable ItemId obj) {
         return (obj != null) && (value == obj.value);
     }
@@ -122,11 +128,13 @@ public final class ItemId implements Comparable<ItemId> {
      *
      * @return the item count value
      */
+    @Contract(pure = true)
     public int getValue() {
         return value;
     }
 
     @Override
+    @Contract(pure = true)
     public int compareTo(@Nonnull ItemId o) {
         if (value == o.value) {
             return 0;

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,6 +17,7 @@ package illarion.common.util;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 /**
  * This class is the timer queue that stores all instances of timers and regularly calls this instances from a single
@@ -52,7 +53,6 @@ public final class TimerQueue implements Runnable {
      * Constructor for TimerQueue.
      */
     private TimerQueue() {
-        super();
         running = false;
 
         start();
@@ -76,16 +76,16 @@ public final class TimerQueue implements Runnable {
 
         try {
             while (running) {
-                final long timeToWait = postExpiredTimers();
+                long timeToWait = postExpiredTimers();
                 synchronized (this) {
                     try {
                         wait(timeToWait);
-                    } catch (@Nonnull final InterruptedException ie) {
+                    } catch (@Nonnull InterruptedException ie) {
                         // nothing to do
                     }
                 }
             }
-        } catch (@Nonnull final ThreadDeath td) {
+        } catch (@Nonnull ThreadDeath td) {
             running = false;
 
             // remove all queued timers.
@@ -102,41 +102,37 @@ public final class TimerQueue implements Runnable {
      * @param timer the timer to add
      * @param expirationTime the time stamp of the next time this timer is supposed to be called
      */
-    void addTimer(@Nonnull final Timer timer, final long expirationTime) {
-
-        synchronized (this) {
-            // If the Timer is already in the queue, then ignore the add.
-            if (containsTimer(timer)) {
-                return;
-            }
-
-            Timer previousTimer = null;
-            Timer nextTimer = firstTimer;
-
-            while (nextTimer != null) {
-                if (nextTimer.getExpirationTime() > expirationTime) {
-                    break;
-                }
-
-                previousTimer = nextTimer;
-                nextTimer = nextTimer.getNextTimer();
-            }
-
-            if (previousTimer == null) {
-                firstTimer = timer;
-            } else {
-                previousTimer.setNextTimer(timer);
-            }
-
-            timer.setExpirationTime(expirationTime);
-            timer.setNextTimer(nextTimer);
-
-            if (nextTimer == null) {
-                lastTimer = timer;
-            }
-
-            notify();
+    synchronized void addTimer(@Nonnull Timer timer, long expirationTime) {
+        if (containsTimer(timer)) {
+            return;
         }
+
+        Timer previousTimer = null;
+        Timer nextTimer = firstTimer;
+
+        while (nextTimer != null) {
+            if (nextTimer.getExpirationTime() > expirationTime) {
+                break;
+            }
+
+            previousTimer = nextTimer;
+            nextTimer = nextTimer.getNextTimer();
+        }
+
+        if (previousTimer == null) {
+            firstTimer = timer;
+        } else {
+            previousTimer.setNextTimer(timer);
+        }
+
+        timer.setExpirationTime(expirationTime);
+        timer.setNextTimer(nextTimer);
+
+        if (nextTimer == null) {
+            lastTimer = timer;
+        }
+
+        notifyAll();
     }
 
     /**
@@ -145,7 +141,7 @@ public final class TimerQueue implements Runnable {
      * @param timer the timer to check
      * @return {@code true} in case the timer is in this timer queue
      */
-    boolean containsTimer(@Nonnull final Timer timer) {
+    boolean containsTimer(@Nonnull Timer timer) {
         return timer.equals(firstTimer) || timer.equals(lastTimer) || (timer.getNextTimer() != null);
     }
 
@@ -158,12 +154,12 @@ public final class TimerQueue implements Runnable {
         long timeToWait;
 
         do {
-            final Timer timer;
+            Timer timer;
             synchronized (this) {
                 timer = firstTimer;
                 try {
                     wait(1);
-                } catch (@Nonnull final InterruptedException e) {
+                } catch (@Nonnull InterruptedException e) {
                     // nothing to do
                 }
             }
@@ -172,7 +168,7 @@ public final class TimerQueue implements Runnable {
                 return 0;
             }
 
-            final long currentTime = System.currentTimeMillis();
+            long currentTime = System.currentTimeMillis();
             timeToWait = timer.getExpirationTime() - currentTime;
 
             if (timeToWait <= 0) {
@@ -197,42 +193,39 @@ public final class TimerQueue implements Runnable {
      *
      * @param timer the timer to remove from the list
      */
-    void removeTimer(@Nonnull final Timer timer) {
-
-        synchronized (this) {
-            if (!containsTimer(timer)) {
-                return;
-            }
-
-            Timer previousTimer = null;
-            Timer nextTimer = firstTimer;
-            boolean found = false;
-
-            while (nextTimer != null) {
-                if (nextTimer == timer) {
-                    found = true;
-                    break;
-                }
-
-                previousTimer = nextTimer;
-                nextTimer = nextTimer.getNextTimer();
-            }
-
-            if (found) {
-                if (previousTimer == null) {
-                    firstTimer = timer.getNextTimer();
-                } else {
-                    previousTimer.setNextTimer(timer.getNextTimer());
-                }
-
-                if (timer.getNextTimer() == null) {
-                    lastTimer = previousTimer;
-                }
-            }
-
-            timer.setExpirationTime(0L);
-            timer.setNextTimer(null);
+    synchronized void removeTimer(@Nonnull Timer timer) {
+        if (!containsTimer(timer)) {
+            return;
         }
+
+        Timer previousTimer = null;
+        Timer nextTimer = firstTimer;
+        boolean found = false;
+
+        while (nextTimer != null) {
+            if (Objects.equals(nextTimer, timer)) {
+                found = true;
+                break;
+            }
+
+            previousTimer = nextTimer;
+            nextTimer = nextTimer.getNextTimer();
+        }
+
+        if (found) {
+            if (previousTimer == null) {
+                firstTimer = timer.getNextTimer();
+            } else {
+                previousTimer.setNextTimer(timer.getNextTimer());
+            }
+
+            if (timer.getNextTimer() == null) {
+                lastTimer = previousTimer;
+            }
+        }
+
+        timer.setExpirationTime(0L);
+        timer.setNextTimer(null);
     }
 
     /**
@@ -240,13 +233,12 @@ public final class TimerQueue implements Runnable {
      *
      * @throws IllegalStateException in case the timer queue was already started
      */
-    @SuppressWarnings("nls")
     private synchronized void start() {
         if (running) {
             throw new IllegalStateException("Can't start a TimerQueue that is already running");
         }
 
-        final Thread timerThread = new Thread(null, this, "TimerQueue");
+        Thread timerThread = new Thread(null, this, "TimerQueue");
         timerThread.setDaemon(true);
         timerThread.setPriority(Thread.NORM_PRIORITY);
 

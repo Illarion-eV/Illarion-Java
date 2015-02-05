@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,6 +14,8 @@
  * GNU General Public License for more details.
  */
 package illarion.common.data;
+
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,9 +46,9 @@ public final class CreditsPerson implements Comparable<CreditsPerson> {
      * @param lists the lists this member is supposed to be added to
      */
     public static void create(
-            @Nonnull final String firstName,
-            @Nonnull final String lastName,
-            @Nonnull final CreditsList... lists) {
+            @Nonnull String firstName,
+            @Nonnull String lastName,
+            @Nonnull CreditsList... lists) {
         create(firstName, null, lastName, lists);
     }
 
@@ -56,7 +58,7 @@ public final class CreditsPerson implements Comparable<CreditsPerson> {
      * @param nickName the nick name of the person
      * @param lists the lists this member is supposed to be added to
      */
-    public static void create(@Nonnull final String nickName, @Nonnull final CreditsList... lists) {
+    public static void create(@Nonnull String nickName, @Nonnull CreditsList... lists) {
         create(null, nickName, null, lists);
     }
 
@@ -69,12 +71,12 @@ public final class CreditsPerson implements Comparable<CreditsPerson> {
      * @param lists the lists this member is supposed to be added to
      */
     public static void create(
-            @Nullable final String firstName,
-            @Nullable final String nickName,
-            @Nullable final String lastName,
-            @Nonnull final CreditsList... lists) {
-        final CreditsPerson person = new CreditsPerson(firstName, nickName, lastName);
-        for (final CreditsList list : lists) {
+            @Nullable String firstName,
+            @Nullable String nickName,
+            @Nullable String lastName,
+            @Nonnull CreditsList... lists) {
+        CreditsPerson person = new CreditsPerson(firstName, nickName, lastName);
+        for (CreditsList list : lists) {
             list.addMember(person);
         }
     }
@@ -87,18 +89,15 @@ public final class CreditsPerson implements Comparable<CreditsPerson> {
      * @param lastName the last name of the person
      */
     private CreditsPerson(
-            @Nullable final String firstName,
-            @Nullable final String nickName,
-            @Nullable final String lastName) {
+            @Nullable String firstName,
+            @Nullable String nickName,
+            @Nullable String lastName) {
         if ((isNullOrWhitespace(firstName) || isNullOrWhitespace(lastName)) && isNullOrWhitespace(nickName)) {
             throw new IllegalArgumentException("No valid name supplied.");
         }
 
         if (!isNullOrWhitespace(nickName)) {
-            assert nickName != null;
             if (!isNullOrWhitespace(firstName) && !isNullOrWhitespace(lastName)) {
-                assert firstName != null;
-                assert lastName != null;
                 name = firstName.trim() + " \"" + nickName.trim() + "\" " + lastName.trim();
                 compareName = lastName.trim() + firstName.trim();
             } else {
@@ -106,8 +105,6 @@ public final class CreditsPerson implements Comparable<CreditsPerson> {
                 compareName = nickName.trim();
             }
         } else if (!isNullOrWhitespace(firstName) && !isNullOrWhitespace(lastName)) {
-            assert firstName != null;
-            assert lastName != null;
             name = firstName.trim() + ' ' + lastName.trim();
             compareName = lastName.trim() + firstName.trim();
         } else {
@@ -121,12 +118,14 @@ public final class CreditsPerson implements Comparable<CreditsPerson> {
      * @return the name of the person
      */
     @Nonnull
+    @Contract(pure = true)
     public String getName() {
         return name;
     }
 
     @Nonnull
     @Override
+    @Contract(pure = true)
     public String toString() {
         return name;
     }
@@ -137,27 +136,30 @@ public final class CreditsPerson implements Comparable<CreditsPerson> {
      * @param input the string to test
      * @return {@code true} in case the input is {@code null} or contains only whitespaces
      */
-    private static boolean isNullOrWhitespace(@Nullable final String input) {
+    @Contract(value = "null->true", pure = true)
+    private static boolean isNullOrWhitespace(@Nullable String input) {
         return (input == null) || input.trim().isEmpty();
     }
 
     @Override
-    public int compareTo(@Nonnull final CreditsPerson o) {
+    @Contract(pure = true)
+    public int compareTo(@Nonnull CreditsPerson o) {
         return compareName.compareTo(o.compareName);
     }
 
     @Override
-    public boolean equals(@Nullable final Object other) {
-        if (super.equals(other)) {
-            return true;
-        }
-        if (other instanceof CreditsPerson) {
-            return name.equals(((CreditsPerson) other).name);
-        }
-        return false;
+    @Contract(value = "null->false", pure = true)
+    public boolean equals(@Nullable Object other) {
+        return super.equals(other) || ((other instanceof CreditsPerson) && equals((CreditsPerson) other));
+    }
+
+    @Contract(value = "null->false", pure = true)
+    public boolean equals(@Nullable CreditsPerson other) {
+        return (other != null) && name.equals(other.name);
     }
 
     @Override
+    @Contract(pure = true)
     public int hashCode() {
         return name.hashCode();
     }

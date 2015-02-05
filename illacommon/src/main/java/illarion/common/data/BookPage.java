@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,6 +15,7 @@
  */
 package illarion.common.data;
 
+import illarion.common.data.BookPageEntry.Align;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.NamedNodeMap;
@@ -33,6 +34,7 @@ import java.util.List;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class BookPage implements Iterable<BookPageEntry> {
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(BookPage.class);
     /**
      * The list of entries on this page.
@@ -60,28 +62,28 @@ public final class BookPage implements Iterable<BookPageEntry> {
             switch (child.getNodeName()) {
                 case "headline":
                     entries.add(new BookPageEntry(true, getNodeValue(child.getFirstChild()), false,
-                                                  BookPageEntry.Align.Center));
+                            Align.Center));
                     break;
                 case "poem":
                     entries.add(new BookPageEntry(true, getNodeValue(child.getFirstChild()), true,
-                                                  BookPageEntry.Align.Center));
+                            Align.Center));
                     break;
                 case "paragraph":
                     NamedNodeMap attributes = child.getAttributes();
                     boolean showLineBreaks = getNodeValueBool(attributes.getNamedItem("showLineBreaks"));
-                    BookPageEntry.Align align;
+                    Align align;
                     switch (getNodeValue(attributes.getNamedItem("align"))) {
                         case "left":
-                            align = BookPageEntry.Align.Left;
+                            align = Align.Left;
                             break;
                         case "right":
-                            align = BookPageEntry.Align.Right;
+                            align = Align.Right;
                             break;
                         case "center":
-                            align = BookPageEntry.Align.Center;
+                            align = Align.Center;
                             break;
                         default:
-                            align = BookPageEntry.Align.Left;
+                            align = Align.Left;
                     }
                     entries.add(new BookPageEntry(false, getNodeValue(child.getFirstChild()), showLineBreaks, align));
                     break;
@@ -119,23 +121,4 @@ public final class BookPage implements Iterable<BookPageEntry> {
         return entries.iterator();
     }
 
-    /**
-     * Get a book page entry with a specified index.
-     *
-     * @param index the index of the book page entry requested
-     * @return the book page entry assigned to the index
-     * @throws IndexOutOfBoundsException if the index is out of range ({@code index &lt; 0 || index &gt;= size()})
-     */
-    public BookPageEntry getEntry(int index) {
-        return entries.get(index);
-    }
-
-    /**
-     * Get the amount of book page entries on this book page.
-     *
-     * @return the amount of book page entries
-     */
-    public int getEntryCount() {
-        return entries.size();
-    }
 }

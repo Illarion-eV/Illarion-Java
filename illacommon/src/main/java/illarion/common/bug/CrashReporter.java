@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,6 +18,7 @@ package illarion.common.bug;
 import illarion.common.config.Config;
 import illarion.common.util.AppIdent;
 import illarion.common.util.DirectoryManager;
+import illarion.common.util.DirectoryManager.Directory;
 import illarion.common.util.MessageSource;
 import org.mantisbt.connect.IMCSession;
 import org.mantisbt.connect.MCException;
@@ -81,14 +82,15 @@ public final class CrashReporter {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(CrashReporter.class);
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(CrashReporter.class);
 
     static {
         URL result = null;
         try {
             result = new URL("http://illarion.org/mantis/api/soap/mantisconnect.php"); //$NON-NLS-1$
         } catch (@Nonnull MalformedURLException e) {
-            LOGGER.warn("Preparing the crash report target URL failed. Crash reporter not functional."); //$NON-NLS-1$
+            log.warn("Preparing the crash report target URL failed. Crash reporter not functional."); //$NON-NLS-1$
         }
         CRASH_SERVER = result;
     }
@@ -167,7 +169,6 @@ public final class CrashReporter {
      * @param ownThread {@code true} in case the crash report is supposed
      * to be started in a additional thread
      */
-    @SuppressWarnings("nls")
     public void reportCrash(@Nonnull final CrashData crash, boolean ownThread) {
         if (ownThread) {
             new Thread(new Runnable() {
@@ -180,11 +181,10 @@ public final class CrashReporter {
 
         if ("NoClassDefFoundError".equals(crash.getExceptionName())) {
             try {
-                //noinspection ResultOfMethodCallIgnored
                 Files.createFile(
-                        DirectoryManager.getInstance().resolveFile(DirectoryManager.Directory.Data, "corrupted"));
+                        DirectoryManager.getInstance().resolveFile(Directory.Data, "corrupted"));
             } catch (@Nonnull IOException e) {
-                LOGGER.error("Failed to mark data as corrupted.");
+                log.error("Failed to mark data as corrupted.");
             }
         }
 
@@ -233,7 +233,7 @@ public final class CrashReporter {
 
                 synchronized (this) {
                     dialog = null;
-                    notify();
+                    notifyAll();
                 }
 
                 break;
@@ -273,9 +273,9 @@ public final class CrashReporter {
         synchronized (this) {
             while (dialog != null) {
                 try {
-                    this.wait(100);
+                    wait(100);
                 } catch (@Nonnull InterruptedException e) {
-                    LOGGER.debug("Wait for report was interrupted!", e); //$NON-NLS-1$
+                    log.debug("Wait for report was interrupted!", e); //$NON-NLS-1$
                 }
             }
         }
@@ -292,7 +292,6 @@ public final class CrashReporter {
      *
      * @param data the data that was collected about the crash
      */
-    @SuppressWarnings("nls")
     private static void sendCrashData(@Nonnull CrashData data) {
         if (CRASH_SERVER == null) {
             return;
@@ -310,7 +309,7 @@ public final class CrashReporter {
                 }
             }
             if (selectedProject == null) {
-                LOGGER.error("Failed to find {} project.", data.getMantisProject());
+                log.error("Failed to find {} project.", data.getMantisProject());
                 return;
             }
 
@@ -390,7 +389,7 @@ public final class CrashReporter {
                 issue.setPrivate(false);
 
                 long id = mantisSession.addIssue(issue);
-                LOGGER.info("Added new Issue #{}", id);
+                log.info("Added new Issue #{}", id);
 
                 if (similarIssue != null) {
                     mantisSession
@@ -398,7 +397,7 @@ public final class CrashReporter {
                 }
             }
         } catch (MCException e) {
-            LOGGER.error("Failed to send error reporting data.", e);
+            log.error("Failed to send error reporting data.", e);
         }
     }
 

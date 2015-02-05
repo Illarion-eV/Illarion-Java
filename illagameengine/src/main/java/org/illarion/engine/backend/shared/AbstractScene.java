@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -101,8 +101,13 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
     @Override
     public final void updateElementLocation(@Nonnull SceneElement element) {
         synchronized (sceneElements) {
-            removeElement(element);
-            addElement(element);
+            int insertIndex = Collections.binarySearch(sceneElements, element, this);
+            int checkIndex = (insertIndex < 0) ? (-insertIndex - 1) : insertIndex;
+            SceneElement testElement = sceneElements.get(checkIndex);
+            if (!Objects.equals(testElement, element)) {
+                removeElement(element);
+                addElement(element);
+            }
         }
     }
 

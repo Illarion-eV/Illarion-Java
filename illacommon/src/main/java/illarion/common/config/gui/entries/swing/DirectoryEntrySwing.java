@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,8 +17,9 @@ package illarion.common.config.gui.entries.swing;
 
 import illarion.common.config.entries.ConfigEntry;
 import illarion.common.config.entries.DirectoryEntry;
-import illarion.common.config.gui.entries.SaveableEntry;
+import illarion.common.config.gui.entries.SavableEntry;
 import illarion.common.util.MessageSource;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,7 +40,7 @@ import java.nio.file.Path;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class DirectoryEntrySwing extends JPanel implements SaveableEntry {
+public final class DirectoryEntrySwing extends JPanel implements SavableEntry {
     /**
      * The listener that is added to the button. It opens the file dialog in
      * case its requested.
@@ -68,11 +69,8 @@ public final class DirectoryEntrySwing extends JPanel implements SaveableEntry {
              * regular expressions. Also it allows the directories to be shown.
              */
             @Override
-            public boolean accept(@Nonnull final File pathname) {
-                if (pathname.isDirectory()) {
-                    return true;
-                }
-                return false;
+            public boolean accept(@Nonnull File pathname) {
+                return pathname.isDirectory();
             }
 
             /**
@@ -80,6 +78,7 @@ public final class DirectoryEntrySwing extends JPanel implements SaveableEntry {
              */
             @Nullable
             @Override
+            @Contract(value = "-> null", pure = true)
             public String getDescription() {
                 return null;
             }
@@ -88,16 +87,19 @@ public final class DirectoryEntrySwing extends JPanel implements SaveableEntry {
         /**
          * The entry that is used as data source for the file chooser.
          */
+        @Nonnull
         private final DirectoryEntry cfgEntry;
 
         /**
          * The source that is used to fetch the texts displayed in this entry.
          */
+        @Nonnull
         private final MessageSource messageSource;
 
         /**
          * The file entry that is the parent of this class instance.
          */
+        @Nonnull
         private final DirectoryEntrySwing parentEntry;
 
         /**
@@ -111,8 +113,8 @@ public final class DirectoryEntrySwing extends JPanel implements SaveableEntry {
          * @param msgSource the message source used as source for all texts
          * displayed in this dialog
          */
-        public ButtonListener(
-                final DirectoryEntrySwing fileEntry, final DirectoryEntry cfg, final MessageSource msgSource) {
+        public ButtonListener(@Nonnull DirectoryEntrySwing fileEntry, @Nonnull DirectoryEntry cfg,
+                              @Nonnull MessageSource msgSource) {
             cfgEntry = cfg;
             parentEntry = fileEntry;
             messageSource = msgSource;
@@ -122,10 +124,9 @@ public final class DirectoryEntrySwing extends JPanel implements SaveableEntry {
          * This function called causes the file selection dialog to be
          * displayed.
          */
-        @SuppressWarnings("nls")
         @Override
-        public void actionPerformed(final ActionEvent e) {
-            final JFileChooser fileDiag = new JFileChooser();
+        public void actionPerformed(ActionEvent e) {
+            JFileChooser fileDiag = new JFileChooser();
             fileDiag.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             fileDiag.setCurrentDirectory(new File(cfgEntry.getDefaultDir()));
             fileDiag.setFileFilter(new Filter());
@@ -133,8 +134,10 @@ public final class DirectoryEntrySwing extends JPanel implements SaveableEntry {
             fileDiag.setVisible(true);
 
             if (fileDiag.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-                final File file = fileDiag.getSelectedFile();
-                parentEntry.setCurrentValue(file.toPath());
+                File file = fileDiag.getSelectedFile();
+                if (file != null) {
+                    parentEntry.setCurrentValue(file.toPath());
+                }
             }
         }
     }
@@ -163,37 +166,25 @@ public final class DirectoryEntrySwing extends JPanel implements SaveableEntry {
     private final JTextField input;
 
     /**
-     * The button that opens the search dialog.
-     */
-    @Nonnull
-    private final JButton searchBtn;
-
-    /**
-     * Create a instance of this check entry and set the configuration entry
-     * that is used to setup this class.
+     * Create a instance of this check entry and set the configuration entry that is used to setup this class.
      *
-     * @param usedEntry the entry used to setup this class, the entry needs to
-     * pass the check with the static method
-     * @param msgs the message source that is used to fetch the texts displayed
-     * in this entry
+     * @param usedEntry the entry used to setup this class, the entry needs to pass the check with the static method
+     * @param messageSource the message source that is used to fetch the texts displayed in this entry
      */
-    @SuppressWarnings("nls")
-    public DirectoryEntrySwing(
-            final ConfigEntry usedEntry, @Nonnull final MessageSource msgs) {
+    public DirectoryEntrySwing(@Nonnull ConfigEntry usedEntry, @Nonnull MessageSource messageSource) {
         super(new BorderLayout(10, 0));
         if (!isUsableEntry(usedEntry)) {
             throw new IllegalArgumentException("ConfigEntry type illegal.");
         }
         entry = (DirectoryEntry) usedEntry;
-
         currentValue = entry.getValue();
 
-        input = new JTextField(currentValue.toString());
+        input = new JTextField((currentValue == null) ? null : currentValue.toString());
         input.setColumns(20);
         add(input, BorderLayout.CENTER);
 
-        searchBtn = new JButton(msgs.getMessage("illarion.common.config.gui.directory.Browse"));
-        searchBtn.addActionListener(new ButtonListener(this, entry, msgs));
+        JButton searchBtn = new JButton(messageSource.getMessage("illarion.common.config.gui.directory.Browse"));
+        searchBtn.addActionListener(new ButtonListener(this, entry, messageSource));
         add(searchBtn, BorderLayout.EAST);
 
         setMinimumSize(new Dimension(300, 10));
@@ -203,10 +194,10 @@ public final class DirectoryEntrySwing extends JPanel implements SaveableEntry {
      * Test a entry if it is usable with this class or not.
      *
      * @param entry the entry to test
-     * @return <code>true</code> in case this entry is usable with this class
+     * @return {@code true} in case this entry is usable with this class
      */
-    public static boolean isUsableEntry(final ConfigEntry entry) {
-        return (entry instanceof DirectoryEntry);
+    public static boolean isUsableEntry(ConfigEntry entry) {
+        return entry instanceof DirectoryEntry;
     }
 
     /**
@@ -214,7 +205,9 @@ public final class DirectoryEntrySwing extends JPanel implements SaveableEntry {
      */
     @Override
     public void save() {
-        entry.setValue(currentValue);
+        if (currentValue != null) {
+            entry.setValue(currentValue);
+        }
     }
 
     /**
@@ -222,7 +215,7 @@ public final class DirectoryEntrySwing extends JPanel implements SaveableEntry {
      *
      * @param newValue the new value that is set from now on
      */
-    void setCurrentValue(@Nonnull final Path newValue) {
+    void setCurrentValue(@Nonnull Path newValue) {
         if (Files.isDirectory(newValue)) {
             currentValue = newValue;
             input.setText(newValue.toAbsolutePath().toString());

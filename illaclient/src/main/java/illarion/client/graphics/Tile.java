@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -196,9 +196,7 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
             } catch (EngineException ignored) {
             }
         }
-        parentTile.updateColor(delta);
-        MapGroup group = parentTile.getMapGroup();
-        if ((group != null) && group.isHidden()) {
+        if (parentTile.isHidden()) {
             setAlphaTarget(0);
             setFadingCorridorEffectEnabled(false);
         } else {

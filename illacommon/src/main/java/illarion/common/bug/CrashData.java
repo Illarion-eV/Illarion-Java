@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -39,19 +39,16 @@ public final class CrashData implements Externalizable {
     /**
      * The string that is used to introduce a caused part of the crash data.
      */
-    @SuppressWarnings("nls")
     private static final String CAUSED = "Caused by: ";
 
     /**
      * The newline string that is used to create the backtrace.
      */
-    @SuppressWarnings("nls")
     private static final String NL = "\n";
 
     /**
      * The tab string that is used to create the backtrace.
      */
-    @SuppressWarnings("nls")
     private static final String TAB = "\t";
 
     /**
@@ -148,7 +145,6 @@ public final class CrashData implements Externalizable {
      * @return the string to identify the operation system
      */
     @Nonnull
-    @SuppressWarnings("nls")
     static String getOSName() {
 
         return System.getProperty("os.name") + ' ' + System.getProperty("os.version") + ' ' +

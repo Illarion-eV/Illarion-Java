@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,6 +14,8 @@
  * GNU General Public License for more details.
  */
 package illarion.common.data;
+
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
@@ -42,6 +44,7 @@ public final class SkillGroups {
      * @return the singleton instance of this class
      */
     @Nonnull
+    @Contract(pure = true)
     public static SkillGroups getInstance() {
         return INSTANCE;
     }
@@ -65,7 +68,7 @@ public final class SkillGroups {
      *
      * @param group the skill group to add
      */
-    void addSkillGroup(@Nonnull final SkillGroup group) {
+    void addSkillGroup(@Nonnull SkillGroup group) {
         skillGroupList.add(group);
     }
 
@@ -75,6 +78,7 @@ public final class SkillGroups {
      * @return a list of skill groups
      */
     @Nonnull
+    @Contract(pure = true)
     public List<SkillGroup> getSkillGroups() {
         return Collections.unmodifiableList(skillGroupList);
     }

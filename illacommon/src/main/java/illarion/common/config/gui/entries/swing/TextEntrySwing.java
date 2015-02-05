@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,7 @@ package illarion.common.config.gui.entries.swing;
 
 import illarion.common.config.entries.ConfigEntry;
 import illarion.common.config.entries.TextEntry;
-import illarion.common.config.gui.entries.SaveableEntry;
+import illarion.common.config.gui.entries.SavableEntry;
 
 import javax.annotation.Nonnull;
 import javax.swing.*;
@@ -29,7 +29,7 @@ import javax.swing.*;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class TextEntrySwing extends JTextField implements SaveableEntry {
+public final class TextEntrySwing extends JTextField implements SavableEntry {
     /**
      * The serialization UID of this text field.
      */
@@ -48,8 +48,7 @@ public final class TextEntrySwing extends JTextField implements SaveableEntry {
      * @param usedEntry the entry used to setup this class, the entry needs to
      * pass the check with the static method
      */
-    @SuppressWarnings("nls")
-    public TextEntrySwing(final ConfigEntry usedEntry) {
+    public TextEntrySwing(ConfigEntry usedEntry) {
         if (!isUsableEntry(usedEntry)) {
             throw new IllegalArgumentException("ConfigEntry type illegal.");
         }
@@ -62,10 +61,10 @@ public final class TextEntrySwing extends JTextField implements SaveableEntry {
      * Text a entry if it is usable with this class or not.
      *
      * @param entry the entry to test
-     * @return <code>true</code> in case this entry is usable with this class
+     * @return {@code true} in case this entry is usable with this class
      */
-    public static boolean isUsableEntry(final ConfigEntry entry) {
-        return (entry instanceof TextEntry);
+    public static boolean isUsableEntry(ConfigEntry entry) {
+        return entry instanceof TextEntry;
     }
 
     /**

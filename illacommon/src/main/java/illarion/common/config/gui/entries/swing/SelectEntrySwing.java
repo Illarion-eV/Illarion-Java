@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,8 @@ package illarion.common.config.gui.entries.swing;
 
 import illarion.common.config.entries.ConfigEntry;
 import illarion.common.config.entries.SelectEntry;
-import illarion.common.config.gui.entries.SaveableEntry;
+import illarion.common.config.gui.entries.SavableEntry;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.swing.*;
@@ -30,7 +31,7 @@ import java.awt.*;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class SelectEntrySwing extends JComboBox implements SaveableEntry {
+public final class SelectEntrySwing extends JComboBox<String> implements SavableEntry {
     /**
      * The serialization UID of this text field.
      */
@@ -49,20 +50,16 @@ public final class SelectEntrySwing extends JComboBox implements SaveableEntry {
      * @param usedEntry the entry used to setup this class, the entry needs to
      * pass the check with the static method
      */
-    @SuppressWarnings("nls")
-    public SelectEntrySwing(final ConfigEntry usedEntry) {
+    public SelectEntrySwing(@Nonnull ConfigEntry usedEntry) {
         if (!isUsableEntry(usedEntry)) {
             throw new IllegalArgumentException("ConfigEntry type illegal.");
         }
         entry = (SelectEntry) usedEntry;
 
-        final String[] items = entry.getLabels();
-        if (items.length > 0) {
-            for (final String item : items) {
-                addItem(item);
-            }
-            setSelectedIndex(entry.getIndex());
+        for (String item : entry.getLabels()) {
+            addItem(item);
         }
+        setSelectedIndex(entry.getIndex());
         setMinimumSize(new Dimension(300, 10));
     }
 
@@ -70,10 +67,11 @@ public final class SelectEntrySwing extends JComboBox implements SaveableEntry {
      * Text a entry if it is usable with this class or not.
      *
      * @param entry the entry to test
-     * @return <code>true</code> in case this entry is usable with this class
+     * @return {@code true} in case this entry is usable with this class
      */
-    public static boolean isUsableEntry(final ConfigEntry entry) {
-        return (entry instanceof SelectEntry);
+    @Contract(pure = true)
+    public static boolean isUsableEntry(@Nonnull ConfigEntry entry) {
+        return entry instanceof SelectEntry;
     }
 
     /**

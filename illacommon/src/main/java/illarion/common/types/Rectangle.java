@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,6 +14,8 @@
  * GNU General Public License for more details.
  */
 package illarion.common.types;
+
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -70,17 +72,6 @@ public final class Rectangle implements Serializable {
     }
 
     /**
-     * Get a instance of the rectangle class. Either a new one or one from the buffer.
-     *
-     * @return the rectangle method that is free for use.
-     */
-    @Nonnull
-    @Deprecated
-    public static Rectangle getInstance() {
-        return new Rectangle();
-    }
-
-    /**
      * Add another rectangle to this one. This basically creates a union of both rectangles.
      *
      * @param other the rectangle that shall be added to the current instance
@@ -103,9 +94,10 @@ public final class Rectangle implements Serializable {
      * Test this rectangle and another object for being equal.
      *
      * @param o the object this Rectangle shall be compared with
-     * @return {@code true} in case this rectangle and the other one descripe the same rectangle
+     * @return {@code true} in case this rectangle and the other one describe the same rectangle
      */
     @Override
+    @Contract(value = "null -> false", pure = true)
     public boolean equals(@Nullable Object o) {
         if (super.equals(o)) {
             return true;
@@ -122,6 +114,7 @@ public final class Rectangle implements Serializable {
      *
      * @return the coordinate of the bottom border
      */
+    @Contract(pure = true)
     public int getBottom() {
         return y0;
     }
@@ -131,6 +124,7 @@ public final class Rectangle implements Serializable {
      *
      * @return the center x coordinate of the rectangle
      */
+    @Contract(pure = true)
     public int getCenterX() {
         return (x0 + x1) / 2;
     }
@@ -140,6 +134,7 @@ public final class Rectangle implements Serializable {
      *
      * @return the center y coordinate of the rectangle
      */
+    @Contract(pure = true)
     public int getCenterY() {
         return (y0 + y1) / 2;
     }
@@ -149,6 +144,7 @@ public final class Rectangle implements Serializable {
      *
      * @return the height of the rectangle
      */
+    @Contract(pure = true)
     public int getHeight() {
         return y1 - y0;
     }
@@ -158,6 +154,7 @@ public final class Rectangle implements Serializable {
      *
      * @return the coordinate of the left border
      */
+    @Contract(pure = true)
     public int getLeft() {
         return x0;
     }
@@ -167,6 +164,7 @@ public final class Rectangle implements Serializable {
      *
      * @return the coordinate of the right border
      */
+    @Contract(pure = true)
     public int getRight() {
         return x1;
     }
@@ -176,6 +174,7 @@ public final class Rectangle implements Serializable {
      *
      * @return the coordinate of the top border
      */
+    @Contract(pure = true)
     public int getTop() {
         return y1;
     }
@@ -185,6 +184,7 @@ public final class Rectangle implements Serializable {
      *
      * @return the width of the rectangle
      */
+    @Contract(pure = true)
     public int getWidth() {
         return x1 - x0;
     }
@@ -194,6 +194,7 @@ public final class Rectangle implements Serializable {
      *
      * @return the coordinate of the left border
      */
+    @Contract(pure = true)
     public int getX() {
         return x0;
     }
@@ -203,6 +204,7 @@ public final class Rectangle implements Serializable {
      *
      * @return the coordinate of the top border
      */
+    @Contract(pure = true)
     public int getY() {
         return y0;
     }
@@ -213,6 +215,7 @@ public final class Rectangle implements Serializable {
      * @return the hashcode of this object
      */
     @Override
+    @Contract(pure = true)
     public int hashCode() {
         int retVal = x0 & 0xFF;
         retVal <<= Byte.SIZE;
@@ -245,23 +248,6 @@ public final class Rectangle implements Serializable {
     }
 
     /**
-     * Ensure that the current rectangle describes only a area that is also described by another rectangle. So if a
-     * area if this rectangle is outside the other rectangle it will be cut off.
-     *
-     * @param other the other rectangle
-     */
-    public void intersect(@Nonnull Rectangle other) {
-        x0 = Math.max(x0, other.x0);
-        y0 = Math.max(y0, other.y0);
-        x1 = Math.min(x1, other.x1);
-        y1 = Math.min(y1, other.y1);
-        if ((x1 < x0) || (y1 < y0)) {
-            x1 = x0;
-            y1 = y0;
-        }
-    }
-
-    /**
      * Check the two rectangles for intersection.
      *
      * @param other the second rectangle
@@ -282,6 +268,7 @@ public final class Rectangle implements Serializable {
      *
      * @return {@code true} if the rectangle covers no area
      */
+    @Contract(pure = true)
     public boolean isEmpty() {
         return (x0 == x1) || (y0 == y1);
     }
@@ -293,15 +280,9 @@ public final class Rectangle implements Serializable {
      * @param y the y coordinate of check
      * @return {@code true} in case the coordinates are inside the the rectangle
      */
+    @Contract(pure = true)
     public boolean isInside(int x, int y) {
         return (x >= x0) && (y >= y0) && (x < x1) && (y < y1);
-    }
-
-    /**
-     * Put a rectangle that is not any longer needed back into the factory.
-     */
-    @Deprecated
-    public void recycle() {
     }
 
     /**
@@ -342,26 +323,18 @@ public final class Rectangle implements Serializable {
     }
 
     /**
-     * Get the same rectangle as the native implementation of rectangle.
-     *
-     * @return the java.awt.Rectangle that represents the same rectangle as this one
-     */
-    @Nonnull
-    public java.awt.Rectangle toNative() {
-        return new java.awt.Rectangle(x0, y0, x1 - x0, y1 - y0);
-    }
-
-    /**
      * Get the size of the area covered by this rectangle.
      *
      * @return the size of the area
      */
+    @Contract(pure = true)
     public int getArea() {
         return getWidth() * getHeight();
     }
 
     @Override
     @Nonnull
+    @Contract(pure = true)
     public String toString() {
         return String.format("Rectangle(x:%1$d y:%2$d w:%3$d h:%4$d)", getX(), getY(), getWidth(), getHeight());
     }

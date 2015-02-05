@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -26,6 +26,7 @@ import javolution.util.FastTable;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,6 +101,7 @@ public final class People {
         }
     }
 
+    @Contract(value = "null->false", pure = true)
     public boolean isAvatarTagShown(@Nullable CharacterId id) {
         if (id == null) {
             return false;
@@ -359,11 +361,11 @@ public final class People {
     @Override
     @Nonnull
     public String toString() {
-        charsLock.writeLock().lock();
+        charsLock.readLock().lock();
         try {
             return String.format(TO_STRING_TEXT, chars.size());
         } finally {
-            charsLock.writeLock().unlock();
+            charsLock.readLock().unlock();
         }
     }
 

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,6 +14,8 @@
  * GNU General Public License for more details.
  */
 package illarion.common.util;
+
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,7 +45,7 @@ public final class ArrayEnumeration<T> implements Enumeration<T>, Iterator<T> {
     /**
      * The last index that is a valid target.
      */
-    private int lastIndex;
+    private final int lastIndex;
 
     /**
      * Create a new instance of the array enumerator. Once created it can be
@@ -53,7 +55,8 @@ public final class ArrayEnumeration<T> implements Enumeration<T>, Iterator<T> {
      *
      * @param targetArray the array this enumerator is using
      */
-    public ArrayEnumeration(@Nonnull final T[] targetArray) {
+    @SafeVarargs
+    public ArrayEnumeration(@Nonnull T... targetArray) {
         this(targetArray, 0, targetArray.length);
     }
 
@@ -65,9 +68,8 @@ public final class ArrayEnumeration<T> implements Enumeration<T>, Iterator<T> {
      * @param startIndex the first valid instance of the array
      * @param length the amount of elements this enumerator shall enumerate
      */
-    @SuppressWarnings("nls")
     public ArrayEnumeration(
-            @Nonnull final T[] targetArray, final int startIndex, final int length) {
+            @Nonnull T[] targetArray, int startIndex, int length) {
         if ((startIndex < 0) || (startIndex >= targetArray.length)) {
             throw new IllegalArgumentException(
                     "The starting index is smaller then 0 or larger then the length of the array.");
@@ -78,15 +80,18 @@ public final class ArrayEnumeration<T> implements Enumeration<T>, Iterator<T> {
         }
         currentIndex = startIndex;
         lastIndex = (startIndex + length) - 1;
+        //noinspection AssignmentToCollectionOrArrayFieldFromParameter
         array = targetArray;
     }
 
     @Override
+    @Contract(pure = true)
     public boolean hasMoreElements() {
         return currentIndex <= lastIndex;
     }
 
     @Override
+    @Contract(pure = true)
     public boolean hasNext() {
         return hasMoreElements();
     }
@@ -101,7 +106,6 @@ public final class ArrayEnumeration<T> implements Enumeration<T>, Iterator<T> {
      * @throws NoSuchElementException in case there are no elements remaining
      */
     @Nullable
-    @SuppressWarnings("nls")
     @Override
     public T nextElement() {
         if (!hasMoreElements()) {
@@ -116,7 +120,6 @@ public final class ArrayEnumeration<T> implements Enumeration<T>, Iterator<T> {
      *
      * @throws UnsupportedOperationException in any case its called
      */
-    @SuppressWarnings("nls")
     @Override
     public void remove() {
         throw new UnsupportedOperationException("Removing array entries is not supported");

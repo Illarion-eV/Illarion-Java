@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,8 +15,9 @@
  */
 package illarion.common.util;
 
+import org.jetbrains.annotations.Contract;
+
 import javax.annotation.Nonnull;
-import java.io.InputStream;
 
 /**
  * This is the special implementation of a table loader that is used to load the map group names of the items.
@@ -44,30 +45,8 @@ public final class TableLoaderMapGroups extends TableLoader {
      *
      * @param callback the callback that will receive the data of this loader
      */
-    public TableLoaderMapGroups(@Nonnull final TableLoaderSink<TableLoaderMapGroups> callback) {
-        this("MapGroup", callback);
-    }
-
-    /**
-     * Constructor to create this table loader with advanced settings.
-     *
-     * @param table the name of the table that is supposed to be read using this table loader
-     * @param callback the callback that will receive the data of this loader
-     */
-    public TableLoaderMapGroups(final String table, @Nonnull final TableLoaderSink<TableLoaderMapGroups> callback) {
-        super(table, false, callback, ",");
-    }
-
-    /**
-     * Constructor to create this table loader with advanced settings.
-     *
-     * @param resource the stream that is read for the data that is used in this table loader
-     * @param callback the callback that will receive the data of this loader
-     */
-    public TableLoaderMapGroups(
-            @Nonnull final InputStream resource,
-            @Nonnull final TableLoaderSink<TableLoaderMapGroups> callback) {
-        super(resource, false, callback, ",");
+    public TableLoaderMapGroups(@Nonnull TableLoaderSink<TableLoaderMapGroups> callback) {
+        super("MapGroup", callback);
     }
 
     /**
@@ -75,6 +54,7 @@ public final class TableLoaderMapGroups extends TableLoader {
      *
      * @return the index of the map group
      */
+    @Contract(pure = true)
     public int getId() {
         return getInt(TB_ID);
     }
@@ -84,6 +64,8 @@ public final class TableLoaderMapGroups extends TableLoader {
      *
      * @return the german name of the map group
      */
+    @Nonnull
+    @Contract(pure = true)
     public String getNameGerman() {
         return getString(TB_NAME_GERMAN);
     }
@@ -93,6 +75,8 @@ public final class TableLoaderMapGroups extends TableLoader {
      *
      * @return the english name of the map group
      */
+    @Nonnull
+    @Contract(pure = true)
     public String getNameEnglish() {
         return getString(TB_NAME_ENGLISH);
     }

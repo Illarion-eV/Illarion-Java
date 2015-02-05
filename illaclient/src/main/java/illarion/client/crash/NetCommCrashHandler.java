@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,6 +14,9 @@
  * GNU General Public License for more details.
  */
 package illarion.client.crash;
+
+import illarion.client.IllaClient;
+import illarion.client.util.Lang;
 
 import javax.annotation.Nonnull;
 
@@ -35,7 +38,6 @@ public final class NetCommCrashHandler extends AbstractCrashHandler {
      * instances but the singleton instance.
      */
     private NetCommCrashHandler() {
-        super();
     }
 
     /**
@@ -56,18 +58,15 @@ public final class NetCommCrashHandler extends AbstractCrashHandler {
     @Nonnull
     @SuppressWarnings("nls")
     @Override
-    protected String getCrashMessage() {
-        return "crash.netcomm";
+    protected String getCrashMessage(@Nonnull Thread t, @Nonnull Throwable e) {
+        return Lang.getMsg("crash.netcomm") + '\n' + e.getLocalizedMessage();
     }
 
     /**
      * Prepare everything for a proper restart of the map processor.
-     *
-     * @return <code>true</code> in case a restart of the connection is needed
      */
     @Override
-    protected boolean restart() {
-        // can't do anything but restarting the connection
-        return true;
+    protected void restart(@Nonnull Thread t, @Nonnull Throwable e) {
+        IllaClient.performLogout();
     }
 }

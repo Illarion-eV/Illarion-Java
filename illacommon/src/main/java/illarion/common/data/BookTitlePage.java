@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,11 +15,13 @@
  */
 package illarion.common.data;
 
+import org.jetbrains.annotations.Contract;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.regex.Pattern;
 
 /**
  * This class represents the title page of a book.
@@ -27,6 +29,8 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class BookTitlePage {
+    @Nonnull
+    private static final Pattern WHITE_SPACES_PATTERN = Pattern.compile("\\s+");
     /**
      * The title that is displayed on this title page.
      */
@@ -40,32 +44,23 @@ public final class BookTitlePage {
     private final String author;
 
     /**
-     * Create the title page by providing the title and the author of the book.
-     *
-     * @param title the title of the book
-     * @param author the author of the book
-     */
-    public BookTitlePage(@Nonnull final String title, @Nullable final String author) {
-        this.title = title;
-        this.author = author;
-    }
-
-    /**
      * Create a book title page that receives its data from a XML node.
      *
      * @param source the node that supplies the data
      */
-    public BookTitlePage(@Nonnull final Node source) {
+    public BookTitlePage(@Nonnull Node source) {
         String title = null;
         String author = null;
 
-        final NodeList children = source.getChildNodes();
+        NodeList children = source.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
-            final Node child = children.item(i);
-            if ("title".equals(child.getNodeName())) {
-                title = getNodeValue(child.getFirstChild()).trim().replaceAll("\\s+", " ");
-            } else if ("author".equals(child.getNodeName())) {
-                author = getNodeValue(child.getFirstChild()).trim().replaceAll("\\s+", " ");
+            Node child = children.item(i);
+            if (child != null) {
+                if ("title".equals(child.getNodeName())) {
+                    title = WHITE_SPACES_PATTERN.matcher(getNodeValue(child.getFirstChild()).trim()).replaceAll(" ");
+                } else if ("author".equals(child.getNodeName())) {
+                    author = WHITE_SPACES_PATTERN.matcher(getNodeValue(child.getFirstChild()).trim()).replaceAll(" ");
+                }
             }
         }
 
@@ -83,11 +78,12 @@ public final class BookTitlePage {
      * @param node the node
      * @return the value of the node or a empty string
      */
-    private static String getNodeValue(@Nullable final Node node) {
+    @Nonnull
+    private static String getNodeValue(@Nullable Node node) {
         if (node == null) {
             return "";
         }
-        final String nodeValue = node.getNodeValue();
+        String nodeValue = node.getNodeValue();
         if (nodeValue == null) {
             return "";
         }
@@ -100,6 +96,7 @@ public final class BookTitlePage {
      * @return the book title
      */
     @Nonnull
+    @Contract(pure = true)
     public String getTitle() {
         return title;
     }
@@ -110,6 +107,7 @@ public final class BookTitlePage {
      * @return the author
      */
     @Nullable
+    @Contract(pure = true)
     public String getAuthor() {
         return author;
     }
@@ -119,6 +117,7 @@ public final class BookTitlePage {
      *
      * @return {@code true} in case the author is set
      */
+    @Contract(pure = true)
     public boolean hasAuthor() {
         return author != null;
     }

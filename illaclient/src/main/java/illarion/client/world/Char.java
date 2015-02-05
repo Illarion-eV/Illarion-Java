@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -97,14 +97,9 @@ public final class Char implements AnimatedMove {
     private static final float MINIMAL_SCALE = 0.8f;
 
     /**
-     * Modifier to calculate the alpha value from the visibility.
-     */
-    private static final int VISIBILITY_ALPHA_MOD = 10;
-
-    /**
      * Maximum value for visibility.
      */
-    public static final int VISIBILITY_MAX = 100;
+    public static final float VISIBILITY_MAX = 1.f;
 
     /**
      * This color is used to display the name in case the character is a player character.
@@ -516,10 +511,8 @@ public final class Char implements AnimatedMove {
 
         if (avatar != null) {
             oldAlpha = avatar.getAlpha();
-            oldAlphaTarget = avatar.getTargetAlpha();
-        } else {
-            oldAlphaTarget = World.getPlayer().canSee(this) * VISIBILITY_ALPHA_MOD;
         }
+        oldAlphaTarget = (int) (World.getPlayer().canSee(this) * Color.MAX_INT_VALUE);
 
         @Nullable Avatar newAvatar = Avatar.create(newAvatarId, this);
 
@@ -1053,8 +1046,11 @@ public final class Char implements AnimatedMove {
                 } else if (mode == CharMovementMode.Run) {
                     startAnimation(CharAnimations.RUN, duration, true, dir.isDiagonal() ? FastMath.sqrt(2.f) : 1.f);
                 }
-                move.start(oldPos.getDcX() - newPos.getDcX(), oldPos.getDcY() - fromElevation - newPos.getDcY(), 0, 0,
-                           -elevation, 0, duration);
+                int zDelta = Math.min(oldPos.getDcZ() - newPos.getDcZ(), 0);
+                move.start(oldPos.getDcX() - newPos.getDcX(),
+                        oldPos.getDcY() - fromElevation - newPos.getDcY(),
+                        zDelta,
+                        0, -elevation, zDelta, duration);
             } else {
                 // reset last animation result
                 dX = 0;

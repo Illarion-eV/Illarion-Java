@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!--
   ~ This file is part of the Illarion project.
   ~
-  ~ Copyright © 2014 - Illarion e.V.
+  ~ Copyright © 2015 - Illarion e.V.
   ~
   ~ Illarion is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU Affero General Public License as published by
@@ -14,10 +14,6 @@
   ~ GNU General Public License for more details.
   -->
 <nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
-    <useStyles filename="nifty-illarion-style.xml"/>
-    <useControls filename="nifty-default-controls.xml"/>
-    <useControls filename="illarion-gamecontrols.xml"/>
-
     <registerEffect name="DoubleEffect" class="org.illarion.nifty.effects.DoubleEffect"/>
 
     <resourceBundle id="gamescreen-bundle" filename="gamescreen"/>
@@ -147,7 +143,7 @@
                         <control id="carryLoad" name="progress" width="227px" x="0px" y="292px"/>
                     </panel>
                     <control name="button" style="nifty-button" width="227px" label="${gamescreen-bundle.pickUpAll}"
-                             marginTop="7px" id="pickUpItemsBtn"/>
+                             marginTop="7px" id="pickUpItemsBtn" focusable="false" />
                 </panel>
             </control>
             <control id="book" name="window" style="nifty-window" title="${gamescreen-bundle.book}"
@@ -160,8 +156,10 @@
                     <control align="center" name="label" id="#pageNumber" marginBottom="10px" style="nifty-label"
                              textHAlign="center" width="368px" height="20px" backgroundColor="#000000bf"/>
                     <panel style="nifty-panel-small" childLayout="horizontal" align="center">
-                        <control name="button" label="${gamescreen-bundle.back}" id="#buttonBack" margin="5px,10px"/>
-                        <control name="button" label="${gamescreen-bundle.next}" id="#buttonNext" margin="5px,10px"/>
+                        <control name="button" label="${gamescreen-bundle.back}" id="#buttonBack" margin="5px,10px"
+                                 focusable="false" />
+                        <control name="button" label="${gamescreen-bundle.next}" id="#buttonNext" margin="5px,10px"
+                                 focusable="false" />
                     </panel>
                 </panel>
             </control>
@@ -181,7 +179,7 @@
                         <control name="listBox" id="#questList" vertical="on" horizontal="off"
                                  displayItems="10" selection="Single" forceSelection="true" marginBottom="5px"/>
                         <panel childLayout="horizontal">
-                            <control name="checkbox" id="#showFinishedCheckbox" marginRight="4px"/>
+                            <control name="checkbox" id="#showFinishedCheckbox" marginRight="4px" focusable="false" />
                             <control name="label" text="${gamescreen-bundle.showFinishedQuests}" paddingLeft="5px"/>
                         </panel>
                     </panel>

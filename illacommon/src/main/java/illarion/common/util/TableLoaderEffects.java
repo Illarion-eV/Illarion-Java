@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,9 +15,9 @@
  */
 package illarion.common.util;
 
+import org.jetbrains.annotations.Contract;
+
 import javax.annotation.Nonnull;
-import java.io.File;
-import java.io.InputStream;
 
 /**
  * This is a special implementation of the table loader that targets the effects table file.
@@ -60,39 +60,8 @@ public final class TableLoaderEffects extends TableLoader {
      */
     private static final int TB_SPEED = 5;
 
-    public TableLoaderEffects(@Nonnull final TableLoaderSink<TableLoaderEffects> callback) {
+    public TableLoaderEffects(@Nonnull TableLoaderSink<TableLoaderEffects> callback) {
         super("Effects", callback);
-    }
-
-    public TableLoaderEffects(@Nonnull final File table, @Nonnull final TableLoaderSink<TableLoaderEffects> callback) {
-        super(table, callback);
-    }
-
-    public TableLoaderEffects(final String table, @Nonnull final TableLoaderSink<TableLoaderEffects> callback) {
-        super(table, callback);
-    }
-
-    public TableLoaderEffects(
-            @Nonnull final File table,
-            @Nonnull final TableLoaderSink<TableLoaderEffects> callback,
-            final String tableDelim) {
-        super(table, callback, tableDelim);
-    }
-
-    public TableLoaderEffects(
-            @Nonnull final InputStream resource,
-            final boolean ndsc,
-            @Nonnull final TableLoaderSink<TableLoaderEffects> callback,
-            final String tableDelim) {
-        super(resource, ndsc, callback, tableDelim);
-    }
-
-    public TableLoaderEffects(
-            final String table,
-            final boolean ndsc,
-            @Nonnull final TableLoaderSink<TableLoaderEffects> callback,
-            final String tableDelim) {
-        super(table, ndsc, callback, tableDelim);
     }
 
     /**
@@ -100,6 +69,7 @@ public final class TableLoaderEffects extends TableLoader {
      *
      * @return the animation speed of the effect
      */
+    @Contract(pure = true)
     public int getAnimationSpeed() {
         return getInt(TB_SPEED);
     }
@@ -109,6 +79,7 @@ public final class TableLoaderEffects extends TableLoader {
      *
      * @return the ID of the effect
      */
+    @Contract(pure = true)
     public int getEffectId() {
         return getInt(TB_ID);
     }
@@ -118,6 +89,7 @@ public final class TableLoaderEffects extends TableLoader {
      *
      * @return the light emitted by this effect
      */
+    @Contract(pure = true)
     public int getEffectLight() {
         return getInt(TB_LIGHT);
     }
@@ -127,6 +99,7 @@ public final class TableLoaderEffects extends TableLoader {
      *
      * @return the frame count of the effect
      */
+    @Contract(pure = true)
     public int getFrameCount() {
         return getInt(TB_FRAME);
     }
@@ -136,6 +109,7 @@ public final class TableLoaderEffects extends TableLoader {
      *
      * @return the offset component that needs to be applied to the item graphics
      */
+    @Contract(pure = true)
     public int getOffsetX() {
         return getInt(TB_OFFX);
     }
@@ -145,6 +119,7 @@ public final class TableLoaderEffects extends TableLoader {
      *
      * @return the offset component that needs to be applied to the item graphics
      */
+    @Contract(pure = true)
     public int getOffsetY() {
         return getInt(TB_OFFY);
     }
@@ -155,6 +130,8 @@ public final class TableLoaderEffects extends TableLoader {
      *
      * @return the resource name of this effect
      */
+    @Nonnull
+    @Contract(pure = true)
     public String getResourceName() {
         return getString(TB_NAME);
     }

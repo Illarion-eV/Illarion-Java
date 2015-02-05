@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -70,7 +70,7 @@ public final class ProgressMonitor implements ProgressMonitorCallback {
      * @throws IllegalArgumentException in case the weight is set to a value less then {@code 0.f} or to NaN or to
      * Infinity
      */
-    public ProgressMonitor(final float weight) {
+    public ProgressMonitor(float weight) {
         if (weight < 0.f) {
             throw new IllegalArgumentException("weight may not be less then 0");
         }
@@ -88,7 +88,7 @@ public final class ProgressMonitor implements ProgressMonitorCallback {
     }
 
     @Override
-    public void updatedProgress(@Nonnull final ProgressMonitor monitor) {
+    public void updatedProgress(@Nonnull ProgressMonitor monitor) {
         reportProgressChange();
     }
 
@@ -97,10 +97,10 @@ public final class ProgressMonitor implements ProgressMonitorCallback {
      *
      * @param callback the callback target or {@code null} in case no more callbacks are required
      */
-    public void setCallback(@Nullable final ProgressMonitorCallback callback) {
+    public void setCallback(@Nullable ProgressMonitorCallback callback) {
         this.callback = callback;
         if (children != null) {
-            for (final ProgressMonitor child : children) {
+            for (ProgressMonitor child : children) {
                 if (callback == null) {
                     child.setCallback(null);
                 } else {
@@ -115,12 +115,12 @@ public final class ProgressMonitor implements ProgressMonitorCallback {
      *
      * @param childMonitor the children that is supposed to be monitored now
      */
-    public void addChild(@Nonnull final ProgressMonitor childMonitor) {
+    public void addChild(@Nonnull ProgressMonitor childMonitor) {
         if (children == null) {
             children = new ArrayList<>();
         }
         children.add(childMonitor);
-        final ProgressMonitorCallback targetCallback = callback;
+        ProgressMonitorCallback targetCallback = callback;
         if (targetCallback != null) {
             childMonitor.setCallback(targetCallback);
         }
@@ -133,19 +133,13 @@ public final class ProgressMonitor implements ProgressMonitorCallback {
      * @param progress the new progress value, the value is capped to {@code 0.f} to {@code 1.f}
      * @throws IllegalStateException in case this monitor has children applied to it
      */
-    public void setProgress(final float progress) {
+    public void setProgress(float progress) {
         if (children != null) {
             throw new IllegalStateException("Setting the progress of a monitor with children is not allowed.");
         }
-        final float oldValue = this.progress;
-        if (progress > 1.f) {
-            this.progress = 1.f;
-        } else if (progress < 0.f) {
-            this.progress = 0.f;
-        } else {
-            this.progress = progress;
-        }
-        if (oldValue != this.progress) {
+        float oldValue = this.progress;
+        this.progress = FastMath.clamp(progress, 0.f, 1.f);
+        if (!FastMath.equals(oldValue, this.progress, FastMath.FLT_EPSILON)) {
             reportProgressChange();
         }
     }
@@ -156,7 +150,7 @@ public final class ProgressMonitor implements ProgressMonitorCallback {
             return;
         }
 
-        final ProgressMonitorCallback targetCallback = callback;
+        ProgressMonitorCallback targetCallback = callback;
         if (targetCallback != null) {
             boolean firstRun = true;
             while (firstRun || repeatCallback) {
@@ -165,7 +159,7 @@ public final class ProgressMonitor implements ProgressMonitorCallback {
                 activeCallback = true;
                 try {
                     targetCallback.updatedProgress(this);
-                } catch (@Nonnull final Exception e) {
+                } catch (@Nonnull Exception e) {
                     // nothing
                 } finally {
                     activeCallback = false;
@@ -179,7 +173,7 @@ public final class ProgressMonitor implements ProgressMonitorCallback {
      *
      * @param weight the new weight of the monitor
      */
-    public void setWeight(final float weight) {
+    public void setWeight(float weight) {
         this.weight = weight;
     }
 
@@ -195,7 +189,7 @@ public final class ProgressMonitor implements ProgressMonitorCallback {
         }
         float totalProgress = 0.f;
         float totalWeight = 0.f;
-        for (@Nonnull final ProgressMonitor childMonitor : children) {
+        for (@Nonnull ProgressMonitor childMonitor : children) {
             totalProgress += childMonitor.getProgress() * childMonitor.weight;
             totalWeight += childMonitor.weight;
         }

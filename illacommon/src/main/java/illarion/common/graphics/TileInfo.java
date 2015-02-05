@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,6 +14,8 @@
  * GNU General Public License for more details.
  */
 package illarion.common.graphics;
+
+import org.jetbrains.annotations.Contract;
 
 /**
  * This class is used to store some general information about a tile.
@@ -42,12 +44,6 @@ public final class TileInfo {
     private final int mapColor;
 
     /**
-     * The movement costs of this tile. This will be taken into consideration
-     * when performing a path finding operation.
-     */
-    private final int movementCost;
-
-    /**
      * This stores if the tile is opaque or transparent. This has some effect
      * how the tiles below are handled.
      */
@@ -57,12 +53,10 @@ public final class TileInfo {
      * This creates a instance of the TileInfo and sets the values.
      *
      * @param color the color of the tile on the map
-     * @param cost the cost to move over this tile
-     * @param isOpaque <code>true</code> in case the tile is opaque
+     * @param isOpaque {@code true} in case the tile is opaque
      */
-    public TileInfo(final int color, final int cost, final boolean isOpaque) {
+    public TileInfo(int color, boolean isOpaque) {
         mapColor = color;
-        movementCost = cost;
         opaque = isOpaque;
     }
 
@@ -72,7 +66,8 @@ public final class TileInfo {
      * @param id the full tile ID
      * @return the base tile ID
      */
-    public static int getBaseID(final int id) {
+    @Contract(pure = true)
+    public static int getBaseID(int id) {
         if ((id & SHAPE_MASK) != 0) {
             return id & BASE_MASK;
         }
@@ -85,7 +80,8 @@ public final class TileInfo {
      * @param id the full tile ID
      * @return the overlay tile ID
      */
-    public static int getOverlayID(final int id) {
+    @Contract(pure = true)
+    public static int getOverlayID(int id) {
         if ((id & SHAPE_MASK) != 0) {
             return (id & OVERLAY_MASK) >> 5;
         }
@@ -98,7 +94,8 @@ public final class TileInfo {
      * @param id the full tile ID
      * @return {@code true} in case there is a overlay encoded in the tile ID
      */
-    public static boolean hasOverlay(final int id) {
+    @Contract(pure = true)
+    public static boolean hasOverlay(int id) {
         return getShapeId(id) > 0;
     }
 
@@ -108,7 +105,8 @@ public final class TileInfo {
      * @param id the full tile ID
      * @return the shape ID
      */
-    public static int getShapeId(final int id) {
+    @Contract(pure = true)
+    public static int getShapeId(int id) {
         return (id & SHAPE_MASK) >> 10;
     }
 
@@ -117,24 +115,17 @@ public final class TileInfo {
      *
      * @return the simplified color code of this tile
      */
+    @Contract(pure = true)
     public int getMapColor() {
         return mapColor;
     }
 
     /**
-     * Get how much is costs to move over this tile.
-     *
-     * @return the movement costs of this tile
-     */
-    public int getMovementCost() {
-        return movementCost;
-    }
-
-    /**
      * Check if the tile is opaque.
      *
-     * @return <code>true</code> in case the tile is opaque
+     * @return {@code true} in case the tile is opaque
      */
+    @Contract(pure = true)
     public boolean isOpaque() {
         return opaque;
     }

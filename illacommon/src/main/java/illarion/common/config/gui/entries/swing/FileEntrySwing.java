@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,7 @@ package illarion.common.config.gui.entries.swing;
 
 import illarion.common.config.entries.ConfigEntry;
 import illarion.common.config.entries.FileEntry;
-import illarion.common.config.gui.entries.SaveableEntry;
+import illarion.common.config.gui.entries.SavableEntry;
 import illarion.common.util.MessageSource;
 
 import javax.annotation.Nonnull;
@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class FileEntrySwing extends JPanel implements SaveableEntry {
+public final class FileEntrySwing extends JPanel implements SavableEntry {
     /**
      * The listener that is added to the button. It opens the file dialog in
      * case its requested.
@@ -76,7 +76,7 @@ public final class FileEntrySwing extends JPanel implements SaveableEntry {
              * @param files the list of regular expressions
              * @param desc the description that is displayed in the dialog
              */
-            public Filter(final String files, final String desc) {
+            public Filter(String files, String desc) {
                 validFiles = files;
                 description = desc;
             }
@@ -86,16 +86,15 @@ public final class FileEntrySwing extends JPanel implements SaveableEntry {
              * and allows only those files to be displayed that match the
              * regular expressions. Also it allows the directories to be shown.
              */
-            @SuppressWarnings("nls")
             @Override
-            public boolean accept(@Nonnull final File pathname) {
+            public boolean accept(@Nonnull File pathname) {
                 if (pathname.isDirectory()) {
                     return true;
                 }
 
-                final String[] names = validFiles.split(";");
-                for (final String testName : names) {
-                    final String fixedTextName = testName.replace(".", "\\.").replace("*", ".+");
+                String[] names = validFiles.split(";");
+                for (String testName : names) {
+                    String fixedTextName = testName.replace(".", "\\.").replace("*", ".+");
                     if (Pattern.matches(testName, fixedTextName)) {
                         return true;
                     }
@@ -139,7 +138,7 @@ public final class FileEntrySwing extends JPanel implements SaveableEntry {
          * displayed in this dialog
          */
         public ButtonListener(
-                final FileEntrySwing fileEntry, final FileEntry cfg, final MessageSource msgSource) {
+                FileEntrySwing fileEntry, FileEntry cfg, MessageSource msgSource) {
             cfgEntry = cfg;
             parentEntry = fileEntry;
             messageSource = msgSource;
@@ -149,10 +148,9 @@ public final class FileEntrySwing extends JPanel implements SaveableEntry {
          * This function called causes the file selection dialog to be
          * displayed.
          */
-        @SuppressWarnings("nls")
         @Override
-        public void actionPerformed(final ActionEvent e) {
-            final JFileChooser fileDiag = new JFileChooser();
+        public void actionPerformed(ActionEvent e) {
+            JFileChooser fileDiag = new JFileChooser();
             fileDiag.setFileSelectionMode(JFileChooser.FILES_ONLY);
             fileDiag.setCurrentDirectory(new File(cfgEntry.getDefaultDir()));
             fileDiag.setSelectedFile(new File(cfgEntry.getName()));
@@ -161,7 +159,7 @@ public final class FileEntrySwing extends JPanel implements SaveableEntry {
             fileDiag.setVisible(true);
 
             if (fileDiag.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-                final File file = fileDiag.getSelectedFile();
+                File file = fileDiag.getSelectedFile();
                 parentEntry.setCurrentValue(file.toPath());
             }
         }
@@ -199,8 +197,7 @@ public final class FileEntrySwing extends JPanel implements SaveableEntry {
      * @param msgs the message source that is used to fetch the texts displayed
      * in this entry
      */
-    @SuppressWarnings("nls")
-    public FileEntrySwing(@Nonnull final ConfigEntry usedEntry, @Nonnull final MessageSource msgs) {
+    public FileEntrySwing(@Nonnull ConfigEntry usedEntry, @Nonnull MessageSource msgs) {
         super(new BorderLayout(10, 0));
         if (!isUsableEntry(usedEntry)) {
             throw new IllegalArgumentException("ConfigEntry type illegal.");
@@ -226,10 +223,10 @@ public final class FileEntrySwing extends JPanel implements SaveableEntry {
      * Test a entry if it is usable with this class or not.
      *
      * @param entry the entry to test
-     * @return <code>true</code> in case this entry is usable with this class
+     * @return {@code true} in case this entry is usable with this class
      */
-    public static boolean isUsableEntry(final ConfigEntry entry) {
-        return (entry instanceof FileEntry);
+    public static boolean isUsableEntry(ConfigEntry entry) {
+        return entry instanceof FileEntry;
     }
 
     /**
@@ -245,7 +242,7 @@ public final class FileEntrySwing extends JPanel implements SaveableEntry {
      *
      * @param newValue the new value that is set from now on
      */
-    void setCurrentValue(@Nonnull final Path newValue) {
+    void setCurrentValue(@Nonnull Path newValue) {
         if (Files.isRegularFile(newValue)) {
             currentValue = newValue;
             input.setText(newValue.toAbsolutePath().toString());
