@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,6 +16,7 @@
 package org.illarion.engine.graphic;
 
 import org.illarion.engine.Disposable;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 
@@ -28,6 +29,7 @@ public interface Font extends Disposable {
      *
      * @return the line height of the font
      */
+    @Contract(pure = true)
     int getLineHeight();
 
     /**
@@ -36,6 +38,7 @@ public interface Font extends Disposable {
      * @param text the text
      * @return the width of the line needed to place the text in
      */
+    @Contract(pure = true)
     int getWidth(@Nonnull CharSequence text);
 
     /**
@@ -45,5 +48,6 @@ public interface Font extends Disposable {
      * @param next the next character
      * @return the amount of pixels the cursor needs to be moved before drawing the next glyph
      */
+    @Contract(pure = true)
     int getAdvance(char current, char next);
 }

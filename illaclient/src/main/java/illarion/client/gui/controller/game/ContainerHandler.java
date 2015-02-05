@@ -62,6 +62,7 @@ import org.illarion.nifty.controls.InventorySlot;
 import org.illarion.nifty.controls.InventorySlot.MerchantBuyLevel;
 import org.illarion.nifty.controls.ItemContainerCloseEvent;
 import org.illarion.nifty.controls.itemcontainer.builder.ItemContainerBuilder;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,9 +111,10 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
     }
 
     private final class UpdateContainerTask implements UpdateTask {
+        @Nonnull
         private final ItemContainer itemContainer;
 
-        UpdateContainerTask(ItemContainer container) {
+        UpdateContainerTask(@Nonnull ItemContainer container) {
             itemContainer = container;
         }
 
@@ -128,33 +130,40 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
     /**
      * The pattern to fetch the ID of a slot name.
      */
+    @Nonnull
     private static final Pattern slotPattern = Pattern.compile("slot([0-9]+)");
 
     /**
      * The pattern to fetch the ID of a container name.
      */
+    @Nonnull
     private static final Pattern containerPattern = Pattern.compile("container([0-9]+)");
 
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(ContainerHandler.class);
 
     /**
      * The Nifty-GUI instance that is handling the GUI display currently.
      */
+    @Nullable
     private Nifty activeNifty;
 
     /**
      * The screen that takes care for the display currently.
      */
+    @Nullable
     private Screen activeScreen;
 
     /**
      * The select popup handler that is used to receive money input from the user.
      */
+    @Nonnull
     private final NumberSelectPopupHandler numberSelect;
 
     /**
      * The tooltip handler that is used to show the tooltips of this container.
      */
+    @Nonnull
     private final TooltipHandler tooltipHandler;
 
     /**
@@ -173,6 +182,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
     /**
      * The task that is executed to update the merchant overlays.
      */
+    @Nonnull
     private final UpdateTask updateMerchantOverlays = new UpdateTask() {
         @Override
         public void onUpdateGame(@Nonnull GameContainer container, int delta) {
@@ -482,7 +492,10 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
     @Override
     public void onEndScreen() {
         AnnotationProcessor.unprocess(this);
-        activeNifty.unsubscribeAnnotations(this);
+
+        if (activeNifty != null) {
+            activeNifty.unsubscribeAnnotations(this);
+        }
 
         Iterable<Integer> containerIds = new HashSet<>(itemContainerMap.keySet());
         for (int id : containerIds) {
@@ -493,7 +506,11 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
     @Override
     public void onStartScreen() {
         AnnotationProcessor.process(this);
-        activeNifty.subscribeAnnotations(this);
+        if (activeNifty != null) {
+            activeNifty.subscribeAnnotations(this);
+        } else {
+            log.error("Initialization of ContainerHandler failed. No nifty instance. Container will not work.");
+        }
     }
 
     @Override
@@ -578,11 +595,21 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
         try {
             return new SizeValue(configEntry);
         } catch (IllegalArgumentException e) {
+            if (configEntry.endsWith("px")) {
+                try {
+                    float value = Float.parseFloat(configEntry.substring(0, configEntry.length() - 2));
+                    return SizeValue.px((int) value);
+                } catch (NumberFormatException e1) {
+                    // failed!
+                }
+            }
             return SizeValue.def();
         }
     }
 
-    private String getPrefix(int containerId) {
+    @Nonnull
+    @Contract(pure = true)
+    private static String getPrefix(int containerId) {
         String prefix = "bag";
         if (containerId == 0) {
             prefix = "backpack";
@@ -614,6 +641,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
     }
 
     @Nonnull
+    @Contract(pure = true)
     private static String getShortenedDescription(
             @Nonnull String description, @Nonnull String expansion, @Nonnull Font usedFont, int maxWidth) {
         if (maxWidth <= 0) {
