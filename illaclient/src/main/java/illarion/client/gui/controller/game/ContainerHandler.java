@@ -550,11 +550,13 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
 
         if (!container.isVisible()) {
             container.show();
+            conControl.moveToFront();
         }
 
         itemContainerMap.put(itemContainer.getContainerId(), conControl);
     }
 
+    @Nonnull
     private org.illarion.nifty.controls.ItemContainer buildNewContainer(int slotCount) {
         String containerId = "container" + Integer.toString(++lastContainerId);
         ItemContainerBuilder builder = new ItemContainerBuilder(containerId, "NoTitle");
@@ -590,6 +592,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
         return prefix;
     }
 
+    @Nonnull
     private static String buildTitle(@Nonnull ItemContainer container) {
         String title = container.getTitle();
 
@@ -610,6 +613,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
         }
     }
 
+    @Nonnull
     private static String getShortenedDescription(
             @Nonnull String description, @Nonnull String expansion, @Nonnull Font usedFont, int maxWidth) {
         if (maxWidth <= 0) {
