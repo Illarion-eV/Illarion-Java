@@ -190,6 +190,7 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
 
     @Override
     public void update(@Nonnull GameContainer container, int delta) {
+        parentTile.updateColor(delta);
         if (tileLightEffect == null) {
             try {
                 tileLightEffect = container.getEngine().getAssets().getEffectManager().getTileLightEffect(true);
