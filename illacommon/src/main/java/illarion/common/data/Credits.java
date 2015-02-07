@@ -71,6 +71,7 @@ public final class Credits {
      * Be aware, this class will load all the text and objects required to display the credits. Only do so in case
      * you really want to display this stuff.
      */
+    @SuppressWarnings("OverlyLongMethod")
     private Credits() {
         singlePosList = new ArrayList<>();
         multiPosList = new ArrayList<>();

@@ -50,6 +50,7 @@ public final class SkillLoader {
     /**
      * Load the skills from the XML file.
      */
+    @SuppressWarnings("OverlyLongMethod")
     public static void load() {
         if (loadingFinished) {
             return;
@@ -149,6 +150,8 @@ public final class SkillLoader {
                     } catch (NumberFormatException e) {
                         throw new XmlPullParserException("Parsing the ID attribute failed.", parser, e);
                     }
+                    break;
+                default:
                     break;
             }
         }
