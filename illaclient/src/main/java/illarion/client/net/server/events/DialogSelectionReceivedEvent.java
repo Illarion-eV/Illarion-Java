@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,10 +16,6 @@
 package illarion.client.net.server.events;
 
 import illarion.client.world.items.SelectionItem;
-import illarion.common.util.ArrayEnumeration;
-
-import javax.annotation.Nonnull;
-import java.util.Iterator;
 
 /**
  * This event is fired in case the client receives a selection dialog from the server that is supposed to be displayed.
@@ -27,7 +23,7 @@ import java.util.Iterator;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class DialogSelectionReceivedEvent extends AbstractDialogReceivedEvent
-        implements Iterable<SelectionItem>, ServerEvent {
+        implements ServerEvent {
     /**
      * The message displayed in the dialog.
      */
@@ -47,7 +43,7 @@ public final class DialogSelectionReceivedEvent extends AbstractDialogReceivedEv
      * @param dialogItems the items to be displayed in this dialog
      */
     public DialogSelectionReceivedEvent(
-            final int dialogId, final String dialogTitle, final String message, final SelectionItem... dialogItems) {
+            int dialogId, String dialogTitle, String message, SelectionItem... dialogItems) {
         super(dialogId, dialogTitle);
         this.message = message;
         options = dialogItems;
@@ -79,17 +75,11 @@ public final class DialogSelectionReceivedEvent extends AbstractDialogReceivedEv
      * @throws IndexOutOfBoundsException in case index is less then 0 or larger or equal to {@link
      * #getOptionCount()}.
      */
-    public SelectionItem getOption(final int index) {
+    public SelectionItem getOption(int index) {
         if ((index < 0) || (index >= options.length)) {
             throw new IndexOutOfBoundsException();
         }
 
         return options[index];
-    }
-
-    @Nonnull
-    @Override
-    public Iterator<SelectionItem> iterator() {
-        return new ArrayEnumeration<>(options);
     }
 }

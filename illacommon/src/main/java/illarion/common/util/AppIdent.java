@@ -15,6 +15,8 @@
  */
 package illarion.common.util;
 
+import org.jetbrains.annotations.Contract;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;
@@ -118,6 +120,7 @@ public class AppIdent implements Externalizable {
      * @return the name of the application
      */
     @Nonnull
+    @Contract(pure = true)
     public String getApplicationName() {
         return appName;
     }
@@ -128,6 +131,7 @@ public class AppIdent implements Externalizable {
      * @return the version of the application or a empty string in case the version is unknown
      */
     @Nonnull
+    @Contract(pure = true)
     public String getApplicationVersion() {
         return appVersion;
     }
@@ -138,6 +142,7 @@ public class AppIdent implements Externalizable {
      * @return the application root version
      */
     @Nonnull
+    @Contract(pure = true)
     public String getApplicationRootVersion() {
         int indexOfSeparator = appVersion.indexOf('-');
         if (indexOfSeparator == -1) {
@@ -151,6 +156,7 @@ public class AppIdent implements Externalizable {
      *
      * @return the commit count
      */
+    @Contract(pure = true)
     public int getCommitCount() {
         int indexOfSeparator = appVersion.indexOf('-');
         if (indexOfSeparator == -1) {
@@ -173,6 +179,7 @@ public class AppIdent implements Externalizable {
      * @return the identifier of the application
      */
     @Nonnull
+    @Contract(pure = true)
     public String getApplicationIdentifier() {
         if (appVersion.isEmpty()) {
             return appName;

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,13 +15,14 @@
  */
 package illarion.easynpc.gui;
 
-import illarion.common.util.ArrayEnumeration;
 import illarion.easynpc.Lang;
 import illarion.easynpc.docu.DocuEntry;
 import illarion.easynpc.docu.DocuRoot;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -29,7 +30,10 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreeNode;
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 
 /**
  * This dialog is the help browser used to display the embedded documentation of
@@ -38,11 +42,14 @@ import java.util.Enumeration;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class DocuBrowser extends JDialog {
+    @Immutable
     private final class DocuTreeNode implements TreeNode {
         @Nullable
-        private final DocuTreeNode[] children;
+        private final List<DocuTreeNode> children;
         @Nonnull
         private final DocuEntry nodeEntry;
+
+        @Nullable
         private final DocuTreeNode parentNode;
         @Nullable
         private final String title;
@@ -51,7 +58,7 @@ public final class DocuBrowser extends JDialog {
             this(entry, null);
         }
 
-        public DocuTreeNode(@Nonnull DocuEntry entry, DocuTreeNode parent) {
+        public DocuTreeNode(@Nonnull DocuEntry entry, @Nullable DocuTreeNode parent) {
             nodeEntry = entry;
             parentNode = parent;
             title = entry.getTitle();
@@ -59,21 +66,23 @@ public final class DocuBrowser extends JDialog {
             if (entry.getChildCount() == 0) {
                 children = null;
             } else {
-                children = new DocuTreeNode[entry.getChildCount()];
+                List<DocuTreeNode> childList = new ArrayList<>();
 
-                for (int i = 0; i < children.length; i++) {
-                    children[i] = new DocuTreeNode(entry.getChild(i), this);
+                for (int i = 0; i < entry.getChildCount(); i++) {
+                    childList.add(new DocuTreeNode(entry.getChild(i), this));
                 }
+                children = Collections.unmodifiableList(childList);
             }
         }
 
-        @Nullable
+        @Nonnull
         @Override
+        @Contract(pure = true)
         public Enumeration<DocuTreeNode> children() {
             if (children == null) {
-                return null;
+                return Collections.emptyEnumeration();
             }
-            return new ArrayEnumeration<>(children);
+            return Collections.enumeration(children);
         }
 
         /**
@@ -84,20 +93,22 @@ public final class DocuBrowser extends JDialog {
         }
 
         @Override
+        @Contract(value = "-> true", pure = true)
         public boolean getAllowsChildren() {
             return true;
         }
 
         @Nullable
         @Override
+        @Contract(pure = true)
         public TreeNode getChildAt(int childIndex) {
             if (children == null) {
                 return null;
             }
-            if ((childIndex < 0) || (childIndex >= children.length)) {
+            if ((childIndex < 0) || (childIndex >= children.size())) {
                 return null;
             }
-            return children[childIndex];
+            return children.get(childIndex);
         }
 
         @Override
@@ -105,36 +116,49 @@ public final class DocuBrowser extends JDialog {
             if (children == null) {
                 return 0;
             }
-            return children.length;
+            return children.size();
         }
 
         @Override
-        public int getIndex(TreeNode node) {
+        @Contract(pure = true)
+        public int getIndex(@Nonnull TreeNode node) {
             if (children == null) {
                 return -1;
             }
-            for (int i = 0; i < children.length; i++) {
-                if (children[i].equals(node)) {
-                    return i;
-                }
+
+            if (node instanceof DocuTreeNode) {
+                return getIndex((DocuTreeNode) node);
             }
             return -1;
         }
 
+        @Contract(pure = true)
+        public int getIndex(@Nonnull DocuTreeNode node) {
+            if (children == null) {
+                return -1;
+            }
+
+            return children.indexOf(node);
+        }
+
         @Override
+        @Nullable
+        @Contract(pure = true)
         public TreeNode getParent() {
             return parentNode;
         }
 
         @Override
+        @Contract(pure = true)
         public boolean isLeaf() {
             return children == null;
         }
 
         @Nonnull
         @Override
+        @Contract(pure = true)
         public String toString() {
-            return title;
+            return (title == null) ? "<null>" : title;
         }
     }
 
