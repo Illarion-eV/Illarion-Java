@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,17 +16,14 @@
 package illarion.download.launcher;
 
 import illarion.common.util.DirectoryManager;
-import illarion.common.util.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,15 +37,8 @@ public final class JavaLauncher {
     /**
      * This instance of the logger takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(JavaLauncher.class);
-
-    private boolean cancelExecution;
-
-    /**
-     * The reader that receives the console output of the launched application.
-     */
-    @Nullable
-    private BufferedReader outputReader;
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(JavaLauncher.class);
 
     /**
      * This text contains the error data in case the launch failed.
@@ -57,30 +47,12 @@ public final class JavaLauncher {
 
     private final boolean snapshot;
 
-    @Nonnull
-    private final Timer launchTimer;
-
     /**
      * Construct a new launcher and set the classpath and the class to launch.
      */
     @SuppressWarnings("nls")
     public JavaLauncher(boolean snapshot) {
         this.snapshot = snapshot;
-
-        launchTimer = new Timer(10000, new Runnable() {
-            @Override
-            public void run() {
-                cancelExecution = true;
-                if (outputReader != null) {
-                    try {
-                        outputReader.close();
-                    } catch (IOException ignored) {
-                    }
-                }
-            }
-        });
-        launchTimer.stop();
-        launchTimer.setRepeats(false);
     }
 
     /**
@@ -113,7 +85,7 @@ public final class JavaLauncher {
                 if (launchCallList(callList)) {
                     return true;
                 } else {
-                    LOGGER.error("Error while launching application: {}", errorData);
+                    log.error("Error while launching application: {}", errorData);
                 }
             }
         }
@@ -144,8 +116,8 @@ public final class JavaLauncher {
                             int minorVersion = Integer.parseInt(matcher.group(3));
                             int buildNumber = Integer.parseInt(matcher.group(4));
 
-                            LOGGER.info("Matched Java version to {}.{}.{}_b{}", mainVersion, majorVersion, minorVersion,
-                                        buildNumber);
+                            log.info("Matched Java version to {}.{}.{}_b{}", mainVersion, majorVersion, minorVersion,
+                                    buildNumber);
 
                             return mainVersion >= 1 && majorVersion >= 7 && buildNumber >= 21;
                         }
@@ -154,7 +126,7 @@ public final class JavaLauncher {
             }
             process.destroy();
         } catch (IOException e) {
-            LOGGER.error("Launching {} failed.", executable);
+            log.error("Launching {} failed.", executable);
         }
         return false;
     }
@@ -202,7 +174,7 @@ public final class JavaLauncher {
      * @param callList the call list to print
      */
     private static void printCallList(@Nonnull List<String> callList) {
-        if (LOGGER.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             StringBuilder debugBuilder = new StringBuilder();
             debugBuilder.append("Calling: ");
             debugBuilder.append(System.getProperty("line.separator"));
@@ -210,7 +182,7 @@ public final class JavaLauncher {
             for (String aCallList : callList) {
                 debugBuilder.append(aCallList).append(' ');
             }
-            LOGGER.debug(debugBuilder.toString());
+            log.debug(debugBuilder.toString());
         }
     }
 
@@ -225,34 +197,44 @@ public final class JavaLauncher {
             ProcessBuilder pBuilder = new ProcessBuilder(callList);
 
             Path workingDirectory = DirectoryManager.getInstance().getWorkingDirectory();
-            if (workingDirectory != null) {
-                pBuilder.directory(workingDirectory.toFile());
-            }
+            pBuilder.directory(workingDirectory.toFile());
             pBuilder.redirectErrorStream(true);
             Process proc = pBuilder.start();
-            proc.getOutputStream().close();
+
+            //noinspection EmptyTryBlock
+            try (OutputStream ignored = proc.getOutputStream()) {
+            }
 
             StringBuilder outputBuffer = new StringBuilder();
-            outputReader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+            try (final BufferedReader outputReader = new BufferedReader(
+                    new InputStreamReader(proc.getInputStream(), Charset.defaultCharset()))) {
 
-            launchTimer.start();
-            cancelExecution = false;
+                TimerTask timeoutTask = new TimerTask() {
+                    @Override
+                    public void run() {
+                        try {
+                            outputReader.close();
+                        } catch (IOException ignored) {
+                            // nothing to do
+                        }
+                    }
+                };
+                new Timer().schedule(timeoutTask, 10000);
 
-            while (true) {
-                if (cancelExecution) {
-                    throw new IOException("Response Timeout.");
+                while (true) {
+                    String line = outputReader.readLine();
+                    if (line == null) {
+                        errorData = outputBuffer.toString().trim();
+                        return false;
+                    }
+                    if (line.endsWith("Startup done.")) {
+                        timeoutTask.cancel();
+                        outputReader.close();
+                        return true;
+                    }
+                    outputBuffer.append(line);
+                    outputBuffer.append('\n');
                 }
-                String line = outputReader.readLine();
-                if (line == null) {
-                    errorData = outputBuffer.toString().trim();
-                    return false;
-                }
-                if (line.endsWith("Startup done.")) {
-                    outputReader.close();
-                    return true;
-                }
-                outputBuffer.append(line);
-                outputBuffer.append('\n');
             }
         } catch (@Nonnull Exception e) {
             StringWriter sWriter = new StringWriter();
@@ -261,15 +243,6 @@ public final class JavaLauncher {
             writer.flush();
             errorData = sWriter.toString();
             return false;
-        } finally {
-            if (outputReader != null) {
-                try {
-                    outputReader.close();
-                } catch (@Nonnull IOException e) {
-                    // nothing
-                }
-            }
-            outputReader = null;
         }
     }
 

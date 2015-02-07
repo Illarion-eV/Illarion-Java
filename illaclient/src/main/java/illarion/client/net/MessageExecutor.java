@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,6 +16,7 @@
 package illarion.client.net;
 
 import illarion.client.net.server.AbstractReply;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -77,11 +78,13 @@ final class MessageExecutor {
 
         return new Future<Boolean>() {
             @Override
+            @Contract(value = "_ -> false", pure = true)
             public boolean cancel(boolean mayInterruptIfRunning) {
                 return false;
             }
 
             @Override
+            @Contract(value = "-> false", pure = true)
             public boolean isCancelled() {
                 return false;
             }
@@ -92,6 +95,7 @@ final class MessageExecutor {
             }
 
             @Override
+            @Nonnull
             public Boolean get() throws InterruptedException, ExecutionException {
                 try {
                     return get(1, TimeUnit.HOURS);
@@ -101,6 +105,7 @@ final class MessageExecutor {
             }
 
             @Override
+            @Nonnull
             public Boolean get(long timeout, @Nonnull TimeUnit unit)
                     throws InterruptedException, ExecutionException, TimeoutException {
                 return executorService.awaitTermination(timeout, unit);

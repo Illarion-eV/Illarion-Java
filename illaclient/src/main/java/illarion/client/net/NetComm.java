@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,7 +21,6 @@ import illarion.client.crash.NetCommCrashHandler;
 import illarion.client.net.client.AbstractCommand;
 import illarion.client.net.client.KeepAliveCmd;
 import illarion.client.util.ConnectionPerformanceClock;
-import illarion.common.util.Timer;
 import javolution.text.TextBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,8 +35,7 @@ import java.nio.channels.spi.SelectorProvider;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 /**
  * Network communication interface. All activities like sending and transmitting of messages and commands in handled
@@ -73,26 +71,18 @@ public final class NetComm {
     private static final int FIRST_PRINT_CHAR = 65;
 
     /**
-     * Delay in ms before the first render of the screen. This is needed to give the network interface some time to
-     * fetch the data.
-     */
-    private static final int INITIAL_DELAY = 500;
-
-    /**
-     * The delay in ms between two keep alive commands that are send to ensure the server that the client is still
-     * working and the connection is stable. Now set to 10 seconds.
-     */
-    private static final int KEEP_ALIVE_DELAY = 500;
-
-    /**
      * The instance of the logger that is used to write out the data.
      */
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(NetComm.class);
 
     /**
      * General time to wait in case its needed that other threads need to react on some input.
      */
     private static final int THREAD_WAIT_TIME = 100;
+
+    @Nonnull
+    private final ScheduledExecutorService keepAliveExecutor;
 
     /**
      * The receiver that accepts and decodes data that was received from the server.
@@ -124,6 +114,8 @@ public final class NetComm {
      */
     public NetComm() {
         ReplyFactory.getInstance();
+
+        keepAliveExecutor = new ScheduledThreadPoolExecutor(1);
     }
 
     /**
@@ -199,10 +191,11 @@ public final class NetComm {
         try {
             Servers usedServer = IllaClient.getInstance().getUsedServer();
 
-            String serverAddress;
+            @Nonnull String serverAddress;
             int serverPort;
             if (usedServer == Servers.customserver) {
-                serverAddress = IllaClient.getCfg().getString("serverAddress");
+                String configServer = IllaClient.getCfg().getString("serverAddress");
+                serverAddress = (configServer == null) ? Servers.customserver.getServerHost() : configServer;
                 serverPort = IllaClient.getCfg().getInteger("serverPort");
             } else {
                 serverAddress = usedServer.getServerHost();
@@ -218,11 +211,6 @@ public final class NetComm {
             if (!socket.connect(address)) {
                 while (socket.isConnectionPending()) {
                     socket.finishConnect();
-                    try {
-                        Thread.sleep(1);
-                    } catch (@Nonnull InterruptedException e) {
-                        log.warn("Waiting time for connection finished got interrupted");
-                    }
                 }
             }
 
@@ -232,27 +220,21 @@ public final class NetComm {
             inputThread.setUncaughtExceptionHandler(NetCommCrashHandler.getInstance());
             inputThread.start();
 
-            keepAliveTimer = new Timer(INITIAL_DELAY, KEEP_ALIVE_DELAY, new Runnable() {
+            keepAliveExecutor.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
                     if (ConnectionPerformanceClock.isReadyForNewPing()) {
                         ConnectionPerformanceClock.notifySendToNetComm();
-                        sendCommand(keepAliveCmd);
+                        sendCommand(new KeepAliveCmd());
                     }
                 }
-            });
-            keepAliveTimer.setRepeats(true);
-            keepAliveTimer.start();
+            }, 500, 500, TimeUnit.MILLISECONDS);
         } catch (@Nonnull IOException e) {
             log.error("Connection error");
             return false;
         }
         return true;
     }
-
-    private final KeepAliveCmd keepAliveCmd = new KeepAliveCmd();
-    @Nullable
-    private Timer keepAliveTimer;
 
     /**
      * Disconnect the client-server connection and shut the socket along with all threads for sending and receiving
@@ -263,9 +245,13 @@ public final class NetComm {
         setLoginDone(false);
         try {
             Collection<Future<?>> terminationFutures = new ArrayList<>();
-            if (keepAliveTimer != null) {
-                keepAliveTimer.stop();
-                keepAliveTimer = null;
+
+            keepAliveExecutor.shutdown();
+            while (!keepAliveExecutor.isTerminated()) {
+                try {
+                    keepAliveExecutor.awaitTermination(1, TimeUnit.SECONDS);
+                } catch (InterruptedException ignore) {
+                }
             }
             // stop threads
             if (sender != null) {

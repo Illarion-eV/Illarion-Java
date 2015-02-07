@@ -15,6 +15,8 @@
  */
 package illarion.client;
 
+import org.jetbrains.annotations.Contract;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -93,6 +95,7 @@ public enum Servers {
      *
      * @return the client version that need to be transferred
      */
+    @Contract(pure = true)
     public int getClientVersion() {
         return clientVersion;
     }
@@ -102,6 +105,8 @@ public enum Servers {
      *
      * @return the host address of the server
      */
+    @Nonnull
+    @Contract(pure = true)
     public String getServerHost() {
         return serverAddr;
     }
@@ -111,6 +116,8 @@ public enum Servers {
      *
      * @return the name of the server
      */
+    @Nonnull
+    @Contract(pure = true)
     public String getServerName() {
         return serverName;
     }
@@ -120,10 +127,12 @@ public enum Servers {
      *
      * @return the port that is listened by the server
      */
+    @Contract(pure = true)
     public int getServerPort() {
         return serverPort;
     }
 
+    @Contract(pure = true)
     public int getServerKey() {
         return serverKey;
     }
