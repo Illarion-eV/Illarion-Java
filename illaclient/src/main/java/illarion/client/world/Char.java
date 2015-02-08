@@ -1144,10 +1144,12 @@ public final class Char implements AnimatedMove {
         if (move.isRunning()) {
             log.warn("{}: Received new animation {} while move was in progress.", this, newAnimation);
         }
+
         if (avatar == null) {
             log.debug("{}: Starting a new animation is impossible. No avatar!", this);
             return; // avatar not ready, discard animation
         }
+
         if (!isAnimationAvailable(newAnimation)) {
             log.debug("{}: Animation {} is not available.", this, animation);
             MapTile tile = World.getMap().getMapAt(getLocation());
@@ -1173,6 +1175,11 @@ public final class Char implements AnimatedMove {
         animation = newAnimation;
         log.debug("{}: Starting new animation: {} for {}ms", this, animation, duration);
         updateAvatar();
+
+        if (avatar == null) {
+            log.debug("{}: After updating the avatar, the avatar is gone. Animation impossible.", this);
+            return; // avatar not ready, discard animation
+        }
         avatar.animate(duration, false, shiftAnimation, length);
     }
 
