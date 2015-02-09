@@ -89,22 +89,22 @@ public final class InteractionManager {
         if (draggedObject == null) {
             LOGGER.warn("Dropping to container called without a active dragging operation.");
             cancelDragging();
-        }
+        }else {
+            ItemContainer itemContainer = World.getPlayer().getContainer(container);
+            if (itemContainer == null) { // If the container is not valid
+                LOGGER.error("Container a item was dropped at was not found.");
+            }else {
 
-        ItemContainer itemContainer = World.getPlayer().getContainer(container);
-        if (itemContainer == null) {
-            LOGGER.error("Container a item was dropped at was not found.");
-            return;
-        }
-
-        try {
-            InteractiveContainerSlot targetSlot = itemContainer.getSlot(slot).getInteractive();
-            draggedObject.dragTo(targetSlot, count);
-        } catch (@Nonnull IndexOutOfBoundsException ex) {
-            LOGGER.error("Tried to drop a item at a container slot that does not exist.", ex);
-        } finally {
-            cancelDragging();
-        }
+                try {
+                    InteractiveContainerSlot targetSlot = itemContainer.getSlot(slot).getInteractive();
+                    draggedObject.dragTo(targetSlot, count); // Enter the contents into the slot
+                } catch (@Nonnull IndexOutOfBoundsException ex) {
+                    LOGGER.error("Tried to drop a item at a container slot that does not exist.", ex);
+                } finally {
+                    cancelDragging(); // Always clean up the action
+                }// End finally
+            }// End else
+        } // End else
     }
 
     /**
