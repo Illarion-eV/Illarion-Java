@@ -18,6 +18,10 @@ package org.illarion.engine.graphic;
 import javax.annotation.Nonnull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.awt.GraphicsEnviroment;
+import java.awt.GraphicsDevice;
+import java.awt.DisplayMode;
+
 
 /**
  * This class is used to supply and compare possible display resolutions.
@@ -51,6 +55,30 @@ public final class GraphicResolution {
      */
     private final int width;
 
+    /**
+     * Default Constructor for a graphic resolution definition.
+     * Sets width = (the local screen width) * 0.75
+     * height = (the local screen height) * 0.75
+     * refreshRate = local refreshRate;
+     */
+    public GraphicResolution(){
+        builder = new StringBuilder();
+
+        GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice gd = environment.getDefaultScreenDevice();
+        DisplayMode dm = gd.getDisplayMode();
+        // Sets the width and height equal to the screen.
+        height = dm.getHeight();
+        width = dm.getWidth();
+        // To keep the non-fullscreen version from taking up the whole screen, mutltiply by 0.75
+        height *= 0.75;
+        width *=  0.75;
+        // Automatically detect refresh rate
+        refreshRate = dm.getRefreshRate();
+        // Take the Screen Resolution of the client computer
+        // Fetches the local Bit Depth in Bits-Per-Pixel
+        bpp = dm.getBitDepth();
+    }
     /**
      * Constructor for a graphic resolution definition.
      *
