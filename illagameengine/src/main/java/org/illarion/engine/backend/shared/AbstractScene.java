@@ -101,8 +101,12 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
     @Override
     public final void updateElementLocation(@Nonnull SceneElement element) {
         synchronized (sceneElements) {
+            // If element is not found, insertIndex = (where the element should be added * -1) - 1
             int insertIndex = Collections.binarySearch(sceneElements, element, this);
-            int checkIndex = (insertIndex < 0) ? (-insertIndex - 1) : insertIndex;
+            // If the item wasn't found, set checkIndex = the proper location
+            int checkIndex = (insertIndex < 0) ? ((insertIndex + 1) * -1) : insertIndex;
+            // If checkIndex is outside our ArrayList, set it to the last element
+            checkIndex = (checkIndex < sceneElements.size()) ? (checkIndex = sceneElements.size() - 1) : checkIndex;
             SceneElement testElement = sceneElements.get(checkIndex);
             if (!Objects.equals(testElement, element)) {
                 removeElement(element);
