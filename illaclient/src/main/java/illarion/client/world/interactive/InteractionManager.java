@@ -87,24 +87,24 @@ public final class InteractionManager {
      */
     public void dropAtContainer(int container, int slot, @Nonnull ItemCount count) {
         if (draggedObject == null) {
-            LOGGER.warn("Dropping to container called without a active dragging operation.");
+            LOGGER.warn("Dropping to container called without an active dragging operation.");
             cancelDragging();
-        }
+        }else { // If cancelDragging() didn't stop the sequence, don't do anything anyway
+            ItemContainer itemContainer = World.getPlayer().getContainer(container);
+            if (itemContainer == null) { // If the container is not valid
+                LOGGER.error("Container an item was dropped at was not found.");
+            }else {
 
-        ItemContainer itemContainer = World.getPlayer().getContainer(container);
-        if (itemContainer == null) {
-            LOGGER.error("Container a item was dropped at was not found.");
-            return;
-        }
-
-        try {
-            InteractiveContainerSlot targetSlot = itemContainer.getSlot(slot).getInteractive();
-            draggedObject.dragTo(targetSlot, count);
-        } catch (@Nonnull IndexOutOfBoundsException ex) {
-            LOGGER.error("Tried to drop a item at a container slot that does not exist.", ex);
-        } finally {
-            cancelDragging();
-        }
+                try {
+                    InteractiveContainerSlot targetSlot = itemContainer.getSlot(slot).getInteractive();
+                    draggedObject.dragTo(targetSlot, count); // Enter the contents into the slot
+                } catch (@Nonnull IndexOutOfBoundsException ex) {
+                    LOGGER.error("Tried to drop an item at a container slot that does not exist.", ex);
+                } finally {
+                    cancelDragging(); // Always clean up the action
+                }// End finally
+            }// End else
+        } // End else
     }
 
     /**
@@ -115,7 +115,7 @@ public final class InteractionManager {
      */
     public void dropAtInventory(int slot, @Nonnull ItemCount count) {
         if (draggedObject == null) {
-            LOGGER.warn("Dropping to inventory called without a active dragging operation.");
+            LOGGER.warn("Dropping to inventory called without an active dragging operation.");
             cancelDragging();
         }
 
@@ -123,7 +123,7 @@ public final class InteractionManager {
             InteractiveInventorySlot targetSlot = World.getPlayer().getInventory().getItem(slot).getInteractive();
             draggedObject.dragTo(targetSlot, count);
         } catch (@Nonnull IndexOutOfBoundsException ex) {
-            LOGGER.error("Tried to drop a item at a inventory slot that does not exist.", ex);
+            LOGGER.error("Tried to drop an item at an inventory slot that does not exist.", ex);
         } finally {
             cancelDragging();
         }
@@ -138,7 +138,7 @@ public final class InteractionManager {
      */
     public void dropAtMap(int x, int y, @Nonnull ItemCount count) {
         if (draggedObject == null) {
-            LOGGER.warn("Dropping to map called without a active dragging operation.");
+            LOGGER.warn("Dropping to map called without an active dragging operation.");
             cancelDragging();
         }
 
@@ -249,7 +249,7 @@ public final class InteractionManager {
                     return;
                 }
             } catch (@Nonnull IndexOutOfBoundsException ex) {
-                LOGGER.error("Tried to start dragging from a inventory slot that does not exist?!", ex);
+                LOGGER.error("Tried to start dragging from an inventory slot that does not exist?!", ex);
             }
         }
         if (endOfDragOp != null) {
@@ -269,14 +269,14 @@ public final class InteractionManager {
 
             Item draggedItem = targetTile.getTopItem();
             if (draggedItem == null) {
-                LOGGER.error("Tried start dragging on a tile without a item to drag.");
+                LOGGER.error("Tried to start dragging on a tile without an item to drag.");
             } else if (interactiveMapTile.canDrag()) {
                 startDragging(interactiveMapTile);
                 endOfDragAction = endOfDragOp;
                 amount = draggedItem.getCount();
                 return;
             } else {
-                LOGGER.error("Tried start dragging on a tile without a draggable item.");
+                LOGGER.error("Tried to start dragging on a tile without a draggable item.");
             }
         }
         if (endOfDragOp != null) {
