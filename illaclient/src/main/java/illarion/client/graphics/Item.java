@@ -67,6 +67,12 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
     private ItemCount count;
 
     /**
+     * The ID of this item.
+     */
+    @Nonnull
+    private final ItemId itemId;
+
+    /**
      * The text tag is the rendered text that shows the count of the item next to it.
      */
     @Nullable
@@ -100,6 +106,8 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      */
     public Item(@Nonnull ItemTemplate template, @Nonnull MapTile parentTile) {
         super(template);
+
+        itemId = new ItemId(template.getId());
 
         // an animated item
         if ((template.getAnimationSpeed() > 0) && (template.getFrames() > 1)) {
@@ -214,7 +222,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      */
     @Nonnull
     public ItemId getItemId() {
-        return new ItemId(getTemplate().getId());
+        return itemId;
     }
 
     private int showHighlight;

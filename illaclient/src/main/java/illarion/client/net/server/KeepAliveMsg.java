@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,6 +19,7 @@ import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.util.ConnectionPerformanceClock;
 import illarion.common.net.NetCommReader;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -29,20 +30,23 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_KEEP_ALIVE)
-public class KeepAliveMsg extends AbstractReply {
+public final class KeepAliveMsg implements ServerReply {
     @Override
-    public void decode(NetCommReader reader) throws IOException {
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
         ConnectionPerformanceClock.notifyNetCommDecode();
-    }
-
-    @Override
-    public void executeUpdate() {
-        ConnectionPerformanceClock.notifyPublishToClient();
     }
 
     @Nonnull
     @Override
+    public ServerReplyResult execute() {
+        ConnectionPerformanceClock.notifyPublishToClient();
+        return ServerReplyResult.Success;
+    }
+
+    @Nonnull
+    @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString("");
+        return Utilities.toString(KeepAliveMsg.class);
     }
 }

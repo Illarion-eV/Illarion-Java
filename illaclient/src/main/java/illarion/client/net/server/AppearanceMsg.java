@@ -26,6 +26,7 @@ import illarion.common.net.NetCommReader;
 import illarion.common.types.CharacterId;
 import illarion.common.types.ItemId;
 import org.illarion.engine.graphic.Color;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,17 +35,15 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
- * Servermessage: Character appearance (@link CommandList#MSG_APPEARANCE}).
+ * Server message: Character appearance
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_APPEARANCE)
-public final class AppearanceMsg extends AbstractGuiMsg {
-    /**
-     * The instance of the logger that is used to write out the data.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(AppearanceMsg.class);
+public final class AppearanceMsg implements ServerReply {
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(AppearanceMsg.class);
 
     /**
      * Conversation value for the scale value received from the server and the value the client actually uses.
@@ -60,11 +59,13 @@ public final class AppearanceMsg extends AbstractGuiMsg {
     /**
      * The name of the character.
      */
+    @Nullable
     private String name;
 
     /**
      * The custom given name of the character.
      */
+    @Nullable
     private String customName;
 
     /**
@@ -75,6 +76,7 @@ public final class AppearanceMsg extends AbstractGuiMsg {
     /**
      * ID of the character this message is about.
      */
+    @Nullable
     private CharacterId charId;
 
     /**
@@ -85,6 +87,7 @@ public final class AppearanceMsg extends AbstractGuiMsg {
     /**
      * The color of the hair
      */
+    @Nullable
     private Color hairColor;
 
     /**
@@ -93,13 +96,14 @@ public final class AppearanceMsg extends AbstractGuiMsg {
     private short hairID;
 
     /**
-     * Size modificator of the character.
+     * Size modifier of the character.
      */
     private short size;
 
     /**
      * The color of the skin
      */
+    @Nullable
     private Color skinColor;
 
     /**
@@ -120,15 +124,6 @@ public final class AppearanceMsg extends AbstractGuiMsg {
         itemSlots = new ItemId[Inventory.SLOT_COUNT];
     }
 
-    /**
-     * Decode the appearance data the receiver got and prepare it for the
-     * execution.
-     *
-     * @param reader the receiver that got the data from the server that needs
-     * to be decoded
-     * @throws IOException thrown in case there was not enough data received to
-     * decode the full message
-     */
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         charId = new CharacterId(reader);
@@ -152,17 +147,19 @@ public final class AppearanceMsg extends AbstractGuiMsg {
         deadFlag = reader.readUByte() == 1;
     }
 
-    /**
-     * Execute the message and send the decoded appearance data to the rest of the client.
-     */
-    @SuppressWarnings("nls")
+    @Nonnull
     @Override
-    public void executeUpdate() {
+    public ServerReplyResult execute() {
+        if ((skinColor == null) || (hairColor == null)) {
+            throw new NotDecodedException();
+        }
+
         @Nullable Char character = World.getPeople().getCharacter(charId);
 
         // Character not found.
         if (character == null) {
-            return;
+            log.error("Received appearance message for non-existing character: {}", charId);
+            return ServerReplyResult.Failed;
         }
 
         character.setScale(size / SCALE_MOD);
@@ -191,6 +188,8 @@ public final class AppearanceMsg extends AbstractGuiMsg {
         character.setAttribute(CharacterAttribute.HitPoints, hitPoints);
         character.setAlive(!deadFlag);
         character.updateLight();
+
+        return ServerReplyResult.Success;
     }
 
     /**
@@ -280,21 +279,15 @@ public final class AppearanceMsg extends AbstractGuiMsg {
             case 117: //Ettin
                 return 117;
             default:
-                LOGGER.warn("Unexpected race id {}. Using appearance with the same ID by chance.", race);
+                log.warn("Unexpected race id {}. Using appearance with the same ID by chance.", race);
                 return race;
         }
     }
 
-    /**
-     * Get the data of this appearance message as string.
-     *
-     * @return the string that contains the values that were decoded for this
-     * message
-     */
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString(charId + " app=" + appearance + " size=" + size);
+        return Utilities.toString(AppearanceMsg.class, charId);
     }
 }

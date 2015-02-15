@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,14 +20,14 @@ import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.Location;
+import org.jetbrains.annotations.Contract;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.*;
 
 /**
  * This is the server message that handles the server messages about the available quests in range of the player.
@@ -35,63 +35,79 @@ import java.util.HashSet;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_QUEST_AVAILABILITY)
-public class QuestAvailabilityMsg extends AbstractGuiMsg {
+public final class QuestAvailabilityMsg implements ServerReply {
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(QuestAvailabilityMsg.class);
+
     /**
      * This array contains the available quests in range of the character.
      */
     @Nullable
-    private Location[] availableQuests;
+    private List<Location> availableQuests;
 
     /**
      * This array contains the quests that become available to the player soon.
      */
     @Nullable
-    private Location[] availableSoonQuests;
+    private List<Location> availableSoonQuests;
 
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         int availableQuestCount = reader.readUShort();
         if (availableQuestCount > 0) {
-            availableQuests = new Location[availableQuestCount];
+            availableQuests = Arrays.asList(new Location[availableQuestCount]);
             for (int i = 0; i < availableQuestCount; i++) {
-                availableQuests[i] = new Location(reader);
+                availableQuests.set(i, new Location(reader));
             }
+        } else {
+            availableQuests = Collections.emptyList();
         }
 
         int soonQuestCount = reader.readUShort();
         if (soonQuestCount > 0) {
-            availableSoonQuests = new Location[soonQuestCount];
+            availableSoonQuests = Arrays.asList(new Location[soonQuestCount]);
             for (int i = 0; i < soonQuestCount; i++) {
-                availableSoonQuests[i] = new Location(reader);
+                availableSoonQuests.set(i, new Location(reader));
             }
-        }
-    }
-
-    @Override
-    public void executeUpdate() {
-        Collection<Location> available;
-        if (availableQuests == null) {
-            available = Collections.emptyList();
         } else {
-            available = new HashSet<>(Arrays.asList(availableQuests));
+            availableSoonQuests = Collections.emptyList();
         }
-
-        Collection<Location> availableSoon;
-        if (availableSoonQuests == null) {
-            availableSoon = Collections.emptyList();
-        } else {
-            availableSoon = new HashSet<>(Arrays.asList(availableSoonQuests));
-        }
-        availableSoon.removeAll(available);
-
-        World.getMap().applyQuestStartLocations(available, availableSoon);
     }
 
     @Nonnull
     @Override
+    public ServerReplyResult execute() {
+        if ((availableQuests == null) || (availableSoonQuests == null)) {
+            throw new NotDecodedException();
+        }
+
+        if (!World.getGameGui().isReady()) {
+            return ServerReplyResult.Reschedule;
+        }
+
+        boolean needToRebuildList = false;
+        for (Location location : availableSoonQuests) {
+            if (availableSoonQuests.contains(location)) {
+                needToRebuildList = true;
+                break;
+            }
+        }
+
+        if (needToRebuildList) {
+            log.warn("Server send at least one location for a quest marker in both lists. Need to rebuild.");
+            Collection<Location> newList = new HashSet<>(availableSoonQuests);
+            newList.removeAll(availableQuests);
+            World.getMap().applyQuestStartLocations(availableQuests, newList);
+        } else {
+            World.getMap().applyQuestStartLocations(availableQuests, availableSoonQuests);
+        }
+        return ServerReplyResult.Success;
+    }
+
+    @Nonnull
+    @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString("Available quests: " + ((availableQuests == null) ? '0' : availableQuests.length) +
-                                " Available soon quests: " +
-                                ((availableSoonQuests == null) ? '0' : availableSoonQuests.length));
+        return Utilities.toString(QuestAvailabilityMsg.class, availableQuests, availableSoonQuests);
     }
 }

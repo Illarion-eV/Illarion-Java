@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,8 +14,7 @@
  * GNU General Public License for more details.
  */
 /**
- * This package contains all messages the server can send to the client to
- * update the state of the client.
+ * This package contains all messages the server can send to the client to update the state of the client.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,18 +18,27 @@ package illarion.client.net.server;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.common.net.NetCommReader;
+import org.jetbrains.annotations.Contract;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
- * Servermessage: Look at description of a character ({@link illarion.client.net.CommandList#MSG_LOOKAT_CHAR}).
+ * Server message: Look at description of a character
+ * <p />
+ * <b>This command is currently not in use.</b>
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_LOOKAT_CHAR)
-public final class LookAtCharMsg extends AbstractReply {
+public final class LookAtCharMsg implements ServerReply {
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(LookAtCharMsg.class);
+
     /**
      * The ID of the character the look at text is related to.
      */
@@ -38,41 +47,26 @@ public final class LookAtCharMsg extends AbstractReply {
     /**
      * The text that is the look at result.
      */
+    @Nullable
     private String text;
 
-    /**
-     * Decode the character look at text data the receiver got and prepare it
-     * for the execution.
-     *
-     * @param reader the receiver that got the data from the server that needs to be decoded
-     * @throws IOException thrown in case there was not enough data received to decode the full message
-     */
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         charId = reader.readUInt();
         text = reader.readString();
     }
 
-    /**
-     * Execute the character look at text message and send the decoded data to the rest of the client.
-     */
+    @Nonnull
     @Override
-    public void executeUpdate() {
-        // final Char ch = Game.getPeople().getCharacter(charId);
-        // if (ch != null) {
-        // ch.showText(text, SpeechMode.normal);
-        // }
+    public ServerReplyResult execute() {
+        log.warn("Received a look at char message for some reason for {} with the text {}", charId, text);
+        return ServerReplyResult.Success;
     }
 
-    /**
-     * Get the data of this character look at text message as string.
-     *
-     * @return the string that contains the values that were decoded for this message
-     */
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString("Char: " + charId + " Message: " + text);
+        return Utilities.toString(LookAtCharMsg.class, charId, text);
     }
 }

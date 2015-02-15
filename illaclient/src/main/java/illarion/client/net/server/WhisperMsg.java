@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,48 +17,61 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.util.ChatHandler;
+import illarion.client.util.ChatHandler.SpeechMode;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.Location;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
- * Servermessage: Whispering ({@link illarion.client.net.CommandList#MSG_WHISPER}).
+ * Server message: Whispering
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_WHISPER)
-public final class WhisperMsg extends AbstractReply {
-
+public final class WhisperMsg implements ServerReply {
     /**
      * The location the text was spoken at.
      */
-    private transient Location loc;
+    @Nullable
+    private Location location;
 
     /**
      * The text that was actually spoken.
      */
+    @Nullable
     private String text;
 
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
-        loc = decodeLocation(reader);
+        location = new Location(reader);
         text = reader.readString();
     }
 
+    @Nonnull
     @Override
-    public void executeUpdate() {
-        World.getChatHandler().handleMessage(text, loc, ChatHandler.SpeechMode.Whisper);
+    public ServerReplyResult execute() {
+        if ((location == null) || (text == null)) {
+            throw new NotDecodedException();
+        }
+
+        if (!World.getGameGui().isReady()) {
+            return ServerReplyResult.Reschedule;
+        }
+
+        World.getChatHandler().handleMessage(text, location, SpeechMode.Whisper);
+        return ServerReplyResult.Success;
     }
 
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString("at " + loc + " \"" + text + '"');
+        return Utilities.toString(WhisperMsg.class, location, text);
     }
 }

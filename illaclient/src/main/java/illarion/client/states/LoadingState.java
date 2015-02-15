@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -38,6 +38,7 @@ public final class LoadingState implements GameState {
     /**
      * The manager of the loading tasks.
      */
+    @Nonnull
     private final Loading loadingManager = new Loading();
 
     @Override

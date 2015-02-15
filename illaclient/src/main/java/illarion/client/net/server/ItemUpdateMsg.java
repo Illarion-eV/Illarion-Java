@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,34 +23,38 @@ import illarion.common.net.NetCommReader;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
- * Servermessage: Update Items on map ( {@link illarion.client.net.CommandList#MSG_UPDATE_ITEMS}).
+ * Server message: Update Items on map
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_UPDATE_ITEMS)
-public final class ItemUpdateMsg extends AbstractReply {
+public final class ItemUpdateMsg implements ServerReply {
     /**
-     * Default size of the array that stores the items on this field. The size is increase automatically if needed.
+     * The value for {@link #newTileMovePoints} to indicate that the field is blocked.
      */
-    private static final int DEFAULT_SIZE = 5;
+    private static final int BLOCKED_MOVEMENT_POINTS = 255;
 
     /**
      * Count values for each item on this map tile.
      */
-    private final List<ItemCount> itemCount = new ArrayList<>(DEFAULT_SIZE);
+    @Nullable
+    private List<ItemCount> itemCount;
 
     /**
      * List of the item IDs on this map tile.
      */
-    private final List<ItemId> itemId = new ArrayList<>(DEFAULT_SIZE);
+    @Nullable
+    private List<ItemId> itemId;
 
     /**
      * Amount of item stacks on the map tile.
@@ -60,54 +64,50 @@ public final class ItemUpdateMsg extends AbstractReply {
     /**
      * Position of the server map that is updated.
      */
-    private Location loc;
-
-    private int newTileMovePoints;
+    private Location location;
 
     /**
-     * Decode the items on tile data the receiver got and prepare it for the execution.
-     *
-     * @param reader the receiver that got the data from the server that needs to be decoded
-     * @throws IOException thrown in case there was not enough data received to decode the full message
+     * The new movement points of the tile.
      */
+    private int newTileMovePoints;
+
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
-        loc = decodeLocation(reader);
+        location = new Location(reader);
 
         itemNumber = reader.readUByte();
-
+        itemId = Arrays.asList(new ItemId[itemNumber]);
+        itemCount = Arrays.asList(new ItemCount[itemNumber]);
         for (int i = 0; i < itemNumber; ++i) {
-            itemId.add(new ItemId(reader));
-            itemCount.add(ItemCount.getInstance(reader));
+            itemId.set(i, new ItemId(reader));
+            itemCount.set(i, ItemCount.getInstance(reader));
         }
         newTileMovePoints = reader.readUByte();
     }
 
-    /**
-     * Execute the items on tile message and send the decoded data to the rest of the client.
-     */
+    @Nonnull
     @Override
-    public void executeUpdate() {
-        MapTile tile = World.getMap().getMapAt(loc);
+    public ServerReplyResult execute() {
+        if ((location == null) || (itemId == null) || (itemCount == null)) {
+            throw new NotDecodedException();
+        }
+
+        MapTile tile = World.getMap().getMapAt(location);
         if (tile != null) {
             tile.updateItems(itemNumber, itemId, itemCount);
-            if (newTileMovePoints == 255) {
+            if (newTileMovePoints == BLOCKED_MOVEMENT_POINTS) {
                 tile.setMovementCost(-1);
             } else {
                 tile.setMovementCost(newTileMovePoints);
             }
         }
+        return ServerReplyResult.Success;
     }
 
-    /**
-     * Get the data of this items on tile message as string.
-     *
-     * @return the string that contains the values that were decoded for this message
-     */
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString("Loc: " + loc + " - Items: " + itemId);
+        return Utilities.toString(ItemUpdateMsg.class, location);
     }
 }

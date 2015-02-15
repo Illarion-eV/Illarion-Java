@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,10 @@
  */
 package illarion.client.world.items;
 
+import illarion.common.types.ItemId;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This item is the entry of a selection dialog that contains a item reference along with a name.
@@ -31,19 +34,16 @@ public class SelectionItem {
     /**
      * The ID of the item.
      */
-    private final int id;
+    @Nullable
+    private final ItemId id;
 
     /**
      * The name of the selection item.
      */
+    @Nonnull
     private final String name;
 
-    /**
-     * Copy constructor.
-     *
-     * @param org the original item
-     */
-    protected SelectionItem(@Nonnull final SelectionItem org) {
+    protected SelectionItem(@Nonnull SelectionItem org) {
         index = org.index;
         id = org.id;
         name = org.name;
@@ -56,7 +56,7 @@ public class SelectionItem {
      * @param itemId the item ID of this item
      * @param itemName the item name of this item
      */
-    public SelectionItem(final int itemIndex, final int itemId, final String itemName) {
+    public SelectionItem(int itemIndex, @Nullable ItemId itemId, @Nonnull String itemName) {
         index = itemIndex;
         id = itemId;
         name = itemName;
@@ -67,7 +67,8 @@ public class SelectionItem {
      *
      * @return the ID of the item
      */
-    public int getId() {
+    @Nullable
+    public ItemId getId() {
         return id;
     }
 

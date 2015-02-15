@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -13,13 +13,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package illarion.client.net.server.events;
+package illarion.client.net.server;
 
 /**
- * This is the common interface for events that are fired in response to a command that was send from the server to
- * the client.
+ * This exception may be raised in case a server message is executed before it was decoded.
  *
- * @author Martin Karing $lt;nitram@illarion.org&gt;
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface ServerEvent {
+public class NotDecodedException extends RuntimeException {
 }

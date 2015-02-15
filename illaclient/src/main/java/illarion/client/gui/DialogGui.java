@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,14 +17,19 @@ package illarion.client.gui;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface DialogGui {
+    int ALL_DIALOGS = -1;
+
     @Nullable
     DialogType getDialogType(int dialogId);
 
     @Nullable
     DialogType getDialogType(int dialogId, @Nonnull DialogType firstType, @Nonnull DialogType... moreTypes);
+
+    void closeDialog(int dialogId, @Nonnull Collection<DialogType> dialogTypes);
 }

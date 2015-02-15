@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,52 +20,46 @@ import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.CharacterId;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
- * Servermessage: ID of the player character (
- * {@link illarion.client.net.CommandList#MSG_PLAYER_ID}).
+ * Server message: ID of the player character
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_PLAYER_ID)
-public final class PlayerIdMsg extends AbstractReply {
+public final class PlayerIdMsg implements ServerReply {
     /**
      * The ID if the character, played with this client.
      */
+    @Nullable
     private CharacterId playerId;
 
-    /**
-     * Decode the player id data the receiver got and prepare it for the execution.
-     *
-     * @param reader the receiver that got the data from the server that needs to be decoded
-     * @throws IOException thrown in case there was not enough data received to decode the full message
-     */
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         playerId = new CharacterId(reader);
     }
 
-    /**
-     * Execute the player id message and send the decoded data to the rest of the client.
-     */
+    @Nonnull
     @Override
-    public void executeUpdate() {
+    public ServerReplyResult execute() {
+        if (playerId == null) {
+            throw new NotDecodedException();
+        }
+
         World.getPlayer().setPlayerId(playerId);
+        return ServerReplyResult.Success;
     }
 
-    /**
-     * Get the data of this player id message as string.
-     *
-     * @return the string that contains the values that were decoded for this message
-     */
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString(playerId.toString());
+        return Utilities.toString(PlayerIdMsg.class, playerId);
     }
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,61 +21,57 @@ import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.CharacterId;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
- * Servermessage: Introduce character ({@link illarion.client.net.CommandList#MSG_INTRODUCE}).
+ * Server message: Introduce character
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_INTRODUCE)
-public final class IntroduceMsg extends AbstractReply {
+public final class IntroduceMsg implements ServerReply {
     /**
      * The ID of the character who is introduced.
      */
+    @Nullable
     private CharacterId charId;
 
     /**
      * The name of the character.
      */
-    private String text;
+    @Nullable
+    private String name;
 
-    /**
-     * Decode the introduce data the receiver got and prepare it for the execution.
-     *
-     * @param reader the receiver that got the data from the server that needs to be decoded
-     * @throws IOException thrown in case there was not enough data received to decode the full message
-     */
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         charId = new CharacterId(reader);
-        text = reader.readString();
+        name = reader.readString();
     }
 
-    /**
-     * Execute the introduce message and send the decoded data to the rest of the client.
-     */
+    @Nonnull
     @Override
-    public void executeUpdate() {
+    public ServerReplyResult execute() {
+        if (name == null) {
+            throw new NotDecodedException();
+        }
+
         Char chara = World.getPeople().getCharacter(charId);
         if (chara != null) {
-            chara.setName(text);
+            chara.setName(name);
+            return ServerReplyResult.Success;
         }
+        return ServerReplyResult.Failed;
     }
 
-    /**
-     * Get the data of this introduce message as string.
-     *
-     * @return the string that contains the values that were decoded for this
-     * message
-     */
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString("Chat(" + charId + ") is named \"" + text + '"');
+        return Utilities.toString(IntroduceMsg.class, charId, name);
     }
 }

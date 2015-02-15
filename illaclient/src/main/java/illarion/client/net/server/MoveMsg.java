@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,23 +23,23 @@ import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
- * Servermessage: Move of a character ( {@link illarion.client.net.CommandList#MSG_MOVE}).
+ * Server message: Move of a character
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_MOVE)
-public final class MoveMsg extends AbstractReply {
-    /**
-     * The instance of the logger that is used to write out the data.
-     */
+public final class MoveMsg implements ServerReply {
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(MoveMsg.class);
 
     /**
@@ -71,12 +71,14 @@ public final class MoveMsg extends AbstractReply {
     /**
      * The ID of the moving character.
      */
+    @Nullable
     private CharacterId charId;
 
     /**
      * The new location of the character.
      */
-    private Location loc;
+    @Nullable
+    private Location location;
 
     /**
      * The moving mode of the character. Valid values are {@link #MODE_NO_MOVE}, {@link #MODE_MOVE}, {@link
@@ -89,110 +91,102 @@ public final class MoveMsg extends AbstractReply {
      */
     private int duration;
 
-    /**
-     * Decode the character move data the receiver got and prepare it for the execution.
-     *
-     * @param reader the receiver that got the data from the server that needs to be decoded
-     * @throws IOException thrown in case there was not enough data received to decode the full message
-     */
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         charId = new CharacterId(reader);
-        loc = decodeLocation(reader);
+        location = new Location(reader);
         mode = reader.readUByte();
         duration = reader.readUShort();
     }
 
-    /**
-     * Execute the character move message and send the decoded data to the rest of the client.
-     */
-    @SuppressWarnings("nls")
+    @Nonnull
     @Override
-    public void executeUpdate() {
-        if ((mode != MODE_NO_MOVE) && (mode != MODE_MOVE) && (mode != MODE_PUSH) && (mode != MODE_RUN) &&
-                (mode != MODE_TOO_EARLY)) {
-            log.warn("Move char message called in unknown mode {}", mode);
-            return;
+    public ServerReplyResult execute() {
+        if ((charId == null) || (location == null)) {
+            throw new NotDecodedException();
+        }
+
+        switch (mode) {
+            case MODE_NO_MOVE:
+            case MODE_MOVE:
+            case MODE_PUSH:
+            case MODE_RUN:
+            case MODE_TOO_EARLY:
+                break;
+            default:
+                log.warn("Move char message called in unknown mode {}", mode);
+                return ServerReplyResult.Failed;
         }
 
         if (World.getPlayer().isPlayer(charId)) {
-            CharMovementMode moveMode;
-            switch (mode) {
-                case MODE_MOVE:
-                    moveMode = CharMovementMode.Walk;
-                    break;
-                case MODE_PUSH:
-                    moveMode = CharMovementMode.Push;
-                    break;
-                case MODE_RUN:
-                    moveMode = CharMovementMode.Run;
-                    break;
-                case MODE_TOO_EARLY:
-                    World.getPlayer().getMovementHandler().executeServerRespMoveTooEarly();
-                    return;
-                default:
-                    moveMode = CharMovementMode.None;
-            }
-            World.getPlayer().getMovementHandler().executeServerRespMove(moveMode, loc, duration);
-            return;
+            return executeForPlayer();
+        }
+        return executeForOther();
+    }
+
+    @Nonnull
+    private ServerReplyResult executeForPlayer() {
+        if (location == null) {
+            throw new NotDecodedException(); // shouldn't be possible
+        }
+
+        CharMovementMode moveMode;
+        switch (mode) {
+            case MODE_MOVE:
+                moveMode = CharMovementMode.Walk;
+                break;
+            case MODE_PUSH:
+                moveMode = CharMovementMode.Push;
+                break;
+            case MODE_RUN:
+                moveMode = CharMovementMode.Run;
+                break;
+            case MODE_TOO_EARLY:
+                World.getPlayer().getMovementHandler().executeServerRespMoveTooEarly();
+                return ServerReplyResult.Success;
+            default:
+                moveMode = CharMovementMode.None;
+        }
+        World.getPlayer().getMovementHandler().executeServerRespMove(moveMode, location, duration);
+        return ServerReplyResult.Success;
+    }
+
+    @Nonnull
+    private ServerReplyResult executeForOther() {
+        if ((charId == null) || (location == null)) {
+            throw new NotDecodedException();  // shouldn't be possible
         }
 
         // other char not on screen, just remove it.
-        if (!World.getPlayer().isOnScreen(loc, 1)) {
+        if (!World.getPlayer().isOnScreen(location, 1)) {
             World.getPeople().removeCharacter(charId);
-            return;
+            return ServerReplyResult.Success;
         }
 
         Char chara = World.getPeople().accessCharacter(charId);
         switch (mode) {
             case MODE_NO_MOVE:
-                chara.setLocation(loc);
+                chara.setLocation(location);
                 break;
             case MODE_MOVE:
-                chara.moveTo(loc, CharMovementMode.Walk, duration);
+                chara.moveTo(location, CharMovementMode.Walk, duration);
                 break;
             case MODE_RUN:
-                chara.moveTo(loc, CharMovementMode.Run, duration);
+                chara.moveTo(location, CharMovementMode.Run, duration);
                 break;
             case MODE_TOO_EARLY:
                 log.warn("Received MODE_TOO_EARLY for a character other then the player character. That is wrong.");
-                return;
+                return ServerReplyResult.Failed;
             default:
-                chara.moveTo(loc, CharMovementMode.Push, 0);
+                chara.moveTo(location, CharMovementMode.Push, 0);
         }
+        return ServerReplyResult.Success;
     }
 
-    /**
-     * Get the data of this character move message as string.
-     *
-     * @return the string that contains the values that were decoded for this message
-     */
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
-        StringBuilder builder = new StringBuilder(charId.toString());
-        builder.append("to ").append(loc);
-        builder.append(" mode: ");
-        switch (mode) {
-            case MODE_MOVE:
-                builder.append("move");
-                break;
-            case MODE_NO_MOVE:
-                builder.append("no move");
-                break;
-            case MODE_PUSH:
-                builder.append("push");
-                break;
-            case MODE_RUN:
-                builder.append("run");
-                break;
-            default:
-                builder.append("unknown");
-                break;
-        }
-        builder.append('(').append(mode).append(')');
-        builder.append(" duration: ").append(duration).append("ms");
-        return toString(builder.toString());
+        return Utilities.toString(MoveMsg.class, location, "Duration: " + duration + "ms");
     }
 }

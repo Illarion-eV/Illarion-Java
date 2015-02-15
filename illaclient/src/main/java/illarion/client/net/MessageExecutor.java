@@ -15,7 +15,8 @@
  */
 package illarion.client.net;
 
-import illarion.client.net.server.AbstractReply;
+import illarion.client.net.server.ServerReply;
+import illarion.client.net.server.ServerReplyResult;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +48,7 @@ final class MessageExecutor {
         executorService = Executors.newSingleThreadExecutor();
     }
 
-    void scheduleReplyExecution(@Nonnull final AbstractReply reply) {
+    void scheduleReplyExecution(@Nonnull final ServerReply reply) {
         log.debug(NET, "scheduled {}", reply);
         executorService.submit(new Runnable() {
             @Override
@@ -57,15 +58,20 @@ final class MessageExecutor {
         });
     }
 
-    private void executeReply(@Nonnull AbstractReply reply) {
-        if (reply.processNow()) {
-            log.debug(NET, "executing {}", reply);
+    private void executeReply(@Nonnull ServerReply reply) {
+        log.debug(NET, "executing {}", reply);
+        ServerReplyResult result = reply.execute();
 
-            reply.executeUpdate();
-            log.debug(NET, "finished {}", reply);
-        } else {
-            log.debug(NET, "delaying {}", reply);
-            scheduleReplyExecution(reply);
+        switch (result) {
+            case Success:
+                log.debug(NET, "finished with success {}", reply);
+                break;
+            case Failed:
+                log.error(NET, "finished with failure {}", reply);
+                break;
+            case Reschedule:
+                log.debug(NET, "delaying {}", reply);
+                scheduleReplyExecution(reply);
         }
     }
 

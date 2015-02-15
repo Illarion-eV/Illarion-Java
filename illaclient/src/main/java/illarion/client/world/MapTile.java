@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -434,8 +434,7 @@ public final class MapTile implements AlphaChangeListener {
         }
         items.getLock().writeLock().lock();
         try {
-            int pos = 0;
-            pos = items.getItemCount();
+            int pos = items.getItemCount();
             setItem(pos, itemId, count);
         } finally {
             items.getLock().writeLock().unlock();
@@ -458,8 +457,9 @@ public final class MapTile implements AlphaChangeListener {
         try {
             if (index < items.size()) {
                 item = items.get(index);
+                assert item != null;
                 // just an update of present item
-                if (item.getItemId().equals(itemId)) {
+                if (ItemId.equals(item.getItemId(), itemId)) {
                     updateItem(item, itemCount, index);
                 } else {
                     // different item: clear old item

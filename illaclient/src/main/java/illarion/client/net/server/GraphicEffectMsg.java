@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,18 +21,19 @@ import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.Location;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
- * Servermessage: Graphic effect ( {@link CommandList#MSG_GRAPHIC_FX}).
+ * Server message: Graphic effect.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_GRAPHIC_FX)
-public final class GraphicEffectMsg extends AbstractReply {
+public final class GraphicEffectMsg implements ServerReply {
     /**
      * ID of the effect that shall be shown.
      */
@@ -41,40 +42,34 @@ public final class GraphicEffectMsg extends AbstractReply {
     /**
      * The location the effect occurs on.
      */
-    private transient Location loc;
+    private transient Location location;
 
-    /**
-     * Decode the effect data the receiver got and prepare it for the execution.
-     *
-     * @param reader the receiver that got the data from the server that needs to be decoded
-     * @throws java.io.IOException thrown in case there was not enough data received to decode the full message
-     */
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
-        loc = decodeLocation(reader);
+        location = new Location(reader);
         effectId = reader.readUShort();
     }
 
-    /**
-     * Execute the effect message and send the decoded data to the rest of the client.
-     */
+    @Nonnull
     @Override
-    public void executeUpdate() {
-        MapTile tile = World.getMap().getMapAt(loc);
+    public ServerReplyResult execute() {
+        if (World.getMap().isEmpty()) {
+            //got no map data yet
+            return ServerReplyResult.Reschedule;
+        }
+
+        MapTile tile = World.getMap().getMapAt(location);
         if (tile != null) {
             tile.showEffect(effectId);
+            return ServerReplyResult.Success;
         }
+        return ServerReplyResult.Failed;
     }
 
-    /**
-     * Get the data of this effect message as string.
-     *
-     * @return the string that contains the values that were decoded for this message
-     */
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString("Graphic Effect: " + effectId);
+        return Utilities.toString(GraphicEffectMsg.class, location, "ID: " + effectId);
     }
 }

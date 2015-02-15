@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,16 +19,26 @@ import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
+ * Server message: Report the current and the maximal carry load of the character.
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_CARRY_LOAD)
-public class CarryLoadMsg extends AbstractReply {
+public final class CarryLoadMsg implements ServerReply {
+    /**
+     * The load the character currently carries.
+     */
     private int currentLoad;
+
+    /**
+     * The load the character is maximal able to carry.
+     */
     private int maximumLoad;
 
     @Override
@@ -37,14 +47,17 @@ public class CarryLoadMsg extends AbstractReply {
         maximumLoad = reader.readUShort();
     }
 
+    @Nonnull
     @Override
-    public void executeUpdate() {
+    public ServerReplyResult execute() {
         World.getPlayer().getCarryLoad().updateLoad(currentLoad, maximumLoad);
+        return ServerReplyResult.Success;
     }
 
     @Nonnull
     @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString("Current load: " + currentLoad + " - Maximum Load: " + maximumLoad);
+        return Utilities.toString(CarryLoadMsg.class, "Current: " + currentLoad, "Max:" + maximumLoad);
     }
 }

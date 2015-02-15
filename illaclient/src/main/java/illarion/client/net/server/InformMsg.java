@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,7 +22,7 @@ import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.util.Lang;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
-import javolution.text.TextBuilder;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,12 +36,12 @@ import java.io.IOException;
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
 @ReplyMessage(replyId = CommandList.MSG_INFORM)
-public final class InformMsg extends AbstractGuiMsg {
+public final class InformMsg implements ServerReply {
     /**
      * The logger that is used for the log output of this class.
      */
     @Nonnull
-    private static final Logger LOGGER = LoggerFactory.getLogger(InformMsg.class);
+    private static final Logger log = LoggerFactory.getLogger(InformMsg.class);
 
     private static final int SERVER = 0;
     private static final int BROADCAST = 1;
@@ -61,25 +61,22 @@ public final class InformMsg extends AbstractGuiMsg {
     @Nullable
     private String informText;
 
-    @Nonnull
-    @Override
-    public String toString() {
-        TextBuilder builder = new TextBuilder();
-        builder.append("Type: ").append(informType);
-        builder.append(" Text: ").append(informText);
-        return toString(builder.toString());
-    }
-
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         informType = reader.readUByte();
         informText = reader.readString();
     }
 
+    @Nonnull
     @Override
-    public void executeUpdate() {
+    @SuppressWarnings("OverlyLongMethod")
+    public ServerReplyResult execute() {
         if (informText == null) {
-            throw new IllegalStateException("Executing a inform message while the inform text is not set.");
+            throw new NotDecodedException();
+        }
+
+        if (!World.getGameGui().isReady()) {
+            return ServerReplyResult.Reschedule;
         }
 
         GameGui gui = World.getGameGui();
@@ -108,10 +105,15 @@ public final class InformMsg extends AbstractGuiMsg {
                 gui.getChatGui().addChatMessage(informText, ChatGui.COLOR_HIGH_INFORM);
                 break;
             default:
-                TextBuilder builder = new TextBuilder();
-                builder.append("Received inform with unknown type: ").append(informType);
-                builder.append("(").append(informText).append(")");
-                LOGGER.warn(builder.toString());
+                log.warn("Received inform with unknown type: {}" + '(' + "{}" + ')', informType, informText);
         }
+        return ServerReplyResult.Success;
+    }
+
+    @Nonnull
+    @Override
+    @Contract(pure = true)
+    public String toString() {
+        return Utilities.toString(InformMsg.class, informText);
     }
 }

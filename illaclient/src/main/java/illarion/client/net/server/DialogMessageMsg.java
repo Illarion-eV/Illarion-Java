@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,9 +19,10 @@ import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
-import javolution.text.TextBuilder;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
@@ -30,20 +31,23 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_DIALOG_MSG)
-public final class DialogMessageMsg extends AbstractGuiMsg {
+public final class DialogMessageMsg implements ServerReply {
     /**
      * The title of the dialog window.
      */
+    @Nullable
     private String title;
 
     /**
      * The content of the dialog.
      */
+    @Nullable
     private String content;
 
     /**
      * The ID of the dialog that needs to be returned in order to inform the server that the window was closed.
      */
+    @Nullable
     private int dialogId;
 
     @Override
@@ -53,18 +57,25 @@ public final class DialogMessageMsg extends AbstractGuiMsg {
         dialogId = reader.readInt();
     }
 
+    @Nonnull
     @Override
-    public void executeUpdate() {
+    public ServerReplyResult execute() {
+        if ((title == null) || (content == null)) {
+            throw new NotDecodedException();
+        }
+
+        if (!World.getGameGui().isReady()) {
+            return ServerReplyResult.Reschedule;
+        }
+
         World.getGameGui().getDialogMessageGui().showMessageDialog(dialogId, title, content);
+        return ServerReplyResult.Success;
     }
 
     @Nonnull
     @Override
+    @Contract(pure = true)
     public String toString() {
-        TextBuilder builder = new TextBuilder();
-        builder.append("title: \"").append(title).append("\", ");
-        builder.append("message: \"").append(content).append("\", ");
-        builder.append("dialog ID: ").append(dialogId);
-        return toString(builder.toString());
+        return Utilities.toString(DialogMessageMsg.class, "ID: " + dialogId, title);
     }
 }

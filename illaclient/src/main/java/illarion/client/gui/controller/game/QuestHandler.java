@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -33,13 +33,14 @@ import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
 import illarion.common.types.Location;
 import org.illarion.engine.GameContainer;
+import org.intellij.lang.annotations.Flow;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -61,23 +62,26 @@ public final class QuestHandler implements QuestGui, ScreenController {
         /**
          * The displayed name of the quest.
          */
-        private String name;
+        @Nonnull
+        private final String name;
 
         /**
          * The description of the current quest state.
          */
-        private String description;
+        @Nonnull
+        private final String description;
 
         /**
          * The flag if this quest is now finished or not.
          */
-        private boolean finished;
+        @Nonnull
+        private final boolean finished;
 
         /**
          * The list of valid target locations for this quest.
          */
         @Nonnull
-        private Location[] targetLocations;
+        private final List<Location> targetLocations;
 
         /**
          * The constructor of the quest.
@@ -88,28 +92,14 @@ public final class QuestHandler implements QuestGui, ScreenController {
          * @param finished {@code true} in case the quest is finished
          * @param locations the valid target locations
          */
-        QuestEntry(
-                int questId, String name, String description, boolean finished, @Nonnull Location... locations) {
+        QuestEntry(int questId, @Nonnull String name, @Nonnull String description, boolean finished,
+                   @Nonnull @Flow(targetIsContainer = true, sourceIsContainer = true) List<Location> locations) {
             this.questId = questId;
-            targetLocations = new Location[0];
-            updateData(name, description, finished, locations);
-        }
-
-        /**
-         * Update the data of this quest.
-         *
-         * @param name the name of the quest
-         * @param description the description of the quest state
-         * @param finished {@code true} in case the quest is finished
-         * @param locations the valid target locations of this quest
-         */
-        void updateData(
-                String name, String description, boolean finished, @Nonnull Location... locations) {
             this.name = name;
             this.description = description;
             this.finished = finished;
-
-            targetLocations = Arrays.copyOf(locations, locations.length);
+            //noinspection AssignmentToCollectionOrArrayFieldFromParameter
+            targetLocations = locations;
         }
 
         @Override
@@ -125,17 +115,20 @@ public final class QuestHandler implements QuestGui, ScreenController {
         }
 
         @Override
+        @Contract(value = "null -> false", pure = true)
         public boolean equals(Object obj) {
             return super.equals(obj) || ((obj instanceof QuestEntry) && (questId == ((QuestEntry) obj).questId));
         }
 
         @Override
+        @Contract(pure = true)
         public int hashCode() {
             return questId;
         }
 
         @Nonnull
         @Override
+        @Contract(pure = true)
         public String toString() {
             return name;
         }
@@ -145,6 +138,8 @@ public final class QuestHandler implements QuestGui, ScreenController {
          *
          * @return the quest description
          */
+        @Nonnull
+        @Contract(pure = true)
         public String getDescription() {
             return description;
         }
@@ -154,6 +149,8 @@ public final class QuestHandler implements QuestGui, ScreenController {
          *
          * @return the name of the quest
          */
+        @Nonnull
+        @Contract(pure = true)
         public String getName() {
             return name;
         }
@@ -163,6 +160,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
          *
          * @return the ID of the quest
          */
+        @Contract(pure = true)
         public int getQuestId() {
             return questId;
         }
@@ -172,6 +170,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
          *
          * @return {@code true} in case the quest is finished
          */
+        @Contract(pure = true)
         public boolean isFinished() {
             return finished;
         }
@@ -181,8 +180,9 @@ public final class QuestHandler implements QuestGui, ScreenController {
          *
          * @return the target locations
          */
+        @Contract(pure = true)
         public int getTargetLocationCount() {
-            return targetLocations.length;
+            return targetLocations.size();
         }
 
         /**
@@ -193,8 +193,9 @@ public final class QuestHandler implements QuestGui, ScreenController {
          * @throws ArrayIndexOutOfBoundsException in case index is {@code < 0} or greater then or equal to the count
          */
         @Nonnull
+        @Contract(pure = true)
         public Location getTargetLocation(int index) {
-            return targetLocations[index];
+            return targetLocations.get(index);
         }
     }
 
@@ -636,7 +637,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
             @Nonnull final String name,
             @Nonnull final String description,
             final boolean finished,
-            @Nonnull final Location... locations) {
+            @Nonnull final List<Location> locations) {
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
             public void onUpdateGame(@Nonnull GameContainer container, int delta) {
@@ -669,7 +670,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
             @Nonnull String name,
             @Nonnull String description,
             boolean finished,
-            @Nonnull Location... locations) {
+            @Nonnull List<Location> locations) {
         QuestEntry oldEntry = findQuest(questId);
         if (finished && (oldEntry != null)) {
             Collection<Location> locationList = new ArrayList<>(oldEntry.getTargetLocationCount());
@@ -679,33 +680,19 @@ public final class QuestHandler implements QuestGui, ScreenController {
             }
             World.getMap().removeQuestMarkers(locationList);
         }
-        if (oldEntry == null) {
-            QuestEntry newEntry = new QuestEntry(questId, name, description, finished, locations);
-            if (!finished || showFinishedQuests) {
-                insertToGuiList(newEntry);
-                pulseQuestButton();
-            } else {
-                hiddenList.add(newEntry);
+        if (oldEntry != null) {
+            ListBox<QuestEntry> questList = getQuestList();
+            if (questList != null) {
+                questList.removeItem(oldEntry);
             }
-        } else {
-            boolean changeOrder = (oldEntry.isFinished() != finished) || !oldEntry.getName().equals(name);
-            boolean wasFinished = oldEntry.isFinished();
-            oldEntry.updateData(name, description, finished, locations);
+        }
+
+        QuestEntry newEntry = new QuestEntry(questId, name, description, finished, locations);
+        if (!finished || showFinishedQuests) {
+            insertToGuiList(newEntry);
             pulseQuestButton();
-            if (changeOrder) {
-                if (!wasFinished || showFinishedQuests) {
-                    ListBox<QuestEntry> questList = getQuestList();
-                    if (questList != null) {
-                        questList.removeItem(oldEntry);
-                    }
-                }
-                if (!finished || showFinishedQuests) {
-                    if (wasFinished) {
-                        hiddenList.remove(oldEntry);
-                    }
-                    insertToGuiList(oldEntry);
-                }
-            }
+        } else {
+            hiddenList.add(newEntry);
         }
 
         QuestEntry selectedEntry = getSelectedQuest();

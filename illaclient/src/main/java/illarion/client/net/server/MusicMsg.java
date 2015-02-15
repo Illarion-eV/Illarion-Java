@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,60 +20,44 @@ import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.MusicBox;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
- * Servermessage: Play background music (
- * {@link illarion.client.net.CommandList#MSG_MUSIC}).
+ * Server message: Play background music
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_MUSIC)
-public final class MusicMsg extends AbstractReply {
+public final class MusicMsg implements ServerReply {
     /**
      * The ID of the song that shall be played.
      */
     private int song;
 
-    /**
-     * Decode the play music data the receiver got and prepare it for the
-     * execution.
-     *
-     * @param reader the receiver that got the data from the server that needs
-     * to be decoded
-     * @throws IOException thrown in case there was not enough data received to
-     * decode the full message
-     */
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         song = reader.readUShort();
     }
 
-    /**
-     * Execute the play music message and send the decoded data to the rest of the client.
-     */
+    @Nonnull
     @Override
-    public void executeUpdate() {
+    public ServerReplyResult execute() {
         if (song == MusicBox.NO_TRACK) {
             World.getMusicBox().playDefaultMusic();
         } else {
             World.getMusicBox().playMusicTrack(song);
         }
+        return ServerReplyResult.Success;
     }
 
-    /**
-     * Get the data of this play music message as string.
-     *
-     * @return the string that contains the values that were decoded for this
-     * message
-     */
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString("ID: " + song);
+        return Utilities.toString(MusicMsg.class, "Song: " + song);
     }
 }

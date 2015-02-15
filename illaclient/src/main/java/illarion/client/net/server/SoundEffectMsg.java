@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,20 +23,23 @@ import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.Location;
 import org.illarion.engine.GameContainer;
+import org.illarion.engine.assets.SoundsManager;
 import org.illarion.engine.sound.Sound;
 import org.illarion.engine.sound.Sounds;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
- * Servermessage: Sound effect ( {@link CommandList#MSG_SOUND_FX}.
+ * Server message: Sound effect
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_SOUND_FX)
-public final class SoundEffectMsg extends AbstractReply implements UpdateTask {
+public final class SoundEffectMsg implements UpdateTask, ServerReply {
     /**
      * ID of the effect that shall be shown.
      */
@@ -45,36 +48,50 @@ public final class SoundEffectMsg extends AbstractReply implements UpdateTask {
     /**
      * The location the effect occurs on.
      */
-    private transient Location loc;
+    @Nullable
+    private Location location;
 
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
-        loc = decodeLocation(reader);
+        location = new Location(reader);
         effectId = reader.readUShort();
     }
 
+    @Nonnull
     @Override
-    public void executeUpdate() {
+    public ServerReplyResult execute() {
+        if (location == null) {
+            throw new NotDecodedException();
+        }
+
         World.getUpdateTaskManager().addTask(this);
+        return ServerReplyResult.Success;
     }
 
     @Override
     public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+        if (location == null) {
+            throw new NotDecodedException(); // this can't happen.
+        }
+
         Location plyLoc = World.getPlayer().getLocation();
-        Sound sound = SoundFactory.getInstance()
-                .getSound(effectId, container.getEngine().getAssets().getSoundsManager());
+        SoundsManager manager = container.getEngine().getAssets().getSoundsManager();
+        Sound sound = SoundFactory.getInstance().getSound(effectId, manager);
         if (sound == null) {
             return;
         }
         Sounds sounds = container.getEngine().getSounds();
-        sounds.playSound(sound, sounds.getSoundVolume(), loc.getScX() - plyLoc.getScX(), loc.getScY() - plyLoc.getScY(),
-                         loc.getScZ() - plyLoc.getScZ());
+
+        int dX = location.getScX() - plyLoc.getScX();
+        int dY = location.getScY() - plyLoc.getScY();
+        int dZ = location.getScZ() - plyLoc.getScZ();
+        sounds.playSound(sound, sounds.getSoundVolume(), dX, dY, dZ);
     }
 
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString("Sound: " + effectId);
+        return Utilities.toString(SoundEffectMsg.class, location, "Sound: " + effectId);
     }
 }

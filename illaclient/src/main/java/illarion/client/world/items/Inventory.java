@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,8 +18,10 @@ package illarion.client.world.items;
 import illarion.client.world.World;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This class is used to store the current inventory of the player character.
@@ -57,7 +59,8 @@ public final class Inventory {
      * @throws IndexOutOfBoundsException in case {@code slot} is outside of the valid range
      */
     @Nonnull
-    public InventorySlot getItem(final int slot) {
+    @Contract(pure = true)
+    public InventorySlot getItem(int slot) {
         return slots[slot];
     }
 
@@ -68,8 +71,10 @@ public final class Inventory {
      * @param id the ID of the new item
      * @param count the new item count
      */
-    public void setItem(final int slot, @Nonnull final ItemId id, @Nonnull final ItemCount count) {
+    public void setItem(int slot, @Nullable ItemId id, @Nullable ItemCount count) {
         slots[slot].setData(id, count);
-        World.getGameGui().getInventoryGui().setItemSlot(slot, id, count);
+        if (World.getGameGui().isReady()) {
+            World.getGameGui().getInventoryGui().setItemSlot(slot, id, count);
+        }
     }
 }

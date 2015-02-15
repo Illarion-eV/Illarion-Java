@@ -128,6 +128,7 @@ public class ItemStack implements DisplayItem, List<Item> {
         return items.size();
     }
 
+    @Nonnull
     public Item getTopItem() {
         lock.readLock().lock();
         try {

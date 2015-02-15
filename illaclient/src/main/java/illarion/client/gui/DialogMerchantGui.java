@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,10 @@
  */
 package illarion.client.gui;
 
+import illarion.client.world.items.MerchantItem;
+
 import javax.annotation.Nonnull;
+import java.util.Collection;
 
 /**
  * This interface defines the access to the crafting dialog GUI.
@@ -32,4 +35,13 @@ public interface DialogMerchantGui {
      * @param tooltip the tooltip
      */
     void showMerchantListTooltip(int dialogId, int list, int itemIndex, @Nonnull Tooltip tooltip);
+
+    /**
+     * Show a merchant dialog.
+     *
+     * @param dialogId the ID of the dialog
+     * @param title    the title of the dialog
+     * @param items    the items shown in the dialog
+     */
+    void showMerchantDialog(int dialogId, @Nonnull String title, @Nonnull Collection<MerchantItem> items);
 }

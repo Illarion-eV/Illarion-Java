@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -28,19 +28,16 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.IllaClient;
-import illarion.client.gui.DialogType;
 import illarion.client.gui.EntitySlickRenderImage;
 import illarion.client.gui.InventoryGui;
 import illarion.client.gui.Tooltip;
 import illarion.client.net.client.PickUpAllItemsCmd;
-import illarion.client.net.server.events.DialogMerchantReceivedEvent;
 import illarion.client.resources.ItemFactory;
 import illarion.client.resources.data.ItemTemplate;
 import illarion.client.util.Lang;
 import illarion.client.util.LookAtTracker;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
-import illarion.client.world.events.CloseDialogEvent;
 import illarion.client.world.interactive.InteractionManager;
 import illarion.client.world.items.CarryLoad;
 import illarion.client.world.items.Inventory;
@@ -49,8 +46,6 @@ import illarion.client.world.items.MerchantList;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Rectangle;
-import org.bushe.swing.event.annotation.AnnotationProcessor;
-import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.input.Button;
 import org.illarion.engine.input.Input;
@@ -140,6 +135,7 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
     @Nonnull
     private final Input input;
 
+    @Nonnull
     private final UpdateTask updateMerchantOverlays = new UpdateTask() {
         @Override
         public void onUpdateGame(@Nonnull GameContainer container, int delta) {
@@ -181,18 +177,6 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
         this.input = input;
     }
 
-    @EventSubscriber
-    public void onDialogClosedEvent(@Nonnull CloseDialogEvent event) {
-        if (event.isClosingDialogType(DialogType.Merchant)) {
-            World.getUpdateTaskManager().addTask(updateMerchantOverlays);
-        }
-    }
-
-    @EventSubscriber
-    public void onMerchantDialogReceivedHandler(DialogMerchantReceivedEvent event) {
-        World.getUpdateTaskManager().addTask(updateMerchantOverlays);
-    }
-
     @NiftyEventSubscriber(id = "pickUpItemsBtn")
     public void onPickUpItemsBtnClick(String topic, @Nonnull ButtonClickedEvent event) {
         World.getNet().sendCommand(new PickUpAllItemsCmd());
@@ -224,6 +208,11 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
                 carryLoadDisplay.layoutElements();
             }
         }
+    }
+
+    @Override
+    public void updateMerchantOverlay() {
+        World.getUpdateTaskManager().addTask(updateMerchantOverlays);
     }
 
     @Override
@@ -446,7 +435,6 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
     @Override
     public void onEndScreen() {
         activeNifty.unsubscribeAnnotations(this);
-        AnnotationProcessor.unprocess(this);
         IllaClient.getCfg().set("inventoryPosX", Integer.toString(inventoryWindow.getX()) + "px");
         IllaClient.getCfg().set("inventoryPosY", Integer.toString(inventoryWindow.getY()) + "px");
     }
@@ -454,7 +442,6 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
     @Override
     public void onStartScreen() {
         activeNifty.subscribeAnnotations(this);
-        AnnotationProcessor.process(this);
 
         Inventory inventory = World.getPlayer().getInventory();
         illarion.client.world.items.InventorySlot invSlot;

@@ -26,76 +26,69 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
- * Servermessage: Disconnect by server (
- * {@link illarion.client.net.CommandList#MSG_DISCONNECT}).
+ * Server message: Disconnect by server.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_DISCONNECT)
-public final class DisconnectMsg extends AbstractReply {
-    /**
-     * The list of the reasons for the logout from the server. This are the keys
-     * for the translation.
-     */
-    @SuppressWarnings("nls")
-    @Nonnull
-    private static final String[] REASONS = {null, "old_client", "already_logged_in", "wrong_pw", "server_shutdown",
-                                             "kicked", null, "no_place", "not_found", null, "unstable", "no_account",
-                                             "no_skillpack", "corruput_inventory"};
-
+public final class DisconnectMsg implements ServerReply {
     /**
      * The ID of the logout reason.
      */
     private short reason;
 
-    /**
-     * Decode the disconnect data the receiver got and prepare it for the
-     * execution.
-     *
-     * @param reader the receiver that got the data from the server that needs
-     * to be decoded
-     * @throws IOException thrown in case there was not enough data received to
-     * decode the full message
-     */
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         reason = reader.readUByte();
     }
 
-    /**
-     * Execute the disconnect message and send the decoded data to the rest of the client.
-     */
-    @SuppressWarnings("nls")
+    @Nonnull
     @Override
-    public void executeUpdate() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(Lang.getMsg("logout"));
-        builder.append('\n');
-        builder.append(Lang.getMsg("logout.reason"));
-        builder.append(' ');
-
-        if (reason < REASONS.length) {
-            builder.append(Lang.getMsg("logout." + REASONS[reason]));
-        } else {
-            builder.append(Lang.getMsg("logout.unknown"));
-            builder.append(Integer.toHexString(reason));
-        }
-
-        IllaClient.sendDisconnectEvent(builder.toString(), true);
+    public ServerReplyResult execute() {
+        IllaClient.sendDisconnectEvent(Lang.getMsg("logout") + '\n' + Lang.getMsg("logout.reason") + ' ' +
+                getMessageForReason(reason), true);
+        return ServerReplyResult.Success;
     }
 
-    /**
-     * Get the data of this disconnect message as string.
-     *
-     * @return the string that contains the values that were decoded for this
-     * message
-     */
     @Nonnull
-    @SuppressWarnings("nls")
+    @Contract(pure = true)
+    @SuppressWarnings({"SpellCheckingInspection", "OverlyComplexMethod"})
+    private static String getMessageForReason(int reason) {
+        switch (reason) {
+            case 1:
+                return Lang.getMsg("logout.old_client");
+            case 2:
+                return Lang.getMsg("logout.already_logged_in");
+            case 3:
+                return Lang.getMsg("logout.wrong_pw");
+            case 4:
+                return Lang.getMsg("logout.server_shutdown");
+            case 5:
+                return Lang.getMsg("logout.kicked");
+            //6
+            case 7:
+                return Lang.getMsg("logout.no_place");
+            case 8:
+                return Lang.getMsg("logout.not_found");
+            //9
+            case 10:
+                return Lang.getMsg("logout.unstable");
+            case 11:
+                return Lang.getMsg("logout.no_account");
+            case 12:
+                return Lang.getMsg("logout.no_skillpack");
+            case 13:
+                return Lang.getMsg("logout.corruput_inventory");
+            default:
+                return Lang.getMsg("logout.unknown") + ' ' + Integer.toHexString(reason);
+        }
+    }
+
+    @Nonnull
     @Override
     @Contract(pure = true)
     public String toString() {
-        return toString("Reason: " + Integer.toHexString(reason));
+        return Utilities.toString(DisconnectMsg.class, getMessageForReason(reason));
     }
 }

@@ -113,7 +113,7 @@ public final class ItemId implements Comparable<ItemId> {
     }
 
     /**
-     * Check if two item count instances are equal.
+     * Check if two item id instances are equal.
      *
      * @param obj the second instance to check
      * @return {@code true} in case both instances represent the same value
@@ -121,6 +121,18 @@ public final class ItemId implements Comparable<ItemId> {
     @Contract(value = "null -> false", pure = true)
     public boolean equals(@Nullable ItemId obj) {
         return (obj != null) && (value == obj.value);
+    }
+
+    /**
+     * Check if two item id instances are equal.
+     *
+     * @param id1 the first instance to check
+     * @param id2 the second instance to check
+     * @return {@code true} in case both instances represent the same value
+     */
+    @Contract(value = "null,null -> true; !null,null -> false; null,!null -> false", pure = true)
+    public static boolean equals(@Nullable ItemId id1, @Nullable ItemId id2) {
+        return ((id1 == null) && (id2 == null)) || ((id1 != null) && id1.equals(id2));
     }
 
     /**

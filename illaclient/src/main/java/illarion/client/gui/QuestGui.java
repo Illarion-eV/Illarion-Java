@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,6 +18,7 @@ package illarion.client.gui;
 import illarion.common.types.Location;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 /**
  * This interface defines the access possibilities that are exposed to access the quest log.
@@ -65,7 +66,7 @@ public interface QuestGui {
             @Nonnull String name,
             @Nonnull String description,
             boolean finished,
-            @Nonnull Location... locations);
+            @Nonnull List<Location> locations);
 
     /**
      * Toggle the visibility state of the quest log.
@@ -77,5 +78,8 @@ public interface QuestGui {
      */
     void showQuestLog();
 
+    /**
+     * Update the data of all quests.
+     */
     void updateAllQuests();
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,20 +21,23 @@ import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.Location;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
- * Servermessage: Look at description of a map item ({@link CommandList#MSG_LOOKAT_MAPITEM}).
+ * Server message: Look at description of a map item
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_LOOKAT_MAPITEM)
-public final class LookAtMapItemMsg extends AbstractGuiMsg {
+public final class LookAtMapItemMsg implements ServerReply {
     /**
      * The location of the tile on the server map.
      */
+    @Nullable
     private Location location;
 
     /**
@@ -45,38 +48,35 @@ public final class LookAtMapItemMsg extends AbstractGuiMsg {
     /**
      * The tooltip that is displayed for the item on the specified location.
      */
+    @Nullable
     private Tooltip tooltip;
 
-    /**
-     * Decode the tile look at text data the receiver got and prepare it for the execution.
-     *
-     * @param reader the receiver that got the data from the server that needs to be decoded
-     * @throws IOException thrown in case there was not enough data received to decode the full message
-     */
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
-        location = decodeLocation(reader);
+        location = new Location(reader);
         stackPosition = reader.readUByte();
         tooltip = new Tooltip(reader);
     }
 
-    /**
-     * Execute the tile look at text message and send the decoded data to the rest of the client.
-     */
+    @Nonnull
     @Override
-    public void executeUpdate() {
+    public ServerReplyResult execute() {
+        if ((location == null) || (tooltip == null)) {
+            throw new NotDecodedException();
+        }
+
+        if (!World.getGameGui().isReady()) {
+            return ServerReplyResult.Reschedule;
+        }
+
         World.getGameGui().getGameMapGui().showItemTooltip(location, stackPosition, tooltip);
+        return ServerReplyResult.Success;
     }
 
-    /**
-     * Get the data of this tile look at text message as string.
-     *
-     * @return the string that contains the values that were decoded for this message
-     */
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString(location.toString() + ' ' + tooltip);
+        return Utilities.toString(LookAtMapItemMsg.class, location, tooltip);
     }
 }

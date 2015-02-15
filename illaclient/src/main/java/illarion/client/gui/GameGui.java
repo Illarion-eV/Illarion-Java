@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,6 +17,7 @@ package illarion.client.gui;
 
 import de.lessvoid.nifty.screen.ScreenController;
 import org.illarion.engine.GameContainer;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 
@@ -33,6 +34,7 @@ public interface GameGui {
      * @return the controller of the book display
      */
     @Nonnull
+    @Contract(pure = true)
     BookGui getBookGui();
 
     /**
@@ -41,6 +43,7 @@ public interface GameGui {
      * @return the chat GUI controller
      */
     @Nonnull
+    @Contract(pure = true)
     ChatGui getChatGui();
 
     /**
@@ -49,6 +52,7 @@ public interface GameGui {
      * @return the item container gui controller
      */
     @Nonnull
+    @Contract(pure = true)
     ContainerGui getContainerGui();
 
     /**
@@ -57,6 +61,7 @@ public interface GameGui {
      * @return the dialog GUI control
      */
     @Nonnull
+    @Contract(pure = true)
     DialogGui getDialogGui();
 
     /**
@@ -65,6 +70,7 @@ public interface GameGui {
      * @return the crafting dialog GUI control
      */
     @Nonnull
+    @Contract(pure = true)
     DialogCraftingGui getDialogCraftingGui();
 
     /**
@@ -73,6 +79,7 @@ public interface GameGui {
      * @return the crafting dialog GUI control
      */
     @Nonnull
+    @Contract(pure = true)
     DialogMerchantGui getDialogMerchantGui();
 
     /**
@@ -81,6 +88,7 @@ public interface GameGui {
      * @return the input dialog GUI control
      */
     @Nonnull
+    @Contract(pure = true)
     DialogInputGui getDialogInputGui();
 
     /**
@@ -89,7 +97,17 @@ public interface GameGui {
      * @return the message dialog GUI control
      */
     @Nonnull
+    @Contract(pure = true)
     DialogMessageGui getDialogMessageGui();
+
+    /**
+     * Get the GUI controller that is used to display selection dialogs.
+     *
+     * @return the selection dialog GUI control
+     */
+    @Nonnull
+    @Contract(pure = true)
+    DialogSelectionGui getDialogSelectionGui();
 
     /**
      * Get the controller that displays the elements that are directly related to the game game.
@@ -97,6 +115,7 @@ public interface GameGui {
      * @return the game map gui controller
      */
     @Nonnull
+    @Contract(pure = true)
     GameMapGui getGameMapGui();
 
     /**
@@ -105,6 +124,7 @@ public interface GameGui {
      * @return the inform GUI controller
      */
     @Nonnull
+    @Contract(pure = true)
     InformGui getInformGui();
 
     /**
@@ -113,6 +133,7 @@ public interface GameGui {
      * @return the inventory gui controller
      */
     @Nonnull
+    @Contract(pure = true)
     InventoryGui getInventoryGui();
 
     /**
@@ -121,6 +142,7 @@ public interface GameGui {
      * @return the player character GUI controller
      */
     @Nonnull
+    @Contract(pure = true)
     PlayerStatusGui getPlayerStatusGui();
 
     /**
@@ -129,6 +151,7 @@ public interface GameGui {
      * @return the quest GUI controller
      */
     @Nonnull
+    @Contract(pure = true)
     QuestGui getQuestGui();
 
     /**
@@ -137,6 +160,7 @@ public interface GameGui {
      * @return the documentation GUI controller
      */
     @Nonnull
+    @Contract(pure = true)
     DocumentationGui getDocumentationGui();
 
     /**
@@ -145,6 +169,7 @@ public interface GameGui {
      * @return the GUI screen controller
      */
     @Nonnull
+    @Contract(pure = true)
     ScreenController getScreenController();
 
     /**
@@ -153,6 +178,7 @@ public interface GameGui {
      * @return the skill GUI controller
      */
     @Nonnull
+    @Contract(pure = true)
     SkillGui getSkillGui();
 
     /**
@@ -161,9 +187,11 @@ public interface GameGui {
      * @return the mini map display control
      */
     @Nonnull
+    @Contract(pure = true)
     MiniMapGui getMiniMapGui();
 
     @Nonnull
+    @Contract(pure = true)
     CloseGameGui getCloseGameGui();
 
     /**
@@ -171,6 +199,7 @@ public interface GameGui {
      *
      * @return {@code true} in case the GUI is ready
      */
+    @Contract(pure = true)
     boolean isReady();
 
     /**

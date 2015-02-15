@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,34 +21,45 @@ import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.Location;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
- * Servermessage: Remove the top item on a tile ( {@link illarion.client.net.CommandList#MSG_REMOVE_ITEM}).
+ * Server message: Remove the top item on a tile
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_REMOVE_ITEM)
-public final class RemoveItemMsg extends AbstractReply {
+public final class RemoveItemMsg implements ServerReply {
     /**
      * The location the top item shall be removed from.
      */
-    private Location loc;
+    @Nullable
+    private Location location;
 
+    /**
+     * The new move points of the tile after the update.
+     */
     private int newTileMovePoints;
 
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
-        loc = decodeLocation(reader);
+        location = new Location(reader);
         newTileMovePoints = reader.readUByte();
     }
 
+    @Nonnull
     @Override
-    public void executeUpdate() {
-        MapTile tile = World.getMap().getMapAt(loc);
+    public ServerReplyResult execute() {
+        if (location == null) {
+            throw new NotDecodedException();
+        }
+
+        MapTile tile = World.getMap().getMapAt(location);
         if (tile != null) {
             tile.removeTopItem();
             if (newTileMovePoints == 255) {
@@ -56,13 +67,15 @@ public final class RemoveItemMsg extends AbstractReply {
             } else {
                 tile.setMovementCost(newTileMovePoints);
             }
+            return ServerReplyResult.Success;
         }
+        return ServerReplyResult.Failed;
     }
 
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString("location: " + loc.toString());
+        return Utilities.toString(RemoveItemMsg.class, location);
     }
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -105,8 +105,6 @@ public final class ItemContainer {
             throw new IndexOutOfBoundsException("Requested slot outside of allowed range: " + slot);
         }
         if (ItemId.isValidItem(id) && ItemCount.isGreaterZero(count)) {
-            assert id != null;
-            assert count != null;
             slots[slot].setData(id, count);
         } else {
             slots[slot].clearSlot();

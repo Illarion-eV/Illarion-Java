@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,18 +19,18 @@ import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
-import javolution.text.TextBuilder;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
- * Servermessage: Text Request ( {@link illarion.client.net.CommandList#MSG_DIALOG_INPUT}).
+ * Server message: Text Request
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_DIALOG_INPUT)
-public final class DialogInputMsg extends AbstractGuiMsg {
+public final class DialogInputMsg implements ServerReply {
     /**
      * The title that is supposed to be displayed in the dialog.
      */
@@ -56,12 +56,6 @@ public final class DialogInputMsg extends AbstractGuiMsg {
      */
     private int requestId;
 
-    /**
-     * Decode the text request the receiver got and prepare it for the execution.
-     *
-     * @param reader the receiver that got the data from the server that needs to be decoded
-     * @throws IOException thrown in case there was not enough data received to decode the full message
-     */
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         title = reader.readString();
@@ -71,28 +65,24 @@ public final class DialogInputMsg extends AbstractGuiMsg {
         requestId = reader.readInt();
     }
 
-    /**
-     * Execute the text request message and send the decoded data to the rest of the client.
-     */
+    @Nonnull
     @Override
-    public void executeUpdate() {
+    public ServerReplyResult execute() {
+        if ((title == null) || (description == null)) {
+            throw new IllegalStateException("Message is not decoded yet.");
+        }
+        if (!World.getGameGui().isReady()) {
+            return ServerReplyResult.Reschedule;
+        }
+
         World.getGameGui().getDialogInputGui().showInputDialog(requestId, title, description, maxCharacters, multiLine);
+        return ServerReplyResult.Success;
     }
 
-    /**
-     * Get the data of this text request message as string.
-     *
-     * @return the string that contains the values that were decoded for this message
-     */
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
-        TextBuilder builder = new TextBuilder();
-        builder.append("title: ").append(title);
-        builder.append(" id: ").append(requestId);
-        builder.append(" maximal characters: ").append(maxCharacters);
-        builder.append(" support multiline: ").append(multiLine);
-        return toString(builder.toString());
+        return Utilities.toString(DialogInputMsg.class, "ID: " + requestId, title, description);
     }
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,18 +20,20 @@ import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
- * Servermessage: Look at description of item in the inventory ({@link CommandList#MSG_LOOKAT_INV}).
+ * Server message: Look at description of item in the inventory
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_LOOKAT_INV)
-public final class LookAtInvMsg extends AbstractGuiMsg {
+public final class LookAtInvMsg implements ServerReply {
     /**
      * Inventory slot that message is related to.
      */
@@ -40,40 +42,33 @@ public final class LookAtInvMsg extends AbstractGuiMsg {
     /**
      * The tooltip that is supposed to be displayed at the inventory slot.
      */
+    @Nullable
     private Tooltip tooltip;
 
-    /**
-     * Decode the inventory item look at text data the receiver got and prepare
-     * it for the execution.
-     *
-     * @param reader the receiver that got the data from the server that needs
-     * to be decoded
-     * @throws IOException thrown in case there was not enough data received to
-     * decode the full message
-     */
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         slot = reader.readUByte();
         tooltip = new Tooltip(reader);
     }
 
-    /**
-     * Execute the inventory item look at text message and send the decoded data to the rest of the client.
-     */
+    @Nonnull
     @Override
-    public void executeUpdate() {
+    public ServerReplyResult execute() {
+        if (tooltip == null) {
+            throw new NotDecodedException();
+        }
+        if (!World.getGameGui().isReady()) {
+            return ServerReplyResult.Reschedule;
+        }
+
         World.getGameGui().getInventoryGui().showTooltip(slot, tooltip);
+        return ServerReplyResult.Success;
     }
 
-    /**
-     * Get the data of this inventory item look at text message as string.
-     *
-     * @return the string that contains the values that were decoded for this  message
-     */
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString("Slot: " + slot + ' ' + tooltip);
+        return Utilities.toString(LookAtInvMsg.class, "Slot: " + slot, tooltip);
     }
 }

@@ -331,7 +331,7 @@ public final class Char implements AnimatedMove {
             setAlive(value > 0);
         }
 
-        if (World.getPlayer().isPlayer(getCharId())) {
+        if (World.getGameGui().isReady() && World.getPlayer().isPlayer(getCharId())) {
             World.getGameGui().getPlayerStatusGui().setAttribute(attribute, value);
         }
     }
@@ -805,12 +805,12 @@ public final class Char implements AnimatedMove {
      * @param newName the name of the character or null
      */
     @SuppressWarnings("nls")
-    public void setName(@Nonnull String newName) {
+    public void setName(@Nullable String newName) {
         name = newName;
         setAvatarName();
     }
 
-    public void setCustomName(@Nonnull String customName) {
+    public void setCustomName(@Nullable String customName) {
         this.customName = customName;
         setAvatarName();
     }

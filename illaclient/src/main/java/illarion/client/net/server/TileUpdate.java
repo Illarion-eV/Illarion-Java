@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,11 +19,13 @@ import illarion.common.net.NetCommReader;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -35,20 +37,16 @@ import java.util.List;
 @Immutable
 public final class TileUpdate {
     /**
-     * Default size of the arrays that store the items of this tile update. The size is increased automatically in
-     * case its needed.
-     */
-    private static final int DEFAULT_SIZE = 5;
-
-    /**
      * List of count values for the items on this tile.
      */
-    private final List<ItemCount> itemCount = new ArrayList<>(DEFAULT_SIZE);
+    @Nonnull
+    private final List<ItemCount> itemCount;
 
     /**
      * List of Item IDs on this tile.
      */
-    private final List<ItemId> itemId = new ArrayList<>(DEFAULT_SIZE);
+    @Nonnull
+    private final List<ItemId> itemId;
 
     /**
      * Count of item stacks on the tile.
@@ -94,9 +92,12 @@ public final class TileUpdate {
         // read items
         itemNumber = reader.readUByte();
 
+        itemId = Arrays.asList(new ItemId[itemNumber]);
+        itemCount = Arrays.asList(new ItemCount[itemNumber]);
+
         for (int i = 0; i < itemNumber; ++i) {
-            itemId.add(new ItemId(reader));
-            itemCount.add(ItemCount.getInstance(reader));
+            itemId.set(i, new ItemId(reader));
+            itemCount.set(i, ItemCount.getInstance(reader));
         }
     }
 
@@ -106,8 +107,9 @@ public final class TileUpdate {
      * @return the list of item counts
      */
     @Nonnull
+    @Contract(pure = true)
     public List<ItemCount> getItemCount() {
-        return itemCount;
+        return Collections.unmodifiableList(itemCount);
     }
 
     /**
@@ -116,8 +118,9 @@ public final class TileUpdate {
      * @return the list of item ids
      */
     @Nonnull
+    @Contract(pure = true)
     public List<ItemId> getItemId() {
-        return itemId;
+        return Collections.unmodifiableList(itemId);
     }
 
     /**
@@ -125,6 +128,7 @@ public final class TileUpdate {
      *
      * @return the number of item stacks
      */
+    @Contract(pure = true)
     public int getItemNumber() {
         return itemNumber;
     }
@@ -135,6 +139,7 @@ public final class TileUpdate {
      * @return the location of the tile.
      */
     @Nonnull
+    @Contract(pure = true)
     public Location getLocation() {
         return tileLocation;
     }
@@ -144,6 +149,7 @@ public final class TileUpdate {
      *
      * @return the tile id of the tile this update describes
      */
+    @Contract(pure = true)
     public int getTileId() {
         return tileId;
     }
@@ -153,6 +159,7 @@ public final class TileUpdate {
      *
      * @return the music ID of this tile
      */
+    @Contract(pure = true)
     public int getTileMusic() {
         return tileMusic;
     }
@@ -162,6 +169,7 @@ public final class TileUpdate {
      *
      * @return true if the tile is static blocked
      */
+    @Contract(pure = true)
     public boolean isBlocked() {
         return movementCost == 255;
     }
@@ -171,6 +179,7 @@ public final class TileUpdate {
      *
      * @return the movement cost or {@code 255} in case the tile is blocked
      */
+    @Contract(pure = true)
     public int getMovementCost() {
         return movementCost;
     }

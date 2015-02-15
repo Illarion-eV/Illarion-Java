@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,7 +20,6 @@ import illarion.client.resources.data.ItemTemplate;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -91,7 +90,7 @@ public abstract class AbstractItemSlot {
      * @param newId the ID of the item
      * @param newCount the amount of items
      */
-    public void setData(@Nonnull final ItemId newId, @Nonnull final ItemCount newCount) {
+    public void setData(@Nullable ItemId newId, @Nullable ItemCount newCount) {
         itemId = newId;
         count = newCount;
     }

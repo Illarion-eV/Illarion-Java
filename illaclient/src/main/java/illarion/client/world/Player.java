@@ -19,23 +19,15 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import illarion.client.Login;
 import illarion.client.gui.DialogType;
 import illarion.client.net.client.RequestAppearanceCmd;
-import illarion.client.net.server.events.DialogMerchantReceivedEvent;
-import illarion.client.net.server.events.OpenContainerEvent;
 import illarion.client.util.ChatLog;
-import illarion.client.world.events.CloseDialogEvent;
-import illarion.client.world.items.CarryLoad;
-import illarion.client.world.items.Inventory;
-import illarion.client.world.items.ItemContainer;
-import illarion.client.world.items.MerchantList;
+import illarion.client.world.items.*;
 import illarion.client.world.movement.Movement;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Location;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.FastMath;
-import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.annotation.AnnotationProcessor;
-import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.engine.Engine;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +38,8 @@ import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
+import java.util.Collection;
+import java.util.EnumSet;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -88,6 +81,7 @@ public final class Player {
     /**
      * The instance of the logger used by this class.
      */
+    @Nonnull
     private static final Logger LOGGER = LoggerFactory.getLogger(Player.class);
 
     /**
@@ -202,8 +196,6 @@ public final class Player {
         inventory = new Inventory();
         containers = new TIntObjectHashMap<>();
         containerLock = new ReentrantReadWriteLock();
-
-        AnnotationProcessor.process(this);
     }
 
     /**
@@ -220,71 +212,61 @@ public final class Player {
         World.getGameGui().getContainerGui().closeContainer(id);
     }
 
-    @EventSubscriber
-    public void onDialogClosedEvent(@Nonnull CloseDialogEvent event) {
-        if (merchantDialog == null) {
-            return;
-        }
-
-        if (event.isClosingDialogType(DialogType.Merchant)) {
-            if (event.getDialogId() == merchantDialog.getId()) {
+    public void closeDialog(int dialogId, @Nonnull Collection<DialogType> dialogTypes) {
+        if ((merchantDialog != null) && dialogTypes.contains(DialogType.Merchant)) {
+            if (dialogId == merchantDialog.getId()) {
                 MerchantList oldList = merchantDialog;
                 merchantDialog = null;
                 oldList.closeDialog();
+                if (World.getGameGui().isReady()) {
+                    World.getGameGui().getInventoryGui().updateMerchantOverlay();
+                    World.getGameGui().getContainerGui().updateMerchantOverlay();
+                }
             }
+        }
+
+        if (World.getGameGui().isReady()) {
+            World.getGameGui().getDialogGui().closeDialog(dialogId, dialogTypes);
         }
     }
 
-    @EventSubscriber
-    public void onMerchantDialogOpenedEvent(@Nonnull DialogMerchantReceivedEvent event) {
-        MerchantList list = new MerchantList(event.getId(), event.getItemCount());
-        for (int i = 0; i < event.getItemCount(); i++) {
-            list.setItem(i, event.getItem(i));
+    public void openMerchantDialog(int dialogId, @Nonnull String title, @Nonnull Iterable<MerchantItem> items) {
+        MerchantList list = new MerchantList(dialogId);
+        for (MerchantItem item : items) {
+            list.addItem(item);
         }
 
         MerchantList oldList = merchantDialog;
         merchantDialog = list;
 
         if (oldList != null) {
-            EventBus.publish(new CloseDialogEvent(oldList.getId(), DialogType.Merchant));
+            closeDialog(oldList.getId(), EnumSet.of(DialogType.Merchant));
+        }
+
+        if (World.getGameGui().isReady()) {
+            World.getGameGui().getContainerGui().updateMerchantOverlay();
+            World.getGameGui().getInventoryGui().updateMerchantOverlay();
         }
     }
 
-    @EventSubscriber
-    public void onOpenContainerEvent(@Nonnull OpenContainerEvent event) {
-        ItemContainer container;
-        int slotCount = event.getSlotCount();
-        if (hasContainer(event.getContainerId())) {
-            container = getContainer(event.getContainerId());
+    @Nonnull
+    public ItemContainer getOrCreateContainer(int id, @Nonnull String title, @Nonnull String description,
+                                              int slotCount) {
+        if (hasContainer(id)) {
+            ItemContainer container = getContainer(id);
             if (container == null) {
                 throw new IllegalStateException(
-                        "Has container with ID but can't receive it. " + "Internal state corrupted.");
+                        "Has container with ID but can't receive it. Internal state corrupted.");
             }
-            if (container.getSlotCount() != slotCount) {
+            if (container.getSlotCount() == slotCount) {
+                return container;
+            } else {
                 LOGGER.error("Received container event for existing container but without fitting slot count!");
-                removeContainer(event.getContainerId());
-                EventBus.publish(event);
-                return;
-            }
-        } else {
-            container = createNewContainer(event.getContainerId(), event.getTitle(), event.getDescription(), slotCount);
-        }
+                removeContainer(id);
 
-        boolean[] updatedSlot = new boolean[slotCount];
-        Arrays.fill(updatedSlot, false);
-
-        for (OpenContainerEvent.Item item : event.getItems()) {
-            updatedSlot[item.getSlot()] = true;
-            container.setItem(item.getSlot(), item.getItemId(), item.getCount());
-        }
-
-        for (int i = 0; i < slotCount; i++) {
-            if (!updatedSlot[i]) {
-                container.setItem(i, null, null);
             }
         }
-
-        World.getGameGui().getContainerGui().showContainer(container);
+        return createNewContainer(id, title, description, slotCount);
     }
 
     /**
@@ -347,6 +329,7 @@ public final class Player {
      * @return The character of the player
      */
     @Nonnull
+    @Contract(pure = true)
     public Char getCharacter() {
         return character;
     }
@@ -357,6 +340,7 @@ public final class Player {
      * @return the chat log of this player
      */
     @Nonnull
+    @Contract(pure = true)
     public ChatLog getChatLog() {
         return chatLog;
     }
@@ -367,6 +351,7 @@ public final class Player {
      * @return the combat handler of this player
      */
     @Nonnull
+    @Contract(pure = true)
     public CombatHandler getCombatHandler() {
         return combatHandler;
     }
@@ -377,6 +362,7 @@ public final class Player {
      * @return the player inventory
      */
     @Nonnull
+    @Contract(pure = true)
     public Inventory getInventory() {
         return inventory;
     }
@@ -387,6 +373,7 @@ public final class Player {
      * @return The current location of the character
      */
     @Nonnull
+    @Contract(pure = true)
     public Location getLocation() {
         return playerLocation;
     }
@@ -397,6 +384,7 @@ public final class Player {
      * @return the movement handler
      */
     @Nonnull
+    @Contract(pure = true)
     public Movement getMovementHandler() {
         return movementHandler;
     }
@@ -407,6 +395,7 @@ public final class Player {
      * @return The path to the player directory
      */
     @Nonnull
+    @Contract(pure = true)
     public Path getPath() {
         return path;
     }
@@ -417,6 +406,7 @@ public final class Player {
      * @return the merchant list
      */
     @Nullable
+    @Contract(pure = true)
     public MerchantList getMerchantList() {
         return merchantDialog;
     }
@@ -427,6 +417,7 @@ public final class Player {
      * @return The ID of the player character
      */
     @Nullable
+    @Contract(pure = true)
     public CharacterId getPlayerId() {
         return playerId;
     }
@@ -437,6 +428,7 @@ public final class Player {
      * @param checkLoc The location that shall be checked
      * @return true if the location is at the same level as the player
      */
+    @Contract(pure = true)
     boolean isBaseLevel(@Nonnull Location checkLoc) {
         return getLocation().getScZ() == checkLoc.getScZ();
     }
@@ -447,6 +439,7 @@ public final class Player {
      * @param chara The character that is checked
      * @return the visibility of the character in percent
      */
+    @Contract(pure = true)
     public float canSee(@Nonnull Char chara) {
         if (isPlayer(chara.getCharId())) {
             return Char.VISIBILITY_MAX;
@@ -464,6 +457,7 @@ public final class Player {
      * @param checkId the ID to be checked
      * @return true if it is the player, false if not
      */
+    @Contract(value = "null -> false", pure = true)
     public boolean isPlayer(@Nullable CharacterId checkId) {
         return (playerId != null) && playerId.equals(checkId);
     }
@@ -473,6 +467,7 @@ public final class Player {
      *
      * @return The level the player character is currently standing on
      */
+    @Contract(pure = true)
     public int getBaseLevel() {
         return playerLocation.getScZ();
     }
@@ -482,10 +477,12 @@ public final class Player {
      *
      * @return {@code true} in case a merchant list is active
      */
+    @Contract(pure = true)
     public boolean hasMerchantList() {
         return merchantDialog != null;
     }
 
+    @Contract(pure = true)
     public boolean hasValidLocation() {
         return validLocation;
     }
@@ -497,6 +494,7 @@ public final class Player {
      * @param tolerance an additional tolerance added to the default clipping distance
      * @return true if the position is within the clipping distance and the tolerance
      */
+    @Contract(pure = true)
     public boolean isOnScreen(@Nonnull Location testLoc, int tolerance) {
         if (Math.abs(testLoc.getScZ() - playerLocation.getScZ()) > 2) {
             return false;

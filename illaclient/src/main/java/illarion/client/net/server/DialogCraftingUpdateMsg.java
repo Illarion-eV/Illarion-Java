@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,25 +15,23 @@
  */
 package illarion.client.net.server;
 
+import illarion.client.gui.DialogCraftingGui;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.net.server.events.DialogCraftingUpdateAbortedReceivedEvent;
-import illarion.client.net.server.events.DialogCraftingUpdateCompletedReceivedEvent;
-import illarion.client.net.server.events.DialogCraftingUpdateStartReceivedEvent;
+import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
-import javolution.text.TextBuilder;
-import org.bushe.swing.event.EventBus;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
- * Servermessage: Crafting dialog update ({@link CommandList#MSG_DIALOG_CRAFTING_UPDATE}).
+ * Server message: Crafting dialog update
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_DIALOG_CRAFTING_UPDATE)
-public final class DialogCraftingUpdateMsg extends AbstractGuiMsg {
+public final class DialogCraftingUpdateMsg implements ServerReply {
     /**
      * This is the value of {@link #type} in case the update means that the crafting operation was started.
      */
@@ -69,12 +67,6 @@ public final class DialogCraftingUpdateMsg extends AbstractGuiMsg {
      */
     private int remaining;
 
-    /**
-     * Decode the text request the receiver got and prepare it for the execution.
-     *
-     * @param reader the receiver that got the data from the server that needs to be decoded
-     * @throws java.io.IOException thrown in case there was not enough data received to decode the full message
-     */
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         type = reader.readUByte();
@@ -85,53 +77,45 @@ public final class DialogCraftingUpdateMsg extends AbstractGuiMsg {
         requestId = reader.readInt();
     }
 
-    /**
-     * Execute the text request message and send the decoded data to the rest of the client.
-     */
+    @Nonnull
     @Override
-    public void executeUpdate() {
+    public ServerReplyResult execute() {
+        if (!World.getGameGui().isReady()) {
+            return ServerReplyResult.Reschedule;
+        }
+
+        DialogCraftingGui gui = World.getGameGui().getDialogCraftingGui();
         switch (type) {
             case START:
-                EventBus.publish(new DialogCraftingUpdateStartReceivedEvent(requestId, remaining, requiredTime));
+                gui.startProductionIndicator(requestId, remaining, requiredTime / 10.0);
                 break;
             case COMPLETE:
-                EventBus.publish(new DialogCraftingUpdateCompletedReceivedEvent(requestId));
+                gui.finishProduction(requestId);
                 break;
             case ABORTED:
-                EventBus.publish(new DialogCraftingUpdateAbortedReceivedEvent(requestId));
+                gui.abortProduction(requestId);
                 break;
             default:
-                break;
+                return ServerReplyResult.Failed;
         }
+
+        return ServerReplyResult.Success;
     }
 
-    /**
-     * Get the data of this text request message as string.
-     *
-     * @return the string that contains the values that were decoded for this message
-     */
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
-        TextBuilder builder = new TextBuilder();
         switch (type) {
             case START:
-                builder.append("START");
-                builder.append(", required time: ");
-                builder.append((float) requiredTime / 10.f);
-                builder.append("s");
-                break;
+                return Utilities.toString(DialogCraftingUpdateMsg.class, "ID: " + requestId, "START",
+                        "required time" + (requiredTime / 10.f) + 's', "remaining: " + remaining);
             case COMPLETE:
-                builder.append("COMPLETED");
-                break;
+                return Utilities.toString(DialogCraftingUpdateMsg.class, "ID: " + requestId, "COMPLETED");
             case ABORTED:
-                builder.append("ABORTED");
-                break;
+                return Utilities.toString(DialogCraftingUpdateMsg.class, "ID: " + requestId, "ABORTED");
             default:
-                builder.append("UNKNOWN");
+                return Utilities.toString(DialogCraftingUpdateMsg.class, "ID: " + requestId, "UNKNOWN");
         }
-        builder.append(", id: ").append(requestId);
-        return toString(builder.toString());
     }
 }

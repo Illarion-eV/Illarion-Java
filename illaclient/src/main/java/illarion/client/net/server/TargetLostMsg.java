@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,33 +19,35 @@ import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
- * Servermessage: This message is received in case the current attack target is lost.
+ * Server message: This message is received in case the current attack target is lost.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_TARGET_LOST)
-public final class TargetLostMsg extends AbstractReply {
+public final class TargetLostMsg implements ServerReply {
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         // nothing to decode
     }
 
-    @SuppressWarnings("nls")
+    @Nonnull
     @Override
-    public void executeUpdate() {
+    public ServerReplyResult execute() {
         World.getPlayer().getCombatHandler().targetLost();
+        return ServerReplyResult.Success;
     }
 
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString("target lost");
+        return Utilities.toString(TargetLostMsg.class);
     }
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,6 +43,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.security.InvalidParameterException;
 import java.text.DecimalFormat;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -205,7 +207,7 @@ public class DialogCraftingControl extends WindowControl
         increaseAmountButtonEventHandler = new IncreaseAmountButtonEventSubscriber();
         decreaseAmountButtonEventHandler = new DecreaseAmountButtonEventSubscriber();
 
-        treeRootNode = new TreeItem<ListEntry>();
+        treeRootNode = new TreeItem<>();
         timeFormat = new DecimalFormat("#0.0");
     }
 
@@ -308,7 +310,7 @@ public class DialogCraftingControl extends WindowControl
      */
     @Override
     public void clearItemList() {
-        treeRootNode = new TreeItem<ListEntry>();
+        treeRootNode = new TreeItem<>();
         getItemList().setTree(treeRootNode);
     }
 
@@ -627,12 +629,17 @@ public class DialogCraftingControl extends WindowControl
 
     @Override
     public void addCraftingItems(@Nonnull CraftingCategoryEntry... entries) {
-        TreeBox<DialogCraftingControl.ListEntry> list = getItemList();
+        addCraftingItems(Arrays.asList(entries));
+    }
 
-        for (CraftingCategoryEntry entry : entries) {
-            TreeItem<ListEntry> categoryItem = new TreeItem<ListEntry>(new ListEntry(entry));
+    @Override
+    public <T extends CraftingCategoryEntry> void addCraftingItems(@Nonnull Collection<T> entries) {
+        TreeBox<ListEntry> list = getItemList();
+
+        for (T entry : entries) {
+            TreeItem<ListEntry> categoryItem = new TreeItem<>(new ListEntry(entry));
             for (CraftingItemEntry itemEntry : entry.getChildren()) {
-                categoryItem.addTreeItem(new TreeItem<ListEntry>(new ListEntry(itemEntry)));
+                categoryItem.addTreeItem(new TreeItem<>(new ListEntry(itemEntry)));
             }
             treeRootNode.addTreeItem(categoryItem);
         }

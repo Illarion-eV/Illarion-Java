@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,9 +20,13 @@ import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.Location;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This is the server message that contains the information regarding a single quest.
@@ -30,7 +34,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_QUEST)
-public final class QuestMsg extends AbstractGuiMsg {
+public final class QuestMsg implements ServerReply {
     /**
      * The ID of the quest.
      */
@@ -39,11 +43,13 @@ public final class QuestMsg extends AbstractGuiMsg {
     /**
      * The title of the quest.
      */
+    @Nullable
     private String title;
 
     /**
      * The description text of the quests current state.
      */
+    @Nullable
     private String description;
 
     /**
@@ -54,7 +60,8 @@ public final class QuestMsg extends AbstractGuiMsg {
     /**
      * The target locations where the next steps of the quest will happen.
      */
-    private Location[] targetLocations;
+    @Nullable
+    private List<Location> targetLocations;
 
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
@@ -62,21 +69,32 @@ public final class QuestMsg extends AbstractGuiMsg {
         title = reader.readString();
         description = reader.readString();
         finished = reader.readByte() == 1;
-        targetLocations = new Location[reader.readUByte()];
-        for (int i = 0; i < targetLocations.length; i++) {
-            targetLocations[i] = decodeLocation(reader);
+        int count = reader.readUByte();
+        targetLocations = Arrays.asList(new Location[count]);
+        for (int i = 0; i < count; i++) {
+            targetLocations.set(i, new Location(reader));
         }
     }
 
+    @Nonnull
     @Override
-    public void executeUpdate() {
+    public ServerReplyResult execute() {
+        if ((title == null) || (description == null) || (targetLocations == null)) {
+            throw new NotDecodedException();
+        }
+
+        if (!World.getGameGui().isReady()) {
+            return ServerReplyResult.Reschedule;
+        }
+
         World.getGameGui().getQuestGui().setQuest(questId, title, description, finished, targetLocations);
+        return ServerReplyResult.Success;
     }
 
-    @Override
     @Nonnull
+    @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString("ID: " + questId + " Title: \"" + title + '"' + (finished ? " (finished)" : "") + " Target " +
-                                "Locations: " + targetLocations.length);
+        return Utilities.toString(QuestMsg.class, "Quest ID: " + questId, title);
     }
 }

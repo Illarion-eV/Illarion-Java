@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,6 +14,8 @@
  * GNU General Public License for more details.
  */
 package illarion.client.world;
+
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -78,6 +80,7 @@ public final class Clock {
      *
      * @return the current day
      */
+    @Contract(pure = true)
     public int getDay() {
         return day;
     }
@@ -87,6 +90,7 @@ public final class Clock {
      *
      * @return the current month
      */
+    @Contract(pure = true)
     public int getMonth() {
         return month;
     }
@@ -96,6 +100,7 @@ public final class Clock {
      *
      * @return the current year
      */
+    @Contract(pure = true)
     public int getYear() {
         return year;
     }
@@ -105,6 +110,7 @@ public final class Clock {
      *
      * @return the current hour
      */
+    @Contract(pure = true)
     public int getHour() {
         long illaHoursPass = getIllaSecondPass() / 60 / 60;
         return (int) ((hour + illaHoursPass) % 24);
@@ -115,6 +121,7 @@ public final class Clock {
      *
      * @return the current minute
      */
+    @Contract(pure = true)
     public int getMinute() {
         long illaMinutesPass = getIllaSecondPass() / 60;
         return (int) ((minute + illaMinutesPass) % 60);
@@ -125,6 +132,7 @@ public final class Clock {
      *
      * @return the current second
      */
+    @Contract(pure = true)
     public int getSecond() {
         return (int) (getIllaSecondPass() % 60);
     }
@@ -134,6 +142,7 @@ public final class Clock {
      *
      * @return the elapsed time in Illarion seconds
      */
+    @Contract(pure = true)
     private long getIllaSecondPass() {
         long secondsPass = (System.currentTimeMillis() - lastSync) / 1000;
         return secondsPass * 3L;
