@@ -199,7 +199,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
             }
         }
         if (res == null) {
-            res = new GraphicResolution(800, 600, 32, 60);
+            res = new GraphicResolution(); // auto detection
         }
 
         try {
