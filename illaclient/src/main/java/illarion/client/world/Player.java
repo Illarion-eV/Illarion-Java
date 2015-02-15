@@ -463,6 +463,18 @@ public final class Player {
     }
 
     /**
+     * Check if the player is setup and ready.
+     * <p />
+     * As long as this returns {@code false}, the player did not receive it's ID yet.
+     *
+     * @return {@code true} in case the player is properly set up.
+     */
+    @Contract(pure = true)
+    public boolean isReady() {
+        return playerId != null;
+    }
+
+    /**
      * Get the map level the player character is currently standing on.
      *
      * @return The level the player character is currently standing on

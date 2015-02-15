@@ -69,6 +69,15 @@ public final class AttributeMsg implements ServerReply {
         for (CharacterAttribute charAttribute : CharacterAttribute.values()) {
             if (charAttribute.getServerName().equals(attribute)) {
                 Char character = World.getPeople().getCharacter(targetCharacter);
+                if (character == null) {
+                    if (!World.getPlayer().isReady()) {
+                        return ServerReplyResult.Reschedule;
+                    }
+                    if (World.getPlayer().isPlayer(targetCharacter)) {
+                        character = World.getPlayer().getCharacter();
+                    }
+                }
+
                 if (character != null) {
                     character.setAttribute(charAttribute, value);
                 } else {
@@ -88,6 +97,6 @@ public final class AttributeMsg implements ServerReply {
     @Override
     @Contract(pure = true)
     public String toString() {
-        return Utilities.toString(AttributeMsg.class, targetCharacter, attribute, "New value" + value);
+        return Utilities.toString(AttributeMsg.class, targetCharacter, attribute, "New value: " + value);
     }
 }
