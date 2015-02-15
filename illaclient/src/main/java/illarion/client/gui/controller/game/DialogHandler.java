@@ -664,7 +664,7 @@ public final class DialogHandler
             if (closeEvent == null) {
                 break;
             }
-            closeDialog(closeEvent.dialogId, closeEvent.types);
+            closeDialogImpl(closeEvent.dialogId, closeEvent.types);
         }
     }
 
