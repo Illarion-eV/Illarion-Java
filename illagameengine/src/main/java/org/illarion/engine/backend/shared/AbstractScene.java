@@ -202,6 +202,11 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
         sceneEffects.clear();
     }
 
+    @Override
+    public int getElementCount() {
+        return sceneElements.size();
+    }
+
     /**
      * Get a scene effect applied to a specific image.
      *

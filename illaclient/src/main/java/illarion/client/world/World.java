@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -26,6 +26,7 @@ import illarion.client.world.interactive.InteractionManager;
 import org.illarion.engine.Engine;
 import org.illarion.engine.EngineException;
 import org.illarion.engine.graphic.LightTracer;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -354,5 +355,10 @@ public final class World {
      */
     public static synchronized void initGui(@Nonnull Engine engine) {
         INSTANCE.gameGui = new GameScreenController(engine.getInput());
+    }
+
+    @Contract(pure = true)
+    public static boolean isInitDone() {
+        return INSTANCE.init;
     }
 }

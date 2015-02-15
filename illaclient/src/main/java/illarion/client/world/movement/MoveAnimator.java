@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -41,7 +41,9 @@ import java.util.Queue;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 class MoveAnimator implements AnimatedMove {
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(MoveAnimator.class);
+    @Nonnull
     private static final Marker marker = MarkerFactory.getMarker("Movement");
 
     @Nonnull

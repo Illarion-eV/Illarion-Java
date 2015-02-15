@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -94,4 +94,11 @@ public interface Scene {
      * Remove all effects from the scene.
      */
     void clearEffects();
+
+    /**
+     * Get the amount of elements in the scene.
+     *
+     * @return the amount of elements
+     */
+    int getElementCount();
 }

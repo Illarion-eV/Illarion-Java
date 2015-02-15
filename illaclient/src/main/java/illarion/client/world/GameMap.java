@@ -36,6 +36,7 @@ import org.illarion.engine.Engine;
 import org.illarion.engine.EngineException;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.LightingMap;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -69,12 +70,12 @@ public final class GameMap implements LightingMap, Stoppable {
         /**
          * Executed for the given tile on the map. It will trigger the markAsRemoved method for that tile.
          *
-         * @param tile the tile to remove
+         * @param object the tile to remove
          * @return {@code true} always
          */
         @Override
-        public boolean execute(@Nonnull MapTile tile) {
-            tile.markAsRemoved();
+        public boolean execute(@Nonnull MapTile object) {
+            object.markAsRemoved();
             return true;
         }
     }
@@ -95,17 +96,17 @@ public final class GameMap implements LightingMap, Stoppable {
         /**
          * Trigger the renderLight function on one tile with the parameters that were setup.
          *
-         * @param tile the tile that gets its lights rendered now
+         * @param object the tile that gets its lights rendered now
          * @return {@code true} in case the tiles are getting processed, {@code false} of the helper was not properly
          * setup
          */
         @Override
-        public boolean execute(@Nullable MapTile tile) {
+        public boolean execute(@Nullable MapTile object) {
             if (light == null) {
                 return false;
             }
-            if (tile != null) {
-                tile.renderLight(light);
+            if (object != null) {
+                object.renderLight(light);
             }
             return true;
         }
@@ -131,13 +132,13 @@ public final class GameMap implements LightingMap, Stoppable {
         /**
          * This method causes the tile its called for to reset the light.
          *
-         * @param tile the tile to reset
+         * @param object the tile to reset
          * @return {@code true} in all cases
          */
         @Override
-        public boolean execute(@Nullable MapTile tile) {
-            if (tile != null) {
-                tile.resetLight();
+        public boolean execute(@Nullable MapTile object) {
+            if (object != null) {
+                object.resetLight();
             }
             return true;
         }
@@ -445,12 +446,12 @@ public final class GameMap implements LightingMap, Stoppable {
      * Determines whether a map location accepts the light from a specific direction.
      *
      * @param loc the location of the tile
-     * @param deltaX the X-Delta of the light ray direction
-     * @param deltaY the Y-Delta of the light ray direction
+     * @param dx the X-Delta of the light ray direction
+     * @param dy the Y-Delta of the light ray direction
      * @return {@code true} if the position accepts the light, false if not
      */
     @Override
-    public boolean acceptsLight(@Nonnull Location loc, int deltaX, int deltaY) {
+    public boolean acceptsLight(@Nonnull Location loc, int dx, int dy) {
         MapTile tile = getMapAt(loc);
         if (tile != null) {
             switch (tile.getFace()) {
@@ -458,13 +459,13 @@ public final class GameMap implements LightingMap, Stoppable {
                     return true;
 
                 case ItemInfo.FACE_W:
-                    return deltaX >= 0;
+                    return dx >= 0;
 
                 case ItemInfo.FACE_SW:
-                    return (deltaY - deltaX) < 0;
+                    return (dy - dx) < 0;
 
                 case ItemInfo.FACE_S:
-                    return deltaY <= 0;
+                    return dy <= 0;
 
                 default:
                     return true;
@@ -481,6 +482,7 @@ public final class GameMap implements LightingMap, Stoppable {
      * @return obscurity of the tile, 0 for clear view {@link LightingMap#BLOCKED_VIEW} for fully blocked
      */
     @Override
+    @Contract(pure = true)
     public int blocksView(@Nonnull Location loc) {
         MapTile tile = getMapAt(loc);
         if (tile == null) {
@@ -529,8 +531,19 @@ public final class GameMap implements LightingMap, Stoppable {
      *
      * @return {@code true} in case the map is empty
      */
+    @Contract(pure = true)
     public boolean isEmpty() {
         return tiles.isEmpty();
+    }
+
+    /**
+     * Get the amount of tiles currently stored in the map.
+     *
+     * @return the amount of tiles
+     */
+    @Contract(pure = true)
+    public int getTileCount() {
+        return tiles.size();
     }
 
     /**
@@ -546,6 +559,7 @@ public final class GameMap implements LightingMap, Stoppable {
      * @param loc the location that shall be checked
      * @return the elevation value
      */
+    @Contract(pure = true)
     public int getElevationAt(@Nonnull Location loc) {
         MapTile ground = getMapAt(loc);
         if (ground != null) {
@@ -560,6 +574,7 @@ public final class GameMap implements LightingMap, Stoppable {
      * @return the map used to interact with this map
      */
     @Nonnull
+    @Contract(pure = true)
     public InteractiveMap getInteractive() {
         return interactive;
     }
@@ -573,6 +588,7 @@ public final class GameMap implements LightingMap, Stoppable {
      * @return the map tile at the location or {@code null}
      */
     @Nullable
+    @Contract(pure = true)
     public MapTile getMapAt(int posX, int posY, int posZ) {
         return getMapAt(Location.getKey(posX, posY, posZ));
     }
@@ -584,6 +600,7 @@ public final class GameMap implements LightingMap, Stoppable {
      * @return the map tile at the location or {@code null}
      */
     @Nullable
+    @Contract(pure = true)
     public MapTile getMapAt(@Nonnull Location loc) {
         return getMapAt(loc.getKey());
     }
@@ -595,6 +612,7 @@ public final class GameMap implements LightingMap, Stoppable {
      * @return the map tile at the location or {@code null}
      */
     @Nullable
+    @Contract(pure = true)
     public MapTile getMapAt(long key) {
         mapLock.readLock().lock();
         try {
@@ -801,6 +819,7 @@ public final class GameMap implements LightingMap, Stoppable {
     }
 
     @Nullable
+    @Contract(pure = true)
     private MapTile getMapAt(@Nonnull Location origin, @Nonnull Direction direction) {
         int offsetX = direction.getDirectionVectorX();
         int offsetY = direction.getDirectionVectorY();

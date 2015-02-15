@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,6 +22,7 @@ import illarion.client.input.InputReceiver;
 import illarion.client.states.*;
 import illarion.client.util.ConnectionPerformanceClock;
 import illarion.client.util.Lang;
+import illarion.client.world.World;
 import illarion.common.config.ConfigChangedEvent;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
@@ -286,6 +287,7 @@ public final class Game implements GameListener {
         if (showFPS || showPing) {
             Font fpsFont = container.getEngine().getAssets().getFontManager().getFont(FontLoader.CONSOLE_FONT);
             if (fpsFont != null) {
+
                 int renderLine = 10;
                 if (showFPS) {
                     container.getEngine().getGraphics()
@@ -298,6 +300,16 @@ public final class Game implements GameListener {
                             renderLine += fpsFont.getLineHeight();
                         }
                     }
+                }
+
+                if (SHOW_RENDER_DIAGNOSTIC && World.isInitDone()) {
+                    String tileLine = "Tile count: " + World.getMap().getTileCount();
+                    container.getEngine().getGraphics().drawText(fpsFont, tileLine, Color.WHITE, 10, renderLine);
+                    renderLine += fpsFont.getLineHeight();
+
+                    String sceneLine = "Scene objects: " + World.getMapDisplay().getGameScene().getElementCount();
+                    container.getEngine().getGraphics().drawText(fpsFont, sceneLine, Color.WHITE, 10, renderLine);
+                    renderLine += fpsFont.getLineHeight();
                 }
 
                 if (showPing) {
