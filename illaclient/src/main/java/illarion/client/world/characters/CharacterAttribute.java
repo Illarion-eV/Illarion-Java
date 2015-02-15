@@ -33,7 +33,13 @@ public enum CharacterAttribute {
     Intelligence("intelligence"),
     Essence("essence"),
     Willpower("willpower"),
-    Perception("perception");
+    Perception("perception"),
+    Age("age"),
+    Weight("weight"),
+    Height("height"),
+    Attitude("attitude"),
+    Luck("luck"),
+    Sex("sex");
 
     /**
      * The name for the attribute that is used by the server.
@@ -46,7 +52,7 @@ public enum CharacterAttribute {
      *
      * @param serverName the name used by the server to refer to this attribute
      */
-    CharacterAttribute(@Nonnull final String serverName) {
+    CharacterAttribute(@Nonnull String serverName) {
         this.serverName = serverName;
     }
 
