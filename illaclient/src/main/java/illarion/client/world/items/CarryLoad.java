@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,6 +20,7 @@ import illarion.client.util.Lang;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
 import org.illarion.engine.GameContainer;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 
@@ -42,7 +43,7 @@ public class CarryLoad {
     public void updateLoad(int current, int maximum) {
         boolean oldRunningPossible = isRunningPossible();
         boolean oldWalkingPossible = isWalkingPossible();
-        boolean isFirst = (maximumLoad == 0);
+        boolean isFirst = maximumLoad == 0;
 
         maximumLoad = maximum;
         currentLoad = current;
@@ -81,9 +82,12 @@ public class CarryLoad {
                 }
             });
         }
-        World.getGameGui().getInventoryGui().updateCarryLoad();
+        if (World.getGameGui().isReady()) {
+            World.getGameGui().getInventoryGui().updateCarryLoad();
+        }
     }
 
+    @Contract(pure = true)
     public double getLoadFactor() {
         if (maximumLoad == 0) {
             return Double.POSITIVE_INFINITY;
@@ -91,10 +95,12 @@ public class CarryLoad {
         return (double) currentLoad / maximumLoad;
     }
 
+    @Contract(pure = true)
     public boolean isRunningPossible() {
         return getLoadFactor() <= 0.75;
     }
 
+    @Contract(pure = true)
     public boolean isWalkingPossible() {
         return currentLoad <= maximumLoad;
     }
