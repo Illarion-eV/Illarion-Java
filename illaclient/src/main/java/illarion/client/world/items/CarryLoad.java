@@ -52,8 +52,7 @@ public class CarryLoad {
         //noinspection ConstantConditions
         if (isFirst && !isRunningPossible()) {
             messageToSend = Lang.getMsg("illarion.client.world.items.CarryLoad.RunningImpossible");
-        }
-        if (oldRunningPossible != isRunningPossible()) {
+        } else if (oldRunningPossible != isRunningPossible()) {
             if (oldRunningPossible) {
                 messageToSend = Lang.getMsg("illarion.client.world.items.CarryLoad.RunningImpossible");
             }
@@ -63,8 +62,7 @@ public class CarryLoad {
         }
         if (isFirst && !isWalkingPossible()) {
             messageToSend = Lang.getMsg("illarion.client.world.items.CarryLoad.WalkingImpossible");
-        }
-        if (oldWalkingPossible != isWalkingPossible()) {
+        } else if (oldWalkingPossible != isWalkingPossible()) {
             if (oldWalkingPossible) {
                 messageToSend = Lang.getMsg("illarion.client.world.items.CarryLoad.WalkingImpossible");
             }
