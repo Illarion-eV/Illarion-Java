@@ -54,12 +54,12 @@ public final class World {
             if (INSTANCE.player != null) {
                 INSTANCE.player.shutdown();
             }
+            if (INSTANCE.lights != null) {
+                INSTANCE.lights.saveShutdown();
+            }
             if (INSTANCE.map != null) {
                 INSTANCE.map.getMiniMap().saveAllMaps();
                 INSTANCE.map.saveShutdown();
-            }
-            if (INSTANCE.lights != null) {
-                INSTANCE.lights.saveShutdown();
             }
             if (INSTANCE.musicBox != null) {
                 INSTANCE.musicBox.saveShutdown();
@@ -344,8 +344,6 @@ public final class World {
         INSTANCE.player = new Player(engine);
         INSTANCE.weather = new Weather();
         INSTANCE.interactionManager = new InteractionManager();
-
-        INSTANCE.lights.start();
     }
 
     /**

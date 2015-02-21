@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,6 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * A ray node is one node on the path of a light to a destination. It knows all its child nodes around.
@@ -28,30 +30,16 @@ import javax.annotation.Nonnull;
  */
 final class RayNode {
     /**
-     * The string builder used to create the string texts in this class.
-     */
-    private static final StringBuilder BUILDER = new StringBuilder();
-
-    /**
      * The error and debug logger of the client.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(RayNode.class);
-
-    /**
-     * The maximum amount of children a node can get. This is the size of the array that stores the child references.
-     */
-    private static final int MAX_CHILDS = 8;
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(RayNode.class);
 
     /**
      * The list of children this node has.
      */
-    private final RayNode[] children = new RayNode[MAX_CHILDS];
-
-    /**
-     * The amount of children that were already added to this node. This is the index of the next child that shall be
-     * added in the {@link #children} array.
-     */
-    private int childrenCount;
+    @Nonnull
+    private final Collection<RayNode> children;
 
     /**
      * The light intensity value of this node.
@@ -67,12 +55,12 @@ final class RayNode {
     /**
      * The x coordinate of this node.
      */
-    private final int x;
+    private final int posX;
 
     /**
      * The y coordinate of this node.
      */
-    private final int y;
+    private final int posY;
 
     /**
      * Create a ray node. A node created with this constructor is placed at the origin of the light as the root node.
@@ -80,7 +68,7 @@ final class RayNode {
      * @param size the length of the rays of the light this node is a part of, its used to calculate the intensity of
      * the light
      */
-    public RayNode(final float size) {
+    public RayNode(float size) {
         this(0, 0, 0, size);
     }
 
@@ -93,14 +81,14 @@ final class RayNode {
      * how many nodes are in front of this ray node. The root ray node is level 0
      * @param size the length of the rays of the light this node is a part of,
      */
-    RayNode(final int posX, final int posY, final int nodeLevel, final double size) {
+    RayNode(int posX, int posY, int nodeLevel, double size) {
         level = nodeLevel;
-        x = posX;
-        y = posY;
+        this.posX = posX;
+        this.posY = posY;
 
-        final float distance = (float) Math.sqrt((x * x) + (y * y));
+        float distance = (float) Math.sqrt((this.posX * this.posX) + (this.posY * this.posY));
         intensity = 1.0 - (distance / (size + 0.5));
-        childrenCount = 0;
+        children = new ArrayList<>();
     }
 
     /**
@@ -114,19 +102,28 @@ final class RayNode {
      * @param index the current position on the ray
      * @param size real length of the ray
      */
-    public void addRay(final int[] xPath, final int[] yPath, final int len, final int index, final double size) {
+    void addRay(@Nonnull int[] xPath, @Nonnull int[] yPath, int len, int index, double size) {
+        if (index < 0) {
+            throw new IllegalArgumentException("The index has to be positive.");
+        }
+        if (len < index) {
+            throw new IllegalArgumentException("The index has to be smaller then the length.");
+        }
+        if ((len > xPath.length) || (len > yPath.length)) {
+            throw new IllegalArgumentException("The length argument must not be larger then the length of the arrays.");
+        }
         // there are more points on the path
         if (index < len) {
-            final int nx = xPath[index];
-            final int ny = yPath[index];
+            int nx = xPath[index];
+            int ny = yPath[index];
 
             // search matching point
             RayNode next = null;
-            for (final RayNode node : children) {
+            for (RayNode node : children) {
                 if (node == null) {
                     break;
                 }
-                if ((node.x == nx) && (node.y == ny)) {
+                if ((node.posX == nx) && (node.posY == ny)) {
                     next = node;
                     break;
                 }
@@ -137,7 +134,7 @@ final class RayNode {
                 next = new RayNode(nx, ny, index, size);
                 // only inside falloff circle
                 if (next.intensity > 0) {
-                    children[childrenCount++] = next;
+                    children.add(next);
                 }
             }
 
@@ -157,8 +154,8 @@ final class RayNode {
      * @param globalIntensity global intensity modificator that reduces the default intensity of the light by the
      * glowing intensity of the light in order to make the light generally weaker
      */
-    public void apply(@Nonnull final LightSource shadowMap, final float globalIntensity) {
-        int blocked = shadowMap.setIntensity(x, y, globalIntensity * intensity);
+    public void apply(@Nonnull LightSource shadowMap, float globalIntensity) {
+        int blocked = shadowMap.setIntensity(posX, posY, globalIntensity * intensity);
         float newIntensity = globalIntensity;
         // never block light source itself, remove when blocking is variable
         if (level == 0) {
@@ -171,7 +168,7 @@ final class RayNode {
             }
 
             if (newIntensity > 0.05) {
-                for (final RayNode node : children) {
+                for (RayNode node : children) {
                     if (node == null) {
                         break;
                     }
@@ -182,37 +179,23 @@ final class RayNode {
     }
 
     /**
-     * Dump the data of all ray nodes from this node and all its children out.
-     */
-    public void dump() {
-        LOGGER.debug(toString());
-        for (final RayNode node : children) {
-            if (node == null) {
-                break;
-            }
-            node.dump();
-        }
-    }
-
-    /**
      * Create a string representation of this ray node.
      *
      * @return the string representation of this ray node
-     * @see java.lang.Object#toString()
      */
     @Nonnull
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        BUILDER.setLength(0);
+        StringBuilder builder = new StringBuilder();
         for (int i = 0; i < level; i++) {
-            BUILDER.append("--");
+            builder.append("--");
         }
-        BUILDER.append("(");
-        BUILDER.append(x);
-        BUILDER.append(",");
-        BUILDER.append(y);
-        BUILDER.append(")");
-        return BUILDER.toString();
+        builder.append('(');
+        builder.append(posX);
+        builder.append(',');
+        builder.append(posY);
+        builder.append(')');
+        return builder.toString();
     }
 }

@@ -151,6 +151,7 @@ public final class MapTile implements AlphaChangeListener {
     /**
      * The temporary light instance that is used for the calculations before its applied to the actual light.
      */
+    @Nonnull
     private final Color tmpLight = new Color(Color.WHITE);
 
     /**
@@ -330,7 +331,6 @@ public final class MapTile implements AlphaChangeListener {
         removedTile = true;
         if (lightSrc != null) {
             World.getLights().remove(lightSrc);
-            LightSource.releaseLight(lightSrc);
         }
         clampItems(0);
         if (tile != null) {
@@ -597,13 +597,12 @@ public final class MapTile implements AlphaChangeListener {
 
         if (lightSrc != null) {
             World.getLights().remove(lightSrc);
-            LightSource.releaseLight(lightSrc);
             lightSrc = null;
         }
 
         if (newLightValue > 0) {
-            lightSrc = LightSource.createLight(tileLocation, newLightValue);
-            World.getLights().add(lightSrc);
+            lightSrc = new LightSource(tileLocation, newLightValue);
+            World.getLights().addLight(lightSrc);
         }
 
         lightValue = newLightValue;
@@ -834,6 +833,8 @@ public final class MapTile implements AlphaChangeListener {
      * Render the light on this tile, using the ambient light of the weather and a factor how much the tile light
      * modifies the ambient light.
      *
+     * This also resets the value of the temporary light to zero to ready it for the next calculation.
+     *
      * @param ambientLight the ambient light from the weather
      */
     public void renderLight(@Nonnull Color ambientLight) {
@@ -841,10 +842,11 @@ public final class MapTile implements AlphaChangeListener {
             LOGGER.warn("Render light of a removed tile.");
             return;
         }
+        tmpLight.multiply(1.f - ambientLight.getLuminancef());
+        tmpLight.add(ambientLight);
+        tmpLight.setAlpha(Color.MAX_INT_VALUE);
         targetCenterColor.setColor(tmpLight);
-        targetCenterColor.multiply(1.f - ambientLight.getLuminancef());
-        targetCenterColor.add(ambientLight);
-        targetCenterColor.setAlpha(Color.MAX_INT_VALUE);
+        tmpLight.setColor(Color.BLACK);
     }
 
     /**

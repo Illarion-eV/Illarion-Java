@@ -122,28 +122,6 @@ public final class GameMap implements LightingMap, Stoppable {
         }
     }
 
-    /**
-     * This class is a helper class to reset the lights. Each tile this class is executed receives a reset trigger for
-     * the light value of the tile. This should be done before new light values are rendered on the tile.
-     *
-     * @author Martin Karing &lt;nitram@illarion.org&gt;
-     */
-    private static final class ResetLightsHelper implements TObjectProcedure<MapTile> {
-        /**
-         * This method causes the tile its called for to reset the light.
-         *
-         * @param object the tile to reset
-         * @return {@code true} in all cases
-         */
-        @Override
-        public boolean execute(@Nullable MapTile object) {
-            if (object != null) {
-                object.resetLight();
-            }
-            return true;
-        }
-    }
-
     private static final class QuestMarkerCarrier {
         @Nullable
         private final QuestMarker mapMarker;
@@ -227,12 +205,6 @@ public final class GameMap implements LightingMap, Stoppable {
      */
     @Nonnull
     private final RenderLightsHelper renderLightsHelper = new RenderLightsHelper();
-
-    /**
-     * This is a helper procedure that will trigger a reset on all tiles its called upon.
-     */
-    @Nonnull
-    private final TObjectProcedure<MapTile> resetLightsHelper = new ResetLightsHelper();
 
     /**
      * The tiles of the map. The key of the hash map is the location key of the tiles location.
@@ -687,19 +659,6 @@ public final class GameMap implements LightingMap, Stoppable {
         }
 
         World.getPeople().updateLight();
-    }
-
-    /**
-     * Reset all tiles on the map back to black color.
-     */
-    @Override
-    public void resetLights() {
-        mapLock.readLock().lock();
-        try {
-            tiles.forEachValue(resetLightsHelper);
-        } finally {
-            mapLock.readLock().unlock();
-        }
     }
 
     @Override

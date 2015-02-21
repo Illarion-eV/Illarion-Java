@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,32 +16,29 @@
 package org.illarion.engine.graphic;
 
 import illarion.common.types.Location;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
- * This class handles a light source and contains its rays, the location and the
- * color of the light.
+ * This class handles a light source and contains its rays, the location and the color of the light.
  *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class LightSource {
     /**
-     * This cache array stores the light sources that were created already at a
-     * given size and are currently not in use, so they can be reused later.
+     * The flag of this light source was already deleted.
      */
-    @SuppressWarnings("unchecked")
-    private static final List<LightSource>[] CACHE = new List[LightTracer.MAX_RADIUS];
+    private boolean disposed;
 
     /**
-     * The brightness of the light. This acts like a general modifier on the
-     * brightness of the light that reduces anyway with increasing distance from
-     * the light source.
+     * The brightness of the light. This acts like a general modifier on the rightness of the light that reduces
+     * anyway with increasing distance from the light source.
      */
-    private double bright;
+    private final double bright;
 
     /**
      * The color of the light itself.
@@ -50,39 +47,31 @@ public final class LightSource {
     private final Color color;
 
     /**
-     * The dirty flag, this is set to true in case there are further
-     * calculations needed and to false in case all calculations are done.
+     * The dirty flag, this is set to true in case there are further calculations needed and to false in case all
+     * calculations are done.
      */
     private boolean dirty;
 
     /**
-     * The intensity array stores the calculated light intensity values. These
-     * result from the pre-calculated light rays along with the situation on the
-     * map such as objects that block out the light.
+     * The intensity array stores the calculated light intensity values. These result from the pre-calculated light
+     * rays along with the situation on the map such as objects that block out the light.
      */
     @Nonnull
     private final double[][] intensity;
 
     /**
-     * Invert flag. If this is set to true it results in a reduce of the light
-     * share on a tile instead of a increase.
+     * Invert flag. If this is set to true it results in a reduce of the light share on a tile instead of a increase.
      */
-    private boolean invert;
-
-    /**
-     * Store if this light is currently in the cache.
-     */
-    private boolean lightCached;
+    private final boolean invert;
 
     /**
      * The location of the light source on the map.
      */
     @Nonnull
-    private Location location;
+    private final Location location;
 
     /**
-     * The reference map that is used to get the data how the light spreads on
-     * the map.
+     * The reference map that is used to get the data how the light spreads on the map.
      */
     private LightingMap mapSource;
 
@@ -94,12 +83,13 @@ public final class LightSource {
     /**
      * The length of the light rays that are send out by this light source.
      */
-    private int size;
+    private final int size;
 
     /**
      * A location instance for temporary purposes. This is for calculations or
      * to get some data from other classes.
      */
+    @Nonnull
     private final Location tempLocation = new Location();
 
     /**
@@ -110,72 +100,27 @@ public final class LightSource {
      * @param encoding the encoding of the light, this contains the color, the
      * brightness, the size and the inversion flag
      */
-    private LightSource(@Nonnull final Location location, final int encoding) {
-        final int newSize = (encoding / 10000) % 10;
-        rays = LightTracer.getRays(newSize);
+    public LightSource(@Nonnull Location location, int encoding) {
+        int newSize = (encoding / 10000) % 10;
+        rays = LightRays.getRays(newSize);
         intensity = new double[(newSize * 2) + 1][(newSize * 2) + 1];
         color = new Color(Color.WHITE);
 
-        init(location, encoding);
-    }
+        this.location = location;
 
-    /**
-     * Retrieve a light from the cache or create a new one.
-     *
-     * @param loc the location of the light source on the map
-     * @param encoding the encoding of the light source that has to be decoded
-     * in order to receive the parameters of the light
-     * @return the prepared instance of the light source
-     */
-    @Nonnull
-    @SuppressWarnings("nls")
-    public static LightSource createLight(
-            @Nonnull final Location loc, final int encoding) {
-        final int size = ((encoding / 10000) % 10) - 1;
-        if (size < 0) {
-            throw new IllegalArgumentException("empty light source");
-        }
-        if (size >= LightTracer.MAX_RADIUS) {
-            throw new IllegalArgumentException("light size too large");
-        }
+        float blue = (encoding % 10) / 9.f;
+        float green = ((encoding / 10) % 10) / 9.f;
+        float red = ((encoding / 100) % 10) / 9.f;
 
-        if (CACHE[size] == null) {
-            return new LightSource(loc, encoding);
-        }
+        color.setRedf(red);
+        color.setGreenf(green);
+        color.setBluef(blue);
 
-        LightSource light = null;
-        synchronized (CACHE[size]) {
-            if (!CACHE[size].isEmpty()) {
-                light = CACHE[size].remove(CACHE[size].size() - 1);
-            }
-        }
+        bright = ((encoding / 1000) % 10) / 9.f;
+        size = (encoding / 10000) % 10;
+        invert = (encoding / 100000) == 1;
 
-        if (light == null) {
-            return new LightSource(loc, encoding);
-        }
-
-        light.lightCached = false;
-        light.init(loc, encoding);
-        light.resetShadows();
-        return light;
-    }
-
-    /**
-     * Release a light source and put it in the cache for later reuse.
-     *
-     * @param light the light that shall be put into the cache.
-     */
-    public static void releaseLight(@Nonnull final LightSource light) {
-        final int size = light.size - 1;
-
-        if (CACHE[size] == null) {
-            CACHE[size] = new ArrayList<>();
-        }
-        synchronized (CACHE[size]) {
-            if (!CACHE[size].contains(light)) {
-                CACHE[size].add(light);
-            }
-        }
+        dirty = true;
     }
 
     /**
@@ -183,27 +128,27 @@ public final class LightSource {
      * are added to the map by this function.
      */
     public void apply() {
-        if (lightCached) {
-            return;
+        if (mapSource == null) {
+            throw new IllegalStateException("The light source is not properly bound to a map yet.");
         }
-        final int xOff = location.getScX() - size;
-        final int yOff = location.getScY() - size;
+        int xOff = location.getScX() - size;
+        int yOff = location.getScY() - size;
 
         tempLocation.setSC(xOff, yOff, location.getScZ());
-        final int xLimit = intensity.length + xOff;
-        final int yLimit = intensity.length + yOff;
+        int xLimit = intensity.length + xOff;
+        int yLimit = intensity.length + yOff;
         while (tempLocation.getScX() < xLimit) {
             tempLocation.setSC(tempLocation.getScX(), yOff, tempLocation.getScZ());
             while (tempLocation.getScY() < yLimit) {
-                final double locIntensity = intensity[tempLocation.getScX() - xOff][tempLocation.getScY() - yOff];
+                double locIntensity = intensity[tempLocation.getScX() - xOff][tempLocation.getScY() - yOff];
                 if (locIntensity == 0) {
                     tempLocation.addSC(0, 1, 0);
                     continue;
                 }
 
-                final double factor = locIntensity * bright;
+                double factor = locIntensity * bright;
 
-                final Color tempColor = new Color(color);
+                Color tempColor = new Color(color);
                 tempColor.multiply((float) factor);
                 if (invert) {
                     tempColor.multiply(-1.f);
@@ -227,13 +172,11 @@ public final class LightSource {
         if (!dirty) {
             return false;
         }
+        dirty = false;
 
         // reset array
         resetShadows();
-
         rays.apply(this);
-
-        dirty = false;
 
         return true;
     }
@@ -243,6 +186,7 @@ public final class LightSource {
      *
      * @return the location of the light source
      */
+    @Contract(pure = true)
     @Nonnull
     public Location getLocation() {
         return location;
@@ -253,47 +197,17 @@ public final class LightSource {
      *
      * @return the length of the light rays of this light source
      */
+    @Contract(pure = true)
     public int getSize() {
         return size;
     }
 
     /**
-     * Initializes the light source. So set the location to the correct one and
-     * update the color of the light source by decoding the encoded data.
-     *
-     * @param newLoc the new location of this light source
-     * @param encoding the encoded data that defines the light source
-     */
-    @SuppressWarnings("nls")
-    private void init(@Nonnull final Location newLoc, final int encoding) {
-        location = newLoc;
-        int remEnc = encoding;
-
-        final float blue = (remEnc % 10) / 9.f;
-        remEnc /= 10;
-        final float green = (remEnc % 10) / 9.f;
-        remEnc /= 10;
-        final float red = (remEnc % 10) / 9.f;
-        remEnc /= 10;
-        color.setRedf(red);
-        color.setGreenf(green);
-        color.setBluef(blue);
-
-        bright = (remEnc % 10) / 9.f;
-        remEnc /= 10;
-        size = remEnc % 10;
-        remEnc /= 10;
-        invert = (remEnc == 1);
-
-        dirty = true;
-    }
-
-    /**
-     * Check if this light source is dirty and needs further calculations or
-     * not.
+     * Check if this light source is dirty and needs further calculations or not.
      *
      * @return true in case the light source needs calculations
      */
+    @Contract(pure = true)
     public boolean isDirty() {
         return dirty;
     }
@@ -305,15 +219,14 @@ public final class LightSource {
      * @param changeLoc the location the change occurred on.
      */
     @SuppressWarnings("nls")
-    public void notifyChange(@Nonnull final Location changeLoc) {
-        assert !lightCached;
+    public void notifyChange(@Nonnull Location changeLoc) {
         if (location.getScZ() != changeLoc.getScZ()) {
             return;
         }
 
         if ((Math.abs(changeLoc.getScX() - location.getScX()) <= size) &&
                 (Math.abs(changeLoc.getScY() - location.getScY()) <= size)) {
-            dirty = true;
+            refresh();
         }
     }
 
@@ -330,10 +243,8 @@ public final class LightSource {
      * source object is put into the cache for later usage.
      */
     private void resetShadows() {
-        for (int i = 0; i < intensity.length; ++i) {
-            for (int j = 0; j < intensity.length; ++j) {
-                intensity[j][i] = 0;
-            }
+        for (double[] anIntensity : intensity) {
+            Arrays.fill(anIntensity, 0);
         }
     }
 
@@ -347,8 +258,17 @@ public final class LightSource {
      * @param newInt the intensity that shall for this location now
      * @return the obscurity of the location that's light intensity was just set
      */
-    public int setIntensity(final int x, final int y, final double newInt) {
-        assert !lightCached;
+    public int setIntensity(int x, int y, double newInt) {
+        if (mapSource == null) {
+            throw new IllegalStateException("The light source is not properly bound to a map yet.");
+        }
+        if (Math.abs(x) > size) {
+            throw new IllegalArgumentException("The X offset for the light is out of bounds: " + x);
+        }
+        if (Math.abs(y) > size) {
+            throw new IllegalArgumentException("The Y offset for the light is out of bounds: " + y);
+        }
+
         tempLocation.setSC(location.getScX() + x, location.getScY() + y, location.getScZ());
 
         if (((x == 0) && (y == 0)) || mapSource.acceptsLight(tempLocation, x, y)) {
@@ -364,11 +284,18 @@ public final class LightSource {
      *
      * @param newMapSource the map that contains the light source
      */
-    public void setMapSource(final LightingMap newMapSource) {
-        assert !lightCached;
-        if ((mapSource == null) || (mapSource != newMapSource)) {
+    void setMapSource(@Nonnull LightingMap newMapSource) {
+        if ((mapSource == null) || !Objects.equals(mapSource, newMapSource)) {
             mapSource = newMapSource;
             dirty = true;
         }
+    }
+
+    void dispose() {
+        disposed = true;
+    }
+
+    boolean isDisposed() {
+        return disposed;
     }
 }

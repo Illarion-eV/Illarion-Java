@@ -732,7 +732,6 @@ public final class Char implements AnimatedMove {
     public void resetLight() {
         if (lightSrc != null) {
             World.getLights().remove(lightSrc);
-            LightSource.releaseLight(lightSrc);
             lightSrc = null;
             lightValue = 0;
         }
@@ -1211,9 +1210,8 @@ public final class Char implements AnimatedMove {
         }
         if (lightSrc != null) {
             World.getLights().remove(lightSrc);
-            LightSource.releaseLight(lightSrc);
-            lightSrc = LightSource.createLight(charLocation, lightValue);
-            World.getLights().add(lightSrc);
+            lightSrc = new LightSource(charLocation, lightValue);
+            World.getLights().addLight(lightSrc);
         }
     }
 
@@ -1398,8 +1396,8 @@ public final class Char implements AnimatedMove {
         if (lightValue > 0) {
             int tempLightValue = lightValue;
             resetLight();
-            lightSrc = LightSource.createLight(charLocation, tempLightValue);
-            World.getLights().add(lightSrc);
+            lightSrc = new LightSource(charLocation, tempLightValue);
+            World.getLights().addLight(lightSrc);
             lightValue = tempLightValue;
         }
     }
