@@ -84,8 +84,8 @@ public final class TurnCharMsg implements ServerReply {
                 chara.setDirection(dir);
                 return ServerReplyResult.Success;
             }
-            log.error("Failed to find the character ({}) to turn.", charId);
-            return ServerReplyResult.Failed;
+            // char is outside of the view. Does not matter.
+            return ServerReplyResult.Success;
         }
     }
 

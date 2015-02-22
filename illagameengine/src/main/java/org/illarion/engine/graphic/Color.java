@@ -17,6 +17,7 @@ package org.illarion.engine.graphic;
 
 import illarion.common.net.NetCommReader;
 import illarion.common.util.FastMath;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -363,21 +364,31 @@ public class Color {
     }
 
     @Override
+    @Contract(value = "null->false", pure = true)
     public boolean equals(@Nullable Object obj) {
         return (obj instanceof Color) && equals((Color) obj);
     }
 
+    @Contract(value = "null->false", pure = true)
     public boolean equals(@Nullable Color color) {
         return (color != null) && (red == color.red) && (green == color.green) && (blue == color.blue) &&
                 (alpha == color.alpha);
     }
 
     @Override
+    @Contract(pure = true)
     public int hashCode() {
         int result = alpha;
         result = (31 * result) + blue;
         result = (31 * result) + green;
         result = (31 * result) + red;
         return result;
+    }
+
+    @Override
+    @Nonnull
+    @Contract(pure = true)
+    public String toString() {
+        return "Color(r:" + red + " g:" + green + " b:" + blue + " a:" + alpha + ')';
     }
 }
