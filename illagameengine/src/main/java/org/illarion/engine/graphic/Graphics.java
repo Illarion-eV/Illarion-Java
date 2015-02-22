@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -54,6 +54,27 @@ public interface Graphics {
             double scale,
             double rotation,
             @Nonnull TextureEffect... effects);
+
+    /**
+     * This is a dedicated function to render tiles. It has additional abilities regarding the coloring to allow
+     * rendering smooth light on the ground.
+     *
+     * @param sprite the sprite that is rendered
+     * @param posX the x coordinate of the position
+     * @param posY the y coordinate of the position
+     * @param topColor the color at the top center of the tile
+     * @param bottomColor the color at the bottom center of the tile
+     * @param leftColor the color at the middle left of the tile
+     * @param rightColor the color at the middle right of the tile
+     * @param centerColor the color in the center of the tile
+     * @param frame the frame of the sprite that is supposed to be rendered
+     * @param effects the texture effects that should be applied
+     */
+    void drawTileSprite(@Nonnull Sprite sprite, int posX, int posY,
+                        @Nonnull Color topColor, @Nonnull Color bottomColor,
+                        @Nonnull Color leftColor, @Nonnull Color rightColor,
+                        @Nonnull Color centerColor, int frame,
+                        @Nonnull TextureEffect... effects);
 
     /**
      * Set the method used to blend the colors of overlapping areas.

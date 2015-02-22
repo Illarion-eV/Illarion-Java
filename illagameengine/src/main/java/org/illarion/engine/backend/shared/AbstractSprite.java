@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -52,12 +52,12 @@ public abstract class AbstractSprite<T extends Texture> implements Sprite {
     /**
      * The X coordinate of the center coordinate of the sprite.
      */
-    private final double centerX;
+    private final float centerX;
 
     /**
      * The Y coordinate of the center coordinate of the sprite.
      */
-    private final double centerY;
+    private final float centerY;
 
     /**
      * This mirror flag. In case its set {@code true} the sprite will be rendered vertically mirrored.
@@ -81,18 +81,18 @@ public abstract class AbstractSprite<T extends Texture> implements Sprite {
      * @param mirror the mirrored flag
      */
     protected AbstractSprite(
-            @Nonnull final T[] textures,
-            final int offsetX,
-            final int offsetY,
-            final double centerX,
-            final double centerY,
-            final boolean mirror) {
+            @Nonnull T[] textures,
+            int offsetX,
+            int offsetY,
+            float centerX,
+            float centerY,
+            boolean mirror) {
         if (textures.length == 0) {
             throw new IllegalArgumentException("Amount of textures does not fit.");
         }
-        final int width = textures[0].getWidth();
-        final int height = textures[0].getHeight();
-        for (final Texture texture : textures) {
+        int width = textures[0].getWidth();
+        int height = textures[0].getHeight();
+        for (Texture texture : textures) {
             if ((texture.getWidth() != width) || (texture.getHeight() != height)) {
                 throw new IllegalArgumentException("Sizes of textures do not match.");
             }
@@ -105,16 +105,16 @@ public abstract class AbstractSprite<T extends Texture> implements Sprite {
         this.centerY = centerY;
         this.mirror = mirror;
 
-        final double centerTransX = width * centerX;
-        final double centerTransY = height * centerY;
+        double centerTransX = width * centerX;
+        double centerTransY = height * centerY;
 
-        final long realOffsetX;
+        long realOffsetX;
         if (mirror) {
             realOffsetX = Math.round(-centerTransX - offsetX);
         } else {
             realOffsetX = Math.round(-centerTransX + offsetX);
         }
-        final long realOffsetY = Math.round(-centerTransY - offsetY);
+        long realOffsetY = Math.round(-centerTransY - offsetY);
         displayRectangle = new Rectangle((int) realOffsetX, (int) realOffsetY, width, height);
     }
 
@@ -135,7 +135,7 @@ public abstract class AbstractSprite<T extends Texture> implements Sprite {
 
     @Override
     @Nonnull
-    public T getFrame(final int frame) {
+    public T getFrame(int frame) {
         if ((frame < 0) || (frame >= textures.length)) {
             throw new IndexOutOfBoundsException("Frame out of bounds: " + frame);
         }
@@ -152,11 +152,11 @@ public abstract class AbstractSprite<T extends Texture> implements Sprite {
         return offsetY;
     }
 
-    public double getCenterX() {
+    public float getCenterX() {
         return centerX;
     }
 
-    public double getCenterY() {
+    public float getCenterY() {
         return centerY;
     }
 
@@ -167,23 +167,18 @@ public abstract class AbstractSprite<T extends Texture> implements Sprite {
     @Nonnull
     @Override
     public Rectangle getDisplayArea(
-            final int x, final int y, final double scale, final double rotation, @Nullable final Rectangle storage) {
-        @Nonnull final Rectangle targetRectangle;
-        if (storage == null) {
-            targetRectangle = new Rectangle();
-        } else {
-            targetRectangle = storage;
-        }
+            int x, int y, double scale, double rotation, @Nullable Rectangle storage) {
+        @Nonnull Rectangle targetRectangle = (storage == null) ? new Rectangle() : storage;
 
-        final long displayWidth = FastMath.floor(displayRectangle.getWidth() * scale);
-        final long displayHeight = FastMath.floor(displayRectangle.getHeight() * scale);
-        final long displayX;
+        long displayWidth = FastMath.floor(displayRectangle.getWidth() * scale);
+        long displayHeight = FastMath.floor(displayRectangle.getHeight() * scale);
+        long displayX;
         if (isMirrored()) {
             displayX = FastMath.floor(x - (displayRectangle.getX() * scale) - displayWidth);
         } else {
             displayX = FastMath.floor(x + (displayRectangle.getX() * scale));
         }
-        final long displayY = FastMath.floor(y + (displayRectangle.getY() * scale));
+        long displayY = FastMath.floor(y + (displayRectangle.getY() * scale));
         targetRectangle.set((int) displayX, (int) displayY, (int) displayWidth, (int) displayHeight);
 
         return targetRectangle;

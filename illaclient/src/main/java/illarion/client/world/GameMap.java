@@ -794,6 +794,7 @@ public final class GameMap implements LightingMap, Stoppable {
     private void setColorLinks(@Nonnull MapTile tile) {
         Location tileLocation = tile.getLocation();
 
+        //noinspection ConstantConditions
         for (Direction dir : Direction.values()) {
             MapTile offsetTile = getMapAt(tileLocation, dir);
             if (offsetTile != null) {

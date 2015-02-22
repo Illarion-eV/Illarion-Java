@@ -261,12 +261,10 @@ public final class MapTile implements AlphaChangeListener {
     }
 
     public boolean hasLightGradient() {
-        @Nullable Color lastColor = null;
+        Color lastColor = getLight();
         for (@Nullable AnimatedColor testAnimatedColor : colors.values()) {
             Color testColor = (testAnimatedColor == null) ? Color.WHITE : testAnimatedColor.getCurrentColor();
-            if (lastColor == null) {
-                lastColor = testColor;
-            } else if (!lastColor.equals(testColor)) {
+            if (!lastColor.equals(testColor)) {
                 return true;
             }
         }

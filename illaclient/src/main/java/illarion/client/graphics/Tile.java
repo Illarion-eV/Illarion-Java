@@ -29,6 +29,7 @@ import illarion.client.world.World;
 import illarion.client.world.movement.TargetMovementHandler;
 import illarion.common.graphics.MapVariance;
 import illarion.common.graphics.TileInfo;
+import illarion.common.types.Direction;
 import illarion.common.types.Location;
 import illarion.common.types.Rectangle;
 import org.illarion.engine.EngineException;
@@ -44,6 +45,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.EnumSet;
 
 /**
  * This class represents one tile on the screen.
@@ -156,9 +159,21 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
     @Override
     protected void renderSprite(
             @Nonnull Graphics g, int x, int y, @Nonnull Color light, @Nonnull TextureEffect... effects) {
-        super.renderSprite(g, x, y, light, effects);
-        if (overlay != null) {
-            g.drawSprite(overlay.getSprite(), x, y, light, overlayShape, getScale(), 0.f, effects);
+        Color centerLight = parentTile.getLight();
+        if ((topColor != null) && (leftColor != null) && (rightColor != null) && (bottomColor != null)) {
+            g.drawTileSprite(getTemplate().getSprite(), x, y, topColor, bottomColor, leftColor, rightColor,
+                    centerLight, getCurrentFrame(), effects);
+            if (overlay != null) {
+                g.drawTileSprite(overlay.getSprite(), x, y, topColor, bottomColor, leftColor, rightColor,
+                        centerLight, overlayShape, effects);
+            }
+        } else {
+            g.drawTileSprite(getTemplate().getSprite(), x, y, centerLight, centerLight, centerLight, centerLight,
+                    centerLight, getCurrentFrame(), effects);
+            if (overlay != null) {
+                g.drawTileSprite(overlay.getSprite(), x, y, centerLight, centerLight, centerLight, centerLight,
+                        centerLight, overlayShape, effects);
+            }
         }
     }
 
@@ -188,6 +203,11 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
 
     private TileLightEffect tileLightEffect;
 
+    private Color topColor;
+    private Color leftColor;
+    private Color rightColor;
+    private Color bottomColor;
+
     @Override
     public void update(@Nonnull GameContainer container, int delta) {
         parentTile.updateColor(delta);
@@ -204,6 +224,33 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
             setFadingCorridorEffectEnabled(true);
         }
         super.update(container, delta);
+
+        if (parentTile.hasLightGradient()) {
+            topColor = getCornerColor(topColor, EnumSet.of(Direction.North, Direction.NorthEast, Direction.East));
+            leftColor = getCornerColor(leftColor, EnumSet.of(Direction.North, Direction.NorthWest, Direction.West));
+            bottomColor = getCornerColor(bottomColor, EnumSet.of(Direction.West, Direction.SouthWest, Direction.South));
+            rightColor = getCornerColor(rightColor, EnumSet.of(Direction.East, Direction.SouthEast, Direction.South));
+        } else {
+            topColor = null;
+            leftColor = null;
+            bottomColor = null;
+            rightColor = null;
+        }
+    }
+
+    @Nonnull
+    private Color getCornerColor(@Nullable Color storage, @Nonnull Collection<Direction> sourceDirections) {
+        Color usedStorage = storage;
+        if (usedStorage == null) {
+            usedStorage = new Color(Color.BLACK);
+        }
+
+        usedStorage.setColor(parentTile.getLight());
+        for (Direction sourceDirection : sourceDirections) {
+            usedStorage.add(parentTile.getLight(sourceDirection));
+        }
+        usedStorage.multiply(1.f / (sourceDirections.size() + 1));
+        return usedStorage;
     }
 
     @Override
