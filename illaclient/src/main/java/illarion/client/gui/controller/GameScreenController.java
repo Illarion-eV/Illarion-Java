@@ -18,8 +18,10 @@ package illarion.client.gui.controller;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import illarion.client.IllaClient;
 import illarion.client.gui.*;
 import illarion.client.gui.controller.game.*;
+import illarion.client.world.World;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.input.Input;
 import org.jetbrains.annotations.Contract;
@@ -255,6 +257,8 @@ public final class GameScreenController implements GameGui, ScreenController {
         for (ScreenController childController : childControllers) {
             childController.onEndScreen();
         }
+        World.cleanEnvironment();
+        IllaClient.getCfg().save();
     }
 
     @Override

@@ -272,8 +272,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     public static void returnToLogin() {
         LOGGER.info("Returning to login initiated");
         INSTANCE.game.enterState(Game.STATE_LOGIN);
-        World.cleanEnvironment();
-        getCfg().save();
     }
 
     public static void exitGameContainer() {
