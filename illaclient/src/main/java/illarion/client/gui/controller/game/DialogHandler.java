@@ -751,14 +751,14 @@ public final class DialogHandler
         }
 
         if (dialogTypes.contains(DialogType.Merchant)) {
-            if (merchantDialog != null) {
+            if ((merchantDialog != null) && merchantDialog.getElement().isVisible()) {
                 if ((dialogId == ALL_DIALOGS) || (dialogId == merchantDialog.getDialogId())) {
                     merchantDialog.closeWindow();
                 }
             }
         }
         if (dialogTypes.contains(DialogType.Crafting)) {
-            if (craftingDialog != null) {
+            if ((craftingDialog != null) && craftingDialog.getElement().isVisible()) {
                 if ((dialogId == ALL_DIALOGS) || (dialogId == craftingDialog.getDialogId())) {
                     craftingDialog.closeWindow();
                 }

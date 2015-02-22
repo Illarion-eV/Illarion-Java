@@ -230,7 +230,7 @@ public final class Player {
         }
     }
 
-    public void openMerchantDialog(int dialogId, @Nonnull String title, @Nonnull Iterable<MerchantItem> items) {
+    public void openMerchantDialog(int dialogId, @Nonnull String title, @Nonnull Collection<MerchantItem> items) {
         MerchantList list = new MerchantList(dialogId);
         for (MerchantItem item : items) {
             list.addItem(item);
@@ -244,6 +244,7 @@ public final class Player {
         }
 
         if (World.getGameGui().isReady()) {
+            World.getGameGui().getDialogMerchantGui().showMerchantDialog(dialogId, title, items);
             World.getGameGui().getContainerGui().updateMerchantOverlay();
             World.getGameGui().getInventoryGui().updateMerchantOverlay();
         }
