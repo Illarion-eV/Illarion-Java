@@ -15,8 +15,6 @@
  */
 package illarion.client.world;
 
-import gnu.trove.map.hash.TLongObjectHashMap;
-import gnu.trove.procedure.TObjectProcedure;
 import illarion.client.IllaClient;
 import illarion.client.graphics.QuestMarker;
 import illarion.client.graphics.QuestMarker.QuestMarkerAvailability;
@@ -60,68 +58,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 @ThreadSafe
 public final class GameMap implements LightingMap, Stoppable {
-    /**
-     * This class is used to mark map tiles for removal. Only after all tiles are marked for removed the tiles
-     * container can be emptied.
-     *
-     * @author Andreas Grob &lt;vilarion@illarion.org&gt;
-     */
-    private static final class RemoveHelper implements TObjectProcedure<MapTile> {
-        /**
-         * Executed for the given tile on the map. It will trigger the markAsRemoved method for that tile.
-         *
-         * @param object the tile to remove
-         * @return {@code true} always
-         */
-        @Override
-        public boolean execute(@Nonnull MapTile object) {
-            object.markAsRemoved();
-            return true;
-        }
-    }
-
-    /**
-     * This is a supporter class for the {@link GameMap#renderLights()} function and it triggers the renderLight
-     * function on each tile its called on.
-     *
-     * @author Martin Karing &lt;nitram@illarion.org&gt;
-     */
-    private static final class RenderLightsHelper implements TObjectProcedure<MapTile> {
-        /**
-         * The ambient light that is used to render the real tile light.
-         */
-        @Nullable
-        private Color light;
-
-        /**
-         * Trigger the renderLight function on one tile with the parameters that were setup.
-         *
-         * @param object the tile that gets its lights rendered now
-         * @return {@code true} in case the tiles are getting processed, {@code false} of the helper was not properly
-         * setup
-         */
-        @Override
-        public boolean execute(@Nullable MapTile object) {
-            if (light == null) {
-                return false;
-            }
-            if (object != null) {
-                object.renderLight(light);
-            }
-            return true;
-        }
-
-        /**
-         * Setup the helper class by setting the factor of influence of the ambient light and the ambient light color
-         * itself.
-         *
-         * @param ambientLight the ambient light color itself
-         */
-        void setup(@Nonnull Color ambientLight) {
-            light = ambientLight;
-        }
-    }
-
     private static final class QuestMarkerCarrier {
         @Nullable
         private final QuestMarker mapMarker;
@@ -172,17 +108,6 @@ public final class GameMap implements LightingMap, Stoppable {
     public static final Object LIGHT_LOCK = new Object();
 
     /**
-     * The determines after how many remove operations the lists clean up on their own.
-     */
-    private static final float MAP_COMPACTION_FACTOR = 0.01f;
-
-    /**
-     * This is a helper object that triggers markAsRemoved for all tiles it is called for.
-     */
-    @Nonnull
-    private final TObjectProcedure<MapTile> removeHelper = new RemoveHelper();
-
-    /**
      * The interactive map that is used to handle the player interaction with the map.
      */
     @Nonnull
@@ -201,17 +126,11 @@ public final class GameMap implements LightingMap, Stoppable {
     private final GameMiniMap miniMap;
 
     /**
-     * A helper class for rendering the light values on all map tiles.
-     */
-    @Nonnull
-    private final RenderLightsHelper renderLightsHelper = new RenderLightsHelper();
-
-    /**
      * The tiles of the map. The key of the hash map is the location key of the tiles location.
      */
     @Nonnull
     @GuardedBy("mapLock")
-    private final TLongObjectHashMap<MapTile> tiles;
+    private final Map<Long, MapTile> tiles;
 
     /**
      * This is the list of active quest markers that show where a quest starts.
@@ -245,8 +164,7 @@ public final class GameMap implements LightingMap, Stoppable {
      * Default constructor of the map handler.
      */
     public GameMap(@Nonnull Engine engine) throws EngineException {
-        tiles = new TLongObjectHashMap<>(1000);
-        tiles.setAutoCompactionFactor(MAP_COMPACTION_FACTOR);
+        tiles = new HashMap<>();
         interactive = new InteractiveMap(this);
 
         activeQuestStartMarkers = new HashMap<>();
@@ -477,7 +395,9 @@ public final class GameMap implements LightingMap, Stoppable {
     public void clear() {
         mapLock.writeLock().lock();
         try {
-            tiles.forEachValue(removeHelper);
+            for (MapTile tile : tiles.values()) {
+                tile.markAsRemoved();
+            }
             tiles.clear();
         } finally {
             mapLock.writeLock().unlock();
@@ -647,12 +567,29 @@ public final class GameMap implements LightingMap, Stoppable {
      */
     @Override
     public void renderLights() {
-        renderLightsHelper.setup(World.getWeather().getAmbientLight());
-
         synchronized (LIGHT_LOCK) {
             mapLock.readLock().lock();
             try {
-                tiles.forEachValue(renderLightsHelper);
+                Color ambientLight = World.getWeather().getAmbientLight();
+                for (MapTile tile : tiles.values()) {
+                    tile.renderLight(ambientLight);
+                }
+            } finally {
+                mapLock.readLock().unlock();
+            }
+        }
+
+        World.getPeople().updateLight();
+    }
+
+    public void updateAmbientLight() {
+        synchronized (LIGHT_LOCK) {
+            mapLock.readLock().lock();
+            try {
+                Color ambientLight = World.getWeather().getAmbientLight();
+                for (MapTile tile : tiles.values()) {
+                    tile.applyAmbientLight(ambientLight);
+                }
             } finally {
                 mapLock.readLock().unlock();
             }
@@ -685,18 +622,14 @@ public final class GameMap implements LightingMap, Stoppable {
      * This function sends all tiles to the map processor and causes it to check the tiles again.
      */
     public void updateAllTiles() {
-        final Collection<Long> tilesToDelete = new HashSet<>();
+        Collection<Long> tilesToDelete = new HashSet<>();
         mapLock.readLock().lock();
         try {
-            tiles.forEachValue(new TObjectProcedure<MapTile>() {
-                @Override
-                public boolean execute(@Nonnull MapTile object) {
-                    if (GameMapProcessor2.isOutsideOfClipping(object)) {
-                        tilesToDelete.add(object.getLocation().getKey());
-                    }
-                    return true;
+            for (MapTile tile : tiles.values()) {
+                if (GameMapProcessor2.isOutsideOfClipping(tile)) {
+                    tilesToDelete.add(tile.getLocation().getKey());
                 }
-            });
+            }
         } finally {
             mapLock.readLock().unlock();
         }

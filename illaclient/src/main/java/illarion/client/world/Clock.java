@@ -75,6 +75,20 @@ public final class Clock {
         this.minute = minute;
     }
 
+    public boolean isSet() {
+        return lastSync != 0;
+    }
+
+    @Contract(pure = true)
+    public double getTotalDayInYear() {
+        return getDay() + (getTotalHour() / 24.0) + ((month - 1) * 24);
+    }
+
+    @Contract(pure = true)
+    public double getTotalDay() {
+        return getDay() + (getTotalHour() / 24.0);
+    }
+
     /**
      * Get the current day.
      *
@@ -105,6 +119,11 @@ public final class Clock {
         return year;
     }
 
+    @Contract(pure = true)
+    public double getTotalHour() {
+        return getHour() + (getTotalMinute() / 60.0);
+    }
+
     /**
      * Get the current hours.
      *
@@ -112,8 +131,13 @@ public final class Clock {
      */
     @Contract(pure = true)
     public int getHour() {
-        long illaHoursPass = getIllaSecondPass() / 60 / 60;
+        long illaHoursPass = ((getIllaSecondPass() / 60) + minute) / 60;
         return (int) ((hour + illaHoursPass) % 24);
+    }
+
+    @Contract(pure = true)
+    public double getTotalMinute() {
+        return getMinute() + (getSecond() / 60.0);
     }
 
     /**
@@ -144,7 +168,7 @@ public final class Clock {
      */
     @Contract(pure = true)
     private long getIllaSecondPass() {
-        long secondsPass = (System.currentTimeMillis() - lastSync) / 1000;
-        return secondsPass * 3L;
+        float secondsPass = (System.currentTimeMillis() - lastSync) / 1000.f;
+        return (long) (secondsPass * 3L * 100L);
     }
 }

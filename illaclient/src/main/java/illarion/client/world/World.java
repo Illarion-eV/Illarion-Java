@@ -61,6 +61,9 @@ public final class World {
                 INSTANCE.map.getMiniMap().saveAllMaps();
                 INSTANCE.map.saveShutdown();
             }
+            if (INSTANCE.weather != null) {
+                INSTANCE.weather.shutdown();
+            }
             if (INSTANCE.musicBox != null) {
                 INSTANCE.musicBox.saveShutdown();
             }

@@ -247,7 +247,8 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
 
         usedStorage.setColor(parentTile.getLight());
         for (Direction sourceDirection : sourceDirections) {
-            usedStorage.add(parentTile.getLight(sourceDirection));
+            Color directionLight = parentTile.getLight(sourceDirection);
+            usedStorage.add((directionLight == null) ? parentTile.getLight() : directionLight);
         }
         usedStorage.multiply(1.f / (sourceDirections.size() + 1));
         return usedStorage;

@@ -83,6 +83,12 @@ public final class MapTile implements AlphaChangeListener {
     private final ItemStack items;
 
     /**
+     * The color value supplied by the light tracer.
+     */
+    @Nonnull
+    private final Color tracerColor;
+
+    /**
      * The calculated light in the center of the tile.
      */
     @Nonnull
@@ -240,7 +246,8 @@ public final class MapTile implements AlphaChangeListener {
         tile = null;
         lightSrc = null;
         losDirty = true;
-        targetCenterColor = new Color(Color.WHITE);
+        targetCenterColor = new Color(World.getWeather().getAmbientLight());
+        tracerColor = new Color(Color.BLACK);
         localColor = new AnimatedColor(targetCenterColor);
         colors = new EnumMap<>(Direction.class);
         items = new ItemStack();
@@ -254,17 +261,17 @@ public final class MapTile implements AlphaChangeListener {
         return localColor.getCurrentColor();
     }
 
-    @Nonnull
+    @Nullable
     public Color getLight(@Nonnull Direction direction) {
         @Nullable AnimatedColor color = colors.get(direction);
-        return (color == null) ? Color.WHITE : color.getCurrentColor();
+        return (color == null) ? null : color.getCurrentColor();
     }
 
     public boolean hasLightGradient() {
         Color lastColor = getLight();
         for (@Nullable AnimatedColor testAnimatedColor : colors.values()) {
-            Color testColor = (testAnimatedColor == null) ? Color.WHITE : testAnimatedColor.getCurrentColor();
-            if (!lastColor.equals(testColor)) {
+            Color testColor = (testAnimatedColor == null) ? null : testAnimatedColor.getCurrentColor();
+            if ((testColor != null) && !lastColor.equals(testColor)) {
                 return true;
             }
         }
@@ -840,11 +847,15 @@ public final class MapTile implements AlphaChangeListener {
             LOGGER.warn("Render light of a removed tile.");
             return;
         }
-        tmpLight.multiply(1.f - ambientLight.getLuminancef());
-        tmpLight.add(ambientLight);
-        tmpLight.setAlpha(Color.MAX_INT_VALUE);
-        targetCenterColor.setColor(tmpLight);
+        tracerColor.setColor(tmpLight);
         tmpLight.setColor(Color.BLACK);
+        applyAmbientLight(ambientLight);
+    }
+
+    public void applyAmbientLight(@Nonnull Color ambientLight) {
+        targetCenterColor.setColor(tracerColor);
+        targetCenterColor.add(ambientLight);
+        targetCenterColor.clamp();
     }
 
     /**
