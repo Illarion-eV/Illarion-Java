@@ -169,6 +169,6 @@ public final class Clock {
     @Contract(pure = true)
     private long getIllaSecondPass() {
         float secondsPass = (System.currentTimeMillis() - lastSync) / 1000.f;
-        return (long) (secondsPass * 3L * 100L);
+        return (long) (secondsPass * 3L);
     }
 }

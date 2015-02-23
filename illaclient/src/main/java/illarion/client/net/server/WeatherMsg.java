@@ -94,8 +94,6 @@ public final class WeatherMsg implements ServerReply {
         weather.setPrecipitation(precType, precipitation);
         weather.setWind(wind, gusts);
         weather.setCloud(clouds);
-
-        System.out.println(toString());
         return ServerReplyResult.Success;
     }
 
