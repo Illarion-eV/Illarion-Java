@@ -85,22 +85,12 @@ public final class QuestAvailabilityMsg implements ServerReply {
             return ServerReplyResult.Reschedule;
         }
 
-        boolean needToRebuildList = false;
-        for (Location location : availableSoonQuests) {
-            if (availableSoonQuests.contains(location)) {
-                needToRebuildList = true;
-                break;
-            }
-        }
+        /* It's possible that both lists contain the same entries or multiple times equal entries. */
+        Collection<Location> availableSoonQuestsSet = new HashSet<>(availableSoonQuests);
+        Collection<Location> availableQuestsSet = new HashSet<>(availableQuests);
+        availableSoonQuestsSet.removeAll(availableQuestsSet);
+        World.getMap().applyQuestStartLocations(availableQuestsSet, availableSoonQuestsSet);
 
-        if (needToRebuildList) {
-            log.warn("Server send at least one location for a quest marker in both lists. Need to rebuild.");
-            Collection<Location> newList = new HashSet<>(availableSoonQuests);
-            newList.removeAll(availableQuests);
-            World.getMap().applyQuestStartLocations(availableQuests, newList);
-        } else {
-            World.getMap().applyQuestStartLocations(availableQuests, availableSoonQuests);
-        }
         return ServerReplyResult.Success;
     }
 
