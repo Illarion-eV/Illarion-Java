@@ -61,6 +61,15 @@ public final class LightTracer implements Stoppable {
         }
     }
 
+    @Nonnull
+    private final Callable<Void> PUBLISH_LIGHTS_TASK = new Callable<Void>() {
+        @Override
+        public Void call() throws Exception {
+            notifyLightCalculationDone();
+            return null;
+        }
+    };
+
     /**
      * The executor service that takes care for calculating the lights.
      */
@@ -201,9 +210,8 @@ public final class LightTracer implements Stoppable {
             return;
         }
         light.dispose();
-        if (lightsInProgress.get() == 0) {
-            publishTidyLights();
-        }
+        lightsInProgress.incrementAndGet();
+        lightCalculationService.submit(PUBLISH_LIGHTS_TASK);
     }
 
     /**
