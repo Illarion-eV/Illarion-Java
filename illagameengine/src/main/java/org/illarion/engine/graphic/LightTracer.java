@@ -51,20 +51,19 @@ public final class LightTracer implements Stoppable {
 
         @Override
         public Void call() throws Exception {
-            for (; ; ) {
-                if (isShutDown) {
-                    return null;
-                }
-                applyingLock.readLock().lock();
-                try {
-                    light.calculateShadows();
-                    if (!light.isDirty()) {
-                        tidyLights.add(light);
-                        break;
+            if (isShutDown) {
+                return null;
+            }
+            applyingLock.readLock().lock();
+            try {
+                light.calculateShadows();
+                if (!light.isDirty()) {
+                    if (!lights.contains(light)) {
+                        lights.add(light);
                     }
-                } finally {
-                    applyingLock.readLock().unlock();
                 }
+            } finally {
+                applyingLock.readLock().unlock();
             }
             notifyLightCalculationDone();
             return null;
@@ -103,10 +102,10 @@ public final class LightTracer implements Stoppable {
     private final LightingMap mapSource;
 
     /**
-     * The lists of lights that are fully processed and are ready to be published to the map.
+     * The list of lights that were processed at least once and contain all data to be applied to the map.
      */
     @Nonnull
-    private final List<LightSource> tidyLights;
+    private final List<LightSource> lights;
 
     /**
      * Is set true once the shutdown of the light tracer is triggered.
@@ -125,7 +124,7 @@ public final class LightTracer implements Stoppable {
     @SuppressWarnings("nls")
     public LightTracer(@Nonnull LightingMap tracerMapSource) {
         mapSource = tracerMapSource;
-        tidyLights = new CopyOnWriteArrayList<>();
+        lights = new CopyOnWriteArrayList<>();
         lightCalculationService = Executors.newCachedThreadPool();
         lightsInProgress = new AtomicInteger(0);
         applyingLock = new ReentrantReadWriteLock();
@@ -143,12 +142,15 @@ public final class LightTracer implements Stoppable {
         if (isShutDown) {
             return;
         }
+        log.info("Adding new light to tracer: {}", light);
         light.setMapSource(mapSource);
         if (light.isDirty()) {
             lightsInProgress.incrementAndGet();
             lightCalculationService.submit(new CalculateLightTask(light));
         } else {
-            tidyLights.add(light);
+            lights.add(light);
+            lightsInProgress.incrementAndGet();
+            lightCalculationService.submit(PUBLISH_LIGHTS_TASK);
         }
     }
 
@@ -158,7 +160,7 @@ public final class LightTracer implements Stoppable {
      * @return true in case this tracer does not handle any lights currently
      */
     public boolean isEmpty() {
-        return tidyLights.isEmpty() && (lightsInProgress.get() == 0);
+        return lights.isEmpty() && (lightsInProgress.get() == 0);
     }
 
     /**
@@ -174,9 +176,11 @@ public final class LightTracer implements Stoppable {
         if (isShutDown) {
             return;
         }
-        for (LightSource light : tidyLights) {
+        log.info("Got notification about change at {}", loc);
+        for (LightSource light : lights) {
             light.notifyChange(loc);
             if (light.isDirty()) {
+                log.trace("Light {} requires a update now.", light);
                 refreshLight(light);
             }
         }
@@ -189,9 +193,8 @@ public final class LightTracer implements Stoppable {
         if (isShutDown) {
             return;
         }
-        Iterable<LightSource> tempList = new ArrayList<>(tidyLights);
-        tidyLights.clear();
-        for (LightSource light : tempList) {
+        log.info("Refreshing all lights.");
+        for (LightSource light : lights) {
             light.refresh();
             addLight(light);
         }
@@ -212,9 +215,19 @@ public final class LightTracer implements Stoppable {
         if (isShutDown) {
             return;
         }
+        log.info("Refreshing light {}", light);
+
         light.refresh();
-        tidyLights.remove(light);
         addLight(light);
+    }
+
+    public void replace(@Nonnull LightSource oldSource, @Nonnull LightSource newSource) {
+        if (isShutDown) {
+            return;
+        }
+        log.info("Replacing {} with {}", oldSource, newSource);
+        oldSource.dispose();
+        addLight(newSource);
     }
 
     /**
@@ -227,6 +240,7 @@ public final class LightTracer implements Stoppable {
         if (isShutDown) {
             return;
         }
+        log.info("Removing {} from tracer.", light);
         light.dispose();
         lightsInProgress.incrementAndGet();
         lightCalculationService.submit(PUBLISH_LIGHTS_TASK);
@@ -242,7 +256,8 @@ public final class LightTracer implements Stoppable {
         List<LightSource> disposedList = null;
         applyingLock.writeLock().lock();
         try {
-            for (LightSource light : tidyLights) {
+            log.info("Publishing lights now!");
+            for (LightSource light : lights) {
                 if (light.isDisposed()) {
                     if (disposedList == null) {
                         disposedList = new ArrayList<>();
@@ -258,7 +273,7 @@ public final class LightTracer implements Stoppable {
         mapSource.renderLights();
 
         if (disposedList != null) {
-            tidyLights.removeAll(disposedList);
+            lights.removeAll(disposedList);
         }
     }
 
@@ -267,6 +282,7 @@ public final class LightTracer implements Stoppable {
      */
     @Override
     public void saveShutdown() {
+        log.info("LightTracer is shutting down now.");
         isShutDown = true;
         lightCalculationService.shutdown();
         while (!lightCalculationService.isTerminated()) {
@@ -276,6 +292,6 @@ public final class LightTracer implements Stoppable {
                 // ignore
             }
         }
-        tidyLights.clear();
+        lights.clear();
     }
 }

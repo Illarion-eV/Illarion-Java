@@ -529,7 +529,7 @@ public final class GameMap implements LightingMap, Stoppable {
      *
      * @param key the key of the tile that is to be removed
      */
-    public void removeTile(long key) {
+    public boolean removeTile(long key) {
         @Nullable MapTile removedTile = null;
         mapLock.writeLock().lock();
         try {
@@ -559,7 +559,9 @@ public final class GameMap implements LightingMap, Stoppable {
             }
 
             removedTile.markAsRemoved();
+            return true;
         }
+        return false;
     }
 
     /**
@@ -664,10 +666,11 @@ public final class GameMap implements LightingMap, Stoppable {
      */
     @SuppressWarnings("nls")
     public void updateTile(@Nonnull TileUpdate updateData) {
+        boolean changedSomething = false;
         long locKey = updateData.getLocation().getKey();
 
         if (updateData.getTileId() == MapTile.ID_NONE) {
-            removeTile(locKey);
+            changedSomething = removeTile(locKey);
         } else {
             MapTile tile = getMapAt(locKey);
             boolean newTile = tile == null;
@@ -679,7 +682,9 @@ public final class GameMap implements LightingMap, Stoppable {
             }
 
             // update tile from update info
-            tile.update(updateData);
+            if (tile.update(updateData)) {
+                changedSomething = true;
+            }
 
             if (newTile) {
                 mapLock.writeLock().lock();
@@ -700,18 +705,23 @@ public final class GameMap implements LightingMap, Stoppable {
                 } finally {
                     mapLock.writeLock().unlock();
                 }
-            }
-            tile.applyAmbientLight(World.getWeather().getAmbientLight());
-
-            if (World.getMapDisplay().isActive()) {
-                World.getLights().notifyChange(updateData.getLocation());
+                tile.applyAmbientLight(World.getWeather().getAmbientLight());
+                changedSomething = true;
             }
 
-            if (World.getPlayer().getLocation().equals(tile.getLocation())) {
-                World.getMusicBox().updatePlayerLocation();
+            if (changedSomething) {
+                if (World.getMapDisplay().isActive()) {
+                    World.getLights().notifyChange(updateData.getLocation());
+                }
+
+                if (World.getPlayer().getLocation().equals(tile.getLocation())) {
+                    World.getMusicBox().updatePlayerLocation();
+                }
             }
         }
-        miniMap.update(updateData);
+        if (changedSomething) {
+            miniMap.update(updateData);
+        }
     }
 
     @Nullable

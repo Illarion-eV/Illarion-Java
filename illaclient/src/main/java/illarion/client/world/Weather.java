@@ -584,22 +584,18 @@ public final class Weather {
         gustsTarget = newGusts * WIND_CONVERSATION_VALUE;
     }
 
-    private int deltaSlowDownCounter;
 
     private void animateWeather(int delta) {
-        deltaSlowDownCounter += delta;
-        if (deltaSlowDownCounter > 50) {
-            wind = AnimationUtility.approach(wind, windTarget, WIND_STEP, WIND_INTERAL_MIN, WIND_INTERAL_MAX, delta);
-            gusts = AnimationUtility.approach(gusts, gustsTarget, WIND_STEP, 0, WIND_INTERAL_MAX, delta);
-            cloud = AnimationUtility.approach(cloud, cloudTarget, CLOUDS_STEP, CLOUDS_MIN, CLOUDS_MAX, delta);
-            fog = AnimationUtility.approach(fog, fogTarget, FOG_STEP, 0, 100, delta);
-            rain = AnimationUtility.approach(rain, rainTarget, PREC_STEP, 0, 500, delta);
-            snow = AnimationUtility.approach(snow, snowTarget, PREC_STEP, 0, 500, delta);
+        int effectiveDelta = Math.max(1, delta / 5);
 
-            deltaSlowDownCounter -= 50;
-        }
+        wind = AnimationUtility.approach(wind, windTarget, WIND_STEP, WIND_INTERAL_MIN, WIND_INTERAL_MAX, effectiveDelta);
+        gusts = AnimationUtility.approach(gusts, gustsTarget, WIND_STEP, 0, WIND_INTERAL_MAX, effectiveDelta);
+        cloud = AnimationUtility.approach(cloud, cloudTarget, CLOUDS_STEP, CLOUDS_MIN, CLOUDS_MAX, effectiveDelta);
+        fog = AnimationUtility.approach(fog, fogTarget, FOG_STEP, 0, 100, effectiveDelta);
+        rain = AnimationUtility.approach(rain, rainTarget, PREC_STEP, 0, 500, effectiveDelta);
+        snow = AnimationUtility.approach(snow, snowTarget, PREC_STEP, 0, 500, effectiveDelta);
 
-        if (AnimationUtility.approach(ambientLight, ambientTargetColor, delta)) {
+        if (AnimationUtility.approach(ambientLight, ambientTargetColor, effectiveDelta)) {
             World.getMap().updateAmbientLight();
         }
     }

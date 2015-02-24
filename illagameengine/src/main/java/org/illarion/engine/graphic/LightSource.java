@@ -298,4 +298,11 @@ public final class LightSource {
     boolean isDisposed() {
         return disposed;
     }
+
+    @Override
+    @Nonnull
+    public String toString() {
+        return "LightSource (" + location + ", " + color + ",  brightness: " + bright + ", size: " + size +
+                ", dirty: " + dirty + ')';
+    }
 }
