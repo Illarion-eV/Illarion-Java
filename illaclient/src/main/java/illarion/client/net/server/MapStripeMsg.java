@@ -80,8 +80,6 @@ public final class MapStripeMsg implements ServerReply {
         GameMap map = World.getMap();
         map.updateTiles(tiles);
         map.finishTileUpdate();
-
-        World.getLights().refresh();
         return ServerReplyResult.Success;
     }
 

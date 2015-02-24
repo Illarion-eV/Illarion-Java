@@ -175,7 +175,8 @@ public final class LightTracer implements Stoppable {
         Iterable<LightSource> tempList = new ArrayList<>(tidyLights);
         tidyLights.clear();
         for (LightSource light : tempList) {
-            refreshLight(light);
+            light.refresh();
+            addLight(light);
         }
     }
 

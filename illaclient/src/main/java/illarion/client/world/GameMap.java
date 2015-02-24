@@ -701,7 +701,11 @@ public final class GameMap implements LightingMap, Stoppable {
                     mapLock.writeLock().unlock();
                 }
             }
-            World.getLights().notifyChange(updateData.getLocation());
+            tile.applyAmbientLight(World.getWeather().getAmbientLight());
+
+            if (World.getMapDisplay().isActive()) {
+                World.getLights().notifyChange(updateData.getLocation());
+            }
 
             if (World.getPlayer().getLocation().equals(tile.getLocation())) {
                 World.getMusicBox().updatePlayerLocation();
