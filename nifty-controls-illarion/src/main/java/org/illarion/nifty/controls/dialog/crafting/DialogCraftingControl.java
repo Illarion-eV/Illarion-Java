@@ -232,11 +232,19 @@ public class DialogCraftingControl extends WindowControl
                     return false;
                 }
                 String currentText = getAmountTextField().getRealText();
+                if (currentText.length() >= 5) {
+                    return false;
+                }
+
                 StringBuilder buffer = new StringBuilder(currentText);
                 buffer.insert(index, newChar);
 
-                int value = Integer.parseInt(buffer.toString());
-                return value > 0;
+                try {
+                    int value = Integer.parseInt(buffer.toString());
+                    return value > 0;
+                } catch (NumberFormatException ex) {
+                    return false;
+                }
             }
         });
 
@@ -247,10 +255,14 @@ public class DialogCraftingControl extends WindowControl
                     @Nonnull CharSequence original,
                     int start,
                     int end) {
+                CharSequence usedText = original;
                 if (original.length() == 0) {
-                    return Integer.toString(1);
+                    usedText = Integer.toString(1);
                 }
-                return original.subSequence(start, end);
+                if (original.length() >= 5) {
+                    usedText = Integer.toString(10000);
+                }
+                return usedText.subSequence(start, end);
             }
         });
     }
