@@ -891,7 +891,6 @@ public final class MapTile implements AlphaChangeListener {
         // update items
         updateItemList(update.getItemNumber(), update.getItemId(), update.getItemCount());
 
-        itemChanged();
     }
 
     public void setMovementCost(int newMovementCost) {
@@ -1033,7 +1032,6 @@ public final class MapTile implements AlphaChangeListener {
             return;
         }
         updateItemList(itemNumber, itemId, itemCount);
-        itemChanged();
     }
 
     public boolean isHidden() {

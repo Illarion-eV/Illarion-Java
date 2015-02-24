@@ -17,12 +17,16 @@ package org.illarion.engine.graphic;
 
 import illarion.common.types.Location;
 import illarion.common.util.Stoppable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Manager class that handles the light. It stores the pre-calculated light rays
@@ -51,15 +55,24 @@ public final class LightTracer implements Stoppable {
                 if (isShutDown) {
                     return null;
                 }
-                light.calculateShadows();
-                if (!light.isDirty()) {
-                    tidyLights.add(light);
-                    notifyLightCalculationDone();
-                    return null;
+                applyingLock.readLock().lock();
+                try {
+                    light.calculateShadows();
+                    if (!light.isDirty()) {
+                        tidyLights.add(light);
+                        break;
+                    }
+                } finally {
+                    applyingLock.readLock().unlock();
                 }
             }
+            notifyLightCalculationDone();
+            return null;
         }
     }
+
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(LightTracer.class);
 
     @Nonnull
     private final Callable<Void> PUBLISH_LIGHTS_TASK = new Callable<Void>() {
@@ -100,6 +113,9 @@ public final class LightTracer implements Stoppable {
      */
     private boolean isShutDown;
 
+    @Nonnull
+    private final ReadWriteLock applyingLock;
+
     /**
      * Default constructor of the light tracer. This tracer handles all light
      * sources that are on the map source that is set with the parameter.
@@ -112,6 +128,7 @@ public final class LightTracer implements Stoppable {
         tidyLights = new CopyOnWriteArrayList<>();
         lightCalculationService = Executors.newCachedThreadPool();
         lightsInProgress = new AtomicInteger(0);
+        applyingLock = new ReentrantReadWriteLock();
     }
 
     /**
@@ -223,15 +240,20 @@ public final class LightTracer implements Stoppable {
             return;
         }
         List<LightSource> disposedList = null;
-        for (LightSource light : tidyLights) {
-            if (light.isDisposed()) {
-                if (disposedList == null) {
-                    disposedList = new ArrayList<>();
+        applyingLock.writeLock().lock();
+        try {
+            for (LightSource light : tidyLights) {
+                if (light.isDisposed()) {
+                    if (disposedList == null) {
+                        disposedList = new ArrayList<>();
+                    }
+                    disposedList.add(light);
+                } else {
+                    light.apply();
                 }
-                disposedList.add(light);
-            } else {
-                light.apply();
             }
+        } finally {
+            applyingLock.writeLock().unlock();
         }
         mapSource.renderLights();
 
