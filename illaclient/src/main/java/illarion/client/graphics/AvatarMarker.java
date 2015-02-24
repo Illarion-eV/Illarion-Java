@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -45,7 +45,7 @@ public class AvatarMarker extends AbstractEntity<MiscImageTemplate> {
      * @param markerId the image ID of this marker
      * @param parentAvatar the parent avatar
      */
-    public AvatarMarker(final int markerId, @Nonnull final Avatar parentAvatar) {
+    public AvatarMarker(int markerId, @Nonnull Avatar parentAvatar) {
         super(MiscImageFactory.getInstance().getTemplate(markerId));
         parent = parentAvatar;
     }
@@ -61,7 +61,7 @@ public class AvatarMarker extends AbstractEntity<MiscImageTemplate> {
     }
 
     @Override
-    public void setAlpha(final int alpha) {
+    public void setAlpha(int alpha) {
         super.setAlpha(alpha);
         setAlphaTarget(alpha);
     }

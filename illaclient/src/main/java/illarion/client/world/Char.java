@@ -550,7 +550,6 @@ public final class Char implements AnimatedMove {
         newAvatar.setScale(scale);
         newAvatar.setAlpha(oldAlpha);
         newAvatar.setAlphaTarget(oldAlphaTarget);
-        newAvatar.setAttackMarkerVisible(World.getPlayer().getCombatHandler().isAttacking(this));
         newAvatar.setName(getName());
 
         if (nameColor != null) {
@@ -1229,23 +1228,6 @@ public final class Char implements AnimatedMove {
             appearance = newAppearance;
             resetAnimation(true);
         }
-    }
-
-    /**
-     * Set or remove the marker from the character that selects the character as active combat target.
-     *
-     * @param activate {@code true} to enable the combat target marker on this character
-     */
-    public void setAttackMarker(boolean activate) {
-        if (removedCharacter) {
-            log.warn("Trying to access the attack marker of a removed character.");
-            return;
-        }
-        if (avatar == null) {
-            return;
-        }
-
-        avatar.setAttackMarkerVisible(activate);
     }
 
     /**
