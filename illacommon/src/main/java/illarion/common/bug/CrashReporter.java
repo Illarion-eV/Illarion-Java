@@ -319,8 +319,10 @@ public final class CrashReporter {
             String exceptionDescription = "Exception: " + data.getExceptionName() + "\nBacktrace:\n" +
                     data.getStackBacktrace() + "\nDescription: " + data.getDescription();
 
-            String description = "Application:" + application.getApplicationIdentifier() + "\nThread: " +
-                    data.getThreadName() + '\n' + exceptionDescription;
+            String description = "Application:" + application.getApplicationIdentifier() +
+                    (application.getCommitCount() > 0 ? " (DEV)" : "") +
+                    "\nThread: " + data.getThreadName() +
+                    '\n' + exceptionDescription;
 
             @Nullable IIssue similarIssue = null;
             @Nullable IIssue possibleDuplicateIssue = null;
