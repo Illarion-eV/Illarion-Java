@@ -21,6 +21,8 @@ import org.jetbrains.annotations.Contract;
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * This class handles a light source and contains its rays, the location and the color of the light.
@@ -92,6 +94,9 @@ public final class LightSource {
     @Nonnull
     private final Location tempLocation = new Location();
 
+    @Nonnull
+    private final Lock calculationLock;
+
     /**
      * Constructor for a new light source at a given location with some encoded
      * settings.
@@ -121,6 +126,8 @@ public final class LightSource {
         invert = (encoding / 100000) == 1;
 
         dirty = true;
+
+        calculationLock = new ReentrantLock();
     }
 
     /**
@@ -304,5 +311,10 @@ public final class LightSource {
     public String toString() {
         return "LightSource (" + location + ", " + color + ",  brightness: " + bright + ", size: " + size +
                 ", dirty: " + dirty + ')';
+    }
+
+    @Nonnull
+    Lock getCalculationLock() {
+        return calculationLock;
     }
 }

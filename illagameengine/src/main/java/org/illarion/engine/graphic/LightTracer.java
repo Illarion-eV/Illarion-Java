@@ -56,11 +56,19 @@ public final class LightTracer implements Stoppable {
             }
             applyingLock.readLock().lock();
             try {
-                light.calculateShadows();
-                if (!light.isDirty()) {
-                    if (!lights.contains(light)) {
-                        lights.add(light);
+                light.getCalculationLock().lock();
+                try {
+                    for (; ; ) {
+                        light.calculateShadows();
+                        if (!light.isDirty()) {
+                            if (!lights.contains(light)) {
+                                lights.add(light);
+                            }
+                            break;
+                        }
                     }
+                } finally {
+                    light.getCalculationLock().unlock();
                 }
             } finally {
                 applyingLock.readLock().unlock();
@@ -74,7 +82,7 @@ public final class LightTracer implements Stoppable {
     private static final Logger log = LoggerFactory.getLogger(LightTracer.class);
 
     @Nonnull
-    private final Callable<Void> PUBLISH_LIGHTS_TASK = new Callable<Void>() {
+    private final Callable<Void> publishLightsTask = new Callable<Void>() {
         @Override
         public Void call() throws Exception {
             notifyLightCalculationDone();
@@ -150,7 +158,7 @@ public final class LightTracer implements Stoppable {
         } else {
             lights.add(light);
             lightsInProgress.incrementAndGet();
-            lightCalculationService.submit(PUBLISH_LIGHTS_TASK);
+            lightCalculationService.submit(publishLightsTask);
         }
     }
 
@@ -195,8 +203,7 @@ public final class LightTracer implements Stoppable {
         }
         log.info("Refreshing all lights.");
         for (LightSource light : lights) {
-            light.refresh();
-            addLight(light);
+            refreshLight(light);
         }
     }
 
@@ -218,7 +225,15 @@ public final class LightTracer implements Stoppable {
         log.info("Refreshing light {}", light);
 
         light.refresh();
-        addLight(light);
+        if (light.getCalculationLock().tryLock()) {
+            try {
+                light.refresh();
+                addLight(light);
+            } finally {
+                light.getCalculationLock().unlock();
+            }
+
+        }
     }
 
     public void replace(@Nonnull LightSource oldSource, @Nonnull LightSource newSource) {
@@ -243,7 +258,7 @@ public final class LightTracer implements Stoppable {
         log.info("Removing {} from tracer.", light);
         light.dispose();
         lightsInProgress.incrementAndGet();
-        lightCalculationService.submit(PUBLISH_LIGHTS_TASK);
+        lightCalculationService.submit(publishLightsTask);
     }
 
     /**
