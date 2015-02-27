@@ -1208,9 +1208,7 @@ public final class Char implements AnimatedMove {
             return;
         }
         if (lightSrc != null) {
-            World.getLights().remove(lightSrc);
-            lightSrc = new LightSource(charLocation, lightValue);
-            World.getLights().addLight(lightSrc);
+            World.getLights().refreshLight(lightSrc);
         }
     }
 
