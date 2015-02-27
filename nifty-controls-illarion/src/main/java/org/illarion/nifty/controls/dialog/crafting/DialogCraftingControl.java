@@ -257,10 +257,10 @@ public class DialogCraftingControl extends WindowControl
                     int end) {
                 CharSequence usedText = original;
                 if (original.length() == 0) {
-                    usedText = Integer.toString(1);
+                    return Integer.toString(1);
                 }
                 if (original.length() >= 5) {
-                    usedText = Integer.toString(10000);
+                    return Integer.toString(10000);
                 }
                 return usedText.subSequence(start, end);
             }
