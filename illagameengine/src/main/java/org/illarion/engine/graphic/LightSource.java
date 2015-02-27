@@ -19,6 +19,7 @@ import illarion.common.types.Location;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.locks.Lock;
@@ -31,6 +32,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class LightSource {
+    private final int encodedValue;
     /**
      * The flag of this light source was already deleted.
      */
@@ -106,6 +108,7 @@ public final class LightSource {
      * brightness, the size and the inversion flag
      */
     public LightSource(@Nonnull Location location, int encoding) {
+        encodedValue = encoding;
         int newSize = (encoding / 10000) % 10;
         rays = LightRays.getRays(newSize);
         intensity = new double[(newSize * 2) + 1][(newSize * 2) + 1];
@@ -302,8 +305,25 @@ public final class LightSource {
         disposed = true;
     }
 
+    @Contract(pure = true)
     boolean isDisposed() {
         return disposed;
+    }
+
+    @Contract(pure = true)
+    public int getEncodedValue() {
+        return encodedValue;
+    }
+
+    @Override
+    @Contract(value = "null->false", pure = true)
+    public boolean equals(@Nullable Object obj) {
+        return (obj instanceof LightSource) && equals((LightSource) obj);
+    }
+
+    @Contract(value = "null->false", pure = true)
+    public boolean equals(@Nullable LightSource light) {
+        return (light != null) && (light.getEncodedValue() == getEncodedValue()) && light.location.equals(location);
     }
 
     @Override

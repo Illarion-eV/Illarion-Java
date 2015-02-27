@@ -628,7 +628,6 @@ public final class Char implements AnimatedMove {
 
     private void applyLightValue(@Nullable ItemId itemId) {
         if (ItemId.isValidItem(itemId)) {
-            assert itemId != null; /* Verified by isValidItem. */
             int light = ItemFactory.getInstance().getTemplate(itemId.getValue()).getItemInfo().getLight();
 
             if (light > lightValue) {
@@ -1374,11 +1373,21 @@ public final class Char implements AnimatedMove {
             return;
         }
         if (lightValue > 0) {
-            int tempLightValue = lightValue;
-            resetLight();
-            lightSrc = new LightSource(charLocation, tempLightValue);
-            World.getLights().addLight(lightSrc);
-            lightValue = tempLightValue;
+            if (lightSrc != null) {
+                if (lightSrc.getEncodedValue() != lightValue) {
+                    LightSource newLight = new LightSource(charLocation, lightValue);
+                    World.getLights().replace(lightSrc, newLight);
+                    lightSrc = newLight;
+                }
+            } else {
+                lightSrc = new LightSource(charLocation, lightValue);
+                World.getLights().addLight(lightSrc);
+            }
+        } else {
+            if (lightSrc != null) {
+                World.getLights().remove(lightSrc);
+                lightSrc = null;
+            }
         }
     }
 
