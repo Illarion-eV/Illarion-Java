@@ -381,10 +381,8 @@ public final class People {
 
         charsLock.readLock().lock();
         try {
-            synchronized (GameMap.LIGHT_LOCK) {
-                for (Char character : chars.values()) {
-                    character.updateLight(Char.LIGHT_UPDATE);
-                }
+            for (Char character : chars.values()) {
+                character.updateLight(Char.LIGHT_UPDATE);
             }
         } finally {
             charsLock.readLock().unlock();

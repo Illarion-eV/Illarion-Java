@@ -49,7 +49,7 @@ import java.util.concurrent.locks.Lock;
  */
 @SuppressWarnings("ClassNamingConvention")
 @NotThreadSafe
-public final class MapTile implements AlphaChangeListener {
+public final class MapTile {
     /**
      * Default Tile ID for no tile at this position.
      */
@@ -310,19 +310,6 @@ public final class MapTile implements AlphaChangeListener {
     @Nonnull
     public Item getItem(int index) {
         return items.get(index);
-    }
-
-    /**
-     * This function receives updates in case the alpha value of the tile changes. Its possible that this happens in
-     * case the character is walking past this tile. The effect of this is that the map processor checks the tile again
-     * and displays it, so the tile below the tile that got faded out is visible properly.
-     */
-    @Override
-    public void alphaChanged(int from, int to) {
-        if (removedTile) {
-            LOGGER.warn("Updating alpha of a changed tile");
-            return;
-        }
     }
 
     /**
@@ -956,7 +943,6 @@ public final class MapTile implements AlphaChangeListener {
             // create a tile, possibly with variants
             tile = new Tile(id, this);
 
-            tile.addAlphaChangeListener(this);
             tile.setScreenPos(tileLocation, Layers.TILE);
             tile.show();
         }

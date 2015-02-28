@@ -569,32 +569,28 @@ public final class GameMap implements LightingMap, Stoppable {
      */
     @Override
     public void renderLights() {
-        synchronized (LIGHT_LOCK) {
-            mapLock.readLock().lock();
-            try {
-                Color ambientLight = World.getWeather().getAmbientLight();
-                for (MapTile tile : tiles.values()) {
-                    tile.renderLight(ambientLight);
-                }
-            } finally {
-                mapLock.readLock().unlock();
+        mapLock.readLock().lock();
+        try {
+            Color ambientLight = World.getWeather().getAmbientLight();
+            for (MapTile tile : tiles.values()) {
+                tile.renderLight(ambientLight);
             }
+        } finally {
+            mapLock.readLock().unlock();
         }
 
         World.getPeople().updateLight();
     }
 
     public void updateAmbientLight() {
-        synchronized (LIGHT_LOCK) {
-            mapLock.readLock().lock();
-            try {
-                Color ambientLight = World.getWeather().getAmbientLight();
-                for (MapTile tile : tiles.values()) {
-                    tile.applyAmbientLight(ambientLight);
-                }
-            } finally {
-                mapLock.readLock().unlock();
+        mapLock.readLock().lock();
+        try {
+            Color ambientLight = World.getWeather().getAmbientLight();
+            for (MapTile tile : tiles.values()) {
+                tile.applyAmbientLight(ambientLight);
             }
+        } finally {
+            mapLock.readLock().unlock();
         }
 
         World.getPeople().updateLight();
