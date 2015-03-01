@@ -101,13 +101,6 @@ public final class GameMap implements LightingMap, Stoppable {
     }
 
     /**
-     * The lock that is hold in case the light is currently rendered. If that is done right now the map must not be
-     * rendered.
-     */
-    @Nonnull
-    public static final Object LIGHT_LOCK = new Object();
-
-    /**
      * The interactive map that is used to handle the player interaction with the map.
      */
     @Nonnull
@@ -569,28 +562,29 @@ public final class GameMap implements LightingMap, Stoppable {
      */
     @Override
     public void renderLights() {
-        mapLock.readLock().lock();
+        mapLock.writeLock().lock();
         try {
             Color ambientLight = World.getWeather().getAmbientLight();
             for (MapTile tile : tiles.values()) {
-                tile.renderLight(ambientLight);
+                tile.renderLight();
+                tile.applyAmbientLight(ambientLight);
             }
         } finally {
-            mapLock.readLock().unlock();
+            mapLock.writeLock().unlock();
         }
 
         World.getPeople().updateLight();
     }
 
     public void updateAmbientLight() {
-        mapLock.readLock().lock();
+        mapLock.writeLock().lock();
         try {
             Color ambientLight = World.getWeather().getAmbientLight();
             for (MapTile tile : tiles.values()) {
                 tile.applyAmbientLight(ambientLight);
             }
         } finally {
-            mapLock.readLock().unlock();
+            mapLock.writeLock().unlock();
         }
 
         World.getPeople().updateLight();
