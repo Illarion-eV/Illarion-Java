@@ -35,12 +35,6 @@ public final class Bresenham {
     private static final int MAX_LINE_LENGTH = 100;
 
     /**
-     * The singleton instance of this class.
-     */
-    @Nonnull
-    private static final Bresenham INSTANCE = new Bresenham();
-
-    /**
      * The length of the line that was created latest.
      */
     private int length;
@@ -56,17 +50,6 @@ public final class Bresenham {
      */
     @Nonnull
     private final int[] y = new int[MAX_LINE_LENGTH];
-
-    /**
-     * Get the singleton instance of this class.
-     *
-     * @return the singleton instance
-     */
-    @Nonnull
-    @Contract(pure = true)
-    public static Bresenham getInstance() {
-        return INSTANCE;
-    }
 
     /**
      * Reverse order of points if they do not start with given point.
@@ -172,7 +155,7 @@ public final class Bresenham {
     @Nonnull
     @Contract(pure = true)
     public int[] getX() {
-        return Arrays.copyOf(x, x.length);
+        return Arrays.copyOf(x, length);
     }
 
     /**
@@ -183,7 +166,7 @@ public final class Bresenham {
     @Nonnull
     @Contract(pure = true)
     public int[] getY() {
-        return Arrays.copyOf(y, y.length);
+        return Arrays.copyOf(y, length);
     }
 
     @Nonnull

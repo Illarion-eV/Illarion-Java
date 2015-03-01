@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,6 +17,7 @@ package illarion.client.net;
 
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.net.server.*;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,26 +33,30 @@ import java.util.Map;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@SuppressWarnings("OverlyCoupledClass")
 public final class ReplyFactory {
     /**
      * The singleton instance of this factory.
      */
+    @Nonnull
     private static final ReplyFactory INSTANCE = new ReplyFactory();
 
     /**
      * The logger that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReplyFactory.class);
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(ReplyFactory.class);
 
     /**
      * This map stores the message classes along with the IDs of the command encoded in them.
      */
     @Nonnull
-    private final Map<Integer, Class<? extends AbstractReply>> replyMap;
+    private final Map<Integer, Class<? extends ServerReply>> replyMap;
 
     /**
      * The default constructor of the factory. This registers all commands.
      */
+    @SuppressWarnings({"OverlyLongMethod", "OverlyCoupledMethod"})
     private ReplyFactory() {
         replyMap = new HashMap<>();
 
@@ -110,21 +115,21 @@ public final class ReplyFactory {
     }
 
     /**
-     * Register a class as replay message class. Those classes need to implement the {@link AbstractReply} interface
+     * Register a class as replay message class. Those classes need to implement the {@link ServerReply} interface
      * and they require the contain the {@link ReplyMessage} annotation.
      *
      * @param clazz the class to register as reply.
      */
-    private void register(@Nonnull Class<? extends AbstractReply> clazz) {
+    private void register(@Nonnull Class<? extends ServerReply> clazz) {
         ReplyMessage messageData = clazz.getAnnotation(ReplyMessage.class);
 
         if (messageData == null) {
-            LOGGER.error("Illegal class supplied to register! No annotation: {}", clazz.getName());
+            log.error("Illegal class supplied to register! No annotation: {}", clazz.getName());
             return;
         }
 
         if (replyMap.containsKey(messageData.replyId())) {
-            LOGGER.error("Class with duplicated key: {}", clazz.getName());
+            log.error("Class with duplicated key: {}", clazz.getName());
             return;
         }
 
@@ -139,24 +144,25 @@ public final class ReplyFactory {
      * @return the newly created reply instance
      */
     @Nullable
-    public AbstractReply getReply(int id) {
-        Class<? extends AbstractReply> replyClass = replyMap.get(id);
+    @Contract(pure = true)
+    public ServerReply getReply(int id) {
+        Class<? extends ServerReply> replyClass = replyMap.get(id);
 
         if (replyClass == null) {
-            LOGGER.error("Illegal reply requested. ID: 0x{}", Integer.toHexString(id));
+            log.error("Illegal reply requested. ID: 0x{}", Integer.toHexString(id));
             return null;
         }
 
         try {
             return replyClass.getConstructor().newInstance();
         } catch (InstantiationException e) {
-            LOGGER.error("Failed to create instance of reply class!", e);
+            log.error("Failed to create instance of reply class!", e);
         } catch (IllegalAccessException e) {
-            LOGGER.error("Access to reply class constructor was denied.", e);
+            log.error("Access to reply class constructor was denied.", e);
         } catch (NoSuchMethodException e) {
-            LOGGER.error("Failed to locate required constructor.", e);
+            log.error("Failed to locate required constructor.", e);
         } catch (InvocationTargetException e) {
-            LOGGER.error("Problem while executing the constructor.", e);
+            log.error("Problem while executing the constructor.", e);
         }
         return null;
     }
@@ -167,6 +173,7 @@ public final class ReplyFactory {
      * @return the singleton instance of this class
      */
     @Nonnull
+    @Contract(pure = true)
     public static ReplyFactory getInstance() {
         return INSTANCE;
     }

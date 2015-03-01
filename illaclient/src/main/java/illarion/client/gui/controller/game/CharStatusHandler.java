@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,6 +20,9 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.graphics.AnimationUtility;
 import illarion.client.gui.PlayerStatusGui;
+import illarion.client.world.Char;
+import illarion.client.world.Player;
+import illarion.client.world.World;
 import illarion.client.world.characters.CharacterAttribute;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.illarion.engine.GameContainer;
@@ -91,6 +94,12 @@ public final class CharStatusHandler implements PlayerStatusGui, ScreenControlle
     @Override
     public void onStartScreen() {
         AnnotationProcessor.process(this);
+
+        Player player = World.getPlayer();
+        Char playerChar = player.getCharacter();
+        hitPoints = playerChar.getAttribute(CharacterAttribute.HitPoints);
+        foodPoints = playerChar.getAttribute(CharacterAttribute.FoodPoints);
+        manaPoints = playerChar.getAttribute(CharacterAttribute.ManaPoints);
     }
 
     @Override

@@ -15,20 +15,25 @@
  */
 package illarion.client.gui;
 
+import illarion.client.world.items.SelectionItem;
+
 import javax.annotation.Nonnull;
+import java.util.Collection;
 
 /**
- * This interface defines the access to the GUI used to display message dialogs.
+ * This interface defines the access to the GUI used to display selection dialogs.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface DialogMessageGui {
+public interface DialogSelectionGui {
     /**
      * Show a message dialog on the GUI.
      *
      * @param dialogId the ID of the message dialog
-     * @param title the title of the message dialog
-     * @param message the message that is displayed in the dialog
+     * @param title    the title of the message dialog
+     * @param content  the description text displayed in the dialog
+     * @param items    the entries that are supposed to be displayed
      */
-    void showMessageDialog(int dialogId, @Nonnull String title, @Nonnull String message);
+    void showSelectionDialog(int dialogId, @Nonnull String title, @Nonnull String content,
+                             @Nonnull Collection<SelectionItem> items);
 }

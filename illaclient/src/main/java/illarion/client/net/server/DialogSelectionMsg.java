@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,14 +17,17 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.net.server.events.DialogSelectionReceivedEvent;
+import illarion.client.world.World;
 import illarion.client.world.items.SelectionItem;
 import illarion.common.net.NetCommReader;
-import javolution.text.TextBuilder;
-import org.bushe.swing.event.EventBus;
+import illarion.common.types.ItemId;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * This server message is used to make the client show a selection dialog.
@@ -32,15 +35,17 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_DIALOG_SELECTION)
-public final class DialogSelectionMsg extends AbstractGuiMsg {
+public final class DialogSelectionMsg implements ServerReply {
     /**
      * The title of the dialog window.
      */
+    @Nullable
     private String title;
 
     /**
      * The message that is displayed inside this selection dialog.
      */
+    @Nullable
     private String message;
 
     /**
@@ -51,34 +56,42 @@ public final class DialogSelectionMsg extends AbstractGuiMsg {
     /**
      * The items read from the dialog.
      */
-    private SelectionItem[] items;
+    @Nullable
+    private Collection<SelectionItem> items;
 
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         title = reader.readString();
         message = reader.readString();
         int itemCount = reader.readByte();
-        items = new SelectionItem[itemCount];
+        items = new ArrayList<>(itemCount);
         for (int i = 0; i < itemCount; i++) {
-            int id = reader.readUShort();
+            ItemId id = new ItemId(reader);
             String name = reader.readString();
-            items[i] = new SelectionItem(i, id, name);
+            items.add(new SelectionItem(i, id, name));
         }
         dialogId = reader.readInt();
     }
 
+    @Nonnull
     @Override
-    public void executeUpdate() {
-        EventBus.publish(new DialogSelectionReceivedEvent(dialogId, title, message, items));
+    public ServerReplyResult execute() {
+        if ((title == null) || (message == null) || (items == null)) {
+            throw new NotDecodedException();
+        }
+
+        if (!World.getGameGui().isReady()) {
+            return ServerReplyResult.Reschedule;
+        }
+
+        World.getGameGui().getDialogSelectionGui().showSelectionDialog(dialogId, title, message, items);
+        return ServerReplyResult.Success;
     }
 
     @Nonnull
     @Override
+    @Contract(pure = true)
     public String toString() {
-        TextBuilder builder = new TextBuilder();
-        builder.append("title: \"").append(title).append("\", ");
-        builder.append("items: \"").append(items.length).append("\", ");
-        builder.append("dialog ID: ").append(dialogId);
-        return toString(builder.toString());
+        return Utilities.toString(DialogSelectionMsg.class, "ID: " + dialogId, title);
     }
 }

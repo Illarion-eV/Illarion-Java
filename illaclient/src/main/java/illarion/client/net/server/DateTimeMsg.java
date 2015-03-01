@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,6 +19,7 @@ import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -30,13 +31,7 @@ import java.io.IOException;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_DATETIME)
-public final class DateTimeMsg extends AbstractReply {
-    /**
-     * The format of the string used in the {@link #toString()} function.
-     */
-    @SuppressWarnings("nls")
-    private static final String TO_STRING_FORMAT = "Date: %1$d/%2$d/%3$d - Time: %4$d:%5$d";
-
+public final class DateTimeMsg implements ServerReply {
     /**
      * Day of the current IG time.
      */
@@ -71,14 +66,18 @@ public final class DateTimeMsg extends AbstractReply {
         year = reader.readUShort();
     }
 
+    @Nonnull
     @Override
-    public void executeUpdate() {
+    public ServerReplyResult execute() {
         World.getClock().setDateTime(year, month, day, hour, minute);
+        return ServerReplyResult.Success;
     }
 
     @Nonnull
     @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString(String.format(TO_STRING_FORMAT, month, day, year, hour, minute));
+        return Utilities.toString(DateTimeMsg.class,
+                String.format("Date: %1$d/%2$d/%3$d - Time: %4$d:%5$d", month, day, year, hour, minute));
     }
 }

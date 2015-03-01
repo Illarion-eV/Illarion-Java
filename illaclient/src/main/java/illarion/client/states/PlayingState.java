@@ -44,6 +44,7 @@ public class PlayingState implements GameState {
     /**
      * The logger that is used for the logging output of this class.
      */
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(PlayingState.class);
 
     public PlayingState(@Nonnull InputReceiver inputReceiver) {

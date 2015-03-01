@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,21 +20,24 @@ import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.CharacterId;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
- * Servermessage: Remove a character from the map ({@link illarion.client.net.CommandList#MSG_REMOVE_CHAR}).
+ * Server message: Remove a character from the map
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_REMOVE_CHAR)
-public final class RemoveCharMsg extends AbstractReply {
+public final class RemoveCharMsg implements ServerReply {
     /**
      * The ID of the character that shall be removed.
      */
+    @Nullable
     private CharacterId charId;
 
     @Override
@@ -42,15 +45,21 @@ public final class RemoveCharMsg extends AbstractReply {
         charId = new CharacterId(reader);
     }
 
+    @Nonnull
     @Override
-    public void executeUpdate() {
+    public ServerReplyResult execute() {
+        if (charId == null) {
+            throw new NotDecodedException();
+        }
+
         World.getPeople().removeCharacter(charId);
+        return ServerReplyResult.Success;
     }
 
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString(charId.toString());
+        return Utilities.toString(RemoveCharMsg.class, charId);
     }
 }

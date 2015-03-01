@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,12 +19,15 @@ import illarion.client.gui.DialogType;
 import illarion.client.net.client.BuyTradingItem;
 import illarion.client.net.client.CloseDialogTradingCmd;
 import illarion.client.world.World;
-import illarion.client.world.events.CloseDialogEvent;
+import illarion.client.world.items.MerchantItem.MerchantItemType;
 import illarion.common.types.ItemCount;
-import org.bushe.swing.event.EventBus;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
 
 /**
  * This classes are used to store to information about the goods a merchant is trading.
@@ -36,7 +39,7 @@ public final class MerchantList {
      * This is the list of items the merchant is trading.
      */
     @Nonnull
-    private final MerchantItem[] itemList;
+    private final List<MerchantItem> itemList;
 
     /**
      * This is the ID of the list.
@@ -47,21 +50,19 @@ public final class MerchantList {
      * Create a new instance of this list with the specified ID.
      *
      * @param id the ID used to refer to this list
-     * @param count the amount of items in this list
      */
-    public MerchantList(int id, int count) {
+    public MerchantList(int id) {
         listId = id;
-        itemList = new MerchantItem[count];
+        itemList = new ArrayList<>();
     }
 
     /**
-     * Set the item that is stored at a specified index.
+     * Add a item to the list.
      *
-     * @param index the index of the item to set
-     * @param item the item to set at this slot
+     * @param item the item to add to the list
      */
-    public void setItem(int index, @Nonnull MerchantItem item) {
-        itemList[index] = item;
+    public void addItem(@Nonnull MerchantItem item) {
+        itemList.add(item);
     }
 
     /**
@@ -73,7 +74,7 @@ public final class MerchantList {
      */
     @Nonnull
     public MerchantItem getItem(int index) {
-        MerchantItem item = itemList[index];
+        MerchantItem item = itemList.get(index);
         if (item == null) {
             throw new IllegalStateException("Item on the index " + index + " is not set yet.");
         }
@@ -81,7 +82,7 @@ public final class MerchantList {
     }
 
     @Nullable
-    public MerchantItem getItem(@Nonnull MerchantItem.MerchantItemType type, int index) {
+    public MerchantItem getItem(@Nonnull MerchantItemType type, int index) {
         for (MerchantItem item : itemList) {
             if ((item != null) && (item.getType() == type) && (item.getIndex() == index)) {
                 return item;
@@ -95,8 +96,9 @@ public final class MerchantList {
      *
      * @return the count of items
      */
+    @Contract(pure = true)
     public int getItemCount() {
-        return itemList.length;
+        return itemList.size();
     }
 
     /**
@@ -104,6 +106,7 @@ public final class MerchantList {
      *
      * @return the ID of the merchant list
      */
+    @Contract(pure = true)
     public int getId() {
         return listId;
     }
@@ -113,7 +116,7 @@ public final class MerchantList {
      */
     public void closeDialog() {
         World.getNet().sendCommand(new CloseDialogTradingCmd(listId));
-        EventBus.publish(new CloseDialogEvent(listId, DialogType.Merchant));
+        World.getPlayer().closeDialog(listId, EnumSet.of(DialogType.Merchant));
     }
 
     /**
@@ -131,7 +134,7 @@ public final class MerchantList {
      * @param item the index of the item to buy
      */
     public void buyItem(@Nonnull MerchantItem item, @Nonnull ItemCount count) {
-        if (!itemList[item.getIndex()].equals(item)) {
+        if (!itemList.contains(item)) {
             throw new IllegalArgumentException("This item is not part of this merchant list");
         }
         buyItem(item.getIndex(), count);

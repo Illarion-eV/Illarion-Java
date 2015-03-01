@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -63,7 +63,7 @@ public class AbstractEntityTemplate implements ResourceTemplate {
      * @param shadowOffset the offset of the shadow
      */
     protected AbstractEntityTemplate(
-            final int id, @Nonnull final Sprite sprite, @Nullable final Color defaultColor, final int shadowOffset) {
+            int id, @Nonnull Sprite sprite, @Nullable Color defaultColor, int shadowOffset) {
         this.sprite = sprite;
         this.defaultColor = defaultColor;
         this.id = id;

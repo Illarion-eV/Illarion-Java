@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -47,7 +47,7 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
      *
      * @param item the inventory item that is the parent of this interactive item
      */
-    public InteractiveInventorySlot(@Nonnull final InventorySlot item) {
+    public InteractiveInventorySlot(@Nonnull InventorySlot item) {
         parentItem = item;
     }
 
@@ -55,25 +55,26 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
      * Drag a inventory item to a character. Does nothing currently.
      */
     @Override
-    public void dragTo(@Nonnull final InteractiveChar targetChar, @Nonnull final ItemCount count) {
+    public void dragTo(@Nonnull InteractiveChar targetChar, @Nonnull ItemCount count) {
         // nothing
     }
 
     /**
      * The logger instance that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(InteractiveInventorySlot.class);
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(InteractiveInventorySlot.class);
 
     /**
      * Drag the item in this inventory slot to another inventory slot.
      */
     @Override
-    public void dragTo(@Nonnull final InteractiveInventorySlot targetSlot, @Nonnull final ItemCount count) {
+    public void dragTo(@Nonnull InteractiveInventorySlot targetSlot, @Nonnull ItemCount count) {
         if (!isValidItem()) {
-            LOGGER.error("Tried dragging a invalid item!");
+            log.error("Tried dragging a invalid item!");
             return;
         }
-        final ItemId draggedItem = getItemId();
+        ItemId draggedItem = getItemId();
         assert draggedItem != null;
 
         if (!targetSlot.isAcceptingItem(draggedItem)) {
@@ -122,7 +123,7 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
      * @param itemId the ID of the item that should be dropped on this slot
      * @return {@code true} in case its legal to drop a item with the specified ID on the inventory slot
      */
-    public boolean isAcceptingItem(@Nonnull final ItemId itemId) {
+    public boolean isAcceptingItem(@Nonnull ItemId itemId) {
         return !isValidItem() || itemId.equals(getItemId());
     }
 
@@ -133,12 +134,12 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
         if (!World.getPlayer().hasMerchantList()) {
             return;
         }
-        final MerchantList merchantList = World.getPlayer().getMerchantList();
+        MerchantList merchantList = World.getPlayer().getMerchantList();
         assert merchantList != null;
 
-        final ItemCount count = parentItem.getCount();
+        ItemCount count = parentItem.getCount();
         if (!ItemCount.isGreaterZero(count)) {
-            LOGGER.error("Tried sell from a slot that contains no items!");
+            log.error("Tried sell from a slot that contains no items!");
             return;
         }
         assert count != null;
@@ -153,7 +154,7 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
      * @param count the amount of items to drag to the new location
      */
     @Override
-    public void dragTo(@Nonnull final InteractiveMapTile targetTile, @Nonnull final ItemCount count) {
+    public void dragTo(@Nonnull InteractiveMapTile targetTile, @Nonnull ItemCount count) {
         if (!isValidItem()) {
             return;
         }
@@ -162,12 +163,12 @@ public final class InteractiveInventorySlot implements Draggable, DropTarget {
     }
 
     @Override
-    public void dragTo(@Nonnull final InteractiveContainerSlot targetSlot, @Nonnull final ItemCount count) {
+    public void dragTo(@Nonnull InteractiveContainerSlot targetSlot, @Nonnull ItemCount count) {
         if (!isValidItem()) {
             return;
         }
 
-        final ContainerSlot slot = targetSlot.getSlot();
+        ContainerSlot slot = targetSlot.getSlot();
         World.getNet().sendCommand(new DragInvScCmd(getSlotId(), slot.getContainerId(), slot.getLocation(), count));
     }
 

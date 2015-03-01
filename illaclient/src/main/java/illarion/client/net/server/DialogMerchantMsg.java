@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,13 +17,13 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.net.server.events.DialogMerchantReceivedEvent;
+import illarion.client.world.World;
 import illarion.client.world.items.MerchantItem;
+import illarion.client.world.items.MerchantItem.MerchantItemType;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
-import javolution.text.TextBuilder;
-import org.bushe.swing.event.EventBus;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.util.List;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_DIALOG_MERCHANT)
-public final class DialogMerchantMsg extends AbstractGuiMsg {
+public final class DialogMerchantMsg implements ServerReply {
     /**
      * The title of the dialog window.
      */
@@ -64,7 +64,7 @@ public final class DialogMerchantMsg extends AbstractGuiMsg {
             long itemValue = reader.readUInt();
             ItemCount bundleSize = ItemCount.getInstance(reader);
 
-            items.add(new MerchantItem(i, MerchantItem.MerchantItemType.SellingItem, itemId, name, itemValue,
+            items.add(new MerchantItem(i, MerchantItemType.SellingItem, itemId, name, itemValue,
                                        bundleSize));
         }
 
@@ -74,7 +74,7 @@ public final class DialogMerchantMsg extends AbstractGuiMsg {
             String name = reader.readString();
             long itemValue = reader.readUInt();
 
-            items.add(new MerchantItem(i, MerchantItem.MerchantItemType.BuyingPrimaryItem, itemId, name, itemValue));
+            items.add(new MerchantItem(i, MerchantItemType.BuyingPrimaryItem, itemId, name, itemValue));
         }
 
         int entriesBuySecondary = reader.readUByte();
@@ -83,30 +83,27 @@ public final class DialogMerchantMsg extends AbstractGuiMsg {
             String name = reader.readString();
             long itemValue = reader.readUInt();
 
-            items.add(new MerchantItem(i, MerchantItem.MerchantItemType.BuyingSecondaryItem, itemId, name, itemValue));
+            items.add(new MerchantItem(i, MerchantItemType.BuyingSecondaryItem, itemId, name, itemValue));
         }
 
         dialogId = reader.readInt();
     }
 
+    @Nonnull
     @Override
-    public void executeUpdate() {
-        if (items == null) {
-            throw new IllegalStateException("Can't execute update before it was decoded.");
+    public ServerReplyResult execute() {
+        if ((title == null) || (items == null)) {
+            throw new NotDecodedException();
         }
-
-        MerchantItem[] itemArray = new MerchantItem[items.size()];
-        EventBus.publish(new DialogMerchantReceivedEvent(dialogId, title, items.toArray(itemArray)));
+        World.getPlayer().openMerchantDialog(dialogId, title, items);
+        return ServerReplyResult.Success;
     }
 
     @Nonnull
     @Override
+    @Contract(pure = true)
     public String toString() {
-        TextBuilder builder = new TextBuilder();
-        builder.append("title: \"").append(title).append("\", ");
-        builder.append("items: \"").append(items.size()).append("\", ");
-        builder.append("dialog ID: ").append(dialogId);
-
-        return toString(builder.toString());
+        return Utilities.toString(DialogMerchantMsg.class, "ID: " + dialogId, title,
+                "Items: " + ((items == null) ? "0" : items.size()));
     }
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -39,7 +39,7 @@ public class NiftyCraftingItem extends CraftingItem implements CraftingItemEntry
     @Nonnull
     private final NiftyImage[] ingredientImages;
 
-    public NiftyCraftingItem(@Nonnull final Nifty nifty, final int index, @Nonnull final CraftingItem org) {
+    public NiftyCraftingItem(@Nonnull Nifty nifty, @Nonnull CraftingItem org) {
         super(org);
 
         craftImage = new NiftyImage(nifty.getRenderEngine(), new EntitySlickRenderImage(
@@ -54,13 +54,13 @@ public class NiftyCraftingItem extends CraftingItem implements CraftingItemEntry
 
     @Nonnull
     @Override
-    public ItemId getIngredientItemId(final int index) {
+    public ItemId getIngredientItemId(int index) {
         return getIngredient(index).getItemId();
     }
 
     @Nonnull
     @Override
-    public ItemCount getIngredientAmount(final int index) {
+    public ItemCount getIngredientAmount(int index) {
         return getIngredient(index).getCount();
     }
 
@@ -82,7 +82,7 @@ public class NiftyCraftingItem extends CraftingItem implements CraftingItemEntry
 
     @Nonnull
     @Override
-    public NiftyImage getIngredientImage(final int index) {
+    public NiftyImage getIngredientImage(int index) {
         return ingredientImages[index];
     }
 

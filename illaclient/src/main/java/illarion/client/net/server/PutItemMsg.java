@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,54 +23,58 @@ import illarion.common.net.NetCommReader;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Location;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
- * Servermessage: Add a item on a map tile ({@link illarion.client.net.CommandList#MSG_PUT_ITEM}).
+ * Server message: Add a item on a map tile
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_PUT_ITEM)
-public final class PutItemMsg extends AbstractReply {
+public final class PutItemMsg implements ServerReply {
     /**
      * The ID of the item that is placed on the ground.
      */
+    @Nullable
     private ItemId itemId;
 
     /**
      * The location the item is placed at.
      */
+    @Nullable
     private Location loc;
 
     /**
      * The count value of the item that is placed on the ground.
      */
+    @Nullable
     private ItemCount number;
 
+    /**
+     * The new move points of the tile the item is located on.
+     */
     private int newTileMovePoints;
 
-    /**
-     * Decode the put item on map data the receiver got and prepare it for the execution.
-     *
-     * @param reader the receiver that got the data from the server that needs to be decoded
-     * @throws IOException thrown in case there was not enough data received to decode the full message
-     */
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
-        loc = decodeLocation(reader);
+        loc = new Location(reader);
         itemId = new ItemId(reader);
         number = ItemCount.getInstance(reader);
         newTileMovePoints = reader.readUByte();
     }
 
-    /**
-     * Execute the put item on map message and send the decoded data to the rest of the client.
-     */
+    @Nonnull
     @Override
-    public void executeUpdate() {
+    public ServerReplyResult execute() {
+        if ((loc == null) || (itemId == null) || (number == null)) {
+            throw new NotDecodedException();
+        }
+
         MapTile tile = World.getMap().getMapAt(loc);
         if (tile != null) {
             tile.addItem(itemId, number);
@@ -79,18 +83,15 @@ public final class PutItemMsg extends AbstractReply {
             } else {
                 tile.setMovementCost(newTileMovePoints);
             }
+            return ServerReplyResult.Success;
         }
+        return ServerReplyResult.Failed;
     }
 
-    /**
-     * Get the data of this put item on map message as string.
-     *
-     * @return the string that contains the values that were decoded for this message
-     */
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString("Item: " + itemId + " Count: " + number + " at pos: " + loc);
+        return Utilities.toString(PutItemMsg.class, itemId, loc);
     }
 }

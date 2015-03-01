@@ -13,23 +13,34 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package illarion.client.gui;
+package illarion.client.net.server;
+
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
+import java.util.Arrays;
 
 /**
+ * Some small helper functions for the messages.
+ *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface DialogGui {
-    int ALL_DIALOGS = -1;
+final class Utilities {
+    private Utilities() {
+    }
 
-    @Nullable
-    DialogType getDialogType(int dialogId);
+    @Nonnull
+    @Contract(pure = true)
+    static <T extends ServerReply> String toString(@Nonnull Class<T> baseClass) {
+        return baseClass.getSimpleName();
+    }
 
-    @Nullable
-    DialogType getDialogType(int dialogId, @Nonnull DialogType firstType, @Nonnull DialogType... moreTypes);
-
-    void closeDialog(int dialogId, @Nonnull Collection<DialogType> dialogTypes);
+    @Nonnull
+    @Contract(pure = true)
+    @SuppressWarnings("OverloadedVarargsMethod")
+    static <T extends ServerReply> String toString(@Nonnull Class<T> baseClass,
+                                                   @Nonnull Object... dataValues) {
+        return toString(baseClass) + Arrays.toString(dataValues);
+    }
 }

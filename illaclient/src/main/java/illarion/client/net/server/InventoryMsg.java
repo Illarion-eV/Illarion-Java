@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,26 +21,30 @@ import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
- * Servermessage: Update of a inventory item ({@link CommandList#MSG_INVENTORY}).
+ * Server message: Update of a inventory item
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_INVENTORY)
-public final class InventoryMsg extends AbstractReply {
+public final class InventoryMsg implements ServerReply {
     /**
      * New count of the item on the position.
      */
+    @Nullable
     private ItemCount count;
 
     /**
      * New ID of the item.
      */
+    @Nullable
     private ItemId itemId;
 
     /**
@@ -48,12 +52,6 @@ public final class InventoryMsg extends AbstractReply {
      */
     private short location;
 
-    /**
-     * Decode the inventory item data the receiver got and prepare it for the execution.
-     *
-     * @param reader the receiver that got the data from the server that needs to be decoded
-     * @throws IOException thrown in case there was not enough data received to decode the full message
-     */
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         location = reader.readUByte();
@@ -61,24 +59,17 @@ public final class InventoryMsg extends AbstractReply {
         count = ItemCount.getInstance(reader);
     }
 
-    /**
-     * Execute the inventory item message and send the decoded data to the rest of the client.
-     */
+    @Nonnull
     @Override
-    public void executeUpdate() {
+    public ServerReplyResult execute() {
         World.getPlayer().getInventory().setItem(location, itemId, count);
+        return ServerReplyResult.Success;
     }
 
-    /**
-     * Get the data of this inventory item message as string.
-     *
-     * @return the string that contains the values that were decoded for this
-     * message
-     */
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString("pos: " + location + ' ' + itemId + ' ' + count);
+        return Utilities.toString(InventoryMsg.class, "Slot: " + location, itemId, count);
     }
 }

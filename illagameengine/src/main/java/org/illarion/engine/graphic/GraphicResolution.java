@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,8 +16,10 @@
 package org.illarion.engine.graphic;
 
 import javax.annotation.Nonnull;
+import java.awt.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 /**
  * This class is used to supply and compare possible display resolutions.
@@ -52,6 +54,28 @@ public final class GraphicResolution {
     private final int width;
 
     /**
+     * Default Constructor for a graphic resolution definition.
+     * Sets width = (the local screen width) * 0.75
+     * height = (the local screen height) * 0.75
+     * refreshRate = local refreshRate;
+     */
+    public GraphicResolution(){
+        builder = new StringBuilder();
+
+        GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice gd = environment.getDefaultScreenDevice();
+        DisplayMode dm = gd.getDisplayMode();
+        // Sets the width and height equal to the screen.
+        // To keep the non-fullscreen version from taking up the whole screen, multiply by 0.75
+        height = (int) (dm.getHeight() * 0.75);
+        width = (int) (dm.getWidth() * 0.75);
+        // Automatically detect refresh rate
+        refreshRate = dm.getRefreshRate();
+        // Take the Screen Resolution of the client computer
+        // Fetches the local Bit Depth in Bits-Per-Pixel
+        bpp = dm.getBitDepth();
+    }
+    /**
      * Constructor for a graphic resolution definition.
      *
      * @param newWidth the width of this resolution in pixel
@@ -59,7 +83,7 @@ public final class GraphicResolution {
      * @param newBpp the bits per point of this resolution
      * @param refresh the refresh rate of this resolution in Hz
      */
-    public GraphicResolution(final int newWidth, final int newHeight, final int newBpp, final int refresh) {
+    public GraphicResolution(int newWidth, int newHeight, int newBpp, int refresh) {
         height = newHeight;
         width = newWidth;
         bpp = newBpp;
@@ -73,7 +97,7 @@ public final class GraphicResolution {
      * @param definition the text that is parsed to get the values for the resolution
      * @throws IllegalArgumentException in case the string can't be parsed
      */
-    public GraphicResolution(@Nonnull final CharSequence definition) {
+    public GraphicResolution(@Nonnull CharSequence definition) {
         Pattern pattern = Pattern.compile("(\\d+) x (\\d+) x (\\d+) @ (\\d+)Hz");
         Matcher matcher = pattern.matcher(definition);
 
@@ -125,7 +149,7 @@ public final class GraphicResolution {
      * @param compRes the object this one is compared to
      * @return {@code true} in case all values of the resolutions are equal
      */
-    public boolean equals(@Nonnull final GraphicResolution compRes) {
+    public boolean equals(@Nonnull GraphicResolution compRes) {
         return (height == compRes.height) && (width == compRes.width) && (bpp == compRes.bpp) &&
                 (refreshRate == compRes.refreshRate);
     }
@@ -140,7 +164,7 @@ public final class GraphicResolution {
      * @return {@code true} in case all values equal with this instance
      */
     public boolean equals(
-            final int compWidth, final int compHeight, final int compBpp, final int compRefresh) {
+            int compWidth, int compHeight, int compBpp, int compRefresh) {
         return (height == compHeight) && (width == compWidth) && (bpp == compBpp) && (refreshRate == compRefresh);
     }
 
@@ -153,7 +177,7 @@ public final class GraphicResolution {
      * @return {@code true} in case both objects are equal
      */
     @Override
-    public boolean equals(final Object compObj) {
+    public boolean equals(Object compObj) {
         if (super.equals(compObj)) {
             return true;
         }
@@ -171,7 +195,7 @@ public final class GraphicResolution {
      * @return {@code true} if this object and the string represent the
      * same resolution
      */
-    public boolean equals(final String compString) {
+    public boolean equals(String compString) {
         return toString().equals(compString);
     }
 

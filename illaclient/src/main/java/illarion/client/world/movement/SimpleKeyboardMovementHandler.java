@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,7 +21,6 @@ import illarion.client.world.World;
 import illarion.common.types.Direction;
 import illarion.common.types.Location;
 import illarion.common.util.FastMath;
-import illarion.common.util.Timer;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.input.Input;
 import org.illarion.engine.input.Key;
@@ -30,6 +29,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.Set;
+import java.util.concurrent.*;
 
 /**
  * This keyboard movement handler simply handles the keyboard input to perform the walking operations.
@@ -43,9 +43,13 @@ class SimpleKeyboardMovementHandler extends AbstractMovementHandler implements K
     @Nonnull
     private final Set<Direction> activeDirections;
 
-    @Nonnull
-    private final Timer delayedMoveTrigger;
     private boolean delayedMove;
+
+    @Nonnull
+    private final ScheduledExecutorService delayedMoveExecutor;
+
+    @Nullable
+    private ScheduledFuture<Void> delayedMoveTask;
 
     @Nonnull
     private final UpdateTask updateMovementTask = new UpdateTask() {
@@ -59,22 +63,25 @@ class SimpleKeyboardMovementHandler extends AbstractMovementHandler implements K
         super(movement);
         activeDirections = EnumSet.noneOf(Direction.class);
         this.input = input;
-        delayedMoveTrigger = new Timer(100, new Runnable() {
-            @Override
-            public void run() {
-                delayedMove = false;
-                World.getUpdateTaskManager().addTask(updateMovementTask);
-            }
-        });
-        delayedMoveTrigger.setRepeats(false);
+        delayedMoveExecutor = new ScheduledThreadPoolExecutor(0);
     }
 
     @Override
     public void startMovingTowards(@Nonnull Direction direction) {
         if (activeDirections.add(direction)) {
-            delayedMoveTrigger.stop();
+            if (delayedMoveTask != null) {
+                delayedMoveTask.cancel(false);
+                delayedMoveTask = null;
+            }
             if (!getMovement().isMoving()) {
-                delayedMoveTrigger.start();
+                delayedMoveTask = delayedMoveExecutor.schedule(new Callable<Void>() {
+                    @Override
+                    public Void call() throws Exception {
+                        delayedMove = false;
+                        World.getUpdateTaskManager().addTask(updateMovementTask);
+                        return null;
+                    }
+                }, 100, TimeUnit.MILLISECONDS);
                 delayedMove = true;
             }
         }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,10 +18,13 @@ package illarion.client.gui.controller;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import illarion.client.IllaClient;
 import illarion.client.gui.*;
 import illarion.client.gui.controller.game.*;
+import illarion.client.world.World;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.input.Input;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -52,7 +55,7 @@ public final class GameScreenController implements GameGui, ScreenController {
     @Nonnull
     private final QuestHandler questHandler;
     @Nonnull
-    private DocumentationHandler documentationHandler;
+    private final DocumentationHandler documentationHandler;
     @Nonnull
     private final GameMiniMapHandler gameMiniMapHandler;
     @Nonnull
@@ -112,113 +115,139 @@ public final class GameScreenController implements GameGui, ScreenController {
 
     @Nonnull
     @Override
+    @Contract(pure = true)
     public BookGui getBookGui() {
         return bookHandler;
     }
 
     @Nonnull
     @Override
+    @Contract(pure = true)
     public ChatGui getChatGui() {
         return chatHandler;
     }
 
     @Nonnull
     @Override
+    @Contract(pure = true)
     public ContainerGui getContainerGui() {
         return containerHandler;
     }
 
     @Nonnull
     @Override
+    @Contract(pure = true)
     public DialogGui getDialogGui() {
         return dialogHandler;
     }
 
     @Nonnull
     @Override
+    @Contract(pure = true)
     public DialogCraftingGui getDialogCraftingGui() {
         return dialogHandler;
     }
 
     @Nonnull
     @Override
+    @Contract(pure = true)
     public DialogMerchantGui getDialogMerchantGui() {
         return dialogHandler;
     }
 
     @Nonnull
     @Override
+    @Contract(pure = true)
     public DialogInputGui getDialogInputGui() {
         return dialogHandler;
     }
 
     @Nonnull
     @Override
+    @Contract(pure = true)
     public DialogMessageGui getDialogMessageGui() {
         return dialogHandler;
     }
 
     @Nonnull
     @Override
+    @Contract(pure = true)
+    public DialogSelectionGui getDialogSelectionGui() {
+        return dialogHandler;
+    }
+
+    @Nonnull
+    @Override
+    @Contract(pure = true)
     public GameMapGui getGameMapGui() {
         return gameMapHandler;
     }
 
     @Nonnull
     @Override
+    @Contract(pure = true)
     public InformGui getInformGui() {
         return informHandler;
     }
 
     @Nonnull
     @Override
+    @Contract(pure = true)
     public InventoryGui getInventoryGui() {
         return inventoryHandler;
     }
 
     @Nonnull
     @Override
+    @Contract(pure = true)
     public PlayerStatusGui getPlayerStatusGui() {
         return charStatusHandler;
     }
 
     @Nonnull
     @Override
+    @Contract(pure = true)
     public QuestGui getQuestGui() {
         return questHandler;
     }
 
     @Nonnull
     @Override
+    @Contract(pure = true)
     public DocumentationGui getDocumentationGui() {
         return documentationHandler;
     }
 
     @Nonnull
     @Override
+    @Contract(pure = true)
     public ScreenController getScreenController() {
         return this;
     }
 
     @Nonnull
     @Override
+    @Contract(pure = true)
     public SkillGui getSkillGui() {
         return skillsHandler;
     }
 
     @Nonnull
     @Override
+    @Contract(pure = true)
     public MiniMapGui getMiniMapGui() {
         return gameMiniMapHandler;
     }
 
     @Nonnull
     @Override
+    @Contract(pure = true)
     public CloseGameGui getCloseGameGui() {
         return closeGameHandler;
     }
 
     @Override
+    @Contract(pure = true)
     public boolean isReady() {
         return ready;
     }
@@ -228,6 +257,8 @@ public final class GameScreenController implements GameGui, ScreenController {
         for (ScreenController childController : childControllers) {
             childController.onEndScreen();
         }
+        World.cleanEnvironment();
+        IllaClient.getCfg().save();
     }
 
     @Override

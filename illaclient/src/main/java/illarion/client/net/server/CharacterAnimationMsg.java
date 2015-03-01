@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,18 +23,24 @@ import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.CharacterId;
 import org.illarion.engine.GameContainer;
+import org.jetbrains.annotations.Contract;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
- * Servermessage: Character animation (
- * {@link illarion.client.net.CommandList#MSG_CHARACTER_ANIMATION}).
+ * Server message: Execute a character animation
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_CHARACTER_ANIMATION)
-public final class CharacterAnimationMsg extends AbstractReply {
+public final class CharacterAnimationMsg implements ServerReply, UpdateTask {
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(CharacterAnimationMsg.class);
+
     /**
      * The ID of the animation that is shown.
      */
@@ -43,46 +49,39 @@ public final class CharacterAnimationMsg extends AbstractReply {
     /**
      * The ID of the character that is animated.
      */
+    @Nullable
     private CharacterId charId;
 
-    /**
-     * Decode the character animation data the receiver got and prepare it for the execution.
-     *
-     * @param reader the receiver that got the data from the server that needs to be decoded
-     * @throws IOException thrown in case there was not enough data received to decode the full message
-     */
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         charId = new CharacterId(reader);
         animationId = reader.readUByte();
     }
 
-    /**
-     * Execute the message and send the decoded appearance data to the rest of the client.
-     */
+    @Nonnull
     @Override
-    public void executeUpdate() {
-        final Char ch = World.getPeople().getCharacter(charId);
-        if (ch == null) {
-            return;
+    public ServerReplyResult execute() {
+        if (charId == null) {
+            throw new NotDecodedException();
         }
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                ch.startAnimation(animationId, Char.DEFAULT_ANIMATION_SPEED);
-            }
-        });
+        World.getUpdateTaskManager().addTask(this);
+        return ServerReplyResult.Success;
     }
 
-    /**
-     * Get the data of this character animation message as string.
-     *
-     * @return the string that contains the values that were decoded for this message
-     */
-    @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+        Char character = World.getPeople().getCharacter(charId);
+        if (character == null) {
+            log.error("Received animation request for character {}, but the character is nowhere to be found", charId);
+            return;
+        }
+        character.startAnimation(animationId, Char.DEFAULT_ANIMATION_SPEED);
+    }
+
+    @Nonnull
+    @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString(charId + " - Animation ID: " + Integer.toString(animationId));
+        return Utilities.toString(CharacterAnimationMsg.class, charId, "Animation ID: " + animationId);
     }
 }

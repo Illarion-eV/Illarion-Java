@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,6 +21,7 @@ import de.lessvoid.nifty.elements.Element;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
+import java.util.Collection;
 
 /**
  * This interface is used to interact with a merchant dialog that is displayed inside the GUI.
@@ -35,6 +36,13 @@ public interface DialogCrafting extends Window {
      * @param entries the categories to add
      */
     void addCraftingItems(@Nonnull CraftingCategoryEntry... entries);
+
+    /**
+     * Add a category along with its items to the list.
+     *
+     * @param entries the categories to add
+     */
+    <T extends CraftingCategoryEntry> void addCraftingItems(@Nonnull Collection<T> entries);
 
     /**
      * Get the Nifty element that displays the crafting item.

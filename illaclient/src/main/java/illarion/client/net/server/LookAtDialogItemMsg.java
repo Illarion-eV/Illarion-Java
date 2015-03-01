@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,43 +22,68 @@ import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
- * Servermessage: Look at description of a tile ({@link CommandList#MSG_LOOKAT_DIALOG_ITEM}).
+ * Server message: Look at description of a tile
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_LOOKAT_DIALOG_ITEM)
-public final class LookAtDialogItemMsg extends AbstractGuiMsg {
-    private int dialogId;
-    private int type;
-    private int slotId;
-    private int secondarySlotId;
-    private Tooltip tooltip;
-
-    private static final Logger log = LoggerFactory.getLogger(LookAtDialogItemMsg.class);
+public final class LookAtDialogItemMsg implements ServerReply {
+    /**
+     * The type constant that means that the look at points to the primary slot of the dialog.
+     */
+    private static final int TYPE_PRIMARY_SLOT = 0;
 
     /**
-     * Decode the tile look at text data the receiver got and prepare it for the execution.
-     *
-     * @param reader the receiver that got the data from the server that needs to be decoded
-     * @throws IOException thrown in case there was not enough data received to decode the full message
+     * The type constant that means that the look at points to the secondary slot of the dialog.
      */
+    private static final int TYPE_SECONDARY_SLOT = 1;
+    /**
+     * The ID of the dialog.
+     */
+    private int dialogId;
+
+    /**
+     * The look at type.
+     */
+    private int type;
+
+    /**
+     * The ID of the slot.
+     */
+    private int slotId;
+
+    /**
+     * The ID of the secondary slot.
+     */
+    private int secondarySlotId;
+
+    /**
+     * The tool tip.
+     */
+    @Nullable
+    private Tooltip tooltip;
+
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(LookAtDialogItemMsg.class);
+
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         dialogId = reader.readInt();
         type = reader.readUByte();
         switch (type) {
-            case 0:
+            case TYPE_PRIMARY_SLOT:
                 slotId = reader.readUByte();
-                secondarySlotId = -1;
                 break;
-            case 1:
+            case TYPE_SECONDARY_SLOT:
                 slotId = reader.readUByte();
                 secondarySlotId = reader.readUByte();
                 break;
@@ -70,17 +95,23 @@ public final class LookAtDialogItemMsg extends AbstractGuiMsg {
         tooltip = new Tooltip(reader);
     }
 
-    /**
-     * Execute the tile look at text message and send the decoded data to the rest of the client.
-     */
+    @Nonnull
     @Override
-    public void executeUpdate() {
+    public ServerReplyResult execute() {
+        if (tooltip == null) {
+            throw new NotDecodedException();
+        }
+
+        if (!World.getGameGui().isReady()) {
+            return ServerReplyResult.Reschedule;
+        }
+
         GameGui gui = World.getGameGui();
         switch (type) {
-            case 0:
+            case TYPE_PRIMARY_SLOT:
                 gui.getDialogCraftingGui().showCraftItemTooltip(dialogId, slotId, tooltip);
                 break;
-            case 1:
+            case TYPE_SECONDARY_SLOT:
                 DialogType dialogType = gui.getDialogGui()
                         .getDialogType(dialogId, DialogType.Crafting, DialogType.Merchant);
                 if (dialogType == null) {
@@ -94,17 +125,13 @@ public final class LookAtDialogItemMsg extends AbstractGuiMsg {
             default:
                 log.error("Illegal type ID {}", type);
         }
+        return ServerReplyResult.Success;
     }
 
-    /**
-     * Get the data of this tile look at text message as string.
-     *
-     * @return the string that contains the values that were decoded for this message
-     */
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString("Type: " + type + " Slot: " + slotId + " secondary Slot: " + secondarySlotId);
+        return Utilities.toString(LookAtDialogItemMsg.class, "DialogID: " + dialogId, tooltip);
     }
 }

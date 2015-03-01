@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,51 +20,45 @@ import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.Location;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
- * Servermessage: Current player position ( {@link illarion.client.net.CommandList#MSG_LOCATION}).
+ * Server message: Current player position
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_LOCATION)
-public final class LocationMsg extends AbstractReply {
+public final class LocationMsg implements ServerReply {
     /**
      * The location of the player.
      */
-    private Location loc;
+    @Nullable
+    private Location location;
 
-    /**
-     * Decode the player location data the receiver got and prepare it for the execution.
-     *
-     * @param reader the receiver that got the data from the server that needs to be decoded
-     * @throws IOException thrown in case there was not enough data received to decode the full message
-     */
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
-        loc = decodeLocation(reader);
+        location = new Location(reader);
     }
 
-    /**
-     * Execute the player location message and send the decoded data to the rest of the client.
-     */
-    @Override
-    public void executeUpdate() {
-        World.getPlayer().getMovementHandler().executeServerLocation(loc);
-    }
-
-    /**
-     * Get the data of this player location message as string.
-     *
-     * @return the string that contains the values that were decoded for this message
-     */
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    public ServerReplyResult execute() {
+        if (location == null) {
+            throw new NotDecodedException();
+        }
+        World.getPlayer().getMovementHandler().executeServerLocation(location);
+        return ServerReplyResult.Success;
+    }
+
+    @Nonnull
+    @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString("to " + loc);
+        return Utilities.toString(LocationMsg.class, location);
     }
 }

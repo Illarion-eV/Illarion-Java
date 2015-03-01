@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,22 +22,38 @@ import illarion.client.world.items.ItemContainer;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
- * Servermessage: Content of a single slot of a container. ({@link CommandList#MSG_SHOWCASE_SINGLE}).
+ * Server message: Content of a single slot of a container.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_SHOWCASE_SINGLE)
-public final class ShowcaseSingleMsg extends AbstractGuiMsg {
+public final class ShowcaseSingleMsg implements ServerReply {
+    /**
+     * The ID of the container.
+     */
     private int containerId;
+
+    /**
+     * The slot in the container that is updated.
+     */
     private int containerSlot;
+
+    /**
+     * The id of the new item in the slot.
+     */
     @Nullable
     private ItemId slotItem;
+
+    /**
+     * The new amount of items in the slot.
+     */
     @Nullable
     private ItemCount slotItemCount;
 
@@ -49,20 +65,30 @@ public final class ShowcaseSingleMsg extends AbstractGuiMsg {
         slotItemCount = ItemCount.getInstance(reader);
     }
 
+    @Nonnull
     @Override
-    public void executeUpdate() {
+    public ServerReplyResult execute() {
+        if ((slotItem == null) || (slotItemCount == null)) {
+            throw new NotDecodedException();
+        }
+
+        if (!World.getGameGui().isReady()) {
+            return ServerReplyResult.Reschedule;
+        }
+
         ItemContainer container = World.getPlayer().getContainer(containerId);
         if (container != null) {
             container.setItem(containerSlot, slotItem, slotItemCount);
             World.getGameGui().getContainerGui().showContainer(container);
+            return ServerReplyResult.Success;
         }
+        return ServerReplyResult.Failed;
     }
 
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString("ItemContainer: " + containerSlot + " Slot: " + containerSlot + ' ' + slotItem + ' ' +
-                                slotItemCount);
+        return Utilities.toString(ShowcaseSingleMsg.class, "ID: " + containerId, "Slot: " + containerSlot);
     }
 }

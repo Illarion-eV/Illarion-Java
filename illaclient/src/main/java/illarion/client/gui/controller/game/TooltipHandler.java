@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,6 +43,7 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class TooltipHandler implements ScreenController, UpdatableHandler {
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(TooltipHandler.class);
 
     /**
@@ -77,26 +78,6 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
      */
     private int lastMouseY;
 
-    /**
-     * The task that will clean all opened tooltip.
-     */
-    @Nonnull
-    private final UpdateTask cleanToolTips = new UpdateTask() {
-        @Override
-        public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-            if (toolTipLayer == null) { return; }
-            for (final Element element : toolTipLayer.getChildren()) {
-                element.hide(new EndNotify() {
-                    @Override
-                    public void perform() {
-                        element.markForRemoval();
-                    }
-                });
-                activeTooltipArea = null;
-            }
-        }
-    };
-
     @Override
     public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
         parentNifty = nifty;
@@ -112,7 +93,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
 
     @Override
     public void onEndScreen() {
-        hideToolTip();
+        hideToolTipImpl();
     }
 
     @Override
@@ -134,7 +115,27 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
      * Hide all current tooltips.
      */
     public void hideToolTip() {
-        World.getUpdateTaskManager().addTask(cleanToolTips);
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
+            @Override
+            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+                hideToolTipImpl();
+            }
+        });
+    }
+
+    private void hideToolTipImpl() {
+        if (toolTipLayer == null) {
+            return;
+        }
+        for (final Element element : toolTipLayer.getChildren()) {
+            element.hide(new EndNotify() {
+                @Override
+                public void perform() {
+                    element.markForRemoval();
+                }
+            });
+            activeTooltipArea = null;
+        }
     }
 
     /**
@@ -145,8 +146,6 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
      * @param tooltip the tooltip to display
      */
     public void showToolTip(@Nonnull final Rectangle location, @Nonnull final Tooltip tooltip) {
-        hideToolTip();
-
         if (!tooltip.isValid()) {
             log.warn("Received a invalid tooltip from the server!");
             return;
@@ -161,6 +160,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
             public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+                hideToolTipImpl();
                 showToolTipImpl(location, tooltip);
                 activeTooltipArea = location;
             }

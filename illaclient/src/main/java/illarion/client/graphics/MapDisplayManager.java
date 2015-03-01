@@ -27,6 +27,7 @@ import org.illarion.engine.graphic.Scene;
 import org.illarion.engine.graphic.effects.FogEffect;
 import org.illarion.engine.graphic.effects.GrayScaleEffect;
 import org.illarion.engine.input.Input;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,6 +89,7 @@ public final class MapDisplayManager implements AnimatedMove {
      * @return the game scene
      */
     @Nonnull
+    @Contract(pure = true)
     public Scene getGameScene() {
         return gameScene;
     }

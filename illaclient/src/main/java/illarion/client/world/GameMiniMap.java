@@ -522,11 +522,7 @@ public final class GameMiniMap implements WorldMapDataProvider, Stoppable {
      */
     @SuppressWarnings("nls")
     private void saveMap(@Nonnull Location origin) {
-        @Nullable Reference<ByteBuffer> mapDataRef = mapDataStorage.get(origin);
-        if (mapDataRef == null) {
-            return;
-        }
-        @Nullable ByteBuffer mapData = mapDataRef.get();
+        @Nullable ByteBuffer mapData = getMapDataStorage(origin);
         if (mapData == null) {
             return;
         }

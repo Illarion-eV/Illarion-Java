@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,6 +16,7 @@
 package illarion.client.world.items;
 
 import illarion.client.world.interactive.InteractiveInventorySlot;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 
@@ -41,7 +42,7 @@ public final class InventorySlot extends AbstractItemSlot {
      *
      * @param itemSlot the inventory slot
      */
-    public InventorySlot(final int itemSlot) {
+    public InventorySlot(int itemSlot) {
         slot = itemSlot;
         interactive = new InteractiveInventorySlot(this);
     }
@@ -52,6 +53,7 @@ public final class InventorySlot extends AbstractItemSlot {
      * @return the interactive inventory slot
      */
     @Nonnull
+    @Contract(pure = true)
     public InteractiveInventorySlot getInteractive() {
         return interactive;
     }
@@ -61,6 +63,7 @@ public final class InventorySlot extends AbstractItemSlot {
      *
      * @return the slot of the item
      */
+    @Contract(pure = true)
     public int getSlot() {
         return slot;
     }

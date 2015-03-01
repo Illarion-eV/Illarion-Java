@@ -13,22 +13,32 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package illarion.client.gui;
+package illarion.client.net.server;
+
+import illarion.common.net.NetCommReader;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
 
 /**
- * This interface defines the access to the GUI used to display message dialogs.
+ * The standard interface that is used for a reply that was send by the server.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public interface DialogMessageGui {
+public interface ServerReply {
     /**
-     * Show a message dialog on the GUI.
+     * The decoding function. This function is executed to allow the reply to read the data from the network interface.
      *
-     * @param dialogId the ID of the message dialog
-     * @param title the title of the message dialog
-     * @param message the message that is displayed in the dialog
+     * @param reader the reader from the network interface
+     * @throws IOException throw in case reading fails for some reason
      */
-    void showMessageDialog(int dialogId, @Nonnull String title, @Nonnull String message);
+    void decode(@Nonnull NetCommReader reader) throws IOException;
+
+    /**
+     * Execute the task.
+     *
+     * @return the result of the execution
+     */
+    @Nonnull
+    ServerReplyResult execute();
 }

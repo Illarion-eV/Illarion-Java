@@ -286,7 +286,11 @@ public final class People {
      * @return the character or {@code null} if it does not exist
      */
     @Nullable
-    public Char getCharacter(CharacterId id) {
+    @Contract(value = "null -> null", pure = true)
+    public Char getCharacter(@Nullable CharacterId id) {
+        if (id == null) {
+            return null;
+        }
         if (World.getPlayer().isPlayer(id)) {
             return World.getPlayer().getCharacter();
         }
@@ -377,10 +381,8 @@ public final class People {
 
         charsLock.readLock().lock();
         try {
-            synchronized (GameMap.LIGHT_LOCK) {
-                for (Char character : chars.values()) {
-                    character.updateLight(Char.LIGHT_UPDATE);
-                }
+            for (Char character : chars.values()) {
+                character.updateLight(Char.LIGHT_UPDATE);
             }
         } finally {
             charsLock.readLock().unlock();

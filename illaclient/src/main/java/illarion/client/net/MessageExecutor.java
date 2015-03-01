@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,9 @@
  */
 package illarion.client.net;
 
-import illarion.client.net.server.AbstractReply;
+import illarion.client.net.server.ServerReply;
+import illarion.client.net.server.ServerReplyResult;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -46,7 +48,7 @@ final class MessageExecutor {
         executorService = Executors.newSingleThreadExecutor();
     }
 
-    void scheduleReplyExecution(@Nonnull final AbstractReply reply) {
+    void scheduleReplyExecution(@Nonnull final ServerReply reply) {
         log.debug(NET, "scheduled {}", reply);
         executorService.submit(new Runnable() {
             @Override
@@ -56,15 +58,20 @@ final class MessageExecutor {
         });
     }
 
-    private void executeReply(@Nonnull AbstractReply reply) {
-        if (reply.processNow()) {
-            log.debug(NET, "executing {}", reply);
+    private void executeReply(@Nonnull ServerReply reply) {
+        log.debug(NET, "executing {}", reply);
+        ServerReplyResult result = reply.execute();
 
-            reply.executeUpdate();
-            log.debug(NET, "finished {}", reply);
-        } else {
-            log.debug(NET, "delaying {}", reply);
-            scheduleReplyExecution(reply);
+        switch (result) {
+            case Success:
+                log.debug(NET, "finished with success {}", reply);
+                break;
+            case Failed:
+                log.error(NET, "finished with failure {}", reply);
+                break;
+            case Reschedule:
+                log.debug(NET, "delaying {}", reply);
+                scheduleReplyExecution(reply);
         }
     }
 
@@ -77,11 +84,13 @@ final class MessageExecutor {
 
         return new Future<Boolean>() {
             @Override
+            @Contract(value = "_ -> false", pure = true)
             public boolean cancel(boolean mayInterruptIfRunning) {
                 return false;
             }
 
             @Override
+            @Contract(value = "-> false", pure = true)
             public boolean isCancelled() {
                 return false;
             }
@@ -92,6 +101,7 @@ final class MessageExecutor {
             }
 
             @Override
+            @Nonnull
             public Boolean get() throws InterruptedException, ExecutionException {
                 try {
                     return get(1, TimeUnit.HOURS);
@@ -101,6 +111,7 @@ final class MessageExecutor {
             }
 
             @Override
+            @Nonnull
             public Boolean get(long timeout, @Nonnull TimeUnit unit)
                     throws InterruptedException, ExecutionException, TimeoutException {
                 return executorService.awaitTermination(timeout, unit);

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,50 +15,45 @@
  */
 package illarion.client.net.server;
 
+import illarion.client.gui.DialogType;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.world.events.CloseDialogEvent;
+import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
-import org.bushe.swing.event.EventBus;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.util.EnumSet;
 
 /**
- * Servermessage: Close a dialog ({@link CommandList#MSG_CLOSE_SHOWCASE}).
+ * Server message: Close a dialog
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_CLOSE_DIALOG)
-public final class CloseDialogMsg extends AbstractGuiMsg {
+public final class CloseDialogMsg implements ServerReply {
     /**
      * The ID of the dialog that is supposed to be closed.
      */
     private int dialogId;
 
-    /**
-     * Decode the close dialog data the receiver got and prepare it for the execution.
-     *
-     * @param reader the receiver that got the data from the server that needs  to be decoded
-     * @throws IOException thrown in case there was not enough data received to decode the full message
-     */
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         dialogId = reader.readInt();
     }
 
-    /**
-     * Execute the close dialog message and send the decoded data to the rest of the client.
-     */
+    @Nonnull
     @Override
-    public void executeUpdate() {
-        EventBus.publish(new CloseDialogEvent(dialogId));
+    public ServerReplyResult execute() {
+        World.getPlayer().closeDialog(dialogId, EnumSet.allOf(DialogType.class));
+        return ServerReplyResult.Success;
     }
 
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString("Dialog ID: " + dialogId);
+        return Utilities.toString(CloseDialogMsg.class, dialogId);
     }
 }

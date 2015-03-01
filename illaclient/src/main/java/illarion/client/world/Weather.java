@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -27,36 +27,6 @@ import java.util.Random;
  * Weather control class. Generated and stores all effects caused by the weather.
  */
 public final class Weather {
-    /**
-     * Ambient light colors for every hour and every overcast type. The list builds up with the daytime in the first
-     * level, the clear and overcast colors in the second level and the red, green and blue color value in the third
-     * level.
-     */
-    private static final float[][][] AMBIENT_LIGHT_COLORS = {{{0.2f, 0.2f, 0.4f}, {0.15f, 0.15f, 0.2f}},
-                                                             {{0.15f, 0.15f, 0.3f}, {0.1f, 0.1f, 0.15f}},
-                                                             {{0.15f, 0.15f, 0.3f}, {0.1f, 0.1f, 0.15f}},
-                                                             {{0.15f, 0.15f, 0.3f}, {0.2f, 0.2f, 0.3f}},
-                                                             {{0.7f, 0.7f, 0.75f}, {0.4f, 0.4f, 0.45f}},
-                                                             {{1, 0.95f, 0.8f}, {0.6f, 0.6f, 0.6f}},
-                                                             {{1f, 0.98f, 0.9f}, {0.7f, 0.7f, 0.7f}}, // 6:00
-                                                             {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
-                                                             {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
-                                                             {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
-                                                             {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
-                                                             {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
-                                                             {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}}, // 12:00
-                                                             {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
-                                                             {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
-                                                             {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
-                                                             {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
-                                                             {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}},
-                                                             {{1f, 1f, 1f}, {0.8f, 0.8f, 0.8f}}, // 18:00
-                                                             {{1f, 0.9f, 0.8f}, {0.7f, 0.7f, 0.7f}},
-                                                             {{1, 0.8f, 0.7f}, {0.6f, 0.6f, 0.6f}},
-                                                             {{0.7f, 0.6f, 0.7f}, {0.4f, 0.4f, 0.45f}},
-                                                             {{0.2f, 0.2f, 0.4f}, {0.2f, 0.2f, 0.3f}},
-                                                             {{0.2f, 0.2f, 0.4f}, {0.15f, 0.15f, 0.2f}}};
-
     /**
      * Value of the cloud overcast where it reaches the maximal amount of darken
      * effect.
@@ -351,14 +321,22 @@ public final class Weather {
      */
     private int windTarget;
 
+    @Nonnull
+    private final AmbientLight ambientLightCalculation;
+
     /**
      * Default constructor. Prepare and active everything needed to show the
      * weather.
      */
     @SuppressWarnings("nls")
     public Weather() {
+        ambientLightCalculation = new AmbientLight();
         ambientLight = new Color(Color.BLACK);
         ambientTargetColor = new Color(ambientLight);
+    }
+
+    public void shutdown() {
+        ambientLightCalculation.shutdown();
     }
 
     /**
@@ -375,36 +353,8 @@ public final class Weather {
             return;
         }
 
-        final int hour = World.getClock().getHour();
-        final int nextHour = (hour + 1) % HOUR_PER_DAY;
-        final float timeAlpha = World.getClock().getMinute() / 60.f;
-
-        // heavily overcast - all grey
-        if (cloud > CLOUD_LIMIT) {
-            ambientTargetColor.setRedf((AMBIENT_LIGHT_COLORS[nextHour][1][0] * timeAlpha) +
-                                               (AMBIENT_LIGHT_COLORS[hour][1][0] * (1f - timeAlpha)));
-            ambientTargetColor.setGreenf((AMBIENT_LIGHT_COLORS[nextHour][1][1] * timeAlpha) +
-                                                 (AMBIENT_LIGHT_COLORS[hour][1][1] * (1f - timeAlpha)));
-            ambientTargetColor.setBluef((AMBIENT_LIGHT_COLORS[nextHour][1][2] * timeAlpha) +
-                                                (AMBIENT_LIGHT_COLORS[hour][1][2] * (1f - timeAlpha)));
-        } else { // partially cloudy, interpolate color
-            final float cloudAlpha = (float) cloud / CLOUD_LIMIT;
-            ambientTargetColor.setRedf((((AMBIENT_LIGHT_COLORS[nextHour][0][0] * timeAlpha) +
-                    (AMBIENT_LIGHT_COLORS[hour][0][0] * (1f - timeAlpha))) * (1f - cloudAlpha)) +
-                                               (((AMBIENT_LIGHT_COLORS[nextHour][1][0] * timeAlpha) +
-                                                       (AMBIENT_LIGHT_COLORS[hour][1][0] * (1f - timeAlpha))) *
-                                                       cloudAlpha));
-            ambientTargetColor.setGreenf((((AMBIENT_LIGHT_COLORS[nextHour][0][1] * timeAlpha) +
-                    (AMBIENT_LIGHT_COLORS[hour][0][1] * (1f - timeAlpha))) * (1f - cloudAlpha)) +
-                                                 (((AMBIENT_LIGHT_COLORS[nextHour][1][1] * timeAlpha) +
-                                                         (AMBIENT_LIGHT_COLORS[hour][1][1] * (1f - timeAlpha))) *
-                                                         cloudAlpha));
-            ambientTargetColor.setBluef((((AMBIENT_LIGHT_COLORS[nextHour][0][2] * timeAlpha) +
-                    (AMBIENT_LIGHT_COLORS[hour][0][2] * (1f - timeAlpha))) * (1f - cloudAlpha)) +
-                                                (((AMBIENT_LIGHT_COLORS[nextHour][1][2] * timeAlpha) +
-                                                        (AMBIENT_LIGHT_COLORS[hour][1][2] * (1f - timeAlpha))) *
-                                                        cloudAlpha));
-        }
+        ambientLightCalculation.setOvercast(cloud / (double) CLOUDS_MAX);
+        ambientTargetColor.setColor(ambientLightCalculation.getCurrentAmbientLight());
 
         // it is somewhat darker in buildings
         if (!outside) {
@@ -419,7 +369,7 @@ public final class Weather {
      *
      * @param delta the time since the last call of this function
      */
-    private void changeWeather(final int delta) {
+    private void changeWeather(int delta) {
         calculateLight();
     }
 
@@ -493,7 +443,7 @@ public final class Weather {
             if ((showFlash > 0) && ((showFlash % FLASH_WAIT) != 0)) {
                 coverage -= FLASH_COVERAGE;
             } else {
-                final float lum = ambientLight.getLuminancef();
+                float lum = ambientLight.getLuminancef();
                 coverage += (int) ((1 - lum) * LIGHT_COLOR_COVERAGE);
             }
 
@@ -544,7 +494,7 @@ public final class Weather {
      * {@link #CLOUDS_MAX}
      */
     @SuppressWarnings("nls")
-    public void setCloud(final int newCloud) {
+    public void setCloud(int newCloud) {
         if ((newCloud < CLOUDS_MIN) || (newCloud > CLOUDS_MAX)) {
             LOGGER.warn("Illegal clounds value: " + newCloud);
             return;
@@ -558,7 +508,7 @@ public final class Weather {
      * @param newFog New value for the fog.
      */
     @SuppressWarnings("nls")
-    public void setFog(final int newFog) {
+    public void setFog(int newFog) {
         if ((newFog < FOG_MINIMAL_VALUE) || (newFog > FOG_MAXIMAL_VALUE)) {
             LOGGER.warn("Illegal fog value: " + newFog);
             return;
@@ -574,7 +524,7 @@ public final class Weather {
      * {@link #LIGHTNING_MIN} and {@link #LIGHTNING_MAX}
      */
     @SuppressWarnings("nls")
-    public void setLightning(final int newLightning) {
+    public void setLightning(int newLightning) {
         if ((lightning < LIGHTNING_MIN) || (lightning > LIGHTNING_MAX)) {
             LOGGER.warn("Illegal lightning value: " + newLightning);
             return;
@@ -588,7 +538,7 @@ public final class Weather {
      *
      * @param newOutside true if the character is outside
      */
-    public void setOutside(final boolean newOutside) {
+    public void setOutside(boolean newOutside) {
         outside = newOutside;
     }
 
@@ -600,7 +550,7 @@ public final class Weather {
      * @param strength new precipitation strength value
      */
     @SuppressWarnings("nls")
-    public void setPrecipitation(final int type, final int strength) {
+    public void setPrecipitation(int type, int strength) {
         if ((type < 0) || (type > 2) || (strength < PREC_SERVER_MIN) || (strength > PREC_SERVER_MAX)) {
             LOGGER.warn("Illegal precipitation value: " + type + " strength: " + strength);
             return;
@@ -623,7 +573,7 @@ public final class Weather {
      * @param newGusts the new value for the wind gusts
      */
     @SuppressWarnings("nls")
-    public void setWind(final int newWind, final int newGusts) {
+    public void setWind(int newWind, int newGusts) {
         if ((newWind < WIND_SERVER_MIN) || (newWind > WIND_SERVER_MAX) || (newGusts < WIND_GUST_MIN) ||
                 (newGusts > WIND_GUST_MAX)) {
             LOGGER.warn("Illegal wind value: " + newWind + " gusts: " + newGusts);
@@ -634,27 +584,23 @@ public final class Weather {
         gustsTarget = newGusts * WIND_CONVERSATION_VALUE;
     }
 
-    private int deltaSlowDownCounter;
 
-    private void animateWeather(final int delta) {
-        deltaSlowDownCounter += delta;
-        if (deltaSlowDownCounter > 50) {
-            wind = AnimationUtility.approach(wind, windTarget, WIND_STEP, WIND_INTERAL_MIN, WIND_INTERAL_MAX, delta);
-            gusts = AnimationUtility.approach(gusts, gustsTarget, WIND_STEP, 0, WIND_INTERAL_MAX, delta);
-            cloud = AnimationUtility.approach(cloud, cloudTarget, CLOUDS_STEP, CLOUDS_MIN, CLOUDS_MAX, delta);
-            fog = AnimationUtility.approach(fog, fogTarget, FOG_STEP, 0, 100, delta);
-            rain = AnimationUtility.approach(rain, rainTarget, PREC_STEP, 0, 500, delta);
-            snow = AnimationUtility.approach(snow, snowTarget, PREC_STEP, 0, 500, delta);
+    private void animateWeather(int delta) {
+        int effectiveDelta = Math.max(1, delta / 5);
 
-            deltaSlowDownCounter -= 50;
-        }
+        wind = AnimationUtility.approach(wind, windTarget, WIND_STEP, WIND_INTERAL_MIN, WIND_INTERAL_MAX, effectiveDelta);
+        gusts = AnimationUtility.approach(gusts, gustsTarget, WIND_STEP, 0, WIND_INTERAL_MAX, effectiveDelta);
+        cloud = AnimationUtility.approach(cloud, cloudTarget, CLOUDS_STEP, CLOUDS_MIN, CLOUDS_MAX, effectiveDelta);
+        fog = AnimationUtility.approach(fog, fogTarget, FOG_STEP, 0, 100, effectiveDelta);
+        rain = AnimationUtility.approach(rain, rainTarget, PREC_STEP, 0, 500, effectiveDelta);
+        snow = AnimationUtility.approach(snow, snowTarget, PREC_STEP, 0, 500, effectiveDelta);
 
-        if (AnimationUtility.approach(ambientLight, ambientTargetColor, delta)) {
-            World.getLights().refresh();
+        if (AnimationUtility.approach(ambientLight, ambientTargetColor, effectiveDelta)) {
+            World.getMap().updateAmbientLight();
         }
     }
 
-    public void update(final int delta) {
+    public void update(int delta) {
         changeWeather(delta);
         animateWeather(delta);
     }

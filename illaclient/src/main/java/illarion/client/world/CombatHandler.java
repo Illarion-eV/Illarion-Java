@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
@@ -38,25 +37,15 @@ public final class CombatHandler {
      * The character that is currently under attack.
      */
     @Nullable
-    @GuardedBy("this")
     private Char attackedChar;
-
-    /**
-     * Private constructor to ensure that only the singleton instance is created.
-     */
-    public CombatHandler() {
-        // nothing to do
-    }
 
     /**
      * Test if the player is currently attacking anyone.
      *
-     * @return <code>true</code> in case anyone is attacked
+     * @return {@code true} in case anyone is attacked
      */
     public boolean isAttacking() {
-        synchronized (this) {
-            return attackedChar != null;
-        }
+        return attackedChar != null;
     }
 
     /**
@@ -76,12 +65,10 @@ public final class CombatHandler {
      * Test if a character is currently attacked.
      *
      * @param testChar the char to check if he is the current target
-     * @return <code>true</code> in case the character is the current target
+     * @return {@code true} in case the character is the current target
      */
     public boolean isAttacking(@Nonnull Char testChar) {
-        synchronized (this) {
-            return isAttacking() && testChar.equals(attackedChar);
-        }
+        return testChar.equals(attackedChar);
     }
 
     /**
@@ -89,11 +76,9 @@ public final class CombatHandler {
      * attack. It just requests to stop the attack from the server.
      */
     public void standDown() {
-        synchronized (this) {
-            if (attackedChar != null) {
-                World.getNet().sendCommand(new StandDownCmd());
-                targetLost();
-            }
+        if (attackedChar != null) {
+            World.getNet().sendCommand(new StandDownCmd());
+            targetLost();
         }
     }
 
@@ -102,19 +87,14 @@ public final class CombatHandler {
      * command to the server.
      */
     public void targetLost() {
-        synchronized (this) {
-            if (attackedChar != null) {
-                attackedChar.setAttackMarker(false);
-                attackedChar = null;
-            }
-        }
-        World.getMusicBox().stopFightingMusic();
+        attackedChar = null;
     }
 
     /**
      * The logging instance of this class.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(CombatHandler.class);
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(CombatHandler.class);
 
     /**
      * Set the character that is attacked from now in.
@@ -122,25 +102,21 @@ public final class CombatHandler {
      * @param character the character that is now attacked
      */
     public void setAttackTarget(@Nonnull Char character) {
-        synchronized (this) {
-            if (character == attackedChar) {
-                return;
-            }
+        if (isAttacking(character)) {
+            return;
+        }
 
-            standDown();
+        standDown();
 
-            CharacterId characterId = character.getCharId();
-            if (characterId == null) {
-                LOGGER.error("Trying to attack a character without character ID.");
-                return;
-            }
+        CharacterId characterId = character.getCharId();
+        if (characterId == null) {
+            log.error("Trying to attack a character without character ID.");
+            return;
+        }
 
-            if (canBeAttacked(character)) {
-                attackedChar = character;
-                sendAttackToServer(characterId);
-                character.setAttackMarker(true);
-                World.getMusicBox().playFightingMusic();
-            }
+        if (canBeAttacked(character)) {
+            attackedChar = character;
+            sendAttackToServer(characterId);
         }
     }
 

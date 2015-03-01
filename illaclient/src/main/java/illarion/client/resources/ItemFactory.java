@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,6 +16,7 @@
 package illarion.client.resources;
 
 import illarion.client.resources.data.ItemTemplate;
+import illarion.common.types.ItemId;
 
 import javax.annotation.Nonnull;
 
@@ -52,5 +53,10 @@ public final class ItemFactory extends AbstractTemplateFactory<ItemTemplate> {
      */
     private ItemFactory() {
         super(DEFAULT_ITEM_ID);
+    }
+
+    @Nonnull
+    public ItemTemplate getTemplate(@Nonnull ItemId id) {
+        return getTemplate(id.getValue());
     }
 }

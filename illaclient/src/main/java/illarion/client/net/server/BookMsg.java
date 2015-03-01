@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,17 +19,18 @@ import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
- * Servermessage: Book ({@link CommandList#MSG_BOOK}).
+ * Server message: Show a book
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_BOOK)
-public final class BookMsg extends AbstractGuiMsg {
+public final class BookMsg implements ServerReply {
     /**
      * The book id that was sent.
      */
@@ -40,15 +41,20 @@ public final class BookMsg extends AbstractGuiMsg {
         bookId = reader.readUShort();
     }
 
+    @Nonnull
     @Override
-    public void executeUpdate() {
+    public ServerReplyResult execute() {
+        if (!World.getGameGui().isReady()) {
+            return ServerReplyResult.Reschedule;
+        }
         World.getGameGui().getBookGui().showBook(bookId);
+        return ServerReplyResult.Success;
     }
 
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString("book " + Integer.toString(bookId));
+        return Utilities.toString(BookMsg.class, bookId);
     }
 }

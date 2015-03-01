@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,6 +20,7 @@ import de.lessvoid.nifty.render.NiftyImage;
 import illarion.client.gui.EntitySlickRenderImage;
 import illarion.client.resources.ItemFactory;
 import illarion.client.world.items.SelectionItem;
+import illarion.common.types.ItemId;
 import org.illarion.nifty.controls.SelectListEntry;
 
 import javax.annotation.Nonnull;
@@ -46,15 +47,15 @@ public final class NiftySelectItem extends SelectionItem implements SelectListEn
      * @param nifty the instance of the Nifty-GUI used to create the objects for the GUI
      * @param org the original merchant item that contains the actual data
      */
-    public NiftySelectItem(@Nonnull final Nifty nifty, @Nonnull final SelectionItem org) {
+    public NiftySelectItem(@Nonnull Nifty nifty, @Nonnull SelectionItem org) {
         super(org);
 
-        final int id = org.getId();
-        if (id == 0) {
-            itemImage = null;
-        } else {
+        ItemId id = org.getId();
+        if (ItemId.isValidItem(id)) {
             itemImage = new NiftyImage(nifty.getRenderEngine(),
-                                       new EntitySlickRenderImage(ItemFactory.getInstance().getTemplate(id)));
+                    new EntitySlickRenderImage(ItemFactory.getInstance().getTemplate(id)));
+        } else {
+            itemImage = null;
         }
     }
 

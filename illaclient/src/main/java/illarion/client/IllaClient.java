@@ -46,6 +46,7 @@ import org.illarion.engine.DesktopGameContainer;
 import org.illarion.engine.EngineException;
 import org.illarion.engine.EngineManager;
 import org.illarion.engine.graphic.GraphicResolution;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -128,6 +129,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     /**
      * Stores the server the client shall connect to.
      */
+    @Nonnull
     private Servers usedServer = DEFAULT_SERVER;
 
     /**
@@ -197,7 +199,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
             }
         }
         if (res == null) {
-            res = new GraphicResolution(800, 600, 32, 60);
+            res = new GraphicResolution(); // auto detection
         }
 
         try {
@@ -270,8 +272,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     public static void returnToLogin() {
         LOGGER.info("Returning to login initiated");
         INSTANCE.game.enterState(Game.STATE_LOGIN);
-        World.cleanEnvironment();
-        getCfg().save();
     }
 
     public static void exitGameContainer() {
@@ -407,6 +407,8 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      *
      * @return the selected server
      */
+    @Nonnull
+    @Contract(pure = true)
     public Servers getUsedServer() {
         return usedServer;
     }

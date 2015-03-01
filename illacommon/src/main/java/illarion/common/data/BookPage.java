@@ -54,11 +54,15 @@ public final class BookPage implements Iterable<BookPageEntry> {
      *
      * @param source the XML node that supplies the data
      */
+    @SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
     public BookPage(@Nonnull Node source) {
         this();
         NodeList children = source.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
             Node child = children.item(i);
+            if (child == null) {
+                continue;
+            }
             switch (child.getNodeName()) {
                 case "headline":
                     entries.add(new BookPageEntry(true, getNodeValue(child.getFirstChild()), false,
@@ -70,22 +74,25 @@ public final class BookPage implements Iterable<BookPageEntry> {
                     break;
                 case "paragraph":
                     NamedNodeMap attributes = child.getAttributes();
-                    boolean showLineBreaks = getNodeValueBool(attributes.getNamedItem("showLineBreaks"));
-                    Align align;
-                    switch (getNodeValue(attributes.getNamedItem("align"))) {
-                        case "left":
-                            align = Align.Left;
-                            break;
-                        case "right":
-                            align = Align.Right;
-                            break;
-                        case "center":
-                            align = Align.Center;
-                            break;
-                        default:
-                            align = Align.Left;
+                    if (attributes != null) {
+                        boolean showLineBreaks = getNodeValueBool(attributes.getNamedItem("showLineBreaks"));
+                        Align align;
+                        switch (getNodeValue(attributes.getNamedItem("align"))) {
+                            case "left":
+                                align = Align.Left;
+                                break;
+                            case "right":
+                                align = Align.Right;
+                                break;
+                            case "center":
+                                align = Align.Center;
+                                break;
+                            default:
+                                align = Align.Left;
+                        }
+                        entries.add(new BookPageEntry(false, getNodeValue(child.getFirstChild()),
+                                showLineBreaks, align));
                     }
-                    entries.add(new BookPageEntry(false, getNodeValue(child.getFirstChild()), showLineBreaks, align));
                     break;
                 default:
                     log.error("Unknown page entry type: {}, expected paragraph, poem or headline", child.getNodeName());

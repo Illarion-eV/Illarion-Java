@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,62 +17,125 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.net.server.events.OpenContainerEvent;
 import illarion.client.world.World;
+import illarion.client.world.items.ItemContainer;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
- * Servermessage: Content of a container ({@link CommandList#MSG_SHOWCASE}).
+ * Server message: Content of a container
  *
  * @author Blay09
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_SHOWCASE)
-public final class ShowcaseMsg extends AbstractGuiMsg {
+public final class ShowcaseMsg implements ServerReply {
     /**
-     * The event instance containing all decoded data that is send during the execution using the event bus.
+     * The ID of the container.
+     */
+    private int containerId;
+
+    /**
+     * The title of the container.
      */
     @Nullable
-    private OpenContainerEvent event;
+    private String title;
+
+    /**
+     * The description of the container.
+     */
+    @Nullable
+    private String description;
+
+    /**
+     * The amount of slots in the container.
+     */
+    private int slotCount;
+
+    /**
+     * The positions of the filled slots.
+     */
+    @Nullable
+    private int[] slots;
+
+    /**
+     * The item IDs in the filled slots.
+     */
+    @Nullable
+    private ItemId[] itemIds;
+
+    /**
+     * The amount of items in the filled slots.
+     */
+    @Nullable
+    private ItemCount[] itemCounts;
 
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
-        int containerId = reader.readUByte();
-        String title = reader.readString();
-        String description = reader.readString();
-        int containerSize = reader.readUShort();
+        containerId = reader.readUByte();
+        title = reader.readString();
+        description = reader.readString();
+        slotCount = reader.readUShort();
+
         int itemAmount = reader.readUShort();
 
-        event = new OpenContainerEvent(containerId, title, description, containerSize);
+        slots = new int[itemAmount];
+        itemIds = new ItemId[itemAmount];
+        itemCounts = new ItemCount[itemAmount];
 
         for (int i = 0; i < itemAmount; i++) {
             int itemPos = reader.readUShort();
             ItemId itemId = new ItemId(reader);
             ItemCount itemCount = ItemCount.getInstance(reader);
 
-            event.addItem(new OpenContainerEvent.Item(itemPos, itemId, itemCount));
+            slots[i] = itemPos;
+            itemIds[i] = itemId;
+            itemCounts[i] = itemCount;
         }
-    }
-
-    @Override
-    public void executeUpdate() {
-        if (event == null) {
-            throw new IllegalStateException("Executing the update before the decoding happened.");
-        }
-        World.getPlayer().onOpenContainerEvent(event);
     }
 
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    public ServerReplyResult execute() {
+        //noinspection OverlyComplexBooleanExpression
+        if ((title == null) || (description == null) || (slots == null) || (itemIds == null) || (itemCounts == null)) {
+            throw new NotDecodedException();
+        }
+        if (!World.getGameGui().isReady()) {
+            return ServerReplyResult.Reschedule;
+        }
+
+        ItemContainer container = World.getPlayer().getOrCreateContainer(containerId, title, description, slotCount);
+        boolean[] updatedSlot = new boolean[slotCount];
+        Arrays.fill(updatedSlot, false);
+
+        for (int i = 0; i < slots.length; i++) {
+            updatedSlot[slots[i]] = true;
+            container.setItem(slots[i], itemIds[i], itemCounts[i]);
+        }
+
+        for (int i = 0; i < slotCount; i++) {
+            if (!updatedSlot[i]) {
+                container.setItem(i, null, null);
+            }
+        }
+
+        World.getGameGui().getContainerGui().showContainer(container);
+        return ServerReplyResult.Success;
+    }
+
+    @Nonnull
+    @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString("ItemContainer: " + ((event != null) ? event.getContainerId() : "NULL"));
+        return Utilities.toString(ShowcaseMsg.class, "ID: " + containerId, title, "Slots: " + slotCount);
     }
 }

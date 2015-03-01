@@ -21,6 +21,7 @@ import illarion.client.world.World;
 import illarion.common.data.Skill;
 import illarion.common.data.Skills;
 import illarion.common.net.NetCommReader;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,13 +29,13 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
- * Servermessage: Update the character skills ({@link CommandList#MSG_SKILL}).
+ * Server message: Update the character skills
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_SKILL)
-public final class SkillMsg extends AbstractGuiMsg {
+public final class SkillMsg implements ServerReply {
     /**
      * The logger instance of this class.
      */
@@ -62,20 +63,27 @@ public final class SkillMsg extends AbstractGuiMsg {
         minor = reader.readUShort();
     }
 
+    @Nonnull
     @Override
-    public void executeUpdate() {
+    public ServerReplyResult execute() {
+        if (!World.getGameGui().isReady()) {
+            return ServerReplyResult.Reschedule;
+        }
+
         Skill skill = Skills.getInstance().getSkill(this.skill);
         if (skill == null) {
             log.warn("Unknown skill received! ID: {}", this.skill);
+            return ServerReplyResult.Failed;
         } else {
             World.getGameGui().getSkillGui().updateSkill(skill, value, minor);
+            return ServerReplyResult.Success;
         }
     }
 
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString(skill + ": " + value + " - " + minor);
+        return Utilities.toString(SkillMsg.class, "Skill: " + skill, "Value: " + value, "Minor: " + minor);
     }
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -32,6 +32,7 @@ public class NiftyCraftingCategory implements CraftingCategoryEntry {
     /**
      * The name of the category.
      */
+    @Nonnull
     private final String name;
 
     /**
@@ -45,7 +46,7 @@ public class NiftyCraftingCategory implements CraftingCategoryEntry {
      *
      * @param categoryName the name of the category
      */
-    public NiftyCraftingCategory(final String categoryName) {
+    public NiftyCraftingCategory(@Nonnull String categoryName) {
         name = categoryName;
         children = new ArrayList<>();
     }
@@ -67,7 +68,7 @@ public class NiftyCraftingCategory implements CraftingCategoryEntry {
      *
      * @param child the item that will belong to this category
      */
-    public void addChild(final CraftingItemEntry child) {
+    public void addChild(@Nonnull CraftingItemEntry child) {
         children.add(child);
     }
 

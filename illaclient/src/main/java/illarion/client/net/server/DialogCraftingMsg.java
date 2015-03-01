@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,25 +17,26 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
-import illarion.client.net.server.events.DialogCraftingReceivedEvent;
+import illarion.client.world.World;
 import illarion.client.world.items.CraftingIngredientItem;
 import illarion.client.world.items.CraftingItem;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
-import javolution.text.TextBuilder;
-import org.bushe.swing.event.EventBus;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
- * Servermessage: Crafting Request ({@link CommandList#MSG_DIALOG_INPUT}).
+ * Server message: Open a crafting dialog
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 @ReplyMessage(replyId = CommandList.MSG_DIALOG_CRAFTING)
-public final class DialogCraftingMsg extends AbstractGuiMsg {
+public final class DialogCraftingMsg implements ServerReply {
     /**
      * The title that is supposed to be displayed in the dialog.
      */
@@ -44,11 +45,13 @@ public final class DialogCraftingMsg extends AbstractGuiMsg {
     /**
      * The group names
      */
+    @Nullable
     private String[] groups;
 
     /**
      * The crafting item.
      */
+    @Nullable
     private CraftingItem[] craftItems;
 
     /**
@@ -56,23 +59,20 @@ public final class DialogCraftingMsg extends AbstractGuiMsg {
      */
     private int requestId;
 
-    /**
-     * Decode the text request the receiver got and prepare it for the execution.
-     *
-     * @param reader the receiver that got the data from the server that needs to be decoded
-     * @throws IOException thrown in case there was not enough data received to decode the full message
-     */
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         title = reader.readString();
 
         groups = new String[reader.readUByte()];
-        for (int i = 0; i < groups.length; i++) {
+        int groupCount = groups.length;
+        for (int i = 0; i < groupCount; i++) {
+            assert groups != null;
             groups[i] = reader.readString();
         }
 
         craftItems = new CraftingItem[reader.readUByte()];
-        for (int i = 0; i < craftItems.length; i++) {
+        int itemsCount = craftItems.length;
+        for (int i = 0; i < itemsCount; i++) {
             int itemIndex = reader.readUByte();
             int group = reader.readUByte();
             ItemId itemId = new ItemId(reader);
@@ -88,32 +88,33 @@ public final class DialogCraftingMsg extends AbstractGuiMsg {
                 ingredients[k] = new CraftingIngredientItem(ingredientId, ingredientCount);
             }
 
+            assert craftItems != null;
             craftItems[i] = new CraftingItem(itemIndex, group, itemId, name, buildTime, craftStackSize, ingredients);
         }
 
         requestId = reader.readInt();
     }
 
-    /**
-     * Execute the text request message and send the decoded data to the rest of the client.
-     */
+    @Nonnull
     @Override
-    public void executeUpdate() {
-        EventBus.publish(new DialogCraftingReceivedEvent(requestId, title, groups, craftItems));
+    public ServerReplyResult execute() {
+        if ((groups == null) || (craftItems == null) || (title == null)) {
+            throw new NotDecodedException();
+        }
+
+        if (!World.getGameGui().isReady()) {
+            return ServerReplyResult.Reschedule;
+        }
+
+        World.getGameGui().getDialogCraftingGui().showCraftingDialog(requestId, title, Arrays.asList(groups),
+                Arrays.asList(craftItems));
+        return ServerReplyResult.Success;
     }
 
-    /**
-     * Get the data of this text request message as string.
-     *
-     * @return the string that contains the values that were decoded for this message
-     */
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
-        TextBuilder builder = new TextBuilder();
-        builder.append("title: ").append(title);
-        builder.append(" id: ").append(requestId);
-        return toString(builder.toString());
+        return Utilities.toString(DialogCraftingMsg.class, "ID: " + requestId, title);
     }
 }

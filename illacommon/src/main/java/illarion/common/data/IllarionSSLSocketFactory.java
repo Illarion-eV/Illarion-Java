@@ -72,7 +72,8 @@ public class IllarionSSLSocketFactory {
     /**
      * The logger used to show the error output of this class.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(IllarionSSLSocketFactory.class);
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(IllarionSSLSocketFactory.class);
 
     public IllarionSSLSocketFactory() {
         try {
@@ -82,7 +83,7 @@ public class IllarionSSLSocketFactory {
             try (InputStream keyStoreInput = cls.getResourceAsStream("keystore.jks")) {
                 keyStore.load(keyStoreInput, "jcFv8XQxRN".toCharArray());
             } catch (@Nonnull CertificateException | IOException | NoSuchAlgorithmException e) {
-                LOGGER.error("Failed to load keystore.", e);
+                log.error("Failed to load keystore.", e);
             }
 
             KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
@@ -94,13 +95,13 @@ public class IllarionSSLSocketFactory {
             ctx.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
             sslFactory = ctx.getSocketFactory();
         } catch (@Nonnull KeyStoreException e) {
-            LOGGER.error("Failed to read keystore.", e);
+            log.error("Failed to read keystore.", e);
         } catch (@Nonnull KeyManagementException e) {
-            LOGGER.error("Failed to use keystore.", e);
+            log.error("Failed to use keystore.", e);
         } catch (@Nonnull NoSuchAlgorithmException e) {
-            LOGGER.error("Failed to decode keystore.", e);
+            log.error("Failed to decode keystore.", e);
         } catch (UnrecoverableKeyException e) {
-            LOGGER.error("Failed to open keystore.", e);
+            log.error("Failed to open keystore.", e);
         }
     }
 }

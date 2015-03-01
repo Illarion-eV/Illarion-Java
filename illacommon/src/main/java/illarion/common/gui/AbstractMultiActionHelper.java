@@ -15,21 +15,21 @@
  */
 package illarion.common.gui;
 
-import illarion.common.util.Timer;
-
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.concurrent.*;
 
 /**
  * This class is a helper that enables to GUI to handle things like double clicks.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public abstract class AbstractMultiActionHelper implements Runnable {
+public abstract class AbstractMultiActionHelper {
     /**
-     * The internal timer that is used to group the events and fire the results.
+     * The executor service that takes care for handling the multi action events.
      */
     @Nonnull
-    private final Timer timer;
+    private static final ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(0);
 
     /**
      * Amount of actions that were registered since the events were last fired.
@@ -44,11 +44,28 @@ public abstract class AbstractMultiActionHelper implements Runnable {
     private final int countLimit;
 
     /**
+     * The timeout for this task.
+     */
+    private final long timeout;
+
+    /**
+     * The time unit for the timeout.
+     */
+    @Nonnull
+    private final TimeUnit timeoutUnits;
+
+    /**
+     * The task that is scheduled for the execution for this action.
+     */
+    @Nullable
+    private ScheduledFuture<Void> task;
+
+    /**
      * Create a instance of this class and set the timeout that should be used to group events.
      *
      * @param timeoutInMs the timeout value in milliseconds
      */
-    protected AbstractMultiActionHelper(int timeoutInMs) {
+    protected AbstractMultiActionHelper(long timeoutInMs) {
         this(timeoutInMs, -1);
     }
 
@@ -58,10 +75,22 @@ public abstract class AbstractMultiActionHelper implements Runnable {
      * @param timeoutInMs the timeout value in milliseconds
      * @param limit the amount of clicks allowed at the maximum
      */
-    protected AbstractMultiActionHelper(int timeoutInMs, int limit) {
-        timer = new Timer(timeoutInMs, this);
-        timer.setRepeats(false);
+    protected AbstractMultiActionHelper(long timeoutInMs, int limit) {
+        this(timeoutInMs, TimeUnit.MILLISECONDS, limit);
+    }
+
+    /**
+     * Create a instance of this class and set the timeout that should be used to group events.
+     *
+     * @param timeout the timeout value
+     * @param unit    the unit of the timeout
+     * @param limit   the amount of clicks allowed at the maximum
+     */
+    protected AbstractMultiActionHelper(long timeout, @Nonnull TimeUnit unit, int limit) {
+        this.timeout = timeout;
+        timeoutUnits = unit;
         countLimit = limit;
+        task = null;
         reset();
     }
 
@@ -69,7 +98,10 @@ public abstract class AbstractMultiActionHelper implements Runnable {
      * Reset the helper.
      */
     public final void reset() {
-        timer.stop();
+        if (task != null) {
+            task.cancel(false);
+            task = null;
+        }
         actionCount = 0;
     }
 
@@ -79,20 +111,26 @@ public abstract class AbstractMultiActionHelper implements Runnable {
     public final void pulse() {
         actionCount++;
         if ((actionCount < countLimit) || (countLimit == -1)) {
-            timer.restart();
+            if (task != null) {
+                task.cancel(false);
+            }
+            task = executorService.schedule(new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    task = null;
+                    execute();
+                    return null;
+                }
+            }, timeout, timeoutUnits);
         } else {
-            run();
+            execute();
         }
     }
 
-    /**
-     * This function is called by the timer once the timeout occurred.
-     */
-    @Override
-    public final void run() {
-        timer.stop();
-        executeAction(actionCount);
+    public final void execute() {
+        int count = actionCount;
         reset();
+        executeAction(count);
     }
 
     /**

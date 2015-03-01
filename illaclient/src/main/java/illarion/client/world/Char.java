@@ -331,7 +331,7 @@ public final class Char implements AnimatedMove {
             setAlive(value > 0);
         }
 
-        if (World.getPlayer().isPlayer(getCharId())) {
+        if (World.getGameGui().isReady() && World.getPlayer().isPlayer(getCharId())) {
             World.getGameGui().getPlayerStatusGui().setAttribute(attribute, value);
         }
     }
@@ -550,7 +550,6 @@ public final class Char implements AnimatedMove {
         newAvatar.setScale(scale);
         newAvatar.setAlpha(oldAlpha);
         newAvatar.setAlphaTarget(oldAlphaTarget);
-        newAvatar.setAttackMarkerVisible(World.getPlayer().getCombatHandler().isAttacking(this));
         newAvatar.setName(getName());
 
         if (nameColor != null) {
@@ -629,7 +628,6 @@ public final class Char implements AnimatedMove {
 
     private void applyLightValue(@Nullable ItemId itemId) {
         if (ItemId.isValidItem(itemId)) {
-            assert itemId != null; /* Verified by isValidItem. */
             int light = ItemFactory.getInstance().getTemplate(itemId.getValue()).getItemInfo().getLight();
 
             if (light > lightValue) {
@@ -732,7 +730,6 @@ public final class Char implements AnimatedMove {
     public void resetLight() {
         if (lightSrc != null) {
             World.getLights().remove(lightSrc);
-            LightSource.releaseLight(lightSrc);
             lightSrc = null;
             lightValue = 0;
         }
@@ -805,12 +802,12 @@ public final class Char implements AnimatedMove {
      * @param newName the name of the character or null
      */
     @SuppressWarnings("nls")
-    public void setName(@Nonnull String newName) {
+    public void setName(@Nullable String newName) {
         name = newName;
         setAvatarName();
     }
 
-    public void setCustomName(@Nonnull String customName) {
+    public void setCustomName(@Nullable String customName) {
         this.customName = customName;
         setAvatarName();
     }
@@ -1144,10 +1141,12 @@ public final class Char implements AnimatedMove {
         if (move.isRunning()) {
             log.warn("{}: Received new animation {} while move was in progress.", this, newAnimation);
         }
+
         if (avatar == null) {
             log.debug("{}: Starting a new animation is impossible. No avatar!", this);
             return; // avatar not ready, discard animation
         }
+
         if (!isAnimationAvailable(newAnimation)) {
             log.debug("{}: Animation {} is not available.", this, animation);
             MapTile tile = World.getMap().getMapAt(getLocation());
@@ -1173,6 +1172,11 @@ public final class Char implements AnimatedMove {
         animation = newAnimation;
         log.debug("{}: Starting new animation: {} for {}ms", this, animation, duration);
         updateAvatar();
+
+        if (avatar == null) {
+            log.debug("{}: After updating the avatar, the avatar is gone. Animation impossible.", this);
+            return; // avatar not ready, discard animation
+        }
         avatar.animate(duration, false, shiftAnimation, length);
     }
 
@@ -1203,10 +1207,7 @@ public final class Char implements AnimatedMove {
             return;
         }
         if (lightSrc != null) {
-            World.getLights().remove(lightSrc);
-            LightSource.releaseLight(lightSrc);
-            lightSrc = LightSource.createLight(charLocation, lightValue);
-            World.getLights().add(lightSrc);
+            World.getLights().refreshLight(lightSrc);
         }
     }
 
@@ -1224,23 +1225,6 @@ public final class Char implements AnimatedMove {
             appearance = newAppearance;
             resetAnimation(true);
         }
-    }
-
-    /**
-     * Set or remove the marker from the character that selects the character as active combat target.
-     *
-     * @param activate {@code true} to enable the combat target marker on this character
-     */
-    public void setAttackMarker(boolean activate) {
-        if (removedCharacter) {
-            log.warn("Trying to access the attack marker of a removed character.");
-            return;
-        }
-        if (avatar == null) {
-            return;
-        }
-
-        avatar.setAttackMarkerVisible(activate);
     }
 
     /**
@@ -1389,11 +1373,21 @@ public final class Char implements AnimatedMove {
             return;
         }
         if (lightValue > 0) {
-            int tempLightValue = lightValue;
-            resetLight();
-            lightSrc = LightSource.createLight(charLocation, tempLightValue);
-            World.getLights().add(lightSrc);
-            lightValue = tempLightValue;
+            if (lightSrc != null) {
+                if (lightSrc.getEncodedValue() != lightValue) {
+                    LightSource newLight = new LightSource(charLocation, lightValue);
+                    World.getLights().replace(lightSrc, newLight);
+                    lightSrc = newLight;
+                }
+            } else {
+                lightSrc = new LightSource(charLocation, lightValue);
+                World.getLights().addLight(lightSrc);
+            }
+        } else {
+            if (lightSrc != null) {
+                World.getLights().remove(lightSrc);
+                lightSrc = null;
+            }
         }
     }
 

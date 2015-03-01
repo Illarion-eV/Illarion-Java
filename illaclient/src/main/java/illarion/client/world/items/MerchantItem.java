@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,6 +18,7 @@ package illarion.client.world.items;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Money;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 
@@ -55,26 +56,31 @@ public class MerchantItem {
     /**
      * The ID of the item.
      */
+    @Nonnull
     private final ItemId itemId;
 
     /**
      * The name that is supposed to be displayed along with the item.
      */
+    @Nonnull
     private final String name;
 
     /**
      * The price of the item in copper coins.
      */
+    @Nonnull
     private final Money price;
 
     /**
      * The type of this item.
      */
+    @Nonnull
     private final MerchantItemType type;
 
     /**
      * The amount of items sold at once.
      */
+    @Nonnull
     private final ItemCount bundleSize;
 
     /**
@@ -139,6 +145,7 @@ public class MerchantItem {
      *
      * @return the item ID
      */
+    @Nonnull
     public ItemId getItemId() {
         return itemId;
     }
@@ -168,6 +175,7 @@ public class MerchantItem {
      *
      * @return the type of the item
      */
+    @Nonnull
     public MerchantItemType getType() {
         return type;
     }
@@ -183,6 +191,7 @@ public class MerchantItem {
     }
 
     @Override
+    @Contract(value = "null -> false", pure = true)
     public boolean equals(Object obj) {
         if (super.equals(obj)) {
             return true;
@@ -196,6 +205,12 @@ public class MerchantItem {
             }
         }
         return false;
+    }
+
+    @Override
+    @Contract(pure = true)
+    public int hashCode() {
+        return getItemId().hashCode();
     }
 
     @Nonnull

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,52 +19,41 @@ import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
- * Servermessage: Close a container ({@link CommandList#MSG_CLOSE_SHOWCASE}).
+ * Server message: Close a container
  *
  * @author Blay09
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_CLOSE_SHOWCASE)
-public final class CloseShowcaseMsg extends AbstractReply {
+public final class CloseShowcaseMsg implements ServerReply {
     /**
      * The container that shall be closed.
      */
     private short containerId;
 
-    /**
-     * Decode the close container data the receiver got and prepare it for the execution.
-     *
-     * @param reader the receiver that got the data from the server that needs to be decoded
-     * @throws IOException thrown in case there was not enough data received to decode the full message
-     */
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         containerId = reader.readUByte();
     }
 
-    /**
-     * Execute the close container message and send the decoded data to the rest of the client.
-     */
+    @Nonnull
     @Override
-    public void executeUpdate() {
+    public ServerReplyResult execute() {
         World.getPlayer().removeContainer(containerId);
+        return ServerReplyResult.Success;
     }
 
-    /**
-     * Get the data of this close container message as string.
-     *
-     * @return the string that contains the values that were decoded for this message
-     */
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString("ID: " + containerId);
+        return Utilities.toString(CloseShowcaseMsg.class, containerId);
     }
 }

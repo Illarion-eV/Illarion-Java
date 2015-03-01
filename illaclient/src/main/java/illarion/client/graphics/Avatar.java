@@ -103,14 +103,6 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
     @Nonnull
     private final Char parentChar;
 
-    public boolean isAttackMarkerVisible() {
-        return attackMarkerVisible;
-    }
-
-    public void setAttackMarkerVisible(boolean attackMarkerVisible) {
-        this.attackMarkerVisible = attackMarkerVisible;
-    }
-
     /**
      * This variable changes to true in case the attack marker is supposed to be displayed.
      */
@@ -443,11 +435,9 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
     @Override
     public void render(@Nonnull Graphics g) {
         if (performRendering()) {
-            if (isAttackMarkerVisible()) {
+            if (attackMarkerVisible) {
                 attackMark.render(g);
-            }
-
-            if (showAttackAvailable) {
+            } else if (showAttackAvailable) {
                 attackAvailableMark.render(g);
             }
 
@@ -660,9 +650,12 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
             avatarTextTag.update(container, delta);
         }
 
-        if (isAttackMarkerVisible()) {
+        if (World.getPlayer().getCombatHandler().isAttacking(parentChar)) {
+            attackMarkerVisible = true;
             attackMark.setAlpha(usedAlpha);
             attackMark.update(container, delta);
+        } else {
+            attackMarkerVisible = false;
         }
     }
 

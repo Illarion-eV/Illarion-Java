@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,19 +20,19 @@ import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.Weather;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 
 /**
- * Servermessage: Update of the current weather (
- * {@link illarion.client.net.CommandList#MSG_WEATHER}).
+ * Server message: Update of the current weather
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
 @ReplyMessage(replyId = CommandList.MSG_WEATHER)
-public final class WeatherMsg extends AbstractReply {
+public final class WeatherMsg implements ServerReply {
     /**
      * The new value for the clouds.
      */
@@ -85,26 +85,24 @@ public final class WeatherMsg extends AbstractReply {
         temperature = reader.readByte();
     }
 
+    @Nonnull
     @Override
-    public void executeUpdate() {
+    public ServerReplyResult execute() {
         Weather weather = World.getWeather();
         weather.setFog(fog);
         weather.setLightning(0); //TODO: lightning);
         weather.setPrecipitation(precType, precipitation);
         weather.setWind(wind, gusts);
         weather.setCloud(clouds);
-
-        // Gui.getInstance().getClock().setTemperature(temperature);
+        return ServerReplyResult.Success;
     }
 
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
+    @Contract(pure = true)
     public String toString() {
-        return toString(
-                "clouds: " + clouds + ", fog: " + fog + ", wind: " + wind + ", gusts: " + gusts + ", precipitation: " +
-                        precipitation + ", precType: " + precType + ", lightning: " + lightning + ", temperature: " +
-                        temperature
-        );
+        return Utilities.toString(WeatherMsg.class, "clouds: " + clouds, "fog: " + fog, "wind: " + wind,
+                "gusts: " + gusts, "precipitation: " + precipitation, "precType: " + precType,
+                "lightning: " + lightning, "temperature: " + temperature);
     }
 }

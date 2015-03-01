@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,17 +15,10 @@
  */
 package illarion.client.net.server;
 
-import illarion.client.world.World;
-
 /**
- * This class in general is used for messages that access for manipulate the GUI. All messages with this class as
- * super class are delayed until the GUI is ready for operation.
+ * This exception may be raised in case a server message is executed before it was decoded.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public abstract class AbstractGuiMsg extends AbstractReply {
-    @Override
-    public boolean processNow() {
-        return World.getGameGui().isReady();
-    }
+public class NotDecodedException extends RuntimeException {
 }

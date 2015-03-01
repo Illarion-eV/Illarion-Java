@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -62,12 +62,6 @@ public final class MusicBox implements Stoppable {
     private int currentMusicId;
 
     /**
-     * This flag is set {@code true} in case the music box is supposed to play the fighting background music.
-     * This overwrites any other track that is currently played.
-     */
-    private boolean fightingMusicPlaying;
-
-    /**
      * This variable stores the ID of the track that overwrites the current
      * default track.
      */
@@ -82,7 +76,6 @@ public final class MusicBox implements Stoppable {
     MusicBox(@Nonnull Engine engine) {
         this.engine = engine;
         overrideSoundId = NO_TRACK;
-        fightingMusicPlaying = false;
         currentDefaultTrack = NO_TRACK;
 
         AnnotationProcessor.process(this);
@@ -135,15 +128,6 @@ public final class MusicBox implements Stoppable {
     }
 
     /**
-     * Play the fighting sound track now. This will overwrite all other playback.
-     */
-    public void playFightingMusic() {
-        if (!fightingMusicPlaying) {
-            fightingMusicPlaying = true;
-        }
-    }
-
-    /**
      * Set the sound ID that is supposed to be played. This will overwrite the default sound track that is set with
      * the music ID embedded to the tiles.
      *
@@ -190,16 +174,8 @@ public final class MusicBox implements Stoppable {
     /**
      * The logging instance that takes care for the logging output of this class.
      */
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(MusicBox.class);
-
-    /**
-     * Stop playing the fighting music and fall back to the last sound track played.
-     */
-    public void stopFightingMusic() {
-        if (fightingMusicPlaying) {
-            fightingMusicPlaying = false;
-        }
-    }
 
     /**
      * Update the location where the player is currently at. This will update the soundtrack that is played in case
@@ -219,7 +195,7 @@ public final class MusicBox implements Stoppable {
      * sure that changing the music is in sync with the rest of the game.
      */
     public void update() {
-        if (fightingMusicPlaying) {
+        if (World.getPlayer().getCombatHandler().isAttacking()) {
             setSoundTrack(COMBAT_TRACK);
         } else if (overrideSoundId > NO_TRACK) {
             setSoundTrack(overrideSoundId);

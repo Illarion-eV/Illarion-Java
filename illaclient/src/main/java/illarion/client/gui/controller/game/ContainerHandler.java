@@ -30,19 +30,16 @@ import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.IllaClient;
 import illarion.client.graphics.FontLoader;
 import illarion.client.gui.ContainerGui;
-import illarion.client.gui.DialogType;
 import illarion.client.gui.EntitySlickRenderImage;
 import illarion.client.gui.Tooltip;
 import illarion.client.gui.controller.game.NumberSelectPopupHandler.Callback;
 import illarion.client.net.client.CloseShowcaseCmd;
-import illarion.client.net.server.events.DialogMerchantReceivedEvent;
 import illarion.client.resources.ItemFactory;
 import illarion.client.resources.data.ItemTemplate;
 import illarion.client.util.Lang;
 import illarion.client.util.LookAtTracker;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
-import illarion.client.world.events.CloseDialogEvent;
 import illarion.client.world.interactive.InteractionManager;
 import illarion.client.world.items.ContainerSlot;
 import illarion.client.world.items.ItemContainer;
@@ -51,8 +48,6 @@ import illarion.client.world.items.MerchantList;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
 import illarion.common.types.Rectangle;
-import org.bushe.swing.event.annotation.AnnotationProcessor;
-import org.bushe.swing.event.annotation.EventSubscriber;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Font;
 import org.illarion.engine.input.Button;
@@ -209,29 +204,6 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
         numberSelect = numberSelectPopupHandler;
         tooltipHandler = tooltip;
         this.input = input;
-    }
-
-    /**
-     * Close the container as needed.
-     *
-     * @param event the close event that contains the information what dialog is supposed to be closed
-     */
-    @EventSubscriber
-    public void onDialogClosedEvent(@Nonnull CloseDialogEvent event) {
-        if (event.isClosingDialogType(DialogType.Merchant)) {
-            World.getUpdateTaskManager().addTask(updateMerchantOverlays);
-        }
-    }
-
-    /**
-     * This event is receives in case the client receives a merchant dialog. This is needed to show the overlay on
-     * the items.
-     *
-     * @param event the merchant dialog event
-     */
-    @EventSubscriber
-    public void onMerchantDialogReceivedHandler(DialogMerchantReceivedEvent event) {
-        World.getUpdateTaskManager().addTask(updateMerchantOverlays);
     }
 
     /**
@@ -491,8 +463,6 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
 
     @Override
     public void onEndScreen() {
-        AnnotationProcessor.unprocess(this);
-
         if (activeNifty != null) {
             activeNifty.unsubscribeAnnotations(this);
         }
@@ -505,7 +475,6 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
 
     @Override
     public void onStartScreen() {
-        AnnotationProcessor.process(this);
         if (activeNifty != null) {
             activeNifty.subscribeAnnotations(this);
         } else {
@@ -533,6 +502,11 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
 
             tooltipHandler.showToolTip(rect, tooltip);
         }
+    }
+
+    @Override
+    public void updateMerchantOverlay() {
+        World.getUpdateTaskManager().addTask(updateMerchantOverlays);
     }
 
     private int lastContainerId = -1;

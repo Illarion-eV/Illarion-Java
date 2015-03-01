@@ -17,7 +17,7 @@ package illarion.client.net;
 
 import illarion.client.Debug;
 import illarion.client.IllaClient;
-import illarion.client.net.server.AbstractReply;
+import illarion.client.net.server.ServerReply;
 import illarion.client.util.Lang;
 import illarion.common.net.NetCommReader;
 import org.slf4j.Logger;
@@ -310,7 +310,7 @@ final class Receiver extends Thread implements NetCommReader {
 
                         // decode
                         try {
-                            AbstractReply rpl = ReplyFactory.getInstance().getReply(id);
+                            ServerReply rpl = ReplyFactory.getInstance().getReply(id);
                             if (rpl != null) {
                                 rpl.decode(this);
                                 if (id != CommandList.MSG_KEEP_ALIVE) {

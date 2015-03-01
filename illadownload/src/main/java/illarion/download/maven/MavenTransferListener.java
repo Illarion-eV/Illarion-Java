@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -30,6 +30,7 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class MavenTransferListener implements TransferListener {
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(MavenTransferListener.class);
 
     @Override
@@ -55,7 +56,7 @@ public class MavenTransferListener implements TransferListener {
         }
     }
 
-    private void reportTrace(@Nonnull Object[] dataArray, TransferEvent event) {
+    private void reportTrace(@Nonnull Object[] dataArray, @Nonnull TransferEvent event) {
         ArtifactRequestTracer requestTracer = (ArtifactRequestTracer) dataArray[0];
         ProgressMonitor monitor = (ProgressMonitor) dataArray[1];
         long totalSize = event.getResource().getContentLength();

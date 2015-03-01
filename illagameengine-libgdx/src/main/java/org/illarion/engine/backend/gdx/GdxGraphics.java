@@ -291,6 +291,126 @@ class GdxGraphics implements Graphics {
         }
     }
 
+    @Nonnull
+    private static final float[] FLT_BUFFER = new float[20];
+
+    @Override
+    public void drawTileSprite(@Nonnull Sprite sprite, int posX, int posY, @Nonnull Color topColor,
+                               @Nonnull Color bottomColor, @Nonnull Color leftColor, @Nonnull Color rightColor,
+                               @Nonnull Color centerColor, int frame, @Nonnull TextureEffect... effects) {
+        if (!(sprite instanceof GdxSprite)) {
+            throw new IllegalArgumentException("The sprite is expected to be a sprite provided by this engine.");
+        }
+
+        /*
+        This is something where libGDX provides no function for. So in this case we need to build the data array for
+        OpenGL by hand.
+         */
+
+        GdxSprite gdxSprite = (GdxSprite) sprite;
+        activateSpriteBatch();
+
+        float bottomColorF = getFloatColor(bottomColor, tempColor1);
+        float topColorF = getFloatColor(topColor, tempColor1);
+        float leftColorF = getFloatColor(leftColor, tempColor1);
+        float rightColorF = getFloatColor(rightColor, tempColor1);
+        float centerColorF = getFloatColor(centerColor, tempColor1);
+
+        TextureRegion textureRegion = gdxSprite.getFrame(frame).getTextureRegion();
+
+        int width = sprite.getWidth() + 1;
+        int height = sprite.getHeight() + 1;
+
+        gdxSprite.getDisplayArea(posX, posY, 1.f, 0.f, tempEngineRectangle);
+        float centerTransX = (width * gdxSprite.getCenterX()) + gdxSprite.getOffsetX();
+        float centerTransY = (height * gdxSprite.getCenterY()) + gdxSprite.getOffsetY();
+
+        float originX = posX - centerTransX;
+        float originY = posY + centerTransY;
+
+        float topX = originX + (width / 2.f);
+        float topY = originY - height;
+        float topU = textureRegion.getU() + ((textureRegion.getU2() - textureRegion.getU()) / 2.f);
+        float topV = textureRegion.getV();
+
+        float leftX = originX;
+        float leftY = originY - (height / 2.f);
+        float leftU = textureRegion.getU();
+        float leftV = textureRegion.getV() + ((textureRegion.getV2() - textureRegion.getV()) / 2.f);
+
+        float rightX = originX + width;
+        float rightY = originY - (height / 2.f);
+        float rightU = textureRegion.getU2();
+        float rightV = textureRegion.getV() + ((textureRegion.getV2() - textureRegion.getV()) / 2.f);
+
+        float bottomX = originX + (width / 2.f);
+        float bottomY = originY;
+        float bottomU = textureRegion.getU() + ((textureRegion.getU2() - textureRegion.getU()) / 2.f);
+        float bottomV = textureRegion.getV2();
+
+
+        float[] vertices = FLT_BUFFER;
+        vertices[0] = topX;
+        vertices[1] = topY;
+        vertices[2] = topColorF;
+        vertices[3] = topU;
+        vertices[4] = topV;
+
+        vertices[5] = leftX;
+        vertices[6] = leftY;
+        vertices[7] = leftColorF;
+        vertices[8] = leftU;
+        vertices[9] = leftV;
+
+        vertices[10] = bottomX;
+        vertices[11] = bottomY;
+        vertices[12] = bottomColorF;
+        vertices[13] = bottomU;
+        vertices[14] = bottomV;
+
+        vertices[15] = rightX;
+        vertices[16] = rightY;
+        vertices[17] = rightColorF;
+        vertices[18] = rightU;
+        vertices[19] = rightV;
+
+        @Nullable GdxTextureEffect usedEffect;
+        if ((effects.length > 0) && (effects[0] instanceof GdxTextureEffect)) {
+            usedEffect = (GdxTextureEffect) effects[0];
+        } else {
+            usedEffect = null;
+        }
+        spriteBatch.setColor(tempColor1);
+        tempRegion.setRegion(gdxSprite.getFrame(frame).getTextureRegion());
+        tempRegion.flip(gdxSprite.isMirrored(), true);
+        if (usedEffect != null) {
+            float u, u2;
+            if (tempRegion.isFlipX()) {
+                u = tempRegion.getU();
+                u2 = tempRegion.getU2();
+            } else {
+                u2 = tempRegion.getU();
+                u = tempRegion.getU2();
+            }
+            float v, v2;
+            if (tempRegion.isFlipY()) {
+                v = tempRegion.getV();
+                v2 = tempRegion.getV2();
+            } else {
+                v2 = tempRegion.getV();
+                v = tempRegion.getV2();
+            }
+            usedEffect.setTopLeftCoordinate(u2, v2);
+            usedEffect.setBottomRightCoordinate(u, v);
+            usedEffect.activateEffect(spriteBatch);
+        }
+        spriteBatch.draw(textureRegion.getTexture(), FLT_BUFFER, 0, 20);
+
+        if (usedEffect != null) {
+            usedEffect.disableEffect(spriteBatch);
+        }
+    }
+
     @Override
     public void setBlendingMode(@Nonnull BlendingMode mode) {
         if (lastBlendingMode == mode) {
@@ -323,6 +443,11 @@ class GdxGraphics implements Graphics {
     static void transferColor(@Nonnull Color source, @Nonnull com.badlogic.gdx.graphics.Color target) {
         target.set(source.getRedf(), source.getGreenf(), source.getBluef(), source.getAlphaf());
         target.clamp();
+    }
+
+    private float getFloatColor(@Nonnull Color source, @Nonnull com.badlogic.gdx.graphics.Color workingInstance) {
+        transferColor(source, workingInstance);
+        return workingInstance.toFloatBits();
     }
 
     @Override

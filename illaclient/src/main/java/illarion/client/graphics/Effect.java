@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -95,7 +95,6 @@ public final class Effect extends AbstractEntity<EffectTemplate> implements Reso
         }
         if (lightSrc != null) {
             World.getLights().remove(lightSrc);
-            LightSource.releaseLight(lightSrc);
             lightSrc = null;
         }
         super.hide();
@@ -117,11 +116,10 @@ public final class Effect extends AbstractEntity<EffectTemplate> implements Reso
         if (getTemplate().getLight() > 0) {
             if (lightSrc != null) {
                 World.getLights().remove(lightSrc);
-                LightSource.releaseLight(lightSrc);
             }
             setLight(DEFAULT_LIGHT);
-            lightSrc = LightSource.createLight(loc, getTemplate().getLight());
-            World.getLights().add(lightSrc);
+            lightSrc = new LightSource(loc, getTemplate().getLight());
+            World.getLights().addLight(lightSrc);
         }
     }
 }
