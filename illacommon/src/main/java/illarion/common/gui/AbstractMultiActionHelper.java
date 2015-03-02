@@ -29,7 +29,15 @@ public abstract class AbstractMultiActionHelper {
      * The executor service that takes care for handling the multi action events.
      */
     @Nonnull
-    private static final ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(0);
+    private static final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1,
+            new ThreadFactory() {
+                @Override
+                public Thread newThread(@Nonnull Runnable r) {
+                    Thread t = new Thread(r, "MultiActionHelper Thread");
+                    t.setDaemon(true);
+                    return t;
+                }
+            });
 
     /**
      * Amount of actions that were registered since the events were last fired.
