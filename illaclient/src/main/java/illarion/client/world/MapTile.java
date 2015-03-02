@@ -836,17 +836,14 @@ public final class MapTile {
      * modifies the ambient light.
      *
      * This also resets the value of the temporary light to zero to ready it for the next calculation.
-     *
-     * @param ambientLight the ambient light from the weather
      */
-    public void renderLight(@Nonnull Color ambientLight) {
+    public void renderLight() {
         if (removedTile) {
             LOGGER.warn("Render light of a removed tile.");
             return;
         }
         tracerColor.setColor(tmpLight);
         tmpLight.setColor(Color.BLACK);
-        applyAmbientLight(ambientLight);
     }
 
     public void applyAmbientLight(@Nonnull Color ambientLight) {

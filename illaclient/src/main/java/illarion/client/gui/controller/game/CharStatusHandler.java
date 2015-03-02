@@ -52,6 +52,7 @@ public final class CharStatusHandler implements PlayerStatusGui, ScreenControlle
     /**
      * The progress bar that shows the food points.
      */
+    @Nullable
     private Progress foodPointBar;
 
     /**
@@ -109,17 +110,17 @@ public final class CharStatusHandler implements PlayerStatusGui, ScreenControlle
 
     @Override
     public void update(GameContainer container, int delta) {
-        if (hitPoints != currentHitPoints) {
+        if ((hitPoints != currentHitPoints) && (hitPointBar != null)) {
             currentHitPoints = AnimationUtility.approach(currentHitPoints, hitPoints, 0, 10000, delta);
-            hitPointBar.setProgress((float) currentHitPoints / 10000.f);
+            hitPointBar.setProgress(currentHitPoints / 10000.f);
         }
-        if (manaPoints != currentManaPoints) {
+        if ((manaPoints != currentManaPoints) && (manaPointBar != null)) {
             currentManaPoints = AnimationUtility.approach(currentManaPoints, manaPoints, 0, 10000, delta);
-            manaPointBar.setProgress((float) currentManaPoints / 10000.f);
+            manaPointBar.setProgress(currentManaPoints / 10000.f);
         }
-        if (foodPoints != currentFoodPoints) {
+        if ((foodPoints != currentFoodPoints) && (foodPointBar != null)) {
             currentFoodPoints = AnimationUtility.approach(currentFoodPoints, foodPoints, 0, 60000, delta);
-            foodPointBar.setProgress((float) currentFoodPoints / 60000.f);
+            foodPointBar.setProgress(currentFoodPoints / 60000.f);
         }
     }
 
@@ -134,6 +135,8 @@ public final class CharStatusHandler implements PlayerStatusGui, ScreenControlle
                 break;
             case ManaPoints:
                 manaPoints = value;
+                break;
+            default:
                 break;
         }
     }
