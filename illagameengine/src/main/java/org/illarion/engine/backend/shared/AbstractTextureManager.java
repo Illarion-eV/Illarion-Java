@@ -15,6 +15,7 @@
  */
 package org.illarion.engine.backend.shared;
 
+import illarion.common.util.PoolThreadFactory;
 import illarion.common.util.ProgressMonitor;
 import org.illarion.engine.assets.TextureManager;
 import org.illarion.engine.graphic.Texture;
@@ -126,7 +127,7 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
         parserFactory.setValidating(false);
 
         // Loading starts here. Firing up the executor.
-        loadingExecutor = Executors.newCachedThreadPool();
+        loadingExecutor = Executors.newFixedThreadPool(2, new PoolThreadFactory("TextureLoading", false));
         int directoryCount = rootDirectories.size();
         for (int i = 0; i < directoryCount; i++) {
             if (directoriesLoaded.get(i)) {

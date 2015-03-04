@@ -16,6 +16,7 @@
 package org.illarion.engine.graphic;
 
 import illarion.common.types.Location;
+import illarion.common.util.PoolThreadFactory;
 import illarion.common.util.Stoppable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,7 +134,10 @@ public final class LightTracer implements Stoppable {
     public LightTracer(@Nonnull LightingMap tracerMapSource) {
         mapSource = tracerMapSource;
         lights = new CopyOnWriteArrayList<>();
-        lightCalculationService = Executors.newCachedThreadPool();
+
+        int maxThreads = Runtime.getRuntime().availableProcessors();
+        lightCalculationService = new ThreadPoolExecutor(0, maxThreads, 10L, TimeUnit.SECONDS,
+                new SynchronousQueue<Runnable>(), new PoolThreadFactory("LightTracer", true));
         lightsInProgress = new AtomicInteger(0);
         applyingLock = new ReentrantReadWriteLock();
     }
