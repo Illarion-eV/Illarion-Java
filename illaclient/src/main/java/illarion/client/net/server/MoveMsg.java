@@ -187,6 +187,7 @@ public final class MoveMsg implements ServerReply {
     @Override
     @Contract(pure = true)
     public String toString() {
-        return Utilities.toString(MoveMsg.class, location, "Duration: " + duration + "ms");
+        return Utilities.toString(MoveMsg.class, charId, location, "Duration: " + duration +
+                "ms");
     }
 }
