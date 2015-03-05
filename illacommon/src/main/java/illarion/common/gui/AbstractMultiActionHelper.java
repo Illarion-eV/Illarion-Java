@@ -15,6 +15,8 @@
  */
 package illarion.common.gui;
 
+import illarion.common.util.PoolThreadFactory;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.concurrent.*;
@@ -29,7 +31,8 @@ public abstract class AbstractMultiActionHelper {
      * The executor service that takes care for handling the multi action events.
      */
     @Nonnull
-    private static final ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(0);
+    private static final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1,
+            new PoolThreadFactory("MultiActionHelper", true));
 
     /**
      * Amount of actions that were registered since the events were last fired.

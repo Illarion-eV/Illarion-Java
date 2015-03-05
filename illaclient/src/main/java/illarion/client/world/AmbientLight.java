@@ -15,6 +15,7 @@
  */
 package illarion.client.world;
 
+import illarion.common.util.PoolThreadFactory;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.ImmutableColor;
 
@@ -65,7 +66,8 @@ final class AmbientLight {
         ambientLight1 = new Color(Color.BLACK);
         ambientLight2 = new Color(Color.BLACK);
         ambientLightToggle = false;
-        calculationExecutor = Executors.newSingleThreadScheduledExecutor();
+        calculationExecutor = Executors.newSingleThreadScheduledExecutor(
+                new PoolThreadFactory("AmbientLightCalculation", true));
         calculationExecutor.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
