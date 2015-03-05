@@ -137,7 +137,7 @@ public final class LightTracer implements Stoppable {
 
         int maxThreads = Runtime.getRuntime().availableProcessors();
         lightCalculationService = new ThreadPoolExecutor(0, maxThreads, 10L, TimeUnit.SECONDS,
-                new SynchronousQueue<Runnable>(), new PoolThreadFactory("LightTracer", true));
+                new LinkedBlockingQueue<Runnable>(), new PoolThreadFactory("LightTracer", true));
         lightsInProgress = new AtomicInteger(0);
         applyingLock = new ReentrantReadWriteLock();
     }
