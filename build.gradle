@@ -108,6 +108,10 @@ subprojects { project ->
         }
         project.test {
             useTestNG()
+            options {
+                listeners.clear()
+                listeners << 'org.testng.reporters.XMLReporter'
+            }
         }
         project.apply { 'idea' }
         project.configurations {
