@@ -18,6 +18,7 @@ package illarion.common.types;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -128,8 +129,13 @@ public final class Money implements Comparable<Money> {
 
     @Override
     @Contract(value = "null -> false", pure = true)
-    public boolean equals(@Nonnull Object o) {
-        return super.equals(o) || ((o instanceof Money) && (copperCoins == ((Money) o).copperCoins));
+    public boolean equals(@Nullable Object obj) {
+        return (obj instanceof Money) && equals((Money) obj);
+    }
+
+    @Contract(value = "null -> false", pure = true)
+    public boolean equals(@Nullable Money money) {
+        return (money != null) && (money.copperCoins == copperCoins);
     }
 
     @Override

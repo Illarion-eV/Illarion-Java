@@ -20,6 +20,7 @@ import illarion.common.util.AppIdent;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.DirectoryManager.Directory;
 import illarion.common.util.MessageSource;
+import org.jetbrains.annotations.Contract;
 import org.mantisbt.connect.IMCSession;
 import org.mantisbt.connect.MCException;
 import org.mantisbt.connect.axis.MCSession;
@@ -33,6 +34,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * This class stores the crash reporter itself. It holds all settings done to
@@ -77,6 +79,7 @@ public final class CrashReporter {
     /**
      * The singleton instance of this class.
      */
+    @Nonnull
     private static final CrashReporter INSTANCE = new CrashReporter();
 
     /**
@@ -111,6 +114,7 @@ public final class CrashReporter {
      * This is the source of the messages that are displayed in the crash report
      * dialog.
      */
+    @Nullable
     private MessageSource messages;
 
     /**
@@ -123,6 +127,9 @@ public final class CrashReporter {
      */
     @Nullable
     private ReportDialogFactory dialogFactory;
+
+    @Nullable
+    private CountDownLatch crashReportDoneLatch;
 
     /**
      * Private constructor of the crash reporter that prepares all the required
@@ -138,6 +145,7 @@ public final class CrashReporter {
      * @return the singleton instance of this class
      */
     @Nonnull
+    @Contract(pure = true)
     public static CrashReporter getInstance() {
         return INSTANCE;
     }
@@ -196,14 +204,9 @@ public final class CrashReporter {
                 break;
             case MODE_NEVER:
                 return;
-            case MODE_ASK:
             default:
-                synchronized (this) {
-                    if (dialogFactory == null) {
-                        return;
-                    }
-                    dialog = dialogFactory.createDialog();
-                }
+                crashReportDoneLatch = new CountDownLatch(1);
+                dialog = dialogFactory.createDialog();
 
                 dialog.setCrashData(crash);
                 dialog.setMessageSource(messages);
@@ -216,7 +219,8 @@ public final class CrashReporter {
                         if (cfg != null) {
                             cfg.set(CFG_KEY, MODE_ALWAYS);
                         }
-                        //$FALL-THROUGH$
+                        sendCrashData(crash);
+                        break;
                     case ReportDialog.SEND_ONCE:
                         sendCrashData(crash);
                         break;
@@ -225,17 +229,14 @@ public final class CrashReporter {
                         if (cfg != null) {
                             cfg.set(CFG_KEY, MODE_NEVER);
                         }
-                        //$FALL-THROUGH$
-                    case ReportDialog.SEND_NOT:
+                        break;
                     default:
                         break;
                 }
 
-                synchronized (this) {
-                    dialog = null;
-                    notifyAll();
-                }
-
+                crashReportDoneLatch.countDown();
+                crashReportDoneLatch = null;
+                dialog = null;
                 break;
         }
     }
@@ -267,16 +268,16 @@ public final class CrashReporter {
     /**
      * This function blocks the current thread from execution in case the crash
      * reporter is currently showing a crash report or is sending the
-     * informations on a crash to the server.
+     * information on a crash to the server.
      */
     public void waitForReport() {
-        synchronized (this) {
-            while (dialog != null) {
-                try {
-                    wait(100);
-                } catch (@Nonnull InterruptedException e) {
-                    log.debug("Wait for report was interrupted!", e); //$NON-NLS-1$
-                }
+        CountDownLatch localLatch = crashReportDoneLatch;
+        if (localLatch != null) {
+            try {
+                localLatch.await();
+            } catch (InterruptedException e) {
+                log.debug("Wait for report was interrupted!", e);
+                // Thread interrupted. Just exit the function
             }
         }
     }
@@ -404,6 +405,7 @@ public final class CrashReporter {
     }
 
     @Nonnull
+    @Contract(pure = true)
     private static String saveString(@Nullable String input) {
         if (input == null) {
             return "";
