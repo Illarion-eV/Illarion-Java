@@ -327,13 +327,21 @@ public final class LightSource {
     }
 
     @Override
+    @Contract(pure = true)
+    public int hashCode() {
+        return (int) (((23L + getEncodedValue()) * 31L) + location.hashCode());
+    }
+
+    @Override
     @Nonnull
+    @Contract(pure = true)
     public String toString() {
         return "LightSource (" + location + ", " + color + ",  brightness: " + bright + ", size: " + size +
                 ", dirty: " + dirty + ')';
     }
 
     @Nonnull
+    @Contract(pure = true)
     Lock getCalculationLock() {
         return calculationLock;
     }
