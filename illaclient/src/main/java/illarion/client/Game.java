@@ -325,7 +325,7 @@ public final class Game implements GameListener {
         }
     }
 
-    private static final boolean SHOW_RENDER_DIAGNOSTIC = IllaClient.DEFAULT_SERVER != Servers.realserver;
+    private static final boolean SHOW_RENDER_DIAGNOSTIC = IllaClient.DEFAULT_SERVER != Servers.Realserver;
 
     private boolean showFPS;
     private boolean showPing;

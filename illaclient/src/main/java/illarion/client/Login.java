@@ -146,14 +146,14 @@ public final class Login {
     }
 
     public void storeData(boolean storePassword) {
-        if (IllaClient.DEFAULT_SERVER == Servers.realserver) {
-            IllaClient.getInstance().setUsedServer(Servers.realserver);
+        if (IllaClient.DEFAULT_SERVER == Servers.Realserver) {
+            IllaClient.getInstance().setUsedServer(Servers.Realserver);
         } else {
             IllaClient.getCfg().set("server", getServer().getServerKey());
             IllaClient.getInstance().setUsedServer(getServer());
         }
 
-        if (getServer() == Servers.customserver) {
+        if (getServer() == Servers.Customserver) {
             IllaClient.getCfg().set("customLastLogin", getLoginName());
             IllaClient.getCfg().set("customSavePassword", storePassword);
         } else {
@@ -189,7 +189,7 @@ public final class Login {
     @Nonnull
     public Servers getServer() {
         if (server == null) {
-            return Servers.realserver;
+            return Servers.Realserver;
         }
         return server;
     }
@@ -220,7 +220,7 @@ public final class Login {
     }
 
     public boolean isCharacterListRequired() {
-        if (getServer() == Servers.customserver) {
+        if (getServer() == Servers.Customserver) {
             return IllaClient.getCfg().getBoolean("serverAccountLogin");
         } else {
             return true;
@@ -312,20 +312,20 @@ public final class Login {
             CharEntry addChar = new CharEntry(charName, status);
 
             switch (IllaClient.getInstance().getUsedServer()) {
-                case customserver:
+                case Customserver:
                     charList.add(addChar);
                     break;
-                case testserver:
+                case Testserver:
                     if ("testserver".equals(charServer)) {
                         charList.add(addChar);
                     }
                     break;
-                case devserver:
+                case Devserver:
                     if ("devserver".equals(charServer)) {
                         charList.add(addChar);
                     }
                     break;
-                case realserver:
+                case Realserver:
                     if ("illarionserver".equals(charServer)) {
                         charList.add(addChar);
                     }
@@ -364,7 +364,7 @@ public final class Login {
         }
 
         int clientVersion;
-        if (getServer() == Servers.customserver) {
+        if (getServer() == Servers.Customserver) {
             if (IllaClient.getCfg().getBoolean("clientVersionOverwrite")) {
                 clientVersion = IllaClient.getCfg().getInteger("clientVersion");
             } else {
@@ -385,7 +385,7 @@ public final class Login {
     @SuppressWarnings("nls")
     private void restorePassword() {
         String encoded;
-        if (getServer() == Servers.customserver) {
+        if (getServer() == Servers.Customserver) {
             encoded = IllaClient.getCfg().getString("customFingerprint");
         } else {
             encoded = IllaClient.getCfg().getString("fingerprint");
@@ -395,7 +395,7 @@ public final class Login {
     }
 
     private void restoreStorePassword() {
-        if (getServer() == Servers.customserver) {
+        if (getServer() == Servers.Customserver) {
             storePassword = IllaClient.getCfg().getBoolean("customSavePassword");
         } else {
             storePassword = IllaClient.getCfg().getBoolean("savePassword");
@@ -407,7 +407,7 @@ public final class Login {
     }
 
     private void restoreLogin() {
-        if (getServer() == Servers.customserver) {
+        if (getServer() == Servers.Customserver) {
             loginName = IllaClient.getCfg().getString("customLastLogin");
         } else {
             loginName = IllaClient.getCfg().getString("lastLogin");
@@ -473,7 +473,7 @@ public final class Login {
      */
     @SuppressWarnings("nls")
     private void storePassword(@Nonnull String pw) {
-        if (getServer() == Servers.customserver) {
+        if (getServer() == Servers.Customserver) {
             IllaClient.getCfg().set("customSavePassword", true);
             IllaClient.getCfg().set("customFingerprint", shufflePassword(pw, false));
         } else {
@@ -486,7 +486,7 @@ public final class Login {
      * Remove the stored password.
      */
     private void deleteStoredPassword() {
-        if (getServer() == Servers.customserver) {
+        if (getServer() == Servers.Customserver) {
             IllaClient.getCfg().set("customSavePassword", false);
             IllaClient.getCfg().remove("customFingerprint");
         } else {

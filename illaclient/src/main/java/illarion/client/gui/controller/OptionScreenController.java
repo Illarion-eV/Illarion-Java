@@ -108,7 +108,7 @@ public final class OptionScreenController implements ScreenController {
         if (serverTab == null) {
             return;
         }
-        if (IllaClient.DEFAULT_SERVER == Servers.realserver) {
+        if (IllaClient.DEFAULT_SERVER == Servers.Realserver) {
             tabRoot.getNiftyControl(TabGroup.class).removeTab(serverTab);
         } else {
             serverAddress = serverTab.findNiftyControl("serverAddress", TextField.class);
@@ -145,7 +145,7 @@ public final class OptionScreenController implements ScreenController {
             if (IllaClient.getCfg().getBoolean("clientVersionOverwrite")) {
                 clientVersion.setText(Integer.toString(IllaClient.getCfg().getInteger("clientVersion")));
             } else {
-                clientVersion.setText(Integer.toString(Servers.customserver.getClientVersion()));
+                clientVersion.setText(Integer.toString(Servers.Customserver.getClientVersion()));
             }
             serverAccountLogin.setChecked(IllaClient.getCfg().getBoolean("serverAccountLogin"));
             serverResetSettings.setChecked(false);
@@ -207,9 +207,9 @@ public final class OptionScreenController implements ScreenController {
 
         if (serverAddress != null) {
             if (serverResetSettings.isChecked()) {
-                configSystem.set("serverAddress", Servers.customserver.getServerHost());
-                configSystem.set("serverPort", Servers.customserver.getServerPort());
-                configSystem.set("clientVersion", Servers.customserver.getClientVersion());
+                configSystem.set("serverAddress", Servers.Customserver.getServerHost());
+                configSystem.set("serverPort", Servers.Customserver.getServerPort());
+                configSystem.set("clientVersion", Servers.Customserver.getClientVersion());
                 configSystem.set("clientVersionOverwrite", false);
                 configSystem.set("serverAccountLogin", true);
             } else {
@@ -217,8 +217,8 @@ public final class OptionScreenController implements ScreenController {
                 configSystem.set("serverPort", Integer.parseInt(serverPort.getRealText()));
 
                 int clientVersionNumber = Integer.parseInt(clientVersion.getRealText());
-                if (clientVersionNumber == Servers.customserver.getClientVersion()) {
-                    configSystem.set("clientVersion", Servers.customserver.getClientVersion());
+                if (clientVersionNumber == Servers.Customserver.getClientVersion()) {
+                    configSystem.set("clientVersion", Servers.Customserver.getClientVersion());
                     configSystem.set("clientVersionOverwrite", false);
                 } else {
                     configSystem.set("clientVersion", clientVersionNumber);
