@@ -86,6 +86,15 @@ task generateGrammarSource(dependsOn: antlrOutputDir, type: JavaExec) {
 
 }
 
+tasks.withType(FindBugs) {
+    exclude '**/illarion/easynpc/grammar/*'
+    excludeFilter = file("$projectDir/findbugs-exclude.xml")
+}
+
+tasks.withType(Pmd) {
+    exclude '**/illarion/easynpc/grammar/*'
+}
+
 compileJava {
     dependsOn generateGrammarSource
     source antlr.destinationDir
