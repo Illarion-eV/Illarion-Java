@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,64 +16,57 @@
 package illarion.client.docu;
 
 import illarion.client.util.Lang;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.Iterator;
 
 /**
  * @author Fredrik K
  */
-public class DocuLeaf implements DocuEntry {
+public final class DocuLeaf implements DocuEntry {
     @Nonnull
     private final String docuDesc;
     @Nonnull
     private final String docuTitle;
 
-    public DocuLeaf(String type, String name) {
+    public DocuLeaf(@Nonnull String type, @Nonnull String name) {
         docuTitle = String.format("docu.%s.%s.title", type, name);
         docuDesc = String.format("docu.%s.%s.description", type, name);
     }
 
-    @Nullable
     @Override
+    @Contract(value = "_->fail", pure = true)
     public DocuEntry getChild(int index) {
         throw new IllegalArgumentException("There are no childs to request.");
     }
 
+    @Nonnull
     @Override
+    @Contract(pure = true)
     public int getChildCount() {
         return 0;
     }
 
+    @Nonnull
     @Override
+    @Contract(pure = true)
     public String getDescription() {
         return Lang.getMsg(docuDesc);
     }
 
+    @Nonnull
     @Override
+    @Contract(pure = true)
     public String getTitle() {
         return Lang.getMsg(docuTitle);
     }
 
-    @Nullable
+    @Nonnull
     @Override
+    @Contract(pure = true)
     public Iterator<DocuEntry> iterator() {
-        return new Iterator<DocuEntry>() {
-            @Override
-            public boolean hasNext() {
-                return false;
-            }
-
-            @Override
-            public DocuEntry next() {
-                return null;
-            }
-
-            @Override
-            public void remove() {
-
-            }
-        };
+        return Collections.emptyIterator();
     }
 }

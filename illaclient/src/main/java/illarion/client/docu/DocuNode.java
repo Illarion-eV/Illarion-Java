@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,6 +16,7 @@
 package illarion.client.docu;
 
 import illarion.client.util.Lang;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,11 +27,11 @@ import java.util.List;
 /**
  * @author Fredrik K
  */
-public class DocuNode implements DocuEntry {
+public final class DocuNode implements DocuEntry {
     @Nonnull
     private final String docuTitle;
     @Nonnull
-    private List<DocuEntry> children;
+    private final List<DocuEntry> children;
     @Nonnull
     private final String npcType;
 
@@ -39,17 +40,13 @@ public class DocuNode implements DocuEntry {
      *
      * @param type The type
      */
-    public DocuNode(@Nonnull final String type) {
-        this(type, false);
-    }
-
-    public DocuNode(@Nonnull final String type, boolean example) {
+    public DocuNode(@Nonnull String type) {
         children = new ArrayList<>();
         npcType = type;
         docuTitle = String.format("docu.%s.title", npcType);
     }
 
-    @Nullable
+    @Nonnull
     @Override
     public DocuEntry getChild(int index) {
         return children.get(index);
@@ -62,38 +59,26 @@ public class DocuNode implements DocuEntry {
 
     @Nullable
     @Override
+    @Contract(value = "_->null", pure = true)
     public String getDescription() {
         return null;
     }
 
+    @Nonnull
     @Override
+    @Contract(pure = true)
     public String getTitle() {
         return Lang.getMsg(docuTitle);
     }
 
-    public void addChild(String child) {
+    public void addChild(@Nonnull String child) {
         children.add(new DocuLeaf(npcType, child));
     }
 
+    @Nonnull
     @Override
+    @Contract(pure = true)
     public Iterator<DocuEntry> iterator() {
-        return new Iterator<DocuEntry>() {
-            public int currentIndex = 0;
-
-            @Override
-            public boolean hasNext() {
-                return currentIndex < children.size();
-            }
-
-            @Override
-            public DocuEntry next() {
-                return children.get(currentIndex++);
-            }
-
-            @Override
-            public void remove() {
-
-            }
-        };
+        return children.iterator();
     }
 }

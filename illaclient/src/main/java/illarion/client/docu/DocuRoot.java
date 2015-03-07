@@ -15,6 +15,8 @@
  */
 package illarion.client.docu;
 
+import org.jetbrains.annotations.Contract;
+
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -23,7 +25,7 @@ import java.util.List;
 /**
  * @author Fredrik K
  */
-public class DocuRoot implements Iterable<DocuEntry> {
+public final class DocuRoot implements Iterable<DocuEntry> {
     @Nonnull
     private static final DocuRoot INSTANCE = new DocuRoot();
     @Nonnull
@@ -32,6 +34,14 @@ public class DocuRoot implements Iterable<DocuEntry> {
     private DocuRoot() {
         types = new ArrayList<>();
 
+        types.add(createMouseControlDocu());
+        types.add(createKeyboardControlDocu());
+        types.add(createNoChatDocu());
+        types.add(createInChatDocu());
+    }
+
+    @Nonnull
+    private static DocuEntry createMouseControlDocu() {
         DocuNode docu = new DocuNode("mouse");
         docu.addChild("clickLeft");
         docu.addChild("holdLeft");
@@ -39,18 +49,24 @@ public class DocuRoot implements Iterable<DocuEntry> {
         docu.addChild("clickRight");
         docu.addChild("moveItem");
         docu.addChild("unstackItem");
-        types.add(docu);
+        return docu;
+    }
 
-        docu = new DocuNode("keys");
+    @Nonnull
+    private static DocuEntry createKeyboardControlDocu() {
+        DocuNode docu = new DocuNode("keys");
         docu.addChild("return");
         docu.addChild("emptyReturn");
         docu.addChild("ctrlC");
         docu.addChild("ctrlV");
         docu.addChild("altGr");
         docu.addChild("f12");
-        types.add(docu);
+        return docu;
+    }
 
-        docu = new DocuNode("noChat");
+    @Nonnull
+    private static DocuEntry createNoChatDocu() {
+        DocuNode docu = new DocuNode("noChat");
         docu.addChild("wasd");
         docu.addChild("arrow");
         docu.addChild("numpad");
@@ -62,16 +78,20 @@ public class DocuRoot implements Iterable<DocuEntry> {
         docu.addChild("qKey");
         docu.addChild("bKey");
         docu.addChild("esc");
-        types.add(docu);
+        return docu;
+    }
 
-        docu = new DocuNode("inChat");
+    @Nonnull
+    private static DocuEntry createInChatDocu() {
+        DocuNode docu = new DocuNode("inChat");
         docu.addChild("iCommand");
         docu.addChild("oCommand");
         docu.addChild("wCommand");
         docu.addChild("sCommand");
         docu.addChild("meCommand");
-        types.add(docu);
+        return docu;
     }
+
 
     /**
      * Get the singleton instance of this parser.
@@ -79,6 +99,7 @@ public class DocuRoot implements Iterable<DocuEntry> {
      * @return the singleton instance of this class
      */
     @Nonnull
+    @Contract(pure = true)
     public static DocuRoot getInstance() {
         return INSTANCE;
     }
@@ -86,23 +107,6 @@ public class DocuRoot implements Iterable<DocuEntry> {
     @Nonnull
     @Override
     public Iterator<DocuEntry> iterator() {
-        return new Iterator<DocuEntry>() {
-            public int currentIndex = 0;
-
-            @Override
-            public boolean hasNext() {
-                return currentIndex < types.size();
-            }
-
-            @Override
-            public DocuEntry next() {
-                return types.get(currentIndex++);
-            }
-
-            @Override
-            public void remove() {
-
-            }
-        };
+        return types.iterator();
     }
 }
