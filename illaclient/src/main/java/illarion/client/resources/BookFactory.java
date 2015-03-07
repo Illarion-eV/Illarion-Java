@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,6 +17,7 @@ package illarion.client.resources;
 
 import illarion.client.util.IdWrapper;
 import illarion.common.data.Book;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -42,7 +43,8 @@ public final class BookFactory implements ResourceFactory<IdWrapper<String>> {
     /**
      * The logger instance of this class.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(BookFactory.class);
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(BookFactory.class);
 
     /**
      * The map that stores the file names in relation to the book IDs.
@@ -59,6 +61,7 @@ public final class BookFactory implements ResourceFactory<IdWrapper<String>> {
     /**
      * The singleton instance of this factory.
      */
+    @Nonnull
     private static final BookFactory INSTANCE = new BookFactory();
 
     /**
@@ -67,6 +70,7 @@ public final class BookFactory implements ResourceFactory<IdWrapper<String>> {
      * @return the singleton instance of this factory
      */
     @Nonnull
+    @Contract(pure = true)
     public static BookFactory getInstance() {
         return INSTANCE;
     }
@@ -95,10 +99,10 @@ public final class BookFactory implements ResourceFactory<IdWrapper<String>> {
      * @param resource the resource to store
      */
     @Override
-    public void storeResource(@Nonnull final IdWrapper<String> resource) {
+    public void storeResource(@Nonnull IdWrapper<String> resource) {
         if (getBookUrl(resource.getObject()) == null) {
-            LOGGER.error("Book ID: " + Integer.toString(resource.getId()) + " not found. File " + resource.getObject() +
-                                 ".book.xml is missing in the resources.");
+            log.error("Book ID: {} not found. File {}.book.xml is missing in the resources.",
+                    Integer.toString(resource.getId()), resource.getObject());
         } else {
             fileMap.put(resource.getId(), resource.getObject());
         }
@@ -111,7 +115,7 @@ public final class BookFactory implements ResourceFactory<IdWrapper<String>> {
      * @return the URL to the book resource
      */
     @Nullable
-    private URL getBookUrl(final int id) {
+    private URL getBookUrl(int id) {
         return getBookUrl(fileMap.get(id));
     }
 
@@ -122,11 +126,7 @@ public final class BookFactory implements ResourceFactory<IdWrapper<String>> {
      * @return the URL to the book resource
      */
     @Nullable
-    private static URL getBookUrl(@Nullable final String baseName) {
-        if (baseName == null) {
-            return null;
-        }
-
+    private static URL getBookUrl(@Nonnull String baseName) {
         return Thread.currentThread().getContextClassLoader().getResource("books/" + baseName + ".book.xml");
     }
 
@@ -137,35 +137,35 @@ public final class BookFactory implements ResourceFactory<IdWrapper<String>> {
      * @return the book with all its data
      */
     @Nullable
-    public Book getBook(final int id) {
-        final Reference<Book> bookReference = bookMap.get(id);
+    public Book getBook(int id) {
+        Reference<Book> bookReference = bookMap.get(id);
         Book requestedBook = null;
         if (bookReference != null) {
             requestedBook = bookReference.get();
         }
 
         if (requestedBook == null) {
-            final URL bookUrl = getBookUrl(id);
+            URL bookUrl = getBookUrl(id);
             if (bookUrl == null) {
-                LOGGER.error("Book resource not found: " + Integer.toString(id));
+                log.error("Book resource not found: {}", Integer.toString(id));
                 return null;
             }
 
-            final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
             docBuilderFactory.setIgnoringComments(true);
             docBuilderFactory.setIgnoringElementContentWhitespace(true);
             docBuilderFactory.setNamespaceAware(true);
             docBuilderFactory.setValidating(false);
             try {
-                final Document document = docBuilderFactory.newDocumentBuilder().parse(bookUrl.openStream());
+                Document document = docBuilderFactory.newDocumentBuilder().parse(bookUrl.openStream());
                 requestedBook = new Book(document);
                 bookMap.put(id, new SoftReference<>(requestedBook));
-            } catch (@Nonnull final ParserConfigurationException e) {
-                LOGGER.error("Setting up XML parser failed!", e);
-            } catch (@Nonnull final SAXException e) {
-                LOGGER.error("Parsing Book XML file failed!", e);
-            } catch (@Nonnull final IOException e) {
-                LOGGER.error("Reading Book XML file failed!", e);
+            } catch (@Nonnull ParserConfigurationException e) {
+                log.error("Setting up XML parser failed!", e);
+            } catch (@Nonnull SAXException e) {
+                log.error("Parsing Book XML file failed!", e);
+            } catch (@Nonnull IOException e) {
+                log.error("Reading Book XML file failed!", e);
             }
         }
 

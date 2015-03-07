@@ -69,7 +69,7 @@ public final class BookPage implements Iterable<BookPageEntry> {
                             Align.Center));
                     break;
                 case "poem":
-                    entries.add(new BookPageEntry(true, getNodeValue(child.getFirstChild()), true,
+                    entries.add(new BookPageEntry(false, getNodeValue(child.getFirstChild()), true,
                             Align.Center));
                     break;
                 case "paragraph":
