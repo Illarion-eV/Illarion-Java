@@ -79,7 +79,9 @@ public final class MapStripeMsg implements ServerReply {
 
         GameMap map = World.getMap();
         map.updateTiles(tiles);
-        map.finishTileUpdate();
+        if (World.getMapDisplay().isActive()) {
+            map.checkInside();
+        }
         return ServerReplyResult.Success;
     }
 
