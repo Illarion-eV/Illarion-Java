@@ -88,6 +88,9 @@ public class Movement {
     @Nonnull
     private final MoveAnimation moveAnimation;
 
+    @Nullable
+    private MoveCmd lastSendMoveCommand;
+
     /**
      * This instance of the player location is kept in sync with the location that was last confirmed by the server
      * to keep track of where the player REALLY is.
@@ -237,6 +240,7 @@ public class Movement {
 
     @Contract(pure = true)
     private static int getMovementDuration(int tileMovementCost, double mods, boolean diagonal, boolean running) {
+        // do not mess with this function. This one has to match the server function exactly to yield the same results
         int movementDuration = FastMath.clamp((int) (tileMovementCost * 100.0 * mods), MIN_WALK_COST, MAX_WALK_COST);
 
         if (diagonal) {
@@ -249,19 +253,17 @@ public class Movement {
     }
 
     public void executeServerLocation(@Nonnull Location target) {
-        animator.cancelAll();
-        stepInProgress = false;
-        World.getPlayer().setLocation(target);
-
         MovementHandler currentHandler = activeHandler;
         if (currentHandler != null) {
             currentHandler.disengage(false);
         }
+
+        stepInProgress = false;
+        animator.cancelAll();
+
+        World.getPlayer().setLocation(target);
         playerLocation.set(target);
     }
-
-    @Nullable
-    private MoveCmd lastSendMoveCommand;
 
     /**
      * Send the movement command to the server.

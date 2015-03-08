@@ -32,6 +32,8 @@ import org.illarion.engine.input.Input;
 import org.illarion.engine.input.Key;
 
 import javax.annotation.Nonnull;
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * This class is used to generate events based on keys that got pressed.
@@ -39,10 +41,15 @@ import javax.annotation.Nonnull;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class KeyMapper {
+    @Nonnull
     private final Input input;
 
-    public KeyMapper(Input input) {
+    @Nonnull
+    private final Set<Key> keyPressed;
+
+    public KeyMapper(@Nonnull Input input) {
         this.input = input;
+        keyPressed = EnumSet.noneOf(Key.class);
 
         applyWasdWalkSettings();
         AnnotationProcessor.process(this);
@@ -62,6 +69,7 @@ public final class KeyMapper {
     }
 
     public void handleKeyReleasedInput(@Nonnull Key key) {
+        keyPressed.remove(key);
         KeyboardMovementHandler handler = World.getPlayer().getMovementHandler().getKeyboardHandler();
         switch (key) {
             case CursorUp:
@@ -126,7 +134,8 @@ public final class KeyMapper {
         }
     }
 
-    public void handleKeyPressedInput(@Nonnull Key key) {         
+    public void handleKeyPressedInput(@Nonnull Key key) {
+        boolean firstPressed = keyPressed.add(key);
         switch (key) {
             case B:
                 if (World.getPlayer().hasContainer(0)) {
@@ -161,62 +170,62 @@ public final class KeyMapper {
 
             case CursorUp:
             case NumPad8:
-                startMovingTowards(Direction.NorthEast);
+                startMovingTowards(Direction.NorthEast, firstPressed);
                 break;
             case W:
                 if (useWasdWalking) {
-                    startMovingTowards(Direction.NorthEast);
+                    startMovingTowards(Direction.NorthEast, firstPressed);
                 }
                 break;
 
             case CursorLeft:
             case NumPad4:
-                startMovingTowards(Direction.NorthWest);
+                startMovingTowards(Direction.NorthWest, firstPressed);
                 break;
             case A:
                 if (useWasdWalking) {
-                    startMovingTowards(Direction.NorthWest);
+                    startMovingTowards(Direction.NorthWest, firstPressed);
                 }
                 break;
 
             case CursorDown:
             case NumPad2:
-                startMovingTowards(Direction.SouthWest);
+                startMovingTowards(Direction.SouthWest, firstPressed);
                 break;
             case S:
                 if (useWasdWalking) {
-                    startMovingTowards(Direction.SouthWest);
+                    startMovingTowards(Direction.SouthWest, firstPressed);
                 }
                 break;
 
             case CursorRight:
             case NumPad6:
-                startMovingTowards(Direction.SouthEast);
+                startMovingTowards(Direction.SouthEast, firstPressed);
                 break;
             case D:
                 if (useWasdWalking) {
-                    startMovingTowards(Direction.SouthEast);
+                    startMovingTowards(Direction.SouthEast, firstPressed);
                 }
                 break;
 
             case NumPad1:
             case End:
-                startMovingTowards(Direction.West);
+                startMovingTowards(Direction.West, firstPressed);
                 break;
 
             case NumPad3:
             case PageDown:
-                startMovingTowards(Direction.South);
+                startMovingTowards(Direction.South, firstPressed);
                 break;
 
             case NumPad7:
             case Home:
-                startMovingTowards(Direction.North);
+                startMovingTowards(Direction.North, firstPressed);
                 break;
 
             case NumPad9:
             case PageUp:
-                startMovingTowards(Direction.East);
+                startMovingTowards(Direction.East, firstPressed);
                 break;
 
             case LeftCtrl:
@@ -249,10 +258,12 @@ public final class KeyMapper {
         }
     }
 
-    private static void startMovingTowards(@Nonnull Direction direction) {
+    private static void startMovingTowards(@Nonnull Direction direction, boolean firstPressed) {
         KeyboardMovementHandler handler = World.getPlayer().getMovementHandler().getKeyboardHandler();
         handler.startMovingTowards(direction);
-        handler.assumeControl();
+        if (firstPressed) {
+            handler.assumeControl();
+        }
     }
 
     private static void cyclePermanentAvatarTag() {
