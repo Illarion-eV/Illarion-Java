@@ -18,12 +18,14 @@ package illarion.client.world;
 import illarion.client.net.client.AttackCmd;
 import illarion.client.net.client.StandDownCmd;
 import illarion.common.types.CharacterId;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * This class is used to store and set the current combat mode. It will forward all changes to the combat mode to the
@@ -34,16 +36,29 @@ import javax.annotation.concurrent.ThreadSafe;
 @ThreadSafe
 public final class CombatHandler {
     /**
+     * The logging instance of this class.
+     */
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(CombatHandler.class);
+
+    /**
      * The character that is currently under attack.
      */
     @Nullable
     private Char attackedChar;
 
     /**
+     * This flag is used to track if the next target lost command from the server is supposed to be ignored.
+     */
+    @Nonnull
+    private final AtomicBoolean ignoreNextTargetLost = new AtomicBoolean(false);
+
+    /**
      * Test if the player is currently attacking anyone.
      *
      * @return {@code true} in case anyone is attacked
      */
+    @Contract(pure = true)
     public boolean isAttacking() {
         return attackedChar != null;
     }
@@ -67,6 +82,7 @@ public final class CombatHandler {
      * @param testChar the char to check if he is the current target
      * @return {@code true} in case the character is the current target
      */
+    @Contract(pure = true)
     public boolean isAttacking(@Nonnull Char testChar) {
         return testChar.equals(attackedChar);
     }
@@ -76,9 +92,11 @@ public final class CombatHandler {
      * attack. It just requests to stop the attack from the server.
      */
     public void standDown() {
-        if (attackedChar != null) {
+        Char localAttackedChat = attackedChar;
+        attackedChar = null;
+        if (localAttackedChat != null) {
+            ignoreNextTargetLost.set(true);
             World.getNet().sendCommand(new StandDownCmd());
-            targetLost();
         }
     }
 
@@ -87,14 +105,10 @@ public final class CombatHandler {
      * command to the server.
      */
     public void targetLost() {
-        attackedChar = null;
+        if (!ignoreNextTargetLost.getAndSet(false)) {
+            attackedChar = null;
+        }
     }
-
-    /**
-     * The logging instance of this class.
-     */
-    @Nonnull
-    private static final Logger log = LoggerFactory.getLogger(CombatHandler.class);
 
     /**
      * Set the character that is attacked from now in.
@@ -106,17 +120,18 @@ public final class CombatHandler {
             return;
         }
 
-        standDown();
-
         CharacterId characterId = character.getCharId();
         if (characterId == null) {
             log.error("Trying to attack a character without character ID.");
+            standDown();
             return;
         }
 
         if (canBeAttacked(character)) {
             attackedChar = character;
             sendAttackToServer(characterId);
+        } else {
+            standDown();
         }
     }
 
@@ -126,6 +141,7 @@ public final class CombatHandler {
      * @param character the character to check
      * @return {@code true} in case the character is not the player and not a NPC.
      */
+    @Contract(pure = true)
     public boolean canBeAttacked(@Nonnull Char character) {
         return !World.getPlayer().isPlayer(character.getCharId()) && !character.isNPC();
     }

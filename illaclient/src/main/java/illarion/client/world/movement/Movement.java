@@ -235,6 +235,7 @@ public class Movement {
         }
     }
 
+    @Contract(pure = true)
     private static int getMovementDuration(int tileMovementCost, double mods, boolean diagonal, boolean running) {
         int movementDuration = FastMath.clamp((int) (tileMovementCost * 100.0 * mods), MIN_WALK_COST, MAX_WALK_COST);
 
@@ -247,16 +248,7 @@ public class Movement {
         return movementDuration;
     }
 
-    public void executeServerLocation(@Nonnull final Location target) {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                executeServerLocationInternal(target);
-            }
-        });
-    }
-
-    private void executeServerLocationInternal(@Nonnull Location target) {
+    public void executeServerLocation(@Nonnull Location target) {
         animator.cancelAll();
         stepInProgress = false;
         World.getPlayer().setLocation(target);
