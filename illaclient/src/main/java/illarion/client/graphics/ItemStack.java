@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -390,6 +391,7 @@ public class ItemStack implements DisplayItem, List<Item> {
         }
     }
 
+    @Nullable
     @Override
     public Item set(int index, @Nonnull Item element) {
         if (!isItemGoodForInsert(element)) {
@@ -403,7 +405,9 @@ public class ItemStack implements DisplayItem, List<Item> {
             lock.writeLock().unlock();
         }
         postProcessItemInsert(element);
-        postProcessItemRemove(oldItem);
+        if (oldItem != null) {
+            postProcessItemRemove(oldItem);
+        }
         return oldItem;
     }
 

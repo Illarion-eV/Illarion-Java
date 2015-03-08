@@ -444,11 +444,11 @@ public final class MapTile {
      */
     @SuppressWarnings("nls")
     private boolean setItem(int index, @Nonnull ItemId itemId, @Nonnull ItemCount itemCount) {
-        @Nullable Item item = null;
         // look for present item in map tile
         boolean changedSomething = false;
         items.getLock().writeLock().lock();
         try {
+            @Nullable Item item = null;
             if (index < items.size()) {
                 item = items.get(index);
                 assert item != null;
