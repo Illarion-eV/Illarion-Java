@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -38,6 +38,8 @@ public class DragOnMapEvent extends AbstractMouseOnMapEvent {
     @Nonnull
     private final InputReceiver inputReceiver;
 
+    private final boolean startDragging;
+
     /**
      * Create and initialize such a event.
      *
@@ -48,11 +50,13 @@ public class DragOnMapEvent extends AbstractMouseOnMapEvent {
      * @param pressedKey the key used for the dragging operation
      */
     public DragOnMapEvent(
-            int startX, int startY, int stopX, int stopY, @Nonnull Button pressedKey, @Nonnull InputReceiver receiver) {
+            int startX, int startY, int stopX, int stopY, @Nonnull Button pressedKey, boolean firstEvent,
+            @Nonnull InputReceiver receiver) {
         super(pressedKey, stopX, stopY);
         oldX = startX;
         oldY = startY;
         inputReceiver = receiver;
+        startDragging = firstEvent;
     }
 
     public DragOnMapEvent(@Nonnull DragOnMapEvent org) {
@@ -60,6 +64,8 @@ public class DragOnMapEvent extends AbstractMouseOnMapEvent {
         oldX = org.oldX;
         oldY = org.oldY;
         inputReceiver = org.inputReceiver;
+        startDragging = org.isStartDragging();
+
     }
 
     /**
@@ -101,5 +107,12 @@ public class DragOnMapEvent extends AbstractMouseOnMapEvent {
     @Nonnull
     public InputReceiver getInputReceiver() {
         return inputReceiver;
+    }
+
+    /**
+     * This is set {@code true} in case this is the first event of this drag.
+     */
+    public boolean isStartDragging() {
+        return startDragging;
     }
 }

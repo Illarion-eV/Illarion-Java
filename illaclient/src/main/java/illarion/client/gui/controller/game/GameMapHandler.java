@@ -301,7 +301,9 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
             handler = World.getPlayer().getMovementHandler().getFollowMouseHandler();
         }
         handler.handleMouse(event.getNewX(), event.getNewY());
-        handler.assumeControl();
+        if (event.isStartDragging()) {
+            handler.assumeControl();
+        }
 
         input.enableForwarding(ForwardingTarget.Mouse);
     }
