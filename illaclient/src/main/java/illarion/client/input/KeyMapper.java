@@ -138,34 +138,48 @@ public final class KeyMapper {
         boolean firstPressed = keyPressed.add(key);
         switch (key) {
             case B:
-                if (World.getPlayer().hasContainer(0)) {
-                    World.getPlayer().removeContainer(0);
-                    World.getNet().sendCommand(new CloseShowcaseCmd(0));
-                } else {
-                    InventorySlot slot = World.getPlayer().getInventory().getItem(0);
-                    if (slot.containsItem()) {
-                        slot.getInteractive().openContainer();
+                if (firstPressed) {
+                    if (World.getPlayer().hasContainer(0)) {
+                        World.getPlayer().removeContainer(0);
+                        World.getNet().sendCommand(new CloseShowcaseCmd(0));
+                    } else {
+                        InventorySlot slot = World.getPlayer().getInventory().getItem(0);
+                        if (slot.containsItem()) {
+                            slot.getInteractive().openContainer();
+                        }
                     }
                 }
                 break;
             case C:
-                World.getGameGui().getSkillGui().toggleSkillWindow();
+                if (firstPressed) {
+                    World.getGameGui().getSkillGui().toggleSkillWindow();
+                }
                 break;
             case I:
-                World.getGameGui().getInventoryGui().toggleInventory();
+                if (firstPressed) {
+                    World.getGameGui().getInventoryGui().toggleInventory();
+                }
                 break;
             case Q:
             case J:
-                World.getGameGui().getQuestGui().toggleQuestLog();
+                if (firstPressed) {
+                    World.getGameGui().getQuestGui().toggleQuestLog();
+                }
                 break;
             case F1:
-                World.getGameGui().getDocumentationGui().toggleDocumentation();
+                if (firstPressed) {
+                    World.getGameGui().getDocumentationGui().toggleDocumentation();
+                }
                 break;
             case P:
-                World.getNet().sendCommand(new PickUpAllItemsCmd());
+                if (firstPressed) {
+                    World.getNet().sendCommand(new PickUpAllItemsCmd());
+                }
                 break;
             case Enter:
-                World.getGameGui().getChatGui().activateChatBox();
+                if (firstPressed) {
+                    World.getGameGui().getChatGui().activateChatBox();
+                }
                 break;
 
             case CursorUp:
@@ -235,10 +249,14 @@ public final class KeyMapper {
                 }
                 break;
             case F12:
-                cyclePermanentAvatarTag();
+                if (firstPressed) {
+                    cyclePermanentAvatarTag();
+                }
                 break;
             case Escape:
-                handleEscape();
+                if (firstPressed) {
+                    handleEscape();
+                }
                 break;
         }
     }
