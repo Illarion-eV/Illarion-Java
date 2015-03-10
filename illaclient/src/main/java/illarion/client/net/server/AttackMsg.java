@@ -17,6 +17,7 @@ package illarion.client.net.server;
 
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
+import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import org.jetbrains.annotations.Contract;
 
@@ -39,6 +40,7 @@ public final class AttackMsg implements ServerReply {
     @Nonnull
     @Override
     public ServerReplyResult execute() {
+        World.getPlayer().getCombatHandler().confirmAttack();
         return ServerReplyResult.Success;
     }
 

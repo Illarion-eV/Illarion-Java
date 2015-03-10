@@ -25,6 +25,8 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -48,6 +50,12 @@ public final class CombatHandler {
     private Char attackedChar;
 
     /**
+     * The characters that were not yet confirmed by the server for the attack.
+     */
+    @Nonnull
+    private final Queue<Char> unconfirmedChars = new LinkedList<>();
+
+    /**
      * This flag is used to track if the next target lost command from the server is supposed to be ignored.
      */
     @Nonnull
@@ -60,7 +68,7 @@ public final class CombatHandler {
      */
     @Contract(pure = true)
     public boolean isAttacking() {
-        return attackedChar != null;
+        return (attackedChar != null) || !unconfirmedChars.isEmpty();
     }
 
     /**
@@ -88,6 +96,17 @@ public final class CombatHandler {
     }
 
     /**
+     * Test if a character is about to be attacked, but the attack is not yet confirmed by the server.
+     *
+     * @param testChar the character to check
+     * @return {@code true} if that character is scheduled to be attacked.
+     */
+    @Contract(pure = true)
+    public boolean isGoingToAttack(@Nonnull Char testChar) {
+        return unconfirmedChars.contains(testChar);
+    }
+
+    /**
      * Stop the current attack any report this to the server in case its needed. This does not directly stop the
      * attack. It just requests to stop the attack from the server.
      */
@@ -105,9 +124,21 @@ public final class CombatHandler {
      * command to the server.
      */
     public void targetLost() {
-        if (!ignoreNextTargetLost.getAndSet(false)) {
+        if (ignoreNextTargetLost.getAndSet(false)) {
+            log.debug("Expected target lost received from server. No action taken.");
+        } else {
+            log.debug("Target lost received from server. Stopping attack.");
             attackedChar = null;
+            unconfirmedChars.poll();
         }
+    }
+
+    /**
+     * This function is called once the server is confirming that the attack starts.
+     */
+    public void confirmAttack() {
+        attackedChar = unconfirmedChars.poll();
+        log.debug("Attack confirmed received from server. Now attacking: {}", attackedChar);
     }
 
     /**
@@ -116,7 +147,7 @@ public final class CombatHandler {
      * @param character the character that is now attacked
      */
     public void setAttackTarget(@Nonnull Char character) {
-        if (isAttacking(character)) {
+        if (isAttacking(character) || isGoingToAttack(character)) {
             return;
         }
 
@@ -128,7 +159,7 @@ public final class CombatHandler {
         }
 
         if (canBeAttacked(character)) {
-            attackedChar = character;
+            unconfirmedChars.offer(character);
             sendAttackToServer(characterId);
         } else {
             standDown();
