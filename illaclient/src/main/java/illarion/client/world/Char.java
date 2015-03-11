@@ -1099,9 +1099,10 @@ public final class Char implements AnimatedMove {
      * @param newLoc the new location of the light source
      */
     public void updateLight(@Nonnull Location newLoc) {
-        if (lightSrc != null) {
-            lightSrc.getLocation().set(newLoc);
-            World.getLights().refreshLight(lightSrc);
+        LightSource localLightSource = lightSrc;
+        if (localLightSource != null) {
+            localLightSource.getLocation().set(newLoc);
+            World.getLights().refreshLight(localLightSource);
         }
     }
 
@@ -1216,8 +1217,10 @@ public final class Char implements AnimatedMove {
             log.warn("Trying to enlist the light of a removed character again.");
             return;
         }
-        if (lightSrc != null) {
-            World.getLights().refreshLight(lightSrc);
+
+        LightSource localLightSource = lightSrc;
+        if (localLightSource != null) {
+            World.getLights().refreshLight(localLightSource);
         }
     }
 
