@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,6 +19,7 @@ import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -69,14 +70,14 @@ public final class UpdateTaskManager {
      * @param container the game container
      * @param delta the time since the last update
      */
-    public void onUpdateGame(@Nonnull final GameContainer container, final int delta) {
+    public void onUpdateGame(@Nonnull GameContainer container, int delta) {
         currentContainer = container;
         currentDelta = delta;
         currentThread = Thread.currentThread();
         isInUpdateCall = true;
         try {
             while (true) {
-                @Nullable final UpdateTask task = taskQueue.poll();
+                @Nullable UpdateTask task = taskQueue.poll();
                 if (task == null) {
                     return;
                 }
@@ -95,8 +96,8 @@ public final class UpdateTaskManager {
      *
      * @param task the task to execute
      */
-    public void addTask(@Nonnull final UpdateTask task) {
-        if (isInUpdateCall && (currentThread == Thread.currentThread()) && (currentContainer != null)) {
+    public void addTask(@Nonnull UpdateTask task) {
+        if (isInUpdateCall && Objects.equals(currentThread, Thread.currentThread()) && (currentContainer != null)) {
             task.onUpdateGame(currentContainer, currentDelta);
         } else {
             taskQueue.offer(task);
@@ -108,7 +109,7 @@ public final class UpdateTaskManager {
      *
      * @param task the task to execute
      */
-    public void addTaskForLater(@Nonnull final UpdateTask task) {
+    public void addTaskForLater(@Nonnull UpdateTask task) {
         taskQueue.offer(task);
     }
 }

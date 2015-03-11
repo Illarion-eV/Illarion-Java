@@ -182,7 +182,17 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
         World.getNet().sendCommand(new PickUpAllItemsCmd());
     }
 
+    @Override
     public void updateCarryLoad() {
+        World.getUpdateTaskManager().addTask(new UpdateTask() {
+            @Override
+            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+                updateCarryLoadImpl();
+            }
+        });
+    }
+
+    private void updateCarryLoadImpl() {
         if ((inventoryWindow != null) && inventoryWindow.isVisible()) {
             CarryLoad load = World.getPlayer().getCarryLoad();
             Element carryLoadDisplay = inventoryWindow.findElementById("carryLoad");
