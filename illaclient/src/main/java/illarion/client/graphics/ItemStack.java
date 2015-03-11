@@ -17,10 +17,11 @@ package illarion.client.graphics;
 
 import illarion.client.input.AbstractMouseLocationEvent;
 import illarion.client.world.World;
+import illarion.common.graphics.Layers;
+import illarion.common.types.Location;
 import illarion.common.types.Rectangle;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Graphics;
-import org.illarion.engine.graphic.SceneElement;
 import org.illarion.engine.graphic.SceneEvent;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
@@ -50,13 +51,18 @@ public class ItemStack implements DisplayItem, List<Item> {
     private int order;
 
     @Nonnull
+    private final Location stackLocation;
+
+    @Nonnull
     private final ReadWriteLock lock;
 
-    public ItemStack() {
+    public ItemStack(@Nonnull Location location) {
         shown = false;
         items = new ArrayList<>();
         rectangleDirty = false;
         interactiveRectangle = new Rectangle();
+
+        stackLocation = location;
 
         orderNotSet = true;
         order = 0;
@@ -116,10 +122,6 @@ public class ItemStack implements DisplayItem, List<Item> {
         }
     }
 
-    private boolean isItemGoodForInsert(@Nonnull SceneElement newItem) {
-        return orderNotSet || (newItem.getOrder() == order);
-    }
-
     private void setOrder(int newOrder) {
         orderNotSet = false;
         order = newOrder;
@@ -127,6 +129,15 @@ public class ItemStack implements DisplayItem, List<Item> {
 
     public int getItemCount() {
         return items.size();
+    }
+
+    public int getElevation() {
+        lock.readLock().lock();
+        try {
+            return getElevationForIndex(items.size() - 1);
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     @Nonnull
@@ -144,18 +155,48 @@ public class ItemStack implements DisplayItem, List<Item> {
     }
 
     public boolean hasItems() {
-        return !items.isEmpty();
+        return !isEmpty();
     }
 
     private void unsetOrder() {
         orderNotSet = true;
     }
 
-    private void postProcessItemInsert(@Nonnull Item newItem) {
+    private int getElevationForIndex(int index) {
+        if (index == 0) {
+            return 0;
+        }
+
+        lock.readLock().lock();
+        try {
+            int elevation = 0;
+            for (int i = 0; i < index; i++) {
+                Item itemAtIndex = get(i);
+                elevation += itemAtIndex.getTemplate().getItemInfo().getLevel();
+            }
+            return elevation;
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    private void postProcessItemInsert(int index, @Nonnull Item newItem) {
+        int elevation = getElevationForIndex(index);
+        setScreenPos(newItem, elevation);
+        if (newItem.getTemplate().getItemInfo().getLevel() != 0) {
+            elevation += newItem.getTemplate().getItemInfo().getLevel();
+            for (int i = index + 1; i < items.size(); i++) {
+                Item item = get(i);
+                setScreenPos(item, elevation);
+                elevation += item.getTemplate().getItemInfo().getLevel();
+            }
+        }
+
         if (orderNotSet) {
             setOrder(newItem.getOrder());
             show();
         }
+
         rectangleDirty = true;
         newItem.show(this);
     }
@@ -165,8 +206,23 @@ public class ItemStack implements DisplayItem, List<Item> {
             unsetOrder();
             hide();
         }
+
+        if (removedItem.getTemplate().getItemInfo().getLevel() != 0) {
+            /* Update the elevation of every item. */
+            int elevation = 0;
+            for (Item item : items) {
+                setScreenPos(item, elevation);
+                elevation += item.getTemplate().getItemInfo().getLevel();
+            }
+        }
+
         rectangleDirty = true;
         removedItem.hide();
+    }
+
+    private void setScreenPos(@Nonnull Item item, int elevation) {
+        item.setScreenPos(stackLocation.getDcX(), stackLocation.getDcY() - elevation, stackLocation.getDcZ(),
+                Layers.ITEM);
     }
 
     @Override
@@ -277,14 +333,11 @@ public class ItemStack implements DisplayItem, List<Item> {
     }
 
     @Override
-    public boolean add(@Nonnull Item item) {
-        if (!isItemGoodForInsert(item)) {
-            throw new IllegalArgumentException("Item is not valid in this stack.");
-        }
+    public boolean add(@Nonnull Item e) {
         lock.writeLock().lock();
         try {
-            if (items.add(item)) {
-                postProcessItemInsert(item);
+            if (items.add(e)) {
+                postProcessItemInsert(items.size() - 1, e);
                 return true;
             }
         } finally {
@@ -294,7 +347,7 @@ public class ItemStack implements DisplayItem, List<Item> {
     }
 
     @Override
-    public boolean remove(Object o) {
+    public boolean remove(@Nonnull Object o) {
         lock.writeLock().lock();
         try {
             if (items.remove(o)) {
@@ -382,6 +435,7 @@ public class ItemStack implements DisplayItem, List<Item> {
     }
 
     @Override
+    @Nonnull
     public Item get(int index) {
         lock.readLock().lock();
         try {
@@ -394,47 +448,43 @@ public class ItemStack implements DisplayItem, List<Item> {
     @Nullable
     @Override
     public Item set(int index, @Nonnull Item element) {
-        if (!isItemGoodForInsert(element)) {
-            throw new IllegalArgumentException("Item is not valid in this stack.");
-        }
         Item oldItem;
         lock.writeLock().lock();
         try {
             oldItem = items.set(index, element);
+            postProcessItemInsert(index, element);
+            if (oldItem != null) {
+                postProcessItemRemove(oldItem);
+            }
         } finally {
             lock.writeLock().unlock();
-        }
-        postProcessItemInsert(element);
-        if (oldItem != null) {
-            postProcessItemRemove(oldItem);
         }
         return oldItem;
     }
 
     @Override
     public void add(int index, @Nonnull Item element) {
-        if (!isItemGoodForInsert(element)) {
-            throw new IllegalArgumentException("Item is not valid in this stack.");
-        }
         lock.writeLock().lock();
         try {
             items.add(index, element);
+            postProcessItemInsert(index, element);
         } finally {
             lock.writeLock().unlock();
         }
-        postProcessItemInsert(element);
     }
 
     @Override
+    @Nonnull
     public Item remove(int index) {
         Item removedItem;
         lock.writeLock().lock();
         try {
             removedItem = items.remove(index);
+            assert removedItem != null;
+            postProcessItemRemove(removedItem);
         } finally {
             lock.writeLock().unlock();
         }
-        postProcessItemRemove(removedItem);
         return removedItem;
     }
 
