@@ -47,9 +47,6 @@ public class ItemStack implements DisplayItem, List<Item> {
     @Nonnull
     private final Rectangle interactiveRectangle;
 
-    private boolean orderNotSet;
-    private int order;
-
     @Nonnull
     private final Location stackLocation;
 
@@ -63,9 +60,6 @@ public class ItemStack implements DisplayItem, List<Item> {
         interactiveRectangle = new Rectangle();
 
         stackLocation = location;
-
-        orderNotSet = true;
-        order = 0;
 
         lock = new ReentrantReadWriteLock();
     }
@@ -122,11 +116,6 @@ public class ItemStack implements DisplayItem, List<Item> {
         }
     }
 
-    private void setOrder(int newOrder) {
-        orderNotSet = false;
-        order = newOrder;
-    }
-
     public int getItemCount() {
         return items.size();
     }
@@ -156,10 +145,6 @@ public class ItemStack implements DisplayItem, List<Item> {
 
     public boolean hasItems() {
         return !isEmpty();
-    }
-
-    private void unsetOrder() {
-        orderNotSet = true;
     }
 
     private int getElevationForIndex(int index) {
@@ -192,8 +177,7 @@ public class ItemStack implements DisplayItem, List<Item> {
             }
         }
 
-        if (orderNotSet) {
-            setOrder(newItem.getOrder());
+        if (!shown) {
             show();
         }
 
@@ -203,16 +187,15 @@ public class ItemStack implements DisplayItem, List<Item> {
 
     private void postProcessItemRemove(@Nonnull Item removedItem) {
         if (items.isEmpty()) {
-            unsetOrder();
             hide();
-        }
-
-        if (removedItem.getTemplate().getItemInfo().getLevel() != 0) {
+        } else {
+            if (removedItem.getTemplate().getItemInfo().getLevel() != 0) {
             /* Update the elevation of every item. */
-            int elevation = 0;
-            for (Item item : items) {
-                setScreenPos(item, elevation);
-                elevation += item.getTemplate().getItemInfo().getLevel();
+                int elevation = 0;
+                for (Item item : items) {
+                    setScreenPos(item, elevation);
+                    elevation += item.getTemplate().getItemInfo().getLevel();
+                }
             }
         }
 
@@ -227,7 +210,7 @@ public class ItemStack implements DisplayItem, List<Item> {
 
     @Override
     public int getOrder() {
-        return orderNotSet ? 0 : order;
+        return stackLocation.getDcZ() - Layers.ITEM;
     }
 
     @Override
@@ -259,7 +242,7 @@ public class ItemStack implements DisplayItem, List<Item> {
 
     @Override
     public boolean isEventProcessed(@Nonnull GameContainer container, int delta, @Nonnull SceneEvent event) {
-        if (orderNotSet) {
+        if (interactiveRectangle.isEmpty()) {
             return false;
         }
 
@@ -430,7 +413,7 @@ public class ItemStack implements DisplayItem, List<Item> {
         } finally {
             lock.writeLock().unlock();
         }
-        unsetOrder();
+        rectangleDirty = true;
         hide();
     }
 
