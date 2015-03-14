@@ -27,7 +27,7 @@ idea {
 }
 
 allprojects {
-    if (hasProperty('targetRepo')) {
+    if (project.hasProperty('targetRepo')) {
         ext.mavenRepo = "file://$targetRepo"
     } else {
         ext.mavenRepo = "file://${project.buildDir}/repo"
