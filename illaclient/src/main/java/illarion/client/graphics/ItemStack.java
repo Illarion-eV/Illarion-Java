@@ -238,6 +238,8 @@ public class ItemStack implements DisplayItem, List<Item> {
         } finally {
             lock.readLock().unlock();
         }
+
+        updateInteractiveRectangle();
     }
 
     @Override
@@ -250,8 +252,6 @@ public class ItemStack implements DisplayItem, List<Item> {
             AbstractMouseLocationEvent mouseEvent = (AbstractMouseLocationEvent) event;
             int mouseXonDisplay = mouseEvent.getX() + Camera.getInstance().getViewportOffsetX();
             int mouseYonDisplay = mouseEvent.getY() + Camera.getInstance().getViewportOffsetY();
-
-            updateInteractiveRectangle();
 
             if (!interactiveRectangle.isInside(mouseXonDisplay, mouseYonDisplay)) {
                 return false;
