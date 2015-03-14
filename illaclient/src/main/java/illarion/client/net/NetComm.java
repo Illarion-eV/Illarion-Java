@@ -193,9 +193,9 @@ public final class NetComm {
 
             @Nonnull String serverAddress;
             int serverPort;
-            if (usedServer == Servers.customserver) {
+            if (usedServer == Servers.Customserver) {
                 String configServer = IllaClient.getCfg().getString("serverAddress");
-                serverAddress = (configServer == null) ? Servers.customserver.getServerHost() : configServer;
+                serverAddress = (configServer == null) ? Servers.Customserver.getServerHost() : configServer;
                 serverPort = IllaClient.getCfg().getInteger("serverPort");
             } else {
                 serverAddress = usedServer.getServerHost();

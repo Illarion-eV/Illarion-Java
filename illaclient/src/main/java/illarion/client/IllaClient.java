@@ -83,13 +83,13 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         String server = System.getProperty("illarion.server", "realserver");
         switch (server) {
             case "testserver":
-                DEFAULT_SERVER = Servers.testserver;
+                DEFAULT_SERVER = Servers.Testserver;
                 break;
             case "devserver":
-                DEFAULT_SERVER = Servers.devserver;
+                DEFAULT_SERVER = Servers.Devserver;
                 break;
             default:
-                DEFAULT_SERVER = Servers.realserver;
+                DEFAULT_SERVER = Servers.Realserver;
                 break;
         }
     }
@@ -174,7 +174,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         CrashReporter.getInstance().setConfig(getCfg());
 
         // Report errors of the released version only
-        if (DEFAULT_SERVER != Servers.realserver) {
+        if (DEFAULT_SERVER != Servers.Realserver) {
             CrashReporter.getInstance().setMode(CrashReporter.MODE_NEVER);
         }
         CrashReporter.getInstance().setDialogFactory(new ReportDialogFactorySwing());
@@ -508,9 +508,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("questWindowPosY", "100px");
         cfg.setDefault("questShowFinished", false);
         cfg.setDefault("server", Login.DEVSERVER);
-        cfg.setDefault("serverAddress", Servers.customserver.getServerHost());
-        cfg.setDefault("serverPort", Servers.customserver.getServerPort());
-        cfg.setDefault("clientVersion", Servers.customserver.getClientVersion());
+        cfg.setDefault("serverAddress", Servers.Customserver.getServerHost());
+        cfg.setDefault("serverPort", Servers.Customserver.getServerPort());
+        cfg.setDefault("clientVersion", Servers.Customserver.getClientVersion());
         cfg.setDefault("clientVersionOverwrite", false);
         cfg.setDefault("serverAccountLogin", true);
         cfg.setDefault("wasdWalk", true);

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -152,7 +152,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         login.restoreServer();
         restoreLoginData();
 
-        if (IllaClient.DEFAULT_SERVER == Servers.realserver) {
+        if (IllaClient.DEFAULT_SERVER == Servers.Realserver) {
             @Nullable Element serverPanel = screen.findElementById("serverPanel");
             if (serverPanel != null) {
                 serverPanel.hide();

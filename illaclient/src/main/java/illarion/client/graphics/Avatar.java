@@ -654,6 +654,10 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
             attackMarkerVisible = true;
             attackMark.setAlpha(usedAlpha);
             attackMark.update(container, delta);
+        } else if (World.getPlayer().getCombatHandler().isGoingToAttack(parentChar)) {
+            attackMarkerVisible = true;
+            attackMark.setAlpha(usedAlpha / 2);
+            attackMark.update(container, delta);
         } else {
             attackMarkerVisible = false;
         }

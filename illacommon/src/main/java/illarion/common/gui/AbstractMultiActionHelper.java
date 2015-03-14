@@ -101,10 +101,7 @@ public abstract class AbstractMultiActionHelper {
      * Reset the helper.
      */
     public final void reset() {
-        if (task != null) {
-            task.cancel(false);
-            task = null;
-        }
+        resetPendingTask();
         actionCount = 0;
     }
 
@@ -114,9 +111,7 @@ public abstract class AbstractMultiActionHelper {
     public final void pulse() {
         actionCount++;
         if ((actionCount < countLimit) || (countLimit == -1)) {
-            if (task != null) {
-                task.cancel(false);
-            }
+            resetPendingTask();
             task = executorService.schedule(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
@@ -127,6 +122,14 @@ public abstract class AbstractMultiActionHelper {
             }, timeout, timeoutUnits);
         } else {
             execute();
+        }
+    }
+
+    private void resetPendingTask() {
+        ScheduledFuture<Void> pendingTask = task;
+        task = null;
+        if (pendingTask != null) {
+            pendingTask.cancel(false);
         }
     }
 

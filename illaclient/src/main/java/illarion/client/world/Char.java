@@ -35,6 +35,7 @@ import org.bushe.swing.event.EventBus;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.LightSource;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -841,6 +842,7 @@ public final class Char implements AnimatedMove {
      * @return the avatar of the character
      */
     @Nullable
+    @Contract(pure = true)
     public Avatar getAvatar() {
         return avatar;
     }
@@ -851,6 +853,7 @@ public final class Char implements AnimatedMove {
      * @return the direction value
      */
     @Nonnull
+    @Contract(pure = true)
     public Direction getDirection() {
         return direction;
     }
@@ -879,6 +882,7 @@ public final class Char implements AnimatedMove {
      * @return the location of the character
      */
     @Nonnull
+    @Contract(pure = true)
     public Location getLocation() {
         return charLocation;
     }
@@ -889,6 +893,7 @@ public final class Char implements AnimatedMove {
      * @return the name of the character
      */
     @Nonnull
+    @Contract(pure = true)
     public String getName() {
         if ((name == null) || name.isEmpty()) {
             if ((customName == null) || customName.isEmpty()) {
@@ -906,6 +911,7 @@ public final class Char implements AnimatedMove {
     }
 
     @Nullable
+    @Contract(pure = true)
     public String getCustomName() {
         return customName;
     }
@@ -915,6 +921,7 @@ public final class Char implements AnimatedMove {
      *
      * @return visibility bonus value
      */
+    @Contract(pure = true)
     public int getVisibilityBonus() {
         return visibilityBonus;
     }
@@ -924,6 +931,7 @@ public final class Char implements AnimatedMove {
      *
      * @return {@code true} if the character is a human controlled character
      */
+    @Contract(pure = true)
     public boolean isHuman() {
         return (charId != null) && charId.isHuman();
     }
@@ -933,6 +941,7 @@ public final class Char implements AnimatedMove {
      *
      * @return true if the character is a monster, false if not.
      */
+    @Contract(pure = true)
     public boolean isMonster() {
         return (charId != null) && charId.isMonster();
     }
@@ -942,6 +951,7 @@ public final class Char implements AnimatedMove {
      *
      * @return true if the character is a npc, false if not.
      */
+    @Contract(pure = true)
     public boolean isNPC() {
         return (charId != null) && charId.isNPC();
     }
@@ -1089,9 +1099,10 @@ public final class Char implements AnimatedMove {
      * @param newLoc the new location of the light source
      */
     public void updateLight(@Nonnull Location newLoc) {
-        if (lightSrc != null) {
-            lightSrc.getLocation().set(newLoc);
-            World.getLights().refreshLight(lightSrc);
+        LightSource localLightSource = lightSrc;
+        if (localLightSource != null) {
+            localLightSource.getLocation().set(newLoc);
+            World.getLights().refreshLight(localLightSource);
         }
     }
 
@@ -1206,8 +1217,10 @@ public final class Char implements AnimatedMove {
             log.warn("Trying to enlist the light of a removed character again.");
             return;
         }
-        if (lightSrc != null) {
-            World.getLights().refreshLight(lightSrc);
+
+        LightSource localLightSource = lightSrc;
+        if (localLightSource != null) {
+            World.getLights().refreshLight(localLightSource);
         }
     }
 

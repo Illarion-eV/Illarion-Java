@@ -62,16 +62,6 @@ public final class MapTile {
     private static final Logger LOGGER = LoggerFactory.getLogger(MapTile.class);
 
     /**
-     * Highest elevation caused by an item on this tile.
-     */
-    private int elevation;
-
-    /**
-     * Index of the tile with the highest elevation in the item array.
-     */
-    private int elevationIndex;
-
-    /**
      * This value contains the value the quest marker is elevated by.
      */
     private int questMarkerElevation;
@@ -179,27 +169,6 @@ public final class MapTile {
     @Nullable
     private MapGroup group;
 
-    /**
-     * Get the item that causes the elevation.
-     *
-     * @return get the item that causes a elevation in case there is any
-     */
-    @Nullable
-    public Item getElevatingItem() {
-        if (elevation == 0) {
-            return null;
-        }
-        items.getLock().readLock().lock();
-        try {
-            if (items.size() <= elevationIndex) {
-                return null;
-            }
-            return items.get(elevationIndex);
-        } finally {
-            items.getLock().readLock().unlock();
-        }
-    }
-
     public int getQuestMarkerElevation() {
         return questMarkerElevation;
     }
@@ -251,7 +220,7 @@ public final class MapTile {
         tracerColor = new Color(Color.BLACK);
         localColor = new AnimatedColor(targetCenterColor);
         colors = new EnumMap<>(Direction.class);
-        items = new ItemStack();
+        items = new ItemStack(tileLocation);
     }
 
     @Nonnull
@@ -400,12 +369,6 @@ public final class MapTile {
                 return;
             }
 
-            // supporting item was removed
-            if ((elevation > 0) && (elevationIndex == pos)) {
-                elevation = 0;
-                elevationIndex = 0;
-            }
-
             Item removedItem = items.remove(pos);
             removedItem.markAsRemoved();
         } finally {
@@ -444,29 +407,23 @@ public final class MapTile {
      */
     @SuppressWarnings("nls")
     private boolean setItem(int index, @Nonnull ItemId itemId, @Nonnull ItemCount itemCount) {
-        @Nullable Item item = null;
         // look for present item in map tile
         boolean changedSomething = false;
         items.getLock().writeLock().lock();
         try {
+            @Nullable Item item = null;
             if (index < items.size()) {
                 item = items.get(index);
                 assert item != null;
                 // just an update of present item
                 if (ItemId.equals(item.getItemId(), itemId)) {
                     if (!Objects.equals(item.getCount(), itemCount)) {
-                        updateItem(item, itemCount, index);
+                        item.setCount(itemCount);
                         changedSomething = true;
                     }
                 } else {
                     // different item: clear old item
                     item = null;
-
-                    // carrying item was removed
-                    if (index == elevationIndex) {
-                        elevation = 0;
-                        elevationIndex = 0;
-                    }
                 }
             }
             // add a new item
@@ -474,7 +431,7 @@ public final class MapTile {
                 // create new item
                 item = Item.create(itemId, tileLocation, this);
 
-                updateItem(item, itemCount, index);
+                item.setCount(itemCount);
 
                 // add it to list
                 if (index < items.size()) {
@@ -493,48 +450,19 @@ public final class MapTile {
     }
 
     /**
-     * Update a single item with new data.
-     *
-     * @param item the item that shall be updated
-     * @param itemCount the count value of the new item
-     * @param index the index of the item within the stack of items on this tile
-     */
-    private void updateItem(@Nonnull Item item, @Nonnull ItemCount itemCount, int index) {
-        // set number
-        item.setCount(itemCount);
-        // calculate offset from items carrying other items
-        int objectOffset = 0;
-        if ((elevation > 0) && (index > elevationIndex)) {
-            objectOffset = elevation;
-        }
-        // position on tile with increasing z-order
-        item.setScreenPos(tileLocation.getDcX(), tileLocation.getDcY() - objectOffset, tileLocation.getDcZ(),
-                          Layers.ITEM);
-
-        // set the elevation for items that can carry
-        int level = item.getTemplate().getItemInfo().getLevel();
-        if (level > 0) {
-            // Set elevation only for first suitable item
-            if (((elevation == 0) || (elevationIndex == index)) && (elevation != level)) {
-                elevation = level;
-                elevationIndex = index;
-
-                Char charOnTile = World.getPeople().getCharacterAt(tileLocation);
-                if (charOnTile != null) {
-                    if (World.getPlayer().isPlayer(charOnTile.getCharId())) {
-                        World.getMapDisplay().updateElevation();
-                    }
-                    charOnTile.updateElevation(elevation);
-                }
-            }
-        }
-    }
-
-    /**
      * Notify the tile that the items got changed. That makes a recalculation of the lights and the line of sight
      * needed.
      */
     private void itemChanged() {
+        int tileElevation = items.getElevation();
+        Char charOldField = World.getPeople().getCharacterAt(tileLocation);
+        if (charOldField != null) {
+            charOldField.updateElevation(tileElevation);
+            if (World.getPlayer().isPlayer(charOldField.getCharId())) {
+                World.getMapDisplay().updateElevation();
+            }
+        }
+
         updateQuestMarkerElevation();
 
         // invalidate LOS data
@@ -556,12 +484,9 @@ public final class MapTile {
         Char character = World.getPeople().getCharacterAt(tileLocation);
         @Nullable Avatar avatar = (character == null) ? null : character.getAvatar();
 
-        questMarkerElevation = elevation;
+        questMarkerElevation = items.getElevation();
         if (avatar == null) {
             Item topItem = getTopItem();
-            if (elevationIndex == 0) {
-                questMarkerElevation = 0;
-            }
             if (topItem != null) {
                 Sprite topItemSprite = topItem.getTemplate().getSprite();
 
@@ -676,7 +601,7 @@ public final class MapTile {
         if (removedTile) {
             LOGGER.warn("Checking the elevation of a removed tile.");
         }
-        return elevation;
+        return items.getElevation();
     }
 
     /**
@@ -1011,10 +936,6 @@ public final class MapTile {
      * @param itemNumber the maximum amount of items that shall remain
      */
     private boolean checkAndClampItems(int itemNumber) {
-        // reset elevation data when items are updated
-        elevation = 0;
-        elevationIndex = -1;
-
         items.getLock().writeLock().lock();
         try {
             int amount = items.size() - itemNumber;

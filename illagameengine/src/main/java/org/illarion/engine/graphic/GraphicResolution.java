@@ -15,7 +15,10 @@
  */
 package org.illarion.engine.graphic;
 
+import org.jetbrains.annotations.Contract;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,12 +34,6 @@ public final class GraphicResolution {
      * The bits per point of this resolution.
      */
     private final int bpp;
-
-    /**
-     * The string builder used to construct the strings used to make the resolution human readable.
-     */
-    @Nonnull
-    private final StringBuilder builder;
 
     /**
      * The screen height of this resolution.
@@ -60,8 +57,6 @@ public final class GraphicResolution {
      * refreshRate = local refreshRate;
      */
     public GraphicResolution(){
-        builder = new StringBuilder();
-
         GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice gd = environment.getDefaultScreenDevice();
         DisplayMode dm = gd.getDisplayMode();
@@ -88,7 +83,6 @@ public final class GraphicResolution {
         width = newWidth;
         bpp = newBpp;
         refreshRate = refresh;
-        builder = new StringBuilder();
     }
 
     /**
@@ -101,7 +95,6 @@ public final class GraphicResolution {
         Pattern pattern = Pattern.compile("(\\d+) x (\\d+) x (\\d+) @ (\\d+)Hz");
         Matcher matcher = pattern.matcher(definition);
 
-        builder = new StringBuilder();
         if (matcher.matches()) {
             width = Integer.parseInt(matcher.group(1));
             height = Integer.parseInt(matcher.group(2));
@@ -149,9 +142,9 @@ public final class GraphicResolution {
      * @param compRes the object this one is compared to
      * @return {@code true} in case all values of the resolutions are equal
      */
-    public boolean equals(@Nonnull GraphicResolution compRes) {
-        return (height == compRes.height) && (width == compRes.width) && (bpp == compRes.bpp) &&
-                (refreshRate == compRes.refreshRate);
+    @Contract(value = "null->false", pure = true)
+    public boolean equals(@Nullable GraphicResolution compRes) {
+        return (compRes != null) && equals(compRes.width, compRes.height, compRes.bpp, compRes.refreshRate);
     }
 
     /**
@@ -163,28 +156,21 @@ public final class GraphicResolution {
      * @param compRefresh the fresh rate to compare with
      * @return {@code true} in case all values equal with this instance
      */
-    public boolean equals(
-            int compWidth, int compHeight, int compBpp, int compRefresh) {
+    @Contract(pure = true)
+    public boolean equals(int compWidth, int compHeight, int compBpp, int compRefresh) {
         return (height == compHeight) && (width == compWidth) && (bpp == compBpp) && (refreshRate == compRefresh);
     }
 
     /**
-     * Compare this resolution to another object. This will result in a return
-     * of false, in case the object is not castable to a String or a
-     * GraphicResolution object.
+     * Compare this resolution to another object.
      *
-     * @param compObj the object this resolution is to be compared with
+     * @param obj the object this resolution is to be compared with
      * @return {@code true} in case both objects are equal
      */
     @Override
-    public boolean equals(Object compObj) {
-        if (super.equals(compObj)) {
-            return true;
-        }
-        if (compObj instanceof GraphicResolution) {
-            return equals((GraphicResolution) compObj);
-        }
-        return false;
+    @Contract(value = "null->false", pure = true)
+    public boolean equals(@Nullable Object obj) {
+        return (obj instanceof GraphicResolution) && equals((GraphicResolution) obj);
     }
 
     /**
@@ -195,8 +181,9 @@ public final class GraphicResolution {
      * @return {@code true} if this object and the string represent the
      * same resolution
      */
-    public boolean equals(String compString) {
-        return toString().equals(compString);
+    @Contract(value = "null->false", pure = true)
+    public boolean equals(@Nullable String compString) {
+        return (compString != null) && toString().equals(compString);
     }
 
     /**
@@ -205,6 +192,7 @@ public final class GraphicResolution {
      * @return the bits per point of this resolution or -1 in case it was not
      * possible to determine the bits per point.
      */
+    @Contract(pure = true)
     public int getBPP() {
         return bpp;
     }
@@ -214,6 +202,7 @@ public final class GraphicResolution {
      *
      * @return the height of this resolution
      */
+    @Contract(pure = true)
     public int getHeight() {
         return height;
     }
@@ -223,6 +212,7 @@ public final class GraphicResolution {
      *
      * @return the refresh rate in Hz
      */
+    @Contract(pure = true)
     public int getRefreshRate() {
         return refreshRate;
     }
@@ -232,6 +222,7 @@ public final class GraphicResolution {
      *
      * @return the width of this resolution
      */
+    @Contract(pure = true)
     public int getWidth() {
         return width;
     }
@@ -242,6 +233,7 @@ public final class GraphicResolution {
      * @return the hash code of this object
      */
     @Override
+    @Contract(pure = true)
     public int hashCode() {
         return toString().hashCode();
     }
@@ -254,7 +246,7 @@ public final class GraphicResolution {
     @Nonnull
     @Override
     public String toString() {
-        builder.setLength(0);
+        StringBuilder builder = new StringBuilder();
         builder.append(width);
         builder.append(' ').append('x').append(' ');
         builder.append(height);

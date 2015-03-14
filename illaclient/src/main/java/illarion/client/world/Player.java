@@ -581,6 +581,7 @@ public final class Player {
         playerLocation.set(newLoc);
         World.getMusicBox().updatePlayerLocation();
         World.getMap().updateAllTiles();
+        World.getMap().checkInside();
     }
 
     /**

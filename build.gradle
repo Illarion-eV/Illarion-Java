@@ -26,11 +26,11 @@ idea {
     }
 }
 
-allprojects { project ->
-    if (project.hasProperty('targetRepo')) {
-        project.ext.mavenRepo = "file://$targetRepo"
+allprojects {
+    if (hasProperty('targetRepo')) {
+        ext.mavenRepo = "file://$targetRepo"
     } else {
-        project.ext.mavenRepo = "file://${project.buildDir}/repo"
+        ext.mavenRepo = "file://${project.buildDir}/repo"
     }
 
     task gitVersion { task ->
@@ -75,10 +75,20 @@ allprojects { project ->
         task.project.ext.fullVersion = gitVersion
     }
 
-    project.configurations.all { config ->
+    configurations.all {
         resolutionStrategy {
             cacheDynamicVersionsFor 10 * 60, 'seconds'
             cacheChangingModulesFor 0, 'seconds'
+        }
+    }
+
+    repositories {
+        mavenCentral()
+        maven {
+            url 'http://illarion.org/media/java/maven'
+        }
+        maven {
+            url 'http://oss.sonatype.org/content/repositories/releases'
         }
     }
 }
@@ -97,46 +107,57 @@ buildscript {
     }
 }
 
-subprojects { project ->
-    project.group = 'org.illarion'
+subprojects {
+    group = 'org.illarion'
 
-    project.plugins.withType(JavaPlugin) {
-        project.sourceCompatibility = JavaVersion.VERSION_1_7
-        project.targetCompatibility = JavaVersion.VERSION_1_7
-        project.tasks.withType(JavaCompile) {
+    plugins.withType(JavaPlugin) {
+        sourceCompatibility = JavaVersion.VERSION_1_7
+        targetCompatibility = JavaVersion.VERSION_1_7
+
+        tasks.withType(JavaCompile) {
             options.encoding = 'UTF-8'
         }
-        project.test {
+
+        test {
             useTestNG()
+            options {
+                listeners.clear()
+                listeners << 'org.testng.reporters.XMLReporter'
+            }
         }
-        project.apply { 'idea' }
-        project.configurations {
+
+        configurations {
             provided
         }
-        project.sourceSets {
+        sourceSets {
             main.compileClasspath += configurations.provided
             test.compileClasspath += configurations.provided
             test.runtimeClasspath += configurations.provided
         }
-        project.dependencies {
+        dependencies {
             compile group: 'com.google.code.findbugs', name: 'jsr305', version: '2.0.3'
-        }
-        idea {
-            module {
-                if (scopes.PROVIDED != null) {
-                    scopes.PROVIDED.plus += configurations.provided
-                }
-            }
         }
     }
 
-    repositories {
-        mavenCentral()
-        maven {
-            url 'http://illarion.org/media/java/maven'
-        }
-        maven {
-            url 'http://oss.sonatype.org/content/repositories/releases'
+    apply plugin: 'idea'
+    apply plugin: 'findbugs'
+    apply plugin: 'pmd'
+    findbugs {
+        ignoreFailures = true
+        effort = "max"
+        reportLevel = "high"
+    }
+    pmd {
+        ignoreFailures = true
+        targetJdk = '1.7'
+        ruleSetFiles = files(new File(rootDir, 'pmd.xml'))
+        ruleSets = []
+    }
+    idea {
+        module {
+            if (scopes.PROVIDED != null) {
+                scopes.PROVIDED.plus += configurations.provided
+            }
         }
     }
 }

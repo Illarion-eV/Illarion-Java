@@ -18,12 +18,16 @@ package illarion.client.world;
 import illarion.client.net.client.AttackCmd;
 import illarion.client.net.client.StandDownCmd;
 import illarion.common.types.CharacterId;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * This class is used to store and set the current combat mode. It will forward all changes to the combat mode to the
@@ -34,18 +38,37 @@ import javax.annotation.concurrent.ThreadSafe;
 @ThreadSafe
 public final class CombatHandler {
     /**
+     * The logging instance of this class.
+     */
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(CombatHandler.class);
+
+    /**
      * The character that is currently under attack.
      */
     @Nullable
     private Char attackedChar;
 
     /**
+     * The characters that were not yet confirmed by the server for the attack.
+     */
+    @Nonnull
+    private final Queue<Char> unconfirmedChars = new LinkedList<>();
+
+    /**
+     * This flag is used to track if the next target lost command from the server is supposed to be ignored.
+     */
+    @Nonnull
+    private final AtomicBoolean ignoreNextTargetLost = new AtomicBoolean(false);
+
+    /**
      * Test if the player is currently attacking anyone.
      *
      * @return {@code true} in case anyone is attacked
      */
+    @Contract(pure = true)
     public boolean isAttacking() {
-        return attackedChar != null;
+        return (attackedChar != null) || !unconfirmedChars.isEmpty();
     }
 
     /**
@@ -67,8 +90,20 @@ public final class CombatHandler {
      * @param testChar the char to check if he is the current target
      * @return {@code true} in case the character is the current target
      */
+    @Contract(pure = true)
     public boolean isAttacking(@Nonnull Char testChar) {
         return testChar.equals(attackedChar);
+    }
+
+    /**
+     * Test if a character is about to be attacked, but the attack is not yet confirmed by the server.
+     *
+     * @param testChar the character to check
+     * @return {@code true} if that character is scheduled to be attacked.
+     */
+    @Contract(pure = true)
+    public boolean isGoingToAttack(@Nonnull Char testChar) {
+        return unconfirmedChars.contains(testChar);
     }
 
     /**
@@ -76,9 +111,11 @@ public final class CombatHandler {
      * attack. It just requests to stop the attack from the server.
      */
     public void standDown() {
-        if (attackedChar != null) {
+        Char localAttackedChat = attackedChar;
+        attackedChar = null;
+        if (localAttackedChat != null) {
+            ignoreNextTargetLost.set(true);
             World.getNet().sendCommand(new StandDownCmd());
-            targetLost();
         }
     }
 
@@ -87,14 +124,22 @@ public final class CombatHandler {
      * command to the server.
      */
     public void targetLost() {
-        attackedChar = null;
+        if (ignoreNextTargetLost.getAndSet(false)) {
+            log.debug("Expected target lost received from server. No action taken.");
+        } else {
+            log.debug("Target lost received from server. Stopping attack.");
+            attackedChar = null;
+            unconfirmedChars.poll();
+        }
     }
 
     /**
-     * The logging instance of this class.
+     * This function is called once the server is confirming that the attack starts.
      */
-    @Nonnull
-    private static final Logger log = LoggerFactory.getLogger(CombatHandler.class);
+    public void confirmAttack() {
+        attackedChar = unconfirmedChars.poll();
+        log.debug("Attack confirmed received from server. Now attacking: {}", attackedChar);
+    }
 
     /**
      * Set the character that is attacked from now in.
@@ -102,21 +147,22 @@ public final class CombatHandler {
      * @param character the character that is now attacked
      */
     public void setAttackTarget(@Nonnull Char character) {
-        if (isAttacking(character)) {
+        if (isAttacking(character) || isGoingToAttack(character)) {
             return;
         }
-
-        standDown();
 
         CharacterId characterId = character.getCharId();
         if (characterId == null) {
             log.error("Trying to attack a character without character ID.");
+            standDown();
             return;
         }
 
         if (canBeAttacked(character)) {
-            attackedChar = character;
+            unconfirmedChars.offer(character);
             sendAttackToServer(characterId);
+        } else {
+            standDown();
         }
     }
 
@@ -126,6 +172,7 @@ public final class CombatHandler {
      * @param character the character to check
      * @return {@code true} in case the character is not the player and not a NPC.
      */
+    @Contract(pure = true)
     public boolean canBeAttacked(@Nonnull Char character) {
         return !World.getPlayer().isPlayer(character.getCharId()) && !character.isNPC();
     }

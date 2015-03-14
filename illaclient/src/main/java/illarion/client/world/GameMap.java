@@ -432,13 +432,6 @@ public final class GameMap implements LightingMap, Stoppable {
     }
 
     /**
-     * Finish a tile update of the game map.
-     */
-    public void finishTileUpdate() {
-        GameMapProcessor2.checkInside();
-    }
-
-    /**
      * Get item elevation on a special position.
      *
      * @param loc the location that shall be checked

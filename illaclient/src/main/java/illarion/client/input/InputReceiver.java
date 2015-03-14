@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -282,9 +282,9 @@ public final class InputReceiver implements InputListener {
         if (enabled) {
             buttonMultiClickHelper.reset();
             if (buttonDownReceived.contains(button)) {
-                buttonDownDragged.add(button);
+                boolean isFirst = buttonDownDragged.add(button);
                 log.debug("Received {} mouse button dragged from {}, {} to {}, {}", button, fromX, fromY, toX, toY);
-                EventBus.publish(new DragOnMapEvent(fromX, fromY, toX, toY, button, this));
+                EventBus.publish(new DragOnMapEvent(fromX, fromY, toX, toY, button, isFirst, this));
             } else {
                 log.debug("Received {} mouse button dragged from {}, {} to {}, {} but skipped it.", button, fromX,
                           fromY, toX, toY);

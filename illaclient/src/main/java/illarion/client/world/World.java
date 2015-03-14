@@ -47,26 +47,24 @@ public final class World {
     private static final World INSTANCE = new World();
 
     public static void shutdownWorld() {
-        synchronized (INSTANCE) {
-            if (INSTANCE.net != null) {
-                INSTANCE.net.disconnect();
-            }
-            if (INSTANCE.player != null) {
-                INSTANCE.player.shutdown();
-            }
-            if (INSTANCE.lights != null) {
-                INSTANCE.lights.saveShutdown();
-            }
-            if (INSTANCE.map != null) {
-                INSTANCE.map.getMiniMap().saveAllMaps();
-                INSTANCE.map.saveShutdown();
-            }
-            if (INSTANCE.weather != null) {
-                INSTANCE.weather.shutdown();
-            }
-            if (INSTANCE.musicBox != null) {
-                INSTANCE.musicBox.saveShutdown();
-            }
+        if (INSTANCE.net != null) {
+            INSTANCE.net.disconnect();
+        }
+        if (INSTANCE.player != null) {
+            INSTANCE.player.shutdown();
+        }
+        if (INSTANCE.lights != null) {
+            INSTANCE.lights.saveShutdown();
+        }
+        if (INSTANCE.map != null) {
+            INSTANCE.map.getMiniMap().saveAllMaps();
+            INSTANCE.map.saveShutdown();
+        }
+        if (INSTANCE.weather != null) {
+            INSTANCE.weather.shutdown();
+        }
+        if (INSTANCE.musicBox != null) {
+            INSTANCE.musicBox.saveShutdown();
         }
     }
 
@@ -75,25 +73,23 @@ public final class World {
      */
     @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
     public static void cleanEnvironment() {
-        synchronized (INSTANCE) {
-            shutdownWorld();
+        shutdownWorld();
 
-            INSTANCE.chatHandler = null;
-            INSTANCE.aniManager = null;
-            INSTANCE.interactionManager = null;
-            INSTANCE.map = null;
-            INSTANCE.musicBox = null;
-            INSTANCE.lights = null;
+        INSTANCE.chatHandler = null;
+        INSTANCE.aniManager = null;
+        INSTANCE.interactionManager = null;
+        INSTANCE.map = null;
+        INSTANCE.musicBox = null;
+        INSTANCE.lights = null;
 
-            INSTANCE.player = null;
-            INSTANCE.people = null;
-            INSTANCE.net = null;
-            INSTANCE.weather = null;
-            INSTANCE.clock = null;
-            INSTANCE.updateManager = null;
+        INSTANCE.player = null;
+        INSTANCE.people = null;
+        INSTANCE.net = null;
+        INSTANCE.weather = null;
+        INSTANCE.clock = null;
+        INSTANCE.updateManager = null;
 
-            INSTANCE.init = false;
-        }
+        INSTANCE.init = false;
     }
 
     @Nonnull
@@ -328,7 +324,7 @@ public final class World {
      *
      * @param engine the engine that is used to display the game
      */
-    public static synchronized void initWorldComponents(@Nonnull Engine engine) throws EngineException {
+    public static void initWorldComponents(@Nonnull Engine engine) throws EngineException {
         if (INSTANCE.init) {
             return;
         }
@@ -354,7 +350,7 @@ public final class World {
      *
      * @param engine the game engine
      */
-    public static synchronized void initGui(@Nonnull Engine engine) {
+    public static void initGui(@Nonnull Engine engine) {
         INSTANCE.gameGui = new GameScreenController(engine.getInput());
     }
 
