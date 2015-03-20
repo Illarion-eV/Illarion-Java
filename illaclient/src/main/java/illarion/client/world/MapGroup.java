@@ -15,10 +15,15 @@
  */
 package illarion.client.world;
 
+import org.jetbrains.annotations.Contract;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * This class is used to organise the maps into groups. This is done to show and hide whole groups of maps.
@@ -43,7 +48,7 @@ public final class MapGroup {
      * groups in this list is hidden, this group will be assumed hidden as well.
      */
     @Nullable
-    private List<MapGroup> overwritingGroups;
+    private Set<MapGroup> overwritingGroups;
 
     /**
      * This list stores the children of this map group.
@@ -57,14 +62,15 @@ public final class MapGroup {
      * @return the root group
      */
     @Nonnull
+    @Contract(pure = true)
     public MapGroup getRootGroup() {
         MapGroup currentGroup = this;
         while (true) {
-            assert currentGroup != null;
-            if (currentGroup.parent == null) {
+            MapGroup parentGroup = currentGroup.parent;
+            if (parentGroup == null) {
                 return currentGroup;
             }
-            currentGroup = currentGroup.parent;
+            currentGroup = parentGroup;
         }
     }
 
@@ -86,12 +92,11 @@ public final class MapGroup {
      * @return {@code true} in case one of the overwriting groups is hidden
      */
     private boolean isOverwritingGroupHidden() {
-        @Nullable List<MapGroup> lclList = overwritingGroups;
+        @Nullable Set<MapGroup> lclList = overwritingGroups;
         if (lclList != null) {
-            int count = lclList.size();
-            //noinspection ForLoopReplaceableByForEach
-            for (int i = 0; i < count; i++) {
-                if (lclList.get(i).isHidden()) {
+            for (MapGroup group : lclList) {
+                assert group != null;
+                if (group.isHidden()) {
                     return true;
                 }
             }
@@ -155,11 +160,10 @@ public final class MapGroup {
             children = null;
         }
 
-        if (overwritingGroups != null) {
-            for (MapGroup group : overwritingGroups) {
-                parent.addOverwritingGroup(group);
-            }
-            overwritingGroups = null;
+        Set<MapGroup> overwriting = overwritingGroups;
+        overwritingGroups = null;
+        if (overwriting != null) {
+            parent.addOverwritingGroups(overwriting);
         }
     }
 
@@ -187,10 +191,20 @@ public final class MapGroup {
             throw new IllegalStateException("Adding overwriting groups no non-root groups is not allowed.");
         }
         if (overwritingGroups == null) {
-            overwritingGroups = new ArrayList<>();
+            overwritingGroups = new CopyOnWriteArraySet<>();
         }
         if (!overwritingGroups.contains(group)) {
             overwritingGroups.add(group);
         }
+    }
+
+    public void addOverwritingGroups(@Nonnull Collection<MapGroup> groups) {
+        if (parent != null) {
+            throw new IllegalStateException("Adding overwriting groups no non-root groups is not allowed.");
+        }
+        if (overwritingGroups == null) {
+            overwritingGroups = new CopyOnWriteArraySet<>();
+        }
+        overwritingGroups.addAll(groups);
     }
 }

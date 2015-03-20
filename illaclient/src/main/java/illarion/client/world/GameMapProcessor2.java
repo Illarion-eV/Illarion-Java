@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,6 +16,7 @@
 package illarion.client.world;
 
 import illarion.client.graphics.MapDisplayManager;
+import illarion.common.types.Direction;
 import illarion.common.types.Location;
 
 import javax.annotation.Nonnull;
@@ -59,8 +60,10 @@ public class GameMapProcessor2 {
             tile.setMapGroup(tileGroup);
         } else {
             tileGroup = groups.get(0);
+            assert tileGroup != null;
             tile.setMapGroup(tileGroup);
             for (int i = 1; i < groups.size(); i++) {
+                //noinspection ConstantConditions
                 groups.get(i).setParent(tileGroup);
             }
         }
@@ -123,7 +126,7 @@ public class GameMapProcessor2 {
     }
 
     @Nullable
-    private static MapGroup lastInsideGroup = null;
+    private static MapGroup lastInsideGroup;
 
     public static void checkInside() {
         Location playerLocation = World.getPlayer().getLocation();
@@ -176,22 +179,6 @@ public class GameMapProcessor2 {
         return null;
     }
 
-    @Nonnull
-    private static List<MapTile> getAllTilesAbove(
-            Location startLocation, int zLimit, boolean perceptiveOffset) {
-        List<MapTile> tileList = new ArrayList<>();
-        Location currentLocation = startLocation;
-        while (true) {
-            MapTile currentTile = getFirstTileAbove(currentLocation, zLimit, perceptiveOffset);
-            if (currentTile == null) {
-                break;
-            }
-            tileList.add(currentTile);
-            currentLocation = currentTile.getLocation();
-        }
-        return tileList;
-    }
-
     @Nullable
     private static MapTile getFirstTileAbove(
             @Nonnull Location startLocation, int zLimit, boolean perceptiveOffset) {
@@ -221,21 +208,20 @@ public class GameMapProcessor2 {
     private static List<MapGroup> getSurroundingMapGroups(@Nonnull Location startLocation) {
         List<MapGroup> groupList = new ArrayList<>();
 
-        for (int x = -1; x <= 1; x++) {
-            for (int y = -1; y <= 1; y++) {
-                if ((x == 0) && (y == 0)) {
-                    continue;
+        GameMap map = World.getMap();
+        //noinspection ConstantConditions
+        for (Direction dir : Direction.values()) {
+            int locX = startLocation.getScX() + dir.getDirectionVectorX();
+            int locY = startLocation.getScY() + dir.getDirectionVectorY();
+
+            MapTile tile = map.getMapAt(locX, locY, startLocation.getScZ());
+            if (tile != null) {
+                MapGroup group = tile.getMapGroup();
+                if (group != null) {
+                    group = group.getRootGroup();
                 }
-                MapTile tile = World.getMap()
-                        .getMapAt(startLocation.getScX() + x, startLocation.getScY() + y, startLocation.getScZ());
-                if (tile != null) {
-                    MapGroup group = tile.getMapGroup();
-                    if (group != null) {
-                        group = group.getRootGroup();
-                    }
-                    if ((group != null) && !groupList.contains(group)) {
-                        groupList.add(group);
-                    }
+                if ((group != null) && !groupList.contains(group)) {
+                    groupList.add(group);
                 }
             }
         }
