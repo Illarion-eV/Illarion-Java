@@ -15,6 +15,8 @@
  */
 package illarion.common.util;
 
+import org.jetbrains.annotations.Contract;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -32,14 +34,18 @@ public class TableLoaderOverlay extends TableLoader {
         super("Overlays", callback);
     }
 
+    @Contract(pure = true)
     public int getTileId() {
         return getInt(TB_TILE_ID);
     }
 
+    @Nonnull
+    @Contract(pure = true)
     public String getOverlayFile() {
         return getString(TB_OVERLAY_FILE);
     }
 
+    @Contract(pure = true)
     public int getLayer() {
         return getInt(TB_LAYER);
     }

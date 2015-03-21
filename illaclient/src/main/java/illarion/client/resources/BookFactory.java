@@ -115,8 +115,13 @@ public final class BookFactory implements ResourceFactory<IdWrapper<String>> {
      * @return the URL to the book resource
      */
     @Nullable
+    @Contract(pure = true)
     private URL getBookUrl(int id) {
-        return getBookUrl(fileMap.get(id));
+        String bookRef = fileMap.get(id);
+        if (bookRef == null) {
+            return null;
+        }
+        return getBookUrl(bookRef);
     }
 
     /**
@@ -126,6 +131,7 @@ public final class BookFactory implements ResourceFactory<IdWrapper<String>> {
      * @return the URL to the book resource
      */
     @Nullable
+    @Contract(pure = true)
     private static URL getBookUrl(@Nonnull String baseName) {
         return Thread.currentThread().getContextClassLoader().getResource("books/" + baseName + ".book.xml");
     }
@@ -137,6 +143,7 @@ public final class BookFactory implements ResourceFactory<IdWrapper<String>> {
      * @return the book with all its data
      */
     @Nullable
+    @Contract(pure = true)
     public Book getBook(int id) {
         Reference<Book> bookReference = bookMap.get(id);
         Book requestedBook = null;

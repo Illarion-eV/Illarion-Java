@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,6 +16,7 @@
 package illarion.client.resources;
 
 import illarion.client.resources.data.AvatarTemplate;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 
@@ -34,6 +35,7 @@ public final class CharacterFactory extends AbstractTemplateFactory<AvatarTempla
     /**
      * The singleton instance of this class.
      */
+    @Nonnull
     private static final CharacterFactory INSTANCE = new CharacterFactory();
 
     /**
@@ -42,6 +44,7 @@ public final class CharacterFactory extends AbstractTemplateFactory<AvatarTempla
      * @return the singleton instance of the avatar factory
      */
     @Nonnull
+    @Contract(pure = true)
     public static CharacterFactory getInstance() {
         return INSTANCE;
     }

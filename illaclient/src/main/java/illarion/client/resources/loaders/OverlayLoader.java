@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -39,7 +39,12 @@ public final class OverlayLoader extends AbstractResourceLoader<OverlayTemplate>
     /**
      * The logger that is used to report error messages.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ItemLoader.class);
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(OverlayLoader.class);
+
+    public static final String OVERLAY_PATH = "tiles/";
+
+    public static final int OVERLAY_VARIATIONS = 28;
 
     /**
      * The assets of the game engine that are required to load the data needed for the overlays.
@@ -52,7 +57,7 @@ public final class OverlayLoader extends AbstractResourceLoader<OverlayTemplate>
      *
      * @param assets the assets instance of the game engine that is used to load the data
      */
-    public OverlayLoader(@Nonnull final Assets assets) {
+    public OverlayLoader(@Nonnull Assets assets) {
         this.assets = assets;
     }
 
@@ -66,7 +71,7 @@ public final class OverlayLoader extends AbstractResourceLoader<OverlayTemplate>
             throw new IllegalStateException("targetFactory not set yet.");
         }
 
-        final ResourceFactory<OverlayTemplate> factory = getTargetFactory();
+        ResourceFactory<OverlayTemplate> factory = getTargetFactory();
 
         factory.init();
         new TableLoaderOverlay(this);
@@ -77,28 +82,24 @@ public final class OverlayLoader extends AbstractResourceLoader<OverlayTemplate>
         return factory;
     }
 
-    public static final String OVERLAY_PATH = "tiles/";
-
-    public static final int OVERLAY_VARIATIONS = 28;
-
     /**
      * Handle a single line of the resource table.
      */
     @Override
-    public boolean processRecord(final int line, @Nonnull final TableLoaderOverlay loader) {
-        final int id = loader.getTileId();
-        final String name = loader.getOverlayFile();
+    public boolean processRecord(int line, @Nonnull TableLoaderOverlay loader) {
+        int id = loader.getTileId();
+        String name = loader.getOverlayFile();
 
-        final Sprite overlaySprite = assets.getSpriteFactory()
+        Sprite overlaySprite = assets.getSpriteFactory()
                 .createSprite(getTextures(assets.getTextureManager(), OVERLAY_PATH, name, OVERLAY_VARIATIONS), 0, 0,
                               SpriteFactory.CENTER, SpriteFactory.CENTER, false);
 
-        final OverlayTemplate template = new OverlayTemplate(id, overlaySprite);
+        OverlayTemplate template = new OverlayTemplate(id, overlaySprite);
 
         try {
             getTargetFactory().storeResource(template);
-        } catch (@Nonnull final IllegalStateException ex) {
-            LOGGER.error("Failed adding overlay to internal factory. ID: " + id + " - Filename: " + name);
+        } catch (@Nonnull IllegalStateException ex) {
+            log.error("Failed adding overlay to internal factory. ID: {} - Filename: {}", id, name);
         }
 
         return true;

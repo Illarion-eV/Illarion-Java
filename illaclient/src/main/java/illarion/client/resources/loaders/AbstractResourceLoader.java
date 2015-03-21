@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,6 +20,8 @@ import illarion.client.resources.ResourceFactory;
 import illarion.common.util.ProgressMonitor;
 import org.illarion.engine.assets.TextureManager;
 import org.illarion.engine.graphic.Texture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,6 +33,9 @@ import java.util.concurrent.Callable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public abstract class AbstractResourceLoader<T extends Resource> implements Callable<ResourceFactory<T>> {
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(AbstractResourceLoader.class);
+
     /**
      * The factory that is supposed to store the load objects.
      */
@@ -145,7 +150,7 @@ public abstract class AbstractResourceLoader<T extends Resource> implements Call
         if (frames == 1) {
             resultTextures[0] = textureManager.getTexture(path, name);
             if (resultTextures[0] == null) {
-                System.err.println("Problem loading texture!");
+                log.error("Problem loading texture! Texture[0] is nothing for {}/{}", path, name);
             }
         } else {
             for (int i = 0; i < frames; i++) {

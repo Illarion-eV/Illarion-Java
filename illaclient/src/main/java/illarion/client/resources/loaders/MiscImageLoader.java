@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -34,6 +34,7 @@ public final class MiscImageLoader extends AbstractResourceLoader<MiscImageTempl
     /**
      * The path inside the resources where the GUI images are stored.
      */
+    @Nonnull
     private static final String GUI_PATH = "gui/";
 
     /**
@@ -47,7 +48,7 @@ public final class MiscImageLoader extends AbstractResourceLoader<MiscImageTempl
      *
      * @param assets the assets instance of the game engine that is used to load the data
      */
-    public MiscImageLoader(@Nonnull final Assets assets) {
+    public MiscImageLoader(@Nonnull Assets assets) {
         this.assets = assets;
     }
 
@@ -61,40 +62,40 @@ public final class MiscImageLoader extends AbstractResourceLoader<MiscImageTempl
             throw new IllegalStateException("targetFactory not set yet.");
         }
 
-        final ResourceFactory<MiscImageTemplate> factory = getTargetFactory();
+        ResourceFactory<MiscImageTemplate> factory = getTargetFactory();
 
         factory.init();
 
-        final SpriteFactory sf = assets.getSpriteFactory();
-        final ResourceFactory<MiscImageTemplate> tf = getTargetFactory();
-        final TextureManager tm = assets.getTextureManager();
+        SpriteFactory sf = assets.getSpriteFactory();
+        ResourceFactory<MiscImageTemplate> tf = getTargetFactory();
+        TextureManager tm = assets.getTextureManager();
 
-        final Sprite attackMarkerSprite = sf
+        Sprite attackMarkerSprite = sf
                 .createSprite(getTextures(tm, GUI_PATH, "attackMarker", 1), 0, 0, SpriteFactory.CENTER,
                               SpriteFactory.CENTER, false);
         tf.storeResource(new MiscImageTemplate(MiscImageFactory.ATTACK_MARKER, attackMarkerSprite, 1));
 
-        final Sprite miniMapArrowSprite = sf
+        Sprite miniMapArrowSprite = sf
                 .createSprite(getTextures(tm, GUI_PATH, "minimap_arrow", 1), 0, 71, SpriteFactory.CENTER,
                               SpriteFactory.TOP, false);
         tf.storeResource(new MiscImageTemplate(MiscImageFactory.MINI_MAP_ARROW, miniMapArrowSprite, 1));
 
-        final Sprite miniMapPointSprite = sf
+        Sprite miniMapPointSprite = sf
                 .createSprite(getTextures(tm, GUI_PATH, "minimap_point", 1), 0, 0, SpriteFactory.CENTER,
                               SpriteFactory.CENTER, false);
         tf.storeResource(new MiscImageTemplate(MiscImageFactory.MINI_MAP_POINT, miniMapPointSprite, 1));
 
-        final Sprite miniMapExclSprite = sf
+        Sprite miniMapExclSprite = sf
                 .createSprite(getTextures(tm, GUI_PATH, "minimap_exclamation", 1), 0, 0, SpriteFactory.CENTER,
                               SpriteFactory.CENTER, false);
         tf.storeResource(new MiscImageTemplate(MiscImageFactory.MINI_MAP_EXCLAMATION, miniMapExclSprite, 1));
 
-        final Sprite questMarker1 = sf
+        Sprite questMarker1 = sf
                 .createSprite(getTextures(tm, GUI_PATH, "question_mark", 1), 0, 0, SpriteFactory.CENTER,
                               SpriteFactory.BOTTOM, false);
         tf.storeResource(new MiscImageTemplate(MiscImageFactory.QUEST_MARKER_QUESTION_MARK, questMarker1, 1));
 
-        final Sprite questMarker2 = sf
+        Sprite questMarker2 = sf
                 .createSprite(getTextures(tm, GUI_PATH, "exclamation_mark", 1), 0, 0, SpriteFactory.CENTER,
                               SpriteFactory.BOTTOM, false);
         tf.storeResource(new MiscImageTemplate(MiscImageFactory.QUEST_MARKER_EXCLAMATION_MARK, questMarker2, 1));

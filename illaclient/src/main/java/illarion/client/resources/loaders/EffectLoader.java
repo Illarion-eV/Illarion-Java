@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -39,13 +39,14 @@ public final class EffectLoader extends AbstractResourceLoader<EffectTemplate>
     /**
      * The logger that is used to report error messages.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ItemLoader.class);
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(EffectLoader.class);
 
     /**
      * The resource path to the effect graphics. All graphics need to be located at this path within the JAR-resource
      * files.
      */
-    @SuppressWarnings("nls")
+    @Nonnull
     private static final String EFFECTS_PATH = "effects/";
 
     /**
@@ -59,7 +60,7 @@ public final class EffectLoader extends AbstractResourceLoader<EffectTemplate>
      *
      * @param assets the assets instance of the game engine that is used to load the data
      */
-    public EffectLoader(@Nonnull final Assets assets) {
+    public EffectLoader(@Nonnull Assets assets) {
         this.assets = assets;
     }
 
@@ -73,7 +74,7 @@ public final class EffectLoader extends AbstractResourceLoader<EffectTemplate>
             throw new IllegalStateException("targetFactory not set yet.");
         }
 
-        final ResourceFactory<EffectTemplate> factory = getTargetFactory();
+        ResourceFactory<EffectTemplate> factory = getTargetFactory();
 
         factory.init();
         new TableLoaderEffects(this);
@@ -88,24 +89,24 @@ public final class EffectLoader extends AbstractResourceLoader<EffectTemplate>
      * Handle a single line of the resource table.
      */
     @Override
-    public boolean processRecord(final int line, @Nonnull final TableLoaderEffects loader) {
-        final int effectID = loader.getEffectId();
-        final String name = loader.getResourceName();
-        final int frames = loader.getFrameCount();
-        final int offsetX = loader.getOffsetX();
-        final int offsetY = loader.getOffsetY();
-        final int speed = loader.getAnimationSpeed();
-        final int light = loader.getEffectLight();
+    public boolean processRecord(int line, @Nonnull TableLoaderEffects loader) {
+        int effectID = loader.getEffectId();
+        String name = loader.getResourceName();
+        int frames = loader.getFrameCount();
+        int offsetX = loader.getOffsetX();
+        int offsetY = loader.getOffsetY();
+        int speed = loader.getAnimationSpeed();
+        int light = loader.getEffectLight();
 
-        final Sprite effectSprite = assets.getSpriteFactory()
+        Sprite effectSprite = assets.getSpriteFactory()
                 .createSprite(getTextures(assets.getTextureManager(), EFFECTS_PATH, name, frames), offsetX, offsetY,
                               SpriteFactory.CENTER, SpriteFactory.CENTER, false);
 
-        final EffectTemplate template = new EffectTemplate(effectID, effectSprite, frames, speed, light);
+        EffectTemplate template = new EffectTemplate(effectID, effectSprite, frames, speed, light);
         try {
             getTargetFactory().storeResource(template);
-        } catch (@Nonnull final IllegalStateException ex) {
-            LOGGER.error("Failed adding effect to internal factory. ID: " + effectID + " - Filename: " + name);
+        } catch (@Nonnull IllegalStateException ex) {
+            log.error("Failed adding effect to internal factory. ID: {} - Filename: {}", effectID, name);
         }
 
         return true;

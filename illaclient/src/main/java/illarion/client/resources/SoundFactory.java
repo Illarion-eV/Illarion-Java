@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,13 +19,13 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import illarion.client.util.IdWrapper;
 import org.illarion.engine.assets.SoundsManager;
 import org.illarion.engine.sound.Sound;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -42,12 +42,26 @@ public final class SoundFactory implements ResourceFactory<IdWrapper<String>> {
     /**
      * The singleton instance of the sound factory.
      */
+    @Nonnull
     private static final SoundFactory INSTANCE = new SoundFactory();
 
     /**
      * The instance of the logger that is used to write out the data.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(SoundFactory.class);
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(SoundFactory.class);
+
+    /**
+     * The path where the sounds are located.
+     */
+    @Nonnull
+    private static final String SOUND_PATH = "sounds/";
+
+    /**
+     * The hash map that stores all sound effects available.
+     */
+    @Nullable
+    private TIntObjectHashMap<String> sounds;
 
     /**
      * Get the singleton instance of the sound factory.
@@ -55,19 +69,10 @@ public final class SoundFactory implements ResourceFactory<IdWrapper<String>> {
      * @return the singleton instance of the sound factory
      */
     @Nonnull
+    @Contract(pure = true)
     public static SoundFactory getInstance() {
         return INSTANCE;
     }
-
-    /**
-     * The hash map that stores all sound effects available.
-     */
-    private TIntObjectHashMap<String> sounds;
-
-    /**
-     * The path where the sounds are located.
-     */
-    private static final String SOUND_PATH = "sounds/";
 
     /**
      * Private constructor to ensure that no instances but the singleton instance are created.
@@ -83,14 +88,22 @@ public final class SoundFactory implements ResourceFactory<IdWrapper<String>> {
      * @return the sound effect or {@code null} in case it was not found or if the sound playback is disabled
      */
     @Nullable
-    public Sound getSound(final int id, @Nonnull final SoundsManager manager) {
+    @Contract(pure = true)
+    public Sound getSound(int id, @Nonnull SoundsManager manager) {
+        if (sounds == null) {
+            throw new IllegalStateException("Factory was not initialized yet.");
+        }
+
+        String soundRef = sounds.get(id);
         Sound loadedSound = null;
-        if (sounds.contains(id)) {
-            loadedSound = manager.getSound(sounds.get(id));
+        if (soundRef != null) {
+            loadedSound = manager.getSound(soundRef);
         }
         if (loadedSound == null) {
-            LOGGER.warn("Requested Sound unknown: " + id);
-            return manager.getSound(sounds.get(DEFAULT_SOUND));
+            log.warn("Requested Sound unknown: {}", id);
+            if (id != DEFAULT_SOUND) {
+                return getSound(DEFAULT_SOUND, manager);
+            }
         }
         return loadedSound;
     }
@@ -99,7 +112,6 @@ public final class SoundFactory implements ResourceFactory<IdWrapper<String>> {
      * Prepare the this factory for loading the sounds.
      */
     @Override
-    @SuppressWarnings("nls")
     public void init() {
         sounds = new TIntObjectHashMap<>();
     }
@@ -109,6 +121,10 @@ public final class SoundFactory implements ResourceFactory<IdWrapper<String>> {
      */
     @Override
     public void loadingFinished() {
+        if (sounds == null) {
+            throw new IllegalStateException("Factory was not initialized yet.");
+        }
+
         sounds.compact();
     }
 
@@ -117,8 +133,11 @@ public final class SoundFactory implements ResourceFactory<IdWrapper<String>> {
      * factory.
      */
     @Override
-    public void storeResource(@Nonnull final IdWrapper<String> resource) {
-        final String sound = resource.getObject();
+    public void storeResource(@Nonnull IdWrapper<String> resource) {
+        if (sounds == null) {
+            throw new IllegalStateException("Factory was not initialized yet.");
+        }
+        String sound = resource.getObject();
         sounds.put(resource.getId(), SOUND_PATH + sound);
     }
 
@@ -128,10 +147,12 @@ public final class SoundFactory implements ResourceFactory<IdWrapper<String>> {
      * @return a newly created list that contains the list
      */
     @Nonnull
+    @Contract(pure = true)
     public List<String> getSoundNames() {
-        final List<String> result = new ArrayList<>();
-        Collections.addAll(result, sounds.values(new String[0]));
-        return result;
+        if (sounds == null) {
+            throw new IllegalStateException("Factory was not initialized yet.");
+        }
+        return new ArrayList<>(sounds.valueCollection());
     }
 
     /**
@@ -140,7 +161,7 @@ public final class SoundFactory implements ResourceFactory<IdWrapper<String>> {
      * @param manager the manager used to load the sound
      * @param sound the name of the sound to load
      */
-    public void loadSound(@Nonnull final SoundsManager manager, @Nonnull final String sound) {
+    public void loadSound(@Nonnull SoundsManager manager, @Nonnull String sound) {
         manager.getSound(sound);
     }
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -32,7 +32,7 @@ public interface TableLoaderSink<T extends TableLoader> {
      * @param line the numeric index of the last read line
      * @param loader the instance of table loader that is reading the line
      * @return {@code true} in case the table loader shall go on reading the table, {@code false} for cancel the reading
-     * operations and quit the tableloader
+     * operations and quit the table loader
      */
     boolean processRecord(int line, T loader);
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,6 +16,7 @@
 package illarion.client.resources;
 
 import illarion.client.resources.data.EffectTemplate;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 
@@ -34,6 +35,7 @@ public final class EffectFactory extends AbstractTemplateFactory<EffectTemplate>
     /**
      * The singleton instance of the effect factory.
      */
+    @Nonnull
     private static final EffectFactory INSTANCE = new EffectFactory();
 
     /**
@@ -42,6 +44,7 @@ public final class EffectFactory extends AbstractTemplateFactory<EffectTemplate>
      * @return the singleton instance for the effect factory
      */
     @Nonnull
+    @Contract(pure = true)
     public static EffectFactory getInstance() {
         return INSTANCE;
     }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,6 +21,7 @@ import illarion.client.util.IdWrapper;
 import illarion.common.util.FastMath;
 import org.illarion.engine.assets.SoundsManager;
 import org.illarion.engine.sound.Music;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,11 +39,13 @@ public final class SongFactory implements ResourceFactory<IdWrapper<String>> {
     /**
      * The singleton instance of the SongFactory.
      */
+    @Nonnull
     private static final SongFactory INSTANCE = new SongFactory();
 
     /**
      * The root path to the music track files.
      */
+    @Nonnull
     private static final String SONG_DIR = "music/";
 
     /**
@@ -51,6 +54,7 @@ public final class SongFactory implements ResourceFactory<IdWrapper<String>> {
      * @return the singleton instance
      */
     @Nonnull
+    @Contract(pure = true)
     public static SongFactory getInstance() {
         return INSTANCE;
     }
@@ -58,6 +62,7 @@ public final class SongFactory implements ResourceFactory<IdWrapper<String>> {
     /**
      * The storage for the songs and the variations of the songs.
      */
+    @Nullable
     private TIntObjectHashMap<List<String>> songs;
 
     /**
@@ -76,12 +81,18 @@ public final class SongFactory implements ResourceFactory<IdWrapper<String>> {
      * in case there are multiple variations of this song, one is selected randomly and returned
      */
     @Nullable
-    public Music getSong(final int id, @Nonnull final SoundsManager manager) {
-        if ((songs != null) && songs.contains(id)) {
+    @Contract(pure = true)
+    public Music getSong(int id, @Nonnull SoundsManager manager) {
+        if (songs != null) {
             // select a variant at random
-            final List<String> clipList = songs.get(id);
-            final int variant = FastMath.nextRandomInt(0, clipList.size());
-            return manager.getMusic(songs.get(id).get(variant));
+            List<String> clipList = songs.get(id);
+            if (clipList != null) {
+                int variant = FastMath.nextRandomInt(0, clipList.size());
+                String variantRef = clipList.get(variant);
+                if (variantRef != null) {
+                    return manager.getMusic(variantRef);
+                }
+            }
         }
         return null;
     }
@@ -107,14 +118,16 @@ public final class SongFactory implements ResourceFactory<IdWrapper<String>> {
      * Add a song to this factory.
      */
     @Override
-    public void storeResource(@Nonnull final IdWrapper<String> resource) {
-        final int clipID = resource.getId();
-        final String music = resource.getObject();
+    public void storeResource(@Nonnull IdWrapper<String> resource) {
+        if (songs == null) {
+            throw new IllegalStateException("Factory was not initialized yet.");
+        }
 
-        final List<String> clipList;
-        if (songs.contains(clipID)) {
-            clipList = songs.get(clipID);
-        } else {
+        int clipID = resource.getId();
+        String music = resource.getObject();
+
+        List<String> clipList = songs.get(clipID);
+        if (clipList == null) {
             clipList = new ArrayList<>();
             songs.put(clipID, clipList);
         }
@@ -127,11 +140,16 @@ public final class SongFactory implements ResourceFactory<IdWrapper<String>> {
      * @return a newly created list that contains the list
      */
     @Nonnull
+    @Contract(pure = true)
     public List<String> getSongNames() {
+        if (songs == null) {
+            throw new IllegalStateException("Factory was not initialized yet.");
+        }
+
         final List<String> result = new ArrayList<>();
         songs.forEachValue(new TObjectProcedure<List<String>>() {
             @Override
-            public boolean execute(@Nonnull final List<String> object) {
+            public boolean execute(@Nonnull List<String> object) {
                 result.addAll(object);
                 return true;
             }
@@ -145,7 +163,7 @@ public final class SongFactory implements ResourceFactory<IdWrapper<String>> {
      * @param manager the manager used to load the track
      * @param song the name of the song to load
      */
-    public void loadSong(@Nonnull final SoundsManager manager, @Nonnull final String song) {
+    public void loadSong(@Nonnull SoundsManager manager, @Nonnull String song) {
         manager.getMusic(song);
     }
 }

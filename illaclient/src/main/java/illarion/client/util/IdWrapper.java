@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,6 +16,9 @@
 package illarion.client.util;
 
 import illarion.client.resources.Resource;
+import org.jetbrains.annotations.Contract;
+
+import javax.annotation.Nonnull;
 
 /**
  * This utility class is used to wrap a object together with a ID.
@@ -26,6 +29,7 @@ public final class IdWrapper<T> implements Resource {
     /**
      * The object that is stored in this instance.
      */
+    @Nonnull
     private final T object;
 
     /**
@@ -40,7 +44,7 @@ public final class IdWrapper<T> implements Resource {
      * @param id the ID
      * @param object the object
      */
-    public IdWrapper(final int id, final T object) {
+    public IdWrapper(int id, @Nonnull T object) {
         this.id = id;
         this.object = object;
     }
@@ -50,6 +54,7 @@ public final class IdWrapper<T> implements Resource {
      *
      * @return the Id
      */
+    @Contract(pure = true)
     public int getId() {
         return id;
     }
@@ -59,6 +64,8 @@ public final class IdWrapper<T> implements Resource {
      *
      * @return the object
      */
+    @Nonnull
+    @Contract(pure = true)
     public T getObject() {
         return object;
     }
