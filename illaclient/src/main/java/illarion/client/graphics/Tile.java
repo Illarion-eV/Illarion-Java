@@ -30,8 +30,8 @@ import illarion.client.world.movement.TargetMovementHandler;
 import illarion.common.graphics.MapVariance;
 import illarion.common.graphics.TileInfo;
 import illarion.common.types.Direction;
-import illarion.common.types.Location;
 import illarion.common.types.Rectangle;
+import illarion.common.types.ServerCoordinate;
 import org.illarion.engine.EngineException;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
@@ -105,8 +105,8 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
             animation = template.getSharedAnimation();
         } else if (template.getFrames() > 1) { // a tile with variants
             animation = null;
-            Location location = parentTile.getLocation();
-            setFrame(MapVariance.getTileFrameVariance(location.getScX(), location.getScY(), template.getFrames()));
+            ServerCoordinate location = parentTile.getCoordinates();
+            setFrame(MapVariance.getTileFrameVariance(location.getX(), location.getY(), template.getFrames()));
         } else {
             animation = null;
         }
@@ -280,10 +280,10 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
                 return false;
             }
 
-            log.debug("Single click on tile at {}", parentTile.getLocation());
+            log.debug("Single click on tile at {}", parentTile.getCoordinates());
 
             TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
-            handler.walkTo(parentTile.getLocation(), parentTile.isBlocked() ? 1 : 0);
+            handler.walkTo(parentTile.getCoordinates(), parentTile.isBlocked() ? 1 : 0);
             handler.assumeControl();
             return true;
         }
@@ -294,7 +294,7 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
                 return false;
             }
             World.getPlayer().getMovementHandler().getTargetMouseMovementHandler()
-                    .walkTo(parentTile.getLocation(), parentTile.isBlocked() ? 1 : 0);
+                    .walkTo(parentTile.getCoordinates(), parentTile.isBlocked() ? 1 : 0);
 
             if (!moveEvent.isHighlightHandled()) {
                 showHighlight = 1;

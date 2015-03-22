@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,42 +15,37 @@
  */
 package illarion.mapedit.util;
 
-import illarion.common.types.Location;
+import illarion.common.types.DisplayCoordinate;
+import illarion.common.types.ServerCoordinate;
 
 /**
  * @author Tim
  */
 public class SwingLocation {
 
-    private static final Location DUMMY = new Location();
-
     private SwingLocation() {
 
     }
 
     public static int mapCoordinateX(
-            final int x, final int y, final int transX, final int transY, final float zoom) {
-        final float xr = (x - transX) / zoom;
-        final float yr = (y - transY) / zoom;
-        DUMMY.reset();
-        DUMMY.setDC((int) xr, (int) yr);
-        return DUMMY.getScX();
+            int x, int y, int transX, int transY, float zoom) {
+        float xr = (x - transX) / zoom;
+        float yr = (y - transY) / zoom;
+        return DisplayCoordinate.toServerX((int) xr, (int) yr);
     }
 
     public static int mapCoordinateY(
-            final int x, final int y, final int transX, final int transY, final float zoom) {
-        final float xr = (x - transX) / zoom;
-        final float yr = (y - transY) / zoom;
-        DUMMY.reset();
-        DUMMY.setDC((int) xr, (int) yr);
-        return DUMMY.getScY() - 1;
+            int x, int y, int transX, int transY, float zoom) {
+        float xr = (x - transX) / zoom;
+        float yr = (y - transY) / zoom;
+        return DisplayCoordinate.toServerY((int) xr, (int) yr) - 1;
     }
 
-    public static int displayCoordinateX(final int x, final int y, final int z) {
-        return Location.displayCoordinateX(x, y, z);
+    public static int displayCoordinateX(int x, int y, int z) {
+        return ServerCoordinate.toDisplayX(x, y);
     }
 
-    public static int displayCoordinateY(final int x, final int y, final int z) {
-        return -Location.displayCoordinateY(x, y, z);
+    public static int displayCoordinateY(int x, int y, int z) {
+        return -ServerCoordinate.toDisplayY(x, y, z);
     }
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,6 +16,7 @@
 package illarion.client.graphics;
 
 import illarion.common.types.Direction;
+import illarion.common.types.DisplayCoordinate;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Graphics;
@@ -153,17 +154,8 @@ final class AvatarClothRenderer {
     /**
      * The current x coordinate of the avatar on the screen.
      */
-    private int avatarPosX;
-
-    /**
-     * The current y coordinate of the avatar on the screen.
-     */
-    private int avatarPosY;
-
-    /**
-     * The current z coordinate of the avatar on the screen.
-     */
-    private int avatarPosZ;
+    @Nullable
+    private DisplayCoordinate avatarPos;
 
     /**
      * The list of clothes the avatar currently wears. This clothes are rendered
@@ -180,6 +172,7 @@ final class AvatarClothRenderer {
     /**
      * The light that is currently set to the clothes.
      */
+    @Nullable
     private Color currentLight;
 
     /**
@@ -187,11 +180,6 @@ final class AvatarClothRenderer {
      */
     @Nonnull
     private final Direction direction;
-
-    /**
-     * The layer this clothes are assigned to.
-     */
-    private int layer;
 
     /**
      * The amount of frames the parent animation stores.
@@ -404,8 +392,12 @@ final class AvatarClothRenderer {
             currentClothes[group] = item;
 
             if (item != null) {
-                item.setLight(currentLight);
-                item.setScreenPos(avatarPosX, avatarPosY, avatarPosZ, layer);
+                if (currentLight != null) {
+                    item.setLight(currentLight);
+                }
+                if (avatarPos != null) {
+                    item.setScreenPos(avatarPos);
+                }
                 item.setFrame(currentFrame);
                 item.setScale(scale);
                 if (clothAlpha > -1) {
@@ -423,22 +415,15 @@ final class AvatarClothRenderer {
      * class. Its needed to call this function when ever the location changes or
      * a cloth is added.
      *
-     * @param newX the x coordinate on the screen of this object
-     * @param newY the y coordinate on the screen of this object
-     * @param newZ the z coordinate so the layer of this object
-     * @param newLayer the global layer of this object
+     * @param coordinate the display coordinate of the parent avatar
      */
-    void setScreenLocation(
-            int newX, int newY, int newZ, int newLayer) {
-        avatarPosX = newX;
-        avatarPosY = newY;
-        avatarPosZ = newZ;
-        layer = newLayer;
+    void setScreenPos(@Nonnull DisplayCoordinate coordinate) {
+        avatarPos = coordinate;
         clothLock.readLock().lock();
         try {
             for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
                 if (currentClothes[i] != null) {
-                    currentClothes[i].setScreenPos(newX, newY, newZ, newLayer);
+                    currentClothes[i].setScreenPos(coordinate);
                 }
             }
         } finally {

@@ -45,8 +45,8 @@ import illarion.client.world.movement.MouseMovementHandler;
 import illarion.client.world.movement.Movement;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.types.ItemCount;
-import illarion.common.types.Location;
 import illarion.common.types.Rectangle;
+import illarion.common.types.ServerCoordinate;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
@@ -428,7 +428,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
     }
 
     @Override
-    public void showItemTooltip(@Nonnull Location location, int stackPosition, @Nonnull Tooltip tooltip) {
+    public void showItemTooltip(@Nonnull ServerCoordinate location, int stackPosition, @Nonnull Tooltip tooltip) {
         LOGGER.debug("Now showing tooltip for {} at stack position {}", location, stackPosition);
         MapTile targetTile = World.getMap().getMapAt(location);
         if (targetTile == null) {

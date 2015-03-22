@@ -19,7 +19,6 @@ import illarion.client.Debug;
 import illarion.client.IllaClient;
 import illarion.client.net.client.AbstractCommand;
 import illarion.common.net.NetCommWriter;
-import illarion.common.types.Location;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -217,15 +216,13 @@ final class Sender implements NetCommWriter {
     }
 
     /**
-     * Write a location to the network.
+     * Write 2 byte as signed value to the network.
      *
-     * @param loc the location that shall be send to the server
+     * @param value the signed integer that shall be send to the server
      */
     @Override
-    public void writeLocation(@Nonnull Location loc) {
-        buffer.putShort((short) loc.getScX());
-        buffer.putShort((short) loc.getScY());
-        buffer.putShort((short) loc.getScZ());
+    public void writeShort(short value) {
+        buffer.putShort(value);
     }
 
     /**

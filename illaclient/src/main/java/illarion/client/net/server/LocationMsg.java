@@ -19,7 +19,7 @@ import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
@@ -38,11 +38,11 @@ public final class LocationMsg implements ServerReply {
      * The location of the player.
      */
     @Nullable
-    private Location location;
+    private ServerCoordinate location;
 
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
-        location = new Location(reader);
+        location = new ServerCoordinate(reader);
     }
 
     @Nonnull

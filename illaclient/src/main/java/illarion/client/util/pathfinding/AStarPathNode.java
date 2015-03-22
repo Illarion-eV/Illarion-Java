@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -69,7 +69,7 @@ class AStarPathNode extends AbstractPathNode implements Comparable<AStarPathNode
             @Nonnull MapTile tile,
             @Nonnull PathMovementMethod method,
             @Nonnull Direction approachDirection, int heuristic, @Nullable MapTile walkingTile) {
-        super(tile.getLocation(), method);
+        super(tile.getCoordinates(), method);
         blocked = tile.isBlocked();
         this.heuristic = heuristic;
         this.parentNode = parentNode;
@@ -82,7 +82,7 @@ class AStarPathNode extends AbstractPathNode implements Comparable<AStarPathNode
             if (approachDirection.isDiagonal()) {
                 tileCost = (int) (SQRT2 * tileCost);
             }
-            cost = parentNode == null ? tileCost : parentNode.cost + tileCost;
+            cost = (parentNode == null) ? tileCost : (parentNode.cost + tileCost);
         } else {
             cost = 0;
         }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,6 +15,7 @@
  */
 package illarion.client.graphics;
 
+import illarion.common.types.DisplayCoordinate;
 import illarion.common.types.Rectangle;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
@@ -58,14 +59,10 @@ public final class AvatarTextTag {
     private int avatarHeight;
 
     /**
-     * The x coordinate where the avatar is supposed to be displayed.
+     * The coordinates where the tag is supposed to be displayed.
      */
-    private int displayX;
-
-    /**
-     * The y coordinate where the avatar is supposed to be displayed.
-     */
-    private int displayY;
+    @Nullable
+    private DisplayCoordinate displayCoordinate;
 
     /**
      * The text displayed to show the health state of the character.
@@ -127,16 +124,10 @@ public final class AvatarTextTag {
     /**
      * Set the location on the screen where the tag is supposed to be displayed.
      *
-     * @param x the x coordinate of the location on the screen
-     * @param y the y coordinate of the location on the screen
+     * @param coordinate the coordinate of the location on the screen
      */
-    public void setDisplayLocation(int x, int y) {
-        if ((displayX == x) && (displayY == y)) {
-            return;
-        }
-
-        displayX = x;
-        displayY = y;
+    public void setDisplayLocation(@Nonnull DisplayCoordinate coordinate) {
+        displayCoordinate = coordinate;
     }
 
     /**
@@ -246,7 +237,9 @@ public final class AvatarTextTag {
         healthStateOffsetX = (width - healthWidth) / 2;
         healthStateOffsetY = nameHeight;
 
-        displayRect.set(displayX - (getWidth() / 2), displayY - avatarHeight - getHeight() - 5, width, height);
+        displayRect.set(displayCoordinate.getX() - (getWidth() / 2),
+                displayCoordinate.getY() - avatarHeight - getHeight() - 5,
+                width, height);
     }
 
     private int charNameOffsetX;

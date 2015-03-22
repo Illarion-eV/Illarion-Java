@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,7 @@
  */
 package illarion.client.gui;
 
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 
 import javax.annotation.Nonnull;
 
@@ -32,7 +32,7 @@ public interface GameMapGui {
      * @param stackPosition the position of the referenced item on the stack
      * @param tooltip the tooltip of the item that is supposed to be displayed
      */
-    void showItemTooltip(@Nonnull Location location, int stackPosition, @Nonnull Tooltip tooltip);
+    void showItemTooltip(@Nonnull ServerCoordinate location, int stackPosition, @Nonnull Tooltip tooltip);
 
     /**
      * Toggle the pulsing animation of the run button.

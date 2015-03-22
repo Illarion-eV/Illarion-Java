@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,8 @@
  */
 package illarion.mapedit.data;
 
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
+import illarion.mapedit.data.MapTile.MapTileFactory;
 import illarion.mapedit.events.HistoryPasteCutEvent;
 import illarion.mapedit.history.CopyPasteAction;
 import illarion.mapedit.history.GroupAction;
@@ -92,7 +93,7 @@ public class Map implements Iterable<MapTile> {
      * @param y the y coordinate of the origin of the map
      * @param z the map level (= z coordinate)
      */
-    public Map(final String name, final Path path, final int w, final int h, final int x, final int y, final int z) {
+    public Map(String name, Path path, int w, int h, int x, int y, int z) {
         this.name = name;
         this.path = path;
         width = w;
@@ -113,7 +114,7 @@ public class Map implements Iterable<MapTile> {
     @Nullable
     public List<MapItem> getItemsOnActiveTile() {
         List<MapItem> items = null;
-        final MapTile tile = getTileAt(activeX, activeY);
+        MapTile tile = getTileAt(activeX, activeY);
         if (tile != null) {
             items = tile.getMapItems();
         }
@@ -125,7 +126,7 @@ public class Map implements Iterable<MapTile> {
         return selectionManager.getSelection();
     }
 
-    public boolean isActiveTile(final int x, final int y) {
+    public boolean isActiveTile(int x, int y) {
         return (activeX == x) && (activeY == y);
     }
 
@@ -133,14 +134,14 @@ public class Map implements Iterable<MapTile> {
         return isFillDragging;
     }
 
-    public boolean isPositionAtTile(final int x, final int y) {
+    public boolean isPositionAtTile(int x, int y) {
         return (positionX == x) && (positionY == y);
     }
 
     @Nullable
-    public ItemPlacedAction removeItemOnActiveTile(final int index) {
+    public ItemPlacedAction removeItemOnActiveTile(int index) {
         ItemPlacedAction action = null;
-        final MapTile tile = getTileAt(activeX, activeY);
+        MapTile tile = getTileAt(activeX, activeY);
         if (tile != null) {
 
             action = new ItemPlacedAction(activeX, activeY, tile.getMapItemAt(index), null, this);
@@ -149,24 +150,24 @@ public class Map implements Iterable<MapTile> {
         return action;
     }
 
-    public void replaceItemOnActiveTile(final int index, final int newIndex) {
-        final MapTile tile = getTileAt(activeX, activeY);
+    public void replaceItemOnActiveTile(int index, int newIndex) {
+        MapTile tile = getTileAt(activeX, activeY);
         if (tile != null) {
-            final List<MapItem> items = tile.getMapItems();
+            List<MapItem> items = tile.getMapItems();
             if (items != null) {
-                final MapItem item = items.get(index);
+                MapItem item = items.get(index);
                 items.set(index, items.get(newIndex));
                 items.set(newIndex, item);
             }
         }
     }
 
-    public void setActiveTile(final int x, final int y) {
+    public void setActiveTile(int x, int y) {
         activeX = x;
         activeY = y;
     }
 
-    public void setFillingArea(final int x, final int y, final int startX, final int startY) {
+    public void setFillingArea(int x, int y, int startX, int startY) {
         fillX = x;
         fillY = y;
         fillStartX = startX;
@@ -174,7 +175,7 @@ public class Map implements Iterable<MapTile> {
         isFillDragging = true;
     }
 
-    public void setMapPosition(final int mapX, final int mapY) {
+    public void setMapPosition(int mapX, int mapY) {
         positionX = mapX - x;
         positionY = mapY - y;
     }
@@ -184,7 +185,7 @@ public class Map implements Iterable<MapTile> {
      *
      * @param mapTile the tile to add.
      */
-    public void setTileAt(final int x, final int y, @Nonnull final MapTile mapTile) {
+    public void setTileAt(int x, int y, @Nonnull MapTile mapTile) {
         setTileAtIndex(mapToIndex(x, y), mapTile);
     }
 
@@ -194,14 +195,14 @@ public class Map implements Iterable<MapTile> {
      * @param index the index where the new tile is set
      * @param mapTile the tile to add.
      */
-    private void setTileAtIndex(final int index, @Nonnull final MapTile mapTile) {
+    private void setTileAtIndex(int index, @Nonnull MapTile mapTile) {
         mapTileData[index] = mapTile;
     }
 
     /**
      * Get a tile located at a specific internal index value.
      */
-    MapTile getTileAtIndex(final int index) {
+    MapTile getTileAtIndex(int index) {
         return mapTileData[index];
     }
 
@@ -213,7 +214,7 @@ public class Map implements Iterable<MapTile> {
      * @return the internal index value
      * @throws IllegalArgumentException in case x or y is out of range
      */
-    private int mapToIndex(final int x, final int y) {
+    private int mapToIndex(int x, int y) {
         if (x < 0 || x >= getWidth()) {
             throw new IllegalArgumentException("X is out of range. 0 <= " + x + " < " + getWidth());
         }
@@ -223,22 +224,22 @@ public class Map implements Iterable<MapTile> {
         return (y * width) + x;
     }
 
-    int indexToMapX(final int index) {
+    int indexToMapX(int index) {
         if (index < 0 || index >= mapTileData.length) {
             throw new IllegalArgumentException("Index is out of range. 0 <= " + index + " < " + mapTileData.length);
         }
         return index % width;
     }
 
-    int indexToMapY(final int index) {
+    int indexToMapY(int index) {
         if (index < 0 || index >= mapTileData.length) {
             throw new IllegalArgumentException("Index is out of range. 0 <= " + index + " < " + mapTileData.length);
         }
         return index / width;
     }
 
-    public void setTileAt(@Nonnull final Location loc, @Nonnull final MapTile mapTile) {
-        setTileAt(loc.getScX(), loc.getScY(), mapTile);
+    public void setTileAt(@Nonnull ServerCoordinate loc, @Nonnull MapTile mapTile) {
+        setTileAt(loc.getX(), loc.getY(), mapTile);
     }
 
     /**
@@ -248,11 +249,11 @@ public class Map implements Iterable<MapTile> {
      * @param y the y coordinate relative to the origin
      * @param mapItem the item  <- u don't sayy ;)
      */
-    public void addItemAt(final int x, final int y, final MapItem mapItem) {
+    public void addItemAt(int x, int y, MapItem mapItem) {
         mapTileData[mapToIndex(x, y)].addMapItem(mapItem);
     }
 
-    public void setVisible(final boolean visible) {
+    public void setVisible(boolean visible) {
         this.visible = visible;
     }
 
@@ -267,7 +268,7 @@ public class Map implements Iterable<MapTile> {
      * @param y the y coordinate of the warp point
      * @param warpPoint the warp point <- u don't sayy ;)
      */
-    public void setWarpAt(final int x, final int y, final MapWarpPoint warpPoint) {
+    public void setWarpAt(int x, int y, MapWarpPoint warpPoint) {
         mapTileData[mapToIndex(x, y)].setMapWarpPoint(warpPoint);
     }
 
@@ -279,23 +280,23 @@ public class Map implements Iterable<MapTile> {
      * @return the tile
      */
     @Nullable
-    public MapTile getTileAt(final int x, final int y) {
+    public MapTile getTileAt(int x, int y) {
         if (!contains(x, y)) {
             return null;
         }
-        final int i = mapToIndex(x, y);
+        int i = mapToIndex(x, y);
         if (mapTileData[i] != null) {
             return mapTileData[i];
         }
 
-        final MapTile tile = MapTile.MapTileFactory.createNew(0, 0, 0, 0);
+        MapTile tile = MapTileFactory.createNew(0, 0, 0, 0);
         setTileAtIndex(i, tile);
         return tile;
     }
 
     @Nullable
-    public MapTile getTileAt(@Nonnull final Location loc) {
-        return getTileAt(loc.getScX(), loc.getScY());
+    public MapTile getTileAt(@Nonnull ServerCoordinate loc) {
+        return getTileAt(loc.getX(), loc.getY());
     }
 
     /**
@@ -363,7 +364,7 @@ public class Map implements Iterable<MapTile> {
         return fillY;
     }
 
-    public void setFillDragging(final boolean dragging) {
+    public void setFillDragging(boolean dragging) {
         isFillDragging = dragging;
     }
 
@@ -374,18 +375,18 @@ public class Map implements Iterable<MapTile> {
      * @param y the y coordinate
      * @return {@code true} if the map contains x and y
      */
-    public boolean contains(final int x, final int y) {
+    public boolean contains(int x, int y) {
         return (x >= 0) && (y >= 0) && (x < getWidth()) && (y < getHeight());
     }
 
     @Override
-    public boolean equals(@Nullable final Object obj) {
+    public boolean equals(@Nullable Object obj) {
         if (super.equals(obj)) {
             return true;
         }
 
         if (obj instanceof Map) {
-            final Map otherMap = (Map) obj;
+            Map otherMap = (Map) obj;
             return name.equals(otherMap.name) && path.equals(otherMap.path);
         }
         return false;
@@ -403,7 +404,7 @@ public class Map implements Iterable<MapTile> {
      * @param y the y coordinate
      * @return {@code true} if x and y is a selected tile
      */
-    public boolean isSelected(final int x, final int y) {
+    public boolean isSelected(int x, int y) {
         return selectionManager.isSelected(x, y);
     }
 
@@ -414,7 +415,7 @@ public class Map implements Iterable<MapTile> {
      * @param y the y coordinate
      * @param selected the selected state the tile should have
      */
-    public void setSelected(final int x, final int y, final boolean selected) {
+    public void setSelected(int x, int y, boolean selected) {
         if (selected) {
             selectionManager.select(x, y);
         } else {
@@ -453,15 +454,15 @@ public class Map implements Iterable<MapTile> {
      * @param startY starting y coordinate
      * @param mapSelection tiles to paste
      */
-    public void pasteTiles(final int startX, final int startY, @Nonnull final MapSelection mapSelection) {
-        final GroupAction action = new GroupAction();
-        for (final MapPosition position : mapSelection.getSelectedPositions()) {
-            final int newX = startX + (position.getX() - mapSelection.getOffsetX());
-            final int newY = startY + (position.getY() - mapSelection.getOffsetY());
+    public void pasteTiles(int startX, int startY, @Nonnull MapSelection mapSelection) {
+        GroupAction action = new GroupAction();
+        for (MapPosition position : mapSelection.getSelectedPositions()) {
+            int newX = startX + (position.getX() - mapSelection.getOffsetX());
+            int newY = startY + (position.getY() - mapSelection.getOffsetY());
 
             if (contains(newX, newY)) {
-                final MapTile oldTile = getTileAt(newX, newY);
-                final MapTile newTile = MapTile.MapTileFactory.copy(mapSelection.getMapTileAt(position));
+                MapTile oldTile = getTileAt(newX, newY);
+                MapTile newTile = MapTileFactory.copy(mapSelection.getMapTileAt(position));
                 action.addAction(new CopyPasteAction(newX, newY, oldTile, newTile, this));
                 setTileAt(newX, newY, newTile);
             }

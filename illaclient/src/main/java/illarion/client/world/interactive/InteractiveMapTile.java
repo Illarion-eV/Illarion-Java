@@ -23,7 +23,7 @@ import illarion.client.world.World;
 import illarion.client.world.items.ContainerSlot;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -187,8 +187,8 @@ public class InteractiveMapTile implements Draggable, DropTarget, Usable {
      * @return the location of this tile
      */
     @Nonnull
-    public Location getLocation() {
-        return parentTile.getLocation();
+    public ServerCoordinate getLocation() {
+        return parentTile.getCoordinates();
     }
 
     /**
@@ -198,8 +198,8 @@ public class InteractiveMapTile implements Draggable, DropTarget, Usable {
      */
     @Override
     public boolean isInUseRange() {
-        @Nonnull Location playerLocation = World.getPlayer().getMovementHandler().getServerLocation();
-        if (playerLocation.getScZ() == getLocation().getScZ()) {
+        @Nonnull ServerCoordinate playerLocation = World.getPlayer().getMovementHandler().getServerLocation();
+        if (playerLocation.getZ() == getLocation().getZ()) {
             return playerLocation.getDistance(getLocation()) <= getUseRange();
         }
         return false;

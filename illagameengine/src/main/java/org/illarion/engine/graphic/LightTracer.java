@@ -15,7 +15,7 @@
  */
 package org.illarion.engine.graphic;
 
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import illarion.common.util.PoolThreadFactory;
 import illarion.common.util.Stoppable;
 import org.slf4j.Logger;
@@ -184,7 +184,7 @@ public final class LightTracer implements Stoppable {
      *
      * @param loc the location the change occurred at
      */
-    public void notifyChange(@Nonnull Location loc) {
+    public void notifyChange(@Nonnull ServerCoordinate loc) {
         if (isShutDown) {
             return;
         }
@@ -217,6 +217,18 @@ public final class LightTracer implements Stoppable {
         }
     }
 
+    public void updateLightLocation(@Nonnull LightSource light, @Nonnull ServerCoordinate newLocation) {
+        if (isShutDown) {
+            return;
+        }
+        log.info("Updating light {} location to: {}", light, newLocation);
+
+        light.setLocation(newLocation);
+        if (light.isDirty()) {
+            refreshLight(light);
+        }
+    }
+
     /**
      * Move a light to the dirty lights list to have it updated at the next run.
      *
@@ -236,7 +248,6 @@ public final class LightTracer implements Stoppable {
             } finally {
                 light.getCalculationLock().unlock();
             }
-
         }
     }
 

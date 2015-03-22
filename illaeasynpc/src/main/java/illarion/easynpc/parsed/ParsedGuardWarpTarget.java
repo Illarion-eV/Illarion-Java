@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,7 @@
  */
 package illarion.easynpc.parsed;
 
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import illarion.easynpc.writer.LuaRequireTable;
 import illarion.easynpc.writer.LuaWriter;
 import illarion.easynpc.writer.SQLBuilder;
@@ -36,12 +36,12 @@ public class ParsedGuardWarpTarget implements ParsedData {
      * The target location of the warp.
      */
     @Nonnull
-    private final Location target;
+    private final ServerCoordinate target;
 
     /**
      * Create a new instance of guard warp target.
      */
-    public ParsedGuardWarpTarget(@Nonnull Location target) {
+    public ParsedGuardWarpTarget(@Nonnull ServerCoordinate target) {
         this.target = target;
     }
 
@@ -66,11 +66,11 @@ public class ParsedGuardWarpTarget implements ParsedData {
             throw new IllegalArgumentException("This function did not request a call for a stage but guarding.");
         }
         target.write("guardNPC:setWarpLocation(");
-        target.write(Integer.toString(this.target.getScX()));
+        target.write(Integer.toString(this.target.getX()));
         target.write(',');
-        target.write(Integer.toString(this.target.getScY()));
+        target.write(Integer.toString(this.target.getY()));
         target.write(',');
-        target.write(Integer.toString(this.target.getScZ()));
+        target.write(Integer.toString(this.target.getZ()));
         target.write(")");
         target.write(LuaWriter.NL);
     }

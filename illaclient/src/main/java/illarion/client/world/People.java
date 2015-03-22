@@ -21,7 +21,7 @@ import illarion.client.net.client.RequestAppearanceCmd;
 import illarion.client.world.events.CharRemovedEvent;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.types.CharacterId;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import javolution.util.FastTable;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -306,13 +306,13 @@ public final class People {
     /**
      * Get the character on a special location on the map.
      *
-     * @param loc the location the character is searched at
+     * @param coordinate the location the character is searched at
      * @return the character or {@code null} if not found
      */
     @Nullable
-    public Char getCharacterAt(@Nonnull Location loc) {
+    public Char getCharacterAt(@Nonnull ServerCoordinate coordinate) {
         Char playerChar = World.getPlayer().getCharacter();
-        if (playerChar.getLocation().equals(loc)) {
+        if (playerChar.getLocation().equals(coordinate)) {
             return playerChar;
         }
 
@@ -320,7 +320,7 @@ public final class People {
         try {
 
             for (Char character : chars.values()) {
-                if (character.getLocation().equals(loc)) {
+                if (character.getLocation().equals(coordinate)) {
                     return character;
                 }
             }

@@ -19,7 +19,7 @@ import illarion.client.util.UpdateTask;
 import illarion.client.world.CharMovementMode;
 import illarion.client.world.World;
 import illarion.common.types.Direction;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import illarion.common.util.FastMath;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.input.Input;
@@ -94,7 +94,7 @@ class SimpleKeyboardMovementHandler extends AbstractMovementHandler implements K
 
     @Nullable
     @Override
-    public StepData getNextStep(@Nonnull Location currentLocation) {
+    public StepData getNextStep(@Nonnull ServerCoordinate currentLocation) {
         return new DefaultStepData(getMovementMode(), getMovementDirection());
     }
 

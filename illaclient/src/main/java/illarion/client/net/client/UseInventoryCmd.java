@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -38,14 +38,14 @@ public final class UseInventoryCmd extends AbstractCommand {
      *
      * @param inventorySlot the inventory slot that is used
      */
-    public UseInventoryCmd(final int inventorySlot) {
+    public UseInventoryCmd(int inventorySlot) {
         super(CommandList.CMD_USE);
 
         slot = (short) inventorySlot;
     }
 
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) {
         writer.writeUByte((short) 3); // INVENTORY REFERENCE
         writer.writeUByte(slot);
     }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,7 @@
  */
 package org.illarion.engine.graphic;
 
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 
 import javax.annotation.Nonnull;
 
@@ -31,5 +31,5 @@ public interface WorldMapDataProvider {
      * @param location the location of the requested tile
      * @param callback the callback class that is supposed to receive the tile data
      */
-    void requestTile(@Nonnull Location location, @Nonnull WorldMapDataProviderCallback callback);
+    void requestTile(@Nonnull ServerCoordinate location, @Nonnull WorldMapDataProviderCallback callback);
 }

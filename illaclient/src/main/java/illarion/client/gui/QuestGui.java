@@ -15,7 +15,7 @@
  */
 package illarion.client.gui;
 
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -66,7 +66,7 @@ public interface QuestGui {
             @Nonnull String name,
             @Nonnull String description,
             boolean finished,
-            @Nonnull List<Location> locations);
+            @Nonnull List<ServerCoordinate> locations);
 
     /**
      * Toggle the visibility state of the quest log.

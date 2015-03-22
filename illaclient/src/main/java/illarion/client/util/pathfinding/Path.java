@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,8 @@
  */
 package illarion.client.util.pathfinding;
 
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,10 +30,11 @@ public final class Path {
     /**
      * List if the path nodes that create this path.
      */
+    @Nonnull
     private final LinkedList<PathNode> path = new LinkedList<>();
 
     @Nullable
-    private final Location destination;
+    private final ServerCoordinate destination;
 
     /**
      * Default constructor for a new path.
@@ -44,7 +46,7 @@ public final class Path {
         if (path.isEmpty()) {
             destination = null;
         } else {
-            destination = new Location(path.getLast().getLocation());
+            destination = path.getLast().getLocation();
         }
     }
 
@@ -55,7 +57,8 @@ public final class Path {
      * @return the destination of the path
      */
     @Nullable
-    public Location getDestination() {
+    @Contract(pure = true)
+    public ServerCoordinate getDestination() {
         return destination;
     }
 

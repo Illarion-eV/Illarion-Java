@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,7 @@
  */
 package org.illarion.engine.graphic;
 
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 
 /**
  * This interface defines a callback the world map data provider is using to report the requested map data.
@@ -31,5 +31,5 @@ public interface WorldMapDataProviderCallback {
      * @param overlayId the map ID of the overlay (this is not the tile ID)
      * @param blocked {@code true} in case the player can't step onto this tile
      */
-    void setTile(Location loc, int tileId, int overlayId, boolean blocked);
+    void setTile(ServerCoordinate loc, int tileId, int overlayId, boolean blocked);
 }

@@ -20,7 +20,7 @@ import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.util.ChatHandler.SpeechMode;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
@@ -39,7 +39,7 @@ public final class SayMsg implements ServerReply {
      * The location the text was spoken at.
      */
     @Nullable
-    private Location location;
+    private ServerCoordinate location;
 
     /**
      * The text that was actually spoken.
@@ -49,7 +49,7 @@ public final class SayMsg implements ServerReply {
 
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
-        location = new Location(reader);
+        location = new ServerCoordinate(reader);
         text = reader.readString();
     }
 

@@ -19,7 +19,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.MapColor;
 import org.illarion.engine.graphic.WorldMap;
@@ -27,6 +27,7 @@ import org.illarion.engine.graphic.WorldMapDataProvider;
 import org.illarion.engine.graphic.WorldMapDataProviderCallback;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
 
 /**
@@ -36,14 +37,14 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
     /**
      * The origin location of the map.
      */
-    @Nonnull
-    private final Location mapOrigin;
+    @Nullable
+    private ServerCoordinate mapOrigin;
 
     /**
      * The location of the player.
      */
-    @Nonnull
-    private final Location playerLocation;
+    @Nullable
+    private ServerCoordinate playerLocation;
 
     /**
      * The texture that shows the world map.
@@ -77,23 +78,21 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
 
     GdxWorldMap(@Nonnull WorldMapDataProvider provider) {
         this.provider = provider;
-        mapOrigin = new Location();
-        playerLocation = new Location();
 
         worldMapPixels = new Pixmap(WORLD_MAP_WIDTH, WORLD_MAP_HEIGHT, Pixmap.Format.RGB888);
         worldMapTexture = new GdxTexture(new TextureRegion(new Texture(worldMapPixels)));
         tempDrawingColor = new Color();
     }
 
-    @Nonnull
+    @Nullable
     @Override
-    public Location getMapOrigin() {
+    public ServerCoordinate getMapOrigin() {
         return mapOrigin;
     }
 
-    @Nonnull
+    @Nullable
     @Override
-    public Location getPlayerLocation() {
+    public ServerCoordinate getPlayerLocation() {
         return playerLocation;
     }
 
@@ -104,13 +103,17 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
     }
 
     @Override
-    public void setTile(@Nonnull Location loc, int tileId, int overlayId, boolean blocked) {
-        if (loc.getScZ() != mapOrigin.getScZ()) {
+    public void setTile(@Nonnull ServerCoordinate loc, int tileId, int overlayId, boolean blocked) {
+        if (mapOrigin == null) {
+            throw new IllegalStateException("World map is not ready yet. The origin is not set.");
+        }
+
+        if (loc.getZ() != mapOrigin.getZ()) {
             return;
         }
 
-        int texPosX = loc.getScX() - mapOrigin.getScX();
-        int texPosY = loc.getScY() - mapOrigin.getScY();
+        int texPosX = loc.getX() - mapOrigin.getX();
+        int texPosY = loc.getY() - mapOrigin.getY();
 
         if ((texPosX < 0) || (texPosX >= WORLD_MAP_WIDTH) || (texPosY < 0) || (texPosY >= WORLD_MAP_HEIGHT)) {
             return;
@@ -142,11 +145,14 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
     private boolean cancelFetchingTiles;
 
     @Override
-    public void setTileChanged(@Nonnull Location location) {
+    public void setTileChanged(@Nonnull ServerCoordinate location) {
+        if (mapOrigin == null) {
+            throw new IllegalStateException("World map is not ready yet. The origin is not set.");
+        }
         if (cancelFetchingTiles) {
             return;
         }
-        if (location.getScZ() != mapOrigin.getScZ()) {
+        if (location.getZ() != mapOrigin.getZ()) {
             return;
         }
         currentlyFetchingTiles = true;
@@ -159,15 +165,16 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
 
     @Override
     public void setMapChanged() {
+        if (mapOrigin == null) {
+            throw new IllegalStateException("World map is not ready yet. The origin is not set.");
+        }
         currentlyFetchingTiles = true;
-        Location tempLocation = new Location();
         for (int x = 0; x < WorldMap.WORLD_MAP_WIDTH; x++) {
             for (int y = 0; y < WorldMap.WORLD_MAP_HEIGHT; y++) {
                 if (cancelFetchingTiles) {
                     break;
                 }
-                tempLocation.setSC(x + mapOrigin.getScX(), y + mapOrigin.getScY(), mapOrigin.getScZ());
-                provider.requestTile(tempLocation, this);
+                provider.requestTile(new ServerCoordinate(mapOrigin, x, y, 0), this);
             }
         }
         currentlyFetchingTiles = false;
@@ -177,13 +184,13 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
     }
 
     @Override
-    public void setPlayerLocation(@Nonnull Location location) {
-        playerLocation.set(location);
+    public void setPlayerLocation(@SuppressWarnings("NullableProblems") @Nonnull ServerCoordinate location) {
+        playerLocation = location;
     }
 
     @Override
-    public void setMapOrigin(@Nonnull Location location) {
-        mapOrigin.set(location);
+    public void setMapOrigin(@Nonnull ServerCoordinate location) {
+        mapOrigin = location;
         clear();
     }
 

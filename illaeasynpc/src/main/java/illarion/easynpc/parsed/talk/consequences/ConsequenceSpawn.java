@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,7 @@
  */
 package illarion.easynpc.parsed.talk.consequences;
 
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import illarion.easynpc.parsed.talk.TalkConsequence;
 import illarion.easynpc.writer.LuaRequireTable;
 import illarion.easynpc.writer.LuaWriter;
@@ -45,9 +45,9 @@ public final class ConsequenceSpawn implements TalkConsequence {
     private final int count;
     private final int radius;
     @Nonnull
-    private final Location loc;
+    private final ServerCoordinate loc;
 
-    public ConsequenceSpawn(int monsterId, int count, int radius, @Nonnull Location loc) {
+    public ConsequenceSpawn(int monsterId, int count, int radius, @Nonnull ServerCoordinate loc) {
         this.monsterId = monsterId;
         this.count = count;
         this.radius = radius;
@@ -68,7 +68,7 @@ public final class ConsequenceSpawn implements TalkConsequence {
      */
     @Override
     public void writeLua(@Nonnull Writer target, @Nonnull LuaRequireTable requires) throws IOException {
-        target.write(String.format(LUA_CODE, requires.getStorage(LUA_MODULE), monsterId, count, radius, loc.getScX(),
-                                   loc.getScY(), loc.getScZ()));
+        target.write(String.format(LUA_CODE, requires.getStorage(LUA_MODULE), monsterId, count, radius, loc.getX(),
+                loc.getY(), loc.getZ()));
     }
 }

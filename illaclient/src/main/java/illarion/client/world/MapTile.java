@@ -18,11 +18,11 @@ package illarion.client.world;
 import illarion.client.graphics.*;
 import illarion.client.net.server.TileUpdate;
 import illarion.client.world.interactive.InteractiveMapTile;
-import illarion.common.graphics.Layers;
+import illarion.common.graphics.Layer;
 import illarion.common.types.Direction;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.LightSource;
 import org.illarion.engine.graphic.Sprite;
@@ -109,10 +109,10 @@ public final class MapTile {
     private int lightValue;
 
     /**
-     * Location of the tile.
+     * The coordinates where this tile is located.
      */
     @Nonnull
-    private final Location tileLocation;
+    private final ServerCoordinate tileCoordinate;
 
     /**
      * Flag if there is still work to do for the LOS calculation on this tile.
@@ -205,13 +205,13 @@ public final class MapTile {
     }
 
     /**
-     * Create a new instance of the map and assign its location.
+     * Create a new instance of the map and assign its coordinates.
      *
-     * @param location the location of this tile
+     * @param coordinate the coordinates of this tile
      */
     @SuppressWarnings("nls")
-    public MapTile(@Nonnull Location location) {
-        tileLocation = new Location(location);
+    public MapTile(@Nonnull ServerCoordinate coordinate) {
+        tileCoordinate = coordinate;
         tileId = ID_NONE;
         tile = null;
         lightSrc = null;
@@ -220,7 +220,7 @@ public final class MapTile {
         tracerColor = new Color(Color.BLACK);
         localColor = new AnimatedColor(targetCenterColor);
         colors = new EnumMap<>(Direction.class);
-        items = new ItemStack(tileLocation);
+        items = new ItemStack(coordinate.toDisplayCoordinate(Layer.Items));
     }
 
     @Nonnull
@@ -310,7 +310,7 @@ public final class MapTile {
     @Override
     @Nonnull
     public String toString() {
-        return "MapTile " + tileLocation + " tile=" + tileId + " items=" + items.size();
+        return "MapTile " + tileCoordinate + " tile=" + tileId + " items=" + items.size();
     }
 
     /**
@@ -414,7 +414,6 @@ public final class MapTile {
             @Nullable Item item = null;
             if (index < items.size()) {
                 item = items.get(index);
-                assert item != null;
                 // just an update of present item
                 if (ItemId.equals(item.getItemId(), itemId)) {
                     if (!Objects.equals(item.getCount(), itemCount)) {
@@ -429,7 +428,7 @@ public final class MapTile {
             // add a new item
             if (item == null) {
                 // create new item
-                item = Item.create(itemId, tileLocation, this);
+                item = Item.create(itemId, tileCoordinate, this);
 
                 item.setCount(itemCount);
 
@@ -455,14 +454,6 @@ public final class MapTile {
      */
     private void itemChanged() {
         int tileElevation = items.getElevation();
-        Char charOldField = World.getPeople().getCharacterAt(tileLocation);
-        if (charOldField != null) {
-            charOldField.updateElevation(tileElevation);
-            if (World.getPlayer().isPlayer(charOldField.getCharId())) {
-                World.getMapDisplay().updateElevation();
-            }
-        }
-
         updateQuestMarkerElevation();
 
         // invalidate LOS data
@@ -470,7 +461,7 @@ public final class MapTile {
         // report a change of shadow
 
         if (World.getMapDisplay().isActive()) {
-            World.getLights().notifyChange(tileLocation);
+            World.getLights().notifyChange(tileCoordinate);
         }
         // check for a light source
         checkLight();
@@ -481,7 +472,7 @@ public final class MapTile {
      * this tile change.
      */
     public void updateQuestMarkerElevation() {
-        Char character = World.getPeople().getCharacterAt(tileLocation);
+        Char character = World.getPeople().getCharacterAt(tileCoordinate);
         @Nullable Avatar avatar = (character == null) ? null : character.getAvatar();
 
         questMarkerElevation = items.getElevation();
@@ -520,7 +511,7 @@ public final class MapTile {
             return;
         }
 
-        LightSource newSource = (newLightValue > 0) ? new LightSource(tileLocation, newLightValue) : null;
+        LightSource newSource = (newLightValue > 0) ? new LightSource(tileCoordinate, newLightValue) : null;
         if ((lightSrc != null) && (newSource != null)) {
             World.getLights().replace(lightSrc, newSource);
             lightSrc = newSource;
@@ -558,7 +549,7 @@ public final class MapTile {
             LOGGER.warn("Checking a removed tile for a movable item.");
             return false;
         }
-        if (!World.getPlayer().getLocation().isNeighbour(tileLocation)) {
+        if (!World.getPlayer().getLocation().isNeighbour(tileCoordinate)) {
             return false;
         }
 
@@ -690,20 +681,20 @@ public final class MapTile {
             LOGGER.warn("Checking if a removed tile is at the level of the player.");
             return false;
         }
-        return World.getPlayer().isBaseLevel(getLocation());
+        return World.getPlayer().isBaseLevel(getCoordinates());
     }
 
     /**
-     * Get the location of the tile.
+     * Get the coordinates of the tile.
      *
-     * @return the location of the tile
+     * @return the coordinates of the tile
      */
     @Nonnull
-    public Location getLocation() {
+    public ServerCoordinate getCoordinates() {
         if (removedTile) {
-            LOGGER.warn("Requesting the location of a removed tile");
+            LOGGER.warn("Requesting the coordinates of a removed tile");
         }
-        return tileLocation;
+        return tileCoordinate;
     }
 
     /**
@@ -721,7 +712,7 @@ public final class MapTile {
         }
 
         // check for chars
-        return World.getPeople().getCharacterAt(tileLocation) != null;
+        return World.getPeople().getCharacterAt(tileCoordinate) != null;
     }
 
     /**
@@ -788,7 +779,7 @@ public final class MapTile {
             return;
         }
         Effect effect = Effect.create(effectId);
-        effect.show(tileLocation);
+        effect.show(tileCoordinate);
     }
 
     /**
@@ -848,7 +839,7 @@ public final class MapTile {
 
         // no replacement necessary
         if ((tileId == id) && (tile != null)) {
-            tile.setScreenPos(tileLocation, Layers.TILE);
+            tile.setScreenPos(tileCoordinate.toDisplayCoordinate(Layer.Tiles));
             return;
         }
 
@@ -865,7 +856,7 @@ public final class MapTile {
             // create a tile, possibly with variants
             tile = new Tile(id, this);
 
-            tile.setScreenPos(tileLocation, Layers.TILE);
+            tile.setScreenPos(tileCoordinate.toDisplayCoordinate(Layer.Tiles));
             tile.show();
         }
     }

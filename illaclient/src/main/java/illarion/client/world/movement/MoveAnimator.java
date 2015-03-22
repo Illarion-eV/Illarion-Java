@@ -21,8 +21,10 @@ import illarion.client.world.Char;
 import illarion.client.world.CharMovementMode;
 import illarion.client.world.Player;
 import illarion.client.world.World;
+import illarion.common.graphics.Layer;
 import illarion.common.types.Direction;
-import illarion.common.types.Location;
+import illarion.common.types.DisplayCoordinate;
+import illarion.common.types.ServerCoordinate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -74,7 +76,7 @@ class MoveAnimator implements AnimatedMove {
         this.moveAnimation = moveAnimation;
     }
 
-    private void scheduleMove(@Nonnull CharMovementMode mode, @Nonnull Location target, int duration) {
+    private void scheduleMove(@Nonnull CharMovementMode mode, @Nonnull ServerCoordinate target, int duration) {
         scheduleTask(new MovingTask(this, mode, target, duration));
     }
 
@@ -85,7 +87,7 @@ class MoveAnimator implements AnimatedMove {
         }
     }
 
-    void scheduleEarlyMove(@Nonnull CharMovementMode mode, @Nonnull Location target, int duration) {
+    void scheduleEarlyMove(@Nonnull CharMovementMode mode, @Nonnull ServerCoordinate target, int duration) {
         if (uncomfirmedMoveTask != null) {
             log.warn(marker, "Scheduling another early move is not possible as there is already one set.");
         } else {
@@ -104,7 +106,7 @@ class MoveAnimator implements AnimatedMove {
      *
      * @param allowedTarget allowed target location
      */
-    void cancelMove(@Nonnull Location allowedTarget) {
+    void cancelMove(@Nonnull ServerCoordinate allowedTarget) {
         Player parentPlayer = movement.getPlayer();
 
         MovingTask task = uncomfirmedMoveTask;
@@ -139,7 +141,7 @@ class MoveAnimator implements AnimatedMove {
      * @param target the target of the move
      * @param duration the duration of the move
      */
-    void confirmMove(@Nonnull CharMovementMode mode, @Nonnull Location target, int duration) {
+    void confirmMove(@Nonnull CharMovementMode mode, @Nonnull ServerCoordinate target, int duration) {
         MovingTask task = uncomfirmedMoveTask;
         if (task == null) {
             log.debug(marker, "No unconfirmed move found. Schedule the move.");
@@ -208,7 +210,7 @@ class MoveAnimator implements AnimatedMove {
         executeNext();
     }
 
-    void executeMove(@Nonnull CharMovementMode mode, @Nonnull Location target, int duration) {
+    void executeMove(@Nonnull CharMovementMode mode, @Nonnull ServerCoordinate target, int duration) {
         Player parentPlayer = movement.getPlayer();
         Char playerCharacter = parentPlayer.getCharacter();
         if ((mode == CharMovementMode.None) || playerCharacter.getLocation().equals(target)) {
@@ -221,14 +223,21 @@ class MoveAnimator implements AnimatedMove {
         }
 
         reportingDone = false;
-        playerCharacter.moveTo(target, mode, duration);
-        int oldElevation = World.getMapDisplay().getElevation();
-        int newElevation = World.getMap().getElevationAt(target);
-        int xOffset = parentPlayer.getLocation().getDcX() - target.getDcX();
-        int yOffset = parentPlayer.getLocation().getDcY() - target.getDcY();
-        moveAnimation.start(0, 0, -oldElevation, xOffset, yOffset, -newElevation, duration);
+        DisplayCoordinate startDC = getDisplayCoordinateAt(parentPlayer.getLocation());
+        DisplayCoordinate targetDC = getDisplayCoordinateAt(target);
 
+        moveAnimation.start(startDC, targetDC, duration);
         parentPlayer.updateLocation(target);
+    }
+
+    @Nonnull
+    private DisplayCoordinate getDisplayCoordinateAt(@Nonnull ServerCoordinate coordinate) {
+        int elevation = World.getMap().getElevationAt(coordinate);
+        int x = coordinate.toDisplayX();
+        int y = coordinate.toDisplayY() - elevation;
+        int layer = coordinate.toDisplayLayer(Layer.Chars);
+
+        return new DisplayCoordinate(x, y, layer);
     }
 
     private boolean executeNext() {
@@ -265,7 +274,7 @@ class MoveAnimator implements AnimatedMove {
     }
 
     @Override
-    public void setPosition(int posX, int posY, int posZ) {
+    public void setPosition(@Nonnull DisplayCoordinate position) {
         if (isReportingRequired()) {
             int remaining = moveAnimation.timeRemaining();
             if (remaining < 20) {
@@ -292,6 +301,7 @@ class MoveAnimator implements AnimatedMove {
             reportingDone = true;
             movement.reportReadyForNextStep();
         }
+        World.getMapDisplay().setLocation(movement.getPlayer().getLocation().toDisplayCoordinate(Layer.Chars));
         executeNext();
     }
 }

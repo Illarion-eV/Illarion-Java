@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,7 +16,7 @@
 package illarion.client.world.movement;
 
 import illarion.client.world.CharMovementMode;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 
 import javax.annotation.Nonnull;
 
@@ -29,14 +29,14 @@ class MovingTask implements MoveAnimatorTask {
     @Nonnull
     private final CharMovementMode mode;
     @Nonnull
-    private final Location target;
+    private final ServerCoordinate target;
     private final int duration;
     private boolean executed;
 
     MovingTask(
             @Nonnull MoveAnimator moveAnimator,
             @Nonnull CharMovementMode mode,
-            @Nonnull Location target,
+            @Nonnull ServerCoordinate target,
             int duration) {
         this.moveAnimator = moveAnimator;
         this.mode = mode;
@@ -45,7 +45,7 @@ class MovingTask implements MoveAnimatorTask {
         executed = false;
     }
 
-    public boolean isSetupCorrectly(@Nonnull CharMovementMode mode, @Nonnull Location target, int duration) {
+    public boolean isSetupCorrectly(@Nonnull CharMovementMode mode, @Nonnull ServerCoordinate target, int duration) {
         return (this.mode == mode) && this.target.equals(target) && (this.duration == duration);
     }
 

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -47,8 +47,7 @@ public final class DragInvScCmd extends AbstractDragCommand {
     /**
      * The default constructor of this DragInvScCmd.
      */
-    public DragInvScCmd(
-            final int source, final int targetContainer, final int targetSlot, @Nonnull final ItemCount count) {
+    public DragInvScCmd(int source, int targetContainer, int targetSlot, @Nonnull ItemCount count) {
         super(CommandList.CMD_DRAG_INV_SC, count);
 
         sourceSlot = (short) source;
@@ -57,7 +56,7 @@ public final class DragInvScCmd extends AbstractDragCommand {
     }
 
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) {
         writer.writeUByte(sourceSlot);
         writer.writeUByte(targetContainer);
         writer.writeUByte(targetContainerSlot);

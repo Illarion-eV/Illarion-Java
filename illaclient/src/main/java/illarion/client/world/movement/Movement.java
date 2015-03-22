@@ -28,7 +28,7 @@ import illarion.client.world.characters.CharacterAttribute;
 import illarion.common.graphics.CharAnimations;
 import illarion.common.types.CharacterId;
 import illarion.common.types.Direction;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import illarion.common.util.FastMath;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.input.Input;
@@ -95,8 +95,8 @@ public class Movement {
      * This instance of the player location is kept in sync with the location that was last confirmed by the server
      * to keep track of where the player REALLY is.
      */
-    @Nonnull
-    private final Location playerLocation;
+    @Nullable
+    private ServerCoordinate playerLocation;
 
     public Movement(@Nonnull Player player, @Nonnull Input input, @Nonnull AnimatedMove movementReceiver) {
         this.player = player;
@@ -110,7 +110,6 @@ public class Movement {
         keyboardHandler = new SimpleKeyboardMovementHandler(this, input);
         targetMovementHandler = new WalkToMovementHandler(this);
         targetMouseMovementHandler = new WalkToMouseMovementHandler(this, input);
-        playerLocation = new Location(player.getLocation());
     }
 
     /**
@@ -119,7 +118,10 @@ public class Movement {
      * @return the server location of the player
      */
     @Nonnull
-    public Location getServerLocation() {
+    public ServerCoordinate getServerLocation() {
+        if (playerLocation == null) {
+            throw new IllegalStateException("The location of the player is not known yet.");
+        }
         return playerLocation;
     }
 
@@ -180,24 +182,24 @@ public class Movement {
     }
 
     public void executeServerRespMove(
-            @Nonnull final CharMovementMode mode, @Nonnull final Location target, final int duration) {
-        final Location playerLocationBeforeMove = new Location(playerLocation);
+            @Nonnull final CharMovementMode mode, @Nonnull final ServerCoordinate target, final int duration) {
+        final ServerCoordinate orgLocation = playerLocation;
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
             public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                executeServerRespMoveInternal(playerLocationBeforeMove, mode, target, duration);
+                executeServerRespMoveInternal(orgLocation, mode, target, duration);
             }
         });
-        playerLocation.set(target);
+        playerLocation = target;
     }
 
     private void executeServerRespMoveInternal(
-            @Nonnull Location playerLocationBeforeMove,
+            @Nonnull ServerCoordinate orgLocation,
             @Nonnull CharMovementMode mode,
-            @Nonnull Location target,
+            @Nonnull ServerCoordinate target,
             int duration) {
         log.debug("Received response from the server! Mode: {} Target {} Duration {}ms", mode, target, duration);
-        if (playerLocationBeforeMove.equals(target)) {
+        if (orgLocation.equals(target)) {
             log.debug("Current location and target location match. Cancel any pending move.");
             animator.cancelMove(target);
         } else {
@@ -212,7 +214,7 @@ public class Movement {
 
     private void scheduleEarlyMove(@Nonnull CharMovementMode mode, @Nonnull Direction direction) {
         if (player.getCarryLoad().isWalkingPossible()) {
-            Location target = getTargetLocation(mode, direction);
+            ServerCoordinate target = getTargetLocation(mode, direction);
             MapTile targetTile = World.getMap().getMapAt(target);
 
             if ((targetTile != null) && !targetTile.isBlocked()) {
@@ -224,7 +226,7 @@ public class Movement {
                 int movementDuration = getMovementDuration(targetTile.getMovementCost(), mods, direction.isDiagonal(),
                                                            mode == CharMovementMode.Run);
                 if (mode == CharMovementMode.Run) {
-                    Location walkTarget = getTargetLocation(CharMovementMode.Walk, direction);
+                    ServerCoordinate walkTarget = getTargetLocation(CharMovementMode.Walk, direction);
                     MapTile walkTargetTile = World.getMap().getMapAt(walkTarget);
                     if ((walkTargetTile != null) && !walkTargetTile.isBlocked()) {
                         movementDuration += getMovementDuration(walkTargetTile.getMovementCost(), mods,
@@ -252,7 +254,7 @@ public class Movement {
         return movementDuration;
     }
 
-    public void executeServerLocation(@Nonnull Location target) {
+    public void executeServerLocation(@Nonnull ServerCoordinate target) {
         MovementHandler currentHandler = activeHandler;
         if (currentHandler != null) {
             currentHandler.disengage(false);
@@ -262,7 +264,7 @@ public class Movement {
         animator.cancelAll();
 
         World.getPlayer().setLocation(target);
-        playerLocation.set(target);
+        playerLocation = target;
     }
 
     /**
@@ -347,23 +349,22 @@ public class Movement {
 
     @Nonnull
     @Contract(pure = true)
-    private Location getTargetLocation(@Nonnull CharMovementMode mode, @Nonnull Direction direction) {
-        Location result = new Location(playerLocation);
+    private ServerCoordinate getTargetLocation(@Nonnull CharMovementMode mode, @Nonnull Direction direction) {
+        if (playerLocation == null) {
+            throw new IllegalStateException("The current player location is not known yet.");
+        }
         switch (mode) {
             case Run:
-                result.moveSC(direction);
-                result.moveSC(direction);
-                break;
+                return new ServerCoordinate(playerLocation,
+                        direction.getDirectionVectorX() * 2,
+                        direction.getDirectionVectorY() * 2, 0);
             case Walk:
-                result.moveSC(direction);
-                break;
+                return new ServerCoordinate(playerLocation, direction);
             case Push:
-                result.moveSC(direction);
-                break;
+                return new ServerCoordinate(playerLocation, direction);
             default:
                 throw new IllegalArgumentException("Invalid movement mode for selecting the target location");
         }
-        return result;
     }
 
     @Nonnull

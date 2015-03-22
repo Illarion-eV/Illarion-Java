@@ -32,7 +32,7 @@ import illarion.common.graphics.MapVariance;
 import illarion.common.gui.AbstractMultiActionHelper;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Graphics;
@@ -169,8 +169,8 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      */
     @Nonnull
     public static Item create(
-            @Nonnull ItemId itemID, @Nonnull Location loc, @Nonnull MapTile parent) {
-        return create(itemID, loc.getCol(), loc.getRow(), parent);
+            @Nonnull ItemId itemID, @Nonnull ServerCoordinate loc, @Nonnull MapTile parent) {
+        return create(itemID, loc.getX(), loc.getY(), parent);
     }
 
     @Override
@@ -247,7 +247,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         }
         if (!parentTile.isBlocked()) {
             MouseTargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMouseMovementHandler();
-            handler.walkTo(parentTile.getLocation(), 0);
+            handler.walkTo(parentTile.getCoordinates(), 0);
             return true;
         }
         return false;
@@ -289,15 +289,15 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
                 return true;
             } else {
                 log.trace("Clicked item {} allows walking to. Delaying move to accept double click.", getItemId());
-                delayGoToItem.setLocation(parentTile.getLocation());
+                delayGoToItem.setLocation(parentTile.getCoordinates());
                 delayGoToItem.pulse();
             }
         } else {
             log.trace("Clicked item {} is outside of use range.", getItemId());
             if (blocked) {
-                handler.walkTo(parentTile.getLocation(), 1);
+                handler.walkTo(parentTile.getCoordinates(), 1);
             } else {
-                handler.walkTo(parentTile.getLocation(), 0);
+                handler.walkTo(parentTile.getCoordinates(), 0);
             }
         }
         handler.assumeControl();
@@ -324,7 +324,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
             log.trace("Item {} is outside of the use range. Walking to it.", getItemId());
             final InteractiveMapTile interactiveMapTile = parentTile.getInteractive();
             TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
-            handler.walkTo(parentTile.getLocation(), 1);
+            handler.walkTo(parentTile.getCoordinates(), 1);
             handler.setTargetReachedAction(new Runnable() {
                 @Override
                 public void run() {
@@ -382,13 +382,13 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
 
     private static final class DelayGoToItemHandler extends AbstractMultiActionHelper {
         @Nullable
-        private Location target;
+        private ServerCoordinate target;
 
         DelayGoToItemHandler() {
             super(IllaClient.getCfg().getInteger("doubleClickInterval"), 2);
         }
 
-        void setLocation(@Nullable Location target) {
+        void setLocation(@Nullable ServerCoordinate target) {
             this.target = target;
         }
 
@@ -474,7 +474,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         super.update(container, delta);
 
         if (showNumber && (number != null)) {
-            number.addToCamera(getDisplayX(), getDisplayY());
+            number.addToCamera(getDisplayCoordinate().getX(), getDisplayCoordinate().getY());
             number.update(container, delta);
         }
     }

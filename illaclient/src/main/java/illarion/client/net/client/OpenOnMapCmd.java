@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,7 +19,7 @@ import illarion.client.net.CommandList;
 import illarion.client.world.World;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.Direction;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,7 +44,7 @@ public final class OpenOnMapCmd extends AbstractCommand {
      *
      * @param mapLocation the location on the map where the container is supposed to be opened
      */
-    public OpenOnMapCmd(@Nonnull Location mapLocation) {
+    public OpenOnMapCmd(@Nonnull ServerCoordinate mapLocation) {
         super(CommandList.CMD_OPEN_MAP);
         direction = World.getPlayer().getLocation().getDirection(mapLocation);
     }

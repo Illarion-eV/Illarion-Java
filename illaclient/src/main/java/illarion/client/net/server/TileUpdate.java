@@ -18,7 +18,7 @@ package illarion.client.net.server;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
@@ -57,7 +57,7 @@ public final class TileUpdate {
      * Location of the tile.
      */
     @Nonnull
-    private final Location tileLocation;
+    private final ServerCoordinate tileLocation;
 
     /**
      * ID of this tile.
@@ -77,8 +77,8 @@ public final class TileUpdate {
     /**
      * Constructor for this new tile update.
      */
-    public TileUpdate(@Nonnull Location loc, @Nonnull NetCommReader reader) throws IOException {
-        tileLocation = new Location(loc);
+    public TileUpdate(@Nonnull ServerCoordinate loc, @Nonnull NetCommReader reader) throws IOException {
+        tileLocation = loc;
 
         // read tile attributes
         tileId = reader.readShort();
@@ -140,7 +140,7 @@ public final class TileUpdate {
      */
     @Nonnull
     @Contract(pure = true)
-    public Location getLocation() {
+    public ServerCoordinate getLocation() {
         return tileLocation;
     }
 

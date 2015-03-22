@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,9 +15,10 @@
  */
 package illarion.mapedit.history;
 
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapTile;
+import illarion.mapedit.data.MapTile.MapTileFactory;
 import illarion.mapedit.processing.MapTransitions;
 
 /**
@@ -30,7 +31,7 @@ public class TileIDChangedAction extends HistoryAction {
     private final MapTile old;
     private final MapTile newt;
 
-    public TileIDChangedAction(final int x, final int y, final MapTile old, final MapTile newt, final Map map) {
+    public TileIDChangedAction(int x, int y, MapTile old, MapTile newt, Map map) {
         super(map);
         this.x = x;
         this.y = y;
@@ -40,13 +41,13 @@ public class TileIDChangedAction extends HistoryAction {
 
     @Override
     public void redo() {
-        map.setTileAt(x, y, MapTile.MapTileFactory.setId(newt.getId(), map.getTileAt(x, y)));
-        MapTransitions.getInstance().checkTileAndSurround(map, new Location(x, y, 0));
+        map.setTileAt(x, y, MapTileFactory.setId(newt.getId(), map.getTileAt(x, y)));
+        MapTransitions.getInstance().checkTileAndSurround(map, new ServerCoordinate(x, y, 0));
     }
 
     @Override
     public void undo() {
-        map.setTileAt(x, y, MapTile.MapTileFactory.setId(old.getId(), map.getTileAt(x, y)));
-        MapTransitions.getInstance().checkTileAndSurround(map, new Location(x, y, 0));
+        map.setTileAt(x, y, MapTileFactory.setId(old.getId(), map.getTileAt(x, y)));
+        MapTransitions.getInstance().checkTileAndSurround(map, new ServerCoordinate(x, y, 0));
     }
 }

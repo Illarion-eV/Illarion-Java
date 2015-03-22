@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -50,7 +50,7 @@ public final class CraftItemCmd extends AbstractCommand {
      * @param craftingIndex the index of the item to craft
      * @param amount the amount of items to create as a batch
      */
-    public CraftItemCmd(final int dialogId, final int craftingIndex, final int amount) {
+    public CraftItemCmd(int dialogId, int craftingIndex, int amount) {
         super(CommandList.CMD_CRAFT_ITEM);
 
         this.dialogId = dialogId;
@@ -59,7 +59,7 @@ public final class CraftItemCmd extends AbstractCommand {
     }
 
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) {
         writer.writeInt(dialogId);
         writer.writeByte((byte) 1);
         writer.writeUByte((short) craftingIndex);

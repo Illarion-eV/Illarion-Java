@@ -20,7 +20,7 @@ import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
@@ -38,7 +38,7 @@ public final class LookAtMapItemMsg implements ServerReply {
      * The location of the tile on the server map.
      */
     @Nullable
-    private Location location;
+    private ServerCoordinate location;
 
     /**
      * The position of the referenced item.
@@ -53,7 +53,7 @@ public final class LookAtMapItemMsg implements ServerReply {
 
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
-        location = new Location(reader);
+        location = new ServerCoordinate(reader);
         stackPosition = reader.readUByte();
         tooltip = new Tooltip(reader);
     }

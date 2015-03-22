@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,17 +18,13 @@ package illarion.client.net.client;
 import illarion.client.net.CommandList;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.ItemCount;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 /**
- * Client Command: Dragging a item from the game map to the game map ({@link CommandList#CMD_DRAG_MAP_MAP_N},
- * {@link CommandList#CMD_DRAG_MAP_MAP_NE}, {@link CommandList#CMD_DRAG_MAP_MAP_E},
- * {@link CommandList#CMD_DRAG_MAP_MAP_SE}, {@link CommandList#CMD_DRAG_MAP_MAP_S},
- * {@link CommandList#CMD_DRAG_MAP_MAP_SW}, {@link CommandList#CMD_DRAG_MAP_MAP_W},
- * {@link CommandList#CMD_DRAG_MAP_MAP_NW}).
+ * Client Command: Dragging a item from the game map to the game map ({@link CommandList#CMD_DRAG_MAP_MAP}.
  *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
@@ -39,13 +35,13 @@ public final class DragMapMapCmd extends AbstractDragCommand {
      * The source location of the move operation.
      */
     @Nonnull
-    private final Location srcLoc;
+    private final ServerCoordinate srcLoc;
 
     /**
      * The location on the map that is the target of the move operation.
      */
     @Nonnull
-    private final Location dstLoc;
+    private final ServerCoordinate dstLoc;
 
     /**
      * Default constructor for the dragging from map to map command.
@@ -55,16 +51,16 @@ public final class DragMapMapCmd extends AbstractDragCommand {
      * @param count the amount of items to move
      */
     public DragMapMapCmd(
-            @Nonnull final Location source, @Nonnull final Location destination, @Nonnull final ItemCount count) {
+            @Nonnull ServerCoordinate source, @Nonnull ServerCoordinate destination, @Nonnull ItemCount count) {
         super(CommandList.CMD_DRAG_MAP_MAP, count);
-        srcLoc = new Location(source);
-        dstLoc = new Location(destination);
+        srcLoc = source;
+        dstLoc = destination;
     }
 
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
-        writer.writeLocation(srcLoc);
-        writer.writeLocation(dstLoc);
+    public void encode(@Nonnull NetCommWriter writer) {
+        srcLoc.encode(writer);
+        dstLoc.encode(writer);
         getCount().encode(writer);
     }
 
@@ -72,6 +68,6 @@ public final class DragMapMapCmd extends AbstractDragCommand {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString("Source: " + srcLoc.toString() + " Destination: " + dstLoc.toString() + ' ' + getCount());
+        return toString("Source: " + srcLoc + " Destination: " + dstLoc + ' ' + getCount());
     }
 }

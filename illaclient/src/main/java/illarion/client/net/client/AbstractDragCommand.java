@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -39,7 +39,7 @@ public abstract class AbstractDragCommand extends AbstractCommand {
      * @param commId the ID of the command
      * @param count the amount of items to drag at once
      */
-    protected AbstractDragCommand(final int commId, @Nonnull final ItemCount count) {
+    protected AbstractDragCommand(int commId, @Nonnull ItemCount count) {
         super(commId);
 
         this.count = count;

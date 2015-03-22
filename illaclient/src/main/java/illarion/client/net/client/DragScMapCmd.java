@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,7 +18,7 @@ package illarion.client.net.client;
 import illarion.client.net.CommandList;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.ItemCount;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
@@ -44,7 +44,7 @@ public final class DragScMapCmd extends AbstractDragCommand {
      * The target location of the dragging event.
      */
     @Nonnull
-    private final Location targetLocation;
+    private final ServerCoordinate targetLocation;
 
     /**
      * The default constructor of this DragScMapCmd.
@@ -55,22 +55,22 @@ public final class DragScMapCmd extends AbstractDragCommand {
      * @param count the amount of items to move
      */
     public DragScMapCmd(
-            final int sourceContainer,
-            final int sourceSlot,
-            @Nonnull final Location destination,
-            @Nonnull final ItemCount count) {
+            int sourceContainer,
+            int sourceSlot,
+            @Nonnull ServerCoordinate destination,
+            @Nonnull ItemCount count) {
         super(CommandList.CMD_DRAG_SC_MAP, count);
 
         this.sourceContainer = (short) sourceContainer;
         sourceContainerItem = (short) sourceSlot;
-        targetLocation = new Location(destination);
+        targetLocation = destination;
     }
 
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) {
         writer.writeUByte(sourceContainer);
         writer.writeUByte(sourceContainerItem);
-        writer.writeLocation(targetLocation);
+        targetLocation.encode(writer);
         getCount().encode(writer);
     }
 

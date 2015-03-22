@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,10 +15,11 @@
  */
 package illarion.mapedit.tools;
 
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapTile;
+import illarion.mapedit.data.MapTile.MapTileFactory;
 import illarion.mapedit.history.GroupAction;
 import illarion.mapedit.history.TileIDChangedAction;
 import illarion.mapedit.processing.MapTransitions;
@@ -43,7 +44,7 @@ public class TileBrushTool extends AbstractTool {
     }
 
     @Override
-    public void clickedAt(final int x, final int y, @Nonnull final Map map) {
+    public void clickedAt(int x, int y, @Nonnull Map map) {
         TileIDChangedAction newAction = addTile(x, y, map);
         if (newAction != null) {
             getHistory().addEntry(newAction);
@@ -51,7 +52,7 @@ public class TileBrushTool extends AbstractTool {
     }
 
     @Override
-    public void paintSelected(final int x, final int y, @Nonnull final Map map, @Nonnull final GroupAction action) {
+    public void paintSelected(int x, int y, @Nonnull Map map, @Nonnull GroupAction action) {
         TileIDChangedAction newAction = addTile(x, y, map);
         if (newAction != null) {
             action.addAction(newAction);
@@ -59,19 +60,19 @@ public class TileBrushTool extends AbstractTool {
     }
 
     @Nullable
-    private TileIDChangedAction addTile(final int x, final int y, @Nonnull final Map map) {
-        final TileImg tile = getManager().getSelectedTile();
+    private TileIDChangedAction addTile(int x, int y, @Nonnull Map map) {
+        TileImg tile = getManager().getSelectedTile();
         if (tile == null) {
             return null;
         }
-        final MapTile oldTile = map.getTileAt(x, y);
+        MapTile oldTile = map.getTileAt(x, y);
         TileIDChangedAction action = null;
         if ((oldTile != null) && (oldTile.getId() != tile.getId())) {
-            final MapTile newTile = MapTile.MapTileFactory.setId(tile.getId(), oldTile);
+            MapTile newTile = MapTileFactory.setId(tile.getId(), oldTile);
             action = new TileIDChangedAction(x, y, oldTile, newTile, map);
             map.setTileAt(x, y, newTile);
             newTile.setAnnotation(null);
-            MapTransitions.getInstance().checkTileAndSurround(map, new Location(x, y, 0));
+            MapTransitions.getInstance().checkTileAndSurround(map, new ServerCoordinate(x, y, 0));
         }
         return action;
     }

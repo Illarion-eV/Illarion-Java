@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,7 +23,7 @@ import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.types.Direction;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import illarion.common.util.FastMath;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
@@ -41,6 +41,7 @@ import java.util.EnumSet;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseTargetMovementHandler {
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(WalkToMouseMovementHandler.class);
     /**
      * Limit the path finding to the direction the mouse is pointing at.
@@ -119,15 +120,17 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
         return CharMovementMode.Walk;
     }
 
+    @Nonnull
     @Override
     protected Collection<Direction> getAllowedDirections() {
         if (limitPathFindingToMouseDirection) {
-            Location target = getTargetLocation();
+            ServerCoordinate target = getTargetLocation();
             Direction dir = getMovement().getServerLocation().getDirection(target);
             Collection<Direction> result = EnumSet.noneOf(Direction.class);
             if (dir == null) {
                 return result;
             }
+            //noinspection ConstantConditions
             for (Direction testDir : Direction.values()) {
                 if (testDir == dir) {
                     result.add(testDir);
@@ -151,8 +154,8 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
 
     @Override
     @Nullable
-    protected Path calculateNewPath(@Nonnull Location currentLocation) {
-        int maxDistance = currentLocation.getDistance(getTargetLocation());
+    protected Path calculateNewPath(@Nonnull ServerCoordinate currentLocation) {
+        int maxDistance = currentLocation.getStepDistance(getTargetLocation());
 
         while (getTargetDistance() < maxDistance) {
             Path result = super.calculateNewPath(currentLocation);

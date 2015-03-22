@@ -17,7 +17,7 @@ package illarion.client.world;
 
 import illarion.client.graphics.MapDisplayManager;
 import illarion.common.types.Direction;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,6 +31,9 @@ import java.util.List;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class GameMapProcessor2 {
+    @Nullable
+    private static MapGroup lastInsideGroup;
+
     private GameMapProcessor2() {
     }
 
@@ -41,10 +44,10 @@ public class GameMapProcessor2 {
      */
     @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
     public static void processTile(@Nonnull MapTile tile) {
-        Location playerLocation = World.getPlayer().getLocation();
+        ServerCoordinate playerLocation = World.getPlayer().getLocation();
 
-        MapTile tileAbove = getFirstTileAbove(tile.getLocation(), playerLocation.getScZ() + 2, true);
-        MapTile tileBelow = getFirstTileBelow(tile.getLocation(), playerLocation.getScZ() - 2, true);
+        MapTile tileAbove = getFirstTileAbove(tile.getCoordinates(), playerLocation.getZ() + 2, true);
+        MapTile tileBelow = getFirstTileBelow(tile.getCoordinates(), playerLocation.getZ() - 2, true);
 
         if (tileAbove != null) {
             tile.setObstructingTile(tileAbove);
@@ -53,7 +56,7 @@ public class GameMapProcessor2 {
             tileBelow.setObstructingTile(tile);
         }
 
-        List<MapGroup> groups = getSurroundingMapGroups(tile.getLocation());
+        List<MapGroup> groups = getSurroundingMapGroups(tile.getCoordinates());
         MapGroup tileGroup;
         if (groups.isEmpty()) {
             tileGroup = new MapGroup();
@@ -88,50 +91,47 @@ public class GameMapProcessor2 {
             return false;
         }
 
-        Location playerLoc = World.getPlayer().getLocation();
-        Location tileLoc = tile.getLocation();
+        ServerCoordinate playerLoc = World.getPlayer().getLocation();
+        ServerCoordinate tileLoc = tile.getCoordinates();
 
         /*
          * Start checking the clipping of the tiles. In case a tile is found outside the clipping range, its deleted.
          */
-        if ((playerLoc.getScZ() + 2) < tileLoc.getScZ()) {
+        if ((playerLoc.getZ() + 2) < tileLoc.getZ()) {
             return true;
         }
 
-        if ((playerLoc.getScZ() - 2) > tileLoc.getScZ()) {
+        if ((playerLoc.getZ() - 2) > tileLoc.getZ()) {
             return true;
         }
 
         MapDimensions mapDim = MapDimensions.getInstance();
 
-        if ((playerLoc.getCol() + mapDim.getClippingOffsetLeft()) > tileLoc.getCol()) {
+        if ((playerLoc.toMapColumn() + mapDim.getClippingOffsetLeft()) > tileLoc.toMapColumn()) {
             return true;
         }
 
-        if ((playerLoc.getCol() + mapDim.getClippingOffsetRight()) < tileLoc.getCol()) {
+        if ((playerLoc.toMapColumn() + mapDim.getClippingOffsetRight()) < tileLoc.toMapColumn()) {
             return true;
         }
 
-        int level = (Math.abs(tileLoc.getScZ() - playerLoc.getScZ()) * 6) + 1;
+        int level = (Math.abs(tileLoc.getZ() - playerLoc.getZ()) * 6) + 1;
 
-        if ((playerLoc.getRow() + mapDim.getClippingOffsetTop()) < (tileLoc.getRow() - level)) {
+        if ((playerLoc.toMapRow() + mapDim.getClippingOffsetTop()) < (tileLoc.toMapRow() - level)) {
             return true;
         }
 
-        if ((playerLoc.getRow() + mapDim.getClippingOffsetBottom()) > (tileLoc.getRow() + level)) {
+        if ((playerLoc.toMapRow() + mapDim.getClippingOffsetBottom()) > (tileLoc.toMapRow() + level)) {
             return true;
         }
 
         return false;
     }
 
-    @Nullable
-    private static MapGroup lastInsideGroup;
-
     public static void checkInside() {
-        Location playerLocation = World.getPlayer().getLocation();
+        ServerCoordinate playerLocation = World.getPlayer().getLocation();
 
-        MapTile tileAbove = getFirstTileAbove(playerLocation, playerLocation.getScZ() + 2, false);
+        MapTile tileAbove = getFirstTileAbove(playerLocation, playerLocation.getZ() + 2, false);
         MapGroup realTileAboveGroup = (tileAbove == null) ? null : tileAbove.getMapGroup();
         MapGroup tileAboveGroup = (realTileAboveGroup == null) ? null : realTileAboveGroup.getRootGroup();
 
@@ -156,14 +156,14 @@ public class GameMapProcessor2 {
 
     @Nullable
     private static MapTile getFirstTileBelow(
-            @Nonnull Location startLocation, int zLimit, boolean perceptiveOffset) {
-        if (startLocation.getScZ() <= zLimit) {
+            @Nonnull ServerCoordinate startLocation, int zLimit, boolean perceptiveOffset) {
+        if (startLocation.getZ() <= zLimit) {
             return null;
         }
 
-        int currentX = startLocation.getScX();
-        int currentY = startLocation.getScY();
-        int currentZ = startLocation.getScZ();
+        int currentX = startLocation.getX();
+        int currentY = startLocation.getY();
+        int currentZ = startLocation.getZ();
         while (currentZ > zLimit) {
             if (perceptiveOffset) {
                 currentX += MapDisplayManager.TILE_PERSPECTIVE_OFFSET;
@@ -171,7 +171,7 @@ public class GameMapProcessor2 {
             }
             currentZ--;
 
-            MapTile tile = World.getMap().getMapAt(currentX, currentY, currentZ);
+            MapTile tile = World.getMap().getMapAt(new ServerCoordinate(currentX, currentY, currentZ));
             if (tile != null) {
                 return tile;
             }
@@ -181,14 +181,14 @@ public class GameMapProcessor2 {
 
     @Nullable
     private static MapTile getFirstTileAbove(
-            @Nonnull Location startLocation, int zLimit, boolean perceptiveOffset) {
-        if (startLocation.getScZ() >= zLimit) {
+            @Nonnull ServerCoordinate startLocation, int zLimit, boolean perceptiveOffset) {
+        if (startLocation.getZ() >= zLimit) {
             return null;
         }
 
-        int currentX = startLocation.getScX();
-        int currentY = startLocation.getScY();
-        int currentZ = startLocation.getScZ();
+        int currentX = startLocation.getX();
+        int currentY = startLocation.getY();
+        int currentZ = startLocation.getZ();
         while (currentZ < zLimit) {
             if (perceptiveOffset) {
                 currentX -= MapDisplayManager.TILE_PERSPECTIVE_OFFSET;
@@ -196,7 +196,7 @@ public class GameMapProcessor2 {
             }
             currentZ++;
 
-            MapTile tile = World.getMap().getMapAt(currentX, currentY, currentZ);
+            MapTile tile = World.getMap().getMapAt(new ServerCoordinate(currentX, currentY, currentZ));
             if (tile != null) {
                 return tile;
             }
@@ -205,16 +205,14 @@ public class GameMapProcessor2 {
     }
 
     @Nonnull
-    private static List<MapGroup> getSurroundingMapGroups(@Nonnull Location startLocation) {
+    private static List<MapGroup> getSurroundingMapGroups(@Nonnull ServerCoordinate startLocation) {
         List<MapGroup> groupList = new ArrayList<>();
 
         GameMap map = World.getMap();
         //noinspection ConstantConditions
         for (Direction dir : Direction.values()) {
-            int locX = startLocation.getScX() + dir.getDirectionVectorX();
-            int locY = startLocation.getScY() + dir.getDirectionVectorY();
-
-            MapTile tile = map.getMapAt(locX, locY, startLocation.getScZ());
+            ServerCoordinate newLoc = new ServerCoordinate(startLocation, dir);
+            MapTile tile = map.getMapAt(newLoc);
             if (tile != null) {
                 MapGroup group = tile.getMapGroup();
                 if (group != null) {

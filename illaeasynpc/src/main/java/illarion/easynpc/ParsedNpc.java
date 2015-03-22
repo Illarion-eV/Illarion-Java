@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,7 @@
  */
 package illarion.easynpc;
 
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import illarion.easynpc.data.*;
 import illarion.easynpc.parsed.ParsedData;
 import illarion.easynpc.writer.LuaWritable;
@@ -196,7 +196,7 @@ public final class ParsedNpc implements Iterable<ParsedData> {
     /**
      * The position of this NPC.
      */
-    private Location npcPos;
+    private ServerCoordinate npcPos;
 
     /**
      * The race of the NPC.
@@ -604,10 +604,9 @@ public final class ParsedNpc implements Iterable<ParsedData> {
      *
      * @return the current location of this NPC.
      */
-    public Location getNpcPos() {
+    public ServerCoordinate getNpcPos() {
         if (npcPos == null) {
-            npcPos = new Location();
-            npcPos.setDC(0, 0, 0);
+            return new ServerCoordinate(0, 0, 0);
         }
         return npcPos;
     }
@@ -765,7 +764,7 @@ public final class ParsedNpc implements Iterable<ParsedData> {
      *
      * @param newNpcPos the new position of this NPC
      */
-    public void setNpcPos(Location newNpcPos) {
+    public void setNpcPos(@Nonnull ServerCoordinate newNpcPos) {
         npcPos = newNpcPos;
     }
 

@@ -22,8 +22,9 @@ import illarion.client.net.client.RequestAppearanceCmd;
 import illarion.client.util.ChatLog;
 import illarion.client.world.items.*;
 import illarion.client.world.movement.Movement;
+import illarion.common.graphics.Layer;
 import illarion.common.types.CharacterId;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.FastMath;
 import org.illarion.engine.Engine;
@@ -40,6 +41,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.Objects;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -99,8 +101,8 @@ public final class Player {
     /**
      * The current location of the server map for the player.
      */
-    @Nonnull
-    private final Location playerLocation = new Location();
+    @Nullable
+    private ServerCoordinate playerLocation;
 
     /**
      * The player movement handler that takes care that the player character is walking around.
@@ -375,7 +377,10 @@ public final class Player {
      */
     @Nonnull
     @Contract(pure = true)
-    public Location getLocation() {
+    public ServerCoordinate getLocation() {
+        if (playerLocation == null) {
+            throw new IllegalStateException("The location of the player is not yet set.");
+        }
         return playerLocation;
     }
 
@@ -430,8 +435,8 @@ public final class Player {
      * @return true if the location is at the same level as the player
      */
     @Contract(pure = true)
-    boolean isBaseLevel(@Nonnull Location checkLoc) {
-        return getLocation().getScZ() == checkLoc.getScZ();
+    boolean isBaseLevel(@Nonnull ServerCoordinate checkLoc) {
+        return (playerLocation != null) && (playerLocation.getZ() == checkLoc.getZ());
     }
 
     /**
@@ -482,7 +487,7 @@ public final class Player {
      */
     @Contract(pure = true)
     public int getBaseLevel() {
-        return playerLocation.getScZ();
+        return playerLocation == null ? 0 : playerLocation.getZ();
     }
 
     /**
@@ -508,16 +513,19 @@ public final class Player {
      * @return true if the position is within the clipping distance and the tolerance
      */
     @Contract(pure = true)
-    public boolean isOnScreen(@Nonnull Location testLoc, int tolerance) {
-        if (Math.abs(testLoc.getScZ() - playerLocation.getScZ()) > 2) {
+    public boolean isOnScreen(@Nonnull ServerCoordinate testLoc, int tolerance) {
+        if (playerLocation == null) {
+            throw new IllegalStateException("The player location is not yet set.");
+        }
+        if (Math.abs(testLoc.getZ() - playerLocation.getZ()) > 2) {
             return false;
         }
         int width = MapDimensions.getInstance().getStripesWidth() >> 1;
         int height = MapDimensions.getInstance().getStripesHeight() >> 1;
         int limit = (Math.max(width, height) + tolerance) - 2;
 
-        return (Math.abs(playerLocation.getScX() - testLoc.getScX()) +
-                Math.abs(playerLocation.getScY() - testLoc.getScY())) < limit;
+        return (Math.abs(playerLocation.getX() - testLoc.getX()) +
+                Math.abs(playerLocation.getY() - testLoc.getY())) < limit;
     }
 
     /**
@@ -527,17 +535,18 @@ public final class Player {
      *
      * @param newLoc new location of the character on the map
      */
-    public void setLocation(@Nonnull Location newLoc) {
+    public void setLocation(@Nonnull ServerCoordinate newLoc) {
         validLocation = true;
-        if (playerLocation.equals(newLoc)) {
+        if (Objects.equals(playerLocation, newLoc)) {
             return;
         }
+        assert playerLocation != null;
 
         boolean isLongRange = false;
-        if (playerLocation.getSqrtDistance(newLoc) > 10) {
+        if (playerLocation.getDistance(newLoc) > 10) {
             isLongRange = true;
         }
-        if (FastMath.abs(playerLocation.getScZ() - newLoc.getScZ()) > 3) {
+        if (FastMath.abs(playerLocation.getZ() - newLoc.getZ()) > 3) {
             isLongRange = true;
         }
 
@@ -552,7 +561,8 @@ public final class Player {
         character.stopAnimation();
         character.resetAnimation(true);
         World.getPlayer().getCombatHandler().standDown();
-        World.getMapDisplay().setLocation(newLoc);
+        World.getMapDisplay().setLocation(newLoc.toDisplayCoordinate(Layer.Chars));
+        World.getMap().getMiniMap().setPlayerLocation(newLoc);
 
         if (isLongRange) {
             World.getPlayer().getCharacter().relistLight();
@@ -573,12 +583,12 @@ public final class Player {
      *
      * @param newLoc the new location of the player
      */
-    public void updateLocation(@Nonnull Location newLoc) {
-        if (playerLocation.equals(newLoc)) {
+    public void updateLocation(@Nonnull ServerCoordinate newLoc) {
+        if (Objects.equals(playerLocation, newLoc)) {
             return;
         }
 
-        playerLocation.set(newLoc);
+        playerLocation = newLoc;
         World.getMusicBox().updatePlayerLocation();
         World.getMap().updateAllTiles();
         World.getMap().checkInside();

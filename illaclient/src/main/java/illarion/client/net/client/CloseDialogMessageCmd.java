@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -38,14 +38,14 @@ public final class CloseDialogMessageCmd extends AbstractCommand {
      *
      * @param dialogId the ID of the dialog to close
      */
-    public CloseDialogMessageCmd(final int dialogId) {
+    public CloseDialogMessageCmd(int dialogId) {
         super(CommandList.CMD_CLOSE_DIALOG_MSG);
 
         this.dialogId = dialogId;
     }
 
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) {
         writer.writeInt(dialogId);
     }
 

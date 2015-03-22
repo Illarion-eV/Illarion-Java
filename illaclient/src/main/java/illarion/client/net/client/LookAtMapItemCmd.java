@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,7 @@ package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
 import illarion.common.net.NetCommWriter;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
@@ -34,7 +34,7 @@ public final class LookAtMapItemCmd extends AbstractCommand {
      * The position on the map we are going to look at.
      */
     @Nonnull
-    private final Location location;
+    private final ServerCoordinate location;
 
     /**
      * The position of the item inside the stack.
@@ -47,18 +47,18 @@ public final class LookAtMapItemCmd extends AbstractCommand {
      * @param tileLocation the location of the tile to look at
      * @param position the position of the item inside the stack
      */
-    public LookAtMapItemCmd(@Nonnull Location tileLocation, int position) {
+    public LookAtMapItemCmd(@Nonnull ServerCoordinate tileLocation, int position) {
         super(CommandList.CMD_LOOK_AT_MAP_ITEM);
         if (position < 0) {
             throw new IllegalArgumentException("Position has to be 0 or more. Got: " + position);
         }
-        location = new Location(tileLocation);
+        location = tileLocation;
         stackPosition = (short) position;
     }
 
     @Override
     public void encode(@Nonnull NetCommWriter writer) {
-        writer.writeLocation(location);
+        location.encode(writer);
         writer.writeUByte(stackPosition);
     }
 

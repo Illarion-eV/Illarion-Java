@@ -21,7 +21,7 @@ import illarion.client.resources.SoundFactory;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.assets.SoundsManager;
 import org.illarion.engine.sound.Sound;
@@ -49,11 +49,11 @@ public final class SoundEffectMsg implements UpdateTask, ServerReply {
      * The location the effect occurs on.
      */
     @Nullable
-    private Location location;
+    private ServerCoordinate location;
 
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
-        location = new Location(reader);
+        location = new ServerCoordinate(reader);
         effectId = reader.readUShort();
     }
 
@@ -74,7 +74,7 @@ public final class SoundEffectMsg implements UpdateTask, ServerReply {
             throw new NotDecodedException(); // this can't happen.
         }
 
-        Location plyLoc = World.getPlayer().getLocation();
+        ServerCoordinate plyLoc = World.getPlayer().getLocation();
         SoundsManager manager = container.getEngine().getAssets().getSoundsManager();
         Sound sound = SoundFactory.getInstance().getSound(effectId, manager);
         if (sound == null) {
@@ -82,9 +82,9 @@ public final class SoundEffectMsg implements UpdateTask, ServerReply {
         }
         Sounds sounds = container.getEngine().getSounds();
 
-        int dX = location.getScX() - plyLoc.getScX();
-        int dY = location.getScY() - plyLoc.getScY();
-        int dZ = location.getScZ() - plyLoc.getScZ();
+        int dX = location.getX() - plyLoc.getX();
+        int dY = location.getY() - plyLoc.getY();
+        int dZ = location.getZ() - plyLoc.getZ();
         sounds.playSound(sound, sounds.getSoundVolume(), dX, dY, dZ);
     }
 

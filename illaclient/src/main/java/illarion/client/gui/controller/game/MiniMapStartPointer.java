@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,10 +16,10 @@
 package illarion.client.gui.controller.game;
 
 import de.lessvoid.nifty.elements.Element;
-import illarion.client.gui.MiniMapGui;
+import illarion.client.gui.MiniMapGui.Pointer;
 import illarion.client.resources.MiscImageFactory;
 import illarion.client.world.World;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import illarion.common.util.FastMath;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Graphics;
@@ -27,11 +27,12 @@ import org.illarion.engine.graphic.Sprite;
 import org.illarion.engine.nifty.IgeRenderImage;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This is the implementation of a mini map pointer that marks the starting location of a quest.
  */
-final class MiniMapStartPointer implements IgeRenderImage, MiniMapGui.Pointer {
+final class MiniMapStartPointer implements IgeRenderImage, Pointer {
     /**
      * The sprite that contains the point, that is displayed on the map.
      */
@@ -41,8 +42,8 @@ final class MiniMapStartPointer implements IgeRenderImage, MiniMapGui.Pointer {
     /**
      * The location the arrow is supposed to point to.
      */
-    @Nonnull
-    private final Location targetLocation;
+    @Nullable
+    private ServerCoordinate targetLocation;
 
     /**
      * The Nifty-GUI element this pointer is assigned to.
@@ -68,9 +69,8 @@ final class MiniMapStartPointer implements IgeRenderImage, MiniMapGui.Pointer {
     /**
      * Create a new arrow pointer.
      */
-    MiniMapStartPointer(@Nonnull final Element parentElement) {
+    MiniMapStartPointer(@Nonnull Element parentElement) {
         pointSprite = MiscImageFactory.getInstance().getTemplate(MiscImageFactory.MINI_MAP_EXCLAMATION).getSprite();
-        targetLocation = new Location();
         this.parentElement = parentElement;
     }
 
@@ -91,45 +91,45 @@ final class MiniMapStartPointer implements IgeRenderImage, MiniMapGui.Pointer {
 
     @Override
     public void renderImage(
-            @Nonnull final Graphics g,
-            final int x,
-            final int y,
-            final int width,
-            final int height,
-            @Nonnull final Color color,
-            final float imageScale) {
+            @Nonnull Graphics g,
+            int x,
+            int y,
+            int width,
+            int height,
+            @Nonnull Color color,
+            float imageScale) {
         renderImage(g, x, y, width, height, 0, 0, pointSprite.getWidth(), pointSprite.getHeight(), color, imageScale,
                     pointSprite.getWidth() / 2, pointSprite.getHeight() / 2);
     }
 
     @Override
     public void renderImage(
-            @Nonnull final Graphics g,
-            final int x,
-            final int y,
-            final int w,
-            final int h,
-            final int srcX,
-            final int srcY,
-            final int srcW,
-            final int srcH,
-            @Nonnull final Color color,
-            final float scale,
-            final int centerX,
-            final int centerY) {
-        final int scaledWidth = Math.round(w * scale);
-        final int scaledHeight = Math.round(h * scale);
+            @Nonnull Graphics g,
+            int x,
+            int y,
+            int w,
+            int h,
+            int srcX,
+            int srcY,
+            int srcW,
+            int srcH,
+            @Nonnull Color color,
+            float scale,
+            int centerX,
+            int centerY) {
+        int scaledWidth = Math.round(w * scale);
+        int scaledHeight = Math.round(h * scale);
 
-        final int fixedX = x + Math.round((w - scaledWidth) * ((float) centerX / (float) w));
-        final int fixedY = y + Math.round((h - scaledHeight) * ((float) centerY / (float) h));
+        int fixedX = x + Math.round((w - scaledWidth) * (centerX / (float) w));
+        int fixedY = y + Math.round((h - scaledHeight) * (centerY / (float) h));
 
         if (isOnMapArea()) {
-            final int offsetX = (FastMath.sqrt(FastMath.sqr(currentDeltaX) / 2) * -FastMath.sign(currentDeltaX)) +
+            int offsetX = (FastMath.sqrt(FastMath.sqr(currentDeltaX) / 2) * -FastMath.sign(currentDeltaX)) +
                     (FastMath.sqrt(FastMath.sqr(currentDeltaY) / 2) * -FastMath.sign(currentDeltaY));
-            final int offsetY = (FastMath.sqrt(FastMath.sqr(currentDeltaX) / 2) * FastMath.sign(currentDeltaX)) +
+            int offsetY = (FastMath.sqrt(FastMath.sqr(currentDeltaX) / 2) * FastMath.sign(currentDeltaX)) +
                     (FastMath.sqrt(FastMath.sqr(currentDeltaY) / 2) * -FastMath.sign(currentDeltaY));
 
-            final Color renderColor;
+            Color renderColor;
             if (available) {
                 renderColor = POINTER_COLOR;
             } else {
@@ -155,7 +155,7 @@ final class MiniMapStartPointer implements IgeRenderImage, MiniMapGui.Pointer {
         return FastMath.sqrt(FastMath.sqr(currentDeltaX) + FastMath.sqr(currentDeltaY)) < 71;
     }
 
-    void setAvailable(final boolean available) {
+    void setAvailable(boolean available) {
         this.available = available;
     }
 
@@ -164,14 +164,17 @@ final class MiniMapStartPointer implements IgeRenderImage, MiniMapGui.Pointer {
      *
      * @param delta the time since the last update
      */
-    void update(final int delta) {
-        currentDeltaX = targetLocation.getScX() - World.getPlayer().getLocation().getScX();
-        currentDeltaY = targetLocation.getScY() - World.getPlayer().getLocation().getScY();
+    void update(int delta) {
+        if (targetLocation == null) {
+            throw new IllegalStateException("The target location of the pointer is not set. Updating it is illegal.");
+        }
+        currentDeltaX = targetLocation.getX() - World.getPlayer().getLocation().getX();
+        currentDeltaY = targetLocation.getY() - World.getPlayer().getLocation().getY();
     }
 
     @Override
-    public void setTarget(@Nonnull final Location loc) {
-        targetLocation.set(loc);
+    public void setTarget(@Nonnull ServerCoordinate coordinate) {
+        targetLocation = coordinate;
     }
 
     /**

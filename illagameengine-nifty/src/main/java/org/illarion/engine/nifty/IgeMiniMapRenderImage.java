@@ -15,7 +15,7 @@
  */
 package org.illarion.engine.nifty;
 
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import org.illarion.engine.Engine;
 import org.illarion.engine.EngineException;
 import org.illarion.engine.graphic.Color;
@@ -92,10 +92,10 @@ public class IgeMiniMapRenderImage implements IgeRenderImage {
             int centerY) {
         setupEffect();
 
-        Location playerLoc = map.getPlayerLocation();
-        Location origin = map.getMapOrigin();
-        int miniMapOriginX = playerLoc.getScX() - origin.getScX() - radius;
-        int miniMapOriginY = playerLoc.getScY() - origin.getScY() - radius;
+        ServerCoordinate playerLoc = map.getPlayerLocation();
+        ServerCoordinate origin = map.getMapOrigin();
+        int miniMapOriginX = playerLoc.getX() - origin.getX() - radius;
+        int miniMapOriginY = playerLoc.getY() - origin.getY() - radius;
 
         int scaledWidth = Math.round(w * scale);
         int scaledHeight = Math.round(h * scale);

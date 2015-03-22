@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,7 +18,7 @@ package illarion.client.net.client;
 import illarion.client.net.CommandList;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.ItemCount;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
@@ -34,7 +34,7 @@ public final class DragMapScCmd extends AbstractDragCommand {
      * The location where the item that is moved is located at.
      */
     @Nonnull
-    private final Location srcLoc;
+    private final ServerCoordinate srcLoc;
 
     /**
      * The target container of the dragging event.
@@ -55,20 +55,20 @@ public final class DragMapScCmd extends AbstractDragCommand {
      * @param count the amount of items to move
      */
     public DragMapScCmd(
-            @Nonnull final Location source,
-            final int destinationContainer,
-            final int destinationSlot,
-            @Nonnull final ItemCount count) {
+            @Nonnull ServerCoordinate source,
+            int destinationContainer,
+            int destinationSlot,
+            @Nonnull ItemCount count) {
         super(CommandList.CMD_DRAG_MAP_SC, count);
 
-        srcLoc = new Location(source);
+        srcLoc = source;
         targetContainer = (short) destinationContainer;
         targetContainerSlot = (short) destinationSlot;
     }
 
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
-        writer.writeLocation(srcLoc);
+    public void encode(@Nonnull NetCommWriter writer) {
+        srcLoc.encode(writer);
         writer.writeUByte(targetContainer);
         writer.writeUByte(targetContainerSlot);
         getCount().encode(writer);

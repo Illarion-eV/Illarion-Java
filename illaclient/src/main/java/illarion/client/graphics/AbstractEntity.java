@@ -17,7 +17,7 @@ package illarion.client.graphics;
 
 import illarion.client.resources.data.AbstractEntityTemplate;
 import illarion.client.world.World;
-import illarion.common.types.Location;
+import illarion.common.types.DisplayCoordinate;
 import illarion.common.types.Rectangle;
 import illarion.common.util.FastMath;
 import org.illarion.engine.EngineException;
@@ -26,6 +26,7 @@ import org.illarion.engine.graphic.*;
 import org.illarion.engine.graphic.effects.HighlightEffect;
 import org.illarion.engine.graphic.effects.TextureEffect;
 import org.illarion.engine.input.Input;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -131,20 +132,10 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
     private int currentFrame;
 
     /**
-     * The current x location of this item on the screen relative to the origin of the game map.
+     * The location of the entity on the display.
      */
-    private int displayX;
-
-    /**
-     * The current y location of this item on the screen relative to the origin of the game map.
-     */
-    private int displayY;
-
-    /**
-     * The z order of the item, so the layer of the item that determines the position of the object in the display
-     * list.
-     */
-    private int layerZ;
+    @Nullable
+    private DisplayCoordinate displayCoordinate;
 
     /**
      * The light that effects this entity directly. That could be the {@link #DEFAULT_LIGHT} that ensures that the
@@ -283,8 +274,9 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
     @Override
     public void render(@Nonnull Graphics g) {
         if (performRendering()) {
-            int renderLocX = displayX;
-            int renderLocY = displayY;
+            DisplayCoordinate dc = getDisplayCoordinate();
+            int renderLocX = dc.getX();
+            int renderLocY = dc.getY();
 
             int highlight = getHighlight();
             if ((highlight > 0) && (highlightEffect != null)) {
@@ -309,7 +301,9 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
         g.drawSprite(template.getSprite(), x, y, light, getCurrentFrame(), getScale(), 0.f, effects);
     }
 
+    @Nonnull
     private static final Color COLOR_HIGHLIGHT_STRONG = new ImmutableColor(1.f, 1.f, 1.f, 0.25f);
+    @Nonnull
     private static final Color COLOR_HIGHLIGHT_WEAK = new ImmutableColor(1.f, 1.f, 1.f, 0.05f);
 
     /**
@@ -323,23 +317,15 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
     }
 
     /**
-     * Get the current x location of this object on the screen relative to the
-     * origin of the game map. That value is set with the screen position.
-     *
-     * @return the x coordinate of the display location
+     * The current location on the screen this object is displayed yet.
      */
-    public final int getDisplayX() {
-        return displayX;
-    }
-
-    /**
-     * Get the current y location of this object on the screen relative to the
-     * origin of the game map. That value is set with the screen position.
-     *
-     * @return the y coordinate of the display location
-     */
-    public final int getDisplayY() {
-        return displayY;
+    @Nonnull
+    @Contract(pure = true)
+    public final DisplayCoordinate getDisplayCoordinate() {
+        if (displayCoordinate == null) {
+            throw new IllegalStateException("Display coordinate was not yet set.");
+        }
+        return displayCoordinate;
     }
 
     /**
@@ -378,7 +364,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
      */
     @Override
     public final int getOrder() {
-        return layerZ;
+        return getDisplayCoordinate().getLayer();
     }
 
     /**
@@ -521,40 +507,20 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
     /**
      * Set the position of the entity on the display. The display origin is at the origin of the game map.
      *
-     * @param dispX the x coordinate of the location of the display
-     * @param dispY the y coordinate of the location of the display
-     * @param zLayer the z layer of the coordinate
-     * @param typeLayer the global layer of this type of entity.
+     * @param coordinate the new location on the screen.
      */
-    public void setScreenPos(int dispX, int dispY, int zLayer, int typeLayer) {
+    public void setScreenPos(@Nonnull DisplayCoordinate coordinate) {
         if (removedEntity) {
             LOGGER.warn("Changing the screen position of a removed entity is not allowed.");
             return;
         }
 
-        displayX = dispX;
-        displayY = dispY;
+        DisplayCoordinate oldCoordinate = displayCoordinate;
+        displayCoordinate = coordinate;
 
-        if (shown) {
-            int newLayerZ = zLayer - typeLayer;
-            if (newLayerZ != layerZ) {
-                layerZ = newLayerZ;
-                updateDisplayPosition();
-            }
-        } else {
-            layerZ = zLayer - typeLayer;
+        if (shown && (oldCoordinate != null) && (oldCoordinate.getLayer() != coordinate.getLayer())) {
+            updateDisplayPosition();
         }
-    }
-
-    /**
-     * Set the position of the entity on the display. The display origin is at
-     * the origin of the game map.
-     *
-     * @param loc the location of the entity on the map
-     * @param typeLayer the global layer of this type of entity.
-     */
-    public final void setScreenPos(@Nonnull Location loc, int typeLayer) {
-        setScreenPos(loc.getDcX(), loc.getDcY(), loc.getDcZ(), typeLayer);
     }
 
     @Override
@@ -631,16 +597,18 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
             hide();
             return;
         }
+
         Sprite sprite = template.getSprite();
         int offS = template.getShadowOffset();
 
-        sprite.getDisplayArea(displayX, displayY, scale, 0.f, displayRect);
+        DisplayCoordinate dC = getDisplayCoordinate();
+        sprite.getDisplayArea(dC.getX(), dC.getY(), scale, 0.f, displayRect);
 
         int widthNoShadow = displayRect.getWidth() - (int) (offS * scale);
 
         if (fadingCorridorEffect) {
             currentlyEffectedByFadingCorridor = FadingCorridor.getInstance()
-                    .isInCorridor(displayRect.getX(), displayRect.getY(), layerZ, widthNoShadow,
+                    .isInCorridor(displayRect.getX(), displayRect.getY(), dC.getLayer(), widthNoShadow,
                                   displayRect.getHeight());
 
             if (currentlyEffectedByFadingCorridor) {

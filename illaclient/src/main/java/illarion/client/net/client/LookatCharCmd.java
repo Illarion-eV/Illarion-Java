@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -31,13 +31,13 @@ public final class LookatCharCmd extends AbstractCommand {
     /**
      * Mode for looking in a polite way at a character. That leads to the point
      * that the character you are looking at gets no message but you get only
-     * limited informations.
+     * limited information.
      */
     public static final int LOOKAT_POLITE = 0;
 
     /**
      * Staring at a character, leads to a message for the character you are
-     * staring at. But this way you get far more informations then by looking in
+     * staring at. But this way you get far more information then by looking in
      * a polite way.
      */
     public static final int LOOKAT_STARE = 1;
@@ -69,7 +69,7 @@ public final class LookatCharCmd extends AbstractCommand {
      * communication system
      */
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) {
         charId.encode(writer);
         writer.writeByte(mode);
     }
@@ -81,7 +81,7 @@ public final class LookatCharCmd extends AbstractCommand {
      * @param lookAtMode the mode of the look at so the method used to look at
      * the target character
      */
-    public void examine(final CharacterId lookAtCharId, final int lookAtMode) {
+    public void examine(CharacterId lookAtCharId, int lookAtMode) {
         charId = lookAtCharId;
         mode = (byte) lookAtMode;
     }
@@ -95,6 +95,6 @@ public final class LookatCharCmd extends AbstractCommand {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return toString(charId.toString() + " mode: " + mode);
+        return toString(charId + " mode: " + mode);
     }
 }

@@ -22,7 +22,7 @@ import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
@@ -64,7 +64,7 @@ public final class ItemUpdateMsg implements ServerReply {
     /**
      * Position of the server map that is updated.
      */
-    private Location location;
+    private ServerCoordinate location;
 
     /**
      * The new movement points of the tile.
@@ -73,7 +73,7 @@ public final class ItemUpdateMsg implements ServerReply {
 
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
-        location = new Location(reader);
+        location = new ServerCoordinate(reader);
 
         itemNumber = reader.readUByte();
         itemId = Arrays.asList(new ItemId[itemNumber]);

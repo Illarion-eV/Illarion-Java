@@ -19,7 +19,7 @@ import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,21 +43,21 @@ public final class QuestAvailabilityMsg implements ServerReply {
      * This array contains the available quests in range of the character.
      */
     @Nullable
-    private List<Location> availableQuests;
+    private List<ServerCoordinate> availableQuests;
 
     /**
      * This array contains the quests that become available to the player soon.
      */
     @Nullable
-    private List<Location> availableSoonQuests;
+    private List<ServerCoordinate> availableSoonQuests;
 
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         int availableQuestCount = reader.readUShort();
         if (availableQuestCount > 0) {
-            availableQuests = Arrays.asList(new Location[availableQuestCount]);
+            availableQuests = Arrays.asList(new ServerCoordinate[availableQuestCount]);
             for (int i = 0; i < availableQuestCount; i++) {
-                availableQuests.set(i, new Location(reader));
+                availableQuests.set(i, new ServerCoordinate(reader));
             }
         } else {
             availableQuests = Collections.emptyList();
@@ -65,9 +65,9 @@ public final class QuestAvailabilityMsg implements ServerReply {
 
         int soonQuestCount = reader.readUShort();
         if (soonQuestCount > 0) {
-            availableSoonQuests = Arrays.asList(new Location[soonQuestCount]);
+            availableSoonQuests = Arrays.asList(new ServerCoordinate[soonQuestCount]);
             for (int i = 0; i < soonQuestCount; i++) {
-                availableSoonQuests.set(i, new Location(reader));
+                availableSoonQuests.set(i, new ServerCoordinate(reader));
             }
         } else {
             availableSoonQuests = Collections.emptyList();
@@ -86,8 +86,8 @@ public final class QuestAvailabilityMsg implements ServerReply {
         }
 
         /* It's possible that both lists contain the same entries or multiple times equal entries. */
-        Collection<Location> availableSoonQuestsSet = new HashSet<>(availableSoonQuests);
-        Collection<Location> availableQuestsSet = new HashSet<>(availableQuests);
+        Collection<ServerCoordinate> availableSoonQuestsSet = new HashSet<>(availableSoonQuests);
+        Collection<ServerCoordinate> availableQuestsSet = new HashSet<>(availableQuests);
         availableSoonQuestsSet.removeAll(availableQuestsSet);
         World.getMap().applyQuestStartLocations(availableQuestsSet, availableSoonQuestsSet);
 

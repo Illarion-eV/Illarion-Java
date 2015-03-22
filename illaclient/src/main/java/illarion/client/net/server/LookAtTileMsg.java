@@ -18,7 +18,7 @@ package illarion.client.net.server;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.common.net.NetCommReader;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +40,7 @@ public final class LookAtTileMsg implements ServerReply {
     /**
      * The location of the tile on the server map.
      */
-    private transient Location loc;
+    private transient ServerCoordinate loc;
 
     /**
      * The look at text for the tile.
@@ -49,7 +49,7 @@ public final class LookAtTileMsg implements ServerReply {
 
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
-        loc = new Location(reader);
+        loc = new ServerCoordinate(reader);
         text = reader.readString();
     }
 

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -52,8 +52,7 @@ public final class DragScInvCmd extends AbstractDragCommand {
      * @param destination the inventory slot that is the destination of the drag
      * @param count the amount of items to move
      */
-    public DragScInvCmd(
-            final int sourceContainer, final int sourceSlot, final int destination, @Nonnull final ItemCount count) {
+    public DragScInvCmd(int sourceContainer, int sourceSlot, int destination, @Nonnull ItemCount count) {
         super(CommandList.CMD_DRAG_SC_INV, count);
 
         this.sourceContainer = (short) sourceContainer;
@@ -62,7 +61,7 @@ public final class DragScInvCmd extends AbstractDragCommand {
     }
 
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) {
         writer.writeUByte(sourceContainer);
         writer.writeUByte(sourceContainerItem);
         writer.writeUByte(targetSlot);

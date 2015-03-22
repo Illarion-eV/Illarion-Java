@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,6 +15,7 @@
  */
 package org.illarion.engine.graphic;
 
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +74,9 @@ public final class MapColor {
      * @param color the index of the color value
      * @return a array with the red, green and blue color value
      */
-    public static Color getColor(final int color) {
+    @Nonnull
+    @Contract(pure = true)
+    public static Color getColor(int color) {
         return COLORS[color];
     }
 
@@ -87,7 +90,7 @@ public final class MapColor {
      */
     @SuppressWarnings("nls")
     public static void writeColor(
-            final int color, final int alpha, @Nonnull final ByteBuffer map, final int pos) {
+            int color, int alpha, @Nonnull ByteBuffer map, int pos) {
         // check color
         if (color > COLORS.length) {
             LOGGER.error("minimap color out of range - ignoring");

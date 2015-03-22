@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,7 +18,7 @@ package illarion.client.util.pathfinding;
 import illarion.client.world.GameMap;
 import illarion.client.world.MapTile;
 import illarion.common.types.Direction;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import illarion.common.util.FastMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,14 +33,15 @@ import java.util.*;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class AStar implements PathFindingAlgorithm {
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(AStar.class);
 
     @Nullable
     @Override
     public Path findPath(
             @Nonnull GameMap map,
-            @Nonnull Location start,
-            @Nonnull Location end,
+            @Nonnull ServerCoordinate start,
+            @Nonnull ServerCoordinate end,
             int approachDistance, @Nonnull Collection<Direction> allowedDirections,
             @Nonnull PathMovementMethod movementMethod,
             @Nonnull PathMovementMethod... movementMethods) {
@@ -51,7 +52,7 @@ public class AStar implements PathFindingAlgorithm {
         if (approachDistance < 0) {
             throw new IllegalArgumentException("The approach distance must not be negative.");
         }
-        if (start.getScZ() != end.getScZ()) {
+        if (start.getZ() != end.getZ()) {
             /* Different levels are not supported by this algorithm. */
             return null;
         }
@@ -64,7 +65,7 @@ public class AStar implements PathFindingAlgorithm {
         /* Nodes that are in this set were yet not fully processed. */
         NavigableSet<AStarPathNode> openNodes = new TreeSet<>();
         /* The list of nodes and their corresponding locations. */
-        Map<Location, AStarPathNode> knownNodes = new HashMap<>();
+        Map<ServerCoordinate, AStarPathNode> knownNodes = new HashMap<>();
         /* The methods of movement that apply. */
         EnumSet<PathMovementMethod> movementMethodSettings = EnumSet.of(movementMethod, movementMethods);
 
@@ -106,20 +107,20 @@ public class AStar implements PathFindingAlgorithm {
 
     private static void expandNode(
             @Nonnull GameMap map,
-            @Nonnull Location end,
+            @Nonnull ServerCoordinate end,
             @Nullable AStarPathNode nodeToExpand,
-            @Nonnull Location origin, @Nonnull Iterable<Direction> allowedDirections,
+            @Nonnull ServerCoordinate origin, @Nonnull Iterable<Direction> allowedDirections,
             @Nonnull Collection<PathMovementMethod> movementMethods,
             @Nonnull Collection<AStarPathNode> storage) {
         if (movementMethods.isEmpty()) {
             throw new IllegalArgumentException("No movement methods selected. This is not valid.");
         }
         for (Direction dir : allowedDirections) {
-            Location walkTarget = new Location(origin, dir);
+            ServerCoordinate walkTarget = new ServerCoordinate(origin, dir);
             MapTile walkingTargetTile = map.getMapAt(walkTarget);
             if (movementMethods.contains(PathMovementMethod.Walk)) {
                 if ((walkingTargetTile != null) &&
-                        (!walkingTargetTile.isBlocked() || walkingTargetTile.getLocation().equals(end))) {
+                        (!walkingTargetTile.isBlocked() || walkingTargetTile.getCoordinates().equals(end))) {
                     storage.add(new AStarPathNode(nodeToExpand, walkingTargetTile, PathMovementMethod.Walk, dir,
                                                   getHeuristic(walkTarget, end), null));
                 } else {
@@ -127,7 +128,7 @@ public class AStar implements PathFindingAlgorithm {
                 }
             }
             if (movementMethods.contains(PathMovementMethod.Run)) {
-                Location runTarget = new Location(walkTarget, dir);
+                ServerCoordinate runTarget = new ServerCoordinate(walkTarget, dir);
                 MapTile runningTargetTile = map.getMapAt(runTarget);
                 if ((runningTargetTile != null) && !runningTargetTile.isBlocked()) {
                     storage.add(new AStarPathNode(nodeToExpand, runningTargetTile, PathMovementMethod.Run, dir,
@@ -137,7 +138,8 @@ public class AStar implements PathFindingAlgorithm {
         }
     }
 
-    private static int getHeuristic(@Nonnull Location currentLocation, @Nonnull Location targetLocation) {
-        return FastMath.floor(currentLocation.getSqrtDistance(targetLocation) * 10.f);
+    private static int getHeuristic(@Nonnull ServerCoordinate currentLocation,
+                                    @Nonnull ServerCoordinate targetLocation) {
+        return (int) FastMath.floor(currentLocation.getDistance(targetLocation) * 10.0);
     }
 }

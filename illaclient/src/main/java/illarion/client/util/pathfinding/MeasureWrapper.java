@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,7 @@ package illarion.client.util.pathfinding;
 
 import illarion.client.world.GameMap;
 import illarion.common.types.Direction;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,8 +57,8 @@ public class MeasureWrapper implements PathFindingAlgorithm {
     @Override
     public Path findPath(
             @Nonnull GameMap map,
-            @Nonnull Location start,
-            @Nonnull Location end,
+            @Nonnull ServerCoordinate start,
+            @Nonnull ServerCoordinate end,
             int approachDistance, @Nonnull Collection<Direction> allowedDirections,
             @Nonnull PathMovementMethod movementMethod,
             @Nonnull PathMovementMethod... movementMethods) {

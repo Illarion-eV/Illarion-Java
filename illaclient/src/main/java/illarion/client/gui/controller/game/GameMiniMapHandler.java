@@ -17,7 +17,8 @@ package illarion.client.gui.controller.game;
 
 import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
-import de.lessvoid.nifty.builder.ElementBuilder;
+import de.lessvoid.nifty.builder.ElementBuilder.Align;
+import de.lessvoid.nifty.builder.ElementBuilder.VAlign;
 import de.lessvoid.nifty.builder.ImageBuilder;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.ImageRenderer;
@@ -102,16 +103,18 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
         miniMapPanel = screen.findElementById("miniMapPanel");
     }
 
+    @Nonnull
     public Pointer createTargetPointer() {
         return createTargetPointer(true);
     }
 
+    @Nonnull
     public Pointer createTargetPointer(boolean isCurrentQuest) {
         if (arrowPointerBuffer.isEmpty()) {
             ImageBuilder builder = new ImageBuilder();
             builder.visible(false);
-            builder.align(ElementBuilder.Align.Center);
-            builder.valign(ElementBuilder.VAlign.Center);
+            builder.align(Align.Center);
+            builder.valign(VAlign.Center);
             Element image = builder.build(nifty, screen, miniMapPanel);
             MiniMapArrowPointer pointer = new MiniMapArrowPointer(image);
             pointer.setCurrentQuest(isCurrentQuest);
@@ -125,13 +128,14 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
     }
 
     @Override
+    @Nonnull
     public Pointer createStartPointer(boolean available) {
         MiniMapStartPointer pointer;
         if (startPointerBuffer.isEmpty()) {
             ImageBuilder builder = new ImageBuilder();
             builder.visible(false);
-            builder.align(ElementBuilder.Align.Center);
-            builder.valign(ElementBuilder.VAlign.Center);
+            builder.align(Align.Center);
+            builder.valign(VAlign.Center);
             Element image = builder.build(nifty, screen, miniMapPanel);
             pointer = new MiniMapStartPointer(image);
             image.getRenderer(ImageRenderer.class).setImage(new NiftyImage(nifty.getRenderEngine(), pointer));

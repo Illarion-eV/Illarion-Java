@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -39,14 +39,14 @@ public final class CloseShowcaseCmd extends AbstractCommand {
      *
      * @param showcaseId the ID of the showcase to close
      */
-    public CloseShowcaseCmd(final int showcaseId) {
+    public CloseShowcaseCmd(int showcaseId) {
         super(CommandList.CMD_CLOSE_SHOWCASE);
 
         this.showcaseId = (short) showcaseId;
     }
 
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) {
         writer.writeUByte(showcaseId);
     }
 

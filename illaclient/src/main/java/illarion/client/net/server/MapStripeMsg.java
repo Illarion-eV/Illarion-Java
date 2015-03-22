@@ -20,7 +20,8 @@ import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.GameMap;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
-import illarion.common.types.Location;
+import illarion.common.types.Direction;
+import illarion.common.types.ServerCoordinate;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
@@ -55,7 +56,7 @@ public final class MapStripeMsg implements ServerReply {
 
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
-        Location loc = new Location(reader);
+        ServerCoordinate loc = new ServerCoordinate(reader);
 
         int dir = reader.readUByte();
         int count = reader.readUByte();
@@ -63,9 +64,9 @@ public final class MapStripeMsg implements ServerReply {
         for (int i = 0; i < count; ++i) {
             tiles.set(i, new TileUpdate(loc, reader));
             if (dir == DIR_DOWN) {
-                loc.addSC(-1, 1, 0);
+                loc = new ServerCoordinate(loc, Direction.SouthWest);
             } else if (dir == DIR_RIGHT) {
-                loc.addSC(1, 1, 0);
+                loc = new ServerCoordinate(loc, Direction.SouthEast);
             }
         }
     }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,7 @@
  */
 package illarion.client.world.movement;
 
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -52,5 +52,5 @@ public interface MovementHandler {
      * @return the next step or {@code null} in case no step is to be done
      */
     @Nullable
-    StepData getNextStep(@Nonnull Location currentLocation);
+    StepData getNextStep(@Nonnull ServerCoordinate currentLocation);
 }

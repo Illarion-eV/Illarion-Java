@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -41,14 +41,14 @@ public final class RequestAppearanceCmd extends AbstractCommand {
      *
      * @param characterId the ID of the character to request the appearance from
      */
-    public RequestAppearanceCmd(@Nonnull final CharacterId characterId) {
+    public RequestAppearanceCmd(@Nonnull CharacterId characterId) {
         super(CommandList.CMD_REQUEST_APPEARANCE);
 
         charId = characterId;
     }
 
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) {
         charId.encode(writer);
     }
 
