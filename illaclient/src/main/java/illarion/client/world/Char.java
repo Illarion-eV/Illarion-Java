@@ -621,7 +621,7 @@ public final class Char implements AnimatedMove {
                     "Updating the avatar position while the display pos is not set is forbidden.");
         }
 
-        if (removedCharacter || (coordinate == null)) {
+        if (removedCharacter) {
             return;
         }
         if (avatar != null) {
@@ -640,15 +640,11 @@ public final class Char implements AnimatedMove {
             log.warn("Trying to update the light of a removed character.");
             return;
         }
-
-        ServerCoordinate lightLoc;
-        // different handling for own char
-        @Nonnull Player player = World.getPlayer();
-        if (player.isPlayer(charId)) {
-            lightLoc = player.getLocation();
-        } else {
-            lightLoc = coordinate;
+        if (coordinate == null) {
+            return;
         }
+
+        ServerCoordinate lightLoc = coordinate;
 
         @Nullable MapTile tile = World.getMap().getMapAt(lightLoc);
 
@@ -1305,7 +1301,7 @@ public final class Char implements AnimatedMove {
         }
         log.debug("{}: Setting character location to: {}", this, newLoc);
         coordinate = newLoc;
-        updatePosition();
+        setPosition(newLoc.toDisplayCoordinate(Layer.Chars));
     }
 
     /**

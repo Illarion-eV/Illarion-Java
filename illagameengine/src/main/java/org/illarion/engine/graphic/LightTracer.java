@@ -65,6 +65,7 @@ public final class LightTracer implements Stoppable {
                             if (!lights.contains(light)) {
                                 lights.add(light);
                             }
+                            light.setCalculating(false);
                             break;
                         }
                     }
@@ -157,10 +158,15 @@ public final class LightTracer implements Stoppable {
         log.info("Adding new light to tracer: {}", light);
         light.setMapSource(mapSource);
         if (light.isDirty()) {
-            lightsInProgress.incrementAndGet();
-            lightCalculationService.submit(new CalculateLightTask(light));
+            if (!light.isCalculating()) {
+                light.setCalculating(true);
+                lightsInProgress.incrementAndGet();
+                lightCalculationService.submit(new CalculateLightTask(light));
+            }
         } else {
-            lights.add(light);
+            if (!lights.contains(light)) {
+                lights.add(light);
+            }
             lightsInProgress.incrementAndGet();
             lightCalculationService.submit(publishLightsTask);
         }

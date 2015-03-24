@@ -90,10 +90,16 @@ public class IgeMiniMapRenderImage implements IgeRenderImage {
             float scale,
             int centerX,
             int centerY) {
-        setupEffect();
-
         ServerCoordinate playerLoc = map.getPlayerLocation();
         ServerCoordinate origin = map.getMapOrigin();
+
+        if ((playerLoc == null) || (origin == null)) {
+            // Setting the image up is not done yet.
+            return;
+        }
+        setupEffect();
+
+
         int miniMapOriginX = playerLoc.getX() - origin.getX() - radius;
         int miniMapOriginY = playerLoc.getY() - origin.getY() - radius;
 

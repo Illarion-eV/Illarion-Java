@@ -226,6 +226,7 @@ class MoveAnimator implements AnimatedMove {
         DisplayCoordinate startDC = getDisplayCoordinateAt(parentPlayer.getLocation());
         DisplayCoordinate targetDC = getDisplayCoordinateAt(target);
 
+        playerCharacter.moveTo(target, mode, duration);
         moveAnimation.start(startDC, targetDC, duration);
         parentPlayer.updateLocation(target);
     }

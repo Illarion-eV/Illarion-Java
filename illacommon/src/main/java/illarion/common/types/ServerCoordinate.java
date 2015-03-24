@@ -208,7 +208,7 @@ public final class ServerCoordinate {
 
     @Contract(pure = true)
     public static int toDisplayLayer(int scX, int scY, int scZ, @Nonnull Layer layer) {
-        return ((scX - scY - (scZ * DisplayCoordinate.LEVEL_DISTANCE)) * DisplayCoordinate.ROW_DISTANCE) +
+        return ((scX - scY - (scZ * DisplayCoordinate.LEVEL_DISTANCE)) * DisplayCoordinate.ROW_DISTANCE) -
                 layer.getLayerOffset();
     }
 

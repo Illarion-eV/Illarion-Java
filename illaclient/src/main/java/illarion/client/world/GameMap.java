@@ -695,7 +695,7 @@ public final class GameMap implements LightingMap, Stoppable {
                     World.getLights().notifyChange(updateData.getLocation());
                 }
 
-                if (World.getPlayer().getLocation().equals(tile.getCoordinates())) {
+                if (World.getPlayer().getLocation().equals(updateData.getLocation())) {
                     World.getMusicBox().updatePlayerLocation();
                 }
             }

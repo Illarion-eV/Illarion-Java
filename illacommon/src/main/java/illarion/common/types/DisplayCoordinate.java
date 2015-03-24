@@ -51,7 +51,7 @@ public class DisplayCoordinate {
     }
 
     public DisplayCoordinate(@Nonnull DisplayCoordinate org, int dX, int dY, int dLayer) {
-        this(org.getX() + dX, org.getY() + dY, org.getLayer() + dLayer);
+        this(org.getX() + dX, org.getY() + dY, org.getLayer() - dLayer);
     }
 
     public int getX() {

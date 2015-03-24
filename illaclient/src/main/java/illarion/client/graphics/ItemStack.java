@@ -206,7 +206,7 @@ public class ItemStack implements DisplayItem, List<Item> {
         if (elevation == 0) {
             item.setScreenPos(stackLocation);
         } else {
-            item.setScreenPos(new DisplayCoordinate(stackLocation, 0, -1, 0));
+            item.setScreenPos(new DisplayCoordinate(stackLocation, 0, -elevation, 0));
         }
     }
 

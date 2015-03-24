@@ -113,7 +113,7 @@ public final class MapDisplayManager implements AnimatedMove {
     }
 
     public boolean isActive() {
-        return active;
+        return active && (origin != null);
     }
 
     /**
@@ -123,12 +123,10 @@ public final class MapDisplayManager implements AnimatedMove {
      * @param delta the time in milliseconds since the last update
      */
     public void update(@Nonnull GameContainer container, int delta) {
-        if (!active) {
+        if (!isActive()) {
             return;
         }
-        if (origin == null) {
-            throw new IllegalStateException("Can't update the display without a set origin.");
-        }
+        assert origin != null;
 
         int centerX = container.getWidth() >> 1;
         int centerY = container.getHeight() >> 1;
@@ -228,7 +226,7 @@ public final class MapDisplayManager implements AnimatedMove {
      * @param c the game container the map is rendered in
      */
     public void render(@Nonnull GameContainer c) {
-        if (!active) {
+        if (!isActive()) {
             return;
         }
 
@@ -237,6 +235,9 @@ public final class MapDisplayManager implements AnimatedMove {
     }
 
     public void setActive(boolean active) {
+        if (!active) {
+            origin = null;
+        }
         this.active = active;
     }
 

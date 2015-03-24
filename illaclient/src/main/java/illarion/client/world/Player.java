@@ -540,14 +540,17 @@ public final class Player {
         if (Objects.equals(playerLocation, newLoc)) {
             return;
         }
-        assert playerLocation != null;
 
         boolean isLongRange = false;
-        if (playerLocation.getDistance(newLoc) > 10) {
+        if (playerLocation == null) {
             isLongRange = true;
-        }
-        if (FastMath.abs(playerLocation.getZ() - newLoc.getZ()) > 3) {
-            isLongRange = true;
+        } else {
+            if (playerLocation.getDistance(newLoc) > 10) {
+                isLongRange = true;
+            }
+            if (FastMath.abs(playerLocation.getZ() - newLoc.getZ()) > 3) {
+                isLongRange = true;
+            }
         }
 
         if (isLongRange) {
@@ -562,7 +565,6 @@ public final class Player {
         character.resetAnimation(true);
         World.getPlayer().getCombatHandler().standDown();
         World.getMapDisplay().setLocation(newLoc.toDisplayCoordinate(Layer.Chars));
-        World.getMap().getMiniMap().setPlayerLocation(newLoc);
 
         if (isLongRange) {
             World.getPlayer().getCharacter().relistLight();
@@ -590,6 +592,7 @@ public final class Player {
 
         playerLocation = newLoc;
         World.getMusicBox().updatePlayerLocation();
+        World.getMap().getMiniMap().setPlayerLocation(newLoc);
         World.getMap().updateAllTiles();
         World.getMap().checkInside();
     }

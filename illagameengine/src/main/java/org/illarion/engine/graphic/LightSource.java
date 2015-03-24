@@ -55,6 +55,7 @@ public final class LightSource {
      * calculations are done.
      */
     private boolean dirty;
+    private boolean calculating;
 
     /**
      * The intensity array stores the calculated light intensity values. These result from the pre-calculated light
@@ -135,6 +136,7 @@ public final class LightSource {
             throw new IllegalStateException("The light source is not properly bound to a map yet.");
         }
 
+        ServerCoordinate loc = location;
         for (int dX = -size; dX <= size; dX++) {
             for (int dY = -size; dY <= size; dY++) {
                 double locIntensity = intensity[dX + size][dY + size];
@@ -151,7 +153,7 @@ public final class LightSource {
                 }
 
                 // set the light on the map
-                mapSource.setLight(new ServerCoordinate(location, dX, dY, 0), tempColor);
+                mapSource.setLight(new ServerCoordinate(loc, dX, dY, 0), tempColor);
             }
         }
     }
@@ -224,8 +226,7 @@ public final class LightSource {
             return;
         }
 
-        if ((Math.abs(changeLoc.getX() - location.getX()) <= size) &&
-                (Math.abs(changeLoc.getY() - location.getY()) <= size)) {
+        if (location.getStepDistance(changeLoc) < size) {
             refresh();
         }
     }
@@ -334,5 +335,13 @@ public final class LightSource {
     @Contract(pure = true)
     Lock getCalculationLock() {
         return calculationLock;
+    }
+
+    public boolean isCalculating() {
+        return calculating;
+    }
+
+    public void setCalculating(boolean calculating) {
+        this.calculating = calculating;
     }
 }

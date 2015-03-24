@@ -75,15 +75,16 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
     @Override
     public void disengage(boolean transferAllowed) {
         boolean targetWasSet = isTargetSet() && isActive();
+        ServerCoordinate oldTarget = targetWasSet ? getTargetLocation() : null;
         super.disengage(transferAllowed);
-        if (transferAllowed && targetWasSet) {
+        if (oldTarget != null) {
             switch (getMovementMode()) {
                 case Run:
                 case Walk:
                     TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
                     log.debug("Transferring movement control from {} to {}", this, handler);
-                    MapTile targetTile = World.getMap().getMapAt(getTargetLocation());
-                    handler.walkTo(getTargetLocation(), ((targetTile != null) && targetTile.isBlocked()) ? 1 : 0);
+                    MapTile targetTile = World.getMap().getMapAt(oldTarget);
+                    handler.walkTo(oldTarget, ((targetTile != null) && targetTile.isBlocked()) ? 1 : 0);
                     handler.assumeControl();
                     break;
                 default:
