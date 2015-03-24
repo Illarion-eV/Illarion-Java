@@ -241,7 +241,7 @@ public final class ServerCoordinate {
     @Contract(value = "null->false", pure = true)
     public boolean equals(@Nullable ServerCoordinate serverCoordinate) {
         return (serverCoordinate != null) &&
-                (serverCoordinate.x == x) && (serverCoordinate.x == y) && (serverCoordinate.z == z);
+                (serverCoordinate.x == x) && (serverCoordinate.y == y) && (serverCoordinate.z == z);
     }
 
     @Override

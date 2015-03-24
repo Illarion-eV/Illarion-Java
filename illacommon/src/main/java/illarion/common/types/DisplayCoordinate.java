@@ -127,7 +127,7 @@ public class DisplayCoordinate {
     @Contract(value = "null->false", pure = true)
     public boolean equals(@Nullable DisplayCoordinate displayCoordinate) {
         return (displayCoordinate != null) &&
-                (displayCoordinate.x == x) && (displayCoordinate.x == y) && (displayCoordinate.layer == layer);
+                (displayCoordinate.x == x) && (displayCoordinate.y == y) && (displayCoordinate.layer == layer);
     }
 
     @Override

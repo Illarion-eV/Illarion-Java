@@ -74,7 +74,7 @@ public class AStar implements PathFindingAlgorithm {
         while (!openNodes.isEmpty()) {
             /* Take the unchecked node closest to the target. */
             AStarPathNode currentNode = openNodes.pollFirst();
-            if (currentNode.getLocation().getDistance(end) <= approachDistance) {
+            if (currentNode.getLocation().getStepDistance(end) <= approachDistance) {
                 Path createdPath = buildPath(currentNode);
                 log.debug("Current node is within range. Building path: {}", createdPath);
                 return createdPath;
