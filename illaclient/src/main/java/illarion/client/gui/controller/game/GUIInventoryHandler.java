@@ -241,12 +241,17 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
         });
     }
 
+    /**
+     * Hide the inventory window from view
+     * Hides the current ToolTip
+     */
     @Override
     public void hideInventory() {
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
             public void onUpdateGame(@Nonnull GameContainer container, int delta) {
                 if (inventoryWindow != null) {
+                    tooltipHandler.hideToolTip();
                     inventoryWindow.hide();
                 }
             }
