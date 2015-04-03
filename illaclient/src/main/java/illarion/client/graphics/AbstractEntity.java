@@ -15,8 +15,11 @@
  */
 package illarion.client.graphics;
 
+import illarion.client.input.ClickOnMapEvent;
 import illarion.client.resources.data.AbstractEntityTemplate;
+import illarion.client.world.MapTile;
 import illarion.client.world.World;
+import illarion.client.world.movement.TargetMovementHandler;
 import illarion.common.types.DisplayCoordinate;
 import illarion.common.types.Rectangle;
 import illarion.common.util.FastMath;
@@ -25,6 +28,7 @@ import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.*;
 import org.illarion.engine.graphic.effects.HighlightEffect;
 import org.illarion.engine.graphic.effects.TextureEffect;
+import org.illarion.engine.input.Button;
 import org.illarion.engine.input.Input;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
@@ -528,6 +532,33 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
             @Nonnull GameContainer container, int delta, @Nonnull SceneEvent event) {
         return false;
     }
+
+    /**
+     * Handles clicking on the map for any type of entity.
+     * If possible, walks the character to the location at the tile under the mouse
+     * Does not walk the player to the base of objects or avatars.
+     *
+     * @param event     the event to be processed
+     * @param container the GameContainer; needed to process input
+     * @return {@code true} if the event was processed
+     */
+    protected boolean processMapClick(@Nonnull ClickOnMapEvent event, @Nonnull GameContainer container) {
+        if (event.getKey() != Button.Left) {
+            return false;
+        }
+        MapTile mouseTile = World.getMap().getInteractive().getTileOnScreenLoc(container.getEngine().getInput().getMouseX(), container.getEngine().getInput().getMouseY());
+
+        if (!mouseTile.isAtPlayerLevel()) {
+            return false;
+        }
+
+        TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
+        boolean blocked = mouseTile.isBlocked();
+        handler.walkTo(mouseTile.getCoordinates(), (blocked ? 1 : 0));
+        handler.assumeControl();
+        return true;
+    }
+
 
     protected boolean isMouseInInteractionRect(int mouseX, int mouseY) {
         int mouseXonDisplay = mouseX + Camera.getInstance().getViewportOffsetX();

@@ -444,13 +444,20 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
 
     }
 
+    /**
+     * Closes the given container
+     * Hides the current ToolTip
+     * @param containerId the ID of the container to close
+     */
     @Override
     public void closeContainer(final int containerId) {
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
             public void onUpdateGame(@Nonnull GameContainer container, int delta) {
                 if (isContainerCreated(containerId)) {
+                    tooltipHandler.hideToolTip();
                     removeItemContainer(containerId);
+
                 }
             }
         });
