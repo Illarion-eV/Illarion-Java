@@ -265,6 +265,13 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         return true;
     }
 
+    /**
+     * The default way that the game handles clicking on an item
+     * The processMapClick method in AbstractEntity replaces this
+     *
+     * @param event the event to process
+     * @return      true if the method is processed properly
+     */
     private boolean isEventProcessed(@Nonnull ClickOnMapEvent event) {
         if (event.getKey() != Button.Left) {
             return false;
@@ -363,8 +370,9 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
                     return isEventProcessed((PointOnMapEvent) event);
                 }
 
+                // Uses a method from AbstractEntity that walks the player to the point at the mouse
                 if (event instanceof ClickOnMapEvent) {
-                    return isEventProcessed((ClickOnMapEvent) event);
+                    return processMapClick((ClickOnMapEvent) event, container);
                 }
 
                 if (event instanceof DoubleClickOnMapEvent) {
