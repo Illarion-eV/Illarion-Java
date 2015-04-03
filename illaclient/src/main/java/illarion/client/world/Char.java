@@ -426,9 +426,11 @@ public final class Char implements AnimatedMove {
         log.debug("{}: Resetting the animation. Finished: {}", this, finished);
         if (finished) {
             animation = CharAnimations.STAND;
-            updateAvatar();
-            if (avatar != null) {
-                avatar.animate(DEFAULT_ANIMATION_SPEED, true);
+            if (coordinate != null) {
+                updateAvatar();
+                if (avatar != null) {
+                    avatar.animate(DEFAULT_ANIMATION_SPEED, true);
+                }
             }
         }
     }
