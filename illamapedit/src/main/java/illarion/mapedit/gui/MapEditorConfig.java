@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,11 +18,14 @@ package illarion.mapedit.gui;
 import illarion.common.config.Config;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.config.ConfigDialog;
+import illarion.common.config.ConfigDialog.Entry;
+import illarion.common.config.ConfigDialog.Page;
 import illarion.common.config.ConfigSystem;
 import illarion.common.config.entries.CheckEntry;
 import illarion.common.config.entries.DirectoryEntry;
 import illarion.common.config.entries.SelectEntry;
 import illarion.common.util.DirectoryManager;
+import illarion.common.util.DirectoryManager.Directory;
 import illarion.mapedit.Lang;
 import javolution.util.FastTable;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -46,19 +49,30 @@ import java.util.Map;
  * @author Fredrik K
  */
 public class MapEditorConfig {
+    @Nonnull
     private static final Logger LOGGER = LoggerFactory.getLogger(MapEditorConfig.class);
+    @Nonnull
     private static final String DEFAULT_LOOK_AND_FEEL = "org.pushingpixels.substance.api.skin.OfficeSilver2007Skin";
+    @Nonnull
     private static final String[] LANGUAGES = {"English", "German", ""};
+    @Nonnull
     private static final MapEditorConfig INSTANCE = new MapEditorConfig();
     private static final int ENGLISH = 0;
     private static final int GERMAN = 1;
 
+    @Nonnull
     public static final String MAPEDIT_FOLDER = "mapeditFolder";
+    @Nonnull
     public static final String USE_WINDOW_DECO = "useWindowDeco";
+    @Nonnull
     private static final String USED_LOOK_AND_FEEL = "usedLookAndFeel";
+    @Nonnull
     public static final String USED_LANGUAGE = "usedLanguage";
+    @Nonnull
     public static final String SHOW_MAP_POSITION = "showMapPosition";
+    @Nonnull
     public static final String WINDOW_HEIGHT = "windowSizeH";
+    @Nonnull
     public static final String WINDOW_WIDTH = "windowSizeW";
 
     @Nullable
@@ -96,21 +110,22 @@ public class MapEditorConfig {
         dialog.setConfig(configSystem);
         dialog.setMessageSource(Lang.getInstance());
 
-        ConfigDialog.Page generalPage = new ConfigDialog.Page("gui.config.generalTab");
+        Page generalPage = new Page("gui.config.generalTab");
         generalPage.addEntry(
-                new ConfigDialog.Entry("gui.config.MapeditFolderLabel", new DirectoryEntry(MAPEDIT_FOLDER, null)));
+                new Entry("gui.config.MapeditFolderLabel", new DirectoryEntry(MAPEDIT_FOLDER, null)));
 
-        generalPage.addEntry(new ConfigDialog.Entry("gui.config.language",
-                                                    new SelectEntry(USED_LANGUAGE, SelectEntry.STORE_VALUE, LANGUAGES)
+        generalPage.addEntry(new Entry("gui.config.language",
+                new SelectEntry(USED_LANGUAGE, SelectEntry.STORE_VALUE,
+                        (Object[]) LANGUAGES)
         ));
 
-        generalPage.addEntry(new ConfigDialog.Entry("gui.config.showMapPostion", new CheckEntry(SHOW_MAP_POSITION)));
+        generalPage.addEntry(new Entry("gui.config.showMapPostion", new CheckEntry(SHOW_MAP_POSITION)));
 
         dialog.addPage(generalPage);
 
-        ConfigDialog.Page lookAndFeelPage = new ConfigDialog.Page("gui.config.lookAndFeelTab");
+        Page lookAndFeelPage = new Page("gui.config.lookAndFeelTab");
         lookAndFeelPage
-                .addEntry(new ConfigDialog.Entry("gui.config.useWindowDecoLabel", new CheckEntry(USE_WINDOW_DECO)));
+                .addEntry(new Entry("gui.config.useWindowDecoLabel", new CheckEntry(USE_WINDOW_DECO)));
 
         Collection<String> themeObject = new FastTable<>();
         Collection<String> themeLabel = new FastTable<>();
@@ -120,7 +135,7 @@ public class MapEditorConfig {
             themeLabel.add(skin.getValue().getDisplayName());
         }
 
-        lookAndFeelPage.addEntry(new ConfigDialog.Entry("gui.config.usedThemeLabel",
+        lookAndFeelPage.addEntry(new Entry("gui.config.usedThemeLabel",
                                                         new SelectEntry(USED_LOOK_AND_FEEL, SelectEntry.STORE_VALUE,
                                                                         themeObject.toArray(), themeLabel
                                                                 .toArray(new String[themeLabel.size()])
@@ -235,7 +250,7 @@ public class MapEditorConfig {
      */
     @Nonnull
     private static Path checkFolder() {
-        Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        Path userDir = DirectoryManager.getInstance().getDirectory(Directory.User);
         assert userDir != null;
         return userDir;
     }
