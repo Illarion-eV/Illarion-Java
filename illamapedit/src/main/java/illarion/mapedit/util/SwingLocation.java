@@ -46,6 +46,6 @@ public class SwingLocation {
     }
 
     public static int displayCoordinateY(int x, int y, int z) {
-        return -ServerCoordinate.toDisplayY(x, y, z);
+        return ServerCoordinate.toDisplayY(x, y, z);
     }
 }
