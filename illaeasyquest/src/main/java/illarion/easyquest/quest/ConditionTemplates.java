@@ -57,8 +57,8 @@ public class ConditionTemplates {
         load();
     }
 
-    private static InputStream getResource(final String name) {
-        final ClassLoader loader = ConditionTemplates.class.getClassLoader();
+    private static InputStream getResource(String name) {
+        ClassLoader loader = ConditionTemplates.class.getClassLoader();
         return loader.getResourceAsStream(name);
     }
 
@@ -141,7 +141,7 @@ public class ConditionTemplates {
                     } else {
                         System.out.println("Syntax error in template " + fileName);
                     }
-                } catch (@Nonnull final IOException e1) {
+                } catch (@Nonnull IOException e1) {
                     System.out.println("Error loading template " + fileName);
                 }
             }

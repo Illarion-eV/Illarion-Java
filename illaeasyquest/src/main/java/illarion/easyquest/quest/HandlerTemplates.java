@@ -57,8 +57,8 @@ public class HandlerTemplates {
         load();
     }
 
-    private static InputStream getResource(final String name) {
-        final ClassLoader loader = HandlerTemplates.class.getClassLoader();
+    private static InputStream getResource(String name) {
+        ClassLoader loader = HandlerTemplates.class.getClassLoader();
         return loader.getResourceAsStream(name);
     }
 
@@ -136,7 +136,7 @@ public class HandlerTemplates {
                     } else {
                         System.out.println("Syntax error in template " + fileName);
                     }
-                } catch (@Nonnull final IOException e1) {
+                } catch (@Nonnull IOException e1) {
                     System.out.println("Error loading template " + fileName);
                 }
             }
