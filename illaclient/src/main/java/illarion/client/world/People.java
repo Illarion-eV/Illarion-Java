@@ -312,19 +312,15 @@ public final class People {
     @Nullable
     public Char getCharacterAt(@Nonnull ServerCoordinate coordinate) {
         Char playerChar = World.getPlayer().getCharacter();
-        if (playerChar.getLocation().equals(coordinate)) {
+        if (coordinate.equals(playerChar.getLocation())) {
             return playerChar;
         }
 
         charsLock.readLock().lock();
         try {
             for (Char character : chars.values()) {
-                try {
-                    if (character.getLocation().equals(coordinate)) {
-                        return character;
-                    }
-                } catch(NullPointerException ex) {
-                    // Do nothing, this character isn't at the right location if it is at null anyway
+                if (coordinate.equals(character.getLocation())) {
+                    return character;
                 }
             }
         } finally {

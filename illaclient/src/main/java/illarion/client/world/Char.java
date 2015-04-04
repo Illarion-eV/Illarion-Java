@@ -840,7 +840,7 @@ public final class Char implements AnimatedMove {
      *
      * @return the location of the character
      */
-    @Nonnull
+    @Nullable
     @Contract(pure = true)
     public ServerCoordinate getLocation() {
         return coordinate;
