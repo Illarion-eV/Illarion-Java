@@ -639,7 +639,7 @@ public final class Char implements AnimatedMove {
      */
     private void updateLight(@Nullable Avatar avatar, int mode) {
         if (removedCharacter) {
-            log.warn("Trying to update the light of a removed character.");
+            log.error("Trying to update the light of a removed character.");
             return;
         }
         if (coordinate == null) {
@@ -1046,8 +1046,6 @@ public final class Char implements AnimatedMove {
     }
 
     private boolean updateLocation(@Nonnull ServerCoordinate newLocation) {
-        // get old position
-
         if (newLocation.equals(coordinate)) {
             return false;
         }
@@ -1344,10 +1342,11 @@ public final class Char implements AnimatedMove {
      */
     public void updateLight() {
         if (coordinate == null) {
-            throw new IllegalStateException("The position of the character is not set. The light can't be updated.");
+            log.error("The position of the character is not set. The light can't be updated.");
+            return;
         }
         if (removedCharacter) {
-            log.warn("Trying to update the light of a removed character.");
+            log.error("Trying to update the light of a removed character.");
             return;
         }
         if (lightValue > 0) {
