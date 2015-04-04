@@ -58,6 +58,8 @@ import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Locale;
+import java.util.Locale.Category;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -477,9 +479,15 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("showFps", false);
         cfg.setDefault("showPing", false);
         cfg.setDefault(CrashReporter.CFG_KEY, CrashReporter.MODE_ASK);
-        java.util.Locale locale = java.util.Locale.getDefault();
+
+        Locale locale = Locale.getDefault(Category.DISPLAY);
         // If the system locale is german, set to german. Otherwise, default to English
-        cfg.setDefault(Lang.LOCALE_CFG, (locale.getLanguage().equals("de") ? Lang.LOCALE_CFG_GERMAN : Lang.LOCALE_CFG_ENGLISH));
+        if ("de".equals(locale.getLanguage())) {
+            cfg.setDefault(Lang.LOCALE_CFG, Lang.LOCALE_CFG_GERMAN);
+        } else {
+            cfg.setDefault(Lang.LOCALE_CFG, Lang.LOCALE_CFG_ENGLISH);
+        }
+
         cfg.setDefault("inventoryPosX", "100px");
         cfg.setDefault("inventoryPosY", "10px");
         cfg.setDefault("bookDisplayPosX", "150px");
