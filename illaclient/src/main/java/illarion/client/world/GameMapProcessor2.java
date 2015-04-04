@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This utility class is used to process the map tiles and ensure that they are properly linked and assigned to each
@@ -30,7 +31,7 @@ import java.util.List;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class GameMapProcessor2 {
+public final class GameMapProcessor2 {
     @Nullable
     private static MapGroup lastInsideGroup;
 
@@ -143,7 +144,7 @@ public class GameMapProcessor2 {
             World.getWeather().setOutside(true);
         } else {
             if (lastInsideGroup != null) {
-                if (lastInsideGroup == tileAboveGroup) {
+                if (Objects.equals(lastInsideGroup, tileAboveGroup)) {
                     return;
                 }
                 lastInsideGroup.setHidden(false);
