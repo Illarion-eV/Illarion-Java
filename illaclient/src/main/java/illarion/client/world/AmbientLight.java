@@ -18,6 +18,7 @@ package illarion.client.world;
 import illarion.common.util.PoolThreadFactory;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.ImmutableColor;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.Executors;
@@ -30,27 +31,6 @@ import java.util.concurrent.TimeUnit;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 final class AmbientLight {
-    private static class GradientColorKey {
-        @Nonnull
-        public final Color color;
-        public final double key;
-
-        GradientColorKey(@Nonnull Color color, double key) {
-            this.color = color;
-            this.key = key;
-        }
-    }
-
-    @Nonnull
-    private final Color ambientLight1;
-    @Nonnull
-    private final Color ambientLight2;
-    private boolean ambientLightToggle;
-    private double overcast;
-
-    @Nonnull
-    private final ScheduledExecutorService calculationExecutor;
-
     @Nonnull
     private static final GradientColorKey[] SUN_RISE_GRADIENT = {
             new GradientColorKey(Color.BLACK, 0.0),
@@ -58,9 +38,17 @@ final class AmbientLight {
             new GradientColorKey(new ImmutableColor(255, 210, 170), 0.3),
             new GradientColorKey(Color.WHITE, 1.0)
     };
-
     @Nonnull
     private static final Color STARLIGHT_COLOR = new ImmutableColor(0.15f, 0.15f, 0.3f);
+    private static final float[] HSB_ARRAY = new float[3];
+    @Nonnull
+    private final Color ambientLight1;
+    @Nonnull
+    private final Color ambientLight2;
+    @Nonnull
+    private final ScheduledExecutorService calculationExecutor;
+    private boolean ambientLightToggle;
+    private double overcast;
 
     AmbientLight() {
         ambientLight1 = new Color(Color.BLACK);
@@ -125,19 +113,6 @@ final class AmbientLight {
         return (defaultSunRaiseTime + (sunRaiseVariation * phaseOfSun)) * 60.0 * 60.0;
     }
 
-    /**
-     * Complex luminance calculation.
-     *
-     * @param color the source color
-     * @return the calculated luminance
-     */
-    private static double getLuminance(@Nonnull Color color) {
-        double sqrRed = color.getRedf() * color.getRedf();
-        double sqrGreen = color.getGreenf() * color.getGreenf();
-        double sqrBlue = color.getBluef() * color.getBluef();
-        return Math.sqrt((0.299 * sqrRed) + (0.587 * sqrGreen) + (0.114 * sqrBlue));
-    }
-
     @Nonnull
     private static Color getColorFromGradient(double key, @Nonnull GradientColorKey[] gradientKeys,
                                               @Nonnull Color resultStorage) {
@@ -177,10 +152,12 @@ final class AmbientLight {
         return resultStorage;
     }
 
+    @Contract(pure = true)
     private static double getProgressInRange(double start, double stop, double currentValue) {
         return (currentValue - start) * (1.0 / (stop - start));
     }
 
+    @Contract(pure = true)
     private static double getInterpolated(double start, double stop, double process) {
         return ((stop - start) * process) + start;
     }
@@ -263,8 +240,6 @@ final class AmbientLight {
         ambientLightToggle = !ambientLightToggle;
     }
 
-    private static final float[] HSB_ARRAY = new float[3];
-
     public void shutdown() {
         calculationExecutor.shutdown();
         while (!calculationExecutor.isTerminated()) {
@@ -277,12 +252,25 @@ final class AmbientLight {
     }
 
     @Nonnull
+    @Contract(pure = true)
     private Color getFreeColorStorage() {
         return ambientLightToggle ? ambientLight1 : ambientLight2;
     }
 
     @Nonnull
+    @Contract(pure = true)
     public Color getCurrentAmbientLight() {
         return ambientLightToggle ? ambientLight2 : ambientLight1;
+    }
+
+    private static class GradientColorKey {
+        @Nonnull
+        public final Color color;
+        public final double key;
+
+        GradientColorKey(@Nonnull Color color, double key) {
+            this.color = color;
+            this.key = key;
+        }
     }
 }
