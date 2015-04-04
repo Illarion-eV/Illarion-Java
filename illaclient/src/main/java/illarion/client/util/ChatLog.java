@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -58,14 +59,14 @@ public final class ChatLog {
     /**
      * Stores the information if the logger is set up and working. Only in this case log files are written.
      */
-    private boolean loggerWorking;
+    private final boolean loggerWorking;
 
     /**
      * Private constructor to avoid that any instance but the singleton instance is created.
      *
      * @param playerPath the path this chat log is supposed to be stored at
      */
-    public ChatLog(@Nonnull final java.nio.file.Path playerPath) {
+    public ChatLog(@Nonnull Path playerPath) {
         logActive = IllaClient.getCfg().getBoolean(CFG_TEXTLOG);
 
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
@@ -90,13 +91,14 @@ public final class ChatLog {
         appender.start();
 
         loggerContext.getLogger("CHAT").setAdditive(false);
+        loggerContext.getLogger("CHAT").detachAndStopAllAppenders();
         loggerContext.getLogger("CHAT").addAppender(appender);
         loggerContext.getLogger("CHAT").setLevel(Level.ALL);
 
         loggerWorking = true;
 
         // add a entry of the staring logging session to the logfile.
-        final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
         logger.info("");
         logger.info(Lang.getMsg("log.newSession") + " - " + sdf.format(new Date()));
@@ -109,14 +111,14 @@ public final class ChatLog {
      *
      * @param text the text to log
      */
-    public void logText(@Nonnull final String text) {
+    public void logText(@Nonnull String text) {
         if (loggerWorking && logActive) {
             logger.info(text);
         }
     }
 
     @EventTopicSubscriber(topic = CFG_TEXTLOG)
-    public void onConfigChangedEvent(@Nonnull final String topic, @Nonnull final ConfigChangedEvent data) {
+    public void onConfigChangedEvent(@Nonnull String topic, @Nonnull ConfigChangedEvent data) {
         if (topic.equals(CFG_TEXTLOG)) {
             logActive = data.getConfig().getBoolean(topic);
         }
