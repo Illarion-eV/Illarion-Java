@@ -318,10 +318,13 @@ public final class People {
 
         charsLock.readLock().lock();
         try {
-
             for (Char character : chars.values()) {
-                if (character.getLocation().equals(coordinate)) {
-                    return character;
+                try {
+                    if (character.getLocation().equals(coordinate)) {
+                        return character;
+                    }
+                } catch(NullPointerException ex) {
+                    // Do nothing, this character isn't at the right location if it is at null anyway
                 }
             }
         } finally {

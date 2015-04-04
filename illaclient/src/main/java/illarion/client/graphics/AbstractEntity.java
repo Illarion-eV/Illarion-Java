@@ -533,33 +533,6 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
         return false;
     }
 
-    /**
-     * Handles clicking on the map for any type of entity.
-     * If possible, walks the character to the location at the tile under the mouse
-     * Does not walk the player to the base of objects or avatars.
-     *
-     * @param event     the event to be processed
-     * @param container the GameContainer; needed to process input
-     * @return {@code true} if the event was processed
-     */
-    protected boolean processMapClick(@Nonnull ClickOnMapEvent event, @Nonnull GameContainer container) {
-        if (event.getKey() != Button.Left) {
-            return false;
-        }
-        MapTile mouseTile = World.getMap().getInteractive().getTileOnScreenLoc(container.getEngine().getInput().getMouseX(), container.getEngine().getInput().getMouseY());
-
-        if (!mouseTile.isAtPlayerLevel()) {
-            return false;
-        }
-
-        TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
-        boolean blocked = mouseTile.isBlocked();
-        handler.walkTo(mouseTile.getCoordinates(), (blocked ? 1 : 0));
-        handler.assumeControl();
-        return true;
-    }
-
-
     protected boolean isMouseInInteractionRect(int mouseX, int mouseY) {
         int mouseXonDisplay = mouseX + Camera.getInstance().getViewportOffsetX();
         int mouseYonDisplay = mouseY + Camera.getInstance().getViewportOffsetY();

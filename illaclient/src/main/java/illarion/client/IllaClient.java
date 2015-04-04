@@ -203,24 +203,10 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         }
 
         try {
-            int requestedWidth;
-            int requestedHeight;
-            boolean fullScreenMode;
 
-            if (cfg.getBoolean(CFG_FULLSCREEN)) {
-                fullScreenMode = true;
-                requestedHeight = res.getHeight();
-                requestedWidth = res.getWidth();
-            } else {
-                fullScreenMode = false;
-                int windowedWidth = cfg.getInteger("windowWidth");
-                int windowedHeight = cfg.getInteger("windowHeight");
-                requestedHeight = (windowedHeight < 0) ? res.getHeight() : windowedHeight;
-                requestedWidth = (windowedWidth < 0) ? res.getWidth() : windowedWidth;
-            }
-
+            boolean fullScreenMode = cfg.getBoolean(CFG_FULLSCREEN);
             gameContainer = EngineManager
-                    .createDesktopGame(Backend.libGDX, game, requestedWidth, requestedHeight, fullScreenMode);
+                    .createDesktopGame(Backend.libGDX, game, res.getWidth(), res.getHeight(), fullScreenMode);
         } catch (@Nonnull EngineException e) {
             LOGGER.error("Fatal error creating game screen!!!", e);
             System.exit(-1);
@@ -481,10 +467,10 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("soundOn", true);
         cfg.setDefault("soundVolume", Player.MAX_CLIENT_VOL);
         cfg.setDefault("musicOn", true);
-        cfg.setDefault("musicVolume", Player.MAX_CLIENT_VOL * 0.75f);
+        cfg.setDefault("musicVolume", Player.MAX_CLIENT_VOL * 0.25f);
         cfg.setDefault(ChatLog.CFG_TEXTLOG, true);
         cfg.setDefault(CFG_FULLSCREEN, false);
-        cfg.setDefault(CFG_RESOLUTION, new GraphicResolution(800, 600, 32, 60).toString());
+        cfg.setDefault(CFG_RESOLUTION, new GraphicResolution().toString());
         cfg.setDefault("windowWidth", -1);
         cfg.setDefault("windowHeight", -1);
         cfg.setDefault("savePassword", false);

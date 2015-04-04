@@ -38,6 +38,7 @@ import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Graphics;
 import org.illarion.engine.graphic.SceneEvent;
 import org.illarion.engine.input.Button;
+import org.illarion.engine.input.Input;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -266,8 +267,52 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
     }
 
     /**
+     * Processes single-clicks on the map
+     * If possible, walks the character to the location at the tile under the mouse
+     * Does not walk the player to the base of objects or avatars.
+     *
+     * @param event     the event to be processed
+     * @param container the GameContainer; needed to process input
+     * @return {@code true} if the event was processed
+     */
+    protected boolean processMapClick(@Nonnull ClickOnMapEvent event, @Nonnull GameContainer container) {
+        if (event.getKey() != Button.Left) {
+            return false;
+        }
+        Input input = container.getEngine().getInput();
+        MapTile mouseTile = World.getMap().getInteractive().getTileOnScreenLoc(input.getMouseX(), input.getMouseY());
+
+        if (mouseTile == null || !mouseTile.isAtPlayerLevel()) {
+            return false;
+        }
+        delayGoToItem.reset();
+
+        TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
+
+        boolean mouseTileIsBlocked = mouseTile.isBlocked();
+        boolean mouseTileInUseRange = mouseTile.getInteractive().isInUseRange();
+        boolean itemClickedIsBlocked = parentTile.isBlocked();
+        boolean itemClickedInUseRange = parentTile.getInteractive().isInUseRange();
+
+        if (mouseTileInUseRange && mouseTileIsBlocked){
+            // If it is adjacent and blocked, nowhere to walk
+            return true;
+        }
+        if (itemClickedInUseRange) {
+            if (itemClickedIsBlocked) {
+                delayGoToItem.setLocation(parentTile.getCoordinates());
+                delayGoToItem.pulse();
+            }
+        }else {
+            handler.walkTo(mouseTile.getCoordinates(), (mouseTileIsBlocked ? 1 : 0));
+            handler.assumeControl();
+        }
+        return true;
+    }
+
+    /**
      * The default way that the game handles clicking on an item
-     * The processMapClick method in AbstractEntity replaces this
+     * The processMapClick method above replaces this code.
      *
      * @param event the event to process
      * @return true if the method is processed properly
@@ -291,16 +336,13 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         boolean useRange = parentTile.getInteractive().isInUseRange();
 
         if (useRange) {
-            log.trace("Clicked item {} is inside of use range.", getItemId());
             if (blocked) {
                 return true;
             } else {
-                log.trace("Clicked item {} allows walking to. Delaying move to accept double click.", getItemId());
                 delayGoToItem.setLocation(parentTile.getCoordinates());
                 delayGoToItem.pulse();
             }
         } else {
-            log.trace("Clicked item {} is outside of use range.", getItemId());
             if (blocked) {
                 handler.walkTo(parentTile.getCoordinates(), 1);
             } else {
@@ -322,13 +364,10 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
 
         delayGoToItem.reset();
 
-        log.debug("Double clicking item: {}", getItemId());
 
         if (parentTile.getInteractive().isInUseRange()) {
-            log.trace("Item {} is within use range. Using it!", getItemId());
             parentTile.getInteractive().use();
         } else {
-            log.trace("Item {} is outside of the use range. Walking to it.", getItemId());
             final InteractiveMapTile interactiveMapTile = parentTile.getInteractive();
             TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
             handler.walkTo(parentTile.getCoordinates(), 1);
