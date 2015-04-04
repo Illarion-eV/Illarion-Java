@@ -52,16 +52,16 @@ public final class GraphicResolution {
 
     /**
      * Default Constructor for a graphic resolution definition.
-     * Sets width = (the local screen width) * 0.95
-     * height = (the local screen height) * 0.95
+     * Sets width = (the local screen width) * 0.9
+     * height = (the local screen height) * 0.9
      * refreshRate = local refreshRate;
      */
     public GraphicResolution(){
         GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice gd = environment.getDefaultScreenDevice();
         DisplayMode dm = gd.getDisplayMode();
-        height = (int) (dm.getHeight() * 0.95);
-        width = (int) (dm.getWidth() * 0.95);
+        height = (int) (dm.getHeight() * 0.9);
+        width = (int) (dm.getWidth() * 0.9);
         refreshRate = dm.getRefreshRate();
         bpp = dm.getBitDepth();
     }
