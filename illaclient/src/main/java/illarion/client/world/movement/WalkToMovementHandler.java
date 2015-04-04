@@ -15,7 +15,10 @@
  */
 package illarion.client.world.movement;
 
-import illarion.client.util.pathfinding.*;
+import illarion.client.util.pathfinding.AStar;
+import illarion.client.util.pathfinding.Path;
+import illarion.client.util.pathfinding.PathFindingAlgorithm;
+import illarion.client.util.pathfinding.PathNode;
 import illarion.client.world.CharMovementMode;
 import illarion.client.world.World;
 import illarion.common.types.Direction;
@@ -32,8 +35,8 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Objects;
 
-import static illarion.client.util.pathfinding.PathMovementMethod.Run;
-import static illarion.client.util.pathfinding.PathMovementMethod.Walk;
+import static illarion.client.world.CharMovementMode.Run;
+import static illarion.client.world.CharMovementMode.Walk;
 
 /**
  * This movement handler is used to approach a specified location.
@@ -114,12 +117,11 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
             }
         }
         log.debug(marker, "Performing step to: {}", node.getLocation());
-        CharMovementMode modeMode = convertMovementMode(node.getMovementMethod());
         Direction moveDir = currentLocation.getDirection(node.getLocation());
         if (activePath.isEmpty() && (targetDistance == 0) && !target.equals(node.getLocation())) {
             targetDistance = 1;
         }
-        return new DefaultStepData(modeMode, moveDir);
+        return new DefaultStepData(node.getMovementMethod(), moveDir);
     }
 
     @Nullable
@@ -166,17 +168,6 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
         return false;
     }
 
-    @Nonnull
-    private static CharMovementMode convertMovementMode(@Nonnull PathMovementMethod method) {
-        switch (method) {
-            case Walk:
-                return CharMovementMode.Walk;
-            case Run:
-                return CharMovementMode.Run;
-        }
-        return CharMovementMode.Walk;
-    }
-
     protected int getTargetDistance() {
         return targetDistance;
     }
@@ -213,10 +204,10 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
 
         switch (getMovementMode()) {
             case Walk:
-                return algorithm.findPath(World.getMap(), currentLocation, target, targetDistance,
+                return algorithm.findPath(getMovement(), currentLocation, target, targetDistance,
                                           getAllowedDirections(), Walk);
             case Run:
-                return algorithm.findPath(World.getMap(), currentLocation, target, targetDistance,
+                return algorithm.findPath(getMovement(), currentLocation, target, targetDistance,
                                           getAllowedDirections(), Walk, Run);
             default:
                 return null;
@@ -226,13 +217,13 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
     @Nonnull
     protected CharMovementMode getMovementMode() {
         if (!World.getPlayer().getCarryLoad().isRunningPossible()) {
-            return CharMovementMode.Walk;
+            return Walk;
         }
         CharMovementMode mode = getMovement().getDefaultMovementMode();
         if (getMovement().isMovementModePossible(mode)) {
             return mode;
         }
-        return CharMovementMode.Walk;
+        return Walk;
     }
 
     @Override

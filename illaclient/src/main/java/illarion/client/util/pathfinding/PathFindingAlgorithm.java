@@ -15,7 +15,8 @@
  */
 package illarion.client.util.pathfinding;
 
-import illarion.client.world.GameMap;
+import illarion.client.world.CharMovementMode;
+import illarion.client.world.movement.Movement;
 import illarion.common.types.Direction;
 import illarion.common.types.ServerCoordinate;
 
@@ -32,7 +33,7 @@ public interface PathFindingAlgorithm {
     /**
      * Search for a path between two points.
      *
-     * @param map the game map that delivers the data for the algorithm
+     * @param movement the movement system used to walk the path
      * @param start the location where the character is currently located at
      * @param end the location that is the target of the path, in case this location is blocked the character is
      * supposed to move to one of the locations next to this one, if theses are blocked as well the path
@@ -42,14 +43,15 @@ public interface PathFindingAlgorithm {
      * @param allowedDirections the direction that are allowed to be used for finding the path
      * @param movementMethod the first of the movement methods the pathfinder is expected to use
      * @param movementMethods the additional movement methods the pathfinder is expected to use
+     *
      * @return the calculated path or {@code null} in case the path finding failed
      */
     @Nullable
     Path findPath(
-            @Nonnull GameMap map,
+            @Nonnull Movement movement,
             @Nonnull ServerCoordinate start,
             @Nonnull ServerCoordinate end,
             int approachDistance, @Nonnull Collection<Direction> allowedDirections,
-            @Nonnull PathMovementMethod movementMethod,
-            @Nonnull PathMovementMethod... movementMethods);
+            @Nonnull CharMovementMode movementMethod,
+            @Nonnull CharMovementMode... movementMethods);
 }

@@ -213,31 +213,46 @@ public class Movement {
     private static final int MAX_WALK_COST = 800;
 
     private void scheduleEarlyMove(@Nonnull CharMovementMode mode, @Nonnull Direction direction) {
-        if (player.getCarryLoad().isWalkingPossible()) {
-            ServerCoordinate target = getTargetLocation(mode, direction);
-            MapTile targetTile = World.getMap().getMapAt(target);
+        if (playerLocation == null) {
+            throw new IllegalStateException("The current player location is not known yet.");
+        }
+        int movementDuration = getMovementDuration(playerLocation, mode, direction);
+        if (movementDuration != -1) {
+            animator.scheduleEarlyMove(mode, getTargetLocation(mode, direction), (movementDuration / 100) * 100);
+        }
+    }
 
-            if ((targetTile != null) && !targetTile.isBlocked()) {
+    @Contract(pure = true)
+    public int getMovementDuration(@Nonnull ServerCoordinate current,
+                                   @Nonnull CharMovementMode mode,
+                                   @Nonnull Direction dir) {
+        if (player.getCarryLoad().isWalkingPossible()) {
+            ServerCoordinate walkingTarget = new ServerCoordinate(current, dir);
+            MapTile walkingTile = World.getMap().getMapAt(walkingTarget);
+
+            if ((walkingTile != null) && !walkingTile.isBlocked()) {
                 int agility = Math.min(player.getCharacter().getAttribute(CharacterAttribute.Agility), MAX_WALK_AGI);
                 double agilityMod = (10 - agility) / 100.0;
                 double loadMod = (player.getCarryLoad().getLoadFactor() / 10.0) * 3.0;
                 double mods = agilityMod + loadMod + 1.0;
 
-                int movementDuration = getMovementDuration(targetTile.getMovementCost(), mods, direction.isDiagonal(),
-                                                           mode == CharMovementMode.Run);
+                int movementDuration = getMovementDuration(walkingTile.getMovementCost(), mods, dir.isDiagonal(),
+                        mode == CharMovementMode.Run);
+
                 if (mode == CharMovementMode.Run) {
-                    ServerCoordinate walkTarget = getTargetLocation(CharMovementMode.Walk, direction);
-                    MapTile walkTargetTile = World.getMap().getMapAt(walkTarget);
-                    if ((walkTargetTile != null) && !walkTargetTile.isBlocked()) {
-                        movementDuration += getMovementDuration(walkTargetTile.getMovementCost(), mods,
-                                                                direction.isDiagonal(), true);
+                    ServerCoordinate runTarget = new ServerCoordinate(walkingTarget, dir);
+                    MapTile runningTile = World.getMap().getMapAt(runTarget);
+                    if ((runningTile != null) && !runningTile.isBlocked()) {
+                        movementDuration += getMovementDuration(runningTile.getMovementCost(), mods,
+                                dir.isDiagonal(), true);
                     } else {
-                        return;
+                        return -1;
                     }
                 }
-                animator.scheduleEarlyMove(mode, target, (movementDuration / 100) * 100);
+                return (movementDuration / 100) * 100;
             }
         }
+        return -1;
     }
 
     @Contract(pure = true)

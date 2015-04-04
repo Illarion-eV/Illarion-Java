@@ -15,6 +15,7 @@
  */
 package illarion.client.util.pathfinding;
 
+import illarion.client.world.CharMovementMode;
 import illarion.common.types.ServerCoordinate;
 
 import javax.annotation.Nonnull;
@@ -39,5 +40,5 @@ public interface PathNode {
      * @return get the movement method
      */
     @Nonnull
-    PathMovementMethod getMovementMethod();
+    CharMovementMode getMovementMethod();
 }

@@ -15,6 +15,7 @@
  */
 package illarion.client.util.pathfinding;
 
+import illarion.client.world.CharMovementMode;
 import illarion.common.types.ServerCoordinate;
 
 import javax.annotation.Nonnull;
@@ -29,9 +30,9 @@ abstract class AbstractPathNode implements PathNode {
     private final ServerCoordinate location;
 
     @Nonnull
-    private final PathMovementMethod movementMethod;
+    private final CharMovementMode movementMethod;
 
-    protected AbstractPathNode(@Nonnull ServerCoordinate location, @Nonnull PathMovementMethod movementMethod) {
+    protected AbstractPathNode(@Nonnull ServerCoordinate location, @Nonnull CharMovementMode movementMethod) {
         this.location = location;
         this.movementMethod = movementMethod;
     }
@@ -50,7 +51,7 @@ abstract class AbstractPathNode implements PathNode {
      */
     @Override
     @Nonnull
-    public PathMovementMethod getMovementMethod() {
+    public CharMovementMode getMovementMethod() {
         return movementMethod;
     }
 }
