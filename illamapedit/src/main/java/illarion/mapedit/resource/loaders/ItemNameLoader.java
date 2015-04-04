@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 
 /**
@@ -47,8 +48,8 @@ public class ItemNameLoader implements Resource {
     @Override
     public void load() throws IOException {
         URL url = new URL(ITEM_NAME_URL);
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()))) {
-
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream(),
+                Charset.forName("UTF-8")))) {
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
                 String[] entry = inputLine.trim().split(",");

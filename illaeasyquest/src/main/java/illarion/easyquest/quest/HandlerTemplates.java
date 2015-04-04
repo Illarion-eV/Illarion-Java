@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -25,6 +25,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +67,7 @@ public class HandlerTemplates {
         List<String> result = new FastTable<>();
         BufferedReader bRead = null;
         try {
-            bRead = new BufferedReader(new InputStreamReader((getResource("template/handler/filelist"))));
+            bRead = new BufferedReader(new InputStreamReader(getResource("template/handler/filelist"), Charset.defaultCharset()));
 
             String line = null;
             while ((line = bRead.readLine()) != null) {

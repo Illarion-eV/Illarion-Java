@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ public class MacOsXJavaExecutableIterable extends AbstractJavaExecutableIterable
     /**
      * The logger instance for this class.
      */
+    @Nonnull
     private static final Logger LOGGER = LoggerFactory.getLogger(MacOsXJavaExecutableIterable.class);
 
     /**
@@ -144,13 +146,14 @@ public class MacOsXJavaExecutableIterable extends AbstractJavaExecutableIterable
             ProcessBuilder processBuilder = new ProcessBuilder("/usr/libexec/java_home", "-v", "1.7");
             processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
+            //noinspection resource
             process.getOutputStream().close();
 
             String firstLine;
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), Charset.defaultCharset()))) {
                 firstLine = reader.readLine();
             }
-            if (firstLine == null || process.waitFor() != 0) {
+            if ((firstLine == null) || (process.waitFor() != 0)) {
                 LOGGER.error("Failed to locate valid java version.");
                 return null;
             }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -32,6 +32,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -92,13 +93,14 @@ final class ServerBand extends JRibbonBand {
                             "character=" + URLEncoder.encode(Config.getInstance().getCharacter(), "UTF-8") +
                                     "&password=" + URLEncoder.encode(Config.getInstance().getPassword(), "UTF-8") +
                                     "&questid=" + id + "&queststatus=" + status;
-                    final OutputStreamWriter output = new OutputStreamWriter(conn.getOutputStream());
+                    final OutputStreamWriter output = new OutputStreamWriter(conn.getOutputStream(),
+                            Charset.forName("UTF-8"));
 
                     output.write(query);
                     output.flush();
                     output.close();
 
-                    final String result = new Scanner(conn.getInputStream()).useDelimiter("\\A").next();
+                    final String result = new Scanner(conn.getInputStream(), "UTF-8").useDelimiter("\\A").next();
 
                     if (result.equals("SUCCESS")) {
                         msgCaption = Lang.getMsg(ServerBand.class, "successCaption");

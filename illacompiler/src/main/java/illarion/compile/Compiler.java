@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -25,6 +25,8 @@ import javax.annotation.Nonnull;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
@@ -40,13 +42,14 @@ import java.util.concurrent.*;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class Compiler {
+    @Nonnull
     private static final Logger LOGGER = LoggerFactory.getLogger(Compiler.class);
     private static Map<CompilerType, Path> storagePaths;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws UnsupportedEncodingException {
         ByteArrayOutputStream stdOutBuffer = new ByteArrayOutputStream();
         PrintStream orgStdOut = System.out;
-        System.setOut(new PrintStream(stdOutBuffer));
+        System.setOut(new PrintStream(stdOutBuffer, true, Charset.defaultCharset().toString()));
 
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
