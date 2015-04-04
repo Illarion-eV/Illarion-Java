@@ -323,11 +323,11 @@ public final class People {
                     if (character.getLocation().equals(coordinate)) {
                         return character;
                     }
-                }catch(NullPointerException ex) {
+                } catch(NullPointerException ex) {
                     // Do nothing, this character isn't at the right location if it is at null anyway
                 }
             }
-        }finally {
+        } finally {
             charsLock.readLock().unlock();
         }
 

@@ -276,7 +276,6 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      * @return {@code true} if the event was processed
      */
     protected boolean processMapClick(@Nonnull ClickOnMapEvent event, @Nonnull GameContainer container) {
-        //return isEventProcessed(event);
         if (event.getKey() != Button.Left) {
             return false;
         }
@@ -287,31 +286,24 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
             return false;
         }
         delayGoToItem.reset();
-        log.trace("Single clicking tile: {}", mouseTile);
 
         TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
 
         boolean mouseTileIsBlocked = mouseTile.isBlocked();
+        boolean mouseTileInUseRange = mouseTile.getInteractive().isInUseRange();
         boolean itemClickedIsBlocked = parentTile.isBlocked();
         boolean itemClickedInUseRange = parentTile.getInteractive().isInUseRange();
-        boolean mouseTileInUseRange = mouseTile.getInteractive().isInUseRange();
 
         if (mouseTileInUseRange && mouseTileIsBlocked){
             // If it is adjacent and blocked, nowhere to walk
             return true;
         }
         if (itemClickedInUseRange) {
-            log.trace("Clicked item {} is inside of use range.", getItemId());
             if (itemClickedIsBlocked) {
-
-                log.trace("Delaying move to accept double click.");
                 delayGoToItem.setLocation(parentTile.getCoordinates());
                 delayGoToItem.pulse();
             }
         }else {
-            double distance = World.getPlayer().getLocation().getDistance(mouseTile.getCoordinates());
-            log.trace("Clicked tile {} is outside of use range, walking to it.", mouseTile);
-            log.trace("The distance from the player to the tile is " + distance);
             handler.walkTo(mouseTile.getCoordinates(), (mouseTileIsBlocked ? 1 : 0));
             handler.assumeControl();
         }
@@ -344,16 +336,13 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         boolean useRange = parentTile.getInteractive().isInUseRange();
 
         if (useRange) {
-            log.trace("Clicked item {} is inside of use range.", getItemId());
             if (blocked) {
                 return true;
             } else {
-                log.trace("Clicked item {} allows walking to. Delaying move to accept double click.", getItemId());
                 delayGoToItem.setLocation(parentTile.getCoordinates());
                 delayGoToItem.pulse();
             }
         } else {
-            log.trace("Clicked item {} is outside of use range.", getItemId());
             if (blocked) {
                 handler.walkTo(parentTile.getCoordinates(), 1);
             } else {
@@ -375,13 +364,10 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
 
         delayGoToItem.reset();
 
-        log.trace("Double clicking item: {}", getItemId());
 
         if (parentTile.getInteractive().isInUseRange()) {
-            log.trace("Item {} is within use range. Using it!", getItemId());
             parentTile.getInteractive().use();
         } else {
-            log.trace("Item {} is outside of the use range. Walking to it.", getItemId());
             final InteractiveMapTile interactiveMapTile = parentTile.getInteractive();
             TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
             handler.walkTo(parentTile.getCoordinates(), 1);

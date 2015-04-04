@@ -1342,11 +1342,11 @@ public final class Char implements AnimatedMove {
      */
     public void updateLight() {
         if (coordinate == null) {
-            log.error("The position of the character is not set. The light can't be updated.");
+            log.warn("The position of the character is not set. The light can't be updated.");
             return;
         }
         if (removedCharacter) {
-            log.error("Trying to update the light of a removed character.");
+            log.warn("Trying to update the light of a removed character.");
             return;
         }
         if (lightValue > 0) {
