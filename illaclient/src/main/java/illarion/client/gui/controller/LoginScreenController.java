@@ -29,6 +29,7 @@ import illarion.client.Game;
 import illarion.client.IllaClient;
 import illarion.client.Login;
 import illarion.client.Servers;
+import illarion.client.resources.SongFactory;
 import illarion.client.util.Lang;
 import org.illarion.engine.Engine;
 import org.illarion.engine.sound.Music;
@@ -197,13 +198,13 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     @Override
     public void onStartScreen() {
         if(IllaClient.getCfg().getBoolean("musicOn")) {
-            Music currentMusic = engine.getAssets().getSoundsManager().getMusic("music/illarion.ogg");
-            engine.getSounds().playMusic(currentMusic, 5, 5);
+            Music illarionTheme = SongFactory.getInstance().getSong(2, engine.getAssets().getSoundsManager());
+            engine.getSounds().playMusic(illarionTheme, 5, 5);
         }
         if (nameTxt.getDisplayedText().isEmpty()) {
-            passwordTxt.setFocus();
-        } else {
             nameTxt.setFocus();
+        } else {
+            passwordTxt.setFocus();
         }
     }
 
