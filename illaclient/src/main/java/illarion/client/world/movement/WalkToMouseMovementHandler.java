@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 
 /**
@@ -126,25 +127,23 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
     protected Collection<Direction> getAllowedDirections() {
         if (limitPathFindingToMouseDirection) {
             ServerCoordinate target = getTargetLocation();
-            Direction dir = getMovement().getServerLocation().getDirection(target);
-            Collection<Direction> result = EnumSet.noneOf(Direction.class);
-            if (dir == null) {
-                return result;
+            ServerCoordinate current = getMovement().getServerLocation();
+
+            int dirX = FastMath.sign(target.getX() - current.getX());
+            int dirY = FastMath.sign(target.getY() - current.getY());
+
+            if ((dirX == 0) && (dirY == 0)) {
+                return Collections.emptyList();
             }
+
+            Collection<Direction> result = EnumSet.noneOf(Direction.class);
             //noinspection ConstantConditions
             for (Direction testDir : Direction.values()) {
-                if (testDir == dir) {
+                int testX = testDir.getDirectionVectorX();
+                int testY = testDir.getDirectionVectorY();
+
+                if (((testX == dirX) && (testY == dirY)) || ((Math.abs(testX - dirX) + Math.abs(testY - dirY)) == 1)) {
                     result.add(testDir);
-                } else {
-                    int testX = testDir.getDirectionVectorX();
-                    int testY = testDir.getDirectionVectorY();
-
-                    int dirX = dir.getDirectionVectorX();
-                    int dirY = dir.getDirectionVectorY();
-
-                    if ((Math.abs(testX - dirX) + Math.abs(testY - dirY)) == 1) {
-                        result.add(testDir);
-                    }
                 }
             }
             return result;
