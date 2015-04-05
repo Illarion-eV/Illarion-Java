@@ -82,7 +82,7 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
         int remainingDistance = currentLocation.getStepDistance(target);
         log.debug(marker, "Remaining distance to target: {} Expected distance: {}", remainingDistance, targetDistance);
         if (remainingDistance <= targetDistance) {
-            return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation));
+            return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation), fetchTargetAction());
         }
         Path activePath;
         if (isCurrentPathValid()) {
@@ -92,22 +92,22 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
             currentPath = activePath;
         }
         if ((activePath == null) || activePath.isEmpty()) {
-            return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation));
+            return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation), fetchTargetAction());
         }
 
         PathNode node = activePath.nextStep();
         if (node == null) {
-            return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation));
+            return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation), fetchTargetAction());
         }
         if (!isPathNodeValid(currentLocation, node)) {
             activePath = calculateNewPath(currentLocation);
             currentPath = activePath;
             if (activePath == null) {
-                return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation));
+                return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation), fetchTargetAction());
             }
             node = activePath.nextStep();
             if (node == null) {
-                return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation));
+                return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation), fetchTargetAction());
             }
             if (!isPathNodeValid(currentLocation, node)) {
                 Direction lastDirection = currentLocation.getDirection(target);
@@ -134,17 +134,15 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
         if (remainingDistance > 0) {
             direction = currentLocation.getDirection(targetLocation);
         }
-        executeTargetAction();
         targetLocation = null;
         return direction;
     }
 
-    private void executeTargetAction() {
+    @Nullable
+    private Runnable fetchTargetAction() {
         Runnable action = targetAction;
         targetAction = null;
-        if (action != null) {
-            action.run();
-        }
+        return action;
     }
 
     private static boolean isPathNodeValid(@Nonnull ServerCoordinate currentLocation, @Nonnull PathNode node) {

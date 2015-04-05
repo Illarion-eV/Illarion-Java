@@ -335,6 +335,9 @@ public class Movement {
      * or not.
      */
     public void update() {
+        if (playerLocation == null) {
+            throw new IllegalStateException("The current player location is not known yet.");
+        }
         if (stepInProgress) {
             return;
         }
@@ -346,17 +349,23 @@ public class Movement {
                 log.debug(marker, "Requesting new step data from handler: {} (took {} milliseconds)", nextStep,
                           System.currentTimeMillis() - start);
             }
-            if ((nextStep != null) && (nextStep.getDirection() != null)) {
-                switch (nextStep.getMovementMode()) {
-                    case None:
-                        sendTurnToServer(nextStep.getDirection());
-                        scheduleEarlyTurn(nextStep.getDirection());
-                        break;
-                    default:
-                        stepInProgress = true;
-                        sendMoveToServer(nextStep.getDirection(), nextStep.getMovementMode());
-                        scheduleEarlyTurn(nextStep.getDirection());
-                        scheduleEarlyMove(nextStep.getMovementMode(), nextStep.getDirection());
+            if (nextStep != null) {
+                if (nextStep.getDirection() != null) {
+                    switch (nextStep.getMovementMode()) {
+                        case None:
+                            sendTurnToServer(nextStep.getDirection());
+                            scheduleEarlyTurn(nextStep.getDirection());
+                            break;
+                        default:
+                            stepInProgress = true;
+                            sendMoveToServer(nextStep.getDirection(), nextStep.getMovementMode());
+                            scheduleEarlyTurn(nextStep.getDirection());
+                            scheduleEarlyMove(nextStep.getMovementMode(), nextStep.getDirection());
+                    }
+                }
+
+                if (nextStep.getPostStepAction() != null) {
+                    nextStep.getPostStepAction().run();
                 }
             }
         }

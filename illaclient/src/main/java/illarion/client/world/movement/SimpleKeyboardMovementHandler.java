@@ -122,6 +122,7 @@ class SimpleKeyboardMovementHandler extends AbstractMovementHandler implements K
         xVec = FastMath.sign(xVec);
         yVec = FastMath.sign(yVec);
 
+        //noinspection ConstantConditions
         for (Direction dir : Direction.values()) {
             if ((dir.getDirectionVectorX() == xVec) && (dir.getDirectionVectorY() == yVec)) {
                 return dir;
