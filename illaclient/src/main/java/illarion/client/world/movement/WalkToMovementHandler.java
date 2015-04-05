@@ -277,7 +277,8 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
     public int getMovementCost(@Nonnull ServerCoordinate origin, @Nonnull CharMovementMode mode, @Nonnull Direction direction) {
         int cost = getMovement().getMovementDuration(origin, mode, direction);
 
-        if (origin.equals(getMovement().getServerLocation()) &&
+        if ((cost != MoveCostProvider.BLOCKED) &&
+                origin.equals(getMovement().getServerLocation()) &&
                 (mode == getMovementMode()) &&
                 (direction == getPreferredDirection())) {
             cost /= 2;
