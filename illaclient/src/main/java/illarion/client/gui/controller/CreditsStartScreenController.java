@@ -49,7 +49,8 @@ public final class CreditsStartScreenController implements ScreenController, Key
     public void onStartScreen() {
         final Music creditsMusic = SongFactory.getInstance().getSong(2, engine.getAssets().getSoundsManager());
         if (creditsMusic != null) {
-            engine.getSounds().playMusic(creditsMusic, 250, 250);
+            if(!engine.getSounds().isMusicPlaying(creditsMusic))
+                engine.getSounds().playMusic(creditsMusic, 250, 250);
         }
         nifty.gotoScreen("creditsSingles");
     }
