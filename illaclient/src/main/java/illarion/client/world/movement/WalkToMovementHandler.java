@@ -74,7 +74,10 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
     @Nullable
     @Override
     public StepData getNextStep(@Nonnull ServerCoordinate currentLocation) {
-        ServerCoordinate target = getTargetLocation();
+        ServerCoordinate target = targetLocation;
+        if (target == null) {
+            return null;
+        }
 
         int remainingDistance = currentLocation.getStepDistance(target);
         log.debug(marker, "Remaining distance to target: {} Expected distance: {}", remainingDistance, targetDistance);
