@@ -16,7 +16,6 @@
 package illarion.client.util.pathfinding;
 
 import illarion.client.world.CharMovementMode;
-import illarion.client.world.movement.Movement;
 import illarion.common.types.Direction;
 import illarion.common.types.ServerCoordinate;
 import org.slf4j.Logger;
@@ -38,7 +37,7 @@ public class AStar implements PathFindingAlgorithm {
     @Nullable
     @Override
     public Path findPath(
-            @Nonnull Movement movement,
+            @Nonnull MoveCostProvider costProvider,
             @Nonnull ServerCoordinate start,
             @Nonnull ServerCoordinate end,
             int approachDistance, @Nonnull Collection<Direction> allowedDirections,
@@ -68,7 +67,7 @@ public class AStar implements PathFindingAlgorithm {
         /* The methods of movement that apply. */
         EnumSet<CharMovementMode> movementMethodSettings = EnumSet.of(movementMethod, movementMethods);
 
-        expandNode(movement, end, null, start, allowedDirections, movementMethodSettings, openNodes);
+        expandNode(costProvider, end, null, start, allowedDirections, movementMethodSettings, openNodes);
 
         while (!openNodes.isEmpty()) {
             /* Take the unchecked node closest to the target. */
@@ -81,7 +80,7 @@ public class AStar implements PathFindingAlgorithm {
             AStarPathNode alternative = knownNodes.get(currentNode.getLocation());
             if ((alternative == null) || (alternative.getCost() > currentNode.getCost())) {
                 knownNodes.put(currentNode.getLocation(), currentNode);
-                expandNode(movement, end, currentNode, currentNode.getLocation(), allowedDirections, movementMethodSettings,
+                expandNode(costProvider, end, currentNode, currentNode.getLocation(), allowedDirections, movementMethodSettings,
                            openNodes);
             }
         }
@@ -101,7 +100,7 @@ public class AStar implements PathFindingAlgorithm {
     }
 
     private static void expandNode(
-            @Nonnull Movement movement,
+            @Nonnull MoveCostProvider costProvider,
             @Nonnull ServerCoordinate end,
             @Nullable AStarPathNode nodeToExpand,
             @Nonnull ServerCoordinate origin, @Nonnull Iterable<Direction> allowedDirections,
@@ -113,8 +112,8 @@ public class AStar implements PathFindingAlgorithm {
         for (Direction dir : allowedDirections) {
             ServerCoordinate walkingCoordinates = new ServerCoordinate(origin, dir);
             if (movementMethods.contains(CharMovementMode.Walk)) {
-                int moveCost = movement.getMovementDuration(origin, CharMovementMode.Walk, dir);
-                if (moveCost > -1) {
+                int moveCost = costProvider.getMovementCost(origin, CharMovementMode.Walk, dir);
+                if (moveCost != MoveCostProvider.BLOCKED) {
                     storage.add(new AStarPathNode(nodeToExpand, walkingCoordinates, CharMovementMode.Walk, moveCost,
                             getHeuristic(walkingCoordinates, end)));
                 } else {
@@ -123,8 +122,8 @@ public class AStar implements PathFindingAlgorithm {
             }
             if (movementMethods.contains(CharMovementMode.Run)) {
                 ServerCoordinate runningCoordinates = new ServerCoordinate(walkingCoordinates, dir);
-                int moveCost = movement.getMovementDuration(origin, CharMovementMode.Run, dir);
-                if (moveCost > -1) {
+                int moveCost = costProvider.getMovementCost(origin, CharMovementMode.Run, dir);
+                if (moveCost != MoveCostProvider.BLOCKED) {
                     storage.add(new AStarPathNode(nodeToExpand, runningCoordinates, CharMovementMode.Run, moveCost,
                             getHeuristic(runningCoordinates, end)));
                 }

@@ -16,7 +16,6 @@
 package illarion.client.util.pathfinding;
 
 import illarion.client.world.CharMovementMode;
-import illarion.client.world.movement.Movement;
 import illarion.common.types.Direction;
 import illarion.common.types.ServerCoordinate;
 import org.slf4j.Logger;
@@ -57,7 +56,7 @@ public class MeasureWrapper implements PathFindingAlgorithm {
     @Nullable
     @Override
     public Path findPath(
-            @Nonnull Movement movement,
+            @Nonnull MoveCostProvider costProvider,
             @Nonnull ServerCoordinate start,
             @Nonnull ServerCoordinate end,
             int approachDistance, @Nonnull Collection<Direction> allowedDirections,
@@ -65,7 +64,7 @@ public class MeasureWrapper implements PathFindingAlgorithm {
             @Nonnull CharMovementMode... movementMethods) {
         long startTime = System.currentTimeMillis();
         Path path = wrappedAlgorithm
-                .findPath(movement, start, end, approachDistance, allowedDirections, movementMethod, movementMethods);
+                .findPath(costProvider, start, end, approachDistance, allowedDirections, movementMethod, movementMethods);
         if (LOGGER.isInfoEnabled()) {
             long timeElapsed = System.currentTimeMillis() - startTime;
             LOGGER.info("Path finding from {} to {} took {} milliseconds to create {} using the directions {}", start,

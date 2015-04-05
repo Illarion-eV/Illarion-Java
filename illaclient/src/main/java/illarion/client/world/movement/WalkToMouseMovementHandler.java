@@ -167,6 +167,41 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
         return null;
     }
 
+    @Override
+    @Nonnull
+    protected Direction getPreferredDirection() {
+        MapDimensions mapDimensions = MapDimensions.getInstance();
+        int dX = lastMouseX - (mapDimensions.getOnScreenWidth() / 2);
+        int dY = -(lastMouseY - (mapDimensions.getOnScreenHeight() / 2));
+
+        if ((dX == 0) && (dY == 0)) {
+            return null;
+        }
+
+        double theta = Math.atan2(dY, dX) + Math.PI;
+        double part = Math.PI / 8;
+
+        if (theta < part) {
+            return Direction.NorthWest;
+        } else if (theta < (3 * part)) {
+            return Direction.West;
+        } else if (theta < (5 * part)) {
+            return Direction.SouthWest;
+        } else if (theta < (7 * part)) {
+            return Direction.South;
+        } else if (theta < (9 * part)) {
+            return Direction.SouthEast;
+        } else if (theta < (11 * part)) {
+            return Direction.East;
+        } else if (theta < (13 * part)) {
+            return Direction.NorthEast;
+        } else if (theta < (15 * part)) {
+            return Direction.North;
+        } else {
+            return Direction.NorthWest;
+        }
+    }
+
     @EventTopicSubscriber(topic = "limitPathFindingToMouseDirection")
     private void limitPathFindingToMouseDirectionChanged(
             @Nonnull String topic, @Nonnull ConfigChangedEvent configChangedEvent) {

@@ -15,10 +15,7 @@
  */
 package illarion.client.world.movement;
 
-import illarion.client.util.pathfinding.AStar;
-import illarion.client.util.pathfinding.Path;
-import illarion.client.util.pathfinding.PathFindingAlgorithm;
-import illarion.client.util.pathfinding.PathNode;
+import illarion.client.util.pathfinding.*;
 import illarion.client.world.CharMovementMode;
 import illarion.client.world.World;
 import illarion.common.types.Direction;
@@ -43,7 +40,7 @@ import static illarion.client.world.CharMovementMode.Walk;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class WalkToMovementHandler extends AbstractMovementHandler implements TargetMovementHandler {
+class WalkToMovementHandler extends AbstractMovementHandler implements TargetMovementHandler, MoveCostProvider {
     @Nonnull
     private static final Logger log = LoggerFactory.getLogger(WalkToMovementHandler.class);
     @Nonnull
@@ -202,10 +199,10 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
 
         switch (getMovementMode()) {
             case Walk:
-                return algorithm.findPath(getMovement(), currentLocation, target, targetDistance,
+                return algorithm.findPath(this, currentLocation, target, targetDistance,
                                           getAllowedDirections(), Walk);
             case Run:
-                return algorithm.findPath(getMovement(), currentLocation, target, targetDistance,
+                return algorithm.findPath(this, currentLocation, target, targetDistance,
                                           getAllowedDirections(), Walk, Run);
             default:
                 return null;
@@ -271,5 +268,25 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
             throw new IllegalStateException("The target location is not set.");
         }
         return targetLocation;
+    }
+
+    @Override
+    public int getMovementCost(@Nonnull ServerCoordinate origin, @Nonnull CharMovementMode mode, @Nonnull Direction direction) {
+        int cost = getMovement().getMovementDuration(origin, mode, direction);
+
+        if (origin.equals(getMovement().getServerLocation()) &&
+                (mode == getMovementMode()) &&
+                (direction == getPreferredDirection())) {
+            cost /= 2;
+        }
+
+        return cost;
+    }
+
+    @Nullable
+    protected Direction getPreferredDirection() {
+        ServerCoordinate currentPos = getMovement().getServerLocation();
+        ServerCoordinate targetPos = getTargetLocation();
+        return currentPos.getDirection(targetPos);
     }
 }
