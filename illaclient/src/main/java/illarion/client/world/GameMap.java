@@ -391,15 +391,20 @@ public final class GameMap implements LightingMap, Stoppable {
      * Clear the entire map. This will cause all the tiles and items to be removed. It does not touch the characters.
      */
     public void clear() {
+        MapTile[] oldTiles = null;
+
         mapLock.writeLock().lock();
         try {
-            for (MapTile tile : tiles.values()) {
-                tile.markAsRemoved();
-            }
+            oldTiles = tiles.values().toArray(new MapTile[tiles.size()]);
             tiles.clear();
         } finally {
             mapLock.writeLock().unlock();
         }
+
+        for (MapTile oldTile : oldTiles) {
+            oldTile.markAsRemoved();
+        }
+
         for (@Nonnull Entry<ServerCoordinate, QuestMarkerCarrier> markers : activeQuestTargetMarkers.entrySet()) {
             QuestMarker questMarker = markers.getValue().getMapMarker();
             if (questMarker != null) {
