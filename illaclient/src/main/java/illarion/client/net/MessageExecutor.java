@@ -61,7 +61,7 @@ final class MessageExecutor {
     private void executeReply(@Nonnull ServerReply reply) {
         log.debug(NET, "executing {}", reply);
         try {
-        ServerReplyResult result = reply.execute();
+            ServerReplyResult result = reply.execute();
             switch (result) {
                 case Success:
                     log.debug(NET, "finished with success {}", reply);
@@ -74,7 +74,7 @@ final class MessageExecutor {
                     scheduleReplyExecution(reply);
             }
         } catch (Exception e) {
-            log.error("Error while executing server replay.", e);
+            log.error(NET, "Error while executing server replay.", e);
         }
     }
 

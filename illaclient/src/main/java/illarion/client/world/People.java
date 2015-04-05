@@ -251,7 +251,8 @@ public final class People {
         try {
             @Nonnull Player player = World.getPlayer();
             for (Char character : chars.values()) {
-                if (!player.isOnScreen(character.getLocation(), 0)) {
+                ServerCoordinate charLocation = character.getLocation();
+                if ((charLocation != null) && !player.isOnScreen(charLocation, 0)) {
                     addCharacterToRemoveList(character);
                 }
             }
