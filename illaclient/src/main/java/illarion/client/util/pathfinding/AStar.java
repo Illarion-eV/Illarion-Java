@@ -120,6 +120,12 @@ public class AStar implements PathFindingAlgorithm {
                     continue;
                 }
             }
+            if (walkingCoordinates.equals(end)) {
+                continue;
+            }
+            if ((nodeToExpand != null) && (nodeToExpand.getMovementMethod() != CharMovementMode.Run)) {
+                continue;
+            }
             if (movementMethods.contains(CharMovementMode.Run)) {
                 ServerCoordinate runningCoordinates = new ServerCoordinate(walkingCoordinates, dir);
                 int moveCost = costProvider.getMovementCost(origin, CharMovementMode.Run, dir);
