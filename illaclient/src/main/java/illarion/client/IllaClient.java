@@ -151,6 +151,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
 
     }
 
+    /**
+     * Prepares and sets up the entire client
+     */
     private void init() {
         try {
             EventServiceLocator.setEventService(EventServiceLocator.SERVICE_NAME_EVENT_BUS, null);
@@ -191,6 +194,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
 
         game = new Game();
 
+        // Determine the dimensions of the window to create
         GraphicResolution res = null;
         String resolutionString = cfg.getString(CFG_RESOLUTION);
         if (resolutionString != null) {
@@ -207,6 +211,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         try {
 
             boolean fullScreenMode = cfg.getBoolean(CFG_FULLSCREEN);
+            // Get the game container used to display the game from the engine, using the dimensions from earlier
             gameContainer = EngineManager
                     .createDesktopGame(Backend.libGDX, game, res.getWidth(), res.getHeight(), fullScreenMode);
         } catch (@Nonnull EngineException e) {
@@ -262,6 +267,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         INSTANCE.game.enterState(Game.STATE_LOGIN);
     }
 
+    /**
+     * Save the current configuration and shutdown the client
+     */
     public static void exitGameContainer() {
         INSTANCE.gameContainer.exitGame();
 
@@ -536,6 +544,17 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         TableLoader.setCrypto(crypt);
     }
 
+    /**
+     * If the config is changed AND the changed config is either the resolution
+     * or the fullscreen boolean, updates the relevant config
+     *
+     * Otherwise, does nothing.
+     *
+     * Handling changes in other settings (like volume) should be done here
+     *
+     * @param topic indicates what in the config to change
+     * @param data  the event being handled
+     */
     @Override
     public void onEvent(String topic, ConfigChangedEvent data) {
         if (CFG_RESOLUTION.equals(topic) || CFG_FULLSCREEN.equals(topic)) {

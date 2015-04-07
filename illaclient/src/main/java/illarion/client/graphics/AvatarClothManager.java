@@ -238,7 +238,7 @@ public final class AvatarClothManager {
         } else if (slot == GROUP_TROUSERS) {
             return "Hair";
         } else {
-            return "Unkown Cloth";
+            return "Unknown Cloth";
         }
     }
 }
