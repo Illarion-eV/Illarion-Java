@@ -91,7 +91,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
                 DEFAULT_SERVER = Servers.Devserver;
                 break;
             default:
-                DEFAULT_SERVER = Servers.Realserver;
+                DEFAULT_SERVER = Servers.Illarionserver;
                 break;
         }
     }
@@ -179,7 +179,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         CrashReporter.getInstance().setConfig(getCfg());
 
         // Report errors of the released version only
-        if (DEFAULT_SERVER != Servers.Realserver) {
+        if (DEFAULT_SERVER != Servers.Illarionserver) {
             CrashReporter.getInstance().setMode(CrashReporter.MODE_NEVER);
         }
         CrashReporter.getInstance().setDialogFactory(new ReportDialogFactorySwing());

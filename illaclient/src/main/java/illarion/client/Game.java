@@ -331,7 +331,7 @@ public final class Game implements GameListener {
             Font fpsFont = container.getEngine().getAssets().getFontManager().getFont(FontLoader.CONSOLE_FONT);
             if (fpsFont != null) {
                 // Only show render data unless on devserver, testerver, or a custom server
-                boolean showRenderDiagnostic = IllaClient.DEFAULT_SERVER != Servers.Realserver;
+                boolean showRenderDiagnostic = IllaClient.DEFAULT_SERVER != Servers.Illarionserver;
                 int renderLine = 10;
                 if (showFPS) {
                     container.getEngine().getGraphics()

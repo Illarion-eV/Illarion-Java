@@ -154,7 +154,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         login.restoreServer();
         restoreLoginData();
 
-        if (IllaClient.DEFAULT_SERVER == Servers.Realserver) {
+        if (IllaClient.DEFAULT_SERVER == Servers.Illarionserver) {
             @Nullable Element serverPanel = screen.findElementById("serverPanel");
             if (serverPanel != null) {
                 serverPanel.hide();
@@ -290,7 +290,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         if (server != null) {
             login.setServer(server.getSelectedIndex());
         } else {
-            login.setServer(Login.GAMESERVER);
+            login.setServer(Login.ILLARIONSERVER);
         }
 
         login.storeData(savePassword.isChecked());

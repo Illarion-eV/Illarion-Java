@@ -86,7 +86,8 @@ public final class GameScreenController implements GameGui, ScreenController {
     /**
      * Initializes all of the child handlers, adds them to appropriate collections
      *
-     * Any new In-Game GUIs need to be added to added to this method
+     * Any new In-Game GUIs need to be added to this method
+     *
      * @param input The Engine's input system
      */
     public GameScreenController(@Nonnull Input input) {

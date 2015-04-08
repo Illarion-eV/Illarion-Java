@@ -60,12 +60,26 @@ import java.util.concurrent.Callable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Login {
-
+    /**
+     * The server used only by developers to test functionality
+     */
     public static final int DEVSERVER = 0;
+    /**
+     * The publicly available server for players to test functionality
+     */
     public static final int TESTSERVER = 1;
-    public static final int GAMESERVER = 2;
+    /**
+     * The official "production" server used to host the actual game
+     */
+    public static final int ILLARIONSERVER = 2;
+    /**
+     * A server that may be defined by the user
+     */
     public static final int CUSTOMSERVER = 3;
 
+    /**
+     * Internal class to hold the name and status of each character to display for selection
+     */
     public static final class CharEntry {
         private final String charName;
         private final int charStatus;
@@ -83,15 +97,17 @@ public final class Login {
             return charStatus;
         }
     }
-
+    // The ACCOUNT name of the player
     @Nullable
     private String loginName;
     @Nullable
     private String password;
     @Nullable
     private Servers server;
+    // The chosen character for login
     @Nullable
     private String loginCharacter;
+    // The list of available characters for login
     @Nonnull
     private final List<CharEntry> charList;
 
@@ -126,6 +142,10 @@ public final class Login {
         password = pass;
     }
 
+    /**
+     * Changes the server to the server at the given key
+     * @param server an int to select the server, see class constants
+     */
     public void setServer(int server) {
         for (Servers serverEntry : Servers.values()) {
             if (serverEntry.getServerKey() == server) {
@@ -135,6 +155,10 @@ public final class Login {
         }
     }
 
+    /**
+     * Changes the current server to the given server
+     * @param server the server to switch to
+     */
     public void setServer(@Nonnull Servers server) {
         this.server = server;
     }
@@ -145,9 +169,13 @@ public final class Login {
         restoreStorePassword();
     }
 
+    /**
+     * Saves the content of the fields to the config system
+     * @param storePassword whether or not to save the password
+     */
     public void storeData(boolean storePassword) {
-        if (IllaClient.DEFAULT_SERVER == Servers.Realserver) {
-            IllaClient.getInstance().setUsedServer(Servers.Realserver);
+        if (IllaClient.DEFAULT_SERVER == Servers.Illarionserver) {
+            IllaClient.getInstance().setUsedServer(Servers.Illarionserver);
         } else {
             IllaClient.getCfg().set("server", getServer().getServerKey());
             IllaClient.getInstance().setUsedServer(getServer());
@@ -189,7 +217,7 @@ public final class Login {
     @Nonnull
     public Servers getServer() {
         if (server == null) {
-            return Servers.Realserver;
+            return Servers.Illarionserver;
         }
         return server;
     }
@@ -258,16 +286,16 @@ public final class Login {
             }
 
             conn.connect();
-
+            // Send the query to the server
             try (OutputStreamWriter output = new OutputStreamWriter(conn.getOutputStream(), "UTF-8")) {
                 output.write(query);
                 output.flush();
             }
-
+            // Grabs the XML returned by the server
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
             Document doc = db.parse(conn.getInputStream());
-
+            // Interprets the server's XML
             readXML(doc, resultCallback);
         } catch (@Nonnull UnknownHostException e) {
             resultCallback.finishedRequest(2);
@@ -278,7 +306,14 @@ public final class Login {
         }
     }
 
+    /**
+     * Parses the given XML document and
+     *
+     * @param root  The XML document to read
+     * @param resultCallback
+     */
     private void readXML(@Nonnull Node root, @Nonnull RequestCharListCallback resultCallback) {
+        // If the Node is neither the "chars" doc nor "error", recursively call on each child node
         if (!"chars".equals(root.getNodeName()) && !NODE_NAME_ERROR.equals(root.getNodeName())) {
             NodeList children = root.getChildNodes();
             int count = children.getLength();
@@ -288,20 +323,21 @@ public final class Login {
             return;
         }
         if (NODE_NAME_ERROR.equals(root.getNodeName())) {
+            // Gets the node value of the error's id
             int error = Integer.parseInt(root.getAttributes().getNamedItem("id").getNodeValue());
             resultCallback.finishedRequest(error);
             return;
         }
         NodeList children = root.getChildNodes();
         int count = children.getLength();
-
+        // Fetches the Account language and sets the local config language to match
         String accLang = root.getAttributes().getNamedItem("lang").getNodeValue();
         if ("de".equals(accLang)) {
             IllaClient.getCfg().set(Lang.LOCALE_CFG, Lang.LOCALE_CFG_GERMAN);
         } else if ("us".equals(accLang)) {
             IllaClient.getCfg().set(Lang.LOCALE_CFG, Lang.LOCALE_CFG_ENGLISH);
         }
-
+        // Fills the charList with each character the account has on the selected server
         charList.clear();
         for (int i = 0; i < count; i++) {
             Node charNode = children.item(i);
@@ -310,32 +346,16 @@ public final class Login {
             String charServer = charNode.getAttributes().getNamedItem("server").getNodeValue();
 
             CharEntry addChar = new CharEntry(charName, status);
-
-            switch (IllaClient.getInstance().getUsedServer()) {
-                case Customserver:
-                    charList.add(addChar);
-                    break;
-                case Testserver:
-                    if ("testserver".equals(charServer)) {
-                        charList.add(addChar);
-                    }
-                    break;
-                case Devserver:
-                    if ("devserver".equals(charServer)) {
-                        charList.add(addChar);
-                    }
-                    break;
-                case Realserver:
-                    if ("illarionserver".equals(charServer)) {
-                        charList.add(addChar);
-                    }
-                    break;
+            String usedServerName = IllaClient.getInstance().getUsedServer().getServerName();
+            if(charServer.equals(usedServerName)) {
+                charList.add(addChar);
             }
         }
 
         resultCallback.finishedRequest(0);
     }
 
+    @Nonnull
     public List<CharEntry> getCharacterList() {
         return Collections.unmodifiableList(charList);
     }
@@ -352,6 +372,11 @@ public final class Login {
         return loginCharacter;
     }
 
+    /**
+     * Send the given login data to the server
+     *
+     * @return {@code true} if the login command was SENT successfully
+     */
     public boolean login() {
         NetComm netComm = World.getNet();
         if (!netComm.connect()) {
@@ -394,6 +419,9 @@ public final class Login {
         password = (encoded != null) ? shufflePassword(encoded, true) : "";
     }
 
+    /**
+     * Load the saved decision for whether to save the password
+     */
     private void restoreStorePassword() {
         if (getServer() == Servers.Customserver) {
             storePassword = IllaClient.getCfg().getBoolean("customSavePassword");
@@ -406,6 +434,10 @@ public final class Login {
         return storePassword;
     }
 
+    /**
+     * Load the saved login from the configuration file and insert it to the
+     * login field on the login window.
+     */
     private void restoreLogin() {
         if (getServer() == Servers.Customserver) {
             loginName = IllaClient.getCfg().getString("customLastLogin");
@@ -414,6 +446,10 @@ public final class Login {
         }
     }
 
+    /**
+     * Load the saved server from the configuration file and use it
+     * to select the default server
+     */
     public void restoreServer() {
         setServer(IllaClient.getCfg().getInteger("server"));
     }
