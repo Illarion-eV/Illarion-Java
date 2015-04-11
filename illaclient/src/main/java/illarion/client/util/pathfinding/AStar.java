@@ -15,6 +15,7 @@
  */
 package illarion.client.util.pathfinding;
 
+import illarion.client.util.ConnectionPerformanceClock;
 import illarion.client.world.CharMovementMode;
 import illarion.common.types.Direction;
 import illarion.common.types.ServerCoordinate;
@@ -114,6 +115,11 @@ public class AStar implements PathFindingAlgorithm {
             if (movementMethods.contains(CharMovementMode.Walk)) {
                 int moveCost = costProvider.getMovementCost(origin, CharMovementMode.Walk, dir);
                 if (moveCost != MoveCostProvider.BLOCKED) {
+                    /* Additional cost for distance. */
+                    moveCost += (int) (150 * (dir.isDiagonal() ? 1.4142135623730951 : 1.0));
+                    /* Additional cost for current ping. */
+                    moveCost += (int) ConnectionPerformanceClock.getMaxServerPing();
+
                     storage.add(new AStarPathNode(nodeToExpand, walkingCoordinates, CharMovementMode.Walk, moveCost,
                             getHeuristic(walkingCoordinates, end)));
                 } else {
@@ -123,13 +129,15 @@ public class AStar implements PathFindingAlgorithm {
             if (walkingCoordinates.equals(end)) {
                 continue;
             }
-            if ((nodeToExpand != null) && (nodeToExpand.getMovementMethod() != CharMovementMode.Run)) {
-                continue;
-            }
             if (movementMethods.contains(CharMovementMode.Run)) {
                 ServerCoordinate runningCoordinates = new ServerCoordinate(walkingCoordinates, dir);
                 int moveCost = costProvider.getMovementCost(origin, CharMovementMode.Run, dir);
                 if (moveCost != MoveCostProvider.BLOCKED) {
+                    /* Additional cost for distance. */
+                    moveCost += (int) (300 * (dir.isDiagonal() ? 1.4142135623730951 : 1.0));
+                    /* Additional cost for current ping. */
+                    moveCost += (int) ConnectionPerformanceClock.getMaxServerPing();
+
                     storage.add(new AStarPathNode(nodeToExpand, runningCoordinates, CharMovementMode.Run, moveCost,
                             getHeuristic(runningCoordinates, end)));
                 }

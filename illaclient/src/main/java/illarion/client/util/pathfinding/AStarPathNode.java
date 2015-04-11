@@ -62,7 +62,7 @@ class AStarPathNode extends AbstractPathNode implements Comparable<AStarPathNode
             int heuristic) {
         super(target, method);
         this.parentNode = parentNode;
-        this.cost = (parentNode == null) ? cost : (parentNode.cost + cost + 100);
+        this.cost = (parentNode == null) ? cost : (parentNode.cost + cost);
         this.heuristic = heuristic;
     }
 
