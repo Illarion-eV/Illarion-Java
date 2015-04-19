@@ -122,6 +122,9 @@ public class ItemStack implements DisplayItem, List<Item> {
     public int getElevation() {
         lock.readLock().lock();
         try {
+            if (items.isEmpty()) {
+                return 0;
+            }
             return getElevationForIndex(items.size() - 1);
         } finally {
             lock.readLock().unlock();
@@ -147,14 +150,14 @@ public class ItemStack implements DisplayItem, List<Item> {
     }
 
     private int getElevationForIndex(int index) {
-        if (index == 0) {
-            return 0;
+        if ((index < 0) || (index >= size())) {
+            throw new IndexOutOfBoundsException("Index must be >= 0 and < the amount of items on the stack.");
         }
 
         lock.readLock().lock();
         try {
             int elevation = 0;
-            for (int i = 0; i < index; i++) {
+            for (int i = 0; i <= index; i++) {
                 Item itemAtIndex = get(i);
                 elevation += itemAtIndex.getTemplate().getItemInfo().getLevel();
             }
@@ -165,7 +168,7 @@ public class ItemStack implements DisplayItem, List<Item> {
     }
 
     private void postProcessItemInsert(int index, @Nonnull Item newItem) {
-        int elevation = getElevationForIndex(index);
+        int elevation = (index > 0) ? getElevationForIndex(index - 1) : 0;
         setScreenPos(newItem, elevation);
         if (newItem.getTemplate().getItemInfo().getLevel() != 0) {
             elevation += newItem.getTemplate().getItemInfo().getLevel();

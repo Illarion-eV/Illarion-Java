@@ -453,7 +453,6 @@ public final class MapTile {
      * needed.
      */
     private void itemChanged() {
-        int tileElevation = items.getElevation();
         updateQuestMarkerElevation();
 
         // invalidate LOS data
