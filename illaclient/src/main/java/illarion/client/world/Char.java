@@ -42,7 +42,6 @@ import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Represents a character: player, monster or npc.
@@ -264,7 +263,7 @@ public final class Char implements AnimatedMove {
         scale = 0;
         avatarId = -1;
         appearance = 0;
-        animation = -1;
+        animation = CharAnimations.STAND;
         direction = Direction.North;
     }
 
@@ -1049,7 +1048,12 @@ public final class Char implements AnimatedMove {
         if (newLocation.equals(coordinate)) {
             return false;
         }
+        ServerCoordinate oldCoordinates = coordinate;
         coordinate = newLocation;
+
+        if (oldCoordinates == null) {
+            updateAvatar();
+        }
 
         updateLight(coordinate);
         return true;
@@ -1198,7 +1202,9 @@ public final class Char implements AnimatedMove {
         }
         if (appearance != newAppearance) {
             appearance = newAppearance;
-            resetAnimation(true);
+            if (coordinate != null) {
+                updateAvatar();
+            }
         }
     }
 
@@ -1295,13 +1301,11 @@ public final class Char implements AnimatedMove {
             log.error("Trying to change the location of a character without a ID.");
             return;
         }
-        // set logical location
-        if (Objects.equals(coordinate, newLoc)) {
-            return;
+
+        if (updateLocation(newLoc)) {
+            log.debug("{}: Setting character location to: {}", this, newLoc);
+            setPosition(newLoc.toDisplayCoordinate(Layer.Chars));
         }
-        log.debug("{}: Setting character location to: {}", this, newLoc);
-        coordinate = newLoc;
-        setPosition(newLoc.toDisplayCoordinate(Layer.Chars));
     }
 
     /**
