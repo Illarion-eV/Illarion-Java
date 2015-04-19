@@ -114,7 +114,9 @@ public class AStar implements PathFindingAlgorithm {
             ServerCoordinate walkingCoordinates = new ServerCoordinate(origin, dir);
             if (movementMethods.contains(CharMovementMode.Walk)) {
                 int moveCost = costProvider.getMovementCost(origin, CharMovementMode.Walk, dir);
-                if (moveCost != MoveCostProvider.BLOCKED) {
+                if (moveCost == MoveCostProvider.BLOCKED) {
+                    continue;
+                } else {
                     /* Additional cost for distance. */
                     moveCost += (int) (150 * (dir.isDiagonal() ? 1.4142135623730951 : 1.0));
                     /* Additional cost for current ping. */
@@ -122,8 +124,6 @@ public class AStar implements PathFindingAlgorithm {
 
                     storage.add(new AStarPathNode(nodeToExpand, walkingCoordinates, CharMovementMode.Walk, moveCost,
                             getHeuristic(walkingCoordinates, end)));
-                } else {
-                    continue;
                 }
             }
             if (walkingCoordinates.equals(end)) {
