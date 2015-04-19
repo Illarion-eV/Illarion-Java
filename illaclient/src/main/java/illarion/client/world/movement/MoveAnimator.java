@@ -302,7 +302,7 @@ class MoveAnimator implements AnimatedMove {
             reportingDone = true;
             movement.reportReadyForNextStep();
         }
-        World.getMapDisplay().setLocation(movement.getPlayer().getLocation().toDisplayCoordinate(Layer.Chars));
+        World.getMapDisplay().setLocation(getDisplayCoordinateAt(movement.getPlayer().getLocation()));
         executeNext();
     }
 }
