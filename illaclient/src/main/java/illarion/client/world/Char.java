@@ -1012,6 +1012,14 @@ public final class Char implements AnimatedMove {
                 DisplayCoordinate oldDisplayPos = getDisplayCoordinatesAt(oldPos);
                 DisplayCoordinate newDisplayPos = getDisplayCoordinatesAt(newPos);
 
+                if (oldDisplayPos.getLayer() > newDisplayPos.getLayer()) {
+                    oldDisplayPos = new DisplayCoordinate(oldDisplayPos.getX(),
+                            oldDisplayPos.getY(), newDisplayPos.getLayer());
+                } else if (oldDisplayPos.getLayer() < newDisplayPos.getLayer()) {
+                    newDisplayPos = new DisplayCoordinate(newDisplayPos.getX(),
+                            newDisplayPos.getY(), oldDisplayPos.getLayer());
+                }
+
                 move.start(oldDisplayPos, newDisplayPos, duration);
             } else {
                 // reset last animation result
