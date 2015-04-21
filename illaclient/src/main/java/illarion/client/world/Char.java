@@ -377,6 +377,9 @@ public final class Char implements AnimatedMove {
      */
     @Override
     public void animationFinished(boolean finished) {
+        if (coordinate != null) {
+            displayPos = getDisplayCoordinatesAt(coordinate);
+        }
         updatePosition();
         animationInProgress = false;
 

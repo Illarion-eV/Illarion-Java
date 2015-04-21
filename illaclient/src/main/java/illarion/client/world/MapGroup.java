@@ -104,6 +104,7 @@ public final class MapGroup {
         return false;
     }
 
+    @Contract(pure = true)
     public boolean isRootGroup() {
         return parent == null;
     }
