@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,6 +20,7 @@ import illarion.client.resources.data.AvatarClothTemplate;
 import illarion.client.resources.data.AvatarTemplate;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public final class ClothFactoryRelay implements ResourceFactory<AvatarClothTempl
     /**
      * This list stores the avatars that received clothes. This is needed to trigger the cleanup properly.
      */
-    @Nonnull
+    @Nullable
     private List<AvatarTemplate> usedAvatars;
 
     /**
@@ -49,10 +50,15 @@ public final class ClothFactoryRelay implements ResourceFactory<AvatarClothTempl
      */
     @Override
     public void loadingFinished() {
-        for (final AvatarTemplate ava : usedAvatars) {
+        if (usedAvatars == null) {
+            throw new IllegalStateException("Loading of this factory was already finished.");
+        }
+
+        for (AvatarTemplate ava : usedAvatars) {
             ava.getClothes().finish();
         }
         usedAvatars.clear();
+        usedAvatars = null;
     }
 
     /**
@@ -60,9 +66,13 @@ public final class ClothFactoryRelay implements ResourceFactory<AvatarClothTempl
      * charge of maintaining this resource.
      */
     @Override
-    public void storeResource(@Nonnull final AvatarClothTemplate resource) {
-        final AvatarTemplate avatarTemplate = CharacterFactory.getInstance().getTemplate(resource.getAvatarId());
-        final AvatarClothManager manager = avatarTemplate.getClothes();
+    public void storeResource(@Nonnull AvatarClothTemplate resource) {
+        if (usedAvatars == null) {
+            throw new IllegalStateException("Loading of this factory was already finished.");
+        }
+
+        AvatarTemplate avatarTemplate = CharacterFactory.getInstance().getTemplate(resource.getAvatarId());
+        AvatarClothManager manager = avatarTemplate.getClothes();
         manager.addCloth(resource.getClothSlot(), resource);
 
         if (!usedAvatars.contains(avatarTemplate)) {

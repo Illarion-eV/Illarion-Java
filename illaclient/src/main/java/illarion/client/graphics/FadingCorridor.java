@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,7 @@
  */
 package illarion.client.graphics;
 
-import illarion.common.graphics.Layers;
+import illarion.common.types.DisplayCoordinate;
 import org.illarion.engine.graphic.Sprite;
 
 import javax.annotation.Nonnull;
@@ -94,7 +94,7 @@ public final class FadingCorridor {
      * means that the tested object needs to be faded out
      */
     protected boolean isInCorridor(
-            final int testLocX, final int testLocY, final int testLayer, final int width, final int height) {
+            int testLocX, int testLocY, int testLayer, int width, int height) {
         TEMP_RECT.setBounds(testLocX, testLocY, width, height);
 
         return (testLayer < back) && fading.intersects(TEMP_RECT);
@@ -112,11 +112,11 @@ public final class FadingCorridor {
      * @param character the avatar that delivers the size for the fading
      * corridor
      */
-    protected void setCorridor(@Nonnull final AbstractEntity character) {
-        final Sprite characterSprite = character.getTemplate().getSprite();
-        fading.setBounds(character.getDisplayX() + TOLERANCE,
-                         (character.getDisplayY() + TOLERANCE) - characterSprite.getHeight(),
+    protected void setCorridor(@Nonnull AbstractEntity character) {
+        Sprite characterSprite = character.getTemplate().getSprite();
+        fading.setBounds(character.getDisplayCoordinate().getX() + TOLERANCE,
+                (character.getDisplayCoordinate().getY() + TOLERANCE) - characterSprite.getHeight(),
                          characterSprite.getWidth(), characterSprite.getHeight());
-        back = character.getOrder() - (Layers.DISTANCE / 2);
+        back = character.getOrder() - (DisplayCoordinate.ROW_DISTANCE / 2);
     }
 }

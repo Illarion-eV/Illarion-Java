@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,6 +14,8 @@
  * GNU General Public License for more details.
  */
 package illarion.client.resources;
+
+import javax.annotation.Nonnull;
 
 /**
  * This interface is shared by all resource factories and ensures that they
@@ -38,5 +40,5 @@ public interface ResourceFactory<T extends Resource> {
      *
      * @param resource the resource to store
      */
-    void storeResource(T resource);
+    void storeResource(@Nonnull T resource);
 }

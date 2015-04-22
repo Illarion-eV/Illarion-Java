@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,7 +22,7 @@ import illarion.client.world.Char;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.types.ItemCount;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -111,7 +111,7 @@ public final class InteractiveChar implements Draggable, DropTarget, Usable {
      * @return the location of the character on the map
      */
     @Nonnull
-    public Location getLocation() {
+    public ServerCoordinate getLocation() {
         return parentChar.getLocation();
     }
 
@@ -171,9 +171,9 @@ public final class InteractiveChar implements Draggable, DropTarget, Usable {
      */
     @Override
     public boolean isInUseRange() {
-        @Nonnull Location playerLocation = World.getPlayer().getLocation();
-        return (playerLocation.getScZ() == getLocation().getScZ()) &&
-                (playerLocation.getDistance(getLocation()) <= getUseRange());
+        @Nonnull ServerCoordinate playerLocation = World.getPlayer().getLocation();
+        return (playerLocation.getZ() == getLocation().getZ()) &&
+                (playerLocation.getStepDistance(getLocation()) <= getUseRange());
     }
 
     @Override

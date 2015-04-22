@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -51,7 +51,7 @@ public final class CloseDialogSelectionCmd extends AbstractCommand {
      * @param selectedIndex the index that was selected
      * @param success {@code true} in case the dialog got confirmed
      */
-    public CloseDialogSelectionCmd(final int dialogID, final int selectedIndex, final boolean success) {
+    public CloseDialogSelectionCmd(int dialogID, int selectedIndex, boolean success) {
         super(CommandList.CMD_CLOSE_DIALOG_SELECTION);
 
         this.dialogID = dialogID;
@@ -60,7 +60,7 @@ public final class CloseDialogSelectionCmd extends AbstractCommand {
     }
 
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) {
         writer.writeInt(dialogID);
         if (success) {
             writer.writeUByte((byte) 0xFF);

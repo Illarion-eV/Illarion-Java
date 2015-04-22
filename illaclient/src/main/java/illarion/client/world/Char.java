@@ -23,15 +23,11 @@ import illarion.client.resources.ItemFactory;
 import illarion.client.util.Lang;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.characters.CharacterAttribute;
-import illarion.client.world.events.CharMoveEvent;
 import illarion.client.world.interactive.InteractiveChar;
 import illarion.common.graphics.CharAnimations;
-import illarion.common.types.CharacterId;
-import illarion.common.types.Direction;
-import illarion.common.types.ItemId;
-import illarion.common.types.Location;
+import illarion.common.graphics.Layer;
+import illarion.common.types.*;
 import illarion.common.util.FastMath;
-import org.bushe.swing.event.EventBus;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.LightSource;
@@ -155,31 +151,11 @@ public final class Char implements AnimatedMove {
     /**
      * Current looking direction of the character.
      */
-    @Nonnull
+    @Nullable
     private Direction direction;
 
-    /**
-     * X-Offset for the current move.
-     */
-    @SuppressWarnings("InstanceVariableNamingConvention")
-    private int dX;
-
-    /**
-     * Y-Offset for the current move.
-     */
-    @SuppressWarnings("InstanceVariableNamingConvention")
-    private int dY;
-
-    /**
-     * Z-Offset for the current move.
-     */
-    @SuppressWarnings("InstanceVariableNamingConvention")
-    private int dZ;
-
-    /**
-     * Elevation of the character above the ground. Occurs if the character steps on a item with elevation.
-     */
-    private int elevation;
+    @Nullable
+    private DisplayCoordinate displayPos;
 
     /**
      * Last visibility value that was shown. Used for fading in and out animations.
@@ -200,8 +176,8 @@ public final class Char implements AnimatedMove {
     /**
      * Current Location of the character on the map.
      */
-    @Nonnull
-    private final Location charLocation;
+    @Nullable
+    private ServerCoordinate coordinate;
 
     /**
      * Move animation handler for this character.
@@ -267,7 +243,7 @@ public final class Char implements AnimatedMove {
     private class DelayedMoveData {
         public CharMovementMode mode;
         public int duration;
-        public Location targetLocation;
+        public ServerCoordinate targetLocation;
     }
 
     /**
@@ -280,7 +256,6 @@ public final class Char implements AnimatedMove {
      * Constructor to create a new character.
      */
     public Char() {
-        charLocation = new Location();
         move = new MoveAnimation(this);
 
         attributes = new EnumMap<>(CharacterAttribute.class);
@@ -288,7 +263,7 @@ public final class Char implements AnimatedMove {
         scale = 0;
         avatarId = -1;
         appearance = 0;
-        animation = -1;
+        animation = CharAnimations.STAND;
         direction = Direction.North;
     }
 
@@ -386,19 +361,6 @@ public final class Char implements AnimatedMove {
     }
 
     /**
-     * This variable is used to update the elevation after the current animation is done. That might be needed to
-     * ensure that the character is properly displayed.
-     */
-    private int elevationAfterAnimation;
-
-    public void updateElevation(int newElevation) {
-        elevationAfterAnimation = newElevation;
-        if (!animationInProgress) {
-            updatePosition(newElevation);
-        }
-    }
-
-    /**
      * This flag is used to store if there is currently a animation in progress.
      */
     private boolean animationInProgress;
@@ -411,20 +373,19 @@ public final class Char implements AnimatedMove {
     /**
      * Stop the walking animation of the character.
      *
-     * @param ok not in use
+     * @param finished not in use
      */
     @Override
-    public void animationFinished(boolean ok) {
-        dX = 0;
-        dY = 0;
-        dZ = 0;
-        elevation = elevationAfterAnimation;
-        updatePosition(elevation);
+    public void animationFinished(boolean finished) {
+        if (coordinate != null) {
+            displayPos = getDisplayCoordinatesAt(coordinate);
+        }
+        updatePosition();
         animationInProgress = false;
 
         final DelayedMoveData localDelayedMove = delayedMove;
         delayedMove = null;
-        if (ok && (localDelayedMove != null)) {
+        if (finished && (localDelayedMove != null)) {
             log.info("{}: Planning delayed move for execution", this);
             World.getUpdateTaskManager().addTaskForLater(new UpdateTask() {
                 @Override
@@ -467,9 +428,11 @@ public final class Char implements AnimatedMove {
         log.debug("{}: Resetting the animation. Finished: {}", this, finished);
         if (finished) {
             animation = CharAnimations.STAND;
-            updateAvatar();
-            if (avatar != null) {
-                avatar.animate(DEFAULT_ANIMATION_SPEED, true);
+            if (coordinate != null) {
+                updateAvatar();
+                if (avatar != null) {
+                    avatar.animate(DEFAULT_ANIMATION_SPEED, true);
+                }
             }
         }
     }
@@ -485,6 +448,9 @@ public final class Char implements AnimatedMove {
      */
     @SuppressWarnings("nls")
     private synchronized void updateAvatar() {
+        if (coordinate == null) {
+            throw new IllegalStateException("Updating the avatar while the coordinates are not set is not valid.");
+        }
         if (removedCharacter) {
             releaseAvatar();
             log.warn("{}: Trying to update the avatar of a removed avatar.", this);
@@ -536,9 +502,8 @@ public final class Char implements AnimatedMove {
             newAvatar.changeBaseColor(DEAD_COLOR);
         }
 
-        elevation = World.getMap().getElevationAt(charLocation);
-        elevationAfterAnimation = elevation;
-        updatePosition(newAvatar, elevation);
+        displayPos = getDisplayCoordinatesAt(coordinate);
+        updatePosition(newAvatar);
         updateLight(newAvatar, LIGHT_SET);
 
         Integer healthPoints = attributes.get(CharacterAttribute.HitPoints);
@@ -567,9 +532,11 @@ public final class Char implements AnimatedMove {
             oldAvatar.markAsRemoved();
         }
 
-        MapTile tile = World.getMap().getMapAt(charLocation);
-        if (tile != null) {
-            tile.updateQuestMarkerElevation();
+        if (coordinate != null) {
+            MapTile tile = World.getMap().getMapAt(coordinate);
+            if (tile != null) {
+                tile.updateQuestMarkerElevation();
+            }
         }
     }
 
@@ -651,15 +618,18 @@ public final class Char implements AnimatedMove {
      * Update the avatar display position.
      *
      * @param avatar the avatar that is altered
-     * @param fix additional position offset for the character, used for the elevation.
      */
-    private void updatePosition(@Nullable Avatar avatar, int fix) {
+    private void updatePosition(@Nullable Avatar avatar) {
+        if (displayPos == null) {
+            throw new IllegalStateException(
+                    "Updating the avatar position while the display pos is not set is forbidden.");
+        }
+
         if (removedCharacter) {
             return;
         }
         if (avatar != null) {
-            avatar.setScreenPos(charLocation.getDcX() + dX, (charLocation.getDcY() + dY) - fix,
-                                charLocation.getDcZ() + dZ);
+            avatar.setScreenPos(displayPos);
         }
     }
 
@@ -671,18 +641,14 @@ public final class Char implements AnimatedMove {
      */
     private void updateLight(@Nullable Avatar avatar, int mode) {
         if (removedCharacter) {
-            log.warn("Trying to update the light of a removed character.");
+            log.error("Trying to update the light of a removed character.");
+            return;
+        }
+        if (coordinate == null) {
             return;
         }
 
-        Location lightLoc;
-        // different handling for own char
-        @Nonnull Player player = World.getPlayer();
-        if (player.isPlayer(charId)) {
-            lightLoc = player.getLocation();
-        } else {
-            lightLoc = charLocation;
-        }
+        ServerCoordinate lightLoc = coordinate;
 
         @Nullable MapTile tile = World.getMap().getMapAt(lightLoc);
 
@@ -752,17 +718,12 @@ public final class Char implements AnimatedMove {
     /**
      * Set the new position of the character.
      *
-     * @param x X-Coordinate of the character
-     * @param y Y-Coordinate of the character
-     * @param z Z-Coordinate of the character
+     * @param position the display position of the character
      */
     @Override
-    public void setPosition(int x, int y, int z) {
-        dX = x;
-        dY = y;
-        dZ = z;
-
-        updatePosition(0);
+    public void setPosition(@Nonnull DisplayCoordinate position) {
+        displayPos = position;
+        updatePosition();
     }
 
     /**
@@ -881,10 +842,10 @@ public final class Char implements AnimatedMove {
      *
      * @return the location of the character
      */
-    @Nonnull
+    @Nullable
     @Contract(pure = true)
-    public Location getLocation() {
-        return charLocation;
+    public ServerCoordinate getLocation() {
+        return coordinate;
     }
 
     /**
@@ -963,7 +924,7 @@ public final class Char implements AnimatedMove {
      * @param mode the mode of the move
      * @param duration the duration of the animation in milliseconds
      */
-    public void moveTo(@Nonnull final Location newPos, @Nonnull final CharMovementMode mode, final int duration) {
+    public void moveTo(@Nonnull final ServerCoordinate newPos, @Nonnull final CharMovementMode mode, final int duration) {
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
             public void onUpdateGame(@Nonnull GameContainer container, int delta) {
@@ -990,7 +951,7 @@ public final class Char implements AnimatedMove {
         }
     }
 
-    private void moveToInternal(@Nonnull Location newPos, @Nonnull CharMovementMode mode, int duration) {
+    private void moveToInternal(@Nonnull ServerCoordinate newPos, @Nonnull CharMovementMode mode, int duration) {
         CharacterId characterId = getCharId();
         if (characterId == null) {
             log.error("Can't move a character without ID around.");
@@ -1003,7 +964,7 @@ public final class Char implements AnimatedMove {
                     delayedMove = new DelayedMoveData();
                     delayedMove.duration = duration;
                     delayedMove.mode = mode;
-                    delayedMove.targetLocation = new Location(newPos);
+                    delayedMove.targetLocation = newPos;
                     holdBackAnimationReset();
                     log.info("{}: Scheduled move for later execution.", this);
                     return;
@@ -1020,7 +981,7 @@ public final class Char implements AnimatedMove {
             move.stop();
         }
 
-        Location oldPos = new Location(charLocation);
+        ServerCoordinate oldPos = coordinate;
         if (!updateLocation(newPos)) {
             return;
         }
@@ -1028,7 +989,7 @@ public final class Char implements AnimatedMove {
         // determine general visibility by players
         if (avatar != null) {
             // calculate movement direction
-            Direction dir = oldPos.getDirection(newPos);
+            Direction dir = (oldPos == null) ? null : oldPos.getDirection(newPos);
 
             // turn only when animating, not when pushed
             if ((mode != CharMovementMode.Push) && (dir != null)) {
@@ -1036,9 +997,6 @@ public final class Char implements AnimatedMove {
             }
 
             // find target elevation
-            int fromElevation = elevation;
-            elevation = World.getMap().getElevationAt(newPos);
-            elevationAfterAnimation = elevation;
 
             int range = 1;
             if (mode == CharMovementMode.Run) {
@@ -1046,33 +1004,38 @@ public final class Char implements AnimatedMove {
             }
 
             // start animations only if reasonable distance
-            if ((newPos.getDistance(oldPos) <= range) && (duration > 0) && (dir != null) &&
+            if ((oldPos != null) && (newPos.getStepDistance(oldPos) <= range) && (duration > 0) && (dir != null) &&
                     (mode != CharMovementMode.Push)) {
                 if (mode == CharMovementMode.Walk) {
                     startAnimation(CharAnimations.WALK, duration, true, dir.isDiagonal() ? FastMath.sqrt(2.f) : 1.f);
                 } else if (mode == CharMovementMode.Run) {
                     startAnimation(CharAnimations.RUN, duration, true, dir.isDiagonal() ? FastMath.sqrt(2.f) : 1.f);
                 }
-                int zDelta = Math.min(oldPos.getDcZ() - newPos.getDcZ(), 0);
-                move.start(oldPos.getDcX() - newPos.getDcX(),
-                        oldPos.getDcY() - fromElevation - newPos.getDcY(),
-                        zDelta,
-                        0, -elevation, zDelta, duration);
+
+                DisplayCoordinate oldDisplayPos = getDisplayCoordinatesAt(oldPos);
+                DisplayCoordinate newDisplayPos = getDisplayCoordinatesAt(newPos);
+
+                if (oldDisplayPos.getLayer() > newDisplayPos.getLayer()) {
+                    oldDisplayPos = new DisplayCoordinate(oldDisplayPos.getX(),
+                            oldDisplayPos.getY(), newDisplayPos.getLayer());
+                } else if (oldDisplayPos.getLayer() < newDisplayPos.getLayer()) {
+                    newDisplayPos = new DisplayCoordinate(newDisplayPos.getX(),
+                            newDisplayPos.getY(), oldDisplayPos.getLayer());
+                }
+
+                move.start(oldDisplayPos, newDisplayPos, duration);
             } else {
                 // reset last animation result
-                dX = 0;
-                dY = 0;
-                dZ = 0;
-                updatePosition(elevation);
+                setPosition(getDisplayCoordinatesAt(newPos));
             }
             updateLight(LIGHT_SOFT);
-
-            EventBus.publish(new CharMoveEvent(characterId, charLocation));
         }
 
-        MapTile oldTile = World.getMap().getMapAt(oldPos);
-        if (oldTile != null) {
-            oldTile.updateQuestMarkerElevation();
+        if (oldPos != null) {
+            MapTile oldTile = World.getMap().getMapAt(oldPos);
+            if (oldTile != null) {
+                oldTile.updateQuestMarkerElevation();
+            }
         }
 
         MapTile newTile = World.getMap().getMapAt(newPos);
@@ -1081,15 +1044,29 @@ public final class Char implements AnimatedMove {
         }
     }
 
-    private boolean updateLocation(@Nonnull Location newLocation) {
-        // get old position
+    @Nonnull
+    @Contract(pure = true)
+    private static DisplayCoordinate getDisplayCoordinatesAt(@Nonnull ServerCoordinate coordinate) {
+        int elevation = World.getMap().getElevationAt(coordinate);
+        int x = coordinate.toDisplayX();
+        int y = coordinate.toDisplayY() - elevation;
+        int layer = coordinate.toDisplayLayer(Layer.Chars);
 
-        if (newLocation.equals(charLocation)) {
+        return new DisplayCoordinate(x, y, layer);
+    }
+
+    private boolean updateLocation(@Nonnull ServerCoordinate newLocation) {
+        if (newLocation.equals(coordinate)) {
             return false;
         }
-        charLocation.set(newLocation);
+        ServerCoordinate oldCoordinates = coordinate;
+        coordinate = newLocation;
 
-        updateLight(charLocation);
+        if (oldCoordinates == null) {
+            updateAvatar();
+        }
+
+        updateLight(coordinate);
         return true;
     }
 
@@ -1098,11 +1075,10 @@ public final class Char implements AnimatedMove {
      *
      * @param newLoc the new location of the light source
      */
-    public void updateLight(@Nonnull Location newLoc) {
+    public void updateLight(@Nonnull ServerCoordinate newLoc) {
         LightSource localLightSource = lightSrc;
         if (localLightSource != null) {
-            localLightSource.getLocation().set(newLoc);
-            World.getLights().refreshLight(localLightSource);
+            World.getLights().updateLightLocation(localLightSource, newLoc);
         }
     }
 
@@ -1114,7 +1090,10 @@ public final class Char implements AnimatedMove {
     public void setDirection(@Nonnull Direction newDirection) {
         log.debug("{}: Applying a new direction to the character: {}", this, newDirection);
         direction = newDirection;
-        if (!move.isRunning()) {
+
+        // The update of the direction arrives before the location of the character is set. That is okay because
+        // the update of the character will take the stored direction into account.
+        if (!move.isRunning() && (coordinate != null)) {
             updateAvatar();
         }
     }
@@ -1193,11 +1172,9 @@ public final class Char implements AnimatedMove {
 
     /**
      * Update the avatar display position.
-     *
-     * @param fix additional position offset for the character, used for the elevation.
      */
-    void updatePosition(int fix) {
-        updatePosition(avatar, fix);
+    void updatePosition() {
+        updatePosition(avatar);
     }
 
     /**
@@ -1236,7 +1213,9 @@ public final class Char implements AnimatedMove {
         }
         if (appearance != newAppearance) {
             appearance = newAppearance;
-            resetAnimation(true);
+            if (coordinate != null) {
+                updateAvatar();
+            }
         }
     }
 
@@ -1323,7 +1302,7 @@ public final class Char implements AnimatedMove {
      *
      * @param newLoc new location of the character
      */
-    public void setLocation(@Nonnull Location newLoc) {
+    public void setLocation(@Nonnull ServerCoordinate newLoc) {
         if (removedCharacter) {
             log.warn("Trying to update the location of a removed character.");
             return;
@@ -1333,15 +1312,11 @@ public final class Char implements AnimatedMove {
             log.error("Trying to change the location of a character without a ID.");
             return;
         }
-        // set logical location
-        if (charLocation.equals(newLoc)) {
-            return;
+
+        if (updateLocation(newLoc)) {
+            log.debug("{}: Setting character location to: {}", this, newLoc);
+            setPosition(newLoc.toDisplayCoordinate(Layer.Chars));
         }
-        log.debug("{}: Setting character location to: {}", this, newLoc);
-        charLocation.set(newLoc);
-        elevation = World.getMap().getElevationAt(charLocation);
-        updatePosition(-elevation);
-        EventBus.publish(new CharMoveEvent(characterId, charLocation));
     }
 
     /**
@@ -1381,6 +1356,10 @@ public final class Char implements AnimatedMove {
      * Update the current light source of this character.
      */
     public void updateLight() {
+        if (coordinate == null) {
+            log.warn("The position of the character is not set. The light can't be updated.");
+            return;
+        }
         if (removedCharacter) {
             log.warn("Trying to update the light of a removed character.");
             return;
@@ -1388,12 +1367,12 @@ public final class Char implements AnimatedMove {
         if (lightValue > 0) {
             if (lightSrc != null) {
                 if (lightSrc.getEncodedValue() != lightValue) {
-                    LightSource newLight = new LightSource(charLocation, lightValue);
+                    LightSource newLight = new LightSource(coordinate, lightValue);
                     World.getLights().replace(lightSrc, newLight);
                     lightSrc = newLight;
                 }
             } else {
-                lightSrc = new LightSource(charLocation, lightValue);
+                lightSrc = new LightSource(coordinate, lightValue);
                 World.getLights().addLight(lightSrc);
             }
         } else {

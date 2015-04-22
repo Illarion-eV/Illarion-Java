@@ -15,19 +15,18 @@
  */
 package org.illarion.engine.graphic;
 
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 
 /**
- * The lightmap interface is used to handle the light effects on the map. It
- * allows to set, render and reset light and allows to check if a tile blocks
- * the line of sight or accepts no light.
+ * The light map interface is used to handle the light effects on the map. It allows to set, render and reset light
+ * and allows to check if a tile blocks the line of sight or accepts no light.
  *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public interface LightingMap {
     /**
-     * This value is returned by {@link #blocksView(Location)} in case the view
+     * This value is returned by {@link #blocksView(ServerCoordinate)} in case the view
      * is fully blocked.
      */
     int BLOCKED_VIEW = 1000;
@@ -36,21 +35,21 @@ public interface LightingMap {
      * Determines whether a map location accepts the light from a specific
      * direction.
      *
-     * @param loc the location on that is checked
+     * @param coordinate the location on that is checked
      * @param dx x part of the direction of the light ray
      * @param dy y part of the direction of the light ray
      * @return true if location accepts from this direction
      */
-    boolean acceptsLight(Location loc, int dx, int dy);
+    boolean acceptsLight(ServerCoordinate coordinate, int dx, int dy);
 
     /**
      * Determines whether a map location blocks the flow of light.
      *
-     * @param loc the location on the map
+     * @param coordinate the location on the map
      * @return obscurity, 0 is for free view, {@link #BLOCKED_VIEW} for fully
      * blocked
      */
-    int blocksView(Location loc);
+    int blocksView(ServerCoordinate coordinate);
 
     /**
      * Start rendering lights after calculations are finished.
@@ -60,8 +59,8 @@ public interface LightingMap {
     /**
      * Assign the cumulative light value to a map tile.
      *
-     * @param loc the location on the map the light is assigned to
+     * @param coordinate the location on the map the light is assigned to
      * @param color the color that is assigned to the tile
      */
-    void setLight(Location loc, Color color);
+    void setLight(ServerCoordinate coordinate, Color color);
 }

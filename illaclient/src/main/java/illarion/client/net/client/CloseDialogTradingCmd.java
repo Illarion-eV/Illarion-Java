@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -35,7 +35,7 @@ public final class CloseDialogTradingCmd extends AbstractTradeItemCmd {
      *
      * @param dialogId the ID of the dialog to close
      */
-    public CloseDialogTradingCmd(final int dialogId) {
+    public CloseDialogTradingCmd(int dialogId) {
         super(dialogId, SUB_CMD_ID);
     }
 

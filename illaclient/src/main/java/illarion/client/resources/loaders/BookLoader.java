@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -36,24 +36,22 @@ public final class BookLoader extends AbstractResourceLoader<IdWrapper<String>>
             throw new IllegalStateException("targetFactory not set yet.");
         }
 
-        final ResourceFactory<IdWrapper<String>> factory = getTargetFactory();
+        ResourceFactory<IdWrapper<String>> factory = getTargetFactory();
 
         factory.init();
         new TableLoaderBooks(this);
         factory.loadingFinished();
-
         loadingDone();
 
         return factory;
     }
 
     @Override
-    public boolean processRecord(final int line, @Nonnull final TableLoaderBooks loader) {
-        final int id = loader.getBookId();
-        final String bookFile = loader.getBookFile();
+    public boolean processRecord(int line, @Nonnull TableLoaderBooks loader) {
+        int id = loader.getBookId();
+        String bookFile = loader.getBookFile();
 
         getTargetFactory().storeResource(new IdWrapper<>(id, bookFile));
-
         return true;
     }
 }

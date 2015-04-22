@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -25,6 +25,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -47,8 +48,8 @@ public class TriggerTemplates {
         load();
     }
 
-    private static InputStream getResource(final String name) {
-        final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+    private static InputStream getResource(String name) {
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
         return loader.getResourceAsStream(name);
     }
 
@@ -57,7 +58,7 @@ public class TriggerTemplates {
         List<String> result = new FastTable<>();
         BufferedReader bRead = null;
         try {
-            bRead = new BufferedReader(new InputStreamReader(getResource("template/trigger/filelist")));
+            bRead = new BufferedReader(new InputStreamReader(getResource("template/trigger/filelist"), Charset.defaultCharset()));
 
             String line = null;
             while ((line = bRead.readLine()) != null) {
@@ -65,8 +66,6 @@ public class TriggerTemplates {
             }
         } catch (IOException e) {
             // reading failure
-        } catch (NullPointerException e) {
-            // file list does not exist
         } finally {
             if (bRead != null) {
                 try {
@@ -110,14 +109,17 @@ public class TriggerTemplates {
                         if (isHeader) {
                             if (line.isEmpty()) {
                                 continue;
-                            } else if (line.matches("module.*")) {
+                            }
+                            if (line.matches("module.*")) {
                                 continue;
-                            } else if (line.matches("--\\s*category:.*")) {
+                            }
+                            if (line.matches("--\\s*category:.*")) {
                                 String[] temp = line.split("--\\s*category:");
                                 String category = temp[1].trim();
                                 triggerTemplate.setCategory(category);
                                 continue;
-                            } else if (line.matches("--.*\\w+.*--.*\\w+.*")) {
+                            }
+                            if (line.matches("--.*\\w+.*--.*\\w+.*")) {
                                 String[] names = line.split("\\s*--\\s*");
                                 if (isGerman) {
                                     triggerTemplate.setTitle(names[2]);
@@ -125,16 +127,20 @@ public class TriggerTemplates {
                                     triggerTemplate.setTitle(names[1]);
                                 }
                                 continue;
-                            } else if (line.matches("local\\s+QUEST_NUMBER\\s*=\\s*0\\s*")) {
+                            }
+                            if (line.matches("local\\s+QUEST_NUMBER\\s*=\\s*0\\s*")) {
                                 triggerTemplate.foundQuestNumber();
                                 continue;
-                            } else if (line.matches("local\\s+PRECONDITION_QUESTSTATE\\s*=\\s*0\\s*")) {
+                            }
+                            if (line.matches("local\\s+PRECONDITION_QUESTSTATE\\s*=\\s*0\\s*")) {
                                 triggerTemplate.foundPrior();
                                 continue;
-                            } else if (line.matches("local\\s+POSTCONDITION_QUESTSTATE\\s*=\\s*0\\s*")) {
+                            }
+                            if (line.matches("local\\s+POSTCONDITION_QUESTSTATE\\s*=\\s*0\\s*")) {
                                 triggerTemplate.foundPosterior();
                                 continue;
-                            } else if (line.matches("local\\s+[_A-Z0-9]+\\s*=\\s*[_A-Z0-9]+\\s*--.*\\w+.*--.*\\w+.*")) {
+                            }
+                            if (line.matches("local\\s+[_A-Z0-9]+\\s*=\\s*[_A-Z0-9]+\\s*--.*\\w+.*--.*\\w+.*")) {
                                 String[] param = line.split("^local\\s+|\\s*=\\s*|\\s*--\\s*");
 
                                 String description;
@@ -151,9 +157,9 @@ public class TriggerTemplates {
                                 continue;
                             }
 
-                            header.append(line + "\n");
+                            header.append(line).append('\n');
                         } else {
-                            body.append(line + "\n");
+                            body.append(line).append('\n');
                         }
                     }
 
@@ -166,7 +172,7 @@ public class TriggerTemplates {
                     } else {
                         System.out.println("Syntax error in template " + fileName);
                     }
-                } catch (@Nonnull final Exception e1) {
+                } catch (@Nonnull IOException e1) {
                     System.out.println("Error loading template " + fileName);
                 }
             }

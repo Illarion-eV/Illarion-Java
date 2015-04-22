@@ -103,9 +103,10 @@ public final class JavaLauncher {
             ProcessBuilder processBuilder = new ProcessBuilder(executable.toString(), "-version");
             processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
+            //noinspection resource
             process.getOutputStream().close();
 
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), Charset.defaultCharset()))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     if (line.startsWith("java version")) {
@@ -119,7 +120,7 @@ public final class JavaLauncher {
                             log.info("Matched Java version to {}.{}.{}_b{}", mainVersion, majorVersion, minorVersion,
                                     buildNumber);
 
-                            return mainVersion >= 1 && majorVersion >= 7 && buildNumber >= 21;
+                            return (mainVersion >= 1) && (majorVersion >= 7) && (buildNumber >= 21);
                         }
                     }
                 }

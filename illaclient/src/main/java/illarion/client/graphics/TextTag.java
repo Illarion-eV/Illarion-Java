@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -80,7 +80,7 @@ public class TextTag {
      */
     private boolean dirty;
 
-    public TextTag(@Nonnull final String text, @Nonnull final Color color) {
+    public TextTag(@Nonnull String text, @Nonnull Color color) {
         this.text = text;
         this.color = color;
         font = FontLoader.getInstance().getFont(FontLoader.SMALL_FONT);
@@ -89,7 +89,7 @@ public class TextTag {
         height = font.getLineHeight();
     }
 
-    public void addToCamera(final int x, final int y) {
+    public void addToCamera(int x, int y) {
         if ((displayX == x) && (displayY == y)) {
             return;
         }
@@ -133,7 +133,7 @@ public class TextTag {
      * @param x the x offset of the text tag
      * @param y the y offset of the text tag
      */
-    public void setOffset(final int x, final int y) {
+    public void setOffset(int x, int y) {
         if ((dX == x) && (dY == y)) {
             return;
         }
@@ -143,7 +143,7 @@ public class TextTag {
         dirty = true;
     }
 
-    public void render(@Nonnull final Graphics g) {
+    public void render(@Nonnull Graphics g) {
         if (!Camera.getInstance().requiresUpdate(displayRect)) {
             return;
         }
@@ -159,7 +159,7 @@ public class TextTag {
         return displayRect;
     }
 
-    public void update(@Nonnull final GameContainer container, final int delta) {
+    public void update(@Nonnull GameContainer container, int delta) {
         if (dirty) {
             dirty = false;
             displayRect.set(displayX - dX - 1, displayY - dY - 1, width + 2, height + 2);

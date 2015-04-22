@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,7 @@
  */
 package illarion.easynpc.parsed.talk.consequences;
 
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import illarion.easynpc.parsed.talk.TalkConsequence;
 import illarion.easynpc.writer.LuaRequireTable;
 import illarion.easynpc.writer.LuaWriter;
@@ -45,14 +45,14 @@ public final class ConsequenceWarp implements TalkConsequence {
      * The location of the location that the player is sent to.
      */
     @Nonnull
-    private final Location loc;
+    private final ServerCoordinate loc;
 
     /**
      * The constructor that allows setting the target coordinates of the warp.
      *
      * @param loc the location
      */
-    public ConsequenceWarp(@Nonnull Location loc) {
+    public ConsequenceWarp(@Nonnull ServerCoordinate loc) {
         this.loc = loc;
     }
 
@@ -70,7 +70,7 @@ public final class ConsequenceWarp implements TalkConsequence {
      */
     @Override
     public void writeLua(@Nonnull Writer target, @Nonnull LuaRequireTable requires) throws IOException {
-        target.write(String.format(LUA_CODE, requires.getStorage(LUA_MODULE), loc.getScX(), loc.getScY(),
-                                   loc.getScZ()));
+        target.write(String.format(LUA_CODE, requires.getStorage(LUA_MODULE), loc.getX(), loc.getY(),
+                loc.getZ()));
     }
 }

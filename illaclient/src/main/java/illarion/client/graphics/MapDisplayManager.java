@@ -19,7 +19,7 @@ import illarion.client.IllaClient;
 import illarion.client.input.CurrentMouseLocationEvent;
 import illarion.client.world.World;
 import illarion.client.world.characters.CharacterAttribute;
-import illarion.common.types.Location;
+import illarion.common.types.DisplayCoordinate;
 import org.illarion.engine.Engine;
 import org.illarion.engine.EngineException;
 import org.illarion.engine.GameContainer;
@@ -28,10 +28,9 @@ import org.illarion.engine.graphic.effects.FogEffect;
 import org.illarion.engine.graphic.effects.GrayScaleEffect;
 import org.illarion.engine.input.Input;
 import org.jetbrains.annotations.Contract;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * The map display manager stores and manages all objects displayed on the map. It takes care for rendering the objects
@@ -52,16 +51,8 @@ public final class MapDisplayManager implements AnimatedMove {
     @Nonnull
     private final FadingCorridor corridor;
 
-    private int dL;
-    private int dX;
-    private int dY;
-
-    private int elevation;
-
-    @Nonnull
-    private final Location origin;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(MapDisplayManager.class);
+    @Nullable
+    private DisplayCoordinate origin;
 
     /**
      * The scene the game is displayed in.
@@ -73,14 +64,8 @@ public final class MapDisplayManager implements AnimatedMove {
         active = false;
 
         corridor = FadingCorridor.getInstance();
-        origin = new Location();
 
         gameScene = engine.getAssets().createNewScene();
-
-        dX = 0;
-        dY = 0;
-        elevation = 0;
-        dL = 0;
     }
 
     /**
@@ -94,44 +79,18 @@ public final class MapDisplayManager implements AnimatedMove {
         return gameScene;
     }
 
-    public void updateElevation() {
-        if (!moveAnimationInProgress) {
-            setLocation(World.getPlayer().getLocation());
-        }
-    }
-
-    private boolean moveAnimationInProgress;
-
-    @Override
-    public void animationStarted() {
-        moveAnimationInProgress = true;
-    }
-
-    /**
-     * Map movement is complete
-     *
-     * @param ok
-     */
-    @Override
-    public void animationFinished(boolean ok) {
-        moveAnimationInProgress = false;
-        // move graphical player position to new location
-        setLocation(World.getPlayer().getLocation());
-
-        // remove surplus tiles from the map
-        // Game.getMap().clipMap();
-    }
-
-    public int getElevation() {
-        return elevation;
-    }
-
     public int getWorldX(int x) {
-        return ((x - getMapCenterX()) + origin.getDcX()) - dX;
+        if (origin == null) {
+            throw new IllegalStateException("Origin of the map display is not set.");
+        }
+        return (x - getMapCenterX()) + origin.getX();
     }
 
     public int getWorldY(int y) {
-        return ((y - getMapCenterY()) + origin.getDcY()) - dY;
+        if (origin == null) {
+            throw new IllegalStateException("Origin of the map display is not set.");
+        }
+        return (y - getMapCenterY()) + origin.getY();
     }
 
     private static int getMapCenterX() {
@@ -154,7 +113,7 @@ public final class MapDisplayManager implements AnimatedMove {
     }
 
     public boolean isActive() {
-        return active;
+        return active && (origin != null);
     }
 
     /**
@@ -164,15 +123,16 @@ public final class MapDisplayManager implements AnimatedMove {
      * @param delta the time in milliseconds since the last update
      */
     public void update(@Nonnull GameContainer container, int delta) {
-        if (!active) {
+        if (!isActive()) {
             return;
         }
+        assert origin != null;
 
         int centerX = container.getWidth() >> 1;
         int centerY = container.getHeight() >> 1;
 
-        int offX = (centerX - origin.getDcX()) + dX;
-        int offY = (centerY - origin.getDcY()) + dY - dL;
+        int offX = centerX - origin.getX();
+        int offY = centerY - origin.getY();
 
         Avatar av = World.getPlayer().getCharacter().getAvatar();
         if (av != null) {
@@ -266,7 +226,7 @@ public final class MapDisplayManager implements AnimatedMove {
      * @param c the game container the map is rendered in
      */
     public void render(@Nonnull GameContainer c) {
-        if (!active) {
+        if (!isActive()) {
             return;
         }
 
@@ -275,6 +235,9 @@ public final class MapDisplayManager implements AnimatedMove {
     }
 
     public void setActive(boolean active) {
+        if (!active) {
+            origin = null;
+        }
         this.active = active;
     }
 
@@ -283,30 +246,26 @@ public final class MapDisplayManager implements AnimatedMove {
      *
      * @param location
      */
-    public void setLocation(@Nonnull Location location) {
-        origin.set(location);
-        elevation = World.getMap().getElevationAt(origin);
-        dX = 0;
-        dY = 0;
-        dL = -elevation;
+    public void setLocation(@Nonnull DisplayCoordinate location) {
+        origin = location;
+    }
 
-        World.getMap().getMiniMap().setPlayerLocation(location);
+    @Override
+    public void animationStarted() {
     }
 
     /**
-     * Scroll map
-     *
-     * @param x
-     * @param y
+     * Map movement is complete
      */
     @Override
-    public void setPosition(int x, int y, int z) {
-        if ((dX == x) && (dY == y) && (dL == z)) {
-            return;
-        }
+    public void animationFinished(boolean finished) {
+    }
 
-        dX = x;
-        dY = y;
-        dL = z;
+    /**
+     * Animation implementation. Does the same as {@link #setLocation}
+     */
+    @Override
+    public void setPosition(@Nonnull DisplayCoordinate position) {
+        setLocation(position);
     }
 }

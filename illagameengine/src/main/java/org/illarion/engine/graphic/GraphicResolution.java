@@ -52,22 +52,17 @@ public final class GraphicResolution {
 
     /**
      * Default Constructor for a graphic resolution definition.
-     * Sets width = (the local screen width) * 0.75
-     * height = (the local screen height) * 0.75
+     * Sets width = (the local screen width) * 0.9
+     * height = (the local screen height) * 0.9
      * refreshRate = local refreshRate;
      */
     public GraphicResolution(){
         GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice gd = environment.getDefaultScreenDevice();
         DisplayMode dm = gd.getDisplayMode();
-        // Sets the width and height equal to the screen.
-        // To keep the non-fullscreen version from taking up the whole screen, multiply by 0.75
-        height = (int) (dm.getHeight() * 0.75);
-        width = (int) (dm.getWidth() * 0.75);
-        // Automatically detect refresh rate
+        height = (int) (dm.getHeight() * 0.9);
+        width = (int) (dm.getWidth() * 0.9);
         refreshRate = dm.getRefreshRate();
-        // Take the Screen Resolution of the client computer
-        // Fetches the local Bit Depth in Bits-Per-Pixel
         bpp = dm.getBitDepth();
     }
     /**

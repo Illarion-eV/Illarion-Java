@@ -31,7 +31,7 @@ import java.awt.image.BufferedImage;
  */
 public class MusicRenderer extends AbstractMapRenderer {
     private static final int XOFFSET = 30;
-    private static final int YOFFSET = 20;
+    private static final int YOFFSET = 10;
 
     @Nonnull
     private final Image image;
@@ -41,7 +41,7 @@ public class MusicRenderer extends AbstractMapRenderer {
      */
     public MusicRenderer(final RendererManager manager) {
         super(manager);
-        image = resizeImage((BufferedImage) ImageLoader.getImage("sound"), 16, 16);
+        image = resizeImage((BufferedImage) ImageLoader.getImage("sound"), 24, 24);
     }
 
     @Override

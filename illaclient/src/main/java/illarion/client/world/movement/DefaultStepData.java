@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,10 +17,10 @@ package illarion.client.world.movement;
 
 import illarion.client.world.CharMovementMode;
 import illarion.common.types.Direction;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.beans.ConstructorProperties;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
@@ -30,27 +30,46 @@ class DefaultStepData implements StepData {
     private final CharMovementMode movementMode;
     @Nullable
     private final Direction direction;
+    @Nullable
+    private final Runnable postStepAction;
 
-    @ConstructorProperties({"movementMode", "direction"})
-    public DefaultStepData(@Nonnull CharMovementMode movementMode, @Nullable Direction direction) {
+    public DefaultStepData(@Nonnull CharMovementMode movementMode,
+                           @Nullable Direction direction) {
+        this(movementMode, direction, null);
+    }
+
+    public DefaultStepData(@Nonnull CharMovementMode movementMode,
+                           @Nullable Direction direction,
+                           @Nullable Runnable postStepAction) {
         this.movementMode = movementMode;
         this.direction = direction;
+        this.postStepAction = postStepAction;
     }
 
     @Override
     @Nonnull
+    @Contract(pure = true)
     public CharMovementMode getMovementMode() {
         return movementMode;
     }
 
     @Override
     @Nullable
+    @Contract(pure = true)
     public Direction getDirection() {
         return direction;
     }
 
+    @Nullable
+    @Override
+    @Contract(pure = true)
+    public Runnable getPostStepAction() {
+        return postStepAction;
+    }
+
     @Override
     @Nonnull
+    @Contract(pure = true)
     public String toString() {
         return "Mode: " + movementMode.name() + " Direction: " +
                 ((direction != null) ? direction.name() : "none");

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,7 @@ package illarion.client.net.client;
 
 import illarion.client.net.CommandList;
 import illarion.common.net.NetCommWriter;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
@@ -34,22 +34,22 @@ public final class PickUpItemCmd extends AbstractCommand {
      * The location on the map where the item is fetched from.
      */
     @Nonnull
-    private final Location pickUpLocation;
+    private final ServerCoordinate pickUpLocation;
 
     /**
      * Default constructor for the pickup command.
      *
      * @param location the location the item is taken from
      */
-    public PickUpItemCmd(@Nonnull final Location location) {
+    public PickUpItemCmd(@Nonnull ServerCoordinate location) {
         super(CommandList.CMD_PICK_UP);
 
-        pickUpLocation = new Location(location);
+        pickUpLocation = location;
     }
 
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
-        writer.writeLocation(pickUpLocation);
+    public void encode(@Nonnull NetCommWriter writer) {
+        pickUpLocation.encode(writer);
     }
 
     @Nonnull

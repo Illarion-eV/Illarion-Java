@@ -22,7 +22,7 @@ import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +52,7 @@ public final class ChangeItemMsg implements ServerReply {
      * The location on the map this update is performed on.
      */
     @Nullable
-    private Location location;
+    private ServerCoordinate location;
 
     /**
      * The ID of the item after the change.
@@ -73,7 +73,7 @@ public final class ChangeItemMsg implements ServerReply {
 
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
-        location = new Location(reader);
+        location = new ServerCoordinate(reader);
         oldItem = new ItemId(reader);
         newItem = new ItemId(reader);
         count = ItemCount.getInstance(reader);

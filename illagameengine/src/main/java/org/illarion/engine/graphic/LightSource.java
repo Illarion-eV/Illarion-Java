@@ -15,7 +15,7 @@
  */
 package org.illarion.engine.graphic;
 
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
@@ -55,6 +55,7 @@ public final class LightSource {
      * calculations are done.
      */
     private boolean dirty;
+    private boolean calculating;
 
     /**
      * The intensity array stores the calculated light intensity values. These result from the pre-calculated light
@@ -72,7 +73,7 @@ public final class LightSource {
      * The location of the light source on the map.
      */
     @Nonnull
-    private final Location location;
+    private ServerCoordinate location;
 
     /**
      * The reference map that is used to get the data how the light spreads on the map.
@@ -89,13 +90,6 @@ public final class LightSource {
      */
     private final int size;
 
-    /**
-     * A location instance for temporary purposes. This is for calculations or
-     * to get some data from other classes.
-     */
-    @Nonnull
-    private final Location tempLocation = new Location();
-
     @Nonnull
     private final Lock calculationLock;
 
@@ -107,7 +101,7 @@ public final class LightSource {
      * @param encoding the encoding of the light, this contains the color, the
      * brightness, the size and the inversion flag
      */
-    public LightSource(@Nonnull Location location, int encoding) {
+    public LightSource(@Nonnull ServerCoordinate location, int encoding) {
         encodedValue = encoding;
         int newSize = (encoding / 10000) % 10;
         rays = LightRays.getRays(newSize);
@@ -141,18 +135,12 @@ public final class LightSource {
         if (mapSource == null) {
             throw new IllegalStateException("The light source is not properly bound to a map yet.");
         }
-        int xOff = location.getScX() - size;
-        int yOff = location.getScY() - size;
 
-        tempLocation.setSC(xOff, yOff, location.getScZ());
-        int xLimit = intensity.length + xOff;
-        int yLimit = intensity.length + yOff;
-        while (tempLocation.getScX() < xLimit) {
-            tempLocation.setSC(tempLocation.getScX(), yOff, tempLocation.getScZ());
-            while (tempLocation.getScY() < yLimit) {
-                double locIntensity = intensity[tempLocation.getScX() - xOff][tempLocation.getScY() - yOff];
+        ServerCoordinate loc = location;
+        for (int dX = -size; dX <= size; dX++) {
+            for (int dY = -size; dY <= size; dY++) {
+                double locIntensity = intensity[dX + size][dY + size];
                 if (locIntensity == 0) {
-                    tempLocation.addSC(0, 1, 0);
                     continue;
                 }
 
@@ -165,11 +153,8 @@ public final class LightSource {
                 }
 
                 // set the light on the map
-                mapSource.setLight(tempLocation, tempColor);
-
-                tempLocation.addSC(0, 1, 0);
+                mapSource.setLight(new ServerCoordinate(loc, dX, dY, 0), tempColor);
             }
-            tempLocation.addSC(1, 0, 0);
         }
     }
 
@@ -198,8 +183,15 @@ public final class LightSource {
      */
     @Contract(pure = true)
     @Nonnull
-    public Location getLocation() {
+    public ServerCoordinate getLocation() {
         return location;
+    }
+
+    void setLocation(@Nonnull ServerCoordinate newLocation) {
+        if (!location.equals(newLocation)) {
+            location = newLocation;
+            refresh();
+        }
     }
 
     /**
@@ -229,13 +221,12 @@ public final class LightSource {
      * @param changeLoc the location the change occurred on.
      */
     @SuppressWarnings("nls")
-    public void notifyChange(@Nonnull Location changeLoc) {
-        if (location.getScZ() != changeLoc.getScZ()) {
+    public void notifyChange(@Nonnull ServerCoordinate changeLoc) {
+        if (location.getZ() != changeLoc.getZ()) {
             return;
         }
 
-        if ((Math.abs(changeLoc.getScX() - location.getScX()) <= size) &&
-                (Math.abs(changeLoc.getScY() - location.getScY()) <= size)) {
+        if (location.getStepDistance(changeLoc) < size) {
             refresh();
         }
     }
@@ -261,30 +252,30 @@ public final class LightSource {
     /**
      * Set light intensity in shadow map and return opacity value.
      *
-     * @param x the X offset of the location that's intensity shall be set to the
+     * @param dX the X offset of the location that's intensity shall be set to the
      * location of the light source
-     * @param y the Y offset of the location that's intensity shall be set to the
+     * @param dY the Y offset of the location that's intensity shall be set to the
      * location of the light source
      * @param newInt the intensity that shall for this location now
      * @return the obscurity of the location that's light intensity was just set
      */
-    public int setIntensity(int x, int y, double newInt) {
+    public int setIntensity(int dX, int dY, double newInt) {
         if (mapSource == null) {
             throw new IllegalStateException("The light source is not properly bound to a map yet.");
         }
-        if (Math.abs(x) > size) {
-            throw new IllegalArgumentException("The X offset for the light is out of bounds: " + x);
+        if (Math.abs(dX) > size) {
+            throw new IllegalArgumentException("The X offset for the light is out of bounds: " + dX);
         }
-        if (Math.abs(y) > size) {
-            throw new IllegalArgumentException("The Y offset for the light is out of bounds: " + y);
+        if (Math.abs(dY) > size) {
+            throw new IllegalArgumentException("The Y offset for the light is out of bounds: " + dY);
         }
 
-        tempLocation.setSC(location.getScX() + x, location.getScY() + y, location.getScZ());
+        ServerCoordinate targetCoordinates = new ServerCoordinate(location, dX, dY, 0);
 
-        if (((x == 0) && (y == 0)) || mapSource.acceptsLight(tempLocation, x, y)) {
-            intensity[x + size][y + size] = newInt;
+        if (((dX == 0) && (dY == 0)) || mapSource.acceptsLight(targetCoordinates, dX, dY)) {
+            intensity[dX + size][dY + size] = newInt;
         }
-        return mapSource.blocksView(tempLocation);
+        return mapSource.blocksView(targetCoordinates);
     }
 
     /**
@@ -344,5 +335,13 @@ public final class LightSource {
     @Contract(pure = true)
     Lock getCalculationLock() {
         return calculationLock;
+    }
+
+    public boolean isCalculating() {
+        return calculating;
+    }
+
+    public void setCalculating(boolean calculating) {
+        this.calculating = calculating;
     }
 }

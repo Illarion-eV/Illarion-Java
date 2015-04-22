@@ -31,8 +31,8 @@ import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.client.world.interactive.InteractiveChar;
 import illarion.client.world.movement.TargetMovementHandler;
-import illarion.common.graphics.Layers;
 import illarion.common.gui.AbstractMultiActionHelper;
+import illarion.common.types.DisplayCoordinate;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Graphics;
@@ -596,16 +596,12 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         clothRender.setScale(newScale);
     }
 
-    public void setScreenPos(int posX, int posY, int layerZ) {
-        setScreenPos(posX, posY, layerZ, Layers.CHARS);
-    }
-
     @Override
-    public void setScreenPos(int posX, int posY, int layerZ, int groupLayer) {
-        super.setScreenPos(posX, posY, layerZ, groupLayer);
-        clothRender.setScreenLocation(posX, posY, layerZ, groupLayer);
-        attackMark.setScreenPos(posX, posY, layerZ, groupLayer);
-        attackAvailableMark.setScreenPos(posX, posY, layerZ, groupLayer);
+    public void setScreenPos(@Nonnull DisplayCoordinate coordinate) {
+        super.setScreenPos(coordinate);
+        clothRender.setScreenPos(coordinate);
+        attackMark.setScreenPos(coordinate);
+        attackAvailableMark.setScreenPos(coordinate);
     }
 
     @Override
@@ -646,7 +642,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         }
 
         if (renderName) {
-            avatarTextTag.setDisplayLocation(getDisplayX(), getDisplayY());
+            avatarTextTag.setDisplayLocation(getDisplayCoordinate());
             avatarTextTag.update(container, delta);
         }
 

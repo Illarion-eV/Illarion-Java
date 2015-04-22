@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -35,12 +35,13 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
     /**
      * The render manager.
      */
+    @Nonnull
     private final RendererManager manager;
 
     /**
      * Creates a new map renderer
      */
-    public AbstractMapRenderer(final RendererManager manager) {
+    public AbstractMapRenderer(@Nonnull RendererManager manager) {
         this.manager = manager;
     }
 
@@ -56,13 +57,13 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
         return TILE_POLYGON;
     }
 
-    protected boolean isInViewport(@Nonnull final Shape viewport, final int xDisplay, final int yDisplay) {
-        final float viewX = calculateZoom(xDisplay, getTranslateX(), getTileWidth());
-        final float viewY = calculateZoom(yDisplay, getTranslateY(), getTileHeight());
+    protected boolean isInViewport(@Nonnull Shape viewport, int xDisplay, int yDisplay) {
+        float viewX = calculateZoom(xDisplay, getTranslateX(), getTileWidth());
+        float viewY = calculateZoom(yDisplay, getTranslateY(), getTileHeight());
         return viewport.contains(viewX, viewY);
     }
 
-    protected float calculateZoom(final int display, final int translate, final float size) {
+    protected float calculateZoom(int display, int translate, float size) {
         return (display * getZoom()) + translate + (size * getZoom());
     }
 
@@ -86,14 +87,14 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
      * @return The height of a tile.
      */
     protected float getTileHeight() {
-        return manager.getTileHeight();
+        return RendererManager.getTileHeight();
     }
 
     /**
      * @return The width of a tile.
      */
     protected float getTileWidth() {
-        return manager.getTileWidth();
+        return RendererManager.getTileWidth();
     }
 
     protected float getMinZoom() {
@@ -130,9 +131,9 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
      * @return
      */
     @Override
-    public final int compareTo(@Nonnull final AbstractMapRenderer o) {
-        final int i = getRenderPriority();
-        final int j = o.getRenderPriority();
+    public final int compareTo(@Nonnull AbstractMapRenderer o) {
+        int i = getRenderPriority();
+        int j = o.getRenderPriority();
         if (i < j) {
             return -1;
         }
@@ -150,9 +151,9 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
     }
 
     @Nonnull
-    protected static Image resizeImage(final BufferedImage originalImage, final Integer width, final Integer height) {
-        final BufferedImage resizeImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        final Graphics2D g = resizeImage.createGraphics();
+    protected static Image resizeImage(BufferedImage originalImage, Integer width, Integer height) {
+        BufferedImage resizeImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = resizeImage.createGraphics();
         g.drawImage(originalImage, 0, 0, width, height, null);
         g.dispose();
 

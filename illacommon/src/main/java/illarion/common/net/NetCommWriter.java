@@ -15,8 +15,6 @@
  */
 package illarion.common.net;
 
-import illarion.common.types.Location;
-
 import javax.annotation.Nonnull;
 import java.nio.charset.CharacterCodingException;
 
@@ -42,11 +40,11 @@ public interface NetCommWriter {
     void writeInt(int value);
 
     /**
-     * Write a location to the network.
+     * Write 2 byte signed value to the network.
      *
-     * @param loc the location that shall be send to the server
+     * @param value the value to write to the server
      */
-    void writeLocation(@Nonnull Location loc);
+    void writeShort(short value);
 
     /**
      * Write a string to the network.

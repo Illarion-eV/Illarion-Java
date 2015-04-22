@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,7 @@
  */
 package org.illarion.engine.graphic.effects;
 
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 
 import javax.annotation.Nonnull;
 
@@ -30,7 +30,7 @@ public interface MiniMapEffect extends TextureEffect {
      *
      * @param location the center location, this should be the location where the player is located.
      */
-    void setCenter(@Nonnull Location location);
+    void setCenter(@Nonnull ServerCoordinate location);
 
     /**
      * Set the radius of the rendered texture.

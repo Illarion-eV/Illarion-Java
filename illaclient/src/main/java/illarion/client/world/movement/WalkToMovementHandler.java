@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,7 +19,7 @@ import illarion.client.util.pathfinding.*;
 import illarion.client.world.CharMovementMode;
 import illarion.client.world.World;
 import illarion.common.types.Direction;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -32,28 +32,29 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Objects;
 
-import static illarion.client.util.pathfinding.PathMovementMethod.Run;
-import static illarion.client.util.pathfinding.PathMovementMethod.Walk;
+import static illarion.client.world.CharMovementMode.Run;
+import static illarion.client.world.CharMovementMode.Walk;
 
 /**
  * This movement handler is used to approach a specified location.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class WalkToMovementHandler extends AbstractMovementHandler implements TargetMovementHandler {
+class WalkToMovementHandler extends AbstractMovementHandler implements TargetMovementHandler, MoveCostProvider {
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(WalkToMovementHandler.class);
+    @Nonnull
     private static final Marker marker = MarkerFactory.getMarker("Movement");
+
     /**
      * The path finder used to calculate the paths towards the target location.
      */
     @Nonnull
     private final PathFindingAlgorithm pathFindingAlgorithm;
 
-    @Nonnull
-    private final Location targetLocation;
+    @Nullable
+    private ServerCoordinate targetLocation;
     private int targetDistance;
-
-    private boolean targetSet;
 
     @Nullable
     private Runnable targetAction;
@@ -66,21 +67,22 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
 
     WalkToMovementHandler(@Nonnull Movement movement) {
         super(movement);
-        pathFindingAlgorithm = new AStar();
-        targetLocation = new Location();
         allowedDirections = EnumSet.allOf(Direction.class);
+        pathFindingAlgorithm = new AStar();
     }
 
     @Nullable
     @Override
-    public StepData getNextStep(@Nonnull Location currentLocation) {
-        if (!targetSet) {
+    public StepData getNextStep(@Nonnull ServerCoordinate currentLocation) {
+        ServerCoordinate target = targetLocation;
+        if (target == null) {
             return null;
         }
-        int remainingDistance = currentLocation.getDistance(targetLocation);
+
+        int remainingDistance = currentLocation.getStepDistance(target);
         log.debug(marker, "Remaining distance to target: {} Expected distance: {}", remainingDistance, targetDistance);
         if (remainingDistance <= targetDistance) {
-            return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation));
+            return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation), fetchTargetAction());
         }
         Path activePath;
         if (isCurrentPathValid()) {
@@ -90,60 +92,61 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
             currentPath = activePath;
         }
         if ((activePath == null) || activePath.isEmpty()) {
-            return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation));
+            return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation), fetchTargetAction());
         }
 
         PathNode node = activePath.nextStep();
         if (node == null) {
-            return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation));
+            return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation), fetchTargetAction());
         }
         if (!isPathNodeValid(currentLocation, node)) {
             activePath = calculateNewPath(currentLocation);
             currentPath = activePath;
             if (activePath == null) {
-                return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation));
+                return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation), fetchTargetAction());
             }
             node = activePath.nextStep();
             if (node == null) {
-                return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation));
+                return new DefaultStepData(CharMovementMode.None, finishMove(currentLocation), fetchTargetAction());
             }
             if (!isPathNodeValid(currentLocation, node)) {
-                targetSet = false;
+                Direction lastDirection = currentLocation.getDirection(target);
+                targetLocation = null;
                 targetAction = null;
-                return new DefaultStepData(CharMovementMode.None, currentLocation.getDirection(targetLocation));
+                return new DefaultStepData(CharMovementMode.None, lastDirection);
             }
         }
         log.debug(marker, "Performing step to: {}", node.getLocation());
-        CharMovementMode modeMode = convertMovementMode(node.getMovementMethod());
-        Direction moveDir = getDirection(currentLocation, node.getLocation());
-        if (activePath.isEmpty() && (targetDistance == 0) && !targetLocation.equals(node.getLocation())) {
+        Direction moveDir = currentLocation.getDirection(node.getLocation());
+        if (activePath.isEmpty() && (targetDistance == 0) && !target.equals(node.getLocation())) {
             targetDistance = 1;
         }
-        return new DefaultStepData(modeMode, moveDir);
+        return new DefaultStepData(node.getMovementMethod(), moveDir);
     }
 
     @Nullable
-    private Direction finishMove(@Nonnull Location currentLocation) {
+    private Direction finishMove(@Nonnull ServerCoordinate currentLocation) {
+        if (targetLocation == null) {
+            throw new IllegalStateException("Finishing a move is not possible while there is no target location set.");
+        }
         Direction direction = null;
-        int remainingDistance = currentLocation.getDistance(targetLocation);
+        int remainingDistance = currentLocation.getStepDistance(targetLocation);
         if (remainingDistance > 0) {
             direction = currentLocation.getDirection(targetLocation);
         }
-        executeTargetAction();
-        targetSet = false;
+        targetLocation = null;
         return direction;
     }
 
-    private void executeTargetAction() {
+    @Nullable
+    private Runnable fetchTargetAction() {
         Runnable action = targetAction;
         targetAction = null;
-        if (action != null) {
-            action.run();
-        }
+        return action;
     }
 
-    private static boolean isPathNodeValid(@Nonnull Location currentLocation, @Nonnull PathNode node) {
-        int distanceToPlayer = currentLocation.getDistance(node.getLocation());
+    private static boolean isPathNodeValid(@Nonnull ServerCoordinate currentLocation, @Nonnull PathNode node) {
+        int distanceToPlayer = currentLocation.getStepDistance(node.getLocation());
         switch (node.getMovementMethod()) {
             case Walk:
                 if (distanceToPlayer == 1) {
@@ -163,22 +166,6 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
         return false;
     }
 
-    @Nonnull
-    private static CharMovementMode convertMovementMode(@Nonnull PathMovementMethod method) {
-        switch (method) {
-            case Walk:
-                return CharMovementMode.Walk;
-            case Run:
-                return CharMovementMode.Run;
-        }
-        return CharMovementMode.Walk;
-    }
-
-    @Nullable
-    private static Direction getDirection(@Nonnull Location currentLocation, @Nonnull Location target) {
-        return currentLocation.getDirection(target);
-    }
-
     protected int getTargetDistance() {
         return targetDistance;
     }
@@ -193,7 +180,7 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
             log.debug(marker, "Path is not valid: Current path is NULL");
             return false;
         }
-        Location destination = path.getDestination();
+        ServerCoordinate destination = path.getDestination();
         if (destination == null) {
             log.debug(marker, "Path is not valid: Path destination is NULL");
             return false;
@@ -207,50 +194,53 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
     }
 
     @Nullable
-    protected Path calculateNewPath(@Nonnull Location currentLocation) {
-        log.info(marker, "Calculating a new path to: {}", targetLocation);
+    protected Path calculateNewPath(@Nonnull ServerCoordinate currentLocation) {
+        ServerCoordinate target = getTargetLocation();
+
+        log.info(marker, "Calculating a new path to: {}", target);
         PathFindingAlgorithm algorithm = pathFindingAlgorithm;
 
         switch (getMovementMode()) {
             case Walk:
-                return algorithm.findPath(World.getMap(), currentLocation, targetLocation, targetDistance,
+                return algorithm.findPath(this, currentLocation, target, targetDistance,
                                           getAllowedDirections(), Walk);
             case Run:
-                return algorithm.findPath(World.getMap(), currentLocation, targetLocation, targetDistance,
+                return algorithm.findPath(this, currentLocation, target, targetDistance,
                                           getAllowedDirections(), Walk, Run);
             default:
                 return null;
         }
     }
 
+    @Nonnull
     protected CharMovementMode getMovementMode() {
         if (!World.getPlayer().getCarryLoad().isRunningPossible()) {
-            return CharMovementMode.Walk;
+            return Walk;
         }
         CharMovementMode mode = getMovement().getDefaultMovementMode();
         if (getMovement().isMovementModePossible(mode)) {
             return mode;
         }
-        return CharMovementMode.Walk;
+        return Walk;
     }
 
     @Override
     public void disengage(boolean transferAllowed) {
         super.disengage(transferAllowed);
-        targetSet = false;
+        targetLocation = null;
         setTargetReachedAction(null);
     }
 
+    @Nonnull
     protected Collection<Direction> getAllowedDirections() {
         return Collections.unmodifiableCollection(allowedDirections);
     }
 
     @Override
-    public void walkTo(@Nonnull Location target, int distance) {
+    public void walkTo(@Nonnull ServerCoordinate target, int distance) {
         setTargetReachedAction(null);
-        targetLocation.set(target);
+        targetLocation = target;
         targetDistance = distance;
-        targetSet = true;
     }
 
     @Override
@@ -271,12 +261,36 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
         return "Walk to target movement handler";
     }
 
+    protected boolean isTargetSet() {
+        return targetLocation != null;
+    }
+
     @Nonnull
-    protected Location getTargetLocation() {
+    protected ServerCoordinate getTargetLocation() {
+        if (targetLocation == null) {
+            throw new IllegalStateException("The target location is not set.");
+        }
         return targetLocation;
     }
 
-    protected boolean isTargetSet() {
-        return targetSet;
+    @Override
+    public int getMovementCost(@Nonnull ServerCoordinate origin, @Nonnull CharMovementMode mode, @Nonnull Direction direction) {
+        int cost = getMovement().getMovementDuration(origin, mode, direction);
+
+        if ((cost != MoveCostProvider.BLOCKED) &&
+                origin.equals(getMovement().getServerLocation()) &&
+                (mode == getMovementMode()) &&
+                (direction == getPreferredDirection())) {
+            cost /= 2;
+        }
+
+        return cost;
+    }
+
+    @Nullable
+    protected Direction getPreferredDirection() {
+        ServerCoordinate currentPos = getMovement().getServerLocation();
+        ServerCoordinate targetPos = getTargetLocation();
+        return currentPos.getDirection(targetPos);
     }
 }

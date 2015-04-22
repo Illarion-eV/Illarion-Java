@@ -16,42 +16,31 @@
 package illarion.client.util.pathfinding;
 
 import illarion.client.world.CharMovementMode;
+import illarion.common.types.Direction;
 import illarion.common.types.ServerCoordinate;
 
 import javax.annotation.Nonnull;
 
 /**
- * This is the shared implementation of a path node.
+ * This interface is used in the path finding algorithms to supply them with the movement costs for a step from one
+ * tile to the next.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-abstract class AbstractPathNode implements PathNode {
-    @Nonnull
-    private final ServerCoordinate location;
-
-    @Nonnull
-    private final CharMovementMode movementMethod;
-
-    protected AbstractPathNode(@Nonnull ServerCoordinate location, @Nonnull CharMovementMode movementMethod) {
-        this.location = location;
-        this.movementMethod = movementMethod;
-    }
+public interface MoveCostProvider {
+    /**
+     * Constant return value for {@link #getMovementCost(ServerCoordinate, CharMovementMode, Direction)}  in case the
+     * move is blocked.
+     */
+    int BLOCKED = -1;
 
     /**
-     * The location of this node.
+     * Get the cost for a move from the origin.
+     *
+     * @param origin    the start location of the move
+     * @param mode      the movement method
+     * @param direction the direction of the move
+     * @return the cost of the move or {@link #BLOCKED} in case the move is not possible
      */
-    @Override
-    @Nonnull
-    public ServerCoordinate getLocation() {
-        return location;
-    }
-
-    /**
-     * The method of movement.
-     */
-    @Override
-    @Nonnull
-    public CharMovementMode getMovementMethod() {
-        return movementMethod;
-    }
+    int getMovementCost(@Nonnull ServerCoordinate origin, @Nonnull CharMovementMode mode, @Nonnull Direction direction);
 }

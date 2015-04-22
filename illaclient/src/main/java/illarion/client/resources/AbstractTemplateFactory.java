@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,6 +16,7 @@
 package illarion.client.resources;
 
 import illarion.client.resources.data.ResourceTemplate;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +33,7 @@ import java.util.Map;
  */
 @NotThreadSafe
 public abstract class AbstractTemplateFactory<T extends ResourceTemplate> implements ResourceFactory<T> {
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(AbstractTemplateFactory.class);
 
     /**
@@ -76,11 +78,13 @@ public abstract class AbstractTemplateFactory<T extends ResourceTemplate> implem
     public void init() {
     }
 
+    @Contract(pure = true)
     public boolean hasTemplate(int templateId) {
         return storage.containsKey(templateId);
     }
 
     @Nonnull
+    @Contract(pure = true)
     public T getTemplate(int templateId) {
         T object = storage.get(templateId);
         if ((object == null) && (defaultId > -1)) {

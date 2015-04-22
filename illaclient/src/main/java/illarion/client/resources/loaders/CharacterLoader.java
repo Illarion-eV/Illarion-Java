@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,7 +43,8 @@ public final class CharacterLoader extends AbstractResourceLoader<AvatarTemplate
     /**
      * The logger that is used to report error messages.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(CharacterLoader.class);
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(CharacterLoader.class);
 
     /**
      * The assets of the game engine that are required to load the data needed for the characters.
@@ -111,7 +112,7 @@ public final class CharacterLoader extends AbstractResourceLoader<AvatarTemplate
         Texture[] textures = getTextures(assets.getTextureManager(), CHAR_PATH, name, frames);
         for (Texture texture : textures) {
             if (texture == null) {
-                LOGGER.error("Failed adding avatar to internal factory. ID: {} - Filename: {}", avatarId, name);
+                log.error("Failed adding avatar to internal factory. ID: {} - Filename: {}", avatarId, name);
                 return true;
             }
         }
@@ -124,7 +125,7 @@ public final class CharacterLoader extends AbstractResourceLoader<AvatarTemplate
         try {
             getTargetFactory().storeResource(template);
         } catch (@Nonnull IllegalStateException ex) {
-            LOGGER.error("Failed adding avatar to internal factory. ID: {} - Filename: {}", avatarId, name);
+            log.error("Failed adding avatar to internal factory. ID: {} - Filename: {}", avatarId, name);
         }
 
         return true;

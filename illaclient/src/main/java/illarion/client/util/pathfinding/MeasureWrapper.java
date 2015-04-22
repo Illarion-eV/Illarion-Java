@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,9 +15,9 @@
  */
 package illarion.client.util.pathfinding;
 
-import illarion.client.world.GameMap;
+import illarion.client.world.CharMovementMode;
 import illarion.common.types.Direction;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,15 +56,15 @@ public class MeasureWrapper implements PathFindingAlgorithm {
     @Nullable
     @Override
     public Path findPath(
-            @Nonnull GameMap map,
-            @Nonnull Location start,
-            @Nonnull Location end,
+            @Nonnull MoveCostProvider costProvider,
+            @Nonnull ServerCoordinate start,
+            @Nonnull ServerCoordinate end,
             int approachDistance, @Nonnull Collection<Direction> allowedDirections,
-            @Nonnull PathMovementMethod movementMethod,
-            @Nonnull PathMovementMethod... movementMethods) {
+            @Nonnull CharMovementMode movementMethod,
+            @Nonnull CharMovementMode... movementMethods) {
         long startTime = System.currentTimeMillis();
         Path path = wrappedAlgorithm
-                .findPath(map, start, end, approachDistance, allowedDirections, movementMethod, movementMethods);
+                .findPath(costProvider, start, end, approachDistance, allowedDirections, movementMethod, movementMethods);
         if (LOGGER.isInfoEnabled()) {
             long timeElapsed = System.currentTimeMillis() - startTime;
             LOGGER.info("Path finding from {} to {} took {} milliseconds to create {} using the directions {}", start,

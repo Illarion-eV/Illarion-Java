@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -42,7 +42,7 @@ public abstract class AbstractTradeItemCmd extends AbstractCommand {
      * @param dialogId the ID of the dialog to buy the item from
      * @param subCommandId the ID of the sub command
      */
-    public AbstractTradeItemCmd(int dialogId, int subCommandId) {
+    protected AbstractTradeItemCmd(int dialogId, int subCommandId) {
         super(CommandList.CMD_TRADE_ITEM);
 
         this.dialogId = dialogId;

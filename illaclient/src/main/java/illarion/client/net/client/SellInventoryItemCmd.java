@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -51,7 +51,7 @@ public final class SellInventoryItemCmd extends AbstractTradeItemCmd {
      * @param inventorySlot the inventory slot to tell the item from
      * @param count the amount of items to be sold
      */
-    public SellInventoryItemCmd(final int dialogId, final int inventorySlot, @Nonnull final ItemCount count) {
+    public SellInventoryItemCmd(int dialogId, int inventorySlot, @Nonnull ItemCount count) {
         super(dialogId, SUB_CMD_ID);
 
         slot = inventorySlot;
@@ -59,7 +59,7 @@ public final class SellInventoryItemCmd extends AbstractTradeItemCmd {
     }
 
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) {
         super.encode(writer);
         writer.writeUByte((short) 0);
         writer.writeUShort(slot);

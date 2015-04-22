@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,7 +23,7 @@ import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.types.Direction;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import illarion.common.util.FastMath;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
@@ -35,12 +35,14 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseTargetMovementHandler {
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(WalkToMouseMovementHandler.class);
     /**
      * Limit the path finding to the direction the mouse is pointing at.
@@ -74,15 +76,16 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
     @Override
     public void disengage(boolean transferAllowed) {
         boolean targetWasSet = isTargetSet() && isActive();
+        ServerCoordinate oldTarget = targetWasSet ? getTargetLocation() : null;
         super.disengage(transferAllowed);
-        if (transferAllowed && targetWasSet) {
+        if (oldTarget != null) {
             switch (getMovementMode()) {
                 case Run:
                 case Walk:
                     TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
                     log.debug("Transferring movement control from {} to {}", this, handler);
-                    MapTile targetTile = World.getMap().getMapAt(getTargetLocation());
-                    handler.walkTo(getTargetLocation(), ((targetTile != null) && targetTile.isBlocked()) ? 1 : 0);
+                    MapTile targetTile = World.getMap().getMapAt(oldTarget);
+                    handler.walkTo(oldTarget, ((targetTile != null) && targetTile.isBlocked()) ? 1 : 0);
                     handler.assumeControl();
                     break;
                 default:
@@ -119,28 +122,28 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
         return CharMovementMode.Walk;
     }
 
+    @Nonnull
     @Override
     protected Collection<Direction> getAllowedDirections() {
         if (limitPathFindingToMouseDirection) {
-            Location target = getTargetLocation();
-            Direction dir = getMovement().getServerLocation().getDirection(target);
-            Collection<Direction> result = EnumSet.noneOf(Direction.class);
-            if (dir == null) {
-                return result;
+            ServerCoordinate target = getTargetLocation();
+            ServerCoordinate current = getMovement().getServerLocation();
+
+            int dirX = FastMath.sign(target.getX() - current.getX());
+            int dirY = FastMath.sign(target.getY() - current.getY());
+
+            if ((dirX == 0) && (dirY == 0)) {
+                return Collections.emptyList();
             }
+
+            Collection<Direction> result = EnumSet.noneOf(Direction.class);
+            //noinspection ConstantConditions
             for (Direction testDir : Direction.values()) {
-                if (testDir == dir) {
+                int testX = testDir.getDirectionVectorX();
+                int testY = testDir.getDirectionVectorY();
+
+                if (((testX == dirX) && (testY == dirY)) || ((Math.abs(testX - dirX) + Math.abs(testY - dirY)) == 1)) {
                     result.add(testDir);
-                } else {
-                    int testX = testDir.getDirectionVectorX();
-                    int testY = testDir.getDirectionVectorY();
-
-                    int dirX = dir.getDirectionVectorX();
-                    int dirY = dir.getDirectionVectorY();
-
-                    if ((Math.abs(testX - dirX) + Math.abs(testY - dirY)) == 1) {
-                        result.add(testDir);
-                    }
                 }
             }
             return result;
@@ -151,8 +154,8 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
 
     @Override
     @Nullable
-    protected Path calculateNewPath(@Nonnull Location currentLocation) {
-        int maxDistance = currentLocation.getDistance(getTargetLocation());
+    protected Path calculateNewPath(@Nonnull ServerCoordinate currentLocation) {
+        int maxDistance = currentLocation.getStepDistance(getTargetLocation());
 
         while (getTargetDistance() < maxDistance) {
             Path result = super.calculateNewPath(currentLocation);
@@ -162,6 +165,41 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
             increaseTargetDistance();
         }
         return null;
+    }
+
+    @Override
+    @Nonnull
+    protected Direction getPreferredDirection() {
+        MapDimensions mapDimensions = MapDimensions.getInstance();
+        int dX = lastMouseX - (mapDimensions.getOnScreenWidth() / 2);
+        int dY = -(lastMouseY - (mapDimensions.getOnScreenHeight() / 2));
+
+        if ((dX == 0) && (dY == 0)) {
+            return null;
+        }
+
+        double theta = Math.atan2(dY, dX) + Math.PI;
+        double part = Math.PI / 8;
+
+        if (theta < part) {
+            return Direction.NorthWest;
+        } else if (theta < (3 * part)) {
+            return Direction.West;
+        } else if (theta < (5 * part)) {
+            return Direction.SouthWest;
+        } else if (theta < (7 * part)) {
+            return Direction.South;
+        } else if (theta < (9 * part)) {
+            return Direction.SouthEast;
+        } else if (theta < (11 * part)) {
+            return Direction.East;
+        } else if (theta < (13 * part)) {
+            return Direction.NorthEast;
+        } else if (theta < (15 * part)) {
+            return Direction.North;
+        } else {
+            return Direction.NorthWest;
+        }
     }
 
     @EventTopicSubscriber(topic = "limitPathFindingToMouseDirection")

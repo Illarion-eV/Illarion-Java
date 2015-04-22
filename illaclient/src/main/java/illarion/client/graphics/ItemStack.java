@@ -17,8 +17,7 @@ package illarion.client.graphics;
 
 import illarion.client.input.AbstractMouseLocationEvent;
 import illarion.client.world.World;
-import illarion.common.graphics.Layers;
-import illarion.common.types.Location;
+import illarion.common.types.DisplayCoordinate;
 import illarion.common.types.Rectangle;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Graphics;
@@ -48,12 +47,12 @@ public class ItemStack implements DisplayItem, List<Item> {
     private final Rectangle interactiveRectangle;
 
     @Nonnull
-    private final Location stackLocation;
+    private final DisplayCoordinate stackLocation;
 
     @Nonnull
     private final ReadWriteLock lock;
 
-    public ItemStack(@Nonnull Location location) {
+    public ItemStack(@Nonnull DisplayCoordinate location) {
         shown = false;
         items = new ArrayList<>();
         rectangleDirty = false;
@@ -123,6 +122,9 @@ public class ItemStack implements DisplayItem, List<Item> {
     public int getElevation() {
         lock.readLock().lock();
         try {
+            if (items.isEmpty()) {
+                return 0;
+            }
             return getElevationForIndex(items.size() - 1);
         } finally {
             lock.readLock().unlock();
@@ -148,14 +150,14 @@ public class ItemStack implements DisplayItem, List<Item> {
     }
 
     private int getElevationForIndex(int index) {
-        if (index == 0) {
-            return 0;
+        if ((index < 0) || (index >= size())) {
+            throw new IndexOutOfBoundsException("Index must be >= 0 and < the amount of items on the stack.");
         }
 
         lock.readLock().lock();
         try {
             int elevation = 0;
-            for (int i = 0; i < index; i++) {
+            for (int i = 0; i <= index; i++) {
                 Item itemAtIndex = get(i);
                 elevation += itemAtIndex.getTemplate().getItemInfo().getLevel();
             }
@@ -166,7 +168,7 @@ public class ItemStack implements DisplayItem, List<Item> {
     }
 
     private void postProcessItemInsert(int index, @Nonnull Item newItem) {
-        int elevation = getElevationForIndex(index);
+        int elevation = (index > 0) ? getElevationForIndex(index - 1) : 0;
         setScreenPos(newItem, elevation);
         if (newItem.getTemplate().getItemInfo().getLevel() != 0) {
             elevation += newItem.getTemplate().getItemInfo().getLevel();
@@ -204,13 +206,16 @@ public class ItemStack implements DisplayItem, List<Item> {
     }
 
     private void setScreenPos(@Nonnull Item item, int elevation) {
-        item.setScreenPos(stackLocation.getDcX(), stackLocation.getDcY() - elevation, stackLocation.getDcZ(),
-                Layers.ITEM);
+        if (elevation == 0) {
+            item.setScreenPos(stackLocation);
+        } else {
+            item.setScreenPos(new DisplayCoordinate(stackLocation, 0, -elevation, 0));
+        }
     }
 
     @Override
     public int getOrder() {
-        return stackLocation.getDcZ() - Layers.ITEM;
+        return stackLocation.getLayer();
     }
 
     @Override

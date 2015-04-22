@@ -58,6 +58,8 @@ import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Locale;
+import java.util.Locale.Category;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -89,7 +91,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
                 DEFAULT_SERVER = Servers.Devserver;
                 break;
             default:
-                DEFAULT_SERVER = Servers.Realserver;
+                DEFAULT_SERVER = Servers.Illarionserver;
                 break;
         }
     }
@@ -149,6 +151,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
 
     }
 
+    /**
+     * Prepares and sets up the entire client
+     */
     private void init() {
         try {
             EventServiceLocator.setEventService(EventServiceLocator.SERVICE_NAME_EVENT_BUS, null);
@@ -174,7 +179,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         CrashReporter.getInstance().setConfig(getCfg());
 
         // Report errors of the released version only
-        if (DEFAULT_SERVER != Servers.Realserver) {
+        if (DEFAULT_SERVER != Servers.Illarionserver) {
             CrashReporter.getInstance().setMode(CrashReporter.MODE_NEVER);
         }
         CrashReporter.getInstance().setDialogFactory(new ReportDialogFactorySwing());
@@ -189,6 +194,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
 
         game = new Game();
 
+        // Determine the dimensions of the window to create
         GraphicResolution res = null;
         String resolutionString = cfg.getString(CFG_RESOLUTION);
         if (resolutionString != null) {
@@ -203,24 +209,11 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         }
 
         try {
-            int requestedWidth;
-            int requestedHeight;
-            boolean fullScreenMode;
 
-            if (cfg.getBoolean(CFG_FULLSCREEN)) {
-                fullScreenMode = true;
-                requestedHeight = res.getHeight();
-                requestedWidth = res.getWidth();
-            } else {
-                fullScreenMode = false;
-                int windowedWidth = cfg.getInteger("windowWidth");
-                int windowedHeight = cfg.getInteger("windowHeight");
-                requestedHeight = (windowedHeight < 0) ? res.getHeight() : windowedHeight;
-                requestedWidth = (windowedWidth < 0) ? res.getWidth() : windowedWidth;
-            }
-
+            boolean fullScreenMode = cfg.getBoolean(CFG_FULLSCREEN);
+            // Get the game container used to display the game from the engine, using the dimensions from earlier
             gameContainer = EngineManager
-                    .createDesktopGame(Backend.libGDX, game, requestedWidth, requestedHeight, fullScreenMode);
+                    .createDesktopGame(Backend.libGDX, game, res.getWidth(), res.getHeight(), fullScreenMode);
         } catch (@Nonnull EngineException e) {
             LOGGER.error("Fatal error creating game screen!!!", e);
             System.exit(-1);
@@ -274,6 +267,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         INSTANCE.game.enterState(Game.STATE_LOGIN);
     }
 
+    /**
+     * Save the current configuration and shutdown the client
+     */
     public static void exitGameContainer() {
         INSTANCE.gameContainer.exitGame();
 
@@ -481,17 +477,25 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("soundOn", true);
         cfg.setDefault("soundVolume", Player.MAX_CLIENT_VOL);
         cfg.setDefault("musicOn", true);
-        cfg.setDefault("musicVolume", Player.MAX_CLIENT_VOL * 0.75f);
+        cfg.setDefault("musicVolume", Player.MAX_CLIENT_VOL * 0.25f);
         cfg.setDefault(ChatLog.CFG_TEXTLOG, true);
         cfg.setDefault(CFG_FULLSCREEN, false);
-        cfg.setDefault(CFG_RESOLUTION, new GraphicResolution(800, 600, 32, 60).toString());
+        cfg.setDefault(CFG_RESOLUTION, new GraphicResolution().toString());
         cfg.setDefault("windowWidth", -1);
         cfg.setDefault("windowHeight", -1);
         cfg.setDefault("savePassword", false);
         cfg.setDefault("showFps", false);
         cfg.setDefault("showPing", false);
         cfg.setDefault(CrashReporter.CFG_KEY, CrashReporter.MODE_ASK);
-        cfg.setDefault(Lang.LOCALE_CFG, Lang.LOCALE_CFG_ENGLISH);
+
+        Locale locale = Locale.getDefault(Category.DISPLAY);
+        // If the system locale is german, set to german. Otherwise, default to English
+        if ("de".equals(locale.getLanguage())) {
+            cfg.setDefault(Lang.LOCALE_CFG, Lang.LOCALE_CFG_GERMAN);
+        } else {
+            cfg.setDefault(Lang.LOCALE_CFG, Lang.LOCALE_CFG_ENGLISH);
+        }
+
         cfg.setDefault("inventoryPosX", "100px");
         cfg.setDefault("inventoryPosY", "10px");
         cfg.setDefault("bookDisplayPosX", "150px");
@@ -540,6 +544,17 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         TableLoader.setCrypto(crypt);
     }
 
+    /**
+     * If the config is changed AND the changed config is either the resolution
+     * or the fullscreen boolean, updates the relevant config
+     *
+     * Otherwise, does nothing.
+     *
+     * Handling changes in other settings (like volume) should be done here
+     *
+     * @param topic indicates what in the config to change
+     * @param data  the event being handled
+     */
     @Override
     public void onEvent(String topic, ConfigChangedEvent data) {
         if (CFG_RESOLUTION.equals(topic) || CFG_FULLSCREEN.equals(topic)) {

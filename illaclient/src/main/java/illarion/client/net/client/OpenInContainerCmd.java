@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -46,14 +46,14 @@ public final class OpenInContainerCmd extends AbstractCommand {
      * @param containerId the ID of the container
      * @param slot the slot in the container where the item that is supposed to be opened is located
      */
-    public OpenInContainerCmd(final int containerId, final int slot) {
+    public OpenInContainerCmd(int containerId, int slot) {
         super(CommandList.CMD_OPEN_SHOWCASE);
         this.containerId = (short) containerId;
         this.slot = (short) slot;
     }
 
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) {
         writer.writeUByte(containerId);
         writer.writeUByte(slot);
     }

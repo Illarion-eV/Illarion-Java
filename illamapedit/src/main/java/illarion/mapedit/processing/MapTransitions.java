@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,13 +19,16 @@ import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.map.hash.TIntIntHashMap;
 import illarion.common.graphics.TileInfo;
-import illarion.common.types.Location;
+import illarion.common.types.Direction;
+import illarion.common.types.ServerCoordinate;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapTile;
+import illarion.mapedit.data.MapTile.MapTileFactory;
 import illarion.mapedit.resource.Overlay;
 import illarion.mapedit.resource.loaders.OverlayLoader;
 
 import javax.annotation.Nonnull;
+import java.util.EnumMap;
 
 /**
  * This class is used to calculate the proper overlays to be placed.
@@ -48,7 +51,8 @@ public final class MapTransitions {
      * Helper list that stores the references to the tiles around the checked
      * tile.
      */
-    private final MapTile[] checkTiles = new MapTile[8];
+    @Nonnull
+    private final java.util.Map<Direction, MapTile> checkTiles;
 
     /**
      * List of the found tiles.
@@ -67,6 +71,7 @@ public final class MapTransitions {
      */
     @SuppressWarnings("nls")
     private MapTransitions() {
+        checkTiles = new EnumMap<>(Direction.class);
         /*
          * Build up the transions list. The definion values store the locations
          * around the actual tile where the tile with the largest layer value is
@@ -245,7 +250,7 @@ public final class MapTransitions {
      *
      * @param loc the location of the tile to check
      */
-    public void checkTile(@Nonnull final Map map, @Nonnull final Location loc/*, final GroupAction history*/) {
+    public void checkTile(@Nonnull Map map, @Nonnull ServerCoordinate loc/*, final GroupAction history*/) {
         placeTransition(map, loc/*, history*/);
     }
 
@@ -255,34 +260,13 @@ public final class MapTransitions {
      * @param loc the location to check
      */
     public void checkTileAndSurround(
-            @Nonnull final Map map,
-            @Nonnull final Location loc/*, final GroupAction history*/) {
+            @Nonnull Map map,
+            @Nonnull ServerCoordinate loc/*, final GroupAction history*/) {
         checkTile(map, loc);
-        final Location tempLoc = new Location();
-
-        tempLoc.setSC(loc.getScX() - 1, loc.getScY() - 1, loc.getScZ());
-        checkTile(map, tempLoc);
-
-        tempLoc.setSC(loc.getScX(), loc.getScY() - 1, loc.getScZ());
-        checkTile(map, tempLoc);
-
-        tempLoc.setSC(loc.getScX() + 1, loc.getScY() - 1, loc.getScZ());
-        checkTile(map, tempLoc);
-
-        tempLoc.setSC(loc.getScX() - 1, loc.getScY(), loc.getScZ());
-        checkTile(map, tempLoc);
-
-        tempLoc.setSC(loc.getScX() + 1, loc.getScY(), loc.getScZ());
-        checkTile(map, tempLoc);
-
-        tempLoc.setSC(loc.getScX() - 1, loc.getScY() + 1, loc.getScZ());
-        checkTile(map, tempLoc);
-
-        tempLoc.setSC(loc.getScX(), loc.getScY() + 1, loc.getScZ());
-        checkTile(map, tempLoc);
-
-        tempLoc.setSC(loc.getScX() + 1, loc.getScY() + 1, loc.getScZ());
-        checkTile(map, tempLoc);
+        //noinspection ConstantConditions
+        for (Direction dir : Direction.values()) {
+            checkTile(map, new ServerCoordinate(loc, dir));
+        }
     }
 
     /**
@@ -291,12 +275,10 @@ public final class MapTransitions {
      *
      * @param map
      */
-    public void checkMap(@Nonnull final Map map) {
-        Location loc = new Location();
+    public void checkMap(@Nonnull Map map) {
         for (int x = 0; x < map.getWidth(); x++) {
             for (int y = 0; y < map.getHeight(); y++) {
-                loc.setSC(x, y, 0);
-                checkTile(map, loc);
+                checkTile(map, new ServerCoordinate(x, y, 0));
             }
         }
     }
@@ -309,11 +291,9 @@ public final class MapTransitions {
     private void analyseTiles() {
         analysedTiles.clear();
         foundTiles.clear();
-        for (int i = 0; i < 8; i++) {
-            if (checkTiles[i] == null) {
-                continue;
-            }
-            final int tileId = TileInfo.getBaseID(checkTiles[i].getId());
+
+        for (MapTile tile : checkTiles.values()) {
+            int tileId = TileInfo.getBaseID(tile.getId());
             if (analysedTiles.contains(tileId)) {
                 analysedTiles.put(tileId, analysedTiles.get(tileId) + 1);
             } else {
@@ -326,7 +306,7 @@ public final class MapTransitions {
         }
         int length = foundTiles.size();
         for (int i = 0; i < length; i++) {
-            final int tileId = foundTiles.get(i);
+            int tileId = foundTiles.get(i);
             if (analysedTiles.get(tileId) < 2) {
                 foundTiles.removeAt(i);
                 analysedTiles.remove(tileId);
@@ -342,14 +322,13 @@ public final class MapTransitions {
      * @param id the ID of the tile
      * @return the mask for a shape for this ID
      */
-    private int buildMask(final int id) {
+    private int buildMask(int id) {
         int mask = 0;
-        for (int i = 0; i < 8; i++) {
-            if (checkTiles[i] == null) {
-                continue;
-            }
-            if (checkTiles[i].getId() == id) {
-                mask |= 1 << i;
+
+        for (java.util.Map.Entry<Direction, MapTile> entry : checkTiles.entrySet()) {
+            MapTile tile = entry.getValue();
+            if ((tile != null) && (tile.getId() == id)) {
+                mask |= 1 << entry.getKey().getServerId();
             }
         }
         return mask;
@@ -362,29 +341,29 @@ public final class MapTransitions {
      *
      * @param centerTileID the ID of the tile in the center
      */
-    private void cleanupTiles(final int centerTileID) {
+    private void cleanupTiles(int centerTileID) {
         int centerLayer = 0;
-        final Overlay ovl = OverlayLoader.getInstance().getOverlayFromId(centerTileID);
+        Overlay ovl = OverlayLoader.getInstance().getOverlayFromId(centerTileID);
         if (ovl != null) {
             centerLayer = ovl.getLayer();
         }
 
-        for (int i = 0; i < 8; i++) {
-            if (checkTiles[i] == null) {
-                continue;
-            }
-            final int tileId = TileInfo.getBaseID(checkTiles[i].getId());
-            if ((tileId == 0) || (tileId > 31) || (tileId == centerTileID)) {
-                checkTiles[i] = null;
-                continue;
-            }
-            final Overlay tileOvl = OverlayLoader.getInstance().getOverlayFromId(tileId);
-            if (tileOvl == null) {
-                checkTiles[i] = null;
-                continue;
-            }
-            if (tileOvl.getLayer() <= centerLayer) {
-                checkTiles[i] = null;
+        for (Direction dir : Direction.values()) {
+            MapTile tile = checkTiles.get(dir);
+            if (tile != null) {
+                int tileId = TileInfo.getBaseID(tile.getId());
+                if ((tileId == 0) || (tileId > 31) || (tileId == centerTileID)) {
+                    checkTiles.remove(dir);
+                    continue;
+                }
+                Overlay tileOvl = OverlayLoader.getInstance().getOverlayFromId(tileId);
+                if (tileOvl == null) {
+                    checkTiles.remove(dir);
+                    continue;
+                }
+                if (tileOvl.getLayer() <= centerLayer) {
+                    checkTiles.remove(dir);
+                }
             }
         }
     }
@@ -396,13 +375,13 @@ public final class MapTransitions {
      */
     @SuppressWarnings("null")
     private int findAndRemoveHighestLayer() {
-        final int length = foundTiles.size();
+        int length = foundTiles.size();
         int largestOffset = 0;
         int largestLayer = 0;
         int largestID = 0;
         for (int i = 0; i < length; i++) {
-            final int tileId = foundTiles.get(i);
-            final Overlay tileOvl = OverlayLoader.getInstance().getOverlayFromId(tileId);
+            int tileId = foundTiles.get(i);
+            Overlay tileOvl = OverlayLoader.getInstance().getOverlayFromId(tileId);
             if (tileOvl.getLayer() > largestLayer) {
                 largestLayer = tileOvl.getLayer();
                 largestOffset = i;
@@ -420,7 +399,7 @@ public final class MapTransitions {
      * @param mask the mask value
      * @return the ID of the shape that fits the mask
      */
-    private int findMask(final int mask) {
+    private int findMask(int mask) {
         for (int i = transitions.length - 1; i >= 0; i--) {
             if (transitions[i] == mask) {
                 return i;
@@ -434,13 +413,13 @@ public final class MapTransitions {
      *
      * @param loc the location where a transition could be placed
      */
-    private void placeTransition(@Nonnull final Map map, @Nonnull final Location loc/*, final GroupAction history*/) {
-        final MapTile centerTile = map.getTileAt(loc);
+    private void placeTransition(@Nonnull Map map, @Nonnull ServerCoordinate loc/*, final GroupAction history*/) {
+        MapTile centerTile = map.getTileAt(loc);
         if (centerTile == null) {
             return;
         }
 
-        final int centerTileId = TileInfo.getBaseID(centerTile.getId());
+        int centerTileId = TileInfo.getBaseID(centerTile.getId());
         if ((centerTileId == 0) || (centerTileId > 31)) {
             return;
         }
@@ -451,18 +430,18 @@ public final class MapTransitions {
         analyseTiles();
 
         while (!foundTiles.isEmpty()) {
-            final int testId = findAndRemoveHighestLayer();
-            final int mask = buildMask(testId);
-            final int maskId = findMask(mask);
+            int testId = findAndRemoveHighestLayer();
+            int mask = buildMask(testId);
+            int maskId = findMask(mask);
             if (maskId == -1) {
                 continue;
             }
-            final MapTile newTile = MapTile.MapTileFactory.setOverlay(centerTileId, testId, maskId + 1, centerTile);
+            MapTile newTile = MapTileFactory.setOverlay(centerTileId, testId, maskId + 1, centerTile);
             //history.addAction(new TileIDChangedAction(loc.getScX(), loc.getScY(), map.getTileAt(loc), newTile, map));
             map.setTileAt(loc, newTile);
             return;
         }
-        final MapTile newTile = MapTile.MapTileFactory.setId(centerTileId, centerTile);
+        MapTile newTile = MapTileFactory.setId(centerTileId, centerTile);
         //history.addAction(new TileIDChangedAction(loc.getScX(), loc.getScY(), map.getTileAt(loc), newTile, map));
         map.setTileAt(loc, newTile);
     }
@@ -473,32 +452,17 @@ public final class MapTransitions {
      *
      * @param centerLoc the center location
      */
-    private void populateTiles(@Nonnull final Map map, @Nonnull final Location centerLoc) {
+    private void populateTiles(@Nonnull Map map, @Nonnull ServerCoordinate centerLoc) {
+        //noinspection ConstantConditions
+        for (Direction dir : Direction.values()) {
+            MapTile tile = map.getTileAt(centerLoc.getX() + dir.getDirectionVectorX(),
+                    centerLoc.getY() + dir.getDirectionVectorY());
 
-        final Location searchLoc = new Location();
-
-        searchLoc.setSC(centerLoc.getScX(), centerLoc.getScY() - 1, centerLoc.getScZ());
-        checkTiles[0] = map.getTileAt(searchLoc);
-
-        searchLoc.setSC(centerLoc.getScX() + 1, centerLoc.getScY() - 1, centerLoc.getScZ());
-        checkTiles[1] = map.getTileAt(searchLoc);
-
-        searchLoc.setSC(centerLoc.getScX() + 1, centerLoc.getScY(), centerLoc.getScZ());
-        checkTiles[2] = map.getTileAt(searchLoc);
-
-        searchLoc.setSC(centerLoc.getScX() + 1, centerLoc.getScY() + 1, centerLoc.getScZ());
-        checkTiles[3] = map.getTileAt(searchLoc);
-
-        searchLoc.setSC(centerLoc.getScX(), centerLoc.getScY() + 1, centerLoc.getScZ());
-        checkTiles[4] = map.getTileAt(searchLoc);
-
-        searchLoc.setSC(centerLoc.getScX() - 1, centerLoc.getScY() + 1, centerLoc.getScZ());
-        checkTiles[5] = map.getTileAt(searchLoc);
-
-        searchLoc.setSC(centerLoc.getScX() - 1, centerLoc.getScY(), centerLoc.getScZ());
-        checkTiles[6] = map.getTileAt(searchLoc);
-
-        searchLoc.setSC(centerLoc.getScX() - 1, centerLoc.getScY() - 1, centerLoc.getScZ());
-        checkTiles[7] = map.getTileAt(searchLoc);
+            if (tile == null) {
+                checkTiles.remove(dir);
+            } else {
+                checkTiles.put(dir, tile);
+            }
+        }
     }
 }

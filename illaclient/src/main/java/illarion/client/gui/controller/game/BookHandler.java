@@ -40,6 +40,9 @@ import javax.annotation.Nullable;
  */
 public final class BookHandler implements BookGui, ScreenController, UpdatableHandler {
 
+    /**
+     * Indicates that update() needs to be called
+     */
     private boolean dirty;
     private int showPage;
     @Nullable

@@ -601,7 +601,9 @@ public final class Weather {
     }
 
     public void update(int delta) {
-        changeWeather(delta);
-        animateWeather(delta);
+        if (World.getClock().isSet()) {
+            changeWeather(delta);
+            animateWeather(delta);
+        }
     }
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,6 +16,7 @@
 package illarion.client.resources;
 
 import illarion.client.resources.data.OverlayTemplate;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 
@@ -30,6 +31,7 @@ public final class OverlayFactory extends AbstractTemplateFactory<OverlayTemplat
     /**
      * The singleton instance of this class.
      */
+    @Nonnull
     private static final OverlayFactory INSTANCE = new OverlayFactory();
 
     /**
@@ -38,6 +40,7 @@ public final class OverlayFactory extends AbstractTemplateFactory<OverlayTemplat
      * @return the singleton instance of this factory.
      */
     @Nonnull
+    @Contract(pure = true)
     public static OverlayFactory getInstance() {
         return INSTANCE;
     }

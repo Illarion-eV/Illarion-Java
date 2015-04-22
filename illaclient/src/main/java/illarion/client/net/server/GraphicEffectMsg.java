@@ -20,10 +20,11 @@ import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
@@ -42,17 +43,21 @@ public final class GraphicEffectMsg implements ServerReply {
     /**
      * The location the effect occurs on.
      */
-    private transient Location location;
+    @Nullable
+    private ServerCoordinate location;
 
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
-        location = new Location(reader);
+        location = new ServerCoordinate(reader);
         effectId = reader.readUShort();
     }
 
     @Nonnull
     @Override
     public ServerReplyResult execute() {
+        if (location == null) {
+            throw new NotDecodedException();
+        }
         if (World.getMap().isEmpty()) {
             //got no map data yet
             return ServerReplyResult.Reschedule;

@@ -37,7 +37,7 @@ public final class SoundLoader extends AbstractResourceLoader<IdWrapper<String>>
      * The logger that is used to report error messages.
      */
     @Nonnull
-    private static final Logger LOGGER = LoggerFactory.getLogger(SoundLoader.class);
+    private static final Logger log = LoggerFactory.getLogger(SoundLoader.class);
 
     /**
      * Trigger the loading sequence for this loader.
@@ -71,7 +71,7 @@ public final class SoundLoader extends AbstractResourceLoader<IdWrapper<String>>
         try {
             getTargetFactory().storeResource(new IdWrapper<>(clipID, filename));
         } catch (@Nonnull IllegalStateException ex) {
-            LOGGER.error("Failed adding sound to internal factory. ID: {} - Filename: {}", clipID, filename);
+            log.error("Failed adding sound to internal factory. ID: {} - Filename: {}", clipID, filename);
         }
 
         return true;

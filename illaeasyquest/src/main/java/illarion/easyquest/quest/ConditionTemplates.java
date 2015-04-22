@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -25,6 +25,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -56,8 +57,8 @@ public class ConditionTemplates {
         load();
     }
 
-    private static InputStream getResource(final String name) {
-        final ClassLoader loader = ConditionTemplates.class.getClassLoader();
+    private static InputStream getResource(String name) {
+        ClassLoader loader = ConditionTemplates.class.getClassLoader();
         return loader.getResourceAsStream(name);
     }
 
@@ -66,7 +67,7 @@ public class ConditionTemplates {
         List<String> result = new FastTable<>();
         BufferedReader bRead = null;
         try {
-            bRead = new BufferedReader(new InputStreamReader((getResource("template/condition/filelist"))));
+            bRead = new BufferedReader(new InputStreamReader(getResource("template/condition/filelist"), Charset.defaultCharset()));
 
             String line = null;
             while ((line = bRead.readLine()) != null) {
@@ -140,7 +141,7 @@ public class ConditionTemplates {
                     } else {
                         System.out.println("Syntax error in template " + fileName);
                     }
-                } catch (@Nonnull final IOException e1) {
+                } catch (@Nonnull IOException e1) {
                     System.out.println("Error loading template " + fileName);
                 }
             }

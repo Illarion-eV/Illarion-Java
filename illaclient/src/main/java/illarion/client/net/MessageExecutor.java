@@ -60,18 +60,21 @@ final class MessageExecutor {
 
     private void executeReply(@Nonnull ServerReply reply) {
         log.debug(NET, "executing {}", reply);
-        ServerReplyResult result = reply.execute();
-
-        switch (result) {
-            case Success:
-                log.debug(NET, "finished with success {}", reply);
-                break;
-            case Failed:
-                log.error(NET, "finished with failure {}", reply);
-                break;
-            case Reschedule:
-                log.debug(NET, "delaying {}", reply);
-                scheduleReplyExecution(reply);
+        try {
+            ServerReplyResult result = reply.execute();
+            switch (result) {
+                case Success:
+                    log.debug(NET, "finished with success {}", reply);
+                    break;
+                case Failed:
+                    log.error(NET, "finished with failure {}", reply);
+                    break;
+                case Reschedule:
+                    log.debug(NET, "delaying {}", reply);
+                    scheduleReplyExecution(reply);
+            }
+        } catch (Exception e) {
+            log.error(NET, "Error while executing server replay.", e);
         }
     }
 

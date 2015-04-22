@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,7 +18,7 @@ package org.illarion.engine.backend.gdx;
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import org.illarion.engine.graphic.WorldMap;
 import org.illarion.engine.graphic.effects.MiniMapEffect;
 
@@ -90,9 +90,9 @@ class GdxMiniMapEffect implements MiniMapEffect, GdxTextureEffect {
     }
 
     @Override
-    public void setCenter(@Nonnull Location location) {
-        centerX = location.getScX() - worldMap.getMapOrigin().getScX();
-        centerY = location.getScY() - worldMap.getMapOrigin().getScY();
+    public void setCenter(@Nonnull ServerCoordinate location) {
+        centerX = location.getX() - worldMap.getMapOrigin().getX();
+        centerY = location.getY() - worldMap.getMapOrigin().getY();
     }
 
     @Override

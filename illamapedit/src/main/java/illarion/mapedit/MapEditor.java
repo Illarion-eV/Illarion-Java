@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -54,21 +55,16 @@ public final class MapEditor {
      * The identifier of the application.
      */
     @SuppressWarnings("nls")
+    @Nonnull
     public static final AppIdent APPLICATION = new AppIdent("Illarion Mapeditor");
 
     /**
      * The logger instance that takes care for the logging output of this class.
      */
+    @Nonnull
     private static final Logger LOGGER = LoggerFactory.getLogger(MapEditor.class);
 
-    /**
-     * Constructor of the map editor that loads up all required data.
-     */
-    @SuppressWarnings("nls")
-    public MapEditor() {
-        Crypto crypt = new Crypto();
-        crypt.loadPublicKey();
-        TableLoader.setCrypto(crypt);
+    private MapEditor() {
     }
 
     /**
@@ -105,7 +101,9 @@ public final class MapEditor {
         JRibbonFrame.setDefaultLookAndFeelDecorated(MapEditorConfig.getInstance().isUseWindowDecoration());
         JDialog.setDefaultLookAndFeelDecorated(MapEditorConfig.getInstance().isUseWindowDecoration());
 
-        MapEditor instance = new MapEditor();
+        Crypto crypt = new Crypto();
+        crypt.loadPublicKey();
+        TableLoader.setCrypto(crypt);
 
         loadResources();
         GuiController controller = new GuiController();
@@ -158,9 +156,6 @@ public final class MapEditor {
         SLF4JBridgeHandler.install();
 
         Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
-        if (userDir == null) {
-            return;
-        }
         System.setProperty("log_dir", userDir.toAbsolutePath().toString());
 
         //Reload:

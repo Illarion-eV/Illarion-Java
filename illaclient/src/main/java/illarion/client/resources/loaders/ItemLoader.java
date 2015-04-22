@@ -43,20 +43,20 @@ public final class ItemLoader extends AbstractResourceLoader<ItemTemplate>
      * The logger that is used to report error messages.
      */
     @Nonnull
-    private static final Logger LOGGER = LoggerFactory.getLogger(ItemLoader.class);
+    private static final Logger log = LoggerFactory.getLogger(ItemLoader.class);
 
     /**
      * The resource path to the item graphics. All graphics need to be located at this path within the JAR-resource
      * files.
      */
-    @SuppressWarnings("nls")
+    @Nonnull
     private static final String ITEM_PATH = "items/";
 
     /**
      * The resource path to the GUI graphics. All graphics need to be located at this path within the JAR-resource
      * files.
      */
-    @SuppressWarnings("nls")
+    @Nonnull
     private static final String GUI_PATH = "gui/";
 
     /**
@@ -92,6 +92,7 @@ public final class ItemLoader extends AbstractResourceLoader<ItemTemplate>
         return factory;
     }
 
+    @SuppressWarnings("OverlyLongMethod")
     @Override
     public boolean processRecord(int line, @Nonnull TableLoaderItems loader) {
         String name = loader.getResourceName();
@@ -101,17 +102,15 @@ public final class ItemLoader extends AbstractResourceLoader<ItemTemplate>
         int colorBlue = loader.getColorModBlue();
         int colorAlpha = loader.getColorModAlpha();
 
-        Color paperdollingColor;
+        Color paperdollingColor = null;
         if ((colorRed >= 0) && (colorGreen >= 0) && (colorBlue >= 0) && (colorAlpha >= 0)) {
             paperdollingColor = new Color(colorRed, colorGreen, colorBlue, colorAlpha);
-        } else {
-            paperdollingColor = null;
         }
 
         int mode = loader.getItemMode();
         int itemID = loader.getItemId();
         int face = loader.getFace();
-        boolean moveable = loader.isMovable();
+        boolean movable = loader.isMovable();
         int specialFlag = loader.getSpecialFlag();
         boolean obstacle = loader.isObstacle();
         int variance = loader.getSizeVariance();
@@ -125,7 +124,7 @@ public final class ItemLoader extends AbstractResourceLoader<ItemTemplate>
         int paperdollingRef = loader.getPaperdollingItemId();
 
         ItemInfo info = ItemInfo
-                .create(face, moveable, specialFlag, obstacle, variance, opacity, surfaceLevel, itemLight);
+                .create(face, movable, specialFlag, obstacle, variance, opacity, surfaceLevel, itemLight);
 
         int frames;
         int speed;
@@ -140,7 +139,7 @@ public final class ItemLoader extends AbstractResourceLoader<ItemTemplate>
             frames = 1;
             speed = 0;
         } else {
-            LOGGER.error("Unknown mode for item: {}", mode);
+            log.error("Unknown mode for item: {}", mode);
             frames = 1;
             speed = 0;
         }
@@ -151,17 +150,13 @@ public final class ItemLoader extends AbstractResourceLoader<ItemTemplate>
                     .createSprite(getTextures(assets.getTextureManager(), ITEM_PATH, name, frames), offsetX, offsetY,
                                   SpriteFactory.CENTER, SpriteFactory.BOTTOM, false);
         } catch (@Nonnull IllegalArgumentException e) {
-            LOGGER.error("Failed to fetch graphics for item {} (ID: {}) because: {}", name, itemID, e.getMessage());
+            log.error("Failed to fetch graphics for item {} (ID: {}) because: {}", name, itemID, e.getMessage());
             return true;
         }
 
         Texture guiTexture = assets.getTextureManager().getTexture(GUI_PATH, "items/" + name);
         Texture usedGuiTexture;
-        if (guiTexture == null) {
-            usedGuiTexture = itemSprite.getFrame(0);
-        } else {
-            usedGuiTexture = guiTexture;
-        }
+        usedGuiTexture = (guiTexture == null) ? itemSprite.getFrame(0) : guiTexture;
 
         ItemTemplate template = new ItemTemplate(itemID, itemSprite, usedGuiTexture, frames, offsetShadow, speed,
                                                        info, paperdollingRef, paperdollingColor);
@@ -170,7 +165,7 @@ public final class ItemLoader extends AbstractResourceLoader<ItemTemplate>
         try {
             getTargetFactory().storeResource(template);
         } catch (@Nonnull IllegalStateException e) {
-            LOGGER.error("Failed to register item {} in factory due a duplicated ID: {}", name, itemID);
+            log.error("Failed to register item {} in factory due a duplicated ID: {}", name, itemID);
         }
 
         return true;

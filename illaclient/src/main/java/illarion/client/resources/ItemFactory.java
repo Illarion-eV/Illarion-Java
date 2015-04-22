@@ -17,6 +17,7 @@ package illarion.client.resources;
 
 import illarion.client.resources.data.ItemTemplate;
 import illarion.common.types.ItemId;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 
@@ -31,6 +32,7 @@ public final class ItemFactory extends AbstractTemplateFactory<ItemTemplate> {
     /**
      * The singleton instance of this class.
      */
+    @Nonnull
     private static final ItemFactory INSTANCE = new ItemFactory();
 
     /**
@@ -44,6 +46,7 @@ public final class ItemFactory extends AbstractTemplateFactory<ItemTemplate> {
      * @return the singleton instance of this factory
      */
     @Nonnull
+    @Contract(pure = true)
     public static ItemFactory getInstance() {
         return INSTANCE;
     }
@@ -56,6 +59,7 @@ public final class ItemFactory extends AbstractTemplateFactory<ItemTemplate> {
     }
 
     @Nonnull
+    @Contract(pure = true)
     public ItemTemplate getTemplate(@Nonnull ItemId id) {
         return getTemplate(id.getValue());
     }

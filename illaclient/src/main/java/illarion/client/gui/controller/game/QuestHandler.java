@@ -18,7 +18,7 @@ package illarion.client.gui.controller.game;
 import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
-import de.lessvoid.nifty.builder.ElementBuilder;
+import de.lessvoid.nifty.builder.ElementBuilder.Align;
 import de.lessvoid.nifty.controls.*;
 import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
 import de.lessvoid.nifty.effects.EffectEventId;
@@ -31,7 +31,7 @@ import illarion.client.graphics.FontLoader;
 import illarion.client.gui.QuestGui;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import org.illarion.engine.GameContainer;
 import org.intellij.lang.annotations.Flow;
 import org.jetbrains.annotations.Contract;
@@ -81,7 +81,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
          * The list of valid target locations for this quest.
          */
         @Nonnull
-        private final List<Location> targetLocations;
+        private final List<ServerCoordinate> targetLocations;
 
         /**
          * The constructor of the quest.
@@ -93,7 +93,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
          * @param locations the valid target locations
          */
         QuestEntry(int questId, @Nonnull String name, @Nonnull String description, boolean finished,
-                   @Nonnull @Flow(targetIsContainer = true, sourceIsContainer = true) List<Location> locations) {
+                   @Nonnull @Flow(targetIsContainer = true, sourceIsContainer = true) List<ServerCoordinate> locations) {
             this.questId = questId;
             this.name = name;
             this.description = description;
@@ -194,7 +194,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
          */
         @Nonnull
         @Contract(pure = true)
-        public Location getTargetLocation(int index) {
+        public ServerCoordinate getTargetLocation(int index) {
             return targetLocations.get(index);
         }
     }
@@ -359,9 +359,9 @@ public final class QuestHandler implements QuestGui, ScreenController {
     }
 
     private static void updateQuest(@Nonnull QuestEntry quest) {
-        Collection<Location> locationList = new ArrayList<>(quest.getTargetLocationCount());
+        Collection<ServerCoordinate> locationList = new ArrayList<>(quest.getTargetLocationCount());
         for (int i = 0; i < quest.getTargetLocationCount(); i++) {
-            Location target = quest.getTargetLocation(i);
+            ServerCoordinate target = quest.getTargetLocation(i);
             locationList.add(target);
         }
         World.getMap().removeQuestMarkers(locationList);
@@ -407,7 +407,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
             descriptionLabel.marginLeft("5px");
             descriptionLabel.marginRight("5px");
             descriptionLabel.width((descriptionArea.getWidth() - 10) + "px");
-            descriptionLabel.textHAlign(ElementBuilder.Align.Left);
+            descriptionLabel.textHAlign(Align.Left);
             descriptionLabel.wrap(true);
             descriptionLabel.build(nifty, screen, descriptionArea);
         }
@@ -420,7 +420,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
             finishedLabel.marginRight("5px");
             finishedLabel.marginTop("15px");
             finishedLabel.width((descriptionArea.getWidth() - 10) + "px");
-            finishedLabel.textHAlign(ElementBuilder.Align.Center);
+            finishedLabel.textHAlign(Align.Center);
             finishedLabel.wrap(true);
             finishedLabel.build(nifty, screen, descriptionArea);
         }
@@ -637,7 +637,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
             @Nonnull final String name,
             @Nonnull final String description,
             final boolean finished,
-            @Nonnull final List<Location> locations) {
+            @Nonnull final List<ServerCoordinate> locations) {
         World.getUpdateTaskManager().addTask(new UpdateTask() {
             @Override
             public void onUpdateGame(@Nonnull GameContainer container, int delta) {
@@ -670,12 +670,12 @@ public final class QuestHandler implements QuestGui, ScreenController {
             @Nonnull String name,
             @Nonnull String description,
             boolean finished,
-            @Nonnull List<Location> locations) {
+            @Nonnull List<ServerCoordinate> locations) {
         QuestEntry oldEntry = findQuest(questId);
         if (finished && (oldEntry != null)) {
-            Collection<Location> locationList = new ArrayList<>(oldEntry.getTargetLocationCount());
+            Collection<ServerCoordinate> locationList = new ArrayList<>(oldEntry.getTargetLocationCount());
             for (int i = 0; i < oldEntry.getTargetLocationCount(); i++) {
-                Location target = oldEntry.getTargetLocation(i);
+                ServerCoordinate target = oldEntry.getTargetLocation(i);
                 locationList.add(target);
             }
             World.getMap().removeQuestMarkers(locationList);

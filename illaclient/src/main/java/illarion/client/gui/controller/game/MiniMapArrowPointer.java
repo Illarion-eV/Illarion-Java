@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,10 +17,10 @@ package illarion.client.gui.controller.game;
 
 import de.lessvoid.nifty.elements.Element;
 import illarion.client.graphics.AnimationUtility;
-import illarion.client.gui.MiniMapGui;
+import illarion.client.gui.MiniMapGui.Pointer;
 import illarion.client.resources.MiscImageFactory;
 import illarion.client.world.World;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import illarion.common.util.FastMath;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Graphics;
@@ -28,12 +28,13 @@ import org.illarion.engine.graphic.Sprite;
 import org.illarion.engine.nifty.IgeRenderImage;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This is the implementation of the pointers. This class is the image that is displayed on the GUI in order to
  * show the arrow on the mini map. It takes care for rendering it with the proper rotation applied.
  */
-final class MiniMapArrowPointer implements IgeRenderImage, MiniMapGui.Pointer {
+final class MiniMapArrowPointer implements IgeRenderImage, Pointer {
     /**
      * The sprite that contains the arrow. This is displayed in case the point is outside the area of the mini map.
      */
@@ -50,8 +51,8 @@ final class MiniMapArrowPointer implements IgeRenderImage, MiniMapGui.Pointer {
     /**
      * The location the arrow is supposed to point to.
      */
-    @Nonnull
-    private final Location targetLocation;
+    @Nullable
+    private ServerCoordinate targetLocation;
 
     /**
      * The Nifty-GUI element this pointer is assigned to.
@@ -87,15 +88,14 @@ final class MiniMapArrowPointer implements IgeRenderImage, MiniMapGui.Pointer {
     /**
      * Create a new arrow pointer.
      */
-    MiniMapArrowPointer(@Nonnull final Element parentElement) {
+    MiniMapArrowPointer(@Nonnull Element parentElement) {
         arrowSprite = MiscImageFactory.getInstance().getTemplate(MiscImageFactory.MINI_MAP_ARROW).getSprite();
         pointSprite = MiscImageFactory.getInstance().getTemplate(MiscImageFactory.MINI_MAP_POINT).getSprite();
-        targetLocation = new Location();
         this.parentElement = parentElement;
     }
 
     @Override
-    public void setCurrentQuest(final boolean currentQuest) {
+    public void setCurrentQuest(boolean currentQuest) {
         isCurrentQuest = currentQuest;
     }
 
@@ -115,44 +115,44 @@ final class MiniMapArrowPointer implements IgeRenderImage, MiniMapGui.Pointer {
     }
 
     private float getAngle() {
-        final double angle = Math.toDegrees(Math.atan2(currentDeltaY, currentDeltaX));
+        double angle = Math.toDegrees(Math.atan2(currentDeltaY, currentDeltaX));
 
         return (float) angle + 45.f;
     }
 
     @Override
     public void renderImage(
-            @Nonnull final Graphics g,
-            final int x,
-            final int y,
-            final int width,
-            final int height,
-            @Nonnull final Color color,
-            final float imageScale) {
+            @Nonnull Graphics g,
+            int x,
+            int y,
+            int width,
+            int height,
+            @Nonnull Color color,
+            float imageScale) {
         renderImage(g, x, y, width, height, 0, 0, arrowSprite.getWidth(), arrowSprite.getHeight(), color, imageScale,
                     arrowSprite.getWidth() / 2, arrowSprite.getHeight() / 2);
     }
 
     @Override
     public void renderImage(
-            @Nonnull final Graphics g,
-            final int x,
-            final int y,
-            final int w,
-            final int h,
-            final int srcX,
-            final int srcY,
-            final int srcW,
-            final int srcH,
-            @Nonnull final Color color,
-            final float scale,
-            final int centerX,
-            final int centerY) {
-        final int scaledWidth = Math.round(w * scale);
-        final int scaledHeight = Math.round(h * scale);
+            @Nonnull Graphics g,
+            int x,
+            int y,
+            int w,
+            int h,
+            int srcX,
+            int srcY,
+            int srcW,
+            int srcH,
+            @Nonnull Color color,
+            float scale,
+            int centerX,
+            int centerY) {
+        int scaledWidth = Math.round(w * scale);
+        int scaledHeight = Math.round(h * scale);
 
-        final int fixedX = x + Math.round((w - scaledWidth) * ((float) centerX / (float) w));
-        final int fixedY = y + Math.round((h - scaledHeight) * ((float) centerY / (float) h));
+        int fixedX = x + Math.round((w - scaledWidth) * ((float) centerX / (float) w));
+        int fixedY = y + Math.round((h - scaledHeight) * ((float) centerY / (float) h));
 
         Color pointerColor = POINTER_COLOR;
         if (isCurrentQuest) {
@@ -160,25 +160,25 @@ final class MiniMapArrowPointer implements IgeRenderImage, MiniMapGui.Pointer {
         }
 
         if (isOnMapArea()) {
-            final int offsetX = (FastMath.sqrt(FastMath.sqr(currentDeltaX) / 2) * -FastMath.sign(currentDeltaX)) +
+            int offsetX = (FastMath.sqrt(FastMath.sqr(currentDeltaX) / 2) * -FastMath.sign(currentDeltaX)) +
                     (FastMath.sqrt(FastMath.sqr(currentDeltaY) / 2) * -FastMath.sign(currentDeltaY));
-            final int offsetY = (FastMath.sqrt(FastMath.sqr(currentDeltaX) / 2) * FastMath.sign(currentDeltaX)) +
+            int offsetY = (FastMath.sqrt(FastMath.sqr(currentDeltaX) / 2) * FastMath.sign(currentDeltaX)) +
                     (FastMath.sqrt(FastMath.sqr(currentDeltaY) / 2) * -FastMath.sign(currentDeltaY));
 
             g.drawTexture(pointSprite.getFrame(0), fixedX - offsetX, fixedY - offsetY, scaledWidth, scaledHeight, srcX,
                           srcY, srcW, srcH, centerX - fixedX, centerY - fixedY, 0.f, pointerColor);
         } else {
-            final float angle = (float) currentAngle / 10.f;
+            float angle = (float) currentAngle / 10.f;
 
-            final int spriteOffsetX = arrowSprite.getOffsetX();
-            final int spriteOffsetY = arrowSprite.getOffsetY();
+            int spriteOffsetX = arrowSprite.getOffsetX();
+            int spriteOffsetY = arrowSprite.getOffsetY();
 
-            final float radianAngle = FastMath.toRadians(angle);
-            final float sinAngle = FastMath.sin(radianAngle);
-            final float cosAngle = FastMath.cos(radianAngle);
+            float radianAngle = FastMath.toRadians(angle);
+            float sinAngle = FastMath.sin(radianAngle);
+            float cosAngle = FastMath.cos(radianAngle);
 
-            final int rotationOffsetX = Math.round((spriteOffsetX * cosAngle) + (spriteOffsetY * sinAngle));
-            final int rotationOffsetY = Math.round((spriteOffsetX * sinAngle) + (spriteOffsetY * cosAngle));
+            int rotationOffsetX = Math.round((spriteOffsetX * cosAngle) + (spriteOffsetY * sinAngle));
+            int rotationOffsetY = Math.round((spriteOffsetX * sinAngle) + (spriteOffsetY * cosAngle));
 
             g.drawTexture(arrowSprite.getFrame(0), fixedX + rotationOffsetX, fixedY - rotationOffsetY, scaledWidth,
                           scaledHeight, srcX, srcY, srcW, srcH, centerX - fixedX, centerY - fixedY, angle,
@@ -200,9 +200,12 @@ final class MiniMapArrowPointer implements IgeRenderImage, MiniMapGui.Pointer {
      *
      * @param delta the time since the last update
      */
-    void update(final int delta) {
-        final int dX = targetLocation.getScX() - World.getPlayer().getLocation().getScX();
-        final int dY = targetLocation.getScY() - World.getPlayer().getLocation().getScY();
+    void update(int delta) {
+        if (targetLocation == null) {
+            throw new IllegalStateException("This pointer has no set target and is not valid to be updated.");
+        }
+        int dX = targetLocation.getX() - World.getPlayer().getLocation().getX();
+        int dY = targetLocation.getY() - World.getPlayer().getLocation().getY();
 
         if ((currentDeltaX != dX) || (currentDeltaY != dY)) {
             currentDeltaX = dX;
@@ -219,12 +222,12 @@ final class MiniMapArrowPointer implements IgeRenderImage, MiniMapGui.Pointer {
      *
      * @param delta the time since the last update
      */
-    private void animateAngle(final int delta) {
+    private void animateAngle(int delta) {
         if (targetAngle == currentAngle) {
             return;
         }
 
-        final int angleDiff = targetAngle - currentAngle;
+        int angleDiff = targetAngle - currentAngle;
         if (Math.abs(angleDiff) <= 1800) {
             currentAngle += AnimationUtility.approach(0, angleDiff, -1800, 1800, delta);
         } else if (angleDiff > 0) {
@@ -236,8 +239,8 @@ final class MiniMapArrowPointer implements IgeRenderImage, MiniMapGui.Pointer {
     }
 
     @Override
-    public void setTarget(@Nonnull final Location loc) {
-        targetLocation.set(loc);
+    public void setTarget(@Nonnull ServerCoordinate loc) {
+        targetLocation = loc;
     }
 
     /**

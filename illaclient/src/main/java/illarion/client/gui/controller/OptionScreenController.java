@@ -108,7 +108,7 @@ public final class OptionScreenController implements ScreenController {
         if (serverTab == null) {
             return;
         }
-        if (IllaClient.DEFAULT_SERVER == Servers.Realserver) {
+        if (IllaClient.DEFAULT_SERVER == Servers.Illarionserver) {
             tabRoot.getNiftyControl(TabGroup.class).removeTab(serverTab);
         } else {
             serverAddress = serverTab.findNiftyControl("serverAddress", TextField.class);

@@ -19,8 +19,8 @@ import illarion.client.resources.EffectFactory;
 import illarion.client.resources.Resource;
 import illarion.client.resources.data.EffectTemplate;
 import illarion.client.world.World;
-import illarion.common.graphics.Layers;
-import illarion.common.types.Location;
+import illarion.common.graphics.Layer;
+import illarion.common.types.ServerCoordinate;
 import org.illarion.engine.graphic.LightSource;
 
 import javax.annotation.Nonnull;
@@ -106,8 +106,8 @@ public final class Effect extends AbstractEntity<EffectTemplate> implements Reso
      *
      * @param loc the location on the game map the effect shall be shown on
      */
-    public void show(@Nonnull Location loc) {
-        setScreenPos(loc, Layers.EFFECTS);
+    public void show(@Nonnull ServerCoordinate loc) {
+        setScreenPos(loc.toDisplayCoordinate(Layer.Effects));
         if (animation != null) {
             animation.restart();
         }

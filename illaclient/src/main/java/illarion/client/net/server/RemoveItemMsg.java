@@ -20,7 +20,7 @@ import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
@@ -39,7 +39,7 @@ public final class RemoveItemMsg implements ServerReply {
      * The location the top item shall be removed from.
      */
     @Nullable
-    private Location location;
+    private ServerCoordinate location;
 
     /**
      * The new move points of the tile after the update.
@@ -48,7 +48,7 @@ public final class RemoveItemMsg implements ServerReply {
 
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
-        location = new Location(reader);
+        location = new ServerCoordinate(reader);
         newTileMovePoints = reader.readUByte();
     }
 

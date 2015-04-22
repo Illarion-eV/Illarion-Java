@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,8 +18,9 @@ package illarion.client.graphics;
 import illarion.client.resources.MiscImageFactory;
 import illarion.client.resources.data.MiscImageTemplate;
 import illarion.client.world.MapTile;
-import illarion.common.graphics.Layers;
-import illarion.common.types.Location;
+import illarion.common.graphics.Layer;
+import illarion.common.types.DisplayCoordinate;
+import illarion.common.types.ServerCoordinate;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.ImmutableColor;
@@ -125,8 +126,7 @@ public class QuestMarker extends AbstractEntity<MiscImageTemplate> {
 
     @Override
     public void show() {
-        Location loc = parentTile.getLocation();
-        setScreenPos(loc.getDcX(), loc.getDcY(), loc.getDcZ(), Layers.OVERLAYS);
+        updateScreenPosition(0);
 
         super.show();
     }
@@ -136,16 +136,12 @@ public class QuestMarker extends AbstractEntity<MiscImageTemplate> {
      */
     private void updateScreenPosition(int delta) {
         appliedOffset = AnimationUtility.approach(appliedOffset, parentTile.getQuestMarkerElevation(), 0, 300, delta);
-        Location loc = parentTile.getLocation();
-        setScreenPos(loc.getDcX(), loc.getDcY(), loc.getDcZ());
-    }
+        ServerCoordinate loc = parentTile.getCoordinates();
 
-    public void setScreenPos(int dispX, int dispY, int zLayer) {
-        setScreenPos(dispX, dispY, zLayer, Layers.OVERLAYS);
-    }
-
-    public void setScreenPos(int dispX, int dispY, int zLayer, int typeLayer) {
-        super.setScreenPos(dispX, dispY - appliedOffset, zLayer, typeLayer);
+        int displayX = loc.toDisplayX();
+        int displayY = loc.toDisplayY() - appliedOffset;
+        int displayLayer = loc.toDisplayLayer(Layer.Overlays);
+        setScreenPos(new DisplayCoordinate(displayX, displayY, displayLayer));
     }
 
     @Override

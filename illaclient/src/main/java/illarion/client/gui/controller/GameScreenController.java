@@ -30,12 +30,27 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/**
+ * This class is the global accessor to the GUI of the game.
+ *
+ * @author Martin Karing &lt;nitram@illarion.org&gt;
+ */
 public final class GameScreenController implements GameGui, ScreenController {
+    /**
+     * ALL child ScreenControllers, such as Skills, Inventory, etc.
+     */
     @Nonnull
     private final Collection<ScreenController> childControllers;
+    /**
+     * The child ScreenControllers that are updatable
+     */
     @Nonnull
     private final Collection<UpdatableHandler> childUpdateControllers;
 
+    /**
+     * These handlers are all of the GUIs that can be displayed during the game
+     * Any new In-Game GUIs must be declared here
+     */
     @Nonnull
     private final BookHandler bookHandler;
     @Nonnull
@@ -63,8 +78,18 @@ public final class GameScreenController implements GameGui, ScreenController {
     @Nonnull
     private final CloseGameHandler closeGameHandler;
 
+    /**
+     * Indicates that the screen has been setup by calling bind(Nifty, Screen)
+     */
     private boolean ready;
 
+    /**
+     * Initializes all of the child handlers, adds them to appropriate collections
+     *
+     * Any new In-Game GUIs need to be added to this method
+     *
+     * @param input The Engine's input system
+     */
     public GameScreenController(@Nonnull Input input) {
         NumberSelectPopupHandler numberPopupHandler = new NumberSelectPopupHandler();
         TooltipHandler tooltipHandler = new TooltipHandler();
@@ -106,6 +131,10 @@ public final class GameScreenController implements GameGui, ScreenController {
         addHandler(informHandler);
     }
 
+    /**
+     * Adds the handler to either the childControllers and childUpdatableHandlers if appropriate
+     * @param handler   the ScreenController to be added
+     */
     private void addHandler(ScreenController handler) {
         childControllers.add(handler);
         if (handler instanceof UpdatableHandler) {
@@ -252,6 +281,11 @@ public final class GameScreenController implements GameGui, ScreenController {
         return ready;
     }
 
+    /**
+     * Calls onEndScreen() for all child ScreenControllers
+     * Cleans up the world
+     * Saves the current configuration state
+     */
     @Override
     public void onEndScreen() {
         for (ScreenController childController : childControllers) {
@@ -261,6 +295,9 @@ public final class GameScreenController implements GameGui, ScreenController {
         IllaClient.getCfg().save();
     }
 
+    /**
+     * Starts up all child ScreenControllers
+     */
     @Override
     public void onStartScreen() {
         for (ScreenController childController : childControllers) {
@@ -282,6 +319,12 @@ public final class GameScreenController implements GameGui, ScreenController {
         }
     }
 
+    /**
+     * Calls bind() for all child ScreenControllers with the given arguments
+     * Sets ready to {@code true} once all children are ready
+     * @param nifty     The Nifty object for this instance of the game
+     * @param screen    The Screen for this instance of the game
+     */
     @SuppressWarnings("unchecked")
     @Override
     public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {

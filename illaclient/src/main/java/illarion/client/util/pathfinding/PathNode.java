@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,8 @@
  */
 package illarion.client.util.pathfinding;
 
-import illarion.common.types.Location;
+import illarion.client.world.CharMovementMode;
+import illarion.common.types.ServerCoordinate;
 
 import javax.annotation.Nonnull;
 
@@ -31,7 +32,7 @@ public interface PathNode {
      * @return the location of the node
      */
     @Nonnull
-    Location getLocation();
+    ServerCoordinate getLocation();
 
     /**
      * Get the method of movement that is used to reach this node.
@@ -39,5 +40,5 @@ public interface PathNode {
      * @return get the movement method
      */
     @Nonnull
-    PathMovementMethod getMovementMethod();
+    CharMovementMode getMovementMethod();
 }

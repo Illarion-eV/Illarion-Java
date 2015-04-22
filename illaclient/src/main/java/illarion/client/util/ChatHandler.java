@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,7 +18,7 @@ package illarion.client.util;
 import illarion.client.gui.ChatGui;
 import illarion.client.world.Char;
 import illarion.client.world.World;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import org.illarion.engine.graphic.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,7 +153,7 @@ public final class ChatHandler {
      * @param location the location where the text was spoken
      */
     public void handleMessage(
-            @Nonnull String text, @Nonnull Location location, @Nonnull SpeechMode receivedMode) {
+            @Nonnull String text, @Nonnull ServerCoordinate location, @Nonnull SpeechMode receivedMode) {
         Char talkingChar = World.getPeople().getCharacterAt(location);
 
         SpeechMode mode;

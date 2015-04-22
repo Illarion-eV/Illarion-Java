@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -39,7 +39,8 @@ public final class ClothLoader extends AbstractResourceLoader<AvatarClothTemplat
     /**
      * The logger instance that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClothLoader.class);
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(ClothLoader.class);
 
     /**
      * The assets of the game engine that are required to load the data needed for the clothes.
@@ -114,8 +115,8 @@ public final class ClothLoader extends AbstractResourceLoader<AvatarClothTemplat
         try {
             getTargetFactory().storeResource(template);
         } catch (@Nonnull IllegalStateException e) {
-            LOGGER.error("Error adding paperdolling item to avatar: {} in group: {} to item: {}", avatarID, location,
-                         itemID);
+            log.error("Error adding paperdolling item to avatar: {} in group: {} to item: {}", avatarID, location,
+                    itemID);
         }
         return true;
     }

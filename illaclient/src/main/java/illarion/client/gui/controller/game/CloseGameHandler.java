@@ -111,6 +111,11 @@ public final class CloseGameHandler
         parentNifty.subscribe(parentScreen, elementId, ButtonClickedEvent.class, this);
     }
 
+    /**
+     * Handles the user clicking the Exit, Logout, or Cancel buttons
+     * @param topic the information containing which button was clicked
+     * @param data  (unused)
+     */
     @Override
     public void onEvent(@Nonnull String topic, ButtonClickedEvent data) {
         if (topic.endsWith("#closeExitButton")) {

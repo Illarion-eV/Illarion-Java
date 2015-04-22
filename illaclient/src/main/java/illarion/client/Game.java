@@ -94,6 +94,8 @@ public final class Game implements GameListener {
     private final GameState[] gameStates;
     private int activeListener = STATE_NONE;
     private int targetListener = STATE_NONE;
+    private boolean showFPS;
+    private boolean showPing;
 
     /**
      * Create the game with the fitting title, showing the name of the application and its version.
@@ -105,6 +107,11 @@ public final class Game implements GameListener {
         showPing = IllaClient.getCfg().getBoolean("showPing");
     }
 
+    /**
+     * Sets the next game state to the given state, if between -1 and 5
+     * Game will advance to the given state upon the next call of update()
+     * @param stateId   the state to enter. Using a class constant is recommended for readability.
+     */
     public void enterState(int stateId) {
         if ((stateId >= -1) && (stateId < gameStates.length)) {
             targetListener = stateId;
@@ -123,6 +130,11 @@ public final class Game implements GameListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Game.class);
 
+    /**
+     * Initializes fields and prepares the Game for launch
+     * Enters the login state when finished
+     * @param container the game container
+     */
     @Override
     public void create(@Nonnull GameContainer container) {
         TextureManager texManager = container.getEngine().getAssets().getTextureManager();
@@ -139,6 +151,7 @@ public final class Game implements GameListener {
         }
 
         InputReceiver inputReceiver = new InputReceiver(container.getEngine().getInput());
+        // Prepare the game's Nifty and its properties
         nifty = new Nifty(new IgeRenderDevice(container, "gui/"), new IgeSoundDevice(container.getEngine()),
                           new IgeInputSystem(container.getEngine().getInput(), inputReceiver),
                           new AccurateTimeProvider());
@@ -171,7 +184,7 @@ public final class Game implements GameListener {
         gameStates[STATE_ENDING] = new EndState();
         gameStates[STATE_LOGOUT] = new LogoutState();
         gameStates[STATE_DISCONNECT] = new DisconnectedState();
-
+        // Prepare the sounds and music for use, set volume based on the current configuration settings
         Sounds sounds = container.getEngine().getSounds();
         if (IllaClient.getCfg().getBoolean("musicOn")) {
             sounds.setMusicVolume(IllaClient.getCfg().getFloat("musicVolume") / 100.f);
@@ -191,6 +204,11 @@ public final class Game implements GameListener {
         enterState(STATE_LOGIN);
     }
 
+    /**
+     * Returns the state associated with the given index
+     * @param index the ID of the state to use, between 0 and {@code gameStates.length - 1}
+     * @return  the state associated with the given index, if a valid index
+     */
     @Nonnull
     public GameState getState(int index) {
         if ((index < 0) || (index >= gameStates.length)) {
@@ -226,6 +244,9 @@ public final class Game implements GameListener {
                         clazz.getName()));
     }
 
+    /**
+     * Sets this instance's nifty to null, disposes of each GameState
+     */
     @Override
     public void dispose() {
         nifty = null;
@@ -235,6 +256,14 @@ public final class Game implements GameListener {
         }
     }
 
+    /**
+     * Changes the container's dimensions
+     * Sets the Client's config's window height and width to the new dimensions
+     *
+     * @param container the game container
+     * @param width the new width
+     * @param height the new height
+     */
     @Override
     public void resize(@Nonnull GameContainer container, int width, int height) {
         IllaClient.getCfg().set("windowHeight", height);
@@ -250,6 +279,15 @@ public final class Game implements GameListener {
         }
     }
 
+    /**
+     * During the call of this function the application is supposed to perform the update of the game logic.
+     *
+     * If the Game is not in the state given by the last call of enterState(), enters that state
+     * Updates the Nifty gui for the (now current) state
+     *
+     * @param container the game container
+     * @param delta the time since the last update call
+     */
     @Override
     public void update(@Nonnull GameContainer container, int delta) {
         assert nifty != null;
@@ -274,6 +312,11 @@ public final class Game implements GameListener {
         }
     }
 
+    /**
+     * Perform all rendering operations
+     * If more diagnostic data should be shown, add to this method
+     * @param container the game container
+     */
     @Override
     public void render(@Nonnull GameContainer container) {
         assert nifty != null;
@@ -287,14 +330,15 @@ public final class Game implements GameListener {
         if (showFPS || showPing) {
             Font fpsFont = container.getEngine().getAssets().getFontManager().getFont(FontLoader.CONSOLE_FONT);
             if (fpsFont != null) {
-
+                // Only show render data unless on devserver, testerver, or a custom server
+                boolean showRenderDiagnostic = IllaClient.DEFAULT_SERVER != Servers.Illarionserver;
                 int renderLine = 10;
                 if (showFPS) {
                     container.getEngine().getGraphics()
                             .drawText(fpsFont, "FPS: " + container.getFPS(), Color.WHITE, 10, renderLine);
                     renderLine += fpsFont.getLineHeight();
 
-                    if (SHOW_RENDER_DIAGNOSTIC) {
+                    if (showRenderDiagnostic) {
                         for (CharSequence line : container.getDiagnosticLines()) {
                             container.getEngine().getGraphics().drawText(fpsFont, line, Color.WHITE, 10, renderLine);
                             renderLine += fpsFont.getLineHeight();
@@ -302,7 +346,7 @@ public final class Game implements GameListener {
                     }
                 }
 
-                if (SHOW_RENDER_DIAGNOSTIC && World.isInitDone()) {
+                if (showRenderDiagnostic && World.isInitDone()) {
                     String tileLine = "Tile count: " + World.getMap().getTileCount();
                     container.getEngine().getGraphics().drawText(fpsFont, tileLine, Color.WHITE, 10, renderLine);
                     renderLine += fpsFont.getLineHeight();
@@ -321,14 +365,12 @@ public final class Game implements GameListener {
                         renderLine += fpsFont.getLineHeight();
                     }
                 }
+                // If more diagnostics are wanted, add them here
             }
         }
     }
 
-    private static final boolean SHOW_RENDER_DIAGNOSTIC = IllaClient.DEFAULT_SERVER != Servers.Realserver;
 
-    private boolean showFPS;
-    private boolean showPing;
 
     @EventTopicSubscriber(topic = "showFps")
     public void onFpsConfigChanged(@Nonnull String topic, @Nonnull ConfigChangedEvent event) {
@@ -340,12 +382,17 @@ public final class Game implements GameListener {
         showPing = event.getConfig().getBoolean(event.getKey());
     }
 
+    /**
+     * This function is called in case the game receives a request to be closed.
+     *
+     * @return {@code true} in case the game is supposed to shutdown, else the closing request is rejected
+     */
     @Override
     public boolean isClosingGame() {
         GameState activeListener = getCurrentState();
         if (activeListener != null) {
             return activeListener.isClosingGame();
         }
-        return true;
+        return true; // According to the interface, default reply is false. Consider rewriting docs there or this method.
     }
 }

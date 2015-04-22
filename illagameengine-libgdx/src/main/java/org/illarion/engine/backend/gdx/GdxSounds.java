@@ -50,6 +50,7 @@ class GdxSounds implements Sounds {
 
     /**
      * Create a new instance of the libGDX sound system.
+     * Sets default volume to 100%
      */
     GdxSounds() {
         musicVolume = 1.f;
@@ -100,6 +101,12 @@ class GdxSounds implements Sounds {
         return volume > 1.e-4;
     }
 
+    /**
+     * Check if a specific music track is currently playing.
+     *
+     * @param music the music track to check
+     * @return {@code true} in case this music track is currently played
+     */
     @Override
     public boolean isMusicPlaying(@Nonnull Music music) {
         return (music instanceof GdxMusic) && ((GdxMusic) music).getWrappedMusic().isPlaying();
@@ -110,6 +117,16 @@ class GdxSounds implements Sounds {
         return false;
     }
 
+    /**
+     * Start playing some background music.
+     * Stops current music before starting the given music
+     * <p/>
+     * The fading effect is NOT currently supported.
+     *
+     * @param music the music track that is supposed to be played now
+     * @param fadeOutTime (UNSUPPORTED)
+     * @param fadeInTime (UNSUPPORTED)
+     */
     @Override
     public void playMusic(@Nonnull Music music, int fadeOutTime, int fadeInTime) {
         if (!(music instanceof GdxMusic)) {
@@ -138,16 +155,40 @@ class GdxSounds implements Sounds {
         return -1;
     }
 
+    /**
+     * Calls playSound(sound, volume)
+     * <p/>
+     * Does NOT support using the offset parameters
+     *
+     * @param sound the sound to play
+     * @param volume the default volume
+     * @param offsetX (UNSUPPORTED)
+     * @param offsetY (UNSUPPORTED)
+     * @param offsetZ (UNSUPPORTED)
+     * @return the reference handle to the played sound effect
+     */
     @Override
     public int playSound(@Nonnull Sound sound, float volume, int offsetX, int offsetY, int offsetZ) {
         return playSound(sound, volume);
     }
 
+    /**
+     * Does nothing, this is an unsupported method
+     *
+     * @param delta the time since the last call of the poll function
+     */
     @Override
     public void poll(int delta) {
         // nothing
     }
 
+    /**
+     * Set the volume of a sound effect that is currently playing.
+     *
+     * @param sound the sound the handle belong to
+     * @param handle the handle of the sound effect that is returned by {@link #playSound(Sound, float)}
+     * @param volume the volume of the sound effects
+     */
     @Override
     public void setSoundVolume(@Nonnull Sound sound, int handle, float volume) {
         if (!(sound instanceof GdxSound)) {
@@ -161,6 +202,11 @@ class GdxSounds implements Sounds {
         }
     }
 
+    /**
+     * If music is playing, IMMEDIATELY stops the music
+     *
+     * @param fadeOutTime (UNSUPPORTED)
+     */
     @Override
     public void stopMusic(int fadeOutTime) {
         if (currentBackgroundMusic != null) {
@@ -169,6 +215,11 @@ class GdxSounds implements Sounds {
         }
     }
 
+    /**
+     * Stops the play of the given sound
+     * @param sound the sound that should be stopped
+     * @param handle the handle of the sound effect that is returned by {@link #playSound(Sound, float)}
+     */
     @Override
     public void stopSound(@Nonnull Sound sound, int handle) {
         if (sound instanceof GdxSound) {
@@ -176,6 +227,10 @@ class GdxSounds implements Sounds {
         }
     }
 
+    /**
+     * Stops the play of the given sound
+     * @param sound the sound that should be stopped
+     */
     @Override
     public void stopSound(@Nonnull Sound sound) {
         if (sound instanceof GdxSound) {

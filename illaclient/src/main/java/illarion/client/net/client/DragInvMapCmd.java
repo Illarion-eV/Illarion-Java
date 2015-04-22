@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,7 +18,7 @@ package illarion.client.net.client;
 import illarion.client.net.CommandList;
 import illarion.common.net.NetCommWriter;
 import illarion.common.types.ItemCount;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
@@ -35,7 +35,7 @@ public final class DragInvMapCmd extends AbstractDragCommand {
      * The location on the map that is the target of the move operation.
      */
     @Nonnull
-    private final Location dstLoc;
+    private final ServerCoordinate dstLoc;
 
     /**
      * Inventory position the drag starts at.
@@ -45,16 +45,16 @@ public final class DragInvMapCmd extends AbstractDragCommand {
     /**
      * Default constructor for the dragging from inventory to map command.
      */
-    public DragInvMapCmd(final int source, @Nonnull final Location destination, @Nonnull final ItemCount count) {
+    public DragInvMapCmd(int source, @Nonnull ServerCoordinate destination, @Nonnull ItemCount count) {
         super(CommandList.CMD_DRAG_INV_MAP, count);
         srcPos = (short) source;
-        dstLoc = new Location(destination);
+        dstLoc = destination;
     }
 
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) {
         writer.writeUByte(srcPos);
-        writer.writeLocation(dstLoc);
+        dstLoc.encode(writer);
         getCount().encode(writer);
     }
 

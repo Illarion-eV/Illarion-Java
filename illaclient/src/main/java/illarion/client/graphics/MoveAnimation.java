@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,24 +15,23 @@
  */
 package illarion.client.graphics;
 
+import illarion.common.types.DisplayCoordinate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Created: 23.08.2005 23:42:22
  */
 public class MoveAnimation extends AbstractAnimation<AnimatedMove> {
-
-    private int dstX;
-    private int dstY;
-    private int dstZ;
-    private int lastX;
-    private int lastY;
-    private int lastZ;
-    // move animation parameters
-    private int srcX;
-    private int srcY;
-    private int srcZ;
+    @Nullable
+    private DisplayCoordinate start;
+    @Nullable
+    private DisplayCoordinate target;
+    @Nonnull
+    private static final Logger LOGGER = LoggerFactory.getLogger(MoveAnimation.class);
 
     public MoveAnimation(AnimatedMove target) {
         super(target);
@@ -40,62 +39,53 @@ public class MoveAnimation extends AbstractAnimation<AnimatedMove> {
 
     @Override
     public boolean animate(int delta) {
+        if ((start == null) || (target == null)) {
+            throw new IllegalStateException("Animating a move while there is no start and target location set.");
+        }
+
         // animation has ended
         if (updateCurrentTime(delta)) {
             setRunning(false);
-            setPosition(dstX, dstY, dstZ);
+            setPosition(target);
             return false;
         }
 
         // calc values
         float animationPos = getStoryboardProgress(false);
-        int x = srcX + Math.round(animationPos * (dstX - srcX));
-        int y = srcY + Math.round(animationPos * (dstY - srcY));
-        int z = srcZ + Math.round(animationPos * (dstZ - srcZ));
+        int x = start.getX() + Math.round(animationPos * (target.getX() - start.getX()));
+        int y = start.getY() + Math.round(animationPos * (target.getY() - start.getY()));
+        int layer = start.getLayer() + Math.round(animationPos * (target.getLayer() - start.getLayer()));
 
         // update only for real changes
-        if ((x != lastX) || (y != lastY) || (z != lastZ)) {
-            setPosition(x, y, z);
-        }
-
-        lastX = x;
-        lastY = y;
-        lastZ = z;
+        setPosition(new DisplayCoordinate(x, y, layer));
 
         return true;
     }
 
     @Override
     public void restart() {
+        if (start == null) {
+            throw new IllegalStateException("Starting a animation while there is no starting position set.");
+        }
         start();
 
         // set start position immediately
-        setPosition(srcX, srcY, srcZ);
+        setPosition(start);
         setSkipNextUpdate(true);
-        lastX = srcX;
-        lastY = srcY;
-        lastZ = srcZ;
     }
 
     /**
      * Start a movement animation
      *
-     * @param srcX
-     * @param srcY
-     * @param dstX
-     * @param dstY
-     * @param duration
+     * @param start the start location of the animated move
+     * @param target the target location of the move
+     * @param duration the duration of the move
      */
-    public void start(int srcX, int srcY, int srcZ, int dstX, int dstY, int dstZ, int duration) {
-        this.srcX = srcX;
-        this.srcY = srcY;
-        this.srcZ = srcZ;
-        this.dstX = dstX;
-        this.dstY = dstY;
-        this.dstZ = dstZ;
+    public void start(@Nonnull DisplayCoordinate start, @Nonnull DisplayCoordinate target, int duration) {
+        this.start = start;
+        this.target = target;
 
         setDuration(duration);
-
         restart();
     }
 
@@ -106,25 +96,22 @@ public class MoveAnimation extends AbstractAnimation<AnimatedMove> {
         }
 
         setRunning(false);
-        setPosition(dstX, dstY, dstZ);
+        if (target == null) {
+            LOGGER.warn("Stopping animation received while there is not target location set. Something is wrong.");
+        } else {
+            setPosition(target);
+        }
         animationFinished(false);
     }
 
-    protected void start(
-            int srcX, int srcY, int dstX, int dstY, int speed) {
-        start(srcX, srcY, 0, dstX, dstY, 0, speed);
-    }
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(MoveAnimation.class);
-
-    private void setPosition(int x, int y, int z) {
+    private void setPosition(@Nonnull DisplayCoordinate currentPos) {
         int targetCnt = getTargetCount();
         for (int i = 0; i < targetCnt; i++) {
             AnimatedMove animation = getAnimationTarget(i);
             if (animation == null) {
                 LOGGER.error("Found NULL animation.");
             } else {
-                animation.setPosition(x, y, z);
+                animation.setPosition(currentPos);
             }
         }
     }

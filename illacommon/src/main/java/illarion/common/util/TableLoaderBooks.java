@@ -15,6 +15,8 @@
  */
 package illarion.common.util;
 
+import org.jetbrains.annotations.Contract;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -48,6 +50,7 @@ public class TableLoaderBooks extends TableLoader {
      *
      * @return the ID of the book
      */
+    @Contract(pure = true)
     public int getBookId() {
         return getInt(TB_ID);
     }
@@ -57,6 +60,8 @@ public class TableLoaderBooks extends TableLoader {
      *
      * @return the book file
      */
+    @Nonnull
+    @Contract(pure = true)
     public String getBookFile() {
         return getString(TB_NAME);
     }

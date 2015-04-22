@@ -36,7 +36,7 @@ public abstract class AbstractCommand {
     /**
      * The ID of the command.
      */
-    private final int id;
+    private final int cmdId;
 
     /**
      * The constructor of a command. This is used to set the ID of the command.
@@ -44,7 +44,7 @@ public abstract class AbstractCommand {
      * @param commId the ID of the command
      */
     protected AbstractCommand(int commId) {
-        id = commId;
+        cmdId = commId;
     }
 
     /**
@@ -84,6 +84,6 @@ public abstract class AbstractCommand {
      */
     @Contract(pure = true)
     public final int getId() {
-        return id;
+        return cmdId;
     }
 }

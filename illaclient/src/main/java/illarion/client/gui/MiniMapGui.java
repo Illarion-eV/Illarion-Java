@@ -15,7 +15,7 @@
  */
 package illarion.client.gui;
 
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.ImmutableColor;
 
@@ -35,9 +35,9 @@ public interface MiniMapGui {
         /**
          * Get target of this pointer.
          *
-         * @param loc the location this pointer is supposed to point to
+         * @param coordinate the location this pointer is supposed to point to
          */
-        void setTarget(@Nonnull Location loc);
+        void setTarget(@Nonnull ServerCoordinate coordinate);
 
         /**
          * The color that is supposed to be applied to the pointers.
@@ -50,7 +50,7 @@ public interface MiniMapGui {
          *
          * @param currentQuest
          */
-        void setCurrentQuest(final boolean currentQuest);
+        void setCurrentQuest(boolean currentQuest);
     }
 
     /**
@@ -58,6 +58,7 @@ public interface MiniMapGui {
      *
      * @return the new pointer
      */
+    @Nonnull
     Pointer createTargetPointer();
 
     /**
@@ -65,6 +66,7 @@ public interface MiniMapGui {
      *
      * @return the quest start pointer
      */
+    @Nonnull
     Pointer createStartPointer(boolean available);
 
     /**

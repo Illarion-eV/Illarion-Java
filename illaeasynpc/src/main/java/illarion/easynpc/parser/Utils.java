@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,7 @@ package illarion.easynpc.parser;
 
 import illarion.common.data.Skill;
 import illarion.common.data.Skills;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import illarion.easynpc.data.*;
 import illarion.easynpc.grammar.EasyNpcParser;
 import illarion.easynpc.parsed.talk.AdvancedNumber;
@@ -41,6 +41,7 @@ import java.util.Map;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 final class Utils {
+    @Nonnull
     private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
 
     private Utils() {
@@ -445,15 +446,15 @@ final class Utils {
     }
 
     @Nonnull
-    static Location getLocation(@Nullable EasyNpcParser.LocationContext node) {
+    static ServerCoordinate getLocation(@Nullable EasyNpcParser.LocationContext node) {
         if (node == null) {
             LOGGER.warn("Expected node for location not found.");
-            return new Location(0, 0, 0);
+            return new ServerCoordinate(0, 0, 0);
         }
         int x = getLocationComponent(node.locationComponent(0));
         int y = getLocationComponent(node.locationComponent(1));
         int z = getLocationComponent(node.locationComponent(2));
-        return new Location(x, y, z);
+        return new ServerCoordinate(x, y, z);
     }
 
     private static int getLocationComponent(@Nullable EasyNpcParser.LocationComponentContext node) {

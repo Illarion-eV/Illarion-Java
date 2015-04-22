@@ -32,12 +32,13 @@ import illarion.common.graphics.MapVariance;
 import illarion.common.gui.AbstractMultiActionHelper;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Graphics;
 import org.illarion.engine.graphic.SceneEvent;
 import org.illarion.engine.input.Button;
+import org.illarion.engine.input.Input;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -169,8 +170,8 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      */
     @Nonnull
     public static Item create(
-            @Nonnull ItemId itemID, @Nonnull Location loc, @Nonnull MapTile parent) {
-        return create(itemID, loc.getCol(), loc.getRow(), parent);
+            @Nonnull ItemId itemID, @Nonnull ServerCoordinate loc, @Nonnull MapTile parent) {
+        return create(itemID, loc.getX(), loc.getY(), parent);
     }
 
     @Override
@@ -247,7 +248,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         }
         if (!parentTile.isBlocked()) {
             MouseTargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMouseMovementHandler();
-            handler.walkTo(parentTile.getLocation(), 0);
+            handler.walkTo(parentTile.getCoordinates(), 0);
             return true;
         }
         return false;
@@ -265,6 +266,57 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         return true;
     }
 
+    /**
+     * Processes single-clicks on the map
+     * If possible, walks the character to the location at the tile under the mouse
+     * Does not walk the player to the base of objects or avatars.
+     *
+     * @param event     the event to be processed
+     * @param container the GameContainer; needed to process input
+     * @return {@code true} if the event was processed
+     */
+    protected boolean processMapClick(@Nonnull ClickOnMapEvent event, @Nonnull GameContainer container) {
+        if (event.getKey() != Button.Left) {
+            return false;
+        }
+        Input input = container.getEngine().getInput();
+        MapTile mouseTile = World.getMap().getInteractive().getTileOnScreenLoc(input.getMouseX(), input.getMouseY());
+
+        if (mouseTile == null || !mouseTile.isAtPlayerLevel()) {
+            return false;
+        }
+        delayGoToItem.reset();
+
+        TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
+
+        boolean mouseTileIsBlocked = mouseTile.isBlocked();
+        boolean mouseTileInUseRange = mouseTile.getInteractive().isInUseRange();
+        boolean itemClickedIsBlocked = parentTile.isBlocked();
+        boolean itemClickedInUseRange = parentTile.getInteractive().isInUseRange();
+
+        if (mouseTileInUseRange && mouseTileIsBlocked){
+            // If it is adjacent and blocked, nowhere to walk
+            return true;
+        }
+        if (itemClickedInUseRange) {
+            if (itemClickedIsBlocked) {
+                delayGoToItem.setLocation(parentTile.getCoordinates());
+                delayGoToItem.pulse();
+            }
+        }else {
+            handler.walkTo(mouseTile.getCoordinates(), (mouseTileIsBlocked ? 1 : 0));
+            handler.assumeControl();
+        }
+        return true;
+    }
+
+    /**
+     * The default way that the game handles clicking on an item
+     * The processMapClick method above replaces this code.
+     *
+     * @param event the event to process
+     * @return true if the method is processed properly
+     */
     private boolean isEventProcessed(@Nonnull ClickOnMapEvent event) {
         if (event.getKey() != Button.Left) {
             return false;
@@ -284,20 +336,17 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         boolean useRange = parentTile.getInteractive().isInUseRange();
 
         if (useRange) {
-            log.trace("Clicked item {} is inside of use range.", getItemId());
             if (blocked) {
                 return true;
             } else {
-                log.trace("Clicked item {} allows walking to. Delaying move to accept double click.", getItemId());
-                delayGoToItem.setLocation(parentTile.getLocation());
+                delayGoToItem.setLocation(parentTile.getCoordinates());
                 delayGoToItem.pulse();
             }
         } else {
-            log.trace("Clicked item {} is outside of use range.", getItemId());
             if (blocked) {
-                handler.walkTo(parentTile.getLocation(), 1);
+                handler.walkTo(parentTile.getCoordinates(), 1);
             } else {
-                handler.walkTo(parentTile.getLocation(), 0);
+                handler.walkTo(parentTile.getCoordinates(), 0);
             }
         }
         handler.assumeControl();
@@ -315,16 +364,13 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
 
         delayGoToItem.reset();
 
-        log.debug("Double clicking item: {}", getItemId());
 
         if (parentTile.getInteractive().isInUseRange()) {
-            log.trace("Item {} is within use range. Using it!", getItemId());
             parentTile.getInteractive().use();
         } else {
-            log.trace("Item {} is outside of the use range. Walking to it.", getItemId());
             final InteractiveMapTile interactiveMapTile = parentTile.getInteractive();
             TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
-            handler.walkTo(parentTile.getLocation(), 1);
+            handler.walkTo(parentTile.getCoordinates(), 1);
             handler.setTargetReachedAction(new Runnable() {
                 @Override
                 public void run() {
@@ -363,8 +409,9 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
                     return isEventProcessed((PointOnMapEvent) event);
                 }
 
+                // Uses a method from AbstractEntity that walks the player to the point at the mouse
                 if (event instanceof ClickOnMapEvent) {
-                    return isEventProcessed((ClickOnMapEvent) event);
+                    return processMapClick((ClickOnMapEvent) event, container);
                 }
 
                 if (event instanceof DoubleClickOnMapEvent) {
@@ -382,13 +429,13 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
 
     private static final class DelayGoToItemHandler extends AbstractMultiActionHelper {
         @Nullable
-        private Location target;
+        private ServerCoordinate target;
 
         DelayGoToItemHandler() {
             super(IllaClient.getCfg().getInteger("doubleClickInterval"), 2);
         }
 
-        void setLocation(@Nullable Location target) {
+        void setLocation(@Nullable ServerCoordinate target) {
             this.target = target;
         }
 
@@ -474,7 +521,7 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         super.update(container, delta);
 
         if (showNumber && (number != null)) {
-            number.addToCamera(getDisplayX(), getDisplayY());
+            number.addToCamera(getDisplayCoordinate().getX(), getDisplayCoordinate().getY());
             number.update(container, delta);
         }
     }

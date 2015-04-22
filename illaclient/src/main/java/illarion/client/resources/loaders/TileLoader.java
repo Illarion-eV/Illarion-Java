@@ -41,7 +41,7 @@ public final class TileLoader extends AbstractResourceLoader<TileTemplate>
      * The logger that is used to report error messages.
      */
     @Nonnull
-    private static final Logger LOGGER = LoggerFactory.getLogger(TileLoader.class);
+    private static final Logger log = LoggerFactory.getLogger(TileLoader.class);
 
     /**
      * The assets of the game engine that are required to load the data needed for the tiles.
@@ -107,7 +107,7 @@ public final class TileLoader extends AbstractResourceLoader<TileTemplate>
                 speed = 0;
                 break;
             default:
-                LOGGER.error("Unknown mode {} for tile {}", mode, id);
+                log.error("Unknown mode {} for tile {}", mode, id);
                 frames = 1;
                 speed = 0;
                 break;
@@ -121,7 +121,7 @@ public final class TileLoader extends AbstractResourceLoader<TileTemplate>
             TileTemplate template = new TileTemplate(id, tileSprite, frames, speed, info);
             getTargetFactory().storeResource(template);
         } catch (@Nonnull IllegalStateException ex) {
-            LOGGER.error("Failed adding tile to internal factory. ID: {} - Filename: {}", id, name);
+            log.error("Failed adding tile to internal factory. ID: {} - Filename: {}", id, name);
         }
 
         return true;

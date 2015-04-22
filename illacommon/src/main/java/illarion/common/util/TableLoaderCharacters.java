@@ -16,7 +16,6 @@
 package illarion.common.util;
 
 import illarion.common.types.Direction;
-import illarion.common.types.Location;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
@@ -183,7 +182,6 @@ public final class TableLoaderCharacters extends TableLoader {
      * Get the direction value of the avatar. This is the direction the avatar is facing.
      *
      * @return the direction the avatar is looking at
-     * @see Location
      */
     @Nonnull
     @Contract(pure = true)

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -42,7 +42,7 @@ public final class LookAtCraftItemCmd extends AbstractCommand {
      * @param dialogId the ID of the dialog to close
      * @param itemIndex the index of the item to look at
      */
-    public LookAtCraftItemCmd(final int dialogId, final int itemIndex) {
+    public LookAtCraftItemCmd(int dialogId, int itemIndex) {
         super(CommandList.CMD_CRAFT_ITEM);
 
         this.dialogId = dialogId;
@@ -50,7 +50,7 @@ public final class LookAtCraftItemCmd extends AbstractCommand {
     }
 
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) {
         writer.writeInt(dialogId);
         writer.writeByte((byte) 2);
         writer.writeUByte(itemIndex);

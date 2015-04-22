@@ -19,7 +19,7 @@ import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
@@ -61,7 +61,7 @@ public final class QuestMsg implements ServerReply {
      * The target locations where the next steps of the quest will happen.
      */
     @Nullable
-    private List<Location> targetLocations;
+    private List<ServerCoordinate> targetLocations;
 
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
@@ -70,9 +70,9 @@ public final class QuestMsg implements ServerReply {
         description = reader.readString();
         finished = reader.readByte() == 1;
         int count = reader.readUByte();
-        targetLocations = Arrays.asList(new Location[count]);
+        targetLocations = Arrays.asList(new ServerCoordinate[count]);
         for (int i = 0; i < count; i++) {
-            targetLocations.set(i, new Location(reader));
+            targetLocations.set(i, new ServerCoordinate(reader));
         }
     }
 

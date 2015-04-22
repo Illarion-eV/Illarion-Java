@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -47,7 +47,7 @@ public final class DragInvInvCmd extends AbstractDragCommand {
      * @param destination the inventory position where the drag ends
      * @param count the amount of items to drag
      */
-    public DragInvInvCmd(final int source, final int destination, @Nonnull final ItemCount count) {
+    public DragInvInvCmd(int source, int destination, @Nonnull ItemCount count) {
         super(CommandList.CMD_DRAG_INV_INV, count);
 
         srcPos = (short) source;
@@ -55,7 +55,7 @@ public final class DragInvInvCmd extends AbstractDragCommand {
     }
 
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) {
         writer.writeUByte(srcPos);
         writer.writeUByte(dstPos);
         getCount().encode(writer);

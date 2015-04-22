@@ -228,9 +228,9 @@ public final class LuaWriter {
         builder.setNpcScript("npc." + source.getModuleName());
 
         builder.setNpcFaceTo(source.getNpcDir().getId());
-        builder.setNpcPosX(source.getNpcPos().getScX());
-        builder.setNpcPosY(source.getNpcPos().getScY());
-        builder.setNpcPosZ(source.getNpcPos().getScZ());
+        builder.setNpcPosX(source.getNpcPos().getX());
+        builder.setNpcPosY(source.getNpcPos().getY());
+        builder.setNpcPosZ(source.getNpcPos().getZ());
         builder.setNpcType(source.getNpcRace().getId());
         builder.setNpcSex(source.getNpcSex().getId());
 
@@ -316,9 +316,9 @@ public final class LuaWriter {
                 String freeLine = String.format("-- %1$74s --%n", "");
                 target.write(freeLine);
 
-                String positionString = Integer.toString(source.getNpcPos().getScX()) + ", " +
-                        Integer.toString(source.getNpcPos().getScY()) + ", " +
-                        Integer.toString(source.getNpcPos().getScZ());
+                String positionString = Integer.toString(source.getNpcPos().getX()) + ", " +
+                        Integer.toString(source.getNpcPos().getY()) + ", " +
+                        Integer.toString(source.getNpcPos().getZ());
                 target.write(String.format("-- %1$-37s%2$-37s --", "NPC Race: " + source.getNpcRace().name(),
                                            "NPC Position:  " + positionString));
                 writeNewLine(target);

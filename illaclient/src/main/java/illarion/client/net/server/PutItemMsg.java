@@ -22,7 +22,7 @@ import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.ItemCount;
 import illarion.common.types.ItemId;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
@@ -47,7 +47,7 @@ public final class PutItemMsg implements ServerReply {
      * The location the item is placed at.
      */
     @Nullable
-    private Location loc;
+    private ServerCoordinate loc;
 
     /**
      * The count value of the item that is placed on the ground.
@@ -62,7 +62,7 @@ public final class PutItemMsg implements ServerReply {
 
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
-        loc = new Location(reader);
+        loc = new ServerCoordinate(reader);
         itemId = new ItemId(reader);
         number = ItemCount.getInstance(reader);
         newTileMovePoints = reader.readUByte();

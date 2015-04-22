@@ -29,8 +29,10 @@ import illarion.client.Game;
 import illarion.client.IllaClient;
 import illarion.client.Login;
 import illarion.client.Servers;
+import illarion.client.resources.SongFactory;
 import illarion.client.util.Lang;
 import org.illarion.engine.Engine;
+import org.illarion.engine.sound.Music;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -152,7 +154,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         login.restoreServer();
         restoreLoginData();
 
-        if (IllaClient.DEFAULT_SERVER == Servers.Realserver) {
+        if (IllaClient.DEFAULT_SERVER == Servers.Illarionserver) {
             @Nullable Element serverPanel = screen.findElementById("serverPanel");
             if (serverPanel != null) {
                 serverPanel.hide();
@@ -195,12 +197,14 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
 
     @Override
     public void onStartScreen() {
-        engine.getSounds().stopMusic(500);
-
+        if(IllaClient.getCfg().getBoolean("musicOn")) {
+            Music illarionTheme = SongFactory.getInstance().getSong(2, engine.getAssets().getSoundsManager());
+            engine.getSounds().playMusic(illarionTheme, 5, 5);
+        }
         if (nameTxt.getDisplayedText().isEmpty()) {
-            passwordTxt.setFocus();
-        } else {
             nameTxt.setFocus();
+        } else {
+            passwordTxt.setFocus();
         }
     }
 
@@ -286,7 +290,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         if (server != null) {
             login.setServer(server.getSelectedIndex());
         } else {
-            login.setServer(Login.GAMESERVER);
+            login.setServer(Login.ILLARIONSERVER);
         }
 
         login.storeData(savePassword.isChecked());
@@ -302,6 +306,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
                 }
             });
         } else {
+            engine.getSounds().stopMusic(15);
             game.enterState(Game.STATE_LOADING);
         }
     }

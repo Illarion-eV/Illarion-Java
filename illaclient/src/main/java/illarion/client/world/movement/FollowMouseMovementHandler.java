@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,7 +19,7 @@ import illarion.client.world.CharMovementMode;
 import illarion.client.world.MapDimensions;
 import illarion.client.world.World;
 import illarion.common.types.Direction;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import illarion.common.util.FastMath;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.illarion.engine.input.Input;
@@ -71,7 +71,7 @@ class FollowMouseMovementHandler extends AbstractMovementHandler implements Mous
 
     @Nullable
     @Override
-    public StepData getNextStep(@Nonnull Location currentLocation) {
+    public StepData getNextStep(@Nonnull ServerCoordinate currentLocation) {
         calculateMove();
         if (walkTowardsDir == null) {
             return null;

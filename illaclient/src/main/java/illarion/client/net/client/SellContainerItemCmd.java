@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -57,8 +57,7 @@ public final class SellContainerItemCmd extends AbstractTradeItemCmd {
      * @param slot the slot in the container to sell the item from
      * @param count the amount of items to be sold
      */
-    public SellContainerItemCmd(
-            final int dialogId, final int container, final int slot, @Nonnull final ItemCount count) {
+    public SellContainerItemCmd(int dialogId, int container, int slot, @Nonnull ItemCount count) {
         super(dialogId, SUB_CMD_ID);
 
         this.container = (short) (container + 1);
@@ -67,7 +66,7 @@ public final class SellContainerItemCmd extends AbstractTradeItemCmd {
     }
 
     @Override
-    public void encode(@Nonnull final NetCommWriter writer) {
+    public void encode(@Nonnull NetCommWriter writer) {
         super.encode(writer);
         writer.writeUByte(container);
         writer.writeUShort(slot);

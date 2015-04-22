@@ -22,7 +22,7 @@ import illarion.client.world.CharMovementMode;
 import illarion.client.world.World;
 import illarion.common.net.NetCommReader;
 import illarion.common.types.CharacterId;
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +78,7 @@ public final class MoveMsg implements ServerReply {
      * The new location of the character.
      */
     @Nullable
-    private Location location;
+    private ServerCoordinate location;
 
     /**
      * The moving mode of the character. Valid values are {@link #MODE_NO_MOVE}, {@link #MODE_MOVE}, {@link
@@ -94,7 +94,7 @@ public final class MoveMsg implements ServerReply {
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         charId = new CharacterId(reader);
-        location = new Location(reader);
+        location = new ServerCoordinate(reader);
         mode = reader.readUByte();
         duration = reader.readUShort();
     }

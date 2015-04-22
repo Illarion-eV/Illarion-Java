@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -57,30 +57,30 @@ public class TileRenderer extends AbstractMapRenderer {
     /**
      * Creates a new map renderer
      */
-    public TileRenderer(final RendererManager manager) {
+    public TileRenderer(@Nonnull RendererManager manager) {
         super(manager);
     }
 
     @Override
     public void renderMap(
-            @Nonnull final Map map,
-            @Nonnull final Rectangle viewport,
-            final int level,
-            @Nonnull final Graphics2D g) {
-        final int z = map.getZ() - level;
-        final AffineTransform transform = g.getTransform();
+            @Nonnull Map map,
+            @Nonnull Rectangle viewport,
+            int level,
+            @Nonnull Graphics2D g) {
+        int z = map.getZ() - level;
+        AffineTransform transform = g.getTransform();
 
         for (int x = 0; x < map.getWidth(); ++x) {
             for (int y = 0; y < map.getHeight(); ++y) {
-                final int xdisp = SwingLocation.displayCoordinateX(x + map.getX(), y + map.getY(), z);
-                final int ydisp = SwingLocation.displayCoordinateY(x + map.getX(), y + map.getY(), z);
+                int xdisp = SwingLocation.displayCoordinateX(x + map.getX(), y + map.getY(), z);
+                int ydisp = SwingLocation.displayCoordinateY(x + map.getX(), y + map.getY(), z);
                 if (viewport.contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
                                       (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
-                    final MapTile mt = map.getTileAt(x, y);
+                    MapTile mt = map.getTileAt(x, y);
                     if (renderEmpty || (mt != null && mt.getId() != 0)) {
-                        final TileImg t = TileLoader.getInstance().getTileFromId(mt.getId());
+                        TileImg t = TileLoader.getInstance().getTileFromId(mt.getId());
                         if (t != null) {
-                            final AffineTransform tr = g.getTransform();
+                            AffineTransform tr = g.getTransform();
                             if (getZoom() > getMinZoom()) {
                                 renderTile(xdisp, ydisp, g, t.getImg()[0]);
                                 renderOverlay(g, mt);
@@ -102,18 +102,18 @@ public class TileRenderer extends AbstractMapRenderer {
     }
 
     private void renderTile(
-            final int xDisp,
-            final int yDisp,
-            @Nonnull final Graphics2D graphics,
-            @Nonnull final Image image) {
+            int xDisp,
+            int yDisp,
+            @Nonnull Graphics2D graphics,
+            @Nonnull Image image) {
         graphics.translate(xDisp, yDisp);
         graphics.drawImage(image, 0, 0, null);
     }
 
-    private void renderOverlay(@Nonnull final Graphics2D graphics, @Nonnull final MapTile mapTile) {
-        final Overlay o = OverlayLoader.getInstance().getOverlayFromId(mapTile.getOverlayID());
+    private void renderOverlay(@Nonnull Graphics2D graphics, @Nonnull MapTile mapTile) {
+        Overlay o = OverlayLoader.getInstance().getOverlayFromId(mapTile.getOverlayID());
         if (o != null) {
-            final Image imageOverlay = o.getImgs()[mapTile.getShapeID() - 1];
+            Image imageOverlay = o.getImgs()[mapTile.getShapeID() - 1];
             if (imageOverlay != null) {
                 graphics.drawImage(imageOverlay, 0, 0, null);
             }
@@ -158,7 +158,7 @@ public class TileRenderer extends AbstractMapRenderer {
         return true;
     }
 
-    public void setRenderEmptyTiles(final boolean renderEmptyTiles) {
+    public void setRenderEmptyTiles(boolean renderEmptyTiles) {
         renderEmpty = renderEmptyTiles;
     }
 

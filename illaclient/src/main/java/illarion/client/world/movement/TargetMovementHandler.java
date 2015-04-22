@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,7 @@
  */
 package illarion.client.world.movement;
 
-import illarion.common.types.Location;
+import illarion.common.types.ServerCoordinate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,7 +32,7 @@ public interface TargetMovementHandler extends MovementHandler {
      * @param target the target location
      * @param distance the distance to the location that is sufficient for the approach
      */
-    void walkTo(@Nonnull Location target, int distance);
+    void walkTo(@Nonnull ServerCoordinate target, int distance);
 
     /**
      * Set the action that is executed once the target of the path is reached.

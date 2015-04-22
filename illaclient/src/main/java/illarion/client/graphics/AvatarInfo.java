@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -58,7 +58,7 @@ public final class AvatarInfo {
      * @param visibilityMod the visibility modifications for the avatar in percent. Values above 100 increase the
      * default visibility.
      */
-    private AvatarInfo(final int visibilityMod) {
+    private AvatarInfo(int visibilityMod) {
         visibility = visibilityMod;
         animations = new boolean[CharAnimations.DEFINED_ANIMATIONS];
     }
@@ -84,16 +84,18 @@ public final class AvatarInfo {
      * default visibility.
      * @return the newly created instance of AvatarInfo or a already created one from the cache
      */
-    public static AvatarInfo getInstance(final int appearance, final int visibilityMod) {
+    @Nonnull
+    public static AvatarInfo getInstance(int appearance, int visibilityMod) {
         if (buffer != null) {
-            if (buffer.containsKey(appearance)) {
-                return buffer.get(appearance);
+            AvatarInfo result = buffer.get(appearance);
+            if (result != null) {
+                return result;
             }
         } else {
             LOGGER.error("Requested new avatar information after setup was done. Efficiency degrading!");
         }
 
-        final AvatarInfo newInfo = new AvatarInfo(visibilityMod);
+        AvatarInfo newInfo = new AvatarInfo(visibilityMod);
         if (buffer != null) {
             buffer.put(appearance, newInfo);
         }
@@ -103,6 +105,7 @@ public final class AvatarInfo {
     /**
      * The instance of the logger for this class.
      */
+    @Nonnull
     private static final Logger LOGGER = LoggerFactory.getLogger(AvatarInfo.class);
 
     /**
@@ -122,7 +125,7 @@ public final class AvatarInfo {
      * @param animationID the ID of the animation that shall be checked for availability
      * @return {@code true} in case the animation is available
      */
-    public boolean isAnimationAvailable(final int animationID) {
+    public boolean isAnimationAvailable(int animationID) {
         return animations[animationID];
     }
 
@@ -133,7 +136,7 @@ public final class AvatarInfo {
      * @param animationID the ID of the animation that is available.
      */
     @SuppressWarnings("nls")
-    public void reportAnimation(final int animationID) {
+    public void reportAnimation(int animationID) {
         if (buffer == null) {
             throw new IllegalStateException("Changing this construct is not allowed after the creation process.");
         }
