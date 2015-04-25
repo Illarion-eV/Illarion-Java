@@ -1060,7 +1060,7 @@ public final class Char implements AnimatedMove {
         coordinate = newLocation;
 
         if (oldCoordinates == null) {
-            updateAvatar();
+            updateLight();
         }
 
         updateLight(coordinate);
@@ -1332,7 +1332,7 @@ public final class Char implements AnimatedMove {
      */
     public void updateLight() {
         if (coordinate == null) {
-            log.warn("The position of the character is not set. The light can't be updated.");
+            log.debug("The position of the character is not set. The light can't be updated.");
             return;
         }
         if (removedCharacter) {
