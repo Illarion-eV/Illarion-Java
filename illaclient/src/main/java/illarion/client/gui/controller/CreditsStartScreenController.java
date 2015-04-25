@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -36,21 +36,22 @@ public final class CreditsStartScreenController implements ScreenController, Key
     @Nonnull
     private final Engine engine;
 
-    public CreditsStartScreenController(@Nonnull final Engine engine) {
+    public CreditsStartScreenController(@Nonnull Engine engine) {
         this.engine = engine;
     }
 
     @Override
-    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
         this.nifty = nifty;
     }
 
     @Override
     public void onStartScreen() {
-        final Music creditsMusic = SongFactory.getInstance().getSong(2, engine.getAssets().getSoundsManager());
+        Music creditsMusic = SongFactory.getInstance().getSong(2, engine.getAssets().getSoundsManager());
         if (creditsMusic != null) {
-            if(!engine.getSounds().isMusicPlaying(creditsMusic))
+            if (!engine.getSounds().isMusicPlaying(creditsMusic)) {
                 engine.getSounds().playMusic(creditsMusic, 250, 250);
+            }
         }
         nifty.gotoScreen("creditsSingles");
     }
@@ -61,7 +62,7 @@ public final class CreditsStartScreenController implements ScreenController, Key
     }
 
     @Override
-    public boolean keyEvent(@Nonnull final NiftyInputEvent inputEvent) {
+    public boolean keyEvent(@Nonnull NiftyInputEvent inputEvent) {
         if (inputEvent == NiftyStandardInputEvent.Escape) {
             nifty.gotoScreen("login");
             return true;

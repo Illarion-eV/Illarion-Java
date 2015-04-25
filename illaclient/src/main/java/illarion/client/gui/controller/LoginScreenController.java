@@ -199,7 +199,10 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     public void onStartScreen() {
         if(IllaClient.getCfg().getBoolean("musicOn")) {
             Music illarionTheme = SongFactory.getInstance().getSong(2, engine.getAssets().getSoundsManager());
-            engine.getSounds().playMusic(illarionTheme, 5, 5);
+            if (illarionTheme != null) {
+                // may be null in case OpenAL is not working
+                engine.getSounds().playMusic(illarionTheme, 5, 5);
+            }
         }
         if (nameTxt.getDisplayedText().isEmpty()) {
             nameTxt.setFocus();
