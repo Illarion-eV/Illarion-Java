@@ -194,26 +194,37 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
 
         game = new Game();
 
-        // Determine the dimensions of the window to create
-        GraphicResolution res = null;
-        String resolutionString = cfg.getString(CFG_RESOLUTION);
-        if (resolutionString != null) {
-            try {
-                res = new GraphicResolution(resolutionString);
-            } catch (@Nonnull IllegalArgumentException ex) {
-                LOGGER.error("Failed to initialize screen resolution. Falling back.");
+        int width;
+        int height;
+        boolean fullScreen;
+        if (cfg.getBoolean(CFG_FULLSCREEN)) {
+            // Determine the dimensions of the window to create
+            GraphicResolution res = null;
+            String resolutionString = cfg.getString(CFG_RESOLUTION);
+            if (resolutionString != null) {
+                try {
+                    res = new GraphicResolution(resolutionString);
+                } catch (@Nonnull IllegalArgumentException ex) {
+                    LOGGER.error("Failed to initialize screen resolution. Falling back.");
+                }
             }
-        }
-        if (res == null) {
-            res = new GraphicResolution(); // auto detection
+            if (res == null) {
+                res = new GraphicResolution(); // auto detection
+            }
+
+            width = res.getWidth();
+            height = res.getHeight();
+            fullScreen = true;
+        } else {
+            width = cfg.getInteger("windowWidth");
+            height = cfg.getInteger("windowHeight");
+            fullScreen = false;
         }
 
         try {
-
-            boolean fullScreenMode = cfg.getBoolean(CFG_FULLSCREEN);
             // Get the game container used to display the game from the engine, using the dimensions from earlier
             gameContainer = EngineManager
-                    .createDesktopGame(Backend.libGDX, game, res.getWidth(), res.getHeight(), fullScreenMode);
+                    .createDesktopGame(Backend.libGDX, game, width, height, fullScreen);
         } catch (@Nonnull EngineException e) {
             LOGGER.error("Fatal error creating game screen!!!", e);
             System.exit(-1);
@@ -480,9 +491,11 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("musicVolume", Player.MAX_CLIENT_VOL * 0.25f);
         cfg.setDefault(ChatLog.CFG_TEXTLOG, true);
         cfg.setDefault(CFG_FULLSCREEN, false);
-        cfg.setDefault(CFG_RESOLUTION, new GraphicResolution().toString());
-        cfg.setDefault("windowWidth", -1);
-        cfg.setDefault("windowHeight", -1);
+
+        GraphicResolution defaultResolution = new GraphicResolution();
+        cfg.setDefault(CFG_RESOLUTION, defaultResolution.toString());
+        cfg.setDefault("windowWidth", defaultResolution.getWidth());
+        cfg.setDefault("windowHeight", defaultResolution.getHeight());
         cfg.setDefault("savePassword", false);
         cfg.setDefault("showFps", false);
         cfg.setDefault("showPing", false);
