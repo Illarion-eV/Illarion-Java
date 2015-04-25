@@ -567,11 +567,6 @@ public final class Player {
         World.getMapDisplay().setLocation(newLoc.toDisplayCoordinate(Layer.Chars));
 
         if (isLongRange) {
-            World.getPlayer().getCharacter().relistLight();
-        }
-        World.getPlayer().getCharacter().updateLight(newLoc);
-
-        if (isLongRange) {
             World.getPeople().clear();
         } else {
             World.getMap().checkInside();

@@ -15,11 +15,8 @@
  */
 package illarion.client.graphics;
 
-import illarion.client.input.ClickOnMapEvent;
 import illarion.client.resources.data.AbstractEntityTemplate;
-import illarion.client.world.MapTile;
 import illarion.client.world.World;
-import illarion.client.world.movement.TargetMovementHandler;
 import illarion.common.types.DisplayCoordinate;
 import illarion.common.types.Rectangle;
 import illarion.common.util.FastMath;
@@ -28,7 +25,6 @@ import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.*;
 import org.illarion.engine.graphic.effects.HighlightEffect;
 import org.illarion.engine.graphic.effects.TextureEffect;
-import org.illarion.engine.input.Button;
 import org.illarion.engine.input.Input;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
@@ -555,6 +551,9 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
         if (removedEntity) {
             LOGGER.warn("Adding a entity to the display list is not allowed after the entity was removed.");
             return;
+        }
+        if (displayCoordinate == null) {
+            throw new IllegalStateException("Adding a entity that has no display coordinate is illegal.");
         }
         if (shown) {
             LOGGER.error("Added entity {} twice.", this);
