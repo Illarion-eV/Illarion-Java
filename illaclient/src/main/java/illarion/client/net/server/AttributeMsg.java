@@ -70,7 +70,7 @@ public final class AttributeMsg implements ServerReply {
             if (charAttribute.getServerName().equals(attribute)) {
                 Char character = World.getPeople().getCharacter(targetCharacter);
                 if (character == null) {
-                    if (!World.getPlayer().isReady()) {
+                    if (!World.getPlayer().isPlayerIdSet()) {
                         return ServerReplyResult.Reschedule;
                     }
                     if (World.getPlayer().isPlayer(targetCharacter)) {

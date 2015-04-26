@@ -18,7 +18,6 @@ package illarion.client.gui.controller.game;
 import de.lessvoid.nifty.elements.Element;
 import illarion.client.gui.MiniMapGui.Pointer;
 import illarion.client.resources.MiscImageFactory;
-import illarion.client.world.World;
 import illarion.common.types.ServerCoordinate;
 import illarion.common.util.FastMath;
 import org.illarion.engine.graphic.Color;
@@ -162,14 +161,14 @@ final class MiniMapStartPointer implements IgeRenderImage, Pointer {
     /**
      * Update the angle of arrow.
      *
-     * @param delta the time since the last update
+     * @param playerLocation the current location of the player
      */
-    void update(int delta) {
+    void update(@Nonnull ServerCoordinate playerLocation) {
         if (targetLocation == null) {
             throw new IllegalStateException("The target location of the pointer is not set. Updating it is illegal.");
         }
-        currentDeltaX = targetLocation.getX() - World.getPlayer().getLocation().getX();
-        currentDeltaY = targetLocation.getY() - World.getPlayer().getLocation().getY();
+        currentDeltaX = targetLocation.getX() - playerLocation.getX();
+        currentDeltaY = targetLocation.getY() - playerLocation.getY();
     }
 
     @Override

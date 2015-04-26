@@ -289,8 +289,11 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
 
     @Nullable
     protected Direction getPreferredDirection() {
-        ServerCoordinate currentPos = getMovement().getServerLocation();
-        ServerCoordinate targetPos = getTargetLocation();
-        return currentPos.getDirection(targetPos);
+        if (isTargetSet()) {
+            ServerCoordinate currentPos = getMovement().getServerLocation();
+            ServerCoordinate targetPos = getTargetLocation();
+            return currentPos.getDirection(targetPos);
+        }
+        return null;
     }
 }

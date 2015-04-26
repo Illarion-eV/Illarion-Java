@@ -460,12 +460,11 @@ public final class GameMiniMap implements WorldMapDataProvider, Stoppable {
      * Save all maps that are currently load to the hard disk.
      */
     public void saveAllMaps() {
-        if (mapOrigin == null) {
-            throw new IllegalStateException("Saving the maps is illegal while the map origin is not set.");
-        }
-        List<ServerCoordinate> origins = getOriginsList(mapOrigin);
-        for (@Nonnull ServerCoordinate loc : origins) {
-            saveMap(loc);
+        if (mapOrigin != null) {
+            List<ServerCoordinate> origins = getOriginsList(mapOrigin);
+            for (@Nonnull ServerCoordinate loc : origins) {
+                saveMap(loc);
+            }
         }
     }
 

@@ -29,6 +29,7 @@ import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.gui.MiniMapGui;
 import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
+import illarion.common.types.ServerCoordinate;
 import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
@@ -238,11 +239,15 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
 
     @Override
     public void update(GameContainer container, int delta) {
-        for (@Nonnull MiniMapArrowPointer pointer : activeArrowPointers) {
-            pointer.update(delta);
-        }
-        for (@Nonnull MiniMapStartPointer pointer : activeStartPointers) {
-            pointer.update(delta);
+        if (World.getPlayer().isLocationSet()) {
+            ServerCoordinate playerLocation = World.getPlayer().getLocation();
+
+            for (@Nonnull MiniMapArrowPointer pointer : activeArrowPointers) {
+                pointer.update(delta, playerLocation);
+            }
+            for (@Nonnull MiniMapStartPointer pointer : activeStartPointers) {
+                pointer.update(playerLocation);
+            }
         }
     }
 }

@@ -476,8 +476,19 @@ public final class Player {
      * @return {@code true} in case the player is properly set up.
      */
     @Contract(pure = true)
-    public boolean isReady() {
+    public boolean isPlayerIdSet() {
         return playerId != null;
+    }
+
+
+    /**
+     * Check if the location of the character is set.
+     *
+     * @return {@code true} in case the location is set.
+     */
+    @Contract(pure = true)
+    public boolean isLocationSet() {
+        return playerLocation != null;
     }
 
     /**
@@ -565,11 +576,6 @@ public final class Player {
         character.resetAnimation(true);
         World.getPlayer().getCombatHandler().standDown();
         World.getMapDisplay().setLocation(newLoc.toDisplayCoordinate(Layer.Chars));
-
-        if (isLongRange) {
-            World.getPlayer().getCharacter().relistLight();
-        }
-        World.getPlayer().getCharacter().updateLight(newLoc);
 
         if (isLongRange) {
             World.getPeople().clear();

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -40,7 +40,7 @@ class GdxSoundsManager extends AbstractSoundsManager {
     /**
      * The sound interface of libGDX that is used to prepare the sound for playback.
      */
-    @Nonnull
+    @Nullable
     private final Audio audio;
 
     /**
@@ -49,7 +49,7 @@ class GdxSoundsManager extends AbstractSoundsManager {
      * @param files the file system handler used to load the data
      * @param audio the audio interface of libGDX that is supposed to be used
      */
-    GdxSoundsManager(@Nonnull Files files, @Nonnull Audio audio) {
+    GdxSoundsManager(@Nonnull Files files, @Nullable Audio audio) {
         this.files = files;
         this.audio = audio;
     }
@@ -57,6 +57,9 @@ class GdxSoundsManager extends AbstractSoundsManager {
     @Nullable
     @Override
     protected Sound loadSound(@Nonnull String ref) {
+        if (audio == null) {
+            return null;
+        }
         try {
             return new GdxSound(ref, audio.newSound(files.internal(ref)));
         } catch (@Nonnull GdxRuntimeException e) {
@@ -67,6 +70,9 @@ class GdxSoundsManager extends AbstractSoundsManager {
     @Nullable
     @Override
     protected Music loadMusic(@Nonnull String ref) {
+        if (audio == null) {
+            return null;
+        }
         try {
             return new GdxMusic(ref, new SaveGdxOpenALMusic(audio, files.internal(ref)));
         } catch (@Nonnull GdxRuntimeException e) {

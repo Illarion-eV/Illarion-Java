@@ -45,7 +45,6 @@ public class LoginState implements GameState {
 
     @Override
     public void create(@Nonnull Game game, @Nonnull GameContainer container, @Nonnull Nifty nifty) {
-        log.trace("Creating login state.");
         loginScreenController = new LoginScreenController(game, container.getEngine());
         nifty.registerScreenController(loginScreenController, new CharScreenController(game),
                                        new CreditsStartScreenController(container.getEngine()));
