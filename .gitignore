@@ -12,3 +12,5 @@ illaeasyquest/src/main/resources/template/*/filelist
 bin/
 **/build/
 .settings/
+
+

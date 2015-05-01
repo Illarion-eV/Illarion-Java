@@ -38,6 +38,7 @@ import org.eclipse.aether.graph.DependencyFilter;
 import org.eclipse.aether.graph.DependencyVisitor;
 import org.eclipse.aether.impl.*;
 import org.eclipse.aether.repository.LocalRepository;
+import org.eclipse.aether.repository.LocalRepositoryManager;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RemoteRepository.Builder;
 import org.eclipse.aether.repository.RepositoryPolicy;
@@ -184,9 +185,7 @@ public class MavenDownloader {
             }
             VersionRangeRequest request = new VersionRangeRequest();
             request.setArtifact(artifact);
-            if (!offline) {
-                request.setRepositories(Collections.singletonList(illarionRepository));
-            }
+            request.setRepositories(Collections.singletonList(illarionRepository));
             request.setRequestContext(RUNTIME);
             VersionRangeResult result = system.resolveVersionRange(session, request);
             NavigableSet<String> versions = new TreeSet<>(new MavenVersionComparator());
@@ -221,9 +220,7 @@ public class MavenDownloader {
         try {
             CollectRequest collectRequest = new CollectRequest();
             collectRequest.setRoot(dependency);
-            if (!offline) {
-                collectRequest.setRepositories(repositories);
-            }
+            collectRequest.setRepositories(repositories);
             CollectResult collectResult = system.collectDependencies(session, collectRequest);
 
             final ProgressMonitor progressMonitor = new ProgressMonitor();
@@ -299,7 +296,6 @@ public class MavenDownloader {
     }
 
     private void setupRepositories() {
-        if (!offline) {
             repositories.add(setupRepository("central", "http://repo1.maven.org/maven2/", false,
                                              setupRepository("ibiblio.org", "http://mirrors.ibiblio.org/maven2/",
                                                      false),
@@ -312,13 +308,18 @@ public class MavenDownloader {
 
             illarionRepository = setupRepository("illarion", "http://illarion.org/media/java/maven", snapshot);
             repositories.add(illarionRepository);
-            repositories.add(setupRepository("oss-sonatype", "http://oss.sonatype.org/content/repositories/releases/",
-                                             false));
-        }
+        repositories.add(setupRepository("oss-sonatype", "http://oss.sonatype" +
+                ".org/content/repositories/releases/", false));
+
+        session.setOffline(offline);
 
         Path localDir = DirectoryManager.getInstance().getDirectory(Directory.Data);
         LocalRepository localRepo = new LocalRepository(localDir.toFile());
-        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
+        LocalRepositoryManager manager = system.newLocalRepositoryManager(session, localRepo);
+        //for (RemoteRepository repo : repositories){
+        //    manager.add(session, new LocalMetadataRegistration(null, repo, null));
+        //}
+        session.setLocalRepositoryManager(manager);
     }
 
     @Nonnull
