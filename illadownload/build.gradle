@@ -39,10 +39,10 @@ dependencies {
     compile group: 'xpp3', name: 'xpp3', version: '1.1.4c'
     compile group: 'org.bushe', name: 'eventbus', version: '1.4'
     runtime group: 'com.google.guava', name: 'guava', version: '18.0'
-    compile group: 'org.eclipse.aether', name: 'aether-api', version: '1.0.1.v20141111'
-    compile group: 'org.eclipse.aether', name: 'aether-connector-basic', version: '1.0.1.v20141111'
-    compile group: 'org.eclipse.aether', name: 'aether-transport-http', version: '1.0.1.v20141111'
-    compile group: 'org.apache.maven', name: 'maven-aether-provider', version: '3.2.5'
+    compile group: 'org.eclipse.aether', name: 'aether-api', version: '1.0.2.v20150114'
+    compile group: 'org.eclipse.aether', name: 'aether-connector-basic', version: '1.0.2.v20150114'
+    compile group: 'org.eclipse.aether', name: 'aether-transport-http', version: '1.0.2.v20150114'
+    compile group: 'org.apache.maven', name: 'maven-aether-provider', version: '3.3.3'
     runtime group: 'org.codehaus.janino', name: 'janino', version: project.ext.janinoVersion
 }
 
