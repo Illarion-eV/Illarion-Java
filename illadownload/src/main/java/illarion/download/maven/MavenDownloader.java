@@ -296,29 +296,23 @@ public class MavenDownloader {
     }
 
     private void setupRepositories() {
-            repositories.add(setupRepository("central", "http://repo1.maven.org/maven2/", false,
-                                             setupRepository("ibiblio.org", "http://mirrors.ibiblio.org/maven2/",
-                                                     false),
-                    setupRepository("antelink",
-                            "http://maven.antelink.com/content/repositories/central/", false),
-                                             setupRepository("exist", "http://repo.exist.com/maven2/", false),
-                                             setupRepository("ibiblio.net",
-                                                             "http://www.ibiblio.net/pub/packages/maven2/", false),
-                                             setupRepository("central-uk", "http://uk.maven.org/maven2/", false)));
+        repositories.add(setupRepository("central", "http://repo1.maven.org/maven2/", false,
+                setupRepository("ibiblio.org", "http://mirrors.ibiblio.org/maven2/", false),
+                setupRepository("antelink", ".com/content/repositories/central/", false),
+                setupRepository("exist", "http://repo.exist.com/maven2/", false),
+                setupRepository("ibiblio.net", "http://www.ibiblio.net/pub/packages/maven2/", false),
+                setupRepository("central-uk", "http://uk.maven.org/maven2/", false)));
 
-            illarionRepository = setupRepository("illarion", "http://illarion.org/media/java/maven", snapshot);
-            repositories.add(illarionRepository);
-        repositories.add(setupRepository("oss-sonatype", "http://oss.sonatype" +
-                ".org/content/repositories/releases/", false));
+        illarionRepository = setupRepository("illarion", "http://illarion.org/media/java/maven", snapshot);
+        repositories.add(illarionRepository);
+        repositories.add(setupRepository("oss-sonatype", "http://oss.sonatype.org/content/repositories/releases/",
+                false));
 
         session.setOffline(offline);
 
         Path localDir = DirectoryManager.getInstance().getDirectory(Directory.Data);
         LocalRepository localRepo = new LocalRepository(localDir.toFile());
         LocalRepositoryManager manager = system.newLocalRepositoryManager(session, localRepo);
-        //for (RemoteRepository repo : repositories){
-        //    manager.add(session, new LocalMetadataRegistration(null, repo, null));
-        //}
         session.setLocalRepositoryManager(manager);
     }
 
