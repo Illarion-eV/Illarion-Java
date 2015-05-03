@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 class MavenVersionComparator implements Comparator<String> {
+    @Nonnull
     private static final Pattern VERSION_SEP_PATTER = Pattern.compile("[.-]");
 
     @Override

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -31,6 +31,7 @@ import org.eclipse.aether.version.VersionScheme;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -43,7 +44,8 @@ final class ArtifactRequestBuilder implements DependencyVisitor {
     @Nonnull
     private final VersionScheme versionScheme;
 
-    private List<FutureArtifactRequest> requests;
+    @Nonnull
+    private final List<FutureArtifactRequest> requests;
     @Nonnull
     private final RepositorySystem system;
     @Nonnull
@@ -64,13 +66,18 @@ final class ArtifactRequestBuilder implements DependencyVisitor {
         this.requestTracer = requestTracer;
     }
 
+    @Nonnull
     public List<FutureArtifactRequest> getRequests() {
-        return requests;
+        return Collections.unmodifiableList(requests);
     }
 
+    @Override
     public boolean visitEnter(@Nonnull DependencyNode node) {
         if (node.getDependency() != null) {
             Artifact nodeArtifact = node.getDependency().getArtifact();
+            if (nodeArtifact == null) {
+                return false;
+            }
             String classifier = nodeArtifact.getClassifier();
             if (classifier.contains("native")) {
                 if (classifier.contains("win") && !OSDetection.isWindows()) {
@@ -87,6 +94,9 @@ final class ArtifactRequestBuilder implements DependencyVisitor {
             for (int i = 0; i < requests.size(); i++) {
                 ArtifactRequest testRequest = requests.get(i).getRequest();
                 Artifact testArtifact = testRequest.getArtifact();
+                if (testArtifact == null) {
+                    continue;
+                }
                 if (!testArtifact.getGroupId().equals(nodeArtifact.getGroupId())) {
                     continue;
                 }
@@ -125,6 +135,7 @@ final class ArtifactRequestBuilder implements DependencyVisitor {
         return true;
     }
 
+    @Override
     public boolean visitLeave(DependencyNode node) {
         return true;
     }

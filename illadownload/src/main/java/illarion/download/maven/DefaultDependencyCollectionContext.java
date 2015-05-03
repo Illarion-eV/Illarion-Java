@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -32,7 +32,7 @@ class DefaultDependencyCollectionContext implements DependencyCollectionContext 
     private final Dependency dependency;
 
     public DefaultDependencyCollectionContext(
-            final RepositorySystemSession session, final Artifact artifact, final Dependency dependency) {
+            RepositorySystemSession session, Artifact artifact, Dependency dependency) {
         this.session = session;
         this.artifact = artifact;
         this.dependency = dependency;

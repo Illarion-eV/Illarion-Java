@@ -84,7 +84,7 @@ public class MavenTransferListener implements TransferListener {
     }
 
     @Override
-    public void transferSucceeded(TransferEvent event) {
+    public void transferSucceeded(@Nonnull TransferEvent event) {
         log.info(event.toString());
         @Nullable Object[] dataArray = getTraceObjectArray(event);
         if (dataArray != null) {
@@ -93,7 +93,7 @@ public class MavenTransferListener implements TransferListener {
     }
 
     @Override
-    public void transferFailed(TransferEvent event) {
+    public void transferFailed(@Nonnull TransferEvent event) {
         log.info(event.toString());
     }
 }
