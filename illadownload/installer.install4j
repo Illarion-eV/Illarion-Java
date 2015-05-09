@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="6.0.1" transformSequenceNumber="5">
+<install4j version="6.0.2" transformSequenceNumber="5">
   <directoryPresets config="C:/Users/Martin Karing/Desktop" />
-  <application name="Illarion Launcher" distributionSourceDir="" applicationId="3082-9459-3479-6191" mediaDir="" mediaFilePattern="${compiler:sys.shortName}-${compiler:sys.version}" compression="9" lzmaCompression="true" pack200Compression="true" excludeSignedFromPacking="true" commonExternalFiles="true" createMd5Sums="true" shrinkRuntime="true" shortName="Illarion" publisher="Illarion e.V." publisherWeb="http://illarion.org" version="2.1.0" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" macVolumeId="15386a77f8270a6f" javaMinVersion="1.7" javaMaxVersion="" allowBetaVM="false" jdkMode="jdk" jdkName="JDK 1.7">
+  <application name="Illarion Launcher" distributionSourceDir="" applicationId="3082-9459-3479-6191" mediaDir="" mediaFilePattern="${compiler:sys.shortName}-${compiler:sys.version}" compression="9" lzmaCompression="true" pack200Compression="true" excludeSignedFromPacking="true" commonExternalFiles="true" createMd5Sums="true" shrinkRuntime="true" shortName="Illarion" publisher="Illarion e.V." publisherWeb="http://illarion.org" version="2.1.0" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" macVolumeId="15386a77f8270a6f" javaMinVersion="1.8" javaMaxVersion="" allowBetaVM="false" jdkMode="jdk" jdkName="JDK 1.7">
     <languages skipLanguageSelection="true" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
       <additionalLanguages>
@@ -48,10 +48,9 @@
           <versionLine x="20" y="40" text="version ${compiler:sys.version}" fontSize="8" fontColor="0,0,0" bold="false" />
         </text>
       </splashScreen>
-      <java mainClass="illarion.download.gui.GuiApplication" vmParameters="-Djava.net.preferIPv4Stack=true &quot;-Dorg.illarion.jre=${launcher:sys.jvmHome}&quot; &quot;-Dorg.illarion.install.dir=${launcher:sys.launcherDirectory}&quot;" arguments="" allowVMPassthroughParameters="false" preferredVM="" bundleRuntime="true">
+      <java mainClass="illarion.download.gui.GuiApplication" vmParameters="-Djava.net.preferIPv4Stack=true &quot;-Dorg.illarion.jre=${launcher:sys.jvmHome}&quot; &quot;-Dorg.illarion.install.dir=${launcher:sys.launcherDirectory}&quot;" arguments="" allowVMPassthroughParameters="false" preferredVM="client" bundleRuntime="true">
         <classPath>
           <scanDirectory location="lib" failOnError="true" />
-          <archive location="jre/lib/jfxrt.jar" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
       </java>
@@ -1528,7 +1527,7 @@ if (context.isUnattended()) {
     </applications>
   </installerGui>
   <mediaSets>
-    <windows name="Windows" id="60" customizedId="" mediaFileName="" installDir="${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="windows-x86-1.7.0_72" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="true" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
+    <windows name="Windows" id="60" customizedId="" mediaFileName="" installDir="${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="windows-x86-1.8.0_45" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="true" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
       <excludedLaunchers />
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
@@ -1541,7 +1540,7 @@ if (context.isUnattended()) {
       <excludedComponents />
       <includedDownloadableComponents />
     </windows>
-    <windows name="Windows (x64)" id="226" customizedId="" mediaFileName="${compiler:sys.shortName}-${compiler:sys.version}-x64" installDir="${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="64" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="windows-amd64-1.7.0_72" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="true" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
+    <windows name="Windows (x64)" id="226" customizedId="" mediaFileName="${compiler:sys.shortName}-${compiler:sys.version}-x64" installDir="${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="64" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="windows-amd64-1.8.0_45" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="true" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
       <excludedLaunchers />
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
@@ -1554,7 +1553,7 @@ if (context.isUnattended()) {
       <excludedComponents />
       <includedDownloadableComponents />
     </windows>
-    <unixInstaller name="Unix Installer" id="64" customizedId="" mediaFileName="illarion-${compiler:sys.version}" installDir="illarion" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-x86-1.7.0_72" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Unix Installer" id="64" customizedId="" mediaFileName="illarion-${compiler:sys.version}" installDir="illarion" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-x86-1.8.0_45" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="">
       <excludedLaunchers />
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
@@ -1570,7 +1569,7 @@ if (context.isUnattended()) {
         <content />
       </installerScript>
     </unixInstaller>
-    <unixInstaller name="Unix Installer (x64)" id="420" customizedId="" mediaFileName="illarion-${compiler:sys.version}-amd64" installDir="illarion" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-amd64-1.7.0_72" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="">
+    <unixInstaller name="Unix Installer (x64)" id="420" customizedId="" mediaFileName="illarion-${compiler:sys.version}-amd64" installDir="illarion" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-amd64-1.8.0_45" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="">
       <excludedLaunchers />
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
@@ -1586,7 +1585,7 @@ if (context.isUnattended()) {
         <content />
       </installerScript>
     </unixInstaller>
-    <linuxRPM name="Linux RPM" id="65" customizedId="" mediaFileName="illarion-${compiler:sys.version}" installDir="/opt/illarion" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-x86-1.7.0_72" manualJREEntry="false" os="linux" arch="i386">
+    <linuxRPM name="Linux RPM" id="65" customizedId="" mediaFileName="illarion-${compiler:sys.version}" installDir="/opt/illarion" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-x86-1.8.0_45" manualJREEntry="false" os="linux" arch="i386">
       <excludedLaunchers />
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
@@ -1609,7 +1608,7 @@ if (context.isUnattended()) {
         <content />
       </postUninstallScript>
     </linuxRPM>
-    <linuxRPM name="Linux RPM (x64)" id="416" customizedId="" mediaFileName="illarion-${compiler:sys.version}-amd64" installDir="/opt/illarion" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-amd64-1.7.0_72" manualJREEntry="false" os="linux" arch="i386">
+    <linuxRPM name="Linux RPM (x64)" id="416" customizedId="" mediaFileName="illarion-${compiler:sys.version}-amd64" installDir="/opt/illarion" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-amd64-1.8.0_45" manualJREEntry="false" os="linux" arch="i386">
       <excludedLaunchers />
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
@@ -1632,7 +1631,7 @@ if (context.isUnattended()) {
         <content />
       </postUninstallScript>
     </linuxRPM>
-    <linuxDeb name="Linux Deb Archive" id="66" customizedId="" mediaFileName="illarion-${compiler:sys.version}" installDir="/opt/illarion" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-x86-1.7.0_72" manualJREEntry="false" bzip="true" description="The Illarion Launcher that is used to download the actual game and start it." dependencies="" maintainerEmail="webmaster@illarion.org" architectureSet="true" architecture="x86">
+    <linuxDeb name="Linux Deb Archive" id="66" customizedId="" mediaFileName="illarion-${compiler:sys.version}" installDir="/opt/illarion" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-x86-1.8.0_45" manualJREEntry="false" bzip="true" description="The Illarion Launcher that is used to download the actual game and start it." dependencies="" maintainerEmail="webmaster@illarion.org" architectureSet="true" architecture="x86">
       <excludedLaunchers />
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
@@ -1655,7 +1654,7 @@ if (context.isUnattended()) {
         <content />
       </postUninstallScript>
     </linuxDeb>
-    <linuxDeb name="Linux Deb Archive (x64)" id="411" customizedId="" mediaFileName="illarion-${compiler:sys.version}-amd64" installDir="/opt/illarion" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-amd64-1.7.0_72" manualJREEntry="false" bzip="true" description="The Illarion Launcher that is used to download the actual game and start it." dependencies="" maintainerEmail="webmaster@illarion.org" architectureSet="true" architecture="amd64">
+    <linuxDeb name="Linux Deb Archive (x64)" id="411" customizedId="" mediaFileName="illarion-${compiler:sys.version}-amd64" installDir="/opt/illarion" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="linux-amd64-1.8.0_45" manualJREEntry="false" bzip="true" description="The Illarion Launcher that is used to download the actual game and start it." dependencies="" maintainerEmail="webmaster@illarion.org" architectureSet="true" architecture="amd64">
       <excludedLaunchers />
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
@@ -1678,7 +1677,7 @@ if (context.isUnattended()) {
         <content />
       </postUninstallScript>
     </linuxDeb>
-    <macos name="Mac OS X Single Bundle" id="590" customizedId="" mediaFileName="illarion-${compiler:sys.version}" installDir="illarion" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="macosx-amd64-1.7.0_72" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" appleJre="false" requiredVmIdPrefix="" customInstallBaseDir="" contentFilesType="1" downloadURL="" installerName="${i18n:InstallerName(${compiler:sys.fullName})}" volumeName="${compiler:sys.shortName}" compressDmg="false" launcherId="23">
+    <macos name="Mac OS X Single Bundle" id="590" customizedId="" mediaFileName="illarion-${compiler:sys.version}" installDir="illarion" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="macosx-amd64-1.8.0_45" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" appleJre="false" requiredVmIdPrefix="" customInstallBaseDir="" contentFilesType="1" downloadURL="" installerName="${i18n:InstallerName(${compiler:sys.fullName})}" volumeName="${compiler:sys.shortName}" compressDmg="false" launcherId="23">
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude />
