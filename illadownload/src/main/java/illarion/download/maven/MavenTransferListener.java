@@ -60,11 +60,13 @@ public class MavenTransferListener implements TransferListener {
         ArtifactRequestTracer requestTracer = (ArtifactRequestTracer) dataArray[0];
         ProgressMonitor monitor = (ProgressMonitor) dataArray[1];
         long totalSize = event.getResource().getContentLength();
-        requestTracer.trace(monitor, event.getResource().getResourceName(), totalSize, event.getTransferredBytes());
+        if ((requestTracer != null) && (monitor != null)) {
+            requestTracer.trace(monitor, event.getResource().getResourceName(), totalSize, event.getTransferredBytes());
+        }
     }
 
     @Nullable
-    private Object[] getTraceObjectArray(@Nonnull TransferEvent event) {
+    private static Object[] getTraceObjectArray(@Nonnull TransferEvent event) {
         @Nullable RequestTrace trace = event.getResource().getTrace();
         while (true) {
             if (trace == null) {
