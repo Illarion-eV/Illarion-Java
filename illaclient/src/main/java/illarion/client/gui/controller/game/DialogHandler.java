@@ -120,7 +120,7 @@ public final class DialogHandler
     }
 
     private interface PostBuildTask {
-        void run(Element createdElement);
+        void run(@Nonnull Element createdElement);
     }
 
     @Nonnull
@@ -291,7 +291,7 @@ public final class DialogHandler
         }
 
         World.getNet().sendCommand(new LookAtCraftIngredientCmd(event.getDialogId(), event.getItem().getItemIndex(),
-                                                                event.getIngredientIndex()));
+                event.getIngredientIndex()));
         lastCraftingTooltip = event.getIngredientIndex();
     }
 
@@ -343,12 +343,12 @@ public final class DialogHandler
     }
 
     @Override
-    public void bind(@Nonnull Nifty parentNifty, @Nonnull Screen parentScreen) {
-        nifty = parentNifty;
-        screen = parentScreen;
+    public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
+        this.nifty = nifty;
+        this.screen = screen;
 
-        merchantDialog = screen.findNiftyControl("merchantDialog", DialogMerchant.class);
-        craftingDialog = screen.findNiftyControl("craftingDialog", DialogCrafting.class);
+        merchantDialog = this.screen.findNiftyControl("merchantDialog", DialogMerchant.class);
+        craftingDialog = this.screen.findNiftyControl("craftingDialog", DialogCrafting.class);
     }
 
     @Override
@@ -584,20 +584,28 @@ public final class DialogHandler
 
     @Override
     public void showInputDialog(
-            int id, @Nonnull String title, @Nonnull String description, int maxCharacters, boolean multipleLines) {
+            int dialogId, @Nonnull String title, @Nonnull String message, int maxLength, boolean multiLine) {
         Element parentArea = screen.findElementById("windows");
-        DialogInputBuilder builder = new DialogInputBuilder("inputDialog" + Integer.toString(id), title);
-        builder.description(description);
+        DialogInputBuilder builder = new DialogInputBuilder("inputDialog" + Integer.toString(dialogId), title);
+        builder.description(message);
         builder.buttonLeft("OK");
         builder.buttonRight("Cancel");
-        builder.dialogId(id);
-        builder.maxLength(maxCharacters);
-        if (multipleLines) {
+        builder.dialogId(dialogId);
+        builder.maxLength(maxLength);
+        if (multiLine) {
             builder.style("illarion-dialog-input-multi");
         } else {
             builder.style("illarion-dialog-input-single");
         }
-        builders.add(new BuildWrapper(builder, parentArea, null));
+        builders.add(new BuildWrapper(builder, parentArea, new PostBuildTask() {
+            @Override
+            public void run(@Nonnull Element createdElement) {
+                DialogInput control = createdElement.getNiftyControl(DialogInput.class);
+                if (control != null) {
+                    control.setFocus();
+                }
+            }
+        }));
     }
 
     @Override
@@ -622,7 +630,7 @@ public final class DialogHandler
         builder.style("illarion-dialog-input-single");
         builders.add(new BuildWrapper(builder, parentArea, new PostBuildTask() {
             @Override
-            public void run(Element createdElement) {
+            public void run(@Nonnull Element createdElement) {
                 DialogInput control = createdElement.getNiftyControl(DialogInput.class);
                 if (control != null) {
                     control.setFocus();
@@ -632,12 +640,12 @@ public final class DialogHandler
     }
 
     @Override
-    public void showMessageDialog(int id, @Nonnull String title, @Nonnull String message) {
+    public void showMessageDialog(int dialogId, @Nonnull String title, @Nonnull String message) {
         Element parentArea = screen.findElementById("windows");
-        DialogMessageBuilder builder = new DialogMessageBuilder("msgDialog" + Integer.toString(id), title);
+        DialogMessageBuilder builder = new DialogMessageBuilder("msgDialog" + Integer.toString(dialogId), title);
         builder.text(message);
         builder.button("OK");
-        builder.dialogId(id);
+        builder.dialogId(dialogId);
         builders.add(new BuildWrapper(builder, parentArea, null));
     }
 

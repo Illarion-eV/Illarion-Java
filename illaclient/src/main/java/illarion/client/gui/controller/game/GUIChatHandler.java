@@ -57,6 +57,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -528,6 +529,8 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         }
     }
 
+    private final AtomicLong chatLineCounter = new AtomicLong(0L);
+
     /**
      * Add a entry to the Chat log.
      *
@@ -540,7 +543,10 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         }
         Element contentPane = chatLog.getElement().findElementById("chatLog");
 
+        long index = chatLineCounter.getAndIncrement();
+
         LabelBuilder label = new LabelBuilder();
+        label.id("chatLog#chatLine-" + index);
         label.font("chatFont");
         label.text(text);
         label.color(color);
@@ -548,6 +554,17 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         label.wrap(true);
         label.width(contentPane.getConstraintWidth().toString());
         label.build(nifty, screen, contentPane);
+
+        LabelBuilder translationLabel = new LabelBuilder();
+        translationLabel.id("chatLog#transChatLine-" + index);
+        translationLabel.font("chatFont");
+        translationLabel.text("");
+        translationLabel.color(color);
+        translationLabel.textHAlign(Align.Left);
+        translationLabel.wrap(true);
+        translationLabel.visible(false);
+        translationLabel.width(contentPane.getConstraintWidth().toString());
+        translationLabel.build(nifty, screen, contentPane);
 
         dirty = true;
     }
