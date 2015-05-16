@@ -22,7 +22,7 @@ import illarion.common.util.ProgressMonitor;
 import illarion.download.maven.MavenDownloaderCallback.State;
 import org.apache.maven.model.building.DefaultModelBuilderFactory;
 import org.apache.maven.model.building.ModelBuilder;
-import org.apache.maven.repository.internal.*;
+import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.ConfigurationProperties;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
@@ -36,7 +36,7 @@ import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyFilter;
 import org.eclipse.aether.graph.DependencyVisitor;
-import org.eclipse.aether.impl.*;
+import org.eclipse.aether.impl.DefaultServiceLocator;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.LocalRepositoryManager;
 import org.eclipse.aether.repository.RemoteRepository;
@@ -48,6 +48,7 @@ import org.eclipse.aether.resolution.VersionRangeResolutionException;
 import org.eclipse.aether.resolution.VersionRangeResult;
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
 import org.eclipse.aether.spi.connector.transport.TransporterFactory;
+import org.eclipse.aether.spi.locator.ServiceLocator;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.filter.DependencyFilterUtils;
 import org.eclipse.aether.util.graph.selector.AndDependencySelector;
@@ -93,7 +94,7 @@ public class MavenDownloader {
      * The service locator used to link in the required services.
      */
     @Nonnull
-    private final DefaultServiceLocator serviceLocator;
+    private final ServiceLocator serviceLocator;
 
     /**
      * The repository system that is used by this downloader. This stores the repositories that are queried for the
@@ -145,11 +146,10 @@ public class MavenDownloader {
         offline = offlineFlag;
         log.debug("Setting offline flag: {}", offlineFlag);
 
-        serviceLocator = new DefaultServiceLocator();
-        setupServiceLocator();
+        serviceLocator = setupServiceLocator();
 
         system = serviceLocator.getService(RepositorySystem.class);
-        session = new DefaultRepositorySystemSession();
+        session = MavenRepositorySystemUtils.newSession();
 
         repositoryListener = new MavenRepositoryListener();
 
@@ -334,19 +334,14 @@ public class MavenDownloader {
         return repo.build();
     }
 
-    private void setupServiceLocator() {
-        serviceLocator.addService(ArtifactDescriptorReader.class, DefaultArtifactDescriptorReader.class);
-
-        serviceLocator.addService(VersionResolver.class, DefaultVersionResolver.class);
-        serviceLocator.addService(VersionRangeResolver.class, DefaultVersionRangeResolver.class);
-
-        serviceLocator.addService(MetadataGeneratorFactory.class, SnapshotMetadataGeneratorFactory.class);
-        serviceLocator.addService(MetadataGeneratorFactory.class, VersionsMetadataGeneratorFactory.class);
+    @Nonnull
+    private static ServiceLocator setupServiceLocator() {
+        DefaultServiceLocator serviceLocator = MavenRepositorySystemUtils.newServiceLocator();
 
         serviceLocator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
         serviceLocator.addService(TransporterFactory.class, HttpTransporterFactory.class);
-
         serviceLocator.setServices(ModelBuilder.class, new DefaultModelBuilderFactory().newInstance());
+        return serviceLocator;
     }
 
 }
