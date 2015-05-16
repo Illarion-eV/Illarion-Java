@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -63,8 +63,8 @@ public class GuiApplication extends Application implements Storyboard {
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
 
-        stage.initStyle(StageStyle.TRANSPARENT);
         model = new GuiModel(stage, getHostServices(), this);
+        stage.initStyle(StageStyle.TRANSPARENT);
 
         this.stage = stage;
 
@@ -102,6 +102,7 @@ public class GuiApplication extends Application implements Storyboard {
     }
 
     public static void main(String[] args) {
+        System.setProperty("javafx.userAgentStylesheetUrl", "CASPIAN");
         launch(args);
     }
 

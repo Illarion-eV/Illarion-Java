@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -29,7 +29,7 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 class ApplicationView extends AnchorPane implements SceneUpdater {
-    public ApplicationView(@Nonnull final GuiModel model) throws IOException {
+    public ApplicationView(@Nonnull GuiModel model) throws IOException {
         boolean isApplet;
         try {
             isApplet = model.getHostServices().getWebContext() != null;
@@ -37,7 +37,7 @@ class ApplicationView extends AnchorPane implements SceneUpdater {
             isApplet = false;
         }
 
-        final Parent root = Util.loadFXML("applicationFrame.fxml", model, Util.loadResourceBundle("applicationFrame"));
+        Parent root = Util.loadFXML("applicationFrame.fxml", model, Util.loadResourceBundle("applicationFrame"));
 
         if (isApplet) {
             root.getStyleClass().add("applet");
@@ -60,7 +60,7 @@ class ApplicationView extends AnchorPane implements SceneUpdater {
         return (Pane) lookup("#footer");
     }
 
-    protected final void setContent(@Nonnull final Node content, @Nonnull final Node footer) {
+    protected final void setContent(@Nonnull Node content, @Nonnull Node footer) {
         getContentPane().getChildren().add(content);
         getFooterPane().getChildren().add(footer);
 
@@ -68,7 +68,7 @@ class ApplicationView extends AnchorPane implements SceneUpdater {
         maximizeOnAnchorPane(footer);
     }
 
-    private static void maximizeOnAnchorPane(@Nonnull final Node node) {
+    private static void maximizeOnAnchorPane(@Nonnull Node node) {
         setRightAnchor(node, 0.0);
         setLeftAnchor(node, 0.0);
         setTopAnchor(node, 0.0);
@@ -76,8 +76,8 @@ class ApplicationView extends AnchorPane implements SceneUpdater {
     }
 
     @Override
-    public void updateScene(@Nonnull final Scene scene) {
-        final String stylesheet = Util.getCssReference("applicationFrame");
+    public void updateScene(@Nonnull Scene scene) {
+        String stylesheet = Util.getCssReference("applicationFrame");
         if (stylesheet != null) {
             scene.getStylesheets().add(stylesheet);
         } else {

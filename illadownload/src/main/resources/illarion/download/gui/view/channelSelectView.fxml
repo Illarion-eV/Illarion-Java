@@ -6,7 +6,7 @@
 <!--
   ~ This file is part of the Illarion project.
   ~
-  ~ Copyright © 2014 - Illarion e.V.
+  ~ Copyright © 2015 - Illarion e.V.
   ~
   ~ Illarion is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU Affero General Public License as published by
@@ -18,74 +18,66 @@
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   ~ GNU General Public License for more details.
   -->
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"
+
+<?import javafx.geometry.Insets?><?import javafx.scene.control.*?><?import javafx.scene.layout.*?>
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="illarion.download.gui.controller.ChannelSelectionController">
     <BorderPane fx:id="footer">
         <right>
-            <Button alignment="CENTER_RIGHT" styleClass="button-green" text="%continue" onAction="#nextStep"
-                    prefHeight="25.0" prefWidth="80.0"/>
+            <Button alignment="CENTER_RIGHT" onAction="#nextStep" prefHeight="25.0" prefWidth="80.0"
+                    styleClass="button-green" text="%continue" />
         </right>
     </BorderPane>
-    <BorderPane fx:id="content" prefHeight="200.0" prefWidth="200.0">
+    <BorderPane fx:id="content">
         <center>
-            <Separator orientation="VERTICAL" prefHeight="200.0"/>
+            <Separator orientation="VERTICAL" prefHeight="200.0" />
         </center>
         <left>
-            <VBox fillWidth="true">
-                <fx:define>
-                    <ToggleGroup fx:id="storageMethodSelect"/>
-                </fx:define>
+            <VBox maxWidth="350.0">
                 <padding>
-                    <Insets right="10.0"/>
+                    <Insets right="10.0" />
                 </padding>
-                <Label text="%descriptionGeneral" textAlignment="LEFT" wrapText="true">
-                    <VBox.margin>
-                        <Insets/>
-                    </VBox.margin>
-                </Label>
-                <Label text="%descriptionRelease" textAlignment="LEFT" wrapText="true"/>
-                <Label text="%descriptionSnapshot" textAlignment="LEFT" wrapText="true"/>
+                <Label text="%descriptionGeneral" textAlignment="LEFT" wrapText="true" />
+                <Label text="%descriptionRelease" textAlignment="LEFT" wrapText="true" />
+                <Label text="%descriptionSnapshot" textAlignment="LEFT" wrapText="true" />
             </VBox>
         </left>
         <padding>
-            <Insets bottom="10.0" top="20.0"/>
+            <Insets bottom="10.0" top="20.0" />
         </padding>
         <right>
             <GridPane>
                 <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="142.0" minWidth="2.0" prefWidth="76.0"/>
-                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="198.0" minWidth="10.0" prefWidth="124.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="142.0" minWidth="2.0" prefWidth="76.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="198.0" minWidth="10.0" prefWidth="124.0" />
                 </columnConstraints>
                 <padding>
-                    <Insets left="10.0"/>
+                    <Insets left="10.0" />
                 </padding>
                 <rowConstraints>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 </rowConstraints>
-                <ComboBox fx:id="targetClient" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1"
-                          GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.vgrow="NEVER"/>
-                <ComboBox fx:id="targetEasyNpc" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1"
-                          GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="NEVER"/>
-                <ComboBox fx:id="targetEasyQuest" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1"
-                          GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.vgrow="NEVER"/>
-                <ComboBox fx:id="targetMapEditor" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1"
-                          GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" GridPane.vgrow="NEVER"/>
-                <Label text="%labelClient" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                <Label text="%labelEasyNPC" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                <Label text="%labelEasyQuest" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                <Label text="%labelMapEditor" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                <ComboBox fx:id="targetClient" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0"
+                          GridPane.vgrow="NEVER" />
+                <ComboBox fx:id="targetEasyNpc" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1"
+                          GridPane.vgrow="NEVER" />
+                <ComboBox fx:id="targetEasyQuest" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2"
+                          GridPane.vgrow="NEVER" />
+                <ComboBox fx:id="targetMapEditor" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3"
+                          GridPane.vgrow="NEVER" />
+                <Label text="%labelClient" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <Label text="%labelEasyNPC" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <Label text="%labelEasyQuest" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <Label text="%labelMapEditor" GridPane.columnIndex="0" GridPane.rowIndex="3" />
             </GridPane>
         </right>
         <top>
             <Label style="-fx-font-size: 20pt" text="%title">
                 <BorderPane.margin>
-                    <Insets bottom="10.0"/>
+                    <Insets bottom="10.0" />
                 </BorderPane.margin>
             </Label>
         </top>
