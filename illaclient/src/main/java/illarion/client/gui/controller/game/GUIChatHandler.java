@@ -28,6 +28,7 @@ import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.events.NiftyMousePrimaryMultiClickedEvent;
+import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.input.NiftyStandardInputEvent;
 import de.lessvoid.nifty.screen.KeyInputHandler;
@@ -537,6 +538,8 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
     @Nonnull
     private final AtomicLong chatLineCounter = new AtomicLong(0L);
 
+    private SizeValue emptyLineHeight;
+
     /**
      * Add a entry to the Chat log.
      *
@@ -570,10 +573,20 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         translationLabel.textHAlign(Align.Left);
         translationLabel.wrap(true);
         translationLabel.visible(false);
-        translationLabel.height(SizeValue.px(0));
+        if (emptyLineHeight != null) {
+            translationLabel.marginTop(emptyLineHeight.toString());
+        }
         translationLabel.width(contentPane.getConstraintWidth().toString());
         Element translationElement = translationLabel.build(nifty, screen, contentPane);
-        translationElement.setConstraintHeight(SizeValue.px(0));
+
+        if (emptyLineHeight == null) {
+            TextRenderer renderer = translationElement.getRenderer(TextRenderer.class);
+            if (renderer != null) {
+                int height = renderer.getTextHeight();
+                emptyLineHeight = SizeValue.px(-height);
+                translationElement.setMarginTop(emptyLineHeight);
+            }
+        }
 
         dirty = true;
     }
@@ -587,7 +600,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
             return;
         }
 
-        final Element panel = chatLog.getElement().findElementById("chatLog");
+        Element panel = chatLog.getElement().findElementById("chatLog");
         if (panel == null) {
             return;
         }
@@ -621,9 +634,11 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
                             if (translation == null) {
                                 translationLabel.setText("");
                                 translationElement.setVisible(false);
-                                translationElement.setConstraintHeight(SizeValue.px(0));
+                                if (emptyLineHeight != null) {
+                                    translationElement.setMarginTop(emptyLineHeight);
+                                }
                             } else {
-                                translationElement.setConstraintHeight(SizeValue.def());
+                                translationElement.setMarginTop(SizeValue.def());
                                 translationLabel.setText(Lang.getMsg("chat.translation.header") + ' ' + translation);
                             }
                             dirty = true;
