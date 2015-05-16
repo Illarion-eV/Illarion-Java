@@ -27,7 +27,7 @@ import de.lessvoid.nifty.controls.ScrollPanel.AutoScroll;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
 import de.lessvoid.nifty.elements.Element;
-import de.lessvoid.nifty.elements.events.NiftyMousePrimaryClickedEvent;
+import de.lessvoid.nifty.elements.events.NiftyMousePrimaryMultiClickedEvent;
 import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.input.NiftyStandardInputEvent;
 import de.lessvoid.nifty.screen.KeyInputHandler;
@@ -582,8 +582,8 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
     private final Translator translator = new Translator();
 
     @NiftyEventSubscriber(pattern = "chatLog#chatLine-[0-9]+")
-    public void onChatLineDoubleClick(@Nonnull String id, @Nonnull NiftyMousePrimaryClickedEvent event) {
-        if ((screen == null) || !translator.isServiceEnabled() || (chatLog == null)) {
+    public void onChatLineDoubleClick(@Nonnull String id, @Nonnull NiftyMousePrimaryMultiClickedEvent event) {
+        if ((screen == null) || !translator.isServiceEnabled() || (chatLog == null) || (event.getClickCount() != 2)) {
             return;
         }
 
