@@ -624,7 +624,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
                                 translationElement.setConstraintHeight(SizeValue.px(0));
                             } else {
                                 translationElement.setConstraintHeight(SizeValue.def());
-                                translationLabel.setText(translation);
+                                translationLabel.setText(Lang.getMsg("chat.translation.header") + ' ' + translation);
                             }
                             dirty = true;
                         }
