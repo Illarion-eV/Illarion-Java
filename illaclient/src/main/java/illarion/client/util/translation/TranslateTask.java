@@ -15,6 +15,8 @@
  */
 package illarion.client.util.translation;
 
+import illarion.client.util.Lang;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.text.BreakIterator;
@@ -23,6 +25,8 @@ import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
@@ -52,17 +56,32 @@ class TranslateTask implements Callable<String> {
     @Override
     @Nullable
     public String call() throws Exception {
-        BreakIterator iterator = BreakIterator.getSentenceInstance();
-        iterator.setText(original);
+        String header = findHeader(original);
+        String usedText = (header == null) ? original : original.substring(header.length());
+        boolean foundOocMarkers = false;
+        if (usedText.startsWith("((") && usedText.endsWith("))")) {
+            foundOocMarkers = true;
+            usedText = usedText.substring(2, usedText.length() - 2);
+        }
+
+        BreakIterator iterator = BreakIterator.getSentenceInstance(Lang.getInstance().getLocale());
+        iterator.setText(usedText);
 
         Collection<Future<String>> translationTasks = new ArrayList<>();
         int start = iterator.first();
         for (int end = iterator.next(); end != BreakIterator.DONE; start = end, end = iterator.next()) {
-            String line = original.substring(start, end).trim();
+            String line = usedText.substring(start, end).trim();
             translationTasks.add(executorService.submit(new TranslateSentenceTask(provider, direction, line)));
         }
 
         StringBuilder resultBuilder = new StringBuilder();
+        if (header != null) {
+            resultBuilder.append(header);
+        }
+        if (foundOocMarkers) {
+            resultBuilder.append("((");
+        }
+
         for (Future<String> task : translationTasks) {
             String translated = task.get();
             if (translated == null) {
@@ -78,8 +97,56 @@ class TranslateTask implements Callable<String> {
             return null;
         }
         resultBuilder.setLength(resultBuilder.length() - 1);
+        if (foundOocMarkers) {
+            resultBuilder.append("))");
+        }
         String result = resultBuilder.toString();
         callback.sendTranslation(result);
         return result;
+    }
+
+    @Nonnull
+    private static final Pattern PATTERN_SAY = Pattern.compile("^(.+?)\\s" + Lang.getMsg("log.say") + ":\\s");
+    @Nonnull
+    private static final Pattern PATTERN_SHOUT = Pattern.compile("^(.+?)\\s" + Lang.getMsg("log.shout") + ":\\s");
+    @Nonnull
+    private static final Pattern PATTERN_WHISPER = Pattern.compile("^(.+?)\\s" + Lang.getMsg("log.whisper") + ":\\s");
+
+    @Nullable
+    private String findHeader(@Nonnull String input) {
+        if (input.startsWith(Lang.getMsg("chat.distantShout") + ": ")) {
+            return Lang.getMsg("chat.distantShout") + ": ";
+        }
+        if (input.startsWith(Lang.getMsg("chat.broadcast") + ": ")) {
+            return Lang.getMsg("chat.broadcast") + ": ";
+        }
+        if (input.startsWith(Lang.getMsg("chat.textto") + ": ")) {
+            return Lang.getMsg("chat.textto") + ": ";
+        }
+        if (input.startsWith(Lang.getMsg("chat.scriptInform") + ": ")) {
+            return Lang.getMsg("chat.scriptInform") + ": ";
+        }
+        String sayHeader = findPattern(input, PATTERN_SAY);
+        if (sayHeader != null) {
+            return sayHeader;
+        }
+        String shoutHeader = findPattern(input, PATTERN_SHOUT);
+        if (shoutHeader != null) {
+            return shoutHeader;
+        }
+        String whisperHeader = findPattern(input, PATTERN_WHISPER);
+        if (whisperHeader != null) {
+            return whisperHeader;
+        }
+        return null;
+    }
+
+    @Nullable
+    private String findPattern(@Nonnull String input, @Nonnull Pattern pattern) {
+        Matcher matcher = pattern.matcher(input);
+        if (matcher.find()) {
+            return matcher.group();
+        }
+        return null;
     }
 }

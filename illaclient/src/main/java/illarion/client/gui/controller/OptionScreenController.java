@@ -25,6 +25,7 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.IllaClient;
 import illarion.client.Servers;
+import illarion.client.util.translation.Translator;
 import illarion.common.bug.CrashReporter;
 import illarion.common.config.Config;
 import org.illarion.engine.DesktopGameContainer;
@@ -53,6 +54,8 @@ public final class OptionScreenController implements ScreenController {
     private CheckBox fullscreen;
     private CheckBox showFps;
     private CheckBox showPing;
+    private DropDown<String> translationProviders;
+    private DropDown<String> translationDirections;
 
     private CheckBox soundOn;
     private Slider soundVolume;
@@ -99,6 +102,17 @@ public final class OptionScreenController implements ScreenController {
         showFps = tabRoot.findNiftyControl("showFps", CheckBox.class);
         showPing = tabRoot.findNiftyControl("showPing", CheckBox.class);
 
+        //noinspection unchecked
+        translationProviders = tabRoot.findNiftyControl("translationProviders", DropDown.class);
+        translationProviders.addItem("${options-bundle.translation.provider.none}");
+        translationProviders.addItem("${options-bundle.translation.provider.mymemory}");
+        translationProviders.addItem("${options-bundle.translation.provider.yandex}");
+        //noinspection unchecked
+        translationDirections = tabRoot.findNiftyControl("translationDirections", DropDown.class);
+        translationDirections.addItem("${options-bundle.translation.direction.default}");
+        translationDirections.addItem("${options-bundle.translation.direction.deToEn}");
+        translationDirections.addItem("${options-bundle.translation.direction.enToDe}");
+
         soundOn = tabRoot.findNiftyControl("soundOn", CheckBox.class);
         soundVolume = tabRoot.findNiftyControl("soundVolume", Slider.class);
         musicOn = tabRoot.findNiftyControl("musicOn", CheckBox.class);
@@ -133,6 +147,9 @@ public final class OptionScreenController implements ScreenController {
         fullscreen.setChecked(IllaClient.getCfg().getBoolean(IllaClient.CFG_FULLSCREEN));
         showFps.setChecked(IllaClient.getCfg().getBoolean("showFps"));
         showPing.setChecked(IllaClient.getCfg().getBoolean("showPing"));
+
+        translationProviders.selectItemByIndex(IllaClient.getCfg().getInteger(Translator.CFG_KEY_PROVIDER));
+        translationDirections.selectItemByIndex(IllaClient.getCfg().getInteger(Translator.CFG_KEY_DIRECTION));
 
         soundOn.setChecked(IllaClient.getCfg().getBoolean("soundOn"));
         soundVolume.setValue(IllaClient.getCfg().getFloat("soundVolume"));
@@ -199,6 +216,9 @@ public final class OptionScreenController implements ScreenController {
         configSystem.set(IllaClient.CFG_FULLSCREEN, fullscreen.isChecked());
         configSystem.set("showFps", showFps.isChecked());
         configSystem.set("showPing", showPing.isChecked());
+
+        configSystem.set(Translator.CFG_KEY_PROVIDER, translationProviders.getSelectedIndex());
+        configSystem.set(Translator.CFG_KEY_DIRECTION, translationDirections.getSelectedIndex());
 
         configSystem.set("soundOn", soundOn.isChecked());
         configSystem.set("soundVolume", soundVolume.getValue());

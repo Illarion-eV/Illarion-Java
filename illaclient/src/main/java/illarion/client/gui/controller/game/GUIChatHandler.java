@@ -21,11 +21,13 @@ import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.builder.EffectBuilder;
 import de.lessvoid.nifty.builder.ElementBuilder.Align;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
+import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.controls.ScrollPanel;
 import de.lessvoid.nifty.controls.ScrollPanel.AutoScroll;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
 import de.lessvoid.nifty.elements.Element;
+import de.lessvoid.nifty.elements.events.NiftyMousePrimaryClickedEvent;
 import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.input.NiftyStandardInputEvent;
 import de.lessvoid.nifty.screen.KeyInputHandler;
@@ -41,7 +43,10 @@ import illarion.client.gui.ChatGui;
 import illarion.client.net.client.IntroduceCmd;
 import illarion.client.net.client.SayCmd;
 import illarion.client.util.ChatHandler.SpeechMode;
+import illarion.client.util.Lang;
 import illarion.client.util.UpdateTask;
+import illarion.client.util.translation.Translator;
+import illarion.client.util.translation.TranslatorCallback;
 import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.common.types.Rectangle;
@@ -490,9 +495,9 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         Element contentPane = chatLog.getElement().findElementById("chatLog");
 
         int entryCount = contentPane.getChildren().size();
-        for (int i = 0; i < (entryCount - 200); i++) {
+        for (int i = 0; i < (entryCount - 400); i++) {
             Element elementToRemove = contentPane.getChildren().get(i);
-            if (i == (entryCount - 201)) {
+            if (i == (entryCount - 401)) {
                 elementToRemove.markForRemoval(new EndNotify() {
                     @Override
                     public void perform() {
@@ -529,6 +534,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         }
     }
 
+    @Nonnull
     private final AtomicLong chatLineCounter = new AtomicLong(0L);
 
     /**
@@ -553,6 +559,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         label.textHAlign(Align.Left);
         label.wrap(true);
         label.width(contentPane.getConstraintWidth().toString());
+        label.visibleToMouse(true);
         label.build(nifty, screen, contentPane);
 
         LabelBuilder translationLabel = new LabelBuilder();
@@ -563,10 +570,68 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         translationLabel.textHAlign(Align.Left);
         translationLabel.wrap(true);
         translationLabel.visible(false);
+        translationLabel.height(SizeValue.px(0));
         translationLabel.width(contentPane.getConstraintWidth().toString());
-        translationLabel.build(nifty, screen, contentPane);
+        Element translationElement = translationLabel.build(nifty, screen, contentPane);
+        translationElement.setConstraintHeight(SizeValue.px(0));
 
         dirty = true;
+    }
+
+    @Nonnull
+    private final Translator translator = new Translator();
+
+    @NiftyEventSubscriber(pattern = "chatLog#chatLine-[0-9]+")
+    public void onChatLineDoubleClick(@Nonnull String id, @Nonnull NiftyMousePrimaryClickedEvent event) {
+        if ((screen == null) || !translator.isServiceEnabled() || (chatLog == null)) {
+            return;
+        }
+
+        final Element panel = chatLog.getElement().findElementById("chatLog");
+        if (panel == null) {
+            return;
+        }
+
+        String strId = id.substring("chatLog#chatLine-".length());
+        String translateId = "chatLog#transChatLine-" + strId;
+
+        Element sourceElement = panel.findElementById(id);
+        Label sourceLabel = (sourceElement != null) ? sourceElement.getNiftyControl(Label.class) : null;
+
+        final Element translationElement = panel.findElementById(translateId);
+        final Label translationLabel = (translationElement != null) ? translationElement.getNiftyControl(Label.class) :
+                null;
+
+        if ((sourceLabel == null) || (sourceLabel.getText() == null) || (translationLabel == null)) {
+            return;
+        }
+
+        if ((translationLabel.getText() == null) || translationLabel.getText().isEmpty()) {
+            translationElement.setConstraintHeight(SizeValue.def());
+            translationLabel.setText(Lang.getMsg("chat.translating"));
+            translationElement.setVisible(true);
+            sourceElement.setVisibleToMouseEvents(false);
+            dirty = true;
+            translator.translate(sourceLabel.getText(), new TranslatorCallback() {
+                @Override
+                public void sendTranslation(@Nullable final String translation) {
+                    World.getUpdateTaskManager().addTask(new UpdateTask() {
+                        @Override
+                        public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+                            if (translation == null) {
+                                translationLabel.setText("");
+                                translationElement.setVisible(false);
+                                translationElement.setConstraintHeight(SizeValue.px(0));
+                            } else {
+                                translationElement.setConstraintHeight(SizeValue.def());
+                                translationLabel.setText(translation);
+                            }
+                            dirty = true;
+                        }
+                    });
+                }
+            });
+        }
     }
 
     private final Map<Char, Element> activeBubbles = new HashMap<>();

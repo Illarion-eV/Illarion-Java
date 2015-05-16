@@ -30,7 +30,7 @@
                 <onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true"/>
             </effect>
 
-            <panel height="300px" width="500px" align="center" valign="center" backgroundColor="#0000"
+            <panel height="500px" width="500px" align="center" valign="center" backgroundColor="#0000"
                    childLayout="vertical" visibleToMouse="true">
                 <control id="tabRoot" name="tabGroup" width="100%" height="100%">
                     <control id="#generalTab" caption="General" name="tab" childLayout="vertical">
@@ -63,6 +63,16 @@
                             <control name="label" text="${options-bundle.showPing}"/>
                             <panel width="*"/>
                             <control name="checkbox" id="showPing"/>
+                        </panel>
+                        <panel width="100%" childLayout="horizontal">
+                            <control name="label" text="${options-bundle.translation.provider}" />
+                            <panel width="*" />
+                            <control name="dropDown" id="translationProviders" width="220px" />
+                        </panel>
+                        <panel width="100%" childLayout="horizontal">
+                            <control name="label" text="${options-bundle.translation.direction}" />
+                            <panel width="*" />
+                            <control name="dropDown" id="translationDirections" width="220px" />
                         </panel>
                     </control>
                     <control id="#graphicsTab" caption="Graphics" name="tab" childLayout="vertical">

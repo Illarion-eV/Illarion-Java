@@ -28,6 +28,7 @@ import illarion.client.resources.loaders.SoundLoader;
 import illarion.client.util.ChatLog;
 import illarion.client.util.GlobalExecutorService;
 import illarion.client.util.Lang;
+import illarion.client.util.translation.Translator;
 import illarion.client.world.Player;
 import illarion.client.world.World;
 import illarion.client.world.events.ConnectionLostEvent;
@@ -543,6 +544,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.set("limitPathFindingToMouseDirection", true);
         cfg.set("followMousePathFinding", true);
         cfg.setDefault("preLoadBagCount", 2);
+
+        cfg.setDefault(Translator.CFG_KEY_PROVIDER, Translator.CFG_VALUE_PROVIDER_NONE);
+        cfg.setDefault(Translator.CFG_KEY_DIRECTION, Translator.CFG_VALUE_DIRECTION_DEFAULT);
 
         @Nonnull Toolkit awtDefaultToolkit = Toolkit.getDefaultToolkit();
         @Nullable Object doubleClick = awtDefaultToolkit.getDesktopProperty("awt.multiClickInterval");
