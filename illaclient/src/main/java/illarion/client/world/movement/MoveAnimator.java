@@ -94,7 +94,6 @@ class MoveAnimator implements AnimatedMove {
             log.debug(marker, "Scheduling a early move. Mode: {}, Target: {}, Duration: {}ms", mode, target, duration);
             MovingTask task = new MovingTask(this, mode, target, duration);
             uncomfirmedMoveTask = task;
-            movement.getPlayer().getCharacter().holdBackAnimationReset();
             scheduleTask(task);
         }
     }
