@@ -256,7 +256,11 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
      */
     @Override
     public void animationFinished(boolean finished) {
-        parentChar.resetAnimation(finished);
+        // Do not reset the character if the parent character is not shown anymore.
+        // This may happen in case a currently animated character changes it's avatar.
+        if (isShown()) {
+            parentChar.resetAnimation(finished);
+        }
     }
 
     /**
@@ -466,8 +470,8 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
 
     @Override
     public void hide() {
-        stopAnimation();
         super.hide();
+        stopAnimation();
     }
 
     /**
