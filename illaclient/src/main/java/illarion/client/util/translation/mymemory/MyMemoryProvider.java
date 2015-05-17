@@ -45,6 +45,8 @@ public class MyMemoryProvider implements TranslationProvider {
     @Nullable
     private final URL serviceUrl;
 
+    private boolean operational;
+
     public MyMemoryProvider() {
         URL url = null;
         try {
@@ -53,6 +55,7 @@ public class MyMemoryProvider implements TranslationProvider {
             log.error("Failed to resolve the URL to the translator service. Service is not active.", e);
         }
         serviceUrl = url;
+        operational = true;
     }
 
     @Nullable
@@ -86,6 +89,11 @@ public class MyMemoryProvider implements TranslationProvider {
         } catch (MalformedURLException e) {
             log.error("Generated URL for the query to MyMemory appears to have a invalid format.", e);
         }
+
+        // The provider is not working anymore. That either happens because the provider is unreachable or because
+        // the provider is not accepting any more requests. Either way to reduce overhead the provider may shut down for
+        // this session to reduce the overhead.
+        operational = false;
         return null;
     }
 
@@ -103,6 +111,6 @@ public class MyMemoryProvider implements TranslationProvider {
 
     @Override
     public boolean isProviderWorking() {
-        return serviceUrl != null;
+        return (serviceUrl != null) && operational;
     }
 }

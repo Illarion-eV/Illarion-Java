@@ -55,6 +55,8 @@ public class YandexProvider implements TranslationProvider {
     @Nonnull
     private final String userAgent;
 
+    private boolean operational;
+
     public YandexProvider() {
         URL url = null;
         try {
@@ -64,6 +66,7 @@ public class YandexProvider implements TranslationProvider {
         }
         serviceUrl = url;
         userAgent = readUserAgent();
+        operational = true;
     }
 
     /**
@@ -136,6 +139,11 @@ public class YandexProvider implements TranslationProvider {
         } catch (IOException e) {
             log.error("Failed to open connection for Yandex provider.", e);
         }
+
+        // The provider is not working anymore. That either happens because the provider is unreachable or because
+        // the provider is not accepting any more requests. Either way to reduce overhead the provider may shut down for
+        // this session to reduce the overhead.
+        operational = false;
         return null;
     }
 
@@ -153,6 +161,6 @@ public class YandexProvider implements TranslationProvider {
 
     @Override
     public boolean isProviderWorking() {
-        return serviceUrl != null;
+        return (serviceUrl != null) && operational;
     }
 }
