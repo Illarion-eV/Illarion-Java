@@ -620,6 +620,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         }
 
         if ((translationLabel.getText() == null) || translationLabel.getText().isEmpty()) {
+            translationElement.setMarginTop(SizeValue.def());
             translationElement.setConstraintHeight(SizeValue.def());
             translationLabel.setText(Lang.getMsg("chat.translating"));
             translationElement.setVisible(true);
