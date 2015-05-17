@@ -422,17 +422,13 @@ public final class Char implements AnimatedMove {
      * Set the current animation back to its parent, update the avatar and invoke the needed animations.
      */
     public void resetAnimation(boolean finished) {
-        if (delayedMove != null) {
-            log.debug("{}: Resetting the animation skipped because there is a move pending.", this);
-        } else {
-            log.debug("{}: Resetting the animation. Finished: {}", this, finished);
-            if (finished) {
-                animation = CharAnimations.STAND;
-                if (coordinate != null) {
-                    updateAvatar();
-                    if (avatar != null) {
-                        avatar.animate(DEFAULT_ANIMATION_SPEED, true);
-                    }
+        log.debug("{}: Resetting the animation. Finished: {}", this, finished);
+        if (finished) {
+            animation = CharAnimations.STAND;
+            if (coordinate != null) {
+                updateAvatar();
+                if (avatar != null) {
+                    avatar.animate(DEFAULT_ANIMATION_SPEED, true);
                 }
             }
         }
