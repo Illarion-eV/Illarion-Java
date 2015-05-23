@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,13 +21,13 @@ import javax.swing.*;
 @SuppressWarnings("serial")
 public class TextParameter extends JTextField implements Parameter {
     public TextParameter() {
-        super();
     }
 
     public TextParameter(int width) {
         super(width);
     }
 
+    @Override
     public void setParameter(@Nullable Object parameter) {
         if (parameter != null) {
             setText((String) parameter);
@@ -36,6 +36,7 @@ public class TextParameter extends JTextField implements Parameter {
         }
     }
 
+    @Override
     public Object getParameter() {
         return getText();
     }

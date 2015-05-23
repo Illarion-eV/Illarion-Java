@@ -59,7 +59,7 @@ final class ArtifactRequestBuilder implements DependencyVisitor {
             @Nonnull RepositorySystemSession session,
             @Nonnull ArtifactRequestTracer requestTracer) {
         this.trace = trace;
-        this.requests = new ArrayList<>();
+        requests = new ArrayList<>();
         versionScheme = new GenericVersionScheme();
         this.session = session;
         this.system = system;

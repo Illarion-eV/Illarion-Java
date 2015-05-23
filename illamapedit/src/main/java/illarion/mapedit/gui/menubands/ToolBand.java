@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,7 +23,7 @@ import org.pushingpixels.flamingo.api.common.CommandToggleButtonGroup;
 import org.pushingpixels.flamingo.api.common.JCommandToggleButton;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
-import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
+import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies.Mirror;
 import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
 
 import java.util.Arrays;
@@ -41,8 +41,8 @@ public class ToolBand extends JRibbonBand {
     public ToolBand() {
         super(Lang.getMsg("gui.toolband.Name"), null);
 
-        final Collection<AbstractTool> tools = new FastTable<>();
-        final CommandToggleButtonGroup group = new CommandToggleButtonGroup();
+        Collection<AbstractTool> tools = new FastTable<>();
+        CommandToggleButtonGroup group = new CommandToggleButtonGroup();
 
         tools.add(new TileBrushTool());
         tools.add(new ItemBrushTool());
@@ -53,13 +53,13 @@ public class ToolBand extends JRibbonBand {
         tools.add(new SelectionTool());
         tools.add(new DataTool());
 
-        for (final AbstractTool tool : tools) {
-            final JCommandToggleButton button = new ToolMenuButton(tool);
+        for (AbstractTool tool : tools) {
+            JCommandToggleButton button = new ToolMenuButton(tool);
             addCommandButton(button, RibbonElementPriority.MEDIUM);
             group.add(button);
         }
 
         setResizePolicies(
-                Arrays.<RibbonBandResizePolicy>asList(new CoreRibbonResizePolicies.Mirror(getControlPanel())));
+                Arrays.<RibbonBandResizePolicy>asList(new Mirror(getControlPanel())));
     }
 }

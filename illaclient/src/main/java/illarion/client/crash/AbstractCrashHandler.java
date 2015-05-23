@@ -64,7 +64,6 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
      * @param e the error message it crashed with
      */
     @Override
-    @SuppressWarnings("nls")
     public final void uncaughtException(@Nonnull Thread t, @Nonnull Throwable e) {
         LOGGER.error("Fetched uncaught exception: {}", getCrashMessage(t, e), e);
         if (currentlyCrashing) {
@@ -87,7 +86,6 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
      * Calling this function results in crashing the entire client. Call it only
      * in case there is no chance in keeping the client running.
      */
-    @SuppressWarnings("nls")
     protected final void crashClient(@Nonnull Thread t, @Nonnull Throwable e) {
         IllaClient.errorExit(getCrashMessage(t, e) + '\n' + Lang.getMsg("crash.fixfailed"));
 

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -24,7 +24,7 @@ dependencies {
     compile group: 'de.matthiasmann', name: 'pngdecoder', version: '20130527'
     compile gradleApi()
     compile localGroovy()
-    testCompile group: 'org.testng', name: 'testng', version: '6.8.8'
+    testCompile group: 'org.testng', name: 'testng', version: '6.9.4'
     testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
 }
 

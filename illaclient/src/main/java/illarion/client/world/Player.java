@@ -26,6 +26,7 @@ import illarion.common.graphics.Layer;
 import illarion.common.types.CharacterId;
 import illarion.common.types.ServerCoordinate;
 import illarion.common.util.DirectoryManager;
+import illarion.common.util.DirectoryManager.Directory;
 import illarion.common.util.FastMath;
 import org.illarion.engine.Engine;
 import org.jetbrains.annotations.Contract;
@@ -51,7 +52,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-@SuppressWarnings("ClassNamingConvention")
 @ThreadSafe
 public final class Player {
     /**
@@ -173,9 +173,8 @@ public final class Player {
      *
      * @param charName the character name of the player playing this game
      */
-    @SuppressWarnings("nls")
     public Player(@Nonnull Engine engine, @Nonnull String charName) {
-        Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        Path userDir = DirectoryManager.getInstance().getDirectory(Directory.User);
         path = userDir.resolve(charName);
         chatLog = new ChatLog(path);
         carryLoad = new CarryLoad();
@@ -234,9 +233,7 @@ public final class Player {
 
     public void openMerchantDialog(int dialogId, @Nonnull String title, @Nonnull Collection<MerchantItem> items) {
         MerchantList list = new MerchantList(dialogId);
-        for (MerchantItem item : items) {
-            list.addItem(item);
-        }
+        items.forEach(list::addItem);
 
         MerchantList oldList = merchantDialog;
         merchantDialog = list;

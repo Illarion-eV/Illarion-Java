@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,7 +21,7 @@ package illarion.mapedit.events;
 public class ItemDataAddedEvent {
     private final String data;
 
-    public ItemDataAddedEvent(final String data) {
+    public ItemDataAddedEvent(String data) {
         this.data = data;
     }
 

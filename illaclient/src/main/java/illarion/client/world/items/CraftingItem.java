@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -73,7 +73,7 @@ public class CraftingItem {
      *
      * @param org the crafting item to copy
      */
-    public CraftingItem(@Nonnull final CraftingItem org) {
+    public CraftingItem(@Nonnull CraftingItem org) {
         itemIndex = org.itemIndex;
         group = org.group;
         itemId = org.itemId;
@@ -95,13 +95,13 @@ public class CraftingItem {
      * @param ingredients the ingredients required to build this
      */
     public CraftingItem(
-            final int itemIndex,
-            final int group,
-            @Nonnull final ItemId itemId,
-            @Nonnull final String name,
-            final int buildTime,
-            @Nonnull final ItemCount buildStackSize,
-            @Nonnull final CraftingIngredientItem[] ingredients) {
+            int itemIndex,
+            int group,
+            @Nonnull ItemId itemId,
+            @Nonnull String name,
+            int buildTime,
+            @Nonnull ItemCount buildStackSize,
+            @Nonnull CraftingIngredientItem... ingredients) {
         this.itemIndex = itemIndex;
         this.group = group;
         this.itemId = itemId;
@@ -109,7 +109,7 @@ public class CraftingItem {
         this.buildTime = buildTime;
         this.buildStackSize = buildStackSize;
         this.ingredients = Arrays.copyOf(ingredients, ingredients.length);
-        for (final CraftingIngredientItem ingredient : ingredients) {
+        for (CraftingIngredientItem ingredient : ingredients) {
             if (ingredient == null) {
                 throw new IllegalArgumentException("One of the ingredient was set to NULL!");
             }
@@ -135,7 +135,7 @@ public class CraftingItem {
      * #getIngredientCount()}
      */
     @Nonnull
-    public CraftingIngredientItem getIngredient(final int index) {
+    public CraftingIngredientItem getIngredient(int index) {
         return ingredients[index];
     }
 

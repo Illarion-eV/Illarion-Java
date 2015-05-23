@@ -42,7 +42,6 @@ public final class StandDownCmd extends AbstractCommand {
     }
 
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
     public String toString() {
         return toString(null);

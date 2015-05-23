@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,35 +18,32 @@ package illarion.mapedit.history;
 import javolution.util.FastTable;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 /**
  * @author Tim
  */
 public class GroupAction extends HistoryAction {
     @Nonnull
-    private final FastTable<HistoryAction> actions;
+    private final List<HistoryAction> actions;
 
     public GroupAction() {
         super(null);
-        actions = new FastTable<HistoryAction>();
+        actions = new FastTable<>();
     }
 
-    public void addAction(final HistoryAction action) {
+    public void addAction(HistoryAction action) {
         actions.add(action);
     }
 
     @Override
     public void redo() {
-        for (HistoryAction a : actions) {
-            a.redo();
-        }
+        actions.forEach(HistoryAction::redo);
     }
 
     @Override
     public void undo() {
-        for (HistoryAction a : actions) {
-            a.undo();
-        }
+        actions.forEach(HistoryAction::undo);
     }
 
     public boolean isEmpty() {

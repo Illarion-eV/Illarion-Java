@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -45,10 +45,10 @@ public abstract class AbstractCursorManager implements CursorManager {
 
     @Nullable
     @Override
-    public final MouseCursor getCursor(@Nonnull final String ref, final int hotspotX, final int hotspotY) {
-        @Nullable final MouseCursor bufferedCursor = loadedCursors.get(ref);
+    public final MouseCursor getCursor(@Nonnull String ref, int hotspotX, int hotspotY) {
+        @Nullable MouseCursor bufferedCursor = loadedCursors.get(ref);
         if (bufferedCursor == null) {
-            @Nullable final MouseCursor newCursor = loadCursor(ref, hotspotX, hotspotY);
+            @Nullable MouseCursor newCursor = loadCursor(ref, hotspotX, hotspotY);
             if (newCursor != null) {
                 loadedCursors.put(ref, newCursor);
             }

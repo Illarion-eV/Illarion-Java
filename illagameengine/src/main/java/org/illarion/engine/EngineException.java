@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -24,18 +24,17 @@ import javax.annotation.Nonnull;
  */
 public class EngineException extends Exception {
     public EngineException() {
-        super();
     }
 
-    public EngineException(@Nonnull final String message) {
+    public EngineException(@Nonnull String message) {
         super(message);
     }
 
-    public EngineException(@Nonnull final String message, @Nonnull final Throwable cause) {
+    public EngineException(@Nonnull String message, @Nonnull Throwable cause) {
         super(message, cause);
     }
 
-    public EngineException(@Nonnull final Throwable cause) {
+    public EngineException(@Nonnull Throwable cause) {
         super(cause);
     }
 }

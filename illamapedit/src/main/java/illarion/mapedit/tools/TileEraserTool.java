@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,6 +18,7 @@ package illarion.mapedit.tools;
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapTile;
+import illarion.mapedit.data.MapTile.MapTileFactory;
 import illarion.mapedit.history.GroupAction;
 import illarion.mapedit.history.TileIDChangedAction;
 import illarion.mapedit.tools.panel.TileEraserPanel;
@@ -40,28 +41,28 @@ public class TileEraserTool extends AbstractTool {
     }
 
     @Override
-    public void clickedAt(final int x, final int y, @Nonnull final Map map) {
-        final TileIDChangedAction newAction = eraseTile(x, y, map);
+    public void clickedAt(int x, int y, @Nonnull Map map) {
+        TileIDChangedAction newAction = eraseTile(x, y, map);
         if (newAction != null) {
             getHistory().addEntry(newAction);
         }
     }
 
     @Override
-    public void paintSelected(final int x, final int y, @Nonnull final Map map, @Nonnull final GroupAction action) {
-        final TileIDChangedAction newAction = eraseTile(x, y, map);
+    public void paintSelected(int x, int y, @Nonnull Map map, @Nonnull GroupAction action) {
+        TileIDChangedAction newAction = eraseTile(x, y, map);
         if (newAction != null) {
             action.addAction(newAction);
         }
     }
 
     @Nullable
-    private static TileIDChangedAction eraseTile(final int x, final int y, @Nonnull final Map map) {
-        final MapTile oldTile = map.getTileAt(x, y);
+    private static TileIDChangedAction eraseTile(int x, int y, @Nonnull Map map) {
+        MapTile oldTile = map.getTileAt(x, y);
         if (oldTile == null) {
             return null;
         }
-        final MapTile newTile = MapTile.MapTileFactory.createNew(0, 0, 0, 0);
+        MapTile newTile = MapTileFactory.createNew(0, 0, 0, 0);
         map.setTileAt(x, y, newTile);
 
         return new TileIDChangedAction(x, y, oldTile, newTile, map);

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -28,7 +28,7 @@ public class OpenMapTableCellEditor extends AbstractCellEditor implements TableC
     private final JButton button;
     private Object value;
 
-    public OpenMapTableCellEditor(final JButton button) {
+    public OpenMapTableCellEditor(JButton button) {
         this.button = button;
     }
 
@@ -39,19 +39,19 @@ public class OpenMapTableCellEditor extends AbstractCellEditor implements TableC
 
     @Override
     public Component getTableCellEditorComponent(
-            final JTable table, final Object value, final boolean isSelected, final int row, final int column) {
+            JTable table, Object value, boolean isSelected, int row, int column) {
         this.value = value;
         return button;
     }
 
     @Override
     public Component getTableCellRendererComponent(
-            @Nonnull final JTable table,
-            final Object value,
-            final boolean isSelected,
-            final boolean hasFocus,
-            final int row,
-            final int column) {
+            @Nonnull JTable table,
+            Object value,
+            boolean isSelected,
+            boolean hasFocus,
+            int row,
+            int column) {
         if (isSelected) {
             button.setForeground(table.getSelectionForeground());
             button.setBackground(table.getSelectionBackground());

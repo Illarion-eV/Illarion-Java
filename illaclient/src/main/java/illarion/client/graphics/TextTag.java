@@ -102,12 +102,12 @@ public class TextTag {
     /**
      * The width of this tag. This value is generated once the text is set.
      */
-    private int width;
+    private final int width;
 
     /**
      * The height of this tag. This value is generated once the text is set.
      */
-    private int height;
+    private final int height;
 
     /**
      * Get the height of the text tag.

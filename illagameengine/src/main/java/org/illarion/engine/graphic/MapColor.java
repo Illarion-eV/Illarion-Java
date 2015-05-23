@@ -32,7 +32,6 @@ public final class MapColor {
      * The names of the colors for the display in the configuration tool. They
      * are not used in the client.
      */
-    @SuppressWarnings("nls")
     public static final String[] COLOR_NAMES = {"Black", "Green", "Brown", "Gray", "Blue", "Yellow", "Red", "White",
                                                 "Dark green",};
 
@@ -88,7 +87,6 @@ public final class MapColor {
      * @param map the byte buffer that is going to get the new color value
      * @param pos the position in the byte buffer the color shall be located at
      */
-    @SuppressWarnings("nls")
     public static void writeColor(
             int color, int alpha, @Nonnull ByteBuffer map, int pos) {
         // check color

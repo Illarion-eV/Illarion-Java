@@ -51,12 +51,4 @@ public final class OverlayFactory extends AbstractTemplateFactory<OverlayTemplat
      */
     private OverlayFactory() {
     }
-
-    /**
-     * The initialization function to prepare the class for loading the
-     * resources.
-     */
-    @Override
-    public void init() {
-    }
 }

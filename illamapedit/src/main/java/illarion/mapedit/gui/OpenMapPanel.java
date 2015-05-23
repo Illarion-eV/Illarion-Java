@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -33,11 +33,7 @@ import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import javax.annotation.Nonnull;
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.nio.file.Path;
 
 /**
@@ -64,9 +60,9 @@ public class OpenMapPanel extends JPanel {
         AnnotationProcessor.process(this);
         panel = new JPanel(new GridLayout(0, 1));
 
-        final ResizableIcon iconRender = ImageLoader.getResizableIcon("render");
+        ResizableIcon iconRender = ImageLoader.getResizableIcon("render");
         iconRender.setDimension(new Dimension(ICON_SIZE, ICON_SIZE));
-        final ResizableIcon iconOpen = ImageLoader.getResizableIcon("fileopen");
+        ResizableIcon iconOpen = ImageLoader.getResizableIcon("fileopen");
         iconOpen.setDimension(new Dimension(ICON_SIZE, ICON_SIZE));
 
         openButton = new JToggleButton();
@@ -88,8 +84,8 @@ public class OpenMapPanel extends JPanel {
     private void initOpenMaps() {
         openTableModel = new OpenMapTableModel();
         openTable = new JTable(openTableModel);
-        final JButton closeButton = new JButton(ImageLoader.getImageIcon("close"));
-        final OpenMapTableCellEditor editor = new OpenMapTableCellEditor(closeButton);
+        JButton closeButton = new JButton(ImageLoader.getImageIcon("close"));
+        OpenMapTableCellEditor editor = new OpenMapTableCellEditor(closeButton);
         openTable.getColumnModel().getColumn(2).setCellEditor(editor);
         openTable.getColumnModel().getColumn(2).setCellRenderer(editor);
         openTable.getColumnModel().getColumn(0).setPreferredWidth(PREFERRED_RENDER_CELL_WIDTH);
@@ -97,26 +93,20 @@ public class OpenMapPanel extends JPanel {
         openTable.getColumnModel().getColumn(2).setPreferredWidth(PREFERRED_BUTTON_CELL_WIDTH);
 
         closeButton.setActionCommand(GlobalActionEvents.CLOSE_MAP);
-        closeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent actionEvent) {
-                final int row = openTable.convertRowIndexToModel(openTable.getEditingRow());
-                EventBus.publish(new CloseMapEvent(row));
-            }
+        closeButton.addActionListener(actionEvent -> {
+            int row = openTable.convertRowIndexToModel(openTable.getEditingRow());
+            EventBus.publish(new CloseMapEvent(row));
         });
 
         openTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        final ListSelectionModel selectionModel = openTable.getSelectionModel();
-        selectionModel.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(@Nonnull final ListSelectionEvent e) {
-                if (e.getValueIsAdjusting()) {
-                    return;
-                }
-                final ListSelectionModel listSelectionModel = (ListSelectionModel) e.getSource();
-                if (!listSelectionModel.isSelectionEmpty()) {
-                    EventBus.publish(new MapSelectedEvent(openTable.getSelectedRow()));
-                }
+        ListSelectionModel selectionModel = openTable.getSelectionModel();
+        selectionModel.addListSelectionListener(e -> {
+            if (e.getValueIsAdjusting()) {
+                return;
+            }
+            ListSelectionModel listSelectionModel = (ListSelectionModel) e.getSource();
+            if (!listSelectionModel.isSelectionEmpty()) {
+                EventBus.publish(new MapSelectedEvent(openTable.getSelectedRow()));
             }
         });
     }
@@ -125,22 +115,12 @@ public class OpenMapPanel extends JPanel {
         panel.setPreferredSize(new Dimension(180, 0));
 
         renderButton.setSelected(true);
-        renderButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                showActiveComponents();
-            }
-        });
+        renderButton.addActionListener(e -> showActiveComponents());
 
         openButton.setSelected(true);
-        openButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                showActiveComponents();
-            }
-        });
+        openButton.addActionListener(e -> showActiveComponents());
 
-        final JToolBar itemActions = new JToolBar(JToolBar.VERTICAL);
+        JToolBar itemActions = new JToolBar(JToolBar.VERTICAL);
         itemActions.setFloatable(false);
         itemActions.add(renderButton);
         itemActions.add(openButton);
@@ -165,18 +145,18 @@ public class OpenMapPanel extends JPanel {
     }
 
     @EventSubscriber
-    public void onUpdateMapList(@Nonnull final UpdateMapListEvent e) {
+    public void onUpdateMapList(@Nonnull UpdateMapListEvent e) {
         openTableModel.setTableData(e.getMaps());
         EventBus.publish(new MapSelectedEvent(e.getSelectedIndex()));
     }
 
     @EventTopicSubscriber(topic = MapEditorConfig.MAPEDIT_FOLDER)
-    public void onConfigChanged(final String topic, @Nonnull final ConfigChangedEvent event) {
+    public void onConfigChanged(String topic, @Nonnull ConfigChangedEvent event) {
         tree.setDirectory(MapEditorConfig.getInstance().getMapFolder());
     }
 
     @EventSubscriber
-    public void onFolderList(@Nonnull final SetFolderEvent e) {
+    public void onFolderList(@Nonnull SetFolderEvent e) {
         tree.setDirectory(e.getFile());
     }
 }

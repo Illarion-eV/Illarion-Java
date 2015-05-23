@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -45,7 +45,7 @@ public final class DialogCraftingCraftEvent extends DialogEvent {
      * @param craftItem the item to craft
      * @param craftCount the amount of items to craft
      */
-    public DialogCraftingCraftEvent(final int id, @Nonnull final CraftingItemEntry craftItem, final int craftCount) {
+    public DialogCraftingCraftEvent(int id, @Nonnull CraftingItemEntry craftItem, int craftCount) {
         super(id);
         item = craftItem;
         count = craftCount;

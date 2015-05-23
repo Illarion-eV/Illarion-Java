@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -42,32 +42,32 @@ public class ItemBrushTool extends AbstractTool {
     }
 
     @Override
-    public void clickedAt(final int x, final int y, @Nonnull final Map map) {
-        final ItemPlacedAction newAction = addItem(x, y, map);
+    public void clickedAt(int x, int y, @Nonnull Map map) {
+        ItemPlacedAction newAction = addItem(x, y, map);
         if (newAction != null) {
             getHistory().addEntry(newAction);
         }
     }
 
     @Override
-    public void paintSelected(final int x, final int y, @Nonnull final Map map, @Nonnull final GroupAction action) {
-        final ItemPlacedAction newAction = addItem(x, y, map);
+    public void paintSelected(int x, int y, @Nonnull Map map, @Nonnull GroupAction action) {
+        ItemPlacedAction newAction = addItem(x, y, map);
         if (newAction != null) {
             action.addAction(newAction);
         }
     }
 
     @Nullable
-    private ItemPlacedAction addItem(final int x, final int y, @Nonnull final Map map) {
-        final ItemImg item = getManager().getSelectedItem();
+    private ItemPlacedAction addItem(int x, int y, @Nonnull Map map) {
+        ItemImg item = getManager().getSelectedItem();
         if (item == null) {
             return null;
         }
-        final MapTile tile = map.getTileAt(x, y);
+        MapTile tile = map.getTileAt(x, y);
         if (tile == null) {
             return null;
         }
-        final MapItem mapItem = new MapItem(item.getItemId());
+        MapItem mapItem = new MapItem(item.getItemId());
         tile.addMapItem(mapItem);
         return new ItemPlacedAction(x, y, mapItem, map);
     }

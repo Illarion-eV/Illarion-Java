@@ -90,7 +90,6 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
     /**
      * The instance of the logging class for this class.
      */
-    @SuppressWarnings("UnusedDeclaration")
     private static final Logger log = LoggerFactory.getLogger(Tile.class);
 
     public Tile(int tileId, @Nonnull MapTile parentTile) {

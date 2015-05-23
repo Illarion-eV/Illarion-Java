@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,6 +17,7 @@ package illarion.easyquest;
 
 import com.mxgraph.swing.handler.mxKeyboardHandler;
 import com.mxgraph.swing.mxGraphComponent;
+import illarion.easyquest.EditorActions.*;
 
 import javax.swing.*;
 
@@ -25,6 +26,7 @@ public class EditorKeyboardHandler extends mxKeyboardHandler {
         super(graphComponent);
     }
 
+    @Override
     protected InputMap getInputMap(int condition) {
         InputMap map = super.getInputMap(condition);
 
@@ -39,14 +41,15 @@ public class EditorKeyboardHandler extends mxKeyboardHandler {
         return map;
     }
 
+    @Override
     protected ActionMap createActionMap() {
         ActionMap map = super.createActionMap();
 
-        map.put("save", new EditorActions.SaveAction());
-        map.put("new", new EditorActions.NewAction());
-        map.put("open", new EditorActions.OpenAction());
-        map.put("undo", new EditorActions.UndoAction());
-        map.put("redo", new EditorActions.RedoAction());
+        map.put("save", new SaveAction());
+        map.put("new", new NewAction());
+        map.put("open", new OpenAction());
+        map.put("undo", new UndoAction());
+        map.put("redo", new RedoAction());
 
         return map;
     }

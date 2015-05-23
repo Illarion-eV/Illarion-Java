@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,7 +43,7 @@ public class EffectTemplate extends AbstractAnimatedEntityTemplate {
      * @param speed the animation speed
      */
     public EffectTemplate(
-            final int id, @Nonnull final Sprite sprite, final int frames, final int speed, final int light) {
+            int id, @Nonnull Sprite sprite, int frames, int speed, int light) {
         super(id, sprite, frames, 0, speed, null, 0);
 
         this.light = light;

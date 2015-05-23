@@ -99,7 +99,6 @@ class FollowMouseMovementHandler extends AbstractMovementHandler implements Mous
         float relXOffset = (float) xOffset / distance;
         float relYOffset = (float) yOffset / distance;
 
-        //noinspection IfStatementWithTooManyBranches
         currentMovementMode = getWalkTowardsMode(distance);
 
         //noinspection IfStatementWithTooManyBranches

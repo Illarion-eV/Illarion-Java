@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -14,6 +14,8 @@
  * GNU General Public License for more details.
  */
 package org.illarion.nifty.controls;
+
+import org.illarion.nifty.controls.DialogInput.DialogButton;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
@@ -31,7 +33,7 @@ public final class DialogInputConfirmedEvent extends DialogEvent {
      * The dialog button that was pressed to trigger this event.
      */
     @Nonnull
-    private final DialogInput.DialogButton button;
+    private final DialogButton button;
 
     /**
      * The text that was typed into the input area.
@@ -47,7 +49,7 @@ public final class DialogInputConfirmedEvent extends DialogEvent {
      * @param inputText the text that was typed into the text input area of the dialog
      */
     public DialogInputConfirmedEvent(
-            final int id, @Nonnull final DialogInput.DialogButton pressedButton, @Nonnull final String inputText) {
+            int id, @Nonnull DialogButton pressedButton, @Nonnull String inputText) {
         super(id);
         button = pressedButton;
         text = inputText;
@@ -59,7 +61,7 @@ public final class DialogInputConfirmedEvent extends DialogEvent {
      * @return the constant that defines what button was used
      */
     @Nonnull
-    public DialogInput.DialogButton getPressedButton() {
+    public DialogButton getPressedButton() {
         return button;
     }
 

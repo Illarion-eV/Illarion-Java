@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -35,24 +35,24 @@ public class WarpTool extends AbstractTool {
     private final WarpPanel panel = new WarpPanel();
 
     @Override
-    public void clickedAt(final int x, final int y, @Nonnull final Map map) {
-        final WarpPlacedAction newAction = addWarp(x, y, map);
+    public void clickedAt(int x, int y, @Nonnull Map map) {
+        WarpPlacedAction newAction = addWarp(x, y, map);
         if (newAction != null) {
             getHistory().addEntry(newAction);
         }
     }
 
     @Override
-    public void paintSelected(final int x, final int y, @Nonnull final Map map, @Nonnull final GroupAction action) {
-        final WarpPlacedAction newAction = addWarp(x, y, map);
+    public void paintSelected(int x, int y, @Nonnull Map map, @Nonnull GroupAction action) {
+        WarpPlacedAction newAction = addWarp(x, y, map);
         if (newAction != null) {
             action.addAction(newAction);
         }
     }
 
     @Nullable
-    public WarpPlacedAction addWarp(final int x, final int y, @Nonnull final Map map) {
-        final MapTile tile = map.getTileAt(x, y);
+    public WarpPlacedAction addWarp(int x, int y, @Nonnull Map map) {
+        MapTile tile = map.getTileAt(x, y);
         if (tile == null) {
             return null;
         }

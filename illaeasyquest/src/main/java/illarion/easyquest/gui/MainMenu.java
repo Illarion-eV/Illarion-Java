@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -33,34 +33,23 @@ import java.util.Collection;
 final class MainMenu extends RibbonApplicationMenu {
 
     public MainMenu() {
-        super();
 
-        final RibbonApplicationMenuEntryPrimary newQuest = new RibbonApplicationMenuEntryPrimary(
+        RibbonApplicationMenuEntryPrimary newQuest = new RibbonApplicationMenuEntryPrimary(
                 Utils.getResizableIconFromResource("filenew.png"), Lang.getMsg(getClass(), "newQuestButton"),
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(final ActionEvent e) {
-                        MainFrame.getInstance().addNewQuest();
-                    }
-                }, CommandButtonKind.ACTION_ONLY
+                e -> MainFrame.getInstance().addNewQuest(), CommandButtonKind.ACTION_ONLY
         );
         addMenuEntry(newQuest);
 
-        final RibbonApplicationMenuEntryPrimary openQuest = new RibbonApplicationMenuEntryPrimary(
+        RibbonApplicationMenuEntryPrimary openQuest = new RibbonApplicationMenuEntryPrimary(
                 Utils.getResizableIconFromResource("fileopen.png"), Lang.getMsg(getClass(), "openQuestButton"),
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(final ActionEvent e) {
-                        Utils.selectAndOpenQuest();
-                    }
-                }, CommandButtonKind.ACTION_ONLY
+                e -> Utils.selectAndOpenQuest(), CommandButtonKind.ACTION_ONLY
         );
 
-        final Collection<Path> oldFiles = Config.getInstance().getLastOpenedFiles();
-        final RibbonApplicationMenuEntrySecondary[] workingEntries = new RibbonApplicationMenuEntrySecondary[oldFiles
+        Collection<Path> oldFiles = Config.getInstance().getLastOpenedFiles();
+        RibbonApplicationMenuEntrySecondary[] workingEntries = new RibbonApplicationMenuEntrySecondary[oldFiles
                 .size()];
         int entryIndex = 0;
-        for (@Nonnull final Path openFile : oldFiles) {
+        for (@Nonnull Path openFile : oldFiles) {
             workingEntries[entryIndex] = new RibbonApplicationMenuEntrySecondary(
                     Utils.getResizableIconFromResource("source.png"), openFile.getFileName().toString(),
                     new ActionListener() {
@@ -68,7 +57,7 @@ final class MainMenu extends RibbonApplicationMenu {
                         private final Path fileToOpen = openFile;
 
                         @Override
-                        public void actionPerformed(final ActionEvent e) {
+                        public void actionPerformed(ActionEvent e) {
                             Utils.openQuest(fileToOpen);
                         }
                     }, CommandButtonKind.ACTION_ONLY
@@ -77,7 +66,7 @@ final class MainMenu extends RibbonApplicationMenu {
         }
 
         if (entryIndex > 0) {
-            final RibbonApplicationMenuEntrySecondary[] entries = new RibbonApplicationMenuEntrySecondary[entryIndex];
+            RibbonApplicationMenuEntrySecondary[] entries = new RibbonApplicationMenuEntrySecondary[entryIndex];
             System.arraycopy(workingEntries, 0, entries, 0, entryIndex);
             openQuest.addSecondaryMenuGroup(Lang.getMsg(getClass(), "oldFilesHead"), entries);
         }
@@ -86,73 +75,49 @@ final class MainMenu extends RibbonApplicationMenu {
 
         addMenuSeparator();
 
-        final RibbonApplicationMenuEntryPrimary saveQuest = new RibbonApplicationMenuEntryPrimary(
+        RibbonApplicationMenuEntryPrimary saveQuest = new RibbonApplicationMenuEntryPrimary(
                 Utils.getResizableIconFromResource("filesave.png"), Lang.getMsg(getClass(), "saveQuestButton"),
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(final ActionEvent e) {
-                        Utils.saveEasyQuest(MainFrame.getInstance().getCurrentQuestEditor());
-                    }
-                }, CommandButtonKind.ACTION_ONLY
+                e -> Utils.saveEasyQuest(MainFrame.getInstance().getCurrentQuestEditor()), CommandButtonKind.ACTION_ONLY
         );
         addMenuEntry(saveQuest);
 
-        final RibbonApplicationMenuEntryPrimary saveAllQuest = new RibbonApplicationMenuEntryPrimary(
+        RibbonApplicationMenuEntryPrimary saveAllQuest = new RibbonApplicationMenuEntryPrimary(
                 Utils.getResizableIconFromResource("save_all.png"), Lang.getMsg(getClass(), "saveAllQuestButton"),
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(final ActionEvent e) {
+                e -> {
 
-                    }
                 }, CommandButtonKind.ACTION_ONLY
         );
         addMenuEntry(saveAllQuest);
 
-        final RibbonApplicationMenuEntryPrimary saveAsQuest = new RibbonApplicationMenuEntryPrimary(
+        RibbonApplicationMenuEntryPrimary saveAsQuest = new RibbonApplicationMenuEntryPrimary(
                 Utils.getResizableIconFromResource("filesaveas.png"), Lang.getMsg(getClass(), "saveAsQuestButton"),
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(final ActionEvent e) {
+                e -> {
 
-                    }
                 }, CommandButtonKind.ACTION_ONLY
         );
         addMenuEntry(saveAsQuest);
 
         addMenuSeparator();
 
-        final RibbonApplicationMenuEntryPrimary exportQuest = new RibbonApplicationMenuEntryPrimary(
+        RibbonApplicationMenuEntryPrimary exportQuest = new RibbonApplicationMenuEntryPrimary(
                 Utils.getResizableIconFromResource("fileexport.png"), Lang.getMsg(getClass(), "exportQuestButton"),
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(final ActionEvent e) {
-                        Utils.exportEasyQuest(MainFrame.getInstance().getCurrentQuestEditor());
-                    }
-                }, CommandButtonKind.ACTION_ONLY
+                e -> Utils.exportEasyQuest(MainFrame.getInstance().getCurrentQuestEditor()), CommandButtonKind.ACTION_ONLY
         );
         addMenuEntry(exportQuest);
 
         addMenuSeparator();
 
-        final RibbonApplicationMenuEntryPrimary exitButton = new RibbonApplicationMenuEntryPrimary(
+        RibbonApplicationMenuEntryPrimary exitButton = new RibbonApplicationMenuEntryPrimary(
                 Utils.getResizableIconFromResource("exit.png"), Lang.getMsg(getClass(), "exitButton"),
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(final ActionEvent e) {
-                        MainFrame.getInstance().closeWindow();
-                    }
-                }, CommandButtonKind.ACTION_ONLY
+                e -> MainFrame.getInstance().closeWindow(), CommandButtonKind.ACTION_ONLY
         );
         addMenuEntry(exitButton);
 
-        final RibbonApplicationMenuEntryFooter settings = new RibbonApplicationMenuEntryFooter(
+        RibbonApplicationMenuEntryFooter settings = new RibbonApplicationMenuEntryFooter(
                 Utils.getResizableIconFromResource("configure.png"), Lang.getMsg(getClass(), "settingsButton"),
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(final ActionEvent e) {
-                        final ConfigDialog dialog = Config.getInstance().createDialog();
-                        new ConfigDialogSwing(dialog);
-                    }
+                e -> {
+                    ConfigDialog dialog = Config.getInstance().createDialog();
+                    new ConfigDialogSwing(dialog);
                 }
         );
         addFooterEntry(settings);

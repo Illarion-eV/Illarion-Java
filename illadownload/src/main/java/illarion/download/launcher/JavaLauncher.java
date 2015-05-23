@@ -50,7 +50,6 @@ public final class JavaLauncher {
     /**
      * Construct a new launcher and set the classpath and the class to launch.
      */
-    @SuppressWarnings("nls")
     public JavaLauncher(boolean snapshot) {
         this.snapshot = snapshot;
     }
@@ -60,7 +59,6 @@ public final class JavaLauncher {
      *
      * @return {@code true} in case launching the application was successful
      */
-    @SuppressWarnings("nls")
     public boolean launch(@Nonnull Collection<File> classpath, @Nonnull String startupClass) {
         String classPathString = buildClassPathString(classpath);
 

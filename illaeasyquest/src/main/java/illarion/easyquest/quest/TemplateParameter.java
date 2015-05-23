@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,9 +20,9 @@ import illarion.easyquest.Lang;
 import javax.annotation.Nonnull;
 
 public class TemplateParameter {
-    private String name;
-    private String type;
-    private String description;
+    private final String name;
+    private final String type;
+    private final String description;
 
     public TemplateParameter(String name, String type, String description) {
         this.name = name;

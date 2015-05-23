@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -27,8 +27,6 @@ import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 /**
@@ -36,6 +34,7 @@ import java.util.ArrayList;
  */
 public class ItemDataTable extends JPanel {
     private static final int PREFERRED_KEY_WIDTH = 15;
+    @Nonnull
     private static final String[] DATA_KEYS = {"", "nameDe", "nameEn", "descriptionDe", "descriptionEn", "rareness",
                                                "craftedBy", "magicalDiamond", "magicalEmerald", "magicalRuby",
                                                "magicalSapphire", "magicalAmethyst", "magicalObsidian", "magicalTopaz"};
@@ -58,10 +57,10 @@ public class ItemDataTable extends JPanel {
         annotation = new AnnotationLabel();
         add(annotation, BorderLayout.NORTH);
 
-        final JScrollPane scroll = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+        JScrollPane scroll = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                                                    JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-        dataTableModel = new ItemDataTableModel(new ArrayList<String>());
+        dataTableModel = new ItemDataTableModel(new ArrayList<>());
 
         dataTable = new JTable(dataTableModel);
         dataTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -69,44 +68,31 @@ public class ItemDataTable extends JPanel {
         scroll.setViewportView(dataTable);
         add(scroll, BorderLayout.CENTER);
 
-        final ResizableIcon iconAdd = ImageLoader.getResizableIcon("edit_add");
+        ResizableIcon iconAdd = ImageLoader.getResizableIcon("edit_add");
         iconAdd.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
 
-        final ResizableIcon iconRemove = ImageLoader.getResizableIcon("edit_remove");
+        ResizableIcon iconRemove = ImageLoader.getResizableIcon("edit_remove");
         iconRemove.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
 
-        final ResizableIcon iconAnnotation = ImageLoader.getResizableIcon("annotation");
+        ResizableIcon iconAnnotation = ImageLoader.getResizableIcon("annotation");
         iconAnnotation.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
 
         addDataButton = new JButton();
         addDataButton.setIcon(iconAdd);
-        addDataButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                addData();
-            }
-        });
+        addDataButton.addActionListener(e -> addData());
 
         removeDataButton = new JButton();
         removeDataButton.setIcon(iconRemove);
-        removeDataButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                dataTableModel.removeRow(dataTable.getSelectedRow());
-                removeDataButton.setEnabled(dataTableModel.getRowCount() > 0);
-            }
+        removeDataButton.addActionListener(e -> {
+            dataTableModel.removeRow(dataTable.getSelectedRow());
+            removeDataButton.setEnabled(dataTableModel.getRowCount() > 0);
         });
 
         annotationButton = new JButton();
         annotationButton.setIcon(iconAnnotation);
-        annotationButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                addAnnotation();
-            }
-        });
+        annotationButton.addActionListener(e -> addAnnotation());
 
-        final JToolBar dataActions = new JToolBar();
+        JToolBar dataActions = new JToolBar();
         dataActions.setFloatable(false);
         dataActions.add(addDataButton);
         dataActions.add(removeDataButton);
@@ -117,13 +103,13 @@ public class ItemDataTable extends JPanel {
     }
 
     private void addAnnotation() {
-        final JTextField annotationField = new JTextField(20);
+        JTextField annotationField = new JTextField(20);
         annotationField.setText(annotation.getAnnotation());
-        final JPanel panel = new JPanel();
+        JPanel panel = new JPanel();
         panel.add(new JLabel(Lang.getMsg("tools.DataTool.Annotation")));
         panel.add(annotationField);
 
-        final int result = JOptionPane.showConfirmDialog(null, panel, Lang.getMsg("tools.DataTool.Annotation_header"),
+        int result = JOptionPane.showConfirmDialog(null, panel, Lang.getMsg("tools.DataTool.Annotation_header"),
                                                          JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
             EventBus.publish(new ItemDataAnnotationEvent(annotationField.getText()));
@@ -131,18 +117,18 @@ public class ItemDataTable extends JPanel {
     }
 
     private void addData() {
-        final JComboBox keyField = new JComboBox(DATA_KEYS);
+        JComboBox<String> keyField = new JComboBox<>(DATA_KEYS);
         keyField.setEditable(true);
-        final JTextField valueField = new JTextField(5);
+        JTextField valueField = new JTextField(5);
 
-        final JPanel keyValuePanel = new JPanel();
+        JPanel keyValuePanel = new JPanel();
         keyValuePanel.add(new JLabel(Lang.getMsg("tools.DataTool.Key")));
         keyValuePanel.add(keyField);
         keyValuePanel.add(Box.createHorizontalStrut(15));
         keyValuePanel.add(new JLabel(Lang.getMsg("tools.DataTool.Value")));
         keyValuePanel.add(valueField);
 
-        final int result = JOptionPane
+        int result = JOptionPane
                 .showConfirmDialog(null, keyValuePanel, Lang.getMsg("tools.DataTool.Dialog_header"),
                                    JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
@@ -161,7 +147,7 @@ public class ItemDataTable extends JPanel {
         annotationButton.setEnabled(false);
     }
 
-    public void setDataList(@Nonnull final MapItem item) {
+    public void setDataList(@Nonnull MapItem item) {
         dataTableModel.clearData();
         if (item.getItemData() != null) {
             dataTableModel.setData(item.getItemData());

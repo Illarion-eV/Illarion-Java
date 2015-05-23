@@ -20,6 +20,7 @@ import ch.qos.logback.classic.util.ContextInitializer;
 import ch.qos.logback.core.joran.spi.JoranException;
 import illarion.common.config.ConfigSystem;
 import illarion.common.util.DirectoryManager;
+import illarion.common.util.DirectoryManager.Directory;
 import illarion.download.gui.model.GuiModel;
 import illarion.download.gui.view.ChannelSelectView;
 import illarion.download.gui.view.MainView;
@@ -45,7 +46,7 @@ public class GuiApplication extends Application implements Storyboard {
     private static final double SCENE_WIDTH = 620.0;
     private static final double SCENE_HEIGHT = 410.0;
 
-    private int currentScene = -1;
+    private final int currentScene = -1;
     private static final int SCENE_SELECT_DATA = 0;
     private static final int SCENE_SELECT_USER = 1;
     private static final int SCENE_MAIN = 2;
@@ -91,7 +92,7 @@ public class GuiApplication extends Application implements Storyboard {
     private void loadConfig() {
         if (cfg == null) {
             DirectoryManager dm = DirectoryManager.getInstance();
-            cfg = new ConfigSystem(dm.resolveFile(DirectoryManager.Directory.User, "download.xcfgz"));
+            cfg = new ConfigSystem(dm.resolveFile(Directory.User, "download.xcfgz"));
             cfg.setDefault("channelClient", 0);
             cfg.setDefault("channelEasyNpc", 1);
             cfg.setDefault("channelEasyQuest", 1);
@@ -101,7 +102,7 @@ public class GuiApplication extends Application implements Storyboard {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String... args) {
         System.setProperty("javafx.userAgentStylesheetUrl", "CASPIAN");
         launch(args);
     }
@@ -122,7 +123,7 @@ public class GuiApplication extends Application implements Storyboard {
     }
 
     private static void initLogs() {
-        Path dir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        Path dir = DirectoryManager.getInstance().getDirectory(Directory.User);
         System.setProperty("log_dir", dir.toAbsolutePath().toString());
 
         //Reload:

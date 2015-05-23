@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,6 +20,7 @@ import illarion.common.util.TableLoaderOverlay;
 import illarion.common.util.TableLoaderSink;
 import illarion.mapedit.resource.Overlay;
 import illarion.mapedit.resource.Resource;
+import illarion.mapedit.resource.loaders.TextureLoaderAwt.AwtTexture;
 import org.illarion.engine.assets.TextureManager;
 
 import javax.annotation.Nonnull;
@@ -55,13 +56,13 @@ public class OverlayLoader implements TableLoaderSink<TableLoaderOverlay>, Resou
     }
 
     @Override
-    public boolean processRecord(final int line, @Nonnull final TableLoaderOverlay loader) {
+    public boolean processRecord(int line, @Nonnull TableLoaderOverlay loader) {
         Image[] imgs = new Image[SHAPE_COUNT];
 
         TextureManager manager = TextureLoaderAwt.getInstance();
         String resourceName = loader.getOverlayFile();
         for (int i = 0; i < SHAPE_COUNT; i++) {
-            TextureLoaderAwt.AwtTexture texture = (TextureLoaderAwt.AwtTexture) manager
+            AwtTexture texture = (AwtTexture) manager
                     .getTexture(DIR_IMG_TILES, resourceName + '-' + i);
             imgs[i] = texture == null ? null : texture.getImage();
         }
@@ -71,7 +72,7 @@ public class OverlayLoader implements TableLoaderSink<TableLoaderOverlay>, Resou
     }
 
     @Nullable
-    public Overlay getOverlayFromId(final int id) {
+    public Overlay getOverlayFromId(int id) {
         if (overlays.contains(id)) {
             return overlays.get(id);
         }

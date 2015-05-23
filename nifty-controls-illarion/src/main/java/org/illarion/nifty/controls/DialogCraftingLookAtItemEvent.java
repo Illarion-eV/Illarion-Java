@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -39,7 +39,7 @@ public final class DialogCraftingLookAtItemEvent extends DialogEvent {
      * @param id the ID of the dialog
      * @param item the item the player is looking at
      */
-    public DialogCraftingLookAtItemEvent(final int id, @Nonnull final CraftingItemEntry item) {
+    public DialogCraftingLookAtItemEvent(int id, @Nonnull CraftingItemEntry item) {
         super(id);
         this.item = item;
     }

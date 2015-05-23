@@ -93,7 +93,6 @@ public abstract class AbstractTextureManager<T> implements TextureManager {
     /**
      * Creates a new texture loader.
      */
-    @SuppressWarnings("unchecked")
     protected AbstractTextureManager() {
         directoryMonitors = new ArrayList<>();
         rootDirectories = new ArrayList<>();

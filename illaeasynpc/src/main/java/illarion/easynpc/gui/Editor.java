@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -94,7 +94,7 @@ public final class Editor extends RTextScrollPane {
     /**
      * The default constructor that prepares the editor for the display.
      */
-    Editor(@Nonnull MainFrame frame, @Nonnull final UndoMonitor undoMonitor) {
+    Editor(@Nonnull MainFrame frame, @Nonnull UndoMonitor undoMonitor) {
         super(new RSyntaxTextArea(), true);
         this.frame = frame;
         this.undoMonitor = undoMonitor;
@@ -109,12 +109,7 @@ public final class Editor extends RTextScrollPane {
         for (MenuElement element : elements) {
             AbstractButton button = (AbstractButton) element;
             if ("Undo".equals(button.getActionCommand()) || "Redo".equals(button.getActionCommand())) {
-                button.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        undoMonitor.updateUndoRedoLater(Editor.this);
-                    }
-                });
+                button.addActionListener(e -> undoMonitor.updateUndoRedoLater(this));
             }
         }
 
@@ -460,7 +455,7 @@ public final class Editor extends RTextScrollPane {
         }
 
         if (parsedVersion == null) {
-            final String scriptText = getScriptText();
+            String scriptText = getScriptText();
             Runnable worker = new SwingWorker<ParsedNpc, Void>() {
                 @Nonnull
                 @Override

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,7 @@
  */
 package org.illarion.nifty.controls.dialog.select;
 
-import de.lessvoid.nifty.controls.ListBox;
+import de.lessvoid.nifty.controls.ListBox.ListBoxViewConverter;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.ImageRenderer;
 import de.lessvoid.nifty.elements.render.TextRenderer;
@@ -30,12 +30,12 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class SelectItemViewConverter implements ListBox.ListBoxViewConverter<SelectListEntry> {
+public final class SelectItemViewConverter implements ListBoxViewConverter<SelectListEntry> {
     @Override
-    public void display(@Nonnull final Element listBoxItem, @Nonnull final SelectListEntry item) {
-        final Element itemImage = listBoxItem.findElementById("#imageDisplay");
-        final Element itemImageContainer = itemImage.getParent();
-        final NiftyImage itemPicture = item.getItemImage();
+    public void display(@Nonnull Element listBoxItem, @Nonnull SelectListEntry item) {
+        Element itemImage = listBoxItem.findElementById("#imageDisplay");
+        Element itemImageContainer = itemImage.getParent();
+        NiftyImage itemPicture = item.getItemImage();
         if (itemPicture == null) {
             itemImageContainer.hideWithoutEffect();
             itemImage.hideWithoutEffect();
@@ -68,7 +68,7 @@ public final class SelectItemViewConverter implements ListBox.ListBoxViewConvert
             itemImage.setConstraintWidth(SizeValue.px(imageWidth));
         }
 
-        final Element title = listBoxItem.findElementById("#itemTitle");
+        Element title = listBoxItem.findElementById("#itemTitle");
         title.getRenderer(TextRenderer.class).setText(item.getName());
 
         listBoxItem.layoutElements();
@@ -77,7 +77,7 @@ public final class SelectItemViewConverter implements ListBox.ListBoxViewConvert
     }
 
     @Override
-    public int getWidth(@Nonnull final Element element, @Nonnull final SelectListEntry item) {
+    public int getWidth(@Nonnull Element element, @Nonnull SelectListEntry item) {
         return element.getWidth();
     }
 }

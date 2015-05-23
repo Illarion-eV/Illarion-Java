@@ -19,7 +19,6 @@ import illarion.client.graphics.AnimatedMove;
 import illarion.client.graphics.MoveAnimation;
 import illarion.client.net.client.MoveCmd;
 import illarion.client.net.client.TurnCmd;
-import illarion.client.util.UpdateTask;
 import illarion.client.world.CharMovementMode;
 import illarion.client.world.MapTile;
 import illarion.client.world.Player;
@@ -30,7 +29,6 @@ import illarion.common.types.CharacterId;
 import illarion.common.types.Direction;
 import illarion.common.types.ServerCoordinate;
 import illarion.common.util.FastMath;
-import org.illarion.engine.GameContainer;
 import org.illarion.engine.input.Input;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
@@ -153,13 +151,8 @@ public class Movement {
         return (activeHandler != null) && handler.equals(activeHandler);
     }
 
-    public void executeServerRespTurn(@Nonnull final Direction direction) {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                executeServerRespTurnInternal(direction);
-            }
-        });
+    public void executeServerRespTurn(@Nonnull Direction direction) {
+        World.getUpdateTaskManager().addTask((container, delta) -> executeServerRespTurnInternal(direction));
     }
 
     private void executeServerRespTurnInternal(@Nonnull Direction direction) {
@@ -171,25 +164,17 @@ public class Movement {
     }
 
     public void executeServerRespMoveTooEarly() {
-        World.getUpdateTaskManager().addTaskForLater(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                log.debug(
-                        "Response indicates that the request was received too early. A new request is required later.");
-                resendMoveToServer();
-            }
+        World.getUpdateTaskManager().addTaskForLater((container, delta) -> {
+            log.debug(
+                    "Response indicates that the request was received too early. A new request is required later.");
+            resendMoveToServer();
         });
     }
 
     public void executeServerRespMove(
-            @Nonnull final CharMovementMode mode, @Nonnull final ServerCoordinate target, final int duration) {
-        final ServerCoordinate orgLocation = playerLocation;
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                executeServerRespMoveInternal(orgLocation, mode, target, duration);
-            }
-        });
+            @Nonnull CharMovementMode mode, @Nonnull ServerCoordinate target, int duration) {
+        ServerCoordinate orgLocation = playerLocation;
+        World.getUpdateTaskManager().addTask((container, delta) -> executeServerRespMoveInternal(orgLocation, mode, target, duration));
         playerLocation = target;
     }
 

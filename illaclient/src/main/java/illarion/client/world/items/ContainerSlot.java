@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -47,7 +47,7 @@ public final class ContainerSlot extends AbstractItemSlot {
      * @param conId the ID of the parent container
      * @param loc the location of this slot in this container.
      */
-    public ContainerSlot(final int conId, final int loc) {
+    public ContainerSlot(int conId, int loc) {
         location = loc;
         containerId = conId;
         interactive = new InteractiveContainerSlot(this);

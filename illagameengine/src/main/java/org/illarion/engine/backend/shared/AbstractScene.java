@@ -39,7 +39,6 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
     /**
      * The logger of this class.
      */
-    @SuppressWarnings("UnusedDeclaration")
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractScene.class);
 
     /**

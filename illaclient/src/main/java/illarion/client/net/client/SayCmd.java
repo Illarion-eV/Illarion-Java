@@ -25,7 +25,7 @@ import java.io.IOException;
 
 /**
  * Client Command: Send a spoken text or a emote or a text command (
- * {@link illarion.client.net.CommandList#CMD_SAY}).
+ * {@link CommandList#CMD_SAY}).
  *
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
@@ -74,7 +74,6 @@ public final class SayCmd extends AbstractCommand {
     }
 
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
     public String toString() {
         return toString("Text: " + text + " Mode: " + getId());

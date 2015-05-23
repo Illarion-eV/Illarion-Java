@@ -48,11 +48,11 @@ public class MacOsXJavaExecutableIterable extends AbstractJavaExecutableIterable
      * This is the iterator implementation that is created to walk over the possible locations for java on a Mac OS
      * operating system.
      */
-    private class MacOsXJavaExecutableIterator extends AbstractJavaExecutableIterator {
+    private static class MacOsXJavaExecutableIterator extends AbstractJavaExecutableIterator {
         /**
          * The data source for most of the paths possible.
          */
-        private MacOsXJavaExecutableIterable source;
+        private final MacOsXJavaExecutableIterable source;
 
         /**
          * The index that is used to track the current path set for Mac.
@@ -122,7 +122,7 @@ public class MacOsXJavaExecutableIterable extends AbstractJavaExecutableIterable
     /**
      * This flag is set to {@code true} once the java home directory was tried to be discovered.
      */
-    private boolean javaHomeDirectoryFetched = false;
+    private boolean javaHomeDirectoryFetched;
 
     /**
      * The received path of the java home directory.
@@ -159,7 +159,7 @@ public class MacOsXJavaExecutableIterable extends AbstractJavaExecutableIterable
             }
             Path resultPath = Paths.get(firstLine);
             if (Files.isDirectory(resultPath)) {
-                LOGGER.warn("Java home directory located at: {}", resultPath.toString());
+                LOGGER.warn("Java home directory located at: {}", resultPath);
                 javaHomeDirectory = extendHomeToExecutable(resultPath);
                 return resultPath;
             }
@@ -185,7 +185,7 @@ public class MacOsXJavaExecutableIterable extends AbstractJavaExecutableIterable
         }
 
         try {
-            final Path[] resultFile = new Path[1];
+            Path[] resultFile = new Path[1];
             Files.walkFileTree(home, new SimpleFileVisitor<Path>() {
                 @Nonnull
                 @Override

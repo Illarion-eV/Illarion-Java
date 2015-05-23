@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -28,13 +28,13 @@ public class Vector2i {
         this(0, 0);
     }
 
-    public Vector2i(final int x, final int y) {
+    public Vector2i(int x, int y) {
 
         this.x = x;
         this.y = y;
     }
 
-    public Vector2i(@Nonnull final Vector2i v) {
+    public Vector2i(@Nonnull Vector2i v) {
         x = v.x;
         y = v.y;
     }
@@ -43,7 +43,7 @@ public class Vector2i {
         return x;
     }
 
-    public void setX(final int x) {
+    public void setX(int x) {
         this.x = x;
     }
 
@@ -51,37 +51,37 @@ public class Vector2i {
         return y;
     }
 
-    public void setY(final int y) {
+    public void setY(int y) {
         this.y = y;
     }
 
-    public void set(final int x, final int y) {
+    public void set(int x, int y) {
 
         this.x = x;
         this.y = y;
     }
 
-    private void set(@Nonnull final Vector2i v) {
+    private void set(@Nonnull Vector2i v) {
         x = v.x;
         y = v.y;
     }
 
-    private void add(@Nonnull final Vector2i v) {
+    private void add(@Nonnull Vector2i v) {
         x += v.x;
         y += v.y;
     }
 
-    private void sub(@Nonnull final Vector2i v) {
+    private void sub(@Nonnull Vector2i v) {
         x += v.x;
         y += v.y;
     }
 
-    private void times(final int i) {
+    private void times(int i) {
         x *= i;
         y *= i;
     }
 
-    private void div(final int i) {
+    private void div(int i) {
         x /= i;
         y /= i;
     }

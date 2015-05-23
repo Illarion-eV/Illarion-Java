@@ -44,7 +44,7 @@ public final class InteractiveMap {
      *
      * @param map the map to interact with
      */
-    public InteractiveMap(GameMap map) {
+    public InteractiveMap(@Nonnull GameMap map) {
         parentMap = map;
     }
 
@@ -54,21 +54,6 @@ public final class InteractiveMap {
             return tile.getInteractive();
         }
         return null;
-    }
-
-    @Nullable
-    public InteractiveMapTile getInteractiveTileOnDisplayLoc(int displayX, int displayY) {
-        return getInteractiveTile(getTileOnDisplayLoc(displayX, displayY));
-    }
-
-    @Nullable
-    public InteractiveMapTile getInteractiveTileOnMapLoc(int locX, int locY, int locZ) {
-        return getInteractiveTile(getTileOnMapLoc(locX, locY, locZ));
-    }
-
-    @Nullable
-    public InteractiveMapTile getInteractiveTileOnMapLoc(@Nonnull ServerCoordinate loc) {
-        return getInteractiveTile(getTileOnMapLoc(loc));
     }
 
     @Nullable
@@ -105,23 +90,13 @@ public final class InteractiveMap {
                 }
             }
 
-            @Nullable MapTile foundTile = parentMap.getMapAt(tilePosX, tilePosY, tilePosZ);
+            @Nullable MapTile foundTile = parentMap.getMapAt(new ServerCoordinate(tilePosX, tilePosY, tilePosZ));
             if ((foundTile != null) && !foundTile.isHidden()) {
                 return foundTile;
             }
         }
 
         return null;
-    }
-
-    @Nullable
-    public MapTile getTileOnMapLoc(int locX, int locY, int locZ) {
-        return parentMap.getMapAt(locX, locY, locZ);
-    }
-
-    @Nullable
-    public MapTile getTileOnMapLoc(@Nonnull ServerCoordinate loc) {
-        return parentMap.getMapAt(loc);
     }
 
     @Nullable

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,9 +23,9 @@ import java.nio.file.Path;
  */
 public class SetFolderEvent {
     @Nonnull
-    private Path file;
+    private final Path file;
 
-    public SetFolderEvent(@Nonnull final Path file) {
+    public SetFolderEvent(@Nonnull Path file) {
         this.file = file;
     }
 

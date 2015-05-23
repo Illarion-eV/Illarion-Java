@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -30,7 +30,7 @@ public class Overlay {
     private final int layer;
     private final Image[] imgs;
 
-    public Overlay(final int tileID, final String fileName, final int layer, final Image[] imgs) {
+    public Overlay(int tileID, String fileName, int layer, Image... imgs) {
         this.tileID = tileID;
         this.fileName = fileName;
         this.layer = layer;
@@ -53,7 +53,7 @@ public class Overlay {
         return imgs;
     }
 
-    public static int generateTileId(final int baseId, final int overlayId, final int shapeId) {
+    public static int generateTileId(int baseId, int overlayId, int shapeId) {
         return (baseId & BASE_MASK) | ((overlayId << 5) & OVERLAY_MASK) | ((shapeId << 10) & SHAPE_MASK);
     }
 }

@@ -32,7 +32,6 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-@SuppressWarnings("ClassNamingConvention")
 public final class Effect extends AbstractEntity<EffectTemplate> implements Resource {
     /**
      * The frame animation that handles the animation of this effect.

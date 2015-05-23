@@ -24,6 +24,7 @@ import illarion.common.bug.ReportDialogFactorySwing;
 import illarion.common.util.AppIdent;
 import illarion.common.util.Crypto;
 import illarion.common.util.DirectoryManager;
+import illarion.common.util.DirectoryManager.Directory;
 import illarion.common.util.TableLoader;
 import illarion.mapedit.crash.DefaultCrashHandler;
 import illarion.mapedit.crash.exceptions.UnhandlableException;
@@ -54,7 +55,6 @@ public final class MapEditor {
     /**
      * The identifier of the application.
      */
-    @SuppressWarnings("nls")
     @Nonnull
     public static final AppIdent APPLICATION = new AppIdent("Illarion Mapeditor");
 
@@ -91,7 +91,7 @@ public final class MapEditor {
      *
      * @param args the argument of the system call
      */
-    public static void main(String[] args) {
+    public static void main(String... args) {
         initLogging();
         MapEditorConfig.getInstance().init();
         initExceptionHandler();
@@ -138,24 +138,18 @@ public final class MapEditor {
         CrashReporter.getInstance().setDialogFactory(new ReportDialogFactorySwing());
         Thread.setDefaultUncaughtExceptionHandler(DefaultCrashHandler.getInstance());
         Thread.currentThread().setUncaughtExceptionHandler(DefaultCrashHandler.getInstance());
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                Thread.currentThread().setUncaughtExceptionHandler(DefaultCrashHandler.getInstance());
-            }
-        });
+        SwingUtilities.invokeLater(() -> Thread.currentThread().setUncaughtExceptionHandler(DefaultCrashHandler.getInstance()));
     }
 
     /**
      * Prepare the proper output of the log files.
      */
-    @SuppressWarnings("nls")
     private static void initLogging() {
         System.out.println("Startup done.");
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
 
-        Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        Path userDir = DirectoryManager.getInstance().getDirectory(Directory.User);
         System.setProperty("log_dir", userDir.toAbsolutePath().toString());
 
         //Reload:

@@ -21,14 +21,12 @@ import illarion.client.graphics.AvatarClothManager;
 import illarion.client.graphics.MoveAnimation;
 import illarion.client.resources.ItemFactory;
 import illarion.client.util.Lang;
-import illarion.client.util.UpdateTask;
 import illarion.client.world.characters.CharacterAttribute;
 import illarion.client.world.interactive.InteractiveChar;
 import illarion.common.graphics.CharAnimations;
 import illarion.common.graphics.Layer;
 import illarion.common.types.*;
 import illarion.common.util.FastMath;
-import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.LightSource;
 import org.jetbrains.annotations.Contract;
@@ -240,7 +238,7 @@ public final class Char implements AnimatedMove {
     @Nullable
     private Reference<InteractiveChar> interactiveCharRef;
 
-    private class DelayedMoveData {
+    private static class DelayedMoveData {
         public CharMovementMode mode;
         public int duration;
         public ServerCoordinate targetLocation;
@@ -385,25 +383,19 @@ public final class Char implements AnimatedMove {
         }
         animationInProgress = false;
 
-        final DelayedMoveData localDelayedMove = delayedMove;
+        DelayedMoveData localDelayedMove = delayedMove;
         delayedMove = null;
         if (finished && (localDelayedMove != null)) {
             log.info("{}: Planning delayed move for execution", this);
-            World.getUpdateTaskManager().addTaskForLater(new UpdateTask() {
-                @Override
-                public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                    log.info("{}: Executing delayed move", Char.this);
-                    moveToInternal(localDelayedMove.targetLocation, localDelayedMove.mode, localDelayedMove.duration);
-                }
+            World.getUpdateTaskManager().addTaskForLater((container, delta) -> {
+                log.info("{}: Executing delayed move", this);
+                moveToInternal(localDelayedMove.targetLocation, localDelayedMove.mode, localDelayedMove.duration);
             });
         } else if (localDelayedMove != null) {
-            World.getUpdateTaskManager().addTaskForLater(new UpdateTask() {
-                @Override
-                public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                    log.info("{}: Canceled move received while there still was a delayed more. Fixing the location.",
-                             Char.this);
-                    updateLocation(localDelayedMove.targetLocation);
-                }
+            World.getUpdateTaskManager().addTaskForLater((container, delta) -> {
+                log.info("{}: Canceled move received while there still was a delayed more. Fixing the location.",
+                        this);
+                updateLocation(localDelayedMove.targetLocation);
             });
         }
     }
@@ -441,7 +433,6 @@ public final class Char implements AnimatedMove {
     /**
      * Update the graphical appearance of the character.
      */
-    @SuppressWarnings("nls")
     private void updateAvatar() {
         ServerCoordinate currentCoordinate = coordinate;
         if (currentCoordinate == null) {
@@ -577,7 +568,6 @@ public final class Char implements AnimatedMove {
      * @param id the id of the item that shall be checked
      * @return {@code true} in case a item is defined and displayable
      */
-    @SuppressWarnings("nls")
     public boolean hasWearingItem(@Nullable Avatar avatar, int slot, int id) {
         if ((slot < 0) || (slot >= AvatarClothManager.GROUP_COUNT)) {
             log.warn("Wearing item check on invalid slot: {}", slot);
@@ -721,7 +711,7 @@ public final class Char implements AnimatedMove {
      *
      * @param newCharId new ID of the character
      */
-    @SuppressWarnings({"nls", "IfStatementWithTooManyBranches"})
+    @SuppressWarnings("IfStatementWithTooManyBranches")
     public void setCharId(@Nonnull CharacterId newCharId) {
         charId = newCharId;
         if (charId.isHuman()) {
@@ -753,7 +743,6 @@ public final class Char implements AnimatedMove {
      *
      * @param newName the name of the character or null
      */
-    @SuppressWarnings("nls")
     public void setName(@Nullable String newName) {
         name = newName;
         setAvatarName();
@@ -775,7 +764,6 @@ public final class Char implements AnimatedMove {
      *
      * @param newScale new scale value between 0.5f and 1.2f
      */
-    @SuppressWarnings("nls")
     public void setScale(float newScale) {
         if ((newScale < MINIMAL_SCALE) || (newScale > MAXIMAL_SCALE)) {
             log.warn("invalid character scale {} ignored for {}", newScale, charId);
@@ -914,22 +902,12 @@ public final class Char implements AnimatedMove {
      * @param mode the mode of the move
      * @param duration the duration of the animation in milliseconds
      */
-    public void moveTo(@Nonnull final ServerCoordinate newPos, @Nonnull final CharMovementMode mode, final int duration) {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                moveToInternal(newPos, mode, duration);
-            }
-        });
+    public void moveTo(@Nonnull ServerCoordinate newPos, @Nonnull CharMovementMode mode, int duration) {
+        World.getUpdateTaskManager().addTask((container, delta) -> moveToInternal(newPos, mode, duration));
     }
 
-    public void updateMoveDuration(final int newDuration) {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                updateMoveDurationInteral(newDuration);
-            }
-        });
+    public void updateMoveDuration(int newDuration) {
+        World.getUpdateTaskManager().addTask((container, delta) -> updateMoveDurationInteral(newDuration));
     }
 
     private void updateMoveDurationInteral(int newDuration) {
@@ -1248,7 +1226,6 @@ public final class Char implements AnimatedMove {
      * @param slot the slot the item is carried at
      * @param id the ID of the item the character wears
      */
-    @SuppressWarnings("nls")
     public void setWearingItem(int slot, int id) {
         if (removedCharacter) {
             log.warn("Trying to update the worn items of a removed character.");
@@ -1371,5 +1348,16 @@ public final class Char implements AnimatedMove {
     @Override
     public int hashCode() {
         return (charId == null) ? 0 : charId.hashCode();
+    }
+
+    @Override
+    @Contract(value = "null->false", pure = true)
+    public boolean equals(@Nullable Object obj) {
+        return (obj instanceof Char) && equals((Char) obj);
+    }
+
+    @Contract(value = "null->false", pure = true)
+    public boolean equals(@Nullable Char other) {
+        return (other != null) && (charId != null) && charId.equals(other.charId);
     }
 }

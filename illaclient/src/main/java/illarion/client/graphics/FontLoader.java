@@ -39,7 +39,6 @@ public final class FontLoader {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
-    @SuppressWarnings("UnusedDeclaration")
     private static final Logger LOGGER = LoggerFactory.getLogger(FontLoader.class);
 
     /**
@@ -66,11 +65,11 @@ public final class FontLoader {
      * @return the font itself
      */
     @Nonnull
-    public org.illarion.engine.graphic.Font getFont(@Nonnull String cfgName) {
+    public Font getFont(@Nonnull String cfgName) {
         if (fontManager == null) {
             throw new IllegalStateException("Fonts not loaded yet");
         }
-        org.illarion.engine.graphic.Font loadedFont = fontManager.getFont(cfgName);
+        Font loadedFont = fontManager.getFont(cfgName);
         if (loadedFont == null) {
             throw new IllegalStateException("Something is wrong with the fonts!");
         }

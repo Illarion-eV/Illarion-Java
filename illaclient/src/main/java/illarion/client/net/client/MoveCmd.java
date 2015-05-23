@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -30,7 +30,6 @@ import javax.annotation.concurrent.Immutable;
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@SuppressWarnings("ClassNamingConvention")
 @Immutable
 public final class MoveCmd extends AbstractCommand {
     /**
@@ -108,7 +107,6 @@ public final class MoveCmd extends AbstractCommand {
      * @return the data of this command as string
      */
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
     public String toString() {
         return toString(charId + " Direction: " + direction + " Mode: " + mode);

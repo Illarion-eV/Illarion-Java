@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -35,13 +35,13 @@ public class TileImg {
     private final String description;
 
     public TileImg(
-            final int id,
-            final String name,
-            final int frameCount,
-            final int animationSpeed,
-            final TileInfo info,
-            @Nonnull final Image[] img,
-            final String description) {
+            int id,
+            String name,
+            int frameCount,
+            int animationSpeed,
+            TileInfo info,
+            @Nonnull Image[] img,
+            String description) {
         this.id = id;
         this.name = name;
         this.frameCount = frameCount;

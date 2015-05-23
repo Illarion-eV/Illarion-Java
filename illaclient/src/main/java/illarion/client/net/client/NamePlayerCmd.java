@@ -24,7 +24,7 @@ import javax.annotation.concurrent.Immutable;
 import java.io.IOException;
 
 /**
- * Client Command: Name a player with custom name ({@link illarion.client.net.CommandList#CMD_NAME_PLAYER}).
+ * Client Command: Name a player with custom name ({@link CommandList#CMD_NAME_PLAYER}).
  *
  * @author Andreas Grob &lt;vilarion@illarion.org&gt;
  */
@@ -56,7 +56,6 @@ public final class NamePlayerCmd extends AbstractCommand {
     }
 
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
     public String toString() {
         return toString(playerId + " is named: " + customName);

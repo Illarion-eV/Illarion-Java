@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -44,7 +44,7 @@ public class ChannelSelectionController extends AbstractController {
 
     @Override
     public void initialize(URL url, @Nonnull ResourceBundle resourceBundle) {
-        final ObservableList<String> targets = FXCollections
+        ObservableList<String> targets = FXCollections
                 .observableArrayList(resourceBundle.getString("optionRelease"),
                                      resourceBundle.getString("optionSnapshot"));
         targetClient.setItems(targets);
@@ -53,10 +53,11 @@ public class ChannelSelectionController extends AbstractController {
         targetMapEditor.setItems(targets);
     }
 
-    public void setModel(@Nonnull final GuiModel model) {
+    @Override
+    public void setModel(@Nonnull GuiModel model) {
         super.setModel(model);
 
-        final Config cfg = getModel().getConfig();
+        Config cfg = getModel().getConfig();
         if (cfg == null) {
             throw new IllegalStateException("Can't show options without the config system");
         }
@@ -68,8 +69,8 @@ public class ChannelSelectionController extends AbstractController {
     }
 
     @FXML
-    public void nextStep(@Nonnull final ActionEvent actionEvent) {
-        final Config cfg = getModel().getConfig();
+    public void nextStep(@Nonnull ActionEvent actionEvent) {
+        Config cfg = getModel().getConfig();
         if (cfg == null) {
             throw new IllegalStateException("Can't show options without the config system");
         }
@@ -82,7 +83,7 @@ public class ChannelSelectionController extends AbstractController {
 
         try {
             getModel().getStoryboard().showNormal();
-        } catch (@Nonnull final IOException e) {
+        } catch (@Nonnull IOException e) {
             // nothing
         }
     }

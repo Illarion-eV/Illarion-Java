@@ -45,7 +45,6 @@ public final class NetComm {
     /**
      * This constant holds the encoding for strings that are received from and send to the server.
      */
-    @SuppressWarnings("nls")
     public static final Charset SERVER_STRING_ENCODING = Charset.forName("ISO-8859-1");
 
     /**
@@ -56,13 +55,11 @@ public final class NetComm {
     /**
      * This is the string used to format the debugging output of the received and transmitted data.
      */
-    @SuppressWarnings("nls")
     private static final String DUMP_FORMAT_BYTES = "[%1$02X]";
 
     /**
      * This is the string used to format the debugging output of the total amount of received bytes.
      */
-    @SuppressWarnings("nls")
     private static final String DUMP_FORMAT_TOTAL = "[%1$d byte]";
 
     /**
@@ -143,6 +140,15 @@ public final class NetComm {
     }
 
     /**
+     * Check if the dumping function will do anything.
+     *
+     * @return {@code true} if the dumping is active.
+     */
+    static boolean isDumpingActive() {
+        return log.isTraceEnabled();
+    }
+
+    /**
      * This function has only debug purposes and is used to print the contents of a buffer to the output log. This is
      * used for the debug output when debugging the protocol. The bytes that are written are all remaining bytes of
      * the buffer. Also the position of the buffer with point at the end after this function was called.
@@ -177,7 +183,7 @@ public final class NetComm {
         builder.append(builderText);
         builder.append('>');
 
-        log.debug(builder.toString());
+        log.trace(builder.toString());
     }
 
     /**
@@ -185,7 +191,6 @@ public final class NetComm {
      *
      * @return true in case the connection got established. False if not.
      */
-    @SuppressWarnings("nls")
     public boolean connect() {
         setLoginDone(false);
         try {
@@ -220,13 +225,10 @@ public final class NetComm {
             inputThread.setUncaughtExceptionHandler(NetCommCrashHandler.getInstance());
             inputThread.start();
 
-            keepAliveExecutor.scheduleAtFixedRate(new Runnable() {
-                @Override
-                public void run() {
-                    if (ConnectionPerformanceClock.isReadyForNewPing()) {
-                        ConnectionPerformanceClock.notifySendToNetComm();
-                        sendCommand(new KeepAliveCmd());
-                    }
+            keepAliveExecutor.scheduleAtFixedRate(() -> {
+                if (ConnectionPerformanceClock.isReadyForNewPing()) {
+                    ConnectionPerformanceClock.notifySendToNetComm();
+                    sendCommand(new KeepAliveCmd());
                 }
             }, 500, 500, TimeUnit.MILLISECONDS);
         } catch (@Nonnull IOException e) {
@@ -240,7 +242,6 @@ public final class NetComm {
      * Disconnect the client-server connection and shut the socket along with all threads for sending and receiving
      * down.
      */
-    @SuppressWarnings("nls")
     public void disconnect() {
         setLoginDone(false);
         try {

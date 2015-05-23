@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,6 @@
  */
 package org.illarion.nifty.controls.inventoryslot;
 
-import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.*;
 import de.lessvoid.nifty.elements.Element;
@@ -105,7 +104,6 @@ public class InventorySlotControl extends AbstractController implements Inventor
     /**
      * The logger that displays all logging output of this class.
      */
-    @SuppressWarnings("deprecation")
     private static final Logger LOGGER = LoggerFactory.getLogger(InventorySlotControl.class);
 
     @Override
@@ -124,19 +122,9 @@ public class InventorySlotControl extends AbstractController implements Inventor
         staticBackgroundImage = element.findElementById("#staticBackgroundImage");
         merchantOverlay = element.findElementById("#merchantOverlay");
 
-        dragStartEvent = new EventTopicSubscriber<DraggableDragStartedEvent>() {
-            @Override
-            public void onEvent(String topic, DraggableDragStartedEvent data) {
-                setVisibleOfDraggedImage(true);
-            }
-        };
+        dragStartEvent = (topic, data) -> setVisibleOfDraggedImage(true);
 
-        dragCanceledEvent = new EventTopicSubscriber<DraggableDragCanceledEvent>() {
-            @Override
-            public void onEvent(String topic, DraggableDragCanceledEvent data) {
-                setVisibleOfDraggedImage(false);
-            }
-        };
+        dragCanceledEvent = (topic, data) -> setVisibleOfDraggedImage(false);
 
         String background = parameter.get("background");
 
@@ -220,12 +208,7 @@ public class InventorySlotControl extends AbstractController implements Inventor
     protected void setVisibleOfDraggedImage(boolean value) {
         if (draggedImage.isVisible() != value) {
             if (value) {
-                draggedImage.show(new EndNotify() {
-                    @Override
-                    public void perform() {
-                        draggable.getParent().layoutElements();
-                    }
-                });
+                draggedImage.show(() -> draggable.getParent().layoutElements());
             } else {
                 draggedImage.hide();
             }
@@ -268,12 +251,9 @@ public class InventorySlotControl extends AbstractController implements Inventor
             return;
         }
 
-        draggable.markForMove(droppable, new EndNotify() {
-            @Override
-            public void perform() {
-                draggable.getNiftyControl(Draggable.class).setDroppable(droppable.getNiftyControl(Droppable.class));
-                draggedImage.hide();
-            }
+        draggable.markForMove(droppable, () -> {
+            draggable.getNiftyControl(Draggable.class).setDroppable(droppable.getNiftyControl(Droppable.class));
+            draggedImage.hide();
         });
     }
 
@@ -298,7 +278,7 @@ public class InventorySlotControl extends AbstractController implements Inventor
     }
 
     @Override
-    public void showMerchantOverlay(@Nonnull InventorySlot.MerchantBuyLevel level) {
+    public void showMerchantOverlay(@Nonnull MerchantBuyLevel level) {
         switch (level) {
             case Copper:
                 merchantOverlay.getRenderer(ImageRenderer.class).setImage(nifty.createImage("gui/coin_1_c.png", false));

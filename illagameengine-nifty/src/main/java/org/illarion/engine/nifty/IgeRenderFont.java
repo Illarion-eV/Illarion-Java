@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -37,7 +37,7 @@ class IgeRenderFont implements RenderFont {
      *
      * @param font the backing font
      */
-    IgeRenderFont(@Nonnull final Font font) {
+    IgeRenderFont(@Nonnull Font font) {
         this.font = font;
     }
 
@@ -52,12 +52,12 @@ class IgeRenderFont implements RenderFont {
     }
 
     @Override
-    public int getWidth(@Nonnull final String text) {
+    public int getWidth(@Nonnull String text) {
         return font.getWidth(text);
     }
 
     @Override
-    public int getWidth(@Nonnull final String text, final float size) {
+    public int getWidth(@Nonnull String text, float size) {
         return (int) Math.ceil(font.getWidth(text) * size);
     }
 
@@ -67,7 +67,7 @@ class IgeRenderFont implements RenderFont {
     }
 
     @Override
-    public int getCharacterAdvance(final char currentCharacter, final char nextCharacter, final float size) {
+    public int getCharacterAdvance(char currentCharacter, char nextCharacter, float size) {
         return (int) Math.ceil(font.getAdvance(currentCharacter, nextCharacter) * size);
     }
 

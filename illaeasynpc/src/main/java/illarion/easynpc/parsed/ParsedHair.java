@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,7 +16,7 @@
 package illarion.easynpc.parsed;
 
 import illarion.easynpc.writer.LuaRequireTable;
-import illarion.easynpc.writer.LuaWriter;
+import illarion.easynpc.writer.LuaWriter.WritingStage;
 import illarion.easynpc.writer.SQLBuilder;
 
 import javax.annotation.Nonnull;
@@ -86,7 +86,7 @@ public final class ParsedHair implements ParsedData {
      * Hair information are not written into the LUA script. No stage is effected.
      */
     @Override
-    public boolean effectsLuaWritingStage(@Nonnull LuaWriter.WritingStage stage) {
+    public boolean effectsLuaWritingStage(@Nonnull WritingStage stage) {
         return false;
     }
 
@@ -104,7 +104,7 @@ public final class ParsedHair implements ParsedData {
      */
     @Override
     public void writeLua(
-            @Nonnull Writer target, @Nonnull LuaRequireTable requires, @Nonnull LuaWriter.WritingStage stage) throws IOException {
+            @Nonnull Writer target, @Nonnull LuaRequireTable requires, @Nonnull WritingStage stage) throws IOException {
         // nothing
     }
 }

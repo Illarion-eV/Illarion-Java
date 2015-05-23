@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * This small helper class stores and assigns all the require assignments.
@@ -52,7 +53,7 @@ public class LuaRequireTable {
     }
 
     public void writeDependencies(@Nonnull Writer writer) throws IOException {
-        for (Map.Entry<String, String> entry : requireStorage.entrySet()){
+        for (Entry<String, String> entry : requireStorage.entrySet()) {
             writer.write("local ");
             writer.write(entry.getValue());
             writer.write(" = require(\"");

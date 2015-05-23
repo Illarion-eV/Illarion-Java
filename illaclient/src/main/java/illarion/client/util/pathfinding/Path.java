@@ -95,7 +95,6 @@ public final class Path {
      */
     @Nonnull
     @Override
-    @SuppressWarnings("nls")
     public String toString() {
         if (path.isEmpty()) {
             return "Empty path.";

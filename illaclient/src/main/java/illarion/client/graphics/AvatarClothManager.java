@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -123,7 +123,6 @@ public final class AvatarClothManager {
      * @param group the group the item shall be assigned to
      * @param cloth the definition of the cloth itself
      */
-    @SuppressWarnings("nls")
     public void addCloth(int group, @Nonnull AvatarClothTemplate cloth) {
         if ((group < 0) || (group >= GROUP_COUNT)) {
             throw new IllegalArgumentException("Group needs to be between 0 and " + GROUP_COUNT);
@@ -142,7 +141,6 @@ public final class AvatarClothManager {
      * @param itemID the item id of the item that shall be checked
      * @return {@code true} in case the cloth item is defined for that location
      */
-    @SuppressWarnings("nls")
     public boolean doesClothExists(int group, int itemID) {
         if ((group < 0) || (group >= GROUP_COUNT)) {
             throw new IllegalArgumentException("Group needs to be between 0 and " + GROUP_COUNT);
@@ -183,7 +181,6 @@ public final class AvatarClothManager {
      * defined in this storage
      */
     @Nullable
-    @SuppressWarnings("nls")
     public AvatarCloth getCloth(int group, int itemID, @Nonnull Avatar parentAvatar) {
         if ((group < 0) || (group >= GROUP_COUNT)) {
             throw new IllegalArgumentException("Group needs to be between 0 and " + GROUP_COUNT);

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -35,20 +35,20 @@ public class GridRenderer extends AbstractMapRenderer {
     /**
      * Creates a new map renderer
      */
-    public GridRenderer(final RendererManager manager) {
+    public GridRenderer(RendererManager manager) {
         super(manager);
     }
 
     @Override
     public void renderMap(
-            @Nonnull final Map map,
-            final Rectangle viewport,
-            final int level,
-            @Nonnull final Graphics2D g) {
-        final int width = map.getWidth();
-        final int height = map.getHeight();
-        final int z = map.getZ() - level;
-        final AffineTransform transform = g.getTransform();
+            @Nonnull Map map,
+            Rectangle viewport,
+            int level,
+            @Nonnull Graphics2D g) {
+        int width = map.getWidth();
+        int height = map.getHeight();
+        int z = map.getZ() - level;
+        AffineTransform transform = g.getTransform();
 
         g.translate(0, getTileHeight() + 1);
 

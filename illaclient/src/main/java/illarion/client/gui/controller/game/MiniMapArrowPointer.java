@@ -82,7 +82,7 @@ final class MiniMapArrowPointer implements IgeRenderImage, Pointer {
     /**
      * Change color depending on value
      */
-    boolean isCurrentQuest;
+    private boolean isCurrentQuest;
 
     /**
      * Create a new arrow pointer.
@@ -239,8 +239,8 @@ final class MiniMapArrowPointer implements IgeRenderImage, Pointer {
     }
 
     @Override
-    public void setTarget(@Nonnull ServerCoordinate loc) {
-        targetLocation = loc;
+    public void setTarget(@Nonnull ServerCoordinate coordinate) {
+        targetLocation = coordinate;
     }
 
     /**

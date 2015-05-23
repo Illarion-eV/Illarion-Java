@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,6 +17,7 @@ package org.illarion.engine.backend.gdx;
 
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import illarion.common.util.FastMath;
@@ -68,9 +69,9 @@ class GdxLwjglCursorManager extends AbstractCursorManager {
             cursorWidth = MathUtils.nextPowerOfTwo(cursorWidth);
 
             if ((cursorHeight != cursorPixels.getHeight()) || (cursorWidth != cursorPixels.getWidth()) ||
-                    (cursorPixels.getFormat() != Pixmap.Format.RGBA8888)) {
+                    (cursorPixels.getFormat() != Format.RGBA8888)) {
 
-                Pixmap tempPixMap = new Pixmap(cursorWidth, cursorHeight, Pixmap.Format.RGBA8888);
+                Pixmap tempPixMap = new Pixmap(cursorWidth, cursorHeight, Format.RGBA8888);
                 tempPixMap.drawPixmap(cursorPixels, 0, 0);
                 cursorPixels.dispose();
                 cursorPixels = tempPixMap;

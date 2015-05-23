@@ -328,7 +328,6 @@ public final class Weather {
      * Default constructor. Prepare and active everything needed to show the
      * weather.
      */
-    @SuppressWarnings("nls")
     public Weather() {
         ambientLightCalculation = new AmbientLight();
         ambientLight = new Color(Color.BLACK);
@@ -493,7 +492,6 @@ public final class Weather {
      * @param newCloud new value for the clouds between {@link #CLOUDS_MIN} and
      * {@link #CLOUDS_MAX}
      */
-    @SuppressWarnings("nls")
     public void setCloud(int newCloud) {
         if ((newCloud < CLOUDS_MIN) || (newCloud > CLOUDS_MAX)) {
             LOGGER.warn("Illegal clounds value: " + newCloud);
@@ -507,7 +505,6 @@ public final class Weather {
      *
      * @param newFog New value for the fog.
      */
-    @SuppressWarnings("nls")
     public void setFog(int newFog) {
         if ((newFog < FOG_MINIMAL_VALUE) || (newFog > FOG_MAXIMAL_VALUE)) {
             LOGGER.warn("Illegal fog value: " + newFog);
@@ -523,7 +520,6 @@ public final class Weather {
      * @param newLightning New value for the lightnings between
      * {@link #LIGHTNING_MIN} and {@link #LIGHTNING_MAX}
      */
-    @SuppressWarnings("nls")
     public void setLightning(int newLightning) {
         if ((lightning < LIGHTNING_MIN) || (lightning > LIGHTNING_MAX)) {
             LOGGER.warn("Illegal lightning value: " + newLightning);
@@ -549,7 +545,6 @@ public final class Weather {
      * {@link #SNOW}
      * @param strength new precipitation strength value
      */
-    @SuppressWarnings("nls")
     public void setPrecipitation(int type, int strength) {
         if ((type < 0) || (type > 2) || (strength < PREC_SERVER_MIN) || (strength > PREC_SERVER_MAX)) {
             LOGGER.warn("Illegal precipitation value: " + type + " strength: " + strength);
@@ -572,7 +567,6 @@ public final class Weather {
      * @param newWind the new value for the wind
      * @param newGusts the new value for the wind gusts
      */
-    @SuppressWarnings("nls")
     public void setWind(int newWind, int newGusts) {
         if ((newWind < WIND_SERVER_MIN) || (newWind > WIND_SERVER_MAX) || (newGusts < WIND_GUST_MIN) ||
                 (newGusts > WIND_GUST_MAX)) {

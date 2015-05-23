@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,6 +21,7 @@ import illarion.common.util.TableLoaderItems;
 import illarion.common.util.TableLoaderSink;
 import illarion.mapedit.resource.ItemImg;
 import illarion.mapedit.resource.Resource;
+import illarion.mapedit.resource.loaders.TextureLoaderAwt.AwtTexture;
 import org.illarion.engine.assets.TextureManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,28 +60,28 @@ public class ItemLoader implements TableLoaderSink<TableLoaderItems>, Resource {
     }
 
     @Override
-    public boolean processRecord(final int line, @Nonnull final TableLoaderItems loader) {
-        final int mode = loader.getItemMode();
-        final int itemID = loader.getItemId();
-        final int face = loader.getFace();
-        final boolean moveable = loader.isMovable();
-        final int specialFlag = loader.getSpecialFlag();
-        final boolean obstacle = loader.isObstacle();
-        final int variance = loader.getSizeVariance();
-        final int opacity = loader.getOpacity();
-        final int surfaceLevel = loader.getSurfaceLevel();
-        final int itemLight = loader.getItemLight();
-        final int offsetX = loader.getOffsetX();
-        final int offsetY = loader.getOffsetY();
-        final String resourceName = loader.getResourceName();
-        final int frameCount = loader.getFrameCount();
-        final int animationSpeed = loader.getAnimationSpeed();
-        final int editorGroup = loader.getMapEditorGroup();
+    public boolean processRecord(int line, @Nonnull TableLoaderItems loader) {
+        int mode = loader.getItemMode();
+        int itemID = loader.getItemId();
+        int face = loader.getFace();
+        boolean moveable = loader.isMovable();
+        int specialFlag = loader.getSpecialFlag();
+        boolean obstacle = loader.isObstacle();
+        int variance = loader.getSizeVariance();
+        int opacity = loader.getOpacity();
+        int surfaceLevel = loader.getSurfaceLevel();
+        int itemLight = loader.getItemLight();
+        int offsetX = loader.getOffsetX();
+        int offsetY = loader.getOffsetY();
+        String resourceName = loader.getResourceName();
+        int frameCount = loader.getFrameCount();
+        int animationSpeed = loader.getAnimationSpeed();
+        int editorGroup = loader.getMapEditorGroup();
 
-        final ItemInfo info = ItemInfo
+        ItemInfo info = ItemInfo
                 .create(face, moveable, specialFlag, obstacle, variance, opacity, surfaceLevel, itemLight);
 
-        final ItemImg img = new ItemImg(itemID, resourceName, ItemNameLoader.getInstance().getItemName(itemID),
+        ItemImg img = new ItemImg(itemID, resourceName, ItemNameLoader.getInstance().getItemName(itemID),
                                         editorGroup, offsetX, offsetY, frameCount, animationSpeed, mode,
                                         getTextures(resourceName, frameCount), info);
 
@@ -89,16 +90,16 @@ public class ItemLoader implements TableLoaderSink<TableLoaderItems>, Resource {
     }
 
     @Nonnull
-    private static Image[] getTextures(@Nonnull final String resourceName, final int frameCount) {
-        final Image[] imgs = new Image[frameCount];
+    private static Image[] getTextures(@Nonnull String resourceName, int frameCount) {
+        Image[] imgs = new Image[frameCount];
         TextureManager manager = TextureLoaderAwt.getInstance();
         if (frameCount == 1) {
-            TextureLoaderAwt.AwtTexture texture = (TextureLoaderAwt.AwtTexture) manager
+            AwtTexture texture = (AwtTexture) manager
                     .getTexture(DIR_IMG_ITEMS, resourceName);
             imgs[0] = texture == null ? null : texture.getImage();
         } else {
             for (int i = 0; i < frameCount; i++) {
-                TextureLoaderAwt.AwtTexture texture = (TextureLoaderAwt.AwtTexture) manager
+                AwtTexture texture = (AwtTexture) manager
                         .getTexture(DIR_IMG_ITEMS, resourceName + '-' + i);
                 imgs[i] = texture == null ? null : texture.getImage();
             }
@@ -112,7 +113,7 @@ public class ItemLoader implements TableLoaderSink<TableLoaderItems>, Resource {
     }
 
     @Nullable
-    public ItemImg getTileFromId(final int id) {
+    public ItemImg getTileFromId(int id) {
         if (items.contains(id)) {
             return items.get(id);
         }
@@ -120,7 +121,7 @@ public class ItemLoader implements TableLoaderSink<TableLoaderItems>, Resource {
     }
 
     public ItemImg[] getItems() {
-        final ItemImg[] t = items.values(new ItemImg[items.size()]);
+        ItemImg[] t = items.values(new ItemImg[items.size()]);
         return t;
     }
 }

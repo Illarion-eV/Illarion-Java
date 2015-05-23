@@ -141,7 +141,7 @@ public class TableLoader {
 
     /**
      * Load a table from the jar file resources. The table needs to be in the resources and its file name ending is
-     * {@code .dat}. The file is taken as encrypted and is decrypted using {@link illarion.common.util.Crypto}.
+     * {@code .dat}. The file is taken as encrypted and is decrypted using {@link Crypto}.
      * <p/>
      * <b>Important:</b> The first line is assumed as header line and thrown away at the reading operation.
      * <p/>
@@ -190,7 +190,7 @@ public class TableLoader {
      * resources and its file name ending is {@code .dat}. The
      * table is loaded as a NDSC table that was created by the config tool and
      * its delimiter is {@code ,}. Also the file is taken as encrypted and
-     * is decrypted using {@link illarion.common.util.Crypto}.
+     * is decrypted using {@link Crypto}.
      * <p/>
      * <b>Important:</b> The first line is assumed as header line and thrown
      * away at the reading operation.
@@ -304,7 +304,7 @@ public class TableLoader {
      * @throws IOException in case there is something wrong with the ressource
      * stream
      */
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings("unchecked")
     private <T extends TableLoader> void loadTable(
             @Nonnull InputStream rsc, boolean ndsc, @Nonnull TableLoaderSink<T> callback) throws IOException {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(rsc, "UTF-8"))) {

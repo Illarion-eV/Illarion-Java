@@ -93,7 +93,7 @@ public final class FadingCorridor {
      * avatar image (spoken in z order), so returning {@code true}
      * means that the tested object needs to be faded out
      */
-    protected boolean isInCorridor(
+    boolean isInCorridor(
             int testLocX, int testLocY, int testLayer, int width, int height) {
         TEMP_RECT.setBounds(testLocX, testLocY, width, height);
 
@@ -112,7 +112,7 @@ public final class FadingCorridor {
      * @param character the avatar that delivers the size for the fading
      * corridor
      */
-    protected void setCorridor(@Nonnull AbstractEntity character) {
+    void setCorridor(@Nonnull AbstractEntity<?> character) {
         Sprite characterSprite = character.getTemplate().getSprite();
         fading.setBounds(character.getDisplayCoordinate().getX() + TOLERANCE,
                 (character.getDisplayCoordinate().getY() + TOLERANCE) - characterSprite.getHeight(),

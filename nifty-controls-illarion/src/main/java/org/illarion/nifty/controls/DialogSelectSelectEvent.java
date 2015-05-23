@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -45,7 +45,7 @@ public final class DialogSelectSelectEvent extends DialogEvent {
      * @param buyItem the item that was selected
      * @param buyIndex the index of the item that was selected
      */
-    public DialogSelectSelectEvent(final int id, @Nonnull final SelectListEntry buyItem, final int buyIndex) {
+    public DialogSelectSelectEvent(int id, @Nonnull SelectListEntry buyItem, int buyIndex) {
         super(id);
         item = buyItem;
         itemIndex = buyIndex;

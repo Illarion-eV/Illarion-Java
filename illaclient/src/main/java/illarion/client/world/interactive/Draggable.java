@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -33,7 +33,6 @@ public interface Draggable {
      * @param targetChar the character to drag the object to
      * @param count the amount of objects to be transferred
      */
-    @SuppressWarnings("UnusedDeclaration")
     void dragTo(@Nonnull InteractiveChar targetChar, @Nonnull ItemCount count);
 
     /**

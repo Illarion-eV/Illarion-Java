@@ -41,7 +41,7 @@ public abstract class AbstractMapRenderer implements Comparable<AbstractMapRende
     /**
      * Creates a new map renderer
      */
-    public AbstractMapRenderer(@Nonnull RendererManager manager) {
+    protected AbstractMapRenderer(@Nonnull RendererManager manager) {
         this.manager = manager;
     }
 

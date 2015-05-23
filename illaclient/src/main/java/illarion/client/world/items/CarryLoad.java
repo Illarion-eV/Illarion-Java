@@ -17,12 +17,8 @@ package illarion.client.world.items;
 
 import de.lessvoid.nifty.tools.Color;
 import illarion.client.util.Lang;
-import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
-import org.illarion.engine.GameContainer;
 import org.jetbrains.annotations.Contract;
-
-import javax.annotation.Nonnull;
 
 /**
  * This class stores and maintains the current carry load and provides some methods to easily handle the load values.
@@ -71,13 +67,10 @@ public class CarryLoad {
             }
         }
         if (messageToSend != null) {
-            final String finalMessageToSend = messageToSend;
-            World.getUpdateTaskManager().addTask(new UpdateTask() {
-                @Override
-                public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                    World.getGameGui().getInformGui().showScriptInform(1, finalMessageToSend);
-                    World.getGameGui().getChatGui().addChatMessage(finalMessageToSend, Color.WHITE);
-                }
+            String finalMessageToSend = messageToSend;
+            World.getUpdateTaskManager().addTask((container, delta) -> {
+                World.getGameGui().getInformGui().showScriptInform(1, finalMessageToSend);
+                World.getGameGui().getChatGui().addChatMessage(finalMessageToSend, Color.WHITE);
             });
         }
         if (World.getGameGui().isReady()) {

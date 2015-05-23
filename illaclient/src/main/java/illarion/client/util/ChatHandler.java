@@ -44,7 +44,6 @@ public final class ChatHandler {
         /**
          * Speech mode for emotes.
          */
-        @SuppressWarnings("nls")
         Emote(Color.WHITE, "^\\s*[/#]me(.*)\\s*$", "$1"),
 
         /**
@@ -55,19 +54,16 @@ public final class ChatHandler {
         /**
          * Speech mode for OOC messages.
          */
-        @SuppressWarnings("nls")
         Ooc(Color.GRAY, "^\\s*[/#]o(oc)?\\s*(.*)\\s*$", "$2"),
 
         /**
          * Speech mode for shouted text.
          */
-        @SuppressWarnings("nls")
         Shout(Color.RED, "^\\s*[/#]s(hout)?\\s*(.*)\\s*$", "$2"),
 
         /**
          * Speech mode for whispered text.
          */
-        @SuppressWarnings("nls")
         Whisper(Color.GRAY, "^\\s*[/#]w(hisper)?\\s*(.*)\\s*$", "$2");
 
         /**
@@ -95,7 +91,7 @@ public final class ChatHandler {
          * @param replace the regular expression needed to isolate the actual text
          */
         SpeechMode(
-                org.illarion.engine.graphic.Color modeColor,
+                Color modeColor,
                 @Nullable @RegEx String findRegexp,
                 @Nullable String replace) {
             color = modeColor;

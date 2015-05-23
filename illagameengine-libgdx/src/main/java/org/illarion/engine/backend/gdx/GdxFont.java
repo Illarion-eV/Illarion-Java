@@ -16,6 +16,7 @@
 package org.illarion.engine.backend.gdx;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.BitmapFont.Glyph;
 import org.illarion.engine.graphic.Font;
 
 import javax.annotation.Nonnull;
@@ -69,7 +70,7 @@ class GdxFont implements Font {
 
     @Override
     public int getAdvance(char current, char next) {
-        @Nullable BitmapFont.Glyph currentGlyph = bitmapFont.getData().getGlyph(current);
+        @Nullable Glyph currentGlyph = bitmapFont.getData().getGlyph(current);
         if (currentGlyph == null) {
             return 0;
         }

@@ -42,7 +42,10 @@ public interface MiniMapGui {
         /**
          * The color that is supposed to be applied to the pointers.
          */
+        @Nonnull
         Color POINTER_COLOR = new ImmutableColor(255, 166, 102, 255);
+
+        @Nonnull
         Color ACTIVEPOINTER_COLOR = new ImmutableColor(255, 0, 0, 255);
 
         /**

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -32,16 +32,16 @@ public class ItemPlacedAction extends HistoryAction {
     @Nullable
     private final MapItem newt;
 
-    public ItemPlacedAction(final int x, final int y, @Nullable final MapItem newt, final Map map) {
+    public ItemPlacedAction(int x, int y, @Nullable MapItem newt, Map map) {
         super(map);
         this.x = x;
         this.y = y;
-        this.old = null;
+        old = null;
         this.newt = newt;
     }
 
     public ItemPlacedAction(
-            final int x, final int y, @Nullable final MapItem old, @Nullable final MapItem newt, final Map map) {
+            int x, int y, @Nullable MapItem old, @Nullable MapItem newt, Map map) {
         super(map);
         this.x = x;
         this.y = y;

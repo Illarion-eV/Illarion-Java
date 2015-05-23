@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,6 +15,7 @@
  */
 package illarion.mapedit.data;
 
+import illarion.mapedit.data.MapTile.MapTileFactory;
 import illarion.mapedit.events.HistoryPasteCutEvent;
 import illarion.mapedit.history.CopyPasteAction;
 import illarion.mapedit.history.GroupAction;
@@ -36,26 +37,26 @@ public class SelectionManager {
     }
 
     @Nonnull
-    public MapSelection copy(@Nonnull final Map map) {
-        final MapSelection mapSelection = new MapSelection();
-        for (final MapPosition pos : selection) {
-            final MapTile tile = map.getTileAt(pos.getX(), pos.getY());
+    public MapSelection copy(@Nonnull Map map) {
+        MapSelection mapSelection = new MapSelection();
+        for (MapPosition pos : selection) {
+            MapTile tile = map.getTileAt(pos.getX(), pos.getY());
             if (tile != null) {
-                mapSelection.addSelectedTile(pos, MapTile.MapTileFactory.copy(tile));
+                mapSelection.addSelectedTile(pos, MapTileFactory.copy(tile));
             }
         }
         return mapSelection;
     }
 
     @Nonnull
-    public MapSelection cut(@Nonnull final Map map) {
-        final MapSelection mapSelection = new MapSelection();
-        final GroupAction action = new GroupAction();
-        for (final MapPosition pos : selection) {
-            final MapTile tile = map.getTileAt(pos.getX(), pos.getY());
+    public MapSelection cut(@Nonnull Map map) {
+        MapSelection mapSelection = new MapSelection();
+        GroupAction action = new GroupAction();
+        for (MapPosition pos : selection) {
+            MapTile tile = map.getTileAt(pos.getX(), pos.getY());
             if (tile != null) {
-                mapSelection.addSelectedTile(pos, MapTile.MapTileFactory.copy(tile));
-                final MapTile tileNew = MapTile.MapTileFactory.createNew(0, 0, 0, 0);
+                mapSelection.addSelectedTile(pos, MapTileFactory.copy(tile));
+                MapTile tileNew = MapTileFactory.createNew(0, 0, 0, 0);
                 action.addAction(new CopyPasteAction(pos.getX(), pos.getY(), tile, tileNew, map));
                 map.setTileAt(pos.getX(), pos.getY(), tileNew);
             }
@@ -74,18 +75,18 @@ public class SelectionManager {
         return selection;
     }
 
-    public void select(final int x, final int y) {
+    public void select(int x, int y) {
         selection.add(new MapPosition(x, y));
     }
 
-    public void deselect(final int x, final int y) {
-        final MapPosition pos = new MapPosition(x, y);
+    public void deselect(int x, int y) {
+        MapPosition pos = new MapPosition(x, y);
         if (selection.contains(pos)) {
             selection.remove(pos);
         }
     }
 
-    public boolean isSelected(final int x, final int y) {
+    public boolean isSelected(int x, int y) {
         return selection.contains(new MapPosition(x, y));
     }
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -34,11 +34,11 @@ public class FormatCorruptedException extends IOException {
     /**
      * The nr of the line that contains the error.
      */
-    private int lineNr;
+    private final int lineNr;
     /**
      * The expected content of the line.
      */
-    private String format;
+    private final String format;
 
     /**
      * Creates a new FormatCorruptedException.
@@ -48,7 +48,7 @@ public class FormatCorruptedException extends IOException {
      * @param lineNr the number of the line
      * @param format the expected content of the line
      */
-    public FormatCorruptedException(final String file, final String line, final int lineNr, final String format) {
+    public FormatCorruptedException(String file, String line, int lineNr, String format) {
         super(String.format("Format corrupted in file %s at line %d. Expected:[%s] Found:[%s]", file, lineNr, format,
                             line));
         this.file = file;

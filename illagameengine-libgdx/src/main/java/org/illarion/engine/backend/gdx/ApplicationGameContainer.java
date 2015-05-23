@@ -15,8 +15,8 @@
  */
 package org.illarion.engine.backend.gdx;
 
-import com.badlogic.gdx.Files;
-import com.badlogic.gdx.Graphics;
+import com.badlogic.gdx.Files.FileType;
+import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import org.illarion.engine.DesktopGameContainer;
 import org.illarion.engine.GameListener;
@@ -144,7 +144,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         }
 
         if (targetDisplayMode == null) {
-            Graphics.DisplayMode mode = LwjglApplicationConfiguration.getDesktopDisplayMode();
+            DisplayMode mode = LwjglApplicationConfiguration.getDesktopDisplayMode();
             return new GraphicResolution(mode.width, mode.height, mode.bitsPerPixel, mode.refreshRate);
         }
         return targetDisplayMode;
@@ -233,9 +233,9 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     }
 
     @Override
-    public void setIcons(@Nonnull String[] icons) {
+    public void setIcons(@Nonnull String... icons) {
         for (@Nullable String icon : icons) {
-            config.addIcon(icon, Files.FileType.Internal);
+            config.addIcon(icon, FileType.Internal);
         }
     }
 
@@ -269,7 +269,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     public GraphicResolution[] getFullScreenResolutions() {
         if (graphicResolutions == null) {
             List<GraphicResolution> resultResolutions = new ArrayList<>();
-            Graphics.DisplayMode[] displayModes;
+            DisplayMode[] displayModes;
             boolean ignoreRefreshRate;
             if (gdxApplication == null) {
                 displayModes = LwjglApplicationConfiguration.getDisplayModes();
@@ -278,7 +278,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
                 displayModes = gdxApplication.getGraphics().getDisplayModes();
                 ignoreRefreshRate = false;
             }
-            for (@Nullable Graphics.DisplayMode mode : displayModes) {
+            for (@Nullable DisplayMode mode : displayModes) {
                 if (mode == null) {
                     continue;
                 }

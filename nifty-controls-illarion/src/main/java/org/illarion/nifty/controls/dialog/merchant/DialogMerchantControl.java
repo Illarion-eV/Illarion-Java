@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -27,13 +27,13 @@ import de.lessvoid.nifty.tools.SizeValue;
 import illarion.common.types.Rectangle;
 import org.bushe.swing.event.EventTopicSubscriber;
 import org.illarion.nifty.controls.*;
+import org.illarion.nifty.controls.MerchantListEntry.EntryType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * This is the control class of the merchant dialogs. Not meant to direct usage.
@@ -65,12 +65,7 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
     private final EventTopicSubscriber<ButtonClickedEvent> closeButtonEventHandler;
 
     public DialogMerchantControl() {
-        closeButtonEventHandler = new EventTopicSubscriber<ButtonClickedEvent>() {
-            @Override
-            public void onEvent(String topic, ButtonClickedEvent data) {
-                closeWindow();
-            }
-        };
+        closeButtonEventHandler = (topic, data) -> closeWindow();
     }
 
     @Override
@@ -160,7 +155,7 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
 
     @Override
     public void addSellingItem(@Nonnull MerchantListEntry entry) {
-        if (entry.getEntryType() != MerchantListEntry.EntryType.Selling) {
+        if (entry.getEntryType() != EntryType.Selling) {
             throw new IllegalArgumentException("Entry for selling list requires to by of type selling.");
         }
         ListBox<MerchantListEntry> sellList = getSellList();
@@ -191,8 +186,8 @@ public final class DialogMerchantControl extends WindowControl implements Dialog
 
     @Override
     public void addBuyingItem(@Nonnull MerchantListEntry entry) {
-        if ((entry.getEntryType() != MerchantListEntry.EntryType.BuyPrimary) &&
-                (entry.getEntryType() != MerchantListEntry.EntryType.BuySecondary)) {
+        if ((entry.getEntryType() != EntryType.BuyPrimary) &&
+                (entry.getEntryType() != EntryType.BuySecondary)) {
             throw new IllegalArgumentException("Entry for buying list requires to by of type buying.");
         }
         ListBox<MerchantListEntry> buyList = getBuyList();

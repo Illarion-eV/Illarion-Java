@@ -56,12 +56,7 @@ final class AmbientLight {
         ambientLightToggle = false;
         calculationExecutor = Executors.newSingleThreadScheduledExecutor(
                 new PoolThreadFactory("AmbientLightCalculation", true));
-        calculationExecutor.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                calculate();
-            }
-        }, 0, 500, TimeUnit.MILLISECONDS);
+        calculationExecutor.scheduleAtFixedRate(this::calculate, 0, 500, TimeUnit.MILLISECONDS);
     }
 
     /**

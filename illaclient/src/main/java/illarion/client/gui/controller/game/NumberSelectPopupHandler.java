@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,17 +19,12 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.controls.TextField;
-import de.lessvoid.nifty.controls.textfield.filter.input.TextFieldInputCharFilter;
 import de.lessvoid.nifty.controls.textfield.format.TextFieldDisplayFormat;
 import de.lessvoid.nifty.elements.Element;
-import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.input.NiftyStandardInputEvent;
-import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
-import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
-import org.illarion.engine.GameContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,6 +57,12 @@ public final class NumberSelectPopupHandler implements ScreenController {
     }
 
     /**
+     * The logging instance for this class.
+     */
+    @Nonnull
+    private static final Logger LOGGER = LoggerFactory.getLogger(NumberSelectPopupHandler.class);
+
+    /**
      * The parent instance of Nifty-GUI.
      */
     private Nifty parentNifty;
@@ -81,7 +82,7 @@ public final class NumberSelectPopupHandler implements ScreenController {
      * The callback assigned to the popup.
      */
     @Nullable
-    private NumberSelectPopupHandler.Callback activeCallback;
+    private Callback activeCallback;
 
     /**
      * The largest number allowed.
@@ -112,13 +113,8 @@ public final class NumberSelectPopupHandler implements ScreenController {
      * @param callback the callback that is called in case the user interacts with the popup
      */
     public void requestNewPopup(
-            final int minValue, final int maxValue, @Nonnull final NumberSelectPopupHandler.Callback callback) {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                internalCreateNewPopup(minValue, maxValue, callback);
-            }
-        });
+            int minValue, int maxValue, @Nonnull Callback callback) {
+        World.getUpdateTaskManager().addTask((container, delta) -> internalCreateNewPopup(minValue, maxValue, callback));
     }
 
     /**
@@ -129,7 +125,7 @@ public final class NumberSelectPopupHandler implements ScreenController {
      * @param callback the callback that is called in case the user interacts with the popup
      */
     private void internalCreateNewPopup(
-            final int minValue, final int maxValue, @Nonnull NumberSelectPopupHandler.Callback callback) {
+            int minValue, int maxValue, @Nonnull Callback callback) {
         cancelActivePopup();
 
         activePopup = parentNifty.createPopup("numberSelect");
@@ -138,22 +134,19 @@ public final class NumberSelectPopupHandler implements ScreenController {
         maxNumber = maxValue;
         minNumber = minValue;
 
-        final TextField textField = getTextField();
+        TextField textField = getTextField();
 
         assert textField != null;
-        textField.enableInputFilter(new TextFieldInputCharFilter() {
-            @Override
-            public boolean acceptInput(int index, char newChar) {
-                if (!Character.isDigit(newChar)) {
-                    return false;
-                }
-                String currentText = textField.getRealText();
-                StringBuilder buffer = new StringBuilder(currentText);
-                buffer.insert(index, newChar);
-
-                int value = Integer.parseInt(buffer.toString());
-                return !((value > maxValue) || (value < minValue));
+        textField.enableInputFilter((int index, char newChar) -> {
+            if (!Character.isDigit(newChar)) {
+                return false;
             }
+            String currentText = textField.getRealText();
+            StringBuilder buffer = new StringBuilder(currentText);
+            buffer.insert(index, newChar);
+
+            int value = Integer.parseInt(buffer.toString());
+            return !((value > maxValue) || (value < minValue));
         });
 
         textField.setFormat(new TextFieldDisplayFormat() {
@@ -168,22 +161,19 @@ public final class NumberSelectPopupHandler implements ScreenController {
             }
         });
 
-        activePopup.addInputHandler(new KeyInputHandler() {
-            @Override
-            public boolean keyEvent(@Nonnull NiftyInputEvent inputEvent) {
-                if (!(inputEvent instanceof NiftyStandardInputEvent)) {
+        activePopup.addInputHandler(inputEvent -> {
+            if (!(inputEvent instanceof NiftyStandardInputEvent)) {
+                return false;
+            }
+            switch ((NiftyStandardInputEvent) inputEvent) {
+                case Escape:
+                    cancelActivePopup();
+                    return true;
+                case SubmitText:
+                    confirmActivePopup();
+                    return true;
+                default:
                     return false;
-                }
-                switch ((NiftyStandardInputEvent) inputEvent) {
-                    case Escape:
-                        cancelActivePopup();
-                        return true;
-                    case SubmitText:
-                        confirmActivePopup();
-                        return true;
-                    default:
-                        return false;
-                }
             }
         });
 
@@ -313,11 +303,6 @@ public final class NumberSelectPopupHandler implements ScreenController {
 
         return activePopup.findNiftyControl("#numberInput", TextField.class);
     }
-
-    /**
-     * The logging instance for this class.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(NumberSelectPopupHandler.class);
 
     /**
      * Cancel and destroy the currently active popup. This sends a cancel to the callback and removes the active popup.

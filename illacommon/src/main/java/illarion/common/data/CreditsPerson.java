@@ -149,8 +149,8 @@ public final class CreditsPerson implements Comparable<CreditsPerson> {
 
     @Override
     @Contract(value = "null->false", pure = true)
-    public boolean equals(@Nullable Object other) {
-        return super.equals(other) || ((other instanceof CreditsPerson) && equals((CreditsPerson) other));
+    public boolean equals(@Nullable Object obj) {
+        return super.equals(obj) || ((obj instanceof CreditsPerson) && equals((CreditsPerson) obj));
     }
 
     @Contract(value = "null->false", pure = true)

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -40,24 +40,26 @@ public final class Utils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
 
+    private Utils() {
+    }
+
     @Nullable
     public static ResizableIcon getResizableIconFromResource(
-            final String resource) {
+            String resource) {
         Image image;
         try {
             image = ImageIO.read(Utils.class.getClassLoader().getResource(resource));
-        } catch (@Nonnull final IOException e) {
-            LOGGER.error("Failed to read image: \"" + resource + "\"");
+        } catch (@Nonnull IOException e) {
+            LOGGER.error("Failed to read image: \"" + resource + '"');
             return null;
         }
-        final int height = image.getHeight(null);
-        final int width = image.getWidth(null);
-        final ResizableIcon resizeIcon = ImageWrapperResizableIcon.getIcon(image, new Dimension(width, height));
-        return resizeIcon;
+        int height = image.getHeight(null);
+        int width = image.getWidth(null);
+        return ImageWrapperResizableIcon.getIcon(image, new Dimension(width, height));
     }
 
-    public static void saveEasyQuest(@Nonnull final Editor editor) {
-        final Path file = editor.getQuestFile();
+    public static void saveEasyQuest(@Nonnull Editor editor) {
+        Path file = editor.getQuestFile();
         if (file == null) {
             selectAndSaveEasyQuest(editor);
             return;
@@ -71,16 +73,16 @@ public final class Utils {
         }
     }
 
-    protected static void exportEasyQuest(@Nonnull final Editor editor) {
+    static void exportEasyQuest(@Nonnull Editor editor) {
         if (editor.validQuest()) {
-            final JFileChooser dirDiag = new JFileChooser();
+            JFileChooser dirDiag = new JFileChooser();
             dirDiag.setDialogTitle("Exportieren");
             dirDiag.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             dirDiag.setAcceptAllFileFilterUsed(false);
             dirDiag.setCurrentDirectory(Config.getInstance().getExportFolder().toFile());
-            final int fileReturn = dirDiag.showSaveDialog(MainFrame.getInstance());
+            int fileReturn = dirDiag.showSaveDialog(MainFrame.getInstance());
             if (fileReturn == JFileChooser.APPROVE_OPTION) {
-                final File targetDir = dirDiag.getSelectedFile();
+                File targetDir = dirDiag.getSelectedFile();
                 try {
                     QuestIO.exportQuest(editor.getGraph().getModel(), targetDir.toPath());
                 } catch (IOException e) {
@@ -91,10 +93,10 @@ public final class Utils {
     }
 
     public static void selectAndOpenQuest() {
-        final JFileChooser fileDiag = new JFileChooser();
+        JFileChooser fileDiag = new JFileChooser();
         fileDiag.setFileFilter(new FileFilter() {
             @Override
-            public boolean accept(@Nonnull final File f) {
+            public boolean accept(@Nonnull File f) {
                 return !f.isFile() || f.getName().endsWith(".quest"); //$NON-NLS-1$
             }
 
@@ -106,15 +108,15 @@ public final class Utils {
         fileDiag.setAcceptAllFileFilterUsed(false);
         fileDiag.setCurrentDirectory(Config.getInstance().getEasyQuestFolder().toFile());
 
-        final int fileReturn = fileDiag.showOpenDialog(MainFrame.getInstance());
+        int fileReturn = fileDiag.showOpenDialog(MainFrame.getInstance());
         if (fileReturn == JFileChooser.APPROVE_OPTION) {
-            final File selectedFile = fileDiag.getSelectedFile();
+            File selectedFile = fileDiag.getSelectedFile();
             openQuest(selectedFile.toPath());
         }
     }
 
-    protected static void openQuest(@Nonnull final Path file) {
-        final int editorIndex = MainFrame.getInstance().alreadyOpen(file);
+    static void openQuest(@Nonnull Path file) {
+        int editorIndex = MainFrame.getInstance().alreadyOpen(file);
         if (editorIndex > -1) {
             MainFrame.getInstance().setCurrentEditorTab(editorIndex);
             return;
@@ -127,11 +129,11 @@ public final class Utils {
         Config.getInstance().addLastOpenedFile(file);
     }
 
-    protected static void selectAndSaveEasyQuest(@Nonnull final Editor editor) {
-        final JFileChooser fileDiag = new JFileChooser();
+    static void selectAndSaveEasyQuest(@Nonnull Editor editor) {
+        JFileChooser fileDiag = new JFileChooser();
         fileDiag.setFileFilter(new FileFilter() {
             @Override
-            public boolean accept(@Nonnull final File f) {
+            public boolean accept(@Nonnull File f) {
                 return !f.isFile() || f.getName().endsWith(".quest"); //$NON-NLS-1$
             }
 
@@ -142,15 +144,15 @@ public final class Utils {
         });
         fileDiag.setAcceptAllFileFilterUsed(false);
         fileDiag.setCurrentDirectory(Config.getInstance().getEasyQuestFolder().toFile());
-        final Path questFile = editor.getQuestFile();
+        Path questFile = editor.getQuestFile();
         fileDiag.setSelectedFile(questFile == null ? null : questFile.toFile());
-        final int fileReturn = fileDiag.showSaveDialog(MainFrame.getInstance());
+        int fileReturn = fileDiag.showSaveDialog(MainFrame.getInstance());
         if (fileReturn == JFileChooser.APPROVE_OPTION) {
             File targetFile = fileDiag.getSelectedFile();
             if (!targetFile.getName().endsWith(".quest")) {
                 targetFile = new File(targetFile.getParent(), targetFile.getName() + ".quest");
             }
-            final Path targetPath = targetFile.toPath();
+            Path targetPath = targetFile.toPath();
             editor.setQuestFile(targetPath);
             try {
                 QuestIO.saveGraphModel(editor.getGraph().getModel(), targetPath);

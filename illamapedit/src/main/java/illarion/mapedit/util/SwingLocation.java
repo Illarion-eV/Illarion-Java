@@ -21,7 +21,7 @@ import illarion.common.types.ServerCoordinate;
 /**
  * @author Tim
  */
-public class SwingLocation {
+public final class SwingLocation {
 
     private SwingLocation() {
 

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -48,7 +48,7 @@ import java.util.regex.Pattern;
  *
  * @author Tim
  */
-public class MapIO {
+public final class MapIO {
     private static final Logger LOGGER = LoggerFactory.getLogger(MapIO.class);
     private static final String HEADER_V = "V:";
     private static final String HEADER_L = "L:";
@@ -78,20 +78,16 @@ public class MapIO {
      * @param path the path
      * @param name the map name
      */
-    public static void loadMap(final Path path, final String name) {
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    EventBus.publish(new MapLoadedEvent(loadMapThread(path, name)));
-                } catch (FormatCorruptedException ex) {
-                    LOGGER.warn("Format wrong.", ex);
-                    EventBus.publish(new MapLoadErrorEvent(ex.getMessage()));
-                } catch (IOException ex) {
-                    LOGGER.warn("Can't load map", ex);
-                    EventBus.publish(new MapLoadErrorEvent(Lang.getMsg("gui.error.LoadMap")));
-                }
+    public static void loadMap(Path path, String name) {
+        new Thread(() -> {
+            try {
+                EventBus.publish(new MapLoadedEvent(loadMapThread(path, name)));
+            } catch (FormatCorruptedException ex) {
+                LOGGER.warn("Format wrong.", ex);
+                EventBus.publish(new MapLoadErrorEvent(ex.getMessage()));
+            } catch (IOException ex) {
+                LOGGER.warn("Can't load map", ex);
+                EventBus.publish(new MapLoadErrorEvent(Lang.getMsg("gui.error.LoadMap")));
             }
         }).start();
     }

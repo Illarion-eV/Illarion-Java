@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -38,17 +38,17 @@ public class ItemRenderer extends AbstractMapRenderer {
     /**
      * Creates a new map renderer
      */
-    public ItemRenderer(final RendererManager manager) {
+    public ItemRenderer(RendererManager manager) {
         super(manager);
     }
 
     @Override
     public void renderMap(
-            @Nonnull final Map map,
-            @Nonnull final Rectangle viewport,
-            final int level,
-            @Nonnull final Graphics2D g) {
-        final AffineTransform t = g.getTransform();
+            @Nonnull Map map,
+            @Nonnull Rectangle viewport,
+            int level,
+            @Nonnull Graphics2D g) {
+        AffineTransform t = g.getTransform();
 
         //actual H-Position
         int actualH = 0;
@@ -80,29 +80,29 @@ public class ItemRenderer extends AbstractMapRenderer {
     }
 
     private void render(
-            final int x,
-            final int y,
-            @Nonnull final Rectangle viewport,
-            @Nonnull final Map map,
-            final int level,
-            @Nonnull final Graphics2D g) {
-        final int z = map.getZ() - level;
-        final List<MapItem> items = map.getTileAt(x, y).getMapItems();
+            int x,
+            int y,
+            @Nonnull Rectangle viewport,
+            @Nonnull Map map,
+            int level,
+            @Nonnull Graphics2D g) {
+        int z = map.getZ() - level;
+        List<MapItem> items = map.getTileAt(x, y).getMapItems();
         if ((items == null) || items.isEmpty()) {
             return;
         }
 
-        final int xdisp = SwingLocation.displayCoordinateX(x + map.getX(), y + map.getY(), z);
-        final int ydisp = SwingLocation.displayCoordinateY(x + map.getX(), y + map.getY(), z);
+        int xdisp = SwingLocation.displayCoordinateX(x + map.getX(), y + map.getY(), z);
+        int ydisp = SwingLocation.displayCoordinateY(x + map.getX(), y + map.getY(), z);
         if (viewport.contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
                               (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
             int height = 0;
-            final AffineTransform tr = g.getTransform();
-            for (final MapItem item : items) {
+            AffineTransform tr = g.getTransform();
+            for (MapItem item : items) {
 
-                final ItemImg img = ItemLoader.getInstance().getTileFromId(item.getId());
+                ItemImg img = ItemLoader.getInstance().getTileFromId(item.getId());
                 if ((img != null) && (img.getImgs() != null)) {
-                    final Image paintImg = img.getImgs()[0];
+                    Image paintImg = img.getImgs()[0];
 
                     g.translate(getTileWidth(), getTileHeight());
                     g.translate(xdisp, ydisp);

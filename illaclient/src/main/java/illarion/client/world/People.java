@@ -45,7 +45,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-@SuppressWarnings("ClassNamingConvention")
 @ThreadSafe
 public final class People {
     /**
@@ -57,7 +56,6 @@ public final class People {
     /**
      * This is the format string that is displayed in the {@link #toString()} function.
      */
-    @SuppressWarnings("nls")
     @Nonnull
     private static final String TO_STRING_TEXT = "People Manager - %d$1 characters in storage";
 
@@ -233,9 +231,7 @@ public final class People {
         charsLock.writeLock().lock();
         try {
             cleanRemovalList();
-            for (Char character : chars.values()) {
-                character.markAsRemoved();
-            }
+            chars.values().forEach(Char::markAsRemoved);
             chars.clear();
         } finally {
             charsLock.writeLock().unlock();

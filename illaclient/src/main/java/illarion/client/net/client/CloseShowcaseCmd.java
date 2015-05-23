@@ -51,7 +51,6 @@ public final class CloseShowcaseCmd extends AbstractCommand {
     }
 
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
     public String toString() {
         return toString("Showcase: " + showcaseId);

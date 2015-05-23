@@ -135,7 +135,6 @@ public final class AvatarInfo {
      *
      * @param animationID the ID of the animation that is available.
      */
-    @SuppressWarnings("nls")
     public void reportAnimation(int animationID) {
         if (buffer == null) {
             throw new IllegalStateException("Changing this construct is not allowed after the creation process.");

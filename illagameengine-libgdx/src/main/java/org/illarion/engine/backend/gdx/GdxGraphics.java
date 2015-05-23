@@ -21,6 +21,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.utils.Pools;
 import illarion.common.types.Rectangle;
@@ -199,7 +200,7 @@ class GdxGraphics implements Graphics {
                 gl20.glBlendFunc(GL20.GL_DST_COLOR, GL20.GL_ZERO);
                 break;
         }
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.begin(ShapeType.Filled);
     }
 
     /**

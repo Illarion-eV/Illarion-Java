@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -40,9 +40,9 @@ public class GuiModel {
     private Config config;
 
     public GuiModel(
-            @Nonnull final Stage stage,
-            @Nonnull final HostServices hostServices,
-            @Nonnull final Storyboard storyboard) {
+            @Nonnull Stage stage,
+            @Nonnull HostServices hostServices,
+            @Nonnull Storyboard storyboard) {
         this.stage = stage;
         this.hostServices = hostServices;
         this.storyboard = storyboard;
@@ -63,7 +63,7 @@ public class GuiModel {
         return storyboard;
     }
 
-    public void setConfig(@Nullable final Config config) {
+    public void setConfig(@Nullable Config config) {
         this.config = config;
     }
 

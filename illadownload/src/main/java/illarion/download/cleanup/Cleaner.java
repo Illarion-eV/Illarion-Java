@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,6 +16,7 @@
 package illarion.download.cleanup;
 
 import illarion.common.util.DirectoryManager;
+import illarion.common.util.DirectoryManager.Directory;
 import illarion.common.util.ProgressMonitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +26,15 @@ import javax.annotation.Nullable;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
+import java.nio.file.DirectoryStream.Filter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 /**
  * This is the cleaner implementation of the downloader. While the downloader in general only downloads stuff and
@@ -99,10 +105,10 @@ public class Cleaner {
 
         FilenameFilter userDirFilter = new UserDirectoryFilenameFilter();
 
-        Path userDir = dm.getDirectory(DirectoryManager.Directory.User);
+        Path userDir = dm.getDirectory(Directory.User);
         removalList.addAll(enlistRecursively(userDir, userDirFilter));
 
-        Path dataDir = dm.getDirectory(DirectoryManager.Directory.Data);
+        Path dataDir = dm.getDirectory(Directory.Data);
         removalList.addAll(enlistArtifactsRecursively(dataDir));
 
         printFileList(removalList);
@@ -123,13 +129,8 @@ public class Cleaner {
         Collection<Path> resultList = new LinkedList<>();
         Collection<Future<List<Path>>> artifactScans = new LinkedList<>();
 
-        for (@Nonnull final Path artifactDirectory : artifactDirList) {
-            artifactScans.add(executorService.submit(new Callable<List<Path>>() {
-                @Override
-                public List<Path> call() throws Exception {
-                    return enlistOldArtifacts(artifactDirectory);
-                }
-            }));
+        for (@Nonnull Path artifactDirectory : artifactDirList) {
+            artifactScans.add(executorService.submit(() -> enlistOldArtifacts(artifactDirectory)));
         }
 
         for (Future<List<Path>> artifactScan : artifactScans) {
@@ -152,7 +153,7 @@ public class Cleaner {
 
         List<Path> resultList = new LinkedList<>();
         List<Path> releaseList = new LinkedList<>();
-        final List<Path> snapshotList = new LinkedList<>();
+        List<Path> snapshotList = new LinkedList<>();
 
         try (DirectoryStream<Path> subDirectories = Files.newDirectoryStream(artifactDir)) {
             for (@Nonnull Path versionDir : subDirectories) {
@@ -174,26 +175,18 @@ public class Cleaner {
         for (@Nonnull List<Path> versionList : versionLists) {
             Collections.sort(versionList, versionComparator);
             while (versionList.size() > 1) {
-                final Path dir = versionList.remove(0);
-                dirScans.add(executorService.submit(new Callable<List<Path>>() {
-                    @Override
-                    public List<Path> call() throws Exception {
-                        if (isArtifactComplete(dir, null)) {
-                            return enlistRecursively(dir, null);
-                        }
-                        return Collections.emptyList();
+                Path dir = versionList.remove(0);
+                dirScans.add(executorService.submit(() -> {
+                    if (isArtifactComplete(dir, null)) {
+                        return enlistRecursively(dir, null);
                     }
+                    return Collections.emptyList();
                 }));
             }
         }
 
         if (snapshotList.size() == 1) {
-            dirScans.add(executorService.submit(new Callable<List<Path>>() {
-                @Override
-                public List<Path> call() throws Exception {
-                    return enlistOldSnapshots(snapshotList.get(0));
-                }
-            }));
+            dirScans.add(executorService.submit(() -> enlistOldSnapshots(snapshotList.get(0))));
         }
 
         for (Future<List<Path>> dirScan : dirScans) {
@@ -209,12 +202,9 @@ public class Cleaner {
 
     @Nonnull
     private static List<Path> enlistOldSnapshots(@Nonnull Path snapshotDir) throws IOException {
-        List<Path> snapshotJars = enlistFiles(snapshotDir, new DirectoryStream.Filter<Path>() {
-            @Override
-            public boolean accept(Path entry) throws IOException {
-                String fileName = entry.getFileName().toString();
-                return fileName.endsWith(".jar") && fileName.contains("SNAPSHOT");
-            }
+        List<Path> snapshotJars = enlistFiles(snapshotDir, entry -> {
+            String fileName = entry.getFileName().toString();
+            return fileName.endsWith(".jar") && fileName.contains("SNAPSHOT");
         });
         if (snapshotJars.size() < 2) {
             return Collections.emptyList();
@@ -222,27 +212,21 @@ public class Cleaner {
 
         Collections.sort(snapshotJars);
 
-        final Collection<String> snapshotNames = new ArrayList<>();
-        for (Path snapshotJar : snapshotJars) {
-            snapshotNames.add(snapshotJar.getFileName().toString().replace(".jar", ""));
-        }
+        Collection<String> snapshotNames = snapshotJars.stream().map(snapshotJar -> snapshotJar.getFileName().toString().replace(".jar", "")).collect(Collectors.toList());
 
-        return enlistFiles(snapshotDir, new DirectoryStream.Filter<Path>() {
-            @Override
-            public boolean accept(@Nonnull Path entry) throws IOException {
-                String fileName = entry.getFileName().toString();
-                for (@Nonnull String baseName : snapshotNames) {
-                    if (fileName.startsWith(baseName)) {
-                        return true;
-                    }
+        return enlistFiles(snapshotDir, entry -> {
+            String fileName = entry.getFileName().toString();
+            for (@Nonnull String baseName : snapshotNames) {
+                if (fileName.startsWith(baseName)) {
+                    return true;
                 }
-                return false;
             }
+            return false;
         });
     }
 
     @Nonnull
-    private static List<Path> enlistFiles(@Nonnull Path rootPath, @Nonnull DirectoryStream.Filter<Path> filter)
+    private static List<Path> enlistFiles(@Nonnull Path rootPath, @Nonnull Filter<Path> filter)
             throws IOException {
         List<Path> snapshotJars = new ArrayList<>();
         try (DirectoryStream<Path> files = Files.newDirectoryStream(rootPath, filter)) {
@@ -278,7 +262,7 @@ public class Cleaner {
         return noDirectories && !noJarFiles;
     }
 
-    private List<Path> enlistRecursively(@Nonnull Path rootDir, @Nullable final FilenameFilter filter)
+    private List<Path> enlistRecursively(@Nonnull Path rootDir, @Nullable FilenameFilter filter)
             throws IOException {
         if (executorService == null) {
             throw new IllegalStateException("Executor is not ready");
@@ -290,14 +274,9 @@ public class Cleaner {
         if (Files.isDirectory(rootDir)) {
             Collection<Future<List<Path>>> subDirScans = new ArrayList<>();
             try (DirectoryStream<Path> files = Files.newDirectoryStream(rootDir)) {
-                for (final Path contentFile : files) {
+                for (Path contentFile : files) {
                     if (Files.isDirectory(contentFile)) {
-                        subDirScans.add(executorService.submit(new Callable<List<Path>>() {
-                            @Override
-                            public List<Path> call() throws Exception {
-                                return enlistRecursively(contentFile, filter);
-                            }
-                        }));
+                        subDirScans.add(executorService.submit(() -> enlistRecursively(contentFile, filter)));
                         removeDirectory = false;
                     } else {
                         if ((filter == null) || filter.accept(rootDir.toFile(), contentFile.getFileName().toString())) {

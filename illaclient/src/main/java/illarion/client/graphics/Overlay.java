@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -31,7 +31,6 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-@SuppressWarnings("ClassNamingConvention")
 public class Overlay extends AbstractEntity<OverlayTemplate> implements Resource {
     /**
      * The logger instance that takes care for the logging output of this class.
@@ -51,7 +50,7 @@ public class Overlay extends AbstractEntity<OverlayTemplate> implements Resource
      * @param template the template of the overlay this instance will refer to
      * @param shape the shape of the overlay, this value will be set as frame
      */
-    public Overlay(@Nonnull final OverlayTemplate template, final int shape, @Nonnull final Tile parentTile) {
+    public Overlay(@Nonnull OverlayTemplate template, int shape, @Nonnull Tile parentTile) {
         super(template);
         setFrame(shape);
         this.parentTile = parentTile;
@@ -65,11 +64,11 @@ public class Overlay extends AbstractEntity<OverlayTemplate> implements Resource
      * @return the newly created overlay or {@code null} in case the creation of the overlay failed
      */
     @Nullable
-    public static Overlay create(final int id, final int shape, @Nonnull final Tile parentTile) {
+    public static Overlay create(int id, int shape, @Nonnull Tile parentTile) {
         try {
-            final OverlayTemplate template = OverlayFactory.getInstance().getTemplate(id);
+            OverlayTemplate template = OverlayFactory.getInstance().getTemplate(id);
             return new Overlay(template, shape - 1, parentTile);
-        } catch (@Nonnull final IndexOutOfBoundsException ex) {
+        } catch (@Nonnull IndexOutOfBoundsException ex) {
             LOGGER.error("Failed to create overlay with ID " + id, ex);
         } catch (@Nonnull IllegalStateException ex) {
             LOGGER.error("Template was not found for overlay " + id, ex);

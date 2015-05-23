@@ -15,7 +15,6 @@
  */
 package illarion.client.gui.controller.game;
 
-import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.builder.EffectBuilder;
@@ -47,7 +46,6 @@ import illarion.client.util.ChatHandler.SpeechMode;
 import illarion.client.util.Lang;
 import illarion.client.util.UpdateTask;
 import illarion.client.util.translation.Translator;
-import illarion.client.util.translation.TranslatorCallback;
 import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.common.types.Rectangle;
@@ -76,29 +74,23 @@ import java.util.regex.Pattern;
 public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenController, UpdatableHandler {
     @Override
     public void activateChatBox() {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                if (chatMsg != null) {
-                    chatMsg.setFocus();
-                }
+        World.getUpdateTaskManager().addTask((container, delta) -> {
+            if (chatMsg != null) {
+                chatMsg.setFocus();
             }
         });
     }
 
     @Override
-    public void deactivateChatBox(final boolean clear) {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                if (chatMsg != null) {
-                    if (chatMsg.hasFocus()) {
-                        assert screen != null;
-                        screen.getFocusHandler().setKeyFocus(null);
-                    }
-                    if (clear) {
-                        chatMsg.setText("");
-                    }
+    public void deactivateChatBox(boolean clear) {
+        World.getUpdateTaskManager().addTask((container, delta) -> {
+            if (chatMsg != null) {
+                if (chatMsg.hasFocus()) {
+                    assert screen != null;
+                    screen.getFocusHandler().setKeyFocus(null);
+                }
+                if (clear) {
+                    chatMsg.setText("");
                 }
             }
         });
@@ -441,12 +433,9 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
     @Override
     public void onStartScreen() {
         setHeightOfChatLog(CHAT_COLLAPSED_HEIGHT);
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                keyEvent(NiftyStandardInputEvent.SubmitText);
-                keyEvent(NiftyStandardInputEvent.SubmitText);
-            }
+        World.getUpdateTaskManager().addTask((container, delta) -> {
+            keyEvent(NiftyStandardInputEvent.SubmitText);
+            keyEvent(NiftyStandardInputEvent.SubmitText);
         });
         AnnotationProcessor.process(this);
         assert nifty != null;
@@ -476,9 +465,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
     }
 
     private void clearChatBubbles() {
-        for (Element element : activeBubbles.values()) {
-            element.markForRemoval();
-        }
+        activeBubbles.values().forEach(Element::markForRemoval);
         activeBubbles.clear();
     }
 
@@ -499,12 +486,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         for (int i = 0; i < (entryCount - 400); i++) {
             Element elementToRemove = contentPane.getChildren().get(i);
             if (i == (entryCount - 401)) {
-                elementToRemove.markForRemoval(new EndNotify() {
-                    @Override
-                    public void perform() {
-                        chatLog.getElement().layoutElements();
-                    }
-                });
+                elementToRemove.markForRemoval(() -> chatLog.getElement().layoutElements());
             } else {
                 elementToRemove.markForRemoval();
             }
@@ -611,8 +593,8 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         Element sourceElement = panel.findElementById(id);
         Label sourceLabel = (sourceElement != null) ? sourceElement.getNiftyControl(Label.class) : null;
 
-        final Element translationElement = panel.findElementById(translateId);
-        final Label translationLabel = (translationElement != null) ? translationElement.getNiftyControl(Label.class) :
+        Element translationElement = panel.findElementById(translateId);
+        Label translationLabel = (translationElement != null) ? translationElement.getNiftyControl(Label.class) :
                 null;
 
         if ((sourceLabel == null) || (sourceLabel.getText() == null) || (translationLabel == null)) {
@@ -626,27 +608,20 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
             translationElement.setVisible(true);
             sourceElement.setVisibleToMouseEvents(false);
             dirty = true;
-            translator.translate(sourceLabel.getText(), new TranslatorCallback() {
-                @Override
-                public void sendTranslation(@Nullable final String translation) {
-                    World.getUpdateTaskManager().addTask(new UpdateTask() {
-                        @Override
-                        public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                            if (translation == null) {
-                                translationLabel.setText("");
-                                translationElement.setVisible(false);
-                                if (emptyLineHeight != null) {
-                                    translationElement.setMarginTop(emptyLineHeight);
-                                }
-                            } else {
-                                translationElement.setMarginTop(SizeValue.def());
-                                translationLabel.setText(Lang.getMsg("chat.translation.header") + ' ' + translation);
+            translator.translate(sourceLabel.getText(),
+                    translation -> World.getUpdateTaskManager().addTask((container, delta) -> {
+                        if (translation == null) {
+                            translationLabel.setText("");
+                            translationElement.setVisible(false);
+                            if (emptyLineHeight != null) {
+                                translationElement.setMarginTop(emptyLineHeight);
                             }
-                            dirty = true;
-                        }
-                    });
+                        } else {
+                            translationElement.setMarginTop(SizeValue.def());
+                            translationLabel.setText(Lang.getMsg("chat.translation.header") + ' ' + translation);
                 }
-            });
+                        dirty = true;
+                    }));
         }
     }
 
@@ -659,7 +634,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
      * @param message the message to display
      * @param color the color to show the text in
      */
-    private void addMessageBubble(@Nullable final Char character, @Nonnull String message, @Nonnull Color color) {
+    private void addMessageBubble(@Nullable Char character, @Nonnull String message, @Nonnull Color color) {
         if ((character == null) || (chatLayer == null)) {
             return;
         }
@@ -693,18 +668,15 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
 
         labelBuilder.onHideEffect(hideEffectBuilder);
 
-        final Element bubble = labelBuilder.build(nifty, screen, chatLayer);
+        Element bubble = labelBuilder.build(nifty, screen, chatLayer);
 
         if (updateChatBubbleLocation(character, bubble)) {
             chatLayer.layoutElements();
         }
 
-        bubble.hide(new EndNotify() {
-            @Override
-            public void perform() {
-                nifty.removeElement(screen, bubble);
-                activeBubbles.remove(character);
-            }
+        bubble.hide(() -> {
+            nifty.removeElement(screen, bubble);
+            activeBubbles.remove(character);
         });
         activeBubbles.put(character, bubble);
     }

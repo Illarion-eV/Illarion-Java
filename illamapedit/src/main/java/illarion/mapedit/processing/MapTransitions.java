@@ -29,6 +29,7 @@ import illarion.mapedit.resource.loaders.OverlayLoader;
 
 import javax.annotation.Nonnull;
 import java.util.EnumMap;
+import java.util.Map.Entry;
 
 /**
  * This class is used to calculate the proper overlays to be placed.
@@ -69,7 +70,6 @@ public final class MapTransitions {
      * Private constructor that prepares the required values and ensures that no
      * instance but the singleton instance is created.
      */
-    @SuppressWarnings("nls")
     private MapTransitions() {
         checkTiles = new EnumMap<>(Direction.class);
         /*
@@ -325,7 +325,7 @@ public final class MapTransitions {
     private int buildMask(int id) {
         int mask = 0;
 
-        for (java.util.Map.Entry<Direction, MapTile> entry : checkTiles.entrySet()) {
+        for (Entry<Direction, MapTile> entry : checkTiles.entrySet()) {
             MapTile tile = entry.getValue();
             if ((tile != null) && (tile.getId() == id)) {
                 mask |= 1 << entry.getKey().getServerId();
@@ -373,7 +373,6 @@ public final class MapTransitions {
      *
      * @return the tile ID of the tile with the largest layer that was found
      */
-    @SuppressWarnings("null")
     private int findAndRemoveHighestLayer() {
         int length = foundTiles.size();
         int largestOffset = 0;

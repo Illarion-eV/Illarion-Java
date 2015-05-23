@@ -15,7 +15,6 @@
  */
 package illarion.client.gui.controller;
 
-import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.*;
@@ -299,14 +298,11 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         login.storeData(savePassword.isChecked());
 
         if (login.isCharacterListRequired()) {
-            login.requestCharacterList(new Login.RequestCharListCallback() {
-                @Override
-                public void finishedRequest(int errorCode) {
-                    lastErrorCode = errorCode;
-                    receivedLoginResponse = true;
+            login.requestCharacterList(errorCode -> {
+                lastErrorCode = errorCode;
+                receivedLoginResponse = true;
 
-                    nifty.closePopup(popupReceiveChars.getId());
-                }
+                nifty.closePopup(popupReceiveChars.getId());
             });
         } else {
             engine.getSounds().stopMusic(15);
@@ -348,12 +344,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
      */
     private void closeError() {
         popupIsVisible = false;
-        nifty.closePopup(popupError.getId(), new EndNotify() {
-            @Override
-            public void perform() {
-                nameTxt.getElement().setFocus();
-            }
-        });
+        nifty.closePopup(popupError.getId(), () -> nameTxt.getElement().setFocus());
     }
 
     /**

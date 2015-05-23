@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -63,7 +63,7 @@ import static java.nio.file.StandardOpenOption.CREATE;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class QuestIO {
+public final class QuestIO {
     /**
      * The character sets that will be tried to load the file. One by one. The first one in the list is
      * {@link #CHARSET} as this one is the most likely one to be the one used.
@@ -92,6 +92,9 @@ public class QuestIO {
         mxCodecRegistry.addPackage(Position.class.getPackage().getName());
     }
 
+    private QuestIO() {
+    }
+
     /**
      * Load the graph model of a quest from a file. This is the quest data as its handled internally by the easyQuest
      * editor.
@@ -101,7 +104,7 @@ public class QuestIO {
      * @throws IOException in case reading the model from the file fails for any reason
      */
     @Nonnull
-    public static mxIGraphModel loadGraphModel(@Nonnull final Path file) throws IOException {
+    public static mxIGraphModel loadGraphModel(@Nonnull Path file) throws IOException {
         if (!Files.isReadable(file)) {
             throw new IOException("Can't read the required file.");
         }
@@ -119,13 +122,13 @@ public class QuestIO {
     }
 
     @Nonnull
-    public static mxIGraphModel loadGraphModel(@Nonnull final Reader reader) throws IOException {
+    public static mxIGraphModel loadGraphModel(@Nonnull Reader reader) throws IOException {
         try {
             DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 
             Document document = docBuilder.parse(new InputSource(reader));
-            final mxCodec codec = new mxCodec(document);
+            mxCodec codec = new mxCodec(document);
             mxIGraphModel model = new mxGraphModel();
             codec.decode(document.getDocumentElement(), model);
             return model;
@@ -141,12 +144,12 @@ public class QuestIO {
      * @param target tje target in the file system that will receive the data
      * @throws IOException in case saving the file fails
      */
-    public static void saveGraphModel(@Nonnull final mxIGraphModel model, @Nonnull final Path target)
+    public static void saveGraphModel(@Nonnull mxIGraphModel model, @Nonnull Path target)
             throws IOException {
         if (!Files.isWritable(target)) {
             throw new IOException("Can't write the required file.");
         }
-        final mxCodec codec = new mxCodec();
+        mxCodec codec = new mxCodec();
         Node node = codec.encode(model);
 
         if (node == null) {
@@ -173,7 +176,7 @@ public class QuestIO {
      * @param rootDirectory the directory to store the root directory in
      * @throws IOException in case anything goes wrong
      */
-    public static void exportQuest(@Nonnull final mxIGraphModel model, @Nonnull final Path rootDirectory)
+    public static void exportQuest(@Nonnull mxIGraphModel model, @Nonnull Path rootDirectory)
             throws IOException {
         if (Files.isDirectory(rootDirectory)) {
             Files.walkFileTree(rootDirectory, new SimpleFileVisitor<Path>() {
@@ -198,8 +201,8 @@ public class QuestIO {
 
         String questName = rootDirectory.getName(rootDirectory.getNameCount() - 1).toString();
 
-        final mxICell root = (mxCell) model.getRoot();
-        final Object idNode = root.getValue();
+        mxICell root = (mxCell) model.getRoot();
+        Object idNode = root.getValue();
         int questID = -1;
         if (idNode != null) {
             try {
@@ -218,32 +221,32 @@ public class QuestIO {
         }
 
         mxGraph graph = new mxGraph(model);
-        final Object[] edges = graph.getChildEdges(graph.getDefaultParent());
+        Object[] edges = graph.getChildEdges(graph.getDefaultParent());
 
         for (int i = 0; i < edges.length; i++) {
-            final mxCell edge = (mxCell) edges[i];
-            final Trigger trigger = (Trigger) edge.getValue();
-            final TriggerTemplate template = TriggerTemplates.getInstance().getTemplate(trigger.getType());
+            mxCell edge = (mxCell) edges[i];
+            Trigger trigger = (Trigger) edge.getValue();
+            TriggerTemplate template = TriggerTemplates.getInstance().getTemplate(trigger.getType());
 
-            final String scriptName = "trigger" + Integer.toString(i + 1);
-            final mxICell source = edge.getSource();
-            final mxICell target = edge.getTarget();
-            final Status sourceState = (Status) source.getValue();
-            final Status targetState = (Status) target.getValue();
-            final String sourceId = sourceState.isStart() ? "0" : source.getId();
-            final String targetId = targetState.isStart() ? "0" : target.getId();
-            final Object[] parameters = trigger.getParameters();
-            final Handler[] handlers = targetState.getHandlers();
-            final Collection<String> handlerTypes = new HashSet<>();
-            final Condition[] conditions = trigger.getConditions();
+            String scriptName = "trigger" + Integer.toString(i + 1);
+            mxICell source = edge.getSource();
+            mxICell target = edge.getTarget();
+            Status sourceState = (Status) source.getValue();
+            Status targetState = (Status) target.getValue();
+            String sourceId = sourceState.isStart() ? "0" : source.getId();
+            String targetId = targetState.isStart() ? "0" : target.getId();
+            Object[] parameters = trigger.getParameters();
+            Handler[] handlers = targetState.getHandlers();
+            Collection<String> handlerTypes = new HashSet<>();
+            Condition[] conditions = trigger.getConditions();
 
-            final StringBuilder handlerCode = new StringBuilder();
+            StringBuilder handlerCode = new StringBuilder();
             if (handlers != null) {
-                for (final Handler handler : handlers) {
-                    final String type = handler.getType();
-                    final Object[] handlerParameters = handler.getParameters();
-                    final HandlerTemplate handlerTemplate = HandlerTemplates.getInstance().getTemplate(type);
-                    final int playerIndex = handlerTemplate.getPlayerIndex();
+                for (Handler handler : handlers) {
+                    String type = handler.getType();
+                    Object[] handlerParameters = handler.getParameters();
+                    HandlerTemplate handlerTemplate = HandlerTemplates.getInstance().getTemplate(type);
+                    int playerIndex = handlerTemplate.getPlayerIndex();
 
                     handlerTypes.add(type);
 
@@ -267,22 +270,22 @@ public class QuestIO {
                 }
             }
 
-            final StringBuilder conditionCode = new StringBuilder();
+            StringBuilder conditionCode = new StringBuilder();
             if (conditions != null) {
-                for (final Condition condition : conditions) {
-                    final String type = condition.getType();
-                    final Object[] conditionParameters = condition.getParameters();
-                    final ConditionTemplate conditionTemplate = ConditionTemplates.getInstance().getTemplate(type);
+                for (Condition condition : conditions) {
+                    String type = condition.getType();
+                    Object[] conditionParameters = condition.getParameters();
+                    ConditionTemplate conditionTemplate = ConditionTemplates.getInstance().getTemplate(type);
                     String conditionString = conditionTemplate.getCondition();
                     if (conditionString != null) {
                         for (int j = 0; j < conditionParameters.length; ++j) {
-                            final Object param = conditionParameters[j];
-                            final String paramName = conditionTemplate.getParameter(j).getName();
-                            final String paramType = conditionTemplate.getParameter(j).getType();
+                            Object param = conditionParameters[j];
+                            String paramName = conditionTemplate.getParameter(j).getName();
+                            String paramType = conditionTemplate.getParameter(j).getType();
                             String operator = null;
                             String value = null;
                             if ("INTEGERRELATION".equals(paramType)) {
-                                final IntegerRelation ir = (IntegerRelation) param;
+                                IntegerRelation ir = (IntegerRelation) param;
                                 value = String.valueOf(ir.getInteger());
                                 operator = ir.getRelation().toLua();
                             }
@@ -303,7 +306,7 @@ public class QuestIO {
             }
 
             try (BufferedWriter writer = Files.newBufferedWriter(rootDirectory.resolve(scriptName + ".lua"), CHARSET)) {
-                for (final String type : handlerTypes) {
+                for (String type : handlerTypes) {
                     writer.write("require(\"handler.");
                     writer.write(type.toLowerCase());
                     writer.write("\"}");
@@ -390,14 +393,14 @@ public class QuestIO {
         }
     }
 
-    private static String exportId(final Object parameter, final String type) {
+    private static String exportId(Object parameter, String type) {
         if ("POSITION".equals(type)) {
-            final Position p = (Position) parameter;
+            Position p = (Position) parameter;
             return p.getX() + "," + p.getY() + ',' + p.getZ();
         }
         if ("INTEGER".equals(type)) {
             if (parameter instanceof Long) {
-                final Long n = (Long) parameter;
+                Long n = (Long) parameter;
                 return n.toString();
             }
             return parameter.toString();
@@ -405,18 +408,18 @@ public class QuestIO {
         return "TYPE NOT SUPPORTED";
     }
 
-    private static String exportParameter(@Nonnull final Object parameter, @Nonnull final String type) {
+    private static String exportParameter(@Nonnull Object parameter, @Nonnull String type) {
         if ("TEXT".equals(type)) {
-            final String s = (String) parameter;
+            String s = (String) parameter;
             return '"' + s.replace("\\", "\\\\").replace("\"", "\\\"") + '"';
         }
         if ("POSITION".equals(type)) {
-            final Position p = (Position) parameter;
+            Position p = (Position) parameter;
             return "position(" + p.getX() + ", " + p.getY() + ", " + p.getZ() + ')';
         }
         if ("INTEGER".equals(type)) {
             if (parameter instanceof Long) {
-                final Long n = (Long) parameter;
+                Long n = (Long) parameter;
                 return n.toString();
             }
             return parameter.toString();

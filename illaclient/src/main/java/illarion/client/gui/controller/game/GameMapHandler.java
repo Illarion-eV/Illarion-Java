@@ -213,7 +213,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
      *
      * @param data the event data
      */
-    private void handlePrimaryKeyDrag(@Nonnull final DragOnMapEvent data) {
+    private void handlePrimaryKeyDrag(@Nonnull DragOnMapEvent data) {
         Movement movement = World.getPlayer().getMovementHandler();
         if (!movement.getFollowMouseHandler().isActive() && !movement.getTargetMouseMovementHandler().isActive()) {
             SceneEvent newEvent = new PrimaryKeyMapDrag(data, new PrimaryKeyMapDragCallback() {
@@ -338,11 +338,11 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
     @NiftyEventSubscriber(id = "mapDropTarget")
     public void dropOnMap(String topic, @Nonnull DroppableDroppedEvent data) {
         Element droppedElement = data.getDraggable().getElement();
-        final int dropSpotX = droppedElement.getX() + (droppedElement.getWidth() / 2);
-        final int dropSpotY = droppedElement.getY() + (droppedElement.getHeight() / 2);
+        int dropSpotX = droppedElement.getX() + (droppedElement.getWidth() / 2);
+        int dropSpotY = droppedElement.getY() + (droppedElement.getHeight() / 2);
 
         ItemCount amount = World.getInteractionManager().getMovedAmount();
-        final InteractionManager iManager = World.getInteractionManager();
+        InteractionManager iManager = World.getInteractionManager();
         if (amount == null) {
             LOGGER.error("Corrupted drag detected!");
             iManager.cancelDragging();
@@ -379,6 +379,7 @@ public final class GameMapHandler implements GameMapGui, ScreenController {
     /**
      * Toggle the pulsing animation of the run button.
      */
+    @Override
     public void toggleRunMode() {
         boolean nowWalking = true;
         if (World.getPlayer().getMovementHandler().getDefaultMovementMode() == CharMovementMode.Run) {

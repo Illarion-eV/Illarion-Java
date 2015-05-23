@@ -122,11 +122,8 @@ public final class GameMapProcessor2 {
             return true;
         }
 
-        if ((playerLoc.toMapRow() + mapDim.getClippingOffsetBottom()) > (tileLoc.toMapRow() + level)) {
-            return true;
-        }
+        return (playerLoc.toMapRow() + mapDim.getClippingOffsetBottom()) > (tileLoc.toMapRow() + level);
 
-        return false;
     }
 
     public static void checkInside() {

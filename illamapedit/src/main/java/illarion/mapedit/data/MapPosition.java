@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,10 +21,10 @@ import javax.annotation.Nullable;
  * @author Fredrik K
  */
 public class MapPosition {
-    private int x;
-    private int y;
+    private final int x;
+    private final int y;
 
-    public MapPosition(final int x, final int y) {
+    public MapPosition(int x, int y) {
         this.y = y;
         this.x = x;
     }
@@ -38,7 +38,7 @@ public class MapPosition {
     }
 
     @Override
-    public boolean equals(@Nullable final Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) {
             return true;
         }
@@ -46,16 +46,13 @@ public class MapPosition {
             return false;
         }
 
-        final MapPosition that = (MapPosition) o;
+        MapPosition that = (MapPosition) o;
 
         if (x != that.x) {
             return false;
         }
-        if (y != that.y) {
-            return false;
-        }
+        return y == that.y;
 
-        return true;
     }
 
     @Override

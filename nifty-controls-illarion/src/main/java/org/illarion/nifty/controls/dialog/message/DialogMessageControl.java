@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,6 @@
  */
 package org.illarion.nifty.controls.dialog.message;
 
-import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.Button;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
@@ -132,12 +131,7 @@ public class DialogMessageControl extends WindowControl
 
     @Override
     public void closeWindow() {
-        getElement().hide(new EndNotify() {
-            @Override
-            public void perform() {
-                getElement().markForRemoval();
-            }
-        });
+        getElement().hide(() -> getElement().markForRemoval());
         alreadyClosed = true;
     }
 }

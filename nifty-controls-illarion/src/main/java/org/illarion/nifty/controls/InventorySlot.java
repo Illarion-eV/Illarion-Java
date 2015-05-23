@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -48,7 +48,6 @@ public interface InventorySlot extends NiftyControl {
         /**
          * Highest level. Displayed with a gold coin.
          */
-        @SuppressWarnings("EnumeratedConstantNamingConvention")
         Gold
     }
 
@@ -104,5 +103,5 @@ public interface InventorySlot extends NiftyControl {
      *
      * @param level the overlay level to show
      */
-    void showMerchantOverlay(@Nonnull InventorySlot.MerchantBuyLevel level);
+    void showMerchantOverlay(@Nonnull MerchantBuyLevel level);
 }

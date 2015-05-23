@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,15 +19,15 @@ package illarion.mapedit.crash.exceptions;
  * @author Tim
  */
 public class UnhandlableException extends RuntimeException {
-    public UnhandlableException(final String message) {
+    public UnhandlableException(String message) {
         super(message);
     }
 
-    public UnhandlableException(final String message, final Throwable cause) {
+    public UnhandlableException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public UnhandlableException(final Throwable cause) {
+    public UnhandlableException(Throwable cause) {
         super(cause);
     }
 }

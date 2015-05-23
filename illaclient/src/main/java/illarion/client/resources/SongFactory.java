@@ -16,7 +16,6 @@
 package illarion.client.resources;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
-import gnu.trove.procedure.TObjectProcedure;
 import illarion.client.util.IdWrapper;
 import illarion.common.util.FastMath;
 import org.illarion.engine.assets.SoundsManager;
@@ -101,7 +100,6 @@ public final class SongFactory implements ResourceFactory<IdWrapper<String>> {
      * The initialization function prepares this factory to receive data.
      */
     @Override
-    @SuppressWarnings("nls")
     public void init() {
         songs = new TIntObjectHashMap<>();
     }
@@ -146,13 +144,10 @@ public final class SongFactory implements ResourceFactory<IdWrapper<String>> {
             throw new IllegalStateException("Factory was not initialized yet.");
         }
 
-        final List<String> result = new ArrayList<>();
-        songs.forEachValue(new TObjectProcedure<List<String>>() {
-            @Override
-            public boolean execute(@Nonnull List<String> object) {
-                result.addAll(object);
-                return true;
-            }
+        List<String> result = new ArrayList<>();
+        songs.forEachValue(object -> {
+            result.addAll(object);
+            return true;
         });
         return result;
     }

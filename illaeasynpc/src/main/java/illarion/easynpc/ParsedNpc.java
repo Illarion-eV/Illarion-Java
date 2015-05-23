@@ -16,6 +16,7 @@
 package illarion.easynpc;
 
 import illarion.common.types.ServerCoordinate;
+import illarion.easynpc.EasyNpcScript.Line;
 import illarion.easynpc.data.*;
 import illarion.easynpc.parsed.ParsedData;
 import illarion.easynpc.writer.LuaWritable;
@@ -24,6 +25,7 @@ import javolution.util.FastTable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.text.Normalizer;
+import java.text.Normalizer.Form;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -259,7 +261,7 @@ public final class ParsedNpc implements Iterable<ParsedData> {
      * @param message the message describing the error
      */
     @Deprecated
-    public void addError(@Nonnull EasyNpcScript.Line line, String message) {
+    public void addError(@Nonnull Line line, String message) {
         addError(line.getLineNumber(), message);
     }
 
@@ -565,7 +567,7 @@ public final class ParsedNpc implements Iterable<ParsedData> {
 
     @Nonnull
     public static String convertToModuleName(@Nonnull CharSequence string) {
-        return Normalizer.normalize(string, Normalizer.Form.NFC).replaceAll("[^\\p{ASCII}]", "").replace(' ', '_');
+        return Normalizer.normalize(string, Form.NFC).replaceAll("[^\\p{ASCII}]", "").replace(' ', '_');
     }
 
     public void setModuleName(@Nullable String moduleName) {

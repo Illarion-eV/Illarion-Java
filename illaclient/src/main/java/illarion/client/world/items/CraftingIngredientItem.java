@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -46,7 +46,7 @@ public final class CraftingIngredientItem {
      * @param itemId the ID of the item
      * @param count the amount of items required
      */
-    public CraftingIngredientItem(@Nonnull final ItemId itemId, @Nonnull final ItemCount count) {
+    public CraftingIngredientItem(@Nonnull ItemId itemId, @Nonnull ItemCount count) {
         this.itemId = itemId;
         this.count = count;
     }

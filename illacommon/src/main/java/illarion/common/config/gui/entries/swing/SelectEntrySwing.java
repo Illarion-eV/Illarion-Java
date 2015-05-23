@@ -56,9 +56,7 @@ public final class SelectEntrySwing extends JComboBox<String> implements Savable
         }
         entry = (SelectEntry) usedEntry;
 
-        for (String item : entry.getLabels()) {
-            addItem(item);
-        }
+        entry.getLabels().forEach(this::addItem);
         setSelectedIndex(entry.getIndex());
         setMinimumSize(new Dimension(300, 10));
     }

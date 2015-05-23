@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,11 +20,11 @@ import de.lessvoid.nifty.builder.ControlBuilder;
 import javax.annotation.Nonnull;
 
 public class InventorySlotBuilder extends ControlBuilder {
-    public InventorySlotBuilder(@Nonnull final String id) {
+    public InventorySlotBuilder(@Nonnull String id) {
         super(id, "inventoryslot");
     }
 
-    public void background(@Nonnull final String image) {
+    public void background(@Nonnull String image) {
         set("background", image);
     }
 }

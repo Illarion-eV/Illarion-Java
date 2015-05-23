@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -85,7 +85,6 @@ public final class TextureLoaderAwt extends AbstractTextureManager<BufferedImage
      * The private constructor to prevent the creation of additional instances of this class.
      */
     private TextureLoaderAwt() {
-        super();
         addTextureDirectory("items");
         addTextureDirectory("tiles");
     }

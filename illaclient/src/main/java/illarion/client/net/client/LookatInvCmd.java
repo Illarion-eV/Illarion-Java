@@ -56,7 +56,6 @@ public final class LookatInvCmd extends AbstractCommand {
      * @return the data of this command as string
      */
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
     public String toString() {
         return toString("Slot: " + slot);

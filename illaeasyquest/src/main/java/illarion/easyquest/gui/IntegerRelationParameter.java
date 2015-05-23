@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -30,8 +30,8 @@ import java.util.Map;
 
 @SuppressWarnings("serial")
 public class IntegerRelationParameter extends JPanel implements Parameter {
-    private JComboBox relation;
-    private JFormattedTextField integer;
+    private final JComboBox<Relation> relation;
+    private final JFormattedTextField integer;
     private static final Relation EQUAL = new Relation(Relation.EQUAL);
     private static final Relation NOTEQUAL = new Relation(Relation.NOTEQUAL);
     private static final Relation LESSER = new Relation(Relation.LESSER);
@@ -49,7 +49,7 @@ public class IntegerRelationParameter extends JPanel implements Parameter {
 
     public IntegerRelationParameter() {
         super(new BorderLayout(5, 0));
-        relation = new JComboBox();
+        relation = new JComboBox<>();
         relation.addItem(EQUAL);
         relation.addItem(NOTEQUAL);
         relation.addItem(LESSER);
@@ -68,6 +68,7 @@ public class IntegerRelationParameter extends JPanel implements Parameter {
         setParameter(new IntegerRelation());
     }
 
+    @Override
     public void setParameter(@Nullable Object parameter) {
         IntegerRelation rel;
         if (parameter != null) {
@@ -79,6 +80,7 @@ public class IntegerRelationParameter extends JPanel implements Parameter {
         relation.setSelectedItem(relationMap.get(rel.getRelation().getType()));
     }
 
+    @Override
     @Nonnull
     public Object getParameter() {
         return new IntegerRelation((Relation) relation.getSelectedItem(), (Long) integer.getValue());

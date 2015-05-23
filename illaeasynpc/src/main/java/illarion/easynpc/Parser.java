@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,6 +21,7 @@ import illarion.common.util.TableLoader;
 import illarion.easynpc.docu.DocuEntry;
 import illarion.easynpc.grammar.EasyNpcLexer;
 import illarion.easynpc.grammar.EasyNpcParser;
+import illarion.easynpc.grammar.EasyNpcParser.ScriptContext;
 import illarion.easynpc.gui.Config;
 import illarion.easynpc.parser.ParsedNpcVisitor;
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -91,7 +92,7 @@ public final class Parser implements DocuEntry {
      * @param args the path to the script or the folder with the scripts to parse
      * @throws IOException in case the script can't be read
      */
-    public static void main(@Nonnull String[] args) throws IOException {
+    public static void main(@Nonnull String... args) throws IOException {
         Config.getInstance().init();
 
         if (args.length == 0) {
@@ -114,11 +115,11 @@ public final class Parser implements DocuEntry {
             if (!Files.isDirectory(sourceFile) && Files.isReadable(sourceFile)) {
                 parseScript(sourceFile);
             } else if (Files.isDirectory(sourceFile)) {
-                final ExecutorService executor = Executors.newCachedThreadPool();
+                ExecutorService executor = Executors.newCachedThreadPool();
                 Files.walkFileTree(sourceFile, EnumSet.noneOf(FileVisitOption.class), 1, new SimpleFileVisitor<Path>() {
                     @Nonnull
                     @Override
-                    public FileVisitResult visitFile(@Nonnull final Path file, BasicFileAttributes attrs)
+                    public FileVisitResult visitFile(@Nonnull Path file, BasicFileAttributes attrs)
                             throws IOException {
                         if (file.toUri().toString().endsWith(".npc")) {
                             executor.submit(new Callable<Void>() {
@@ -151,7 +152,7 @@ public final class Parser implements DocuEntry {
         ParsedNpcVisitor visitor = new ParsedNpcVisitor();
         lexer.removeErrorListeners();
         lexer.addErrorListener(visitor);
-        EasyNpcParser.ScriptContext context = parser.script();
+        ScriptContext context = parser.script();
 
         context.accept(visitor);
 

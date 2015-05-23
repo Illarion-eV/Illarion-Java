@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -78,7 +78,7 @@ public class EasyNpcCompile extends AbstractCompile {
     public int compileStream(@Nonnull InputStream in, @Nonnull OutputStream out) {
         try {
             ensureTargetDir();
-            ParsedNpc npc = Parser.getInstance().parse(new InputStreamReader(in, DEFAULT_CHARSET));
+            ParsedNpc npc = Parser.parse(new InputStreamReader(in, DEFAULT_CHARSET));
             if (npc.hasErrors()) {
                 LOGGER.error("Parsing the NPC failed with {} errors", npc.getErrorCount());
                 for (int i = 0; i < npc.getErrorCount(); i++) {

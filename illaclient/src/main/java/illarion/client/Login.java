@@ -122,7 +122,6 @@ public final class Login {
     /**
      * The string that defines the name of a error node
      */
-    @SuppressWarnings("nls")
     private static final String NODE_NAME_ERROR = "error";
 
     /**
@@ -222,6 +221,7 @@ public final class Login {
         return server;
     }
 
+    @FunctionalInterface
     public interface RequestCharListCallback {
         void finishedRequest(int errorCode);
     }
@@ -407,7 +407,6 @@ public final class Login {
      * Load the saved password from the configuration file and insert it to the
      * password field on the login window.
      */
-    @SuppressWarnings("nls")
     private void restorePassword() {
         String encoded;
         if (getServer() == Servers.Customserver) {
@@ -463,7 +462,6 @@ public final class Login {
      * @return the encoded or the decoded password
      */
     @Nonnull
-    @SuppressWarnings("nls")
     private static String shufflePassword(@Nonnull String pw, boolean decode) {
 
         try {
@@ -507,7 +505,6 @@ public final class Login {
      *
      * @param pw the password that stall be stored to the configuration file
      */
-    @SuppressWarnings("nls")
     private void storePassword(@Nonnull String pw) {
         if (getServer() == Servers.Customserver) {
             IllaClient.getCfg().set("customSavePassword", true);

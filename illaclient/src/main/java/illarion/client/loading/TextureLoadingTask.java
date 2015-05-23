@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -44,7 +44,7 @@ final class TextureLoadingTask implements LoadingTask {
      *
      * @param engine the engine used to load the textures
      */
-    TextureLoadingTask(@Nonnull final Engine engine) {
+    TextureLoadingTask(@Nonnull Engine engine) {
         usedEngine = engine;
     }
 

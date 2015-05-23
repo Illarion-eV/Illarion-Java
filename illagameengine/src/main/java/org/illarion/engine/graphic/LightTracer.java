@@ -84,12 +84,9 @@ public final class LightTracer implements Stoppable {
     private static final Logger log = LoggerFactory.getLogger(LightTracer.class);
 
     @Nonnull
-    private final Callable<Void> publishLightsTask = new Callable<Void>() {
-        @Override
-        public Void call() throws Exception {
-            notifyLightCalculationDone();
-            return null;
-        }
+    private final Callable<Void> publishLightsTask = () -> {
+        notifyLightCalculationDone();
+        return null;
     };
 
     /**
@@ -131,14 +128,13 @@ public final class LightTracer implements Stoppable {
      *
      * @param tracerMapSource the map the lights this tracer handles are on
      */
-    @SuppressWarnings("nls")
     public LightTracer(@Nonnull LightingMap tracerMapSource) {
         mapSource = tracerMapSource;
         lights = new CopyOnWriteArrayList<>();
 
         int maxThreads = Runtime.getRuntime().availableProcessors();
         lightCalculationService = new ThreadPoolExecutor(0, maxThreads, 10L, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<Runnable>(), new PoolThreadFactory("LightTracer", true));
+                new LinkedBlockingQueue<>(), new PoolThreadFactory("LightTracer", true));
         lightsInProgress = new AtomicInteger(0);
         applyingLock = new ReentrantReadWriteLock();
     }
@@ -212,9 +208,7 @@ public final class LightTracer implements Stoppable {
             return;
         }
         log.info("Refreshing all lights.");
-        for (LightSource light : lights) {
-            refreshLight(light);
-        }
+        lights.forEach(this::refreshLight);
     }
 
     private void notifyLightCalculationDone() {

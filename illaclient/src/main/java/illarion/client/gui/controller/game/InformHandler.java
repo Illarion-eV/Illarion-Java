@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -150,6 +150,7 @@ public final class InformHandler implements InformGui, ScreenController {
     /**
      * The logger that is used for the logging output of this class.
      */
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(InformHandler.class);
 
     /**
@@ -198,14 +199,8 @@ public final class InformHandler implements InformGui, ScreenController {
 
     @Override
     public void onEndScreen() {
-        for (Element panel : Arrays
-                .asList(broadcastParentPanel, serverParentPanel, textToParentPanel, scriptParentPanel)) {
-            if (panel != null) {
-                for (Element child : panel.getChildren()) {
-                    child.markForRemoval();
-                }
-            }
-        }
+        Arrays.asList(broadcastParentPanel, serverParentPanel, textToParentPanel, scriptParentPanel).stream()
+                .filter(panel -> panel != null).forEach(panel -> panel.getChildren().forEach(Element::markForRemoval));
     }
 
     @Override
@@ -239,7 +234,7 @@ public final class InformHandler implements InformGui, ScreenController {
      * @param parent the parent element that stores the inform message
      * @param layoutParent the element that needs to get its layout recalculated
      */
-    public void showInform(ElementBuilder informBuilder, Element parent, Element layoutParent) {
+    public void showInform(@Nonnull ElementBuilder informBuilder, Element parent, Element layoutParent) {
         World.getUpdateTaskManager().addTask(new InformBuildTask(informBuilder, parent, layoutParent));
     }
 

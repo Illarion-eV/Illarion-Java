@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -113,15 +113,12 @@ public class GuiController extends WindowAdapter {
      * This method starts up the gui.
      */
     private void startGui() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                SubstanceLookAndFeel.setSkin(MapEditorConfig.getInstance().getLookAndFeel());
-                mainFrame.initialize(GuiController.this);
-                mainFrame.setLocationRelativeTo(null);
-                mainFrame.setVisible(true);
-                SplashScreen.getInstance().setVisible(false);
-            }
+        SwingUtilities.invokeLater(() -> {
+            SubstanceLookAndFeel.setSkin(MapEditorConfig.getInstance().getLookAndFeel());
+            mainFrame.initialize(this);
+            mainFrame.setLocationRelativeTo(null);
+            mainFrame.setVisible(true);
+            SplashScreen.getInstance().setVisible(false);
         });
     }
 
@@ -134,7 +131,7 @@ public class GuiController extends WindowAdapter {
         return selected;
     }
 
-    public void addMap(@Nullable final Map map) {
+    public void addMap(@Nullable Map map) {
         if (!maps.contains(map) && (map != null)) {
             maps.add(map);
             if (maps.size() == 1) {
@@ -145,14 +142,14 @@ public class GuiController extends WindowAdapter {
         EventBus.publish(new RepaintRequestEvent());
     }
 
-    private void removeMap(final int index) {
+    private void removeMap(int index) {
         if (index < maps.size()) {
-            final Map map = maps.remove(index);
+            Map map = maps.remove(index);
             setSelectedMap(map);
         }
     }
 
-    private void setSelectedMap(final Map map) {
+    private void setSelectedMap(Map map) {
         if (selected == map) {
             if (maps.isEmpty()) {
                 selected = null;
@@ -164,7 +161,7 @@ public class GuiController extends WindowAdapter {
         EventBus.publish(new RepaintRequestEvent());
     }
 
-    public void removeMap(@Nullable final Map map) {
+    public void removeMap(@Nullable Map map) {
         if (maps.contains(map) && (map != null)) {
             maps.remove(map);
             setSelectedMap(map);
@@ -176,12 +173,12 @@ public class GuiController extends WindowAdapter {
         return historyManager;
     }
 
-    public void setSaved(final boolean saved) {
+    public void setSaved(boolean saved) {
         notSaved = !saved;
     }
 
     @Override
-    public void windowClosing(final WindowEvent e) {
+    public void windowClosing(WindowEvent e) {
         if (notSaved) {
             if (MapDialogs.isShowSaveDialog()) {
                 onMapSave(new MapSaveEvent());
@@ -192,19 +189,19 @@ public class GuiController extends WindowAdapter {
     }
 
     @Override
-    public void windowClosed(final WindowEvent e) {
+    public void windowClosed(WindowEvent e) {
         LOGGER.debug("Exit");
         System.exit(0);
     }
 
     @EventSubscriber
-    public void onMapNew(final MapNewEvent e) {
+    public void onMapNew(MapNewEvent e) {
         addMap(MapDialogs.showNewMapDialog(mainFrame));
     }
 
     @EventSubscriber
-    public void onMapSave(final MapSaveEvent e) {
-        for (final Map map : maps) {
+    public void onMapSave(MapSaveEvent e) {
+        for (Map map : maps) {
             try {
 
                 if (map != null) {
@@ -221,14 +218,14 @@ public class GuiController extends WindowAdapter {
     }
 
     @EventSubscriber
-    public void onMapSelected(@Nonnull final MapSelectedEvent e) {
+    public void onMapSelected(@Nonnull MapSelectedEvent e) {
         if ((e.getIndex() < 0) || (e.getIndex() >= maps.size())) {
             selected = null;
         } else {
             selected = maps.get(e.getIndex());
-            final int x = SwingLocation.displayCoordinateX(selected.getX(), selected.getY(), 0);
-            final int y = SwingLocation.displayCoordinateY(selected.getX(), selected.getY(), 0);
-            final RendererManager manager = mainFrame.getRendererManager();
+            int x = SwingLocation.displayCoordinateX(selected.getX(), selected.getY(), 0);
+            int y = SwingLocation.displayCoordinateY(selected.getX(), selected.getY(), 0);
+            RendererManager manager = mainFrame.getRendererManager();
             manager.setZoom(1f);
             manager.setSelectedLevel(selected.getZ());
             manager.setTranslationX(-x);
@@ -241,36 +238,36 @@ public class GuiController extends WindowAdapter {
     }
 
     @EventSubscriber
-    public void onMapLoaded(@Nonnull final MapLoadedEvent e) {
+    public void onMapLoaded(@Nonnull MapLoadedEvent e) {
         if (!maps.contains(e.getMap())) {
             addMap(e.getMap());
         }
     }
 
     @EventSubscriber
-    public void onMapOpen(@Nonnull final MapOpenEvent e) {
+    public void onMapOpen(@Nonnull MapOpenEvent e) {
         MapIO.loadMap(e.getPath(), e.getName());
     }
 
     @EventTopicSubscriber(topic = GlobalActionEvents.CLOSE_MAP)
-    public void onMapClosed(final String topic, final ActionEvent event) {
+    public void onMapClosed(String topic, ActionEvent event) {
         removeMap(selected);
     }
 
     @EventSubscriber
-    public void onMapCloseAtIndex(@Nonnull final CloseMapEvent e) {
+    public void onMapCloseAtIndex(@Nonnull CloseMapEvent e) {
         removeMap(e.getIndex());
     }
 
     @EventSubscriber
-    public void onCopyClipboard(@Nonnull final ClipboardCopyEvent e) {
+    public void onCopyClipboard(@Nonnull ClipboardCopyEvent e) {
         if (getSelected() != null) {
             clipboard = getSelected().copySelectedTiles();
         }
     }
 
     @EventSubscriber
-    public void onCutClipboard(@Nonnull final ClipboardCutEvent e) {
+    public void onCutClipboard(@Nonnull ClipboardCutEvent e) {
         if ((getSelected() != null) && !annotationChecker.isAnnotatedFill(getSelected())) {
             clipboard = getSelected().cutSelectedTiles();
             EventBus.publish(new RepaintRequestEvent());
@@ -279,7 +276,7 @@ public class GuiController extends WindowAdapter {
     }
 
     @EventSubscriber
-    public void onPasteClipboard(@Nonnull final PasteEvent e) {
+    public void onPasteClipboard(@Nonnull PasteEvent e) {
         EventBus.publish(new DidPasteEvent());
         if ((getSelected() != null) && (clipboard != null) &&
                 !annotationChecker.isAnnotated(e.getX(), e.getY(), getSelected(), clipboard)) {
@@ -290,9 +287,9 @@ public class GuiController extends WindowAdapter {
     }
 
     @EventSubscriber
-    public void onItemRemove(@Nonnull final ItemRemoveEvent e) {
+    public void onItemRemove(@Nonnull ItemRemoveEvent e) {
         if (getSelected() != null) {
-            final ItemPlacedAction historyAction = getSelected().removeItemOnActiveTile(e.getIndex());
+            ItemPlacedAction historyAction = getSelected().removeItemOnActiveTile(e.getIndex());
             if (historyAction != null) {
                 historyManager.addEntry(historyAction);
                 setSaved(false);
@@ -303,7 +300,7 @@ public class GuiController extends WindowAdapter {
     }
 
     @EventSubscriber
-    public void onItemReplace(@Nonnull final ItemReplaceEvent e) {
+    public void onItemReplace(@Nonnull ItemReplaceEvent e) {
         if (getSelected() != null) {
             getSelected().replaceItemOnActiveTile(e.getIndex(), e.getNewIndex());
             EventBus.publish(new RepaintRequestEvent());
@@ -312,7 +309,7 @@ public class GuiController extends WindowAdapter {
     }
 
     @EventSubscriber
-    public void onMapPosition(@Nonnull final MapPositionEvent e) {
+    public void onMapPosition(@Nonnull MapPositionEvent e) {
         if (getSelected() != null) {
             getSelected().setMapPosition(e.getMapX(), e.getMapY());
             EventBus.publish(new RepaintRequestEvent());
@@ -320,11 +317,11 @@ public class GuiController extends WindowAdapter {
     }
 
     @EventSubscriber
-    public void onItemDataAnnotation(@Nonnull final TileAnnotationEvent e) {
+    public void onItemDataAnnotation(@Nonnull TileAnnotationEvent e) {
         if (getSelected() == null) {
             return;
         }
-        final MapTile tile = getSelected().getActiveTile();
+        MapTile tile = getSelected().getActiveTile();
         if (tile != null) {
             tile.setAnnotation(e.getText());
             EventBus.publish(new RepaintRequestEvent());
@@ -332,7 +329,7 @@ public class GuiController extends WindowAdapter {
     }
 
     @EventSubscriber
-    public void onShowHelpDialog(final ShowHelpDialogEvent e) {
+    public void onShowHelpDialog(ShowHelpDialogEvent e) {
         helpDialog.setVisible(true);
     }
 }

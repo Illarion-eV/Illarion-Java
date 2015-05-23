@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,6 @@
  */
 package org.illarion.nifty.controls.tooltip;
 
-import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.AbstractController;
 import de.lessvoid.nifty.controls.Label;
@@ -44,19 +43,19 @@ import javax.annotation.Nullable;
 public final class ToolTipControl extends AbstractController implements ToolTip {
     @Override
     public void bind(
-            @Nonnull final Nifty nifty,
-            @Nonnull final Screen screen,
-            @Nonnull final Element element,
-            @Nonnull final Parameters parameter) {
+            @Nonnull Nifty nifty,
+            @Nonnull Screen screen,
+            @Nonnull Element element,
+            @Nonnull Parameters parameter) {
         bind(element);
 
         boolean largeToolTip = false;
 
         //nifty.setDebugOptionPanelColors(true);
 
-        final String description = parameter.get("description");
+        String description = parameter.get("description");
         if (!isNullOrEmpty(description)) {
-            final Label descriptionLabel = element.findNiftyControl("#description", Label.class);
+            Label descriptionLabel = element.findNiftyControl("#description", Label.class);
             descriptionLabel.getElement().getRenderer(TextRenderer.class).setLineWrapping(true);
             descriptionLabel.setText(description);
             largeToolTip = true;
@@ -64,13 +63,13 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
             removeElement(element.findElementById("#description"));
         }
 
-        final String type = parameter.get("itemtype");
-        final String level = parameter.get("level");
-        final Color levelColor = parameter.getAsColor("levelColor");
+        String type = parameter.get("itemtype");
+        String level = parameter.get("level");
+        Color levelColor = parameter.getAsColor("levelColor");
         if (!isNullOrEmpty(type)) {
-            final Label typeLabel = element.findNiftyControl("#itemtype", Label.class);
-            final Label levelTitle = element.findNiftyControl("#levelTitle", Label.class);
-            final Label levelLabel = element.findNiftyControl("#levelLabel", Label.class);
+            Label typeLabel = element.findNiftyControl("#itemtype", Label.class);
+            Label levelTitle = element.findNiftyControl("#levelTitle", Label.class);
+            Label levelLabel = element.findNiftyControl("#levelLabel", Label.class);
             applyTextToLabel(typeLabel, type);
             largeToolTip = true;
 
@@ -86,61 +85,61 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
             removeElement(element.findElementById("#typeLevelLine"));
         }
 
-        final String producer = parameter.get("producer");
+        String producer = parameter.get("producer");
         if (!isNullOrEmpty(producer)) {
-            final Label producedBy = element.findNiftyControl("#createdByLabel", Label.class);
+            Label producedBy = element.findNiftyControl("#createdByLabel", Label.class);
             applyTextToLabel(producedBy, parameter.get("producer"));
             largeToolTip = true;
         } else {
             removeElement(element.findElementById("#createByLine"));
         }
 
-        final String money = parameter.get("worth");
+        String money = parameter.get("worth");
 
         if (isAllNull(money)) {
             removeElement(element.findElementById("#worthLine"));
         } else {
-            final Money moneyValue = new Money(Long.parseLong(money));
+            Money moneyValue = new Money(Long.parseLong(money));
             applyMoney(element, moneyValue.getGold(), "#worthGoldCount", "#worthGoldImage");
             applyMoney(element, moneyValue.getSilver(), "#worthSilverCount", "#worthSilverImage");
             applyMoney(element, moneyValue.getCopper(), "#worthCopperCount", "#worthCopperImage");
             largeToolTip = true;
         }
 
-        final String weight = parameter.get("weight");
+        String weight = parameter.get("weight");
         if (!isNullOrEmpty(weight)) {
-            final Label qualityText = element.findNiftyControl("#weightLabel", Label.class);
+            Label qualityText = element.findNiftyControl("#weightLabel", Label.class);
             applyTextToLabel(qualityText, weight);
             largeToolTip = true;
         } else {
             removeElement(element.findElementById("#weightLine"));
         }
 
-        final String quality = parameter.get("quality");
+        String quality = parameter.get("quality");
         if (!isNullOrEmpty(quality)) {
-            final Label qualityText = element.findNiftyControl("#qualityText", Label.class);
+            Label qualityText = element.findNiftyControl("#qualityText", Label.class);
             applyTextToLabel(qualityText, quality);
             largeToolTip = true;
         } else {
             removeElement(element.findElementById("#qualityLine"));
         }
 
-        final String durability = parameter.get("durability");
+        String durability = parameter.get("durability");
         if (!isNullOrEmpty(durability)) {
-            final Label qualityText = element.findNiftyControl("#durabilityText", Label.class);
+            Label qualityText = element.findNiftyControl("#durabilityText", Label.class);
             applyTextToLabel(qualityText, durability);
             largeToolTip = true;
         } else {
             removeElement(element.findElementById("#durabilityLine"));
         }
 
-        final String diamond = parameter.get("diamondLevel");
-        final String emerald = parameter.get("emeraldLevel");
-        final String ruby = parameter.get("rubyLevel");
-        final String obsidian = parameter.get("obsidianLevel");
-        final String sapphire = parameter.get("sapphireLevel");
-        final String amethyst = parameter.get("amethystLevel");
-        final String topaz = parameter.get("topazLevel");
+        String diamond = parameter.get("diamondLevel");
+        String emerald = parameter.get("emeraldLevel");
+        String ruby = parameter.get("rubyLevel");
+        String obsidian = parameter.get("obsidianLevel");
+        String sapphire = parameter.get("sapphireLevel");
+        String amethyst = parameter.get("amethystLevel");
+        String topaz = parameter.get("topazLevel");
 
         if (isAllNull(diamond, emerald, ruby, obsidian, sapphire, amethyst, topaz)) {
             removeElement(element.findElementById("#gemsLine"));
@@ -155,24 +154,24 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
             largeToolTip = true;
         }
 
-        final String gemBonus = parameter.get("gemBonus");
+        String gemBonus = parameter.get("gemBonus");
         if (!isNullOrEmpty(gemBonus)) {
-            final Label qualityText = element.findNiftyControl("#gemBonusText", Label.class);
+            Label qualityText = element.findNiftyControl("#gemBonusText", Label.class);
             applyTextToLabel(qualityText, gemBonus);
             largeToolTip = true;
         } else {
             removeElement(element.findElementById("#gemBonusLine"));
         }
 
-        final Label title = element.findNiftyControl("#title", Label.class);
-        final String titleText = parameter.get("title");
-        final Color titleColor = parameter.getAsColor("titleColor");
+        Label title = element.findNiftyControl("#title", Label.class);
+        String titleText = parameter.get("title");
+        Color titleColor = parameter.getAsColor("titleColor");
         if (largeToolTip) {
             title.getElement().getRenderer(TextRenderer.class).setLineWrapping(true);
         } else {
-            final TextRenderer textRenderer = title.getElement().getRenderer(TextRenderer.class);
+            TextRenderer textRenderer = title.getElement().getRenderer(TextRenderer.class);
             textRenderer.setFont(nifty.createFont("textFont"));
-            final int width = textRenderer.getFont().getWidth(titleText);
+            int width = textRenderer.getFont().getWidth(titleText);
             if (width >= 250) {
                 textRenderer.setLineWrapping(true);
             } else {
@@ -192,13 +191,8 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
      *
      * @param element the element to remove
      */
-    private static void removeElement(@Nonnull final Element element) {
-        element.markForRemoval(new EndNotify() {
-            @Override
-            public void perform() {
-                element.getParent().layoutElements();
-            }
-        });
+    private static void removeElement(@Nonnull Element element) {
+        element.markForRemoval(() -> element.getParent().layoutElements());
     }
 
     /**
@@ -207,7 +201,7 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
      * @param value the string to test
      * @return {@code true} in case the value is {@code null} or in case its a empty string
      */
-    private static boolean isNullOrEmpty(@Nullable final String value) {
+    private static boolean isNullOrEmpty(@Nullable String value) {
         return (value == null) || value.isEmpty();
     }
 
@@ -217,8 +211,8 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
      * @param strings the stings to test
      * @return {@code true} in case all strings are {@code null} or equal to {@code Integer.toString(0)}
      */
-    private static boolean isAllNull(@Nonnull final String... strings) {
-        for (final String value : strings) {
+    private static boolean isAllNull(@Nonnull String... strings) {
+        for (String value : strings) {
             if ((value != null) && (Integer.parseInt(value) > 0)) {
                 return false;
             }
@@ -236,23 +230,23 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
      * @param images the name of the gems
      */
     private static void applyGem(
-            @Nonnull final Nifty nifty,
-            @Nonnull final Element element,
-            @Nullable final String gemText,
-            final String elementImage,
-            final String images) {
-        final Element image = element.findElementById(elementImage);
+            @Nonnull Nifty nifty,
+            @Nonnull Element element,
+            @Nullable String gemText,
+            String elementImage,
+            String images) {
+        Element image = element.findElementById(elementImage);
         if (gemText == null) {
             removeElement(image);
             return;
         }
-        final int gemLevel = Integer.parseInt(gemText);
+        int gemLevel = Integer.parseInt(gemText);
         if (gemLevel == 0) {
             removeElement(image);
             return;
         }
 
-        final NiftyImage gemImage = nifty
+        NiftyImage gemImage = nifty
                 .createImage("gui/items/" + images + Integer.toString(gemLevel - 1) + ".png", false);
         image.getRenderer(ImageRenderer.class).setImage(gemImage);
         image.setConstraintHeight(SizeValue.px(gemImage.getHeight()));
@@ -268,10 +262,10 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
      * @param elementImage the element that contains the image of the money component
      */
     private static void applyMoney(
-            @Nonnull final Element element,
-            final int money,
-            @Nonnull final String elementCount,
-            final String elementImage) {
+            @Nonnull Element element,
+            int money,
+            @Nonnull String elementCount,
+            String elementImage) {
         if (money > 0) {
             applyTextToLabel(element.findNiftyControl(elementCount, Label.class), Integer.toString(money));
         } else {
@@ -286,9 +280,9 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
      * @param label the label
      * @param text the text to be stored in the label
      */
-    private static void applyTextToLabel(@Nonnull final Label label, final String text) {
-        final Element labelElement = label.getElement();
-        final TextRenderer renderer = labelElement.getRenderer(TextRenderer.class);
+    private static void applyTextToLabel(@Nonnull Label label, String text) {
+        Element labelElement = label.getElement();
+        TextRenderer renderer = labelElement.getRenderer(TextRenderer.class);
         renderer.setText(text);
         labelElement.setConstraintWidth(SizeValue.px(renderer.getTextWidth()));
     }
@@ -305,7 +299,7 @@ public final class ToolTipControl extends AbstractController implements ToolTip 
      * @return {@code false} in any case
      */
     @Override
-    public boolean inputEvent(@Nonnull final NiftyInputEvent inputEvent) {
+    public boolean inputEvent(@Nonnull NiftyInputEvent inputEvent) {
         return false;
     }
 }

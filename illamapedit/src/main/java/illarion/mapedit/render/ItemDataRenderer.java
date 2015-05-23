@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -37,30 +37,30 @@ public class ItemDataRenderer extends AbstractMapRenderer {
     @Nonnull
     private final Image image;
 
-    public ItemDataRenderer(final RendererManager manager) {
+    public ItemDataRenderer(RendererManager manager) {
         super(manager);
         image = resizeImage((BufferedImage) ImageLoader.getImage("info"), 16, 16);
     }
 
     @Override
     public void renderMap(
-            @Nonnull final Map map,
-            @Nonnull final Rectangle viewport,
-            final int level,
-            @Nonnull final Graphics2D g) {
-        final int width = map.getWidth();
-        final int height = map.getHeight();
-        final int z = map.getZ() - level;
-        final AffineTransform transform = g.getTransform();
+            @Nonnull Map map,
+            @Nonnull Rectangle viewport,
+            int level,
+            @Nonnull Graphics2D g) {
+        int width = map.getWidth();
+        int height = map.getHeight();
+        int z = map.getZ() - level;
+        AffineTransform transform = g.getTransform();
 
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < height; ++y) {
-                final MapTile tile = map.getTileAt(x, y);
+                MapTile tile = map.getTileAt(x, y);
                 if ((tile == null) || tile.isMapItemsDataEmpty()) {
                     continue;
                 }
-                final int xDisplay = SwingLocation.displayCoordinateX(x + map.getX(), y + map.getY(), z);
-                final int yDisplay = SwingLocation.displayCoordinateY(x + map.getX(), y + map.getY(), z);
+                int xDisplay = SwingLocation.displayCoordinateX(x + map.getX(), y + map.getY(), z);
+                int yDisplay = SwingLocation.displayCoordinateY(x + map.getX(), y + map.getY(), z);
                 if (viewport.contains((xDisplay * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
                                       (yDisplay * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
                     g.drawImage(image, xDisplay + (int) (XOFFSET * getZoom()), yDisplay + (int) (YOFFSET * getZoom()),

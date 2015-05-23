@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -44,10 +44,10 @@ public class StatusDialog extends JDialog {
         super(owner);
         setTitle(Lang.getMsg(getClass(), "title"));
 
-        final JPanel main = new JPanel();
+        JPanel main = new JPanel();
         handlerPanels = Box.createVerticalBox();
-        final Box buttons = Box.createHorizontalBox();
-        final JLabel label = new JLabel(Lang.getMsg(getClass(), "name") + ":");
+        Box buttons = Box.createHorizontalBox();
+        JLabel label = new JLabel(Lang.getMsg(getClass(), "name") + ':');
         name = new JTextField(15);
         start = new JCheckBox(Lang.getMsg(getClass(), "start"));
         okay = new JButton(Lang.getMsg(getClass(), "ok"));
@@ -77,10 +77,12 @@ public class StatusDialog extends JDialog {
         pack();
     }
 
+    @Override
     public String getName() {
         return name.getText();
     }
 
+    @Override
     public void setName(@Nonnull String value) {
         name.setText(value);
     }

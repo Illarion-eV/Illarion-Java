@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -65,18 +65,18 @@ public final class DoubleEffect implements EffectImpl {
     @Override
     @SuppressWarnings("unchecked")
     public void activate(
-            @Nonnull final Nifty nifty, @Nonnull final Element element, @Nonnull final EffectProperties parameter) {
+            @Nonnull Nifty nifty, @Nonnull Element element, @Nonnull EffectProperties parameter) {
         try {
             targetControlClass = (Class<? extends NiftyControl>) Class
                     .forName(String.valueOf(parameter.get("targetClass")));
-        } catch (@Nonnull final ClassNotFoundException e) {
+        } catch (@Nonnull ClassNotFoundException e) {
             LOGGER.error("Illegal target class for double effect.");
             return;
         }
 
         try {
             targetMethod = targetControlClass.getMethod(String.valueOf(parameter.get("targetMethod")), double.class);
-        } catch (@Nonnull final NoSuchMethodException e) {
+        } catch (@Nonnull NoSuchMethodException e) {
             LOGGER.error("Illegal target method for double effect.", e);
         }
     }
@@ -91,15 +91,15 @@ public final class DoubleEffect implements EffectImpl {
      */
     @Override
     public void execute(
-            @Nonnull final Element element,
-            final float effectTime,
-            final Falloff falloff,
-            @Nonnull final NiftyRenderEngine r) {
+            @Nonnull Element element,
+            float effectTime,
+            Falloff falloff,
+            @Nonnull NiftyRenderEngine r) {
         if ((targetControlClass == null) || (targetMethod == null)) {
             // something is badly wrong. Don't do anything in this effect.
             return;
         }
-        final NiftyControl targetControl = element.getNiftyControl(targetControlClass);
+        NiftyControl targetControl = element.getNiftyControl(targetControlClass);
         if (targetControl == null) {
             return;
         }

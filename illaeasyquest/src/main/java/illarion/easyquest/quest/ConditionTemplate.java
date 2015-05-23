@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,12 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ConditionTemplate implements Comparable<ConditionTemplate> {
-    private String name;
+    private final String name;
     @Nullable
     private String title;
     @Nullable
     private String condition;
-    private List<TemplateParameter> parameters;
+    private final List<TemplateParameter> parameters;
 
     public ConditionTemplate(String name) {
         this.name = name;
@@ -65,7 +65,7 @@ public class ConditionTemplate implements Comparable<ConditionTemplate> {
     }
 
     public boolean isComplete() {
-        return (title != null) && (condition != null) && (parameters.size() > 0);
+        return (title != null) && (condition != null) && !parameters.isEmpty();
     }
 
     @Override
@@ -75,17 +75,17 @@ public class ConditionTemplate implements Comparable<ConditionTemplate> {
     }
 
     @Override
-    public int compareTo(@Nonnull final ConditionTemplate o) {
+    public int compareTo(@Nonnull ConditionTemplate o) {
         return toString().compareTo(o.toString());
     }
 
     @Override
-    public boolean equals(@Nullable final Object o) {
+    public boolean equals(@Nullable Object o) {
         if (super.equals(o)) {
             return true;
         }
         if (o instanceof ConditionTemplate) {
-            final ConditionTemplate otherTemplate = (ConditionTemplate) o;
+            ConditionTemplate otherTemplate = (ConditionTemplate) o;
             if (otherTemplate.toString().equals(toString())) {
                 return true;
             }

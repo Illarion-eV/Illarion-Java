@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,7 @@ package org.illarion.engine.backend.gdx;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import org.illarion.engine.GameContainer;
@@ -168,12 +168,12 @@ class GdxScene extends AbstractScene<GdxSceneEffect> {
     private static FrameBuffer validateFrameBuffer(
             int width, int height, @Nullable FrameBuffer original) {
         if (original == null) {
-            return new FrameBuffer(Pixmap.Format.RGBA8888, width, height, false);
+            return new FrameBuffer(Format.RGBA8888, width, height, false);
         }
         if ((original.getHeight() == height) && (original.getWidth() == width)) {
             return original;
         }
         original.dispose();
-        return new FrameBuffer(Pixmap.Format.RGBA8888, width, height, false);
+        return new FrameBuffer(Format.RGBA8888, width, height, false);
     }
 }

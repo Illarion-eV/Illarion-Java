@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -52,16 +52,16 @@ public class DataPanel extends JPanel {
         add(dataPanel);
     }
 
-    public void setAnnotation(@Nonnull final String text) {
+    public void setAnnotation(@Nonnull String text) {
         itemPanel.setAnnotation(text);
     }
 
-    public void setItems(@Nullable final Collection<MapItem> items, final String annotation) {
+    public void setItems(@Nullable Collection<MapItem> items, String annotation) {
         itemPanel.setAnnotation(annotation);
         setItems(items);
     }
 
-    public void setItems(@Nullable final Collection<MapItem> items) {
+    public void setItems(@Nullable Collection<MapItem> items) {
         Collection<MapItem> mapItems = new ArrayList<>();
         if (items != null) {
             mapItems = items;
@@ -71,22 +71,22 @@ public class DataPanel extends JPanel {
     }
 
     @EventSubscriber
-    public void onItemDataChanged(@Nonnull final ItemItemDataChangedEvent e) {
+    public void onItemDataChanged(@Nonnull ItemItemDataChangedEvent e) {
         itemPanel.getSelectedItem().addItemData(e.getRow(), e.getData());
     }
 
     @EventSubscriber
-    public void onItemDataRemoved(@Nonnull final ItemDataRemovedEvent e) {
+    public void onItemDataRemoved(@Nonnull ItemDataRemovedEvent e) {
         itemPanel.getSelectedItem().removeItemData(e.getIndex());
     }
 
     @EventSubscriber
-    public void onItemDataAdded(@Nonnull final ItemDataAddedEvent e) {
+    public void onItemDataAdded(@Nonnull ItemDataAddedEvent e) {
         itemPanel.getSelectedItem().addItemData(e.getData());
     }
 
     @EventSubscriber
-    public void onItemsUpdated(@Nonnull final ItemsUpdatedEvent e) {
+    public void onItemsUpdated(@Nonnull ItemsUpdatedEvent e) {
         List<MapItem> items = new ArrayList<>();
         if (e.getItems() != null) {
             items = e.getItems();
@@ -95,7 +95,7 @@ public class DataPanel extends JPanel {
     }
 
     @EventSubscriber
-    public void onItemDataAnnotation(@Nonnull final ItemDataAnnotationEvent e) {
+    public void onItemDataAnnotation(@Nonnull ItemDataAnnotationEvent e) {
         itemPanel.getSelectedItem().setAnnotation(e.getText());
         EventBus.publish(new RepaintRequestEvent());
     }

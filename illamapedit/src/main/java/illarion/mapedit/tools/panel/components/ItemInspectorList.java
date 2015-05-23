@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -28,12 +28,9 @@ import org.bushe.swing.event.EventBus;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Collection;
 
 /**
@@ -44,8 +41,8 @@ public class ItemInspectorList extends JPanel {
     private final AnnotationLabel annotation;
     @Nonnull
     private final JScrollPane scroll;
-    @Nonnull
-    private JList dataList;
+    @Nullable
+    private JList<MapItem> dataList;
     @Nonnull
     private final JButton removeItemButton;
     @Nonnull
@@ -62,63 +59,49 @@ public class ItemInspectorList extends JPanel {
 
         add(scroll, BorderLayout.CENTER);
 
-        final ResizableIcon iconRemove = ImageLoader.getResizableIcon("edit_remove");
+        ResizableIcon iconRemove = ImageLoader.getResizableIcon("edit_remove");
         iconRemove.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
-        final ResizableIcon iconUp = ImageLoader.getResizableIcon("1uparrow");
+        ResizableIcon iconUp = ImageLoader.getResizableIcon("1uparrow");
         iconUp.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
-        final ResizableIcon iconDown = ImageLoader.getResizableIcon("1downarrow");
+        ResizableIcon iconDown = ImageLoader.getResizableIcon("1downarrow");
         iconDown.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
-        final ResizableIcon iconAnnotation = ImageLoader.getResizableIcon("annotation");
+        ResizableIcon iconAnnotation = ImageLoader.getResizableIcon("annotation");
         iconAnnotation.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
 
         removeItemButton = new JButton();
         removeItemButton.setIcon(iconRemove);
         removeItemButton.setEnabled(false);
-        removeItemButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                if (dataList.getSelectedIndex() > -1) {
-                    EventBus.publish(new ItemRemoveEvent(dataList.getSelectedIndex()));
-                }
+        removeItemButton.addActionListener(e -> {
+            if (dataList.getSelectedIndex() > -1) {
+                EventBus.publish(new ItemRemoveEvent(dataList.getSelectedIndex()));
             }
         });
 
         itemUpButton = new JButton();
         itemUpButton.setIcon(iconUp);
         itemUpButton.setEnabled(false);
-        itemUpButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final int index = dataList.getSelectedIndex();
-                if (index > 0) {
-                    EventBus.publish(new ItemReplaceEvent(index, index - 1));
-                }
+        itemUpButton.addActionListener(e -> {
+            int index = dataList.getSelectedIndex();
+            if (index > 0) {
+                EventBus.publish(new ItemReplaceEvent(index, index - 1));
             }
         });
 
         itemDownButton = new JButton();
         itemDownButton.setIcon(iconDown);
         itemDownButton.setEnabled(false);
-        itemDownButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                final int index = dataList.getSelectedIndex();
-                if ((index > -1) && (index < (dataList.getModel().getSize() - 1))) {
-                    EventBus.publish(new ItemReplaceEvent(index, index + 1));
-                }
+        itemDownButton.addActionListener(e -> {
+            int index = dataList.getSelectedIndex();
+            if ((index > -1) && (index < (dataList.getModel().getSize() - 1))) {
+                EventBus.publish(new ItemReplaceEvent(index, index + 1));
             }
         });
 
-        final JButton annotationButton = new JButton();
+        JButton annotationButton = new JButton();
         annotationButton.setIcon(iconAnnotation);
-        annotationButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                addAnnotation();
-            }
-        });
+        annotationButton.addActionListener(e -> addAnnotation());
 
-        final JToolBar itemActions = new JToolBar();
+        JToolBar itemActions = new JToolBar();
         itemActions.setFloatable(false);
         itemActions.add(removeItemButton);
         itemActions.addSeparator();
@@ -136,25 +119,25 @@ public class ItemInspectorList extends JPanel {
      */
     @Nonnull
     public MapItem getSelectedItem() {
-        return (MapItem) dataList.getSelectedValue();
+        return dataList.getSelectedValue();
     }
 
     private void addAnnotation() {
-        final JTextField annotationField = new JTextField(20);
+        JTextField annotationField = new JTextField(20);
         annotationField.setText(annotation.getAnnotation());
 
-        final JPanel panel = new JPanel();
+        JPanel panel = new JPanel();
         panel.add(new JLabel(Lang.getMsg("tools.DataTool.Annotation")));
         panel.add(annotationField);
 
-        final int result = JOptionPane.showConfirmDialog(null, panel, Lang.getMsg("tools.DataTool.Annotation_header"),
+        int result = JOptionPane.showConfirmDialog(null, panel, Lang.getMsg("tools.DataTool.Annotation_header"),
                                                          JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
             EventBus.publish(new TileAnnotationEvent(annotationField.getText()));
         }
     }
 
-    public void setAnnotation(@Nonnull final String text) {
+    public void setAnnotation(@Nonnull String text) {
         annotation.setAnnotation(text);
     }
 
@@ -163,16 +146,11 @@ public class ItemInspectorList extends JPanel {
      *
      * @param itemList A collection of items to show
      */
-    public void setDataList(@Nonnull final Collection<MapItem> itemList) {
-        dataList = new JList(itemList.toArray(new MapItem[itemList.size()]));
+    public void setDataList(@Nonnull Collection<MapItem> itemList) {
+        dataList = new JList<>(itemList.toArray(new MapItem[itemList.size()]));
         dataList.setCellRenderer(new MapItemCellRenderer());
         dataList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        dataList.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(final ListSelectionEvent e) {
-                EventBus.publish(new ItemInspectorSelectedEvent((MapItem) dataList.getSelectedValue()));
-            }
-        });
+        dataList.addListSelectionListener(e -> EventBus.publish(new ItemInspectorSelectedEvent(dataList.getSelectedValue())));
 
         removeItemButton.setEnabled(itemList.size() > 0);
         itemUpButton.setEnabled(itemList.size() > 1);

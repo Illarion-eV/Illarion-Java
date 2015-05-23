@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -51,7 +51,7 @@ public class CreateDialogInputControl extends ControlAttributes {
      *
      * @param id the ID of the new control
      */
-    public CreateDialogInputControl(@Nonnull final String id) {
+    public CreateDialogInputControl(@Nonnull String id) {
         setId(id);
         setName(NAME);
     }
@@ -65,7 +65,7 @@ public class CreateDialogInputControl extends ControlAttributes {
      * @return the newly created input dialog
      */
     @Nullable
-    public DialogInput create(@Nonnull final Nifty nifty, @Nonnull final Screen screen, @Nonnull final Element parent) {
+    public DialogInput create(@Nonnull Nifty nifty, @Nonnull Screen screen, @Nonnull Element parent) {
         return nifty.addControl(screen, parent, getStandardControl()).getNiftyControl(DialogInput.class);
     }
 

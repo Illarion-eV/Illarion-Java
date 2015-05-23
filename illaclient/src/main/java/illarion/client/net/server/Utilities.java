@@ -18,7 +18,6 @@ package illarion.client.net.server;
 import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Arrays;
 
 /**

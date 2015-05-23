@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -26,10 +26,11 @@ import java.awt.event.ActionEvent;
 public class BandClickAction extends AbstractAction {
     private final AbstractCommandButton button;
 
-    public BandClickAction(final AbstractCommandButton button) {
+    public BandClickAction(AbstractCommandButton button) {
         this.button = button;
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         button.doActionClick();
     }

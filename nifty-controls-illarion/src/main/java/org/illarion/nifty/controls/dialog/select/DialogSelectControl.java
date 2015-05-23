@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -75,33 +75,27 @@ public final class DialogSelectControl extends WindowControl implements DialogSe
     private final EventTopicSubscriber<ButtonClickedEvent> selectButtonEventHandler;
 
     public DialogSelectControl() {
-        closeButtonEventHandler = new EventTopicSubscriber<ButtonClickedEvent>() {
-            @Override
-            public void onEvent(final String topic, final ButtonClickedEvent data) {
-                if (alreadyClosed) {
-                    return;
-                }
-                closeWindow();
+        closeButtonEventHandler = (topic, data) -> {
+            if (alreadyClosed) {
+                return;
             }
+            closeWindow();
         };
 
-        selectButtonEventHandler = new EventTopicSubscriber<ButtonClickedEvent>() {
-            @Override
-            public void onEvent(final String topic, final ButtonClickedEvent data) {
-                if (alreadyClosed) {
-                    return;
-                }
-                selectItem(getSelectedIndex());
+        selectButtonEventHandler = (topic, data) -> {
+            if (alreadyClosed) {
+                return;
             }
+            selectItem(getSelectedIndex());
         };
     }
 
     @Override
     public void bind(
-            @Nonnull final Nifty nifty,
-            @Nonnull final Screen screen,
-            @Nonnull final Element element,
-            @Nonnull final Parameters parameter) {
+            @Nonnull Nifty nifty,
+            @Nonnull Screen screen,
+            @Nonnull Element element,
+            @Nonnull Parameters parameter) {
         super.bind(nifty, screen, element, parameter);
         niftyInstance = nifty;
         currentScreen = screen;
@@ -114,21 +108,21 @@ public final class DialogSelectControl extends WindowControl implements DialogSe
     public void onStartScreen() {
         super.onStartScreen();
 
-        final Element element = getElement();
-        final Element parent = element.getParent();
+        Element element = getElement();
+        Element parent = element.getParent();
 
-        final int x = (parent.getWidth() - element.getWidth()) / 2;
-        final int y = (parent.getHeight() - element.getHeight()) / 2;
+        int x = (parent.getWidth() - element.getWidth()) / 2;
+        int y = (parent.getHeight() - element.getHeight()) / 2;
 
         element.setConstraintX(new SizeValue(Integer.toString(x) + "px"));
         element.setConstraintY(new SizeValue(Integer.toString(y) + "px"));
 
         parent.layoutElements();
 
-        final Element closeButton = getElement().findElementById("#cancelButton");
+        Element closeButton = getElement().findElementById("#cancelButton");
         niftyInstance.subscribe(currentScreen, closeButton.getId(), ButtonClickedEvent.class, closeButtonEventHandler);
 
-        final Element selectButton = getElement().findElementById("#selectButton");
+        Element selectButton = getElement().findElementById("#selectButton");
         niftyInstance
                 .subscribe(currentScreen, selectButton.getId(), ButtonClickedEvent.class, selectButtonEventHandler);
     }
@@ -140,7 +134,7 @@ public final class DialogSelectControl extends WindowControl implements DialogSe
 
     @Override
     public SelectListEntry getSelectedItem() {
-        final List<SelectListEntry> selectedItems = getList().getSelection();
+        List<SelectListEntry> selectedItems = getList().getSelection();
         if (selectedItems.isEmpty()) {
             return null;
         }
@@ -149,7 +143,7 @@ public final class DialogSelectControl extends WindowControl implements DialogSe
 
     @Override
     public int getSelectedIndex() {
-        final List<Integer> selectedIndices = getList().getSelectedIndices();
+        List<Integer> selectedIndices = getList().getSelectedIndices();
         if (selectedIndices.isEmpty()) {
             return -1;
         }
@@ -157,15 +151,15 @@ public final class DialogSelectControl extends WindowControl implements DialogSe
     }
 
     @Override
-    public void addItem(@Nonnull final SelectListEntry entry) {
+    public void addItem(@Nonnull SelectListEntry entry) {
         getList().addItem(entry);
     }
 
-    public void selectItem(final int index) {
+    public void selectItem(int index) {
         if (index == -1) {
             return;
         }
-        final ListBox<SelectListEntry> list = getList();
+        ListBox<SelectListEntry> list = getList();
         niftyInstance.publishEvent(getId(), new DialogSelectSelectEvent(dialogId, list.getItems().get(index), index));
     }
 

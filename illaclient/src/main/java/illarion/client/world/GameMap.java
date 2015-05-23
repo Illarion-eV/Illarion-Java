@@ -47,6 +47,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
 
 /**
  * This handler stores all map data and ensures the updates of the map. This
@@ -470,23 +471,6 @@ public final class GameMap implements LightingMap, Stoppable {
     /**
      * Get a map tile at a specified location.
      *
-     * @param posX the x coordinate of the location of the searched tile
-     * @param posY the y coordinate of the location of the searched tile
-     * @param posZ the z coordinate of the location of the searched tile
-     * @return the map tile at the location or {@code null}
-     * @deprecated This function generates a server coordinate object to request the map location. This may be not
-     * required.
-     */
-    @Deprecated
-    @Nullable
-    @Contract(pure = true)
-    public MapTile getMapAt(int posX, int posY, int posZ) {
-        return getMapAt(new ServerCoordinate(posX, posY, posZ));
-    }
-
-    /**
-     * Get a map tile at a specified location.
-     *
      * @param coordinate the coordinates of the location
      * @return the map tile at the location or {@code null}
      */
@@ -611,20 +595,14 @@ public final class GameMap implements LightingMap, Stoppable {
         Collection<ServerCoordinate> tilesToDelete = new HashSet<>();
         mapLock.readLock().lock();
         try {
-            for (MapTile tile : tiles.values()) {
-                if (GameMapProcessor2.isOutsideOfClipping(tile)) {
-                    tilesToDelete.add(tile.getCoordinates());
-                }
-            }
+            tilesToDelete.addAll(tiles.values().stream().filter(GameMapProcessor2::isOutsideOfClipping).map(MapTile::getCoordinates).collect(Collectors.toList()));
         } finally {
             mapLock.readLock().unlock();
         }
         if (!tilesToDelete.isEmpty()) {
             mapLock.writeLock().lock();
             try {
-                for (@Nonnull ServerCoordinate key : tilesToDelete) {
-                    removeTile(key);
-                }
+                tilesToDelete.forEach(this::removeTile);
             } finally {
                 mapLock.writeLock().unlock();
             }
@@ -648,7 +626,6 @@ public final class GameMap implements LightingMap, Stoppable {
      *
      * @param updateData the data of the update
      */
-    @SuppressWarnings("nls")
     public void updateTile(@Nonnull TileUpdate updateData) {
         boolean changedSomething = false;
         ServerCoordinate coordinate = updateData.getLocation();
@@ -661,7 +638,6 @@ public final class GameMap implements LightingMap, Stoppable {
 
             // create a tile for this location if none was found
             if (newTile) {
-                //noinspection ReuseOfLocalVariable
                 tile = new MapTile(updateData.getLocation());
             }
 

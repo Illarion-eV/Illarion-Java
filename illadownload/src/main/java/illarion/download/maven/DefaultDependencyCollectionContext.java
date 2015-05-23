@@ -55,7 +55,6 @@ class DefaultDependencyCollectionContext implements DependencyCollectionContext 
 
     @Override
     public List<Dependency> getManagedDependencies() {
-        //noinspection unchecked
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 }

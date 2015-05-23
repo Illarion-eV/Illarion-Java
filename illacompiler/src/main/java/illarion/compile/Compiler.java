@@ -41,12 +41,15 @@ import java.util.concurrent.*;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class Compiler {
+public final class Compiler {
     @Nonnull
     private static final Logger LOGGER = LoggerFactory.getLogger(Compiler.class);
     private static Map<CompilerType, Path> storagePaths;
 
-    public static void main(String[] args) throws UnsupportedEncodingException {
+    private Compiler() {
+    }
+
+    public static void main(String... args) throws UnsupportedEncodingException {
         ByteArrayOutputStream stdOutBuffer = new ByteArrayOutputStream();
         PrintStream orgStdOut = System.out;
         System.setOut(new PrintStream(stdOutBuffer, true, Charset.defaultCharset().toString()));
@@ -137,11 +140,11 @@ public class Compiler {
             }
         }
 
-        final List<Future<Integer>> results = new ArrayList<>();
+        List<Future<Integer>> results = new ArrayList<>();
         for (String file : cmd.getArgs()) {
             Path path = Paths.get(file);
             if (Files.isDirectory(path)) {
-                final ExecutorService finalExecutor = executor;
+                ExecutorService finalExecutor = executor;
                 Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
@@ -203,14 +206,14 @@ public class Compiler {
     }
 
     private static Future<Integer> processPath(
-            @Nonnull ExecutorService executor, @Nonnull final Path path) throws IOException {
+            @Nonnull ExecutorService executor, @Nonnull Path path) throws IOException {
         if (Files.isDirectory(path)) {
             return new CompletedFuture<>(0);
         }
 
         for (CompilerType type : CompilerType.values()) {
             if (type.isValidFile(path)) {
-                final Compile compile = type.getImplementation();
+                Compile compile = type.getImplementation();
                 if (path.isAbsolute()) {
                     if (storagePaths.containsKey(type)) {
                         compile.setTargetDir(storagePaths.get(type));
@@ -235,16 +238,13 @@ public class Compiler {
                     }
                 }
 
-                return executor.submit(new Callable<Integer>() {
-                    @Override
-                    public Integer call() throws Exception {
-                        int result = compile.compileFile(path.toAbsolutePath());
-                        if (result == 1) {
-                            LOGGER.info("Skipped file: {}", path.getFileName());
-                            return -2;
-                        }
-                        return result;
+                return executor.submit(() -> {
+                    int result = compile.compileFile(path.toAbsolutePath());
+                    if (result == 1) {
+                        LOGGER.info("Skipped file: {}", path.getFileName());
+                        return -2;
                     }
+                    return result;
                 });
             }
         }

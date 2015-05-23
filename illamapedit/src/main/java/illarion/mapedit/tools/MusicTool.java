@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,6 +18,7 @@ package illarion.mapedit.tools;
 import illarion.mapedit.Lang;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapTile;
+import illarion.mapedit.data.MapTile.MapTileFactory;
 import illarion.mapedit.history.GroupAction;
 import illarion.mapedit.history.MusicIDChangedAction;
 import illarion.mapedit.tools.panel.MusicPanel;
@@ -40,29 +41,29 @@ public class MusicTool extends AbstractTool {
     }
 
     @Override
-    public void clickedAt(final int x, final int y, @Nonnull final Map map) {
-        final MusicIDChangedAction newAction = addMusic(x, y, map);
+    public void clickedAt(int x, int y, @Nonnull Map map) {
+        MusicIDChangedAction newAction = addMusic(x, y, map);
         if (newAction != null) {
             getHistory().addEntry(newAction);
         }
     }
 
     @Override
-    public void paintSelected(final int x, final int y, @Nonnull final Map map, @Nonnull final GroupAction action) {
-        final MusicIDChangedAction newAction = addMusic(x, y, map);
+    public void paintSelected(int x, int y, @Nonnull Map map, @Nonnull GroupAction action) {
+        MusicIDChangedAction newAction = addMusic(x, y, map);
         if (newAction != null) {
             action.addAction(newAction);
         }
     }
 
     @Nullable
-    public MusicIDChangedAction addMusic(final int x, final int y, @Nonnull final Map map) {
-        final MapTile tile = map.getTileAt(x, y);
-        final int musicID = panel.getMusicID();
+    public MusicIDChangedAction addMusic(int x, int y, @Nonnull Map map) {
+        MapTile tile = map.getTileAt(x, y);
+        int musicID = panel.getMusicID();
         if ((tile == null) || (tile.getMusicID() == musicID)) {
             return null;
         }
-        MapTile newTile = MapTile.MapTileFactory.setMusicId(musicID, tile);
+        MapTile newTile = MapTileFactory.setMusicId(musicID, tile);
         map.setTileAt(x, y, newTile);
         return new MusicIDChangedAction(x, y, tile.getMusicID(), musicID, map);
     }

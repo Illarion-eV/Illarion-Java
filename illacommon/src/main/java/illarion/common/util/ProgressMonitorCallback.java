@@ -22,6 +22,7 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@FunctionalInterface
 public interface ProgressMonitorCallback {
     /**
      * This function is called in case the progress monitor receives a new update.

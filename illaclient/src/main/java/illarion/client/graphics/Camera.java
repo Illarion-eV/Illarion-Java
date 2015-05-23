@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -99,8 +99,8 @@ public final class Camera {
      * @return {@code true} in case there is no clipping area set or the tested area is at least partly within the
      * clipping area, if its fully outside {@code false} is returned
      */
-    public boolean requiresUpdate(final int testLocX, final int testLocY, final int width, final int height) {
-        final Rectangle testRect = new Rectangle();
+    public boolean requiresUpdate(int testLocX, int testLocY, int width, int height) {
+        Rectangle testRect = new Rectangle();
         testRect.set(testLocX, testLocY, width, height);
 
         return requiresUpdate(testRect);
@@ -113,7 +113,7 @@ public final class Camera {
      * @return {@code true} in case there is no clipping area set or the tested area is at least partly within the
      * clipping area, if its fully outside {@code false} is returned
      */
-    public boolean requiresUpdate(@Nonnull final Rectangle rect) {
+    public boolean requiresUpdate(@Nonnull Rectangle rect) {
         return !(!viewport.intersects(rect) || rect.isEmpty());
     }
 
@@ -125,7 +125,7 @@ public final class Camera {
      * @param width the width of the viewport
      * @param height the height of the viewport
      */
-    public void setViewport(final int x, final int y, final int width, final int height) {
+    public void setViewport(int x, int y, int width, int height) {
         viewport.set(x, y, width, height);
     }
 

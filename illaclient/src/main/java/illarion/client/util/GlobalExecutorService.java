@@ -24,7 +24,7 @@ import java.util.concurrent.Executors;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class GlobalExecutorService {
+public final class GlobalExecutorService {
     /**
      * The executor service instance.
      */

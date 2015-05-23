@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,7 +22,7 @@ public class MapScrollEvent {
     private final int x;
     private final int y;
 
-    public MapScrollEvent(final int x, final int y) {
+    public MapScrollEvent(int x, int y) {
         this.x = x;
         this.y = y;
     }

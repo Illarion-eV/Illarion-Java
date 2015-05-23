@@ -69,7 +69,7 @@ public class ConditionTemplates {
         try {
             bRead = new BufferedReader(new InputStreamReader(getResource("template/condition/filelist"), Charset.defaultCharset()));
 
-            String line = null;
+            String line;
             while ((line = bRead.readLine()) != null) {
                 result.add(line);
             }
@@ -108,7 +108,6 @@ public class ConditionTemplates {
                     while ((line = reader.readLine()) != null) {
 
                         if (line.isEmpty()) {
-                            continue;
                         } else if (line.matches("--.*\\w+.*--.*\\w+.*")) {
                             String[] names = line.split("\\s*--\\s*");
                             if (isGerman) {
@@ -130,7 +129,7 @@ public class ConditionTemplates {
                             if (oldCondition == null) {
                                 conditionTemplate.setCondition(line);
                             } else {
-                                conditionTemplate.setCondition(oldCondition + "\n" + line);
+                                conditionTemplate.setCondition(oldCondition + '\n' + line);
                             }
                         }
                     }

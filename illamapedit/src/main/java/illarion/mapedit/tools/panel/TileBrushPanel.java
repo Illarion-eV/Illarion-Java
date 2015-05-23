@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -39,12 +39,12 @@ public class TileBrushPanel extends JPanel {
 
         add(new TileList(), BorderLayout.CENTER);
 
-        final JPanel brushSizePanel = new JPanel(new GridLayout(0, 2));
+        JPanel brushSizePanel = new JPanel(new GridLayout(0, 2));
 
         fillSelectedCheckbox = new JRadioButton();
         fillAreaCheckbox = new JRadioButton();
         fillAreaCheckbox.setSelected(true);
-        final ButtonGroup group = new ButtonGroup();
+        ButtonGroup group = new ButtonGroup();
         group.add(fillAreaCheckbox);
         group.add(fillSelectedCheckbox);
 

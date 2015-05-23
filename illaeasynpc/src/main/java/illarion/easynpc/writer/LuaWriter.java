@@ -430,9 +430,7 @@ public final class LuaWriter {
             @Nonnull LuaRequireTable requires,
             @Nonnull Writer target) throws IOException {
         for (LuaWritable writable : source) {
-            for (String module : writable.getRequiredModules()) {
-                requires.registerDependency(module);
-            }
+            writable.getRequiredModules().forEach(requires::registerDependency);
         }
 
         requires.registerDependency("npc.base.basic");

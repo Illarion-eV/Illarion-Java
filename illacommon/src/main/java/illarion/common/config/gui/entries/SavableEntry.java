@@ -20,6 +20,7 @@ package illarion.common.config.gui.entries;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
+@FunctionalInterface
 public interface SavableEntry {
     /**
      * Save the values stored in this entry.

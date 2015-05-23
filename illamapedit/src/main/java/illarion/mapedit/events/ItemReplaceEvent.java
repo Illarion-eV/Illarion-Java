@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,7 +22,7 @@ public class ItemReplaceEvent {
     private final int index;
     private final int newIndex;
 
-    public ItemReplaceEvent(final int index, final int newIndex) {
+    public ItemReplaceEvent(int index, int newIndex) {
         this.index = index;
         this.newIndex = newIndex;
     }

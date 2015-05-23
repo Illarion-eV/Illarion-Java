@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -31,18 +31,18 @@ public class Handler implements Serializable {
     public Handler() {
     }
 
-    public Handler(@Nonnull final String type, @Nonnull final Object... parameters) {
+    public Handler(@Nonnull String type, @Nonnull Object... parameters) {
         this.type = type;
         this.parameters = parameters;
     }
 
     @CalledByReflection
-    public void setParameters(@Nonnull final Object[] parameters) {
+    public void setParameters(@Nonnull Object... parameters) {
         this.parameters = parameters;
     }
 
     @CalledByReflection
-    public void setType(@Nonnull final String type) {
+    public void setType(@Nonnull String type) {
         this.type = type;
     }
 

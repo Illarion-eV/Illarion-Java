@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,9 @@ package illarion.client.util;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * Dialog base class. This class implements OK and Cancel buttons and standard
@@ -63,10 +65,10 @@ public abstract class AbstractDialog extends JDialog {
      * @param titel Title of the dialog
      * @param modal true for a modal dialog, false for one that allows other
      * dialogs to be in focus at the same time.
-     * @see javax.swing.JDialog#JDialog(java.awt.Frame, String, boolean)
+     * @see JDialog#JDialog(Frame, String, boolean)
      */
-    public AbstractDialog(
-            final Frame owner, final String titel, final boolean modal) {
+    protected AbstractDialog(
+            Frame owner, String titel, boolean modal) {
         super(owner, titel, modal);
         init();
     }
@@ -78,10 +80,10 @@ public abstract class AbstractDialog extends JDialog {
      * @param titel Title of the dialog
      * @param modal true for a modal dialog, false for one that allows other
      * dialogs to be in focus at the same time.
-     * @see javax.swing.JDialog#JDialog(java.awt.Dialog, String, boolean)
+     * @see JDialog#JDialog(Dialog, String, boolean)
      */
-    public AbstractDialog(
-            final JDialog parent, final String titel, final boolean modal) {
+    protected AbstractDialog(
+            JDialog parent, String titel, boolean modal) {
         super(parent, titel, modal);
         init();
     }
@@ -103,7 +105,7 @@ public abstract class AbstractDialog extends JDialog {
      *
      * @param comp the Component that shall be added the the button pane
      */
-    public final void addButton(final JComponent comp) {
+    public final void addButton(JComponent comp) {
         buttons.add(comp);
     }
 
@@ -122,7 +124,7 @@ public abstract class AbstractDialog extends JDialog {
             dadpos = new Point(0, 0);
             dadsize = Toolkit.getDefaultToolkit().getScreenSize();
         }
-        final Dimension size = getSize();
+        Dimension size = getSize();
 
         int x = dadpos.x + ((dadsize.width - size.width) / 2);
         int y = dadpos.y + ((dadsize.height - size.height) / 2);
@@ -135,7 +137,6 @@ public abstract class AbstractDialog extends JDialog {
      * Init the frame and set up all default values such as buttons and button
      * listeners.
      */
-    @SuppressWarnings("nls")
     protected final void init() {
         // add buttons
         buttons = new JPanel(new FlowLayout());
@@ -150,32 +151,17 @@ public abstract class AbstractDialog extends JDialog {
         getContentPane().add(buttons, BorderLayout.SOUTH);
 
         // button actions
-        cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent ae) {
-                actionCancel();
-            }
-        });
-        okButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent ae) {
-                actionOK();
-            }
-        });
+        cancelButton.addActionListener(ae -> actionCancel());
+        okButton.addActionListener(ae -> actionOK());
 
         // window keyboard actions
-        getRootPane().registerKeyboardAction(new ActionListener() {
-                                                 @Override
-                                                 public void actionPerformed(final ActionEvent ae) {
-                                                     actionCancel();
-                                                 }
-                                             }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false),
+        getRootPane().registerKeyboardAction(ae -> actionCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false),
                                              JComponent.WHEN_IN_FOCUSED_WINDOW
         );
 
         addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(final WindowEvent we) {
+            public void windowClosing(WindowEvent we) {
                 actionCancel();
             }
         });
@@ -188,8 +174,7 @@ public abstract class AbstractDialog extends JDialog {
      * are {@link #BUTTON_OK} and {@link #BUTTON_CANCEL}
      * @return <code>true</code> in case the button is enabled
      */
-    @SuppressWarnings("nls")
-    protected final boolean isButtonEnabled(final int button) {
+    protected final boolean isButtonEnabled(int button) {
         if (button == BUTTON_OK) {
             return okButton.isEnabled();
         } else if (button == BUTTON_CANCEL) {
@@ -206,9 +191,8 @@ public abstract class AbstractDialog extends JDialog {
      * are {@link #BUTTON_OK} and {@link #BUTTON_CANCEL}
      * @param enabled the new enabled status
      */
-    @SuppressWarnings("nls")
     protected final void setButtonEnabled(
-            final int button, final boolean enabled) {
+            int button, boolean enabled) {
         if (button == BUTTON_OK) {
             okButton.setEnabled(enabled);
         } else if (button == BUTTON_CANCEL) {
@@ -225,8 +209,7 @@ public abstract class AbstractDialog extends JDialog {
      * are {@link #BUTTON_OK} and {@link #BUTTON_CANCEL}
      * @param name the new text written on the button
      */
-    @SuppressWarnings("nls")
-    protected final void setButtonName(final int button, final String name) {
+    protected final void setButtonName(int button, String name) {
         if (button == BUTTON_OK) {
             okButton.setText(name);
         } else if (button == BUTTON_CANCEL) {
@@ -243,8 +226,7 @@ public abstract class AbstractDialog extends JDialog {
      * @param button Select the button that shall be changed. Possible values
      * are {@link #BUTTON_OK} and {@link #BUTTON_CANCEL}
      */
-    @SuppressWarnings("nls")
-    protected final void setDefaultButton(final int button) {
+    protected final void setDefaultButton(int button) {
         if (button == BUTTON_OK) {
             getRootPane().setDefaultButton(okButton);
         } else if (button == BUTTON_CANCEL) {

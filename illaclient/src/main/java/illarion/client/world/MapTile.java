@@ -47,7 +47,6 @@ import java.util.concurrent.locks.Lock;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@SuppressWarnings("ClassNamingConvention")
 @NotThreadSafe
 public final class MapTile {
     /**
@@ -209,7 +208,6 @@ public final class MapTile {
      *
      * @param coordinate the coordinates of this tile
      */
-    @SuppressWarnings("nls")
     public MapTile(@Nonnull ServerCoordinate coordinate) {
         tileCoordinate = coordinate;
         tileId = ID_NONE;
@@ -306,7 +304,6 @@ public final class MapTile {
      *
      * @return the generated string
      */
-    @SuppressWarnings("nls")
     @Override
     @Nonnull
     public String toString() {
@@ -320,7 +317,6 @@ public final class MapTile {
      * @param itemId the new ID that shall be set on the item
      * @param count the new count value of the item in top position
      */
-    @SuppressWarnings("nls")
     public void changeTopItem(
             @Nonnull ItemId oldItemId, @Nonnull ItemId itemId, @Nonnull ItemCount count) {
         if (removedTile) {
@@ -354,7 +350,6 @@ public final class MapTile {
     /**
      * Remove the item at the top position of the item stack.
      */
-    @SuppressWarnings("nls")
     public void removeTopItem() {
         if (removedTile) {
             LOGGER.warn("Remove top item of removed tile requested.");
@@ -405,7 +400,6 @@ public final class MapTile {
      * @param itemId The new item ID of the item
      * @param itemCount The new count value of this item
      */
-    @SuppressWarnings("nls")
     private boolean setItem(int index, @Nonnull ItemId itemId, @Nonnull ItemCount itemCount) {
         // look for present item in map tile
         boolean changedSomething = false;

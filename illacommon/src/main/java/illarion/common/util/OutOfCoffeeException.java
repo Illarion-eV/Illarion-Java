@@ -23,7 +23,6 @@ package illarion.common.util;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@SuppressWarnings("UnusedDeclaration")
 public class OutOfCoffeeException extends RuntimeException {
     /**
      * The serialization unique ID.

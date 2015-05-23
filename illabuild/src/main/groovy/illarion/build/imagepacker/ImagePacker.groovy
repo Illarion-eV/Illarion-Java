@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -224,8 +224,9 @@ public final class ImagePacker implements Comparator<TextureElement> {
         logger.info("Packing images")
         shutdownExecutionService()
 
-        def targetType = -1
-        for (type in [TYPE_RGBA, TYPE_RGB, TYPE_GREY_ALPHA, TYPE_GREY]) {
+        int targetType = -1
+        def types = [TYPE_RGBA, TYPE_RGB, TYPE_GREY_ALPHA, TYPE_GREY] as int[]
+        for (type in types) {
             if (images[type] != null && !images[type].empty) {
                 targetType = type;
                 break;
@@ -278,7 +279,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
                     sortNeeded[currType] = false
                 }
             }
-            for (i in 0..<imageCnt) {
+            for (int i in 0..<imageCnt) {
                 if (curImages == null) {
                     break
                 }
@@ -289,7 +290,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
                         continue
                     }
 
-                    for (s in 0..<spaces.size()) {
+                    for (int s in 0..<spaces.size()) {
                         final def currentSpace = spaces.get(s)
                         if (!currentSpace.isFittingInside(currentImage)) {
                             continue
@@ -417,7 +418,7 @@ public final class ImagePacker implements Comparator<TextureElement> {
         final int quadSideLength = (int) FastMath.sqrt(pixelCount[currType])
 
         if (quadSideLength > MAX_SIZE) {
-            return [MAX_SIZE, MAX_SIZE]
+            return [MAX_SIZE, MAX_SIZE] as int[]
         }
 
         int width = 1

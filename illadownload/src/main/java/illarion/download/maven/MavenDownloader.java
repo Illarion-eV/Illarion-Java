@@ -56,7 +56,6 @@ import org.eclipse.aether.util.graph.selector.OptionalDependencySelector;
 import org.eclipse.aether.util.graph.selector.ScopeDependencySelector;
 import org.eclipse.aether.util.graph.visitor.FilteringDependencyVisitor;
 import org.eclipse.aether.util.graph.visitor.TreeDependencyVisitor;
-import org.eclipse.aether.version.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +77,9 @@ import static org.eclipse.aether.util.artifact.JavaScopes.*;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class MavenDownloader {
+    @Nonnull
     private static final AppIdent APPLICATION = new AppIdent("Illarion Launcher");
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(MavenDownloader.class);
 
     /**
@@ -89,12 +90,6 @@ public class MavenDownloader {
 
     @Nullable
     private RemoteRepository illarionRepository;
-
-    /**
-     * The service locator used to link in the required services.
-     */
-    @Nonnull
-    private final ServiceLocator serviceLocator;
 
     /**
      * The repository system that is used by this downloader. This stores the repositories that are queried for the
@@ -137,8 +132,8 @@ public class MavenDownloader {
         int requestTimeOut = 60000; // 1 minute
         try {
             log.trace("Starting connection test.");
-            //noinspection UnusedDeclaration
-            InetAddress iNetAddress = InetAddress.getByName("illarion.org");
+            //noinspection ResultOfMethodCallIgnored
+            InetAddress.getByName("illarion.org");
         } catch (IOException e) {
             log.warn("No internet connection. Activating offline mode.");
             offlineFlag = true;
@@ -146,9 +141,13 @@ public class MavenDownloader {
         offline = offlineFlag;
         log.debug("Setting offline flag: {}", offlineFlag);
 
-        serviceLocator = setupServiceLocator();
+        ServiceLocator serviceLocator = setupServiceLocator();
 
-        system = serviceLocator.getService(RepositorySystem.class);
+        RepositorySystem system = serviceLocator.getService(RepositorySystem.class);
+        if (system == null) {
+            throw new IllegalStateException("Failed to init repository system.");
+        }
+        this.system = system;
         session = MavenRepositorySystemUtils.newSession();
 
         repositoryListener = new MavenRepositoryListener();
@@ -176,7 +175,7 @@ public class MavenDownloader {
      */
     @Nullable
     public Collection<File> downloadArtifact(
-            @Nonnull String groupId, @Nonnull String artifactId, @Nullable final MavenDownloaderCallback callback)
+            @Nonnull String groupId, @Nonnull String artifactId, @Nullable MavenDownloaderCallback callback)
             throws DependencyCollectionException, InterruptedException, ExecutionException {
         Artifact artifact = new DefaultArtifact(groupId, artifactId, "jar", "[1,]");
         try {
@@ -189,12 +188,10 @@ public class MavenDownloader {
             request.setRequestContext(RUNTIME);
             VersionRangeResult result = system.resolveVersionRange(session, request);
             NavigableSet<String> versions = new TreeSet<>(new MavenVersionComparator());
-            for (Version version : result.getVersions()) {
-                if (snapshot || !version.toString().contains("SNAPSHOT")) {
-                    log.info("Found {}:{}:jar:{}", groupId, artifactId, version);
-                    versions.add(version.toString());
-                }
-            }
+            result.getVersions().stream().filter(version -> snapshot || !version.toString().contains("SNAPSHOT")).forEach(version -> {
+                log.info("Found {}:{}:jar:{}", groupId, artifactId, version);
+                versions.add(version.toString());
+            });
 
             if (!versions.isEmpty()) {
                 artifact = new DefaultArtifact(groupId, artifactId, "jar", versions.pollLast());
@@ -223,19 +220,15 @@ public class MavenDownloader {
             collectRequest.setRepositories(repositories);
             CollectResult collectResult = system.collectDependencies(session, collectRequest);
 
-            final ProgressMonitor progressMonitor = new ProgressMonitor();
+            ProgressMonitor progressMonitor = new ProgressMonitor();
 
-            ArtifactRequestTracer tracer = new ArtifactRequestTracer() {
-                @Override
-                public void trace(@Nonnull ProgressMonitor monitor, @Nonnull String artifact,
-                                  long totalSize, long transferred) {
-                    if (totalSize >= 0) {
-                        monitor.setProgress(transferred / (float) totalSize);
-                    }
-                    if (callback != null) {
-                        callback.reportNewState(ResolvingArtifacts, progressMonitor, offline,
-                                humanReadableByteCount(transferred, true) + ' ' + artifact);
-                    }
+            ArtifactRequestTracer tracer = (monitor, artifact1, totalSize, transferred) -> {
+                if (totalSize >= 0) {
+                    monitor.setProgress(transferred / (float) totalSize);
+                }
+                if (callback != null) {
+                    callback.reportNewState(ResolvingArtifacts, progressMonitor, offline,
+                            humanReadableByteCount(transferred, true) + ' ' + artifact1);
                 }
             };
 
@@ -262,7 +255,7 @@ public class MavenDownloader {
                 log.info("Downloading is not done yet.");
             }
 
-            List<File> result = new ArrayList<>();
+            Collection<File> result = new ArrayList<>();
             for (@Nonnull Future<ArtifactResult> artifactResult : results) {
                 result.add(artifactResult.get().getArtifact().getFile());
             }

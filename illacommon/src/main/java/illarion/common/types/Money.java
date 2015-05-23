@@ -110,7 +110,6 @@ public final class Money implements Comparable<Money> {
      *
      * @return the money in silver coins
      */
-    @SuppressWarnings("UnusedDeclaration")
     @Contract(pure = true)
     public long getTotalSilver() {
         return copperCoins / COPPER_TO_SILVER;
@@ -121,7 +120,6 @@ public final class Money implements Comparable<Money> {
      *
      * @return the money in gold coins
      */
-    @SuppressWarnings("UnusedDeclaration")
     @Contract(pure = true)
     public long getTotalGold() {
         return copperCoins / COPPER_TO_GOLD;

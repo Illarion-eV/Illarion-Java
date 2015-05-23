@@ -20,7 +20,6 @@ import de.lessvoid.nifty.builder.ImageBuilder;
 import de.lessvoid.nifty.builder.PanelBuilder;
 import de.lessvoid.nifty.controls.*;
 import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
-import de.lessvoid.nifty.controls.textfield.filter.input.TextFieldInputCharFilter;
 import de.lessvoid.nifty.controls.textfield.format.TextFieldDisplayFormat;
 import de.lessvoid.nifty.controls.window.WindowControl;
 import de.lessvoid.nifty.effects.Effect;
@@ -225,26 +224,23 @@ public class DialogCraftingControl extends WindowControl
 
         nifty.subscribeAnnotations(this);
 
-        getAmountTextField().enableInputFilter(new TextFieldInputCharFilter() {
-            @Override
-            public boolean acceptInput(int index, char newChar) {
-                if (!Character.isDigit(newChar)) {
-                    return false;
-                }
-                String currentText = getAmountTextField().getRealText();
-                if (currentText.length() >= 5) {
-                    return false;
-                }
+        getAmountTextField().enableInputFilter((int index, char newChar) -> {
+            if (!Character.isDigit(newChar)) {
+                return false;
+            }
+            String currentText = getAmountTextField().getRealText();
+            if (currentText.length() >= 5) {
+                return false;
+            }
 
-                StringBuilder buffer = new StringBuilder(currentText);
-                buffer.insert(index, newChar);
+            StringBuilder buffer = new StringBuilder(currentText);
+            buffer.insert(index, newChar);
 
-                try {
-                    int value = Integer.parseInt(buffer.toString());
-                    return value > 0;
-                } catch (NumberFormatException ex) {
-                    return false;
-                }
+            try {
+                int value = Integer.parseInt(buffer.toString());
+                return value > 0;
+            } catch (NumberFormatException ex) {
+                return false;
             }
         });
 

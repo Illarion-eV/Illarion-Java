@@ -74,7 +74,6 @@ public final class LoginCmd extends AbstractCommand {
     }
 
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
     @Contract(pure = true)
     public String toString() {

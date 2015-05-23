@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,7 +22,10 @@ import illarion.easynpc.data.Color;
 import illarion.easynpc.data.EquipmentSlots;
 import illarion.easynpc.data.Items;
 import illarion.easynpc.grammar.EasyNpcBaseVisitor;
+import illarion.easynpc.parsed.AbstractParsedTrade.TradeMode;
 import illarion.easynpc.parsed.*;
+import illarion.easynpc.parsed.ParsedColors.ColorTarget;
+import illarion.easynpc.parsed.ParsedHair.HairType;
 import illarion.easynpc.parsed.shared.ParsedItemData;
 import illarion.easynpc.parsed.talk.conditions.*;
 import illarion.easynpc.parsed.talk.consequences.*;
@@ -126,10 +129,10 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> imple
         Color color = getColor(ctx.color());
         switch (startToken.getText()) {
             case "colorHair":
-                npc.addNpcData(new ParsedColors(ParsedColors.ColorTarget.Hair, color));
+                npc.addNpcData(new ParsedColors(ColorTarget.Hair, color));
                 break;
             case "colorSkin":
-                npc.addNpcData(new ParsedColors(ParsedColors.ColorTarget.Skin, color));
+                npc.addNpcData(new ParsedColors(ColorTarget.Skin, color));
                 break;
             default:
                 ctx.addErrorNode(startToken);
@@ -208,10 +211,10 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> imple
         int id = getInteger(ctx.INT());
         switch (startToken.getText()) {
             case "hairID":
-                npc.addNpcData(new ParsedHair(ParsedHair.HairType.Hair, id));
+                npc.addNpcData(new ParsedHair(HairType.Hair, id));
                 break;
             case "beardID":
-                npc.addNpcData(new ParsedHair(ParsedHair.HairType.Beard, id));
+                npc.addNpcData(new ParsedHair(HairType.Beard, id));
                 break;
             default:
                 ctx.addErrorNode(startToken);
@@ -223,16 +226,16 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> imple
     @Override
     public ParsedNpcVisitor visitTraderComplexConfiguration(@NotNull TraderComplexConfigurationContext ctx) {
         Token startToken = ctx.getStart();
-        AbstractParsedTrade.TradeMode tradeMode;
+        TradeMode tradeMode;
         switch (startToken.getText()) {
             case "sellItem":
-                tradeMode = AbstractParsedTrade.TradeMode.selling;
+                tradeMode = TradeMode.selling;
                 break;
             case "buyPrimaryItem":
-                tradeMode = AbstractParsedTrade.TradeMode.buyingPrimary;
+                tradeMode = TradeMode.buyingPrimary;
                 break;
             case "buySecondaryItem":
-                tradeMode = AbstractParsedTrade.TradeMode.buyingSecondary;
+                tradeMode = TradeMode.buyingSecondary;
                 break;
             default:
                 ctx.addErrorNode(startToken);
@@ -292,16 +295,16 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> imple
     public ParsedNpcVisitor visitTraderSimpleConfiguration(
             @NotNull TraderSimpleConfigurationContext ctx) {
         Token startToken = ctx.getStart();
-        AbstractParsedTrade.TradeMode tradeMode;
+        TradeMode tradeMode;
         switch (startToken.getText()) {
             case "sellItems":
-                tradeMode = AbstractParsedTrade.TradeMode.selling;
+                tradeMode = TradeMode.selling;
                 break;
             case "buyPrimaryItems":
-                tradeMode = AbstractParsedTrade.TradeMode.buyingPrimary;
+                tradeMode = TradeMode.buyingPrimary;
                 break;
             case "buySecondaryItems":
-                tradeMode = AbstractParsedTrade.TradeMode.buyingSecondary;
+                tradeMode = TradeMode.buyingSecondary;
                 break;
             default:
                 ctx.addErrorNode(startToken);

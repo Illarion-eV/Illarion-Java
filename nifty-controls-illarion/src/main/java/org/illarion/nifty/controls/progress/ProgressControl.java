@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -58,10 +58,10 @@ public final class ProgressControl extends AbstractController implements Progres
 
     @Override
     public void bind(
-            @Nonnull final Nifty nifty,
-            @Nonnull final Screen screen,
-            @Nonnull final Element element,
-            @Nonnull final Parameters parameter) {
+            @Nonnull Nifty nifty,
+            @Nonnull Screen screen,
+            @Nonnull Element element,
+            @Nonnull Parameters parameter) {
         bind(element);
 
         minImageWidth = parameter.getAsInteger("minImageWidth", 0);
@@ -70,7 +70,7 @@ public final class ProgressControl extends AbstractController implements Progres
     }
 
     @Override
-    public void init(@Nonnull final Parameters parameter) {
+    public void init(@Nonnull Parameters parameter) {
         super.init(parameter);
 
         NiftyImage fillImage = getFillImage();
@@ -143,7 +143,7 @@ public final class ProgressControl extends AbstractController implements Progres
         if (fillArea == null) {
             return;
         }
-        final int oldWidth = maxWidth;
+        int oldWidth = maxWidth;
         maxWidth = fillArea.getWidth();
         if (maxWidth != oldWidth) {
             setProgress(currentProgress, true);
@@ -151,7 +151,7 @@ public final class ProgressControl extends AbstractController implements Progres
     }
 
     @Override
-    public boolean inputEvent(@Nonnull final NiftyInputEvent inputEvent) {
+    public boolean inputEvent(@Nonnull NiftyInputEvent inputEvent) {
         return false;
     }
 
@@ -162,7 +162,7 @@ public final class ProgressControl extends AbstractController implements Progres
      * @param forced {@code true} in case the values are supposed to be updated event if the old and the new progress
      * value are equal
      */
-    private void setProgress(final double value, final boolean forced) {
+    private void setProgress(double value, boolean forced) {
         final double usedValue;
         if (value < 0.f) {
             usedValue = 0.f;
@@ -181,14 +181,14 @@ public final class ProgressControl extends AbstractController implements Progres
         if (unscaledImageMode == null || originalImageMode == null) {
             return;
         }
-        final Element wrapper = getFillWrapper();
-        final Element fill = getFill();
+        Element wrapper = getFillWrapper();
+        Element fill = getFill();
 
         if (wrapper == null || fill == null) {
             return;
         }
 
-        final int width = (int) Math.round(maxWidth * usedValue);
+        int width = (int) Math.round(maxWidth * usedValue);
 
         fill.setConstraintWidth(SizeValue.px(width));
         wrapper.setConstraintWidth(SizeValue.px(width));
@@ -219,7 +219,7 @@ public final class ProgressControl extends AbstractController implements Progres
      * @param value the progress value
      */
     @Override
-    public void setProgress(final double value) {
+    public void setProgress(double value) {
         setProgress(value, false);
     }
 }

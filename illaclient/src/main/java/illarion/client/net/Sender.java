@@ -15,8 +15,6 @@
  */
 package illarion.client.net;
 
-import illarion.client.Debug;
-import illarion.client.IllaClient;
 import illarion.client.net.client.AbstractCommand;
 import illarion.common.net.NetCommWriter;
 import org.slf4j.Logger;
@@ -41,7 +39,6 @@ import java.util.concurrent.*;
  * @author Nop
  */
 @NotThreadSafe
-@SuppressWarnings("ClassNamingConvention")
 final class Sender implements NetCommWriter {
     /**
      * The XOR mask the command ID is masked with to decode the checking ID and
@@ -97,7 +94,6 @@ final class Sender implements NetCommWriter {
      * @param out the output channel of the socket connection used to send the
      * data to the server
      */
-    @SuppressWarnings("nls")
     Sender(@Nonnull WritableByteChannel out) {
         commandExecutor = Executors.newSingleThreadExecutor();
         outChannel = out;
@@ -105,17 +101,14 @@ final class Sender implements NetCommWriter {
         encoder = NetComm.SERVER_STRING_ENCODING.newEncoder();
     }
 
-    void sendCommand(@Nonnull final AbstractCommand cmd) {
-        commandExecutor.submit(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-                try {
-                    encodeCommand(cmd);
-                } catch (Exception e) {
-                    log.error("Error while sending command.", e);
-                }
-                return null;
+    void sendCommand(@Nonnull AbstractCommand cmd) {
+        commandExecutor.submit(() -> {
+            try {
+                encodeCommand(cmd);
+            } catch (Exception e) {
+                log.error("Error while sending command.", e);
             }
+            return null;
         });
     }
 
@@ -146,7 +139,7 @@ final class Sender implements NetCommWriter {
         buffer.putShort((short) crc);
         buffer.position(0);
 
-        if (IllaClient.isDebug(Debug.net)) {
+        if (NetComm.isDumpingActive()) {
             NetComm.dump("snd => ", buffer);
             buffer.flip();
         }

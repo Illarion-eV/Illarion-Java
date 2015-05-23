@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,10 +22,10 @@ import org.pushingpixels.flamingo.api.common.JCommandToggleButton;
 import org.pushingpixels.flamingo.api.common.RichTooltip;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
-import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
+import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies.Mid2Low;
+import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies.Mirror;
 import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
 
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,12 +63,7 @@ final class CompileBand extends JRibbonBand {
             autoCheckScriptButton.doActionClick();
         }
 
-        ActionListener autoCheckScriptAction = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Config.getInstance().setAutoBuild(!Config.getInstance().getAutoBuild());
-            }
-        };
+        ActionListener autoCheckScriptAction = e -> Config.getInstance().setAutoBuild(!Config.getInstance().getAutoBuild());
 
         checkScriptButton.getActionModel().setActionCommand("checkScript");
         autoCheckScriptButton.getActionModel().setActionCommand("autoCheckScript");
@@ -82,8 +77,8 @@ final class CompileBand extends JRibbonBand {
         addCommandButton(autoCheckScriptButton, RibbonElementPriority.MEDIUM);
 
         List<RibbonBandResizePolicy> policies = new ArrayList<>();
-        policies.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
-        policies.add(new CoreRibbonResizePolicies.Mid2Low(getControlPanel()));
+        policies.add(new Mirror(getControlPanel()));
+        policies.add(new Mid2Low(getControlPanel()));
         setResizePolicies(policies);
     }
 }

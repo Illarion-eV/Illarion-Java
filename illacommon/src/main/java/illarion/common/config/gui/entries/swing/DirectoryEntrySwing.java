@@ -69,8 +69,8 @@ public final class DirectoryEntrySwing extends JPanel implements SavableEntry {
              * regular expressions. Also it allows the directories to be shown.
              */
             @Override
-            public boolean accept(@Nonnull File pathname) {
-                return pathname.isDirectory();
+            public boolean accept(@Nonnull File f) {
+                return f.isDirectory();
             }
 
             /**

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -13,6 +13,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
+import proguard.gradle.ProGuardTask
+
 apply plugin: 'java'
 apply plugin: 'application'
 apply from: '../versions.gradle'
@@ -48,7 +50,7 @@ jar {
     }
 }
 
-task proguard(type: proguard.gradle.ProGuardTask, dependsOn: 'jar') {
+task proguard(type: ProGuardTask, dependsOn: 'jar') {
     final def mainFile = new File(project.buildDir, "libs/${project.archivesBaseName}-${project.version}.jar")
             .absolutePath
     injars(mainFile)

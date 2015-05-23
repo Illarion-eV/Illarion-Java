@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,6 +20,7 @@ import illarion.mapedit.crash.exceptions.FormatCorruptedException;
 import illarion.mapedit.data.Map;
 import illarion.mapedit.data.MapItem;
 import illarion.mapedit.data.MapTile;
+import illarion.mapedit.data.MapTile.MapTileFactory;
 import illarion.mapedit.data.MapWarpPoint;
 
 import javax.annotation.Nonnull;
@@ -53,10 +54,10 @@ public class Version2Decoder implements Decoder {
     @Nullable
     private Map map;
 
-    private String name;
-    private Path path;
+    private final String name;
+    private final Path path;
 
-    Version2Decoder(@Nonnull final String name, @Nonnull final Path path) {
+    Version2Decoder(@Nonnull String name, @Nonnull Path path) {
         this.name = name;
         this.path = path;
         map = null;
@@ -67,11 +68,11 @@ public class Version2Decoder implements Decoder {
         height = -1;
     }
 
-    public void decodeItemLine(@Nonnull final String line, final int i) throws FormatCorruptedException {
+    public void decodeItemLine(@Nonnull String line, int i) throws FormatCorruptedException {
         if (line.startsWith("# ")) {
             return;
         }
-        final List<String> matches = getItemMatches(line);
+        List<String> matches = getItemMatches(line);
         if (matches.size() < 4) {
             throw new FormatCorruptedException(path + ".item.txt", line, i,
                                                "<dx>;<dy>;<item ID>;<quality>[;<data value>[;...]]");
@@ -80,11 +81,11 @@ public class Version2Decoder implements Decoder {
     }
 
     @Nonnull
-    private List<String> getItemMatches(final String line) {
-        final Matcher regexMatcher = PATTERN_DATA.matcher(line);
-        final List<String> matches = new LinkedList<>();
+    private List<String> getItemMatches(String line) {
+        Matcher regexMatcher = PATTERN_DATA.matcher(line);
+        List<String> matches = new LinkedList<>();
         while (regexMatcher.find()) {
-            final String match = regexMatcher.group();
+            String match = regexMatcher.group();
             if (!match.isEmpty()) {
                 matches.add(match);
             }
@@ -92,26 +93,26 @@ public class Version2Decoder implements Decoder {
         return matches;
     }
 
-    private void createNewItem(@Nonnull final List<String> matches) {
-        final int itemX = Integer.parseInt(matches.get(0));
-        final int itemY = Integer.parseInt(matches.get(1));
-        final int itemId = Integer.parseInt(matches.get(2));
-        final int itemQuality = Integer.parseInt(matches.get(3));
+    private void createNewItem(@Nonnull List<String> matches) {
+        int itemX = Integer.parseInt(matches.get(0));
+        int itemY = Integer.parseInt(matches.get(1));
+        int itemId = Integer.parseInt(matches.get(2));
+        int itemQuality = Integer.parseInt(matches.get(3));
 
-        final List<String> data = new ArrayList<>();
+        List<String> data = new ArrayList<>();
         if (matches.size() > 4) {
             for (int index = 4; index < matches.size(); index++) {
                 data.add(matches.get(index));
             }
         }
 
-        final MapItem item = new MapItem(itemId, data, itemQuality);
+        MapItem item = new MapItem(itemId, data, itemQuality);
         if (map != null) {
             map.addItemAt(itemX, itemY, item);
         }
     }
 
-    public void decodeTileLine(@Nonnull final String line, final int i) throws FormatCorruptedException {
+    public void decodeTileLine(@Nonnull String line, int i) throws FormatCorruptedException {
         if (line.startsWith("# ")) {
             return;
         }
@@ -121,39 +122,39 @@ public class Version2Decoder implements Decoder {
             decodeHeader(line);
             return;
         }
-        final String[] sections = DELIMITER.split(line);
+        String[] sections = DELIMITER.split(line);
         if (sections.length != 4) {
             throw new FormatCorruptedException(path + ".tiles.txt", line, i, "<dx>;<dy>;<tileID>;<musicID>");
         }
-        final int tx = Integer.parseInt(sections[0]);
-        final int ty = Integer.parseInt(sections[1]);
-        final int tid = Integer.parseInt(sections[2]);
-        final int tmid = Integer.parseInt(sections[3]);
+        int tx = Integer.parseInt(sections[0]);
+        int ty = Integer.parseInt(sections[1]);
+        int tid = Integer.parseInt(sections[2]);
+        int tmid = Integer.parseInt(sections[3]);
         final MapTile tile;
         if (TileInfo.hasOverlay(tid)) {
-            tile = MapTile.MapTileFactory
+            tile = MapTileFactory
                     .createNew(TileInfo.getBaseID(tid), TileInfo.getOverlayID(tid), TileInfo.getShapeId(tid), tmid);
         } else {
-            tile = MapTile.MapTileFactory.createNew(tid, 0, 0, tmid);
+            tile = MapTileFactory.createNew(tid, 0, 0, tmid);
         }
         map.setTileAt(tx, ty, tile);
     }
 
-    public void decodeAnnoLine(final String line, final int i) throws FormatCorruptedException {
+    public void decodeAnnoLine(String line, int i) throws FormatCorruptedException {
         if (line.startsWith("# ")) {
             return;
         }
-        final String[] sections = DELIMITER.split(line);
+        String[] sections = DELIMITER.split(line);
         if (sections.length != 4) {
             throw new FormatCorruptedException(path + ".annot.txt", line, i, "<sx>;<sy>;<type>;<annotation>");
         }
-        final int sx = Integer.parseInt(sections[0]);
-        final int sy = Integer.parseInt(sections[1]);
-        final int index = Integer.parseInt(sections[2]);
-        final String annotation = sections[3];
+        int sx = Integer.parseInt(sections[0]);
+        int sy = Integer.parseInt(sections[1]);
+        int index = Integer.parseInt(sections[2]);
+        String annotation = sections[3];
 
         if (map != null) {
-            final MapTile tile = map.getTileAt(sx, sy);
+            MapTile tile = map.getTileAt(sx, sy);
             if ((tile != null) && (index == 0)) {
                 tile.setAnnotation(annotation);
             }
@@ -163,21 +164,21 @@ public class Version2Decoder implements Decoder {
         }
     }
 
-    public void decodeWarpLine(@Nonnull final String line, final int i) throws FormatCorruptedException {
+    public void decodeWarpLine(@Nonnull String line, int i) throws FormatCorruptedException {
         if (line.startsWith("# ")) {
             return;
         }
         // <sx>;<sy>;<tx>;<ty>;<tz>
-        final String[] sections = DELIMITER.split(line);
+        String[] sections = DELIMITER.split(line);
         if (sections.length != 5) {
             throw new FormatCorruptedException(path + ".warps.txt", line, i, "<sx>;<sy>;<tx>;<ty>;<tz>");
         }
-        final int sx = Integer.parseInt(sections[0]);
-        final int sy = Integer.parseInt(sections[1]);
-        final int tx = Integer.parseInt(sections[2]);
-        final int ty = Integer.parseInt(sections[3]);
-        final int tz = Integer.parseInt(sections[4]);
-        final MapWarpPoint warp = new MapWarpPoint(tx, ty, tz);
+        int sx = Integer.parseInt(sections[0]);
+        int sy = Integer.parseInt(sections[1]);
+        int tx = Integer.parseInt(sections[2]);
+        int ty = Integer.parseInt(sections[3]);
+        int tz = Integer.parseInt(sections[4]);
+        MapWarpPoint warp = new MapWarpPoint(tx, ty, tz);
         if (map != null) {
             map.setWarpAt(sx, sy, warp);
         }
@@ -207,7 +208,7 @@ public class Version2Decoder implements Decoder {
         return map;
     }
 
-    private void decodeHeader(final String line) {
+    private void decodeHeader(String line) {
         Matcher matcher = PATTERN_L.matcher(line);
         if (matcher.find()) {
             level = Integer.parseInt(matcher.group(1));

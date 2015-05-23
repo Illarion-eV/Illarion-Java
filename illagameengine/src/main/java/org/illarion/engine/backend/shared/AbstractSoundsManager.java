@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -52,10 +52,10 @@ public abstract class AbstractSoundsManager implements SoundsManager {
 
     @Nullable
     @Override
-    public final Sound getSound(@Nonnull final String ref) {
-        @Nullable final Sound existingSound = loadedSounds.get(ref);
+    public final Sound getSound(@Nonnull String ref) {
+        @Nullable Sound existingSound = loadedSounds.get(ref);
         if (existingSound == null) {
-            @Nullable final Sound loadedSound = loadSound(ref);
+            @Nullable Sound loadedSound = loadSound(ref);
             if (loadedSound != null) {
                 loadedSounds.put(ref, loadedSound);
             }
@@ -84,10 +84,10 @@ public abstract class AbstractSoundsManager implements SoundsManager {
 
     @Nullable
     @Override
-    public final Music getMusic(@Nonnull final String ref) {
-        @Nullable final Music existingMusic = loadedMusic.get(ref);
+    public final Music getMusic(@Nonnull String ref) {
+        @Nullable Music existingMusic = loadedMusic.get(ref);
         if (existingMusic == null) {
-            @Nullable final Music loadedMusicHandle = loadMusic(ref);
+            @Nullable Music loadedMusicHandle = loadMusic(ref);
             if (loadedMusicHandle != null) {
                 loadedMusic.put(ref, loadedMusicHandle);
             }

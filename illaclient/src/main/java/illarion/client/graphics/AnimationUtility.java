@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -189,7 +189,7 @@ public final class AnimationUtility {
             float min,
             float max,
             int delta) {
-        float diff = (target - value);
+        float diff = target - value;
         if (diff != 0) {
             int dir = (int) (diff / FastMath.abs(diff));
             diff = FastMath.abs(diff);
@@ -263,7 +263,7 @@ public final class AnimationUtility {
             int min,
             int max,
             int delta) {
-        int diff = (target - value);
+        int diff = target - value;
         if (diff != 0) {
             int dir = FastMath.sign(diff);
             diff = FastMath.abs(diff);

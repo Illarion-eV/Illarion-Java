@@ -40,6 +40,7 @@ import illarion.common.config.ConfigSystem;
 import illarion.common.util.AppIdent;
 import illarion.common.util.Crypto;
 import illarion.common.util.DirectoryManager;
+import illarion.common.util.DirectoryManager.Directory;
 import illarion.common.util.TableLoader;
 import org.bushe.swing.event.*;
 import org.illarion.engine.Backend;
@@ -119,17 +120,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     private ConfigSystem cfg;
 
     /**
-     * Stores the debug level of the client.
-     */
-    private int debugLevel = 0;
-
-    /**
-     * The class loader of the this class. It is used to get the resource streams that contain the resource data of the
-     * client.
-     */
-    private final ClassLoader rscLoader = IllaClient.class.getClassLoader();
-
-    /**
      * Stores the server the client shall connect to.
      */
     @Nonnull
@@ -149,7 +139,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      * The default empty constructor used to create the singleton instance of this class.
      */
     private IllaClient() {
-
     }
 
     /**
@@ -232,8 +221,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         }
 
         gameContainer.setTitle(APPLICATION.getApplicationIdentifier());
-        gameContainer.setIcons(new String[]{"illarion_client16.png", "illarion_client32.png", "illarion_client64.png",
-                                            "illarion_client256.png"});
+        gameContainer.setIcons("illarion_client16.png", "illarion_client32.png", "illarion_client64.png", "illarion_client256.png");
 
         EventBus.subscribe(CFG_FULLSCREEN, this);
         EventBus.subscribe(CFG_RESOLUTION, this);
@@ -301,8 +289,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      *
      * @param message the error message that shall be displayed.
      */
-    @SuppressWarnings("nls")
-    public static void errorExit(@Nonnull final String message) {
+    public static void errorExit(@Nonnull String message) {
         World.cleanEnvironment();
 
         LOGGER.info("Client terminated on user request.");
@@ -312,12 +299,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
 
         INSTANCE.cfg.save();
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
-                startFinalKiller();
-            }
+        new Thread(() -> {
+            JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
+            startFinalKiller();
         }).start();
     }
 
@@ -349,7 +333,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      */
     @Nonnull
     public static Path getFile(@Nonnull String name) {
-        Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        Path userDir = DirectoryManager.getInstance().getDirectory(Directory.User);
         return userDir.resolve(name);
     }
 
@@ -364,22 +348,11 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     }
 
     /**
-     * Check if a debug flag is set or not.
-     *
-     * @param flag the debug flag that shall be checked
-     * @return true in case the flag is enabled, false if not
-     */
-    public static boolean isDebug(@Nonnull Debug flag) {
-        return (INSTANCE.debugLevel & (1 << flag.ordinal())) > 0;
-    }
-
-    /**
      * Main function starts the client and sets up all data.
      *
      * @param args the arguments handed over to the client
      */
-    @SuppressWarnings("nls")
-    public static void main(String[] args) {
+    public static void main(String... args) {
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
 
@@ -397,7 +370,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      * 10 seconds before it forcefully shuts down everything. This is used to ensure that the client quits when it has
      * to, but in case it does so faster, it won't be killed like that.
      */
-    @SuppressWarnings("nls")
     public static void startFinalKiller() {
         Timer finalKiller = new Timer("Final Death", true);
         finalKiller.schedule(new TimerTask() {
@@ -444,9 +416,8 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     /**
      * Basic initialization of the log files and the debug settings.
      */
-    @SuppressWarnings("nls")
     private static void initLogfiles() throws IOException {
-        Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        Path userDir = DirectoryManager.getInstance().getDirectory(Directory.User);
         if (!Files.isDirectory(userDir)) {
             if (Files.exists(userDir)) {
                 Files.delete(userDir);
@@ -481,7 +452,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     /**
      * Prepare the configuration system and the decryption system.
      */
-    @SuppressWarnings("nls")
     private void prepareConfig() {
         cfg = new ConfigSystem(getFile("Illarion.xcfgz"));
         cfg.setDefault("debugLevel", 1);

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,6 +18,7 @@ package org.illarion.engine.backend.gdx;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import org.illarion.engine.backend.shared.AbstractTextureManager;
@@ -46,7 +47,7 @@ class GdxTextureManager extends AbstractTextureManager<Pixmap> {
     protected GdxTexture loadTexture(@Nonnull String resource, @Nonnull Pixmap preLoadData) {
         try {
             Texture tex = new Texture(preLoadData, false);
-            tex.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+            tex.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
             TextureRegion region = new TextureRegion(tex);
             region.flip(false, false);
             return new GdxTexture(region);

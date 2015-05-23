@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -30,7 +30,10 @@ import java.util.ResourceBundle;
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class Util {
+final class Util {
+    private Util() {
+    }
+
     /**
      * Load a FXML file.
      *
@@ -40,18 +43,18 @@ class Util {
      */
     @Nonnull
     public static <T> T loadFXML(
-            @Nonnull final String file, @Nonnull final GuiModel model, @Nonnull final ResourceBundle bundle)
+            @Nonnull String file, @Nonnull GuiModel model, @Nonnull ResourceBundle bundle)
             throws IOException {
-        final URL resource = Util.class.getResource(file);
+        URL resource = Util.class.getResource(file);
         if (resource == null) {
             throw new FileNotFoundException("Failed to locate the resource: " + file);
         }
 
-        final FXMLLoader loader = new FXMLLoader(resource, bundle);
+        FXMLLoader loader = new FXMLLoader(resource, bundle);
 
-        final T obj = (T) loader.load();
+        T obj = loader.load();
 
-        final Controller controller = loader.getController();
+        Controller controller = loader.getController();
         if (controller != null) {
             controller.setModel(model);
         }
@@ -59,8 +62,8 @@ class Util {
         return obj;
     }
 
-    public static ResourceBundle loadResourceBundle(@Nonnull final String name) {
-        final String dir = "illarion/download/gui/view/";
+    public static ResourceBundle loadResourceBundle(@Nonnull String name) {
+        String dir = "illarion/download/gui/view/";
         final ResourceBundle bundle;
         if (Locale.getDefault().getLanguage().equals(Locale.GERMAN.getLanguage())) {
             bundle = ResourceBundle.getBundle(dir + name, Locale.GERMAN, Util.class.getClassLoader());
@@ -71,12 +74,12 @@ class Util {
     }
 
     @Nullable
-    public static String getCssReference(@Nonnull final String baseName) {
-        @Nullable final URL bss = Util.class.getResource(baseName + ".bss");
+    public static String getCssReference(@Nonnull String baseName) {
+        @Nullable URL bss = Util.class.getResource(baseName + ".bss");
         if (bss != null) {
             return bss.toExternalForm();
         }
-        @Nullable final URL css = Util.class.getResource(baseName + ".css");
+        @Nullable URL css = Util.class.getResource(baseName + ".css");
         if (css != null) {
             return css.toExternalForm();
         }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -49,7 +49,7 @@ public class OpenMapTableModel extends AbstractTableModel {
     }
 
     @Override
-    public void setValueAt(final Object value, final int row, final int column) {
+    public void setValueAt(Object value, int row, int column) {
         if (column == 0) {
             maps.get(row).setVisible((Boolean) value);
             EventBus.publish(new RepaintRequestEvent());
@@ -57,13 +57,13 @@ public class OpenMapTableModel extends AbstractTableModel {
     }
 
     @Override
-    public String getColumnName(final int col) {
+    public String getColumnName(int col) {
         return columnNames[col];
     }
 
     @Nullable
     @Override
-    public Object getValueAt(final int row, final int column) {
+    public Object getValueAt(int row, int column) {
         if (column == 0) {
             return maps.get(row).isVisible();
         }
@@ -75,7 +75,7 @@ public class OpenMapTableModel extends AbstractTableModel {
 
     @Nonnull
     @Override
-    public Class getColumnClass(final int column) {
+    public Class<?> getColumnClass(int column) {
         if (column == 0) {
             return Boolean.class;
         }
@@ -85,14 +85,14 @@ public class OpenMapTableModel extends AbstractTableModel {
         return String.class;
     }
 
-    public void setTableData(@Nonnull final Collection<Map> maps) {
+    public void setTableData(@Nonnull Collection<Map> maps) {
         this.maps.clear();
         this.maps.addAll(maps);
         fireTableDataChanged();
     }
 
     @Override
-    public boolean isCellEditable(final int rowIndex, final int columnIndex) {
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
         return columnIndex != 1;
     }
 }

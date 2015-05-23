@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,12 +20,14 @@ import ch.qos.logback.classic.util.ContextInitializer;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
 import illarion.common.util.DirectoryManager;
+import illarion.common.util.DirectoryManager.Directory;
 import illarion.easyquest.Lang;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.common.RichTooltip;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
+import org.pushingpixels.substance.api.skin.OfficeSilver2007Skin;
 import org.pushingpixels.substance.api.tabbed.VetoableTabCloseListener;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -34,8 +36,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.nio.file.Path;
@@ -50,7 +50,7 @@ public class MainFrame extends JRibbonFrame {
 
     private final VetoableTabCloseListener editorTabListener = new VetoableTabCloseListener() {
         @Override
-        public void tabClosed(@Nonnull final JTabbedPane pane, final Component component) {
+        public void tabClosed(@Nonnull JTabbedPane pane, Component component) {
             //((Editor) component).cleanup();
             if (pane.getTabCount() == 0) {
                 addNewQuest();
@@ -58,22 +58,21 @@ public class MainFrame extends JRibbonFrame {
         }
 
         @Override
-        public void tabClosing(final JTabbedPane pane, final Component component) {
+        public void tabClosing(JTabbedPane pane, Component component) {
             // nothing
         }
 
-        @SuppressWarnings("nls")
         @Override
-        public boolean vetoTabClosing(final JTabbedPane pane, final Component component) {
-            final Editor editor = (Editor) component;
+        public boolean vetoTabClosing(JTabbedPane pane, Component component) {
+            Editor editor = (Editor) component;
             if (!editor.changedSinceSave()) {
                 return false;
             }
 
-            final Object[] options = new Object[]{Lang.getMsg(MainFrame.class, "UnsavedChanges.saveButton"),
+            Object[] options = {Lang.getMsg(MainFrame.class, "UnsavedChanges.saveButton"),
                                                   Lang.getMsg(MainFrame.class, "UnsavedChanges.discardButton"),
                                                   Lang.getMsg(MainFrame.class, "UnsavedChanges.cancelButton")};
-            final int result = JOptionPane.showOptionDialog(MainFrame.getInstance(),
+            int result = JOptionPane.showOptionDialog(getInstance(),
                                                             Lang.getMsg(MainFrame.class, "UnsavedChanges" + ".message"),
                                                             Lang.getMsg(MainFrame.class, "UnsavedChanges.title"),
                                                             JOptionPane.YES_NO_CANCEL_OPTION,
@@ -83,7 +82,7 @@ public class MainFrame extends JRibbonFrame {
                 Utils.saveEasyQuest(editor);
                 return false;
             }
-            return (result == JOptionPane.CANCEL_OPTION);
+            return result == JOptionPane.CANCEL_OPTION;
         }
     };
 
@@ -99,46 +98,31 @@ public class MainFrame extends JRibbonFrame {
 
         setApplicationIcon(Utils.getResizableIconFromResource("easyquest.png"));
 
-        final RibbonTask graphTask = new RibbonTask(Lang.getMsg(getClass(), "ribbonTaskQuest"), new ClipboardBand(),
+        RibbonTask graphTask = new RibbonTask(Lang.getMsg(getClass(), "ribbonTaskQuest"), new ClipboardBand(),
                                                     new GraphBand(), new ServerBand());
         getRibbon().addTask(graphTask);
 
         getRibbon().setApplicationMenu(new MainMenu());
 
-        final JCommandButton saveButton = new JCommandButton(Utils.getResizableIconFromResource("filesave.png"));
+        JCommandButton saveButton = new JCommandButton(Utils.getResizableIconFromResource("filesave.png"));
         saveButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(getClass(), "saveButtonTooltipTitle"),
                                                         Lang.getMsg(getClass(), "saveButtonTooltip")));
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                Utils.saveEasyQuest(getCurrentQuestEditor());
-            }
-        });
+        saveButton.addActionListener(e -> Utils.saveEasyQuest(getCurrentQuestEditor()));
         getRibbon().addTaskbarComponent(saveButton);
 
-        final JCommandButton undoButton = new JCommandButton(Utils.getResizableIconFromResource("undo.png"));
+        JCommandButton undoButton = new JCommandButton(Utils.getResizableIconFromResource("undo.png"));
         undoButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(getClass(), "undoButtonTooltipTitle"),
                                                         Lang.getMsg(getClass(), "undoButtonTooltip")));
-        undoButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                getCurrentQuestEditor().getUndoManager().undo();
-            }
-        });
+        undoButton.addActionListener(e -> getCurrentQuestEditor().getUndoManager().undo());
         getRibbon().addTaskbarComponent(undoButton);
 
-        final JCommandButton redoButton = new JCommandButton(Utils.getResizableIconFromResource("redo.png"));
+        JCommandButton redoButton = new JCommandButton(Utils.getResizableIconFromResource("redo.png"));
         redoButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(getClass(), "redoButtonTooltipTitle"),
                                                         Lang.getMsg(getClass(), "redoButtonTooltip")));
-        redoButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                getCurrentQuestEditor().getUndoManager().redo();
-            }
-        });
+        redoButton.addActionListener(e -> getCurrentQuestEditor().getUndoManager().redo());
         getRibbon().addTaskbarComponent(redoButton);
 
-        final JPanel rootPanel = new JPanel(new BorderLayout());
+        JPanel rootPanel = new JPanel(new BorderLayout());
         tabbedEditorArea = new JTabbedPane(SwingConstants.TOP);
         rootPanel.add(tabbedEditorArea, BorderLayout.CENTER);
         SubstanceLookAndFeel.registerTabCloseChangeListener(tabbedEditorArea, editorTabListener);
@@ -151,37 +135,37 @@ public class MainFrame extends JRibbonFrame {
         addWindowListener(new WindowListener() {
 
             @Override
-            public void windowActivated(final WindowEvent e) {
+            public void windowActivated(WindowEvent e) {
                 // nothing
             }
 
             @Override
-            public void windowClosed(final WindowEvent e) {
-                MainFrame.getInstance().dispose();
+            public void windowClosed(WindowEvent e) {
+                getInstance().dispose();
             }
 
             @Override
-            public void windowClosing(final WindowEvent e) {
-                MainFrame.getInstance().closeWindow();
+            public void windowClosing(WindowEvent e) {
+                getInstance().closeWindow();
             }
 
             @Override
-            public void windowDeactivated(final WindowEvent e) {
+            public void windowDeactivated(WindowEvent e) {
                 // nothing
             }
 
             @Override
-            public void windowDeiconified(final WindowEvent e) {
+            public void windowDeiconified(WindowEvent e) {
                 // nothing
             }
 
             @Override
-            public void windowIconified(final WindowEvent e) {
+            public void windowIconified(WindowEvent e) {
                 // nothing
             }
 
             @Override
-            public void windowOpened(final WindowEvent e) {
+            public void windowOpened(WindowEvent e) {
                 // nothing
             }
         });
@@ -193,27 +177,23 @@ public class MainFrame extends JRibbonFrame {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String... args) {
         initLogging();
         Config.getInstance().init();
 
         JRibbonFrame.setDefaultLookAndFeelDecorated(true);
         JDialog.setDefaultLookAndFeelDecorated(true);
 
-        SwingUtilities.invokeLater(new Runnable() {
-            @SuppressWarnings("synthetic-access")
-            @Override
-            public void run() {
-                SubstanceLookAndFeel.setSkin(new org.pushingpixels.substance.api.skin.OfficeSilver2007Skin());
+        SwingUtilities.invokeLater(() -> {
+            SubstanceLookAndFeel.setSkin(new OfficeSilver2007Skin());
 
-                instance = new MainFrame();
-                getInstance().setDefaultCloseOperation(JRibbonFrame.EXIT_ON_CLOSE);
-                getInstance().setSize(1204, 768);
-                getInstance().setLocationRelativeTo(null);
-                getInstance().setVisible(true);
+            instance = new MainFrame();
+            getInstance().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            getInstance().setSize(1204, 768);
+            getInstance().setLocationRelativeTo(null);
+            getInstance().setVisible(true);
 
-                System.out.println("Startup done.");
-            }
+            System.out.println("Startup done.");
         });
     }
 
@@ -222,7 +202,7 @@ public class MainFrame extends JRibbonFrame {
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
 
-        Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        Path userDir = DirectoryManager.getInstance().getDirectory(Directory.User);
         if (userDir == null) {
             return;
         }
@@ -250,7 +230,7 @@ public class MainFrame extends JRibbonFrame {
     }
 
     @Nonnull
-    protected Editor getQuestEditor(final int index) {
+    protected Editor getQuestEditor(int index) {
         return (Editor) tabbedEditorArea.getComponentAt(index);
     }
 
@@ -269,13 +249,13 @@ public class MainFrame extends JRibbonFrame {
         return tabbedEditorArea.getTabCount();
     }
 
-    public void setCurrentTabTitle(final String title) {
+    public void setCurrentTabTitle(String title) {
         setTabTitle(tabbedEditorArea.getSelectedIndex(), title);
     }
 
     @Nonnull
     protected Editor addNewQuest(@Nullable Path quest) {
-        final Editor editor = Editor.loadQuest(quest);
+        Editor editor = Editor.loadQuest(quest);
         editor.putClientProperty(SubstanceLookAndFeel.TABBED_PANE_CLOSE_BUTTONS_PROPERTY, Boolean.TRUE);
         tabbedEditorArea
                 .insertTab(Lang.getMsg(getClass(), "newQuestTab"), null, editor, null, tabbedEditorArea.getTabCount());
@@ -288,8 +268,8 @@ public class MainFrame extends JRibbonFrame {
         return addNewQuest(null);
     }
 
-    protected int alreadyOpen(@Nonnull final Path file) {
-        final int count = tabbedEditorArea.getComponentCount();
+    protected int alreadyOpen(@Nonnull Path file) {
+        int count = tabbedEditorArea.getComponentCount();
         Editor currentComp;
         for (int i = 0; i < count; i++) {
             currentComp = (Editor) tabbedEditorArea.getComponent(i);
@@ -300,15 +280,15 @@ public class MainFrame extends JRibbonFrame {
         return -1;
     }
 
-    protected void setCurrentEditorTab(final int index) {
+    protected void setCurrentEditorTab(int index) {
         tabbedEditorArea.setSelectedIndex(index);
 
         //UndoMonitor.getInstance().updateUndoRedo(
         //    getScriptEditor(index).getUndoManager());
     }
 
-    protected void setTabTitle(final Editor component, final String title) {
-        final int count = tabbedEditorArea.getComponentCount();
+    protected void setTabTitle(Editor component, String title) {
+        int count = tabbedEditorArea.getComponentCount();
         Editor currentComp;
         for (int i = 0; i < count; i++) {
             currentComp = (Editor) tabbedEditorArea.getComponent(i);
@@ -318,7 +298,7 @@ public class MainFrame extends JRibbonFrame {
         }
     }
 
-    private void setTabTitle(final int index, final String title) {
+    private void setTabTitle(int index, String title) {
         tabbedEditorArea.setTitleAt(index, title);
     }
 

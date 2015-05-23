@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -141,12 +141,7 @@ public final class UndoMonitor implements UndoableEditListener, ChangeListener {
      * undo and the redo button, in case the manager is
      * {@code null} the buttons are disabled
      */
-    public void updateUndoRedoLater(final Editor manager) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                updateUndoRedo(manager);
-            }
-        });
+    public void updateUndoRedoLater(Editor manager) {
+        SwingUtilities.invokeLater(() -> updateUndoRedo(manager));
     }
 }

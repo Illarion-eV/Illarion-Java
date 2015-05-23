@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -48,6 +48,7 @@ public class PositionParameter extends JPanel implements Parameter {
         setParameter(new Position());
     }
 
+    @Override
     public void setParameter(@Nullable Object parameter) {
         Position p;
         if (parameter != null) {
@@ -60,6 +61,7 @@ public class PositionParameter extends JPanel implements Parameter {
         zField.setValue(p.getZ());
     }
 
+    @Override
     @Nonnull
     public Object getParameter() {
         return new Position(((Number) xField.getValue()).shortValue(), ((Number) yField.getValue()).shortValue(),

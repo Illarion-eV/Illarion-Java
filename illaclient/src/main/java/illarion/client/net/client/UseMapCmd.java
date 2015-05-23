@@ -53,7 +53,6 @@ public final class UseMapCmd extends AbstractCommand {
     }
 
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
     public String toString() {
         return toString("Location: " + usedLocation);

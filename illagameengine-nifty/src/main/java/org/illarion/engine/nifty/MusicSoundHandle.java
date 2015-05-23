@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -45,7 +45,7 @@ class MusicSoundHandle implements SoundHandle {
      * @param soundsEngine the sound engine used to play the music
      * @param music the music track that is played
      */
-    MusicSoundHandle(@Nonnull final Sounds soundsEngine, @Nonnull final Music music) {
+    MusicSoundHandle(@Nonnull Sounds soundsEngine, @Nonnull Music music) {
         this.music = music;
         this.soundsEngine = soundsEngine;
     }
@@ -61,7 +61,7 @@ class MusicSoundHandle implements SoundHandle {
     }
 
     @Override
-    public void setVolume(final float volume) {
+    public void setVolume(float volume) {
         soundsEngine.setMusicVolume(volume);
     }
 

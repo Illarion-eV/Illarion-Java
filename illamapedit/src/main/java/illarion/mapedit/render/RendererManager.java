@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -63,26 +63,26 @@ public class RendererManager {
         AnnotationProcessor.process(this);
     }
 
-    public void addRenderer(final AbstractMapRenderer r) {
+    public void addRenderer(AbstractMapRenderer r) {
         renderers.add(r);
         Collections.sort(renderers);
         EventBus.publish(new RepaintRequestEvent());
     }
 
-    public void removeRenderer(final AbstractMapRenderer r) {
+    public void removeRenderer(AbstractMapRenderer r) {
         renderers.remove(r);
         EventBus.publish(new RepaintRequestEvent());
     }
 
-    public void render(final Map map, @Nonnull final Rectangle viewport, @Nonnull final Graphics2D g) {
-        final Rectangle renderViewport = new Rectangle((int) (viewport.x - (getTileWidth() * getZoom())),
+    public void render(Map map, @Nonnull Rectangle viewport, @Nonnull Graphics2D g) {
+        Rectangle renderViewport = new Rectangle((int) (viewport.x - (getTileWidth() * getZoom())),
                                                        (int) (viewport.y - (getTileHeight() * getZoom())),
                                                        (int) (viewport.width + (2 * getTileWidth() * getZoom())),
                                                        (int) (viewport.height + (2 * getTileHeight() * getZoom())));
-        final AffineTransform t = g.getTransform();
+        AffineTransform t = g.getTransform();
         g.translate(translationX, translationY);
         g.scale(getZoom(), getZoom());
-        for (final AbstractMapRenderer r : renderers) {
+        for (AbstractMapRenderer r : renderers) {
             r.renderMap(map, renderViewport, actualLevel, g);
         }
         g.setTransform(t);
@@ -96,7 +96,7 @@ public class RendererManager {
         return DEFAULT_TILE_WIDTH;
     }
 
-    public void setZoom(final float zoom, @Nullable final Vector2i zoomPoint) {
+    public void setZoom(float zoom, @Nullable Vector2i zoomPoint) {
         if (zoomPoint == null) {
             setZoom(zoom);
             return;
@@ -104,20 +104,20 @@ public class RendererManager {
         if ((zoom < .1) || (zoom > 1)) {
             return;
         }
-        final int viewportWidth = panelViewport.width;
-        final int viewportHeight = panelViewport.height;
+        int viewportWidth = panelViewport.width;
+        int viewportHeight = panelViewport.height;
 
-        final float relativeX = zoomPoint.getX() / (float) viewportWidth;
-        final float relativeY = zoomPoint.getY() / (float) viewportHeight;
+        float relativeX = zoomPoint.getX() / (float) viewportWidth;
+        float relativeY = zoomPoint.getY() / (float) viewportHeight;
 
-        final float oldViewportWidth = viewportWidth / this.zoom;
-        final float oldViewportHeight = viewportHeight / this.zoom;
+        float oldViewportWidth = viewportWidth / this.zoom;
+        float oldViewportHeight = viewportHeight / this.zoom;
 
-        final float newViewportWidth = viewportWidth / zoom;
-        final float newViewportHeight = viewportHeight / zoom;
+        float newViewportWidth = viewportWidth / zoom;
+        float newViewportHeight = viewportHeight / zoom;
 
-        final int fixX = Math.round((newViewportWidth - oldViewportWidth) * relativeX);
-        final int fixY = Math.round((newViewportHeight - oldViewportHeight) * relativeY);
+        int fixX = Math.round((newViewportWidth - oldViewportWidth) * relativeX);
+        int fixY = Math.round((newViewportHeight - oldViewportHeight) * relativeY);
 
         translationX /= this.zoom;
         translationY /= this.zoom;
@@ -132,11 +132,11 @@ public class RendererManager {
         EventBus.publish(new RepaintRequestEvent());
     }
 
-    public void setZoom(final float zoom) {
+    public void setZoom(float zoom) {
         if ((zoom < .1) || (zoom > 1)) {
             return;
         }
-        final Vector2i zoomPoint = new Vector2i(panelViewport.width / 2, panelViewport.height / 2);
+        Vector2i zoomPoint = new Vector2i(panelViewport.width / 2, panelViewport.height / 2);
         setZoom(zoom, zoomPoint);
     }
 
@@ -148,7 +148,7 @@ public class RendererManager {
         return translationX;
     }
 
-    public void setTranslationX(final int translationX) {
+    public void setTranslationX(int translationX) {
         this.translationX = translationX;
     }
 
@@ -156,27 +156,27 @@ public class RendererManager {
         return translationY;
     }
 
-    public void setTranslationY(final int translationY) {
+    public void setTranslationY(int translationY) {
         this.translationY = translationY;
     }
 
-    public void zoomIn(final Vector2i pos) {
+    public void zoomIn(Vector2i pos) {
         if (zoom < 1) {
             setZoom(zoom + ZOOM_STEP, pos);
         }
     }
 
-    public void zoomOut(final Vector2i pos) {
+    public void zoomOut(Vector2i pos) {
         if (zoom > 0) {
             setZoom(zoom - ZOOM_STEP, pos);
         }
     }
 
-    public void changeZoom(final float amount, final Vector2i pos) {
+    public void changeZoom(float amount, Vector2i pos) {
         setZoom(zoom + amount, pos);
     }
 
-    public void changeTranslation(final int x, final int y) {
+    public void changeTranslation(int x, int y) {
         setTranslationX(translationX + x);
         setTranslationY(translationY + y);
     }
@@ -185,7 +185,7 @@ public class RendererManager {
         return MIN_ZOOM;
     }
 
-    public void setPanelViewport(@Nullable final Rectangle panelViewport) {
+    public void setPanelViewport(@Nullable Rectangle panelViewport) {
         if (panelViewport == null) {
             LOGGER.warn("SetPanelViewport: panelViewport is null");
             return;
@@ -196,20 +196,20 @@ public class RendererManager {
         this.panelViewport.setRect(panelViewport.x, panelViewport.y, panelViewport.width, panelViewport.height);
     }
 
-    public void setDefaultTranslationY(final int defaultTranslationY) {
+    public void setDefaultTranslationY(int defaultTranslationY) {
         this.defaultTranslationY = defaultTranslationY;
     }
 
-    public void setDefaultTranslationX(final int defaultTranslationX) {
+    public void setDefaultTranslationX(int defaultTranslationX) {
         this.defaultTranslationX = defaultTranslationX;
     }
 
-    public void setSelectedLevel(final int level) {
+    public void setSelectedLevel(int level) {
         actualLevel = level;
     }
 
     @EventSubscriber
-    public void onZoom(@Nonnull final ZoomEvent e) {
+    public void onZoom(@Nonnull ZoomEvent e) {
         if (e.isOriginal()) {
             setZoom(DEFAULT_ZOOM);
             setTranslationX(defaultTranslationX);
@@ -220,7 +220,7 @@ public class RendererManager {
     }
 
     @EventSubscriber
-    public void onScroll(@Nonnull final MapScrollEvent e) {
+    public void onScroll(@Nonnull MapScrollEvent e) {
         changeTranslation(e.getX(), e.getY());
         EventBus.publish(new RepaintRequestEvent());
     }

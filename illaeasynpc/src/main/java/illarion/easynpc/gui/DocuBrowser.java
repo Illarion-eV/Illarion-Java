@@ -25,8 +25,6 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreeNode;
 import java.awt.*;
 import java.io.IOException;
@@ -214,12 +212,7 @@ public final class DocuBrowser extends JDialog {
         splitPane.add(contentScroll, JSplitPane.LEFT);
         splitPane.add(detailsScroll, JSplitPane.RIGHT);
 
-        contentTree.addTreeSelectionListener(new TreeSelectionListener() {
-            @Override
-            public void valueChanged(@Nonnull TreeSelectionEvent e) {
-                ((DocuTreeNode) e.getPath().getLastPathComponent()).displayNode();
-            }
-        });
+        contentTree.addTreeSelectionListener(e -> ((DocuTreeNode) e.getPath().getLastPathComponent()).displayNode());
 
         getContentPane().add(splitPane);
 

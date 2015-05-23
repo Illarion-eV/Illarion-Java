@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -34,14 +34,14 @@ public final class AnimationManager {
      * The animation to add.
      */
     @Nonnull
-    private final List<AbstractAnimation> addAnimations;
+    private final List<AbstractAnimation<?>> addAnimations;
 
     /**
      * The list of animations that are registered to the manager. All animations
      * in here need to be updated when the animate function is called.
      */
     @Nonnull
-    private final List<AbstractAnimation> animations;
+    private final List<AbstractAnimation<?>> animations;
 
     /**
      * The private constructor of this class. This ensures that the only
@@ -60,7 +60,7 @@ public final class AnimationManager {
      */
     public void animate(int delta) {
         while (!addAnimations.isEmpty()) {
-            AbstractAnimation ani = addAnimations.remove(0);
+            AbstractAnimation<?> ani = addAnimations.remove(0);
             if (!animations.contains(ani)) {
                 animations.add(ani);
             }
@@ -68,7 +68,7 @@ public final class AnimationManager {
 
         int count = animations.size();
         for (int i = 0; i < count; ++i) {
-            AbstractAnimation ani = animations.get(i);
+            AbstractAnimation<?> ani = animations.get(i);
             // execute those that are running
             if (ani == null) {
             } else if (!ani.isRunning()) {
@@ -92,7 +92,7 @@ public final class AnimationManager {
      *
      * @param animation the animation that shall be to the animation manager
      */
-    protected void register(AbstractAnimation animation) {
+    void register(AbstractAnimation<?> animation) {
         if (!addAnimations.contains(animation)) {
             addAnimations.add(animation);
         }

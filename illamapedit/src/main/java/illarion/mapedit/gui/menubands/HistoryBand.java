@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,10 +22,10 @@ import org.bushe.swing.event.EventBus;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
-import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
+import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies.Mid2Low;
+import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies.Mirror;
 import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
 
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,24 +38,14 @@ public class HistoryBand extends JRibbonBand {
     public HistoryBand() {
         super(Lang.getMsg("gui.history"), ImageLoader.getResizableIcon("reload"));
 
-        final JCommandButton undo = new JCommandButton(Lang.getMsg("gui.history.undo"),
+        JCommandButton undo = new JCommandButton(Lang.getMsg("gui.history.undo"),
                                                        ImageLoader.getResizableIcon("undo"));
-        final JCommandButton redo = new JCommandButton(Lang.getMsg("gui.history.redo"),
+        JCommandButton redo = new JCommandButton(Lang.getMsg("gui.history.redo"),
                                                        ImageLoader.getResizableIcon("redo"));
 
-        final ActionListener undoListener = new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                EventBus.publish(new HistoryEvent(true));
-            }
-        };
+        ActionListener undoListener = e -> EventBus.publish(new HistoryEvent(true));
 
-        final ActionListener redoListener = new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                EventBus.publish(new HistoryEvent(false));
-            }
-        };
+        ActionListener redoListener = e -> EventBus.publish(new HistoryEvent(false));
 
         undo.addActionListener(undoListener);
         redo.addActionListener(redoListener);
@@ -63,9 +53,9 @@ public class HistoryBand extends JRibbonBand {
         addCommandButton(undo, RibbonElementPriority.MEDIUM);
         addCommandButton(redo, RibbonElementPriority.MEDIUM);
 
-        final List<RibbonBandResizePolicy> policies = new ArrayList<>();
-        policies.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
-        policies.add(new CoreRibbonResizePolicies.Mid2Low(getControlPanel()));
+        List<RibbonBandResizePolicy> policies = new ArrayList<>();
+        policies.add(new Mirror(getControlPanel()));
+        policies.add(new Mid2Low(getControlPanel()));
         setResizePolicies(policies);
     }
 }

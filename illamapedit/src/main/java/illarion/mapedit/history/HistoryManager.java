@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -63,8 +63,7 @@ public class HistoryManager {
      *
      * @param entry the entry to add to this list
      */
-    @SuppressWarnings("nls")
-    public void addEntry(final HistoryAction entry) {
+    public void addEntry(HistoryAction entry) {
         undoList.addLast(entry);
         redoList.clear();
         while (undoList.size() > MAX_HISTORY_LENGHT) {
@@ -95,7 +94,7 @@ public class HistoryManager {
      */
     public void redo() {
         if (canRedo()) {
-            final HistoryAction entry = redoList.removeLast();
+            HistoryAction entry = redoList.removeLast();
             entry.redo();
             undoList.addLast(entry);
         }
@@ -106,14 +105,14 @@ public class HistoryManager {
      */
     public void undo() {
         if (canUndo()) {
-            final HistoryAction entry = undoList.removeLast();
+            HistoryAction entry = undoList.removeLast();
             entry.undo();
             redoList.addLast(entry);
         }
     }
 
     @EventSubscriber
-    public void onHistoryEvent(@Nonnull final HistoryEvent e) {
+    public void onHistoryEvent(@Nonnull HistoryEvent e) {
         if (e.isUndo()) {
             undo();
         } else {
@@ -123,7 +122,7 @@ public class HistoryManager {
     }
 
     @EventSubscriber
-    public void onHistoryCutPasteEvent(@Nonnull final HistoryPasteCutEvent e) {
+    public void onHistoryCutPasteEvent(@Nonnull HistoryPasteCutEvent e) {
         addEntry(e.getAction());
     }
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,6 @@
  */
 package illarion.client.gui.controller.game;
 
-import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.builder.PanelBuilder;
@@ -102,13 +101,10 @@ public class DocumentationHandler implements DocumentationGui, ScreenController,
         if (documentationWindow == null) {
             LOGGER.error("Showing the documentation failed. The required GUI element can't be located.");
         } else {
-            documentationWindow.show(new EndNotify() {
-                @Override
-                public void perform() {
-                    Window documentationWindow = getDocumentationWindow();
-                    if (documentationWindow != null) {
-                        documentationWindow.moveToFront();
-                    }
+            documentationWindow.show(() -> {
+                Window documentationWindow1 = getDocumentationWindow();
+                if (documentationWindow1 != null) {
+                    documentationWindow1.moveToFront();
                 }
             });
         }
@@ -120,7 +116,7 @@ public class DocumentationHandler implements DocumentationGui, ScreenController,
         this.screen = screen;
 
         documentationWindow = getDocumentationWindow();
-        if ((documentationWindow != null && documentationWindow.getElement() != null)) {
+        if (documentationWindow != null && documentationWindow.getElement() != null) {
             documentationWindow.getElement()
                     .setConstraintX(new SizeValue(IllaClient.getCfg().getString("docuWindowPosX")));
             documentationWindow.getElement()

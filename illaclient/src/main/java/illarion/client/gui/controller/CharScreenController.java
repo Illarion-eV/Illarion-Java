@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -150,11 +150,7 @@ public final class CharScreenController implements ScreenController, KeyInputHan
     public void fillMyListBox() {
         if (listBox != null) {
             listBox.clear();
-            for (@Nonnull Login.CharEntry entry : Login.getInstance().getCharacterList()) {
-                if (entry.getStatus() == 0) {
-                    listBox.addItem(entry.getName());
-                }
-            }
+            Login.getInstance().getCharacterList().stream().filter(entry -> entry.getStatus() == 0).forEach(entry -> listBox.addItem(entry.getName()));
         }
     }
 

@@ -79,21 +79,21 @@ public final class Range {
      * Compare this instance of the range with another object. This returns true only in case the object this range
      * instance is compared with is a instance of range and the two border values are exactly the same.
      *
-     * @param o the object this instance of Range shall be compared with
+     * @param obj the object this instance of Range shall be compared with
      * @return the result of the comparing
      */
     @Override
     @Contract(value = "null -> false", pure = true)
-    public boolean equals(@Nullable Object o) {
-        if (super.equals(o)) {
+    public boolean equals(@Nullable Object obj) {
+        if (super.equals(obj)) {
             return true;
         }
 
-        if (!(o instanceof Range)) {
+        if (!(obj instanceof Range)) {
             return false;
         }
 
-        Range compRange = (Range) o;
+        Range compRange = (Range) obj;
         return (compRange.minValue == minValue) && (compRange.maxValue == maxValue);
     }
 

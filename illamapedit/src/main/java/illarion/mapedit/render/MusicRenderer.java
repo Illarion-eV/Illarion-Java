@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -39,30 +39,30 @@ public class MusicRenderer extends AbstractMapRenderer {
     /**
      * Creates a new map renderer
      */
-    public MusicRenderer(final RendererManager manager) {
+    public MusicRenderer(RendererManager manager) {
         super(manager);
         image = resizeImage((BufferedImage) ImageLoader.getImage("sound"), 24, 24);
     }
 
     @Override
     public void renderMap(
-            @Nonnull final Map map,
-            @Nonnull final Rectangle viewport,
-            final int level,
-            @Nonnull final Graphics2D g) {
-        final int width = map.getWidth();
-        final int height = map.getHeight();
-        final int z = map.getZ() - level;
-        final AffineTransform transform = g.getTransform();
+            @Nonnull Map map,
+            @Nonnull Rectangle viewport,
+            int level,
+            @Nonnull Graphics2D g) {
+        int width = map.getWidth();
+        int height = map.getHeight();
+        int z = map.getZ() - level;
+        AffineTransform transform = g.getTransform();
 
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < height; ++y) {
-                final int id = map.getTileAt(x, y).getMusicID();
+                int id = map.getTileAt(x, y).getMusicID();
                 if (id == 0) {
                     continue;
                 }
-                final int xdisp = SwingLocation.displayCoordinateX(x + map.getX(), y + map.getY(), z);
-                final int ydisp = SwingLocation.displayCoordinateY(x + map.getX(), y + map.getY(), z);
+                int xdisp = SwingLocation.displayCoordinateX(x + map.getX(), y + map.getY(), z);
+                int ydisp = SwingLocation.displayCoordinateY(x + map.getX(), y + map.getY(), z);
                 if (viewport.contains((xdisp * getZoom()) + getTranslateX() + (getTileWidth() * getZoom()),
                                       (ydisp * getZoom()) + getTranslateY() + (getTileHeight() * getZoom()))) {
 

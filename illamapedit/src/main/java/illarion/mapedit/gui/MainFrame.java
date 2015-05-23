@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -38,6 +38,7 @@ import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXStatusBar;
+import org.jdesktop.swingx.JXStatusBar.Constraint;
 import org.pushingpixels.flamingo.api.common.AbstractCommandButton;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.common.JCommandToggleButton;
@@ -64,9 +65,9 @@ public class MainFrame extends JRibbonFrame {
     private final MapPanel mapPanel;
     @Nonnull
     private final ToolSettingsPanel settingsPanel;
-    private OpenMapPanel filePanel;
+    private final OpenMapPanel filePanel;
 
-    public MainFrame(final GuiController controller) {
+    public MainFrame(GuiController controller) {
         AnnotationProcessor.process(this);
         mapPanel = new MapPanel(controller);
         settingsPanel = new ToolSettingsPanel();
@@ -74,7 +75,7 @@ public class MainFrame extends JRibbonFrame {
         instance = this;
     }
 
-    public void initialize(final WindowListener controller) {
+    public void initialize(WindowListener controller) {
         addWindowListener(controller);
         setTitle(MapEditor.APPLICATION.getApplicationIdentifier());
         setSize(getSavedDimension());
@@ -82,9 +83,9 @@ public class MainFrame extends JRibbonFrame {
         getRibbon().configureHelp(ImageLoader.getResizableIcon("help"),
                                   new ActionEventPublisher(new ShowHelpDialogEvent()));
 
-        final JCommandButton saveBtn = getCommandButton("gui.mainmenu.Save", "filesave", KeyEvent.VK_S, "Save");
-        final JCommandButton undoBtn = getCommandButton("gui.history.undo", "undo", KeyEvent.VK_Z, "Undo");
-        final JCommandButton redoBtn = getCommandButton("gui.history.redo", "redo", KeyEvent.VK_Z, "Redo", true);
+        JCommandButton saveBtn = getCommandButton("gui.mainmenu.Save", "filesave", KeyEvent.VK_S, "Save");
+        JCommandButton undoBtn = getCommandButton("gui.history.undo", "undo", KeyEvent.VK_Z, "Undo");
+        JCommandButton redoBtn = getCommandButton("gui.history.redo", "redo", KeyEvent.VK_Z, "Redo", true);
 
         saveBtn.addActionListener(new ActionEventPublisher(new MapSaveEvent()));
         undoBtn.addActionListener(new ActionEventPublisher(new HistoryEvent(true)));
@@ -99,24 +100,24 @@ public class MainFrame extends JRibbonFrame {
         add(settingsPanel, BorderLayout.EAST);
         add(filePanel, BorderLayout.LINE_START);
 
-        final RibbonTask task = new RibbonTask(Lang.getMsg("gui.mainframe.ribbon"), new ClipboardBand(),
+        RibbonTask task = new RibbonTask(Lang.getMsg("gui.mainframe.ribbon"), new ClipboardBand(),
                                                new ViewBand(getRendererManager()), new ZoomBand(), new ToolBand());
 
-        final JXStatusBar status = new JXStatusBar();
+        JXStatusBar status = new JXStatusBar();
         status.setResizeHandleEnabled(true);
-        final JXLabel mapCoordinates = new JXLabel();
-        final JXLabel worldCoordinates = new JXLabel();
+        JXLabel mapCoordinates = new JXLabel();
+        JXLabel worldCoordinates = new JXLabel();
         EventBus.subscribeStrongly(MapPositionEvent.class, new EventSubscriber<MapPositionEvent>() {
             @Override
-            public void onEvent(@Nonnull final MapPositionEvent event) {
+            public void onEvent(@Nonnull MapPositionEvent event) {
                 mapCoordinates.setText(Lang.getMsg("gui.mainframe.status.mapCoord") + ": " + event.getMapX() +
                                                ',' + event.getMapY());
                 worldCoordinates.setText(Lang.getMsg("gui.mainframe.status.worldCoord") + ": " + event.getWorldX() +
                                                  ',' + event.getWorldY() + ',' + event.getWorldZ());
             }
         });
-        status.add(mapCoordinates, new JXStatusBar.Constraint());
-        status.add(worldCoordinates, new JXStatusBar.Constraint());
+        status.add(mapCoordinates, new Constraint());
+        status.add(worldCoordinates, new Constraint());
         add(status, BorderLayout.SOUTH);
 
         getRibbon().addTask(task);
@@ -141,7 +142,7 @@ public class MainFrame extends JRibbonFrame {
 
     @Nonnull
     private static Dimension getSavedDimension() {
-        final Dimension windowSize = MapEditorConfig.getInstance().getWindowSize();
+        Dimension windowSize = MapEditorConfig.getInstance().getWindowSize();
         if ((windowSize.getHeight() == 0) || (windowSize.getWidth() == 0)) {
             return WINDOW_SIZE;
         }
@@ -150,14 +151,14 @@ public class MainFrame extends JRibbonFrame {
 
     @Nonnull
     public static JCommandToggleButton getToggleButton(
-            final String text, final String icon, final int key, final String action) {
+            String text, String icon, int key, String action) {
         return getToggleButton(text, icon, key, action, false);
     }
 
     @Nonnull
     public static JCommandToggleButton getToggleButton(
-            final String text, final String icon, final int key, final String action, final boolean shift) {
-        final JCommandToggleButton commandButton = new JCommandToggleButton(Lang.getMsg(text),
+            String text, String icon, int key, String action, boolean shift) {
+        JCommandToggleButton commandButton = new JCommandToggleButton(Lang.getMsg(text),
                                                                             ImageLoader.getResizableIcon(icon));
         setAction(commandButton, key, action, shift);
 
@@ -165,31 +166,31 @@ public class MainFrame extends JRibbonFrame {
     }
 
     private static void setAction(
-            @Nonnull final AbstractCommandButton commandButton,
-            final int key,
-            final String action,
-            final boolean shift) {
-        final InputMap input = commandButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+            @Nonnull AbstractCommandButton commandButton,
+            int key,
+            String action,
+            boolean shift) {
+        InputMap input = commandButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         int mask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
         if (shift) {
             mask |= InputEvent.SHIFT_DOWN_MASK;
         }
 
-        final KeyStroke enter = KeyStroke.getKeyStroke(key, mask);
+        KeyStroke enter = KeyStroke.getKeyStroke(key, mask);
         input.put(enter, action);
         commandButton.getActionMap().put(action, new BandClickAction(commandButton));
     }
 
     @Nonnull
     public static JCommandButton getCommandButton(
-            final String text, final String icon, final int key, final String action) {
+            String text, String icon, int key, String action) {
         return getCommandButton(text, icon, key, action, false);
     }
 
     @Nonnull
     public static JCommandButton getCommandButton(
-            final String text, final String icon, final int key, final String action, final boolean shift) {
-        final JCommandButton commandButton = new JCommandButton(Lang.getMsg(text), ImageLoader.getResizableIcon(icon));
+            String text, String icon, int key, String action, boolean shift) {
+        JCommandButton commandButton = new JCommandButton(Lang.getMsg(text), ImageLoader.getResizableIcon(icon));
 
         setAction(commandButton, key, action, shift);
         return commandButton;
@@ -200,25 +201,25 @@ public class MainFrame extends JRibbonFrame {
         showMessageDialog(e.getMessage());
     }
 
-    public static void showMessageDialog(final String message) {
+    public static void showMessageDialog(String message) {
         JOptionPane.showMessageDialog(getInstance(), message, Lang.getMsg("gui.error"), JOptionPane.ERROR_MESSAGE,
                                       ImageLoader.getImageIcon("messagebox_critical"));
     }
 
     @EventTopicSubscriber(topic = MapEditorConfig.USED_LANGUAGE)
-    public void onConfigLanguageChanged(final String topic, @Nonnull final ConfigChangedEvent event) {
-        final JOptionPane optionPane = new JOptionPane(Lang.getMsg("gui.LocaleChanged"),
+    public void onConfigLanguageChanged(String topic, @Nonnull ConfigChangedEvent event) {
+        JOptionPane optionPane = new JOptionPane(Lang.getMsg("gui.LocaleChanged"),
                                                        JOptionPane.INFORMATION_MESSAGE);
-        final JDialog dialog = optionPane.createDialog(getInstance(), Lang.getMsg("gui.info"));
+        JDialog dialog = optionPane.createDialog(getInstance(), Lang.getMsg("gui.info"));
         dialog.setAlwaysOnTop(true);
         dialog.setVisible(true);
     }
 
     @EventTopicSubscriber(topic = MapEditorConfig.USE_WINDOW_DECO)
-    public void onConfigWindowDecoChanged(final String topic, @Nonnull final ConfigChangedEvent event) {
-        final JOptionPane optionPane = new JOptionPane(Lang.getMsg("gui.LocaleChanged"),
+    public void onConfigWindowDecoChanged(String topic, @Nonnull ConfigChangedEvent event) {
+        JOptionPane optionPane = new JOptionPane(Lang.getMsg("gui.LocaleChanged"),
                                                        JOptionPane.INFORMATION_MESSAGE);
-        final JDialog dialog = optionPane.createDialog(getInstance(), Lang.getMsg("gui.info"));
+        JDialog dialog = optionPane.createDialog(getInstance(), Lang.getMsg("gui.info"));
         dialog.setAlwaysOnTop(true);
         dialog.setVisible(true);
     }

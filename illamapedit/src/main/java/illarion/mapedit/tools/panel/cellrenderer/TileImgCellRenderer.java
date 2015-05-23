@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
-public class TileImgCellRenderer extends JPanel implements ListCellRenderer {
+public class TileImgCellRenderer extends JPanel implements ListCellRenderer<TileImg> {
     private static final Color COLOR_SELECTED = new Color(-6100481);
     private static final Color COLOR_UNSELECTED = new Color(-1246977);
 
@@ -44,18 +44,17 @@ public class TileImgCellRenderer extends JPanel implements ListCellRenderer {
     @Nonnull
     @Override
     public Component getListCellRendererComponent(
-            final JList jList,
-            final Object val,
-            final int index,
-            final boolean isSelected,
-            final boolean cellHasFocus) {
+            JList<? extends TileImg> list,
+            TileImg value,
+            int index,
+            boolean isSelected,
+            boolean cellHasFocus) {
 
         if (isSelected) {
             adjustColors(COLOR_SELECTED, this, img, name);
         } else {
             adjustColors(COLOR_UNSELECTED, this, img, name);
         }
-        final TileImg value = (TileImg) val;
         img.setIcon(new ImageIcon(value.getImg()[0]));
 
         if ((value.getDescription() == null) || value.getDescription().isEmpty()) {
@@ -66,8 +65,8 @@ public class TileImgCellRenderer extends JPanel implements ListCellRenderer {
         return this;
     }
 
-    private static void adjustColors(@Nullable final Color bg, @Nonnull final Component... components) {
-        for (final Component c : components) {
+    private static void adjustColors(@Nullable Color bg, @Nonnull Component... components) {
+        for (Component c : components) {
             if (bg != null) {
                 c.setBackground(bg);
             }

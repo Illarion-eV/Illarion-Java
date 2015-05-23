@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -24,9 +24,9 @@ public class Condition implements Serializable {
     @Nonnull
     private final String type;
     @Nonnull
-    private Object[] parameters;
+    private final Object[] parameters;
 
-    public Condition(@Nonnull final String type, @Nonnull final Object[] parameters) {
+    public Condition(@Nonnull String type, @Nonnull Object... parameters) {
         this.type = type;
         this.parameters = Arrays.copyOf(parameters, parameters.length);
     }

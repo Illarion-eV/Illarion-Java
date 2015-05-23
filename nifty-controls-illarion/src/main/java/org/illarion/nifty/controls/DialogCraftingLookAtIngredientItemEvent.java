@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -46,7 +46,7 @@ public final class DialogCraftingLookAtIngredientItemEvent extends DialogEvent {
      * @param ingredientIndex the index of the ingredient the player is looking at
      */
     public DialogCraftingLookAtIngredientItemEvent(
-            final int id, @Nonnull final CraftingItemEntry item, final int ingredientIndex) {
+            int id, @Nonnull CraftingItemEntry item, int ingredientIndex) {
         super(id);
         this.item = item;
         this.ingredientIndex = ingredientIndex;

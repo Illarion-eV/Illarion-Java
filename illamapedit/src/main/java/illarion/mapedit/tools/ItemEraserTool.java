@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -44,31 +44,31 @@ public class ItemEraserTool extends AbstractTool {
     }
 
     @Override
-    public void clickedAt(final int x, final int y, @Nonnull final Map map) {
-        final HistoryAction newAction = removeItem(x, y, map);
+    public void clickedAt(int x, int y, @Nonnull Map map) {
+        HistoryAction newAction = removeItem(x, y, map);
         if (newAction != null) {
             getHistory().addEntry(newAction);
         }
     }
 
     @Override
-    public void paintSelected(final int x, final int y, @Nonnull final Map map, @Nonnull final GroupAction action) {
-        final HistoryAction newAction = removeItem(x, y, map);
+    public void paintSelected(int x, int y, @Nonnull Map map, @Nonnull GroupAction action) {
+        HistoryAction newAction = removeItem(x, y, map);
         if (newAction != null) {
             action.addAction(newAction);
         }
     }
 
     @Nullable
-    private HistoryAction removeItem(final int x, final int y, @Nonnull final Map map) {
+    private HistoryAction removeItem(int x, int y, @Nonnull Map map) {
         if (!map.contains(x, y)) {
             return null;
         }
-        final MapTile tile = map.getTileAt(x, y);
+        MapTile tile = map.getTileAt(x, y);
         if (tile == null) {
             return null;
         }
-        final List<MapItem> items = tile.getMapItems();
+        List<MapItem> items = tile.getMapItems();
         if (items == null || items.isEmpty()) {
             return null;
         }
@@ -83,22 +83,22 @@ public class ItemEraserTool extends AbstractTool {
 
     @Nullable
     private static HistoryAction removeTopItem(
-            final int x,
-            final int y,
-            final Map map,
-            @Nonnull final List<MapItem> items) {
-        final MapItem item = items.remove(items.size() - 1);
+            int x,
+            int y,
+            Map map,
+            @Nonnull List<MapItem> items) {
+        MapItem item = items.remove(items.size() - 1);
         return new ItemPlacedAction(x, y, item, null, map);
     }
 
     @Nonnull
     private static HistoryAction clearItems(
-            final int x,
-            final int y,
-            @Nonnull final Map map,
-            @Nonnull final Collection<MapItem> items) {
-        final GroupAction action = new GroupAction();
-        for (final MapItem item : items) {
+            int x,
+            int y,
+            @Nonnull Map map,
+            @Nonnull Collection<MapItem> items) {
+        GroupAction action = new GroupAction();
+        for (MapItem item : items) {
             action.addAction(new ItemPlacedAction(x, y, item, null, map));
         }
         items.clear();

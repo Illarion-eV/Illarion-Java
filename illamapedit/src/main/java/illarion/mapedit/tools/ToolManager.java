@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -55,7 +55,7 @@ public final class ToolManager implements Disposable {
     private int currentX = Integer.MIN_VALUE;
     private int currentY = Integer.MIN_VALUE;
 
-    public ToolManager(final GuiController controller) {
+    public ToolManager(GuiController controller) {
         this.controller = controller;
         AnnotationProcessor.process(this);
         setTool(new TileBrushTool());
@@ -63,14 +63,14 @@ public final class ToolManager implements Disposable {
 
     @Nullable
     public MapTile getActiveTile() {
-        final Map currentMap = controller.getSelected();
+        Map currentMap = controller.getSelected();
         if (currentMap == null) {
             return null;
         }
         return currentMap.getActiveTile();
     }
 
-    public void setTool(@Nullable final AbstractTool tool) {
+    public void setTool(@Nullable AbstractTool tool) {
         if (tool != null) {
             tool.registerManager(this);
         }
@@ -92,7 +92,7 @@ public final class ToolManager implements Disposable {
     }
 
     @EventSubscriber
-    public void clickedAt(@Nonnull final MapClickedEvent e) {
+    public void clickedAt(@Nonnull MapClickedEvent e) {
         if (e.getButton() != MouseButton.LeftButton) {
             return;
         }
@@ -115,7 +115,7 @@ public final class ToolManager implements Disposable {
         }
     }
 
-    private boolean isAnnotated(@Nonnull final MapClickedEvent e) {
+    private boolean isAnnotated(@Nonnull MapClickedEvent e) {
         if ((actualTool == null) || !actualTool.isWarnAnnotated()) {
             return false;
         }
@@ -125,12 +125,12 @@ public final class ToolManager implements Disposable {
         return controller.getAnnotationChecker().isAnnotated(e.getX(), e.getY(), e.getMap());
     }
 
-    private boolean isFillAction(@Nonnull final MapClickedEvent e) {
+    private boolean isFillAction(@Nonnull MapClickedEvent e) {
         return (actualTool != null) && actualTool.isFillSelected() && e.getMap().isSelected(e.getX(), e.getY());
     }
 
     @EventSubscriber
-    public void onMapDragged(@Nonnull final MapDraggedEvent e) {
+    public void onMapDragged(@Nonnull MapDraggedEvent e) {
         if ((actualTool != null) && (e.getButton() == MouseButton.LeftButton)) {
             if (actualTool.isFillAreaAction()) {
                 e.getMap().setFillingArea(e.getX(), e.getY(), e.getStartX(), e.getStartY());
@@ -146,7 +146,7 @@ public final class ToolManager implements Disposable {
     }
 
     @EventSubscriber
-    public void onMapDragFinished(@Nonnull final MapDragFinishedEvent e) {
+    public void onMapDragFinished(@Nonnull MapDragFinishedEvent e) {
         if ((actualTool != null) && !actualTool.isFillSelected()) {
             currentX = Integer.MIN_VALUE;
             currentY = Integer.MIN_VALUE;
@@ -159,17 +159,17 @@ public final class ToolManager implements Disposable {
     }
 
     @EventSubscriber
-    public void onTileSelected(@Nonnull final TileSelectedEvent e) {
+    public void onTileSelected(@Nonnull TileSelectedEvent e) {
         selectedTile = e.getTileImg();
     }
 
     @EventSubscriber
-    public void onItemSelected(@Nonnull final ItemSelectedEvent e) {
+    public void onItemSelected(@Nonnull ItemSelectedEvent e) {
         selectedItem = e.getItemImg();
     }
 
     @EventSubscriber
-    public void onSelectTool(@Nonnull final ToolSelectedEvent e) {
+    public void onSelectTool(@Nonnull ToolSelectedEvent e) {
         setTool(e.getTool());
     }
 
@@ -179,7 +179,7 @@ public final class ToolManager implements Disposable {
     }
 
     @EventSubscriber
-    public void onPasteClipboard(@Nonnull final ClipboardPasteEvent e) {
+    public void onPasteClipboard(@Nonnull ClipboardPasteEvent e) {
         doPaste = true;
     }
 }

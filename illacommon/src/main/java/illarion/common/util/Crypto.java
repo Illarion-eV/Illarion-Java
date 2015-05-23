@@ -36,7 +36,7 @@ import java.security.SecureRandom;
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@SuppressWarnings({"ClassNamingConvention", "SpellCheckingInspection"})
+@SuppressWarnings("SpellCheckingInspection")
 public final class Crypto {
     /**
      * The error and debug logger of the client.

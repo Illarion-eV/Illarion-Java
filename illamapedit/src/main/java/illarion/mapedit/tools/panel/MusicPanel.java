@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -24,8 +24,6 @@ import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * @author Tim
@@ -50,25 +48,20 @@ public class MusicPanel extends JPanel {
         songTable = new SongTable();
         add(songTable, BorderLayout.CENTER);
 
-        final JPanel northPanel = new JPanel(new GridLayout(0, 2));
+        JPanel northPanel = new JPanel(new GridLayout(0, 2));
 
         delCheckBox = new JCheckBox();
         fillSelectedCheckbox = new JRadioButton();
         fillAreaCheckbox = new JRadioButton();
         fillAreaCheckbox.setSelected(true);
-        final ButtonGroup group = new ButtonGroup();
+        ButtonGroup group = new ButtonGroup();
         group.add(fillAreaCheckbox);
         group.add(fillSelectedCheckbox);
-        final ResizableIcon icon = ImageLoader.getResizableIcon("player_play");
+        ResizableIcon icon = ImageLoader.getResizableIcon("player_play");
         icon.setDimension(new Dimension(ToolManager.ICON_SIZE, ToolManager.ICON_SIZE));
-        final JButton playButton = new JButton(icon);
+        JButton playButton = new JButton(icon);
 
-        playButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                songTable.playSelectedSong();
-            }
-        });
+        playButton.addActionListener(e -> songTable.playSelectedSong());
 
         northPanel.add(new JLabel(Lang.getMsg("tools.FillSelected")));
         northPanel.add(fillSelectedCheckbox);

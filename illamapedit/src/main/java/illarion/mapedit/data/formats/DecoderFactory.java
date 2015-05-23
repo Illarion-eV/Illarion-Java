@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -25,7 +25,7 @@ import java.nio.file.Path;
  */
 public final class DecoderFactory {
     @Nonnull
-    public Decoder getDecoder(final int version, @Nonnull final String mapName, @Nonnull final Path mapPath) {
+    public Decoder getDecoder(int version, @Nonnull String mapName, @Nonnull Path mapPath) {
         switch (version) {
             case 2:
                 return new Version2Decoder(mapName, mapPath);

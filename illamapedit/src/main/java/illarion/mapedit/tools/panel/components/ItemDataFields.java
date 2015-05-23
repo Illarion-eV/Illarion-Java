@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,8 +23,6 @@ import javax.annotation.Nullable;
 import javax.swing.*;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
 
 /**
@@ -48,21 +46,18 @@ public class ItemDataFields extends JPanel {
         qualityFormatter.setCommitsOnValidEdit(true);
         qualityField = new JFormattedTextField(qualityFormatter);
         qualityField.setEnabled(false);
-        qualityField.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(@Nonnull PropertyChangeEvent e) {
-                if (item == null) {
-                    return;
-                }
-                if (!e.getPropertyName().equals("value")) {
-                    return;
-                }
-                if (e.getSource() != qualityField) {
-                    return;
-                }
-                int val = (int) e.getNewValue();
-                item.setQuality(val);
+        qualityField.addPropertyChangeListener(e -> {
+            if (item == null) {
+                return;
             }
+            if (!e.getPropertyName().equals("value")) {
+                return;
+            }
+            if (e.getSource() != qualityField) {
+                return;
+            }
+            int val = (int) e.getNewValue();
+            item.setQuality(val);
         });
 
         NumberFormatter durabilityFormatter = new NumberFormatter(format);
@@ -72,21 +67,18 @@ public class ItemDataFields extends JPanel {
         durabilityFormatter.setCommitsOnValidEdit(true);
         durabilityField = new JFormattedTextField(durabilityFormatter);
         durabilityField.setEnabled(false);
-        durabilityField.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(@Nonnull PropertyChangeEvent e) {
-                if (item == null) {
-                    return;
-                }
-                if (!e.getPropertyName().equals("value")) {
-                    return;
-                }
-                if (e.getSource() != durabilityField) {
-                    return;
-                }
-                int val = (int) e.getNewValue();
-                item.setDurability(val);
+        durabilityField.addPropertyChangeListener(e -> {
+            if (item == null) {
+                return;
             }
+            if (!e.getPropertyName().equals("value")) {
+                return;
+            }
+            if (e.getSource() != durabilityField) {
+                return;
+            }
+            int val = (int) e.getNewValue();
+            item.setDurability(val);
         });
 
         add(new JLabel(Lang.getMsg("tools.DataTool.Quality")));

@@ -25,7 +25,6 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@SuppressWarnings("nls")
 public enum Servers {
     /**
      * The Gameserver of Illarion. Normal players should connect to this server. If the selection of the server is

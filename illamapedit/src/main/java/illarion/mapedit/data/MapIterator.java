@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -30,7 +30,7 @@ public class MapIterator implements Iterator<MapTile> {
     @Nonnull
     private final Map parentMap;
 
-    MapIterator(@Nonnull final Map map, final int tileCount) {
+    MapIterator(@Nonnull Map map, int tileCount) {
         parentMap = map;
         this.tileCount = tileCount;
     }

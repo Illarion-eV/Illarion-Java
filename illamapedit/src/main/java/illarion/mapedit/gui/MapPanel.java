@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -34,7 +34,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -59,7 +58,7 @@ public class MapPanel extends JPanel
     private final ToolManager toolManager;
     private final GuiController controller;
 
-    public MapPanel(final GuiController controller) {
+    public MapPanel(GuiController controller) {
         this.controller = controller;
         rendererManager = new RendererManager();
         toolManager = new ToolManager(controller);
@@ -72,24 +71,14 @@ public class MapPanel extends JPanel
     }
 
     @Override
-    public void paintComponent(final Graphics gt) {
-        final Graphics2D g = (Graphics2D) gt;
+    public void paintComponent(Graphics gt) {
+        Graphics2D g = (Graphics2D) gt;
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, getWidth(), getHeight());
-        final List<Map> maps = new ArrayList<>(controller.getMaps());
+        List<Map> maps = new ArrayList<>(controller.getMaps());
 
-        Collections.sort(maps, new Comparator<Map>() {
-
-            @Override
-            public int compare(@Nonnull final Map map1, @Nonnull final Map map2) {
-                return map1.getZ() - map2.getZ();
-            }
-        });
-        for (final Map map : maps) {
-            if (map.isVisible()) {
-                rendererManager.render(map, getVisibleRect(), g);
-            }
-        }
+        Collections.sort(maps, (map1, map2) -> Integer.compare(map1.getZ(), map2.getZ()));
+        maps.stream().filter(Map::isVisible).forEach(map -> rendererManager.render(map, getVisibleRect(), g));
 
         dirty.x = 0;
         dirty.y = 0;
@@ -98,7 +87,7 @@ public class MapPanel extends JPanel
     }
 
     @Override
-    public void mouseWheelMoved(@Nonnull final MouseWheelEvent e) {
+    public void mouseWheelMoved(@Nonnull MouseWheelEvent e) {
         if (controller.isMapLoaded()) {
             if (e.getWheelRotation() < 0) {
                 rendererManager.zoomIn(new Vector2i(e.getX(), e.getY()));
@@ -109,24 +98,24 @@ public class MapPanel extends JPanel
     }
 
     @Override
-    public void mouseDragged(@Nonnull final MouseEvent e) {
+    public void mouseDragged(@Nonnull MouseEvent e) {
         publishMapPosition(e);
-        final Map selected = controller.getSelected();
+        Map selected = controller.getSelected();
         if (!canDrag || !controller.isMapLoaded() || (selected == null)) {
             return;
         }
 
-        final MouseButton btn = MouseButton.fromAwt(e.getModifiers());
+        MouseButton btn = MouseButton.fromAwt(e.getModifiers());
 
         if (btn == MouseButton.RightButton) {
             rendererManager.changeTranslation(e.getX() - clickX, e.getY() - clickY);
         } else {
             isDragging = true;
             if (btn == MouseButton.LeftButton) {
-                final int x = getMapCoordinateX(clickX, clickY, 0);
-                final int y = getMapCoordinateY(clickX, clickY, 0);
-                final int startX = getMapCoordinateX(downClickX, downClickY, 0);
-                final int startY = getMapCoordinateY(downClickX, downClickY, 0);
+                int x = getMapCoordinateX(clickX, clickY, 0);
+                int y = getMapCoordinateY(clickX, clickY, 0);
+                int startX = getMapCoordinateX(downClickX, downClickY, 0);
+                int startY = getMapCoordinateY(downClickX, downClickY, 0);
                 if (selected.contains(x, y)) {
                     EventBus.publish(new MapDraggedEvent(x, y, startX, startY, btn, selected));
                 }
@@ -137,41 +126,41 @@ public class MapPanel extends JPanel
         clickY = e.getY();
     }
 
-    private void publishMapPosition(@Nonnull final MouseEvent e) {
-        final Map selectedMap = controller.getSelected();
+    private void publishMapPosition(@Nonnull MouseEvent e) {
+        Map selectedMap = controller.getSelected();
         if (selectedMap == null) {
             return;
         }
 
-        final int mapX = getMapCoordinateX(e.getX(), e.getY(), selectedMap.getX());
-        final int mapY = getMapCoordinateY(e.getX(), e.getY(), selectedMap.getY());
-        final int worldX = selectedMap.getX() + mapX;
-        final int worldY = selectedMap.getY() + mapY;
-        final int worldZ = selectedMap.getZ();
+        int mapX = getMapCoordinateX(e.getX(), e.getY(), selectedMap.getX());
+        int mapY = getMapCoordinateY(e.getX(), e.getY(), selectedMap.getY());
+        int worldX = selectedMap.getX() + mapX;
+        int worldY = selectedMap.getY() + mapY;
+        int worldZ = selectedMap.getZ();
         EventBus.publish(new MapPositionEvent(mapX, mapY, worldX, worldY, worldZ));
     }
 
     @Override
-    public void mouseMoved(@Nonnull final MouseEvent e) {
+    public void mouseMoved(@Nonnull MouseEvent e) {
         publishMapPosition(e);
     }
 
     @Override
-    public void mouseClicked(@Nonnull final MouseEvent e) {
-        final Map selected = controller.getSelected();
+    public void mouseClicked(@Nonnull MouseEvent e) {
+        Map selected = controller.getSelected();
         if (selected == null) {
             return;
         }
 
-        final int x = getMapCoordinateX(e.getX(), e.getY(), selected.getX());
-        final int y = getMapCoordinateY(e.getX(), e.getY(), selected.getY());
+        int x = getMapCoordinateX(e.getX(), e.getY(), selected.getX());
+        int y = getMapCoordinateY(e.getX(), e.getY(), selected.getY());
         if (selected.contains(x, y)) {
             EventBus.publish(new MapClickedEvent(x, y, MouseButton.fromAwt(e.getModifiers()), selected));
         }
     }
 
     @Override
-    public void mousePressed(@Nonnull final MouseEvent e) {
+    public void mousePressed(@Nonnull MouseEvent e) {
         if (canDrag && controller.isMapLoaded()) {
             clickX = e.getX();
             clickY = e.getY();
@@ -181,14 +170,14 @@ public class MapPanel extends JPanel
     }
 
     @Override
-    public void mouseReleased(@Nonnull final MouseEvent e) {
+    public void mouseReleased(@Nonnull MouseEvent e) {
         if (isDragging) {
-            final Map selected = controller.getSelected();
+            Map selected = controller.getSelected();
             if (selected != null) {
-                final int x1 = getMapCoordinateX(downClickX, downClickY, selected.getX());
-                final int y1 = getMapCoordinateY(downClickX, downClickY, selected.getY());
-                final int x2 = getMapCoordinateX(e.getX(), e.getY(), selected.getX());
-                final int y2 = getMapCoordinateY(e.getX(), e.getY(), selected.getY());
+                int x1 = getMapCoordinateX(downClickX, downClickY, selected.getX());
+                int y1 = getMapCoordinateY(downClickX, downClickY, selected.getY());
+                int x2 = getMapCoordinateX(e.getX(), e.getY(), selected.getX());
+                int y2 = getMapCoordinateY(e.getX(), e.getY(), selected.getY());
                 if ((x1 != x2) || (y1 != y2)) {
                     EventBus.publish(new MapDragFinishedEvent(x1, y1, x2, y2, selected));
                 }
@@ -197,23 +186,23 @@ public class MapPanel extends JPanel
         isDragging = false;
     }
 
-    private int getMapCoordinateX(final int x, final int y, final int offset) {
+    private int getMapCoordinateX(int x, int y, int offset) {
         return SwingLocation.mapCoordinateX(x, y, rendererManager.getTranslationX(), rendererManager.getTranslationY(),
                                             rendererManager.getZoom()) - offset;
     }
 
-    private int getMapCoordinateY(final int x, final int y, final int offset) {
+    private int getMapCoordinateY(int x, int y, int offset) {
         return SwingLocation.mapCoordinateY(x, y, rendererManager.getTranslationX(), rendererManager.getTranslationY(),
                                             rendererManager.getZoom()) - offset;
     }
 
     @Override
-    public void mouseEntered(final MouseEvent e) {
+    public void mouseEntered(MouseEvent e) {
         canDrag = true;
     }
 
     @Override
-    public void mouseExited(final MouseEvent e) {
+    public void mouseExited(MouseEvent e) {
         canDrag = false;
     }
 
@@ -223,27 +212,27 @@ public class MapPanel extends JPanel
     }
 
     @Override
-    public void componentResized(final ComponentEvent e) {
+    public void componentResized(ComponentEvent e) {
         rendererManager.setPanelViewport(getVisibleRect());
     }
 
     @Override
-    public void componentMoved(final ComponentEvent e) {
+    public void componentMoved(ComponentEvent e) {
 
     }
 
     @Override
-    public void componentShown(final ComponentEvent e) {
+    public void componentShown(ComponentEvent e) {
         rendererManager.setPanelViewport(getVisibleRect());
     }
 
     @Override
-    public void componentHidden(final ComponentEvent e) {
+    public void componentHidden(ComponentEvent e) {
 
     }
 
     @EventSubscriber
-    public void onRepaintRequest(@Nonnull final RepaintRequestEvent e) {
+    public void onRepaintRequest(@Nonnull RepaintRequestEvent e) {
         e.doRepaint(this);
     }
 }
