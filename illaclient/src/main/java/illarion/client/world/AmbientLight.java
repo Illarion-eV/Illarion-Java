@@ -40,7 +40,6 @@ final class AmbientLight {
     };
     @Nonnull
     private static final Color STARLIGHT_COLOR = new ImmutableColor(0.15f, 0.15f, 0.3f);
-    private static final float[] HSB_ARRAY = new float[3];
     @Nonnull
     private final Color ambientLight1;
     @Nonnull
@@ -67,7 +66,7 @@ final class AmbientLight {
      */
     private static double getPhaseOfTheSun(double dayOfYear) {
         int daysInYear = 365; /* The amount of days in one year. */
-        int longDay = 184;  /* The longest day in the year. */
+        int longDay = 182;  /* The longest day in the year. */
 
         double usedDay = dayOfYear - longDay;
         if (usedDay < 0) {
@@ -109,42 +108,35 @@ final class AmbientLight {
     }
 
     @Nonnull
-    private static Color getColorFromGradient(double key, @Nonnull GradientColorKey[] gradientKeys,
-                                              @Nonnull Color resultStorage) {
+    private static Color getColorFromGradient(double key, @Nonnull GradientColorKey... gradientKeys) {
         if (gradientKeys.length < 2) {
             throw new IllegalArgumentException("Supplied gradient is no gradient. Too few values.");
         }
         assert gradientKeys[0] != null;
-        if (key <= gradientKeys[0].key) {
-            resultStorage.setColor(gradientKeys[0].color);
-            return resultStorage;
+        if (key <= gradientKeys[0].getKey()) {
+            return gradientKeys[0].getColor();
         }
-        if (key >= gradientKeys[gradientKeys.length - 1].key) {
-            resultStorage.setColor(gradientKeys[gradientKeys.length - 1].color);
-            return resultStorage;
+        if (key >= gradientKeys[gradientKeys.length - 1].getKey()) {
+            return gradientKeys[gradientKeys.length - 1].getColor();
         }
         for (int i = 0; i < (gradientKeys.length - 1); i++) {
-            double startKey = gradientKeys[i].key;
-            double stopKey = gradientKeys[i + 1].key;
+            double startKey = gradientKeys[i].getKey();
+            double stopKey = gradientKeys[i + 1].getKey();
             if ((key >= startKey) && (key < stopKey)) {
                 /* Found the gradient range it is in. */
                 double processWithinRange = getProgressInRange(startKey, stopKey, key);
-                Color startColor = gradientKeys[i].color;
-                Color stopColor = gradientKeys[i + 1].color;
+                Color startColor = gradientKeys[i].getColor();
+                Color stopColor = gradientKeys[i + 1].getColor();
 
-                resultStorage.setAlphaf((float) getInterpolated(startColor.getAlphaf(),
-                        stopColor.getAlphaf(), processWithinRange));
-                resultStorage.setRedf((float) getInterpolated(startColor.getRedf(),
-                        stopColor.getRedf(), processWithinRange));
-                resultStorage.setGreenf((float) getInterpolated(startColor.getGreenf(),
-                        stopColor.getGreenf(), processWithinRange));
-                resultStorage.setBluef((float) getInterpolated(startColor.getBluef(),
-                        stopColor.getBluef(), processWithinRange));
-                return resultStorage;
+                return new ImmutableColor(
+                        getInterpolated(startColor.getRedf(), stopColor.getRedf(), processWithinRange),
+                        getInterpolated(startColor.getGreenf(), stopColor.getGreenf(), processWithinRange),
+                        getInterpolated(startColor.getBluef(), stopColor.getBluef(), processWithinRange),
+                        getInterpolated(startColor.getAlphaf(), stopColor.getAlphaf(), processWithinRange));
 
             }
         }
-        return resultStorage;
+        throw new IllegalStateException("Feature at gradient calculation. This poit must not ever be reached.");
     }
 
     @Contract(pure = true)
@@ -153,8 +145,8 @@ final class AmbientLight {
     }
 
     @Contract(pure = true)
-    private static double getInterpolated(double start, double stop, double process) {
-        return ((stop - start) * process) + start;
+    private static float getInterpolated(float start, float stop, double process) {
+        return (float) (((stop - start) * process) + start);
     }
 
     public void setOvercast(double newValue) {
@@ -175,6 +167,40 @@ final class AmbientLight {
         double secondOfDay = World.getClock().getTotalHour() * 60.0 * 60.0;
         double middleOfDay = 12.0 * 60.0 * 60.0; /* The time in a day where the run is highest. */
 
+        usedColor.setColor(calculateSunlight(dayInYear, secondOfDay, middleOfDay));
+
+        usedColor.setRedf(Math.max(usedColor.getRedf(), STARLIGHT_COLOR.getRedf()));
+        usedColor.setGreenf(Math.max(usedColor.getGreenf(), STARLIGHT_COLOR.getGreenf()));
+        usedColor.setBluef(Math.max(usedColor.getBluef(), STARLIGHT_COLOR.getBluef()));
+
+        if (overcast > 1.0e-8) {
+            /* Calculate the darkening effect of the overcast. */
+            /* We need HSB for that. */
+            float[] hsb = java.awt.Color.RGBtoHSB(usedColor.getRed(), usedColor.getGreen(), usedColor.getBlue(), null);
+
+            hsb[1] = Math.max(0, hsb[1] - (float) (0.3f * overcast)); /* Clouds make everything gray */
+            hsb[2] = Math.max(0.1f, hsb[2] - (float) (0.3f * overcast)); /* Clouds make it darker. */
+
+            int rgb = java.awt.Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]);
+            usedColor.setRed((0xFF0000 & rgb) >> 16);
+            usedColor.setGreen((0xFF00 & rgb) >> 8);
+            usedColor.setBlue(0xFF & rgb);
+        }
+
+        /* Activate the new color */
+        ambientLightToggle = !ambientLightToggle;
+    }
+
+    /**
+     * Calculate the color the sun is shining with.
+     *
+     * @param dayInYear   the day within the year
+     * @param secondOfDay the second within the current day
+     * @param middleOfDay the second of the day that marks the middle
+     * @return the color of the sun
+     */
+    @Nonnull
+    private static Color calculateSunlight(double dayInYear, double secondOfDay, double middleOfDay) {
         double phaseOfTheSun = getPhaseOfTheSun(dayInYear);
 
         double daylightTimeSpan = getDaylightSpan(phaseOfTheSun);
@@ -189,11 +215,9 @@ final class AmbientLight {
             if ((secondOfDay > beginOfSunrise) && (secondOfDay < endOfSunrise)) {
                 /* We are currently within the time span of a sunrise. */
                 double riseProgress = getProgressInRange(beginOfSunrise, endOfSunrise, secondOfDay);
-                getColorFromGradient(riseProgress, SUN_RISE_GRADIENT, usedColor);
-            } else if (secondOfDay >= endOfSunrise) {
-                usedColor.setColor(Color.WHITE);
+                return getColorFromGradient(riseProgress, SUN_RISE_GRADIENT);
             } else {
-                usedColor.setColor(Color.BLACK);
+                return (secondOfDay >= endOfSunrise) ? Color.WHITE : Color.BLACK;
             }
         } else {
             /* Before noon. So there may be a sunset at hand. */
@@ -204,35 +228,11 @@ final class AmbientLight {
                 /* We are currently within the time span of a sunset. */
                 double setProgress = getProgressInRange(beginOfSunset, endOfSunset, secondOfDay);
                 /* Follow the gradient inverse. */
-                getColorFromGradient(1.0 - setProgress, SUN_RISE_GRADIENT, usedColor);
-            } else if (secondOfDay >= endOfSunset) {
-                usedColor.setColor(Color.BLACK);
+                return getColorFromGradient(1.0 - setProgress, SUN_RISE_GRADIENT);
             } else {
-                usedColor.setColor(Color.WHITE);
+                return (secondOfDay >= endOfSunset) ? Color.BLACK : Color.WHITE;
             }
         }
-
-        usedColor.setRedf(Math.max(usedColor.getRedf(), STARLIGHT_COLOR.getRedf()));
-        usedColor.setGreenf(Math.max(usedColor.getGreenf(), STARLIGHT_COLOR.getGreenf()));
-        usedColor.setBluef(Math.max(usedColor.getBluef(), STARLIGHT_COLOR.getBluef()));
-
-        if (overcast > 1.0e-8) {
-            /* Calculate the darkening effect of the overcast. */
-            /* We need HSB for that. */
-
-            java.awt.Color.RGBtoHSB(usedColor.getRed(), usedColor.getGreen(), usedColor.getBlue(), HSB_ARRAY);
-
-            HSB_ARRAY[1] = Math.max(0, HSB_ARRAY[1] - (float) (0.3f * overcast)); /* Clouds make everything gray */
-            HSB_ARRAY[2] = Math.max(0.1f, HSB_ARRAY[2] - (float) (0.3f * overcast)); /* Clouds make it darker. */
-
-            int rgb = java.awt.Color.HSBtoRGB(HSB_ARRAY[0], HSB_ARRAY[1], HSB_ARRAY[2]);
-            usedColor.setRed((0xFF0000 & rgb) >> 16);
-            usedColor.setGreen((0xFF00 & rgb) >> 8);
-            usedColor.setBlue(0xFF & rgb);
-        }
-
-        /* Activate the new color */
-        ambientLightToggle = !ambientLightToggle;
     }
 
     public void shutdown() {
@@ -260,12 +260,21 @@ final class AmbientLight {
 
     private static class GradientColorKey {
         @Nonnull
-        public final Color color;
-        public final double key;
+        private final ImmutableColor color;
+        private final double key;
 
-        GradientColorKey(@Nonnull Color color, double key) {
+        GradientColorKey(@Nonnull ImmutableColor color, double key) {
             this.color = color;
             this.key = key;
+        }
+
+        @Nonnull
+        public ImmutableColor getColor() {
+            return color;
+        }
+
+        public double getKey() {
+            return key;
         }
     }
 }

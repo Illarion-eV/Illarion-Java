@@ -46,7 +46,7 @@ public final class PoolThreadFactory implements ThreadFactory {
     }
 
     @Override
-    public Thread newThread(Runnable r) {
+    public Thread newThread(@Nonnull Runnable r) {
         Thread createdThread = new Thread(group, r, threadNameHead + threadNumber.getAndIncrement(), 0);
         if (createdThread.isDaemon() != daemonThreads) {
             createdThread.setDaemon(daemonThreads);
