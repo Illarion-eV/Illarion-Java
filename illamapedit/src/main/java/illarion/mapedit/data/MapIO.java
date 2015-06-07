@@ -49,23 +49,38 @@ import java.util.regex.Pattern;
  * @author Tim
  */
 public final class MapIO {
+    @Nonnull
     private static final Logger LOGGER = LoggerFactory.getLogger(MapIO.class);
+    @Nonnull
     private static final String HEADER_V = "V:";
+    @Nonnull
     private static final String HEADER_L = "L:";
+    @Nonnull
     private static final String HEADER_X = "X:";
+    @Nonnull
     private static final String HEADER_Y = "Y:";
+    @Nonnull
     private static final String HEADER_W = "W:";
+    @Nonnull
     private static final String HEADER_H = "H:";
+    @Nonnull
     public static final String EXT_WARP = ".warps.txt";
+    @Nonnull
     public static final String EXT_ITEM = ".items.txt";
+    @Nonnull
     public static final String EXT_TILE = ".tiles.txt";
+    @Nonnull
     public static final String EXT_ANNO = ".annot.txt";
     private static final char NEWLINE = '\n';
+    @Nonnull
     private static final Pattern VERSION_PATTERN = Pattern.compile("V: (\\d+)");
-    @Nullable
+    @Nonnull
     private static final CopyrightHeader COPYRIGHT_HEADER = new CopyrightHeader(80, null, null, "# ", null);
+    @Nonnull
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
+    @Nonnull
     private static final Charset CHARSET = Charset.forName("ISO-8859-1");
+    @Nonnull
     private static final DecoderFactory DECODER_FACTORY = new DecoderFactory();
 
     private MapIO() {
@@ -158,7 +173,7 @@ public final class MapIO {
             while (tileLinesItr.hasNext()) {
                 i++;
                 String line = tileLinesItr.next();
-                if (line.startsWith("# ")) {
+                if ((line == null) || line.startsWith("#")) {
                     continue;
                 }
                 Matcher versionLineMatcher = VERSION_PATTERN.matcher(line);

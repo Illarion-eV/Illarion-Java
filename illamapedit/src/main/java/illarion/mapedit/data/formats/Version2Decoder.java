@@ -45,11 +45,16 @@ public class Version2Decoder implements Decoder {
     private static final Pattern DELIMITER = Pattern.compile(";");
     private static final Pattern PATTERN_DATA = Pattern.compile("(?:\\\\.|[^;\\\\]++)*");
 
-    private int level = -1;
-    private int mapX = -1;
-    private int mapY = -1;
-    private int width = -1;
-    private int height = -1;
+    @Nullable
+    private Integer level;
+    @Nullable
+    private Integer mapX;
+    @Nullable
+    private Integer mapY;
+    @Nullable
+    private Integer width;
+    @Nullable
+    private Integer height;
 
     @Nullable
     private Map map;
@@ -61,11 +66,11 @@ public class Version2Decoder implements Decoder {
         this.name = name;
         this.path = path;
         map = null;
-        level = -1;
-        mapX = -1;
-        mapY = -1;
-        width = -1;
-        height = -1;
+        level = null;
+        mapX = null;
+        mapY = null;
+        width = null;
+        height = null;
     }
 
     public void decodeItemLine(@Nonnull String line, int i) throws FormatCorruptedException {
@@ -229,7 +234,7 @@ public class Version2Decoder implements Decoder {
         if (matcher.find()) {
             height = Integer.parseInt(matcher.group(1));
         }
-        if ((level != -1) && (mapX != -1) && (mapY != -1) && (width != -1) && (height != -1)) {
+        if ((level != null) && (mapX != null) && (mapY != null) && (width != null) && (height != null)) {
             map = new Map(name, path, width, height, mapX, mapY, level);
         }
     }
