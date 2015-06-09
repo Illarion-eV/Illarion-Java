@@ -17,7 +17,7 @@
 apply plugin: 'idea'
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.3'
+    gradleVersion = '2.4'
 }
 
 idea {
@@ -103,7 +103,7 @@ buildscript {
     dependencies {
         classpath group: 'net.sf.proguard', name: 'proguard-gradle', version: '5.1'
         classpath group: 'de.undercouch', name: 'gradle-download-task', version: '1.2'
-        classpath group: 'com.install4j', name: 'gradle-plugin', version: '6.0'
+        classpath group: 'com.install4j', name: 'gradle-plugin', version: '6.0.3'
     }
 }
 

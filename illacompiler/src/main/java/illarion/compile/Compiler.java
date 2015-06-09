@@ -89,7 +89,7 @@ public final class Compiler {
         jobs.setRequired(false);
         options.addOption(jobs);
 
-        CommandLineParser parser = new GnuParser();
+        CommandLineParser parser = new DefaultParser();
         try {
             CommandLine cmd = parser.parse(options, args);
 

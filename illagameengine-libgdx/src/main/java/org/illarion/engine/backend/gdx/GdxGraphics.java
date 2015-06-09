@@ -468,14 +468,14 @@ class GdxGraphics implements Graphics {
             if (outlineFont != null) {
                 transferColor(Color.BLACK, tempColor1);
                 tempColor1.a = color.getAlphaf();
-                outlineFont.setScale((float) scaleX, (float) scaleY);
+                outlineFont.getData().setScale((float) scaleX, (float) scaleY);
                 outlineFont.setColor(tempColor1);
                 outlineFont.draw(spriteBatch, text, x, y - outlineFont.getAscent());
             }
 
             transferColor(color, tempColor1);
             BitmapFont bitmapFont = gdxFont.getBitmapFont();
-            bitmapFont.setScale((float) scaleX, (float) scaleY);
+            bitmapFont.getData().setScale((float) scaleX, (float) scaleY);
             bitmapFont.setColor(tempColor1);
             bitmapFont.draw(spriteBatch, text, x, y - bitmapFont.getAscent());
         }
