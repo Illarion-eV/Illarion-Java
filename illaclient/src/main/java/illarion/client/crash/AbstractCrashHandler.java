@@ -35,6 +35,7 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
+    @Nonnull
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCrashHandler.class);
 
     /**
@@ -70,9 +71,14 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
             return;
         }
         currentlyCrashing = true;
+
+        if (isUnsolvableError(t, e)) {
+            crashClient(t, e, false);
+        }
+
         long oldLastCrash = lastCrash;
         lastCrash = System.currentTimeMillis();
-        if ((lastCrash - oldLastCrash) < TIME_SINCE_LAST_CRASH) {
+        if (isUnsolvableError(t, e) || ((lastCrash - oldLastCrash) < TIME_SINCE_LAST_CRASH)) {
             crashClient(t, e);
             return;
         }
@@ -82,12 +88,24 @@ abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
         currentlyCrashing = false;
     }
 
+    protected boolean isUnsolvableError(@Nonnull Thread t, @Nonnull Throwable e) {
+        return false;
+    }
+
     /**
      * Calling this function results in crashing the entire client. Call it only
      * in case there is no chance in keeping the client running.
      */
     protected final void crashClient(@Nonnull Thread t, @Nonnull Throwable e) {
-        IllaClient.errorExit(getCrashMessage(t, e) + '\n' + Lang.getMsg("crash.fixfailed"));
+        crashClient(t, e, true);
+    }
+
+    protected final void crashClient(@Nonnull Thread t, @Nonnull Throwable e, boolean showFixFailed) {
+        String message = getCrashMessage(t, e);
+        if (showFixFailed) {
+            message += '\n' + Lang.getMsg("crash.fixfailed");
+        }
+        IllaClient.errorExit(message);
 
         currentlyCrashing = false;
     }

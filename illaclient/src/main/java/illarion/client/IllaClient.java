@@ -294,7 +294,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
 
         LOGGER.info("Client terminated on user request.");
 
-        LOGGER.error(Lang.getMsg(message));
+        LOGGER.error(message);
         LOGGER.error("Terminating client!");
 
         INSTANCE.cfg.save();
