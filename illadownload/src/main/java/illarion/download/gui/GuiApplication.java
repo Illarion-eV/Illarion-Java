@@ -46,34 +46,30 @@ public class GuiApplication extends Application implements Storyboard {
     private static final double SCENE_WIDTH = 620.0;
     private static final double SCENE_HEIGHT = 410.0;
 
-    private final int currentScene = -1;
-    private static final int SCENE_SELECT_DATA = 0;
-    private static final int SCENE_SELECT_USER = 1;
-    private static final int SCENE_MAIN = 2;
-
     private GuiModel model;
 
     @Nullable
     private Stage stage;
 
-    @Nullable
-    private ConfigSystem cfg;
-
     @Override
-    public void start(@Nonnull Stage stage) throws Exception {
+    public void start(@Nonnull Stage primaryStage) throws Exception {
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
 
-        model = new GuiModel(stage, getHostServices(), this);
-        stage.initStyle(StageStyle.TRANSPARENT);
+        model = new GuiModel(primaryStage, getHostServices(), this);
+        ConfigSystem cfg = loadConfig();
+        initLogs();
+        model.setConfig(cfg);
 
-        this.stage = stage;
+        primaryStage.initStyle(StageStyle.TRANSPARENT);
 
-        stage.getIcons().add(new Image("illarion_download256.png"));
+        stage = primaryStage;
 
-        nextScene();
-        stage.setResizable(false);
-        stage.show();
+        primaryStage.getIcons().add(new Image("illarion_download256.png"));
+
+        showNormal();
+        primaryStage.setResizable(false);
+        primaryStage.show();
     }
 
     public void setScene(@Nonnull Parent sceneContent) {
@@ -89,37 +85,20 @@ public class GuiApplication extends Application implements Storyboard {
         stage.setScene(scene);
     }
 
-    private void loadConfig() {
-        if (cfg == null) {
-            DirectoryManager dm = DirectoryManager.getInstance();
-            cfg = new ConfigSystem(dm.resolveFile(Directory.User, "download.xcfgz"));
-            cfg.setDefault("channelClient", 0);
-            cfg.setDefault("channelEasyNpc", 1);
-            cfg.setDefault("channelEasyQuest", 1);
-            cfg.setDefault("channelMapEditor", 1);
-
-            model.setConfig(cfg);
-        }
+    @Nonnull
+    private static ConfigSystem loadConfig() {
+        DirectoryManager dm = DirectoryManager.getInstance();
+        ConfigSystem cfg = new ConfigSystem(dm.resolveFile(Directory.User, "download.xcfgz"));
+        cfg.setDefault("channelClient", 0);
+        cfg.setDefault("channelEasyNpc", 1);
+        cfg.setDefault("channelEasyQuest", 1);
+        cfg.setDefault("channelMapEditor", 1);
+        return cfg;
     }
 
     public static void main(String... args) {
         System.setProperty("javafx.userAgentStylesheetUrl", "CASPIAN");
         launch(args);
-    }
-
-    @Override
-    public boolean hasNextScene() {
-        return currentScene < SCENE_MAIN;
-    }
-
-    @Override
-    public void nextScene() throws IOException {
-        loadConfig();
-        initLogs();
-
-        if (hasNextScene()) {
-            showNormal();
-        }
     }
 
     private static void initLogs() {
@@ -138,11 +117,19 @@ public class GuiApplication extends Application implements Storyboard {
 
     @Override
     public void showOptions() throws IOException {
+        if (model == null) {
+            throw new IllegalStateException("Model is not set.");
+        }
+
         setScene(new ChannelSelectView(model));
     }
 
     @Override
     public void showNormal() throws IOException {
+        if (model == null) {
+            throw new IllegalStateException("Model is not set.");
+        }
+
         setScene(new MainView(model));
     }
 }
