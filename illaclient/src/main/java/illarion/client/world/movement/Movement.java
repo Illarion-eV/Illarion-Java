@@ -174,6 +174,10 @@ public class Movement {
     public void executeServerRespMove(
             @Nonnull CharMovementMode mode, @Nonnull ServerCoordinate target, int duration) {
         ServerCoordinate orgLocation = playerLocation;
+        if (orgLocation == null) {
+            throw new IllegalStateException("The player location is currently unknown.");
+        }
+
         World.getUpdateTaskManager().addTask((container, delta) -> executeServerRespMoveInternal(orgLocation, mode, target, duration));
         playerLocation = target;
     }
@@ -255,10 +259,12 @@ public class Movement {
     }
 
     public void executeServerLocation(@Nonnull ServerCoordinate target) {
-        MovementHandler currentHandler = activeHandler;
-        if (currentHandler != null) {
-            currentHandler.disengage(false);
-        }
+        World.getUpdateTaskManager().addTask((container, delta) -> {
+            MovementHandler currentHandler = activeHandler;
+            if (currentHandler != null) {
+                currentHandler.disengage(false);
+            }
+        });
 
         stepInProgress = false;
         animator.cancelAll();
