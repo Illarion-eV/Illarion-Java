@@ -19,6 +19,7 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.controls.TextField;
+import de.lessvoid.nifty.controls.textfield.filter.input.TextFieldInputFilter;
 import de.lessvoid.nifty.controls.textfield.format.TextFieldDisplayFormat;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.input.NiftyStandardInputEvent;
@@ -30,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.stream.IntStream;
 
 /**
  * This class takes care for displaying and controlling the number select popup properly.
@@ -137,17 +139,8 @@ public final class NumberSelectPopupHandler implements ScreenController {
         TextField textField = getTextField();
 
         assert textField != null;
-        textField.enableInputFilter((int index, char newChar) -> {
-            if (!Character.isDigit(newChar)) {
-                return false;
-            }
-            String currentText = textField.getRealText();
-            StringBuilder buffer = new StringBuilder(currentText);
-            buffer.insert(index, newChar);
 
-            int value = Integer.parseInt(buffer.toString());
-            return !((value > maxValue) || (value < minValue));
-        });
+        textField.enableInputFilter(new InputFilter(textField, maxValue, minValue));
 
         textField.setFormat(new TextFieldDisplayFormat() {
             @Nonnull
@@ -334,6 +327,48 @@ public final class NumberSelectPopupHandler implements ScreenController {
             parentNifty.closePopup(activePopup.getId());
             activePopup = null;
             activeCallback = null;
+        }
+    }
+
+    private static class InputFilter implements TextFieldInputFilter {
+        @Nonnull
+        private final TextField textField;
+        private final int maxValue;
+        private final int minValue;
+
+        public InputFilter(@Nonnull TextField textField, int maxValue, int minValue) {
+            this.textField = textField;
+            this.maxValue = maxValue;
+            this.minValue = minValue;
+        }
+
+        @Override
+        public boolean acceptInput(int index, @Nonnull CharSequence newChars) {
+            try (IntStream newCharStream = newChars.chars()) {
+                if (!newCharStream.allMatch(Character::isDigit)) {
+                    return false;
+                }
+            }
+
+            String currentText = textField.getRealText();
+            StringBuilder buffer = new StringBuilder(currentText);
+            buffer.insert(index, newChars);
+
+            int value = Integer.parseInt(buffer.toString());
+            return !((value > maxValue) || (value < minValue));
+        }
+
+        @Override
+        public boolean acceptInput(int index, char newChar) {
+            if (!Character.isDigit(newChar)) {
+                return false;
+            }
+            String currentText = textField.getRealText();
+            StringBuilder buffer = new StringBuilder(currentText);
+            buffer.insert(index, newChar);
+
+            int value = Integer.parseInt(buffer.toString());
+            return !((value > maxValue) || (value < minValue));
         }
     }
 }
