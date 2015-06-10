@@ -354,8 +354,7 @@ public final class NumberSelectPopupHandler implements ScreenController {
             StringBuilder buffer = new StringBuilder(currentText);
             buffer.insert(index, newChars);
 
-            int value = Integer.parseInt(buffer.toString());
-            return !((value > maxValue) || (value < minValue));
+            return isValidNumber(buffer);
         }
 
         @Override
@@ -367,7 +366,12 @@ public final class NumberSelectPopupHandler implements ScreenController {
             StringBuilder buffer = new StringBuilder(currentText);
             buffer.insert(index, newChar);
 
-            int value = Integer.parseInt(buffer.toString());
+            return isValidNumber(buffer);
+        }
+
+        private boolean isValidNumber(@Nonnull CharSequence sequence) {
+            String text = sequence.toString();
+            int value = Integer.parseInt(text);
             return !((value > maxValue) || (value < minValue));
         }
     }
