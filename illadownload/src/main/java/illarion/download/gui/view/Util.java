@@ -62,9 +62,10 @@ final class Util {
         return obj;
     }
 
+    @Nonnull
     public static ResourceBundle loadResourceBundle(@Nonnull String name) {
         String dir = "illarion/download/gui/view/";
-        final ResourceBundle bundle;
+        @Nonnull ResourceBundle bundle;
         if (Locale.getDefault().getLanguage().equals(Locale.GERMAN.getLanguage())) {
             bundle = ResourceBundle.getBundle(dir + name, Locale.GERMAN, Util.class.getClassLoader());
         } else {

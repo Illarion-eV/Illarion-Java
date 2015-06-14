@@ -20,6 +20,8 @@ import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.collection.DependencyCollectionContext;
 import org.eclipse.aether.graph.Dependency;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,34 +29,44 @@ import java.util.List;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 class DefaultDependencyCollectionContext implements DependencyCollectionContext {
+    @Nonnull
     private final RepositorySystemSession session;
-    private final Artifact artifact;
+    @Nullable
     private final Dependency dependency;
 
     public DefaultDependencyCollectionContext(
-            RepositorySystemSession session, Artifact artifact, Dependency dependency) {
+            @Nonnull RepositorySystemSession session, @Nullable Dependency dependency) {
         this.session = session;
-        this.artifact = artifact;
         this.dependency = dependency;
     }
 
+    @Nonnull
     @Override
     public RepositorySystemSession getSession() {
         return session;
     }
 
     @Override
+    @Nullable
     public Artifact getArtifact() {
-        return artifact;
+        return (dependency != null) ? dependency.getArtifact() : null;
     }
 
     @Override
+    @Nullable
     public Dependency getDependency() {
         return dependency;
     }
 
     @Override
+    @Nonnull
     public List<Dependency> getManagedDependencies() {
         return Collections.emptyList();
+    }
+
+    @Override
+    @Nonnull
+    public String toString() {
+        return String.valueOf(getDependency());
     }
 }

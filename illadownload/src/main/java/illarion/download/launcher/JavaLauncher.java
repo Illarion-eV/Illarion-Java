@@ -20,12 +20,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * The use of this class is to start a independent JVM that runs the chosen application. This class requires calls
@@ -63,11 +65,7 @@ public final class JavaLauncher {
         String classPathString = buildClassPathString(classpath);
 
         Iterable<Path> executablePaths;
-        if (OSDetection.isMacOSX()) {
-            executablePaths = new MacOsXJavaExecutableIterable();
-        } else {
-            executablePaths = new JavaExecutableIterable();
-        }
+        executablePaths = OSDetection.isMacOSX() ? new MacOsXJavaExecutableIterable() : new JavaExecutableIterable();
 
         for (Path executable : executablePaths) {
             if (isJavaExecutableWorking(executable)) {
@@ -96,34 +94,37 @@ public final class JavaLauncher {
      * @param executable the path to the executable
      * @return {@code true} in case java meets the required specifications
      */
-    private boolean isJavaExecutableWorking(@Nonnull Path executable) {
+    private static boolean isJavaExecutableWorking(@Nonnull Path executable) {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(executable.toString(), "-version");
             processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
-            //noinspection resource
-            process.getOutputStream().close();
 
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), Charset.defaultCharset()))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    if (line.startsWith("java version")) {
-                        Matcher matcher = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)_(\\d+)").matcher(line);
-                        if (matcher.find()) {
-                            int mainVersion = Integer.parseInt(matcher.group(1));
-                            int majorVersion = Integer.parseInt(matcher.group(2));
-                            int minorVersion = Integer.parseInt(matcher.group(3));
-                            int buildNumber = Integer.parseInt(matcher.group(4));
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream(), Charset.defaultCharset()))) {
 
-                            log.info("Matched Java version to {}.{}.{}_b{}", mainVersion, majorVersion, minorVersion,
-                                    buildNumber);
+                Pattern versionRegex = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)_(\\d+)");
+                Optional<Matcher> versionMatcher = reader.lines()
+                        .filter(s -> s.startsWith("java version"))
+                        .map(versionRegex::matcher)
+                        .filter(Matcher::find)
+                        .findFirst();
 
-                            return (mainVersion >= 1) && (majorVersion >= 7) && (buildNumber >= 21);
-                        }
-                    }
+                if (versionMatcher.isPresent()) {
+                    Matcher matcher = versionMatcher.get();
+                    int mainVersion = Integer.parseInt(matcher.group(1));
+                    int majorVersion = Integer.parseInt(matcher.group(2));
+                    int minorVersion = Integer.parseInt(matcher.group(3));
+                    int buildNumber = Integer.parseInt(matcher.group(4));
+
+                    log.info("Matched Java version to {}.{}.{}_b{}",
+                            mainVersion, majorVersion, minorVersion, buildNumber);
+
+                    return (mainVersion >= 1) && (majorVersion >= 8) && (buildNumber >= 0);
                 }
+            } finally {
+                process.destroy();
             }
-            process.destroy();
         } catch (IOException e) {
             log.error("Launching {} failed.", executable);
         }
@@ -137,17 +138,13 @@ public final class JavaLauncher {
      * @return the string that represents the class path
      */
     @Nonnull
-    private String buildClassPathString(@Nonnull Collection<File> classpath) {
+    private static String buildClassPathString(@Nonnull Collection<File> classpath) {
         if (classpath.isEmpty()) {
             return "";
         }
-        StringBuilder builder = new StringBuilder();
-        for (File classPathFile : classpath) {
-            builder.append(classPathFile.getAbsolutePath());
-            builder.append(File.pathSeparatorChar);
-        }
-        builder.setLength(builder.length() - 1);
-        return escapePath(builder.toString());
+
+        String cp = classpath.stream().map(File::getAbsolutePath).collect(Collectors.joining(File.pathSeparator));
+        return (cp == null) ? "" : escapePath(cp);
     }
 
     /**
@@ -157,6 +154,7 @@ public final class JavaLauncher {
      * @param orgPath the original plain path
      * @return the escaped path
      */
+    @Nonnull
     private static String escapePath(@Nonnull String orgPath) {
         if (OSDetection.isWindows()) {
             if (orgPath.contains(" ")) {
@@ -164,6 +162,7 @@ public final class JavaLauncher {
             }
             return orgPath;
         }
+        //noinspection DynamicRegexReplaceableByCompiledPattern
         return orgPath.replace(" ", "\\ ");
     }
 
@@ -172,16 +171,10 @@ public final class JavaLauncher {
      *
      * @param callList the call list to print
      */
-    private static void printCallList(@Nonnull List<String> callList) {
+    private static void printCallList(@Nonnull Collection<String> callList) {
         if (log.isDebugEnabled()) {
-            StringBuilder debugBuilder = new StringBuilder();
-            debugBuilder.append("Calling: ");
-            debugBuilder.append(System.getProperty("line.separator"));
-
-            for (String aCallList : callList) {
-                debugBuilder.append(aCallList).append(' ');
-            }
-            log.debug(debugBuilder.toString());
+            String prefix = "Calling: " + System.getProperty("line.separator");
+            log.debug(callList.stream().collect(Collectors.joining(" ", prefix, "")));
         }
     }
 
@@ -250,6 +243,7 @@ public final class JavaLauncher {
      *
      * @return the string containing the data about the crash
      */
+    @Nullable
     public String getErrorData() {
         return errorData;
     }

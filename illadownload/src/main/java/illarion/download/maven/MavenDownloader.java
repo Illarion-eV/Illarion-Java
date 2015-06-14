@@ -210,7 +210,7 @@ public class MavenDownloader {
         DependencySelector selector = new AndDependencySelector(new OptionalDependencySelector(),
                                                                 new ScopeDependencySelector(usedScopes, null));
         session.setDependencySelector(
-                selector.deriveChildSelector(new DefaultDependencyCollectionContext(session, artifact, dependency)));
+                selector.deriveChildSelector(new DefaultDependencyCollectionContext(session, dependency)));
 
         DependencyFilter filter = DependencyFilterUtils.classpathFilter(RUNTIME, COMPILE);
 
