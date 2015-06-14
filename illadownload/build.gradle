@@ -27,7 +27,7 @@ def hasInstall4jDir = project.hasProperty('install4jDir')
 def hasInstall4jTargetDir = project.hasProperty('install4jTargetDir')
 
 archivesBaseName = 'illarion_download'
-mainClassName = 'illarion.download.gui.GuiApplication'
+mainClassName = 'illarion.download.Application'
 
 dependencies {
     compile project(':common')

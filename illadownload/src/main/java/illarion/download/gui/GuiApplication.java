@@ -15,9 +15,6 @@
  */
 package illarion.download.gui;
 
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.util.ContextInitializer;
-import ch.qos.logback.core.joran.spi.JoranException;
 import illarion.common.config.ConfigSystem;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.DirectoryManager.Directory;
@@ -31,13 +28,10 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.slf4j.LoggerFactory;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.nio.file.Path;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
@@ -45,20 +39,30 @@ import java.nio.file.Path;
 public class GuiApplication extends Application implements Storyboard {
     private static final double SCENE_WIDTH = 620.0;
     private static final double SCENE_HEIGHT = 410.0;
-
+    @Nonnull
+    private final ConfigSystem cfg;
     private GuiModel model;
-
     @Nullable
     private Stage stage;
 
+    public GuiApplication() {
+        cfg = loadConfig();
+    }
+
+    @Nonnull
+    private static ConfigSystem loadConfig() {
+        DirectoryManager dm = DirectoryManager.getInstance();
+        ConfigSystem cfg = new ConfigSystem(dm.resolveFile(Directory.User, "download.xcfgz"));
+        cfg.setDefault("channelClient", 0);
+        cfg.setDefault("channelEasyNpc", 1);
+        cfg.setDefault("channelEasyQuest", 1);
+        cfg.setDefault("channelMapEditor", 1);
+        return cfg;
+    }
+
     @Override
     public void start(@Nonnull Stage primaryStage) throws Exception {
-        SLF4JBridgeHandler.removeHandlersForRootLogger();
-        SLF4JBridgeHandler.install();
-
         model = new GuiModel(primaryStage, getHostServices(), this);
-        ConfigSystem cfg = loadConfig();
-        initLogs();
         model.setConfig(cfg);
 
         primaryStage.initStyle(StageStyle.TRANSPARENT);
@@ -83,36 +87,6 @@ public class GuiApplication extends Application implements Storyboard {
             ((SceneUpdater) sceneContent).updateScene(scene);
         }
         stage.setScene(scene);
-    }
-
-    @Nonnull
-    private static ConfigSystem loadConfig() {
-        DirectoryManager dm = DirectoryManager.getInstance();
-        ConfigSystem cfg = new ConfigSystem(dm.resolveFile(Directory.User, "download.xcfgz"));
-        cfg.setDefault("channelClient", 0);
-        cfg.setDefault("channelEasyNpc", 1);
-        cfg.setDefault("channelEasyQuest", 1);
-        cfg.setDefault("channelMapEditor", 1);
-        return cfg;
-    }
-
-    public static void main(String... args) {
-        System.setProperty("javafx.userAgentStylesheetUrl", "CASPIAN");
-        launch(args);
-    }
-
-    private static void initLogs() {
-        Path dir = DirectoryManager.getInstance().getDirectory(Directory.User);
-        System.setProperty("log_dir", dir.toAbsolutePath().toString());
-
-        //Reload:
-        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-        ContextInitializer ci = new ContextInitializer(lc);
-        lc.reset();
-        try {
-            ci.autoConfig();
-        } catch (JoranException ignored) {
-        }
     }
 
     @Override
