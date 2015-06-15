@@ -223,9 +223,6 @@ public final class MapTile {
 
     @Nonnull
     public Color getLight() {
-        if (removedTile) {
-            LOGGER.warn("Fetching light of a removed tile.");
-        }
         return localColor.getCurrentColor();
     }
 
@@ -670,10 +667,6 @@ public final class MapTile {
      * @return {@code true} in case the tile is on the same level as the player
      */
     public boolean isAtPlayerLevel() {
-        if (removedTile) {
-            LOGGER.warn("Checking if a removed tile is at the level of the player.");
-            return false;
-        }
         return World.getPlayer().isBaseLevel(getCoordinates());
     }
 

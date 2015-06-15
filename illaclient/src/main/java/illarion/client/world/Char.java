@@ -242,6 +242,33 @@ public final class Char implements AnimatedMove {
         public CharMovementMode mode;
         public int duration;
         public ServerCoordinate targetLocation;
+
+        @Override
+        @Nonnull
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append("DelayedMoveData(");
+            if (mode == null) {
+                builder.append("NULL");
+            } else {
+                switch (mode) {
+                    case Walk:
+                        builder.append("Walk");
+                        break;
+                    case Run:
+                        builder.append("Run");
+                        break;
+                    case None:
+                        builder.append("None");
+                        break;
+                    case Push:
+                        builder.append("Push");
+                        break;
+                }
+            }
+            builder.append(", ").append(duration).append("ms, ").append("to ").append(targetLocation);
+            return builder.toString();
+        }
     }
 
     /**
@@ -920,6 +947,9 @@ public final class Char implements AnimatedMove {
     }
 
     private void moveToInternal(@Nonnull ServerCoordinate newPos, @Nonnull CharMovementMode mode, int duration) {
+        if (mode == CharMovementMode.None) {
+            return;
+        }
         CharacterId characterId = getCharId();
         if (characterId == null) {
             log.error("Can't move a character without ID around.");
@@ -927,13 +957,16 @@ public final class Char implements AnimatedMove {
         }
 
         if (!World.getPlayer().isPlayer(characterId)) {
-            if (move.isRunning()) {
+            if (mode == CharMovementMode.Push) {
+                log.info("{}: Executing push move right away.", this);
+                resetAnimation(true);
+            } else if (move.isRunning()) {
                 if (delayedMove == null) {
                     delayedMove = new DelayedMoveData();
                     delayedMove.duration = duration;
                     delayedMove.mode = mode;
                     delayedMove.targetLocation = newPos;
-                    log.info("{}: Scheduled move for later execution.", this);
+                    log.info("{}: Scheduled move for later execution: {}", this, delayedMove);
                     return;
                 } else {
                     log.warn("{}: Can't delay the move. Spot is already taken. Executing now.", this);

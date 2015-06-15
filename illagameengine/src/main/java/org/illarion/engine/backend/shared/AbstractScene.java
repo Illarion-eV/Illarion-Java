@@ -149,7 +149,6 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
             }
             event = eventQueue.poll();
         }
-        long end = System.currentTimeMillis();
 
         for (int i = 0; i < workingArraySize; i++) {
             SceneElement element = workingArray[i];
