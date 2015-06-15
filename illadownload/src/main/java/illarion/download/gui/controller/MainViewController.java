@@ -37,6 +37,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xmlpull.v1.XmlPullParser;
@@ -78,13 +79,14 @@ public class MainViewController extends AbstractController implements MavenDownl
 
     private ResourceBundle resourceBundle;
 
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(MainViewController.class);
 
     @Override
-    public void initialize(URL url, @Nonnull ResourceBundle resourceBundle) {
-        this.resourceBundle = resourceBundle;
+    public void initialize(URL location, @Nonnull ResourceBundle resources) {
+        resourceBundle = resources;
         progress.setProgress(0.0);
-        progressDescription.setText(resourceBundle.getString("selectStartApp"));
+        progressDescription.setText(resources.getString("selectStartApp"));
 
         new Thread(() -> {
             try {
@@ -98,11 +100,11 @@ public class MainViewController extends AbstractController implements MavenDownl
             private final KeyCombination combo = new KeyCodeCombination(KeyCode.ENTER);
 
             @Override
-            public void handle(@Nonnull KeyEvent keyEvent) {
-                if (combo.match(keyEvent)) {
+            public void handle(@Nonnull KeyEvent event) {
+                if (combo.match(event)) {
                     launchClientButton.fire();
                 }
-                keyEvent.consume();
+                event.consume();
             }
         };
         launchEasyNpcButton.setOnKeyReleased(eventEventHandler);
@@ -130,7 +132,7 @@ public class MainViewController extends AbstractController implements MavenDownl
         }
 
         @Override
-        public int compareTo(NewsQuestEntry o) {
+        public int compareTo(@Nonnull NewsQuestEntry o) {
             if ((timeStamp == null) && (o.timeStamp != null)) {
                 return -1;
             }
@@ -239,17 +241,19 @@ public class MainViewController extends AbstractController implements MavenDownl
                         case "title":
                             boolean german = "de".equals(parser.getAttributeValue(null, "lang"));
                             String text = parser.nextText();
-                            if ((title == null) || title.isEmpty() ||
-                                    ((text != null) && !text.isEmpty() && (german == useGerman))) {
+                            if (isNullOrEmpty(title) || (!isNullOrEmpty(text) && (german == useGerman))) {
                                 title = text;
                             }
                             break;
                         case "link":
-                            linkTarget = new URL(parser.nextText());
+                            String linkUrl = parser.nextText();
+                            if (!isNullOrEmpty(linkUrl)) {
+                                linkTarget = new URL(linkUrl);
+                            }
                             break;
                         case "date":
                             String textTimeStamp = parser.nextText();
-                            if (!textTimeStamp.isEmpty()) {
+                            if (!isNullOrEmpty(textTimeStamp)) {
                                 timestamp = parsingFormat.parse(textTimeStamp);
                             }
                             break;
@@ -257,6 +261,11 @@ public class MainViewController extends AbstractController implements MavenDownl
                     break;
             }
         }
+    }
+
+    @Contract(value = "null -> true", pure = true)
+    private static boolean isNullOrEmpty(@Nullable String testString) {
+        return (testString == null) || testString.isEmpty();
     }
 
     private void showNewsInList(@Nonnull Iterable<NewsQuestEntry> list) {
@@ -388,6 +397,7 @@ public class MainViewController extends AbstractController implements MavenDownl
                     MavenDownloader downloader = new MavenDownloader(useSnapshots, attempt);
                     downloader.downloadArtifact(groupId, artifactId, this);
                 } catch (@Nonnull Exception e) {
+                    //noinspection ThrowableResultOfMethodCallIgnored
                     if (getInnerExceptionOfType(SocketTimeoutException.class, e) != null) {
                         log.warn("Timeout detected. Restarting download with longer timeout.");
                         continue;
@@ -486,6 +496,7 @@ public class MainViewController extends AbstractController implements MavenDownl
 
     @Override
     public void resolvingFailed(@Nonnull Exception ex) {
+        //noinspection ThrowableResultOfMethodCallIgnored
         if (getInnerExceptionOfType(SocketTimeoutException.class, ex) != null) {
             return;
         }

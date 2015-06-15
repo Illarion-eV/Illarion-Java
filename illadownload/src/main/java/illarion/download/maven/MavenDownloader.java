@@ -232,7 +232,7 @@ public class MavenDownloader {
                 }
             };
 
-            ArtifactRequestBuilder builder = new ArtifactRequestBuilder(null, system, session, tracer);
+            ArtifactRequestBuilder builder = new ArtifactRequestBuilder(system, session, tracer);
             DependencyVisitor visitor = new FilteringDependencyVisitor(builder, filter);
             visitor = new TreeDependencyVisitor(visitor);
             collectResult.getRoot().accept(visitor);
@@ -278,7 +278,7 @@ public class MavenDownloader {
         }
     }
 
-    public static String humanReadableByteCount(long bytes, boolean si) {
+    private static String humanReadableByteCount(long bytes, boolean si) {
         int unit = si ? 1000 : 1024;
         if (bytes < unit) {
             return bytes + " B";

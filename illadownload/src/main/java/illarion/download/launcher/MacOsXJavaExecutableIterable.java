@@ -26,10 +26,11 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * The sole purpose of this java executable iterator is to combat the inability of Apple Inc. to create a operating
@@ -79,40 +80,40 @@ public class MacOsXJavaExecutableIterable extends AbstractJavaExecutableIterable
             if (super.hasNext()) {
                 return true;
             }
-            if (currentIndex == -1 && (source.getJavaHomeDirectory() != null)) {
+            if ((currentIndex == -1) && (source.getJavaHomeDirectory() != null)) {
                 return true;
-            } else if (currentIndex <= 0) {
+            }
+            if (currentIndex <= 0) {
                 if (alternativePaths == null) {
-                    alternativePaths = source.getLibraryDirectoryCandidates().iterator();
+                    alternativePaths = getLibraryDirectoryCandidates().iterator();
                 }
                 return alternativePaths.hasNext();
             }
             return false;
         }
 
-        @Override
         @Nonnull
+        @Override
         public Path next() {
             if (super.hasNext()) {
                 return super.next();
-            } else {
-                while (hasNext()) {
-                    currentIndex++;
-                    switch (currentIndex) {
-                        case 0:
-                            Path homePath = source.getJavaHomeDirectory();
-                            if (homePath != null) {
-                                return homePath;
-                            }
-                            break;
-                        case 1:
-                            if (alternativePaths != null) {
-                                currentIndex--;
-                                return alternativePaths.next();
-                            }
-                        default:
-                            throw new NoSuchElementException();
-                    }
+            }
+            while (hasNext()) {
+                currentIndex++;
+                switch (currentIndex) {
+                    case 0:
+                        Path homePath = source.getJavaHomeDirectory();
+                        if (homePath != null) {
+                            return homePath;
+                        }
+                        break;
+                    case 1:
+                        if (alternativePaths != null) {
+                            currentIndex--;
+                            return alternativePaths.next();
+                        }
+                    default:
+                        throw new NoSuchElementException();
                 }
             }
             throw new NoSuchElementException();
@@ -189,8 +190,8 @@ public class MacOsXJavaExecutableIterable extends AbstractJavaExecutableIterable
             Files.walkFileTree(home, new SimpleFileVisitor<Path>() {
                 @Nonnull
                 @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    if (file.getFileName().toString().equals("java")) {
+                public FileVisitResult visitFile(@Nonnull Path file, BasicFileAttributes attrs) throws IOException {
+                    if ("java".equals(file.getFileName().toString())) {
                         resultFile[0] = file;
                         return FileVisitResult.TERMINATE;
                     }
@@ -211,38 +212,31 @@ public class MacOsXJavaExecutableIterable extends AbstractJavaExecutableIterable
      * @return the list of java installment candidates
      */
     @Nonnull
-    private List<Path> getLibraryDirectoryCandidates() {
-        List<Path> possiblePaths = new ArrayList<>();
+    private static List<Path> getLibraryDirectoryCandidates() {
+        Stream<Path> possiblePaths = Stream.empty();
         try {
             Path systemJvmPath = Paths.get("/System/Library/Frameworks/JavaVM.framework/Versions/");
             if (Files.isDirectory(systemJvmPath)) {
-                for (Path versionDir : Files.newDirectoryStream(systemJvmPath)) {
-                    possiblePaths.add(versionDir.resolve("Home"));
-                }
+                Stream<Path> paths = Files.list(systemJvmPath).map(path -> path.resolve("Home"));
+                possiblePaths = Stream.concat(possiblePaths, paths);
             }
 
             Path appletPluginPath = Paths.get("/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home");
             if (Files.isDirectory(appletPluginPath)) {
-                possiblePaths.add(appletPluginPath);
+                possiblePaths = Stream.concat(possiblePaths, Stream.of(appletPluginPath));
             }
+
             Path libraryJvmPath = Paths.get("/Library/Java/JavaVirtualMachines/");
             if (Files.isDirectory(libraryJvmPath)) {
-                for (Path versionDir : Files.newDirectoryStream(libraryJvmPath)) {
-                    possiblePaths.add(versionDir.resolve("Contents").resolve("Home"));
-                }
+                Stream<Path> paths = Files.list(libraryJvmPath)
+                        .map(path -> path.resolve("Contents").resolve("Home"));
+                possiblePaths = Stream.concat(possiblePaths, paths);
             }
         } catch (IOException e) {
             LOGGER.error("Failed to resolve the directories.", e);
         }
 
-        List<Path> result = new ArrayList<>();
-        for (Path path : possiblePaths) {
-            Path executable = extendHomeToExecutable(path);
-            if (executable != null) {
-                result.add(executable);
-            }
-        }
-        return result;
+        return possiblePaths.map(MacOsXJavaExecutableIterable::extendHomeToExecutable).collect(Collectors.toList());
     }
 
     @Override

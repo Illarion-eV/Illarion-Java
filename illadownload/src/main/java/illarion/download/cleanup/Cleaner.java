@@ -212,7 +212,9 @@ public class Cleaner {
 
         Collections.sort(snapshotJars);
 
-        Collection<String> snapshotNames = snapshotJars.stream().map(snapshotJar -> snapshotJar.getFileName().toString().replace(".jar", "")).collect(Collectors.toList());
+        Collection<String> snapshotNames = snapshotJars.stream()
+                .map(snapshotJar -> snapshotJar.getFileName().toString().replace(".jar", ""))
+                .collect(Collectors.toList());
 
         return enlistFiles(snapshotDir, entry -> {
             String fileName = entry.getFileName().toString();

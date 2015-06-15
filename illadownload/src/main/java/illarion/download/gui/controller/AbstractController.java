@@ -32,7 +32,7 @@ public abstract class AbstractController implements Controller {
     @Nullable
     private GuiModel model;
 
-    protected AbstractController() {
+    AbstractController() {
     }
 
     @Override
@@ -41,7 +41,7 @@ public abstract class AbstractController implements Controller {
     }
 
     @Nonnull
-    public GuiModel getModel() {
+    GuiModel getModel() {
         if (model == null) {
             throw new IllegalStateException("GUIModel was not set yet.");
         }

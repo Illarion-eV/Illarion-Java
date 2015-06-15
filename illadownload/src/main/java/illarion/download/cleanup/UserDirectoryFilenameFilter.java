@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -35,7 +35,7 @@ class UserDirectoryFilenameFilter implements FilenameFilter {
             return true;
         }
         // old name files
-        if (name.equals("names.tbl") || name.equals("names.dat")) {
+        if ("names.tbl".equals(name) || "names.dat".equals(name)) {
             return true;
         }
         // old crash dump file

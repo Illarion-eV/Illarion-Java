@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -26,25 +26,26 @@ import java.util.regex.Pattern;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 class VersionComparator implements Comparator<Path>, Serializable {
-    private static final Pattern VERSION_SPLIT_PATTERN = Pattern.compile("\\.");
+    @Nonnull
+    private static final Pattern VERSION_SPLIT_PATTERN = Pattern.compile(".", Pattern.LITERAL);
 
     @Override
-    public int compare(@Nonnull Path file1, @Nonnull Path file2) {
+    public int compare(@Nonnull Path o1, @Nonnull Path o2) {
         String version1;
         String version2;
-        if (Files.isDirectory(file1)) {
-            if (Files.isDirectory(file2)) {
-                version1 = file1.toString();
-                version2 = file2.toString();
+        if (Files.isDirectory(o1)) {
+            if (Files.isDirectory(o2)) {
+                version1 = o1.toString();
+                version2 = o2.toString();
             } else {
                 return 1;
             }
         } else {
-            if (Files.isDirectory(file2)) {
+            if (Files.isDirectory(o2)) {
                 return -1;
             } else {
-                version1 = file1.toString();
-                version2 = file2.toString();
+                version1 = o1.toString();
+                version2 = o2.toString();
                 version1 = version1.substring(version1.indexOf('-'));
                 version2 = version2.substring(version2.indexOf('-'));
             }
@@ -54,13 +55,15 @@ class VersionComparator implements Comparator<Path>, Serializable {
         boolean snapshot2;
         if (version1.endsWith("-SNAPSHOT")) {
             snapshot1 = true;
-            version1 = version1.replace("-SNAPSHOT", "");
+            //noinspection SubtractionInCompareTo
+            version1 = version1.substring(0, version1.length() - "-SNAPSHOT".length());
         } else {
             snapshot1 = false;
         }
         if (version2.endsWith("-SNAPSHOT")) {
             snapshot2 = true;
-            version2 = version2.replace("-SNAPSHOT", "");
+            //noinspection SubtractionInCompareTo
+            version2 = version2.substring(0, version2.length() - "-SNAPSHOT".length());
         } else {
             snapshot2 = false;
         }

@@ -76,7 +76,7 @@ public class GuiApplication extends Application implements Storyboard {
         primaryStage.show();
     }
 
-    public void setScene(@Nonnull Parent sceneContent) {
+    private void setScene(@Nonnull Parent sceneContent) {
         if (stage == null) {
             return;
         }

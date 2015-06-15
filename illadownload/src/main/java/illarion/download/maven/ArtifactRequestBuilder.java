@@ -18,7 +18,6 @@ package illarion.download.maven;
 import illarion.download.launcher.OSDetection;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
-import org.eclipse.aether.RequestTrace;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.graph.DependencyVisitor;
@@ -29,7 +28,6 @@ import org.eclipse.aether.version.Version;
 import org.eclipse.aether.version.VersionScheme;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -38,9 +36,6 @@ import java.util.List;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 final class ArtifactRequestBuilder implements DependencyVisitor {
-    @Nullable
-    private final RequestTrace trace;
-
     @Nonnull
     private final VersionScheme versionScheme;
 
@@ -54,11 +49,9 @@ final class ArtifactRequestBuilder implements DependencyVisitor {
     private final ArtifactRequestTracer requestTracer;
 
     public ArtifactRequestBuilder(
-            @Nullable RequestTrace trace,
             @Nonnull RepositorySystem system,
             @Nonnull RepositorySystemSession session,
             @Nonnull ArtifactRequestTracer requestTracer) {
-        this.trace = trace;
         requests = new ArrayList<>();
         versionScheme = new GenericVersionScheme();
         this.session = session;
@@ -126,8 +119,6 @@ final class ArtifactRequestBuilder implements DependencyVisitor {
 
             if (noMatch) {
                 ArtifactRequest request = new ArtifactRequest(node);
-                request.setTrace(trace);
-
                 requests.add(new FutureArtifactRequest(system, session, request, requestTracer));
             }
         }

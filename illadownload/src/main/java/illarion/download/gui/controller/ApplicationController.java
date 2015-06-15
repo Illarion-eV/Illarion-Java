@@ -42,7 +42,7 @@ public class ApplicationController extends AbstractController {
     private double initialY;
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    public void initialize(URL location, ResourceBundle resources) {
     }
 
     @Override

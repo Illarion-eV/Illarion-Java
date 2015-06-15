@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class MavenTransferListener implements TransferListener {
+class MavenTransferListener implements TransferListener {
     @Nonnull
     private static final Logger log = LoggerFactory.getLogger(MavenTransferListener.class);
 
@@ -56,7 +56,7 @@ public class MavenTransferListener implements TransferListener {
         }
     }
 
-    private void reportTrace(@Nonnull Object[] dataArray, @Nonnull TransferEvent event) {
+    private static void reportTrace(@Nonnull Object[] dataArray, @Nonnull TransferEvent event) {
         ArtifactRequestTracer requestTracer = (ArtifactRequestTracer) dataArray[0];
         ProgressMonitor monitor = (ProgressMonitor) dataArray[1];
         long totalSize = event.getResource().getContentLength();

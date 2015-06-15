@@ -27,11 +27,11 @@ import java.util.NoSuchElementException;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public abstract class AbstractJavaExecutableIterable implements Iterable<Path> {
+abstract class AbstractJavaExecutableIterable implements Iterable<Path> {
     /**
      * The iterator implementation for the that iterates over the data supplies by the java executable iterable.
      */
-    protected abstract static class AbstractJavaExecutableIterator implements Iterator<Path> {
+    static class AbstractJavaExecutableIterator implements Iterator<Path> {
         /**
          * The original data source.
          */
@@ -48,7 +48,7 @@ public abstract class AbstractJavaExecutableIterable implements Iterable<Path> {
          *
          * @param source the data source of this iterator
          */
-        protected AbstractJavaExecutableIterator(@Nonnull AbstractJavaExecutableIterable source) {
+        AbstractJavaExecutableIterator(@Nonnull AbstractJavaExecutableIterable source) {
             this.source = source;
         }
 
@@ -76,7 +76,7 @@ public abstract class AbstractJavaExecutableIterable implements Iterable<Path> {
     @Nullable
     private final String usedJreRootDir;
 
-    protected AbstractJavaExecutableIterable() {
+    AbstractJavaExecutableIterable() {
         usedJreRootDir = System.getProperty("org.illarion.jre");
     }
 
@@ -107,7 +107,7 @@ public abstract class AbstractJavaExecutableIterable implements Iterable<Path> {
     }
 
     @Nullable
-    String getUsedJreRootDir() {
+    private String getUsedJreRootDir() {
         return usedJreRootDir;
     }
 }

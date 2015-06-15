@@ -53,6 +53,9 @@ final class Util {
         FXMLLoader loader = new FXMLLoader(resource, bundle);
 
         T obj = loader.load();
+        if (obj == null) {
+            throw new IOException("Loading the FXML failed. Loader returned null.");
+        }
 
         Controller controller = loader.getController();
         if (controller != null) {

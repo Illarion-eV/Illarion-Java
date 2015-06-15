@@ -28,7 +28,7 @@ import static illarion.download.maven.MavenDownloaderCallback.State.ResolvingDep
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class MavenRepositoryListener implements RepositoryListener {
+class MavenRepositoryListener implements RepositoryListener {
     @Nonnull
     private static final Logger log = LoggerFactory.getLogger(MavenRepositoryListener.class);
 
