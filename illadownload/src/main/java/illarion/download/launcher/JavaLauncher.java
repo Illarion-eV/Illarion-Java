@@ -15,6 +15,7 @@
  */
 package illarion.download.launcher;
 
+import illarion.common.config.Config;
 import illarion.common.util.DirectoryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,15 +46,19 @@ public final class JavaLauncher {
     /**
      * This text contains the error data in case the launch failed.
      */
+    @Nullable
     private String errorData;
 
     private final boolean snapshot;
+    @Nonnull
+    private final Config cfg;
 
     /**
      * Construct a new launcher and set the classpath and the class to launch.
      */
-    public JavaLauncher(boolean snapshot) {
+    public JavaLauncher(@Nonnull Config cfg, boolean snapshot) {
         this.snapshot = snapshot;
+        this.cfg = cfg;
     }
 
     /**
@@ -75,6 +80,9 @@ public final class JavaLauncher {
                 callList.add(classPathString);
                 if (snapshot) {
                     callList.add("-Dillarion.server=devserver");
+                }
+                if (cfg.getBoolean("launchAggressive")) {
+                    callList.add("-XX:+AggressiveOpts");
                 }
                 callList.add(startupClass);
                 printCallList(callList);

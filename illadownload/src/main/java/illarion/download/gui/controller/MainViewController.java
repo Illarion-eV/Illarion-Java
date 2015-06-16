@@ -383,9 +383,6 @@ public class MainViewController extends AbstractController implements MavenDownl
             @Nonnull String launchClass,
             @Nonnull String configKey) {
         Config cfg = getModel().getConfig();
-        if (cfg == null) {
-            throw new IllegalStateException("Can't show options without the config system");
-        }
 
         this.launchClass = launchClass;
         useSnapshots = cfg.getInteger(configKey) == 1;
@@ -471,11 +468,15 @@ public class MainViewController extends AbstractController implements MavenDownl
                 progress.setProgress(1.0);
                 progressDescription.setText(resourceBundle.getString("launchApplication"));
             });
-            JavaLauncher launcher = new JavaLauncher(useSnapshots);
+            JavaLauncher launcher = new JavaLauncher(getModel().getConfig(), useSnapshots);
             if (launcher.launch(classpath, launchClass)) {
                 Platform.runLater(() -> {
                     try {
-                        getModel().getStoryboard().showNormal();
+                        if (getModel().getConfig().getBoolean("stayOpenAfterLaunch")) {
+                            getModel().getStoryboard().showNormal();
+                        } else {
+                            getModel().getStage().close();
+                        }
                     } catch (IOException e) {
                         getModel().getStage().close();
                     }

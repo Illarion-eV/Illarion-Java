@@ -58,9 +58,6 @@ public class ChannelSelectionController extends AbstractController {
         super.setModel(model);
 
         Config cfg = getModel().getConfig();
-        if (cfg == null) {
-            throw new IllegalStateException("Can't show options without the config system");
-        }
 
         targetClient.setValue(targetClient.getItems().get(cfg.getInteger("channelClient")));
         targetEasyNpc.setValue(targetEasyNpc.getItems().get(cfg.getInteger("channelEasyNpc")));
@@ -71,9 +68,6 @@ public class ChannelSelectionController extends AbstractController {
     @FXML
     public void nextStep(@Nonnull ActionEvent actionEvent) {
         Config cfg = getModel().getConfig();
-        if (cfg == null) {
-            throw new IllegalStateException("Can't show options without the config system");
-        }
         cfg.set("channelClient", targetClient.getItems().indexOf(targetClient.getValue()));
         cfg.set("channelEasyNpc", targetEasyNpc.getItems().indexOf(targetEasyNpc.getValue()));
         cfg.set("channelEasyQuest", targetEasyQuest.getItems().indexOf(targetEasyQuest.getValue()));

@@ -15,9 +15,6 @@
  */
 package illarion.download.gui;
 
-import illarion.common.config.ConfigSystem;
-import illarion.common.util.DirectoryManager;
-import illarion.common.util.DirectoryManager.Directory;
 import illarion.download.gui.model.GuiModel;
 import illarion.download.gui.view.ChannelSelectView;
 import illarion.download.gui.view.MainView;
@@ -39,31 +36,13 @@ import java.io.IOException;
 public class GuiApplication extends Application implements Storyboard {
     private static final double SCENE_WIDTH = 620.0;
     private static final double SCENE_HEIGHT = 410.0;
-    @Nonnull
-    private final ConfigSystem cfg;
     private GuiModel model;
     @Nullable
     private Stage stage;
 
-    public GuiApplication() {
-        cfg = loadConfig();
-    }
-
-    @Nonnull
-    private static ConfigSystem loadConfig() {
-        DirectoryManager dm = DirectoryManager.getInstance();
-        ConfigSystem cfg = new ConfigSystem(dm.resolveFile(Directory.User, "download.xcfgz"));
-        cfg.setDefault("channelClient", 0);
-        cfg.setDefault("channelEasyNpc", 1);
-        cfg.setDefault("channelEasyQuest", 1);
-        cfg.setDefault("channelMapEditor", 1);
-        return cfg;
-    }
-
     @Override
     public void start(@Nonnull Stage primaryStage) throws Exception {
         model = new GuiModel(primaryStage, getHostServices(), this);
-        model.setConfig(cfg);
 
         primaryStage.initStyle(StageStyle.TRANSPARENT);
 
