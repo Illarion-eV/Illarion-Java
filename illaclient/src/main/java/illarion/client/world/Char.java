@@ -1189,6 +1189,7 @@ public final class Char implements AnimatedMove {
             return;
         }
         if (appearance != newAppearance) {
+            log.debug("{}: Changing appearance to: {}", this, newAppearance);
             appearance = newAppearance;
             if (coordinate != null) {
                 updateAvatar();

@@ -72,10 +72,6 @@ public final class TurnCharMsg implements ServerReply {
         }
 
         if (World.getPlayer().isPlayer(charId)) { // turn player
-            if (World.getPlayer().getMovementHandler().isMoving()) {
-                // no turning while the player is still moving
-                return ServerReplyResult.Reschedule;
-            }
             World.getPlayer().getMovementHandler().executeServerRespTurn(dir);
             return ServerReplyResult.Success;
         } else { // turn char
