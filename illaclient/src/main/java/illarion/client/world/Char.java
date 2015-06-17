@@ -1094,7 +1094,11 @@ public final class Char implements AnimatedMove {
         // The update of the direction arrives before the location of the character is set. That is okay because
         // the update of the character will take the stored direction into account.
         if (!move.isRunning() && (coordinate != null)) {
-            updateAvatar();
+            if (animation != CharAnimations.STAND) {
+                resetAnimation(true);
+            } else {
+                updateAvatar();
+            }
         }
     }
 
