@@ -14,12 +14,29 @@
   ~ GNU General Public License for more details.
   -->
 <configuration>
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log_dir:-}/launcher.log</file>
+        <encoder>
+            <pattern>%-5p - %d{ISO8601} - [%t]: %m%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <maxIndex>5</maxIndex>
+            <FileNamePattern>${log_dir:-}/launcher.log.%i.gz</FileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>10MB</maxFileSize>
+        </triggeringPolicy>
+    </appender>
+    <root level="warn">
+        <appender-ref ref="FILE" />
+    </root>
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%-5p - %d{ISO8601} - [%t]: %m%n</pattern>
         </encoder>
     </appender>
+    <logger name="org.bushe.swing.event.EventService" level="warn" />
     <root level="warn">
-        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="CONSOLE" />
     </root>
 </configuration>

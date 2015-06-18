@@ -24,6 +24,7 @@ import illarion.download.gui.GuiApplication;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
+import java.net.URL;
 import java.nio.file.Path;
 
 /**
@@ -54,7 +55,13 @@ public final class Application {
         ContextInitializer ci = new ContextInitializer(lc);
         lc.reset();
         try {
-            ci.autoConfig();
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            URL resource = cl.getResource("logback-with-file.xml");
+            if (resource != null) {
+                ci.configureByResource(resource);
+            } else {
+                ci.autoConfig();
+            }
         } catch (JoranException ignored) {
         }
     }

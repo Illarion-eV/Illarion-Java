@@ -45,7 +45,7 @@ dependencies {
     compile group: 'org.eclipse.aether', name: 'aether-connector-basic', version: '1.0.2.v20150114'
     compile group: 'org.eclipse.aether', name: 'aether-transport-http', version: '1.0.2.v20150114'
     compile group: 'org.apache.maven', name: 'maven-aether-provider', version: '3.3.3'
-    runtime group: 'org.codehaus.janino', name: 'janino', version: project.ext.janinoVersion
+    //runtime group: 'org.codehaus.janino', name: 'janino', version: project.ext.janinoVersion
     testCompile group: 'org.testng', name: 'testng', version: '6.9.4'
     testCompile group: 'org.easymock', name: 'easymock', version: '3.3.1'
     testCompile group: 'org.powermock', name: 'powermock-module-testng', version: '1.6.2'
@@ -55,17 +55,18 @@ dependencies {
 jar {
     dependsOn { gitVersion }
     manifest {
-        attributes         \
-                'Main-Class': 'illarion.download.gui.GuiApplication',        \
-                'Permissions': 'all-permissions',        \
-                'Codebase': 'illarion.org',        \
-                'Application-Name': 'Illarion Launcher',        \
-                'Application-Library-Allowable-Codebase': 'illarion.org',        \
-                'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),        \
-                'Built-By': System.getProperty('user.name'),         \
-                'Built-JDK': System.getProperty('java.version'),         \
-                'Implementation-Title': 'Illarion Launcher',         \
-                'Implementation-Vendor': 'Illarion e.V.',        \
+        attributes \
+                 'Main-Class': 'illarion.download.gui.GuiApplication', \
+                 'JavaFX-Feature-Proxy': 'None', \
+                 'Permissions': 'all-permissions', \
+                 'Codebase': 'illarion.org', \
+                 'Application-Name': 'Illarion Launcher', \
+                 'Application-Library-Allowable-Codebase': 'illarion.org', \
+                 'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'), \
+                 'Built-By': System.getProperty('user.name'), \
+                 'Built-JDK': System.getProperty('java.version'), \
+                 'Implementation-Title': 'Illarion Launcher', \
+                 'Implementation-Vendor': 'Illarion e.V.',\
                 'Implementation-Version': project.ext.fullVersion
     }
 }
