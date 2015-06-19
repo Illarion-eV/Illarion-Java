@@ -219,7 +219,7 @@ public final class JavaLauncher {
                         }
                     }
                 };
-                new Timer().schedule(timeoutTask, 10000);
+                new Timer("Startup Timeout Timer", true).schedule(timeoutTask, 10000);
 
                 while (true) {
                     String line = outputReader.readLine();

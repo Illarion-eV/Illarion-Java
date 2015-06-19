@@ -15,6 +15,7 @@
  */
 package illarion.download.cleanup;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.DirectoryManager.Directory;
 import illarion.common.util.ProgressMonitor;
@@ -47,7 +48,8 @@ public class Cleaner {
     /**
      * The logger that takes care for the logging output of this class.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(Cleaner.class);
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(Cleaner.class);
 
     /**
      * The executor service that is used to balance the load to find all required files across multiple threads.
@@ -71,13 +73,18 @@ public class Cleaner {
     }
 
     public void clean() {
-        executorService = Executors.newCachedThreadPool();
+        executorService = Executors.newFixedThreadPool(4,
+                new ThreadFactoryBuilder()
+                        .setDaemon(false)
+                        .setNameFormat("Cleanup Thread-%d")
+                        .build()
+        );
         monitor.setProgress(0);
         try {
             List<Path> filesToDelete = getRemovalTargets();
             deleteFiles(filesToDelete);
         } catch (IOException e) {
-            LOGGER.warn("Failed to cleanup.", e);
+            log.warn("Failed to cleanup.", e);
         }
         executorService.shutdown();
     }
@@ -137,7 +144,7 @@ public class Cleaner {
             try {
                 resultList.addAll(artifactScan.get());
             } catch (InterruptedException | ExecutionException e) {
-                LOGGER.error("Failed to get results of directory scan.");
+                log.error("Failed to get results of directory scan.");
             }
         }
 
@@ -193,7 +200,7 @@ public class Cleaner {
             try {
                 resultList.addAll(dirScan.get());
             } catch (InterruptedException | ExecutionException e) {
-                LOGGER.error("Failed to get results of directory scan.");
+                log.error("Failed to get results of directory scan.");
             }
         }
 
@@ -292,7 +299,7 @@ public class Cleaner {
                     try {
                         resultList.addAll(subDirScan.get());
                     } catch (InterruptedException | ExecutionException e) {
-                        LOGGER.error("Failed to get results of directory scan.");
+                        log.error("Failed to get results of directory scan.");
                     }
                 }
             }
@@ -308,9 +315,9 @@ public class Cleaner {
         long size = 0L;
         for (@Nonnull Path file : files) {
             size += Files.size(file);
-            LOGGER.debug(file.toAbsolutePath().toString());
+            log.debug(file.toAbsolutePath().toString());
         }
 
-        LOGGER.info("Files to delete: {} ({} Bytes)", files.size(), size);
+        log.info("Files to delete: {} ({} Bytes)", files.size(), size);
     }
 }

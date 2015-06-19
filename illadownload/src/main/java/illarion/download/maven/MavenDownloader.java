@@ -15,6 +15,7 @@
  */
 package illarion.download.maven;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import illarion.common.util.AppIdent;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.DirectoryManager.Directory;
@@ -248,7 +249,12 @@ public class MavenDownloader {
                 callback.reportNewState(ResolvingArtifacts, progressMonitor, offline, null);
             }
 
-            ExecutorService executorService = Executors.newSingleThreadExecutor();
+            ExecutorService executorService = Executors.newSingleThreadExecutor(
+                    new ThreadFactoryBuilder()
+                            .setDaemon(false)
+                            .setNameFormat("Download Thread")
+                            .build()
+            );
             List<Future<ArtifactResult>> results = executorService.invokeAll(requests);
             executorService.shutdown();
             while (!executorService.awaitTermination(1, TimeUnit.MINUTES)) {
