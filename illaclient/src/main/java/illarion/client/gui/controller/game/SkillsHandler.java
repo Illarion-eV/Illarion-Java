@@ -52,6 +52,9 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class SkillsHandler implements SkillGui, ScreenController, UpdatableHandler {
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(SkillsHandler.class);
+
     /**
      * The Nifty-GUI instance this handler is bound to.
      */
@@ -345,7 +348,7 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
             screen.findElementById("openSkillsBtn").startEffect(EffectEventId.onCustom, null, "pulse");
             MapTile playerTile = World.getMap().getMapAt(World.getPlayer().getLocation());
             if (playerTile == null) {
-                LOGGER.error("Tile below the player is NULL?!");
+                log.error("Tile below the player is NULL?!");
             } else {
                 playerTile.showEffect(41);
             }
@@ -353,8 +356,6 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
 
         layoutDirty = true;
     }
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SkillsHandler.class);
 
     private void updateVisibility() {
         Element content = getContentPanel();

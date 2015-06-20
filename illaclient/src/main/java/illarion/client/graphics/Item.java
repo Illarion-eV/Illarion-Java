@@ -472,8 +472,6 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         // write number to text for display
         if (ItemCount.isGreaterOne(count)) {
             number = new TextTag(count.getShortText(Lang.getInstance().getLocale()), Color.YELLOW);
-            number.setOffset((MapConstants.TILE_W / 2) - number.getHeight() - number.getWidth(),
-                             -number.getHeight() / 2);
         } else {
             number = null;
         }
@@ -517,6 +515,9 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
 
         if (showNumber && (number != null)) {
             number.addToCamera(getDisplayCoordinate().getX(), getDisplayCoordinate().getY());
+            number.updateHeightAndWidth();
+            number.setOffset((MapConstants.TILE_W / 2) - number.getHeight() - number.getWidth(),
+                    -number.getHeight() / 2);
             number.update(container, delta);
         }
     }

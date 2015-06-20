@@ -196,6 +196,12 @@ public final class DialogHandler
     @Override
     public void showSelectionDialog(int dialogId, @Nonnull String title, @Nonnull String content,
                                     @Nonnull Collection<SelectionItem> items) {
+        World.getUpdateTaskManager().addTask((container, delta) ->
+                showSelectionDialogImpl(dialogId, title, content, items));
+    }
+
+    private void showSelectionDialogImpl(int dialogId, @Nonnull String title, @Nonnull String content,
+                                         @Nonnull Collection<SelectionItem> items) {
         if (screen == null) {
             throw new IllegalStateException("UI is not ready yet.");
         }

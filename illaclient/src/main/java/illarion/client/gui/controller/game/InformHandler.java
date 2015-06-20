@@ -32,7 +32,6 @@ import illarion.client.util.UpdateTask;
 import illarion.client.world.MapDimensions;
 import illarion.client.world.World;
 import org.illarion.engine.GameContainer;
-import org.illarion.engine.graphic.Font;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -319,17 +318,14 @@ public final class InformHandler implements InformGui, ScreenController {
         panelBuilder.childLayoutHorizontal();
 
         String text = "Server> " + message;
-        Font font = FontLoader.getInstance().getFont(FontLoader.CONSOLE_FONT);
 
         LabelBuilder labelBuilder = new LabelBuilder();
         panelBuilder.control(labelBuilder);
         labelBuilder.label(text);
         labelBuilder.font(FontLoader.CONSOLE_FONT);
         labelBuilder.invisibleToMouse();
-        if (MapDimensions.getInstance().getOnScreenWidth() < font.getWidth(text)) {
-            labelBuilder.wrap(true);
-            labelBuilder.width(SizeValue.px(MapDimensions.getInstance().getOnScreenWidth()));
-        }
+        labelBuilder.wrap(true);
+        panelBuilder.width(SizeValue.px(MapDimensions.getInstance().getOnScreenWidth()));
 
         EffectBuilder effectBuilder = new EffectBuilder("hide");
         effectBuilder.startDelay(10000 + (message.length() * 50));
