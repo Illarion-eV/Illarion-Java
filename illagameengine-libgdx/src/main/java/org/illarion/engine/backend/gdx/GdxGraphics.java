@@ -18,6 +18,7 @@ package org.illarion.engine.backend.gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -464,20 +465,29 @@ class GdxGraphics implements Graphics {
             activateSpriteBatch();
             GdxFont gdxFont = (GdxFont) font;
 
+            BitmapFont bitmapFont = gdxFont.getBitmapFont();
+            bitmapFont.getData().setScale((float) scaleX, (float) scaleY);
+            transferColor(color, tempColor1);
+            bitmapFont.setColor(tempColor1);
+            GlyphLayout layout = Pools.obtain(GlyphLayout.class);
+            layout.setText(bitmapFont, text);
+
             BitmapFont outlineFont = gdxFont.getOutlineBitmapFont();
             if (outlineFont != null) {
                 transferColor(Color.BLACK, tempColor1);
                 tempColor1.a = color.getAlphaf();
                 outlineFont.getData().setScale((float) scaleX, (float) scaleY);
                 outlineFont.setColor(tempColor1);
-                outlineFont.draw(spriteBatch, text, x, y - outlineFont.getAscent());
+
+                GlyphLayout outlineLayout = Pools.obtain(GlyphLayout.class);
+                outlineLayout.setText(outlineFont, text);
+
+                float widthOffset = (layout.width - outlineLayout.width) / 2.f;
+
+                outlineFont.draw(spriteBatch, outlineLayout, x + widthOffset, y - outlineFont.getAscent());
             }
 
-            transferColor(color, tempColor1);
-            BitmapFont bitmapFont = gdxFont.getBitmapFont();
-            bitmapFont.getData().setScale((float) scaleX, (float) scaleY);
-            bitmapFont.setColor(tempColor1);
-            bitmapFont.draw(spriteBatch, text, x, y - bitmapFont.getAscent());
+            bitmapFont.draw(spriteBatch, layout, x, y - bitmapFont.getAscent());
         }
     }
 
