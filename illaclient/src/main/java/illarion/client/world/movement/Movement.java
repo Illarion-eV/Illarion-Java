@@ -327,7 +327,9 @@ public class Movement {
      */
     public void update() {
         if (playerLocation == null) {
-            throw new IllegalStateException("The current player location is not known yet.");
+            // We are not ready set to do anything. Let's wait.
+            log.debug("Received early update on the movement system. Can't do much yet. Standing by.");
+            return;
         }
         if (stepInProgress) {
             return;
