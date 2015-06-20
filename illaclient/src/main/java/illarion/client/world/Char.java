@@ -695,19 +695,19 @@ public final class Char implements AnimatedMove {
         removedCharacter = true;
 
         move.stop();
-        resetLight();
+        if (lightSrc != null) {
+            World.getLights().remove(lightSrc);
+            lightSrc = null;
+        }
+
         releaseAvatar();
     }
 
     /**
-     * Remove the current light source of the character.
+     * Reset the cached light value to start sampling a new value.
      */
-    public void resetLight() {
-        if (lightSrc != null) {
-            World.getLights().remove(lightSrc);
-            lightSrc = null;
-            lightValue = 0;
-        }
+    public void resetLightValue() {
+        lightValue = 0;
     }
 
     /**

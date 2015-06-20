@@ -171,7 +171,7 @@ public final class AppearanceMsg implements ServerReply {
         character.setWearingItem(AvatarClothManager.GROUP_HAIR, hairID);
         character.setWearingItem(AvatarClothManager.GROUP_BEARD, beardID);
 
-        character.resetLight();
+        character.resetLightValue();
         for (int i = 0; i < itemSlots.length; i++) {
             character.setInventoryItem(i, itemSlots[i]);
         }
