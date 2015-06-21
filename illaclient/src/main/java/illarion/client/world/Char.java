@@ -1079,6 +1079,7 @@ public final class Char implements AnimatedMove {
         coordinate = newLocation;
 
         if (oldCoordinates == null) {
+            updateAvatar();
             updateLight();
         }
 
@@ -1163,7 +1164,7 @@ public final class Char implements AnimatedMove {
         }
 
         if (!isAnimationAvailable(newAnimation)) {
-            log.debug("{}: Animation {} is not available.", this, animation);
+            log.debug("{}: Animation {} is not available.", this, newAnimation);
             MapTile tile = World.getMap().getMapAt(getLocation());
             if (tile == null) {
                 return;
