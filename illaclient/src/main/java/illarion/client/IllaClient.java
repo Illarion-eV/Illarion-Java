@@ -58,6 +58,7 @@ import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Locale;
@@ -75,6 +76,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     /**
      * The identification of this application.
      */
+    @Nonnull
     public static final AppIdent APPLICATION = new AppIdent("Illarion Client"); //$NON-NLS-1$
 
     /**
@@ -83,9 +85,14 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     @Nonnull
     public static final Servers DEFAULT_SERVER;
 
+    @Nonnull
+    public static final String CFG_FULLSCREEN = "fullscreen";
+    @Nonnull
+    public static final String CFG_RESOLUTION = "resolution";
+
     static {
         String server = System.getProperty("illarion.server", "realserver");
-        switch (server) {
+        switch ((server == null) ? "" : server) {
             case "testserver":
                 DEFAULT_SERVER = Servers.Testserver;
                 break;
@@ -353,9 +360,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      * @param args the arguments handed over to the client
      */
     public static void main(String... args) {
-        SLF4JBridgeHandler.removeHandlersForRootLogger();
-        SLF4JBridgeHandler.install();
-
         // Setup the crash reporter so the client is able to crash properly.
         CrashReporter.getInstance().setMessageSource(Lang.getInstance());
 
@@ -417,6 +421,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      * Basic initialization of the log files and the debug settings.
      */
     private static void initLogfiles() throws IOException {
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
+
         Path userDir = DirectoryManager.getInstance().getDirectory(Directory.User);
         if (!Files.isDirectory(userDir)) {
             if (Files.exists(userDir)) {
@@ -429,25 +436,25 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         //Reload:
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
         ContextInitializer ci = new ContextInitializer(lc);
-        lc.reset();
         try {
-            ci.autoConfig();
-        } catch (JoranException e) {
-            e.printStackTrace();
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            URL resource = cl.getResource("logback-to-file.xml");
+            if (resource != null) {
+                ci.configureByResource(resource);
+            }
+        } catch (JoranException ignored) {
         }
         StatusPrinter.printInCaseOfErrorsOrWarnings(lc);
 
         Thread.setDefaultUncaughtExceptionHandler(DefaultCrashHandler.getInstance());
 
+        //noinspection UseOfSystemOutOrSystemErr
         System.out.println("Startup done.");
         LOGGER.info("{} started.", APPLICATION.getApplicationIdentifier());
         LOGGER.info("VM: {}", System.getProperty("java.version"));
         LOGGER.info("OS: {} {} {}", System.getProperty("os.name"), System.getProperty("os.version"),
                     System.getProperty("os.arch"));
     }
-
-    public static final String CFG_FULLSCREEN = "fullscreen";
-    public static final String CFG_RESOLUTION = "resolution";
 
     /**
      * Prepare the configuration system and the decryption system.

@@ -162,6 +162,8 @@ public final class AppearanceMsg implements ServerReply {
             return ServerReplyResult.Failed;
         }
 
+        log.debug("Publishing appearance to: {}", character);
+
         character.setScale(size / SCALE_MOD);
 
         character.setName(name);
