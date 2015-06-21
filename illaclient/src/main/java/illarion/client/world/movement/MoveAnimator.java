@@ -17,6 +17,7 @@ package illarion.client.world.movement;
 
 import illarion.client.graphics.AnimatedMove;
 import illarion.client.graphics.MoveAnimation;
+import illarion.client.util.UpdateTaskManager;
 import illarion.client.world.Char;
 import illarion.client.world.CharMovementMode;
 import illarion.client.world.Player;
@@ -83,7 +84,7 @@ class MoveAnimator implements AnimatedMove {
     private void scheduleTask(@Nonnull MoveAnimatorTask task) {
         taskQueue.offer(task);
         if (!animationInProgress) {
-            executeNext();
+            World.getUpdateTaskManager().addTaskForLater((container, delta) -> executeNext());
         }
     }
 
@@ -109,9 +110,10 @@ class MoveAnimator implements AnimatedMove {
         Player parentPlayer = movement.getPlayer();
 
         MovingTask task = uncomfirmedMoveTask;
+        UpdateTaskManager utm = World.getUpdateTaskManager();
         if (task == null) {
             log.debug(marker, "Received cancel move, but there is no unconfirmed move.");
-            parentPlayer.setLocation(allowedTarget);
+            utm.addTaskForLater((container, delta) -> parentPlayer.setLocation(allowedTarget));
         } else {
             taskQueue.clear();
             if (task.isExecuted()) {
@@ -119,12 +121,14 @@ class MoveAnimator implements AnimatedMove {
                 confirmedMoveTask = null;
                 if (moveAnimation.isRunning()) {
                     log.debug(marker, "Received cancel move, move was already in progress. Resetting");
-                    moveAnimation.stop();
-                    parentPlayer.getCharacter().resetAnimation(true);
-                    parentPlayer.setLocation(allowedTarget);
+                    utm.addTaskForLater((container, delta) -> {
+                        moveAnimation.stop();
+                        parentPlayer.getCharacter().resetAnimation(true);
+                        parentPlayer.setLocation(allowedTarget);
+                    });
                 } else {
                     log.debug(marker, "Move seems to be done already.");
-                    parentPlayer.setLocation(allowedTarget);
+                    utm.addTaskForLater((container, delta) -> parentPlayer.setLocation(allowedTarget));
                 }
             } else {
                 log.debug(marker, "Move did not start yet. We are good.");
@@ -299,7 +303,9 @@ class MoveAnimator implements AnimatedMove {
         if (isReportingRequired()) {
             log.debug(marker, "Requesting next move at the end of the animation.");
             reportingDone = true;
-            movement.reportReadyForNextStep();
+            if (finished) {
+                movement.reportReadyForNextStep();
+            }
         }
         World.getMapDisplay().setLocation(getDisplayCoordinateAt(movement.getPlayer().getLocation()));
         executeNext();
