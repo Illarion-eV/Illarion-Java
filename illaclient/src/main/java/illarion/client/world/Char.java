@@ -239,9 +239,17 @@ public final class Char implements AnimatedMove {
     private Reference<InteractiveChar> interactiveCharRef;
 
     private static class DelayedMoveData {
-        public CharMovementMode mode;
-        public int duration;
-        public ServerCoordinate targetLocation;
+        @Nonnull
+        public final CharMovementMode mode;
+        public final int duration;
+        @Nonnull
+        public final ServerCoordinate targetLocation;
+
+        private DelayedMoveData(@Nonnull CharMovementMode mode, int duration, @Nonnull ServerCoordinate targetLocation) {
+            this.mode = mode;
+            this.duration = duration;
+            this.targetLocation = targetLocation;
+        }
 
         @Override
         @Nonnull
@@ -958,14 +966,22 @@ public final class Char implements AnimatedMove {
 
         if (!World.getPlayer().isPlayer(characterId)) {
             if (mode == CharMovementMode.Push) {
+                if (delayedMove != null) {
+                    if (delayedMove.targetLocation.equals(newPos)) {
+                        log.info("{}: Skipping push because there is a delayed move with the same target.", this);
+                        return;
+                    }
+                } else {
+                    if ((coordinate != null) && coordinate.equals(newPos)) {
+                        log.info("{}: Skipping push because the character is already on the correct place.", this);
+                        return;
+                    }
+                }
                 log.info("{}: Executing push move right away.", this);
                 resetAnimation(true);
             } else if (move.isRunning()) {
                 if (delayedMove == null) {
-                    delayedMove = new DelayedMoveData();
-                    delayedMove.duration = duration;
-                    delayedMove.mode = mode;
-                    delayedMove.targetLocation = newPos;
+                    delayedMove = new DelayedMoveData(mode, duration, newPos);
                     log.info("{}: Scheduled move for later execution: {}", this, delayedMove);
                     return;
                 } else {
@@ -1088,18 +1104,24 @@ public final class Char implements AnimatedMove {
      * @param newDirection the new direction value
      */
     public void setDirection(@Nonnull Direction newDirection) {
+        if (direction == newDirection) {
+            log.debug("{}: Skipping direction change, because direction already matches: {}", this, newDirection);
+            return;
+        }
         log.debug("{}: Applying a new direction to the character: {}", this, newDirection);
         direction = newDirection;
 
         // The update of the direction arrives before the location of the character is set. That is okay because
         // the update of the character will take the stored direction into account.
-        if (!move.isRunning() && (coordinate != null)) {
-            if (animation != CharAnimations.STAND) {
-                resetAnimation(true);
-            } else {
-                updateAvatar();
+        World.getUpdateTaskManager().addTask((container, delta) -> {
+            if (!move.isRunning() && (coordinate != null)) {
+                if (animation == CharAnimations.STAND) {
+                    updateAvatar();
+                } else {
+                    resetAnimation(true);
+                }
             }
-        }
+        });
     }
 
     public boolean isAnimationAvailable(int animation) {
