@@ -55,6 +55,7 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Avatar extends AbstractEntity<AvatarTemplate> implements Resource {
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(Avatar.class);
     /**
      * The minimal alpha value of a avatar that is needed to show the name tag above the avatar graphic.
@@ -183,7 +184,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
 
     @Override
     public int getTargetAlpha() {
-        MapTile mapTileOfChar = World.getMap().getMapAt(parentChar.getLocation());
+        MapTile mapTileOfChar = World.getMap().getMapAt(parentChar.getVisibleLocation());
         if (mapTileOfChar == null) {
             return Color.MAX_INT_VALUE;
         } else {

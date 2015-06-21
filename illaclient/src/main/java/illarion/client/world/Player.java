@@ -447,7 +447,7 @@ public final class Player {
         if (isPlayer(chara.getCharId())) {
             return Char.VISIBILITY_MAX;
         }
-        MapTile tile = World.getMap().getMapAt(chara.getLocation());
+        MapTile tile = World.getMap().getMapAt(chara.getVisibleLocation());
         if ((tile == null) || tile.isHidden()) {
             return 0;
         }
