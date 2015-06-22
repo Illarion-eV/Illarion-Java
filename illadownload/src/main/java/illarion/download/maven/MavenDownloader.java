@@ -123,10 +123,10 @@ public class MavenDownloader {
      * versions of the main application.
      *
      * @param snapshot {@code true} in case the downloader is supposed to use snapshot versions of the main application
-     * @param attemps the indicator how many times downloading was already tried and failed.
+     * @param attempts the indicator how many times downloading was already tried and failed.
      */
-    public MavenDownloader(boolean snapshot, int attemps) {
-        log.trace("Creating Maven Downloader. Attempt number: {}", attemps);
+    public MavenDownloader(boolean snapshot, int attempts) {
+        log.trace("Creating Maven Downloader. Attempt number: {}", attempts);
         this.snapshot = snapshot;
 
         boolean offlineFlag = false;
@@ -176,13 +176,11 @@ public class MavenDownloader {
      */
     @Nullable
     public Collection<File> downloadArtifact(
-            @Nonnull String groupId, @Nonnull String artifactId, @Nullable MavenDownloaderCallback callback)
+            @Nonnull String groupId, @Nonnull String artifactId, @Nonnull MavenDownloaderCallback callback)
             throws DependencyCollectionException, InterruptedException, ExecutionException {
         Artifact artifact = new DefaultArtifact(groupId, artifactId, "jar", "[1,]");
         try {
-            if (callback != null) {
-                callback.reportNewState(State.SearchingNewVersion, null, offline, null);
-            }
+            callback.reportNewState(State.SearchingNewVersion, null, offline, null);
             VersionRangeRequest request = new VersionRangeRequest();
             request.setArtifact(artifact);
             request.setRepositories(Collections.singletonList(illarionRepository));
@@ -200,11 +198,9 @@ public class MavenDownloader {
         } catch (VersionRangeResolutionException ignored) {
         }
 
-        if (callback != null) {
-            callback.reportNewState(ResolvingDependencies, null, offline, null);
-            repositoryListener.setCallback(callback);
-            repositoryListener.setOffline(offline);
-        }
+        callback.reportNewState(ResolvingDependencies, null, offline, null);
+        repositoryListener.setCallback(callback);
+        repositoryListener.setOffline(offline);
         Dependency dependency = new Dependency(artifact, RUNTIME, false);
 
         List<String> usedScopes = Arrays.asList(COMPILE, RUNTIME, SYSTEM);
@@ -223,15 +219,7 @@ public class MavenDownloader {
 
             ProgressMonitor progressMonitor = new ProgressMonitor();
 
-            ArtifactRequestTracer tracer = (monitor, artifact1, totalSize, transferred) -> {
-                if (totalSize >= 0) {
-                    monitor.setProgress(transferred / (float) totalSize);
-                }
-                if (callback != null) {
-                    callback.reportNewState(ResolvingArtifacts, progressMonitor, offline,
-                            humanReadableByteCount(transferred, true) + ' ' + artifact1);
-                }
-            };
+            ArtifactRequestTracer tracer = new DefaultArtifactRequestTracer(offline, callback, progressMonitor);
 
             ArtifactRequestBuilder builder = new ArtifactRequestBuilder(system, session, tracer);
             DependencyVisitor visitor = new FilteringDependencyVisitor(builder, filter);
@@ -240,19 +228,15 @@ public class MavenDownloader {
 
             List<FutureArtifactRequest> requests = builder.getRequests();
 
-            if (callback != null) {
-                for (@Nonnull FutureArtifactRequest request : requests) {
-                    progressMonitor.addChild(request.getProgressMonitor());
-                }
+            for (@Nonnull FutureArtifactRequest request : requests) {
+                progressMonitor.addChild(request.getProgressMonitor());
             }
-            if (callback != null) {
-                callback.reportNewState(ResolvingArtifacts, progressMonitor, offline, null);
-            }
+            callback.reportNewState(ResolvingArtifacts, progressMonitor, offline, null);
 
-            ExecutorService executorService = Executors.newSingleThreadExecutor(
+            ExecutorService executorService = Executors.newFixedThreadPool(4,
                     new ThreadFactoryBuilder()
                             .setDaemon(false)
-                            .setNameFormat("Download Thread")
+                            .setNameFormat("Download Thread-%d")
                             .build()
             );
             List<Future<ArtifactResult>> results = executorService.invokeAll(requests);
@@ -267,45 +251,28 @@ public class MavenDownloader {
             }
 
             if (result.isEmpty()) {
-                if (callback != null) {
-                    callback.resolvingDone(Collections.<File>emptyList());
-                }
+                callback.resolvingDone(Collections.<File>emptyList());
                 return null;
             }
-            if (callback != null) {
-                callback.resolvingDone(result);
-            }
+            callback.resolvingDone(result);
             return result;
         } catch (@Nonnull DependencyCollectionException | InterruptedException | ExecutionException e) {
-            if (callback != null) {
-                callback.resolvingFailed(e);
-            }
+            callback.resolvingFailed(e);
             throw e;
         }
     }
 
-    private static String humanReadableByteCount(long bytes, boolean si) {
-        int unit = si ? 1000 : 1024;
-        if (bytes < unit) {
-            return bytes + " B";
-        }
-        int exp = (int) (StrictMath.log(bytes) / StrictMath.log(unit));
-        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
-        return String.format("%.1f %sB", bytes / StrictMath.pow(unit, exp), pre);
-    }
-
     private void setupRepositories() {
-        repositories.add(setupRepository("central", "http://repo1.maven.org/maven2/", false,
-                setupRepository("ibiblio.org", "http://mirrors.ibiblio.org/maven2/", false),
-                setupRepository("antelink", ".com/content/repositories/central/", false),
-                setupRepository("exist", "http://repo.exist.com/maven2/", false),
-                setupRepository("ibiblio.net", "http://www.ibiblio.net/pub/packages/maven2/", false),
-                setupRepository("central-uk", "http://uk.maven.org/maven2/", false)));
+        repositories.add(setupRepository("central", "http://repo1.maven.org/maven2/",
+                setupRepository("ibiblio.org", "http://mirrors.ibiblio.org/maven2/"),
+                setupRepository("antelink", ".com/content/repositories/central/"),
+                setupRepository("exist", "http://repo.exist.com/maven2/"),
+                setupRepository("ibiblio.net", "http://www.ibiblio.net/pub/packages/maven2/"),
+                setupRepository("central-uk", "http://uk.maven.org/maven2/")));
 
-        illarionRepository = setupRepository("illarion", "http://illarion.org/media/java/maven", snapshot);
+        illarionRepository = setupRepository("illarion", "http://illarion.org/media/java/maven", true, snapshot);
         repositories.add(illarionRepository);
-        repositories.add(setupRepository("oss-sonatype", "http://oss.sonatype.org/content/repositories/releases/",
-                false));
+        repositories.add(setupRepository("oss-sonatype", "http://oss.sonatype.org/content/repositories/releases/"));
 
         session.setOffline(offline);
 
@@ -316,15 +283,27 @@ public class MavenDownloader {
     }
 
     @Nonnull
-    private static RemoteRepository setupRepository(
-            @Nonnull String id, @Nonnull String url, boolean enableSnapshots, @Nonnull RemoteRepository... mirrors) {
+    private static RemoteRepository setupRepository(@Nonnull String id,
+                                                    @Nonnull String url,
+                                                    @Nonnull RemoteRepository... mirrors) {
+        return setupRepository(id, url, false, false, mirrors);
+    }
+
+    @Nonnull
+    private static RemoteRepository setupRepository(@Nonnull String id,
+                                                    @Nonnull String url,
+                                                    boolean alwaysCheck,
+                                                    boolean enableSnapshots,
+                                                    @Nonnull RemoteRepository... mirrors) {
         Builder repo = new Builder(id, "default", url);
+
+        String updatePolicy = alwaysCheck ? UPDATE_POLICY_ALWAYS : UPDATE_POLICY_NEVER;
         if (enableSnapshots) {
-            repo.setSnapshotPolicy(new RepositoryPolicy(true, UPDATE_POLICY_ALWAYS, CHECKSUM_POLICY_FAIL));
+            repo.setSnapshotPolicy(new RepositoryPolicy(true, updatePolicy, CHECKSUM_POLICY_IGNORE));
         } else {
-            repo.setSnapshotPolicy(new RepositoryPolicy(false, UPDATE_POLICY_NEVER, CHECKSUM_POLICY_FAIL));
+            repo.setSnapshotPolicy(new RepositoryPolicy(false, UPDATE_POLICY_NEVER, CHECKSUM_POLICY_IGNORE));
         }
-        repo.setReleasePolicy(new RepositoryPolicy(true, UPDATE_POLICY_ALWAYS, CHECKSUM_POLICY_FAIL));
+        repo.setReleasePolicy(new RepositoryPolicy(true, updatePolicy, CHECKSUM_POLICY_IGNORE));
 
         for (RemoteRepository mirror : mirrors) {
             repo.addMirroredRepository(mirror);

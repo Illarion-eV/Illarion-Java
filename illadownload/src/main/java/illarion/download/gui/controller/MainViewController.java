@@ -96,16 +96,12 @@ public class MainViewController extends AbstractController implements MavenDownl
             }
         }).start();
 
-        EventHandler<KeyEvent> eventEventHandler = new EventHandler<KeyEvent>() {
-            private final KeyCombination combo = new KeyCodeCombination(KeyCode.ENTER);
-
-            @Override
-            public void handle(@Nonnull KeyEvent event) {
-                if (combo.match(event)) {
-                    launchClientButton.fire();
-                }
-                event.consume();
+        KeyCombination combo = new KeyCodeCombination(KeyCode.ENTER);
+        EventHandler<KeyEvent> eventEventHandler = event -> {
+            if (combo.match(event)) {
+                launchClientButton.fire();
             }
+            event.consume();
         };
         launchEasyNpcButton.setOnKeyReleased(eventEventHandler);
         launchEasyQuestButton.setOnKeyReleased(eventEventHandler);

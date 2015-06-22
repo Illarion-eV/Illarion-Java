@@ -45,7 +45,7 @@
                         </Button>
                         <Button alignment="TOP_LEFT" contentDisplay="GRAPHIC_ONLY" maxHeight="14.0"
                                 maxWidth="13.0" minHeight="14.0" minWidth="13.0" mnemonicParsing="false"
-                                styleClass="button-close" onAction="#close">
+                                styleClass="button-close" onAction="#close" cancelButton="true">
                         </Button>
                     </HBox>
                 </right>
