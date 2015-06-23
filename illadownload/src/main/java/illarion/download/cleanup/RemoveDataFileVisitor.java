@@ -72,6 +72,10 @@ class RemoveDataFileVisitor implements FileVisitor<Path> {
         Boolean deleteDir = removeDirectory.pop();
         if (Boolean.TRUE.equals(deleteDir)) {
             resultList.add(dir);
+        } else if (Boolean.FALSE.equals(deleteDir) && !removeDirectory.isEmpty()) {
+            /* Skip also the next directory up. */
+            removeDirectory.pop();
+            removeDirectory.push(Boolean.FALSE);
         }
         return FileVisitResult.CONTINUE;
     }

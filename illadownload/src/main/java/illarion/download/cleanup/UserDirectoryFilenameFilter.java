@@ -32,7 +32,7 @@ class UserDirectoryFilenameFilter implements Filter<Path> {
         // keep everything in the alternative binary storage
         for (int i = 0; i < (entry.getNameCount() - 1); i++) {
             Path dirName = entry.getName(i);
-            if ((dirName != null) && "bin".equals(dirName.toString())) {
+            if ("bin".equals(dirName.toString())) {
                 return false;
             }
         }
