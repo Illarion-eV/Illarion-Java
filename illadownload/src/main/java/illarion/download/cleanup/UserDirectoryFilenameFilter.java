@@ -15,21 +15,29 @@
  */
 package illarion.download.cleanup;
 
-import javax.annotation.Nonnull;
-import java.io.File;
-import java.io.FilenameFilter;
+import java.io.IOException;
+import java.nio.file.DirectoryStream.Filter;
+import java.nio.file.Path;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class UserDirectoryFilenameFilter implements FilenameFilter {
+class UserDirectoryFilenameFilter implements Filter<Path> {
     @Override
-    public boolean accept(@Nonnull File dir, @Nonnull String name) {
-        // keep everything in the alternative binary storage
-        if (dir.toString().contains("/bin/") || dir.toString().contains("\\bin\\")) {
-            return false;
+    public boolean accept(Path entry) throws IOException {
+        if (entry == null) {
+            throw new IllegalArgumentException("The path must not be null.");
         }
 
+        // keep everything in the alternative binary storage
+        for (int i = 0; i < (entry.getNameCount() - 1); i++) {
+            Path dirName = entry.getName(i);
+            if ((dirName != null) && "bin".equals(dirName.toString())) {
+                return false;
+            }
+        }
+
+        String name = entry.getFileName().toString();
         // old map files
         if (name.startsWith("level") && name.endsWith(".map")) {
             return true;

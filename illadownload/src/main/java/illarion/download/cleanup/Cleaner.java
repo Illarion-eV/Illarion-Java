@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.DirectoryStream.Filter;
@@ -110,7 +109,7 @@ public class Cleaner {
 
         List<Path> removalList = new ArrayList<>();
 
-        FilenameFilter userDirFilter = new UserDirectoryFilenameFilter();
+        Filter<Path> userDirFilter = new UserDirectoryFilenameFilter();
 
         Path userDir = dm.getDirectory(Directory.User);
         removalList.addAll(enlistRecursively(userDir, userDirFilter));
@@ -271,44 +270,19 @@ public class Cleaner {
         return noDirectories && !noJarFiles;
     }
 
-    private List<Path> enlistRecursively(@Nonnull Path rootDir, @Nullable FilenameFilter filter)
+    @Nonnull
+    private List<Path> enlistRecursively(@Nonnull Path rootDir, @Nullable Filter<Path> filter)
             throws IOException {
         if (executorService == null) {
             throw new IllegalStateException("Executor is not ready");
         }
 
-        List<Path> resultList = new LinkedList<>();
-        boolean removeDirectory = true;
-
         if (Files.isDirectory(rootDir)) {
-            Collection<Future<List<Path>>> subDirScans = new ArrayList<>();
-            try (DirectoryStream<Path> files = Files.newDirectoryStream(rootDir)) {
-                for (Path contentFile : files) {
-                    if (Files.isDirectory(contentFile)) {
-                        subDirScans.add(executorService.submit(() -> enlistRecursively(contentFile, filter)));
-                        removeDirectory = false;
-                    } else {
-                        if ((filter == null) || filter.accept(rootDir.toFile(), contentFile.getFileName().toString())) {
-                            resultList.add(contentFile);
-                        } else {
-                            removeDirectory = false;
-                        }
-                    }
-                }
-                for (Future<List<Path>> subDirScan : subDirScans) {
-                    try {
-                        resultList.addAll(subDirScan.get());
-                    } catch (InterruptedException | ExecutionException e) {
-                        log.error("Failed to get results of directory scan.");
-                    }
-                }
-            }
+            RemoveDataFileVisitor visitor = new RemoveDataFileVisitor(filter);
+            Files.walkFileTree(rootDir, visitor);
+            return visitor.getResultList();
         }
-
-        if (removeDirectory) {
-            resultList.add(rootDir);
-        }
-        return resultList;
+        return Collections.emptyList();
     }
 
     private static void printFileList(@Nonnull List<Path> files) throws IOException {
@@ -320,4 +294,5 @@ public class Cleaner {
 
         log.info("Files to delete: {} ({} Bytes)", files.size(), size);
     }
+
 }
