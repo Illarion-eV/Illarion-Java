@@ -81,6 +81,7 @@ public class GuiModel {
         cfg.setDefault("channelMapEditor", 1);
         cfg.setDefault("launchAggressive", true);
         cfg.setDefault("stayOpenAfterLaunch", true);
+        cfg.setDefault("verifyArtifactChecksum", false);
         return cfg;
     }
 }

@@ -387,7 +387,7 @@ public class MainViewController extends AbstractController implements MavenDownl
             while (attempt < 10) {
                 attempt++;
                 try {
-                    MavenDownloader downloader = new MavenDownloader(useSnapshots, attempt);
+                    MavenDownloader downloader = new MavenDownloader(useSnapshots, attempt, cfg);
                     downloader.downloadArtifact(groupId, artifactId, this);
                 } catch (@Nonnull Exception e) {
                     //noinspection ThrowableResultOfMethodCallIgnored

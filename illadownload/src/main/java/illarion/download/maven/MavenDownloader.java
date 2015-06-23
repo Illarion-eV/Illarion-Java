@@ -16,6 +16,7 @@
 package illarion.download.maven;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import illarion.common.config.Config;
 import illarion.common.util.AppIdent;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.DirectoryManager.Directory;
@@ -115,6 +116,12 @@ public class MavenDownloader {
      */
     private final boolean offline;
 
+    /**
+     * The configuration provider.
+     */
+    @Nonnull
+    private final Config config;
+
     @Nonnull
     private final MavenRepositoryListener repositoryListener;
 
@@ -124,10 +131,12 @@ public class MavenDownloader {
      *
      * @param snapshot {@code true} in case the downloader is supposed to use snapshot versions of the main application
      * @param attempts the indicator how many times downloading was already tried and failed.
+     * @param cfg the configuration provider
      */
-    public MavenDownloader(boolean snapshot, int attempts) {
+    public MavenDownloader(boolean snapshot, int attempts, @Nonnull Config cfg) {
         log.trace("Creating Maven Downloader. Attempt number: {}", attempts);
         this.snapshot = snapshot;
+        config = cfg;
 
         boolean offlineFlag = false;
         int requestTimeOut = 60000; // 1 minute
@@ -283,27 +292,29 @@ public class MavenDownloader {
     }
 
     @Nonnull
-    private static RemoteRepository setupRepository(@Nonnull String id,
-                                                    @Nonnull String url,
-                                                    @Nonnull RemoteRepository... mirrors) {
+    private RemoteRepository setupRepository(@Nonnull String id,
+                                             @Nonnull String url,
+                                             @Nonnull RemoteRepository... mirrors) {
         return setupRepository(id, url, false, false, mirrors);
     }
 
     @Nonnull
-    private static RemoteRepository setupRepository(@Nonnull String id,
-                                                    @Nonnull String url,
-                                                    boolean alwaysCheck,
-                                                    boolean enableSnapshots,
-                                                    @Nonnull RemoteRepository... mirrors) {
+    private RemoteRepository setupRepository(@Nonnull String id,
+                                             @Nonnull String url,
+                                             boolean alwaysCheck,
+                                             boolean enableSnapshots,
+                                             @Nonnull RemoteRepository... mirrors) {
         Builder repo = new Builder(id, "default", url);
 
+        String checksumPolicy =
+                config.getBoolean("verifyArtifactChecksum") ? CHECKSUM_POLICY_FAIL : CHECKSUM_POLICY_IGNORE;
         String updatePolicy = alwaysCheck ? UPDATE_POLICY_ALWAYS : UPDATE_POLICY_NEVER;
         if (enableSnapshots) {
-            repo.setSnapshotPolicy(new RepositoryPolicy(true, updatePolicy, CHECKSUM_POLICY_IGNORE));
+            repo.setSnapshotPolicy(new RepositoryPolicy(true, updatePolicy, checksumPolicy));
         } else {
-            repo.setSnapshotPolicy(new RepositoryPolicy(false, UPDATE_POLICY_NEVER, CHECKSUM_POLICY_IGNORE));
+            repo.setSnapshotPolicy(new RepositoryPolicy(false, UPDATE_POLICY_NEVER, checksumPolicy));
         }
-        repo.setReleasePolicy(new RepositoryPolicy(true, updatePolicy, CHECKSUM_POLICY_IGNORE));
+        repo.setReleasePolicy(new RepositoryPolicy(true, updatePolicy, checksumPolicy));
 
         for (RemoteRepository mirror : mirrors) {
             repo.addMirroredRepository(mirror);
