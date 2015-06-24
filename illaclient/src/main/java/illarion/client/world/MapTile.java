@@ -231,6 +231,11 @@ public final class MapTile {
         return localColor.getCurrentColor();
     }
 
+    @Nonnull
+    public Color getTargetLight() {
+        return localColor.getTargetColor();
+    }
+
     @Nullable
     public Color getLight(@Nonnull Direction direction) {
         @Nullable AnimatedColor color = colors.get(direction);
