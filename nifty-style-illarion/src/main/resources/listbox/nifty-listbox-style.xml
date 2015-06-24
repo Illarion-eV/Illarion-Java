@@ -2,7 +2,7 @@
 <!--
   ~ This file is part of the Illarion project.
   ~
-  ~ Copyright © 2014 - Illarion e.V.
+  ~ Copyright © 2015 - Illarion e.V.
   ~
   ~ Illarion is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU Affero General Public License as published by
@@ -21,8 +21,7 @@
     </style>
     <style id="nifty-listbox#scrollpanel">
         <attributes focusable="true"/>
-        <effect overlay="true">
-        </effect>
+        <effect overlay="true" />
     </style>
     <style id="nifty-listbox#bottom-right">
         <attributes width="16px" height="16px"/>
@@ -38,5 +37,17 @@
                       timeType="infinite"/>
             <onClick name="focus" targetElement="#parent#parent"/>
         </effect>
+    </style>
+
+    <style id="nifty-listbox-no-background">
+        <attributes backgroundImage="gui/listbox/listview_rahmen_no_bg.png" imageMode="resize:4,2,4,12,4,2,4,2,4,2,4,12"
+                    padding="5px,4px" />
+    </style>
+    <style id="nifty-listbox-no-background#scrollpanel">
+        <attributes focusable="true" />
+        <effect overlay="true" />
+    </style>
+    <style id="nifty-listbox-no-background#bottom-right">
+        <attributes width="16px" height="16px" />
     </style>
 </nifty-styles>

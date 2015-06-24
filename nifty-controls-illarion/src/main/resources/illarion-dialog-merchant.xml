@@ -42,8 +42,8 @@
     <controlDefinition name="dialog-merchant-sell" style="illarion-dialog-merchant-sell">
         <panel childLayout="vertical" width="100%">
             <panel width="100%" childLayout="center">
-                <control name="listBox" id="#sellList" vertical="on" horizontal="off"
-                         displayItems="9" selection="Disabled" width="100%"
+                <control name="listBox" id="#sellList" vertical="on" horizontal="off" displayItems="9"
+                         selection="Disabled" width="100%" style="nifty-listbox-no-background"
                          viewConverterClass="org.illarion.nifty.controls.dialog.merchant.MerchantItemListViewConverter">
                     <control name="dialog-merchant-list-entry" selectable="true"/>
                 </control>
@@ -56,8 +56,8 @@
             <panel width="100%" childLayout="vertical">
                 <control name="label" style="nifty-label" wrap="true" width="100%" textHAlign="left"
                          text="${illarion-dialog-merchant-bundle.buyDescription}" margin="1px"/>
-                <control name="listBox" id="#buyList" vertical="on" horizontal="off"
-                         displayItems="8" selection="Disabled"
+                <control name="listBox" id="#buyList" vertical="on" horizontal="off" displayItems="8"
+                         selection="Disabled" style="nifty-listbox-no-background"
                          viewConverterClass="org.illarion.nifty.controls.dialog.merchant.MerchantItemListViewConverter">
                     <control name="dialog-merchant-list-entry" selectable="false"/>
                 </control>
