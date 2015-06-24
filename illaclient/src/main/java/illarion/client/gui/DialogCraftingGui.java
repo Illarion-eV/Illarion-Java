@@ -61,9 +61,9 @@ public interface DialogCraftingGui {
      *
      * @param dialogId              the ID of the dialog
      * @param remainingItemCount    the remaining items to produce
-     * @param requiredTimeInSeconds the time in seconds required to produce the item
+     * @param requiredTime the time in seconds required to produce the item
      */
-    void startProductionIndicator(int dialogId, int remainingItemCount, double requiredTimeInSeconds);
+    void startProductionIndicator(int dialogId, int remainingItemCount, double requiredTime);
 
     /**
      * Indicate that a production finished.
@@ -78,4 +78,11 @@ public interface DialogCraftingGui {
      * @param dialogId the ID of the dialog
      */
     void abortProduction(int dialogId);
+
+    /**
+     * Check if there is currently crafting happening.
+     *
+     * @return {@code true} in case there is currently crafting happening
+     */
+    boolean isCraftingInProgress();
 }

@@ -136,6 +136,7 @@ public final class DialogHandler
     @Nullable
     private DialogCrafting craftingDialog;
     private boolean openCraftDialog;
+    private boolean craftingInProgress;
 
     @Nonnull
     private final Queue<BuildWrapper> builders;
@@ -528,11 +529,12 @@ public final class DialogHandler
 
     @Override
     public void startProductionIndicator(int dialogId, int remainingItemCount,
-                                         double requiredTimeInSeconds) {
+                                         double requiredTime) {
         World.getUpdateTaskManager().addTask((container, delta) -> {
             if ((craftingDialog != null) && openCraftDialog && (craftingDialog.getDialogId() == dialogId)) {
                 craftingDialog.setAmount(remainingItemCount);
-                craftingDialog.startProgress(requiredTimeInSeconds);
+                craftingDialog.startProgress(requiredTime);
+                craftingInProgress = true;
             }
         });
     }
@@ -543,6 +545,7 @@ public final class DialogHandler
             if ((craftingDialog != null) && openCraftDialog && (craftingDialog.getDialogId() == dialogId)) {
                 craftingDialog.setAmount(craftingDialog.getAmount() - 1);
                 craftingDialog.setProgress(0.f);
+                craftingInProgress = false;
             }
         });
     }
@@ -552,8 +555,14 @@ public final class DialogHandler
         World.getUpdateTaskManager().addTask((container, delta) -> {
             if ((craftingDialog != null) && openCraftDialog && (craftingDialog.getDialogId() == dialogId)) {
                 craftingDialog.setProgress(0.f);
+                craftingInProgress = false;
             }
         });
+    }
+
+    @Override
+    public boolean isCraftingInProgress() {
+        return craftingInProgress;
     }
 
     @Override
