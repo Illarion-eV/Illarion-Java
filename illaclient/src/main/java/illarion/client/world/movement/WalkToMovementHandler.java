@@ -197,7 +197,7 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
     protected Path calculateNewPath(@Nonnull ServerCoordinate currentLocation) {
         ServerCoordinate target = getTargetLocation();
 
-        log.info(marker, "Calculating a new path to: {}", target);
+        log.info(marker, "Calculating a new path from {} to {}", currentLocation, target);
         PathFindingAlgorithm algorithm = pathFindingAlgorithm;
 
         switch (getMovementMode()) {

@@ -284,8 +284,8 @@ public class Movement {
         stepInProgress = false;
         animator.cancelAll();
 
-        World.getPlayer().setLocation(target);
         playerLocation = target;
+        World.getPlayer().setLocation(target);
     }
 
     /**

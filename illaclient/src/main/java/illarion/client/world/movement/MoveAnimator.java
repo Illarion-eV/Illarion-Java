@@ -84,7 +84,11 @@ class MoveAnimator implements AnimatedMove {
     private void scheduleTask(@Nonnull MoveAnimatorTask task) {
         taskQueue.offer(task);
         if (!animationInProgress) {
-            World.getUpdateTaskManager().addTaskForLater((container, delta) -> executeNext());
+            World.getUpdateTaskManager().addTaskForLater((container, delta) -> {
+                if (!animationInProgress) {
+                    executeNext();
+                }
+            });
         }
     }
 
@@ -112,8 +116,12 @@ class MoveAnimator implements AnimatedMove {
         MovingTask task = uncomfirmedMoveTask;
         UpdateTaskManager utm = World.getUpdateTaskManager();
         if (task == null) {
-            log.debug(marker, "Received cancel move, but there is no unconfirmed move.");
-            utm.addTaskForLater((container, delta) -> parentPlayer.setLocation(allowedTarget));
+            log.debug(marker, "Received cancel move, but there is no unconfirmed move. Settings location to {}",
+                    allowedTarget);
+            utm.addTaskForLater((container, delta) -> {
+                log.debug(marker, "Setting player location to {} now.", allowedTarget);
+                parentPlayer.setLocation(allowedTarget);
+            });
         } else {
             taskQueue.clear();
             if (task.isExecuted()) {
@@ -122,9 +130,10 @@ class MoveAnimator implements AnimatedMove {
                 if (moveAnimation.isRunning()) {
                     log.debug(marker, "Received cancel move, move was already in progress. Resetting");
                     utm.addTaskForLater((container, delta) -> {
-                        moveAnimation.stop();
-                        parentPlayer.getCharacter().resetAnimation(true);
+                        log.debug(marker, "Resetting location to {} for cancel.", allowedTarget);
                         parentPlayer.setLocation(allowedTarget);
+                        parentPlayer.getCharacter().resetAnimation(true);
+                        moveAnimation.stop();
                     });
                 } else {
                     log.debug(marker, "Move seems to be done already.");
@@ -209,11 +218,13 @@ class MoveAnimator implements AnimatedMove {
     }
 
     void executeTurn(@Nonnull Direction direction) {
+        log.debug("Executing turn to {} now.", direction);
         movement.getPlayer().getCharacter().setDirection(direction);
         executeNext();
     }
 
     void executeMove(@Nonnull CharMovementMode mode, @Nonnull ServerCoordinate target, int duration) {
+        log.debug("Executing move (Mode: {}) to {} (Duration: {}ms) now.", mode, target, duration);
         Player parentPlayer = movement.getPlayer();
         Char playerCharacter = parentPlayer.getCharacter();
         if ((mode == CharMovementMode.None) || playerCharacter.getLocation().equals(target)) {

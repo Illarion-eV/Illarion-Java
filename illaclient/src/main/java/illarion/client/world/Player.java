@@ -593,6 +593,8 @@ public final class Player {
             return;
         }
 
+        LOGGER.debug("Setting player location to: {}", newLoc);
+
         playerLocation = newLoc;
         World.getMusicBox().updatePlayerLocation();
         World.getMap().getMiniMap().setPlayerLocation(newLoc);
