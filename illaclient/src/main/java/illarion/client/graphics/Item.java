@@ -130,10 +130,11 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
     }
 
     @Override
+    @Nonnull
     protected Color getParentLight() {
         Tile parentGraphicTile = parentTile.getTile();
         if (parentGraphicTile == null) {
-            return null;
+            return Color.BLACK;
         }
         return parentGraphicTile.getLocalLight();
     }
@@ -299,57 +300,14 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
             return true;
         }
         if (itemClickedInUseRange) {
-            if (itemClickedIsBlocked) {
-                delayGoToItem.setLocation(parentTile.getCoordinates());
-                delayGoToItem.pulse();
-            }
-        }else {
-            handler.walkTo(mouseTile.getCoordinates(), mouseTileIsBlocked ? 1 : 0);
-            handler.assumeControl();
-        }
-        return true;
-    }
-
-    /**
-     * The default way that the game handles clicking on an item
-     * The processMapClick method above replaces this code.
-     *
-     * @param event the event to process
-     * @return true if the method is processed properly
-     */
-    private boolean isEventProcessed(@Nonnull ClickOnMapEvent event) {
-        if (event.getKey() != Button.Left) {
-            return false;
-        }
-
-        if (!parentTile.isAtPlayerLevel()) {
-            return false;
-        }
-
-        delayGoToItem.reset();
-
-        log.debug("Single clicking item: {}", getItemId());
-
-        TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
-
-        boolean blocked = parentTile.isBlocked();
-        boolean useRange = parentTile.getInteractive().isInUseRange();
-
-        if (useRange) {
-            if (blocked) {
-                return true;
-            } else {
+            if (!itemClickedIsBlocked) {
                 delayGoToItem.setLocation(parentTile.getCoordinates());
                 delayGoToItem.pulse();
             }
         } else {
-            if (blocked) {
-                handler.walkTo(parentTile.getCoordinates(), 1);
-            } else {
-                handler.walkTo(parentTile.getCoordinates(), 0);
-            }
+            handler.walkTo(mouseTile.getCoordinates(), mouseTileIsBlocked ? 1 : 0);
+            handler.assumeControl();
         }
-        handler.assumeControl();
         return true;
     }
 
@@ -363,7 +321,6 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         }
 
         delayGoToItem.reset();
-
 
         if (parentTile.getInteractive().isInUseRange()) {
             parentTile.getInteractive().use();
