@@ -110,8 +110,8 @@ public final class OptionScreenController implements ScreenController {
         //noinspection unchecked
         translationDirections = tabRoot.findNiftyControl("translationDirections", DropDown.class);
         translationDirections.addItem("${options-bundle.translation.direction.default}");
-        translationDirections.addItem("${options-bundle.translation.direction.deToEn}");
         translationDirections.addItem("${options-bundle.translation.direction.enToDe}");
+        translationDirections.addItem("${options-bundle.translation.direction.deToEn}");
 
         soundOn = tabRoot.findNiftyControl("soundOn", CheckBox.class);
         soundVolume = tabRoot.findNiftyControl("soundVolume", Slider.class);
