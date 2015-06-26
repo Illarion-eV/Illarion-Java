@@ -21,8 +21,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The animation handler is the base class for all animations. It offers some
@@ -87,7 +87,7 @@ abstract class AbstractAnimation<T extends Animated> {
      * is actually animated
      */
     protected AbstractAnimation(@Nullable T firstTarget) {
-        targets = new ArrayList<>();
+        targets = new CopyOnWriteArrayList<>();
         if (firstTarget != null) {
             targets.add(firstTarget);
         }

@@ -133,25 +133,6 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
 
             super.render(g);
             showHighlight = 0;
-
-            /* This is the new light based tile. Sadly the performance of this thing is too poor,
-             * so its disabled for now.
-            if ((showHighlight != 0) || (tileLightEffect == null) || !parentTile.hasLightGradient()) {
-                super.render(g);
-                showHighlight = 0;
-            } else {
-                tileLightEffect.setTopLeftColor(parentTile.getLight(Location.DIR_NORTH));
-                tileLightEffect.setTopRightColor(parentTile.getLight(Location.DIR_EAST));
-                tileLightEffect.setBottomLeftColor(parentTile.getLight(Location.DIR_WEST));
-                tileLightEffect.setBottomRightColor(parentTile.getLight(Location.DIR_SOUTH));
-                tileLightEffect.setTopColor(parentTile.getLight(Location.DIR_NORTHEAST));
-                tileLightEffect.setBottomColor(parentTile.getLight(Location.DIR_SOUTHWEST));
-                tileLightEffect.setLeftColor(parentTile.getLight(Location.DIR_NORTHWEST));
-                tileLightEffect.setRightColor(parentTile.getLight(Location.DIR_SOUTHEAST));
-                tileLightEffect.setCenterColor(parentTile.getLight());
-                renderSprite(g, getDisplayX(), getDisplayY(), Color.WHITE, tileLightEffect);
-            }
-            */
         }
     }
 
