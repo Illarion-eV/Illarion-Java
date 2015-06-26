@@ -641,10 +641,6 @@ public final class Char implements AnimatedMove {
     private void updatePosition(@Nullable Avatar avatar, @Nonnull DisplayCoordinate newPosition) {
         displayPos = newPosition;
 
-        if (removedCharacter) {
-            return;
-        }
-
         if (avatar != null) {
             avatar.setScreenPos(newPosition);
         }
