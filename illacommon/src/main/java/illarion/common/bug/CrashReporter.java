@@ -358,12 +358,10 @@ public final class CrashReporter {
 
                 possibleDuplicateIssue = checkedIssue;
 
-                if (!saveString(checkedIssue.getDescription()).equals(description)) {
-                    continue;
+                if (saveString(checkedIssue.getDescription()).equals(description)) {
+                    duplicateIssue = checkedIssue;
+                    break;
                 }
-
-                duplicateIssue = checkedIssue;
-                break;
             }
 
             if (duplicateIssue != null) {

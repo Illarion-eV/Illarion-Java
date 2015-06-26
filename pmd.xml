@@ -29,6 +29,7 @@
     <rule ref="rulesets/java/controversial.xml/BooleanInversion" />
     <rule ref="rulesets/java/design.xml">
         <exclude name="SwitchStmtsShouldHaveDefault" />
+        <exclude name="EmptyMethodInAbstractClassShouldBeAbstract" />
     </rule>
     <rule ref="rulesets/java/imports.xml" />
     <rule ref="rulesets/java/finalizers.xml" />
