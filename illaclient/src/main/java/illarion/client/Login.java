@@ -24,6 +24,7 @@ import illarion.common.data.IllarionSSLSocketFactory;
 import illarion.common.util.Base64;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.DirectoryManager.Directory;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -51,6 +52,7 @@ import java.security.spec.KeySpec;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 
 /**
@@ -60,43 +62,23 @@ import java.util.concurrent.Callable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class Login {
+    @Nonnull
+    private static final Login INSTANCE = new Login();
     /**
-     * The server used only by developers to test functionality
+     * The instance of the logger that is used write the log output of this class.
      */
-    public static final int DEVSERVER = 0;
+    @Nonnull
+    private static final Logger LOGGER = LoggerFactory.getLogger(Login.class);
     /**
-     * The publicly available server for players to test functionality
+     * The string that defines the name of a error node
      */
-    public static final int TESTSERVER = 1;
-    /**
-     * The official "production" server used to host the actual game
-     */
-    public static final int ILLARIONSERVER = 2;
-    /**
-     * A server that may be defined by the user
-     */
-    public static final int CUSTOMSERVER = 3;
-
-    /**
-     * Internal class to hold the name and status of each character to display for selection
-     */
-    public static final class CharEntry {
-        private final String charName;
-        private final int charStatus;
-
-        public CharEntry(String name, int status) {
-            charName = name;
-            charStatus = status;
-        }
-
-        public String getName() {
-            return charName;
-        }
-
-        public int getStatus() {
-            return charStatus;
-        }
-    }
+    private static final String NODE_NAME_ERROR = "error";
+    // The list of available characters for login
+    @Nonnull
+    private final List<CharEntry> charList;
+    // The chosen character for login
+    @Nullable
+    private String loginCharacter;
     // The ACCOUNT name of the player
     @Nullable
     private String loginName;
@@ -104,116 +86,71 @@ public final class Login {
     private String password;
     @Nullable
     private Servers server;
-    // The chosen character for login
-    @Nullable
-    private String loginCharacter;
-    // The list of available characters for login
-    @Nonnull
-    private final List<CharEntry> charList;
-
     private boolean storePassword;
 
     private Login() {
         charList = new ArrayList<>();
     }
 
-    private static final Login INSTANCE = new Login();
-
-    /**
-     * The string that defines the name of a error node
-     */
-    private static final String NODE_NAME_ERROR = "error";
-
-    /**
-     * The instance of the logger that is used write the log output of this
-     * class.
-     */
-    @Nonnull
-    private static final Logger LOGGER = LoggerFactory.getLogger(Login.class);
-
     @Nonnull
     public static Login getInstance() {
         return INSTANCE;
     }
 
-    public void setLoginData(String name, String pass) {
-        loginName = name;
-        password = pass;
+    @Nonnull
+    public List<CharEntry> getCharacterList() {
+        return Collections.unmodifiableList(charList);
+    }
+
+    public boolean getStorePassword() {
+        return storePassword;
     }
 
     /**
-     * Changes the server to the server at the given key
-     * @param server an int to select the server, see class constants
+     * Send the given login data to the server
+     *
+     * @return {@code true} if the login command was SENT successfully
      */
-    public void setServer(int server) {
-        for (Servers serverEntry : Servers.values()) {
-            if (serverEntry.getServerKey() == server) {
-                setServer(serverEntry);
-                return;
-            }
-        }
-    }
-
-    /**
-     * Changes the current server to the given server
-     * @param server the server to switch to
-     */
-    public void setServer(@Nonnull Servers server) {
-        this.server = server;
-    }
-
-    public void restoreLoginData() {
-        restoreLogin();
-        restorePassword();
-        restoreStorePassword();
-    }
-
-    /**
-     * Saves the content of the fields to the config system
-     * @param storePassword whether or not to save the password
-     */
-    public void storeData(boolean storePassword) {
-        if (IllaClient.DEFAULT_SERVER == Servers.Illarionserver) {
-            IllaClient.getInstance().setUsedServer(Servers.Illarionserver);
-        } else {
-            IllaClient.getCfg().set("server", getServer().getServerKey());
-            IllaClient.getInstance().setUsedServer(getServer());
+    public boolean login() {
+        NetComm netComm = World.getNet();
+        if (!netComm.connect()) {
+            return false;
         }
 
+        String loginChar = getLoginCharacter();
+        if (loginChar == null) {
+            return false;
+        }
+
+        int clientVersion;
         if (getServer() == Servers.Customserver) {
-            IllaClient.getCfg().set("customLastLogin", getLoginName());
-            IllaClient.getCfg().set("customSavePassword", storePassword);
+            if (IllaClient.getCfg().getBoolean("clientVersionOverwrite")) {
+                clientVersion = IllaClient.getCfg().getInteger("clientVersion");
+            } else {
+                clientVersion = getServer().getClientVersion();
+            }
         } else {
-            IllaClient.getCfg().set("lastLogin", getLoginName());
-            IllaClient.getCfg().set("savePassword", storePassword);
+            clientVersion = getServer().getClientVersion();
         }
+        World.getNet().sendCommand(new LoginCmd(loginChar, getPassword(), clientVersion));
 
-        if (storePassword) {
-            storePassword(getPassword());
-        } else {
-            deleteStoredPassword();
+        return true;
+    }
+
+    @Nullable
+    public String getLoginCharacter() {
+        if (!isCharacterListRequired()) {
+            return loginName;
         }
+        return loginCharacter;
+    }
 
-        IllaClient.getCfg().save();
+    public void setLoginCharacter(@Nonnull String character) {
+        loginCharacter = character;
     }
 
     @Nonnull
-    public String getLoginName() {
-        if (loginName == null) {
-            return "";
-        }
-        return loginName;
-    }
-
-    @Nonnull
-    public String getPassword() {
-        if (password == null) {
-            return "";
-        }
-        return password;
-    }
-
-    @Nonnull
+    @Contract(pure = true)
     public Servers getServer() {
         if (server == null) {
             return Servers.Illarionserver;
@@ -221,41 +158,79 @@ public final class Login {
         return server;
     }
 
-    @FunctionalInterface
-    public interface RequestCharListCallback {
-        void finishedRequest(int errorCode);
+    /**
+     * Changes the current server to the given server
+     *
+     * @param server the server to switch to
+     */
+    public void setServer(@Nonnull Servers server) {
+        this.server = server;
     }
 
-    private final class RequestCharacterListTask implements Callable<Void> {
-        private final RequestCharListCallback callback;
-
-        private RequestCharacterListTask(RequestCharListCallback callback) {
-            this.callback = callback;
+    @Nonnull
+    @Contract(pure = true)
+    public String getPassword() {
+        if (password == null) {
+            return "";
         }
-
-        /**
-         * Computes a result, or throws an exception if unable to do so.
-         *
-         * @return computed result
-         * @throws Exception if unable to compute a result
-         */
-        @Nullable
-        @Override
-        public Void call() throws Exception {
-            requestCharacterListInternal(callback);
-            return null;
-        }
+        return password;
     }
 
+    @Contract(pure = true)
     public boolean isCharacterListRequired() {
-        if (getServer() == Servers.Customserver) {
-            return IllaClient.getCfg().getBoolean("serverAccountLogin");
-        } else {
-            return true;
-        }
+        return (getServer() != Servers.Customserver) || IllaClient.getCfg().getBoolean("serverAccountLogin");
     }
 
-    public void requestCharacterList(RequestCharListCallback resultCallback) {
+    /**
+     * Parses the given XML document and
+     *
+     * @param root           The XML document to read
+     * @param resultCallback
+     */
+    private void readXML(@Nonnull Node root, @Nonnull RequestCharListCallback resultCallback) {
+        // If the Node is neither the "chars" doc nor "error", recursively call on each child node
+        if (!"chars".equals(root.getNodeName()) && !NODE_NAME_ERROR.equals(root.getNodeName())) {
+            NodeList children = root.getChildNodes();
+            int count = children.getLength();
+            for (int i = 0; i < count; i++) {
+                readXML(children.item(i), resultCallback);
+            }
+            return;
+        }
+        if (NODE_NAME_ERROR.equals(root.getNodeName())) {
+            // Gets the node value of the error's id
+            int error = Integer.parseInt(root.getAttributes().getNamedItem("id").getNodeValue());
+            resultCallback.finishedRequest(error);
+            return;
+        }
+        NodeList children = root.getChildNodes();
+        int count = children.getLength();
+        // Fetches the Account language and sets the local config language to match
+        String accLang = root.getAttributes().getNamedItem("lang").getNodeValue();
+        if ("de".equals(accLang)) {
+            IllaClient.getCfg().set(Lang.LOCALE_CFG, Lang.LOCALE_CFG_GERMAN);
+        } else if ("us".equals(accLang)) {
+            IllaClient.getCfg().set(Lang.LOCALE_CFG, Lang.LOCALE_CFG_ENGLISH);
+        }
+        // Fills the charList with each character the account has on the selected server
+        charList.clear();
+        for (int i = 0; i < count; i++) {
+            Node charNode = Objects.requireNonNull(children.item(i));
+            String charName = Objects.requireNonNull(charNode.getTextContent());
+            int status = Integer.parseInt(charNode.getAttributes().getNamedItem("status").getNodeValue());
+            String charServer = charNode.getAttributes().getNamedItem("server").getNodeValue();
+
+            CharEntry addChar = new CharEntry(charName, status);
+            String usedServerName = IllaClient.getInstance().getUsedServer().getServerName();
+            if (charServer.equals(usedServerName)) {
+                charList.add(addChar);
+            }
+        }
+
+        resultCallback.finishedRequest(0);
+    }
+
+    public void requestCharacterList(@Nonnull RequestCharListCallback resultCallback) {
         GlobalExecutorService.getService().submit(new RequestCharacterListTask(resultCallback));
     }
 
@@ -306,101 +281,22 @@ public final class Login {
         }
     }
 
-    /**
-     * Parses the given XML document and
-     *
-     * @param root  The XML document to read
-     * @param resultCallback
-     */
-    private void readXML(@Nonnull Node root, @Nonnull RequestCharListCallback resultCallback) {
-        // If the Node is neither the "chars" doc nor "error", recursively call on each child node
-        if (!"chars".equals(root.getNodeName()) && !NODE_NAME_ERROR.equals(root.getNodeName())) {
-            NodeList children = root.getChildNodes();
-            int count = children.getLength();
-            for (int i = 0; i < count; i++) {
-                readXML(children.item(i), resultCallback);
-            }
-            return;
-        }
-        if (NODE_NAME_ERROR.equals(root.getNodeName())) {
-            // Gets the node value of the error's id
-            int error = Integer.parseInt(root.getAttributes().getNamedItem("id").getNodeValue());
-            resultCallback.finishedRequest(error);
-            return;
-        }
-        NodeList children = root.getChildNodes();
-        int count = children.getLength();
-        // Fetches the Account language and sets the local config language to match
-        String accLang = root.getAttributes().getNamedItem("lang").getNodeValue();
-        if ("de".equals(accLang)) {
-            IllaClient.getCfg().set(Lang.LOCALE_CFG, Lang.LOCALE_CFG_GERMAN);
-        } else if ("us".equals(accLang)) {
-            IllaClient.getCfg().set(Lang.LOCALE_CFG, Lang.LOCALE_CFG_ENGLISH);
-        }
-        // Fills the charList with each character the account has on the selected server
-        charList.clear();
-        for (int i = 0; i < count; i++) {
-            Node charNode = children.item(i);
-            String charName = charNode.getTextContent();
-            int status = Integer.parseInt(charNode.getAttributes().getNamedItem("status").getNodeValue());
-            String charServer = charNode.getAttributes().getNamedItem("server").getNodeValue();
-
-            CharEntry addChar = new CharEntry(charName, status);
-            String usedServerName = IllaClient.getInstance().getUsedServer().getServerName();
-            if(charServer.equals(usedServerName)) {
-                charList.add(addChar);
-            }
-        }
-
-        resultCallback.finishedRequest(0);
-    }
-
-    @Nonnull
-    public List<CharEntry> getCharacterList() {
-        return Collections.unmodifiableList(charList);
-    }
-
-    public void setLoginCharacter(@Nonnull String character) {
-        loginCharacter = character;
-    }
-
-    @Nullable
-    public String getLoginCharacter() {
-        if (!isCharacterListRequired()) {
-            return loginName;
-        }
-        return loginCharacter;
+    public void restoreLoginData() {
+        restoreLogin();
+        restorePassword();
+        restoreStorePassword();
     }
 
     /**
-     * Send the given login data to the server
-     *
-     * @return {@code true} if the login command was SENT successfully
+     * Load the saved login from the configuration file and insert it to the
+     * login field on the login window.
      */
-    public boolean login() {
-        NetComm netComm = World.getNet();
-        if (!netComm.connect()) {
-            return false;
-        }
-
-        String loginChar = getLoginCharacter();
-        if (loginChar == null) {
-            return false;
-        }
-
-        int clientVersion;
+    private void restoreLogin() {
         if (getServer() == Servers.Customserver) {
-            if (IllaClient.getCfg().getBoolean("clientVersionOverwrite")) {
-                clientVersion = IllaClient.getCfg().getInteger("clientVersion");
-            } else {
-                clientVersion = getServer().getClientVersion();
-            }
+            loginName = IllaClient.getCfg().getString("customLastLogin");
         } else {
-            clientVersion = getServer().getClientVersion();
+            loginName = IllaClient.getCfg().getString("lastLogin");
         }
-        World.getNet().sendCommand(new LoginCmd(loginChar, getPassword(), clientVersion));
-
-        return true;
     }
 
     /**
@@ -429,35 +325,11 @@ public final class Login {
         }
     }
 
-    public boolean getStorePassword() {
-        return storePassword;
-    }
-
-    /**
-     * Load the saved login from the configuration file and insert it to the
-     * login field on the login window.
-     */
-    private void restoreLogin() {
-        if (getServer() == Servers.Customserver) {
-            loginName = IllaClient.getCfg().getString("customLastLogin");
-        } else {
-            loginName = IllaClient.getCfg().getString("lastLogin");
-        }
-    }
-
-    /**
-     * Load the saved server from the configuration file and use it
-     * to select the default server
-     */
-    public void restoreServer() {
-        setServer(IllaClient.getCfg().getInteger("server"));
-    }
-
     /**
      * Shuffle the letters of the password around a bit.
      *
-     * @param pw the encoded password or the decoded password that stall be
-     * shuffled
+     * @param pw     the encoded password or the decoded password that stall be
+     *               shuffled
      * @param decode false for encoding the password, true for decoding.
      * @return the encoded or the decoded password
      */
@@ -501,6 +373,71 @@ public final class Login {
     }
 
     /**
+     * Load the saved server from the configuration file and use it
+     * to select the default server
+     */
+    public void restoreServer() {
+        applyServerByKey(IllaClient.getCfg().getInteger("server"));
+    }
+
+    /**
+     * Changes the server to the server at the given key
+     *
+     * @param server an int to select the server, see class constants
+     */
+    public void applyServerByKey(int server) {
+        for (Servers serverEntry : Servers.values()) {
+            if (serverEntry.getServerKey() == server) {
+                setServer(serverEntry);
+                return;
+            }
+        }
+    }
+
+    public void setLoginData(String name, String pass) {
+        loginName = name;
+        password = pass;
+    }
+
+    /**
+     * Saves the content of the fields to the config system
+     *
+     * @param storePassword whether or not to save the password
+     */
+    public void storeData(boolean storePassword) {
+        if (IllaClient.DEFAULT_SERVER == Servers.Illarionserver) {
+            IllaClient.getInstance().setUsedServer(Servers.Illarionserver);
+        } else {
+            IllaClient.getCfg().set("server", getServer().getServerKey());
+            IllaClient.getInstance().setUsedServer(getServer());
+        }
+
+        if (getServer() == Servers.Customserver) {
+            IllaClient.getCfg().set("customLastLogin", getLoginName());
+            IllaClient.getCfg().set("customSavePassword", storePassword);
+        } else {
+            IllaClient.getCfg().set("lastLogin", getLoginName());
+            IllaClient.getCfg().set("savePassword", storePassword);
+        }
+
+        if (storePassword) {
+            storePassword(getPassword());
+        } else {
+            deleteStoredPassword();
+        }
+
+        IllaClient.getCfg().save();
+    }
+
+    @Nonnull
+    public String getLoginName() {
+        if (loginName == null) {
+            return "";
+        }
+        return loginName;
+    }
+
+    /**
      * Store the password in the configuration file or remove the stored password from the configuration.
      *
      * @param pw the password that stall be stored to the configuration file
@@ -525,6 +462,56 @@ public final class Login {
         } else {
             IllaClient.getCfg().set("savePassword", false);
             IllaClient.getCfg().remove("fingerprint");
+        }
+    }
+
+    @FunctionalInterface
+    public interface RequestCharListCallback {
+        void finishedRequest(int errorCode);
+    }
+
+    /**
+     * Internal class to hold the name and status of each character to display for selection
+     */
+    public static final class CharEntry {
+        @Nonnull
+        private final String charName;
+        private final int charStatus;
+
+        public CharEntry(@Nonnull String name, int status) {
+            charName = name;
+            charStatus = status;
+        }
+
+        @Nonnull
+        public String getName() {
+            return charName;
+        }
+
+        public int getStatus() {
+            return charStatus;
+        }
+    }
+
+    private final class RequestCharacterListTask implements Callable<Void> {
+        @Nonnull
+        private final RequestCharListCallback callback;
+
+        private RequestCharacterListTask(@Nonnull RequestCharListCallback callback) {
+            this.callback = callback;
+        }
+
+        /**
+         * Computes a result, or throws an exception if unable to do so.
+         *
+         * @return computed result
+         * @throws Exception if unable to compute a result
+         */
+        @Nullable
+        @Override
+        public Void call() throws Exception {
+            requestCharacterListInternal(callback);
+            return null;
         }
     }
 }

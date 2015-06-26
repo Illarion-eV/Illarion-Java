@@ -45,96 +45,73 @@ import javax.annotation.Nullable;
  */
 public final class LoginScreenController implements ScreenController, KeyInputHandler {
     /**
-     * The instance of the Nifty-GUI that was bound to this controller.
+     * This is the logging instance for this class.
      */
-    private Nifty nifty;
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoginScreenController.class);
     /**
-     * The screen this controller is a part of.
+     * The engine that is used in this game instance.
      */
-    private Screen screen;
-
+    @Nonnull
+    private final Engine engine;
+    /**
+     * The game that is the parent of this class.
+     */
+    @Nonnull
+    private final Game game;
+    /**
+     * The last error code that was received from the server. This will be {@code 0} in case there was no error or
+     * any larger value in case there is a error.
+     */
+    private int lastErrorCode;
     /**
      * The text field that contains the login name.
      */
     @Nonnull
     private TextField nameTxt;
-
+    /**
+     * The instance of the Nifty-GUI that was bound to this controller.
+     */
+    private Nifty nifty;
     /**
      * The text field that contains the password.
      */
     @Nonnull
     private TextField passwordTxt;
-
+    /**
+     * The generated popup that is shown in case a error occurred during the login.
+     */
+    private Element popupError;
+    /**
+     * This variable is set true in case the popup is visible.
+     */
+    private boolean popupIsVisible;
+    /**
+     * The generated popup that is shown while the client is busy fetching the characters from the server.
+     */
+    private Element popupReceiveChars;
+    /**
+     * This value is set {@code true} in case a new response was received from the server that needs to be processed
+     * upon the next update loop.
+     */
+    private boolean receivedLoginResponse;
     /**
      * The checkbox that is ticked in case the password is supposed to be saved.
      */
     @Nullable
     private CheckBox savePassword;
-
+    /**
+     * The screen this controller is a part of.
+     */
+    private Screen screen;
     /**
      * The drop down box is used to select a server.
      */
     @Nullable
     private DropDown<String> server;
 
-    /**
-     * The generated popup that is shown in case a error occurred during the login.
-     */
-    private Element popupError;
-
-    /**
-     * The generated popup that is shown while the client is busy fetching the characters from the server.
-     */
-    private Element popupReceiveChars;
-
-    /**
-     * This variable is set true in case the popup is visible.
-     */
-    private boolean popupIsVisible;
-
-    /**
-     * This value is set {@code true} in case a new response was received from the server that needs to be processed
-     * upon the next update loop.
-     */
-    private boolean receivedLoginResponse;
-
-    /**
-     * The last error code that was received from the server. This will be {@code 0} in case there was no error or
-     * any larger value in case there is a error.
-     */
-    private int lastErrorCode;
-
-    /**
-     * The game that is the parent of this class.
-     */
-    @Nonnull
-    private final Game game;
-
-    /**
-     * The engine that is used in this game instance.
-     */
-    @Nonnull
-    private final Engine engine;
-
-    /**
-     * This is the logging instance for this class.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoginScreenController.class);
-
     public LoginScreenController(@Nonnull Game game, @Nonnull Engine engine) {
         this.game = game;
         this.engine = engine;
-    }
-
-    /**
-     * Get the text that describes a error code.
-     *
-     * @param error the error code
-     * @return the localized text that describes the error for the player
-     */
-    public static String getErrorText(int error) {
-        return Lang.getMsg("login.error." + Integer.toString(error));
     }
 
     @Override
@@ -188,15 +165,9 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         savePassword.setChecked(login.getStorePassword());
     }
 
-    @NiftyEventSubscriber(id = "server")
-    public void onServerChanged(@Nonnull String topic, @Nonnull DropDownSelectionChangedEvent<String> data) {
-        Login.getInstance().setServer(server.getSelectedIndex());
-        restoreLoginData();
-    }
-
     @Override
     public void onStartScreen() {
-        if(IllaClient.getCfg().getBoolean("musicOn")) {
+        if (IllaClient.getCfg().getBoolean("musicOn")) {
             Music illarionTheme = SongFactory.getInstance().getSong(2, engine.getAssets().getSoundsManager());
             if (illarionTheme != null) {
                 // may be null in case OpenAL is not working
@@ -214,60 +185,17 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     public void onEndScreen() {
     }
 
-    /**
-     * This function is called in case the login button is clicked.
-     *
-     * @param topic the topic of the event
-     * @param event the data of the event
-     */
-    @NiftyEventSubscriber(id = "loginBtn")
-    public void onLoginButtonClicked(String topic, ButtonClickedEvent event) {
-        login();
-    }
-
-    @NiftyEventSubscriber(id = "server")
-    public void onServerChangedEvent(String topic, @Nonnull DropDownSelectionChangedEvent<String> event) {
-        if (event.getSelectionItemIndex() == 4) {
-            nameTxt.setText(IllaClient.getCfg().getString("testserverLogin"));
-            passwordTxt.setText(IllaClient.getCfg().getString("testserverPass"));
-        } else {
-            Login login = Login.getInstance();
-            nameTxt.setText(login.getLoginName());
-            passwordTxt.setText(login.getPassword());
+    @Override
+    public boolean keyEvent(@Nonnull NiftyInputEvent inputEvent) {
+        if (inputEvent == NiftyStandardInputEvent.SubmitText) {
+            if (popupIsVisible) {
+                closeError();
+            } else {
+                login();
+            }
+            return true;
         }
-    }
-
-    /**
-     * This function is called in case the exit button is clicked.
-     *
-     * @param topic the topic of the event
-     * @param event the data of the event
-     */
-    @NiftyEventSubscriber(id = "exitBtn")
-    public void onExitButtonClicked(String topic, ButtonClickedEvent event) {
-        IllaClient.ensureExit();
-    }
-
-    /**
-     * This function is called in case the credits button is clicked.
-     *
-     * @param topic the topic of the event
-     * @param event the data of the event
-     */
-    @NiftyEventSubscriber(id = "creditsBtn")
-    public void onCreditsButtonClicked(String topic, ButtonClickedEvent event) {
-        nifty.gotoScreen("creditsStart");
-    }
-
-    /**
-     * This function is called in case the option button is clicked.
-     *
-     * @param topic the topic of the event
-     * @param event the data of the event
-     */
-    @NiftyEventSubscriber(id = "optionBtn")
-    public void onOptionsButtonClicked(String topic, ButtonClickedEvent event) {
-        options();
+        return false;
     }
 
     /**
@@ -282,6 +210,47 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     }
 
     /**
+     * This function closes the error popup that is displayed in case the login to the server failed.
+     */
+    private void closeError() {
+        popupIsVisible = false;
+        nifty.closePopup(popupError.getId(), () -> nameTxt.getElement().setFocus());
+    }
+
+    /**
+     * This function is called in case the credits button is clicked.
+     *
+     * @param topic the topic of the event
+     * @param event the data of the event
+     */
+    @NiftyEventSubscriber(id = "creditsBtn")
+    public void onCreditsButtonClicked(String topic, ButtonClickedEvent event) {
+        nifty.gotoScreen("creditsStart");
+    }
+
+    /**
+     * This function is called in case the exit button is clicked.
+     *
+     * @param topic the topic of the event
+     * @param event the data of the event
+     */
+    @NiftyEventSubscriber(id = "exitBtn")
+    public void onExitButtonClicked(String topic, ButtonClickedEvent event) {
+        IllaClient.ensureExit();
+    }
+
+    /**
+     * This function is called in case the login button is clicked.
+     *
+     * @param topic the topic of the event
+     * @param event the data of the event
+     */
+    @NiftyEventSubscriber(id = "loginBtn")
+    public void onLoginButtonClicked(String topic, ButtonClickedEvent event) {
+        login();
+    }
+
+    /**
      * This function triggers the login process. It will request the character list of the player from the server.
      */
     private void login() {
@@ -290,9 +259,9 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         login.setLoginData(nameTxt.getRealText(), passwordTxt.getRealText());
 
         if (server != null) {
-            login.setServer(server.getSelectedIndex());
+            login.applyServerByKey(server.getSelectedIndex());
         } else {
-            login.setServer(Login.ILLARIONSERVER);
+            login.setServer(Servers.Illarionserver);
         }
 
         login.storeData(savePassword.isChecked());
@@ -307,6 +276,42 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         } else {
             engine.getSounds().stopMusic(15);
             game.enterState(Game.STATE_LOADING);
+        }
+    }
+
+    /**
+     * This function is called in case the option button is clicked.
+     *
+     * @param topic the topic of the event
+     * @param event the data of the event
+     */
+    @NiftyEventSubscriber(id = "optionBtn")
+    public void onOptionsButtonClicked(String topic, ButtonClickedEvent event) {
+        options();
+    }
+
+    /**
+     * This function switches the screen to the option screen.
+     */
+    private void options() {
+        nifty.gotoScreen("options");
+    }
+
+    @NiftyEventSubscriber(id = "server")
+    public void onServerChanged(@Nonnull String topic, @Nonnull DropDownSelectionChangedEvent<String> data) {
+        Login.getInstance().applyServerByKey(server.getSelectedIndex());
+        restoreLoginData();
+    }
+
+    @NiftyEventSubscriber(id = "server")
+    public void onServerChangedEvent(String topic, @Nonnull DropDownSelectionChangedEvent<String> event) {
+        if (event.getSelectionItemIndex() == 4) {
+            nameTxt.setText(IllaClient.getCfg().getString("testserverLogin"));
+            passwordTxt.setText(IllaClient.getCfg().getString("testserverPass"));
+        } else {
+            Login login = Login.getInstance();
+            nameTxt.setText(login.getLoginName());
+            passwordTxt.setText(login.getPassword());
         }
     }
 
@@ -340,30 +345,12 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     }
 
     /**
-     * This function closes the error popup that is displayed in case the login to the server failed.
+     * Get the text that describes a error code.
+     *
+     * @param error the error code
+     * @return the localized text that describes the error for the player
      */
-    private void closeError() {
-        popupIsVisible = false;
-        nifty.closePopup(popupError.getId(), () -> nameTxt.getElement().setFocus());
-    }
-
-    /**
-     * This function switches the screen to the option screen.
-     */
-    private void options() {
-        nifty.gotoScreen("options");
-    }
-
-    @Override
-    public boolean keyEvent(@Nonnull NiftyInputEvent inputEvent) {
-        if (inputEvent == NiftyStandardInputEvent.SubmitText) {
-            if (popupIsVisible) {
-                closeError();
-            } else {
-                login();
-            }
-            return true;
-        }
-        return false;
+    public static String getErrorText(int error) {
+        return Lang.getMsg("login.error." + Integer.toString(error));
     }
 }
