@@ -32,7 +32,24 @@ import java.nio.file.Paths;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class DirectoryManager {
-    private static final Logger log = LoggerFactory.getLogger(DirectoryManager.class);
+    @SuppressWarnings("LoggerInitializedWithForeignClass")
+    private static final class LazyHolder {
+        @Nonnull
+        static final Logger log = LoggerFactory.getLogger(DirectoryManager.class);
+    }
+
+    /**
+     * Get the logger.
+     * <p />
+     * This function is around to avoid the initialization of the log in this function as it may happen to early in
+     * the runtime of the applications.
+     *
+     * @return the logging instance
+     */
+    @Nonnull
+    private static Logger getLog() {
+        return LazyHolder.log;
+    }
 
     /**
      * The enumeration of directories that are managed by this manager.
@@ -80,14 +97,14 @@ public final class DirectoryManager {
             try {
                 Files.delete(userDir);
             } catch (IOException e) {
-                log.error("Failed to delete old .illarion file.", e);
+                getLog().error("Failed to delete old .illarion file.", e);
             }
         }
         if (!Files.isDirectory(userDir)) {
             try {
                 Files.createDirectories(userDir);
             } catch (IOException e) {
-                log.error("Failed to create the .illarion directory.", e);
+                getLog().error("Failed to create the .illarion directory.", e);
             }
         }
     }
@@ -145,7 +162,7 @@ public final class DirectoryManager {
                     }
                     Files.delete(newCreatedFile);
                 } catch (IOException e) {
-                    log.info("Accessing the directory failed: {}", e.getMessage());
+                    getLog().info("Accessing the directory failed: {}", e.getMessage());
                 }
             }
             if (binaryDirectory == null) {
@@ -156,7 +173,7 @@ public final class DirectoryManager {
                     try {
                         return Files.createDirectories(binaryDirectory);
                     } catch (IOException e) {
-                        log.error("Critical error! No possible binary directory.");
+                        getLog().error("Critical error! No possible binary directory.");
                     }
                 }
             }

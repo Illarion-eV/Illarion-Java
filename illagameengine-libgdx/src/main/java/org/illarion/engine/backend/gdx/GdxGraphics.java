@@ -18,9 +18,11 @@ package org.illarion.engine.backend.gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.utils.Pools;
 import illarion.common.types.Rectangle;
@@ -199,7 +201,7 @@ class GdxGraphics implements Graphics {
                 gl20.glBlendFunc(GL20.GL_DST_COLOR, GL20.GL_ZERO);
                 break;
         }
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.begin(ShapeType.Filled);
     }
 
     /**
@@ -463,20 +465,29 @@ class GdxGraphics implements Graphics {
             activateSpriteBatch();
             GdxFont gdxFont = (GdxFont) font;
 
+            BitmapFont bitmapFont = gdxFont.getBitmapFont();
+            bitmapFont.getData().setScale((float) scaleX, (float) scaleY);
+            transferColor(color, tempColor1);
+            bitmapFont.setColor(tempColor1);
+            GlyphLayout layout = Pools.obtain(GlyphLayout.class);
+            layout.setText(bitmapFont, text);
+
             BitmapFont outlineFont = gdxFont.getOutlineBitmapFont();
             if (outlineFont != null) {
                 transferColor(Color.BLACK, tempColor1);
                 tempColor1.a = color.getAlphaf();
-                outlineFont.setScale((float) scaleX, (float) scaleY);
+                outlineFont.getData().setScale((float) scaleX, (float) scaleY);
                 outlineFont.setColor(tempColor1);
-                outlineFont.draw(spriteBatch, text, x, y - outlineFont.getAscent());
+
+                GlyphLayout outlineLayout = Pools.obtain(GlyphLayout.class);
+                outlineLayout.setText(outlineFont, text);
+
+                float widthOffset = (layout.width - outlineLayout.width) / 2.f;
+
+                outlineFont.draw(spriteBatch, outlineLayout, x + widthOffset, y - outlineFont.getAscent());
             }
 
-            transferColor(color, tempColor1);
-            BitmapFont bitmapFont = gdxFont.getBitmapFont();
-            bitmapFont.setScale((float) scaleX, (float) scaleY);
-            bitmapFont.setColor(tempColor1);
-            bitmapFont.draw(spriteBatch, text, x, y - bitmapFont.getAscent());
+            bitmapFont.draw(spriteBatch, layout, x, y - bitmapFont.getAscent());
         }
     }
 

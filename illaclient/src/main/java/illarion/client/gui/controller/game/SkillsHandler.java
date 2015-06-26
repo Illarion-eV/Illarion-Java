@@ -15,7 +15,6 @@
  */
 package illarion.client.gui.controller.game;
 
-import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.builder.PanelBuilder;
@@ -32,7 +31,6 @@ import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.IllaClient;
 import illarion.client.gui.SkillGui;
 import illarion.client.util.Lang;
-import illarion.client.util.UpdateTask;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
 import illarion.common.config.Config;
@@ -54,6 +52,9 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class SkillsHandler implements SkillGui, ScreenController, UpdatableHandler {
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(SkillsHandler.class);
+
     /**
      * The Nifty-GUI instance this handler is bound to.
      */
@@ -109,35 +110,20 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
 
     @Override
     public void showSkillWindow() {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                internalShowSkillWindow();
-            }
-        });
+        World.getUpdateTaskManager().addTask((container, delta) -> internalShowSkillWindow());
     }
 
     private void internalShowSkillWindow() {
         Element skillWindowElement = getSkillWindowElement();
         if (skillWindowElement != null) {
             assert skillWindow != null;
-            skillWindowElement.show(new EndNotify() {
-                @Override
-                public void perform() {
-                    skillWindow.moveToFront();
-                }
-            });
+            skillWindowElement.show(skillWindow::moveToFront);
         }
     }
 
     @Override
     public void hideSkillWindow() {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                internalHideSkillWindow();
-            }
-        });
+        World.getUpdateTaskManager().addTask((container, delta) -> internalHideSkillWindow());
     }
 
     private void internalHideSkillWindow() {
@@ -236,13 +222,8 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
     private boolean layoutDirty;
 
     @Override
-    public void updateSkill(@Nonnull final Skill skill, final int value, final int minor) {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                internalUpdateSkill(skill, value, minor);
-            }
-        });
+    public void updateSkill(@Nonnull Skill skill, int value, int minor) {
+        World.getUpdateTaskManager().addTask((container, delta) -> internalUpdateSkill(skill, value, minor));
     }
 
     @Nullable
@@ -367,7 +348,7 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
             screen.findElementById("openSkillsBtn").startEffect(EffectEventId.onCustom, null, "pulse");
             MapTile playerTile = World.getMap().getMapAt(World.getPlayer().getLocation());
             if (playerTile == null) {
-                LOGGER.error("Tile below the player is NULL?!");
+                log.error("Tile below the player is NULL?!");
             } else {
                 playerTile.showEffect(41);
             }
@@ -375,8 +356,6 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
 
         layoutDirty = true;
     }
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SkillsHandler.class);
 
     private void updateVisibility() {
         Element content = getContentPanel();
@@ -396,9 +375,7 @@ public final class SkillsHandler implements SkillGui, ScreenController, Updatabl
             }
         }
 
-        for (Element child : target.getChildren()) {
-            updateVisibilityOfElement(child);
-        }
+        target.getChildren().forEach(SkillsHandler::updateVisibilityOfElement);
     }
 
     @Override

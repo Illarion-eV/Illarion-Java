@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,7 +43,7 @@ public final class InteractiveContainerSlot implements Draggable, DropTarget {
      *
      * @param slot the container slot this reference points to
      */
-    public InteractiveContainerSlot(final ContainerSlot slot) {
+    public InteractiveContainerSlot(ContainerSlot slot) {
         parentSlot = slot;
     }
 
@@ -51,7 +51,7 @@ public final class InteractiveContainerSlot implements Draggable, DropTarget {
      * Drag a inventory item to a character. Does nothing currently.
      */
     @Override
-    public void dragTo(@Nonnull final InteractiveChar targetChar, @Nonnull final ItemCount count) {
+    public void dragTo(@Nonnull InteractiveChar targetChar, @Nonnull ItemCount count) {
         // nothing
     }
 
@@ -66,12 +66,12 @@ public final class InteractiveContainerSlot implements Draggable, DropTarget {
      * @param targetSlot the slot to drag the item to
      */
     @Override
-    public void dragTo(@Nonnull final InteractiveInventorySlot targetSlot, @Nonnull final ItemCount count) {
+    public void dragTo(@Nonnull InteractiveInventorySlot targetSlot, @Nonnull ItemCount count) {
         if (!isValidItem()) {
             LOGGER.error("Dragging of illegal item detected.");
             return;
         }
-        final ItemId draggedItemId = getItemId();
+        ItemId draggedItemId = getItemId();
         assert draggedItemId != null;
         if (!targetSlot.isAcceptingItem(draggedItemId)) {
             return;
@@ -100,17 +100,17 @@ public final class InteractiveContainerSlot implements Draggable, DropTarget {
      * @param targetTile the target location on the map
      */
     @Override
-    public void dragTo(@Nonnull final InteractiveMapTile targetTile, @Nonnull final ItemCount count) {
+    public void dragTo(@Nonnull InteractiveMapTile targetTile, @Nonnull ItemCount count) {
         World.getNet().sendCommand(new DragScMapCmd(getContainerId(), getSlotId(), targetTile.getLocation(), count));
     }
 
     @Override
-    public void dragTo(@Nonnull final InteractiveContainerSlot targetSlot, @Nonnull final ItemCount count) {
+    public void dragTo(@Nonnull InteractiveContainerSlot targetSlot, @Nonnull ItemCount count) {
         if (!isValidItem()) {
             LOGGER.error("Dragging of illegal item detected.");
             return;
         }
-        final ItemId draggedItemId = getItemId();
+        ItemId draggedItemId = getItemId();
         assert draggedItemId != null;
 
         if (!targetSlot.acceptItem(draggedItemId)) {
@@ -131,12 +131,12 @@ public final class InteractiveContainerSlot implements Draggable, DropTarget {
         return parentSlot.getLocation();
     }
 
-    public boolean acceptItem(@Nonnull final ItemId itemId) {
+    public boolean acceptItem(@Nonnull ItemId itemId) {
         return !isValidItem() || itemId.equals(getItemId());
     }
 
     public boolean isValidItem() {
-        final ItemId itemId = getItemId();
+        ItemId itemId = getItemId();
         return (itemId != null) && (itemId.getValue() > 0);
     }
 
@@ -171,10 +171,10 @@ public final class InteractiveContainerSlot implements Draggable, DropTarget {
             return;
         }
 
-        final MerchantList merchantList = World.getPlayer().getMerchantList();
+        MerchantList merchantList = World.getPlayer().getMerchantList();
         assert merchantList != null;
 
-        final ItemCount count = parentSlot.getCount();
+        ItemCount count = parentSlot.getCount();
         if (!ItemCount.isGreaterZero(count)) {
             LOGGER.error("Tried sell from a slot that contains no items!");
             return;

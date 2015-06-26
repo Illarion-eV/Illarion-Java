@@ -44,7 +44,6 @@ import javax.annotation.concurrent.NotThreadSafe;
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@SuppressWarnings("nls")
 @NotThreadSafe
 public abstract class AbstractEntity<T extends AbstractEntityTemplate>
         implements DisplayItem, AlphaHandler, AnimatedFrame {

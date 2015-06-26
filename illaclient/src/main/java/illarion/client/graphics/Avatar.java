@@ -16,6 +16,7 @@
 package illarion.client.graphics;
 
 import illarion.client.IllaClient;
+import illarion.client.graphics.FrameAnimation.Mode;
 import illarion.client.input.AbstractMouseLocationEvent;
 import illarion.client.input.ClickOnMapEvent;
 import illarion.client.input.CurrentMouseLocationEvent;
@@ -25,7 +26,6 @@ import illarion.client.resources.MiscImageFactory;
 import illarion.client.resources.Resource;
 import illarion.client.resources.data.AvatarTemplate;
 import illarion.client.util.Lang;
-import illarion.client.util.UpdateTask;
 import illarion.client.world.Char;
 import illarion.client.world.MapTile;
 import illarion.client.world.World;
@@ -54,8 +54,8 @@ import javax.annotation.Nullable;
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@SuppressWarnings("ClassNamingConvention")
 public final class Avatar extends AbstractEntity<AvatarTemplate> implements Resource {
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(Avatar.class);
     /**
      * The minimal alpha value of a avatar that is needed to show the name tag above the avatar graphic.
@@ -184,7 +184,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
 
     @Override
     public int getTargetAlpha() {
-        MapTile mapTileOfChar = World.getMap().getMapAt(parentChar.getLocation());
+        MapTile mapTileOfChar = World.getMap().getMapAt(parentChar.getVisibleLocation());
         if (mapTileOfChar == null) {
             return Color.MAX_INT_VALUE;
         } else {
@@ -233,7 +233,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         }
         animation.setDuration(duration);
         if (loop) {
-            animation.updateMode(FrameAnimation.Mode.Looped);
+            animation.updateMode(Mode.Looped);
         } else {
             animation.updateMode();
         }
@@ -256,7 +256,11 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
      */
     @Override
     public void animationFinished(boolean finished) {
-        parentChar.resetAnimation(finished);
+        // Do not reset the character if the parent character is not shown anymore.
+        // This may happen in case a currently animated character changes it's avatar.
+        if (isShown()) {
+            parentChar.resetAnimation(finished);
+        }
     }
 
     /**
@@ -311,7 +315,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
      * @param event the event that actually happened
      * @return {@code true} in case the event was handled
      */
-    @SuppressWarnings({"BooleanMethodNameMustStartWithQuestion", "UnusedParameters"})
+    @SuppressWarnings("UnusedParameters")
     private boolean isEventProcessed(
             GameContainer container, int delta, @Nonnull ClickOnMapEvent event) {
         if (World.getPlayer().isPlayer(parentChar.getCharId())) {
@@ -358,7 +362,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
      * @param event the event that actually happened
      * @return {@code true} in case the event was handled
      */
-    @SuppressWarnings({"BooleanMethodNameMustStartWithQuestion", "UnusedParameters"})
+    @SuppressWarnings("UnusedParameters")
     private boolean isEventProcessed(
             GameContainer container, int delta, @Nonnull DoubleClickOnMapEvent event) {
         if (event.getKey() != Button.Left) {
@@ -374,15 +378,10 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         }
 
         if (parentChar.isHuman()) {
-            final Char charToName = parentChar;
-            World.getUpdateTaskManager().addTaskForLater(new UpdateTask() {
-                @Override
-                public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                    World.getGameGui().getDialogInputGui().showNamingDialog(charToName);
-                }
-            });
+            Char charToName = parentChar;
+            World.getUpdateTaskManager().addTaskForLater((container1, delta1) -> World.getGameGui().getDialogInputGui().showNamingDialog(charToName));
         } else {
-            final InteractiveChar interactiveChar = parentChar.getInteractive();
+            InteractiveChar interactiveChar = parentChar.getInteractive();
 
             if (interactiveChar.isInUseRange()) {
                 log.debug("Using the character {}", interactiveChar);
@@ -391,12 +390,7 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
                 log.debug("Walking to and using the character {}", interactiveChar);
                 TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
                 handler.walkTo(parentChar.getLocation(), 1);
-                handler.setTargetReachedAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        interactiveChar.use();
-                    }
-                });
+                handler.setTargetReachedAction(interactiveChar::use);
                 handler.assumeControl();
             }
         }
@@ -420,7 +414,6 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         return isMouseInInteractionRect(event.getX(), event.getY());
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     private static final Logger LOGGER = LoggerFactory.getLogger(Avatar.class);
 
     @Override
@@ -466,8 +459,8 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
 
     @Override
     public void hide() {
-        stopAnimation();
         super.hide();
+        stopAnimation();
     }
 
     /**

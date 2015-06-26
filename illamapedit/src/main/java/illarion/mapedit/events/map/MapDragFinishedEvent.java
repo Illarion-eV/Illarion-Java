@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -29,7 +29,7 @@ public class MapDragFinishedEvent {
     private final int endY;
     private final Map map;
 
-    public MapDragFinishedEvent(final int startX, final int startY, final int endX, final int endY, final Map map) {
+    public MapDragFinishedEvent(int startX, int startY, int endX, int endY, Map map) {
         this.startX = startX;
         this.startY = startY;
         this.endX = endX;

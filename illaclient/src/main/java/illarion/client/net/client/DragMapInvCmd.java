@@ -64,7 +64,6 @@ public final class DragMapInvCmd extends AbstractDragCommand {
     }
 
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
     public String toString() {
         return toString("Source: " + srcLoc + " Destination: " + dstPos + ' ' + getCount());

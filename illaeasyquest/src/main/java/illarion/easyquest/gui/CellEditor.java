@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -24,8 +24,6 @@ import illarion.easyquest.quest.Trigger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.EventObject;
 
 /**
@@ -47,38 +45,19 @@ public class CellEditor implements mxICellEditor {
         this.graphComponent = graphComponent;
 
         nodeDialog = new StatusDialog(MainFrame.getInstance());
-        nodeDialog.addOkayListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                stopEditing(false);
-            }
-        });
-        nodeDialog.addCancelListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                stopEditing(true);
-            }
-        });
+        nodeDialog.addOkayListener(e -> stopEditing(false));
+        nodeDialog.addCancelListener(e -> stopEditing(true));
 
         triggerDialog = new TriggerDialog(MainFrame.getInstance());
-        triggerDialog.addOkayListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                stopEditing(false);
-            }
-        });
-        triggerDialog.addCancelListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                stopEditing(true);
-            }
-        });
+        triggerDialog.addOkayListener(e -> stopEditing(false));
+        triggerDialog.addCancelListener(e -> stopEditing(true));
     }
 
     /*
       * (non-Javadoc)
       * @see com.mxgraph.swing.view.mxICellEditor#startEditing(java.lang.Object, java.util.EventObject)
       */
+    @Override
     public void startEditing(@Nonnull Object cell, EventObject evt) {
         if (editingCell != null) {
             stopEditing(true);
@@ -116,6 +95,7 @@ public class CellEditor implements mxICellEditor {
       * (non-Javadoc)
       * @see com.mxgraph.swing.view.mxICellEditor#stopEditing(boolean)
       */
+    @Override
     public void stopEditing(boolean cancel) {
         if (editingCell != null) {
             Object cell = editingCell;
@@ -177,6 +157,7 @@ public class CellEditor implements mxICellEditor {
       * (non-Javadoc)
       * @see com.mxgraph.swing.view.mxICellEditor#getEditingCell()
       */
+    @Override
     @Nullable
     public Object getEditingCell() {
         // Countering a jgraphx bug: http://forum.jgraph.com/questions/1991/how-to-prevent-custom-cell-editor-from-hiding-edited-cells-label/2016
@@ -185,8 +166,8 @@ public class CellEditor implements mxICellEditor {
     }
 
     private static boolean isVertex(@Nullable Object cell) {
-        if (cell != null && cell instanceof mxCell) {
-            final mxCell c = (mxCell) cell;
+        if (cell instanceof mxCell) {
+            mxCell c = (mxCell) cell;
             return c.isVertex();
         }
         return false;

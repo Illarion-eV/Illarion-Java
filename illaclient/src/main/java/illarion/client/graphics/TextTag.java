@@ -80,13 +80,20 @@ public class TextTag {
      */
     private boolean dirty;
 
+    /**
+     * The width of this tag. This value is generated once the text is set.
+     */
+    private int width;
+
+    /**
+     * The height of this tag. This value is generated once the text is set.
+     */
+    private int height;
+
     public TextTag(@Nonnull String text, @Nonnull Color color) {
         this.text = text;
         this.color = color;
         font = FontLoader.getInstance().getFont(FontLoader.SMALL_FONT);
-
-        width = font.getWidth(text);
-        height = font.getLineHeight();
     }
 
     public void addToCamera(int x, int y) {
@@ -99,15 +106,10 @@ public class TextTag {
         dirty = true;
     }
 
-    /**
-     * The width of this tag. This value is generated once the text is set.
-     */
-    private int width;
-
-    /**
-     * The height of this tag. This value is generated once the text is set.
-     */
-    private int height;
+    public void updateHeightAndWidth() {
+        width = font.getWidth(text);
+        height = font.getLineHeight();
+    }
 
     /**
      * Get the height of the text tag.

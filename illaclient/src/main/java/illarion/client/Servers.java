@@ -25,28 +25,27 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@SuppressWarnings("nls")
 public enum Servers {
     /**
      * The Gameserver of Illarion. Normal players should connect to this server. If the selection of the server is
      * disabled this server is chosen as default server the client will show up as game client and not as Testclient.
      */
-    Illarionserver(Login.ILLARIONSERVER, "illarionserver", "illarion.org", 3008, 20),
+    Illarionserver(2, "illarionserver", "illarion.org", 3008, 20),
 
     /**
      * The Testserver of Illarion. Testers and developers need a client that is allowed to connect to this server.
      */
-    Testserver(Login.TESTSERVER, "testserver", Illarionserver.serverAddr, 3011, 20),
+    Testserver(1, "testserver", Illarionserver.serverHostName, 3011, 20),
 
     /**
      * The development server of Illarion. Developers need a client that is allowed to connect to this server.
      */
-    Devserver(Login.DEVSERVER, "devserver", Illarionserver.serverAddr, 3012, 20),
+    Devserver(0, "devserver", Illarionserver.serverHostName, 3012, 20),
 
     /**
      * Custom server, only for very special applications. It will connect to a server running at a user-specified host.
      */
-    Customserver(Login.CUSTOMSERVER, "customserver", Illarionserver.serverAddr, 3012, 20);
+    Customserver(3, "customserver", Illarionserver.serverHostName, 3012, 20);
 
     /**
      * The client version that needs to be transferred to the server so it accepts the connection and the client shows
@@ -58,35 +57,35 @@ public enum Servers {
      * Storage of the server host address the client needs to connect to.
      */
     @Nonnull
-    private final String serverAddr;
-
+    private final String serverHostName;
+    /**
+     * The identifier key for this server.
+     */
+    private final int serverKey;
     /**
      * The name of the server.
      * Is in lowercase with no spaces.
      */
     private final String serverName;
-
     /**
      * The port of the server the clients needs to connect to.
      */
     private final int serverPort;
 
-    private final int serverKey;
-
     /**
      * Default ENUM constructor for the enumeration entries. It creates a definition of a server and stores it to the
      * enumeration constants.
      *
-     * @param name the name of the server
-     * @param addr the host address of the server
-     * @param port the port the server is listening for connections
-     * @param version the version that shall be transferred to the server to
-     * validate the correct client version
+     * @param name     the name of the server
+     * @param hostName the host name of the server
+     * @param port     the port the server is listening for connections
+     * @param version  the version that shall be transferred to the server to
+     *                 validate the correct client version
      */
-    Servers(int key, @Nonnull String name, @Nonnull String addr, int port, int version) {
+    Servers(int key, @Nonnull String name, @Nonnull String hostName, int port, int version) {
         serverKey = key;
         serverName = name;
-        serverAddr = addr;
+        serverHostName = hostName;
         serverPort = port;
         clientVersion = version;
     }
@@ -109,7 +108,12 @@ public enum Servers {
     @Nonnull
     @Contract(pure = true)
     public String getServerHost() {
-        return serverAddr;
+        return serverHostName;
+    }
+
+    @Contract(pure = true)
+    public int getServerKey() {
+        return serverKey;
     }
 
     /**
@@ -131,10 +135,5 @@ public enum Servers {
     @Contract(pure = true)
     public int getServerPort() {
         return serverPort;
-    }
-
-    @Contract(pure = true)
-    public int getServerKey() {
-        return serverKey;
     }
 }

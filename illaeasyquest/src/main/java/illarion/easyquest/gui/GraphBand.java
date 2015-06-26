@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,12 +22,12 @@ import org.pushingpixels.flamingo.api.common.JCommandToggleButton;
 import org.pushingpixels.flamingo.api.common.RichTooltip;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
-import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
+import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies.Mid2Low;
+import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies.Mirror;
 import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
 
 import javax.annotation.Nonnull;
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +48,6 @@ final class GraphBand extends JRibbonBand {
     /**
      * Default constructor that prepares the buttons displayed on this band.
      */
-    @SuppressWarnings("nls")
     public GraphBand() {
         super(Lang.getMsg(GraphBand.class, "title"), null);
 
@@ -66,49 +65,40 @@ final class GraphBand extends JRibbonBand {
         transitionButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(getClass(), "transitionTooltipTitle"),
                                                               Lang.getMsg(getClass(), "transitionTooltip")));
 
-        final String idRequestTitle = Lang.getMsg(getClass(), "idRequestTitle");
-        final String idRequest = Lang.getMsg(getClass(), "idRequest");
-        final ActionListener propertiesAction = new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                boolean validID = false;
-                int id = MainFrame.getInstance().getCurrentQuestEditor().getQuestID();
-                while (!validID) {
-                    validID = true;
-                    String input = (String) JOptionPane
-                            .showInputDialog(null, idRequest, idRequestTitle, JOptionPane.QUESTION_MESSAGE, null, null,
-                                             id);
-                    if (input != null) {
-                        try {
-                            id = Integer.parseInt(input);
-                            MainFrame.getInstance().getCurrentQuestEditor().setQuestID(id);
-                        } catch (NumberFormatException exc) {
-                            validID = false;
-                        }
+        String idRequestTitle = Lang.getMsg(getClass(), "idRequestTitle");
+        String idRequest = Lang.getMsg(getClass(), "idRequest");
+        ActionListener propertiesAction = e -> {
+            boolean validID = false;
+            int id = MainFrame.getInstance().getCurrentQuestEditor().getQuestID();
+            while (!validID) {
+                validID = true;
+                String input = (String) JOptionPane
+                        .showInputDialog(null, idRequest, idRequestTitle, JOptionPane.QUESTION_MESSAGE, null, null,
+                                id);
+                if (input != null) {
+                    try {
+                        id = Integer.parseInt(input);
+                        MainFrame.getInstance().getCurrentQuestEditor().setQuestID(id);
+                    } catch (NumberFormatException exc) {
+                        validID = false;
                     }
                 }
             }
         };
 
-        final ActionListener nodeAction = new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                if (nodeButton.getActionModel().isSelected()) {
-                    MainFrame.getInstance().setCreateType(MainFrame.CREATE_STATUS);
-                } else {
-                    MainFrame.getInstance().setCreateType(MainFrame.CREATE_NOTHING);
-                }
+        ActionListener nodeAction = e -> {
+            if (nodeButton.getActionModel().isSelected()) {
+                MainFrame.getInstance().setCreateType(MainFrame.CREATE_STATUS);
+            } else {
+                MainFrame.getInstance().setCreateType(MainFrame.CREATE_NOTHING);
             }
         };
 
-        final ActionListener transitionAction = new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                if (transitionButton.getActionModel().isSelected()) {
-                    MainFrame.getInstance().setCreateType(MainFrame.CREATE_TRIGGER);
-                } else {
-                    MainFrame.getInstance().setCreateType(MainFrame.CREATE_NOTHING);
-                }
+        ActionListener transitionAction = e -> {
+            if (transitionButton.getActionModel().isSelected()) {
+                MainFrame.getInstance().setCreateType(MainFrame.CREATE_TRIGGER);
+            } else {
+                MainFrame.getInstance().setCreateType(MainFrame.CREATE_NOTHING);
             }
         };
 
@@ -124,9 +114,9 @@ final class GraphBand extends JRibbonBand {
         addCommandButton(nodeButton, RibbonElementPriority.TOP);
         addCommandButton(transitionButton, RibbonElementPriority.TOP);
 
-        final List<RibbonBandResizePolicy> policies = new ArrayList<>();
-        policies.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
-        policies.add(new CoreRibbonResizePolicies.Mid2Low(getControlPanel()));
+        List<RibbonBandResizePolicy> policies = new ArrayList<>();
+        policies.add(new Mirror(getControlPanel()));
+        policies.add(new Mid2Low(getControlPanel()));
         setResizePolicies(policies);
     }
 }

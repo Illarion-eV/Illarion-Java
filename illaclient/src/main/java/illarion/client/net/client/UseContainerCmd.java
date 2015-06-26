@@ -59,7 +59,6 @@ public final class UseContainerCmd extends AbstractCommand {
     }
 
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
     public String toString() {
         return toString("Container: " + containerId + " Slot: " + slot);

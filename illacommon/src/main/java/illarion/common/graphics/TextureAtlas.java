@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Contract;
  * @param <T> the type of the texture stored in this texture atlas
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
+@FunctionalInterface
 public interface TextureAtlas<T> {
     /**
      * Get the texture assigned to a specified name.

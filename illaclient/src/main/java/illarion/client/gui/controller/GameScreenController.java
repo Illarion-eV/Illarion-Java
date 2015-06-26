@@ -288,9 +288,7 @@ public final class GameScreenController implements GameGui, ScreenController {
      */
     @Override
     public void onEndScreen() {
-        for (ScreenController childController : childControllers) {
-            childController.onEndScreen();
-        }
+        childControllers.forEach(ScreenController::onEndScreen);
         World.cleanEnvironment();
         IllaClient.getCfg().save();
     }
@@ -300,9 +298,7 @@ public final class GameScreenController implements GameGui, ScreenController {
      */
     @Override
     public void onStartScreen() {
-        for (ScreenController childController : childControllers) {
-            childController.onStartScreen();
-        }
+        childControllers.forEach(ScreenController::onStartScreen);
     }
 
     /**
@@ -325,7 +321,6 @@ public final class GameScreenController implements GameGui, ScreenController {
      * @param nifty     The Nifty object for this instance of the game
      * @param screen    The Screen for this instance of the game
      */
-    @SuppressWarnings("unchecked")
     @Override
     public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
         for (ScreenController childController : childControllers) {

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -30,13 +30,13 @@ import java.util.concurrent.Callable;
  */
 class FutureArtifactRequest implements Callable<ArtifactResult> {
     @Nonnull
-    private final ArtifactRequest request;
+    private final ProgressMonitor progressMonitor;
     @Nonnull
-    private final RepositorySystem system;
+    private final ArtifactRequest request;
     @Nonnull
     private final RepositorySystemSession session;
     @Nonnull
-    private final ProgressMonitor progressMonitor;
+    private final RepositorySystem system;
 
     public FutureArtifactRequest(
             @Nonnull RepositorySystem system,
@@ -48,12 +48,16 @@ class FutureArtifactRequest implements Callable<ArtifactResult> {
         this.session = session;
         progressMonitor = new ProgressMonitor();
 
-        request.setTrace(new RequestTrace(new Object[]{requestTracer, progressMonitor}));
+        request.setTrace(new RequestTrace(new ArtifactTraceData(requestTracer, progressMonitor)));
     }
 
     @Nonnull
-    public ArtifactRequest getRequest() {
-        return request;
+    @Override
+    public ArtifactResult call() throws Exception {
+        progressMonitor.setProgress(0.f);
+        ArtifactResult result = system.resolveArtifact(session, request);
+        progressMonitor.setProgress(1.f);
+        return result;
     }
 
     @Nonnull
@@ -61,11 +65,8 @@ class FutureArtifactRequest implements Callable<ArtifactResult> {
         return progressMonitor;
     }
 
-    @Override
-    public ArtifactResult call() throws Exception {
-        progressMonitor.setProgress(0.f);
-        ArtifactResult result = system.resolveArtifact(session, request);
-        progressMonitor.setProgress(1.f);
-        return result;
+    @Nonnull
+    public ArtifactRequest getRequest() {
+        return request;
     }
 }

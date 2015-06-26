@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,10 +23,13 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import static illarion.download.maven.MavenDownloaderCallback.State.ResolvingDependencies;
+
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class MavenRepositoryListener implements RepositoryListener {
+class MavenRepositoryListener implements RepositoryListener {
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(MavenRepositoryListener.class);
 
     private boolean offline;
@@ -36,86 +39,86 @@ public class MavenRepositoryListener implements RepositoryListener {
 
 
     @Override
-    public void artifactDescriptorInvalid(RepositoryEvent event) {
+    public void artifactDescriptorInvalid(@Nonnull RepositoryEvent event) {
         log.warn(event.toString());
     }
 
     @Override
-    public void artifactDescriptorMissing(RepositoryEvent event) {
+    public void artifactDescriptorMissing(@Nonnull RepositoryEvent event) {
         log.warn(event.toString());
     }
 
     @Override
-    public void metadataInvalid(RepositoryEvent event) {
+    public void metadataInvalid(@Nonnull RepositoryEvent event) {
         log.warn(event.toString());
     }
 
     @Override
-    public void artifactResolving(RepositoryEvent event) {
+    public void artifactResolving(@Nonnull RepositoryEvent event) {
         if ((callback != null) && "pom".equals(event.getArtifact().getExtension())) {
-            callback.reportNewState(MavenDownloaderCallback.State.ResolvingDependencies, null, offline,
+            callback.reportNewState(ResolvingDependencies, null, offline,
                                     event.getArtifact().getGroupId() + ':' + event.getArtifact().getArtifactId());
         }
         log.info(event.toString());
     }
 
     @Override
-    public void artifactResolved(RepositoryEvent event) {
+    public void artifactResolved(@Nonnull RepositoryEvent event) {
         log.info(event.toString());
     }
 
     @Override
-    public void metadataResolving(RepositoryEvent event) {
+    public void metadataResolving(@Nonnull RepositoryEvent event) {
         log.info(event.toString());
     }
 
     @Override
-    public void metadataResolved(RepositoryEvent event) {
+    public void metadataResolved(@Nonnull RepositoryEvent event) {
         log.info(event.toString());
     }
 
     @Override
-    public void artifactDownloading(RepositoryEvent event) {
+    public void artifactDownloading(@Nonnull RepositoryEvent event) {
         log.info(event.toString());
     }
 
     @Override
-    public void artifactDownloaded(RepositoryEvent event) {
+    public void artifactDownloaded(@Nonnull RepositoryEvent event) {
         log.info(event.toString());
     }
 
     @Override
-    public void metadataDownloading(RepositoryEvent event) {
+    public void metadataDownloading(@Nonnull RepositoryEvent event) {
         log.info(event.toString());
     }
 
     @Override
-    public void metadataDownloaded(RepositoryEvent event) {
+    public void metadataDownloaded(@Nonnull RepositoryEvent event) {
 
     }
 
     @Override
-    public void artifactInstalling(RepositoryEvent event) {
+    public void artifactInstalling(@Nonnull RepositoryEvent event) {
         log.info(event.toString());
     }
 
     @Override
-    public void artifactInstalled(RepositoryEvent event) {
+    public void artifactInstalled(@Nonnull RepositoryEvent event) {
         log.info(event.toString());
     }
 
     @Override
-    public void metadataInstalling(RepositoryEvent event) {
+    public void metadataInstalling(@Nonnull RepositoryEvent event) {
         log.info(event.toString());
     }
 
     @Override
-    public void metadataInstalled(RepositoryEvent event) {
+    public void metadataInstalled(@Nonnull RepositoryEvent event) {
         log.info(event.toString());
     }
 
     @Override
-    public void artifactDeploying(RepositoryEvent event) {
+    public void artifactDeploying(@Nonnull RepositoryEvent event) {
         log.info(event.toString());
     }
 
@@ -125,12 +128,12 @@ public class MavenRepositoryListener implements RepositoryListener {
     }
 
     @Override
-    public void metadataDeploying(RepositoryEvent event) {
+    public void metadataDeploying(@Nonnull RepositoryEvent event) {
         log.info(event.toString());
     }
 
     @Override
-    public void metadataDeployed(RepositoryEvent event) {
+    public void metadataDeployed(@Nonnull RepositoryEvent event) {
         log.info(event.toString());
     }
 

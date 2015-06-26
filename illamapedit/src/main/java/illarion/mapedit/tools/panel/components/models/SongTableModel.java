@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,31 +23,35 @@ import javax.swing.table.AbstractTableModel;
 
 public class SongTableModel extends AbstractTableModel {
     @Nonnull
-    private String[] columnNames = {"ID", "File"};
+    private final String[] columnNames = {"ID", "File"};
 
-    private Song[] songs;
+    private final Song[] songs;
 
     /**
      * Default constructor
      *
      * @param songs Array with songs to show.
      */
-    public SongTableModel(final Song[] songs) {
+    public SongTableModel(Song... songs) {
         this.songs = songs;
     }
 
+    @Override
     public int getColumnCount() {
         return columnNames.length;
     }
 
+    @Override
     public int getRowCount() {
         return songs.length;
     }
 
+    @Override
     public String getColumnName(int col) {
         return columnNames[col];
     }
 
+    @Override
     @Nullable
     public Object getValueAt(int row, int col) {
         Object retVal = null;
@@ -62,12 +66,13 @@ public class SongTableModel extends AbstractTableModel {
         return retVal;
     }
 
+    @Override
     public boolean isCellEditable(int row, int col) {
         return false;
     }
 
     @Nullable
-    public Song getSongAtRow(final int selectedRow) {
+    public Song getSongAtRow(int selectedRow) {
         Song retVal = null;
         if (selectedRow >= 0 && selectedRow < songs.length) {
             retVal = songs[selectedRow];

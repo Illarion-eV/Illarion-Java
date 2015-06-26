@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,8 +21,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The animation handler is the base class for all animations. It offers some
@@ -87,7 +87,7 @@ abstract class AbstractAnimation<T extends Animated> {
      * is actually animated
      */
     protected AbstractAnimation(@Nullable T firstTarget) {
-        targets = new ArrayList<>();
+        targets = new CopyOnWriteArrayList<>();
         if (firstTarget != null) {
             targets.add(firstTarget);
         }
@@ -245,9 +245,7 @@ abstract class AbstractAnimation<T extends Animated> {
     }
 
     protected final void animationStarted() {
-        for (@Nonnull Animated target : targets) {
-            target.animationStarted();
-        }
+        targets.forEach(Animated::animationStarted);
     }
 
     /**

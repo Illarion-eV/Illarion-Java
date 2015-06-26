@@ -90,13 +90,11 @@ public final class CharAnimations {
     /**
      * Constant for the running animation.
      */
-    @SuppressWarnings("ConstantNamingConvention")
     public static final int RUN = 19;
 
     /**
      * Constant for the sitting animation.
      */
-    @SuppressWarnings("ConstantNamingConvention")
     public static final int SIT = 1;
 
     /**
@@ -118,7 +116,6 @@ public final class CharAnimations {
     /**
      * Constant for the walking animation.
      */
-    @SuppressWarnings("ConstantNamingConvention")
     public static final int WALK = 3;
 
     /**

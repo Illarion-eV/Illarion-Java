@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -24,7 +24,8 @@ import org.pushingpixels.flamingo.api.common.RichTooltip;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonComponent;
 import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
-import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
+import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies.Mid2Low;
+import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies.Mirror;
 import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
 
 import javax.annotation.Nonnull;
@@ -53,11 +54,11 @@ public final class SearchBand extends JRibbonBand {
      * The constructor of the search band that creates all contents of this band
      * properly.
      */
-    public SearchBand(@Nonnull final MainFrame frame) {
+    public SearchBand(@Nonnull MainFrame frame) {
         super(Lang.getMsg(SearchBand.class, "title"), null);
 
         startGroup(Lang.getMsg(SearchBand.class, "fastSearchGroup"));
-        final JTextField textBox = new JTextField();
+        JTextField textBox = new JTextField();
         textBox.setPreferredSize(new Dimension(150, textBox.getPreferredSize().height));
         JRibbonComponent ribbonTextBox = new JRibbonComponent(textBox);
         addRibbonComponent(ribbonTextBox);
@@ -117,8 +118,8 @@ public final class SearchBand extends JRibbonBand {
         addCommandButton(findButton, RibbonElementPriority.TOP);
 
         List<RibbonBandResizePolicy> policies = new ArrayList<>();
-        policies.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
-        policies.add(new CoreRibbonResizePolicies.Mid2Low(getControlPanel()));
+        policies.add(new Mirror(getControlPanel()));
+        policies.add(new Mid2Low(getControlPanel()));
         setResizePolicies(policies);
     }
 }

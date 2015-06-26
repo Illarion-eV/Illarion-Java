@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -42,7 +42,7 @@ public class Song implements Comparable<Song> {
      * @param clipID id of the clip
      * @param fileName fileName of the file
      */
-    public Song(final int clipID, final String fileName) {
+    public Song(int clipID, String fileName) {
         this.clipID = clipID;
         this.fileName = fileName;
     }
@@ -79,7 +79,7 @@ public class Song implements Comparable<Song> {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(Object o) {
         if (super.equals(o)) {
             return true;
         }
@@ -95,7 +95,7 @@ public class Song implements Comparable<Song> {
     }
 
     @Override
-    public int compareTo(@Nonnull final Song o) {
-        return clipID - o.getClipID();
+    public int compareTo(@Nonnull Song o) {
+        return Integer.compare(clipID, o.getClipID());
     }
 }

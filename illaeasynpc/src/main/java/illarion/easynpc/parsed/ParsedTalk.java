@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,6 +19,7 @@ import illarion.easynpc.parsed.talk.TalkCondition;
 import illarion.easynpc.parsed.talk.TalkConsequence;
 import illarion.easynpc.writer.LuaRequireTable;
 import illarion.easynpc.writer.LuaWriter;
+import illarion.easynpc.writer.LuaWriter.WritingStage;
 import illarion.easynpc.writer.SQLBuilder;
 
 import javax.annotation.Nonnull;
@@ -86,8 +87,8 @@ public final class ParsedTalk implements ParsedData {
      * talking lines.
      */
     @Override
-    public boolean effectsLuaWritingStage(@Nonnull LuaWriter.WritingStage stage) {
-        return stage == LuaWriter.WritingStage.Talking;
+    public boolean effectsLuaWritingStage(@Nonnull WritingStage stage) {
+        return stage == WritingStage.Talking;
     }
 
     /**
@@ -121,8 +122,8 @@ public final class ParsedTalk implements ParsedData {
      * Write the LUA code needed for this talking line.
      */
     @Override
-    public void writeLua(@Nonnull Writer target, @Nonnull LuaRequireTable requires, @Nonnull LuaWriter.WritingStage stage) throws IOException {
-        if (stage == LuaWriter.WritingStage.Talking) {
+    public void writeLua(@Nonnull Writer target, @Nonnull LuaRequireTable requires, @Nonnull WritingStage stage) throws IOException {
+        if (stage == WritingStage.Talking) {
             target.write("do"); //$NON-NLS-1$
             target.write(LuaWriter.NL);
             target.write("local talkEntry = " + requires.getStorage("npc.base.talk") + ".talkNPCEntry()");

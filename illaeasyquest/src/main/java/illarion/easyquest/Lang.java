@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,7 +23,6 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-@SuppressWarnings("nls")
 public final class Lang implements MessageSource {
     /**
      * The singleton instance of this class.
@@ -83,8 +82,8 @@ public final class Lang implements MessageSource {
      * key was not found in the storage
      */
     @Nonnull
-    public static String getMsg(@Nonnull final Class<?> clazz, @Nonnull final String key) {
-        final TextBuilder builder = new TextBuilder();
+    public static String getMsg(@Nonnull Class<?> clazz, @Nonnull String key) {
+        TextBuilder builder = new TextBuilder();
         builder.append(clazz.getName());
         builder.append('.');
         builder.append(key);
@@ -99,7 +98,7 @@ public final class Lang implements MessageSource {
      * case the key was not found in the storage
      */
     @Nonnull
-    public static String getMsg(@Nonnull final String key) {
+    public static String getMsg(@Nonnull String key) {
         return INSTANCE.getMessage(key);
     }
 
@@ -122,12 +121,12 @@ public final class Lang implements MessageSource {
      */
     @Override
     @Nonnull
-    public String getMessage(@Nonnull final String key) {
+    public String getMessage(@Nonnull String key) {
         try {
             return messages.getString(key);
-        } catch (@Nonnull final MissingResourceException e) {
+        } catch (@Nonnull MissingResourceException e) {
             System.out.println("Failed searching translated version of: " + key);
-            return "<" + key + ">";
+            return '<' + key + '>';
         }
     }
 
@@ -137,10 +136,10 @@ public final class Lang implements MessageSource {
      * @param key the key that shall be checked
      * @return true in case a message was found
      */
-    public boolean hasMsg(@Nonnull final String key) {
+    public boolean hasMsg(@Nonnull String key) {
         try {
             messages.getString(key);
-        } catch (@Nonnull final MissingResourceException e) {
+        } catch (@Nonnull MissingResourceException e) {
             return false;
         }
         return true;
@@ -152,7 +151,7 @@ public final class Lang implements MessageSource {
      * @return true if the language is set to English
      */
     public boolean isEnglish() {
-        return (locale == Locale.ENGLISH);
+        return locale == Locale.ENGLISH;
     }
 
     /**
@@ -161,6 +160,6 @@ public final class Lang implements MessageSource {
      * @return true if the language is set to German
      */
     public boolean isGerman() {
-        return (locale == Locale.GERMAN);
+        return locale == Locale.GERMAN;
     }
 }

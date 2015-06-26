@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -45,7 +45,6 @@ public class SongLoader implements TableLoaderSink<TableLoader>, Resource {
     private final TIntObjectHashMap<Song> songs = new TIntObjectHashMap<>();
 
     private static final SongLoader INSTANCE = new SongLoader();
-    ;
 
     /**
      * Creates a new TableLoader
@@ -64,9 +63,9 @@ public class SongLoader implements TableLoaderSink<TableLoader>, Resource {
     }
 
     @Override
-    public boolean processRecord(final int line, @Nonnull final TableLoader loader) {
-        final int clipID = loader.getInt(TB_ID);
-        final String filename = loader.getString(TB_NAME);
+    public boolean processRecord(int line, @Nonnull TableLoader loader) {
+        int clipID = loader.getInt(TB_ID);
+        String filename = loader.getString(TB_NAME);
         Song song = new Song(clipID, filename);
         songs.put(clipID, song);
         return true;
@@ -88,7 +87,7 @@ public class SongLoader implements TableLoaderSink<TableLoader>, Resource {
      * @return Array of songs
      */
     public Song[] getSongs() {
-        final Song[] s = songs.values(new Song[songs.size()]);
+        Song[] s = songs.values(new Song[songs.size()]);
         Arrays.sort(s);
         return s;
     }

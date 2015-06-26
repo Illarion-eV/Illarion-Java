@@ -36,7 +36,6 @@ import java.util.ResourceBundle;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @author Nop
  */
-@SuppressWarnings("nls")
 public final class Lang implements MessageSource {
     /**
      * The string that is the key of the language settings in the configuration

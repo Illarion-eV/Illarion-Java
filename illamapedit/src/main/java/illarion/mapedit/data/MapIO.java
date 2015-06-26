@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -48,24 +48,39 @@ import java.util.regex.Pattern;
  *
  * @author Tim
  */
-public class MapIO {
+public final class MapIO {
+    @Nonnull
     private static final Logger LOGGER = LoggerFactory.getLogger(MapIO.class);
+    @Nonnull
     private static final String HEADER_V = "V:";
+    @Nonnull
     private static final String HEADER_L = "L:";
+    @Nonnull
     private static final String HEADER_X = "X:";
+    @Nonnull
     private static final String HEADER_Y = "Y:";
+    @Nonnull
     private static final String HEADER_W = "W:";
+    @Nonnull
     private static final String HEADER_H = "H:";
+    @Nonnull
     public static final String EXT_WARP = ".warps.txt";
+    @Nonnull
     public static final String EXT_ITEM = ".items.txt";
+    @Nonnull
     public static final String EXT_TILE = ".tiles.txt";
+    @Nonnull
     public static final String EXT_ANNO = ".annot.txt";
     private static final char NEWLINE = '\n';
+    @Nonnull
     private static final Pattern VERSION_PATTERN = Pattern.compile("V: (\\d+)");
-    @Nullable
+    @Nonnull
     private static final CopyrightHeader COPYRIGHT_HEADER = new CopyrightHeader(80, null, null, "# ", null);
+    @Nonnull
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
+    @Nonnull
     private static final Charset CHARSET = Charset.forName("ISO-8859-1");
+    @Nonnull
     private static final DecoderFactory DECODER_FACTORY = new DecoderFactory();
 
     private MapIO() {
@@ -78,20 +93,16 @@ public class MapIO {
      * @param path the path
      * @param name the map name
      */
-    public static void loadMap(final Path path, final String name) {
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    EventBus.publish(new MapLoadedEvent(loadMapThread(path, name)));
-                } catch (FormatCorruptedException ex) {
-                    LOGGER.warn("Format wrong.", ex);
-                    EventBus.publish(new MapLoadErrorEvent(ex.getMessage()));
-                } catch (IOException ex) {
-                    LOGGER.warn("Can't load map", ex);
-                    EventBus.publish(new MapLoadErrorEvent(Lang.getMsg("gui.error.LoadMap")));
-                }
+    public static void loadMap(Path path, String name) {
+        new Thread(() -> {
+            try {
+                EventBus.publish(new MapLoadedEvent(loadMapThread(path, name)));
+            } catch (FormatCorruptedException ex) {
+                LOGGER.warn("Format wrong.", ex);
+                EventBus.publish(new MapLoadErrorEvent(ex.getMessage()));
+            } catch (IOException ex) {
+                LOGGER.warn("Can't load map", ex);
+                EventBus.publish(new MapLoadErrorEvent(Lang.getMsg("gui.error.LoadMap")));
             }
         }).start();
     }
@@ -162,7 +173,7 @@ public class MapIO {
             while (tileLinesItr.hasNext()) {
                 i++;
                 String line = tileLinesItr.next();
-                if (line.startsWith("# ")) {
+                if ((line == null) || line.startsWith("#")) {
                     continue;
                 }
                 Matcher versionLineMatcher = VERSION_PATTERN.matcher(line);

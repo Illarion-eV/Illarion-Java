@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -25,7 +25,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
-public class EditorActions {
+public final class EditorActions {
+
+    private EditorActions() {
+    }
 
     @Nullable
     public static Editor getEditor(@Nonnull ActionEvent e) {
@@ -44,6 +47,7 @@ public class EditorActions {
 
     @SuppressWarnings("serial")
     public static class NewAction extends AbstractAction {
+        @Override
         public void actionPerformed(ActionEvent e) {
             MainFrame.getInstance().addNewQuest();
         }
@@ -51,6 +55,7 @@ public class EditorActions {
 
     @SuppressWarnings("serial")
     public static class OpenAction extends AbstractAction {
+        @Override
         public void actionPerformed(ActionEvent e) {
             Utils.selectAndOpenQuest();
         }
@@ -58,6 +63,7 @@ public class EditorActions {
 
     @SuppressWarnings("serial")
     public static class SaveAction extends AbstractAction {
+        @Override
         public void actionPerformed(ActionEvent e) {
             Utils.saveEasyQuest(MainFrame.getInstance().getCurrentQuestEditor());
         }
@@ -65,6 +71,7 @@ public class EditorActions {
 
     @SuppressWarnings("serial")
     public static class UndoAction extends AbstractAction {
+        @Override
         public void actionPerformed(@Nonnull ActionEvent e) {
             Editor editor = getEditor(e);
 
@@ -76,6 +83,7 @@ public class EditorActions {
 
     @SuppressWarnings("serial")
     public static class RedoAction extends AbstractAction {
+        @Override
         public void actionPerformed(@Nonnull ActionEvent e) {
             Editor editor = getEditor(e);
 

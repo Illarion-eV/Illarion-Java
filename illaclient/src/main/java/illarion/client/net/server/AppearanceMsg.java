@@ -162,6 +162,8 @@ public final class AppearanceMsg implements ServerReply {
             return ServerReplyResult.Failed;
         }
 
+        log.debug("Publishing appearance to: {}", character);
+
         character.setScale(size / SCALE_MOD);
 
         character.setName(name);
@@ -171,7 +173,7 @@ public final class AppearanceMsg implements ServerReply {
         character.setWearingItem(AvatarClothManager.GROUP_HAIR, hairID);
         character.setWearingItem(AvatarClothManager.GROUP_BEARD, beardID);
 
-        character.resetLight();
+        character.resetLightValue();
         for (int i = 0; i < itemSlots.length; i++) {
             character.setInventoryItem(i, itemSlots[i]);
         }

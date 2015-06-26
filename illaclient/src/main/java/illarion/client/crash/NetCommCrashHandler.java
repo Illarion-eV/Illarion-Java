@@ -56,7 +56,6 @@ public final class NetCommCrashHandler extends AbstractCrashHandler {
      * @return the error message
      */
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
     protected String getCrashMessage(@Nonnull Thread t, @Nonnull Throwable e) {
         return Lang.getMsg("crash.netcomm") + '\n' + e.getLocalizedMessage();

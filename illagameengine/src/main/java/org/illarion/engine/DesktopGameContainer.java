@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -34,7 +34,7 @@ public interface DesktopGameContainer extends GameContainer {
      *
      * @param icons the icons (in different sizes) to load as application icons
      */
-    void setIcons(@Nonnull String[] icons);
+    void setIcons(@Nonnull String... icons);
 
     /**
      * Set the title of the game. This text is displayed in the title bar of the application.

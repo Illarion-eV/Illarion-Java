@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -28,11 +28,11 @@ import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.common.JCommandToggleButton;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
-import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
+import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies.High2Mid;
+import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies.Mirror;
 import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
 
 import javax.annotation.Nonnull;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -51,47 +51,32 @@ public class ClipboardBand extends JRibbonBand {
     public ClipboardBand() {
         super(Lang.getMsg("gui.clipboardband.Name"), null);
         AnnotationProcessor.process(this);
-        final JCommandButton copy = MainFrame
+        JCommandButton copy = MainFrame
                 .getCommandButton("gui.clipboardband.Copy", "editcopy", KeyEvent.VK_C, "Copy");
         paste = MainFrame.getToggleButton("gui.clipboardband.Paste", "editpaste", KeyEvent.VK_V, "Paste");
-        final JCommandButton cut = MainFrame.getCommandButton("gui.clipboardband.Cut", "editcut", KeyEvent.VK_X, "Cut");
+        JCommandButton cut = MainFrame.getCommandButton("gui.clipboardband.Cut", "editcut", KeyEvent.VK_X, "Cut");
 
-        final ActionListener copyListener = new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                EventBus.publish(new ClipboardCopyEvent());
-            }
-        };
+        ActionListener copyListener = e -> EventBus.publish(new ClipboardCopyEvent());
         copy.addActionListener(copyListener);
 
-        final ActionListener pasteListener = new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                EventBus.publish(new ClipboardPasteEvent());
-            }
-        };
+        ActionListener pasteListener = e -> EventBus.publish(new ClipboardPasteEvent());
         paste.addActionListener(pasteListener);
 
-        final ActionListener cutListener = new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                EventBus.publish(new ClipboardCutEvent());
-            }
-        };
+        ActionListener cutListener = e -> EventBus.publish(new ClipboardCutEvent());
         cut.addActionListener(cutListener);
 
         addCommandButton(paste, RibbonElementPriority.MEDIUM);
         addCommandButton(copy, RibbonElementPriority.MEDIUM);
         addCommandButton(cut, RibbonElementPriority.MEDIUM);
 
-        final List<RibbonBandResizePolicy> policies = new ArrayList<>();
-        policies.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
-        policies.add(new CoreRibbonResizePolicies.High2Mid(getControlPanel()));
+        List<RibbonBandResizePolicy> policies = new ArrayList<>();
+        policies.add(new Mirror(getControlPanel()));
+        policies.add(new High2Mid(getControlPanel()));
         setResizePolicies(policies);
     }
 
     @EventSubscriber
-    public void onDidPaste(@Nonnull final DidPasteEvent e) {
+    public void onDidPaste(@Nonnull DidPasteEvent e) {
         paste.getActionModel().setSelected(false);
     }
 }

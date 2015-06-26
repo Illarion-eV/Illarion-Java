@@ -15,7 +15,6 @@
  */
 package illarion.client.gui.controller.game;
 
-import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
@@ -24,7 +23,6 @@ import de.lessvoid.nifty.tools.Color;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.gui.Tooltip;
 import illarion.client.gui.events.TooltipsRemovedEvent;
-import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
 import illarion.common.types.Rectangle;
 import org.bushe.swing.event.EventBus;
@@ -115,25 +113,15 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
      * Hide all current tooltips.
      */
     public void hideToolTip() {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                hideToolTipImpl();
-            }
-        });
+        World.getUpdateTaskManager().addTask((container, delta) -> hideToolTipImpl());
     }
 
     private void hideToolTipImpl() {
         if (toolTipLayer == null) {
             return;
         }
-        for (final Element element : toolTipLayer.getChildren()) {
-            element.hide(new EndNotify() {
-                @Override
-                public void perform() {
-                    element.markForRemoval();
-                }
-            });
+        for (Element element : toolTipLayer.getChildren()) {
+            element.hide(element::markForRemoval);
             activeTooltipArea = null;
         }
     }
@@ -145,7 +133,7 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
      * Also the mouse is required to remain inside this area to keep the tooltip active
      * @param tooltip the tooltip to display
      */
-    public void showToolTip(@Nonnull final Rectangle location, @Nonnull final Tooltip tooltip) {
+    public void showToolTip(@Nonnull Rectangle location, @Nonnull Tooltip tooltip) {
         if (!tooltip.isValid()) {
             log.warn("Received a invalid tooltip from the server!");
             return;
@@ -157,13 +145,10 @@ public final class TooltipHandler implements ScreenController, UpdatableHandler 
 
         log.debug("Showing tooltip {} for {}", tooltip, location);
 
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                hideToolTipImpl();
-                showToolTipImpl(location, tooltip);
-                activeTooltipArea = location;
-            }
+        World.getUpdateTaskManager().addTask((container, delta) -> {
+            hideToolTipImpl();
+            showToolTipImpl(location, tooltip);
+            activeTooltipArea = location;
         });
     }
 

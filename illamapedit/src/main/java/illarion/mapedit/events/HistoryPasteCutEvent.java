@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,9 +22,9 @@ import illarion.mapedit.history.HistoryAction;
  * @author Fredrik K
  */
 public class HistoryPasteCutEvent {
-    private HistoryAction action;
+    private final HistoryAction action;
 
-    public HistoryPasteCutEvent(final GroupAction action) {
+    public HistoryPasteCutEvent(GroupAction action) {
         this.action = action;
     }
 

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,7 @@
  */
 package org.illarion.nifty.controls.dialog.merchant;
 
-import de.lessvoid.nifty.controls.ListBox;
+import de.lessvoid.nifty.controls.ListBox.ListBoxViewConverter;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.ImageRenderer;
 import de.lessvoid.nifty.elements.render.TextRenderer;
@@ -32,8 +32,7 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@SuppressWarnings("UnusedDeclaration")
-public final class MerchantItemListViewConverter implements ListBox.ListBoxViewConverter<MerchantListEntry> {
+public final class MerchantItemListViewConverter implements ListBoxViewConverter<MerchantListEntry> {
     @Override
     public void display(@Nonnull Element listBoxItem, @Nonnull MerchantListEntry item) {
         Element itemImage = listBoxItem.findElementById("#imageDisplay");

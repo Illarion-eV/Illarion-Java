@@ -178,12 +178,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      * The task that is executed to update the merchant overlays.
      */
     @Nonnull
-    private final UpdateTask updateMerchantOverlays = new UpdateTask() {
-        @Override
-        public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-            updateAllMerchantOverlays();
-        }
-    };
+    private final UpdateTask updateMerchantOverlays = (container, delta) -> updateAllMerchantOverlays();
 
     /**
      * The input system that is used to query the state of the keyboard.
@@ -372,10 +367,10 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      */
     @NiftyEventSubscriber(pattern = ".*container[0-9]+.*slot[0-9]+.*")
     public void dropIn(@Nonnull String topic, @Nonnull DroppableDroppedEvent data) {
-        final int slotId = getSlotId(topic);
-        final int containerId = getContainerId(topic);
+        int slotId = getSlotId(topic);
+        int containerId = getContainerId(topic);
 
-        final InteractionManager iManager = World.getInteractionManager();
+        InteractionManager iManager = World.getInteractionManager();
         ItemCount amount = iManager.getMovedAmount();
         if (amount == null) {
             log.error("Corrupted dropping detected.");
@@ -450,15 +445,12 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
      * @param containerId the ID of the container to close
      */
     @Override
-    public void closeContainer(final int containerId) {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                if (isContainerCreated(containerId)) {
-                    tooltipHandler.hideToolTip();
-                    removeItemContainer(containerId);
+    public void closeContainer(int containerId) {
+        World.getUpdateTaskManager().addTask((container, delta) -> {
+            if (isContainerCreated(containerId)) {
+                tooltipHandler.hideToolTip();
+                removeItemContainer(containerId);
 
-                }
             }
         });
     }

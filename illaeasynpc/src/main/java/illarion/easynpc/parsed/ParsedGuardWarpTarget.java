@@ -18,6 +18,7 @@ package illarion.easynpc.parsed;
 import illarion.common.types.ServerCoordinate;
 import illarion.easynpc.writer.LuaRequireTable;
 import illarion.easynpc.writer.LuaWriter;
+import illarion.easynpc.writer.LuaWriter.WritingStage;
 import illarion.easynpc.writer.SQLBuilder;
 
 import javax.annotation.Nonnull;
@@ -50,8 +51,8 @@ public class ParsedGuardWarpTarget implements ParsedData {
     }
 
     @Override
-    public boolean effectsLuaWritingStage(@Nonnull LuaWriter.WritingStage stage) {
-        return stage == LuaWriter.WritingStage.Guarding;
+    public boolean effectsLuaWritingStage(@Nonnull WritingStage stage) {
+        return stage == WritingStage.Guarding;
     }
 
     @Nonnull
@@ -61,8 +62,8 @@ public class ParsedGuardWarpTarget implements ParsedData {
     }
 
     @Override
-    public void writeLua(@Nonnull Writer target, @Nonnull LuaRequireTable requires, @Nonnull LuaWriter.WritingStage stage) throws IOException {
-        if (stage != LuaWriter.WritingStage.Guarding) {
+    public void writeLua(@Nonnull Writer target, @Nonnull LuaRequireTable requires, @Nonnull WritingStage stage) throws IOException {
+        if (stage != WritingStage.Guarding) {
             throw new IllegalArgumentException("This function did not request a call for a stage but guarding.");
         }
         target.write("guardNPC:setWarpLocation(");

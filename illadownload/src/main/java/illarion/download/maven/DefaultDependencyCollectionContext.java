@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,6 +20,8 @@ import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.collection.DependencyCollectionContext;
 import org.eclipse.aether.graph.Dependency;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,35 +29,44 @@ import java.util.List;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 class DefaultDependencyCollectionContext implements DependencyCollectionContext {
+    @Nonnull
     private final RepositorySystemSession session;
-    private final Artifact artifact;
+    @Nullable
     private final Dependency dependency;
 
     public DefaultDependencyCollectionContext(
-            final RepositorySystemSession session, final Artifact artifact, final Dependency dependency) {
+            @Nonnull RepositorySystemSession session, @Nullable Dependency dependency) {
         this.session = session;
-        this.artifact = artifact;
         this.dependency = dependency;
     }
 
+    @Nonnull
     @Override
     public RepositorySystemSession getSession() {
         return session;
     }
 
     @Override
+    @Nullable
     public Artifact getArtifact() {
-        return artifact;
+        return (dependency != null) ? dependency.getArtifact() : null;
     }
 
     @Override
+    @Nullable
     public Dependency getDependency() {
         return dependency;
     }
 
     @Override
+    @Nonnull
     public List<Dependency> getManagedDependencies() {
-        //noinspection unchecked
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
+    }
+
+    @Override
+    @Nonnull
+    public String toString() {
+        return String.valueOf(getDependency());
     }
 }

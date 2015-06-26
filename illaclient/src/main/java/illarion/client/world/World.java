@@ -334,7 +334,6 @@ public final class World {
         INSTANCE.chatHandler = new ChatHandler();
         INSTANCE.clock = new Clock();
         INSTANCE.map = new GameMap(engine);
-        //noinspection ConstantConditions
         INSTANCE.lights = new LightTracer(INSTANCE.map);
         INSTANCE.mapDisplay = new MapDisplayManager(engine);
         INSTANCE.musicBox = new MusicBox(engine);

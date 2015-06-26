@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -44,8 +44,8 @@ public class DataTool extends AbstractTool {
     }
 
     @Override
-    public void clickedAt(final int x, final int y, @Nonnull final Map map) {
-        final MapTile tile = map.getTileAt(x, y);
+    public void clickedAt(int x, int y, @Nonnull Map map) {
+        MapTile tile = map.getTileAt(x, y);
 
         if (tile != null) {
             panel.setVisible(true);
@@ -87,18 +87,18 @@ public class DataTool extends AbstractTool {
     }
 
     @Override
-    public void paintSelected(final int x, final int y, final Map map, final GroupAction action) {
+    public void paintSelected(int x, int y, Map map, GroupAction action) {
     }
 
     @EventSubscriber
-    public void onItemDataAnnotation(@Nonnull final TileAnnotationEvent e) {
+    public void onItemDataAnnotation(@Nonnull TileAnnotationEvent e) {
         panel.setAnnotation(e.getText());
     }
 
     @EventSubscriber
-    public void onSelectTool(@Nonnull final ToolSelectedEvent e) {
+    public void onSelectTool(@Nonnull ToolSelectedEvent e) {
         if (equals(e.getTool())) {
-            final MapTile tile = getManager().getActiveTile();
+            MapTile tile = getManager().getActiveTile();
             if (tile == null) {
                 panel.setVisible(false);
             } else {

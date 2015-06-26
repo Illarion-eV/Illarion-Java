@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -39,7 +39,7 @@ public class SelectionPanel extends JPanel {
     public SelectionPanel() {
         setLayout(new BorderLayout());
 
-        final JPanel northPanel = new JPanel(new GridLayout(0, 2));
+        JPanel northPanel = new JPanel(new GridLayout(0, 2));
         delCheckBox = new JCheckBox();
         radiusSpinner = new JSpinner(new SpinnerNumberModel(1, 1, ToolManager.TOOL_RADIUS, 1));
 

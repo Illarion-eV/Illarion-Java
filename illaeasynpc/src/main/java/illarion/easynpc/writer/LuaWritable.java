@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,6 +15,8 @@
  */
 package illarion.easynpc.writer;
 
+import illarion.easynpc.writer.LuaWriter.WritingStage;
+
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Writer;
@@ -22,7 +24,7 @@ import java.util.Collection;
 
 /**
  * This implements needs to be implemented in all objects that are able to
- * supply data to the {@link illarion.easynpc.writer.LuaWriter}. This interface
+ * supply data to the {@link LuaWriter}. This interface
  * is used to fetch the data that needs to be written into the script.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
@@ -41,7 +43,7 @@ public interface LuaWritable {
      * @param stage the selected stage
      * @return <code>true<code> in case this LUA writable effects the stage
      */
-    boolean effectsLuaWritingStage(@Nonnull LuaWriter.WritingStage stage);
+    boolean effectsLuaWritingStage(@Nonnull WritingStage stage);
 
     /**
      * Get the list of modules required to have the code written by this
@@ -60,6 +62,6 @@ public interface LuaWritable {
      * @param stage the stage that is currently written
      * @throws IOException thrown in case a writing error occurs
      */
-    void writeLua(@Nonnull Writer target, @Nonnull LuaRequireTable requires, @Nonnull LuaWriter.WritingStage stage)
+    void writeLua(@Nonnull Writer target, @Nonnull LuaRequireTable requires, @Nonnull WritingStage stage)
             throws IOException;
 }

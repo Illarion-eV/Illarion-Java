@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -31,7 +31,7 @@ public class DialogMessageBuilder extends ControlBuilder {
      * @param id the nifty-gui ID of the dialog
      * @param title the title of the dialog
      */
-    public DialogMessageBuilder(@Nonnull final String id, @Nonnull final String title) {
+    public DialogMessageBuilder(@Nonnull String id, @Nonnull String title) {
         super(id, CreateDialogMessageControl.NAME);
         set("title", title);
         set("closeable", "false");
@@ -46,7 +46,8 @@ public class DialogMessageBuilder extends ControlBuilder {
      *
      * @param text the text displayed in this dialog
      */
-    public void text(@Nonnull final String text) {
+    @Override
+    public void text(@Nonnull String text) {
         set("text", text);
     }
 
@@ -55,7 +56,7 @@ public class DialogMessageBuilder extends ControlBuilder {
      *
      * @param text the button label in this dialog
      */
-    public void button(@Nonnull final String text) {
+    public void button(@Nonnull String text) {
         set("button", text);
     }
 
@@ -64,7 +65,7 @@ public class DialogMessageBuilder extends ControlBuilder {
      *
      * @param id the dialog ID
      */
-    public void dialogId(final int id) {
+    public void dialogId(int id) {
         set("dialogId", Integer.toString(id));
     }
 }

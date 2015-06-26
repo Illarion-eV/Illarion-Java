@@ -17,6 +17,7 @@ package org.illarion.engine.backend.gdx;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import illarion.common.types.ServerCoordinate;
@@ -79,7 +80,7 @@ class GdxWorldMap implements WorldMap, WorldMapDataProviderCallback {
     GdxWorldMap(@Nonnull WorldMapDataProvider provider) {
         this.provider = provider;
 
-        worldMapPixels = new Pixmap(WORLD_MAP_WIDTH, WORLD_MAP_HEIGHT, Pixmap.Format.RGB888);
+        worldMapPixels = new Pixmap(WORLD_MAP_WIDTH, WORLD_MAP_HEIGHT, Format.RGB888);
         worldMapTexture = new GdxTexture(new TextureRegion(new Texture(worldMapPixels)));
         tempDrawingColor = new Color();
     }

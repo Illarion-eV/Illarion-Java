@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -39,8 +39,10 @@ import javax.annotation.Nullable;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  * @deprecated Use {@link Progress}
  */
+@Deprecated
 public final class ProgressControl extends AbstractController implements Progress {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProgressControl.class);
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(ProgressControl.class);
     private int minImageWidth;
     private int maxWidth;
     @Nullable
@@ -58,10 +60,10 @@ public final class ProgressControl extends AbstractController implements Progres
 
     @Override
     public void bind(
-            @Nonnull final Nifty nifty,
-            @Nonnull final Screen screen,
-            @Nonnull final Element element,
-            @Nonnull final Parameters parameter) {
+            @Nonnull Nifty nifty,
+            @Nonnull Screen screen,
+            @Nonnull Element element,
+            @Nonnull Parameters parameter) {
         bind(element);
 
         minImageWidth = parameter.getAsInteger("minImageWidth", 0);
@@ -70,7 +72,7 @@ public final class ProgressControl extends AbstractController implements Progres
     }
 
     @Override
-    public void init(@Nonnull final Parameters parameter) {
+    public void init(@Nonnull Parameters parameter) {
         super.init(parameter);
 
         NiftyImage fillImage = getFillImage();
@@ -78,7 +80,7 @@ public final class ProgressControl extends AbstractController implements Progres
             originalImageMode = fillImage.getImageMode();
             unscaledImageMode = ImageModeFactory.getSharedInstance().createImageMode("fullimage", "direct");
         } else {
-            LOGGER.error("Progress control does not seem to have a image. This progress control will not work.");
+            log.error("Progress control does not seem to have a image. This progress control will not work.");
         }
         setProgress(currentProgress, true);
     }
@@ -143,7 +145,7 @@ public final class ProgressControl extends AbstractController implements Progres
         if (fillArea == null) {
             return;
         }
-        final int oldWidth = maxWidth;
+        int oldWidth = maxWidth;
         maxWidth = fillArea.getWidth();
         if (maxWidth != oldWidth) {
             setProgress(currentProgress, true);
@@ -151,7 +153,7 @@ public final class ProgressControl extends AbstractController implements Progres
     }
 
     @Override
-    public boolean inputEvent(@Nonnull final NiftyInputEvent inputEvent) {
+    public boolean inputEvent(@Nonnull NiftyInputEvent inputEvent) {
         return false;
     }
 
@@ -162,15 +164,8 @@ public final class ProgressControl extends AbstractController implements Progres
      * @param forced {@code true} in case the values are supposed to be updated event if the old and the new progress
      * value are equal
      */
-    private void setProgress(final double value, final boolean forced) {
-        final double usedValue;
-        if (value < 0.f) {
-            usedValue = 0.f;
-        } else if (value > 1.f) {
-            usedValue = 1.f;
-        } else {
-            usedValue = value;
-        }
+    private void setProgress(double value, boolean forced) {
+        double usedValue = Math.max(0.0, Math.min(1.0, value));
 
         if (!forced && (Math.abs(currentProgress - usedValue) < 0.001)) {
             return;
@@ -178,22 +173,39 @@ public final class ProgressControl extends AbstractController implements Progres
 
         currentProgress = usedValue;
 
-        if (unscaledImageMode == null || originalImageMode == null) {
-            return;
-        }
-        final Element wrapper = getFillWrapper();
-        final Element fill = getFill();
+        Element wrapper = getFillWrapper();
+        Element fill = getFill();
 
-        if (wrapper == null || fill == null) {
+        if ((wrapper == null) || (fill == null)) {
             return;
         }
 
-        final int width = (int) Math.round(maxWidth * usedValue);
+        int width = (int) Math.round(maxWidth * usedValue);
+
+        updateImageMode(width);
 
         fill.setConstraintWidth(SizeValue.px(width));
+        fill.setWidth(width);
         wrapper.setConstraintWidth(SizeValue.px(width));
+        wrapper.setWidth(width);
 
-        if ((width < minImageWidth) && currentOriginalMode) {
+        Element element = getElement();
+        if (element != null) {
+            element.layoutElements();
+        }
+    }
+
+    /**
+     * Update the image scaling mode in case it is required. This function is expected to be called as part of the
+     * layout update of the component.
+     *
+     * @param newWidth the new width value
+     */
+    private void updateImageMode(int newWidth) {
+        if ((unscaledImageMode == null) || (originalImageMode == null)) {
+            return;
+        }
+        if ((newWidth < minImageWidth) && currentOriginalMode) {
             NiftyImage image = getFillImage();
             if (image != null) {
                 image.setImageMode(unscaledImageMode);
@@ -206,11 +218,6 @@ public final class ProgressControl extends AbstractController implements Progres
             }
             currentOriginalMode = true;
         }
-
-        Element element = getElement();
-        if (element != null) {
-            element.layoutElements();
-        }
     }
 
     /**
@@ -219,7 +226,7 @@ public final class ProgressControl extends AbstractController implements Progres
      * @param value the progress value
      */
     @Override
-    public void setProgress(final double value) {
+    public void setProgress(double value) {
         setProgress(value, false);
     }
 }

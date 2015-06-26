@@ -23,6 +23,7 @@ package illarion.common.util;
  * @author Nop
  * @author Martin Karing &gt;nitram@illarion.org&lt;
  */
+@FunctionalInterface
 public interface TableLoaderSink<T extends TableLoader> {
     /**
      * This function is called for every line and allows reading the tokens that are read in the line by the table

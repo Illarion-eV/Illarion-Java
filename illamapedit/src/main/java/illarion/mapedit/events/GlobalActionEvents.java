@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,6 +18,6 @@ package illarion.mapedit.events;
 /**
  * @author Tim
  */
-public class GlobalActionEvents {
+public final class GlobalActionEvents {
     public static final String CLOSE_MAP = "close map";
 }

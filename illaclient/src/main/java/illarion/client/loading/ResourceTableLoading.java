@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -49,7 +49,7 @@ final class ResourceTableLoading implements LoadingTask {
      *
      * @param gameEngine the engine of the game
      */
-    ResourceTableLoading(@Nonnull final Engine gameEngine) {
+    ResourceTableLoading(@Nonnull Engine gameEngine) {
         taskList = new ArrayList<>();
         progressMonitor = new ProgressMonitor();
 
@@ -71,7 +71,7 @@ final class ResourceTableLoading implements LoadingTask {
      * @param <T> the resource type that is load in this case
      */
     private <T extends Resource> void addTask(
-            @Nonnull final AbstractResourceLoader<T> loader, @Nonnull final ResourceFactory<T> factory) {
+            @Nonnull AbstractResourceLoader<T> loader, @Nonnull ResourceFactory<T> factory) {
         loader.setTarget(factory);
         progressMonitor.addChild(loader.getProgressMonitor());
         taskList.add(loader);
@@ -80,7 +80,7 @@ final class ResourceTableLoading implements LoadingTask {
     @Override
     public void load() {
         if (!taskList.isEmpty()) {
-            final AbstractResourceLoader<? extends Resource> loader = taskList.remove(0);
+            AbstractResourceLoader<? extends Resource> loader = taskList.remove(0);
             try {
                 loader.call();
             } catch (Exception e) {
@@ -91,7 +91,7 @@ final class ResourceTableLoading implements LoadingTask {
 
     @Override
     public boolean isLoadingDone() {
-        for (final AbstractResourceLoader<? extends Resource> loader : taskList) {
+        for (AbstractResourceLoader<? extends Resource> loader : taskList) {
             if (!loader.isLoadingDone()) {
                 return false;
             }

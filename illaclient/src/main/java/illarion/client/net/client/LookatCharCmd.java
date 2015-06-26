@@ -92,7 +92,6 @@ public final class LookatCharCmd extends AbstractCommand {
      * @return the data of this command as string
      */
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
     public String toString() {
         return toString(charId + " mode: " + mode);

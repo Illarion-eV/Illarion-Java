@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,12 +18,14 @@ package illarion.easynpc.gui;
 import illarion.common.bug.CrashReporter;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.config.ConfigDialog;
+import illarion.common.config.ConfigDialog.Page;
 import illarion.common.config.ConfigSystem;
 import illarion.common.config.entries.CheckEntry;
 import illarion.common.config.entries.DirectoryEntry;
 import illarion.common.config.entries.NumberEntry;
 import illarion.common.config.entries.SelectEntry;
 import illarion.common.util.DirectoryManager;
+import illarion.common.util.DirectoryManager.Directory;
 import illarion.easynpc.Lang;
 import javolution.util.FastTable;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -204,7 +206,7 @@ public final class Config {
      */
     @Nonnull
     private static Path checkFolder() {
-        return DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        return DirectoryManager.getInstance().getDirectory(Directory.User);
     }
 
     /**
@@ -246,7 +248,7 @@ public final class Config {
         dialog.setConfig(cfg);
         dialog.setMessageSource(Lang.getInstance());
 
-        ConfigDialog.Page page = new ConfigDialog.Page("illarion.easynpc.gui.config.generalTab");
+        Page page = new Page("illarion.easynpc.gui.config.generalTab");
         page.addEntry(new ConfigDialog.Entry("illarion.easynpc.gui.config.easyNpcFolderLabel",
                                              new DirectoryEntry(EASY_NPC_FOLDER, null)));
         page.addEntry(new ConfigDialog.Entry("illarion.easynpc.gui.config.luaFolderLabel",
@@ -255,17 +257,16 @@ public final class Config {
                                              new NumberEntry(UNDO_COUNT_KEY, 0, 10000)));
         page.addEntry(new ConfigDialog.Entry("illarion.easynpc.gui.config.errorReport",
                                              new SelectEntry(CrashReporter.CFG_KEY, SelectEntry.STORE_INDEX,
-                                                             new Object[]{Lang.getMsg(
-                                                                     "illarion.easynpc.gui.config.errorAsk"),
-                                                                          Lang.getMsg(
-                                                                                  "illarion.easynpc.gui.config.errorAlways"),
-                                                                          Lang.getMsg(
-                                                                                  "illarion.easynpc.gui.config.errorNever")}
-                                             )
+                                                     Lang.getMsg(
+                                                             "illarion.easynpc.gui.config.errorAsk"),
+                                                     Lang.getMsg(
+                                                             "illarion.easynpc.gui.config.errorAlways"),
+                                                     Lang.getMsg(
+                                                             "illarion.easynpc.gui.config.errorNever"))
         ));
         dialog.addPage(page);
 
-        page = new ConfigDialog.Page("illarion.easynpc.gui.config.lookAndFeelTab");
+        page = new Page("illarion.easynpc.gui.config.lookAndFeelTab");
         page.addEntry(new ConfigDialog.Entry("illarion.easynpc.gui.config.useWindowDecoLabel",
                                              new CheckEntry(USE_WINDOW_DECO)));
 
@@ -762,14 +763,11 @@ public final class Config {
         if (!requireRestart) {
             return;
         }
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                requireRestart = false;
-                JOptionPane.showMessageDialog(MainFrame.getInstance(),
-                                              "Some of the settings changed require a " + "restart to take effect.",
-                                              "Restart needed", JOptionPane.INFORMATION_MESSAGE);
-            }
+        SwingUtilities.invokeLater(() -> {
+            requireRestart = false;
+            JOptionPane.showMessageDialog(MainFrame.getInstance(),
+                    "Some of the settings changed require a " + "restart to take effect.",
+                    "Restart needed", JOptionPane.INFORMATION_MESSAGE);
         });
     }
 

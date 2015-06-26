@@ -22,6 +22,7 @@ import ch.qos.logback.core.util.StatusPrinter;
 import illarion.common.bug.CrashReporter;
 import illarion.common.bug.ReportDialogFactorySwing;
 import illarion.common.util.DirectoryManager;
+import illarion.common.util.DirectoryManager.Directory;
 import illarion.easynpc.EasyNpcScript;
 import illarion.easynpc.Lang;
 import illarion.easynpc.crash.AWTCrashHandler;
@@ -43,7 +44,6 @@ import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeListener;
@@ -120,12 +120,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
         JCommandButton saveButton = new JCommandButton(Utils.getResizableIconFromResource("filesave.png"));
         saveButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(getClass(), "saveButtonTooltipTitle"),
                                                         Lang.getMsg(getClass(), "saveButtonTooltip")));
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Utils.saveEasyNPC(MainFrame.this, getCurrentScriptEditor());
-            }
-        });
+        saveButton.addActionListener(e -> Utils.saveEasyNPC(this, getCurrentScriptEditor()));
         getRibbon().addTaskbarComponent(saveButton);
 
         getRibbon().addTaskbarComponent(undoMonitor.getUndoButton());
@@ -133,12 +128,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
 
         getRibbon().setApplicationMenu(new MainMenu(this));
 
-        getRibbon().configureHelp(Utils.getResizableIconFromResource("help.png"), new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                showDocuBrowser();
-            }
-        });
+        getRibbon().configureHelp(Utils.getResizableIconFromResource("help.png"), e -> showDocuBrowser());
 
         JPanel rootPanel = new JPanel(new BorderLayout());
         mainPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
@@ -313,7 +303,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
      *
      * @param args start arguments
      */
-    public static void main(String[] args) {
+    public static void main(String... args) {
         initLogging();
         Config.getInstance().init();
 
@@ -325,18 +315,15 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
         CrashReporter.getInstance().setDialogFactory(new ReportDialogFactorySwing());
         AWTCrashHandler.init();
 
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    SubstanceLookAndFeel.setSkin(Config.getInstance().getLookAndFeel());
-                } catch (@Nonnull Exception e) {
-                    SubstanceLookAndFeel.setSkin(Config.DEFAULT_LOOK_AND_FEEL);
-                }
-
-                instance = new MainFrame();
-                instance.setVisible(true);
+        SwingUtilities.invokeLater(() -> {
+            try {
+                SubstanceLookAndFeel.setSkin(Config.getInstance().getLookAndFeel());
+            } catch (@Nonnull Exception e) {
+                SubstanceLookAndFeel.setSkin(Config.DEFAULT_LOOK_AND_FEEL);
             }
+
+            instance = new MainFrame();
+            instance.setVisible(true);
         });
     }
 
@@ -346,7 +333,7 @@ public final class MainFrame extends JRibbonFrame { // NO_UCD
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
 
-        Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        Path userDir = DirectoryManager.getInstance().getDirectory(Directory.User);
         if (userDir == null) {
             return;
         }

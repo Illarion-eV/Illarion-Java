@@ -17,12 +17,12 @@
 apply plugin: 'idea'
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.3'
+    gradleVersion = '2.4'
 }
 
 idea {
     project {
-        languageLevel = '1.7'
+        languageLevel = '1.8'
     }
 }
 
@@ -103,7 +103,7 @@ buildscript {
     dependencies {
         classpath group: 'net.sf.proguard', name: 'proguard-gradle', version: '5.1'
         classpath group: 'de.undercouch', name: 'gradle-download-task', version: '1.2'
-        classpath group: 'com.install4j', name: 'gradle-plugin', version: '6.0'
+        classpath group: 'com.install4j', name: 'gradle-plugin', version: '6.0.3'
     }
 }
 
@@ -111,8 +111,8 @@ subprojects {
     group = 'org.illarion'
 
     plugins.withType(JavaPlugin) {
-        sourceCompatibility = JavaVersion.VERSION_1_7
-        targetCompatibility = JavaVersion.VERSION_1_7
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
 
         tasks.withType(JavaCompile) {
             options.encoding = 'UTF-8'

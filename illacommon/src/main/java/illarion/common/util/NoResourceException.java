@@ -22,7 +22,6 @@ package illarion.common.util;
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@SuppressWarnings("UnusedDeclaration")
 public final class NoResourceException extends RuntimeException {
     /**
      * The serialization unique ID.

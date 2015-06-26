@@ -8,6 +8,10 @@
  * own build script and define your own repository and version for the plugin.
  */
 
+import org.gradle.api.GradleException;
+
+
+
 buildscript {
     repositories {
         mavenLocal()
@@ -25,19 +29,66 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.bitbucket.shemnon.javafxplugin:gradle-javafx-plugin:0.4.0'
-        classpath project.files("${System.properties['java.home']}/../lib/ant-javafx.jar")
-        switch (JavaVersion.current()) {
-            case JavaVersion.VERSION_1_8:
-                classpath project.files("${System.properties['java.home']}/lib/ext/jfxrt.jar")
-                break
-            case JavaVersion.VERSION_1_7:
-            case JavaVersion.VERSION_1_6:
-                classpath project.files("${System.properties['java.home']}/lib/jfxrt.jar")
-                break
-            default:
-                 throw new GradleException("Java version too old.");
+        try {
+            assert (jfxrtDir != null)
+        } catch (RuntimeException re) {
+            ext.jfxrtDir = "."
         }
+
+        ext.searchFile = {Map<String, Closure> places, List<String> searchPaths, String searchID ->
+            File result = null;
+            places.each { k, v ->
+                if (result != null) return;
+                project.logger.debug("Looking for $searchID in $k")
+                def dir = v()
+                if (dir == null) {
+                    project.logger.debug("$k not set")
+                } else {
+                    project.logger.debug("$k is $dir")
+                    searchPaths.each { s ->
+                        if (result != null) return;
+                        File f = new File(dir, s);
+                        project.logger.debug("Trying $f.path")
+                        if (f.exists() && f.file) {
+                            project.logger.debug("found $searchID as $result")
+                            result = f;
+                        }
+                    }
+                }
+            }
+            if (!result?.file) {
+                throw new GradleException("Could not find $searchID, please set one of ${places.keySet()}");
+            } else {
+                project.logger.info("$searchID: ${result}")
+                return result
+            }
+        }
+        ext.findJFXJar = {
+            return searchFile([
+                    'jfxrtDir in Gradle Properties': {jfxrtDir},
+                    'JFXRT_HOME in System Environment': {System.env['JFXRT_HOME']},
+                    'JAVA_HOME in System Environment': {System.env['JAVA_HOME']},
+                    'java.home in JVM properties': {System.properties['java.home']}
+            ],
+                    ['jfxrt.jar', 'lib/jfxrt.jar', 'lib/ext/jfxrt.jar', 'jre/lib/jfxrt.jar', 'jre/lib/ext/jfxrt.jar'],
+                    'JavaFX Runtime Jar')
+        }
+
+        ext.findAntJavaFXJar = {
+            return searchFile([
+                    'jfxrtDir in Gradle Properties': {jfxrtDir},
+                    'JFXRT_HOME in System Environment': {System.env['JFXRT_HOME']},
+                    'JAVA_HOME in System Environment': {System.env['JAVA_HOME']},
+                    'java.home in JVM properties': {System.properties['java.home']}
+            ],
+                    ['ant-javafx.jar', 'lib/ant-javafx.jar', '../lib/ant-javafx.jar'],
+                    'JavaFX Packager Tools')
+        }
+
+
+        classpath 'org.bitbucket.shemnon.javafxplugin:gradle-javafx-plugin:8.1.1'
+        classpath project.files(findAntJavaFXJar())
+        classpath project.files(findJFXJar())
     }
 }
 

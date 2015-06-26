@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,6 +18,7 @@ package illarion.client.gui.controller.game;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.*;
+import de.lessvoid.nifty.controls.ScrollPanel.AutoScroll;
 import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
@@ -99,9 +100,7 @@ public final class BookHandler implements BookGui, ScreenController, UpdatableHa
             return;
         }
 
-        for (Element child : bookTextContent.getChildren()) {
-            child.markForRemoval();
-        }
+        bookTextContent.getChildren().forEach(Element::markForRemoval);
 
         if ((showPage == 0) && showBook.hasTitlePage()) {
             BookTitlePage titlePage = showBook.getTitlePage();
@@ -185,8 +184,8 @@ public final class BookHandler implements BookGui, ScreenController, UpdatableHa
 
         bookDisplay.getElement().getParent().layoutElements();
 
-        bookScrollArea.setAutoScroll(ScrollPanel.AutoScroll.TOP);
-        bookScrollArea.setAutoScroll(ScrollPanel.AutoScroll.OFF);
+        bookScrollArea.setAutoScroll(AutoScroll.TOP);
+        bookScrollArea.setAutoScroll(AutoScroll.OFF);
     }
 
     private int getTotalPageCount() {

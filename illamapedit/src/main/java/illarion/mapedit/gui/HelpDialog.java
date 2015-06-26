@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkEvent.EventType;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;
@@ -36,7 +37,7 @@ import java.net.URL;
 public class HelpDialog extends JDialog implements HyperlinkListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(HelpDialog.class);
 
-    public HelpDialog(final JFrame frame) {
+    public HelpDialog(JFrame frame) {
         super(frame, Lang.getMsg("gui.docu.Name"), false);
         setLayout(new BorderLayout());
 
@@ -46,7 +47,7 @@ public class HelpDialog extends JDialog implements HyperlinkListener {
         setMinimumSize(new Dimension(300, 400));
         setPreferredSize(new Dimension(500, 500));
         html.addHyperlinkListener(this);
-        final URL url = HelpDialog.class.getResource(
+        URL url = HelpDialog.class.getResource(
                 String.format("/docu/%s/mapeditor_docu.html", (Lang.getInstance().isGerman()) ? "de" : "en"));
         html.setContentType("text/html");
         try {
@@ -62,19 +63,16 @@ public class HelpDialog extends JDialog implements HyperlinkListener {
     }
 
     @Override
-    public void hyperlinkUpdate(@Nonnull final HyperlinkEvent e) {
-        if (e.getEventType() != HyperlinkEvent.EventType.ACTIVATED) {
+    public void hyperlinkUpdate(@Nonnull HyperlinkEvent e) {
+        if (e.getEventType() != EventType.ACTIVATED) {
             return;
         }
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                if (Desktop.isDesktopSupported()) {
-                    try {
-                        Desktop.getDesktop().browse(e.getURL().toURI());
-                    } catch (@Nonnull IOException | URISyntaxException e1) {
-                        LOGGER.warn("Can't launch browser: ", e1);
-                    }
+        SwingUtilities.invokeLater(() -> {
+            if (Desktop.isDesktopSupported()) {
+                try {
+                    Desktop.getDesktop().browse(e.getURL().toURI());
+                } catch (@Nonnull IOException | URISyntaxException e1) {
+                    LOGGER.warn("Can't launch browser: ", e1);
                 }
             }
         });

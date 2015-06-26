@@ -15,7 +15,6 @@
  */
 package illarion.client.gui.controller;
 
-import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
@@ -63,7 +62,7 @@ public final class CreditsMultiScreenController implements ScreenController, Key
         showNextEntry(creditsIterator);
     }
 
-    private void showNextEntry(@Nonnull final Iterator<CreditsList> iterator) {
+    private void showNextEntry(@Nonnull Iterator<CreditsList> iterator) {
         if (!iterator.hasNext()) {
             gotoNextScreen();
             return;
@@ -76,9 +75,7 @@ public final class CreditsMultiScreenController implements ScreenController, Key
             titleLabel.setText(list.getNameEnglish());
         }
 
-        for (Element element : namesPanel.getChildren()) {
-            element.markForRemoval();
-        }
+        namesPanel.getChildren().forEach(Element::markForRemoval);
 
         for (CreditsPerson person : list) {
             LabelBuilder entry = new LabelBuilder();
@@ -92,17 +89,7 @@ public final class CreditsMultiScreenController implements ScreenController, Key
         nifty.executeEndOfFrameElementActions();
         displayParent.getParent().layoutElements();
 
-        displayParent.show(new EndNotify() {
-            @Override
-            public void perform() {
-                displayParent.hide(new EndNotify() {
-                    @Override
-                    public void perform() {
-                        showNextEntry(iterator);
-                    }
-                });
-            }
-        });
+        displayParent.show(() -> displayParent.hide(() -> showNextEntry(iterator)));
     }
 
     private void gotoNextScreen() {

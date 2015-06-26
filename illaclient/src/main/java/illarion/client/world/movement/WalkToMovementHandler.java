@@ -197,16 +197,16 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
     protected Path calculateNewPath(@Nonnull ServerCoordinate currentLocation) {
         ServerCoordinate target = getTargetLocation();
 
-        log.info(marker, "Calculating a new path to: {}", target);
+        log.info(marker, "Calculating a new path from {} to {}", currentLocation, target);
         PathFindingAlgorithm algorithm = pathFindingAlgorithm;
 
         switch (getMovementMode()) {
             case Walk:
                 return algorithm.findPath(this, currentLocation, target, targetDistance,
-                                          getAllowedDirections(), Walk);
+                        getAllowedDirections(currentLocation, target), Walk);
             case Run:
                 return algorithm.findPath(this, currentLocation, target, targetDistance,
-                                          getAllowedDirections(), Walk, Run);
+                        getAllowedDirections(currentLocation, target), Walk, Run);
             default:
                 return null;
         }
@@ -232,7 +232,8 @@ class WalkToMovementHandler extends AbstractMovementHandler implements TargetMov
     }
 
     @Nonnull
-    protected Collection<Direction> getAllowedDirections() {
+    protected Collection<Direction> getAllowedDirections(@Nonnull ServerCoordinate current,
+                                                         @Nonnull ServerCoordinate target) {
         return Collections.unmodifiableCollection(allowedDirections);
     }
 

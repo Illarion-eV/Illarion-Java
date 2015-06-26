@@ -53,7 +53,6 @@ public final class ChatLog {
     /**
      * Instance of the used logger.
      */
-    @SuppressWarnings("nls")
     private static final Logger logger = LoggerFactory.getLogger("CHAT");
 
     /**

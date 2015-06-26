@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,6 @@
  */
 package illarion.client.gui.controller;
 
-import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.elements.Element;
@@ -49,7 +48,7 @@ public final class CreditsSinglesScreenController implements ScreenController, K
     private Label nameLabel;
 
     @Override
-    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
         this.nifty = nifty;
 
         displayParent = screen.findElementById("nameDisplay");
@@ -59,30 +58,30 @@ public final class CreditsSinglesScreenController implements ScreenController, K
 
     @Override
     public void onStartScreen() {
-        final Iterator<CreditsList> creditsIterator = Credits.getInstance().getSingleLists();
+        Iterator<CreditsList> creditsIterator = Credits.getInstance().getSingleLists();
 
         showNextEntry(creditsIterator);
     }
 
-    private void showNextEntry(@Nonnull final Iterator<CreditsList> iterator) {
+    private void showNextEntry(@Nonnull Iterator<CreditsList> iterator) {
         if (!iterator.hasNext()) {
             gotoNextScreen();
             return;
         }
 
-        final CreditsList list = iterator.next();
+        CreditsList list = iterator.next();
         if (Lang.getInstance().isGerman()) {
             titleLabel.setText(list.getNameGerman());
         } else {
             titleLabel.setText(list.getNameEnglish());
         }
 
-        final List<String> names = new ArrayList<>();
-        for (final CreditsPerson person : list) {
+        List<String> names = new ArrayList<>();
+        for (CreditsPerson person : list) {
             names.add(person.getName());
         }
-        final StringBuilder builder = new StringBuilder();
-        final int nameCount = names.size();
+        StringBuilder builder = new StringBuilder();
+        int nameCount = names.size();
         for (int i = 0; i < nameCount; i++) {
             builder.append(names.get(i));
             if (i < (nameCount - 2)) {
@@ -98,17 +97,7 @@ public final class CreditsSinglesScreenController implements ScreenController, K
         nameLabel.setText(builder.toString());
         displayParent.layoutElements();
 
-        displayParent.show(new EndNotify() {
-            @Override
-            public void perform() {
-                displayParent.hide(new EndNotify() {
-                    @Override
-                    public void perform() {
-                        showNextEntry(iterator);
-                    }
-                });
-            }
-        });
+        displayParent.show(() -> displayParent.hide(() -> showNextEntry(iterator)));
     }
 
     private void gotoNextScreen() {
@@ -121,7 +110,7 @@ public final class CreditsSinglesScreenController implements ScreenController, K
     }
 
     @Override
-    public boolean keyEvent(final NiftyInputEvent inputEvent) {
+    public boolean keyEvent(NiftyInputEvent inputEvent) {
         if (inputEvent == NiftyStandardInputEvent.Escape) {
             nifty.gotoScreen("login");
             return true;

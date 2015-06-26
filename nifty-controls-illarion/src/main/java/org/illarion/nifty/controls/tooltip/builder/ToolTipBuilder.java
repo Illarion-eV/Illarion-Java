@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -30,91 +30,91 @@ public class ToolTipBuilder extends ControlBuilder {
         super("tooltip");
     }
 
-    public ToolTipBuilder(@Nonnull final String id) {
+    public ToolTipBuilder(@Nonnull String id) {
         super(id, "tooltip");
     }
 
-    public void title(@Nonnull final String value) {
+    public void title(@Nonnull String value) {
         set("title", value);
     }
 
-    public void titleColor(@Nonnull final Color value) {
+    public void titleColor(@Nonnull Color value) {
         titleColor(value.getColorString());
     }
 
-    public void titleColor(@Nonnull final String value) {
+    public void titleColor(@Nonnull String value) {
         set("titleColor", value);
     }
 
-    public void description(@Nonnull final String value) {
+    public void description(@Nonnull String value) {
         set("description", value);
     }
 
-    public void producer(@Nonnull final String value) {
+    public void producer(@Nonnull String value) {
         set("producer", value);
     }
 
-    public void type(@Nonnull final String value) {
+    public void type(@Nonnull String value) {
         set("itemtype", value);
     }
 
-    public void level(final int value) {
+    public void level(int value) {
         set("level", Integer.toString(value));
     }
 
-    public void levelColor(@Nonnull final Color value) {
+    public void levelColor(@Nonnull Color value) {
         levelColor(value.getColorString());
     }
 
-    public void levelColor(@Nonnull final String value) {
+    public void levelColor(@Nonnull String value) {
         set("levelColor", value);
     }
 
-    public void weight(@Nonnull final String value) {
+    public void weight(@Nonnull String value) {
         set("weight", value);
     }
 
-    public void worth(final long value) {
+    public void worth(long value) {
         set("worth", Long.toString(value));
     }
 
-    public void quality(@Nonnull final String value) {
+    public void quality(@Nonnull String value) {
         set("quality", value);
     }
 
-    public void durability(@Nonnull final String value) {
+    public void durability(@Nonnull String value) {
         set("durability", value);
     }
 
-    public void diamondLevel(final int value) {
+    public void diamondLevel(int value) {
         set("diamondLevel", Integer.toString(value));
     }
 
-    public void emeraldLevel(final int value) {
+    public void emeraldLevel(int value) {
         set("emeraldLevel", Integer.toString(value));
     }
 
-    public void rubyLevel(final int value) {
+    public void rubyLevel(int value) {
         set("rubyLevel", Integer.toString(value));
     }
 
-    public void obsidianLevel(final int value) {
+    public void obsidianLevel(int value) {
         set("obsidianLevel", Integer.toString(value));
     }
 
-    public void sapphireLevel(final int value) {
+    public void sapphireLevel(int value) {
         set("sapphireLevel", Integer.toString(value));
     }
 
-    public void amethystLevel(final int value) {
+    public void amethystLevel(int value) {
         set("amethystLevel", Integer.toString(value));
     }
 
-    public void topazLevel(final int value) {
+    public void topazLevel(int value) {
         set("topazLevel", Integer.toString(value));
     }
 
-    public void gemBonus(@Nonnull final String value) {
+    public void gemBonus(@Nonnull String value) {
         set("gemBonus", value);
     }
 }

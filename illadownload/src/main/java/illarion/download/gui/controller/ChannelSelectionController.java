@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,23 +43,21 @@ public class ChannelSelectionController extends AbstractController {
     public ComboBox<String> targetMapEditor;
 
     @Override
-    public void initialize(URL url, @Nonnull ResourceBundle resourceBundle) {
-        final ObservableList<String> targets = FXCollections
-                .observableArrayList(resourceBundle.getString("optionRelease"),
-                                     resourceBundle.getString("optionSnapshot"));
+    public void initialize(URL location, @Nonnull ResourceBundle resources) {
+        ObservableList<String> targets = FXCollections
+                .observableArrayList(resources.getString("optionRelease"),
+                        resources.getString("optionSnapshot"));
         targetClient.setItems(targets);
         targetEasyNpc.setItems(targets);
         targetEasyQuest.setItems(targets);
         targetMapEditor.setItems(targets);
     }
 
-    public void setModel(@Nonnull final GuiModel model) {
+    @Override
+    public void setModel(@Nonnull GuiModel model) {
         super.setModel(model);
 
-        final Config cfg = getModel().getConfig();
-        if (cfg == null) {
-            throw new IllegalStateException("Can't show options without the config system");
-        }
+        Config cfg = getModel().getConfig();
 
         targetClient.setValue(targetClient.getItems().get(cfg.getInteger("channelClient")));
         targetEasyNpc.setValue(targetEasyNpc.getItems().get(cfg.getInteger("channelEasyNpc")));
@@ -68,11 +66,8 @@ public class ChannelSelectionController extends AbstractController {
     }
 
     @FXML
-    public void nextStep(@Nonnull final ActionEvent actionEvent) {
-        final Config cfg = getModel().getConfig();
-        if (cfg == null) {
-            throw new IllegalStateException("Can't show options without the config system");
-        }
+    public void nextStep(@Nonnull ActionEvent actionEvent) {
+        Config cfg = getModel().getConfig();
         cfg.set("channelClient", targetClient.getItems().indexOf(targetClient.getValue()));
         cfg.set("channelEasyNpc", targetEasyNpc.getItems().indexOf(targetEasyNpc.getValue()));
         cfg.set("channelEasyQuest", targetEasyQuest.getItems().indexOf(targetEasyQuest.getValue()));
@@ -82,7 +77,7 @@ public class ChannelSelectionController extends AbstractController {
 
         try {
             getModel().getStoryboard().showNormal();
-        } catch (@Nonnull final IOException e) {
+        } catch (@Nonnull IOException e) {
             // nothing
         }
     }

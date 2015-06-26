@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -39,8 +39,8 @@ public class SelectionTool extends AbstractTool {
     }
 
     @Override
-    public void clickedAt(final int x, final int y, @Nonnull final Map map) {
-        final int radius = panel.getRadius();
+    public void clickedAt(int x, int y, @Nonnull Map map) {
+        int radius = panel.getRadius();
         for (int i = (x - radius) + 1; i <= ((x + radius) - 1); i++) {
             for (int j = (y - radius) + 1; j <= ((y + radius) - 1); j++) {
                 if (map.contains(i, j)) {
@@ -83,7 +83,7 @@ public class SelectionTool extends AbstractTool {
     }
 
     @Override
-    public void paintSelected(final int x, final int y, @Nonnull final Map map, final GroupAction action) {
+    public void paintSelected(int x, int y, @Nonnull Map map, GroupAction action) {
         if (map.contains(x, y)) {
             map.setSelected(x, y, !panel.isDeselectChecked());
         }

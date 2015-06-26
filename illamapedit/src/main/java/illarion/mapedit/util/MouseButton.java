@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -30,7 +30,7 @@ public enum MouseButton {
     OtherButton;
 
     @Nonnull
-    public static MouseButton getButton(final int btn) {
+    public static MouseButton getButton(int btn) {
         switch (btn) {
             case 0:
                 return NoButton;
@@ -50,15 +50,15 @@ public enum MouseButton {
     }
 
     @Nonnull
-    public static MouseButton fromAwt(final int buttonMask) {
+    public static MouseButton fromAwt(int buttonMask) {
         if ((buttonMask & MouseEvent.BUTTON3_MASK) != 0) {
-            return MouseButton.RightButton;
+            return RightButton;
         } else if ((buttonMask & MouseEvent.BUTTON2_MASK) != 0) {
-            return MouseButton.MiddleButton;
+            return MiddleButton;
         } else if ((buttonMask & MouseEvent.BUTTON1_MASK) != 0) {
-            return MouseButton.LeftButton;
+            return LeftButton;
         } else {
-            return MouseButton.OtherButton;
+            return OtherButton;
         }
     }
 }

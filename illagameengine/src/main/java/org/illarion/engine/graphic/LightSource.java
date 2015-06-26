@@ -220,7 +220,6 @@ public final class LightSource {
      *
      * @param changeLoc the location the change occurred on.
      */
-    @SuppressWarnings("nls")
     public void notifyChange(@Nonnull ServerCoordinate changeLoc) {
         if (location.getZ() != changeLoc.getZ()) {
             return;

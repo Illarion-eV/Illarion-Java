@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -54,12 +54,12 @@ public class AbstractMultiFrameEntityTemplate extends AbstractEntityTemplate {
      * @param shadowOffset the offset of the shadow
      */
     protected AbstractMultiFrameEntityTemplate(
-            final int id,
-            @Nonnull final Sprite sprite,
-            final int frames,
-            final int stillFrame,
-            @Nullable final Color defaultColor,
-            final int shadowOffset) {
+            int id,
+            @Nonnull Sprite sprite,
+            int frames,
+            int stillFrame,
+            @Nullable Color defaultColor,
+            int shadowOffset) {
         super(id, sprite, defaultColor, shadowOffset);
         this.frames = frames;
         this.stillFrame = stillFrame;

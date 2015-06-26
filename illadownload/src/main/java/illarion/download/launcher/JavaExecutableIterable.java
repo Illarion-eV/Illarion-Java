@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -25,11 +25,10 @@ import java.util.Iterator;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class JavaExecutableIterable extends AbstractJavaExecutableIterable {
+final class JavaExecutableIterable extends AbstractJavaExecutableIterable {
     @Nonnull
     @Override
     public Iterator<Path> iterator() {
-        return new AbstractJavaExecutableIterator(this) {
-        };
+        return new AbstractJavaExecutableIterator(this);
     }
 }

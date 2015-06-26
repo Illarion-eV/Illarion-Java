@@ -63,7 +63,6 @@ public final class LookAtMapItemCmd extends AbstractCommand {
     }
 
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
     public String toString() {
         return toString(location + " Stack position: " + stackPosition);

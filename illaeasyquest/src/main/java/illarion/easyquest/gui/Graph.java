@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,7 +19,6 @@ import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxIGraphModel;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
-import com.mxgraph.util.mxEventObject;
 import com.mxgraph.view.mxGraph;
 import illarion.easyquest.Lang;
 import illarion.easyquest.quest.Status;
@@ -33,56 +32,51 @@ public class Graph extends mxGraph {
         setAlternateEdgeStyle("edgeStyle=mxEdgeStyle.ElbowConnector;elbow=vertical");
         setAllowLoops(true);
 
-        addListener(mxEvent.ADD_CELLS, new mxIEventListener() {
-            public void invoke(Object sender, @Nonnull mxEventObject evt) {
-                Object[] cells = (Object[]) evt.getProperty("cells");
+        addListener(mxEvent.ADD_CELLS, (sender, evt) -> {
+            Object[] cells = (Object[]) evt.getProperty("cells");
 
-                for (Object cellObject : cells) {
-                    mxCell cell = (mxCell) cellObject;
-                    if (cell.isEdge()) {
-                        cell.setValue(new Trigger());
+            for (Object cellObject : cells) {
+                mxCell cell = (mxCell) cellObject;
+                if (cell.isEdge()) {
+                    cell.setValue(new Trigger());
 
-                        if (cell.getSource() == null || cell.getTarget() == null) {
-                            cell.setStyle(mxConstants.STYLE_STROKECOLOR + "=#FF0000");
-                        }
+                    if (cell.getSource() == null || cell.getTarget() == null) {
+                        cell.setStyle(mxConstants.STYLE_STROKECOLOR + "=#FF0000");
                     }
                 }
             }
         });
 
-        addListener(mxEvent.CELLS_ADDED, new mxIEventListener() {
-            public void invoke(Object sender, @Nonnull mxEventObject evt) {
-                Object[] cells = (Object[]) evt.getProperty("cells");
+        addListener(mxEvent.CELLS_ADDED, (sender, evt) -> {
+            Object[] cells = (Object[]) evt.getProperty("cells");
 
-                for (Object cellObject : cells) {
-                    mxCell cell = (mxCell) cellObject;
-                    if (cell.isEdge()) {
-                        if (cell.getSource() == null || cell.getTarget() == null) {
-                            cell.setStyle(mxConstants.STYLE_STROKECOLOR + "=#FF0000");
-                        }
+            for (Object cellObject : cells) {
+                mxCell cell = (mxCell) cellObject;
+                if (cell.isEdge()) {
+                    if (cell.getSource() == null || cell.getTarget() == null) {
+                        cell.setStyle(mxConstants.STYLE_STROKECOLOR + "=#FF0000");
                     }
                 }
             }
         });
 
-        final Graph g = this;
-        addListener(mxEvent.CELL_CONNECTED, new mxIEventListener() {
-            public void invoke(Object sender, @Nonnull mxEventObject evt) {
-                mxCell edge = (mxCell) evt.getProperty("edge");
+        Graph g = this;
+        addListener(mxEvent.CELL_CONNECTED, (sender, evt) -> {
+            mxCell edge = (mxCell) evt.getProperty("edge");
 
-                mxCell source = (mxCell) edge.getSource();
-                mxCell target = (mxCell) edge.getTarget();
+            mxCell source = (mxCell) edge.getSource();
+            mxCell target = (mxCell) edge.getTarget();
 
-                Object[] cells = {edge};
-                if (source == null || target == null) {
-                    g.setCellStyle(mxConstants.STYLE_STROKECOLOR + "=#FF0000", cells);
-                } else {
-                    g.setCellStyle("", cells);
-                }
+            Object[] cells = {edge};
+            if (source == null || target == null) {
+                g.setCellStyle(mxConstants.STYLE_STROKECOLOR + "=#FF0000", cells);
+            } else {
+                g.setCellStyle("", cells);
             }
         });
     }
 
+    @Override
     @Nonnull
     public String getToolTipForCell(Object cell) {
         String tip = "<html>";
@@ -98,6 +92,7 @@ public class Graph extends mxGraph {
         return tip;
     }
 
+    @Override
     public String convertValueToString(@Nonnull Object cell) {
         if (cell instanceof mxCell) {
             Object value = ((mxCell) cell).getValue();

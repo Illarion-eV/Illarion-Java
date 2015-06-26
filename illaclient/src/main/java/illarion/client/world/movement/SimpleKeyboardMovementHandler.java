@@ -21,7 +21,6 @@ import illarion.client.world.World;
 import illarion.common.types.Direction;
 import illarion.common.types.ServerCoordinate;
 import illarion.common.util.FastMath;
-import org.illarion.engine.GameContainer;
 import org.illarion.engine.input.Input;
 import org.illarion.engine.input.Key;
 
@@ -29,7 +28,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.Set;
-import java.util.concurrent.*;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This keyboard movement handler simply handles the keyboard input to perform the walking operations.
@@ -52,12 +54,7 @@ class SimpleKeyboardMovementHandler extends AbstractMovementHandler implements K
     private ScheduledFuture<Void> delayedMoveTask;
 
     @Nonnull
-    private final UpdateTask updateMovementTask = new UpdateTask() {
-        @Override
-        public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-            getMovement().update();
-        }
-    };
+    private final UpdateTask updateMovementTask = (container, delta) -> getMovement().update();
 
     SimpleKeyboardMovementHandler(@Nonnull Movement movement, @Nonnull Input input) {
         super(movement);
@@ -74,13 +71,10 @@ class SimpleKeyboardMovementHandler extends AbstractMovementHandler implements K
                 delayedMoveTask = null;
             }
             if (!getMovement().isMoving()) {
-                delayedMoveTask = delayedMoveExecutor.schedule(new Callable<Void>() {
-                    @Override
-                    public Void call() throws Exception {
-                        delayedMove = false;
-                        World.getUpdateTaskManager().addTask(updateMovementTask);
-                        return null;
-                    }
+                delayedMoveTask = delayedMoveExecutor.schedule(() -> {
+                    delayedMove = false;
+                    World.getUpdateTaskManager().addTask(updateMovementTask);
+                    return null;
                 }, 100, TimeUnit.MILLISECONDS);
                 delayedMove = true;
             }

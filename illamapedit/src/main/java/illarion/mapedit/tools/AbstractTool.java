@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -64,15 +64,15 @@ public abstract class AbstractTool {
 
     public abstract void paintSelected(int x, int y, Map map, GroupAction action);
 
-    public final void registerManager(@Nonnull final ToolManager toolManager) {
+    public final void registerManager(@Nonnull ToolManager toolManager) {
         manager = toolManager;
         history = toolManager.getHistory();
     }
 
-    public void fillSelected(@Nonnull final Map map) {
-        final GroupAction action = new GroupAction();
-        for (final MapPosition pos : map.getSelectedTiles()) {
-            final MapTile tile = map.getTileAt(pos.getX(), pos.getY());
+    public void fillSelected(@Nonnull Map map) {
+        GroupAction action = new GroupAction();
+        for (MapPosition pos : map.getSelectedTiles()) {
+            MapTile tile = map.getTileAt(pos.getX(), pos.getY());
             if (tile != null) {
                 paintSelected(pos.getX(), pos.getY(), map, action);
             }
@@ -82,12 +82,12 @@ public abstract class AbstractTool {
         }
     }
 
-    public void fillArea(final int startX, final int startY, final int endX, final int endY, final Map map) {
-        final int fromX = Math.min(startX, endX);
-        final int toX = Math.max(startX, endX);
-        final int fromY = Math.min(startY, endY);
-        final int toY = Math.max(startY, endY);
-        final GroupAction action = new GroupAction();
+    public void fillArea(int startX, int startY, int endX, int endY, Map map) {
+        int fromX = Math.min(startX, endX);
+        int toX = Math.max(startX, endX);
+        int fromY = Math.min(startY, endY);
+        int toY = Math.max(startY, endY);
+        GroupAction action = new GroupAction();
         for (int x = fromX; x <= toX; x++) {
             for (int y = fromY; y <= toY; y++) {
                 paintSelected(x, y, map, action);

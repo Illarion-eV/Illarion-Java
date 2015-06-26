@@ -109,7 +109,6 @@ public class HandlerTemplates {
                     while ((line = reader.readLine()) != null) {
 
                         if (line.isEmpty()) {
-                            continue;
                         } else if (line.matches("--.*\\w+.*--.*\\w+.*")) {
                             String[] names = line.split("\\s*--\\s*");
                             if (isGerman) {
@@ -124,7 +123,7 @@ public class HandlerTemplates {
                             } else {
                                 handlerTemplate.addParameter(new TemplateParameter(param[1], param[2], param[3]));
                             }
-                            parameterCount = parameterCount + 1;
+                            parameterCount += 1;
                         } else if (line.matches("--\\s*PLAYER")) {
                             handlerTemplate.addPlayerParameterAt(parameterCount);
                         }

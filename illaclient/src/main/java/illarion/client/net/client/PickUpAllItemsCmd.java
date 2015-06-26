@@ -40,7 +40,6 @@ public final class PickUpAllItemsCmd extends AbstractCommand {
     }
 
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
     public String toString() {
         return toString(null);

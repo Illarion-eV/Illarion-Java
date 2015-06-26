@@ -15,7 +15,6 @@
  */
 package illarion.client.gui.controller.game;
 
-import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.builder.ElementBuilder.Align;
 import de.lessvoid.nifty.builder.ElementBuilder.VAlign;
@@ -27,7 +26,6 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.gui.MiniMapGui;
-import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
 import illarion.common.types.ServerCoordinate;
 import org.illarion.engine.GameContainer;
@@ -104,6 +102,7 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
         miniMapPanel = screen.findElementById("miniMapPanel");
     }
 
+    @Override
     @Nonnull
     public Pointer createTargetPointer() {
         return createTargetPointer(true);
@@ -153,73 +152,52 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
     @Override
     public void releasePointer(@Nullable Pointer pointer) {
         if (pointer instanceof MiniMapArrowPointer) {
-            final MiniMapArrowPointer arrowPointer = (MiniMapArrowPointer) pointer;
+            MiniMapArrowPointer arrowPointer = (MiniMapArrowPointer) pointer;
 
-            World.getUpdateTaskManager().addTaskForLater(new UpdateTask() {
-                @Override
-                public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                    if (arrowPointer.getParentElement().isVisible()) {
-                        arrowPointer.getParentElement().hide(new EndNotify() {
-                            @Override
-                            public void perform() {
-                                activeArrowPointers.remove(arrowPointer);
-                                arrowPointerBuffer.offer(arrowPointer);
-                            }
-                        });
-                    } else {
+            World.getUpdateTaskManager().addTaskForLater((container, delta) -> {
+                if (arrowPointer.getParentElement().isVisible()) {
+                    arrowPointer.getParentElement().hide(() -> {
                         activeArrowPointers.remove(arrowPointer);
                         arrowPointerBuffer.offer(arrowPointer);
-                    }
+                    });
+                } else {
+                    activeArrowPointers.remove(arrowPointer);
+                    arrowPointerBuffer.offer(arrowPointer);
                 }
             });
         } else if (pointer instanceof MiniMapStartPointer) {
-            final MiniMapStartPointer startPointer = (MiniMapStartPointer) pointer;
-            World.getUpdateTaskManager().addTaskForLater(new UpdateTask() {
-                @Override
-                public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                    if (startPointer.getParentElement().isVisible()) {
-                        startPointer.getParentElement().hide(new EndNotify() {
-                            @Override
-                            public void perform() {
-                                activeStartPointers.remove(startPointer);
-                                startPointerBuffer.offer(startPointer);
-                            }
-                        });
-                    } else {
+            MiniMapStartPointer startPointer = (MiniMapStartPointer) pointer;
+            World.getUpdateTaskManager().addTaskForLater((container, delta) -> {
+                if (startPointer.getParentElement().isVisible()) {
+                    startPointer.getParentElement().hide(() -> {
                         activeStartPointers.remove(startPointer);
                         startPointerBuffer.offer(startPointer);
-                    }
+                    });
+                } else {
+                    activeStartPointers.remove(startPointer);
+                    startPointerBuffer.offer(startPointer);
                 }
             });
         }
     }
 
     @Override
-    public void addPointer(@Nonnull final Pointer pointer) {
-        World.getUpdateTaskManager().addTaskForLater(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                if (pointer instanceof MiniMapArrowPointer) {
-                    final MiniMapArrowPointer arrowPointer = (MiniMapArrowPointer) pointer;
-                    arrowPointer.getParentElement().show(new EndNotify() {
-                        @Override
-                        public void perform() {
-                            if (!activeArrowPointers.contains(arrowPointer)) {
-                                activeArrowPointers.add(arrowPointer);
-                            }
-                        }
-                    });
-                } else if (pointer instanceof MiniMapStartPointer) {
-                    final MiniMapStartPointer startPointer = (MiniMapStartPointer) pointer;
-                    startPointer.getParentElement().show(new EndNotify() {
-                        @Override
-                        public void perform() {
-                            if (!activeStartPointers.contains(startPointer)) {
-                                activeStartPointers.add(startPointer);
-                            }
-                        }
-                    });
-                }
+    public void addPointer(@Nonnull Pointer pointer) {
+        World.getUpdateTaskManager().addTaskForLater((container, delta) -> {
+            if (pointer instanceof MiniMapArrowPointer) {
+                MiniMapArrowPointer arrowPointer = (MiniMapArrowPointer) pointer;
+                arrowPointer.getParentElement().show(() -> {
+                    if (!activeArrowPointers.contains(arrowPointer)) {
+                        activeArrowPointers.add(arrowPointer);
+                    }
+                });
+            } else if (pointer instanceof MiniMapStartPointer) {
+                MiniMapStartPointer startPointer = (MiniMapStartPointer) pointer;
+                startPointer.getParentElement().show(() -> {
+                    if (!activeStartPointers.contains(startPointer)) {
+                        activeStartPointers.add(startPointer);
+                    }
+                });
             }
         });
     }

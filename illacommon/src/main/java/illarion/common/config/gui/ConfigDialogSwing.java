@@ -114,9 +114,7 @@ public final class ConfigDialogSwing extends JDialog {
          */
         @Override
         public void actionPerformed(ActionEvent e) {
-            for (SavableEntry aTodoList : todoList) {
-                aTodoList.save();
-            }
+            todoList.forEach(SavableEntry::save);
             parentDialog.setVisible(false);
             parentDialog.dispose();
         }

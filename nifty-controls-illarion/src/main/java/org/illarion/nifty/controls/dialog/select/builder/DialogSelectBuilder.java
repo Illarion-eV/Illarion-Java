@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -31,7 +31,7 @@ public final class DialogSelectBuilder extends ControlBuilder {
      * @param id the nifty-gui ID of the dialog
      * @param title the title of the dialog
      */
-    public DialogSelectBuilder(@Nonnull final String id, @Nonnull final String title) {
+    public DialogSelectBuilder(@Nonnull String id, @Nonnull String title) {
         super(id, CreateDialogSelectControl.NAME);
         set("title", title);
         set("closeable", "true");
@@ -47,7 +47,7 @@ public final class DialogSelectBuilder extends ControlBuilder {
      *
      * @param id the ID of the dialog
      */
-    public void dialogId(final int id) {
+    public void dialogId(int id) {
         set("dialogId", Integer.toString(id));
     }
 
@@ -56,11 +56,11 @@ public final class DialogSelectBuilder extends ControlBuilder {
      *
      * @param text the message shown in this dialog
      */
-    public void message(final String text) {
+    public void message(String text) {
         set("message", text);
     }
 
-    public void itemCount(final int count) {
+    public void itemCount(int count) {
         set("itemCount", Integer.toString(count));
     }
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,7 +23,7 @@ import java.util.Arrays;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class ConnectionPerformanceClock {
+public final class ConnectionPerformanceClock {
     /**
      * The last time the ping command was handed over to NetComm.
      */
@@ -45,8 +45,8 @@ public class ConnectionPerformanceClock {
     private static long lastNetCommTime;
 
     @Nonnull
-    private static long lastServerTimes[] = new long[16];
-    private static long lastNetCommTimes[] = new long[16];
+    private static final long[] lastServerTimes = new long[16];
+    private static final long[] lastNetCommTimes = new long[16];
     private static int serverTimesCursor;
     private static int netCommTimesCursor;
 
@@ -83,7 +83,7 @@ public class ConnectionPerformanceClock {
      * Report that the command was received from the server and is now decoded.
      */
     public static void notifyNetCommDecode() {
-        final long localLastEncode = lastEncode;
+        long localLastEncode = lastEncode;
         lastEncode = -1;
         if (localLastEncode > -1) {
             lastServerTime = System.currentTimeMillis() - localLastEncode;
@@ -96,7 +96,7 @@ public class ConnectionPerformanceClock {
      * Report that the command is now published to the client.
      */
     public static void notifyPublishToClient() {
-        final long localLastSendToNetComm = lastSendToNetComm;
+        long localLastSendToNetComm = lastSendToNetComm;
         lastSendToNetComm = -1;
         if (localLastSendToNetComm > -1) {
             lastNetCommTime = System.currentTimeMillis() - localLastSendToNetComm;

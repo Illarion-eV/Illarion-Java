@@ -1,7 +1,7 @@
 <!--
   ~ This file is part of the Illarion project.
   ~
-  ~ Copyright © 2014 - Illarion e.V.
+  ~ Copyright © 2015 - Illarion e.V.
   ~
   ~ Illarion is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU Affero General Public License as published by
@@ -14,32 +14,11 @@
   ~ GNU General Public License for more details.
   -->
 <configuration>
-    <if condition='property("log_dir").length()>0'>
-        <then>
-            <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-                <file>${log_dir:-}/launcher.log</file>
-                <encoder>
-                    <pattern>%-5p - %d{ISO8601} - [%t]: %m%n</pattern>
-                </encoder>
-                <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-                    <maxIndex>5</maxIndex>
-                    <FileNamePattern>${log_dir:-}/launcher.log.%i.gz</FileNamePattern>
-                </rollingPolicy>
-                <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-                    <maxFileSize>10MB</maxFileSize>
-                </triggeringPolicy>
-            </appender>
-            <root level="warn">
-                <appender-ref ref="FILE"/>
-            </root>
-        </then>
-    </if>
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%-5p - %d{ISO8601} - [%t]: %m%n</pattern>
         </encoder>
     </appender>
-    <logger name="org.bushe.swing.event.EventService" level="warn"/>
     <root level="warn">
         <appender-ref ref="CONSOLE"/>
     </root>

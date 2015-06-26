@@ -277,10 +277,12 @@ public final class KeyMapper {
     }
 
     private static void startMovingTowards(@Nonnull Direction direction, boolean firstPressed) {
-        KeyboardMovementHandler handler = World.getPlayer().getMovementHandler().getKeyboardHandler();
-        handler.startMovingTowards(direction);
-        if (firstPressed) {
-            handler.assumeControl();
+        if (World.getPlayer().isLocationSet()) {
+            KeyboardMovementHandler handler = World.getPlayer().getMovementHandler().getKeyboardHandler();
+            handler.startMovingTowards(direction);
+            if (firstPressed) {
+                handler.assumeControl();
+            }
         }
     }
 

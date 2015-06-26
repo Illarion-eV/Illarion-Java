@@ -28,7 +28,7 @@ import java.util.Random;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@SuppressWarnings({"NonReproducibleMathCall", "UnusedDeclaration"})
+@SuppressWarnings("NonReproducibleMathCall")
 public final class FastMath {
     /**
      * A "close to zero" double epsilon value for use.
@@ -255,7 +255,7 @@ public final class FastMath {
      * @param value the value whose arc cosine is to be returned
      * @return the arc cosine of the argument
      */
-    @SuppressWarnings({"unused"})
+    @SuppressWarnings("unused")
     @Contract(value = "_ -> fail", pure = true)
     public static byte acos(byte value) {
         throw new OutOfCoffeeException("A arc cosine from a byte value? No point in that.");
@@ -322,7 +322,7 @@ public final class FastMath {
      * @param value the value whose arc cosine is to be returned
      * @return the arc cosine of the argument
      */
-    @SuppressWarnings({"unused"})
+    @SuppressWarnings("unused")
     @Contract(value = "_ -> fail", pure = true)
     public static int acos(int value) {
         throw new OutOfCoffeeException("A arc cosine from a integer value? No point in that.");
@@ -337,7 +337,7 @@ public final class FastMath {
      * @param value the value whose arc cosine is to be returned
      * @return the arc cosine of the argument
      */
-    @SuppressWarnings({"unused"})
+    @SuppressWarnings("unused")
     @Contract(value = "_ -> fail", pure = true)
     public static long acos(long value) {
         throw new OutOfCoffeeException("A arc cosine from a long value? No point in that.");
@@ -352,7 +352,7 @@ public final class FastMath {
      * @param value the value whose arc cosine is to be returned
      * @return the arc cosine of the argument
      */
-    @SuppressWarnings({"unused"})
+    @SuppressWarnings("unused")
     @Contract(value = "_ -> fail", pure = true)
     public static short acos(short value) {
         throw new OutOfCoffeeException("A arc cosine from a short value? No point in that.");
@@ -367,7 +367,7 @@ public final class FastMath {
      * @param value the value whose arc sine is to be returned
      * @return the arc sine of the argument
      */
-    @SuppressWarnings({"unused"})
+    @SuppressWarnings("unused")
     @Contract(value = "_ -> fail", pure = true)
     public static byte asin(byte value) {
         throw new OutOfCoffeeException("A arc sine from a byte value? No point in that.");
@@ -440,7 +440,7 @@ public final class FastMath {
      * @param value the value whose arc sine is to be returned
      * @return the arc sine of the argument
      */
-    @SuppressWarnings({"unused"})
+    @SuppressWarnings("unused")
     @Contract(value = "_ -> fail", pure = true)
     public static int asin(int value) {
         throw new OutOfCoffeeException("A arc sine from a integer value? No point in that.");
@@ -455,7 +455,7 @@ public final class FastMath {
      * @param value the value whose arc sine is to be returned
      * @return the arc sine of the argument
      */
-    @SuppressWarnings({"unused"})
+    @SuppressWarnings("unused")
     @Contract(value = "_ -> fail", pure = true)
     public static long asin(long value) {
         throw new OutOfCoffeeException("A arc sine from a long value? No point in that.");
@@ -470,7 +470,7 @@ public final class FastMath {
      * @param value the value whose arc sine is to be returned
      * @return the arc sine of the argument
      */
-    @SuppressWarnings({"unused"})
+    @SuppressWarnings("unused")
     @Contract(value = "_ -> fail", pure = true)
     public static short asin(short value) {
         throw new OutOfCoffeeException("A arc sine from a short value? No point in that.");
@@ -571,7 +571,7 @@ public final class FastMath {
      * @param value the value that needs to be rounded
      * @return the next larger short of the argument
      */
-    @SuppressWarnings({"unused"})
+    @SuppressWarnings("unused")
     @Contract(value = "_ -> fail", pure = true)
     public static byte ceil(byte value) {
         throw new OutOfCoffeeException("Rounding up a byte value? Seriously?");
@@ -637,7 +637,7 @@ public final class FastMath {
      * @param value the value that needs to be rounded
      * @return the next larger integer of the argument
      */
-    @SuppressWarnings({"unused"})
+    @SuppressWarnings("unused")
     @Contract(value = "_ -> fail", pure = true)
     public static int ceil(int value) {
         throw new OutOfCoffeeException("Rounding up a integer value? Seriously?");
@@ -652,7 +652,7 @@ public final class FastMath {
      * @param value the value that needs to be rounded
      * @return the next larger long of the argument
      */
-    @SuppressWarnings({"unused"})
+    @SuppressWarnings("unused")
     @Contract(value = "_ -> fail", pure = true)
     public static long ceil(long value) {
         throw new OutOfCoffeeException("Rounding up a long value? Seriously?");
@@ -667,7 +667,7 @@ public final class FastMath {
      * @param value the value that needs to be rounded
      * @return the next larger short of the argument
      */
-    @SuppressWarnings({"unused"})
+    @SuppressWarnings("unused")
     @Contract(value = "_ -> fail", pure = true)
     public static short ceil(short value) {
         throw new OutOfCoffeeException("Rounding up a short value? Seriously?");

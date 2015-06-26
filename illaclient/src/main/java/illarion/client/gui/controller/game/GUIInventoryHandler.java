@@ -15,7 +15,6 @@
  */
 package illarion.client.gui.controller.game;
 
-import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.*;
@@ -31,6 +30,7 @@ import illarion.client.IllaClient;
 import illarion.client.gui.EntitySlickRenderImage;
 import illarion.client.gui.InventoryGui;
 import illarion.client.gui.Tooltip;
+import illarion.client.gui.controller.game.NumberSelectPopupHandler.Callback;
 import illarion.client.net.client.PickUpAllItemsCmd;
 import illarion.client.resources.ItemFactory;
 import illarion.client.resources.data.ItemTemplate;
@@ -51,6 +51,7 @@ import org.illarion.engine.input.Button;
 import org.illarion.engine.input.Input;
 import org.illarion.engine.input.Key;
 import org.illarion.nifty.controls.InventorySlot;
+import org.illarion.nifty.controls.InventorySlot.MerchantBuyLevel;
 import org.illarion.nifty.controls.Progress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,6 +119,7 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
     /**
      * The logger that takes care for the logging output of this class.
      */
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(GUIInventoryHandler.class);
 
     @Nonnull
@@ -136,13 +138,10 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
     private final Input input;
 
     @Nonnull
-    private final UpdateTask updateMerchantOverlays = new UpdateTask() {
-        @Override
-        public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-            Inventory inventory = World.getPlayer().getInventory();
-            for (int i = 0; i < Inventory.SLOT_COUNT; i++) {
-                updateMerchantOverlay(i, inventory.getItem(i).getItemID());
-            }
+    private final UpdateTask updateMerchantOverlays = (container, delta) -> {
+        Inventory inventory = World.getPlayer().getInventory();
+        for (int i = 0; i < Inventory.SLOT_COUNT; i++) {
+            updateMerchantOverlay(i, inventory.getItem(i).getItemID());
         }
     };
 
@@ -184,12 +183,7 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
 
     @Override
     public void updateCarryLoad() {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                updateCarryLoadImpl();
-            }
-        });
+        World.getUpdateTaskManager().addTask((container, delta) -> updateCarryLoadImpl());
     }
 
     private void updateCarryLoadImpl() {
@@ -227,15 +221,12 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
 
     @Override
     public void toggleInventory() {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                if (inventoryWindow != null) {
-                    if (inventoryWindow.isVisible()) {
-                        hideInventory();
-                    } else {
-                        showInventory();
-                    }
+        World.getUpdateTaskManager().addTask((container, delta) -> {
+            if (inventoryWindow != null) {
+                if (inventoryWindow.isVisible()) {
+                    hideInventory();
+                } else {
+                    showInventory();
                 }
             }
         });
@@ -247,36 +238,22 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
      */
     @Override
     public void hideInventory() {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                if (inventoryWindow != null) {
-                    tooltipHandler.hideToolTip();
-                    inventoryWindow.hide();
-                }
+        World.getUpdateTaskManager().addTask((container, delta) -> {
+            if (inventoryWindow != null) {
+                tooltipHandler.hideToolTip();
+                inventoryWindow.hide();
             }
         });
     }
 
     @Override
     public void showInventory() {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                if (inventoryWindow != null) {
-                    inventoryWindow.show(new EndNotify() {
-                        @Override
-                        public void perform() {
-                            World.getUpdateTaskManager().addTaskForLater(new UpdateTask() {
-                                @Override
-                                public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                                    updateCarryLoad();
-                                }
-                            });
-                            inventoryWindow.getNiftyControl(Window.class).moveToFront();
-                        }
-                    });
-                }
+        World.getUpdateTaskManager().addTask((container, delta) -> {
+            if (inventoryWindow != null) {
+                inventoryWindow.show(() -> {
+                    World.getUpdateTaskManager().addTaskForLater((container1, delta1) -> updateCarryLoad());
+                    inventoryWindow.getNiftyControl(Window.class).moveToFront();
+                });
             }
         });
     }
@@ -350,16 +327,16 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
     @NiftyEventSubscriber(pattern = "invslot_.*")
     public void dragFromInventory(@Nonnull String topic, DraggableDragStartedEvent data) {
         int slotId = getSlotNumber(topic);
-        World.getInteractionManager().notifyDraggingInventory(slotId, new GUIInventoryHandler.EndOfDragOperation(
+        World.getInteractionManager().notifyDraggingInventory(slotId, new EndOfDragOperation(
                 invSlots[slotId].getNiftyControl(InventorySlot.class)));
         tooltipHandler.hideToolTip();
     }
 
     @NiftyEventSubscriber(pattern = "invslot_.*")
     public void dropInInventory(@Nonnull String topic, DroppableDroppedEvent data) {
-        final int slotId = getSlotNumber(topic);
+        int slotId = getSlotNumber(topic);
 
-        final InteractionManager iManager = World.getInteractionManager();
+        InteractionManager iManager = World.getInteractionManager();
         ItemCount amount = iManager.getMovedAmount();
         if (amount == null) {
             log.error("Corrupted dragging detected.");
@@ -367,7 +344,7 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
             return;
         }
         if (ItemCount.isGreaterOne(amount) && isShiftPressed()) {
-            numberSelect.requestNewPopup(1, amount.getValue(), new NumberSelectPopupHandler.Callback() {
+            numberSelect.requestNewPopup(1, amount.getValue(), new Callback() {
                 @Override
                 public void popupCanceled() {
                     // nothing
@@ -531,10 +508,10 @@ public final class GUIInventoryHandler implements InventoryGui, ScreenController
                 if (item.getItemId().equals(itemId)) {
                     switch (item.getType()) {
                         case BuyingPrimaryItem:
-                            control.showMerchantOverlay(InventorySlot.MerchantBuyLevel.Gold);
+                            control.showMerchantOverlay(MerchantBuyLevel.Gold);
                             return;
                         case BuyingSecondaryItem:
-                            control.showMerchantOverlay(InventorySlot.MerchantBuyLevel.Silver);
+                            control.showMerchantOverlay(MerchantBuyLevel.Silver);
                             return;
                         case SellingItem:
                             break;

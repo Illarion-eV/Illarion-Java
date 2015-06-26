@@ -33,8 +33,9 @@
                 <panel width="600px" align="left" valign="bottom" childLayout="vertical" visibleToMouse="true">
                     <panel width="600px" align="right" valign="top" childLayout="vertical" visibleToMouse="true">
                         <control name="scrollPanel" id="chatPanel" vertical="true" horizontal="false" height="180px"
-                                 width="600px" autoScroll="off" stepSizeY="20" style="nifty-chatlog">
-                            <panel id="chatLog" childLayout="vertical" width="574px" visibleToMouse="false"/>
+                                 width="600px" autoScroll="off" stepSizeY="20" style="nifty-chatlog"
+                                 visibleToMouse="true">
+                            <panel id="chatLog" childLayout="vertical" width="574px" visibleToMouse="true" />
                         </control>
                         <panel childLayout="horizontal">
                             <control name="textfield" id="chatMsg" style="chat-textfield" maxLength="255"
@@ -176,14 +177,15 @@
                      hideOnClose="true" visible="false" width="700px" height="305px">
                 <panel childLayout="horizontal">
                     <panel childLayout="vertical" width="230px" paddingRight="8px">
-                        <control name="listBox" id="#questList" vertical="on" horizontal="off"
-                                 displayItems="10" selection="Single" forceSelection="true" marginBottom="5px"/>
+                        <control name="listBox" id="#questList" vertical="on" horizontal="off" displayItems="10"
+                                 selection="Single" forceSelection="true" marginBottom="5px"
+                                 style="nifty-listbox-no-background" />
                         <panel childLayout="horizontal">
                             <control name="checkbox" id="#showFinishedCheckbox" marginRight="4px" focusable="false" />
                             <control name="label" text="${gamescreen-bundle.showFinishedQuests}" paddingLeft="5px"/>
                         </panel>
                     </panel>
-                    <panel childLayout="horizontal" style="nifty-panel">
+                    <panel childLayout="horizontal" style="nifty-panel-no-background">
                         <control name="scrollPanel" childLayout="vertical" autoScroll="off"
                                  stepSizeY="20" height="*" style="nifty-scrollpanel" horizontal="false">
                             <panel id="#questDescription" childLayout="vertical" width="100%"/>

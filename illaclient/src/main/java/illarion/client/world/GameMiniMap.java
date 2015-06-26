@@ -149,7 +149,7 @@ public final class GameMiniMap implements WorldMapDataProvider, Stoppable {
 
     /**
      * Get the entire origin of the current world map. The origin is stored in a
-     * {@link illarion.common.types.ServerCoordinate} class instance that
+     * {@link ServerCoordinate} class instance that
      * is newly fetched from the buffer. In case its not used anymore it should be put back into the buffer. <p> The
      * server X and Y coordinate are the coordinates of the current origin of the world map. The Z coordinate is the
      * current level. </p> <p> For details on each coordinate see the functions that request the single coordinates.
@@ -307,9 +307,7 @@ public final class GameMiniMap implements WorldMapDataProvider, Stoppable {
 
         if (oldOrigin == null) {
             List<ServerCoordinate> loadList = getOriginsList(newOrigin);
-            for (@Nonnull ServerCoordinate loc : loadList) {
-                strengthenOrLoadMap(loc);
-            }
+            loadList.forEach(this::strengthenOrLoadMap);
             return;
         }
 
@@ -329,7 +327,7 @@ public final class GameMiniMap implements WorldMapDataProvider, Stoppable {
         Collection<Callable<Void>> updateList = new ArrayList<>();
 
         /* Save all the old data to the file system and weaken the storage of each map. */
-        for (@Nonnull final ServerCoordinate loc : oldActive) {
+        for (@Nonnull ServerCoordinate loc : oldActive) {
             updateList.add(new Callable<Void>() {
                 @Nullable
                 @Override
@@ -342,7 +340,7 @@ public final class GameMiniMap implements WorldMapDataProvider, Stoppable {
         }
 
         /* Reactivate or load all the maps that are newly inside the player range. */
-        for (@Nonnull final ServerCoordinate loc : newActive) {
+        for (@Nonnull ServerCoordinate loc : newActive) {
             updateList.add(new Callable<Void>() {
                 @Nullable
                 @Override
@@ -462,16 +460,13 @@ public final class GameMiniMap implements WorldMapDataProvider, Stoppable {
     public void saveAllMaps() {
         if (mapOrigin != null) {
             List<ServerCoordinate> origins = getOriginsList(mapOrigin);
-            for (@Nonnull ServerCoordinate loc : origins) {
-                saveMap(loc);
-            }
+            origins.forEach(this::saveMap);
         }
     }
 
     /**
      * Save the current map to its file.
      */
-    @SuppressWarnings("nls")
     private void saveMap(@Nonnull ServerCoordinate origin) {
         @Nullable ByteBuffer mapData = getMapDataStorage(origin);
         if (mapData == null) {
@@ -508,7 +503,6 @@ public final class GameMiniMap implements WorldMapDataProvider, Stoppable {
      *
      * @return the path and the filename of the map file
      */
-    @SuppressWarnings("nls")
     @Nonnull
     private static Path getMapFilename(@Nonnull ServerCoordinate mapOrigin) {
         StringBuilder builder = new StringBuilder();
@@ -574,12 +568,7 @@ public final class GameMiniMap implements WorldMapDataProvider, Stoppable {
      * Once this function is called the mini map will be rendered completely again.
      */
     public void performFullUpdate() {
-        GlobalExecutorService.getService().submit(new Runnable() {
-            @Override
-            public void run() {
-                worldMap.setMapChanged();
-            }
-        });
+        GlobalExecutorService.getService().submit(worldMap::setMapChanged);
     }
 
     /**

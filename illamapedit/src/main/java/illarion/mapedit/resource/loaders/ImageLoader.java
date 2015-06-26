@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -53,11 +53,11 @@ public class ImageLoader implements Resource {
 
     @Override
     public void load() throws IOException {
-        final Class<?> clazz = ImageLoader.class;
-        for (final String file : FILES) {
-            final String filePath = '/' + file;
-            final String key = filePath.substring(1, filePath.length() - 4);
-            final InputStream is = clazz.getResourceAsStream(filePath);
+        Class<?> clazz = ImageLoader.class;
+        for (String file : FILES) {
+            String filePath = '/' + file;
+            String key = filePath.substring(1, filePath.length() - 4);
+            InputStream is = clazz.getResourceAsStream(filePath);
             if (is == null) {
                 throw new IOException(filePath + " does not exist!");
             }
@@ -76,7 +76,7 @@ public class ImageLoader implements Resource {
         return INSTANCE;
     }
 
-    public static Image getImage(final String key) {
+    public static Image getImage(String key) {
         if (!IMAGES.containsKey(key)) {
             LOGGER.warn("Image [" + key + "] does not exist!");
             throw new RuntimeException("Image [" + key + "] does not exist!");
@@ -86,17 +86,17 @@ public class ImageLoader implements Resource {
     }
 
     @Nonnull
-    public static ResizableIcon getResizableIcon(final String key) {
-        final Image image = getImage(key);
+    public static ResizableIcon getResizableIcon(String key) {
+        Image image = getImage(key);
 
-        final int height = image.getHeight(null);
-        final int width = image.getWidth(null);
-        final ResizableIcon resizeIcon = ImageWrapperResizableIcon.getIcon(image, new Dimension(width, height));
+        int height = image.getHeight(null);
+        int width = image.getWidth(null);
+        ResizableIcon resizeIcon = ImageWrapperResizableIcon.getIcon(image, new Dimension(width, height));
         return resizeIcon;
     }
 
     @Nonnull
-    public static ImageIcon getImageIcon(final String key) {
+    public static ImageIcon getImageIcon(String key) {
         return new ImageIcon(getImage(key));
     }
 }

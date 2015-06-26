@@ -130,10 +130,11 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
     }
 
     @Override
+    @Nonnull
     protected Color getParentLight() {
         Tile parentGraphicTile = parentTile.getTile();
         if (parentGraphicTile == null) {
-            return null;
+            return Color.BLACK;
         }
         return parentGraphicTile.getLocalLight();
     }
@@ -275,14 +276,14 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
      * @param container the GameContainer; needed to process input
      * @return {@code true} if the event was processed
      */
-    protected boolean processMapClick(@Nonnull ClickOnMapEvent event, @Nonnull GameContainer container) {
+    boolean processMapClick(@Nonnull ClickOnMapEvent event, @Nonnull GameContainer container) {
         if (event.getKey() != Button.Left) {
             return false;
         }
         Input input = container.getEngine().getInput();
         MapTile mouseTile = World.getMap().getInteractive().getTileOnScreenLoc(input.getMouseX(), input.getMouseY());
 
-        if (mouseTile == null || !mouseTile.isAtPlayerLevel()) {
+        if ((mouseTile == null) || !mouseTile.isAtPlayerLevel()) {
             return false;
         }
         delayGoToItem.reset();
@@ -299,57 +300,14 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
             return true;
         }
         if (itemClickedInUseRange) {
-            if (itemClickedIsBlocked) {
-                delayGoToItem.setLocation(parentTile.getCoordinates());
-                delayGoToItem.pulse();
-            }
-        }else {
-            handler.walkTo(mouseTile.getCoordinates(), (mouseTileIsBlocked ? 1 : 0));
-            handler.assumeControl();
-        }
-        return true;
-    }
-
-    /**
-     * The default way that the game handles clicking on an item
-     * The processMapClick method above replaces this code.
-     *
-     * @param event the event to process
-     * @return true if the method is processed properly
-     */
-    private boolean isEventProcessed(@Nonnull ClickOnMapEvent event) {
-        if (event.getKey() != Button.Left) {
-            return false;
-        }
-
-        if (!parentTile.isAtPlayerLevel()) {
-            return false;
-        }
-
-        delayGoToItem.reset();
-
-        log.debug("Single clicking item: {}", getItemId());
-
-        TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
-
-        boolean blocked = parentTile.isBlocked();
-        boolean useRange = parentTile.getInteractive().isInUseRange();
-
-        if (useRange) {
-            if (blocked) {
-                return true;
-            } else {
+            if (!itemClickedIsBlocked) {
                 delayGoToItem.setLocation(parentTile.getCoordinates());
                 delayGoToItem.pulse();
             }
         } else {
-            if (blocked) {
-                handler.walkTo(parentTile.getCoordinates(), 1);
-            } else {
-                handler.walkTo(parentTile.getCoordinates(), 0);
-            }
+            handler.walkTo(mouseTile.getCoordinates(), mouseTileIsBlocked ? 1 : 0);
+            handler.assumeControl();
         }
-        handler.assumeControl();
         return true;
     }
 
@@ -364,19 +322,13 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
 
         delayGoToItem.reset();
 
-
         if (parentTile.getInteractive().isInUseRange()) {
             parentTile.getInteractive().use();
         } else {
-            final InteractiveMapTile interactiveMapTile = parentTile.getInteractive();
+            InteractiveMapTile interactiveMapTile = parentTile.getInteractive();
             TargetMovementHandler handler = World.getPlayer().getMovementHandler().getTargetMovementHandler();
             handler.walkTo(parentTile.getCoordinates(), 1);
-            handler.setTargetReachedAction(new Runnable() {
-                @Override
-                public void run() {
-                    interactiveMapTile.use();
-                }
-            });
+            handler.setTargetReachedAction(interactiveMapTile::use);
             handler.assumeControl();
         }
 
@@ -477,8 +429,6 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
         // write number to text for display
         if (ItemCount.isGreaterOne(count)) {
             number = new TextTag(count.getShortText(Lang.getInstance().getLocale()), Color.YELLOW);
-            number.setOffset((MapConstants.TILE_W / 2) - number.getHeight() - number.getWidth(),
-                             -number.getHeight() / 2);
         } else {
             number = null;
         }
@@ -522,6 +472,9 @@ public final class Item extends AbstractEntity<ItemTemplate> implements Resource
 
         if (showNumber && (number != null)) {
             number.addToCamera(getDisplayCoordinate().getX(), getDisplayCoordinate().getY());
+            number.updateHeightAndWidth();
+            number.setOffset((MapConstants.TILE_W / 2) - number.getHeight() - number.getWidth(),
+                    -number.getHeight() / 2);
             number.update(container, delta);
         }
     }

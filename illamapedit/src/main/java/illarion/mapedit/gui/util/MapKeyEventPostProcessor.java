@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -29,7 +29,7 @@ public class MapKeyEventPostProcessor implements KeyEventPostProcessor {
     private static class KeyEventRunnable implements Runnable {
         private final KeyEvent keyEvent;
 
-        private KeyEventRunnable(final KeyEvent keyEvent) {
+        private KeyEventRunnable(KeyEvent keyEvent) {
             this.keyEvent = keyEvent;
         }
 
@@ -52,7 +52,7 @@ public class MapKeyEventPostProcessor implements KeyEventPostProcessor {
     }
 
     @Override
-    public boolean postProcessKeyEvent(final KeyEvent keyEvent) {
+    public boolean postProcessKeyEvent(KeyEvent keyEvent) {
         EventQueue.invokeLater(new KeyEventRunnable(keyEvent));
         return false;
     }

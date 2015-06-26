@@ -124,11 +124,9 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
 
     @Nonnull
     @Override
-    protected Collection<Direction> getAllowedDirections() {
+    protected Collection<Direction> getAllowedDirections(@Nonnull ServerCoordinate current,
+                                                         @Nonnull ServerCoordinate target) {
         if (limitPathFindingToMouseDirection) {
-            ServerCoordinate target = getTargetLocation();
-            ServerCoordinate current = getMovement().getServerLocation();
-
             int dirX = FastMath.sign(target.getX() - current.getX());
             int dirY = FastMath.sign(target.getY() - current.getY());
 
@@ -148,7 +146,7 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
             }
             return result;
         } else {
-            return super.getAllowedDirections();
+            return super.getAllowedDirections(current, target);
         }
     }
 
@@ -168,7 +166,7 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
     }
 
     @Override
-    @Nonnull
+    @Nullable
     protected Direction getPreferredDirection() {
         MapDimensions mapDimensions = MapDimensions.getInstance();
         int dX = lastMouseX - (mapDimensions.getOnScreenWidth() / 2);

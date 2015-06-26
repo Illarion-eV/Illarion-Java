@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -54,17 +54,26 @@ public final class InformHandler implements InformGui, ScreenController {
         /**
          * The element builder that is executed to create the inform message.
          */
+        @Nonnull
         private final ElementBuilder builder;
 
         /**
          * The element that will be parent to the elements created by the builder.
          */
+        @Nonnull
         private final Element parent;
 
         /**
          * The element that needs to get a new layout once the inform is displayed.
          */
+        @Nonnull
         private final Element layoutParent;
+
+        /**
+         * The optional action that is executed before the inform is build.
+         */
+        @Nullable
+        private final Runnable prepareAction;
 
         /**
          * Create a new instance of this build task that stores all the information needed to create the inform
@@ -73,17 +82,26 @@ public final class InformHandler implements InformGui, ScreenController {
          * @param informBuilder the element builder that creates the message
          * @param parentElement the parent element that will store the elements created by the element builder
          * @param layoutParent the element that needs to get a new layout once the inform is displayed
+         * @param prepareAction the action executed directly before the task is build
          */
-        InformBuildTask(ElementBuilder informBuilder, Element parentElement, Element layoutParent) {
+        InformBuildTask(@Nonnull ElementBuilder informBuilder,
+                        @Nonnull Element parentElement,
+                        @Nonnull Element layoutParent,
+                        @Nullable Runnable prepareAction) {
             builder = informBuilder;
             parent = parentElement;
             this.layoutParent = layoutParent;
+            this.prepareAction = prepareAction;
         }
 
         @Override
         public void onUpdateGame(@Nonnull GameContainer container, int delta) {
             if (!parent.isVisible()) {
                 parent.showWithoutEffects();
+            }
+
+            if (prepareAction != null) {
+                prepareAction.run();
             }
 
             Element msg = builder.build(parentNifty, parentScreen, parent);
@@ -150,6 +168,7 @@ public final class InformHandler implements InformGui, ScreenController {
     /**
      * The logger that is used for the logging output of this class.
      */
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(InformHandler.class);
 
     /**
@@ -198,14 +217,8 @@ public final class InformHandler implements InformGui, ScreenController {
 
     @Override
     public void onEndScreen() {
-        for (Element panel : Arrays
-                .asList(broadcastParentPanel, serverParentPanel, textToParentPanel, scriptParentPanel)) {
-            if (panel != null) {
-                for (Element child : panel.getChildren()) {
-                    child.markForRemoval();
-                }
-            }
-        }
+        Arrays.asList(broadcastParentPanel, serverParentPanel, textToParentPanel, scriptParentPanel).stream()
+                .filter(panel -> panel != null).forEach(panel -> panel.getChildren().forEach(Element::markForRemoval));
     }
 
     @Override
@@ -239,8 +252,25 @@ public final class InformHandler implements InformGui, ScreenController {
      * @param parent the parent element that stores the inform message
      * @param layoutParent the element that needs to get its layout recalculated
      */
-    public void showInform(ElementBuilder informBuilder, Element parent, Element layoutParent) {
-        World.getUpdateTaskManager().addTask(new InformBuildTask(informBuilder, parent, layoutParent));
+    public void showInform(@Nonnull ElementBuilder informBuilder,
+                           @Nonnull Element parent,
+                           @Nonnull Element layoutParent) {
+        showInform(informBuilder, parent, layoutParent, null);
+    }
+
+    /**
+     * Show a inform on the screen.
+     *
+     * @param informBuilder the builder that is meant to create the inform message
+     * @param parent        the parent element that stores the inform message
+     * @param layoutParent  the element that needs to get its layout recalculated
+     * @param prepareAction the action executed right before the element is build
+     */
+    public void showInform(@Nonnull ElementBuilder informBuilder,
+                           @Nonnull Element parent,
+                           @Nonnull Element layoutParent,
+                           @Nullable Runnable prepareAction) {
+        World.getUpdateTaskManager().addTask(new InformBuildTask(informBuilder, parent, layoutParent, prepareAction));
     }
 
     /**
@@ -324,23 +354,28 @@ public final class InformHandler implements InformGui, ScreenController {
         panelBuilder.childLayoutHorizontal();
 
         String text = "Server> " + message;
-        Font font = FontLoader.getInstance().getFont(FontLoader.CONSOLE_FONT);
 
         LabelBuilder labelBuilder = new LabelBuilder();
         panelBuilder.control(labelBuilder);
         labelBuilder.label(text);
         labelBuilder.font(FontLoader.CONSOLE_FONT);
         labelBuilder.invisibleToMouse();
-        if (MapDimensions.getInstance().getOnScreenWidth() < font.getWidth(text)) {
-            labelBuilder.wrap(true);
-            labelBuilder.width(SizeValue.px(MapDimensions.getInstance().getOnScreenWidth()));
-        }
+        labelBuilder.wrap(true);
+        labelBuilder.alignLeft();
 
         EffectBuilder effectBuilder = new EffectBuilder("hide");
         effectBuilder.startDelay(10000 + (message.length() * 50));
         panelBuilder.onHideEffect(effectBuilder);
 
-        showInform(panelBuilder, serverParentPanel, serverParentPanel.getParent());
+        showInform(panelBuilder, serverParentPanel, serverParentPanel.getParent(), () -> {
+            Font font = FontLoader.getInstance().getFont(FontLoader.CONSOLE_FONT);
+            int width = font.getWidth(text);
+            int maxWidth = MapDimensions.getInstance().getOnScreenWidth() - 10;
+            if (width > maxWidth) {
+                width = maxWidth;
+            }
+            panelBuilder.width(SizeValue.px(width));
+        });
     }
 
     @Override

@@ -91,8 +91,8 @@ public class TriggerTemplates {
                 String fileName = rawFileName.replace('\\', '/');
                 String line = null;
                 boolean isHeader = true;
-                StringBuffer header = new StringBuffer();
-                StringBuffer body = new StringBuffer();
+                StringBuilder header = new StringBuilder();
+                StringBuilder body = new StringBuilder();
                 String uniqueName = fileName.substring(fileName.lastIndexOf('/') + 1, fileName.lastIndexOf('.'));
                 TriggerTemplate triggerTemplate = new TriggerTemplate(uniqueName);
                 try {

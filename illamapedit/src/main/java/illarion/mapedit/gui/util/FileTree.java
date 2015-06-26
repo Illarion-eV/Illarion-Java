@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.swing.*;
+import javax.swing.SwingWorker.StateValue;
 import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -33,10 +34,10 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
+import java.nio.file.DirectoryStream.Filter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Comparator;
 
 /**
  * @author Fredrik K
@@ -47,20 +48,20 @@ public class FileTree extends JTree {
 
     private class FileTreeMouseAdapter extends MouseAdapter {
         @Override
-        public void mousePressed(@Nonnull final MouseEvent e) {
-            final int selRow = getClosestRowForLocation(e.getX(), e.getY());
+        public void mousePressed(@Nonnull MouseEvent e) {
+            int selRow = getClosestRowForLocation(e.getX(), e.getY());
             if (selRow == -1) {
                 return;
             }
-            final Rectangle bounds = getRowBounds(selRow);
-            final boolean outside = (e.getX() < bounds.getX()) || (e.getX() > (bounds.getX() + bounds.getWidth()));
+            Rectangle bounds = getRowBounds(selRow);
+            boolean outside = (e.getX() < bounds.getX()) || (e.getX() > (bounds.getX() + bounds.getWidth()));
 
-            final boolean onRow = (e.getY() >= bounds.getY()) && (e.getY() < (bounds.getY() + bounds.getHeight()));
+            boolean onRow = (e.getY() >= bounds.getY()) && (e.getY() < (bounds.getY() + bounds.getHeight()));
             if (onRow) {
                 if (outside) {
                     setSelectionRow(selRow);
                     if (e.getClickCount() == 2) {
-                        final DefaultMutableTreeNode node = (DefaultMutableTreeNode) getLastSelectedPathComponent();
+                        DefaultMutableTreeNode node = (DefaultMutableTreeNode) getLastSelectedPathComponent();
                         if (node == null) {
                             return;
                         }
@@ -72,7 +73,7 @@ public class FileTree extends JTree {
                     }
                 }
                 if (e.getClickCount() == 2) {
-                    final DefaultMutableTreeNode node = (DefaultMutableTreeNode) getLastSelectedPathComponent();
+                    DefaultMutableTreeNode node = (DefaultMutableTreeNode) getLastSelectedPathComponent();
                     if (node == null) {
                         return;
                     }
@@ -89,9 +90,9 @@ public class FileTree extends JTree {
 
         public MyTreeCellRenderer() {
             setBackgroundNonSelectionColor(null);
-            final ResizableIcon iconOpen = ImageLoader.getResizableIcon("fileopen");
+            ResizableIcon iconOpen = ImageLoader.getResizableIcon("fileopen");
             iconOpen.setDimension(new Dimension(ICON_SIZE, ICON_SIZE));
-            final ResizableIcon iconMap = ImageLoader.getResizableIcon("mapedit64");
+            ResizableIcon iconMap = ImageLoader.getResizableIcon("mapedit64");
             iconMap.setDimension(new Dimension(ICON_SIZE, ICON_SIZE));
             setLeafIcon(iconMap);
             setClosedIcon(iconOpen);
@@ -118,39 +119,36 @@ public class FileTree extends JTree {
         addMouseListener(new FileTreeMouseAdapter());
     }
 
-    public static boolean isMapFile(@Nonnull final File node) {
+    public static boolean isMapFile(@Nonnull File node) {
         return node.isDirectory() || node.getName().endsWith(MapIO.EXT_TILE);
     }
 
     @Nullable
-    private static MutableTreeNode scan(@Nonnull final Path node) {
+    private static MutableTreeNode scan(@Nonnull Path node) {
         if (Files.isDirectory(node)) {
             return getDirectoryTreeNode(node);
         }
         String fileName = node.getFileName().toString();
-        final MapOpenEvent leaf = new MapOpenEvent(node.getParent(),
+        MapOpenEvent leaf = new MapOpenEvent(node.getParent(),
                                                    fileName.substring(0, fileName.length() - MapIO.EXT_TILE.length()));
         return new DefaultMutableTreeNode(leaf);
     }
 
-    private static final DirectoryStream.Filter<Path> MAP_FILE_FILTER = new DirectoryStream.Filter<Path>() {
-        @Override
-        public boolean accept(@Nonnull Path entry) throws IOException {
-            if (Files.isDirectory(entry)) {
-                return true;
-            }
-            return entry.toString().endsWith(MapIO.EXT_TILE);
+    private static final Filter<Path> MAP_FILE_FILTER = entry -> {
+        if (Files.isDirectory(entry)) {
+            return true;
         }
+        return entry.toString().endsWith(MapIO.EXT_TILE);
     };
 
     @Nullable
-    private static MutableTreeNode getDirectoryTreeNode(@Nonnull final Path node) {
+    private static MutableTreeNode getDirectoryTreeNode(@Nonnull Path node) {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(node, MAP_FILE_FILTER)) {
-            final String dirName = node.getFileName().toString();
-            final DefaultMutableTreeNode ret = new DefaultMutableTreeNode(dirName);
+            String dirName = node.getFileName().toString();
+            DefaultMutableTreeNode ret = new DefaultMutableTreeNode(dirName);
 
-            for (final Path child : stream) {
-                final MutableTreeNode childNode = scan(child);
+            for (Path child : stream) {
+                MutableTreeNode childNode = scan(child);
                 if (childNode != null) {
                     ret.add(childNode);
                 }
@@ -165,19 +163,16 @@ public class FileTree extends JTree {
         return null;
     }
 
-    private static void sortFiles(@Nonnull final File[] files) {
-        Arrays.sort(files, new Comparator<File>() {
-            @Override
-            public int compare(@Nonnull final File o1, @Nonnull final File o2) {
-                if (o1.isDirectory() ^ o2.isDirectory()) {
-                    if (o1.isDirectory()) {
-                        return -1;
-                    } else {
-                        return 1;
-                    }
+    private static void sortFiles(@Nonnull File... files) {
+        Arrays.sort(files, (o1, o2) -> {
+            if (o1.isDirectory() ^ o2.isDirectory()) {
+                if (o1.isDirectory()) {
+                    return -1;
                 } else {
-                    return o1.getName().compareToIgnoreCase(o2.getName());
+                    return 1;
                 }
+            } else {
+                return o1.getName().compareToIgnoreCase(o2.getName());
             }
         });
     }
@@ -185,10 +180,10 @@ public class FileTree extends JTree {
     @Nullable
     private SwingWorker<MutableTreeNode, Object> currentWorker;
 
-    public void setDirectory(@Nonnull final Path file) {
+    public void setDirectory(@Nonnull Path file) {
         if (Files.isDirectory(file)) {
             SwingWorker<MutableTreeNode, Object> localCurrentWorker = currentWorker;
-            if (localCurrentWorker != null && localCurrentWorker.getState() != SwingWorker.StateValue.DONE) {
+            if (localCurrentWorker != null && localCurrentWorker.getState() != StateValue.DONE) {
                 localCurrentWorker.cancel(true);
             }
             setModel(null);
@@ -213,13 +208,13 @@ public class FileTree extends JTree {
     }
 
     @Override
-    protected void paintComponent(@Nonnull final Graphics g) {
+    protected void paintComponent(@Nonnull Graphics g) {
         g.setColor(getBackground());
         g.fillRect(0, 0, getWidth(), getHeight());
 
-        final int fromRow = getRowForPath(getSelectionPath());
+        int fromRow = getRowForPath(getSelectionPath());
         if (fromRow != -1) {
-            final Rectangle fromBounds = getRowBounds(fromRow);
+            Rectangle fromBounds = getRowBounds(fromRow);
             if (fromBounds != null) {
                 g.setColor(SELECTED_COLOR);
                 g.fillRect(0, fromBounds.y, getWidth(), fromBounds.height);

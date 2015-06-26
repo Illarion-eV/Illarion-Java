@@ -309,6 +309,7 @@ public class ItemStack implements DisplayItem, List<Item> {
         }
     }
 
+    @SuppressWarnings("SuspiciousToArrayCall")
     @Nonnull
     @Override
     public <T> T[] toArray(@Nonnull T[] a) {

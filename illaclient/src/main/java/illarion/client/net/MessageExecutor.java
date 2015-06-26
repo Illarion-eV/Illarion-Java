@@ -43,19 +43,13 @@ final class MessageExecutor {
     /**
      * Default constructor for a message executor.
      */
-    @SuppressWarnings("nls")
     MessageExecutor() {
         executorService = Executors.newSingleThreadExecutor();
     }
 
-    void scheduleReplyExecution(@Nonnull final ServerReply reply) {
+    void scheduleReplyExecution(@Nonnull ServerReply reply) {
         log.debug(NET, "scheduled {}", reply);
-        executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                executeReply(reply);
-            }
-        });
+        executorService.submit(() -> executeReply(reply));
     }
 
     private void executeReply(@Nonnull ServerReply reply) {

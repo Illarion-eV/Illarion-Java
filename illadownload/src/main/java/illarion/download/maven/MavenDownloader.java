@@ -15,6 +15,8 @@
  */
 package illarion.download.maven;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import illarion.common.config.Config;
 import illarion.common.util.AppIdent;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.DirectoryManager.Directory;
@@ -22,7 +24,7 @@ import illarion.common.util.ProgressMonitor;
 import illarion.download.maven.MavenDownloaderCallback.State;
 import org.apache.maven.model.building.DefaultModelBuilderFactory;
 import org.apache.maven.model.building.ModelBuilder;
-import org.apache.maven.repository.internal.*;
+import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.ConfigurationProperties;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
@@ -36,8 +38,9 @@ import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyFilter;
 import org.eclipse.aether.graph.DependencyVisitor;
-import org.eclipse.aether.impl.*;
+import org.eclipse.aether.impl.DefaultServiceLocator;
 import org.eclipse.aether.repository.LocalRepository;
+import org.eclipse.aether.repository.LocalRepositoryManager;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RemoteRepository.Builder;
 import org.eclipse.aether.repository.RepositoryPolicy;
@@ -47,6 +50,7 @@ import org.eclipse.aether.resolution.VersionRangeResolutionException;
 import org.eclipse.aether.resolution.VersionRangeResult;
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
 import org.eclipse.aether.spi.connector.transport.TransporterFactory;
+import org.eclipse.aether.spi.locator.ServiceLocator;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.filter.DependencyFilterUtils;
 import org.eclipse.aether.util.graph.selector.AndDependencySelector;
@@ -54,7 +58,6 @@ import org.eclipse.aether.util.graph.selector.OptionalDependencySelector;
 import org.eclipse.aether.util.graph.selector.ScopeDependencySelector;
 import org.eclipse.aether.util.graph.visitor.FilteringDependencyVisitor;
 import org.eclipse.aether.util.graph.visitor.TreeDependencyVisitor;
-import org.eclipse.aether.version.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +79,9 @@ import static org.eclipse.aether.util.artifact.JavaScopes.*;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class MavenDownloader {
+    @Nonnull
     private static final AppIdent APPLICATION = new AppIdent("Illarion Launcher");
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(MavenDownloader.class);
 
     /**
@@ -87,12 +92,6 @@ public class MavenDownloader {
 
     @Nullable
     private RemoteRepository illarionRepository;
-
-    /**
-     * The service locator used to link in the required services.
-     */
-    @Nonnull
-    private final DefaultServiceLocator serviceLocator;
 
     /**
      * The repository system that is used by this downloader. This stores the repositories that are queried for the
@@ -117,6 +116,12 @@ public class MavenDownloader {
      */
     private final boolean offline;
 
+    /**
+     * The configuration provider.
+     */
+    @Nonnull
+    private final Config config;
+
     @Nonnull
     private final MavenRepositoryListener repositoryListener;
 
@@ -125,18 +130,20 @@ public class MavenDownloader {
      * versions of the main application.
      *
      * @param snapshot {@code true} in case the downloader is supposed to use snapshot versions of the main application
-     * @param attemps the indicator how many times downloading was already tried and failed.
+     * @param attempts the indicator how many times downloading was already tried and failed.
+     * @param cfg the configuration provider
      */
-    public MavenDownloader(boolean snapshot, int attemps) {
-        log.trace("Creating Maven Downloader. Attempt number: {}", attemps);
+    public MavenDownloader(boolean snapshot, int attempts, @Nonnull Config cfg) {
+        log.trace("Creating Maven Downloader. Attempt number: {}", attempts);
         this.snapshot = snapshot;
+        config = cfg;
 
         boolean offlineFlag = false;
         int requestTimeOut = 60000; // 1 minute
         try {
             log.trace("Starting connection test.");
-            //noinspection UnusedDeclaration
-            InetAddress iNetAddress = InetAddress.getByName("illarion.org");
+            //noinspection ResultOfMethodCallIgnored
+            InetAddress.getByName("illarion.org");
         } catch (IOException e) {
             log.warn("No internet connection. Activating offline mode.");
             offlineFlag = true;
@@ -144,11 +151,14 @@ public class MavenDownloader {
         offline = offlineFlag;
         log.debug("Setting offline flag: {}", offlineFlag);
 
-        serviceLocator = new DefaultServiceLocator();
-        setupServiceLocator();
+        ServiceLocator serviceLocator = setupServiceLocator();
 
-        system = serviceLocator.getService(RepositorySystem.class);
-        session = new DefaultRepositorySystemSession();
+        RepositorySystem system = serviceLocator.getService(RepositorySystem.class);
+        if (system == null) {
+            throw new IllegalStateException("Failed to init repository system.");
+        }
+        this.system = system;
+        session = MavenRepositorySystemUtils.newSession();
 
         repositoryListener = new MavenRepositoryListener();
 
@@ -175,27 +185,21 @@ public class MavenDownloader {
      */
     @Nullable
     public Collection<File> downloadArtifact(
-            @Nonnull String groupId, @Nonnull String artifactId, @Nullable final MavenDownloaderCallback callback)
+            @Nonnull String groupId, @Nonnull String artifactId, @Nonnull MavenDownloaderCallback callback)
             throws DependencyCollectionException, InterruptedException, ExecutionException {
         Artifact artifact = new DefaultArtifact(groupId, artifactId, "jar", "[1,]");
         try {
-            if (callback != null) {
-                callback.reportNewState(State.SearchingNewVersion, null, offline, null);
-            }
+            callback.reportNewState(State.SearchingNewVersion, null, offline, null);
             VersionRangeRequest request = new VersionRangeRequest();
             request.setArtifact(artifact);
-            if (!offline) {
-                request.setRepositories(Collections.singletonList(illarionRepository));
-            }
+            request.setRepositories(Collections.singletonList(illarionRepository));
             request.setRequestContext(RUNTIME);
             VersionRangeResult result = system.resolveVersionRange(session, request);
             NavigableSet<String> versions = new TreeSet<>(new MavenVersionComparator());
-            for (Version version : result.getVersions()) {
-                if (snapshot || !version.toString().contains("SNAPSHOT")) {
-                    log.info("Found {}:{}:jar:{}", groupId, artifactId, version);
-                    versions.add(version.toString());
-                }
-            }
+            result.getVersions().stream().filter(version -> snapshot || !version.toString().contains("SNAPSHOT")).forEach(version -> {
+                log.info("Found {}:{}:jar:{}", groupId, artifactId, version);
+                versions.add(version.toString());
+            });
 
             if (!versions.isEmpty()) {
                 artifact = new DefaultArtifact(groupId, artifactId, "jar", versions.pollLast());
@@ -203,134 +207,114 @@ public class MavenDownloader {
         } catch (VersionRangeResolutionException ignored) {
         }
 
-        if (callback != null) {
-            callback.reportNewState(ResolvingDependencies, null, offline, null);
-            repositoryListener.setCallback(callback);
-            repositoryListener.setOffline(offline);
-        }
+        callback.reportNewState(ResolvingDependencies, null, offline, null);
+        repositoryListener.setCallback(callback);
+        repositoryListener.setOffline(offline);
         Dependency dependency = new Dependency(artifact, RUNTIME, false);
 
         List<String> usedScopes = Arrays.asList(COMPILE, RUNTIME, SYSTEM);
         DependencySelector selector = new AndDependencySelector(new OptionalDependencySelector(),
                                                                 new ScopeDependencySelector(usedScopes, null));
         session.setDependencySelector(
-                selector.deriveChildSelector(new DefaultDependencyCollectionContext(session, artifact, dependency)));
+                selector.deriveChildSelector(new DefaultDependencyCollectionContext(session, dependency)));
 
         DependencyFilter filter = DependencyFilterUtils.classpathFilter(RUNTIME, COMPILE);
 
         try {
             CollectRequest collectRequest = new CollectRequest();
             collectRequest.setRoot(dependency);
-            if (!offline) {
-                collectRequest.setRepositories(repositories);
-            }
+            collectRequest.setRepositories(repositories);
             CollectResult collectResult = system.collectDependencies(session, collectRequest);
 
-            final ProgressMonitor progressMonitor = new ProgressMonitor();
+            ProgressMonitor progressMonitor = new ProgressMonitor();
 
-            ArtifactRequestTracer tracer = new ArtifactRequestTracer() {
-                @Override
-                public void trace(@Nonnull ProgressMonitor monitor, @Nonnull String artifact,
-                                  long totalSize, long transferred) {
-                    if (totalSize >= 0) {
-                        monitor.setProgress(transferred / (float) totalSize);
-                    }
-                    if (callback != null) {
-                        callback.reportNewState(ResolvingArtifacts, progressMonitor, offline,
-                                humanReadableByteCount(transferred, true) + ' ' + artifact);
-                    }
-                }
-            };
+            ArtifactRequestTracer tracer = new DefaultArtifactRequestTracer(offline, callback, progressMonitor);
 
-            ArtifactRequestBuilder builder = new ArtifactRequestBuilder(null, system, session, tracer);
+            ArtifactRequestBuilder builder = new ArtifactRequestBuilder(system, session, tracer);
             DependencyVisitor visitor = new FilteringDependencyVisitor(builder, filter);
             visitor = new TreeDependencyVisitor(visitor);
             collectResult.getRoot().accept(visitor);
 
             List<FutureArtifactRequest> requests = builder.getRequests();
 
-            if (callback != null) {
-                for (@Nonnull FutureArtifactRequest request : requests) {
-                    progressMonitor.addChild(request.getProgressMonitor());
-                }
+            for (@Nonnull FutureArtifactRequest request : requests) {
+                progressMonitor.addChild(request.getProgressMonitor());
             }
-            if (callback != null) {
-                callback.reportNewState(ResolvingArtifacts, progressMonitor, offline, null);
-            }
+            callback.reportNewState(ResolvingArtifacts, progressMonitor, offline, null);
 
-            ExecutorService executorService = Executors.newSingleThreadExecutor();
+            ExecutorService executorService = Executors.newFixedThreadPool(4,
+                    new ThreadFactoryBuilder()
+                            .setDaemon(false)
+                            .setNameFormat("Download Thread-%d")
+                            .build()
+            );
             List<Future<ArtifactResult>> results = executorService.invokeAll(requests);
             executorService.shutdown();
             while (!executorService.awaitTermination(1, TimeUnit.MINUTES)) {
                 log.info("Downloading is not done yet.");
             }
 
-            List<File> result = new ArrayList<>();
+            Collection<File> result = new ArrayList<>();
             for (@Nonnull Future<ArtifactResult> artifactResult : results) {
                 result.add(artifactResult.get().getArtifact().getFile());
             }
 
             if (result.isEmpty()) {
-                if (callback != null) {
-                    callback.resolvingDone(Collections.<File>emptyList());
-                }
+                callback.resolvingDone(Collections.<File>emptyList());
                 return null;
             }
-            if (callback != null) {
-                callback.resolvingDone(result);
-            }
+            callback.resolvingDone(result);
             return result;
         } catch (@Nonnull DependencyCollectionException | InterruptedException | ExecutionException e) {
-            if (callback != null) {
-                callback.resolvingFailed(e);
-            }
+            callback.resolvingFailed(e);
             throw e;
         }
     }
 
-    public static String humanReadableByteCount(long bytes, boolean si) {
-        int unit = si ? 1000 : 1024;
-        if (bytes < unit) {
-            return bytes + " B";
-        }
-        int exp = (int) (StrictMath.log(bytes) / StrictMath.log(unit));
-        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
-        return String.format("%.1f %sB", bytes / StrictMath.pow(unit, exp), pre);
-    }
-
     private void setupRepositories() {
-        if (!offline) {
-            repositories.add(setupRepository("central", "http://repo1.maven.org/maven2/", false,
-                                             setupRepository("ibiblio.org", "http://mirrors.ibiblio.org/maven2/",
-                                                     false),
-                    setupRepository("antelink",
-                            "http://maven.antelink.com/content/repositories/central/", false),
-                                             setupRepository("exist", "http://repo.exist.com/maven2/", false),
-                                             setupRepository("ibiblio.net",
-                                                             "http://www.ibiblio.net/pub/packages/maven2/", false),
-                                             setupRepository("central-uk", "http://uk.maven.org/maven2/", false)));
+        repositories.add(setupRepository("central", "http://repo1.maven.org/maven2/",
+                setupRepository("ibiblio.org", "http://mirrors.ibiblio.org/maven2/"),
+                setupRepository("antelink", ".com/content/repositories/central/"),
+                setupRepository("exist", "http://repo.exist.com/maven2/"),
+                setupRepository("ibiblio.net", "http://www.ibiblio.net/pub/packages/maven2/"),
+                setupRepository("central-uk", "http://uk.maven.org/maven2/")));
 
-            illarionRepository = setupRepository("illarion", "http://illarion.org/media/java/maven", snapshot);
-            repositories.add(illarionRepository);
-            repositories.add(setupRepository("oss-sonatype", "http://oss.sonatype.org/content/repositories/releases/",
-                                             false));
-        }
+        illarionRepository = setupRepository("illarion", "http://illarion.org/media/java/maven", true, snapshot);
+        repositories.add(illarionRepository);
+        repositories.add(setupRepository("oss-sonatype", "http://oss.sonatype.org/content/repositories/releases/"));
+
+        session.setOffline(offline);
 
         Path localDir = DirectoryManager.getInstance().getDirectory(Directory.Data);
         LocalRepository localRepo = new LocalRepository(localDir.toFile());
-        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
+        LocalRepositoryManager manager = system.newLocalRepositoryManager(session, localRepo);
+        session.setLocalRepositoryManager(manager);
     }
 
     @Nonnull
-    private static RemoteRepository setupRepository(
-            @Nonnull String id, @Nonnull String url, boolean enableSnapshots, @Nonnull RemoteRepository... mirrors) {
+    private RemoteRepository setupRepository(@Nonnull String id,
+                                             @Nonnull String url,
+                                             @Nonnull RemoteRepository... mirrors) {
+        return setupRepository(id, url, false, false, mirrors);
+    }
+
+    @Nonnull
+    private RemoteRepository setupRepository(@Nonnull String id,
+                                             @Nonnull String url,
+                                             boolean alwaysCheck,
+                                             boolean enableSnapshots,
+                                             @Nonnull RemoteRepository... mirrors) {
         Builder repo = new Builder(id, "default", url);
+
+        String checksumPolicy =
+                config.getBoolean("verifyArtifactChecksum") ? CHECKSUM_POLICY_FAIL : CHECKSUM_POLICY_IGNORE;
+        String updatePolicy = alwaysCheck ? UPDATE_POLICY_ALWAYS : UPDATE_POLICY_NEVER;
         if (enableSnapshots) {
-            repo.setSnapshotPolicy(new RepositoryPolicy(true, UPDATE_POLICY_ALWAYS, CHECKSUM_POLICY_FAIL));
+            repo.setSnapshotPolicy(new RepositoryPolicy(true, updatePolicy, checksumPolicy));
         } else {
-            repo.setSnapshotPolicy(new RepositoryPolicy(false, UPDATE_POLICY_NEVER, CHECKSUM_POLICY_FAIL));
+            repo.setSnapshotPolicy(new RepositoryPolicy(false, UPDATE_POLICY_NEVER, checksumPolicy));
         }
-        repo.setReleasePolicy(new RepositoryPolicy(true, UPDATE_POLICY_ALWAYS, CHECKSUM_POLICY_FAIL));
+        repo.setReleasePolicy(new RepositoryPolicy(true, updatePolicy, checksumPolicy));
 
         for (RemoteRepository mirror : mirrors) {
             repo.addMirroredRepository(mirror);
@@ -339,19 +323,14 @@ public class MavenDownloader {
         return repo.build();
     }
 
-    private void setupServiceLocator() {
-        serviceLocator.addService(ArtifactDescriptorReader.class, DefaultArtifactDescriptorReader.class);
-
-        serviceLocator.addService(VersionResolver.class, DefaultVersionResolver.class);
-        serviceLocator.addService(VersionRangeResolver.class, DefaultVersionRangeResolver.class);
-
-        serviceLocator.addService(MetadataGeneratorFactory.class, SnapshotMetadataGeneratorFactory.class);
-        serviceLocator.addService(MetadataGeneratorFactory.class, VersionsMetadataGeneratorFactory.class);
+    @Nonnull
+    private static ServiceLocator setupServiceLocator() {
+        DefaultServiceLocator serviceLocator = MavenRepositorySystemUtils.newServiceLocator();
 
         serviceLocator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
         serviceLocator.addService(TransporterFactory.class, HttpTransporterFactory.class);
-
         serviceLocator.setServices(ModelBuilder.class, new DefaultModelBuilderFactory().newInstance());
+        return serviceLocator;
     }
 
 }

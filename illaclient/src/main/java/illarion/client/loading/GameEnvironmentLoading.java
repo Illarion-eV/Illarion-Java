@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -62,7 +62,7 @@ final class GameEnvironmentLoading implements LoadingTask {
      *
      * @param engine the engine that is used to load the game
      */
-    GameEnvironmentLoading(@Nonnull final Engine engine) {
+    GameEnvironmentLoading(@Nonnull Engine engine) {
         usedEngine = engine;
         monitor = new ProgressMonitor();
     }
@@ -72,7 +72,7 @@ final class GameEnvironmentLoading implements LoadingTask {
         try {
             SkillLoader.load();
             World.initWorldComponents(usedEngine);
-        } catch (@Nonnull final EngineException e) {
+        } catch (@Nonnull EngineException e) {
             logger.error("Failed to init the components of the world.", e);
             IllaClient.errorExit("World init failed!");
         }

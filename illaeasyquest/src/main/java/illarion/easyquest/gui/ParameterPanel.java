@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -25,10 +25,10 @@ import java.awt.*;
 @SuppressWarnings("serial")
 public class ParameterPanel extends JPanel {
     @Nullable
-    private Component comp;
+    private final Component comp;
 
     public ParameterPanel(@Nonnull TemplateParameter parameter) {
-        JLabel description = new JLabel(parameter.getDescription() + ":");
+        JLabel description = new JLabel(parameter.getDescription() + ':');
         String type = parameter.getType();
         switch (type) {
             case "TEXT":

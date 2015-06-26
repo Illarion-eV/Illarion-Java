@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -27,7 +27,7 @@ public class MapOpenEvent {
     private final Path path;
     private final String name;
 
-    public MapOpenEvent(@Nonnull final Path path, final String name) {
+    public MapOpenEvent(@Nonnull Path path, String name) {
         this.path = path;
         this.name = name;
     }

@@ -19,7 +19,10 @@ import illarion.common.util.PoolThreadFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.concurrent.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This class is a helper that enables to GUI to handle things like double clicks.
@@ -112,13 +115,10 @@ public abstract class AbstractMultiActionHelper {
         actionCount++;
         if ((actionCount < countLimit) || (countLimit == -1)) {
             resetPendingTask();
-            task = executorService.schedule(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    task = null;
-                    execute();
-                    return null;
-                }
+            task = executorService.schedule(() -> {
+                task = null;
+                execute();
+                return null;
             }, timeout, timeoutUnits);
         } else {
             execute();

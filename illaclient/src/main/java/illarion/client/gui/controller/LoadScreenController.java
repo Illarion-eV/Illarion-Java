@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -32,12 +32,12 @@ public final class LoadScreenController implements ScreenController {
     @Nonnull
     private final Game game;
 
-    public LoadScreenController(@Nonnull final Game game) {
+    public LoadScreenController(@Nonnull Game game) {
         this.game = game;
     }
 
     @Override
-    public void bind(@Nonnull final Nifty nifty, @Nonnull final Screen screen) {
+    public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
         progress = screen.findNiftyControl("loading", Progress.class);
     }
 
@@ -57,7 +57,7 @@ public final class LoadScreenController implements ScreenController {
         game.enterState(Game.STATE_PLAYING);
     }
 
-    public void setProgress(final float progressValue) {
+    public void setProgress(float progressValue) {
         if (progress != null) {
             progress.setProgress(progressValue);
         }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -45,7 +45,7 @@ public class ItemDataTableModel extends AbstractTableModel {
      *
      * @param data List with key=value data as strings
      */
-    public ItemDataTableModel(@Nonnull final List<String> data) {
+    public ItemDataTableModel(@Nonnull List<String> data) {
         this.data = new ArrayList<>(data);
     }
 
@@ -54,7 +54,7 @@ public class ItemDataTableModel extends AbstractTableModel {
      *
      * @param keyValue a string with key=value
      */
-    public void addData(final String keyValue) {
+    public void addData(String keyValue) {
         data.add(keyValue);
         EventBus.publish(new ItemDataAddedEvent(keyValue));
     }
@@ -77,23 +77,23 @@ public class ItemDataTableModel extends AbstractTableModel {
     }
 
     @Override
-    public String getColumnName(final int col) {
+    public String getColumnName(int col) {
         return columnNames[col];
     }
 
     @Nullable
     @Override
-    public Object getValueAt(final int row, final int col) {
-        final String[] dataKeyVal = split(data.get(row));
+    public Object getValueAt(int row, int col) {
+        String[] dataKeyVal = split(data.get(row));
         return dataKeyVal[col];
     }
 
     @Nonnull
-    private static String[] split(@Nonnull final CharSequence line) {
-        final Matcher regexMatcher = PATTERN_DATA.matcher(line);
-        final List<String> matches = new LinkedList<>();
+    private static String[] split(@Nonnull CharSequence line) {
+        Matcher regexMatcher = PATTERN_DATA.matcher(line);
+        List<String> matches = new LinkedList<>();
         while (regexMatcher.find()) {
-            final String match = regexMatcher.group();
+            String match = regexMatcher.group();
             if (!match.isEmpty()) {
                 matches.add(match);
             }
@@ -106,7 +106,7 @@ public class ItemDataTableModel extends AbstractTableModel {
      *
      * @param row the row to remove
      */
-    public void removeRow(final int row) {
+    public void removeRow(int row) {
         if ((data.size() > row) && (row > -1)) {
             data.remove(row);
             EventBus.publish(new ItemDataRemovedEvent(row));
@@ -114,9 +114,9 @@ public class ItemDataTableModel extends AbstractTableModel {
     }
 
     @Override
-    public void setValueAt(final Object aValue, final int rowIndex, final int columnIndex) {
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         String newKeyVal = null;
-        final String[] dataKeyVal = split(data.get(rowIndex));
+        String[] dataKeyVal = split(data.get(rowIndex));
         if (columnIndex == 0) {
             newKeyVal = aValue + "=" + dataKeyVal[1];
         } else if (columnIndex == 1) {
@@ -133,13 +133,13 @@ public class ItemDataTableModel extends AbstractTableModel {
      *
      * @param dataList List with key=value data as strings
      */
-    public void setData(@Nonnull final Collection<String> dataList) {
+    public void setData(@Nonnull Collection<String> dataList) {
         data.clear();
         data.addAll(dataList);
     }
 
     @Override
-    public boolean isCellEditable(final int rowIndex, final int columnIndex) {
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
         return true;
     }
 }

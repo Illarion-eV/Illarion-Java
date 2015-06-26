@@ -184,7 +184,6 @@ final class RayNode {
      * @return the string representation of this ray node
      */
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

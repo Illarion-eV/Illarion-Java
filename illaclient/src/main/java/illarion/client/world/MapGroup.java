@@ -155,9 +155,7 @@ public final class MapGroup {
         parent.addChild(this);
 
         if (children != null) {
-            for (MapGroup aChildren : children) {
-                parent.addChild(aChildren);
-            }
+            children.forEach(parent::addChild);
             children = null;
         }
 

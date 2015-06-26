@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,10 +16,13 @@
 package illarion.easyquest.gui;
 
 import illarion.common.config.ConfigDialog;
+import illarion.common.config.ConfigDialog.Entry;
+import illarion.common.config.ConfigDialog.Page;
 import illarion.common.config.ConfigSystem;
 import illarion.common.config.entries.DirectoryEntry;
 import illarion.common.config.entries.TextEntry;
 import illarion.common.util.DirectoryManager;
+import illarion.common.util.DirectoryManager.Directory;
 import illarion.easyquest.Lang;
 
 import javax.annotation.Nonnull;
@@ -43,7 +46,6 @@ public final class Config {
     /**
      * The property key value for the easyQuest folder.
      */
-    @SuppressWarnings("nls")
     private static final String easyQuestFolder = "easyQuestFolder";
 
     /**
@@ -54,20 +56,17 @@ public final class Config {
     /**
      * The key of the last files list on the configuration file
      */
-    @SuppressWarnings("nls")
     private static final String lastFilesKey = "lastFiles";
 
     /**
      * The property key value for the export folder.
      */
-    @SuppressWarnings("nls")
     private static final String exportFolder = "exportFolder";
 
     /**
      * The property key for the list of files that were open at the last time
      * the editor was running.
      */
-    @SuppressWarnings("nls")
     private static final String openFiles = "openFiles";
 
     private static final String character = "character";
@@ -114,9 +113,8 @@ public final class Config {
      * set
      */
     @Nonnull
-    @SuppressWarnings("nls")
     private static Path checkFolder() {
-        return DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
+        return DirectoryManager.getInstance().getDirectory(Directory.User);
     }
 
     /**
@@ -130,23 +128,22 @@ public final class Config {
     }
 
     @Nonnull
-    @SuppressWarnings("nls")
     public ConfigDialog createDialog() {
         ConfigDialog dialog = new ConfigDialog();
         dialog.setConfig(cfg);
         dialog.setMessageSource(Lang.getInstance());
 
-        ConfigDialog.Page page;
-        page = new ConfigDialog.Page("illarion.easyquest.gui.config.generalTab");
-        page.addEntry(new ConfigDialog.Entry("illarion.easyquest.gui.config.easyQuestFolderLabel",
+        Page page;
+        page = new Page("illarion.easyquest.gui.config.generalTab");
+        page.addEntry(new Entry("illarion.easyquest.gui.config.easyQuestFolderLabel",
                                              new DirectoryEntry(easyQuestFolder, null)));
-        page.addEntry(new ConfigDialog.Entry("illarion.easyquest.gui.config.exportFolderLabel",
+        page.addEntry(new Entry("illarion.easyquest.gui.config.exportFolderLabel",
                                              new DirectoryEntry(exportFolder, null)));
         dialog.addPage(page);
 
-        page = new ConfigDialog.Page("illarion.easyquest.gui.config.serverTab");
-        page.addEntry(new ConfigDialog.Entry("illarion.easyquest.gui.config.characterLabel", new TextEntry(character)));
-        page.addEntry(new ConfigDialog.Entry("illarion.easyquest.gui.config.passwordLabel", new TextEntry(password)));
+        page = new Page("illarion.easyquest.gui.config.serverTab");
+        page.addEntry(new Entry("illarion.easyquest.gui.config.characterLabel", new TextEntry(character)));
+        page.addEntry(new Entry("illarion.easyquest.gui.config.passwordLabel", new TextEntry(password)));
         dialog.addPage(page);
 
         return dialog;
@@ -162,12 +159,12 @@ public final class Config {
     @Nonnull
     public Collection<Path> getLastOpenedFiles() {
         if (lastOpenedFilesBuffer != null) {
-            return lastOpenedFilesBuffer;
+            return Collections.unmodifiableList(lastOpenedFilesBuffer);
         }
         String lastFiles = cfg.getString(lastFilesKey);
         if (lastFiles == null || lastFiles.isEmpty()) {
             lastOpenedFilesBuffer = Collections.emptyList();
-            return lastOpenedFilesBuffer;
+            return Collections.unmodifiableList(lastOpenedFilesBuffer);
         }
         String[] fetchedList = lastFiles.split(File.pathSeparator);
         List<Path> returnList = Arrays.asList(new Path[Math.min(fetchedList.length, LAST_OPEN_FILES_COUNT)]);
@@ -194,7 +191,7 @@ public final class Config {
 
         StringBuilder cleanedResult = new StringBuilder();
         for (int i = 0; i < entryPos; i++) {
-            cleanedResult.append(returnList.get(i).toAbsolutePath().toString());
+            cleanedResult.append(returnList.get(i).toAbsolutePath());
             cleanedResult.append(File.pathSeparator);
         }
         cleanedResult.setLength(cleanedResult.length() - 1);
@@ -234,7 +231,6 @@ public final class Config {
     /**
      * Initialize the configuration class and load all configuration values.
      */
-    @SuppressWarnings("nls")
     public void init() {
         Path folder = checkFolder();
 
@@ -277,7 +273,7 @@ public final class Config {
     public void setOldFiles(@Nonnull Iterable<Path> files) {
         StringBuilder buffer = new StringBuilder();
         for (Path file : files) {
-            buffer.append(file.toAbsolutePath().toString());
+            buffer.append(file.toAbsolutePath());
             buffer.append(File.pathSeparator);
         }
         buffer.setLength(buffer.length() - 1);

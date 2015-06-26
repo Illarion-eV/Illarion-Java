@@ -17,12 +17,8 @@ package illarion.client.world.items;
 
 import de.lessvoid.nifty.tools.Color;
 import illarion.client.util.Lang;
-import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
-import org.illarion.engine.GameContainer;
 import org.jetbrains.annotations.Contract;
-
-import javax.annotation.Nonnull;
 
 /**
  * This class stores and maintains the current carry load and provides some methods to easily handle the load values.
@@ -40,6 +36,7 @@ public class CarryLoad {
      * @param current the new current load value
      * @param maximum the maximum load value
      */
+    @SuppressWarnings("ConstantConditions")
     public void updateLoad(int current, int maximum) {
         boolean oldRunningPossible = isRunningPossible();
         boolean oldWalkingPossible = isWalkingPossible();
@@ -48,37 +45,35 @@ public class CarryLoad {
         maximumLoad = maximum;
         currentLoad = current;
 
-        String messageToSend = null;
-        //noinspection ConstantConditions
-        if (isFirst && !isRunningPossible()) {
-            messageToSend = Lang.getMsg("illarion.client.world.items.CarryLoad.RunningImpossible");
-        } else if (oldRunningPossible != isRunningPossible()) {
-            if (oldRunningPossible) {
+        if (World.getGameGui().isReady() && !World.getGameGui().getDialogCraftingGui().isCraftingInProgress()) {
+            String messageToSend = null;
+            if (isFirst && !isRunningPossible()) {
                 messageToSend = Lang.getMsg("illarion.client.world.items.CarryLoad.RunningImpossible");
+            } else if (oldRunningPossible != isRunningPossible()) {
+                if (oldRunningPossible) {
+                    messageToSend = Lang.getMsg("illarion.client.world.items.CarryLoad.RunningImpossible");
+                }
+                if (!isFirst && !oldRunningPossible) {
+                    messageToSend = Lang.getMsg("illarion.client.world.items.CarryLoad.RunningPossible");
+                }
             }
-            if (!isFirst && !oldRunningPossible) {
-                messageToSend = Lang.getMsg("illarion.client.world.items.CarryLoad.RunningPossible");
-            }
-        }
-        if (isFirst && !isWalkingPossible()) {
-            messageToSend = Lang.getMsg("illarion.client.world.items.CarryLoad.WalkingImpossible");
-        } else if (oldWalkingPossible != isWalkingPossible()) {
-            if (oldWalkingPossible) {
+            if (isFirst && !isWalkingPossible()) {
                 messageToSend = Lang.getMsg("illarion.client.world.items.CarryLoad.WalkingImpossible");
+            } else if (oldWalkingPossible != isWalkingPossible()) {
+                if (oldWalkingPossible) {
+                    messageToSend = Lang.getMsg("illarion.client.world.items.CarryLoad.WalkingImpossible");
+                }
+                if (!isFirst && !oldWalkingPossible) {
+                    messageToSend = Lang.getMsg("illarion.client.world.items.CarryLoad.WalkingPossible");
+                }
             }
-            if (!isFirst && !oldWalkingPossible) {
-                messageToSend = Lang.getMsg("illarion.client.world.items.CarryLoad.WalkingPossible");
-            }
-        }
-        if (messageToSend != null) {
-            final String finalMessageToSend = messageToSend;
-            World.getUpdateTaskManager().addTask(new UpdateTask() {
-                @Override
-                public void onUpdateGame(@Nonnull GameContainer container, int delta) {
+            if (messageToSend != null) {
+                String finalMessageToSend = messageToSend;
+                World.getUpdateTaskManager().addTask((container, delta) -> {
                     World.getGameGui().getInformGui().showScriptInform(1, finalMessageToSend);
                     World.getGameGui().getChatGui().addChatMessage(finalMessageToSend, Color.WHITE);
-                }
-            });
+                });
+            }
         }
         if (World.getGameGui().isReady()) {
             World.getGameGui().getInventoryGui().updateCarryLoad();

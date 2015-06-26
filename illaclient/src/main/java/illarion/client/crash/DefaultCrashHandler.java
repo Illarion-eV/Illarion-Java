@@ -58,10 +58,22 @@ public final class DefaultCrashHandler extends AbstractCrashHandler {
      * @return the error message
      */
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
     protected String getCrashMessage(@Nonnull Thread t, @Nonnull Throwable e) {
+        if (isMissingOpenGLSupportMessage(t, e)) {
+            return Lang.getMsg("crash.noOpenGL");
+        }
         return Lang.getMsg("crash.default") + '\n' + e.getLocalizedMessage();
+    }
+
+    @Override
+    protected boolean isUnsolvableError(@Nonnull Thread t, @Nonnull Throwable e) {
+        return isMissingOpenGLSupportMessage(t, e);
+    }
+
+    private static boolean isMissingOpenGLSupportMessage(@Nonnull Thread t, @Nonnull Throwable e) {
+        return "LWJGL Application".equals(t.getName()) && (e instanceof RuntimeException) &&
+                (e.getMessage() != null) && e.getMessage().startsWith("OpenGL is not supported by the video driver");
     }
 
     /**

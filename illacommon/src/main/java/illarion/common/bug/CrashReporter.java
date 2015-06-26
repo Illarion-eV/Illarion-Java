@@ -177,13 +177,10 @@ public final class CrashReporter {
      * @param ownThread {@code true} in case the crash report is supposed
      * to be started in a additional thread
      */
-    public void reportCrash(@Nonnull final CrashData crash, boolean ownThread) {
+    public void reportCrash(@Nonnull CrashData crash, boolean ownThread) {
         if (ownThread) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    reportCrash(crash, false);
-                }
+            new Thread(() -> {
+                reportCrash(crash, false);
             }).start();
         }
 
@@ -361,12 +358,10 @@ public final class CrashReporter {
 
                 possibleDuplicateIssue = checkedIssue;
 
-                if (!saveString(checkedIssue.getDescription()).equals(description)) {
-                    continue;
+                if (saveString(checkedIssue.getDescription()).equals(description)) {
+                    duplicateIssue = checkedIssue;
+                    break;
                 }
-
-                duplicateIssue = checkedIssue;
-                break;
             }
 
             if (duplicateIssue != null) {

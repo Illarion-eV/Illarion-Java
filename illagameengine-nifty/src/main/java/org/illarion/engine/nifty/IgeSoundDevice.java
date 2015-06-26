@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -44,19 +44,19 @@ public class IgeSoundDevice implements SoundDevice {
      *
      * @param engine the engine that is used by this device
      */
-    public IgeSoundDevice(@Nonnull final Engine engine) {
+    public IgeSoundDevice(@Nonnull Engine engine) {
         this.engine = engine;
     }
 
     @Override
-    public void setResourceLoader(@Nonnull final NiftyResourceLoader niftyResourceLoader) {
+    public void setResourceLoader(@Nonnull NiftyResourceLoader niftyResourceLoader) {
         // nothing
     }
 
     @Nullable
     @Override
-    public SoundHandle loadSound(@Nonnull final SoundSystem soundSystem, @Nonnull final String filename) {
-        final Sound sound = engine.getAssets().getSoundsManager().getSound(filename);
+    public SoundHandle loadSound(@Nonnull SoundSystem soundSystem, @Nonnull String filename) {
+        Sound sound = engine.getAssets().getSoundsManager().getSound(filename);
         if (sound == null) {
             return null;
         }
@@ -65,8 +65,8 @@ public class IgeSoundDevice implements SoundDevice {
 
     @Nullable
     @Override
-    public SoundHandle loadMusic(@Nonnull final SoundSystem soundSystem, @Nonnull final String filename) {
-        final Music music = engine.getAssets().getSoundsManager().getMusic(filename);
+    public SoundHandle loadMusic(@Nonnull SoundSystem soundSystem, @Nonnull String filename) {
+        Music music = engine.getAssets().getSoundsManager().getMusic(filename);
         if (music == null) {
             return null;
         }
@@ -74,7 +74,7 @@ public class IgeSoundDevice implements SoundDevice {
     }
 
     @Override
-    public void update(final int delta) {
+    public void update(int delta) {
         // nothing to do
     }
 }

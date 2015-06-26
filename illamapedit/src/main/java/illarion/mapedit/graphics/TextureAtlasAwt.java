@@ -44,25 +44,25 @@ public final class TextureAtlasAwt implements TextureAtlas<BufferedImage> {
      * @param image the buffered image that contains the entire texture
      * @param textureDef the XML document that contains the locations of the sub-images on the large image
      */
-    public TextureAtlasAwt(@Nonnull final BufferedImage image, @Nonnull final Document textureDef) {
+    public TextureAtlasAwt(@Nonnull BufferedImage image, @Nonnull Document textureDef) {
         textures = new FastMap<>(Equalities.LEXICAL_FAST, Equalities.STANDARD);
 
-        final NodeList list = textureDef.getElementsByTagName("sprite");
+        NodeList list = textureDef.getElementsByTagName("sprite");
         for (int i = 0; i < list.getLength(); i++) {
-            final Element element = (Element) list.item(i);
+            Element element = (Element) list.item(i);
 
-            final String name = element.getAttribute("name");
-            final int x = Integer.parseInt(element.getAttribute("x"));
-            final int y = Integer.parseInt(element.getAttribute("y"));
-            final int width = Integer.parseInt(element.getAttribute("width"));
-            final int height = Integer.parseInt(element.getAttribute("height"));
+            String name = element.getAttribute("name");
+            int x = Integer.parseInt(element.getAttribute("x"));
+            int y = Integer.parseInt(element.getAttribute("y"));
+            int width = Integer.parseInt(element.getAttribute("width"));
+            int height = Integer.parseInt(element.getAttribute("height"));
 
             textures.put(name, image.getSubimage(x, y, width, height));
         }
     }
 
     @Override
-    public BufferedImage getTexture(final String texture) {
+    public BufferedImage getTexture(String texture) {
         return textures.get(texture);
     }
 }

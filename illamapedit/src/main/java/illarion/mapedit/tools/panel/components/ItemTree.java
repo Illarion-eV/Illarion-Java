@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -26,13 +26,10 @@ import org.bushe.swing.event.EventBus;
 import javax.annotation.Nonnull;
 import javax.swing.*;
 import javax.swing.event.TreeModelListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeSelectionModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -46,13 +43,13 @@ public class ItemTree extends JScrollPane {
         @Nonnull
         private final List<ItemGroup> groups;
 
-        private ItemGroupModel(@Nonnull final ItemImg[] items) {
-            final ItemGroupLoader gl = ItemGroupLoader.getInstance();
+        private ItemGroupModel(@Nonnull ItemImg... items) {
+            ItemGroupLoader gl = ItemGroupLoader.getInstance();
             groups = new FastTable<>();
 
-            for (final ItemImg i : items) {
+            for (ItemImg i : items) {
                 boolean existedGroup = false;
-                for (final ItemGroup ig : groups) {
+                for (ItemGroup ig : groups) {
                     if (ig.getId() == i.getEditorGroup()) {
                         ig.add(i);
                         existedGroup = true;
@@ -62,23 +59,20 @@ public class ItemTree extends JScrollPane {
                 if (existedGroup) {
                     continue;
                 }
-                final ItemGroup gr = new ItemGroup(i.getEditorGroup(), gl.getGroupName(i.getEditorGroup()));
+                ItemGroup gr = new ItemGroup(i.getEditorGroup(), gl.getGroupName(i.getEditorGroup()));
                 gr.add(i);
                 groups.add(gr);
             }
-            Collections.sort(groups, new Comparator<ItemGroup>() {
-                @Override
-                public int compare(@Nonnull final ItemGroup group1, @Nonnull final ItemGroup group2) {
-                    String g1 = group1.getName();
-                    if (g1 == null) {
-                        g1 = "";
-                    }
-                    String g2 = group2.getName();
-                    if (g2 == null) {
-                        g2 = "";
-                    }
-                    return g1.compareToIgnoreCase(g2);
+            Collections.sort(groups, (group1, group2) -> {
+                String g1 = group1.getName();
+                if (g1 == null) {
+                    g1 = "";
                 }
+                String g2 = group2.getName();
+                if (g2 == null) {
+                    g2 = "";
+                }
+                return g1.compareToIgnoreCase(g2);
             });
         }
 
@@ -89,7 +83,7 @@ public class ItemTree extends JScrollPane {
         }
 
         @Override
-        public Object getChild(@Nonnull final Object parent, final int index) {
+        public Object getChild(@Nonnull Object parent, int index) {
             if (parent == getRoot()) {
                 return groups.get(index);
             }
@@ -100,7 +94,7 @@ public class ItemTree extends JScrollPane {
         }
 
         @Override
-        public int getChildCount(@Nonnull final Object parent) {
+        public int getChildCount(@Nonnull Object parent) {
             if (parent == getRoot()) {
                 return groups.size();
             }
@@ -114,17 +108,17 @@ public class ItemTree extends JScrollPane {
         }
 
         @Override
-        public boolean isLeaf(final Object node) {
+        public boolean isLeaf(Object node) {
             return node instanceof ItemImg;
         }
 
         @Override
-        public void valueForPathChanged(final TreePath path, final Object newValue) {
+        public void valueForPathChanged(TreePath path, Object newValue) {
 
         }
 
         @Override
-        public int getIndexOfChild(@Nonnull final Object parent, final Object child) {
+        public int getIndexOfChild(@Nonnull Object parent, Object child) {
             if (parent == getRoot()) {
                 return groups.indexOf(child);
             }
@@ -135,12 +129,12 @@ public class ItemTree extends JScrollPane {
         }
 
         @Override
-        public void addTreeModelListener(final TreeModelListener l) {
+        public void addTreeModelListener(TreeModelListener l) {
 
         }
 
         @Override
-        public void removeTreeModelListener(final TreeModelListener l) {
+        public void removeTreeModelListener(TreeModelListener l) {
 
         }
     }
@@ -151,7 +145,7 @@ public class ItemTree extends JScrollPane {
         private final String name;
         private final int id;
 
-        private ItemGroup(final int id, final String name) {
+        private ItemGroup(int id, String name) {
             this.id = id;
             items = new FastTable<>();
             this.name = name;
@@ -162,7 +156,7 @@ public class ItemTree extends JScrollPane {
             return items;
         }
 
-        public void add(final ItemImg item) {
+        public void add(ItemImg item) {
             items.add(item);
         }
 
@@ -182,7 +176,7 @@ public class ItemTree extends JScrollPane {
     }
 
     public ItemTree() {
-        final JTree tree = new JTree(new ItemGroupModel(ItemLoader.getInstance().getItems()));
+        JTree tree = new JTree(new ItemGroupModel(ItemLoader.getInstance().getItems()));
         tree.setToggleClickCount(1);
         setViewportView(tree);
         tree.setEditable(false);
@@ -190,13 +184,10 @@ public class ItemTree extends JScrollPane {
         tree.setScrollsOnExpand(false);
         tree.setCellRenderer(new ItemTreeCellRenderer(getBackground()));
         tree.setSelectionModel(new DefaultTreeSelectionModel());
-        tree.addTreeSelectionListener(new TreeSelectionListener() {
-            @Override
-            public void valueChanged(@Nonnull final TreeSelectionEvent e) {
-                final Object[] o = e.getPath().getPath();
-                if (o[o.length - 1] instanceof ItemImg) {
-                    EventBus.publish(new ItemSelectedEvent((ItemImg) o[o.length - 1]));
-                }
+        tree.addTreeSelectionListener(e -> {
+            Object[] o = e.getPath().getPath();
+            if (o[o.length - 1] instanceof ItemImg) {
+                EventBus.publish(new ItemSelectedEvent((ItemImg) o[o.length - 1]));
             }
         });
     }

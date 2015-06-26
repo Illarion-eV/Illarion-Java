@@ -39,7 +39,6 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
     /**
      * The logger of this class.
      */
-    @SuppressWarnings("UnusedDeclaration")
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractScene.class);
 
     /**
@@ -150,7 +149,6 @@ public abstract class AbstractScene<T extends SceneEffect> implements Scene, Com
             }
             event = eventQueue.poll();
         }
-        long end = System.currentTimeMillis();
 
         for (int i = 0; i < workingArraySize; i++) {
             SceneElement element = workingArray[i];

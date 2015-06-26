@@ -91,7 +91,6 @@ public final class ClothLoader extends AbstractResourceLoader<AvatarClothTemplat
      * @return true in case the loader shall go on reading the table, false if
      * it should stop
      */
-    @SuppressWarnings("nls")
     @Override
     public boolean processRecord(int line, @Nonnull TableLoaderClothes loader) {
         int avatarID = loader.getReferenceCharacterId();

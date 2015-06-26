@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -22,6 +22,8 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.sound.sampled.*;
+import javax.sound.sampled.AudioFormat.Encoding;
+import javax.sound.sampled.DataLine.Info;
 import java.io.IOException;
 import java.net.URL;
 
@@ -75,7 +77,7 @@ public class OggPlayer extends Thread implements Stoppable {
         audioInputStream = AudioSystem.getAudioInputStream(songURL);
         if (audioInputStream != null) {
             AudioFormat baseFormat = audioInputStream.getFormat();
-            decodedFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, baseFormat.getSampleRate(), 16,
+            decodedFormat = new AudioFormat(Encoding.PCM_SIGNED, baseFormat.getSampleRate(), 16,
                                             baseFormat.getChannels(), baseFormat.getChannels() * 2,
                                             baseFormat.getSampleRate(), false);
 
@@ -86,7 +88,7 @@ public class OggPlayer extends Thread implements Stoppable {
     @Nullable
     private SourceDataLine getLine() throws LineUnavailableException {
         SourceDataLine res = null;
-        DataLine.Info info = new DataLine.Info(SourceDataLine.class, decodedFormat);
+        Info info = new Info(SourceDataLine.class, decodedFormat);
         res = (SourceDataLine) AudioSystem.getLine(info);
         res.open(decodedFormat);
         return res;

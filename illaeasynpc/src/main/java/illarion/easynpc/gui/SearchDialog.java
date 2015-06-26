@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,8 +23,6 @@ import org.fife.ui.rtextarea.SearchEngine;
 import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * This is the advanced search dialog that can be used to search and replace contents of the script that is currently
@@ -42,10 +40,10 @@ public final class SearchDialog extends JDialog {
      * The constructor of the dialog that prepares the dialog for proper
      * display.
      */
-    public SearchDialog(@Nonnull final MainFrame frame) {
+    public SearchDialog(@Nonnull MainFrame frame) {
         super(frame, Lang.getMsg(SearchDialog.class, "title"), false);
 
-        final SearchDialog dialog = this;
+        SearchDialog dialog = this;
 
         JPanel mainPanel = new JPanel(new GridBagLayout());
         getContentPane().add(mainPanel);
@@ -62,13 +60,13 @@ public final class SearchDialog extends JDialog {
         JLabel searchLabel = new JLabel(Lang.getMsg(SearchDialog.class, "searchForLabel"));
         JLabel replaceLabel = new JLabel(Lang.getMsg(SearchDialog.class, "replaceWithLabel"));
 
-        final JTextField searchText = new JTextField();
-        final JTextField replaceField = new JTextField();
+        JTextField searchText = new JTextField();
+        JTextField replaceField = new JTextField();
         searchText.setPreferredSize(new Dimension(300, searchText.getPreferredSize().height));
         replaceField.setPreferredSize(new Dimension(300, replaceField.getPreferredSize().height));
 
-        final JCheckBox caseSensitiveCheck = new JCheckBox(Lang.getMsg(SearchDialog.class, "caseCheck"));
-        final JCheckBox regExpCheck = new JCheckBox(Lang.getMsg(SearchDialog.class, "regExpCheck"));
+        JCheckBox caseSensitiveCheck = new JCheckBox(Lang.getMsg(SearchDialog.class, "caseCheck"));
+        JCheckBox regExpCheck = new JCheckBox(Lang.getMsg(SearchDialog.class, "regExpCheck"));
 
         JButton findNextBtn = new JButton(Lang.getMsg(SearchDialog.class, "findNextButton"));
         JButton replaceOneBtn = new JButton(Lang.getMsg(SearchDialog.class, "replaceButton"));
@@ -84,62 +82,48 @@ public final class SearchDialog extends JDialog {
         replaceAllBtn.setPreferredSize(buttonDim);
         closeBtn.setPreferredSize(buttonDim);
 
-        findNextBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Editor scriptEditor = frame.getCurrentScriptEditor();
-                RSyntaxTextArea editor = scriptEditor.getEditor();
+        findNextBtn.addActionListener(e -> {
+            Editor scriptEditor = frame.getCurrentScriptEditor();
+            RSyntaxTextArea editor = scriptEditor.getEditor();
 
-                SearchContext search = new SearchContext();
-                search.setSearchFor(searchText.getText());
-                search.setMatchCase(caseSensitiveCheck.isSelected());
-                search.setRegularExpression(regExpCheck.isSelected());
-                search.setSearchForward(true);
+            SearchContext search = new SearchContext();
+            search.setSearchFor(searchText.getText());
+            search.setMatchCase(caseSensitiveCheck.isSelected());
+            search.setRegularExpression(regExpCheck.isSelected());
+            search.setSearchForward(true);
 
-                SearchEngine.find(editor, search);
-            }
+            SearchEngine.find(editor, search);
         });
 
-        replaceOneBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Editor scriptEditor = frame.getCurrentScriptEditor();
-                RSyntaxTextArea editor = scriptEditor.getEditor();
+        replaceOneBtn.addActionListener(e -> {
+            Editor scriptEditor = frame.getCurrentScriptEditor();
+            RSyntaxTextArea editor = scriptEditor.getEditor();
 
-                SearchContext search = new SearchContext();
-                search.setSearchFor(searchText.getText());
-                search.setReplaceWith(replaceField.getText());
-                search.setMatchCase(caseSensitiveCheck.isSelected());
-                search.setRegularExpression(regExpCheck.isSelected());
-                search.setSearchForward(true);
+            SearchContext search = new SearchContext();
+            search.setSearchFor(searchText.getText());
+            search.setReplaceWith(replaceField.getText());
+            search.setMatchCase(caseSensitiveCheck.isSelected());
+            search.setRegularExpression(regExpCheck.isSelected());
+            search.setSearchForward(true);
 
-                SearchEngine.replace(editor, search);
-            }
+            SearchEngine.replace(editor, search);
         });
 
-        replaceAllBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Editor scriptEditor = frame.getCurrentScriptEditor();
-                RSyntaxTextArea editor = scriptEditor.getEditor();
+        replaceAllBtn.addActionListener(e -> {
+            Editor scriptEditor = frame.getCurrentScriptEditor();
+            RSyntaxTextArea editor = scriptEditor.getEditor();
 
-                SearchContext search = new SearchContext();
-                search.setSearchFor(searchText.getText());
-                search.setReplaceWith(replaceField.getText());
-                search.setMatchCase(caseSensitiveCheck.isSelected());
-                search.setRegularExpression(regExpCheck.isSelected());
-                search.setSearchForward(true);
+            SearchContext search = new SearchContext();
+            search.setSearchFor(searchText.getText());
+            search.setReplaceWith(replaceField.getText());
+            search.setMatchCase(caseSensitiveCheck.isSelected());
+            search.setRegularExpression(regExpCheck.isSelected());
+            search.setSearchForward(true);
 
-                SearchEngine.replaceAll(editor, search);
-            }
+            SearchEngine.replaceAll(editor, search);
         });
 
-        closeBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dialog.setVisible(false);
-            }
-        });
+        closeBtn.addActionListener(e -> dialog.setVisible(false));
 
         generalConstraints.gridwidth = GridBagConstraints.REMAINDER;
         mainPanel.add(searchLabel, generalConstraints);

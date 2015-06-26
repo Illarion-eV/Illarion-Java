@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -88,17 +88,17 @@ public class ItemImg {
     }
 
     public ItemImg(
-            final int itemId,
-            final String resourceName,
-            final String itemName,
-            final int editorGroup,
-            final int offsetX,
-            final int offsetY,
-            final int frameCount,
-            final int animationSpeed,
-            final int itemMode,
-            @Nonnull final Image[] imgs,
-            final ItemInfo info) {
+            int itemId,
+            String resourceName,
+            String itemName,
+            int editorGroup,
+            int offsetX,
+            int offsetY,
+            int frameCount,
+            int animationSpeed,
+            int itemMode,
+            @Nonnull Image[] imgs,
+            ItemInfo info) {
 
         this.itemId = itemId;
         this.resourceName = resourceName;

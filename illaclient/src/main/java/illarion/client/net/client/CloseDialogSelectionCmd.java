@@ -71,7 +71,6 @@ public final class CloseDialogSelectionCmd extends AbstractCommand {
     }
 
     @Nonnull
-    @SuppressWarnings("nls")
     @Override
     public String toString() {
         return toString("Dialog ID: " + dialogID + " - Index: " + selectedIndex + " successful: " + success);

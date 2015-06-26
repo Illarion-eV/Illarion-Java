@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.lang.Thread.UncaughtExceptionHandler;
 
 /**
  * This abstract class takes care for fetching uncaught exceptions and tries to
@@ -32,7 +33,7 @@ import javax.annotation.Nonnull;
  * @version 0.99
  * @since 0.99
  */
-abstract class AbstractCrashHandler implements Thread.UncaughtExceptionHandler {
+abstract class AbstractCrashHandler implements UncaughtExceptionHandler {
     /**
      * The logger instance that takes care for the logging output of this class.
      */
@@ -65,7 +66,6 @@ abstract class AbstractCrashHandler implements Thread.UncaughtExceptionHandler {
      * @param e the error message it crashed with
      */
     @Override
-    @SuppressWarnings("nls")
     public final void uncaughtException(@Nonnull Thread t, @Nonnull Throwable e) {
         LOGGER.error("Fetched uncaught exception: {}", getCrashMessage(), e);
         if (currentlyCrashing) {
@@ -89,7 +89,6 @@ abstract class AbstractCrashHandler implements Thread.UncaughtExceptionHandler {
      * Calling this function results in crashing the entire editor. Call it only
      * in case there is no chance in keeping the client running.
      */
-    @SuppressWarnings("nls")
     protected final void crashEditor() {
         MapEditor.crashEditor(Lang.getInstance().getMessage(getCrashMessage()) + '\n' +
                                       Lang.getInstance().getMessage("crash.fixfailed"));

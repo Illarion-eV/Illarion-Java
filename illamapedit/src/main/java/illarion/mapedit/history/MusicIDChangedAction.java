@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,7 +16,7 @@
 package illarion.mapedit.history;
 
 import illarion.mapedit.data.Map;
-import illarion.mapedit.data.MapTile;
+import illarion.mapedit.data.MapTile.MapTileFactory;
 
 /**
  * @author Tim
@@ -28,7 +28,7 @@ public class MusicIDChangedAction extends HistoryAction {
     private final int oldID;
     private final int newID;
 
-    public MusicIDChangedAction(final int x, final int y, final int oldID, final int newID, final Map map) {
+    public MusicIDChangedAction(int x, int y, int oldID, int newID, Map map) {
         super(map);
         this.x = x;
         this.y = y;
@@ -38,11 +38,11 @@ public class MusicIDChangedAction extends HistoryAction {
 
     @Override
     void redo() {
-        map.setTileAt(x, y, MapTile.MapTileFactory.setMusicId(newID, map.getTileAt(x, y)));
+        map.setTileAt(x, y, MapTileFactory.setMusicId(newID, map.getTileAt(x, y)));
     }
 
     @Override
     void undo() {
-        map.setTileAt(x, y, MapTile.MapTileFactory.setMusicId(oldID, map.getTileAt(x, y)));
+        map.setTileAt(x, y, MapTileFactory.setMusicId(oldID, map.getTileAt(x, y)));
     }
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -41,7 +41,7 @@ public class ItemTreeCellRenderer extends JPanel implements TreeCellRenderer {
     private Dimension size;
     private final Color unselected;
 
-    public ItemTreeCellRenderer(final Color unselected) {
+    public ItemTreeCellRenderer(Color unselected) {
         this.unselected = unselected;
     }
 
@@ -53,13 +53,13 @@ public class ItemTreeCellRenderer extends JPanel implements TreeCellRenderer {
     @Nonnull
     @Override
     public Component getTreeCellRendererComponent(
-            final JTree tree,
-            @Nonnull final Object val,
-            final boolean isSelected,
-            final boolean expanded,
-            final boolean leaf,
-            final int row,
-            final boolean hasFocus) {
+            JTree tree,
+            @Nonnull Object val,
+            boolean isSelected,
+            boolean expanded,
+            boolean leaf,
+            int row,
+            boolean hasFocus) {
         if (!(val instanceof ItemImg)) {
             if (isSelected) {
                 label.setBackground(COLOR_SELECTED);
@@ -69,7 +69,7 @@ public class ItemTreeCellRenderer extends JPanel implements TreeCellRenderer {
             label.setText(val.toString());
             return label;
         }
-        final ItemImg value = (ItemImg) val;
+        ItemImg value = (ItemImg) val;
         selected = isSelected;
 
         image = value.getImgs()[0];
@@ -80,10 +80,10 @@ public class ItemTreeCellRenderer extends JPanel implements TreeCellRenderer {
     }
 
     @Override
-    protected void paintComponent(@Nonnull final Graphics g) {
-        final int w = image.getWidth(null);
-        final int h = image.getHeight(null);
-        final Dimension size = getPreferredSize();
+    protected void paintComponent(@Nonnull Graphics g) {
+        int w = image.getWidth(null);
+        int h = image.getHeight(null);
+        Dimension size = getPreferredSize();
 
         if (selected) {
             g.setColor(COLOR_SELECTED);
@@ -96,7 +96,7 @@ public class ItemTreeCellRenderer extends JPanel implements TreeCellRenderer {
         final int newWidth;
         final int newHeight;
 
-        if (w > (h)) {
+        if (w > h) {
             newWidth = Math.min(w, MAX_WIDTH);
             newHeight = (int) (((float) h / (float) w) * (float) newWidth);
         } else {

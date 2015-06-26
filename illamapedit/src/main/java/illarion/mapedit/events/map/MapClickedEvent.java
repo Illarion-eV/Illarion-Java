@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -28,7 +28,7 @@ public class MapClickedEvent {
     private final MouseButton button;
     private final Map map;
 
-    public MapClickedEvent(final int x, final int y, final MouseButton button, final Map map) {
+    public MapClickedEvent(int x, int y, MouseButton button, Map map) {
         this.x = x;
         this.y = y;
         this.button = button;

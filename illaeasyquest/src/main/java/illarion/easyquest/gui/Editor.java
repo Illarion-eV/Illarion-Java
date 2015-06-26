@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -53,7 +53,7 @@ public final class Editor extends mxGraphComponent {
     @Nullable
     private Path questFile;
 
-    private boolean savedSinceLastChange = false;
+    private boolean savedSinceLastChange;
 
     private int questID = 10000;
 
@@ -68,18 +68,19 @@ public final class Editor extends mxGraphComponent {
     private final mxUndoManager undoManager;
 
     private final mxIEventListener undoHandler = new mxIEventListener() {
-        public void invoke(final Object source, @Nonnull final mxEventObject evt) {
+        @Override
+        public void invoke(Object source, @Nonnull mxEventObject evt) {
             undoManager.undoableEditHappened((mxUndoableEdit) evt.getProperty("edit"));
         }
     };
 
-    Editor(@Nonnull final Graph graph) {
+    Editor(@Nonnull Graph graph) {
         super(graph);
 
-        final mxICell root = (mxCell) graph.getModel().getRoot();
-        final Object value = root.getValue();
+        mxICell root = (mxCell) graph.getModel().getRoot();
+        Object value = root.getValue();
         if (value != null) {
-            final String txt = value.toString();
+            String txt = value.toString();
             try {
                 questID = Integer.parseInt(txt);
             } catch (NumberFormatException e) {
@@ -102,56 +103,53 @@ public final class Editor extends mxGraphComponent {
         mxCodecRegistry.register(new mxObjectCodec(new Position()));
         mxCodecRegistry.addPackage(Position.class.getPackage().getName());
 
-        final Graph g = graph;
+        graph.getModel().addListener(mxEvent.UNDO, undoHandler);
+        graph.getView().addListener(mxEvent.UNDO, undoHandler);
 
-        g.getModel().addListener(mxEvent.UNDO, undoHandler);
-        g.getView().addListener(mxEvent.UNDO, undoHandler);
-
-        final mxIEventListener undoHandler = new mxIEventListener() {
-            public void invoke(final Object source, @Nonnull final mxEventObject evt) {
-                final List<mxUndoableChange> changes = ((mxUndoableEdit) evt.getProperty("edit")).getChanges();
-                g.setSelectionCells(g.getSelectionCellsForChanges(changes));
-            }
+        mxIEventListener undoHandler = (source, evt) -> {
+            List<mxUndoableChange> changes = ((mxUndoableEdit) evt.getProperty("edit")).getChanges();
+            graph.setSelectionCells(graph.getSelectionCellsForChanges(changes));
         };
 
         undoManager.addListener(mxEvent.UNDO, undoHandler);
         undoManager.addListener(mxEvent.REDO, undoHandler);
 
-        final Editor editor = this;
+        Editor editor = this;
 
         getGraphControl().addMouseListener(new MouseAdapter() {
-            public void mouseClicked(@Nonnull final MouseEvent e) {
+            @Override
+            public void mouseClicked(@Nonnull MouseEvent e) {
                 if ((e.getClickCount() == 2) || ((e.getClickCount() == 1) &&
                         (MainFrame.getInstance().getCreateType() == MainFrame.CREATE_STATUS))) {
-                    final Object cell = getCellAt(e.getX(), e.getY());
+                    Object cell = getCellAt(e.getX(), e.getY());
                     if (cell == null) {
-                        final Object parent = g.getDefaultParent();
-                        g.getModel().beginUpdate();
+                        Object parent = graph.getDefaultParent();
+                        graph.getModel().beginUpdate();
                         try {
-                            final Status status = new Status();
+                            Status status = new Status();
                             status.setName("New Quest Status");
                             status.setStart(false);
-                            g.insertVertex(parent, null, status, e.getX() - 60, e.getY() - 15, 120, 30);
+                            graph.insertVertex(parent, null, status, e.getX() - 60, e.getY() - 15, 120, 30);
                         } finally {
-                            g.getModel().endUpdate();
+                            graph.getModel().endUpdate();
                         }
                         e.consume();
                     }
                 } else if ((e.getClickCount() == 1) &&
                         (MainFrame.getInstance().getCreateType() == MainFrame.CREATE_TRIGGER)) {
-                    final Object cell = getCellAt(e.getX(), e.getY());
+                    Object cell = getCellAt(e.getX(), e.getY());
                     if (cell == null) {
-                        final Object parent = g.getDefaultParent();
-                        g.getModel().beginUpdate();
+                        Object parent = graph.getDefaultParent();
+                        graph.getModel().beginUpdate();
                         try {
-                            final Trigger trigger = new Trigger();
+                            Trigger trigger = new Trigger();
                             trigger.setName("New Quest Trigger");
-                            final mxICell edge = (mxCell) g.insertEdge(parent, null, trigger, null, null);
+                            mxICell edge = (mxCell) graph.insertEdge(parent, null, trigger, null, null);
                             edge.getGeometry().setSourcePoint(new mxPoint(e.getX() - 60, e.getY() - 15));
                             edge.getGeometry().setTargetPoint(new mxPoint(e.getX() + 60, e.getY() + 15));
                             editor.labelChanged(edge, trigger, null);
                         } finally {
-                            g.getModel().endUpdate();
+                            graph.getModel().endUpdate();
                         }
                         e.consume();
                     }
@@ -160,9 +158,9 @@ public final class Editor extends mxGraphComponent {
         });
     }
 
-    private static void setup(@Nonnull final Graph graph) {
-        final mxStylesheet stylesheet = graph.getStylesheet();
-        final Map<String, Object> nodeStyle = stylesheet.getDefaultVertexStyle();
+    private static void setup(@Nonnull Graph graph) {
+        mxStylesheet stylesheet = graph.getStylesheet();
+        Map<String, Object> nodeStyle = stylesheet.getDefaultVertexStyle();
         nodeStyle.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
         nodeStyle.put(mxConstants.STYLE_ROUNDED, true);
         nodeStyle.put(mxConstants.STYLE_OPACITY, 50);
@@ -170,12 +168,12 @@ public final class Editor extends mxGraphComponent {
         nodeStyle.put(mxConstants.STYLE_GRADIENTCOLOR, "#AFAFFF");
         nodeStyle.put(mxConstants.STYLE_FONTCOLOR, "#000000");
         stylesheet.setDefaultVertexStyle(nodeStyle);
-        final Map<String, Object> edgeStyle = stylesheet.getDefaultEdgeStyle();
+        Map<String, Object> edgeStyle = stylesheet.getDefaultEdgeStyle();
         edgeStyle.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ELBOW);
         edgeStyle.put(mxConstants.STYLE_STROKEWIDTH, 2.0);
         edgeStyle.put(mxConstants.STYLE_ROUNDED, true);
         stylesheet.setDefaultEdgeStyle(edgeStyle);
-        final Map<String, Object> startStyle = new HashMap<>();
+        Map<String, Object> startStyle = new HashMap<>();
         startStyle.put(mxConstants.STYLE_STROKEWIDTH, 3.0);
         startStyle.put(mxConstants.STYLE_STROKECOLOR, "#0000F0");
         stylesheet.putCellStyle("StartStyle", startStyle);
@@ -187,14 +185,14 @@ public final class Editor extends mxGraphComponent {
     }
 
     public int getSelectedStatusNumber() throws IllegalStateException {
-        final Graph graph = (Graph) getGraph();
-        final mxGraphSelectionModel model = graph.getSelectionModel();
-        final Object[] nodes = model.getCells();
+        Graph graph = (Graph) getGraph();
+        mxGraphSelectionModel model = graph.getSelectionModel();
+        Object[] nodes = model.getCells();
         int count = 0;
         mxCell status = null;
 
-        for (final Object node : nodes) {
-            final mxCell cell = (mxCell) node;
+        for (Object node : nodes) {
+            mxCell cell = (mxCell) node;
             if (cell.getValue() instanceof Status) {
                 status = cell;
                 count += 1;
@@ -212,13 +210,13 @@ public final class Editor extends mxGraphComponent {
         return questID;
     }
 
-    public void setQuestID(final int questID) {
+    public void setQuestID(int questID) {
         if (this.questID != questID) {
             this.questID = questID;
             mxIGraphModel model = getGraph().getModel();
             model.beginUpdate();
             try {
-                final mxICell root = (mxCell) model.getRoot();
+                mxICell root = (mxCell) model.getRoot();
                 root.setValue(questID);
             } finally {
                 model.endUpdate();
@@ -231,7 +229,7 @@ public final class Editor extends mxGraphComponent {
         return questFile;
     }
 
-    public void setQuestFile(@Nullable final Path file) {
+    public void setQuestFile(@Nullable Path file) {
         if (file != null) {
             questFile = file;
         }
@@ -250,7 +248,7 @@ public final class Editor extends mxGraphComponent {
     }
 
     @Nonnull
-    public static Editor loadQuest(@Nullable final Path quest) {
+    public static Editor loadQuest(@Nullable Path quest) {
         mxIGraphModel model;
         if (quest == null) {
             model = new mxGraphModel();
@@ -261,23 +259,23 @@ public final class Editor extends mxGraphComponent {
                 model = new mxGraphModel();
             }
         }
-        final Graph graph = new Graph(model);
+        Graph graph = new Graph(model);
         setup(graph);
         return new Editor(graph);
     }
 
     public boolean validQuest() {
-        final Graph graph = (Graph) getGraph();
-        final mxGraphSelectionModel model = graph.getSelectionModel();
+        Graph graph = (Graph) getGraph();
+        mxGraphSelectionModel model = graph.getSelectionModel();
         model.clear();
-        final Object parent = graph.getDefaultParent();
-        final Object[] edges = graph.getChildEdges(parent);
-        final Object[] nodes = graph.getChildVertices(parent);
+        Object parent = graph.getDefaultParent();
+        Object[] edges = graph.getChildEdges(parent);
+        Object[] nodes = graph.getChildVertices(parent);
 
         int countStart = 0;
-        for (final Object node : nodes) {
-            final mxICell cell = (mxICell) node;
-            final Status status = (Status) cell.getValue();
+        for (Object node : nodes) {
+            mxICell cell = (mxICell) node;
+            Status status = (Status) cell.getValue();
             if (status.isStart()) {
                 countStart += 1;
             }
@@ -289,15 +287,15 @@ public final class Editor extends mxGraphComponent {
 
         int countUnconnected = 0;
         int countNoContent = 0;
-        for (final Object edge : edges) {
-            final mxCell cell = (mxCell) edge;
-            final mxCell source = (mxCell) cell.getSource();
-            final mxCell target = (mxCell) cell.getTarget();
+        for (Object edge : edges) {
+            mxCell cell = (mxCell) edge;
+            mxCell source = (mxCell) cell.getSource();
+            mxCell target = (mxCell) cell.getTarget();
             if ((source == null) || (target == null)) {
                 countUnconnected += 1;
             }
 
-            final Trigger trigger = (Trigger) cell.getValue();
+            Trigger trigger = (Trigger) cell.getValue();
 
             if ((trigger.getType() == null) || (trigger.getObjectId() == null) ||
                     ((trigger.getObjectId() instanceof Long) && ((Long) trigger.getObjectId() == 0)) ||

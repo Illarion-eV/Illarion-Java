@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -26,7 +26,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +36,7 @@ public class TriggerDialog extends JDialog {
     @Nonnull
     private final JTextField name;
     @Nonnull
-    private final JComboBox trigger;
+    private final JComboBox<TriggerTemplate> trigger;
     @Nonnull
     private final Box conditionPanels;
     @Nonnull
@@ -51,17 +50,17 @@ public class TriggerDialog extends JDialog {
         super(owner);
         setTitle(Lang.getMsg(getClass(), "title"));
 
-        final JPanel header = new JPanel(new GridLayout(0, 2, 0, 5));
+        JPanel header = new JPanel(new GridLayout(0, 2, 0, 5));
         main = new JPanel(new GridLayout(0, 1, 0, 5));
         conditionPanels = Box.createVerticalBox();
-        final Box body = Box.createVerticalBox();
-        final Box buttons = Box.createHorizontalBox();
-        final JLabel labelName = new JLabel(Lang.getMsg(getClass(), "name") + ":");
-        final JLabel labelType = new JLabel(Lang.getMsg(getClass(), "type") + ":");
+        Box body = Box.createVerticalBox();
+        Box buttons = Box.createHorizontalBox();
+        JLabel labelName = new JLabel(Lang.getMsg(getClass(), "name") + ':');
+        JLabel labelType = new JLabel(Lang.getMsg(getClass(), "type") + ':');
         name = new JTextField(17);
         NumberFormat format = NumberFormat.getIntegerInstance();
         format.setGroupingUsed(false);
-        trigger = new JComboBox();
+        trigger = new JComboBox<>();
         okay = new JButton(Lang.getMsg(getClass(), "ok"));
         cancel = new JButton(Lang.getMsg(getClass(), "cancel"));
 
@@ -69,18 +68,16 @@ public class TriggerDialog extends JDialog {
             trigger.addItem(TriggerTemplates.getInstance().getTemplate(i));
         }
 
-        trigger.addItemListener(new ItemListener() {
-            public void itemStateChanged(@Nonnull ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    main.removeAll();
-                    TriggerTemplate template = (TriggerTemplate) e.getItem();
-                    main.add(new ParameterPanel(template.getId()));
-                    for (int i = 0; i < template.size(); ++i) {
-                        main.add(new ParameterPanel(template.getParameter(i)));
-                    }
-                    pack();
-                    validate();
+        trigger.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                main.removeAll();
+                TriggerTemplate template = (TriggerTemplate) e.getItem();
+                main.add(new ParameterPanel(template.getId()));
+                for (int i = 0; i < template.size(); ++i) {
+                    main.add(new ParameterPanel(template.getParameter(i)));
                 }
+                pack();
+                validate();
             }
         });
 
@@ -117,10 +114,12 @@ public class TriggerDialog extends JDialog {
         pack();
     }
 
+    @Override
     public String getName() {
         return name.getText();
     }
 
+    @Override
     public void setName(String value) {
         name.setText(value);
     }
@@ -173,7 +172,7 @@ public class TriggerDialog extends JDialog {
     @Nonnull
     public Condition[] getConditions() {
         int count = (conditionPanels.getComponentCount() + 1) / 2;
-        List<Condition> conditions = new ArrayList<Condition>();
+        List<Condition> conditions = new ArrayList<>();
         for (int i = 0; i < count; ++i) {
             ConditionPanel cp = (ConditionPanel) conditionPanels.getComponent(2 * i);
             Condition c = cp.getCondition();

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TriggerTemplate {
-    private String name;
+    private final String name;
     @Nullable
     private String title;
     @Nullable
@@ -37,7 +37,7 @@ public class TriggerTemplate {
     private boolean hasPosterior;
     @Nullable
     private TemplateParameter id;
-    private List<TemplateParameter> parameters;
+    private final List<TemplateParameter> parameters;
 
     public TriggerTemplate(String name) {
         this.name = name;
@@ -140,6 +140,7 @@ public class TriggerTemplate {
                 (entryPoint != null) && (category != null) && (id != null);
     }
 
+    @Override
     @Nonnull
     public String toString() {
         return title;

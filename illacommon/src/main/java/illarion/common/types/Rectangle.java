@@ -93,17 +93,17 @@ public final class Rectangle implements Serializable {
     /**
      * Test this rectangle and another object for being equal.
      *
-     * @param o the object this Rectangle shall be compared with
+     * @param obj the object this Rectangle shall be compared with
      * @return {@code true} in case this rectangle and the other one describe the same rectangle
      */
     @Override
     @Contract(value = "null -> false", pure = true)
-    public boolean equals(@Nullable Object o) {
-        if (super.equals(o)) {
+    public boolean equals(@Nullable Object obj) {
+        if (super.equals(obj)) {
             return true;
         }
-        if (o instanceof Rectangle) {
-            Rectangle oRect = (Rectangle) o;
+        if (obj instanceof Rectangle) {
+            Rectangle oRect = (Rectangle) obj;
             return (oRect.x0 == x0) && (oRect.x1 == x1) && (oRect.y0 == y0) && (oRect.y1 == y1);
         }
         return false;
@@ -257,10 +257,7 @@ public final class Rectangle implements Serializable {
         if ((x0 > other.x1) || (x1 < other.x0)) {
             return false;
         }
-        if ((y0 > other.y1) || (y1 < other.y0)) {
-            return false;
-        }
-        return true;
+        return !((y0 > other.y1) || (y1 < other.y0));
     }
 
     /**

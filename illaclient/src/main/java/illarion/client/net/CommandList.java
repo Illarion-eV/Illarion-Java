@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -491,7 +491,7 @@ public final class CommandList {
     /**
      * The default size of the header of each command and each message in byte.
      */
-    protected static final int HEADER_SIZE = 6;
+    static final int HEADER_SIZE = 6;
 
     /**
      * Private constructor of the class so nothing can create a instance of this utility class.

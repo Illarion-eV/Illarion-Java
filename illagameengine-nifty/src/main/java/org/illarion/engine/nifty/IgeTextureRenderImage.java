@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -38,7 +38,7 @@ public class IgeTextureRenderImage implements IgeRenderImage {
      *
      * @param texture the texture that is rendered by this render image
      */
-    public IgeTextureRenderImage(@Nonnull final Texture texture) {
+    public IgeTextureRenderImage(@Nonnull Texture texture) {
         this.texture = texture;
     }
 
@@ -64,39 +64,39 @@ public class IgeTextureRenderImage implements IgeRenderImage {
 
     @Override
     public void renderImage(
-            @Nonnull final Graphics g,
-            final int x,
-            final int y,
-            final int width,
-            final int height,
-            @Nonnull final Color color,
-            final float imageScale) {
-        final int scaledWidth = Math.round(width * imageScale);
-        final int scaledHeight = Math.round(height * imageScale);
-        final int fixedX = x + ((width - scaledWidth) / 2);
-        final int fixedY = y + ((height - scaledHeight) / 2);
+            @Nonnull Graphics g,
+            int x,
+            int y,
+            int width,
+            int height,
+            @Nonnull Color color,
+            float imageScale) {
+        int scaledWidth = Math.round(width * imageScale);
+        int scaledHeight = Math.round(height * imageScale);
+        int fixedX = x + ((width - scaledWidth) / 2);
+        int fixedY = y + ((height - scaledHeight) / 2);
         g.drawTexture(texture, fixedX, fixedY, scaledWidth, scaledHeight, color);
     }
 
     @Override
     public void renderImage(
-            @Nonnull final Graphics g,
-            final int x,
-            final int y,
-            final int w,
-            final int h,
-            final int srcX,
-            final int srcY,
-            final int srcW,
-            final int srcH,
-            @Nonnull final Color color,
-            final float scale,
-            final int centerX,
-            final int centerY) {
-        final int scaledWidth = Math.round(w * scale);
-        final int scaledHeight = Math.round(h * scale);
-        final int fixedX = (int) Math.round(x + ((w - scaledWidth) * ((double) w / (double) centerX)));
-        final int fixedY = (int) Math.round(y + ((h - scaledHeight) * ((double) h / (double) centerY)));
+            @Nonnull Graphics g,
+            int x,
+            int y,
+            int w,
+            int h,
+            int srcX,
+            int srcY,
+            int srcW,
+            int srcH,
+            @Nonnull Color color,
+            float scale,
+            int centerX,
+            int centerY) {
+        int scaledWidth = Math.round(w * scale);
+        int scaledHeight = Math.round(h * scale);
+        int fixedX = (int) Math.round(x + ((w - scaledWidth) * ((double) w / (double) centerX)));
+        int fixedY = (int) Math.round(y + ((h - scaledHeight) * ((double) h / (double) centerY)));
         g.drawTexture(texture, fixedX, fixedY, scaledWidth, scaledHeight, srcX, srcY, srcW, srcH, color);
     }
 }

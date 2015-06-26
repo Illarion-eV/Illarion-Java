@@ -37,6 +37,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xmlpull.v1.XmlPullParser;
@@ -78,35 +79,29 @@ public class MainViewController extends AbstractController implements MavenDownl
 
     private ResourceBundle resourceBundle;
 
+    @Nonnull
     private static final Logger log = LoggerFactory.getLogger(MainViewController.class);
 
     @Override
-    public void initialize(URL url, @Nonnull ResourceBundle resourceBundle) {
-        this.resourceBundle = resourceBundle;
+    public void initialize(URL location, @Nonnull ResourceBundle resources) {
+        resourceBundle = resources;
         progress.setProgress(0.0);
-        progressDescription.setText(resourceBundle.getString("selectStartApp"));
+        progressDescription.setText(resources.getString("selectStartApp"));
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    readNewsAndQuests();
-                } catch (@Nonnull XmlPullParserException | IOException | ParseException e) {
-                    log.error("Failed reading news and quests.", e);
-                }
+        new Thread(() -> {
+            try {
+                readNewsAndQuests();
+            } catch (@Nonnull XmlPullParserException | IOException | ParseException e) {
+                log.error("Failed reading news and quests.", e);
             }
         }).start();
 
-        EventHandler<KeyEvent> eventEventHandler = new EventHandler<KeyEvent>() {
-            private final KeyCombination combo = new KeyCodeCombination(KeyCode.ENTER);
-
-            @Override
-            public void handle(@Nonnull KeyEvent keyEvent) {
-                if (combo.match(keyEvent)) {
-                    launchClientButton.fire();
-                }
-                keyEvent.consume();
+        KeyCombination combo = new KeyCodeCombination(KeyCode.ENTER);
+        EventHandler<KeyEvent> eventEventHandler = event -> {
+            if (combo.match(event)) {
+                launchClientButton.fire();
             }
+            event.consume();
         };
         launchEasyNpcButton.setOnKeyReleased(eventEventHandler);
         launchEasyQuestButton.setOnKeyReleased(eventEventHandler);
@@ -133,7 +128,7 @@ public class MainViewController extends AbstractController implements MavenDownl
         }
 
         @Override
-        public int compareTo(NewsQuestEntry o) {
+        public int compareTo(@Nonnull NewsQuestEntry o) {
             if ((timeStamp == null) && (o.timeStamp != null)) {
                 return -1;
             }
@@ -242,17 +237,19 @@ public class MainViewController extends AbstractController implements MavenDownl
                         case "title":
                             boolean german = "de".equals(parser.getAttributeValue(null, "lang"));
                             String text = parser.nextText();
-                            if ((title == null) || title.isEmpty() ||
-                                    ((text != null) && !text.isEmpty() && (german == useGerman))) {
+                            if (isNullOrEmpty(title) || (!isNullOrEmpty(text) && (german == useGerman))) {
                                 title = text;
                             }
                             break;
                         case "link":
-                            linkTarget = new URL(parser.nextText());
+                            String linkUrl = parser.nextText();
+                            if (!isNullOrEmpty(linkUrl)) {
+                                linkTarget = new URL(linkUrl);
+                            }
                             break;
                         case "date":
                             String textTimeStamp = parser.nextText();
-                            if (!textTimeStamp.isEmpty()) {
+                            if (!isNullOrEmpty(textTimeStamp)) {
                                 timestamp = parsingFormat.parse(textTimeStamp);
                             }
                             break;
@@ -260,6 +257,11 @@ public class MainViewController extends AbstractController implements MavenDownl
                     break;
             }
         }
+    }
+
+    @Contract(value = "null -> true", pure = true)
+    private static boolean isNullOrEmpty(@Nullable String testString) {
+        return (testString == null) || testString.isEmpty();
     }
 
     private void showNewsInList(@Nonnull Iterable<NewsQuestEntry> list) {
@@ -270,9 +272,9 @@ public class MainViewController extends AbstractController implements MavenDownl
         showNewsQuestInList(list, questsPane, DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT));
     }
 
-    private void showNewsQuestInList(@Nonnull Iterable<NewsQuestEntry> list, @Nonnull final Pane display, @Nonnull
+    private void showNewsQuestInList(@Nonnull Iterable<NewsQuestEntry> list, @Nonnull Pane display, @Nonnull
     DateFormat dateFormat) {
-        final VBox storage = new VBox();
+        VBox storage = new VBox();
         storage.setFillWidth(true);
         AnchorPane.setBottomAnchor(storage, 0.0);
         AnchorPane.setTopAnchor(storage, 0.0);
@@ -280,7 +282,7 @@ public class MainViewController extends AbstractController implements MavenDownl
         AnchorPane.setRightAnchor(storage, 3.0);
 
         int entryCount = 0;
-        for (@Nonnull final NewsQuestEntry entry : list) {
+        for (@Nonnull NewsQuestEntry entry : list) {
             if (entryCount == 4) {
                 break;
             }
@@ -302,25 +304,17 @@ public class MainViewController extends AbstractController implements MavenDownl
             }
 
             line.setMouseTransparent(false);
-            line.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent mouseEvent) {
-                    if ((mouseEvent.getButton() == MouseButton.PRIMARY) &&
-                            Objects.equals(mouseEvent.getEventType(), MouseEvent.MOUSE_CLICKED) &&
-                            (mouseEvent.getClickCount() == 1)) {
-                        getModel().getHostServices().showDocument(entry.linkTarget.toExternalForm());
-                    }
+            line.setOnMouseClicked(mouseEvent -> {
+                if ((mouseEvent.getButton() == MouseButton.PRIMARY) &&
+                        Objects.equals(mouseEvent.getEventType(), MouseEvent.MOUSE_CLICKED) &&
+                        (mouseEvent.getClickCount() == 1)) {
+                    getModel().getHostServices().showDocument(entry.linkTarget.toExternalForm());
                 }
             });
             storage.getChildren().add(line);
         }
 
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                display.getChildren().add(storage);
-            }
-        });
+        Platform.runLater(() -> display.getChildren().add(storage));
     }
 
     @FXML
@@ -353,11 +347,11 @@ public class MainViewController extends AbstractController implements MavenDownl
     }
 
     private void updateLaunchButtons(
-            final boolean enabled,
-            final boolean client,
-            final boolean easyNpc,
-            final boolean easyQuest,
-            final boolean mapEdit) {
+            boolean enabled,
+            boolean client,
+            boolean easyNpc,
+            boolean easyQuest,
+            boolean mapEdit) {
         if (Platform.isFxApplicationThread()) {
             launchClientButton.setDisable(!enabled);
             launchMapEditButton.setDisable(!enabled);
@@ -375,45 +369,35 @@ public class MainViewController extends AbstractController implements MavenDownl
                 launchEasyNpcButton.setText(resourceBundle.getString(easyNpc ? "starting" : "launchEasyNpc"));
             }
         } else {
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    updateLaunchButtons(enabled, client, easyNpc, easyQuest, mapEdit);
-                }
-            });
+            Platform.runLater(() -> updateLaunchButtons(enabled, client, easyNpc, easyQuest, mapEdit));
         }
     }
 
     private void launch(
-            @Nonnull final String groupId,
-            @Nonnull final String artifactId,
+            @Nonnull String groupId,
+            @Nonnull String artifactId,
             @Nonnull String launchClass,
             @Nonnull String configKey) {
         Config cfg = getModel().getConfig();
-        if (cfg == null) {
-            throw new IllegalStateException("Can't show options without the config system");
-        }
 
         this.launchClass = launchClass;
         useSnapshots = cfg.getInteger(configKey) == 1;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                int attempt = 0;
-                while (attempt < 10) {
-                    attempt++;
-                    try {
-                        MavenDownloader downloader = new MavenDownloader(useSnapshots, attempt);
-                        downloader.downloadArtifact(groupId, artifactId, MainViewController.this);
-                    } catch (@Nonnull Exception e) {
-                        if (getInnerExceptionOfType(SocketTimeoutException.class, e) != null) {
-                            log.warn("Timeout detected. Restarting download with longer timeout.");
-                            continue;
-                        }
-                        log.error("Error while resolving.", e);
+        new Thread(() -> {
+            int attempt = 0;
+            while (attempt < 10) {
+                attempt++;
+                try {
+                    MavenDownloader downloader = new MavenDownloader(useSnapshots, attempt, cfg);
+                    downloader.downloadArtifact(groupId, artifactId, this);
+                } catch (@Nonnull Exception e) {
+                    //noinspection ThrowableResultOfMethodCallIgnored
+                    if (getInnerExceptionOfType(SocketTimeoutException.class, e) != null) {
+                        log.warn("Timeout detected. Restarting download with longer timeout.");
+                        continue;
                     }
-                    break;
+                    log.error("Error while resolving.", e);
                 }
+                break;
             }
         }).start();
     }
@@ -434,10 +418,10 @@ public class MainViewController extends AbstractController implements MavenDownl
 
     @Override
     public void reportNewState(
-            @Nonnull final State state,
-            @Nullable final ProgressMonitor progress,
-            final boolean offline,
-            @Nullable final String detail) {
+            @Nonnull State state,
+            @Nullable ProgressMonitor progress,
+            boolean offline,
+            @Nullable String detail) {
         if (Platform.isFxApplicationThread()) {
             switch (state) {
                 case SearchingNewVersion:
@@ -463,12 +447,7 @@ public class MainViewController extends AbstractController implements MavenDownl
                 this.progress.setProgress(progress.getProgress());
             }
         } else {
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    reportNewState(state, progress, offline, detail);
-                }
-            });
+            Platform.runLater(() -> reportNewState(state, progress, offline, detail));
         }
     }
 
@@ -476,65 +455,52 @@ public class MainViewController extends AbstractController implements MavenDownl
     public void resolvingDone(@Nonnull Collection<File> classpath) {
         if (launchClass == null) {
             cancelLaunch();
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    progress.setProgress(1.0);
-                    progressDescription.setText(resourceBundle.getString("errorClasspathNull"));
-                }
+            Platform.runLater(() -> {
+                progress.setProgress(1.0);
+                progressDescription.setText(resourceBundle.getString("errorClasspathNull"));
             });
         } else {
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    progress.setProgress(1.0);
-                    progressDescription.setText(resourceBundle.getString("launchApplication"));
-                }
+            Platform.runLater(() -> {
+                progress.setProgress(1.0);
+                progressDescription.setText(resourceBundle.getString("launchApplication"));
             });
-            final JavaLauncher launcher = new JavaLauncher(useSnapshots);
+            JavaLauncher launcher = new JavaLauncher(getModel().getConfig(), useSnapshots);
             if (launcher.launch(classpath, launchClass)) {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
+                Platform.runLater(() -> {
+                    try {
+                        if (getModel().getConfig().getBoolean("stayOpenAfterLaunch")) {
                             getModel().getStoryboard().showNormal();
-                        } catch (IOException e) {
+                        } else {
                             getModel().getStage().close();
                         }
+                    } catch (IOException e) {
+                        getModel().getStage().close();
                     }
                 });
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Cleaner cleaner = new Cleaner();
-                        cleaner.clean();
-                    }
+                new Thread(() -> {
+                    Cleaner cleaner = new Cleaner();
+                    cleaner.clean();
                 }).start();
             } else {
                 cancelLaunch();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        progress.setProgress(1.0);
-                        progressDescription.setText(launcher.getErrorData());
-                    }
+                Platform.runLater(() -> {
+                    progress.setProgress(1.0);
+                    progressDescription.setText(launcher.getErrorData());
                 });
             }
         }
     }
 
     @Override
-    public void resolvingFailed(@Nonnull final Exception ex) {
+    public void resolvingFailed(@Nonnull Exception ex) {
+        //noinspection ThrowableResultOfMethodCallIgnored
         if (getInnerExceptionOfType(SocketTimeoutException.class, ex) != null) {
             return;
         }
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                progress.setProgress(1.0);
-                progressDescription.setText(ex.getLocalizedMessage());
-                log.error("Resolving failed.", ex);
-            }
+        Platform.runLater(() -> {
+            progress.setProgress(1.0);
+            progressDescription.setText(ex.getLocalizedMessage());
+            log.error("Resolving failed.", ex);
         });
     }
 

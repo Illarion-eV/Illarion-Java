@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -45,7 +45,7 @@ public enum Backend {
      *
      * @param desktopContainerClass the class used to create a desktop game
      */
-    Backend(@Nullable final String desktopContainerClass) {
+    Backend(@Nullable String desktopContainerClass) {
         this.desktopContainerClass = desktopContainerClass;
     }
 

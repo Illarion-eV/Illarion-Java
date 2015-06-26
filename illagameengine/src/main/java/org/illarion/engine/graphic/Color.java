@@ -32,7 +32,7 @@ public class Color {
     /**
      * A fully opaque black color. This color is immutable.
      */
-    public static final Color BLACK = new ImmutableColor(0.f, 0.f, 0.f);
+    public static final ImmutableColor BLACK = new ImmutableColor(0.f, 0.f, 0.f);
     /**
      * The maximal valid integer value of a color component.
      */
@@ -40,22 +40,22 @@ public class Color {
     /**
      * A fully opaque white color. This color is immutable.
      */
-    public static final Color WHITE = new ImmutableColor(1.f, 1.f, 1.f);
+    public static final ImmutableColor WHITE = new ImmutableColor(1.f, 1.f, 1.f);
 
     /**
      * A fully opaque red color. This color is immutable.
      */
-    public static final Color RED = new ImmutableColor(1.f, 0.f, 0.f);
+    public static final ImmutableColor RED = new ImmutableColor(1.f, 0.f, 0.f);
 
     /**
      * A fully opaque yellow color. This color is immutable.
      */
-    public static final Color YELLOW = new ImmutableColor(1.f, 1.f, 0.f);
+    public static final ImmutableColor YELLOW = new ImmutableColor(1.f, 1.f, 0.f);
 
     /**
      * A fully opaque gray color. This color is immutable.
      */
-    public static final Color GRAY = new ImmutableColor(0.5f, 0.5f, 0.5f);
+    public static final ImmutableColor GRAY = new ImmutableColor(0.5f, 0.5f, 0.5f);
 
     /**
      * The alpha component of the color.

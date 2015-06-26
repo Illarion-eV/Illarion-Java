@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,14 +15,11 @@
  */
 package org.illarion.nifty.controls.dialog.input;
 
-import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.controls.*;
 import de.lessvoid.nifty.controls.window.WindowControl;
 import de.lessvoid.nifty.elements.Element;
-import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.input.NiftyStandardInputEvent;
-import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.tools.SizeValue;
 import org.bushe.swing.event.EventTopicSubscriber;
@@ -131,24 +128,21 @@ public class DialogInputControl extends WindowControl implements DialogInput, Ev
 
         parent.layoutElements();
 
-        element.addInputHandler(new KeyInputHandler() {
-            @Override
-            public boolean keyEvent(@Nonnull NiftyInputEvent inputEvent) {
-                if (inputEvent instanceof NiftyStandardInputEvent) {
-                    switch ((NiftyStandardInputEvent) inputEvent) {
-                        case SubmitText:
-                            fireResponse(DialogButton.LeftButton);
-                            return true;
-                        case Escape:
-                            fireResponse(DialogButton.RightButton);
-                            return true;
-                        default:
-                            return false;
-                    }
+        element.addInputHandler(inputEvent -> {
+            if (inputEvent instanceof NiftyStandardInputEvent) {
+                switch ((NiftyStandardInputEvent) inputEvent) {
+                    case SubmitText:
+                        fireResponse(DialogButton.LeftButton);
+                        return true;
+                    case Escape:
+                        fireResponse(DialogButton.RightButton);
+                        return true;
+                    default:
+                        return false;
                 }
-
-                return false;
             }
+
+            return false;
         });
     }
 
@@ -217,12 +211,7 @@ public class DialogInputControl extends WindowControl implements DialogInput, Ev
 
     @Override
     public void closeWindow() {
-        getElement().hide(new EndNotify() {
-            @Override
-            public void perform() {
-                getElement().markForRemoval();
-            }
-        });
+        getElement().hide(() -> getElement().markForRemoval());
         alreadyClosed = true;
     }
 

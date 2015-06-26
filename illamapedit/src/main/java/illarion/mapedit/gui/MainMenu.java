@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -24,7 +24,7 @@ import illarion.mapedit.events.menu.MapSaveEvent;
 import illarion.mapedit.events.menu.SetFolderEvent;
 import illarion.mapedit.resource.loaders.ImageLoader;
 import org.bushe.swing.event.EventBus;
-import org.pushingpixels.flamingo.api.common.JCommandButton;
+import org.pushingpixels.flamingo.api.common.JCommandButton.CommandButtonKind;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenu;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntryFooter;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntryPrimary;
@@ -46,10 +46,10 @@ public class MainMenu extends RibbonApplicationMenu {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainMenu.class);
 
     public MainMenu() {
-        final RibbonApplicationMenuEntryPrimary menuOpenMap = new RibbonApplicationMenuEntryPrimary(
+        RibbonApplicationMenuEntryPrimary menuOpenMap = new RibbonApplicationMenuEntryPrimary(
                 ImageLoader.getResizableIcon("fileopen"), Lang.getMsg("gui.mainmenu.Open"), new ActionListener() {
             @Override
-            public void actionPerformed(final ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 Path file = null;
                 try {
                     file = MapDialogs.showSetFolderDialog();
@@ -61,33 +61,20 @@ public class MainMenu extends RibbonApplicationMenu {
                     EventBus.publish(new SetFolderEvent(file));
                 }
             }
-        }, JCommandButton.CommandButtonKind.ACTION_ONLY
+        }, CommandButtonKind.ACTION_ONLY
         );
-        final RibbonApplicationMenuEntryPrimary menuNewMap = new RibbonApplicationMenuEntryPrimary(
-                ImageLoader.getResizableIcon("filenew"), Lang.getMsg("gui.mainmenu.New"), new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                EventBus.publish(new MapNewEvent());
-            }
-        }, JCommandButton.CommandButtonKind.ACTION_ONLY
+        RibbonApplicationMenuEntryPrimary menuNewMap = new RibbonApplicationMenuEntryPrimary(
+                ImageLoader.getResizableIcon("filenew"), Lang.getMsg("gui.mainmenu.New"), e -> EventBus.publish(new MapNewEvent()), CommandButtonKind.ACTION_ONLY
         );
-        final RibbonApplicationMenuEntryPrimary menuSave = new RibbonApplicationMenuEntryPrimary(
-                ImageLoader.getResizableIcon("filesave"), Lang.getMsg("gui.mainmenu.Save"), new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                EventBus.publish(new MapSaveEvent());
-            }
-        }, JCommandButton.CommandButtonKind.ACTION_ONLY
+        RibbonApplicationMenuEntryPrimary menuSave = new RibbonApplicationMenuEntryPrimary(
+                ImageLoader.getResizableIcon("filesave"), Lang.getMsg("gui.mainmenu.Save"), e -> EventBus.publish(new MapSaveEvent()), CommandButtonKind.ACTION_ONLY
         );
 
-        final RibbonApplicationMenuEntryFooter settings = new RibbonApplicationMenuEntryFooter(
+        RibbonApplicationMenuEntryFooter settings = new RibbonApplicationMenuEntryFooter(
                 ImageLoader.getResizableIcon("configure"), Lang.getMsg("gui.mainmenu.MapEditorConfig"),
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(final ActionEvent e) {
-                        final ConfigDialog dialog = MapEditorConfig.getInstance().createDialog();
-                        new ConfigDialogSwing(dialog);
-                    }
+                e -> {
+                    ConfigDialog dialog = MapEditorConfig.getInstance().createDialog();
+                    new ConfigDialogSwing(dialog);
                 }
         );
         addFooterEntry(settings);

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -46,7 +46,7 @@ public class MapWarpPoint {
      * @param yTarget
      * @param zTarget
      */
-    public MapWarpPoint(final int xTarget, final int yTarget, final int zTarget) {
+    public MapWarpPoint(int xTarget, int yTarget, int zTarget) {
         this.xTarget = xTarget;
         this.yTarget = yTarget;
         this.zTarget = zTarget;
@@ -57,7 +57,7 @@ public class MapWarpPoint {
      *
      * @param old
      */
-    public MapWarpPoint(@Nonnull final MapWarpPoint old) {
+    public MapWarpPoint(@Nonnull MapWarpPoint old) {
         xTarget = old.xTarget;
         yTarget = old.yTarget;
         zTarget = old.zTarget;
@@ -99,7 +99,7 @@ public class MapWarpPoint {
     @Nonnull
     @Override
     public String toString() {
-        final TextBuilder builder = new TextBuilder();
+        TextBuilder builder = new TextBuilder();
 
         builder.append(xTarget).append(';');
         builder.append(yTarget).append(';');

@@ -22,10 +22,8 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.IllaClient;
 import illarion.client.gui.CloseGameGui;
-import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
 import org.bushe.swing.event.EventTopicSubscriber;
-import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -136,21 +134,11 @@ public final class CloseGameHandler
 
     @Override
     public void hideClosingDialog() {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                hideExitDialog();
-            }
-        });
+        World.getUpdateTaskManager().addTask((container, delta) -> hideExitDialog());
     }
 
     @Override
     public void showClosingDialog() {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                showExitDialog();
-            }
-        });
+        World.getUpdateTaskManager().addTask((container, delta) -> showExitDialog());
     }
 }

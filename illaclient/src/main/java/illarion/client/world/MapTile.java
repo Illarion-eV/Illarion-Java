@@ -47,7 +47,6 @@ import java.util.concurrent.locks.Lock;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-@SuppressWarnings("ClassNamingConvention")
 @NotThreadSafe
 public final class MapTile {
     /**
@@ -169,6 +168,11 @@ public final class MapTile {
     @Nullable
     private MapGroup group;
 
+    /**
+     * Once this value is set {@code true} the tile is assumed to be removed.
+     */
+    private boolean removedTile;
+
     public int getQuestMarkerElevation() {
         return questMarkerElevation;
     }
@@ -209,7 +213,6 @@ public final class MapTile {
      *
      * @param coordinate the coordinates of this tile
      */
-    @SuppressWarnings("nls")
     public MapTile(@Nonnull ServerCoordinate coordinate) {
         tileCoordinate = coordinate;
         tileId = ID_NONE;
@@ -225,10 +228,12 @@ public final class MapTile {
 
     @Nonnull
     public Color getLight() {
-        if (removedTile) {
-            LOGGER.warn("Fetching light of a removed tile.");
-        }
         return localColor.getCurrentColor();
+    }
+
+    @Nonnull
+    public Color getTargetLight() {
+        return localColor.getTargetColor();
     }
 
     @Nullable
@@ -266,7 +271,7 @@ public final class MapTile {
     @Nullable
     public Item getTopItem() {
         if (removedTile) {
-            LOGGER.warn("Requested top item of a removed tile.");
+            LOGGER.debug("Requested top item of a removed tile.");
             return null;
         }
 
@@ -280,11 +285,6 @@ public final class MapTile {
     public Item getItem(int index) {
         return items.get(index);
     }
-
-    /**
-     * Once this value is set {@code true} the tile is assumed to be removed.
-     */
-    private boolean removedTile;
 
     /**
      * Remove the light source of this tile in case there is any.
@@ -306,7 +306,6 @@ public final class MapTile {
      *
      * @return the generated string
      */
-    @SuppressWarnings("nls")
     @Override
     @Nonnull
     public String toString() {
@@ -320,7 +319,6 @@ public final class MapTile {
      * @param itemId the new ID that shall be set on the item
      * @param count the new count value of the item in top position
      */
-    @SuppressWarnings("nls")
     public void changeTopItem(
             @Nonnull ItemId oldItemId, @Nonnull ItemId itemId, @Nonnull ItemCount count) {
         if (removedTile) {
@@ -354,7 +352,6 @@ public final class MapTile {
     /**
      * Remove the item at the top position of the item stack.
      */
-    @SuppressWarnings("nls")
     public void removeTopItem() {
         if (removedTile) {
             LOGGER.warn("Remove top item of removed tile requested.");
@@ -405,7 +402,6 @@ public final class MapTile {
      * @param itemId The new item ID of the item
      * @param itemCount The new count value of this item
      */
-    @SuppressWarnings("nls")
     private boolean setItem(int index, @Nonnull ItemId itemId, @Nonnull ItemCount itemCount) {
         // look for present item in map tile
         boolean changedSomething = false;
@@ -545,7 +541,7 @@ public final class MapTile {
      */
     public boolean canMoveItem() {
         if (removedTile) {
-            LOGGER.warn("Checking a removed tile for a movable item.");
+            LOGGER.debug("Checking a removed tile for a movable item.");
             return false;
         }
         if (!World.getPlayer().getLocation().isNeighbour(tileCoordinate)) {
@@ -563,7 +559,7 @@ public final class MapTile {
      */
     public int getCoverage() {
         if (removedTile) {
-            LOGGER.warn("Checking the coverage of a removed tile");
+            LOGGER.debug("Checking the coverage of a removed tile");
             return 0;
         }
         if (losDirty) {
@@ -589,7 +585,8 @@ public final class MapTile {
      */
     public int getElevation() {
         if (removedTile) {
-            LOGGER.warn("Checking the elevation of a removed tile.");
+            LOGGER.debug("Checking the elevation of a removed tile.");
+            return 0;
         }
         return items.getElevation();
     }
@@ -601,7 +598,7 @@ public final class MapTile {
      */
     public int getFace() {
         if (removedTile) {
-            LOGGER.warn("Checking the facing flag of a removed tile.");
+            LOGGER.debug("Checking the facing flag of a removed tile.");
             return 0;
         }
         // empty tile accept all light
@@ -664,7 +661,7 @@ public final class MapTile {
      */
     public int getTileMusic() {
         if (removedTile) {
-            LOGGER.warn("Requested the music ID of a removed tile.");
+            LOGGER.debug("Requested the music ID of a removed tile.");
             return 0;
         }
         return musicId;
@@ -676,10 +673,6 @@ public final class MapTile {
      * @return {@code true} in case the tile is on the same level as the player
      */
     public boolean isAtPlayerLevel() {
-        if (removedTile) {
-            LOGGER.warn("Checking if a removed tile is at the level of the player.");
-            return false;
-        }
         return World.getPlayer().isBaseLevel(getCoordinates());
     }
 
@@ -690,9 +683,6 @@ public final class MapTile {
      */
     @Nonnull
     public ServerCoordinate getCoordinates() {
-        if (removedTile) {
-            LOGGER.warn("Requesting the coordinates of a removed tile");
-        }
         return tileCoordinate;
     }
 
@@ -703,7 +693,7 @@ public final class MapTile {
      */
     public boolean isBlocked() {
         if (removedTile) {
-            LOGGER.warn("Checking a removed tile if its blocked.");
+            LOGGER.debug("Checking a removed tile if its blocked.");
             return true;
         }
         if (isObstacle()) {
@@ -721,7 +711,7 @@ public final class MapTile {
      */
     public boolean isObstacle() {
         if (removedTile) {
-            LOGGER.warn("Checking a removed tile if its a obstacle.");
+            LOGGER.debug("Checking a removed tile if its a obstacle.");
             return true;
         }
         return getMovementCost() == Integer.MAX_VALUE;
@@ -734,7 +724,8 @@ public final class MapTile {
      */
     public boolean isOpaque() {
         if (removedTile) {
-            LOGGER.warn("Checking opaque value of a removed tile.");
+            LOGGER.debug("Checking opaque value of a removed tile.");
+            return true;
         }
         Tile localTile = tile;
         if (tile == null) {
@@ -754,7 +745,7 @@ public final class MapTile {
      */
     public void renderLight() {
         if (removedTile) {
-            LOGGER.warn("Render light of a removed tile.");
+            LOGGER.debug("Render light of a removed tile.");
             return;
         }
         tracerColor.setColor(tmpLight);
@@ -788,7 +779,7 @@ public final class MapTile {
      */
     public boolean update(@Nonnull TileUpdate update) {
         if (removedTile) {
-            LOGGER.warn("Process update of a removed tile.");
+            LOGGER.error("Process update of a removed tile.");
             return false;
         }
 
@@ -830,7 +821,7 @@ public final class MapTile {
      */
     public void setTileId(int id) {
         if (removedTile) {
-            LOGGER.warn("Change the ID of a removed tile.");
+            LOGGER.error("Change the ID of a removed tile.");
             return;
         }
         losDirty = true;
@@ -870,7 +861,7 @@ public final class MapTile {
      */
     public void resetLight() {
         if (removedTile) {
-            LOGGER.warn("Resetting the light of a removed tile.");
+            LOGGER.debug("Resetting the light of a removed tile.");
         }
         tmpLight.setColor(Color.BLACK);
     }
@@ -957,7 +948,7 @@ public final class MapTile {
     public void updateItems(
             int itemNumber, @Nonnull List<ItemId> itemId, @Nonnull List<ItemCount> itemCount) {
         if (removedTile) {
-            LOGGER.warn("Update items of a removed tile requested.");
+            LOGGER.error("Update items of a removed tile requested.");
             return;
         }
         updateItemList(itemNumber, itemId, itemCount);

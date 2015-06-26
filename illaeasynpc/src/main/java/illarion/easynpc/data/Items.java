@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,6 @@ package illarion.easynpc.data;
 
 import illarion.common.types.ItemId;
 import illarion.common.util.TableLoader;
-import illarion.common.util.TableLoaderSink;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,16 +42,12 @@ public final class Items implements Comparable<Items> {
     private static final int[] itemsList;
 
     static {
-        final ArrayList<Integer> itemList = new ArrayList<>();
+        ArrayList<Integer> itemList = new ArrayList<>();
 
-        new TableLoader("Items", new TableLoaderSink() {
-            @Override
-            public boolean processRecord(
-                    int line, @Nonnull TableLoader loader) {
-                int itemId = loader.getInt(TB_ID);
-                itemList.add(itemId);
-                return true;
-            }
+        new TableLoader("Items", (line, loader) -> {
+            int itemId1 = loader.getInt(TB_ID);
+            itemList.add(itemId1);
+            return true;
         });
 
         itemsList = new int[itemList.size()];
@@ -129,7 +124,7 @@ public final class Items implements Comparable<Items> {
 
     @Override
     public int compareTo(@Nonnull Items o) {
-        return Integer.valueOf(itemId).compareTo(o.itemId);
+        return Integer.compare(itemId, o.itemId);
     }
 
     @Override

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -49,7 +49,7 @@ public class ItemGroupLoader implements TableLoaderSink<TableLoaderMapGroups>, R
     }
 
     @Override
-    public boolean processRecord(final int line, @Nonnull final TableLoaderMapGroups loader) {
+    public boolean processRecord(int line, @Nonnull TableLoaderMapGroups loader) {
         if (isGerman) {
             groups.put(loader.getId(), loader.getNameGerman());
         } else {
@@ -58,7 +58,7 @@ public class ItemGroupLoader implements TableLoaderSink<TableLoaderMapGroups>, R
         return true;
     }
 
-    public String getGroupName(final int id) {
+    public String getGroupName(int id) {
         return groups.get(id);
     }
 }

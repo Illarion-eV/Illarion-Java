@@ -15,7 +15,6 @@
  */
 package illarion.client.gui.controller.game;
 
-import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.builder.ElementBuilder.Align;
@@ -29,10 +28,8 @@ import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.IllaClient;
 import illarion.client.graphics.FontLoader;
 import illarion.client.gui.QuestGui;
-import illarion.client.util.UpdateTask;
 import illarion.client.world.World;
 import illarion.common.types.ServerCoordinate;
-import org.illarion.engine.GameContainer;
 import org.intellij.lang.annotations.Flow;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
@@ -290,13 +287,10 @@ public final class QuestHandler implements QuestGui, ScreenController {
         if (questWindowElement == null) {
             LOGGER.error("Showing the quest log failed. The required GUI element can't be located.");
         } else {
-            questWindowElement.show(new EndNotify() {
-                @Override
-                public void perform() {
-                    Window questWindow = getQuestWindow();
-                    if (questWindow != null) {
-                        questWindow.moveToFront();
-                    }
+            questWindowElement.show(() -> {
+                Window questWindow1 = getQuestWindow();
+                if (questWindow1 != null) {
+                    questWindow1.moveToFront();
                 }
             });
         }
@@ -328,23 +322,13 @@ public final class QuestHandler implements QuestGui, ScreenController {
             @Nonnull String topic, @Nonnull ListBoxSelectionChangedEvent<QuestEntry> event) {
         Element descriptionArea = getDescriptionArea();
         if (descriptionArea != null) {
-            descriptionArea.hide(new EndNotify() {
-                @Override
-                public void perform() {
-                    updateDisplayedQuest();
-                }
-            });
+            descriptionArea.hide(this::updateDisplayedQuest);
         }
     }
 
     @Override
     public void updateAllQuests() {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                updateAllQuestsInternal();
-            }
-        });
+        World.getUpdateTaskManager().addTask((container, delta) -> updateAllQuestsInternal());
     }
 
     private void updateAllQuestsInternal() {
@@ -353,9 +337,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
             return;
         }
         List<QuestEntry> selectedEntries = questList.getItems();
-        for (QuestEntry selectedEntry : selectedEntries) {
-            updateQuest(selectedEntry);
-        }
+        selectedEntries.forEach(QuestHandler::updateQuest);
     }
 
     private static void updateQuest(@Nonnull QuestEntry quest) {
@@ -381,9 +363,7 @@ public final class QuestHandler implements QuestGui, ScreenController {
             LOGGER.error("Can't update displayed quest. Description area not found.");
             return;
         }
-        for (Element oldChildren : descriptionArea.getChildren()) {
-            oldChildren.markForRemoval();
-        }
+        descriptionArea.getChildren().forEach(Element::markForRemoval);
 
         QuestEntry selectedEntry = getSelectedQuest();
         if (selectedEntry == null) {
@@ -475,18 +455,12 @@ public final class QuestHandler implements QuestGui, ScreenController {
         showFinishedQuests = event.isChecked();
 
         if (showFinishedQuests) {
-            for (QuestEntry hiddenEntry : hiddenList) {
-                insertToGuiList(hiddenEntry);
-            }
+            hiddenList.forEach(this::insertToGuiList);
             hiddenList.clear();
         } else {
             ListBox<QuestEntry> questList = getQuestList();
             if (questList != null) {
-                for (QuestEntry visibleEntry : questList.getItems()) {
-                    if (visibleEntry.isFinished() && !hiddenList.contains(visibleEntry)) {
-                        hiddenList.add(visibleEntry);
-                    }
-                }
+                questList.getItems().stream().filter(visibleEntry -> visibleEntry.isFinished() && !hiddenList.contains(visibleEntry)).forEach(hiddenList::add);
             }
             getQuestList().removeAllItems(hiddenList);
         }
@@ -587,13 +561,8 @@ public final class QuestHandler implements QuestGui, ScreenController {
     }
 
     @Override
-    public void removeQuest(final int questId) {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                removeQuestInternal(questId);
-            }
-        });
+    public void removeQuest(int questId) {
+        World.getUpdateTaskManager().addTask((container, delta) -> removeQuestInternal(questId));
     }
 
     /**
@@ -623,27 +592,18 @@ public final class QuestHandler implements QuestGui, ScreenController {
     public void setDisplayedQuest(int questId) {
         ListBox<QuestEntry> guiList = getQuestList();
         if (guiList != null) {
-            for (QuestEntry guiListEntry : guiList.getItems()) {
-                if (guiListEntry.getQuestId() == questId) {
-                    guiList.selectItem(guiListEntry);
-                }
-            }
+            guiList.getItems().stream().filter(guiListEntry -> guiListEntry.getQuestId() == questId).forEach(guiList::selectItem);
         }
     }
 
     @Override
     public void setQuest(
-            final int questId,
-            @Nonnull final String name,
-            @Nonnull final String description,
-            final boolean finished,
-            @Nonnull final List<ServerCoordinate> locations) {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                setQuestInternal(questId, name, description, finished, locations);
-            }
-        });
+            int questId,
+            @Nonnull String name,
+            @Nonnull String description,
+            boolean finished,
+            @Nonnull List<ServerCoordinate> locations) {
+        World.getUpdateTaskManager().addTask((container, delta) -> setQuestInternal(questId, name, description, finished, locations));
     }
 
     @Override

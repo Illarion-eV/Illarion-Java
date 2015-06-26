@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -30,8 +30,8 @@ import javax.annotation.Nullable;
 public class DropDownOption<T> implements Option<T, DropDown<DropDownItem<T>>> {
 
     @Nullable
-    private DropDown<DropDownItem<T>> control;
-    private String key;
+    private final DropDown<DropDownItem<T>> control;
+    private final String key;
 
     public DropDownOption(String name, Element parent, Nifty nifty, @Nonnull Screen screen) {
         key = name;
@@ -41,7 +41,7 @@ public class DropDownOption<T> implements Option<T, DropDown<DropDownItem<T>>> {
 
         control = dropDownElement.getNiftyControl(DropDown.class);
 
-        control.setViewConverter(new DropDownItemViewConverter<DropDownItem<T>>());
+        control.setViewConverter(new DropDownItemViewConverter<>());
     }
 
     @Nullable

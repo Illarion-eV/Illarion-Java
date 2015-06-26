@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -27,7 +27,7 @@ import java.awt.*;
 /**
  * @author Fredrik K
  */
-public class MapItemCellRenderer extends JPanel implements ListCellRenderer {
+public class MapItemCellRenderer extends JPanel implements ListCellRenderer<MapItem> {
     private static final Color COLOR_SELECTED = new Color(-6100481);
     private static final Color COLOR_UNSELECTED = new Color(-1246977);
 
@@ -37,7 +37,6 @@ public class MapItemCellRenderer extends JPanel implements ListCellRenderer {
     private final JLabel name;
 
     public MapItemCellRenderer() {
-        super();
         itemId = new JLabel();
         name = new JLabel();
 
@@ -47,8 +46,8 @@ public class MapItemCellRenderer extends JPanel implements ListCellRenderer {
         add(name);
     }
 
-    private static void adjustColors(@Nullable final Color bg, @Nonnull final Component... components) {
-        for (final Component component : components) {
+    private static void adjustColors(@Nullable Color bg, @Nonnull Component... components) {
+        for (Component component : components) {
             if (bg != null) {
                 component.setBackground(bg);
             }
@@ -58,20 +57,19 @@ public class MapItemCellRenderer extends JPanel implements ListCellRenderer {
     @Nonnull
     @Override
     public Component getListCellRendererComponent(
-            final JList list,
-            final Object value,
-            final int index,
-            final boolean isSelected,
-            final boolean cellHasFocus) {
+            JList<? extends MapItem> list,
+            MapItem value,
+            int index,
+            boolean isSelected,
+            boolean cellHasFocus) {
         if (isSelected) {
             adjustColors(COLOR_SELECTED, this, itemId, name);
         } else {
             adjustColors(COLOR_UNSELECTED, this, itemId, name);
         }
-        MapItem item = ((MapItem) value);
-        final String idText = String.valueOf(item.getId());
+        String idText = String.valueOf(value.getId());
         itemId.setText(idText + String.format("%" + (10 - idText.length()) + 's', ""));
-        final ItemImg itm = ItemLoader.getInstance().getTileFromId(item.getId());
+        ItemImg itm = ItemLoader.getInstance().getTileFromId(value.getId());
         if (itm != null) {
             name.setText(itm.getResourceName());
         }

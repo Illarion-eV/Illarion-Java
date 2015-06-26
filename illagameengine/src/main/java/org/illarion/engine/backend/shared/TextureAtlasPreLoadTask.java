@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -44,7 +44,7 @@ public class TextureAtlasPreLoadTask<V> implements Callable<V> {
      * @param textureName the name of the texture atlas
      */
     public TextureAtlasPreLoadTask(
-            @Nonnull final AbstractTextureManager<V> textureManager, @Nonnull final String textureName) {
+            @Nonnull AbstractTextureManager<V> textureManager, @Nonnull String textureName) {
         this.textureManager = textureManager;
         this.textureName = textureName;
     }

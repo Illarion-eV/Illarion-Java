@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -30,6 +30,11 @@ public class MainView extends ApplicationView {
 
         Node viewContents = Util.loadFXML("mainView.fxml", model, Util.loadResourceBundle("mainView"));
 
-        setContent(viewContents.lookup("#content"), viewContents.lookup("#footer"));
+        Node content = viewContents.lookup("#content");
+        Node footer = viewContents.lookup("#footer");
+        if ((content == null) || (footer == null)) {
+            throw new IllegalStateException("Failed to locate contents and footer in source FXML.");
+        }
+        setContent(content, footer);
     }
 }

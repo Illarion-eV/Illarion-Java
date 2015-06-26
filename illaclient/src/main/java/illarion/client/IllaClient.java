@@ -28,6 +28,7 @@ import illarion.client.resources.loaders.SoundLoader;
 import illarion.client.util.ChatLog;
 import illarion.client.util.GlobalExecutorService;
 import illarion.client.util.Lang;
+import illarion.client.util.translation.Translator;
 import illarion.client.world.Player;
 import illarion.client.world.World;
 import illarion.client.world.events.ConnectionLostEvent;
@@ -39,6 +40,7 @@ import illarion.common.config.ConfigSystem;
 import illarion.common.util.AppIdent;
 import illarion.common.util.Crypto;
 import illarion.common.util.DirectoryManager;
+import illarion.common.util.DirectoryManager.Directory;
 import illarion.common.util.TableLoader;
 import org.bushe.swing.event.*;
 import org.illarion.engine.Backend;
@@ -56,10 +58,12 @@ import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Locale.Category;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -73,17 +77,36 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     /**
      * The identification of this application.
      */
+    @Nonnull
     public static final AppIdent APPLICATION = new AppIdent("Illarion Client"); //$NON-NLS-1$
-
+    @Nonnull
+    public static final String CFG_FULLSCREEN = "fullscreen";
+    @Nonnull
+    public static final String CFG_RESOLUTION = "resolution";
     /**
      * The default server the client connects too. The client will always connect to this server.
      */
     @Nonnull
     public static final Servers DEFAULT_SERVER;
+    /**
+     * The singleton instance of this class.
+     */
+    @Nonnull
+    private static final IllaClient INSTANCE = new IllaClient();
+    /**
+     * The error and debug logger of the client.
+     */
+    @Nonnull
+    private static final Logger LOGGER = LoggerFactory.getLogger(IllaClient.class);
+
+    /**
+     * Stores if there currently is a exit requested to avoid that the question area is opened multiple times.
+     */
+    private static boolean exitRequested;
 
     static {
         String server = System.getProperty("illarion.server", "realserver");
-        switch (server) {
+        switch ((server == null) ? "" : server) {
             case "testserver":
                 DEFAULT_SERVER = Servers.Testserver;
                 break;
@@ -97,37 +120,17 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     }
 
     /**
-     * The error and debug logger of the client.
-     */
-    @Nonnull
-    private static final Logger LOGGER = LoggerFactory.getLogger(IllaClient.class);
-
-    /**
-     * Stores if there currently is a exit requested to avoid that the question area is opened multiple times.
-     */
-    private static boolean exitRequested;
-
-    /**
-     * The singleton instance of this class.
-     */
-    private static final IllaClient INSTANCE = new IllaClient();
-
-    /**
      * The configuration of the client settings.
      */
     private ConfigSystem cfg;
-
     /**
-     * Stores the debug level of the client.
+     * This is the reference to the Illarion Game instance.
      */
-    private int debugLevel = 0;
-
+    private Game game;
     /**
-     * The class loader of the this class. It is used to get the resource streams that contain the resource data of the
-     * client.
+     * The container that is used to display the game.
      */
-    private final ClassLoader rscLoader = IllaClient.class.getClassLoader();
-
+    private DesktopGameContainer gameContainer;
     /**
      * Stores the server the client shall connect to.
      */
@@ -135,20 +138,74 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     private Servers usedServer = DEFAULT_SERVER;
 
     /**
-     * This is the reference to the Illarion Game instance.
-     */
-    private Game game;
-
-    /**
-     * The container that is used to display the game.
-     */
-    private DesktopGameContainer gameContainer;
-
-    /**
      * The default empty constructor used to create the singleton instance of this class.
      */
     private IllaClient() {
+    }
 
+    /**
+     * Show a question frame if the client shall really quit and exit the client in case the user selects yes.
+     */
+    public static void ensureExit() {
+        if (exitRequested) {
+            return;
+        }
+        exitRequested = true;
+
+        INSTANCE.game.enterState(Game.STATE_ENDING);
+    }
+
+    /**
+     * Show an error message and leave the client.
+     *
+     * @param message the error message that shall be displayed.
+     */
+    public static void errorExit(@Nonnull String message) {
+        World.cleanEnvironment();
+
+        LOGGER.info("Client terminated on user request.");
+
+        LOGGER.error(message);
+        LOGGER.error("Terminating client!");
+
+        INSTANCE.cfg.save();
+
+        new Thread(() -> {
+            JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
+            startFinalKiller();
+        }).start();
+    }
+
+    /**
+     * This method is the final one to be called before the client is killed for sure. It gives the rest of the client
+     * 10 seconds before it forcefully shuts down everything. This is used to ensure that the client quits when it has
+     * to, but in case it does so faster, it won't be killed like that.
+     */
+    public static void startFinalKiller() {
+        Timer finalKiller = new Timer("Final Death", true);
+        finalKiller.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                CrashReporter.getInstance().waitForReport();
+                System.err.println("Killed by final death");
+                System.exit(-1);
+            }
+        }, 10000);
+    }
+
+    /**
+     * Main function starts the client and sets up all data.
+     *
+     * @param args the arguments handed over to the client
+     */
+    public static void main(String... args) {
+        // Setup the crash reporter so the client is able to crash properly.
+        CrashReporter.getInstance().setMessageSource(Lang.getInstance());
+
+        // in case the server is now known, update the files if needed and
+        // launch the client.
+
+        INSTANCE.init();
     }
 
     /**
@@ -161,7 +218,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
             EventServiceLocator
                     .setEventService(EventServiceLocator.SERVICE_NAME_EVENT_BUS, new ThreadSafeEventService());
             EventServiceLocator.setEventService(EventServiceLocator.SERVICE_NAME_SWING_EVENT_SERVICE,
-                                                EventServiceLocator.getEventBusService());
+                    EventServiceLocator.getEventBusService());
         } catch (EventServiceExistsException e1) {
             LOGGER.error("Failed preparing the EventBus. Settings the Service handler happened too late");
         }
@@ -231,8 +288,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         }
 
         gameContainer.setTitle(APPLICATION.getApplicationIdentifier());
-        gameContainer.setIcons(new String[]{"illarion_client16.png", "illarion_client32.png", "illarion_client64.png",
-                                            "illarion_client256.png"});
+        gameContainer.setIcons("illarion_client16.png", "illarion_client32.png", "illarion_client64.png", "illarion_client256.png");
 
         EventBus.subscribe(CFG_FULLSCREEN, this);
         EventBus.subscribe(CFG_RESOLUTION, this);
@@ -247,240 +303,8 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     }
 
     /**
-     * Get the container that is used to display the game inside.
-     *
-     * @return the are used to display the game inside
-     */
-    public DesktopGameContainer getContainer() {
-        return gameContainer;
-    }
-
-    /**
-     * Show a question frame if the client shall really quit and exit the client in case the user selects yes.
-     */
-    public static void ensureExit() {
-        if (exitRequested) {
-            return;
-        }
-        exitRequested = true;
-
-        INSTANCE.game.enterState(Game.STATE_ENDING);
-    }
-
-    public static void performLogout() {
-        LOGGER.info("Logout requested.");
-        getInstance().quitGame();
-        INSTANCE.game.enterState(Game.STATE_LOGOUT);
-    }
-
-    public static void returnToLogin() {
-        LOGGER.info("Returning to login initiated");
-        INSTANCE.game.enterState(Game.STATE_LOGIN);
-    }
-
-    /**
-     * Save the current configuration and shutdown the client
-     */
-    public static void exitGameContainer() {
-        INSTANCE.gameContainer.exitGame();
-
-        LOGGER.info("Client shutdown initiated.");
-
-        getInstance().quitGame();
-        World.cleanEnvironment();
-        getCfg().save();
-        GlobalExecutorService.shutdown();
-
-        LOGGER.info("Cleanup done.");
-        startFinalKiller();
-    }
-
-    /**
-     * Show an error message and leave the client.
-     *
-     * @param message the error message that shall be displayed.
-     */
-    @SuppressWarnings("nls")
-    public static void errorExit(@Nonnull final String message) {
-        World.cleanEnvironment();
-
-        LOGGER.info("Client terminated on user request.");
-
-        LOGGER.error(Lang.getMsg(message));
-        LOGGER.error("Terminating client!");
-
-        INSTANCE.cfg.save();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
-                startFinalKiller();
-            }
-        }).start();
-    }
-
-    /**
-     * Publishing a ConnectionLostEvent.
-     *
-     * @param message the message that shall be displayed
-     */
-    public static void sendDisconnectEvent(@Nonnull String message, boolean tryToReconnect) {
-        LOGGER.warn("Disconnect received: {}", message);
-        EventBus.publish(new ConnectionLostEvent(message, tryToReconnect));
-    }
-
-    /**
-     * Get the configuration handler of the basic client settings.
-     *
-     * @return the configuration handler
-     */
-    public static Config getCfg() {
-        return INSTANCE.cfg;
-    }
-
-    /**
-     * Get the full path to a file. This includes the default path that was set up and the name of the file this
-     * function gets.
-     *
-     * @param name the name of the file that shall be append to the folder
-     * @return the full path to a file
-     */
-    @Nonnull
-    public static Path getFile(@Nonnull String name) {
-        Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
-        return userDir.resolve(name);
-    }
-
-    /**
-     * Get the singleton instance of this client main object.
-     *
-     * @return the singleton instance of this class
-     */
-    @Nonnull
-    public static IllaClient getInstance() {
-        return INSTANCE;
-    }
-
-    /**
-     * Check if a debug flag is set or not.
-     *
-     * @param flag the debug flag that shall be checked
-     * @return true in case the flag is enabled, false if not
-     */
-    public static boolean isDebug(@Nonnull Debug flag) {
-        return (INSTANCE.debugLevel & (1 << flag.ordinal())) > 0;
-    }
-
-    /**
-     * Main function starts the client and sets up all data.
-     *
-     * @param args the arguments handed over to the client
-     */
-    @SuppressWarnings("nls")
-    public static void main(String[] args) {
-        SLF4JBridgeHandler.removeHandlersForRootLogger();
-        SLF4JBridgeHandler.install();
-
-        // Setup the crash reporter so the client is able to crash properly.
-        CrashReporter.getInstance().setMessageSource(Lang.getInstance());
-
-        // in case the server is now known, update the files if needed and
-        // launch the client.
-
-        INSTANCE.init();
-    }
-
-    /**
-     * This method is the final one to be called before the client is killed for sure. It gives the rest of the client
-     * 10 seconds before it forcefully shuts down everything. This is used to ensure that the client quits when it has
-     * to, but in case it does so faster, it won't be killed like that.
-     */
-    @SuppressWarnings("nls")
-    public static void startFinalKiller() {
-        Timer finalKiller = new Timer("Final Death", true);
-        finalKiller.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                CrashReporter.getInstance().waitForReport();
-                System.err.println("Killed by final death");
-                System.exit(-1);
-            }
-        }, 10000);
-    }
-
-    /**
-     * Get the server that was selected as connection target.
-     *
-     * @return the selected server
-     */
-    @Nonnull
-    @Contract(pure = true)
-    public Servers getUsedServer() {
-        return usedServer;
-    }
-
-    /**
-     * End the game by user request and send the logout command to the server.
-     */
-    public void quitGame() {
-        try {
-            World.getNet().sendCommand(new LogoutCmd());
-        } catch (@Nonnull IllegalStateException ex) {
-            // the NET was not launched up yet. This does not really matter.
-        }
-    }
-
-    /**
-     * Set the server that shall be used to login at.
-     *
-     * @param server the server that is used to connect with
-     */
-    public void setUsedServer(Servers server) {
-        usedServer = server;
-    }
-
-    /**
-     * Basic initialization of the log files and the debug settings.
-     */
-    @SuppressWarnings("nls")
-    private static void initLogfiles() throws IOException {
-        Path userDir = DirectoryManager.getInstance().getDirectory(DirectoryManager.Directory.User);
-        if (!Files.isDirectory(userDir)) {
-            if (Files.exists(userDir)) {
-                Files.delete(userDir);
-            }
-            Files.createDirectories(userDir);
-        }
-        System.setProperty("log_dir", userDir.toAbsolutePath().toString());
-
-        //Reload:
-        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-        ContextInitializer ci = new ContextInitializer(lc);
-        lc.reset();
-        try {
-            ci.autoConfig();
-        } catch (JoranException e) {
-            e.printStackTrace();
-        }
-        StatusPrinter.printInCaseOfErrorsOrWarnings(lc);
-
-        Thread.setDefaultUncaughtExceptionHandler(DefaultCrashHandler.getInstance());
-
-        System.out.println("Startup done.");
-        LOGGER.info("{} started.", APPLICATION.getApplicationIdentifier());
-        LOGGER.info("VM: {}", System.getProperty("java.version"));
-        LOGGER.info("OS: {} {} {}", System.getProperty("os.name"), System.getProperty("os.version"),
-                    System.getProperty("os.arch"));
-    }
-
-    public static final String CFG_FULLSCREEN = "fullscreen";
-    public static final String CFG_RESOLUTION = "resolution";
-
-    /**
      * Prepare the configuration system and the decryption system.
      */
-    @SuppressWarnings("nls")
     private void prepareConfig() {
         cfg = new ConfigSystem(getFile("Illarion.xcfgz"));
         cfg.setDefault("debugLevel", 1);
@@ -524,7 +348,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.setDefault("questWindowPosX", "100px");
         cfg.setDefault("questWindowPosY", "100px");
         cfg.setDefault("questShowFinished", false);
-        cfg.setDefault("server", Login.DEVSERVER);
+        cfg.setDefault("server", Servers.Devserver.getServerKey());
         cfg.setDefault("serverAddress", Servers.Customserver.getServerHost());
         cfg.setDefault("serverPort", Servers.Customserver.getServerPort());
         cfg.setDefault("clientVersion", Servers.Customserver.getClientVersion());
@@ -544,6 +368,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg.set("followMousePathFinding", true);
         cfg.setDefault("preLoadBagCount", 2);
 
+        cfg.setDefault(Translator.CFG_KEY_PROVIDER, Translator.CFG_VALUE_PROVIDER_NONE);
+        cfg.setDefault(Translator.CFG_KEY_DIRECTION, Translator.CFG_VALUE_DIRECTION_DEFAULT);
+
         @Nonnull Toolkit awtDefaultToolkit = Toolkit.getDefaultToolkit();
         @Nullable Object doubleClick = awtDefaultToolkit.getDesktopProperty("awt.multiClickInterval");
         if (doubleClick instanceof Number) {
@@ -555,6 +382,157 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         Crypto crypt = new Crypto();
         crypt.loadPublicKey();
         TableLoader.setCrypto(crypt);
+    }
+
+    /**
+     * Basic initialization of the log files and the debug settings.
+     */
+    private static void initLogfiles() throws IOException {
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
+
+        Path userDir = DirectoryManager.getInstance().getDirectory(Directory.User);
+        if (!Files.isDirectory(userDir)) {
+            if (Files.exists(userDir)) {
+                Files.delete(userDir);
+            }
+            Files.createDirectories(userDir);
+        }
+        System.setProperty("log_dir", userDir.toAbsolutePath().toString());
+
+        //Reload:
+        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+        ContextInitializer ci = new ContextInitializer(lc);
+        try {
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            URL resource = cl.getResource("logback-to-file.xml");
+            if (resource != null) {
+                ci.configureByResource(resource);
+            }
+        } catch (JoranException ignored) {
+        }
+        StatusPrinter.printInCaseOfErrorsOrWarnings(lc);
+
+        Thread.setDefaultUncaughtExceptionHandler(DefaultCrashHandler.getInstance());
+
+        //noinspection UseOfSystemOutOrSystemErr
+        System.out.println("Startup done.");
+        LOGGER.info("{} started.", APPLICATION.getApplicationIdentifier());
+        LOGGER.info("VM: {}", System.getProperty("java.version"));
+        LOGGER.info("OS: {} {} {}", System.getProperty("os.name"), System.getProperty("os.version"),
+                System.getProperty("os.arch"));
+    }
+
+    /**
+     * Get the configuration handler of the basic client settings.
+     *
+     * @return the configuration handler
+     */
+    @Nonnull
+    @Contract(pure = true)
+    public static Config getCfg() {
+        return Objects.requireNonNull(INSTANCE.cfg, "Config is not ready yet");
+    }
+
+    /**
+     * Save the current configuration and shutdown the client
+     */
+    public static void exitGameContainer() {
+        INSTANCE.gameContainer.exitGame();
+
+        LOGGER.info("Client shutdown initiated.");
+
+        getInstance().quitGame();
+        World.cleanEnvironment();
+        getCfg().save();
+        GlobalExecutorService.shutdown();
+
+        LOGGER.info("Cleanup done.");
+        startFinalKiller();
+    }
+
+    /**
+     * Get the full path to a file. This includes the default path that was set up and the name of the file this
+     * function gets.
+     *
+     * @param name the name of the file that shall be append to the folder
+     * @return the full path to a file
+     */
+    @Nonnull
+    public static Path getFile(@Nonnull String name) {
+        Path userDir = DirectoryManager.getInstance().getDirectory(Directory.User);
+        return userDir.resolve(name);
+    }
+
+    public static void performLogout() {
+        LOGGER.info("Logout requested.");
+        getInstance().quitGame();
+        INSTANCE.game.enterState(Game.STATE_LOGOUT);
+    }
+
+    /**
+     * End the game by user request and send the logout command to the server.
+     */
+    public void quitGame() {
+        try {
+            World.getNet().sendCommand(new LogoutCmd());
+        } catch (@Nonnull IllegalStateException ex) {
+            // the NET was not launched up yet. This does not really matter.
+        }
+    }
+
+    /**
+     * Get the singleton instance of this client main object.
+     *
+     * @return the singleton instance of this class
+     */
+    @Nonnull
+    public static IllaClient getInstance() {
+        return INSTANCE;
+    }
+
+    public static void returnToLogin() {
+        LOGGER.info("Returning to login initiated");
+        INSTANCE.game.enterState(Game.STATE_LOGIN);
+    }
+
+    /**
+     * Publishing a ConnectionLostEvent.
+     *
+     * @param message the message that shall be displayed
+     */
+    public static void sendDisconnectEvent(@Nonnull String message, boolean tryToReconnect) {
+        LOGGER.warn("Disconnect received: {}", message);
+        EventBus.publish(new ConnectionLostEvent(message, tryToReconnect));
+    }
+
+    /**
+     * Get the container that is used to display the game inside.
+     *
+     * @return the are used to display the game inside
+     */
+    public DesktopGameContainer getContainer() {
+        return gameContainer;
+    }
+
+    /**
+     * Get the server that was selected as connection target.
+     *
+     * @return the selected server
+     */
+    @Nonnull
+    @Contract(pure = true)
+    public Servers getUsedServer() {
+        return usedServer;
+    }
+
+    /**
+     * Set the server that shall be used to login at.
+     *
+     * @param server the server that is used to connect with
+     */
+    public void setUsedServer(Servers server) {
+        usedServer = server;
     }
 
     /**

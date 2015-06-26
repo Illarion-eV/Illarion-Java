@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -23,26 +23,19 @@ import org.bushe.swing.event.EventBus;
 
 import javax.annotation.Nonnull;
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 public class TileList extends JScrollPane {
 
     @Nonnull
-    private final JList tileList;
+    private final JList<TileImg> tileList;
 
     public TileList() {
         super(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-        tileList = new JList(TileLoader.getInstance().getTiles());
+        tileList = new JList<>(TileLoader.getInstance().getTiles());
         tileList.setCellRenderer(new TileImgCellRenderer());
         tileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        tileList.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(final ListSelectionEvent e) {
-                EventBus.publish(new TileSelectedEvent((TileImg) tileList.getSelectedValue()));
-            }
-        });
+        tileList.addListSelectionListener(e -> EventBus.publish(new TileSelectedEvent(tileList.getSelectedValue())));
 
         setViewportView(tileList);
     }

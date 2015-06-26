@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -25,10 +25,10 @@ import java.io.IOException;
  * @author Andreas Grob &lt;vilarion@illarion.org&gt;
  */
 public class ChannelSelectView extends ApplicationView {
-    public ChannelSelectView(@Nonnull final GuiModel model) throws IOException {
+    public ChannelSelectView(@Nonnull GuiModel model) throws IOException {
         super(model);
 
-        final Node viewContents = Util
+        Node viewContents = Util
                 .loadFXML("channelSelectView.fxml", model, Util.loadResourceBundle("channelSelectView"));
 
         setContent(viewContents.lookup("#content"), viewContents.lookup("#footer"));

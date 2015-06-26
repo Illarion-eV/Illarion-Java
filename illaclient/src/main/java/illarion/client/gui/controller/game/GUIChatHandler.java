@@ -15,17 +15,19 @@
  */
 package illarion.client.gui.controller.game;
 
-import de.lessvoid.nifty.EndNotify;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.builder.EffectBuilder;
 import de.lessvoid.nifty.builder.ElementBuilder.Align;
 import de.lessvoid.nifty.controls.ButtonClickedEvent;
+import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.controls.ScrollPanel;
 import de.lessvoid.nifty.controls.ScrollPanel.AutoScroll;
 import de.lessvoid.nifty.controls.TextField;
 import de.lessvoid.nifty.controls.label.builder.LabelBuilder;
 import de.lessvoid.nifty.elements.Element;
+import de.lessvoid.nifty.elements.events.NiftyMousePrimaryMultiClickedEvent;
+import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.input.NiftyStandardInputEvent;
 import de.lessvoid.nifty.screen.KeyInputHandler;
@@ -41,7 +43,9 @@ import illarion.client.gui.ChatGui;
 import illarion.client.net.client.IntroduceCmd;
 import illarion.client.net.client.SayCmd;
 import illarion.client.util.ChatHandler.SpeechMode;
+import illarion.client.util.Lang;
 import illarion.client.util.UpdateTask;
+import illarion.client.util.translation.Translator;
 import illarion.client.world.Char;
 import illarion.client.world.World;
 import illarion.common.types.Rectangle;
@@ -57,6 +61,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,29 +74,23 @@ import java.util.regex.Pattern;
 public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenController, UpdatableHandler {
     @Override
     public void activateChatBox() {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                if (chatMsg != null) {
-                    chatMsg.setFocus();
-                }
+        World.getUpdateTaskManager().addTask((container, delta) -> {
+            if (chatMsg != null) {
+                chatMsg.setFocus();
             }
         });
     }
 
     @Override
-    public void deactivateChatBox(final boolean clear) {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                if (chatMsg != null) {
-                    if (chatMsg.hasFocus()) {
-                        assert screen != null;
-                        screen.getFocusHandler().setKeyFocus(null);
-                    }
-                    if (clear) {
-                        chatMsg.setText("");
-                    }
+    public void deactivateChatBox(boolean clear) {
+        World.getUpdateTaskManager().addTask((container, delta) -> {
+            if (chatMsg != null) {
+                if (chatMsg.hasFocus()) {
+                    assert screen != null;
+                    screen.getFocusHandler().setKeyFocus(null);
+                }
+                if (clear) {
+                    chatMsg.setText("");
                 }
             }
         });
@@ -434,12 +433,9 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
     @Override
     public void onStartScreen() {
         setHeightOfChatLog(CHAT_COLLAPSED_HEIGHT);
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                keyEvent(NiftyStandardInputEvent.SubmitText);
-                keyEvent(NiftyStandardInputEvent.SubmitText);
-            }
+        World.getUpdateTaskManager().addTask((container, delta) -> {
+            keyEvent(NiftyStandardInputEvent.SubmitText);
+            keyEvent(NiftyStandardInputEvent.SubmitText);
         });
         AnnotationProcessor.process(this);
         assert nifty != null;
@@ -469,9 +465,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
     }
 
     private void clearChatBubbles() {
-        for (Element element : activeBubbles.values()) {
-            element.markForRemoval();
-        }
+        activeBubbles.values().forEach(Element::markForRemoval);
         activeBubbles.clear();
     }
 
@@ -489,15 +483,10 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         Element contentPane = chatLog.getElement().findElementById("chatLog");
 
         int entryCount = contentPane.getChildren().size();
-        for (int i = 0; i < (entryCount - 200); i++) {
+        for (int i = 0; i < (entryCount - 400); i++) {
             Element elementToRemove = contentPane.getChildren().get(i);
-            if (i == (entryCount - 201)) {
-                elementToRemove.markForRemoval(new EndNotify() {
-                    @Override
-                    public void perform() {
-                        chatLog.getElement().layoutElements();
-                    }
-                });
+            if (i == (entryCount - 401)) {
+                elementToRemove.markForRemoval(() -> chatLog.getElement().layoutElements());
             } else {
                 elementToRemove.markForRemoval();
             }
@@ -528,6 +517,11 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         }
     }
 
+    @Nonnull
+    private final AtomicLong chatLineCounter = new AtomicLong(0L);
+
+    private SizeValue emptyLineHeight;
+
     /**
      * Add a entry to the Chat log.
      *
@@ -540,16 +534,95 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
         }
         Element contentPane = chatLog.getElement().findElementById("chatLog");
 
+        long index = chatLineCounter.getAndIncrement();
+
         LabelBuilder label = new LabelBuilder();
+        label.id("chatLog#chatLine-" + index);
         label.font("chatFont");
         label.text(text);
         label.color(color);
         label.textHAlign(Align.Left);
         label.wrap(true);
         label.width(contentPane.getConstraintWidth().toString());
+        label.visibleToMouse(true);
         label.build(nifty, screen, contentPane);
 
+        LabelBuilder translationLabel = new LabelBuilder();
+        translationLabel.id("chatLog#transChatLine-" + index);
+        translationLabel.font("chatFont");
+        translationLabel.text("");
+        translationLabel.color(color);
+        translationLabel.textHAlign(Align.Left);
+        translationLabel.wrap(true);
+        translationLabel.visible(false);
+        if (emptyLineHeight != null) {
+            translationLabel.marginTop(emptyLineHeight.toString());
+        }
+        translationLabel.width(contentPane.getConstraintWidth().toString());
+        Element translationElement = translationLabel.build(nifty, screen, contentPane);
+
+        if (emptyLineHeight == null) {
+            TextRenderer renderer = translationElement.getRenderer(TextRenderer.class);
+            if (renderer != null) {
+                int height = renderer.getTextHeight();
+                emptyLineHeight = SizeValue.px(-height);
+                translationElement.setMarginTop(emptyLineHeight);
+            }
+        }
+
         dirty = true;
+    }
+
+    @Nonnull
+    private final Translator translator = new Translator();
+
+    @NiftyEventSubscriber(pattern = "chatLog#chatLine-[0-9]+")
+    public void onChatLineDoubleClick(@Nonnull String id, @Nonnull NiftyMousePrimaryMultiClickedEvent event) {
+        if ((screen == null) || !translator.isServiceEnabled() || (chatLog == null) || (event.getClickCount() != 2)) {
+            return;
+        }
+
+        Element panel = chatLog.getElement().findElementById("chatLog");
+        if (panel == null) {
+            return;
+        }
+
+        String strId = id.substring("chatLog#chatLine-".length());
+        String translateId = "chatLog#transChatLine-" + strId;
+
+        Element sourceElement = panel.findElementById(id);
+        Label sourceLabel = (sourceElement != null) ? sourceElement.getNiftyControl(Label.class) : null;
+
+        Element translationElement = panel.findElementById(translateId);
+        Label translationLabel = (translationElement != null) ? translationElement.getNiftyControl(Label.class) :
+                null;
+
+        if ((sourceLabel == null) || (sourceLabel.getText() == null) || (translationLabel == null)) {
+            return;
+        }
+
+        if ((translationLabel.getText() == null) || translationLabel.getText().isEmpty()) {
+            translationElement.setMarginTop(SizeValue.def());
+            translationElement.setConstraintHeight(SizeValue.def());
+            translationLabel.setText(Lang.getMsg("chat.translating"));
+            translationElement.setVisible(true);
+            sourceElement.setVisibleToMouseEvents(false);
+            dirty = true;
+            translator.translate(sourceLabel.getText(),
+                    translation -> World.getUpdateTaskManager().addTask((container, delta) -> {
+                        if (translation == null) {
+                            translationLabel.setText("");
+                            translationElement.setVisible(false);
+                            if (emptyLineHeight != null) {
+                                translationElement.setMarginTop(emptyLineHeight);
+                            }
+                        } else {
+                            translationElement.setMarginTop(SizeValue.def());
+                            translationLabel.setText(Lang.getMsg("chat.translation.header") + ' ' + translation);
+                }
+                        dirty = true;
+                    }));
+        }
     }
 
     private final Map<Char, Element> activeBubbles = new HashMap<>();
@@ -561,7 +634,7 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
      * @param message the message to display
      * @param color the color to show the text in
      */
-    private void addMessageBubble(@Nullable final Char character, @Nonnull String message, @Nonnull Color color) {
+    private void addMessageBubble(@Nullable Char character, @Nonnull String message, @Nonnull Color color) {
         if ((character == null) || (chatLayer == null)) {
             return;
         }
@@ -595,18 +668,15 @@ public final class GUIChatHandler implements ChatGui, KeyInputHandler, ScreenCon
 
         labelBuilder.onHideEffect(hideEffectBuilder);
 
-        final Element bubble = labelBuilder.build(nifty, screen, chatLayer);
+        Element bubble = labelBuilder.build(nifty, screen, chatLayer);
 
         if (updateChatBubbleLocation(character, bubble)) {
             chatLayer.layoutElements();
         }
 
-        bubble.hide(new EndNotify() {
-            @Override
-            public void perform() {
-                nifty.removeElement(screen, bubble);
-                activeBubbles.remove(character);
-            }
+        bubble.hide(() -> {
+            nifty.removeElement(screen, bubble);
+            activeBubbles.remove(character);
         });
         activeBubbles.put(character, bubble);
     }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -27,7 +27,7 @@ public final class MoveOnMapEvent extends AbstractMouseLocationEvent {
      * @param x the x coordinate of the click
      * @param y the y coordinate of the click
      */
-    public MoveOnMapEvent(final int x, final int y) {
+    public MoveOnMapEvent(int x, int y) {
         super(x, y);
     }
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -24,7 +24,7 @@ public interface Usable {
     /**
      * Perform a use operation on this interactive instance.
      */
-    public void use();
+    void use();
 
     /**
      * Check if the interactive instance is inside the valid using
@@ -33,12 +33,12 @@ public interface Usable {
      * @return {@code true} in case the character is allowed to use
      * anything on this tile or the tile itself
      */
-    public boolean isInUseRange();
+    boolean isInUseRange();
 
     /**
      * Get the range that the interactive instance can be used at.
      *
      * @return the usable range
      */
-    public int getUseRange();
+    int getUseRange();
 }

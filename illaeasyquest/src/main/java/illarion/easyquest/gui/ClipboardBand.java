@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,10 +20,10 @@ import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.common.RichTooltip;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.RibbonElementPriority;
-import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
+import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies.Mid2Low;
+import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies.Mirror;
 import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
 
-import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,15 +40,14 @@ final class ClipboardBand extends JRibbonBand {
      * The constructor for this clipboard band that prepares the buttons and all
      * settings needed for the proper display.
      */
-    @SuppressWarnings("nls")
     public ClipboardBand() {
         super(Lang.getMsg(ClipboardBand.class, "title"), null);
 
-        final JCommandButton pasteButton = new JCommandButton(Lang.getMsg(getClass(), "pasteButton"),
+        JCommandButton pasteButton = new JCommandButton(Lang.getMsg(getClass(), "pasteButton"),
                                                               Utils.getResizableIconFromResource("editpaste.png"));
-        final JCommandButton copyButton = new JCommandButton(Lang.getMsg(getClass(), "copyButton"),
+        JCommandButton copyButton = new JCommandButton(Lang.getMsg(getClass(), "copyButton"),
                                                              Utils.getResizableIconFromResource("editcopy.png"));
-        final JCommandButton cutButton = new JCommandButton(Lang.getMsg(getClass(), "cutButton"),
+        JCommandButton cutButton = new JCommandButton(Lang.getMsg(getClass(), "cutButton"),
                                                             Utils.getResizableIconFromResource("editcut.png"));
 
         pasteButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(getClass(), "pasteButtonTooltipTitle"),
@@ -58,35 +57,20 @@ final class ClipboardBand extends JRibbonBand {
         cutButton.setActionRichTooltip(new RichTooltip(Lang.getMsg(getClass(), "cutButtonTooltipTitle"),
                                                        Lang.getMsg(getClass(), "cutButtonTooltip")));
 
-        final ActionListener pasteAction = new ActionListener() {
-            @Override
-            public void actionPerformed(@Nonnull final ActionEvent e) {
-                TransferHandler.getPasteAction().actionPerformed(
-                        new ActionEvent(MainFrame.getInstance().getCurrentQuestEditor(), e.getID(),
-                                        e.getActionCommand())
-                );
-            }
-        };
+        ActionListener pasteAction = e -> TransferHandler.getPasteAction().actionPerformed(
+                new ActionEvent(MainFrame.getInstance().getCurrentQuestEditor(), e.getID(),
+                        e.getActionCommand())
+        );
 
-        final ActionListener copyAction = new ActionListener() {
-            @Override
-            public void actionPerformed(@Nonnull final ActionEvent e) {
-                TransferHandler.getCopyAction().actionPerformed(
-                        new ActionEvent(MainFrame.getInstance().getCurrentQuestEditor(), e.getID(),
-                                        e.getActionCommand())
-                );
-            }
-        };
+        ActionListener copyAction = e -> TransferHandler.getCopyAction().actionPerformed(
+                new ActionEvent(MainFrame.getInstance().getCurrentQuestEditor(), e.getID(),
+                        e.getActionCommand())
+        );
 
-        final ActionListener cutAction = new ActionListener() {
-            @Override
-            public void actionPerformed(@Nonnull final ActionEvent e) {
-                TransferHandler.getCutAction().actionPerformed(
-                        new ActionEvent(MainFrame.getInstance().getCurrentQuestEditor(), e.getID(),
-                                        e.getActionCommand())
-                );
-            }
-        };
+        ActionListener cutAction = e -> TransferHandler.getCutAction().actionPerformed(
+                new ActionEvent(MainFrame.getInstance().getCurrentQuestEditor(), e.getID(),
+                        e.getActionCommand())
+        );
 
         pasteButton.addActionListener(pasteAction);
         copyButton.addActionListener(copyAction);
@@ -96,9 +80,9 @@ final class ClipboardBand extends JRibbonBand {
         addCommandButton(copyButton, RibbonElementPriority.TOP);
         addCommandButton(cutButton, RibbonElementPriority.TOP);
 
-        final List<RibbonBandResizePolicy> policies = new ArrayList<>();
-        policies.add(new CoreRibbonResizePolicies.Mirror(getControlPanel()));
-        policies.add(new CoreRibbonResizePolicies.Mid2Low(getControlPanel()));
+        List<RibbonBandResizePolicy> policies = new ArrayList<>();
+        policies.add(new Mirror(getControlPanel()));
+        policies.add(new Mid2Low(getControlPanel()));
         setResizePolicies(policies);
     }
 }

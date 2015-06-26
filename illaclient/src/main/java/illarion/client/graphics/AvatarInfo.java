@@ -16,6 +16,7 @@
 package illarion.client.graphics;
 
 import illarion.common.graphics.CharAnimations;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +33,12 @@ import java.util.Map;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class AvatarInfo {
+    /**
+     * The instance of the logger for this class.
+     */
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(AvatarInfo.class);
+
     /**
      * The buffer of constructs of this class that is generated during the creation process and stores all AvatarInfo
      * constructs that were generated. This is needed to ensure that there is only one instance for each avatar
@@ -92,7 +99,7 @@ public final class AvatarInfo {
                 return result;
             }
         } else {
-            LOGGER.error("Requested new avatar information after setup was done. Efficiency degrading!");
+            log.error("Requested new avatar information after setup was done. Efficiency degrading!");
         }
 
         AvatarInfo newInfo = new AvatarInfo(visibilityMod);
@@ -103,17 +110,12 @@ public final class AvatarInfo {
     }
 
     /**
-     * The instance of the logger for this class.
-     */
-    @Nonnull
-    private static final Logger LOGGER = LoggerFactory.getLogger(AvatarInfo.class);
-
-    /**
      * Get the visibility modifications of the avatar. The modifications is set in percent. Use the return of this
      * function in general in the following way: {@code realVisibility = defaultVisibility * functionReturn / 100}
      *
      * @return 100 for the normal visibility, greater values for larger visibility and lower values for less visibility
      */
+    @Contract(pure = true)
     public int getVisibility() {
         return visibility;
     }
@@ -125,6 +127,7 @@ public final class AvatarInfo {
      * @param animationID the ID of the animation that shall be checked for availability
      * @return {@code true} in case the animation is available
      */
+    @Contract(pure = true)
     public boolean isAnimationAvailable(int animationID) {
         return animations[animationID];
     }
@@ -135,7 +138,6 @@ public final class AvatarInfo {
      *
      * @param animationID the ID of the animation that is available.
      */
-    @SuppressWarnings("nls")
     public void reportAnimation(int animationID) {
         if (buffer == null) {
             throw new IllegalStateException("Changing this construct is not allowed after the creation process.");

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,6 +21,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -29,7 +31,10 @@ import java.io.IOException;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 class ApplicationView extends AnchorPane implements SceneUpdater {
-    public ApplicationView(@Nonnull final GuiModel model) throws IOException {
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(ApplicationView.class);
+
+    ApplicationView(@Nonnull GuiModel model) throws IOException {
         boolean isApplet;
         try {
             isApplet = model.getHostServices().getWebContext() != null;
@@ -37,11 +42,11 @@ class ApplicationView extends AnchorPane implements SceneUpdater {
             isApplet = false;
         }
 
-        final Parent root = Util.loadFXML("applicationFrame.fxml", model, Util.loadResourceBundle("applicationFrame"));
+        Parent root = Util.loadFXML("applicationFrame.fxml", model, Util.loadResourceBundle("applicationFrame"));
 
         if (isApplet) {
             root.getStyleClass().add("applet");
-            root.lookup("#header").setVisible(false);
+            getHeader().setVisible(false);
         } else {
             root.getStyleClass().add("application");
         }
@@ -51,16 +56,30 @@ class ApplicationView extends AnchorPane implements SceneUpdater {
     }
 
     @Nonnull
-    protected final Pane getContentPane() {
-        return (Pane) lookup("#content");
+    private Node lookupRequiredNode(@Nonnull String selector) {
+        Node node = lookup(selector);
+        if (node == null) {
+            throw new IllegalArgumentException("Selector did not mark a existing node.");
+        }
+        return node;
     }
 
     @Nonnull
-    protected final Pane getFooterPane() {
-        return (Pane) lookup("#footer");
+    private Pane getContentPane() {
+        return (Pane) lookupRequiredNode("#content");
     }
 
-    protected final void setContent(@Nonnull final Node content, @Nonnull final Node footer) {
+    @Nonnull
+    private Pane getFooterPane() {
+        return (Pane) lookupRequiredNode("#footer");
+    }
+
+    @Nonnull
+    private Node getHeader() {
+        return lookupRequiredNode("#header");
+    }
+
+    final void setContent(@Nonnull Node content, @Nonnull Node footer) {
         getContentPane().getChildren().add(content);
         getFooterPane().getChildren().add(footer);
 
@@ -68,7 +87,7 @@ class ApplicationView extends AnchorPane implements SceneUpdater {
         maximizeOnAnchorPane(footer);
     }
 
-    private static void maximizeOnAnchorPane(@Nonnull final Node node) {
+    private static void maximizeOnAnchorPane(@Nonnull Node node) {
         setRightAnchor(node, 0.0);
         setLeftAnchor(node, 0.0);
         setTopAnchor(node, 0.0);
@@ -76,12 +95,12 @@ class ApplicationView extends AnchorPane implements SceneUpdater {
     }
 
     @Override
-    public void updateScene(@Nonnull final Scene scene) {
-        final String stylesheet = Util.getCssReference("applicationFrame");
+    public void updateScene(@Nonnull Scene scene) {
+        String stylesheet = Util.getCssReference("applicationFrame");
         if (stylesheet != null) {
             scene.getStylesheets().add(stylesheet);
         } else {
-            System.out.println("Failed to locate stylesheet: applicationFrame");
+            log.error("Failed to locate stylesheet: applicationFrame");
         }
     }
 }

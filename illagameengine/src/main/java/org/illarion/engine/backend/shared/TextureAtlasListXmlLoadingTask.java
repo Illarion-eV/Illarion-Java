@@ -227,16 +227,22 @@ public class TextureAtlasListXmlLoadingTask<T> implements Runnable, TextureAtlas
             @Nonnull String attributeName = parser.getAttributeName(i);
             @Nonnull String attributeValue = parser.getAttributeValue(i);
             try {
-                if ("x".equals(attributeName)) {
-                    posX = Integer.parseInt(attributeValue);
-                } else if ("y".equals(attributeName)) {
-                    posY = Integer.parseInt(attributeValue);
-                } else if ("height".equals(attributeName)) {
-                    height = Integer.parseInt(attributeValue);
-                } else if ("width".equals(attributeName)) {
-                    width = Integer.parseInt(attributeValue);
-                } else if ("name".equals(attributeName)) {
-                    name = attributeValue;
+                switch (attributeName) {
+                    case "x":
+                        posX = Integer.parseInt(attributeValue);
+                        break;
+                    case "y":
+                        posY = Integer.parseInt(attributeValue);
+                        break;
+                    case "height":
+                        height = Integer.parseInt(attributeValue);
+                        break;
+                    case "width":
+                        width = Integer.parseInt(attributeValue);
+                        break;
+                    case "name":
+                        name = attributeValue;
+                        break;
                 }
             } catch (@Nonnull NumberFormatException e) {
                 log.error("Error while parsing texture atlas sprite: {}=\"{}" + '"', attributeName, attributeValue);

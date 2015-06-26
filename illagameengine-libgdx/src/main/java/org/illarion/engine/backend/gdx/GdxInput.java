@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,6 +16,8 @@
 package org.illarion.engine.backend.gdx;
 
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Buttons;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import illarion.common.util.FastMath;
 import org.illarion.engine.backend.shared.AbstractForwardingInput;
@@ -150,11 +152,11 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     @Nullable
     private static Button getEngineButton(int button) {
         switch (button) {
-            case Input.Buttons.LEFT:
+            case Buttons.LEFT:
                 return Button.Left;
-            case Input.Buttons.RIGHT:
+            case Buttons.RIGHT:
                 return Button.Right;
-            case Input.Buttons.MIDDLE:
+            case Buttons.MIDDLE:
                 return Button.Middle;
             default:
                 return null;
@@ -170,11 +172,11 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     private static int getGdxButton(@Nonnull Button button) {
         switch (button) {
             case Left:
-                return Input.Buttons.LEFT;
+                return Buttons.LEFT;
             case Right:
-                return Input.Buttons.RIGHT;
+                return Buttons.RIGHT;
             case Middle:
-                return Input.Buttons.MIDDLE;
+                return Buttons.MIDDLE;
         }
         return -1;
     }
@@ -189,143 +191,143 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     @Nullable
     private static Key getEngineKey(int gdxKeyCode) {
         switch (gdxKeyCode) {
-            case Input.Keys.A:
+            case Keys.A:
                 return Key.A;
-            case Input.Keys.B:
+            case Keys.B:
                 return Key.B;
-            case Input.Keys.C:
+            case Keys.C:
                 return Key.C;
-            case Input.Keys.D:
+            case Keys.D:
                 return Key.D;
-            case Input.Keys.E:
+            case Keys.E:
                 return Key.E;
-            case Input.Keys.F:
+            case Keys.F:
                 return Key.F;
-            case Input.Keys.G:
+            case Keys.G:
                 return Key.G;
-            case Input.Keys.H:
+            case Keys.H:
                 return Key.H;
-            case Input.Keys.I:
+            case Keys.I:
                 return Key.I;
-            case Input.Keys.J:
+            case Keys.J:
                 return Key.J;
-            case Input.Keys.K:
+            case Keys.K:
                 return Key.K;
-            case Input.Keys.L:
+            case Keys.L:
                 return Key.L;
-            case Input.Keys.M:
+            case Keys.M:
                 return Key.M;
-            case Input.Keys.N:
+            case Keys.N:
                 return Key.N;
-            case Input.Keys.O:
+            case Keys.O:
                 return Key.O;
-            case Input.Keys.P:
+            case Keys.P:
                 return Key.P;
-            case Input.Keys.Q:
+            case Keys.Q:
                 return Key.Q;
-            case Input.Keys.R:
+            case Keys.R:
                 return Key.R;
-            case Input.Keys.S:
+            case Keys.S:
                 return Key.S;
-            case Input.Keys.T:
+            case Keys.T:
                 return Key.T;
-            case Input.Keys.U:
+            case Keys.U:
                 return Key.U;
-            case Input.Keys.V:
+            case Keys.V:
                 return Key.V;
-            case Input.Keys.W:
+            case Keys.W:
                 return Key.W;
-            case Input.Keys.X:
+            case Keys.X:
                 return Key.X;
-            case Input.Keys.Y:
+            case Keys.Y:
                 return Key.Y;
-            case Input.Keys.Z:
+            case Keys.Z:
                 return Key.Z;
-            case Input.Keys.SHIFT_LEFT:
+            case Keys.SHIFT_LEFT:
                 return Key.LeftShift;
-            case Input.Keys.SHIFT_RIGHT:
+            case Keys.SHIFT_RIGHT:
                 return Key.RightShift;
-            case Input.Keys.ALT_LEFT:
+            case Keys.ALT_LEFT:
                 return Key.LeftAlt;
-            case Input.Keys.ALT_RIGHT:
+            case Keys.ALT_RIGHT:
                 return Key.RightAlt;
-            case Input.Keys.CONTROL_LEFT:
+            case Keys.CONTROL_LEFT:
                 return Key.LeftCtrl;
-            case Input.Keys.CONTROL_RIGHT:
+            case Keys.CONTROL_RIGHT:
                 return Key.RightCtrl;
-            case Input.Keys.LEFT:
+            case Keys.LEFT:
                 return Key.CursorLeft;
-            case Input.Keys.RIGHT:
+            case Keys.RIGHT:
                 return Key.CursorRight;
-            case Input.Keys.UP:
+            case Keys.UP:
                 return Key.CursorUp;
-            case Input.Keys.DOWN:
+            case Keys.DOWN:
                 return Key.CursorDown;
-            case Input.Keys.ENTER:
+            case Keys.ENTER:
                 return Key.Enter;
-            case Input.Keys.BACKSPACE:
+            case Keys.BACKSPACE:
                 return Key.Backspace;
-            case Input.Keys.NUMPAD_0:
+            case Keys.NUMPAD_0:
                 return Key.NumPad0;
-            case Input.Keys.NUMPAD_1:
+            case Keys.NUMPAD_1:
                 return Key.NumPad1;
-            case Input.Keys.NUMPAD_2:
+            case Keys.NUMPAD_2:
                 return Key.NumPad2;
-            case Input.Keys.NUMPAD_3:
+            case Keys.NUMPAD_3:
                 return Key.NumPad3;
-            case Input.Keys.NUMPAD_4:
+            case Keys.NUMPAD_4:
                 return Key.NumPad4;
-            case Input.Keys.NUMPAD_5:
+            case Keys.NUMPAD_5:
                 return Key.NumPad5;
-            case Input.Keys.NUMPAD_6:
+            case Keys.NUMPAD_6:
                 return Key.NumPad6;
-            case Input.Keys.NUMPAD_7:
+            case Keys.NUMPAD_7:
                 return Key.NumPad7;
-            case Input.Keys.NUMPAD_8:
+            case Keys.NUMPAD_8:
                 return Key.NumPad8;
-            case Input.Keys.NUMPAD_9:
+            case Keys.NUMPAD_9:
                 return Key.NumPad9;
-            case Input.Keys.NUM:
+            case Keys.NUM:
                 return Key.NumLock;
-            case Input.Keys.ESCAPE:
+            case Keys.ESCAPE:
                 return Key.Escape;
-            case Input.Keys.F1:
+            case Keys.F1:
                 return Key.F1;
-            case Input.Keys.F2:
+            case Keys.F2:
                 return Key.F2;
-            case Input.Keys.F3:
+            case Keys.F3:
                 return Key.F3;
-            case Input.Keys.F4:
+            case Keys.F4:
                 return Key.F4;
-            case Input.Keys.F5:
+            case Keys.F5:
                 return Key.F5;
-            case Input.Keys.F6:
+            case Keys.F6:
                 return Key.F6;
-            case Input.Keys.F7:
+            case Keys.F7:
                 return Key.F7;
-            case Input.Keys.F8:
+            case Keys.F8:
                 return Key.F8;
-            case Input.Keys.F9:
+            case Keys.F9:
                 return Key.F9;
-            case Input.Keys.F10:
+            case Keys.F10:
                 return Key.F10;
-            case Input.Keys.F11:
+            case Keys.F11:
                 return Key.F11;
-            case Input.Keys.F12:
+            case Keys.F12:
                 return Key.F12;
-            case Input.Keys.INSERT:
+            case Keys.INSERT:
                 return Key.Insert;
-            case Input.Keys.FORWARD_DEL:
+            case Keys.FORWARD_DEL:
                 return Key.Delete;
-            case Input.Keys.HOME:
+            case Keys.HOME:
                 return Key.Home;
-            case Input.Keys.END:
+            case Keys.END:
                 return Key.End;
-            case Input.Keys.PAGE_UP:
+            case Keys.PAGE_UP:
                 return Key.PageUp;
-            case Input.Keys.PAGE_DOWN:
+            case Keys.PAGE_DOWN:
                 return Key.PageDown;
-            case Input.Keys.TAB:
+            case Keys.TAB:
                 return Key.Tab;
             default:
                 return null;
@@ -336,156 +338,156 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
      * Get the libGDX key code of a engine button.
      *
      * @param key the engine key
-     * @return the libGDX key code or {@link Input.Keys#UNKNOWN} in case the mapping fails
+     * @return the libGDX key code or {@link Keys#UNKNOWN} in case the mapping fails
      */
     @SuppressWarnings("SwitchStatementWithTooManyBranches")
     private static int getGdxKey(@Nonnull Key key) {
         switch (key) {
             case A:
-                return Input.Keys.A;
+                return Keys.A;
             case B:
-                return Input.Keys.B;
+                return Keys.B;
             case C:
-                return Input.Keys.C;
+                return Keys.C;
             case D:
-                return Input.Keys.D;
+                return Keys.D;
             case E:
-                return Input.Keys.E;
+                return Keys.E;
             case F:
-                return Input.Keys.F;
+                return Keys.F;
             case G:
-                return Input.Keys.G;
+                return Keys.G;
             case H:
-                return Input.Keys.H;
+                return Keys.H;
             case I:
-                return Input.Keys.I;
+                return Keys.I;
             case J:
-                return Input.Keys.J;
+                return Keys.J;
             case K:
-                return Input.Keys.K;
+                return Keys.K;
             case L:
-                return Input.Keys.L;
+                return Keys.L;
             case M:
-                return Input.Keys.M;
+                return Keys.M;
             case N:
-                return Input.Keys.N;
+                return Keys.N;
             case O:
-                return Input.Keys.O;
+                return Keys.O;
             case P:
-                return Input.Keys.P;
+                return Keys.P;
             case Q:
-                return Input.Keys.Q;
+                return Keys.Q;
             case R:
-                return Input.Keys.R;
+                return Keys.R;
             case S:
-                return Input.Keys.S;
+                return Keys.S;
             case T:
-                return Input.Keys.T;
+                return Keys.T;
             case U:
-                return Input.Keys.U;
+                return Keys.U;
             case V:
-                return Input.Keys.V;
+                return Keys.V;
             case W:
-                return Input.Keys.W;
+                return Keys.W;
             case X:
-                return Input.Keys.X;
+                return Keys.X;
             case Y:
-                return Input.Keys.Y;
+                return Keys.Y;
             case Z:
-                return Input.Keys.Z;
+                return Keys.Z;
             case LeftShift:
-                return Input.Keys.SHIFT_LEFT;
+                return Keys.SHIFT_LEFT;
             case RightShift:
-                return Input.Keys.SHIFT_RIGHT;
+                return Keys.SHIFT_RIGHT;
             case LeftAlt:
-                return Input.Keys.ALT_LEFT;
+                return Keys.ALT_LEFT;
             case RightAlt:
-                return Input.Keys.ALT_RIGHT;
+                return Keys.ALT_RIGHT;
             case LeftCtrl:
-                return Input.Keys.CONTROL_LEFT;
+                return Keys.CONTROL_LEFT;
             case RightCtrl:
-                return Input.Keys.CONTROL_RIGHT;
+                return Keys.CONTROL_RIGHT;
             case CursorLeft:
-                return Input.Keys.LEFT;
+                return Keys.LEFT;
             case CursorRight:
-                return Input.Keys.RIGHT;
+                return Keys.RIGHT;
             case CursorUp:
-                return Input.Keys.UP;
+                return Keys.UP;
             case CursorDown:
-                return Input.Keys.DOWN;
+                return Keys.DOWN;
             case Enter:
-                return Input.Keys.ENTER;
+                return Keys.ENTER;
             case Backspace:
-                return Input.Keys.BACKSPACE;
+                return Keys.BACKSPACE;
             case NumPad0:
-                return Input.Keys.NUMPAD_0;
+                return Keys.NUMPAD_0;
             case NumPad1:
-                return Input.Keys.NUMPAD_1;
+                return Keys.NUMPAD_1;
             case NumPad2:
-                return Input.Keys.NUMPAD_2;
+                return Keys.NUMPAD_2;
             case NumPad3:
-                return Input.Keys.NUMPAD_3;
+                return Keys.NUMPAD_3;
             case NumPad4:
-                return Input.Keys.NUMPAD_4;
+                return Keys.NUMPAD_4;
             case NumPad5:
-                return Input.Keys.NUMPAD_5;
+                return Keys.NUMPAD_5;
             case NumPad6:
-                return Input.Keys.NUMPAD_6;
+                return Keys.NUMPAD_6;
             case NumPad7:
-                return Input.Keys.NUMPAD_7;
+                return Keys.NUMPAD_7;
             case NumPad8:
-                return Input.Keys.NUMPAD_8;
+                return Keys.NUMPAD_8;
             case NumPad9:
-                return Input.Keys.NUMPAD_9;
+                return Keys.NUMPAD_9;
             case NumLock:
-                return Input.Keys.NUM;
+                return Keys.NUM;
             case Escape:
-                return Input.Keys.ESCAPE;
+                return Keys.ESCAPE;
             case F1:
-                return Input.Keys.F1;
+                return Keys.F1;
             case F2:
-                return Input.Keys.F2;
+                return Keys.F2;
             case F3:
-                return Input.Keys.F3;
+                return Keys.F3;
             case F4:
-                return Input.Keys.F4;
+                return Keys.F4;
             case F5:
-                return Input.Keys.F5;
+                return Keys.F5;
             case F6:
-                return Input.Keys.F6;
+                return Keys.F6;
             case F7:
-                return Input.Keys.F7;
+                return Keys.F7;
             case F8:
-                return Input.Keys.F8;
+                return Keys.F8;
             case F9:
-                return Input.Keys.F9;
+                return Keys.F9;
             case F10:
-                return Input.Keys.F10;
+                return Keys.F10;
             case F11:
-                return Input.Keys.F11;
+                return Keys.F11;
             case F12:
-                return Input.Keys.F12;
+                return Keys.F12;
             case Insert:
-                return Input.Keys.INSERT;
+                return Keys.INSERT;
             case Delete:
-                return Input.Keys.FORWARD_DEL;
+                return Keys.FORWARD_DEL;
             case Home:
-                return Input.Keys.HOME;
+                return Keys.HOME;
             case End:
-                return Input.Keys.END;
+                return Keys.END;
             case PageUp:
-                return Input.Keys.PAGE_UP;
+                return Keys.PAGE_UP;
             case PageDown:
-                return Input.Keys.PAGE_DOWN;
+                return Keys.PAGE_DOWN;
             case Tab:
-                return Input.Keys.TAB;
+                return Keys.TAB;
         }
-        return Input.Keys.UNKNOWN;
+        return Keys.UNKNOWN;
     }
 
     @Override
     public boolean keyDown(int keycode) {
-        final Key pressedKey = getEngineKey(keycode);
+        Key pressedKey = getEngineKey(keycode);
         if (pressedKey == null) {
             log.debug("Received key down with code: {} that failed to translate to a key.", keycode);
             return true;
@@ -494,12 +496,9 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
             addKeyToAltKeyCode(pressedKey);
         }
         log.debug("Received key down with code: {} that translated to key: {}", keycode, pressedKey);
-        events.offer(new Runnable() {
-            @Override
-            public void run() {
-                assert inputListener != null;
-                inputListener.keyDown(pressedKey);
-            }
+        events.offer(() -> {
+            assert inputListener != null;
+            inputListener.keyDown(pressedKey);
         });
         return true;
     }
@@ -553,18 +552,15 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
 
     @Override
     public boolean keyUp(int keycode) {
-        final Key releasedKey = getEngineKey(keycode);
+        Key releasedKey = getEngineKey(keycode);
         if (releasedKey == null) {
             log.debug("Received key up with code: {} that failed to translate to a key.", keycode);
             return true;
         }
         log.debug("Received key up with code: {} that translated to key: {}", keycode, releasedKey);
-        events.offer(new Runnable() {
-            @Override
-            public void run() {
-                assert inputListener != null;
-                inputListener.keyUp(releasedKey);
-            }
+        events.offer(() -> {
+            assert inputListener != null;
+            inputListener.keyUp(releasedKey);
         });
         if ((releasedKey == Key.LeftAlt) || (releasedKey == Key.RightAlt)) {
             keyTyped(altKeyCode);
@@ -574,15 +570,12 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     }
 
     @Override
-    public boolean keyTyped(final char character) {
+    public boolean keyTyped(char character) {
         if (Character.isDefined(character) && (character != 0)) {
             log.debug("Received key typed with character: {}", character);
-            events.offer(new Runnable() {
-                @Override
-                public void run() {
-                    assert inputListener != null;
-                    inputListener.keyTyped(character);
-                }
+            events.offer(() -> {
+                assert inputListener != null;
+                inputListener.keyTyped(character);
             });
             return true;
         } else {
@@ -591,20 +584,17 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     }
 
     @Override
-    public boolean touchDown(final int x, final int y, int pointer, int button) {
+    public boolean touchDown(int x, int y, int pointer, int button) {
         if (pointer != USED_MOUSE_POINTER) {
             return false;
         }
-        final Button pressedButton = getEngineButton(button);
+        Button pressedButton = getEngineButton(button);
         if (pressedButton == null) {
             return true;
         }
-        events.offer(new Runnable() {
-            @Override
-            public void run() {
-                assert inputListener != null;
-                inputListener.buttonDown(x, y, pressedButton);
-            }
+        events.offer(() -> {
+            assert inputListener != null;
+            inputListener.buttonDown(x, y, pressedButton);
         });
 
         touchDownX = x;
@@ -618,11 +608,11 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     }
 
     @Override
-    public boolean touchUp(final int x, final int y, int pointer, int button) {
+    public boolean touchUp(int x, int y, int pointer, int button) {
         if (pointer != USED_MOUSE_POINTER) {
             return false;
         }
-        final Button releasedButton = getEngineButton(button);
+        Button releasedButton = getEngineButton(button);
         if (releasedButton == null) {
             return true;
         }
@@ -630,12 +620,9 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
                 (FastMath.abs(touchDownX - x) < CLICK_TOLERANCE) && (FastMath.abs(touchDownY - y) < CLICK_TOLERANCE)) {
             publishClick(x, y, releasedButton);
         }
-        events.offer(new Runnable() {
-            @Override
-            public void run() {
-                assert inputListener != null;
-                inputListener.buttonUp(x, y, releasedButton);
-            }
+        events.offer(() -> {
+            assert inputListener != null;
+            inputListener.buttonUp(x, y, releasedButton);
         });
         return true;
     }
@@ -647,49 +634,40 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
      * @param y the y coordinate where the click happened
      * @param button the button that was clicked
      */
-    private void publishClick(final int x, final int y, @Nonnull final Button button) {
+    private void publishClick(int x, int y, @Nonnull Button button) {
         if ((clickTimeout == 0) || (clickButton != button) || (System.currentTimeMillis() > clickTimeout)) {
             clickButton = button;
             clickTimeout = System.currentTimeMillis() + doubleClickDelay;
-            events.offer(new Runnable() {
-                @Override
-                public void run() {
-                    assert inputListener != null;
-                    inputListener.buttonClicked(x, y, button, 1);
-                }
+            events.offer(() -> {
+                assert inputListener != null;
+                inputListener.buttonClicked(x, y, button, 1);
             });
         } else {
             clickTimeout = 0;
-            events.offer(new Runnable() {
-                @Override
-                public void run() {
-                    assert inputListener != null;
-                    inputListener.buttonClicked(x, y, button, 2);
-                }
+            events.offer(() -> {
+                assert inputListener != null;
+                inputListener.buttonClicked(x, y, button, 2);
             });
         }
     }
 
     @Override
-    public boolean touchDragged(final int x, final int y, int pointer) {
+    public boolean touchDragged(int x, int y, int pointer) {
         if (pointer != USED_MOUSE_POINTER) {
             return false;
         }
 
-        final int startX = lastDragRelevantX;
-        final int startY = lastDragRelevantY;
+        int startX = lastDragRelevantX;
+        int startY = lastDragRelevantY;
 
         lastDragRelevantX = x;
         lastDragRelevantY = y;
 
-        for (@Nonnull final Button button : Button.values()) {
+        for (@Nonnull Button button : Button.values()) {
             if (isButtonDown(button)) {
-                events.offer(new Runnable() {
-                    @Override
-                    public void run() {
-                        assert inputListener != null;
-                        inputListener.mouseDragged(button, startX, startY, x, y);
-                    }
+                events.offer(() -> {
+                    assert inputListener != null;
+                    inputListener.mouseDragged(button, startX, startY, x, y);
                 });
             }
         }
@@ -697,25 +675,19 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
     }
 
     @Override
-    public boolean mouseMoved(final int x, final int y) {
-        events.offer(new Runnable() {
-            @Override
-            public void run() {
-                assert inputListener != null;
-                inputListener.mouseMoved(x, y);
-            }
+    public boolean mouseMoved(int x, int y) {
+        events.offer(() -> {
+            assert inputListener != null;
+            inputListener.mouseMoved(x, y);
         });
         return true;
     }
 
     @Override
-    public boolean scrolled(final int amount) {
-        events.offer(new Runnable() {
-            @Override
-            public void run() {
-                assert inputListener != null;
-                inputListener.mouseWheelMoved(getMouseX(), getMouseY(), -amount);
-            }
+    public boolean scrolled(int amount) {
+        events.offer(() -> {
+            assert inputListener != null;
+            inputListener.mouseWheelMoved(getMouseX(), getMouseY(), -amount);
         });
         return true;
     }

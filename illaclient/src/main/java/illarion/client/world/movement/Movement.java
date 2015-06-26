@@ -15,11 +15,11 @@
  */
 package illarion.client.world.movement;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import illarion.client.graphics.AnimatedMove;
 import illarion.client.graphics.MoveAnimation;
 import illarion.client.net.client.MoveCmd;
 import illarion.client.net.client.TurnCmd;
-import illarion.client.util.UpdateTask;
 import illarion.client.world.CharMovementMode;
 import illarion.client.world.MapTile;
 import illarion.client.world.Player;
@@ -30,7 +30,6 @@ import illarion.common.types.CharacterId;
 import illarion.common.types.Direction;
 import illarion.common.types.ServerCoordinate;
 import illarion.common.util.FastMath;
-import org.illarion.engine.GameContainer;
 import org.illarion.engine.input.Input;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
@@ -40,6 +39,8 @@ import org.slf4j.MarkerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * This is the main controlling class for the movement. It maintains the references to the different handlers and
@@ -52,12 +53,18 @@ public class Movement {
     private static final Logger log = LoggerFactory.getLogger(Movement.class);
     @Nonnull
     private static final Marker marker = MarkerFactory.getMarker("Movement");
+    @Nonnull
+    private static final String THEAD_NAME_HEADER = "Movement Thread-";
+
 
     /**
      * The instance of the player that is moved around by this class.
      */
     @Nonnull
     private final Player player;
+
+    @Nonnull
+    private final ExecutorService executorService;
 
     /**
      * The currently active movement handler.
@@ -110,6 +117,12 @@ public class Movement {
         keyboardHandler = new SimpleKeyboardMovementHandler(this, input);
         targetMovementHandler = new WalkToMovementHandler(this);
         targetMouseMovementHandler = new WalkToMouseMovementHandler(this, input);
+
+        executorService = Executors.newSingleThreadExecutor(
+                new ThreadFactoryBuilder()
+                        .setNameFormat(THEAD_NAME_HEADER + "%d")
+                        .setDaemon(true)
+                        .build());
     }
 
     /**
@@ -153,13 +166,8 @@ public class Movement {
         return (activeHandler != null) && handler.equals(activeHandler);
     }
 
-    public void executeServerRespTurn(@Nonnull final Direction direction) {
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                executeServerRespTurnInternal(direction);
-            }
-        });
+    public void executeServerRespTurn(@Nonnull Direction direction) {
+        executorService.submit(() -> executeServerRespTurnInternal(direction));
     }
 
     private void executeServerRespTurnInternal(@Nonnull Direction direction) {
@@ -171,25 +179,21 @@ public class Movement {
     }
 
     public void executeServerRespMoveTooEarly() {
-        World.getUpdateTaskManager().addTaskForLater(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                log.debug(
-                        "Response indicates that the request was received too early. A new request is required later.");
-                resendMoveToServer();
-            }
+        executorService.submit(() -> {
+            log.debug(
+                    "Response indicates that the request was received too early. A new request is required later.");
+            resendMoveToServer();
         });
     }
 
     public void executeServerRespMove(
-            @Nonnull final CharMovementMode mode, @Nonnull final ServerCoordinate target, final int duration) {
-        final ServerCoordinate orgLocation = playerLocation;
-        World.getUpdateTaskManager().addTask(new UpdateTask() {
-            @Override
-            public void onUpdateGame(@Nonnull GameContainer container, int delta) {
-                executeServerRespMoveInternal(orgLocation, mode, target, duration);
-            }
-        });
+            @Nonnull CharMovementMode mode, @Nonnull ServerCoordinate target, int duration) {
+        ServerCoordinate orgLocation = playerLocation;
+        if (orgLocation == null) {
+            throw new IllegalStateException("The player location is currently unknown.");
+        }
+
+        executorService.submit(() -> executeServerRespMoveInternal(orgLocation, mode, target, duration));
         playerLocation = target;
     }
 
@@ -270,16 +274,18 @@ public class Movement {
     }
 
     public void executeServerLocation(@Nonnull ServerCoordinate target) {
-        MovementHandler currentHandler = activeHandler;
-        if (currentHandler != null) {
-            currentHandler.disengage(false);
-        }
+        World.getUpdateTaskManager().addTask((container, delta) -> {
+            MovementHandler currentHandler = activeHandler;
+            if (currentHandler != null) {
+                currentHandler.disengage(false);
+            }
+        });
 
         stepInProgress = false;
         animator.cancelAll();
 
-        World.getPlayer().setLocation(target);
         playerLocation = target;
+        World.getPlayer().setLocation(target);
     }
 
     /**
@@ -335,8 +341,18 @@ public class Movement {
      * or not.
      */
     public void update() {
+        if (Thread.currentThread().getName().startsWith(THEAD_NAME_HEADER)) {
+            updateImpl();
+        } else {
+            executorService.submit(this::updateImpl);
+        }
+    }
+
+    private void updateImpl() {
         if (playerLocation == null) {
-            throw new IllegalStateException("The current player location is not known yet.");
+            // We are not ready set to do anything. Let's wait.
+            log.debug("Received early update on the movement system. Can't do much yet. Standing by.");
+            return;
         }
         if (stepInProgress) {
             return;
@@ -439,5 +455,6 @@ public class Movement {
 
     public void shutdown() {
         activeHandler = null;
+        executorService.shutdown();
     }
 }

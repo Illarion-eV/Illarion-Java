@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -32,6 +32,7 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
+import java.util.ResourceBundle.Control;
 
 /**
  * Localized text handler. Loads the localized messages and returns them if
@@ -41,7 +42,6 @@ import java.util.ResourceBundle;
  * @version 1.01
  * @since 1.01
  */
-@SuppressWarnings("nls")
 public final class Lang implements MessageSource {
     /**
      * The string stores in the configuration for English language.
@@ -71,7 +71,7 @@ public final class Lang implements MessageSource {
     /**
      * The current local settings.
      */
-    private Locale locale;
+    private final Locale locale;
 
     /**
      * The storage of the localized messages. Holds the key for the string and
@@ -84,7 +84,7 @@ public final class Lang implements MessageSource {
      */
     private Lang() {
         locale = MapEditorConfig.getInstance().getLanguage();
-        messages = ResourceBundle.getBundle(MESSAGE_BUNDLE, locale, Lang.class.getClassLoader(),new UTF8Control());
+        messages = ResourceBundle.getBundle(MESSAGE_BUNDLE, locale, Lang.class.getClassLoader(), new UTF8Control());
     }
 
     /**
@@ -106,8 +106,8 @@ public final class Lang implements MessageSource {
      *         key was not found in the storage
      */
     @Nonnull
-    public static String getMsg(@Nonnull final Class<?> clazz, final String key) {
-        final TextBuilder builder = new TextBuilder();
+    public static String getMsg(@Nonnull Class<?> clazz, String key) {
+        TextBuilder builder = new TextBuilder();
         builder.append(clazz.getName());
         builder.append('.');
         builder.append(key);
@@ -122,7 +122,7 @@ public final class Lang implements MessageSource {
      *         case the key was not found in the storage
      */
     @Nonnull
-    public static String getMsg(final String key) {
+    public static String getMsg(String key) {
         return INSTANCE.getMessage(key);
     }
 
@@ -143,10 +143,10 @@ public final class Lang implements MessageSource {
      *         case the key was not found in the storage
      */
     @Override
-    public String getMessage(@Nonnull final String key) {
+    public String getMessage(@Nonnull String key) {
         try {
             return messages.getString(key);
-        } catch (@Nonnull final MissingResourceException e) {
+        } catch (@Nonnull MissingResourceException e) {
             LOGGER.warn("Failed searching translated version of: " + key);
             return '<' + key + '>';
         }
@@ -158,10 +158,10 @@ public final class Lang implements MessageSource {
      * @param key the key that shall be checked
      * @return true in case a message was found
      */
-    public boolean hasMsg(final String key) {
+    public boolean hasMsg(String key) {
         try {
             messages.getString(key);
-        } catch (@Nonnull final MissingResourceException e) {
+        } catch (@Nonnull MissingResourceException e) {
             return false;
         }
         return true;
@@ -185,18 +185,18 @@ public final class Lang implements MessageSource {
         return locale == Locale.GERMAN;
     }
 
-    private class UTF8Control extends ResourceBundle.Control {
+    private static class UTF8Control extends Control {
         @Nullable
         @Override
-        public ResourceBundle newBundle(final String baseName, final Locale locale, final String format,
-                                        @Nonnull final ClassLoader loader, final boolean reload) throws IOException {
-            final String bundleName = toBundleName(baseName, locale);
-            final String resourceName = toResourceName(bundleName, "properties");
+        public ResourceBundle newBundle(String baseName, Locale locale, String format,
+                                        @Nonnull ClassLoader loader, boolean reload) throws IOException {
+            String bundleName = toBundleName(baseName, locale);
+            String resourceName = toResourceName(bundleName, "properties");
             InputStream stream = null;
             if (reload) {
-                final URL url = loader.getResource(resourceName);
+                URL url = loader.getResource(resourceName);
                 if (url != null) {
-                    final URLConnection connection = url.openConnection();
+                    URLConnection connection = url.openConnection();
                     if (connection != null) {
                         connection.setUseCaches(false);
                         stream = connection.getInputStream();
