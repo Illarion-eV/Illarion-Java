@@ -15,6 +15,7 @@
  */
 package illarion.client.world;
 
+import com.google.common.base.Strings;
 import illarion.client.graphics.AnimatedMove;
 import illarion.client.graphics.Avatar;
 import illarion.client.graphics.AvatarClothManager;
@@ -885,19 +886,69 @@ public final class Char implements AnimatedMove {
     @Nonnull
     @Contract(pure = true)
     public String getName() {
-        if ((name == null) || name.isEmpty()) {
-            if ((customName == null) || customName.isEmpty()) {
-                return Lang.getMsg("chat.someone"); //$NON-NLS-1$
-            } else {
-                return '"' + customName + '"';
-            }
+        if (Strings.isNullOrEmpty(name)) {
+            return Strings.isNullOrEmpty(customName) ? getFallbackName() : ('"' + customName + '"');
         } else {
-            if ((customName == null) || customName.isEmpty()) {
-                return name;
-            } else {
-                return name + " (" + customName + ')';
-            }
+            return Strings.isNullOrEmpty(customName) ? name : (name + " (" + customName + ')');
         }
+    }
+
+    @Nonnull
+    @Contract(pure = true)
+    private String getFallbackName() {
+        String key;
+        switch (appearance) {
+            // humans
+            case 1:
+                key = "character.name.fallback.human.male";
+                break;
+            case 16:
+                key = "character.name.fallback.human.female";
+                break;
+
+            // dwarfs
+            case 12:
+                key = "character.name.fallback.dwarf.male";
+                break;
+            case 17:
+                key = "character.name.fallback.dwarf.female";
+                break;
+
+            // halflings
+            case 24:
+                key = "character.name.fallback.halfling.male";
+                break;
+            case 25:
+                key = "character.name.fallback.halfling.female";
+                break;
+
+            // elves
+            case 20:
+                key = "character.name.fallback.elf.male";
+                break;
+            case 19:
+                key = "character.name.fallback.elf.female";
+                break;
+
+            // orcs
+            case 13:
+                key = "character.name.fallback.orc.male";
+                break;
+            case 18:
+                key = "character.name.fallback.orc.female";
+                break;
+
+            // lizards
+            case 7:
+                key = "character.name.fallback.lizard";
+                break;
+
+            // And everyone else
+            default:
+                key = "chat.someone";
+                break;
+        }
+        return Lang.getMsg(key);
     }
 
     @Nullable
