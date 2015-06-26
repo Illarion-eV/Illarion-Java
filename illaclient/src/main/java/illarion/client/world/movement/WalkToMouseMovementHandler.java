@@ -166,7 +166,7 @@ class WalkToMouseMovementHandler extends WalkToMovementHandler implements MouseT
     }
 
     @Override
-    @Nonnull
+    @Nullable
     protected Direction getPreferredDirection() {
         MapDimensions mapDimensions = MapDimensions.getInstance();
         int dX = lastMouseX - (mapDimensions.getOnScreenWidth() / 2);
