@@ -106,7 +106,7 @@ public final class OptionScreenController implements ScreenController {
         translationProviders = tabRoot.findNiftyControl("translationProviders", DropDown.class);
         translationProviders.addItem("${options-bundle.translation.provider.none}");
         translationProviders.addItem("${options-bundle.translation.provider.mymemory}");
-        translationProviders.addItem("${options-bundle.translation.provider.yandex}");
+        //translationProviders.addItem("${options-bundle.translation.provider.yandex}");
         //noinspection unchecked
         translationDirections = tabRoot.findNiftyControl("translationDirections", DropDown.class);
         translationDirections.addItem("${options-bundle.translation.direction.default}");
@@ -167,6 +167,25 @@ public final class OptionScreenController implements ScreenController {
             serverAccountLogin.setChecked(IllaClient.getCfg().getBoolean("serverAccountLogin"));
             serverResetSettings.setChecked(false);
         }
+    }
+
+    @Override
+    public void onEndScreen() {
+    }
+
+    @Nonnull
+    public static List<String> getResolutionList() {
+        DesktopGameContainer container = IllaClient.getInstance().getContainer();
+
+        GraphicResolution[] resolutions = container.getFullScreenResolutions();
+
+        List<String> resList = new ArrayList<>();
+
+        for (GraphicResolution resolution : resolutions) {
+            resList.add(resolution.toString());
+        }
+
+        return resList;
     }
 
     @NiftyEventSubscriber(pattern = "tabRoot#tab-content-panel#[a-z]+Tab")
@@ -254,24 +273,5 @@ public final class OptionScreenController implements ScreenController {
     @NiftyEventSubscriber(id = "cancelButton")
     public void onCancelButtonClickedEvent(String topic, ButtonClickedEvent event) {
         nifty.gotoScreen("login");
-    }
-
-    @Override
-    public void onEndScreen() {
-    }
-
-    @Nonnull
-    public static List<String> getResolutionList() {
-        DesktopGameContainer container = IllaClient.getInstance().getContainer();
-
-        GraphicResolution[] resolutions = container.getFullScreenResolutions();
-
-        List<String> resList = new ArrayList<>();
-
-        for (GraphicResolution resolution : resolutions) {
-            resList.add(resolution.toString());
-        }
-
-        return resList;
     }
 }
