@@ -202,6 +202,37 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
         });
     }
 
+
+    /**
+     * Toggles display of minimap
+     * Will hide minimap if visible, show if not
+     */
+    @Override
+    public void toggleMiniMap(){
+        World.getUpdateTaskManager().addTask((container, delta) -> {
+            if (miniMapPanel != null) {
+                if (miniMapPanel.isVisible()) {
+                    hideMiniMap();
+                } else {
+                    showMiniMap();
+                }
+            }
+        });
+    }
+    public void showMiniMap(){
+        World.getUpdateTaskManager().addTask((container, delta) -> {
+            if (miniMapPanel != null) {
+                miniMapPanel.show();
+            }
+        });
+    }
+    public void hideMiniMap(){
+        World.getUpdateTaskManager().addTask((container, delta) -> {
+            if (miniMapPanel != null) {
+                miniMapPanel.hide();
+            }
+        });
+    }
     @Override
     public void onStartScreen() {
         arrowPointerBuffer.clear();
