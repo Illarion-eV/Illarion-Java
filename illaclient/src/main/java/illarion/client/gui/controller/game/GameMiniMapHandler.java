@@ -16,9 +16,11 @@
 package illarion.client.gui.controller.game;
 
 import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.builder.ElementBuilder.Align;
 import de.lessvoid.nifty.builder.ElementBuilder.VAlign;
 import de.lessvoid.nifty.builder.ImageBuilder;
+import de.lessvoid.nifty.controls.ButtonClickedEvent;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.ImageRenderer;
 import de.lessvoid.nifty.render.NiftyImage;
@@ -202,7 +204,10 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
         });
     }
 
-
+    @NiftyEventSubscriber(id = "openMiniMapBtn")
+    public void onMiniMapButtonClicked(String topic, ButtonClickedEvent data) {
+        toggleMiniMap();
+    }
     /**
      * Toggles display of minimap
      * Will hide minimap if visible, show if not
