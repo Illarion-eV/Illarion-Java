@@ -241,13 +241,18 @@ public final class GameMiniMapHandler implements MiniMapGui, ScreenController, U
     @Override
     public void onStartScreen() {
         arrowPointerBuffer.clear();
-
+        if (nifty != null) {
+            nifty.subscribeAnnotations(this);
+        }
         miniMapPanel.findElementById("miniMapImage").getRenderer(ImageRenderer.class)
                 .setImage(new NiftyImage(nifty.getRenderEngine(), World.getMap().getMiniMap().getMiniMap()));
     }
 
     @Override
     public void onEndScreen() {
+        if (nifty != null) {
+            nifty.unsubscribeAnnotations(this);
+        }
         arrowPointerBuffer.clear();
     }
 
