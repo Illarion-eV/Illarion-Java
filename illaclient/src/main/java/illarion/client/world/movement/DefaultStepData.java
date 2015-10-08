@@ -71,7 +71,7 @@ class DefaultStepData implements StepData {
     @Nonnull
     @Contract(pure = true)
     public String toString() {
-        return "Mode: " + movementMode.name() + " Direction: " +
+        return "FrameAnimationMode: " + movementMode.name() + " Direction: " +
                 ((direction != null) ? direction.name() : "none");
     }
 }

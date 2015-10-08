@@ -57,40 +57,36 @@ import java.util.EnumSet;
 @SuppressWarnings("ClassNamingConvention")
 public class Tile extends AbstractEntity<TileTemplate> implements Resource {
     /**
+     * The instance of the logging class for this class.
+     */
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(Tile.class);
+    /**
      * The animation that is applied to this tile or {@code null} in case there is none.
      */
     @Nullable
     private final FrameAnimation animation;
-
+    /**
+     * The parent map tile reference.
+     */
+    @Nonnull
+    private final MapTile parentTile;
     /**
      * The template of the overlay that is rendered on top of the tile or {@code null} in case just the plain tile is
      * rendered.
      */
     @Nullable
     private OverlayTemplate overlay;
-
     /**
      * The shape of the overlay that is rendered on the tile.
      */
     private int overlayShape;
-
-    /**
-     * The parent map tile reference.
-     */
-    @Nonnull
-    private final MapTile parentTile;
-
     private int showHighlight;
-
-    @Override
-    public int getHighlight() {
-        return showHighlight;
-    }
-
-    /**
-     * The instance of the logging class for this class.
-     */
-    private static final Logger log = LoggerFactory.getLogger(Tile.class);
+    private TileLightEffect tileLightEffect;
+    private Color topColor;
+    private Color leftColor;
+    private Color rightColor;
+    private Color bottomColor;
 
     public Tile(int tileId, @Nonnull MapTile parentTile) {
         this(TileFactory.getInstance().getTemplate(TileInfo.getBaseID(tileId)), tileId, parentTile);
@@ -118,75 +114,49 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
         }
     }
 
+    @Override
+    public int getHighlight() {
+        return showHighlight;
+    }
+
+    @Override
+    protected void renderSprite(@Nonnull Graphics g, int x, int y, @Nonnull Color light,
+                                @Nonnull TextureEffect... effects) {
+        Color centerLight = parentTile.getLight();
+        if ((topColor != null) && (leftColor != null) && (rightColor != null) && (bottomColor != null)) {
+            g.drawTileSprite(getTemplate().getSprite(), x, y, topColor, bottomColor, leftColor, rightColor, centerLight,
+                             getCurrentFrame(), effects);
+            if (overlay != null) {
+                g.drawTileSprite(overlay.getSprite(), x, y, topColor, bottomColor, leftColor, rightColor, centerLight,
+                                 overlayShape, effects);
+            }
+        } else {
+            g.drawTileSprite(getTemplate().getSprite(), x, y, centerLight, centerLight, centerLight, centerLight,
+                             centerLight, getCurrentFrame(), effects);
+            if (overlay != null) {
+                g.drawTileSprite(overlay.getSprite(), x, y, centerLight, centerLight, centerLight, centerLight,
+                                 centerLight, overlayShape, effects);
+            }
+        }
+    }
+
     /**
      * Draw tile and its overlay
      *
-     * @param g the graphics object that is used to render the tile.
+     * @param graphics the graphics object that is used to render the tile.
      */
     @Override
-    public void render(@Nonnull Graphics g) {
+    public void render(@Nonnull Graphics graphics) {
         if (performRendering()) {
             MapTile obstructingTile = parentTile.getObstructingTile();
             if ((obstructingTile != null) && obstructingTile.isOpaque()) {
                 return;
             }
 
-            super.render(g);
+            super.render(graphics);
             showHighlight = 0;
         }
     }
-
-    @Override
-    protected void renderSprite(
-            @Nonnull Graphics g, int x, int y, @Nonnull Color light, @Nonnull TextureEffect... effects) {
-        Color centerLight = parentTile.getLight();
-        if ((topColor != null) && (leftColor != null) && (rightColor != null) && (bottomColor != null)) {
-            g.drawTileSprite(getTemplate().getSprite(), x, y, topColor, bottomColor, leftColor, rightColor,
-                    centerLight, getCurrentFrame(), effects);
-            if (overlay != null) {
-                g.drawTileSprite(overlay.getSprite(), x, y, topColor, bottomColor, leftColor, rightColor,
-                        centerLight, overlayShape, effects);
-            }
-        } else {
-            g.drawTileSprite(getTemplate().getSprite(), x, y, centerLight, centerLight, centerLight, centerLight,
-                    centerLight, getCurrentFrame(), effects);
-            if (overlay != null) {
-                g.drawTileSprite(overlay.getSprite(), x, y, centerLight, centerLight, centerLight, centerLight,
-                        centerLight, overlayShape, effects);
-            }
-        }
-    }
-
-    @Override
-    public void show() {
-        MapGroup group = parentTile.getMapGroup();
-        if ((group != null) && group.isHidden()) {
-            setAlphaTarget(0);
-            setAlpha(0);
-            setFadingCorridorEffectEnabled(false);
-        } else {
-            setFadingCorridorEffectEnabled(true);
-        }
-        super.show();
-        if (animation != null) {
-            animation.addTarget(this, true);
-        }
-    }
-
-    @Override
-    public void hide() {
-        super.hide();
-        if (animation != null) {
-            animation.removeTarget(this);
-        }
-    }
-
-    private TileLightEffect tileLightEffect;
-
-    private Color topColor;
-    private Color leftColor;
-    private Color rightColor;
-    private Color bottomColor;
 
     @Override
     public void update(@Nonnull GameContainer container, int delta) {
@@ -218,25 +188,8 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
         }
     }
 
-    @Nonnull
-    private Color getCornerColor(@Nullable Color storage, @Nonnull Collection<Direction> sourceDirections) {
-        Color usedStorage = storage;
-        if (usedStorage == null) {
-            usedStorage = new Color(Color.BLACK);
-        }
-
-        usedStorage.setColor(parentTile.getLight());
-        for (Direction sourceDirection : sourceDirections) {
-            Color directionLight = parentTile.getLight(sourceDirection);
-            usedStorage.add((directionLight == null) ? parentTile.getLight() : directionLight);
-        }
-        usedStorage.multiply(1.f / (sourceDirections.size() + 1));
-        return usedStorage;
-    }
-
     @Override
-    public boolean isEventProcessed(
-            @Nonnull GameContainer container, int delta, @Nonnull SceneEvent event) {
+    public boolean isEventProcessed(@Nonnull GameContainer container, int delta, @Nonnull SceneEvent event) {
         if (event instanceof PointOnMapEvent) {
             if (!isVisible()) {
                 return false;
@@ -274,7 +227,7 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
                 return false;
             }
             World.getPlayer().getMovementHandler().getTargetMouseMovementHandler()
-                    .walkTo(parentTile.getCoordinates(), parentTile.isBlocked() ? 1 : 0);
+                 .walkTo(parentTile.getCoordinates(), parentTile.isBlocked() ? 1 : 0);
 
             if (!moveEvent.isHighlightHandled()) {
                 showHighlight = 1;
@@ -284,6 +237,30 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
         }
 
         return false;
+    }
+
+    @Override
+    public void hide() {
+        super.hide();
+        if (animation != null) {
+            animation.removeTarget(this);
+        }
+    }
+
+    @Override
+    public void show() {
+        MapGroup group = parentTile.getMapGroup();
+        if ((group != null) && group.isHidden()) {
+            setAlphaTarget(0);
+            setAlpha(0);
+            setFadingCorridorEffectEnabled(false);
+        } else {
+            setFadingCorridorEffectEnabled(true);
+        }
+        super.show();
+        if (animation != null) {
+            animation.addTarget(this, true);
+        }
     }
 
     @Override
@@ -317,7 +294,7 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
 
     /**
      * {@inheritDoc}
-     * <p/>
+     * <p>
      * This implementation of the parent light fetches the light of the parent tile in order to ensure that the same
      * color value is used.
      */
@@ -325,5 +302,21 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
     @Nonnull
     protected Color getParentLight() {
         return parentTile.getLight();
+    }
+
+    @Nonnull
+    private Color getCornerColor(@Nullable Color storage, @Nonnull Collection<Direction> sourceDirections) {
+        Color usedStorage = storage;
+        if (usedStorage == null) {
+            usedStorage = new Color(Color.BLACK);
+        }
+
+        usedStorage.setColor(parentTile.getLight());
+        for (Direction sourceDirection : sourceDirections) {
+            Color directionLight = parentTile.getLight(sourceDirection);
+            usedStorage.add((directionLight == null) ? parentTile.getLight() : directionLight);
+        }
+        usedStorage.multiply(1.f / (sourceDirections.size() + 1));
+        return usedStorage;
     }
 }

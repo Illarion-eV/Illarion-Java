@@ -43,27 +43,28 @@ public final class MoveMsg implements ServerReply {
     private static final Logger log = LoggerFactory.getLogger(MoveMsg.class);
 
     /**
-     * Mode information that a normal move was done.
+     * FrameAnimationMode information that a normal move was done.
      */
     private static final int MODE_MOVE = 0x0B;
 
     /**
-     * Mode information that no move was done.
+     * FrameAnimationMode information that no move was done.
      */
     private static final int MODE_NO_MOVE = 0x0A;
 
     /**
-     * Mode information that a push was done.
+     * FrameAnimationMode information that a push was done.
      */
     private static final int MODE_PUSH = 0x0C;
 
     /**
-     * Mode information that a running move was done.
+     * FrameAnimationMode information that a running move was done.
      */
     private static final int MODE_RUN = 0x0D;
 
     /**
-     * Mode information that the move request arrived at the server too early. That mode response is only valid in
+     * FrameAnimationMode information that the move request arrived at the server too early. That mode response is
+     * only valid in
      * for move commands related to the player character.
      */
     private static final int MODE_TOO_EARLY = 0x09;

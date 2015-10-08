@@ -15,7 +15,7 @@
  */
 package illarion.client.net.server;
 
-import illarion.client.graphics.AvatarClothManager;
+import illarion.client.graphics.AvatarClothManager.AvatarClothGroup;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.Char;
@@ -170,8 +170,8 @@ public final class AppearanceMsg implements ServerReply {
         character.setCustomName(customName);
 
         character.setAppearance(appearance);
-        character.setWearingItem(AvatarClothManager.GROUP_HAIR, hairID);
-        character.setWearingItem(AvatarClothManager.GROUP_BEARD, beardID);
+        character.setWearingItem(AvatarClothGroup.Hair, hairID);
+        character.setWearingItem(AvatarClothGroup.Beard, beardID);
 
         character.resetLightValue();
         for (int i = 0; i < itemSlots.length; i++) {
@@ -185,8 +185,55 @@ public final class AppearanceMsg implements ServerReply {
             character.setSkinColor(skinColor);
         }
 
-        character.setClothColor(AvatarClothManager.GROUP_HAIR, hairColor);
-        character.setClothColor(AvatarClothManager.GROUP_BEARD, hairColor);
+        character.setClothColor(AvatarClothGroup.Hair, hairColor);
+        character.setClothColor(AvatarClothGroup.Beard, hairColor);
+        character.setAttribute(CharacterAttribute.HitPoints, hitPoints);
+        character.setAlive(!deadFlag);
+        character.updateLight();
+
+        return ServerReplyResult.Success;
+    }
+
+    @Nonnull
+    @Override
+    public ServerReplyResult execute() {
+        if ((skinColor == null) || (hairColor == null)) {
+            throw new NotDecodedException();
+        }
+
+        @Nullable Char character = World.getPeople().getCharacter(charId);
+
+        // Character not found.
+        if (character == null) {
+            log.error("Received appearance message for non-existing character: {}", charId);
+            return ServerReplyResult.Failed;
+        }
+
+        log.debug("Publishing appearance to: {}", character);
+
+        character.setScale(size / SCALE_MOD);
+
+        character.setName(name);
+        character.setCustomName(customName);
+
+        character.setAppearance(appearance);
+        character.setWearingItem(AvatarClothGroup.Hair, hairID);
+        character.setWearingItem(AvatarClothGroup.Beard, beardID);
+
+        character.resetLightValue();
+        for (int i = 0; i < itemSlots.length; i++) {
+            character.setInventoryItem(i, itemSlots[i]);
+        }
+        character.updatePaperdoll();
+
+        if (skinColor.equals(Color.WHITE)) {
+            character.setSkinColor(null);
+        } else {
+            character.setSkinColor(skinColor);
+        }
+
+        character.setClothColor(AvatarClothGroup.Hair, hairColor);
+        character.setClothColor(AvatarClothGroup.Beard, hairColor);
         character.setAttribute(CharacterAttribute.HitPoints, hitPoints);
         character.setAlive(!deadFlag);
         character.updateLight();

@@ -89,6 +89,17 @@ public final class MoveCmd extends AbstractCommand {
     }
 
     /**
+     * Get the data of this move command as string.
+     *
+     * @return the data of this command as string
+     */
+    @Nonnull
+    @Override
+    public String toString() {
+        return toString(charId + " Direction: " + direction + " FrameAnimationMode: " + mode);
+    }
+
+    /**
      * Encode the data of this move command and put the values into the buffer.
      *
      * @param writer the interface that allows writing data to the network
@@ -99,16 +110,5 @@ public final class MoveCmd extends AbstractCommand {
         charId.encode(writer);
         direction.encode(writer);
         writer.writeByte(mode);
-    }
-
-    /**
-     * Get the data of this move command as string.
-     *
-     * @return the data of this command as string
-     */
-    @Nonnull
-    @Override
-    public String toString() {
-        return toString(charId + " Direction: " + direction + " Mode: " + mode);
     }
 }
