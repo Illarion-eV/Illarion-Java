@@ -150,6 +150,9 @@ public final class KeyMapper {
                     }
                 }
                 break;
+            case M:
+                World.getGameGui().getMiniMapGui().toggleMiniMap();
+                break;
             case C:
                 if (firstPressed) {
                     World.getGameGui().getSkillGui().toggleSkillWindow();
