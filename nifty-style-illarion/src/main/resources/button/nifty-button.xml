@@ -130,6 +130,17 @@
         <attributes visible="false"/>
     </style>
 
+    <!-- Style for the minimap button -->
+    <!-- TODO: Make a background image from the treasuremap image -->
+    <style id="nifty-button-minimap#panel">
+        <attributes backgroundImage="gui/imageselect/background.png" width="24px" height="24px" childLayout="center"
+                    visibleToMouse="true" align="center" valign="center"/>
+    </style>
+
+    <style id="nifty-button-minimap#text">
+        <attributes visible="false"/>
+    </style>
+
     <!-- Style for the skills button -->
     <style id="nifty-button-skills#panel">
         <attributes backgroundImage="gui/button/skills.png" width="24px" height="24px" childLayout="center"

@@ -57,6 +57,8 @@
                         </control>
                         <control name="button" id="openInventoryBtn" style="nifty-button-inventory" valign="bottom"
                                  focusable="false" marginRight="10px"/>
+                        <control name="button" id="openMiniMapBtn" style="nifty-button-minimap" valign="bottom"
+                                 focusable="false" marginRight="10px"/>
                         <control name="button" id="openQuestBtn" style="nifty-button-quest-log" valign="bottom"
                                  focusable="false" marginRight="10px">
                             <effect>
