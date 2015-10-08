@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
  */
 public final class LookatCharCmd extends AbstractCommand {
     /**
-     * Mode for looking in a polite way at a character. That leads to the point
+     * FrameAnimationMode for looking in a polite way at a character. That leads to the point
      * that the character you are looking at gets no message but you get only
      * limited information.
      */
@@ -62,19 +62,6 @@ public final class LookatCharCmd extends AbstractCommand {
     }
 
     /**
-     * Encode the data of this look at character command and put the values into
-     * the buffer.
-     *
-     * @param writer the interface that allows writing data to the network
-     * communication system
-     */
-    @Override
-    public void encode(@Nonnull NetCommWriter writer) {
-        charId.encode(writer);
-        writer.writeByte(mode);
-    }
-
-    /**
      * Set the target of the look at and the way the look at is done.
      *
      * @param lookAtCharId the ID of the char we want to look at
@@ -95,5 +82,16 @@ public final class LookatCharCmd extends AbstractCommand {
     @Override
     public String toString() {
         return toString(charId + " mode: " + mode);
+    }
+
+    /**
+     * Encode the data of this look at character command and put the values into the buffer.
+     *
+     * @param writer the interface that allows writing data to the network communication system
+     */
+    @Override
+    public void encode(@Nonnull NetCommWriter writer) {
+        charId.encode(writer);
+        writer.writeByte(mode);
     }
 }

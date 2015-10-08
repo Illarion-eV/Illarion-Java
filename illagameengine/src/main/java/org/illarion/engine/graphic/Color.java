@@ -156,6 +156,19 @@ public class Color {
     }
 
     /**
+     * Get this color as a immutable copy.
+     * <p>
+     * The returned instance is not a wrapper that changes if this color is changed. It is a actual copy of the current
+     * value of the color.
+     *
+     * @return a immutable copy of this color.
+     */
+    @Nonnull
+    public ImmutableColor getImmutableCopy() {
+        return new ImmutableColor(this);
+    }
+
+    /**
      * Get the alpha color component.
      *
      * @return the alpha color component
@@ -363,16 +376,10 @@ public class Color {
         alpha = FastMath.clamp(alpha, 0, MAX_INT_VALUE);
     }
 
-    @Override
-    @Contract(value = "null->false", pure = true)
-    public boolean equals(@Nullable Object obj) {
-        return (obj instanceof Color) && equals((Color) obj);
-    }
-
     @Contract(value = "null->false", pure = true)
     public boolean equals(@Nullable Color color) {
         return (color != null) && (red == color.red) && (green == color.green) && (blue == color.blue) &&
-                (alpha == color.alpha);
+               (alpha == color.alpha);
     }
 
     @Override
@@ -383,6 +390,12 @@ public class Color {
         result = (31 * result) + green;
         result = (31 * result) + red;
         return result;
+    }
+
+    @Override
+    @Contract(value = "null->false", pure = true)
+    public boolean equals(@Nullable Object obj) {
+        return (obj instanceof Color) && equals((Color) obj);
     }
 
     @Override

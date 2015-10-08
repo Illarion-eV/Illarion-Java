@@ -40,25 +40,28 @@ import javax.annotation.Nullable;
  * @author Nop
  */
 public final class MapDisplayManager implements AnimatedMove {
-
     /**
      * Offset of the tiles due the perspective of the map view.
      */
     public static final int TILE_PERSPECTIVE_OFFSET = 3;
-
-    private boolean active;
-
     @Nonnull
     private final FadingCorridor corridor;
-
-    @Nullable
-    private DisplayCoordinate origin;
-
     /**
      * The scene the game is displayed in.
      */
     @Nonnull
     private final Scene gameScene;
+    private boolean active;
+    @Nullable
+    private DisplayCoordinate origin;
+    /**
+     * This flag stores if the fog effect was already applied to the scene.
+     */
+    private boolean fogEnabled;
+    /**
+     * This flag stores if the gray scale filter that is applied in case the character is dead was already enabled.
+     */
+    private boolean deadViewEnabled;
 
     public MapDisplayManager(@Nonnull Engine engine) {
         active = false;
@@ -66,6 +69,16 @@ public final class MapDisplayManager implements AnimatedMove {
         corridor = FadingCorridor.getInstance();
 
         gameScene = engine.getAssets().createNewScene();
+    }
+
+    private static int getMapCenterX() {
+        GameContainer window = IllaClient.getInstance().getContainer();
+        return window.getWidth() >> 1;
+    }
+
+    private static int getMapCenterY() {
+        GameContainer window = IllaClient.getInstance().getContainer();
+        return window.getHeight() >> 1;
     }
 
     /**
@@ -93,27 +106,20 @@ public final class MapDisplayManager implements AnimatedMove {
         return (y - getMapCenterY()) + origin.getY();
     }
 
-    private static int getMapCenterX() {
-        GameContainer window = IllaClient.getInstance().getContainer();
-        return window.getWidth() >> 1;
-    }
-
-    private static int getMapCenterY() {
-        GameContainer window = IllaClient.getInstance().getContainer();
-        return window.getHeight() >> 1;
+    public boolean isActive() {
+        return active && (origin != null);
     }
 
     /**
-     * Fix avatar's position in the middle of the screen and Z-Order
+     * Set the map display as active.
      *
-     * @param av
+     * @param active the active flag
      */
-    public void glueAvatarToOrigin(@Nonnull Avatar av) {
-        //av.setScreenPos(origin.getDcX() - dX, (origin.getDcY() - dY) + dL, origin.getDcZ());
-    }
-
-    public boolean isActive() {
-        return active && (origin != null);
+    public void setActive(boolean active) {
+        if (!active) {
+            origin = null;
+        }
+        this.active = active;
     }
 
     /**
@@ -136,7 +142,6 @@ public final class MapDisplayManager implements AnimatedMove {
 
         Avatar av = World.getPlayer().getCharacter().getAvatar();
         if (av != null) {
-            glueAvatarToOrigin(av);
             corridor.setCorridor(av);
         }
 
@@ -150,27 +155,17 @@ public final class MapDisplayManager implements AnimatedMove {
     }
 
     /**
-     * This flag stores if the fog effect was already applied to the scene.
-     */
-    private boolean fogEnabled;
-
-    /**
-     * This flag stores if the gray scale filter that is applied in case the character is dead was already enabled.
-     */
-    private boolean deadViewEnabled;
-
-    /**
      * Update the graphical effects applied in case the character died.
      *
-     * @param c the game container
+     * @param container the game container
      */
-    private void updateDeadView(@Nonnull GameContainer c) {
+    private void updateDeadView(@Nonnull GameContainer container) {
         int hitPoints = World.getPlayer().getCharacter().getAttribute(CharacterAttribute.HitPoints);
         if (hitPoints == 0) {
             if (!deadViewEnabled) {
                 try {
-                    GrayScaleEffect effect = c.getEngine().getAssets().getEffectManager()
-                            .getGrayScaleEffect(true);
+                    GrayScaleEffect effect =
+                            container.getEngine().getAssets().getEffectManager().getGrayScaleEffect(true);
                     gameScene.addEffect(effect);
                     deadViewEnabled = true;
                 } catch (EngineException e) {
@@ -180,8 +175,8 @@ public final class MapDisplayManager implements AnimatedMove {
         } else {
             if (deadViewEnabled) {
                 try {
-                    GrayScaleEffect effect = c.getEngine().getAssets().getEffectManager()
-                            .getGrayScaleEffect(true);
+                    GrayScaleEffect effect =
+                            container.getEngine().getAssets().getEffectManager().getGrayScaleEffect(true);
                     gameScene.removeEffect(effect);
                     deadViewEnabled = false;
                 } catch (EngineException e) {
@@ -194,13 +189,13 @@ public final class MapDisplayManager implements AnimatedMove {
     /**
      * Update the graphical effect that shows the fog on the map.
      *
-     * @param c the game container
+     * @param container the game container
      */
-    private void updateFog(@Nonnull GameContainer c) {
+    private void updateFog(@Nonnull GameContainer container) {
         float fog = World.getWeather().getFog();
         if (fog > 0.f) {
             try {
-                FogEffect effect = c.getEngine().getAssets().getEffectManager().getFogEffect(true);
+                FogEffect effect = container.getEngine().getAssets().getEffectManager().getFogEffect(true);
                 effect.setDensity(fog);
                 if (!fogEnabled) {
                     gameScene.addEffect(effect);
@@ -211,7 +206,7 @@ public final class MapDisplayManager implements AnimatedMove {
             }
         } else if (fogEnabled) {
             try {
-                FogEffect effect = c.getEngine().getAssets().getEffectManager().getFogEffect(true);
+                FogEffect effect = container.getEngine().getAssets().getEffectManager().getFogEffect(true);
                 gameScene.removeEffect(effect);
                 fogEnabled = false;
             } catch (EngineException e) {
@@ -223,28 +218,21 @@ public final class MapDisplayManager implements AnimatedMove {
     /**
      * Render all visible map items
      *
-     * @param c the game container the map is rendered in
+     * @param container the game container the map is rendered in
      */
-    public void render(@Nonnull GameContainer c) {
+    public void render(@Nonnull GameContainer container) {
         if (!isActive()) {
             return;
         }
 
         Camera camera = Camera.getInstance();
-        gameScene.render(c.getEngine().getGraphics(), camera.getViewportOffsetX(), camera.getViewportOffsetY());
-    }
-
-    public void setActive(boolean active) {
-        if (!active) {
-            origin = null;
-        }
-        this.active = active;
+        gameScene.render(container.getEngine().getGraphics(), camera.getViewportOffsetX(), camera.getViewportOffsetY());
     }
 
     /**
      * Move the map origin to a new location
      *
-     * @param location
+     * @param location the location on the map the view is focused on
      */
     public void setLocation(@Nonnull DisplayCoordinate location) {
         origin = location;
