@@ -42,6 +42,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     /**
      * The game listener that receives the updates regarding the game.
      */
+    @Nonnull
     private final GameListener gameListener;
     /**
      * The libGDX application that contains the game.
@@ -91,7 +92,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
      * @throws GdxEngineException in case the initialization goes wrong
      */
     public ApplicationGameContainer(
-            GameListener gameListener, int width, int height, boolean fullScreen) throws GdxEngineException {
+            @Nonnull GameListener gameListener, int width, int height, boolean fullScreen) throws GdxEngineException {
         this.gameListener = gameListener;
         config = new LwjglApplicationConfiguration();
         config.forceExit = false;
@@ -171,8 +172,13 @@ public class ApplicationGameContainer implements DesktopGameContainer {
 
     @Override
     public void setMouseCursor(@Nullable MouseCursor cursor) {
-        if ((engine != null) && (cursor instanceof GdxCursor)) {
+        if (engine == null) {
+            return;
+        }
+        if (cursor instanceof GdxCursor) {
             engine.getGraphics().setCursor((GdxCursor) cursor);
+        } else {
+            engine.getGraphics().setCursor(null);
         }
     }
 
