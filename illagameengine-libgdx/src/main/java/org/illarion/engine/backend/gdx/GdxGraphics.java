@@ -141,6 +141,14 @@ class GdxGraphics implements Graphics {
         return spriteBatch;
     }
 
+    void setCursor(@Nullable GdxCursor cursor) {
+        if (cursor == null) {
+            gdxGraphics.setCursor(null);
+        } else {
+            gdxGraphics.setCursor(cursor.getGdxCursor());
+        }
+    }
+
     /**
      * This function needs to be called before all rendering operations of a frame. It will setup the render system.
      */
@@ -655,6 +663,20 @@ class GdxGraphics implements Graphics {
         }
     }
 
+    /**
+     * Stops the render operation of both the shape renderer and the sprite batch renderer to ensure that the
+     * buffered data is flushed to the screen.
+     */
+    public void flushAll() {
+        if (shapeRenderer.getCurrentType() != null) {
+            shapeRenderer.end();
+        }
+        if (spriteBatchActive) {
+            spriteBatch.end();
+            spriteBatchActive = false;
+        }
+    }
+
     private float getFloatColor(@Nonnull Color source, @Nonnull com.badlogic.gdx.graphics.Color workingInstance) {
         transferColor(source, workingInstance);
         return workingInstance.toFloatBits();
@@ -680,19 +702,5 @@ class GdxGraphics implements Graphics {
     void endFrame() {
         flushAll();
         unsetClippingArea();
-    }
-
-    /**
-     * Stops the render operation of both the shape renderer and the sprite batch renderer to ensure that the
-     * buffered data is flushed to the screen.
-     */
-    public void flushAll() {
-        if (shapeRenderer.getCurrentType() != null) {
-            shapeRenderer.end();
-        }
-        if (spriteBatchActive) {
-            spriteBatch.end();
-            spriteBatchActive = false;
-        }
     }
 }

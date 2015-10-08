@@ -309,8 +309,8 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         cfg = new ConfigSystem(getFile("Illarion.xcfgz"));
         cfg.setDefault("debugLevel", 1);
         cfg.setDefault("showIDs", false);
-        cfg.setDefault("soundOn", true);
-        cfg.setDefault("soundVolume", Player.MAX_CLIENT_VOL);
+        cfg.setDefault(Player.CFG_SOUND_ON, true);
+        cfg.setDefault(Player.CFG_SOUND_VOL, Player.MAX_CLIENT_VOL);
         cfg.setDefault("musicOn", true);
         cfg.setDefault("musicVolume", Player.MAX_CLIENT_VOL * 0.25f);
         cfg.setDefault(ChatLog.CFG_TEXTLOG, true);
@@ -464,12 +464,6 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         return userDir.resolve(name);
     }
 
-    public static void performLogout() {
-        LOGGER.info("Logout requested.");
-        getInstance().quitGame();
-        INSTANCE.game.enterState(Game.STATE_LOGOUT);
-    }
-
     /**
      * End the game by user request and send the logout command to the server.
      */
@@ -489,6 +483,12 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     @Nonnull
     public static IllaClient getInstance() {
         return INSTANCE;
+    }
+
+    public static void performLogout() {
+        LOGGER.info("Logout requested.");
+        getInstance().quitGame();
+        INSTANCE.game.enterState(Game.STATE_LOGOUT);
     }
 
     public static void returnToLogin() {
