@@ -96,7 +96,7 @@ class MoveAnimator implements AnimatedMove {
         if (uncomfirmedMoveTask != null) {
             log.warn(marker, "Scheduling another early move is not possible as there is already one set.");
         } else {
-            log.debug(marker, "Scheduling a early move. FrameAnimationMode: {}, Target: {}, Duration: {}ms", mode,
+            log.debug(marker, "Scheduling a early move. Mode: {}, Target: {}, Duration: {}ms", mode,
                       target, duration);
             MovingTask task = new MovingTask(this, mode, target, duration);
             uncomfirmedMoveTask = task;
@@ -225,7 +225,7 @@ class MoveAnimator implements AnimatedMove {
     }
 
     void executeMove(@Nonnull CharMovementMode mode, @Nonnull ServerCoordinate target, int duration) {
-        log.debug("Executing move (FrameAnimationMode: {}) to {} (Duration: {}ms) now.", mode, target, duration);
+        log.debug("Executing move (Mode: {}) to {} (Duration: {}ms) now.", mode, target, duration);
         Player parentPlayer = movement.getPlayer();
         Char playerCharacter = parentPlayer.getCharacter();
         if ((mode == CharMovementMode.None) || playerCharacter.getLocation().equals(target)) {
