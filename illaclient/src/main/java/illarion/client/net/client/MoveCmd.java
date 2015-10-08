@@ -96,7 +96,7 @@ public final class MoveCmd extends AbstractCommand {
     @Nonnull
     @Override
     public String toString() {
-        return toString(charId + " Direction: " + direction + " FrameAnimationMode: " + mode);
+        return toString(charId + " Direction: " + direction + " Mode: " + mode);
     }
 
     /**

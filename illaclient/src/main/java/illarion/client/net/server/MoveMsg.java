@@ -43,22 +43,22 @@ public final class MoveMsg implements ServerReply {
     private static final Logger log = LoggerFactory.getLogger(MoveMsg.class);
 
     /**
-     * FrameAnimationMode information that a normal move was done.
+     * Mode information that a normal move was done.
      */
     private static final int MODE_MOVE = 0x0B;
 
     /**
-     * FrameAnimationMode information that no move was done.
+     * Mode information that no move was done.
      */
     private static final int MODE_NO_MOVE = 0x0A;
 
     /**
-     * FrameAnimationMode information that a push was done.
+     * Mode information that a push was done.
      */
     private static final int MODE_PUSH = 0x0C;
 
     /**
-     * FrameAnimationMode information that a running move was done.
+     * Mode information that a running move was done.
      */
     private static final int MODE_RUN = 0x0D;
 
