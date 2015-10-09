@@ -36,8 +36,8 @@ import javax.annotation.Nullable;
  *
  * Allows the setting of specific tracks and sounds
  * Tracks the volume:
- *      can be manually set for temporary effect
- *      or permanently changed through config changes
+ *      can be manually set for temporary effect or
+ *      permanently changed through config changes
  *
  * @author Mike Kay
  */

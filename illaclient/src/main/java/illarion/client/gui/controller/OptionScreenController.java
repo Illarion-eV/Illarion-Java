@@ -25,6 +25,7 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import illarion.client.IllaClient;
 import illarion.client.Servers;
+import illarion.client.util.AudioPlayer;
 import illarion.client.util.translation.Translator;
 import illarion.common.bug.CrashReporter;
 import illarion.common.config.Config;
@@ -268,6 +269,33 @@ public final class OptionScreenController implements ScreenController {
         }
 
         configSystem.save();
+    }
+
+    @NiftyEventSubscriber (id = "musicVolume")
+    public void onMusicVolumeSliderChangedEvent(String topic, SliderChangedEvent event){
+        AudioPlayer audioPlayer = AudioPlayer.getInstance();
+        if(audioPlayer.getMusicVolume() == 0){
+            if(musicOn.isChecked() && !audioPlayer.isCurrentMusic(audioPlayer.getLastMusic())) {
+                audioPlayer.setMusicVolume(musicVolume.getValue());
+                audioPlayer.playLastMusic();
+            }
+        }else{
+            audioPlayer.setMusicVolume(musicVolume.getValue());
+        }
+
+    }
+
+    @NiftyEventSubscriber (id = "musicOn")
+    public void onMusicOnChangedEvent(String topic, CheckBoxStateChangedEvent event){
+        AudioPlayer audioPlayer = AudioPlayer.getInstance();
+        if(musicOn.isChecked()) {
+            audioPlayer.setMusicVolume(musicVolume.getValue());
+            if (!audioPlayer.isCurrentMusic(audioPlayer.getLastMusic())) {
+                audioPlayer.playLastMusic();
+            }
+        } else{
+            audioPlayer.setMusicVolume(0.f);
+        }
     }
 
     @NiftyEventSubscriber(id = "cancelButton")
