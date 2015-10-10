@@ -88,6 +88,10 @@
                 <image id="miniMapImage" width="162px" height="162px"/>
                 <image width="189px" height="190px" filename="gui/minimap.png"/>
             </panel>
+            <panel align="left" marginTop="5px" valign="top" childLayout="horizontal">
+                <control name="button" id="closeGameBtn" style="nifty-button-close" valign="top"
+                         align="left" focusable="false" marginLeft="10px"/>
+            </panel>
         </layer>
         <layer id="chatLayer" childLayout="absolute"/>
         <layer id="serverMessageLayer" childLayout="absolute">
