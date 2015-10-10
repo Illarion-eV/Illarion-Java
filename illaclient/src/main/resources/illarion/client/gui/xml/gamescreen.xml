@@ -89,7 +89,7 @@
                 <image width="189px" height="190px" filename="gui/minimap.png"/>
             </panel>
             <panel align="left" marginTop="5px" valign="top" childLayout="horizontal">
-                <control name="button" id="closeGameBtn" style="nifty-button-close" valign="top"
+                <control name="button" id="closeGameBtn" style="nifty-button-logout" valign="top"
                          align="left" focusable="false" marginLeft="10px"/>
             </panel>
         </layer>

@@ -120,6 +120,16 @@
         <attributes width="13px" height="14px"/>
     </style>
 
+    <!-- Style for the logout button -->
+    <style id="nifty-button-logout#panel">
+        <attributes backgroundImage="gui/button/logout.png" width="20px" height="20px" childLayout="center"
+                    visibleToMouse="true" align="center" valign="center"/>
+    </style>
+
+    <style id="nifty-button-logout#text">
+        <attributes visible="false"/>
+    </style>
+
     <!-- Style for the inventory button -->
     <style id="nifty-button-inventory#panel">
         <attributes backgroundImage="gui/button/inventory.png" width="24px" height="24px" childLayout="center"
