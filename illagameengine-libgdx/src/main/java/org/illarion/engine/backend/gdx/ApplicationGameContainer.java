@@ -173,6 +173,8 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     public void setMouseCursor(@Nullable MouseCursor cursor) {
         if ((engine != null) && (cursor instanceof GdxCursor)) {
             engine.getGraphics().setCursor((GdxCursor) cursor);
+        }else if(engine != null && cursor == null){
+            engine.getGraphics().setCursor(null);
         }
     }
 
