@@ -44,6 +44,9 @@ class GdxCursor implements MouseCursor {
         this.gdxCursor = gdxCursor;
     }
 
+    /**
+     * Disposing the cursor does nothing
+     */
     @Override
     public void dispose() {
     }

@@ -35,7 +35,7 @@ import java.util.Locale;
 /**
  * @author Tim
  */
-public class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
+public final class TileLoader implements TableLoaderSink<TableLoaderTiles>, Resource {
     /**
      * The logger instance for this class.
      */

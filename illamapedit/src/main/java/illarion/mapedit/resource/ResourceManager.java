@@ -27,7 +27,7 @@ import java.util.List;
  *
  * @author Tim
  */
-public class ResourceManager {
+public final class ResourceManager {
     /**
      * The singleton instance of this class.
      */

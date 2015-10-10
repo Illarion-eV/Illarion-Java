@@ -180,6 +180,7 @@ public final class ChatHandler {
                     mode = SpeechMode.Normal;
                     resultText = text.trim();
                 }
+                break;
         }
 
         StringBuilder textBuilder = new StringBuilder();
@@ -220,7 +221,7 @@ public final class ChatHandler {
                 }
             }
 
-            textBuilder.append(':').append(' ');
+            textBuilder.append(": ");
 
             String bubbleText;
             if (mode == SpeechMode.Ooc) {
@@ -246,6 +247,7 @@ public final class ChatHandler {
                     break;
                 default:
                     color = ChatGui.COLOR_DEFAULT;
+                    break;
             }
 
             String talkText = textBuilder.toString();

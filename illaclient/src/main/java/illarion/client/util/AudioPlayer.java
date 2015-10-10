@@ -41,7 +41,7 @@ import javax.annotation.Nullable;
  *
  * @author Mike Kay
  */
-public class AudioPlayer implements EventTopicSubscriber<ConfigChangedEvent> {
+public final class AudioPlayer implements EventTopicSubscriber<ConfigChangedEvent> {
 
     /**
      * The singleton instance of this class.
@@ -58,7 +58,7 @@ public class AudioPlayer implements EventTopicSubscriber<ConfigChangedEvent> {
     /**
      * This variable is set {@code true} once the music player is initialized.
      */
-    private static boolean init = false;
+    private boolean init = false;
 
     /**
      * Private constructor to ensure the sole instance is the singleton

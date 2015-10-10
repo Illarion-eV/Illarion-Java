@@ -33,7 +33,7 @@ import java.util.Map;
 /**
  * @author Tim
  */
-public class ImageLoader implements Resource {
+public final class ImageLoader implements Resource {
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageLoader.class);
     private static final ImageLoader INSTANCE = new ImageLoader();
     private static final Map<String, Image> IMAGES = new FastMap<>();
