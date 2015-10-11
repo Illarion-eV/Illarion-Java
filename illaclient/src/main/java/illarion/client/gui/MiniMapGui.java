@@ -85,4 +85,9 @@ public interface MiniMapGui {
      * @param pointer the pointer to be added
      */
     void addPointer(@Nonnull Pointer pointer);
+
+    /**
+     * Allows to toggle between showing and hiding minimap
+     */
+    void toggleMiniMap();
 }

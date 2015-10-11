@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -83,7 +83,7 @@ class GdxAssets implements Assets {
         this.container = container;
         textureManager = new GdxTextureManager();
         fontManager = new GdxFontManager(gdxApplication.getFiles(), textureManager);
-        cursorManager = new GdxLwjglCursorManager(gdxApplication.getFiles());
+        cursorManager = new GdxCursorManager(gdxApplication.getGraphics(), gdxApplication.getFiles());
         soundsManager = new GdxSoundsManager(gdxApplication.getFiles(), gdxApplication.getAudio());
         spriteFactory = new GdxSpriteFactory();
         effectManager = new GdxEffectManager(gdxApplication.getFiles());

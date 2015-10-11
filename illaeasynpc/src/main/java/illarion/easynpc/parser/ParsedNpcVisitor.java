@@ -32,7 +32,6 @@ import illarion.easynpc.parsed.talk.consequences.*;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
-import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.slf4j.Logger;
@@ -53,298 +52,19 @@ import static illarion.easynpc.parser.Utils.*;
 public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> implements ANTLRErrorListener {
     @Nonnull
     private static final Logger LOGGER = LoggerFactory.getLogger(ParsedNpcVisitor.class);
-    @Nonnull
-    private final ParsedNpc npc = new ParsedNpc();
 
     static {
         SkillLoader.load();
     }
 
-    @Override
-    public ParsedNpcVisitor visitBasicConfiguration(@NotNull BasicConfigurationContext ctx) {
-        Token startToken = ctx.getStart();
-        switch (startToken.getText()) {
-            case "affiliation":
-                npc.setAffiliation(getTown(ctx.getRuleContext(TownContext.class, 0)));
-                break;
-            case "author":
-                npc.addAuthor(getString(ctx.STRING()));
-                break;
-            case "autointroduce":
-                npc.setAutoIntroduce(getBoolean(ctx.BOOLEAN()));
-                break;
-            case "defaultLanguage":
-                npc.setDefaultLanguage(getCharacterLanguage(ctx.charLanguage()));
-                break;
-            case "direction":
-                npc.setNpcDir(getDirection(ctx.direction()));
-                break;
-            case "job":
-                npc.setJob(getString(ctx.STRING()));
-                break;
-            case "language":
-                npc.addLanguage(getCharacterLanguage(ctx.charLanguage()));
-                break;
-            case "lookatDE":
-                npc.setGermanLookAt(getString(ctx.STRING()));
-                break;
-            case "lookatUS":
-                npc.setEnglishLookAt(getString(ctx.STRING()));
-                break;
-            case "name":
-                npc.setNpcName(getString(ctx.STRING()));
-                break;
-            case "position":
-                npc.setNpcPos(getLocation(ctx.location()));
-                break;
-            case "race":
-                npc.setNpcRace(getRace(ctx.race()));
-                break;
-            case "sex":
-                npc.setNpcSex(getSex(ctx.gender()));
-                break;
-            case "useMsgDE":
-                npc.setGermanUse(getString(ctx.STRING()));
-                break;
-            case "useMsgUS":
-                npc.setEnglishUse(getString(ctx.STRING()));
-                break;
-            case "wrongLangDE":
-                npc.setGermanWrongLang(getString(ctx.STRING()));
-                break;
-            case "wrongLangUS":
-                npc.setEnglishWrongLang(getString(ctx.STRING()));
-                break;
-            default:
-                ctx.addErrorNode(startToken);
-                LOGGER.warn("Unknown basic configuration key: {}", startToken.getText());
-        }
-        return super.visitBasicConfiguration(ctx);
-    }
-
-    @Override
-    public ParsedNpcVisitor visitColorConfiguration(@NotNull ColorConfigurationContext ctx) {
-        Token startToken = ctx.getStart();
-
-        Color color = getColor(ctx.color());
-        switch (startToken.getText()) {
-            case "colorHair":
-                npc.addNpcData(new ParsedColors(ColorTarget.Hair, color));
-                break;
-            case "colorSkin":
-                npc.addNpcData(new ParsedColors(ColorTarget.Skin, color));
-                break;
-            default:
-                ctx.addErrorNode(startToken);
-                LOGGER.warn("Unknown color configuration key: {}", startToken.getText());
-        }
-        return super.visitColorConfiguration(ctx);
-    }
-
-    @Override
-    public ParsedNpcVisitor visitEquipmentConfiguration(@NotNull EquipmentConfigurationContext ctx) {
-        Token startToken = ctx.getStart();
-
-        Items item = getItem(ctx.itemId());
-        if (item == null) {
-            LOGGER.warn("Failed to match item id for equipment slot: {}", startToken.getText());
-            return defaultResult();
-        }
-        switch (startToken.getText()) {
-            case "itemChest":
-                npc.addNpcData(new ParsedEquipment(EquipmentSlots.chest, item));
-                break;
-            case "itemCoat":
-                npc.addNpcData(new ParsedEquipment(EquipmentSlots.coat, item));
-                break;
-            case "itemHands":
-                npc.addNpcData(new ParsedEquipment(EquipmentSlots.hands, item));
-                break;
-            case "itemHead":
-                npc.addNpcData(new ParsedEquipment(EquipmentSlots.head, item));
-                break;
-            case "itemMainHand":
-                npc.addNpcData(new ParsedEquipment(EquipmentSlots.mainHand, item));
-                break;
-            case "itemSecondHand":
-                npc.addNpcData(new ParsedEquipment(EquipmentSlots.secondHand, item));
-                break;
-            case "itemShoes":
-                npc.addNpcData(new ParsedEquipment(EquipmentSlots.feet, item));
-                break;
-            case "itemTrousers":
-                npc.addNpcData(new ParsedEquipment(EquipmentSlots.trousers, item));
-                break;
-            default:
-                ctx.addErrorNode(startToken);
-                LOGGER.warn("Unknown equipment configuration key: {}", startToken.getText());
-        }
-        return super.visitEquipmentConfiguration(ctx);
-    }
-
-    @Override
-    public ParsedNpcVisitor visitGuardConfiguration(@NotNull GuardConfigurationContext ctx) {
-        Token startToken = ctx.getStart();
-
-        switch (startToken.getText()) {
-            case "guardRange":
-                int north = getInteger(ctx.INT(0));
-                int south = getInteger(ctx.INT(1));
-                int west = getInteger(ctx.INT(2));
-                int east = getInteger(ctx.INT(3));
-                npc.addNpcData(new ParsedGuardRange(north, south, west, east));
-                break;
-            case "guardWarpTarget":
-                npc.addNpcData(new ParsedGuardWarpTarget(getLocation(ctx.location())));
-                break;
-            default:
-                ctx.addErrorNode(startToken);
-                LOGGER.warn("Unknown guard configuration key: {}", startToken.getText());
-        }
-        return super.visitGuardConfiguration(ctx);
-    }
-
-    @Override
-    public ParsedNpcVisitor visitHairConfiguration(@NotNull HairConfigurationContext ctx) {
-        Token startToken = ctx.getStart();
-
-        int id = getInteger(ctx.INT());
-        switch (startToken.getText()) {
-            case "hairID":
-                npc.addNpcData(new ParsedHair(HairType.Hair, id));
-                break;
-            case "beardID":
-                npc.addNpcData(new ParsedHair(HairType.Beard, id));
-                break;
-            default:
-                ctx.addErrorNode(startToken);
-                LOGGER.warn("Unknown hair configuration key: {}", startToken.getText());
-        }
-        return super.visitHairConfiguration(ctx);
-    }
-
-    @Override
-    public ParsedNpcVisitor visitTraderComplexConfiguration(@NotNull TraderComplexConfigurationContext ctx) {
-        Token startToken = ctx.getStart();
-        TradeMode tradeMode;
-        switch (startToken.getText()) {
-            case "sellItem":
-                tradeMode = TradeMode.selling;
-                break;
-            case "buyPrimaryItem":
-                tradeMode = TradeMode.buyingPrimary;
-                break;
-            case "buySecondaryItem":
-                tradeMode = TradeMode.buyingSecondary;
-                break;
-            default:
-                ctx.addErrorNode(startToken);
-                LOGGER.warn("Unknown complex trade configuration key: {}", startToken.getText());
-                return super.visitTraderComplexConfiguration(ctx);
-        }
-
-        Map<String, String> data = new HashMap<>();
-
-        Items item = getItem(ctx.traderComplexItemId());
-        if (item == null) {
-            ctx.addErrorNode(ctx.getStart());
-            LOGGER.warn("Failed to match item id for complex trade entry.");
-            return super.visitTraderComplexConfiguration(ctx);
-        }
-        int itemId = item.getItemId();
-
-        String textDe = null;
-        String textEn = null;
-        int price = 0;
-        int stackSize = 0;
-        int quality = 0;
-        for (TraderComplexEntryContext entry : ctx.traderComplexEntry()) {
-            switch (entry.getStart().getText()) {
-                case "de":
-                    textDe = getString(entry.STRING());
-                    break;
-                case "en":
-                    textEn = getString(entry.STRING());
-                    break;
-                case "price":
-                    price = getInteger(entry.INT());
-                    break;
-                case "stack":
-                    stackSize = getInteger(entry.INT());
-                    break;
-                case "quality":
-                    quality = getItemQuality(entry.itemQuality());
-                    break;
-                case "data":
-                    data.putAll(getItemData(entry.itemDataList()));
-                    break;
-                default:
-                    ctx.addErrorNode(entry.getStart());
-                    LOGGER.warn("Unknown key for complex item entry: {}", entry.getStart().getText());
-                    break;
-            }
-        }
-
-        npc.addNpcData(new ParsedTradeComplex(tradeMode, itemId, textDe, textEn, price, stackSize, quality,
-                                              new ParsedItemData(data)));
-
-        return super.visitTraderComplexConfiguration(ctx);
-    }
-
-    @Override
-    public ParsedNpcVisitor visitTraderSimpleConfiguration(
-            @NotNull TraderSimpleConfigurationContext ctx) {
-        Token startToken = ctx.getStart();
-        TradeMode tradeMode;
-        switch (startToken.getText()) {
-            case "sellItems":
-                tradeMode = TradeMode.selling;
-                break;
-            case "buyPrimaryItems":
-                tradeMode = TradeMode.buyingPrimary;
-                break;
-            case "buySecondaryItems":
-                tradeMode = TradeMode.buyingSecondary;
-                break;
-            default:
-                ctx.addErrorNode(startToken);
-                LOGGER.warn("Unknown simple trade configuration key: {}", startToken.getText());
-                return super.visitTraderSimpleConfiguration(ctx);
-        }
-
-        List<ItemIdContext> itemIds = ctx.itemId();
-        List<Integer> ids = new ArrayList<>(itemIds.size());
-        for (ItemIdContext itemId : itemIds) {
-            Items item = getItem(itemId);
-            if (item == null) {
-                ctx.addErrorNode(itemId.getStart());
-            } else {
-                ids.add(item.getItemId());
-            }
-        }
-        npc.addNpcData(new ParsedTradeSimple(tradeMode, ids));
-        return super.visitTraderSimpleConfiguration(ctx);
-    }
-
-    @Override
-    public ParsedNpcVisitor visitWalkConfiguration(@NotNull WalkConfigurationContext ctx) {
-        Token startToken = ctx.getStart();
-        switch (startToken.getText()) {
-            case "radius":
-                npc.addNpcData(new ParsedWalkingRadius(getInteger(ctx.INT())));
-                break;
-            default:
-                ctx.addErrorNode(startToken);
-                LOGGER.warn("Unknown walking configuration key: {}", startToken.getText());
-        }
-        return super.visitWalkConfiguration(ctx);
-    }
-
+    @Nonnull
+    private final ParsedNpc npc = new ParsedNpc();
     @Nullable
     private ParsedTalk currentTalkingLine;
 
+    @Nullable
     @Override
-    public ParsedNpcVisitor visitTalkCommand(@NotNull TalkCommandContext ctx) {
+    public ParsedNpcVisitor visitTalkCommand(TalkCommandContext ctx) {
         currentTalkingLine = new ParsedTalk();
         ParsedNpcVisitor result = super.visitTalkCommand(ctx);
         npc.addNpcData(currentTalkingLine);
@@ -352,18 +72,9 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> imple
         return result;
     }
 
+    @Nullable
     @Override
-    public ParsedNpcVisitor visitTrigger(@NotNull TriggerContext ctx) {
-        if (currentTalkingLine == null) {
-            LOGGER.error("Visiting trigger while there is no active talking line.");
-        } else {
-            currentTalkingLine.addCondition(new ConditionTrigger(getString(ctx.STRING())));
-        }
-        return super.visitTrigger(ctx);
-    }
-
-    @Override
-    public ParsedNpcVisitor visitCondition(@NotNull ConditionContext ctx) {
+    public ParsedNpcVisitor visitCondition(ConditionContext ctx) {
         if (currentTalkingLine == null) {
             LOGGER.error("Visiting condition while there is no active talking line.");
             return super.visitCondition(ctx);
@@ -445,36 +156,9 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> imple
         return super.visitCondition(ctx);
     }
 
+    @Nullable
     @Override
-    public ParsedNpcVisitor visitLanguage(@NotNull LanguageContext ctx) {
-        if (currentTalkingLine != null) {
-            currentTalkingLine.addCondition(new ConditionLanguage(getPlayerLanguage(ctx)));
-        }
-        return super.visitLanguage(ctx);
-    }
-
-    @Override
-    public ParsedNpcVisitor visitTalkstateGet(@NotNull TalkstateGetContext ctx) {
-        if (currentTalkingLine == null) {
-            LOGGER.error("Visiting talk state get while there is no active talking line.");
-        } else {
-            currentTalkingLine.addCondition(new ConditionTalkstate(getTalkState(ctx)));
-        }
-        return super.visitTalkstateGet(ctx);
-    }
-
-    @Override
-    public ParsedNpcVisitor visitAnswer(@NotNull AnswerContext ctx) {
-        if (currentTalkingLine == null) {
-            LOGGER.error("Visiting consequence while there is no active talking line.");
-        } else {
-            currentTalkingLine.addConsequence(new ConsequenceAnswer(getString(ctx.STRING())));
-        }
-        return super.visitAnswer(ctx);
-    }
-
-    @Override
-    public ParsedNpcVisitor visitConsequence(@NotNull ConsequenceContext ctx) {
+    public ParsedNpcVisitor visitConsequence(ConsequenceContext ctx) {
         if (currentTalkingLine == null) {
             LOGGER.error("Visiting consequence while there is no active talking line.");
             return defaultResult();
@@ -573,19 +257,297 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> imple
         return super.visitConsequence(ctx);
     }
 
+    @Nullable
     @Override
-    public ParsedNpcVisitor visitTalkstateSet(@NotNull TalkstateSetContext ctx) {
-        if (currentTalkingLine == null) {
-            LOGGER.error("Visiting consequence while there is no active talking line.");
-            return defaultResult();
+    public ParsedNpcVisitor visitBasicConfiguration(BasicConfigurationContext ctx) {
+        Token startToken = ctx.getStart();
+        switch (startToken.getText()) {
+            case "affiliation":
+                npc.setAffiliation(getTown(ctx.getRuleContext(TownContext.class, 0)));
+                break;
+            case "author":
+                npc.addAuthor(getString(ctx.STRING()));
+                break;
+            case "autointroduce":
+                npc.setAutoIntroduce(getBoolean(ctx.BOOLEAN()));
+                break;
+            case "defaultLanguage":
+                npc.setDefaultLanguage(getCharacterLanguage(ctx.charLanguage()));
+                break;
+            case "direction":
+                npc.setNpcDir(getDirection(ctx.direction()));
+                break;
+            case "job":
+                npc.setJob(getString(ctx.STRING()));
+                break;
+            case "language":
+                npc.addLanguage(getCharacterLanguage(ctx.charLanguage()));
+                break;
+            case "lookatDE":
+                npc.setGermanLookAt(getString(ctx.STRING()));
+                break;
+            case "lookatUS":
+                npc.setEnglishLookAt(getString(ctx.STRING()));
+                break;
+            case "name":
+                npc.setNpcName(getString(ctx.STRING()));
+                break;
+            case "position":
+                npc.setNpcPos(getLocation(ctx.location()));
+                break;
+            case "race":
+                npc.setNpcRace(getRace(ctx.race()));
+                break;
+            case "sex":
+                npc.setNpcSex(getSex(ctx.gender()));
+                break;
+            case "useMsgDE":
+                npc.setGermanUse(getString(ctx.STRING()));
+                break;
+            case "useMsgUS":
+                npc.setEnglishUse(getString(ctx.STRING()));
+                break;
+            case "wrongLangDE":
+                npc.setGermanWrongLang(getString(ctx.STRING()));
+                break;
+            case "wrongLangUS":
+                npc.setEnglishWrongLang(getString(ctx.STRING()));
+                break;
+            default:
+                ctx.addErrorNode(startToken);
+                LOGGER.warn("Unknown basic configuration key: {}", startToken.getText());
         }
-
-        currentTalkingLine.addConsequence(new ConsequenceTalkstate(getTalkState(ctx)));
-        return defaultResult();
+        return super.visitBasicConfiguration(ctx);
     }
 
+    @Nullable
     @Override
-    public ParsedNpcVisitor visitTextConfiguration(@NotNull TextConfigurationContext ctx) {
+    public ParsedNpcVisitor visitColorConfiguration(ColorConfigurationContext ctx) {
+        Token startToken = ctx.getStart();
+
+        Color color = getColor(ctx.color());
+        switch (startToken.getText()) {
+            case "colorHair":
+                npc.addNpcData(new ParsedColors(ColorTarget.Hair, color));
+                break;
+            case "colorSkin":
+                npc.addNpcData(new ParsedColors(ColorTarget.Skin, color));
+                break;
+            default:
+                ctx.addErrorNode(startToken);
+                LOGGER.warn("Unknown color configuration key: {}", startToken.getText());
+        }
+        return super.visitColorConfiguration(ctx);
+    }
+
+    @Nullable
+    @Override
+    public ParsedNpcVisitor visitEquipmentConfiguration(EquipmentConfigurationContext ctx) {
+        Token startToken = ctx.getStart();
+
+        Items item = getItem(ctx.itemId());
+        if (item == null) {
+            LOGGER.warn("Failed to match item id for equipment slot: {}", startToken.getText());
+            return defaultResult();
+        }
+        switch (startToken.getText()) {
+            case "itemChest":
+                npc.addNpcData(new ParsedEquipment(EquipmentSlots.chest, item));
+                break;
+            case "itemCoat":
+                npc.addNpcData(new ParsedEquipment(EquipmentSlots.coat, item));
+                break;
+            case "itemHands":
+                npc.addNpcData(new ParsedEquipment(EquipmentSlots.hands, item));
+                break;
+            case "itemHead":
+                npc.addNpcData(new ParsedEquipment(EquipmentSlots.head, item));
+                break;
+            case "itemMainHand":
+                npc.addNpcData(new ParsedEquipment(EquipmentSlots.mainHand, item));
+                break;
+            case "itemSecondHand":
+                npc.addNpcData(new ParsedEquipment(EquipmentSlots.secondHand, item));
+                break;
+            case "itemShoes":
+                npc.addNpcData(new ParsedEquipment(EquipmentSlots.feet, item));
+                break;
+            case "itemTrousers":
+                npc.addNpcData(new ParsedEquipment(EquipmentSlots.trousers, item));
+                break;
+            default:
+                ctx.addErrorNode(startToken);
+                LOGGER.warn("Unknown equipment configuration key: {}", startToken.getText());
+        }
+        return super.visitEquipmentConfiguration(ctx);
+    }
+
+    @Nullable
+    @Override
+    public ParsedNpcVisitor visitGuardConfiguration(GuardConfigurationContext ctx) {
+        Token startToken = ctx.getStart();
+
+        switch (startToken.getText()) {
+            case "guardRange":
+                int north = getInteger(ctx.INT(0));
+                int south = getInteger(ctx.INT(1));
+                int west = getInteger(ctx.INT(2));
+                int east = getInteger(ctx.INT(3));
+                npc.addNpcData(new ParsedGuardRange(north, south, west, east));
+                break;
+            case "guardWarpTarget":
+                npc.addNpcData(new ParsedGuardWarpTarget(getLocation(ctx.location())));
+                break;
+            default:
+                ctx.addErrorNode(startToken);
+                LOGGER.warn("Unknown guard configuration key: {}", startToken.getText());
+        }
+        return super.visitGuardConfiguration(ctx);
+    }
+
+    @Nullable
+    @Override
+    public ParsedNpcVisitor visitHairConfiguration(HairConfigurationContext ctx) {
+        Token startToken = ctx.getStart();
+
+        int id = getInteger(ctx.INT());
+        switch (startToken.getText()) {
+            case "hairID":
+                npc.addNpcData(new ParsedHair(HairType.Hair, id));
+                break;
+            case "beardID":
+                npc.addNpcData(new ParsedHair(HairType.Beard, id));
+                break;
+            default:
+                ctx.addErrorNode(startToken);
+                LOGGER.warn("Unknown hair configuration key: {}", startToken.getText());
+        }
+        return super.visitHairConfiguration(ctx);
+    }
+
+    @Nullable
+    @Override
+    public ParsedNpcVisitor visitTraderSimpleConfiguration(
+            TraderSimpleConfigurationContext ctx) {
+        Token startToken = ctx.getStart();
+        TradeMode tradeMode;
+        switch (startToken.getText()) {
+            case "sellItems":
+                tradeMode = TradeMode.selling;
+                break;
+            case "buyPrimaryItems":
+                tradeMode = TradeMode.buyingPrimary;
+                break;
+            case "buySecondaryItems":
+                tradeMode = TradeMode.buyingSecondary;
+                break;
+            default:
+                ctx.addErrorNode(startToken);
+                LOGGER.warn("Unknown simple trade configuration key: {}", startToken.getText());
+                return super.visitTraderSimpleConfiguration(ctx);
+        }
+
+        List<ItemIdContext> itemIds = ctx.itemId();
+        List<Integer> ids = new ArrayList<>(itemIds.size());
+        for (ItemIdContext itemId : itemIds) {
+            Items item = getItem(itemId);
+            if (item == null) {
+                ctx.addErrorNode(itemId.getStart());
+            } else {
+                ids.add(item.getItemId());
+            }
+        }
+        npc.addNpcData(new ParsedTradeSimple(tradeMode, ids));
+        return super.visitTraderSimpleConfiguration(ctx);
+    }
+
+    @Nullable
+    @Override
+    public ParsedNpcVisitor visitTraderComplexConfiguration(TraderComplexConfigurationContext ctx) {
+        Token startToken = ctx.getStart();
+        TradeMode tradeMode;
+        switch (startToken.getText()) {
+            case "sellItem":
+                tradeMode = TradeMode.selling;
+                break;
+            case "buyPrimaryItem":
+                tradeMode = TradeMode.buyingPrimary;
+                break;
+            case "buySecondaryItem":
+                tradeMode = TradeMode.buyingSecondary;
+                break;
+            default:
+                ctx.addErrorNode(startToken);
+                LOGGER.warn("Unknown complex trade configuration key: {}", startToken.getText());
+                return super.visitTraderComplexConfiguration(ctx);
+        }
+
+        Map<String, String> data = new HashMap<>();
+
+        Items item = getItem(ctx.traderComplexItemId());
+        if (item == null) {
+            ctx.addErrorNode(ctx.getStart());
+            LOGGER.warn("Failed to match item id for complex trade entry.");
+            return super.visitTraderComplexConfiguration(ctx);
+        }
+        int itemId = item.getItemId();
+
+        String textDe = null;
+        String textEn = null;
+        int price = 0;
+        int stackSize = 0;
+        int quality = 0;
+        for (TraderComplexEntryContext entry : ctx.traderComplexEntry()) {
+            switch (entry.getStart().getText()) {
+                case "de":
+                    textDe = getString(entry.STRING());
+                    break;
+                case "en":
+                    textEn = getString(entry.STRING());
+                    break;
+                case "price":
+                    price = getInteger(entry.INT());
+                    break;
+                case "stack":
+                    stackSize = getInteger(entry.INT());
+                    break;
+                case "quality":
+                    quality = getItemQuality(entry.itemQuality());
+                    break;
+                case "data":
+                    data.putAll(getItemData(entry.itemDataList()));
+                    break;
+                default:
+                    ctx.addErrorNode(entry.getStart());
+                    LOGGER.warn("Unknown key for complex item entry: {}", entry.getStart().getText());
+                    break;
+            }
+        }
+
+        npc.addNpcData(new ParsedTradeComplex(tradeMode, itemId, textDe, textEn, price, stackSize, quality,
+                                              new ParsedItemData(data)));
+
+        return super.visitTraderComplexConfiguration(ctx);
+    }
+
+    @Nullable
+    @Override
+    public ParsedNpcVisitor visitWalkConfiguration(WalkConfigurationContext ctx) {
+        Token startToken = ctx.getStart();
+        switch (startToken.getText()) {
+            case "radius":
+                npc.addNpcData(new ParsedWalkingRadius(getInteger(ctx.INT())));
+                break;
+            default:
+                ctx.addErrorNode(startToken);
+                LOGGER.warn("Unknown walking configuration key: {}", startToken.getText());
+        }
+        return super.visitWalkConfiguration(ctx);
+    }
+
+    @Nullable
+    @Override
+    public ParsedNpcVisitor visitTextConfiguration(TextConfigurationContext ctx) {
         TextKeyContext textKeyContext = ctx.textKey();
         if (textKeyContext == null) {
             ctx.addErrorNode(ctx.getStart());
@@ -627,8 +589,63 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> imple
         return super.visitTextConfiguration(ctx);
     }
 
+    @Nullable
     @Override
-    public ParsedNpcVisitor visitErrorNode(@NotNull ErrorNode node) {
+    public ParsedNpcVisitor visitTrigger(TriggerContext ctx) {
+        if (currentTalkingLine == null) {
+            LOGGER.error("Visiting trigger while there is no active talking line.");
+        } else {
+            currentTalkingLine.addCondition(new ConditionTrigger(getString(ctx.STRING())));
+        }
+        return super.visitTrigger(ctx);
+    }
+
+    @Nullable
+    @Override
+    public ParsedNpcVisitor visitAnswer(AnswerContext ctx) {
+        if (currentTalkingLine == null) {
+            LOGGER.error("Visiting consequence while there is no active talking line.");
+        } else {
+            currentTalkingLine.addConsequence(new ConsequenceAnswer(getString(ctx.STRING())));
+        }
+        return super.visitAnswer(ctx);
+    }
+
+    @Nullable
+    @Override
+    public ParsedNpcVisitor visitLanguage(LanguageContext ctx) {
+        if (currentTalkingLine != null) {
+            currentTalkingLine.addCondition(new ConditionLanguage(getPlayerLanguage(ctx)));
+        }
+        return super.visitLanguage(ctx);
+    }
+
+    @Nullable
+    @Override
+    public ParsedNpcVisitor visitTalkstateGet(TalkstateGetContext ctx) {
+        if (currentTalkingLine == null) {
+            LOGGER.error("Visiting talk state get while there is no active talking line.");
+        } else {
+            currentTalkingLine.addCondition(new ConditionTalkstate(getTalkState(ctx)));
+        }
+        return super.visitTalkstateGet(ctx);
+    }
+
+    @Nullable
+    @Override
+    public ParsedNpcVisitor visitTalkstateSet(TalkstateSetContext ctx) {
+        if (currentTalkingLine == null) {
+            LOGGER.error("Visiting consequence while there is no active talking line.");
+            return defaultResult();
+        }
+
+        currentTalkingLine.addConsequence(new ConsequenceTalkstate(getTalkState(ctx)));
+        return defaultResult();
+    }
+
+    @Nullable
+    @Override
+    public ParsedNpcVisitor visitErrorNode(ErrorNode node) {
         npc.addError(node.getSymbol().getLine(), node.getSymbol().getCharPositionInLine(), node.getText());
         return defaultResult();
     }
@@ -640,46 +657,46 @@ public class ParsedNpcVisitor extends EasyNpcBaseVisitor<ParsedNpcVisitor> imple
 
     @Override
     public void syntaxError(
-            @NotNull Recognizer<?, ?> recognizer,
-            @org.antlr.v4.runtime.misc.Nullable Object offendingSymbol,
+            Recognizer<?, ?> recognizer,
+            Object offendingSymbol,
             int line,
             int charPositionInLine,
-            @NotNull String msg,
-            @org.antlr.v4.runtime.misc.Nullable RecognitionException e) {
+            String msg,
+            RecognitionException e) {
         npc.addError(line, charPositionInLine, msg);
     }
 
     @Override
     public void reportAmbiguity(
-            @NotNull Parser recognizer,
-            @NotNull DFA dfa,
+            Parser recognizer,
+            DFA dfa,
             int startIndex,
             int stopIndex,
             boolean exact,
-            @org.antlr.v4.runtime.misc.Nullable BitSet ambigAlts,
-            @NotNull ATNConfigSet configs) {
+            BitSet ambigAlts,
+            ATNConfigSet configs) {
 
     }
 
     @Override
     public void reportAttemptingFullContext(
-            @NotNull Parser recognizer,
-            @NotNull DFA dfa,
+            Parser recognizer,
+            DFA dfa,
             int startIndex,
             int stopIndex,
-            @org.antlr.v4.runtime.misc.Nullable BitSet conflictingAlts,
-            @NotNull ATNConfigSet configs) {
+            BitSet conflictingAlts,
+            ATNConfigSet configs) {
 
     }
 
     @Override
     public void reportContextSensitivity(
-            @NotNull Parser recognizer,
-            @NotNull DFA dfa,
+            Parser recognizer,
+            DFA dfa,
             int startIndex,
             int stopIndex,
             int prediction,
-            @NotNull ATNConfigSet configs) {
+            ATNConfigSet configs) {
 
     }
 }

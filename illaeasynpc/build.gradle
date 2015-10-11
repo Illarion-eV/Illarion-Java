@@ -54,11 +54,11 @@ dependencies {
     compile group: 'org.bushe', name: 'eventbus', version: '1.4'
     compile group: 'com.github.insubstantial', name: 'substance', version: project.ext.insubstantialVersion
     compile group: 'com.github.insubstantial', name: 'substance-flamingo', version: project.ext.insubstantialVersion
-    compile group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '2.5.6'
-    compile group: 'com.fifesoft', name: 'autocomplete', version: '2.5.4'
-    compile group: 'org.antlr', name: 'antlr4-runtime', version: '4.5'
+    compile group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '2.5.8'
+    compile group: 'com.fifesoft', name: 'autocomplete', version: '2.5.8'
+    compile group: 'org.antlr', name: 'antlr4-runtime', version: '4.5.1-1'
 
-    antlr4 group: 'org.antlr', name: 'antlr4', version: "4.5"
+    antlr4 group: 'org.antlr', name: 'antlr4', version: '4.5.1-1'
 
     runtime group: 'org.illarion', name: 'rsc_tables', version: project.ext.illarionResourcesVersion
 }

@@ -18,7 +18,6 @@ package illarion.client.util.translation;
 import illarion.client.IllaClient;
 import illarion.client.util.Lang;
 import illarion.client.util.translation.mymemory.MyMemoryProvider;
-import illarion.client.util.translation.yandex.YandexProvider;
 import illarion.common.config.Config;
 import illarion.common.config.ConfigChangedEvent;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -39,42 +38,28 @@ import java.util.concurrent.Executors;
  */
 public class Translator {
     @Nonnull
-    private static final Logger log = LoggerFactory.getLogger(Translator.class);
-    @Nonnull
     public static final String CFG_KEY_PROVIDER = "translator_provider";
     public static final int CFG_VALUE_PROVIDER_NONE = 0;
     public static final int CFG_VALUE_PROVIDER_MY_MEMORY = 1;
     public static final int CFG_VALUE_PROVIDER_YANDEX = 2;
-
     public static final String CFG_KEY_DIRECTION = "translator_direction";
     public static final int CFG_VALUE_DIRECTION_DEFAULT = 0;
     public static final int CFG_VALUE_DIRECTION_EN_DE = 1;
     public static final int CFG_VALUE_DIRECTION_DE_EN = 2;
-
-    @Nullable
-    private TranslationProvider provider;
-
     @Nonnull
-    private TranslationDirection direction;
-
+    private static final Logger log = LoggerFactory.getLogger(Translator.class);
     @Nonnull
     private final ExecutorService executorService;
+    @Nullable
+    private TranslationProvider provider;
+    @Nonnull
+    private TranslationDirection direction;
 
     public Translator() {
         provider = getCfgProvider(IllaClient.getCfg());
         direction = getCfgDirection(IllaClient.getCfg());
         executorService = Executors.newCachedThreadPool();
         AnnotationProcessor.process(this);
-    }
-
-    @EventTopicSubscriber(topic = CFG_KEY_PROVIDER)
-    private void onConfigProviderChanged(@Nonnull String key, @Nonnull ConfigChangedEvent event) {
-        provider = getCfgProvider(event.getConfig());
-    }
-
-    @EventTopicSubscriber(topic = CFG_KEY_DIRECTION)
-    private void onConfigDirectionChanged(@Nonnull String key, @Nonnull ConfigChangedEvent event) {
-        direction = getCfgDirection(event.getConfig());
     }
 
     @Nullable
@@ -84,7 +69,9 @@ public class Translator {
             case CFG_VALUE_PROVIDER_MY_MEMORY:
                 return new MyMemoryProvider();
             case CFG_VALUE_PROVIDER_YANDEX:
-                return new YandexProvider();
+                // return new YandexProvider(); Currently disabled because the service does not work this way anymore
+                cfg.set(CFG_KEY_PROVIDER, CFG_VALUE_PROVIDER_NONE);
+                return null;
             case CFG_VALUE_PROVIDER_NONE:
             default:
                 return null;
@@ -107,8 +94,14 @@ public class Translator {
         }
     }
 
-    public boolean isServiceEnabled() {
-        return (provider != null) && provider.isProviderWorking();
+    @EventTopicSubscriber(topic = CFG_KEY_PROVIDER)
+    private void onConfigProviderChanged(@Nonnull String key, @Nonnull ConfigChangedEvent event) {
+        provider = getCfgProvider(event.getConfig());
+    }
+
+    @EventTopicSubscriber(topic = CFG_KEY_DIRECTION)
+    private void onConfigDirectionChanged(@Nonnull String key, @Nonnull ConfigChangedEvent event) {
+        direction = getCfgDirection(event.getConfig());
     }
 
     public void translate(@Nonnull String original, @Nonnull TranslatorCallback callback) {
@@ -118,5 +111,9 @@ public class Translator {
         } else {
             callback.sendTranslation(null);
         }
+    }
+
+    public boolean isServiceEnabled() {
+        return (provider != null) && provider.isProviderWorking();
     }
 }

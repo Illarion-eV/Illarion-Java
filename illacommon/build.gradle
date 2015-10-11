@@ -34,7 +34,7 @@ dependencies {
         exclude module: 'log4j'
         exclude module: 'commons-logging'
     }
-    testCompile group: 'org.testng', name: 'testng', version: '6.9.4'
+    testCompile group: 'org.testng', name: 'testng', version: '6.9.6'
 }
 
 processResources.dependsOn("downloadSkills")
