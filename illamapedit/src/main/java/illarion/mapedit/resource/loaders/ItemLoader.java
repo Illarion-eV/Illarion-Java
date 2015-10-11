@@ -34,7 +34,7 @@ import java.io.IOException;
 /**
  * @author Tim
  */
-public class ItemLoader implements TableLoaderSink<TableLoaderItems>, Resource {
+public final class ItemLoader implements TableLoaderSink<TableLoaderItems>, Resource {
     /**
      * The logger instance for this class.
      */

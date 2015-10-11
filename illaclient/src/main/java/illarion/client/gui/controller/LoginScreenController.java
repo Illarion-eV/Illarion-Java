@@ -29,6 +29,7 @@ import illarion.client.IllaClient;
 import illarion.client.Login;
 import illarion.client.Servers;
 import illarion.client.resources.SongFactory;
+import illarion.client.util.AudioPlayer;
 import illarion.client.util.Lang;
 import org.illarion.engine.Engine;
 import org.illarion.engine.sound.Music;
@@ -167,11 +168,16 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
 
     @Override
     public void onStartScreen() {
+        AudioPlayer audioPlayer = AudioPlayer.getInstance();
+        audioPlayer.initAudioPlayer(engine.getSounds());
+        Music illarionTheme = SongFactory.getInstance().getSong(2, engine.getAssets().getSoundsManager());
+        audioPlayer.setLastMusic(illarionTheme);
         if (IllaClient.getCfg().getBoolean("musicOn")) {
-            Music illarionTheme = SongFactory.getInstance().getSong(2, engine.getAssets().getSoundsManager());
             if (illarionTheme != null) {
-                // may be null in case OpenAL is not working
-                engine.getSounds().playMusic(illarionTheme, 5, 5);
+                if (!audioPlayer.isCurrentMusic(illarionTheme)) {
+                    // may be null in case OpenAL is not working
+                    audioPlayer.playMusic(illarionTheme);
+                }
             }
         }
         if (nameTxt.getDisplayedText().isEmpty()) {

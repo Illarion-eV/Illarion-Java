@@ -44,6 +44,9 @@ class GdxLwjglCursor implements MouseCursor {
         this.lwjglCursor = lwjglCursor;
     }
 
+    /**
+     * Disposing the cursor does nothing
+     */
     @Override
     public void dispose() {
         lwjglCursor.destroy();

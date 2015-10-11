@@ -48,7 +48,7 @@ import java.util.Map;
 /**
  * @author Fredrik K
  */
-public class MapEditorConfig {
+public final class MapEditorConfig {
     @Nonnull
     private static final Logger LOGGER = LoggerFactory.getLogger(MapEditorConfig.class);
     @Nonnull

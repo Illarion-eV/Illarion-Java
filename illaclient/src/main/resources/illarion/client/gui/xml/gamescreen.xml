@@ -48,6 +48,8 @@
 
                 <panel childLayout="vertical" width="*" valign="bottom" marginLeft="5px">
                     <panel align="right" marginBottom="3px" childLayout="horizontal">
+                        <control name="button" id="openMiniMapBtn" style="nifty-button-minimap" valign="bottom"
+                                 focusable="false" marginRight="10px"/>
                         <control name="button" id="openSkillsBtn" style="nifty-button-skills" valign="bottom"
                                  focusable="false" marginRight="10px">
                             <effect>
@@ -56,8 +58,6 @@
                             </effect>
                         </control>
                         <control name="button" id="openInventoryBtn" style="nifty-button-inventory" valign="bottom"
-                                 focusable="false" marginRight="10px"/>
-                        <control name="button" id="openMiniMapBtn" style="nifty-button-minimap" valign="bottom"
                                  focusable="false" marginRight="10px"/>
                         <control name="button" id="openQuestBtn" style="nifty-button-quest-log" valign="bottom"
                                  focusable="false" marginRight="10px">
@@ -87,6 +87,10 @@
             <panel align="right" valign="top" width="189px" height="190px" childLayout="center" id="miniMapPanel">
                 <image id="miniMapImage" width="162px" height="162px"/>
                 <image width="189px" height="190px" filename="gui/minimap.png"/>
+            </panel>
+            <panel align="left" marginTop="5px" valign="top" childLayout="horizontal">
+                <control name="button" id="closeGameBtn" style="nifty-button-logout" valign="top"
+                         align="left" focusable="false" marginLeft="10px"/>
             </panel>
         </layer>
         <layer id="chatLayer" childLayout="absolute"/>
