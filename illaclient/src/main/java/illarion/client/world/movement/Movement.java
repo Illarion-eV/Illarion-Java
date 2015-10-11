@@ -210,8 +210,7 @@ public class Movement {
             @Nonnull CharMovementMode mode,
             @Nonnull ServerCoordinate target,
             int duration) {
-        log.debug("Received response from the server! Mode: {} Target {} Duration {}ms", mode, target,
-                  duration);
+        log.debug("Received response from the server! Mode: {} Target {} Duration {}ms", mode, target, duration);
         if (orgLocation.equals(target)) {
             log.debug("Current location and target location match. Cancel any pending move.");
             animator.cancelMove(target);
