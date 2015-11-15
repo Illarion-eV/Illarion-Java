@@ -1,18 +1,42 @@
+/*
+ * This file is part of the Illarion project.
+ *
+ * Copyright © 2015 - Illarion e.V.
+ *
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Illarion is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
 package illarion.client.util.account;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
+import illarion.client.util.Lang;
 import illarion.common.data.IllarionSSLSocketFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.Charset;
+import java.time.Duration;
+import java.time.Period;
 import java.util.Map;
+import java.util.zip.DeflaterInputStream;
+import java.util.zip.GZIPInputStream;
 
 /**
  * This class is sending out requests and handling the responses.
@@ -26,6 +50,26 @@ class RequestHandler {
         this.rootUrl = rootUrl;
     }
 
+    @Nonnull
+    private static String buildRequestUrl(@Nonnull String root, @Nonnull String route) {
+        String fixedRoot;
+        if (root.endsWith("/")) {
+            fixedRoot = root.substring(0, root.length() - 1);
+        } else {
+            fixedRoot = root;
+        }
+
+        String fullRoute;
+        if (route.startsWith("/")) {
+            fullRoute = fixedRoot + route;
+        } else {
+            fullRoute = fixedRoot + '/' + route;
+        }
+        fullRoute += ".json";
+        return fullRoute;
+    }
+
+    @Nullable
     public <T> T sendRequest(@Nonnull Request request, @Nonnull Map<Integer, Class<T>> responseMap) throws IOException {
         if (request instanceof AuthenticatedRequest) {
             java.net.Authenticator.setDefault(((AuthenticatedRequest) request).getAuthenticator());
@@ -44,6 +88,9 @@ class RequestHandler {
             }
         }
         httpConnection.setRequestMethod(request.getMethod());
+        httpConnection.setRequestProperty("Accept", "application/json");
+        httpConnection.setRequestProperty("Accept-Encoding", "gzip, deflate");
+        httpConnection.setRequestProperty("Accept-Language", Lang.getInstance().isGerman() ? "de-DE,de" : "en-US,en-GB,en");
 
         httpConnection.connect();
         int response = httpConnection.getResponseCode();
@@ -52,27 +99,32 @@ class RequestHandler {
             return null;
         }
 
-        try (JsonReader rd = new JsonReader(new InputStreamReader(httpConnection.getInputStream(), Charset.forName("UTF-8")))) {
-            Gson gson = new GsonBuilder()
-                    .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
-                    .create();
-            return gson.fromJson(rd, responseClass);
-        }
-    }
+        try (InputStream in = httpConnection.getInputStream()) {
+            InputStream usedIn = in;
+            String contentEncoding = httpConnection.getHeaderField("Content-Encoding");
+            if (contentEncoding != null) {
+                switch (contentEncoding) {
+                    case "gzip":
+                        //noinspection IOResourceOpenedButNotSafelyClosed,resource
+                        usedIn = new GZIPInputStream(usedIn);
+                        break;
+                    case "deflate":
+                        //noinspection IOResourceOpenedButNotSafelyClosed,resource
+                        usedIn = new DeflaterInputStream(usedIn);
+                        break;
+                    default:
+                        break;
+                }
+            }
 
-    @Nonnull
-    private static String buildRequestUrl(@Nonnull String root, @Nonnull String route) {
-        String fixedRoot;
-        if (root.endsWith("/")) {
-            fixedRoot = root.substring(0, root.length() - 1);
-        } else {
-            fixedRoot = root;
-        }
-
-        if (route.startsWith("/")) {
-            return fixedRoot + route;
-        } else {
-            return fixedRoot + '/' + route;
+            try (JsonReader rd = new JsonReader(new InputStreamReader(usedIn, Charset.forName("UTF-8")))) {
+                Gson gson = new GsonBuilder()
+                        .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
+                        .registerTypeAdapter(Period.class, new PeriodTypeAdapter())
+                        .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
+                        .create();
+                return gson.fromJson(rd, responseClass);
+            }
         }
     }
 }
