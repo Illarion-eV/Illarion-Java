@@ -19,6 +19,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 /**
  * The main animation manager that handles and updates all animations that are registered. This class handles only the
@@ -33,7 +34,7 @@ public final class AnimationManager {
      * The animation to add.
      */
     @Nonnull
-    private final List<AbstractAnimation<?>> addAnimations;
+    private final Queue<AbstractAnimation<?>> addAnimations;
 
     /**
      * The list of animations that are registered to the manager. All animations in here need to be updated when the
@@ -58,10 +59,12 @@ public final class AnimationManager {
      * before a rendering run
      */
     public void animate(int delta) {
-        while (!addAnimations.isEmpty()) {
-            AbstractAnimation<?> ani = addAnimations.remove(0);
-            if (!animations.contains(ani)) {
-                animations.add(ani);
+        if (!addAnimations.isEmpty()) {
+            AbstractAnimation<?> ani;
+            while ((ani = addAnimations.poll()) != null) {
+                if (!animations.contains(ani)) {
+                    animations.add(ani);
+                }
             }
         }
 
