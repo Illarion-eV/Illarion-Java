@@ -374,9 +374,9 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
         @Nonnull Toolkit awtDefaultToolkit = Toolkit.getDefaultToolkit();
         @Nullable Object doubleClick = awtDefaultToolkit.getDesktopProperty("awt.multiClickInterval");
         if (doubleClick instanceof Number) {
-            cfg.set("doubleClickInterval", ((Number) doubleClick).intValue());
+            cfg.set("doubleClickInterval", ((Number) doubleClick).intValue() * 2);
         } else {
-            cfg.set("doubleClickInterval", 500);
+            cfg.set("doubleClickInterval", 1000);
         }
 
         Crypto crypt = new Crypto();
