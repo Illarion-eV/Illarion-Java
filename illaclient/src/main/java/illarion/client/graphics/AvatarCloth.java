@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -46,14 +46,9 @@ public final class AvatarCloth extends AbstractEntity<AvatarClothTemplate> imple
         parent = parentAvatar;
     }
 
-    /**
-     * {@inheritDoc}
-     * <p/>
-     * Clothes inherit the shown state of their avatar. If the avatar is visible, so are they.
-     */
     @Override
-    protected boolean isShown() {
-        return parent.isShown();
+    public void hide() {
+        // do nothing
     }
 
     @Override
@@ -61,9 +56,14 @@ public final class AvatarCloth extends AbstractEntity<AvatarClothTemplate> imple
         // do nothing
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Clothes inherit the shown state of their avatar. If the avatar is visible, so are they.
+     */
     @Override
-    public void hide() {
-        // do nothing
+    protected boolean isShown() {
+        return parent.isShown();
     }
 
     @Override

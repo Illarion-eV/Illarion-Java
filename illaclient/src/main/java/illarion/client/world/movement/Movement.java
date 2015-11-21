@@ -55,28 +55,16 @@ public class Movement {
     private static final Marker marker = MarkerFactory.getMarker("Movement");
     @Nonnull
     private static final String THEAD_NAME_HEADER = "Movement Thread-";
-
-
+    private static final int MAX_WALK_AGI = 20;
+    private static final int MIN_WALK_COST = 300;
+    private static final int MAX_WALK_COST = 800;
     /**
      * The instance of the player that is moved around by this class.
      */
     @Nonnull
     private final Player player;
-
     @Nonnull
     private final ExecutorService executorService;
-
-    /**
-     * The currently active movement handler.
-     */
-    @Nullable
-    private MovementHandler activeHandler;
-
-    @Nonnull
-    private CharMovementMode defaultMovementMode;
-
-    private boolean stepInProgress;
-
     @Nonnull
     private final MoveAnimator animator;
 
@@ -94,10 +82,16 @@ public class Movement {
 
     @Nonnull
     private final MoveAnimation moveAnimation;
-
+    /**
+     * The currently active movement handler.
+     */
+    @Nullable
+    private MovementHandler activeHandler;
+    @Nonnull
+    private CharMovementMode defaultMovementMode;
+    private boolean stepInProgress;
     @Nullable
     private MoveCmd lastSendMoveCommand;
-
     /**
      * This instance of the player location is kept in sync with the location that was last confirmed by the server
      * to keep track of where the player REALLY is.
@@ -123,6 +117,20 @@ public class Movement {
                         .setNameFormat(THEAD_NAME_HEADER + "%d")
                         .setDaemon(true)
                         .build());
+    }
+
+    @Contract(pure = true)
+    private static int getMovementDuration(int tileMovementCost, double mods, boolean diagonal, boolean running) {
+        // do not mess with this function. This one has to match the server function exactly to yield the same results
+        int movementDuration = FastMath.clamp((int) (tileMovementCost * 100.0 * mods), MIN_WALK_COST, MAX_WALK_COST);
+
+        if (diagonal) {
+            movementDuration = (int) (1.4142135623730951 * movementDuration); // sqrt(2)
+        }
+        if (running) {
+            movementDuration = (int) (0.6 * movementDuration);
+        }
+        return movementDuration;
     }
 
     /**
@@ -212,10 +220,6 @@ public class Movement {
         }
     }
 
-    private static final int MAX_WALK_AGI = 20;
-    private static final int MIN_WALK_COST = 300;
-    private static final int MAX_WALK_COST = 800;
-
     private void scheduleEarlyMove(@Nonnull CharMovementMode mode, @Nonnull Direction direction) {
         if (playerLocation == null) {
             throw new IllegalStateException("The current player location is not known yet.");
@@ -257,20 +261,6 @@ public class Movement {
             }
         }
         return -1;
-    }
-
-    @Contract(pure = true)
-    private static int getMovementDuration(int tileMovementCost, double mods, boolean diagonal, boolean running) {
-        // do not mess with this function. This one has to match the server function exactly to yield the same results
-        int movementDuration = FastMath.clamp((int) (tileMovementCost * 100.0 * mods), MIN_WALK_COST, MAX_WALK_COST);
-
-        if (diagonal) {
-            movementDuration = (int) (1.4142135623730951 * movementDuration); // sqrt(2)
-        }
-        if (running) {
-            movementDuration = (int) (0.6 * movementDuration);
-        }
-        return movementDuration;
     }
 
     public void executeServerLocation(@Nonnull ServerCoordinate target) {
@@ -425,6 +415,10 @@ public class Movement {
         return defaultMovementMode;
     }
 
+    public void setDefaultMovementMode(@Nonnull CharMovementMode defaultMovementMode) {
+        this.defaultMovementMode = defaultMovementMode;
+    }
+
     @Nonnull
     @Contract(pure = true)
     public MouseMovementHandler getFollowMouseHandler() {
@@ -447,10 +441,6 @@ public class Movement {
     @Contract(pure = true)
     public MouseTargetMovementHandler getTargetMouseMovementHandler() {
         return targetMouseMovementHandler;
-    }
-
-    public void setDefaultMovementMode(@Nonnull CharMovementMode defaultMovementMode) {
-        this.defaultMovementMode = defaultMovementMode;
     }
 
     public void shutdown() {

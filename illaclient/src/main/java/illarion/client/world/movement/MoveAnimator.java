@@ -26,6 +26,7 @@ import illarion.common.graphics.Layer;
 import illarion.common.types.Direction;
 import illarion.common.types.DisplayCoordinate;
 import illarion.common.types.ServerCoordinate;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -96,7 +97,8 @@ class MoveAnimator implements AnimatedMove {
         if (uncomfirmedMoveTask != null) {
             log.warn(marker, "Scheduling another early move is not possible as there is already one set.");
         } else {
-            log.debug(marker, "Scheduling a early move. Mode: {}, Target: {}, Duration: {}ms", mode, target, duration);
+            log.debug(marker, "Scheduling a early move. Mode: {}, Target: {}, Duration: {}ms", mode,
+                      target, duration);
             MovingTask task = new MovingTask(this, mode, target, duration);
             uncomfirmedMoveTask = task;
             scheduleTask(task);
@@ -181,8 +183,9 @@ class MoveAnimator implements AnimatedMove {
                             parentPlayer.getCharacter().updateMoveDuration(duration);
                         }
                     } else {
-                        log.warn(marker, "Move to the wrong location. Resetting. Expected location: {} Player " +
-                                "location: {}", target, parentPlayer.getLocation());
+                        log.warn(marker,
+                                 "Move to the wrong location. Resetting. Expected location: {} Player location: {}",
+                                 target, parentPlayer.getLocation());
                         /* Crap! We are moving to the wrong place... */
                         movement.executeServerLocation(target);
                         movement.reportReadyForNextStep();
@@ -300,6 +303,7 @@ class MoveAnimator implements AnimatedMove {
         }
     }
 
+    @Contract(pure = true)
     private boolean isReportingRequired() {
         return !reportingDone && (uncomfirmedMoveTask == null);
     }

@@ -26,12 +26,12 @@ import javax.annotation.Nullable;
  * Created: 23.08.2005 23:42:22
  */
 public class MoveAnimation extends AbstractAnimation<AnimatedMove> {
+    @Nonnull
+    private static final Logger LOGGER = LoggerFactory.getLogger(MoveAnimation.class);
     @Nullable
     private DisplayCoordinate start;
     @Nullable
     private DisplayCoordinate target;
-    @Nonnull
-    private static final Logger LOGGER = LoggerFactory.getLogger(MoveAnimation.class);
 
     public MoveAnimation(AnimatedMove target) {
         super(target);
@@ -74,21 +74,6 @@ public class MoveAnimation extends AbstractAnimation<AnimatedMove> {
         setSkipNextUpdate(true);
     }
 
-    /**
-     * Start a movement animation
-     *
-     * @param start the start location of the animated move
-     * @param target the target location of the move
-     * @param duration the duration of the move
-     */
-    public void start(@Nonnull DisplayCoordinate start, @Nonnull DisplayCoordinate target, int duration) {
-        this.start = start;
-        this.target = target;
-
-        setDuration(duration);
-        restart();
-    }
-
     @Override
     public void stop() {
         if (!isRunning()) {
@@ -102,6 +87,21 @@ public class MoveAnimation extends AbstractAnimation<AnimatedMove> {
             setPosition(target);
         }
         animationFinished(false);
+    }
+
+    /**
+     * Start a movement animation
+     *
+     * @param start the start location of the animated move
+     * @param target the target location of the move
+     * @param duration the duration of the move
+     */
+    public void start(@Nonnull DisplayCoordinate start, @Nonnull DisplayCoordinate target, int duration) {
+        this.start = start;
+        this.target = target;
+
+        setDuration(duration);
+        restart();
     }
 
     private void setPosition(@Nonnull DisplayCoordinate currentPos) {

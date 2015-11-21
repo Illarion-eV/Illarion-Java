@@ -13,32 +13,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package illarion.client.util.account;
-
-import com.google.gson.annotations.SerializedName;
-
-import java.time.Duration;
-import java.util.Date;
+package illarion.client.graphics;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class CharacterListEntry {
-    @SerializedName("name")
-    private String name;
-
-    @SerializedName("status")
-    private String status;
-
-    @SerializedName("race")
-    private String raceId;
-
-    @SerializedName("sex")
-    private String typeId;
-
-    @SerializedName("lastSaveTime")
-    private Date lastSaveTime;
-
-    @SerializedName("onlineTime")
-    private Duration onlineTime;
+public enum QuestMarkerAvailability {
+    Available,
+    AvailableSoon
 }

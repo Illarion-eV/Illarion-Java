@@ -1,3 +1,18 @@
+/*
+ * This file is part of the Illarion project.
+ *
+ * Copyright © 2015 - Illarion e.V.
+ *
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Illarion is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
 package illarion.client.util.account;
 
 import javax.annotation.Nonnull;
@@ -15,13 +30,13 @@ public class AccountSystem {
      * The root URL for the official account system.
      */
     @Nonnull
-    public static final String OFFICIAL = "https://illarion.org/api.php";
+    public static final String OFFICIAL = "https://illarion.org/app.php";
 
     /**
      * The root URL for the local server account system.
      */
     @Nonnull
-    public static final String LOCAL = "http://localhost/api.php";
+    public static final String LOCAL = "http://localhost/app.php";
 
     @Nonnull
     private final String endpoint;
@@ -41,12 +56,13 @@ public class AccountSystem {
         authenticator = new Authenticator(userName, password);
     }
 
+    @Nullable
     public AccountInfo getAccountInformation() {
         if (authenticator == null) {
             throw new IllegalStateException("This function requires the account system to be authenticated.");
         }
 
-        AuthenticatedRequest request = new AccountInfoRequest(authenticator);
+        Request request = new AccountInfoRequest(authenticator);
         RequestHandler handler = new RequestHandler(endpoint);
 
         Map<Integer, Class<AccountInfo>> responses = new HashMap<>();

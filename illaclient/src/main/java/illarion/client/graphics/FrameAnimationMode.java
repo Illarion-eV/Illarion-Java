@@ -13,32 +13,24 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package illarion.client.util.account;
-
-import com.google.gson.annotations.SerializedName;
-
-import java.time.Duration;
-import java.util.Date;
+package illarion.client.graphics;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class CharacterListEntry {
-    @SerializedName("name")
-    private String name;
+public enum FrameAnimationMode {
+    /**
+     * Run animation backwards.
+     */
+    Backwards,
 
-    @SerializedName("status")
-    private String status;
+    /**
+     * End animation with same frame as it started.
+     */
+    Cyclic,
 
-    @SerializedName("race")
-    private String raceId;
-
-    @SerializedName("sex")
-    private String typeId;
-
-    @SerializedName("lastSaveTime")
-    private Date lastSaveTime;
-
-    @SerializedName("onlineTime")
-    private Duration onlineTime;
+    /**
+     * Keep running in an endless loop.
+     */
+    Looped
 }

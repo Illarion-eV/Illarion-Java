@@ -18,7 +18,7 @@ package illarion.client.world;
 import com.google.common.base.Strings;
 import illarion.client.graphics.AnimatedMove;
 import illarion.client.graphics.Avatar;
-import illarion.client.graphics.AvatarClothManager;
+import illarion.client.graphics.AvatarClothManager.AvatarClothGroup;
 import illarion.client.graphics.MoveAnimation;
 import illarion.client.resources.ItemFactory;
 import illarion.client.util.Lang;
@@ -29,6 +29,7 @@ import illarion.common.graphics.Layer;
 import illarion.common.types.*;
 import illarion.common.util.FastMath;
 import org.illarion.engine.graphic.Color;
+import org.illarion.engine.graphic.ImmutableColor;
 import org.illarion.engine.graphic.LightSource;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
@@ -39,6 +40,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -54,49 +56,40 @@ public final class Char implements AnimatedMove {
      * The speed a animation runs with on default.
      */
     public static final int DEFAULT_ANIMATION_SPEED = 750;
-
+    /**
+     * Light Update status SET light value.
+     */
+    public static final int LIGHT_SET = 1;
+    /**
+     * Light Update status SOFTly change value.
+     */
+    public static final int LIGHT_SOFT = 2;
+    /**
+     * Light Update status UPDATE light value.
+     */
+    public static final int LIGHT_UPDATE = 3;
+    /**
+     * Maximum value for visibility.
+     */
+    public static final float VISIBILITY_MAX = 1.f;
     /**
      * The color that is used to show dead characters.
      */
     @Nonnull
     private static final Color DEAD_COLOR;
-
-    /**
-     * Light Update status SET light value.
-     */
-    public static final int LIGHT_SET = 1;
-
-    /**
-     * Light Update status SOFTly change value.
-     */
-    public static final int LIGHT_SOFT = 2;
-
-    /**
-     * Light Update status UPDATE light value.
-     */
-    public static final int LIGHT_UPDATE = 3;
-
     /**
      * The instance of the logger that is used to write out the data.
      */
     @Nonnull
     private static final Logger log = LoggerFactory.getLogger(Char.class);
-
     /**
      * Maximal scale value for the character.
      */
     private static final float MAXIMAL_SCALE = 1.2f;
-
     /**
      * Minimal scale value for the character.
      */
     private static final float MINIMAL_SCALE = 0.8f;
-
-    /**
-     * Maximum value for visibility.
-     */
-    public static final float VISIBILITY_MAX = 1.f;
-
     /**
      * This color is used to display the name in case the character is a player character.
      */
@@ -115,176 +108,124 @@ public final class Char implements AnimatedMove {
     @Nonnull
     private static final Color NAME_COLOR_NPC = new Color(128, 179, 255);
 
-    /**
-     * The alive state of the character. {@code true} in case the character is alive.
-     */
-    private boolean alive;
-
-    /**
-     * The animation that is currently shown by the character.
-     */
-    private int animation;
-
-    /**
-     * Current appearance value. Depends on race and gender of the character.
-     */
-    private int appearance;
-
-    /**
-     * Avatar of the character.
-     */
-    @Nullable
-    private Avatar avatar;
-
-    /**
-     * ID of the avatar that represents the character.
-     */
-    private int avatarId;
-
-    /**
-     * Character ID the the character.
-     */
-    @Nullable
-    private CharacterId charId;
-
-    /**
-     * Current looking direction of the character.
-     */
-    @Nonnull
-    private Direction direction;
-
-    @Nullable
-    private DisplayCoordinate displayPos;
-
-    /**
-     * Last visibility value that was shown. Used for fading in and out animations.
-     */
-    private int lastVisibility;
-
-    /**
-     * Current light source of the character.
-     */
-    @Nullable
-    private LightSource lightSrc;
-
-    /**
-     * Current light value of the character.
-     */
-    private int lightValue;
-
-    /**
-     * Current Location of the character on the map.
-     */
-    @Nullable
-    private ServerCoordinate location;
+    static {
+        DEAD_COLOR = new Color(1.f, 1.f, 1.f, 0.45f);
+    }
 
     /**
      * Move animation handler for this character.
      */
     @Nonnull
     private final MoveAnimation move;
-
-    /**
-     * Name of the character.
-     */
-    @Nullable
-    private String name;
-
-    @Nullable
-    private String customName;
-
-    /**
-     * Color of the name of the character. default, melee fighting, distance fighting, magic
-     */
-    @Nullable
-    private Color nameColor;
-
-    /**
-     * Scale of the character (based on its height).
-     */
-    private float scale;
-
-    /**
-     * The custom color of the characters skin.
-     */
-    @Nullable
-    private Color skinColor;
-
-    /**
-     * Visibility bonus of the character (for large characters).
-     */
-    private int visibilityBonus;
-
     /**
      * A list of items this avatar wears. This list is send to the avatar at a update.
      */
     @Nonnull
-    private final int[] wearItems = new int[AvatarClothManager.GROUP_COUNT];
-
+    private final Map<AvatarClothGroup, Integer> wearItems = new EnumMap<>(AvatarClothGroup.class);
     /**
      * A list of modified colors of the stuff a avatar wears.
      */
     @Nonnull
-    private final Color[] wearItemsColors = new Color[AvatarClothManager.GROUP_COUNT];
-
+    private final Map<AvatarClothGroup, Color> wearItemsColors = new EnumMap<>(AvatarClothGroup.class);
     /**
      * This map stores the attribute values of this character.
      */
     @Nonnull
     private final Map<CharacterAttribute, Integer> attributes;
-
+    /**
+     * The alive state of the character. {@code true} in case the character is alive.
+     */
+    private boolean alive;
+    /**
+     * The animation that is currently shown by the character.
+     */
+    private int animation;
+    /**
+     * Current appearance value. Depends on race and gender of the character.
+     */
+    private int appearance;
+    /**
+     * Avatar of the character.
+     */
+    @Nullable
+    private Avatar avatar;
+    /**
+     * ID of the avatar that represents the character.
+     */
+    private int avatarId;
+    /**
+     * Character ID the the character.
+     */
+    @Nullable
+    private CharacterId charId;
+    /**
+     * Current looking direction of the character.
+     */
+    @Nonnull
+    private Direction direction;
+    @Nullable
+    private DisplayCoordinate displayPos;
+    /**
+     * Last visibility value that was shown. Used for fading in and out animations.
+     */
+    private int lastVisibility;
+    /**
+     * Current light source of the character.
+     */
+    @Nullable
+    private LightSource lightSrc;
+    /**
+     * Current light value of the character.
+     */
+    private int lightValue;
+    /**
+     * Current Location of the character on the map.
+     */
+    @Nullable
+    private ServerCoordinate location;
+    /**
+     * Name of the character.
+     */
+    @Nullable
+    private String name;
+    @Nullable
+    private String customName;
+    /**
+     * Color of the name of the character. default, melee fighting, distance fighting, magic
+     */
+    @Nullable
+    private Color nameColor;
+    /**
+     * Scale of the character (based on its height).
+     */
+    private float scale;
+    /**
+     * The custom color of the characters skin.
+     */
+    @Nullable
+    private Color skinColor;
+    /**
+     * Visibility bonus of the character (for large characters).
+     */
+    private int visibilityBonus;
     /**
      * The reference to the interactive character instance that points to this character.
      */
     @Nullable
     private Reference<InteractiveChar> interactiveCharRef;
-
-    private static class DelayedMoveData {
-        @Nonnull
-        public final CharMovementMode mode;
-        public final int duration;
-        @Nonnull
-        public final ServerCoordinate targetLocation;
-
-        private DelayedMoveData(@Nonnull CharMovementMode mode, int duration, @Nonnull ServerCoordinate targetLocation) {
-            this.mode = mode;
-            this.duration = duration;
-            this.targetLocation = targetLocation;
-        }
-
-        @Override
-        @Nonnull
-        public String toString() {
-            StringBuilder builder = new StringBuilder();
-            builder.append("DelayedMoveData(");
-            if (mode == null) {
-                builder.append("NULL");
-            } else {
-                switch (mode) {
-                    case Walk:
-                        builder.append("Walk");
-                        break;
-                    case Run:
-                        builder.append("Run");
-                        break;
-                    case None:
-                        builder.append("None");
-                        break;
-                    case Push:
-                        builder.append("Push");
-                        break;
-                }
-            }
-            builder.append(", ").append(duration).append("ms, ").append("to ").append(targetLocation);
-            return builder.toString();
-        }
-    }
-
     /**
      * This stores a delayed move in case there is one.
      */
     @Nullable
     private DelayedMoveData delayedMove;
+    /**
+     * This flag is used to store if there is currently a animation in progress.
+     */
+    private boolean animationInProgress;
+    /**
+     * Once this value is turned {@code true} the character is removed from the game.
+     */
+    private boolean removedCharacter;
 
     /**
      * Constructor to create a new character.
@@ -301,8 +242,31 @@ public final class Char implements AnimatedMove {
         direction = Direction.North;
     }
 
-    static {
-        DEAD_COLOR = new Color(1.f, 1.f, 1.f, 0.45f);
+    private static void applyPaperdollingItem(@Nullable Avatar avatar, @Nonnull AvatarClothGroup group,
+                                              @Nullable Integer itemId) {
+        int realItemId = (itemId == null) ? 0 : itemId;
+        applyPaperdollingItem(avatar, group, realItemId);
+    }
+
+    private static void applyPaperdollingItem(@Nullable Avatar avatar, @Nonnull AvatarClothGroup group, int itemId) {
+        if (avatar != null) {
+            if (itemId == 0) {
+                avatar.removeClothItem(group);
+            } else {
+                avatar.setClothItem(group, itemId);
+            }
+        }
+    }
+
+    @Nonnull
+    @Contract(pure = true)
+    private static DisplayCoordinate getDisplayCoordinatesAt(@Nonnull ServerCoordinate coordinate) {
+        int elevation = World.getMap().getElevationAt(coordinate);
+        int x = coordinate.toDisplayX();
+        int y = coordinate.toDisplayY() - elevation;
+        int layer = coordinate.toDisplayLayer(Layer.Chars);
+
+        return new DisplayCoordinate(x, y, layer);
     }
 
     /**
@@ -316,7 +280,10 @@ public final class Char implements AnimatedMove {
             log.warn("Fetching the attributes of a removed character.");
         }
         if (attributes.containsKey(attribute)) {
-            return attributes.get(attribute);
+            Integer value = attributes.get(attribute);
+            if (value != null) {
+                return value;
+            }
         }
         return 0;
     }
@@ -357,6 +324,25 @@ public final class Char implements AnimatedMove {
     }
 
     /**
+     * Change the ID of the character.
+     *
+     * @param newCharId new ID of the character
+     */
+    @SuppressWarnings("IfStatementWithTooManyBranches")
+    public void setCharId(@Nonnull CharacterId newCharId) {
+        charId = newCharId;
+        if (charId.isHuman()) {
+            setNameColor(NAME_COLOR_HUMAN);
+        } else if (charId.isNPC()) {
+            setNameColor(NAME_COLOR_NPC);
+        } else if (charId.isMonster()) {
+            setNameColor(NAME_COLOR_MONSTER);
+        } else {
+            log.warn("Failed to detect character type for {}", charId);
+        }
+    }
+
+    /**
      * Set the alive state of this character.
      *
      * @param newAliveState set the new alive state. {@code true} in case the character is alive.
@@ -379,25 +365,14 @@ public final class Char implements AnimatedMove {
 
         if (alive) {
             avatar.changeBaseColor(skinColor);
-            for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
-                if ((i == AvatarClothManager.GROUP_BEARD) || (i == AvatarClothManager.GROUP_HAIR)) {
-                    continue;
-                }
-                avatar.changeClothColor(i, wearItemsColors[i]);
-            }
+            wearItemsColors.forEach(avatar::changeClothColor);
         } else {
             avatar.changeBaseColor(DEAD_COLOR);
 
-            for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
-                avatar.changeClothColor(i, DEAD_COLOR);
-            }
+            //noinspection ConstantConditions
+            Arrays.asList(AvatarClothGroup.values()).forEach(group -> avatar.changeClothColor(group, DEAD_COLOR));
         }
     }
-
-    /**
-     * This flag is used to store if there is currently a animation in progress.
-     */
-    private boolean animationInProgress;
 
     @Override
     public void animationStarted() {
@@ -429,8 +404,7 @@ public final class Char implements AnimatedMove {
             });
         } else if (localDelayedMove != null) {
             World.getUpdateTaskManager().addTaskForLater((container, delta) -> {
-                log.info("{}: Canceled move received while there still was a delayed more. Fixing the location.",
-                        this);
+                log.info("{}: Canceled move received while there still was a delayed more. Fixing the location.", this);
                 updateLocation(localDelayedMove.targetLocation);
             });
         }
@@ -487,8 +461,9 @@ public final class Char implements AnimatedMove {
         }
 
         // calculate avatar id
+        //noinspection ConstantConditions
         int newAvatarId = (((appearance * Direction.values().length) + direction.getServerId()) *
-                CharAnimations.TOTAL_ANIMATIONS) + animation;
+                           CharAnimations.TOTAL_ANIMATIONS) + animation;
 
         // no change, return
         if ((avatarId == newAvatarId) && (avatar != null)) {
@@ -514,14 +489,11 @@ public final class Char implements AnimatedMove {
         updatePaperdoll(newAvatar);
 
         if (alive) {
-            for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
-                newAvatar.changeClothColor(i, wearItemsColors[i]);
-            }
+            wearItemsColors.forEach(newAvatar::changeClothColor);
             newAvatar.changeBaseColor(skinColor);
         } else {
-            for (int i = 0; i < AvatarClothManager.GROUP_COUNT; ++i) {
-                newAvatar.changeClothColor(i, DEAD_COLOR);
-            }
+            //noinspection ConstantConditions
+            Arrays.asList(AvatarClothGroup.values()).forEach(group -> newAvatar.changeClothColor(group, DEAD_COLOR));
             newAvatar.changeBaseColor(DEAD_COLOR);
         }
 
@@ -574,43 +546,37 @@ public final class Char implements AnimatedMove {
         if (avatar == null) {
             return;
         }
-        if (hasWearingItem(avatar, AvatarClothManager.GROUP_FIRST_HAND,
-                           wearItems[AvatarClothManager.GROUP_FIRST_HAND]) ||
-                hasWearingItem(avatar, AvatarClothManager.GROUP_SECOND_HAND,
-                               wearItems[AvatarClothManager.GROUP_SECOND_HAND])) {
-            applyPaperdollingItem(avatar, AvatarClothManager.GROUP_FIRST_HAND,
-                                  wearItems[AvatarClothManager.GROUP_FIRST_HAND]);
-            applyPaperdollingItem(avatar, AvatarClothManager.GROUP_SECOND_HAND,
-                                  wearItems[AvatarClothManager.GROUP_SECOND_HAND]);
+        if (hasWearingItem(avatar, AvatarClothGroup.FirstHand, wearItems.get(AvatarClothGroup.FirstHand)) ||
+            hasWearingItem(avatar, AvatarClothGroup.SecondHand, wearItems.get(AvatarClothGroup.SecondHand))) {
+            applyPaperdollingItem(avatar, AvatarClothGroup.FirstHand, wearItems.get(AvatarClothGroup.FirstHand));
+            applyPaperdollingItem(avatar, AvatarClothGroup.SecondHand, wearItems.get(AvatarClothGroup.SecondHand));
         } else {
-            applyPaperdollingItem(avatar, AvatarClothManager.GROUP_FIRST_HAND,
-                                  wearItems[AvatarClothManager.GROUP_SECOND_HAND]);
-            applyPaperdollingItem(avatar, AvatarClothManager.GROUP_SECOND_HAND,
-                                  wearItems[AvatarClothManager.GROUP_FIRST_HAND]);
+            applyPaperdollingItem(avatar, AvatarClothGroup.FirstHand, wearItems.get(AvatarClothGroup.FirstHand));
+            applyPaperdollingItem(avatar, AvatarClothGroup.SecondHand, wearItems.get(AvatarClothGroup.SecondHand));
         }
-        for (int i = 0; i < wearItems.length; ++i) {
-            if ((i == AvatarClothManager.GROUP_FIRST_HAND) || (i == AvatarClothManager.GROUP_SECOND_HAND)) {
-                continue;
+
+        //noinspection ConstantConditions
+        Arrays.asList(AvatarClothGroup.values()).forEach(group -> {
+            if ((group != AvatarClothGroup.FirstHand) && (group != AvatarClothGroup.SecondHand)) {
+                applyPaperdollingItem(avatar, group, wearItems.get(group));
             }
-            applyPaperdollingItem(avatar, i, wearItems[i]);
-        }
+        });
     }
 
     /**
      * Check if a cloth item is defined in a specified group.
      *
      * @param avatar the avatar to update
-     * @param slot the slot where the item shall be checked
+     * @param group the cloth group where the item shall be checked
      * @param id the id of the item that shall be checked
      * @return {@code true} in case a item is defined and displayable
      */
-    public boolean hasWearingItem(@Nullable Avatar avatar, int slot, int id) {
-        if ((slot < 0) || (slot >= AvatarClothManager.GROUP_COUNT)) {
-            log.warn("Wearing item check on invalid slot: {}", slot);
-            return false;
-        }
+    public boolean hasWearingItem(@Nullable Avatar avatar, @Nonnull AvatarClothGroup group, int id) {
+        return (id != 0) && ((avatar == null) || avatar.getTemplate().getClothes().doesClothExists(group, id));
+    }
 
-        return (id != 0) && ((avatar == null) || avatar.getTemplate().getClothes().doesClothExists(slot, id));
+    private boolean hasWearingItem(@Nullable Avatar avatar, @Nonnull AvatarClothGroup group, @Nullable Integer id) {
+        return hasWearingItem(avatar, group, (id == null) ? 0 : id);
     }
 
     private void applyLightValue(@Nullable ItemId itemId) {
@@ -619,16 +585,6 @@ public final class Char implements AnimatedMove {
 
             if (light > lightValue) {
                 lightValue = light;
-            }
-        }
-    }
-
-    private static void applyPaperdollingItem(@Nullable Avatar avatar, int slot, int itemId) {
-        if (avatar != null) {
-            if (itemId == 0) {
-                avatar.removeClothItem(slot);
-            } else {
-                avatar.setClothItem(slot, itemId);
             }
         }
     }
@@ -688,11 +644,6 @@ public final class Char implements AnimatedMove {
     }
 
     /**
-     * Once this value is turned {@code true} the character is removed from the game.
-     */
-    private boolean removedCharacter;
-
-    /**
      * Mark this character as removed. Calling this function will cause the instance to clean its dependency and then
      * die gracefully.
      */
@@ -739,25 +690,6 @@ public final class Char implements AnimatedMove {
     }
 
     /**
-     * Change the ID of the character.
-     *
-     * @param newCharId new ID of the character
-     */
-    @SuppressWarnings("IfStatementWithTooManyBranches")
-    public void setCharId(@Nonnull CharacterId newCharId) {
-        charId = newCharId;
-        if (charId.isHuman()) {
-            setNameColor(NAME_COLOR_HUMAN);
-        } else if (charId.isNPC()) {
-            setNameColor(NAME_COLOR_NPC);
-        } else if (charId.isMonster()) {
-            setNameColor(NAME_COLOR_MONSTER);
-        } else {
-            log.warn("Failed to detect character type for {}", charId);
-        }
-    }
-
-    /**
      * Set the color of the name of the character.
      *
      * @param color the new color value
@@ -768,21 +700,6 @@ public final class Char implements AnimatedMove {
         if (avatar != null) {
             avatar.setNameColor(color);
         }
-    }
-
-    /**
-     * Set the name of the current character. Pre and suffixes are generated by this function as well
-     *
-     * @param newName the name of the character or null
-     */
-    public void setName(@Nullable String newName) {
-        name = newName;
-        setAvatarName();
-    }
-
-    public void setCustomName(@Nullable String customName) {
-        this.customName = customName;
-        setAvatarName();
     }
 
     private void setAvatarName() {
@@ -827,6 +744,32 @@ public final class Char implements AnimatedMove {
     @Contract(pure = true)
     public Direction getDirection() {
         return direction;
+    }
+
+    /**
+     * Change the direction the character is looking at.
+     *
+     * @param newDirection the new direction value
+     */
+    public void setDirection(@Nonnull Direction newDirection) {
+        if (direction == newDirection) {
+            log.debug("{}: Skipping direction change, because direction already matches: {}", this, newDirection);
+            return;
+        }
+        log.debug("{}: Applying a new direction to the character: {}", this, newDirection);
+        direction = newDirection;
+
+        // The update of the direction arrives before the location of the character is set. That is okay because
+        // the update of the character will take the stored direction into account.
+        World.getUpdateTaskManager().addTask((container, delta) -> {
+            if (!move.isRunning() && (location != null)) {
+                if (animation == CharAnimations.STAND) {
+                    updateAvatar();
+                } else {
+                    resetAnimation(true);
+                }
+            }
+        });
     }
 
     /**
@@ -875,6 +818,28 @@ public final class Char implements AnimatedMove {
     }
 
     /**
+     * Set the new location of the character.
+     *
+     * @param newLoc new location of the character
+     */
+    public void setLocation(@Nonnull ServerCoordinate newLoc) {
+        if (removedCharacter) {
+            log.warn("Trying to update the location of a removed character.");
+            return;
+        }
+        CharacterId characterId = getCharId();
+        if (characterId == null) {
+            log.error("Trying to change the location of a character without a ID.");
+            return;
+        }
+
+        if (updateLocation(newLoc)) {
+            log.debug("{}: Setting character location to: {}", this, newLoc);
+            setPosition(getDisplayCoordinatesAt(newLoc));
+        }
+    }
+
+    /**
      * Get the name of the character.
      *
      * @return the name of the character
@@ -887,6 +852,16 @@ public final class Char implements AnimatedMove {
         } else {
             return Strings.isNullOrEmpty(customName) ? name : (name + " (" + customName + ')');
         }
+    }
+
+    /**
+     * Set the name of the current character. Pre and suffixes are generated by this function as well
+     *
+     * @param newName the name of the character or null
+     */
+    public void setName(@Nullable String newName) {
+        name = newName;
+        setAvatarName();
     }
 
     @Nonnull
@@ -953,6 +928,11 @@ public final class Char implements AnimatedMove {
         return customName;
     }
 
+    public void setCustomName(@Nullable String customName) {
+        this.customName = customName;
+        setAvatarName();
+    }
+
     /**
      * Get the visibility bonus value.
      *
@@ -961,6 +941,19 @@ public final class Char implements AnimatedMove {
     @Contract(pure = true)
     public int getVisibilityBonus() {
         return visibilityBonus;
+    }
+
+    /**
+     * Set the visibility bonus of this character.
+     *
+     * @param newVisibilityBonus the new visibility bonus value
+     */
+    public void setVisibilityBonus(int newVisibilityBonus) {
+        if (removedCharacter) {
+            log.warn("Trying to set the visibility bonus of a removed character.");
+            return;
+        }
+        visibilityBonus = newVisibilityBonus;
     }
 
     /**
@@ -1104,11 +1097,11 @@ public final class Char implements AnimatedMove {
                 DisplayCoordinate newDisplayPos = getDisplayCoordinatesAt(newPos);
 
                 if (oldDisplayPos.getLayer() > newDisplayPos.getLayer()) {
-                    oldDisplayPos = new DisplayCoordinate(oldDisplayPos.getX(),
-                            oldDisplayPos.getY(), newDisplayPos.getLayer());
+                    oldDisplayPos =
+                            new DisplayCoordinate(oldDisplayPos.getX(), oldDisplayPos.getY(), newDisplayPos.getLayer());
                 } else if (oldDisplayPos.getLayer() < newDisplayPos.getLayer()) {
-                    newDisplayPos = new DisplayCoordinate(newDisplayPos.getX(),
-                            newDisplayPos.getY(), oldDisplayPos.getLayer());
+                    newDisplayPos =
+                            new DisplayCoordinate(newDisplayPos.getX(), newDisplayPos.getY(), oldDisplayPos.getLayer());
                 }
 
                 move.start(oldDisplayPos, newDisplayPos, duration);
@@ -1127,17 +1120,6 @@ public final class Char implements AnimatedMove {
         if (newTile != null) {
             newTile.updateQuestMarkerElevation();
         }
-    }
-
-    @Nonnull
-    @Contract(pure = true)
-    private static DisplayCoordinate getDisplayCoordinatesAt(@Nonnull ServerCoordinate coordinate) {
-        int elevation = World.getMap().getElevationAt(coordinate);
-        int x = coordinate.toDisplayX();
-        int y = coordinate.toDisplayY() - elevation;
-        int layer = coordinate.toDisplayLayer(Layer.Chars);
-
-        return new DisplayCoordinate(x, y, layer);
     }
 
     private boolean updateLocation(@Nonnull ServerCoordinate newLocation) {
@@ -1166,32 +1148,6 @@ public final class Char implements AnimatedMove {
         if (localLightSource != null) {
             World.getLights().updateLightLocation(localLightSource, newLoc);
         }
-    }
-
-    /**
-     * Change the direction the character is looking at.
-     *
-     * @param newDirection the new direction value
-     */
-    public void setDirection(@Nonnull Direction newDirection) {
-        if (direction == newDirection) {
-            log.debug("{}: Skipping direction change, because direction already matches: {}", this, newDirection);
-            return;
-        }
-        log.debug("{}: Applying a new direction to the character: {}", this, newDirection);
-        direction = newDirection;
-
-        // The update of the direction arrives before the location of the character is set. That is okay because
-        // the update of the character will take the stored direction into account.
-        World.getUpdateTaskManager().addTask((container, delta) -> {
-            if (!move.isRunning() && (location != null)) {
-                if (animation == CharAnimations.STAND) {
-                    updateAvatar();
-                } else {
-                    resetAnimation(true);
-                }
-            }
-        });
     }
 
     public boolean isAnimationAvailable(int animation) {
@@ -1302,17 +1258,18 @@ public final class Char implements AnimatedMove {
     /**
      * Update the color of a specified cloth part.
      *
-     * @param slot the slot that shall be changed
+     * @param group the cloth group that should be changed
      * @param color the color this part shall be displayed in
      */
-    public void setClothColor(int slot, @Nonnull Color color) {
+    public void setClothColor(@Nonnull AvatarClothGroup group, @Nonnull Color color) {
         if (removedCharacter) {
             log.warn("Trying to change the cloth color of a removed character.");
             return;
         }
-        wearItemsColors[slot] = new Color(color);
+        ImmutableColor usedColor = color.getImmutableCopy();
+        wearItemsColors.put(group, usedColor);
         if (avatar != null) {
-            avatar.changeClothColor(slot, color);
+            avatar.changeClothColor(group, usedColor);
         }
     }
 
@@ -1330,25 +1287,25 @@ public final class Char implements AnimatedMove {
         applyLightValue(itemId);
         switch (slot) {
             case 1:
-                setWearingItem(AvatarClothManager.GROUP_HAT, itemId.getValue());
+                setWearingItem(AvatarClothGroup.Hat, itemId.getValue());
                 break;
             case 3:
-                setWearingItem(AvatarClothManager.GROUP_CHEST, itemId.getValue());
+                setWearingItem(AvatarClothGroup.Chest, itemId.getValue());
                 break;
             case 5:
-                setWearingItem(AvatarClothManager.GROUP_FIRST_HAND, itemId.getValue());
+                setWearingItem(AvatarClothGroup.FirstHand, itemId.getValue());
                 break;
             case 6:
-                setWearingItem(AvatarClothManager.GROUP_SECOND_HAND, itemId.getValue());
+                setWearingItem(AvatarClothGroup.SecondHand, itemId.getValue());
                 break;
             case 9:
-                setWearingItem(AvatarClothManager.GROUP_TROUSERS, itemId.getValue());
+                setWearingItem(AvatarClothGroup.Trousers, itemId.getValue());
                 break;
             case 10:
-                setWearingItem(AvatarClothManager.GROUP_SHOES, itemId.getValue());
+                setWearingItem(AvatarClothGroup.Shoes, itemId.getValue());
                 break;
             case 11:
-                setWearingItem(AvatarClothManager.GROUP_COAT, itemId.getValue());
+                setWearingItem(AvatarClothGroup.Coat, itemId.getValue());
                 break;
             default:
                 break;
@@ -1359,43 +1316,16 @@ public final class Char implements AnimatedMove {
      * Add a item the avatar wears to its current list. The changes do not become visible until
      * {@link #updatePaperdoll(Avatar)} is called.
      *
-     * @param slot the slot the item is carried at
+     * @param group the group the item belongs to
      * @param id the ID of the item the character wears
      */
-    public void setWearingItem(int slot, int id) {
+    public void setWearingItem(@Nonnull AvatarClothGroup group, int id) {
         if (removedCharacter) {
             log.warn("Trying to update the worn items of a removed character.");
             return;
         }
 
-        if ((slot < 0) || (slot >= AvatarClothManager.GROUP_COUNT)) {
-            log.warn("Wearing item set to invalid slot: {}", slot);
-            return;
-        }
-
-        wearItems[slot] = id;
-    }
-
-    /**
-     * Set the new location of the character.
-     *
-     * @param newLoc new location of the character
-     */
-    public void setLocation(@Nonnull ServerCoordinate newLoc) {
-        if (removedCharacter) {
-            log.warn("Trying to update the location of a removed character.");
-            return;
-        }
-        CharacterId characterId = getCharId();
-        if (characterId == null) {
-            log.error("Trying to change the location of a character without a ID.");
-            return;
-        }
-
-        if (updateLocation(newLoc)) {
-            log.debug("{}: Setting character location to: {}", this, newLoc);
-            setPosition(getDisplayCoordinatesAt(newLoc));
-        }
+        wearItems.put(group, id);
     }
 
     /**
@@ -1416,19 +1346,6 @@ public final class Char implements AnimatedMove {
         if (avatar != null) {
             avatar.changeBaseColor(color);
         }
-    }
-
-    /**
-     * Set the visibility bonus of this character.
-     *
-     * @param newVisibilityBonus the new visibility bonus value
-     */
-    public void setVisibilityBonus(int newVisibilityBonus) {
-        if (removedCharacter) {
-            log.warn("Trying to set the visibility bonus of a removed character.");
-            return;
-        }
-        visibilityBonus = newVisibilityBonus;
     }
 
     /**
@@ -1474,13 +1391,6 @@ public final class Char implements AnimatedMove {
         updatePaperdoll(avatar);
     }
 
-    @Nonnull
-    @Override
-    public String toString() {
-        String charIdString = (charId == null) ? "" : (" (" + charId.getValue() + ')');
-        return "Character " + name + charIdString;
-    }
-
     @Override
     public int hashCode() {
         return (charId == null) ? 0 : charId.hashCode();
@@ -1492,8 +1402,54 @@ public final class Char implements AnimatedMove {
         return (obj instanceof Char) && equals((Char) obj);
     }
 
+    @Nonnull
+    @Override
+    public String toString() {
+        String charIdString = (charId == null) ? "" : (" (" + charId.getValue() + ')');
+        return "Character " + name + charIdString;
+    }
+
     @Contract(value = "null->false", pure = true)
     public boolean equals(@Nullable Char other) {
         return (other != null) && (charId != null) && charId.equals(other.charId);
     }
+
+    private static class DelayedMoveData {
+        @Nonnull
+        public final CharMovementMode mode;
+        public final int duration;
+        @Nonnull
+        public final ServerCoordinate targetLocation;
+
+        private DelayedMoveData(@Nonnull CharMovementMode mode, int duration,
+                                @Nonnull ServerCoordinate targetLocation) {
+            this.mode = mode;
+            this.duration = duration;
+            this.targetLocation = targetLocation;
+        }
+
+        @Override
+        @Nonnull
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append("DelayedMoveData(");
+            switch (mode) {
+                case Walk:
+                    builder.append("Walk");
+                    break;
+                case Run:
+                    builder.append("Run");
+                    break;
+                case None:
+                    builder.append("None");
+                    break;
+                case Push:
+                    builder.append("Push");
+                    break;
+            }
+            builder.append(", ").append(duration).append("ms, ").append("to ").append(targetLocation);
+            return builder.toString();
+        }
+    }
+
 }

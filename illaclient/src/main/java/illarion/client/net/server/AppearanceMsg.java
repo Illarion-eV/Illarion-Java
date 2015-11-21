@@ -15,7 +15,7 @@
  */
 package illarion.client.net.server;
 
-import illarion.client.graphics.AvatarClothManager;
+import illarion.client.graphics.AvatarClothManager.AvatarClothGroup;
 import illarion.client.net.CommandList;
 import illarion.client.net.annotations.ReplyMessage;
 import illarion.client.world.Char;
@@ -49,149 +49,67 @@ public final class AppearanceMsg implements ServerReply {
      * Conversation value for the scale value received from the server and the value the client actually uses.
      */
     private static final float SCALE_MOD = 100.f;
-
+    /**
+     * The slots of the inventory that is required to display the paperdolling of this character.
+     */
+    @Nonnull
+    private final ItemId[] itemSlots;
     /**
      * Appearance of the character. This value contains the race and the gender
      * of the character.
      */
     private int appearance;
-
     /**
      * The name of the character.
      */
     @Nullable
     private String name;
-
     /**
      * The custom given name of the character.
      */
     @Nullable
     private String customName;
-
     /**
      * The ID of the beard of the character.
      */
     private short beardID;
-
     /**
      * ID of the character this message is about.
      */
     @Nullable
     private CharacterId charId;
-
     /**
      * The dead flag of the character. {@code true} is dead, {@code false} is alive.
      */
     private boolean deadFlag;
-
     /**
      * The color of the hair
      */
     @Nullable
     private Color hairColor;
-
     /**
      * The ID of the hair the character has.
      */
     private short hairID;
-
     /**
      * Size modifier of the character.
      */
     private short size;
-
     /**
      * The color of the skin
      */
     @Nullable
     private Color skinColor;
-
     /**
      * The hit points of the character.
      */
     private int hitPoints;
 
     /**
-     * The slots of the inventory that is required to display the paperdolling of this character.
-     */
-    @Nonnull
-    private final ItemId[] itemSlots;
-
-    /**
      * Default constructor for the appearance message.
      */
     public AppearanceMsg() {
         itemSlots = new ItemId[Inventory.SLOT_COUNT];
-    }
-
-    @Override
-    public void decode(@Nonnull NetCommReader reader) throws IOException {
-        charId = new CharacterId(reader);
-        name = reader.readString();
-        customName = reader.readString();
-
-        int race = reader.readUShort();
-        boolean male = reader.readUByte() == 0;
-        appearance = getAppearance(race, male);
-        hitPoints = reader.readUShort();
-        size = reader.readUByte();
-        hairID = reader.readUByte();
-        beardID = reader.readUByte();
-        hairColor = new Color(reader);
-        skinColor = new Color(reader);
-
-        for (int i = 0; i < itemSlots.length; i++) {
-            itemSlots[i] = new ItemId(reader);
-        }
-
-        deadFlag = reader.readUByte() == 1;
-    }
-
-    @Nonnull
-    @Override
-    public ServerReplyResult execute() {
-        if ((skinColor == null) || (hairColor == null)) {
-            throw new NotDecodedException();
-        }
-
-        @Nullable Char character = World.getPeople().getCharacter(charId);
-
-        // Character not found.
-        if (character == null) {
-            log.error("Received appearance message for non-existing character: {}", charId);
-            return ServerReplyResult.Failed;
-        }
-
-        log.debug("Publishing appearance to: {}", character);
-
-        character.setScale(size / SCALE_MOD);
-
-        character.setName(name);
-        character.setCustomName(customName);
-
-        character.setAppearance(appearance);
-        character.setWearingItem(AvatarClothManager.GROUP_HAIR, hairID);
-        character.setWearingItem(AvatarClothManager.GROUP_BEARD, beardID);
-
-        character.resetLightValue();
-        for (int i = 0; i < itemSlots.length; i++) {
-            character.setInventoryItem(i, itemSlots[i]);
-        }
-        character.updatePaperdoll();
-
-        if (skinColor.equals(Color.WHITE)) {
-            character.setSkinColor(null);
-        } else {
-            character.setSkinColor(skinColor);
-        }
-
-        character.setClothColor(AvatarClothManager.GROUP_HAIR, hairColor);
-        character.setClothColor(AvatarClothManager.GROUP_BEARD, hairColor);
-        character.setAttribute(CharacterAttribute.HitPoints, hitPoints);
-        character.setAlive(!deadFlag);
-        character.updateLight();
-
-        return ServerReplyResult.Success;
     }
 
     /**
@@ -284,6 +202,76 @@ public final class AppearanceMsg implements ServerReply {
                 log.warn("Unexpected race id {}. Using appearance with the same ID by chance.", race);
                 return race;
         }
+    }
+
+    @Override
+    public void decode(@Nonnull NetCommReader reader) throws IOException {
+        charId = new CharacterId(reader);
+        name = reader.readString();
+        customName = reader.readString();
+
+        int race = reader.readUShort();
+        boolean male = reader.readUByte() == 0;
+        appearance = getAppearance(race, male);
+        hitPoints = reader.readUShort();
+        size = reader.readUByte();
+        hairID = reader.readUByte();
+        beardID = reader.readUByte();
+        hairColor = new Color(reader);
+        skinColor = new Color(reader);
+
+        for (int i = 0; i < itemSlots.length; i++) {
+            itemSlots[i] = new ItemId(reader);
+        }
+
+        deadFlag = reader.readUByte() == 1;
+    }
+
+    @Nonnull
+    @Override
+    public ServerReplyResult execute() {
+        if ((skinColor == null) || (hairColor == null)) {
+            throw new NotDecodedException();
+        }
+
+        @Nullable Char character = World.getPeople().getCharacter(charId);
+
+        // Character not found.
+        if (character == null) {
+            log.error("Received appearance message for non-existing character: {}", charId);
+            return ServerReplyResult.Failed;
+        }
+
+        log.debug("Publishing appearance to: {}", character);
+
+        character.setScale(size / SCALE_MOD);
+
+        character.setName(name);
+        character.setCustomName(customName);
+
+        character.setAppearance(appearance);
+        character.setWearingItem(AvatarClothGroup.Hair, hairID);
+        character.setWearingItem(AvatarClothGroup.Beard, beardID);
+
+        character.resetLightValue();
+        for (int i = 0; i < itemSlots.length; i++) {
+            character.setInventoryItem(i, itemSlots[i]);
+        }
+        character.updatePaperdoll();
+
+        if (skinColor.equals(Color.WHITE)) {
+            character.setSkinColor(null);
+        } else {
+            character.setSkinColor(skinColor);
+        }
+
+        character.setClothColor(AvatarClothGroup.Hair, hairColor);
+        character.setClothColor(AvatarClothGroup.Beard, hairColor);
+        character.setAttribute(CharacterAttribute.HitPoints, hitPoints);
+        character.setAlive(!deadFlag);
+        character.updateLight();
+
+        return ServerReplyResult.Success;
     }
 
     @Nonnull
