@@ -31,8 +31,6 @@ import illarion.client.Servers;
 import illarion.client.resources.SongFactory;
 import illarion.client.util.AudioPlayer;
 import illarion.client.util.Lang;
-import illarion.client.util.account.AccountInfo;
-import illarion.client.util.account.AccountSystem;
 import org.illarion.engine.Engine;
 import org.illarion.engine.sound.Music;
 import org.slf4j.Logger;
@@ -275,8 +273,8 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         login.storeData(savePassword.isChecked());
 
         if (login.isCharacterListRequired()) {
-            AccountSystem system = new AccountSystem(AccountSystem.LOCAL, nameTxt.getRealText(), passwordTxt.getRealText());
-            AccountInfo info = system.getAccountInformation();
+            //AccountSystem system = new AccountSystem(AccountSystem.LOCAL, nameTxt.getRealText(), passwordTxt.getRealText());
+            //AccountInfo info = system.getAccountInformation();
             login.requestCharacterList(errorCode -> {
                 lastErrorCode = errorCode;
                 receivedLoginResponse = true;

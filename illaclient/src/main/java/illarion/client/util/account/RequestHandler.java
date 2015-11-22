@@ -15,9 +15,11 @@
  */
 package illarion.client.util.account;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import illarion.client.util.Lang;
 import illarion.common.data.IllarionSSLSocketFactory;
 
@@ -28,6 +30,7 @@ import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -35,6 +38,9 @@ import java.nio.charset.Charset;
 import java.time.Duration;
 import java.time.Period;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.zip.DeflaterInputStream;
 import java.util.zip.GZIPInputStream;
 
@@ -46,8 +52,29 @@ class RequestHandler {
     @Nonnull
     private final String rootUrl;
 
+    @Nonnull
+    private final ExecutorService executorService;
+
+    @Nonnull
+    private final Gson gson;
+
+    @Nonnull
+    private final Charset utf8;
+
     RequestHandler(@Nonnull String rootUrl) {
         this.rootUrl = rootUrl;
+        executorService = Executors.newCachedThreadPool(new ThreadFactoryBuilder()
+                .setDaemon(true)
+                .setNameFormat("AccountSystem-REST-Thread %d")
+                .build());
+
+        gson = new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
+                .registerTypeAdapter(Period.class, new PeriodTypeAdapter())
+                .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
+                .create();
+
+        utf8 = Charset.forName("UTF-8");
     }
 
     @Nonnull
@@ -69,8 +96,13 @@ class RequestHandler {
         return fullRoute;
     }
 
+    @Nonnull
+    public <T> Future<T> sendRequestAsync(@Nonnull Request<T> request) {
+        return executorService.submit(() -> sendRequest(request));
+    }
+
     @Nullable
-    public <T> T sendRequest(@Nonnull Request request, @Nonnull Map<Integer, Class<T>> responseMap) throws IOException {
+    public <T> T sendRequest(@Nonnull Request<T> request) throws IOException {
         if (request instanceof AuthenticatedRequest) {
             java.net.Authenticator.setDefault(((AuthenticatedRequest) request).getAuthenticator());
         }
@@ -92,9 +124,17 @@ class RequestHandler {
         httpConnection.setRequestProperty("Accept-Encoding", "gzip, deflate");
         httpConnection.setRequestProperty("Accept-Language", Lang.getInstance().isGerman() ? "de-DE,de" : "en-US,en-GB,en");
 
-        httpConnection.connect();
+        Object payload = request.getData();
+        if (payload != null) {
+            httpConnection.setDoOutput(true);
+            try (JsonWriter wr = new JsonWriter(new OutputStreamWriter(httpConnection.getOutputStream(), utf8))) {
+                gson.toJson(payload, payload.getClass(), wr);
+                wr.flush();
+            }
+        }
+
         int response = httpConnection.getResponseCode();
-        Class<T> responseClass = responseMap.get(response);
+        Class<T> responseClass = request.getResponseMap().get(response);
         if (responseClass == null) {
             return null;
         }
@@ -117,12 +157,7 @@ class RequestHandler {
                 }
             }
 
-            try (JsonReader rd = new JsonReader(new InputStreamReader(usedIn, Charset.forName("UTF-8")))) {
-                Gson gson = new GsonBuilder()
-                        .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
-                        .registerTypeAdapter(Period.class, new PeriodTypeAdapter())
-                        .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
-                        .create();
+            try (JsonReader rd = new JsonReader(new InputStreamReader(usedIn, utf8))) {
                 return gson.fromJson(rd, responseClass);
             }
         }

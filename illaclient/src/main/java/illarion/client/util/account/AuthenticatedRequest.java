@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-interface AuthenticatedRequest extends Request {
+interface AuthenticatedRequest<T> extends Request<T> {
     @Nonnull
     java.net.Authenticator getAuthenticator();
 }

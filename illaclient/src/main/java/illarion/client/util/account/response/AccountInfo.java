@@ -1,4 +1,4 @@
-package illarion.client.util.account;
+package illarion.client.util.account.response;
 
 import com.google.gson.annotations.SerializedName;
 

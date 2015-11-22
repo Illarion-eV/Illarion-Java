@@ -15,6 +15,8 @@
  */
 package illarion.client.util.account;
 
+import illarion.client.util.account.response.AccountInfo;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -53,6 +55,21 @@ public class AccountSystem {
 
     public AccountSystem(@Nonnull String endpoint, @Nonnull String userName, @Nonnull String password) {
         this(endpoint);
+
+        setAuthentication(userName, password);
+    }
+
+    /**
+     * Set the authentication that is used for the interaction with the account system.
+     *
+     * @param userName the user name
+     * @param password the password
+     * @throws IllegalStateException in case the authentication is already set
+     */
+    public void setAuthentication(@Nonnull String userName, @Nonnull String password) {
+        if (authenticator != null) {
+            throw new IllegalStateException("Setting the authentication credentials is now allowed once they are set.");
+        }
         authenticator = new Authenticator(userName, password);
     }
 
@@ -62,14 +79,11 @@ public class AccountSystem {
             throw new IllegalStateException("This function requires the account system to be authenticated.");
         }
 
-        Request request = new AccountInfoRequest(authenticator);
+        AccountInfoRequest request = new AccountInfoRequest(authenticator);
         RequestHandler handler = new RequestHandler(endpoint);
 
-        Map<Integer, Class<AccountInfo>> responses = new HashMap<>();
-        responses.put(HttpURLConnection.HTTP_OK, AccountInfo.class);
-
         try {
-            return handler.sendRequest(request, responses);
+            return handler.sendRequest(request);
         } catch (IOException e) {
             return null;
         }
