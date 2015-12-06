@@ -21,7 +21,6 @@ import illarion.client.crash.NetCommCrashHandler;
 import illarion.client.net.client.AbstractCommand;
 import illarion.client.net.client.KeepAliveCmd;
 import illarion.client.util.ConnectionPerformanceClock;
-import javolution.text.TextBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -157,8 +156,8 @@ public final class NetComm {
      * @param buffer The buffer that contains the values that shall be written
      */
     static void dump(String prefix, @Nonnull ByteBuffer buffer) {
-        TextBuilder builder = new TextBuilder();
-        TextBuilder builderText = new TextBuilder();
+        StringBuilder builder = new StringBuilder();
+        StringBuilder builderText = new StringBuilder();
 
         builder.append(prefix);
         builder.append(' ');

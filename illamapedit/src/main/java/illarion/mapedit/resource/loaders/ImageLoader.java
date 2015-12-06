@@ -16,7 +16,6 @@
 package illarion.mapedit.resource.loaders;
 
 import illarion.mapedit.resource.Resource;
-import javolution.util.FastMap;
 import org.pushingpixels.flamingo.api.common.icon.ImageWrapperResizableIcon;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 import org.slf4j.Logger;
@@ -28,6 +27,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -36,7 +36,7 @@ import java.util.Map;
 public final class ImageLoader implements Resource {
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageLoader.class);
     private static final ImageLoader INSTANCE = new ImageLoader();
-    private static final Map<String, Image> IMAGES = new FastMap<>();
+    private static final Map<String, Image> IMAGES = new HashMap<>();
 
     private static final String[] FILES = {"sound.png", "messagebox_critical.png", "singleSelect.png", "viewmag.png",
                                            "viewmag1.png", "viewmag-.png", "viewmag+.png", "mapedit64.png",

@@ -20,7 +20,6 @@ import illarion.mapedit.resource.ItemImg;
 import illarion.mapedit.resource.loaders.ItemGroupLoader;
 import illarion.mapedit.resource.loaders.ItemLoader;
 import illarion.mapedit.tools.panel.cellrenderer.ItemTreeCellRenderer;
-import javolution.util.FastTable;
 import org.bushe.swing.event.EventBus;
 
 import javax.annotation.Nonnull;
@@ -29,6 +28,7 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.DefaultTreeSelectionModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -45,13 +45,13 @@ public class ItemTree extends JScrollPane {
 
         private ItemGroupModel(@Nonnull ItemImg... items) {
             ItemGroupLoader gl = ItemGroupLoader.getInstance();
-            groups = new FastTable<>();
+            groups = new ArrayList<>();
 
-            for (ItemImg i : items) {
+            for (ItemImg img : items) {
                 boolean existedGroup = false;
                 for (ItemGroup ig : groups) {
-                    if (ig.getId() == i.getEditorGroup()) {
-                        ig.add(i);
+                    if (ig.getId() == img.getEditorGroup()) {
+                        ig.add(img);
                         existedGroup = true;
                         break;
                     }
@@ -59,8 +59,8 @@ public class ItemTree extends JScrollPane {
                 if (existedGroup) {
                     continue;
                 }
-                ItemGroup gr = new ItemGroup(i.getEditorGroup(), gl.getGroupName(i.getEditorGroup()));
-                gr.add(i);
+                ItemGroup gr = new ItemGroup(img.getEditorGroup(), gl.getGroupName(img.getEditorGroup()));
+                gr.add(img);
                 groups.add(gr);
             }
             Collections.sort(groups, (group1, group2) -> {
@@ -147,7 +147,7 @@ public class ItemTree extends JScrollPane {
 
         private ItemGroup(int id, String name) {
             this.id = id;
-            items = new FastTable<>();
+            items = new ArrayList<>();
             this.name = name;
         }
 
