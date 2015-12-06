@@ -26,7 +26,6 @@ import illarion.mapedit.history.HistoryManager;
 import illarion.mapedit.history.ItemPlacedAction;
 import illarion.mapedit.render.RendererManager;
 import illarion.mapedit.util.SwingLocation;
-import javolution.util.FastTable;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -42,6 +41,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -82,7 +82,7 @@ public class GuiController extends WindowAdapter {
         mainFrame = new MainFrame(this);
         historyManager = new HistoryManager();
         annotationChecker = new AnnotationChecker();
-        maps = new FastTable<>();
+        maps = new ArrayList<>();
         notSaved = false;
         helpDialog = new HelpDialog(mainFrame);
     }
