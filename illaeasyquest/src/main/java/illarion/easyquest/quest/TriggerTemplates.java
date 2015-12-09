@@ -16,9 +16,6 @@
 package illarion.easyquest.quest;
 
 import illarion.easyquest.Lang;
-import javolution.util.FastMap;
-import javolution.util.FastTable;
-import javolution.util.function.Equalities;
 
 import javax.annotation.Nonnull;
 import java.io.BufferedReader;
@@ -26,26 +23,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TriggerTemplates {
-    private TriggerTemplate[] templates;
+    private static final TriggerTemplates instance = new TriggerTemplates();
     @Nonnull
     private final Map<String, TriggerTemplate> typeMap;
+    private TriggerTemplate[] templates;
 
-    private static final TriggerTemplates instance = new TriggerTemplates();
+    public TriggerTemplates() {
+        typeMap = new HashMap<>();
+
+        load();
+    }
 
     @Nonnull
     public static TriggerTemplates getInstance() {
         return instance;
-    }
-
-    public TriggerTemplates() {
-        typeMap = new FastMap<>(Equalities.LEXICAL_FAST, Equalities.STANDARD);
-
-        load();
     }
 
     private static InputStream getResource(String name) {
@@ -55,7 +49,7 @@ public class TriggerTemplates {
 
     @Nonnull
     private static List<String> loadFileList() {
-        List<String> result = new FastTable<>();
+        List<String> result = new ArrayList<>();
         BufferedReader bRead = null;
         try {
             bRead = new BufferedReader(new InputStreamReader(getResource("template/trigger/filelist"), Charset.defaultCharset()));
@@ -81,7 +75,7 @@ public class TriggerTemplates {
 
     private void load() {
         List<String> templateFiles = loadFileList();
-        Collection<TriggerTemplate> templateList = new FastTable<>();
+        Collection<TriggerTemplate> templateList = new ArrayList<>();
 
         if (templateFiles.isEmpty()) {
             System.out.println("Trigger directory does not exist!");

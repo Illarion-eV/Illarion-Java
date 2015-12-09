@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2015 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,7 +16,6 @@
 package illarion.easynpc;
 
 import illarion.common.util.MessageSource;
-import javolution.text.TextBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,17 +45,15 @@ public final class Lang implements MessageSource {
      * The file name of the message bundles the client loads for the language.
      */
     private static final String MESSAGE_BUNDLE = "messages";
-
-    /**
-     * The current local settings.
-     */
-    private Locale locale;
-
     /**
      * The storage of the localized messages. Holds the key for the string and
      * the localized full message.
      */
     private final ResourceBundle messages;
+    /**
+     * The current local settings.
+     */
+    private Locale locale;
 
     /**
      * Constructor of the game. Triggers the messages to load.
@@ -89,11 +86,7 @@ public final class Lang implements MessageSource {
      */
     @Nonnull
     public static String getMsg(@Nonnull Class<?> clazz, String key) {
-        TextBuilder builder = new TextBuilder();
-        builder.append(clazz.getName());
-        builder.append('.');
-        builder.append(key);
-        return getMsg(builder.toString());
+        return getMsg(clazz.getName() + '.' + key);
     }
 
     /**

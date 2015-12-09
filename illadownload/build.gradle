@@ -31,7 +31,6 @@ mainClassName = 'illarion.download.Application'
 
 dependencies {
     compile project(':common')
-    compile group: 'org.javolution', name: 'javolution-core-java', version: '6.0.0'
     compile group: 'org.slf4j', name: 'slf4j-api', version: project.ext.slf4jVersion
     compile group: 'org.slf4j', name: 'jul-to-slf4j', version: project.ext.slf4jVersion
     compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: project.ext.slf4jVersion
