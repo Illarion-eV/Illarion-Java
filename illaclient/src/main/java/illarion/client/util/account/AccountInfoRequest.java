@@ -1,6 +1,6 @@
 package illarion.client.util.account;
 
-import illarion.client.util.account.response.AccountInfo;
+import illarion.client.util.account.response.AccountGetResponse;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class AccountInfoRequest implements AuthenticatedRequest<AccountInfo> {
+class AccountInfoRequest implements AuthenticatedRequest<AccountGetResponse> {
     @Nonnull
     private final java.net.Authenticator authenticator;
 
@@ -46,9 +46,9 @@ class AccountInfoRequest implements AuthenticatedRequest<AccountInfo> {
 
     @Nonnull
     @Override
-    public Map<Integer, Class<AccountInfo>> getResponseMap() {
-        Map<Integer, Class<AccountInfo>> responses = new HashMap<>();
-        responses.put(HttpURLConnection.HTTP_OK, AccountInfo.class);
+    public Map<Integer, Class<AccountGetResponse>> getResponseMap() {
+        Map<Integer, Class<AccountGetResponse>> responses = new HashMap<>();
+        responses.put(HttpURLConnection.HTTP_OK, AccountGetResponse.class);
         return responses;
     }
 }

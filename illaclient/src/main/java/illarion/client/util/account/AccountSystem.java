@@ -15,14 +15,11 @@
  */
 package illarion.client.util.account;
 
-import illarion.client.util.account.response.AccountInfo;
+import illarion.client.util.account.response.AccountGetResponse;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
@@ -74,7 +71,7 @@ public class AccountSystem {
     }
 
     @Nullable
-    public AccountInfo getAccountInformation() {
+    public AccountGetResponse getAccountInformation() {
         if (authenticator == null) {
             throw new IllegalStateException("This function requires the account system to be authenticated.");
         }

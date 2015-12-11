@@ -23,7 +23,7 @@ import java.util.Date;
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class CharacterListEntry {
+public class AccountGetCharResponse {
     @SerializedName("name")
     private String name;
 

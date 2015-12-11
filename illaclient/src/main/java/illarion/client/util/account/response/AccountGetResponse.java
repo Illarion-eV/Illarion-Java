@@ -10,7 +10,7 @@ import java.util.Map;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class AccountInfo {
+public class AccountGetResponse {
     @SerializedName("name")
     private String name;
 
@@ -24,8 +24,8 @@ public class AccountInfo {
     private String language;
 
     @SerializedName("chars")
-    private Map<String, List<CharacterListEntry>> chars;
+    private List<AccountGetCharsResponse> chars;
 
     @SerializedName("create")
-    private List<CreateCharacterRoute> createRoutes;
+    private List<AccountGetCreateResponse> createRoutes;
 }

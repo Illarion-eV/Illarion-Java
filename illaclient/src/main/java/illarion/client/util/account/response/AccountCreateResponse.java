@@ -5,7 +5,10 @@ import com.google.gson.annotations.SerializedName;
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class GenericError {
+public class AccountCreateResponse {
+    @SerializedName("success")
+    private SuccessResponse success;
+
     @SerializedName("error")
-    private GenericDetails error;
+    private ErrorResponse error;
 }

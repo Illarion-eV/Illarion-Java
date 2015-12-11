@@ -274,7 +274,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
 
         if (login.isCharacterListRequired()) {
             //AccountSystem system = new AccountSystem(AccountSystem.LOCAL, nameTxt.getRealText(), passwordTxt.getRealText());
-            //AccountInfo info = system.getAccountInformation();
+            //AccountGetResponse info = system.getAccountInformation();
             login.requestCharacterList(errorCode -> {
                 lastErrorCode = errorCode;
                 receivedLoginResponse = true;

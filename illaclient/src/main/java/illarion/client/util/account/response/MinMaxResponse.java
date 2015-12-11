@@ -5,10 +5,10 @@ import com.google.gson.annotations.SerializedName;
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class GenericDetails {
-    @SerializedName("code")
-    private int code;
+public class MinMaxResponse {
+    @SerializedName("min")
+    private int min;
 
-    @SerializedName("message")
-    private String message;
+    @SerializedName("max")
+    private int max;
 }
