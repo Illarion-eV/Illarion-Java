@@ -15,6 +15,8 @@
  */
 package illarion.client.graphics;
 
+import com.google.common.math.IntMath;
+import com.google.common.primitives.Ints;
 import illarion.client.resources.data.AbstractEntityTemplate;
 import illarion.client.world.World;
 import illarion.common.types.DisplayCoordinate;
@@ -202,7 +204,7 @@ public abstract class AbstractEntity<T extends AbstractEntityTemplate>
             LOGGER.warn("Changing the alpha value of a removed entity is not allowed.");
             return;
         }
-        int usedAlpha = FastMath.clamp(newAlpha, 0, Color.MAX_INT_VALUE);
+        int usedAlpha =  FastMath.clamp(newAlpha, 0, Color.MAX_INT_VALUE);
         if (getLight().getAlpha() != usedAlpha) {
             int oldAlpha = getLight().getAlpha();
             getLight().setAlpha(usedAlpha);

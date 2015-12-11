@@ -617,7 +617,7 @@ class GdxInput extends AbstractForwardingInput implements InputProcessor {
             return true;
         }
         if ((touchDownButton == releasedButton) && (touchDownPointer == pointer) &&
-                (FastMath.abs(touchDownX - x) < CLICK_TOLERANCE) && (FastMath.abs(touchDownY - y) < CLICK_TOLERANCE)) {
+                (Math.abs(touchDownX - x) < CLICK_TOLERANCE) && (Math.abs(touchDownY - y) < CLICK_TOLERANCE)) {
             publishClick(x, y, releasedButton);
         }
         events.offer(() -> {

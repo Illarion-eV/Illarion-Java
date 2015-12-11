@@ -15,6 +15,7 @@
  */
 package illarion.client.gui.controller.game;
 
+import com.google.common.math.IntMath;
 import de.lessvoid.nifty.elements.Element;
 import illarion.client.graphics.AnimationUtility;
 import illarion.client.gui.MiniMapGui.Pointer;
@@ -28,6 +29,7 @@ import org.illarion.engine.nifty.IgeRenderImage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.math.RoundingMode;
 
 /**
  * This is the implementation of the pointers. This class is the image that is displayed on the GUI in order to
@@ -150,8 +152,8 @@ final class MiniMapArrowPointer implements IgeRenderImage, Pointer {
         int scaledWidth = Math.round(w * scale);
         int scaledHeight = Math.round(h * scale);
 
-        int fixedX = x + Math.round((w - scaledWidth) * ((float) centerX / (float) w));
-        int fixedY = y + Math.round((h - scaledHeight) * ((float) centerY / (float) h));
+        int fixedX = x + Math.round((w - scaledWidth) * ((float) centerX / w));
+        int fixedY = y + Math.round((h - scaledHeight) * ((float) centerY / h));
 
         Color pointerColor = POINTER_COLOR;
         if (isCurrentQuest) {
@@ -167,7 +169,7 @@ final class MiniMapArrowPointer implements IgeRenderImage, Pointer {
             g.drawTexture(pointSprite.getFrame(0), fixedX - offsetX, fixedY - offsetY, scaledWidth, scaledHeight, srcX,
                           srcY, srcW, srcH, centerX - fixedX, centerY - fixedY, 0.f, pointerColor);
         } else {
-            float angle = (float) currentAngle / 10.f;
+            float angle = currentAngle / 10.f;
 
             int spriteOffsetX = arrowSprite.getOffsetX();
             int spriteOffsetY = arrowSprite.getOffsetY();
@@ -191,7 +193,8 @@ final class MiniMapArrowPointer implements IgeRenderImage, Pointer {
      * @return {@code true} in case the pointer is on the map
      */
     private boolean isOnMapArea() {
-        return FastMath.sqrt(FastMath.sqr(currentDeltaX) + FastMath.sqr(currentDeltaY)) < 71;
+        int dist = IntMath.sqrt((currentDeltaX * currentDeltaX) + (currentDeltaY * currentDeltaY), RoundingMode.DOWN);
+        return dist < 71;
     }
 
     /**
