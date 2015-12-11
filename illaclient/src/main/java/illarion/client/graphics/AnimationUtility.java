@@ -126,7 +126,7 @@ public final class AnimationUtility {
         }
 
         int dir = FastMath.sign(diff);
-        int absDiff = FastMath.abs(diff) / factor;
+        int absDiff = Math.abs(diff) / factor;
 
         if (absDiff > MIN_INT_DIFF) {
             absDiff = FastMath.clamp((absDiff * delta) / DELTA_DIV, 1, FastMath.abs(diff));
@@ -153,8 +153,8 @@ public final class AnimationUtility {
     public static float translate(float value, float target, float step, float min, float max, int delta) {
         float diff = target - value;
         if (diff != 0) {
-            int dir = (int) (diff / FastMath.abs(diff));
-            diff = FastMath.abs(diff);
+            int dir = (int) (diff / Math.abs(diff));
+            diff = Math.abs(diff);
             if (diff <= step) {
                 return target;
             }
@@ -211,7 +211,7 @@ public final class AnimationUtility {
         int diff = target - value;
         if (diff != 0) {
             int dir = FastMath.sign(diff);
-            diff = FastMath.abs(diff);
+            diff = Math.abs(diff);
             if (diff < step) {
                 return target;
             }
