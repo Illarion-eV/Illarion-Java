@@ -16,6 +16,8 @@
 package illarion.compile;
 
 import illarion.compile.impl.Compile;
+import illarion.compile.impl.EasyNpcCompile;
+import illarion.compile.impl.EasyQuestCompile;
 
 import javax.annotation.Nonnull;
 import java.nio.file.Files;
@@ -31,31 +33,31 @@ public enum CompilerType {
     /**
      * Constant for easyNPC files.
      */
-    easyNPC("illarion.compile.impl.EasyNpcCompile", ".npc"),
+    easyNPC(new EasyNpcCompile(), ".npc"),
 
     /**
      * Constant for easyQuest files.
      */
-    easyQuest("illarion.compile.impl.EasyQuestCompile", ".quest");
+    easyQuest(new EasyQuestCompile(), ".quest");
 
     @Nonnull
-    private final String compilerClass;
+    private final Compile compiler;
     @Nonnull
     private final String[] extensions;
 
-    CompilerType(@Nonnull String compilerClass, @Nonnull String... extensions) {
-        this.compilerClass = compilerClass;
+    CompilerType(@Nonnull Compile compiler, @Nonnull String... extensions) {
+        this.compiler = compiler;
         this.extensions = Arrays.copyOf(extensions, extensions.length);
     }
 
     /**
-     * Get the compiler implementation.
+     * Get the compiler.
      *
-     * @return the compiler implementation
+     * @return the compiler
      */
-    public Compile getImplementation() {
+    public Compile getCompiler() {
         try {
-            return (Compile) Class.forName(compilerClass).getConstructor().newInstance();
+            return compiler;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

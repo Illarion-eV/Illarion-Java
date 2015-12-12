@@ -1,7 +1,7 @@
 <!--
   ~ This file is part of the Illarion project.
   ~
-  ~ Copyright © 2014 - Illarion e.V.
+  ~ Copyright © 2015 - Illarion e.V.
   ~
   ~ Illarion is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU Affero General Public License as published by
@@ -14,13 +14,20 @@
   ~ GNU General Public License for more details.
   -->
 <configuration>
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log_dir:-}/easyquest.log</file>
         <encoder>
             <pattern>%-5p - %d{ISO8601} - [%t]: %m%n</pattern>
         </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <maxIndex>5</maxIndex>
+            <FileNamePattern>${log_dir:-}/easyquest.log.%i.gz</FileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>10MB</maxFileSize>
+        </triggeringPolicy>
     </appender>
-    <logger name="org.bushe.swing.event.EventService" level="warn"/>
-    <root level="debug">
-        <appender-ref ref="CONSOLE"/>
+    <root level="warn">
+        <appender-ref ref="FILE" />
     </root>
 </configuration>

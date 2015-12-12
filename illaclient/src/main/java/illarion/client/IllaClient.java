@@ -387,6 +387,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
     /**
      * Basic initialization of the log files and the debug settings.
      */
+    @SuppressWarnings("Duplicates")
     private static void initLogfiles() throws IOException {
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
@@ -531,7 +532,7 @@ public final class IllaClient implements EventTopicSubscriber<ConfigChangedEvent
      *
      * @param server the server that is used to connect with
      */
-    public void setUsedServer(Servers server) {
+    public void setUsedServer(@Nonnull Servers server) {
         usedServer = server;
     }
 
