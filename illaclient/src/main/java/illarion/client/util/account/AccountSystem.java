@@ -50,12 +50,6 @@ public class AccountSystem {
         this.endpoint = endpoint;
     }
 
-    public AccountSystem(@Nonnull String endpoint, @Nonnull String userName, @Nonnull String password) {
-        this(endpoint);
-
-        setAuthentication(userName, password);
-    }
-
     /**
      * Set the authentication that is used for the interaction with the account system.
      *

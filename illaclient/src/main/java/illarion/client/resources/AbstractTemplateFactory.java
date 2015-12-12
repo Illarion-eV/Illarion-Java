@@ -15,15 +15,17 @@
  */
 package illarion.client.resources;
 
+import com.google.common.collect.ImmutableMap;
 import illarion.client.resources.data.ResourceTemplate;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The purpose of this class is to store and retrieve the templates that were load from the resources. Those
@@ -37,10 +39,23 @@ public abstract class AbstractTemplateFactory<T extends ResourceTemplate> implem
     private static final Logger log = LoggerFactory.getLogger(AbstractTemplateFactory.class);
 
     /**
+     * This is the builder that is used to create the resource storage. This variable is only used during the
+     * initialization phase of this factory. Once loading is done it is not required anymore.
+     */
+    @Nullable
+    private ImmutableMap.Builder<Integer, T> storageBuilder;
+
+    /**
+     * This variable is used during populating the resources to ensure that all keys are unique.
+     */
+    @Nullable
+    private Set<Integer> storageBuilderKeys;
+
+    /**
      * The map that is used to store the resources.
      */
-    @Nonnull
-    private final Map<Integer, T> storage;
+    @Nullable
+    private ImmutableMap<Integer, T> storage;
 
     /**
      * The ID used in case the requested object does not exist.
@@ -58,34 +73,55 @@ public abstract class AbstractTemplateFactory<T extends ResourceTemplate> implem
      * The default constructor.
      */
     protected AbstractTemplateFactory(int defaultId) {
-        storage = new HashMap<>();
         this.defaultId = defaultId;
     }
 
     @Override
     public void storeResource(@Nonnull T resource) {
-        if (storage.containsKey(resource.getTemplateId())) {
+        if (storageBuilder == null || storageBuilderKeys == null) {
+            throw new IllegalStateException("Factory was not initialized yet.");
+        }
+
+        if (!storageBuilderKeys.add(resource.getTemplateId())) {
             log.warn("Located duplicated resource template: {}", resource);
         }
-        storage.put(resource.getTemplateId(), resource);
+
+        storageBuilder.put(resource.getTemplateId(), resource);
     }
 
     @Override
     public void loadingFinished() {
+        if (storageBuilder == null) {
+            throw new IllegalStateException("Factory was not initialized yet.");
+        }
+
+        storage = storageBuilder.build();
+        storageBuilder = null;
+        storageBuilderKeys = null;
     }
 
     @Override
     public void init() {
+        storageBuilder = new ImmutableMap.Builder<>();
+        storageBuilderKeys = new HashSet<>();
     }
 
     @Contract(pure = true)
     public boolean hasTemplate(int templateId) {
+        if (storage == null) {
+            throw new IllegalStateException("Factory was not initialized yet.");
+        }
+
         return storage.containsKey(templateId);
     }
 
     @Nonnull
     @Contract(pure = true)
     public T getTemplate(int templateId) {
+        if (storage == null) {
+            throw new IllegalStateException("Factory was not initialized yet.");
+        }
+
         T object = storage.get(templateId);
         if ((object == null) && (defaultId > -1)) {
             T defaultObject = storage.get(defaultId);
