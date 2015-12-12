@@ -1,21 +1,21 @@
 package illarion.client.util.account;
 
-import illarion.client.util.account.request.CreateAccount;
+import illarion.client.util.account.form.AccountCreateForm;
+import illarion.client.util.account.response.AccountCreateResponse;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class CreateAccountRequest implements Request {
+class AccountCreateRequest implements Request<AccountCreateResponse> {
     @Nonnull
-    private final CreateAccount data;
+    private final AccountCreateForm data;
 
-    CreateAccountRequest(@Nonnull CreateAccount data) {
+    AccountCreateRequest(@Nonnull AccountCreateForm data) {
         this.data = data;
     }
 
@@ -39,8 +39,7 @@ class CreateAccountRequest implements Request {
 
     @Nonnull
     @Override
-    public Map<Integer, Class> getResponseMap() {
-        Map<Integer, Class> responses = new HashMap<>();
-        return responses;
+    public Class<AccountCreateResponse> getResponseClass() {
+        return AccountCreateResponse.class;
     }
 }

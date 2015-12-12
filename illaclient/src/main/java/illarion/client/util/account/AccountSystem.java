@@ -76,7 +76,7 @@ public class AccountSystem {
             throw new IllegalStateException("This function requires the account system to be authenticated.");
         }
 
-        AccountInfoRequest request = new AccountInfoRequest(authenticator);
+        AccountGetRequest request = new AccountGetRequest(authenticator);
         RequestHandler handler = new RequestHandler(endpoint);
 
         try {

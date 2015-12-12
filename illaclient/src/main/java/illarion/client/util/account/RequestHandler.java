@@ -22,6 +22,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import illarion.client.util.Lang;
 import illarion.common.data.IllarionSSLSocketFactory;
+import sun.plugin.dom.exception.InvalidStateException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -134,10 +135,10 @@ class RequestHandler {
         }
 
         int response = httpConnection.getResponseCode();
-        Class<T> responseClass = request.getResponseMap().get(response);
-        if (responseClass == null) {
-            return null;
+        if (response / 100 == 5) {
+            throw new InvalidStateException("Server responded with a server error.");
         }
+        Class<T> responseClass = request.getResponseClass();
 
         try (InputStream in = httpConnection.getInputStream()) {
             InputStream usedIn = in;

@@ -18,5 +18,5 @@ interface Request<T> {
     Object getData();
 
     @Nonnull
-    Map<Integer, Class<T>> getResponseMap();
+    Class<T> getResponseClass();
 }

@@ -1,4 +1,4 @@
-package illarion.client.util.account.request;
+package illarion.client.util.account.form;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -8,20 +8,20 @@ import javax.annotation.Nullable;
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class CreateAccount {
+public class AccountCreateForm {
     @SerializedName("name")
     @Nonnull
-    private final String name;
+    private String name;
 
     @SerializedName("email")
     @Nullable
-    private final String eMail;
+    private String eMail;
 
     @SerializedName("password")
     @Nonnull
-    private final String password;
+    private String password;
 
-    public CreateAccount(@Nonnull String name, @Nonnull String password, @Nullable String eMail) {
+    public AccountCreateForm(@Nonnull String name, @Nonnull String password, @Nullable String eMail) {
         this.name = name;
         this.eMail = (eMail == null || eMail.isEmpty() ? null : eMail);
         this.password = password;
@@ -32,13 +32,25 @@ public class CreateAccount {
         return name;
     }
 
+    public void setName(@Nonnull String name) {
+        this.name = name;
+    }
+
     @Nullable
-    public String getEMail() {
+    public String geteMail() {
         return eMail;
+    }
+
+    public void seteMail(@Nullable String eMail) {
+        this.eMail = eMail;
     }
 
     @Nonnull
     public String getPassword() {
         return password;
+    }
+
+    public void setPassword(@Nonnull String password) {
+        this.password = password;
     }
 }
