@@ -28,10 +28,7 @@ dependencies {
     compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: project.ext.slf4jVersion
     compile group: 'xpp3', name: 'xpp3', version: '1.1.4c'
     compile group: 'org.bushe', name: 'eventbus', version: '1.4'
-    compile(group: 'org.mantisbt', name: 'mantisconnect', version: '1.1.2.0') {
-        exclude module: 'log4j'
-        exclude module: 'commons-logging'
-    }
+    compile group: 'biz.futureware.mantis', name: 'mantis-axis-soap-client', version: '1.2.19'
 }
 
 processResources.dependsOn("downloadSkills")

@@ -15,25 +15,26 @@
  */
 package illarion.common.bug;
 
+import biz.futureware.mantis.rpc.soap.client.*;
 import illarion.common.config.Config;
 import illarion.common.util.AppIdent;
 import illarion.common.util.DirectoryManager;
 import illarion.common.util.DirectoryManager.Directory;
 import illarion.common.util.MessageSource;
 import org.jetbrains.annotations.Contract;
-import org.mantisbt.connect.IMCSession;
-import org.mantisbt.connect.MCException;
-import org.mantisbt.connect.axis.MCSession;
-import org.mantisbt.connect.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.xml.rpc.ServiceException;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.rmi.RemoteException;
+import java.util.Collection;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -279,9 +280,9 @@ public final class CrashReporter {
         }
     }
 
-    private static final long REPRODUCIBILITY_NA_NUM = 100;
-    private static final long SEVERITY_CRASH_NUM = 70;
-    private static final long PRIORITY_HIGH_NUM = 40;
+    private static final ObjectRef REPRODUCIBILITY_NA_NUM = new ObjectRef(BigInteger.valueOf(100), null);
+    private static final ObjectRef SEVERITY_CRASH_NUM = new ObjectRef(BigInteger.valueOf(70), null);
+    private static final ObjectRef PRIORITY_HIGH_NUM = new ObjectRef(BigInteger.valueOf(40), null);
 
     private static final String CATEGORY = "Automatic";
 
@@ -296,16 +297,9 @@ public final class CrashReporter {
         }
 
         try {
-            IMCSession mantisSession = new MCSession(CRASH_SERVER, "Java Reporting System",
-                                                           "dA23MvKT1KDm4k0bQmMS");
-            IProject[] projects = mantisSession.getAccessibleProjects();
-            IProject selectedProject = null;
-            for (IProject project : projects) {
-                if (project.getName().equalsIgnoreCase(data.getMantisProject())) {
-                    selectedProject = project;
-                    break;
-                }
-            }
+            MantisConnector connector = new MantisConnector();
+
+            ProjectData selectedProject = connector.getProject(data.getMantisProject());
             if (selectedProject == null) {
                 log.error("Failed to find {} project.", data.getMantisProject());
                 return;
@@ -322,12 +316,16 @@ public final class CrashReporter {
                     "\nThread: " + data.getThreadName() +
                     '\n' + exceptionDescription;
 
-            @Nullable IIssue similarIssue = null;
-            @Nullable IIssue possibleDuplicateIssue = null;
-            @Nullable IIssue duplicateIssue = null;
 
-            @Nonnull IIssueHeader[] headers = mantisSession.getProjectIssueHeaders(selectedProject.getId());
-            for (@Nonnull IIssueHeader header : headers) {
+
+            @Nullable IssueData similarIssue = null;
+            @Nullable IssueData possibleDuplicateIssue = null;
+            @Nullable IssueData duplicateIssue = null;
+
+            FilterData filter = connector.getFilter(selectedProject);
+            Collection<IssueHeaderData> headers = connector.getIssueHeaders(selectedProject, filter);
+
+            for (@Nonnull IssueHeaderData header : headers) {
                 if (!CATEGORY.equals(header.getCategory())) {
                     continue;
                 }
@@ -336,7 +334,7 @@ public final class CrashReporter {
                     continue;
                 }
 
-                @Nonnull IIssue checkedIssue = mantisSession.getIssue(header.getId());
+                @Nonnull IssueData checkedIssue = connector.getIssue(header);
 
                 if (!saveString(checkedIssue.getDescription()).endsWith(exceptionDescription)) {
                     continue;
@@ -352,7 +350,7 @@ public final class CrashReporter {
                     continue;
                 }
 
-                if (!saveString(checkedIssue.getOsBuild()).equals(System.getProperty("os.version"))) {
+                if (!saveString(checkedIssue.getOs_build()).equals(System.getProperty("os.version"))) {
                     continue;
                 }
 
@@ -365,36 +363,33 @@ public final class CrashReporter {
             }
 
             if (duplicateIssue != null) {
-                INote note = mantisSession.newNote("Same problem occurred again.");
-                mantisSession.addNote(duplicateIssue.getId(), note);
+                connector.addNote(duplicateIssue, "Same problem occurred again.");
             } else if (possibleDuplicateIssue != null) {
-                INote note = mantisSession.newNote("A problem that is by all means very similar occurred:\n" +
-                                                                 description + "\nOperating System: " +
-                                                                 System.getProperty("os.name") + ' ' +
-                                                                 System.getProperty("os.version"));
-                mantisSession.addNote(possibleDuplicateIssue.getId(), note);
+                connector.addNote(possibleDuplicateIssue, "A problem that is by all means very similar occurred:\n" +
+                        description + "\nOperating System: " +
+                        System.getProperty("os.name") + ' ' +
+                        System.getProperty("os.version"));
             } else {
-                IIssue issue = mantisSession.newIssue(selectedProject.getId());
+                IssueData issue = new IssueData();
                 issue.setCategory(CATEGORY);
                 issue.setSummary(summery);
                 issue.setDescription(description);
                 issue.setVersion(application.getApplicationRootVersion());
                 issue.setOs(System.getProperty("os.name"));
-                issue.setOsBuild(System.getProperty("os.version"));
-                issue.setReproducibility(new MCAttribute(REPRODUCIBILITY_NA_NUM, null));
-                issue.setSeverity(new MCAttribute(SEVERITY_CRASH_NUM, null));
-                issue.setPriority(new MCAttribute(PRIORITY_HIGH_NUM, null));
-                issue.setPrivate(false);
+                issue.setOs_build(System.getProperty("os.version"));
+                issue.setReproducibility(REPRODUCIBILITY_NA_NUM);
+                issue.setSeverity(SEVERITY_CRASH_NUM);
+                issue.setPriority(PRIORITY_HIGH_NUM);
 
-                long id = mantisSession.addIssue(issue);
+                BigInteger id = connector.addIssue(selectedProject, issue);
                 log.info("Added new Issue #{}", id);
 
                 if (similarIssue != null) {
-                    mantisSession
-                            .addNote(id, mantisSession.newNote("Similar issue was found at #" + similarIssue.getId()));
+                    connector.addNote(issue, "Similar issue was found at #" + similarIssue.getId());
+                    connector.addRelation(issue, similarIssue);
                 }
             }
-        } catch (MCException e) {
+        } catch (ServiceException | RemoteException e) {
             log.error("Failed to send error reporting data.", e);
         }
     }
