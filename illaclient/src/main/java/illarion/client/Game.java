@@ -197,11 +197,16 @@ public final class Game implements GameListener {
             sounds.setSoundVolume(0.f);
         }
 
+        /* Loading general style and control files. */
+        nifty.loadStyleFile("nifty-illarion-style.xml");
+        nifty.loadControlFile("nifty-default-controls.xml");
+        nifty.loadControlFile("illarion-gamecontrols.xml");
+
         for (@Nonnull GameState listener : gameStates) {
             listener.create(this, container, nifty);
         }
 
-        enterState(STATE_LOGIN);
+        enterState(STATE_LOADING);
     }
 
     /**
