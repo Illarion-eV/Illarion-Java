@@ -70,6 +70,12 @@
                                     <control id="#text" font="menuFont"/>
                                 </control>
                             </panel>
+                            <panel childLayout="center" marginBottom="15px" width="350">
+                                <control id="registerBtn" name="button" label="${login-bundle.register}"
+                                         style="nifty-button-large" width="350px" height="35px">
+                                    <control id="#text" font="menuFont"/>
+                                </control>
+                            </panel>
                             <panel childLayout="horizontal">
                                 <control id="optionBtn" name="button" label="${login-bundle.options}" width="100px"
                                          height="35px" marginRight="25px"/>

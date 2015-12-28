@@ -15,7 +15,6 @@
  */
 package illarion.client.world;
 
-import illarion.client.Login;
 import illarion.client.gui.DialogType;
 import illarion.client.net.client.RequestAppearanceCmd;
 import illarion.client.util.ChatLog;
@@ -146,13 +145,6 @@ public final class Player {
      */
     @Nullable
     private MerchantList merchantDialog;
-
-    /**
-     * Constructor for the player that receives the character name from the login data automatically.
-     */
-    public Player(@Nonnull Engine engine) {
-        this(engine, Login.getInstance().getLoginCharacter());
-    }
 
     /**
      * Default constructor for the player.

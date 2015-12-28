@@ -34,21 +34,22 @@
                 <panel height="30px"/>
                 <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#0000"
                        childLayout="vertical" visibleToMouse="true">
-                    <panel childLayout="center" visibleToMouse="true" align="center">
+
+                    <control name="dropDown" id="server" marginBottom="10px" />
+
+                    <panel childLayout="center" visibleToMouse="true" align="center" marginBottom="30px">
                         <control id="myListBox" name="listBox" vertical="on" horizontal="off"
                                  displayItems="5" selection="Single" forceSelection="true"/>
                     </panel>
 
-                    <panel height="30px"/>
-
                     <panel childLayout="horizontal" visibleToMouse="true">
                         <panel width="90px"/>
-                        <control id="playBtn" name="button" label="${charselect-bundle.play}" width="100" height="35">
+                        <control id="playBtn" name="button" label="${charselect-bundle.play}" width="100px"
+                                 height="35px" marginRight="20px">
                             <interact onRelease="play()"/>
                         </control>
-                        <panel width="20px"/>
-                        <control id="logoutBtn" name="button" label="${charselect-bundle.logout}" width="100"
-                                 height="35">
+                        <control id="logoutBtn" name="button" label="${charselect-bundle.logout}" width="100px"
+                                 height="35px">
                             <interact onRelease="logout()"/>
                         </control>
                     </panel>

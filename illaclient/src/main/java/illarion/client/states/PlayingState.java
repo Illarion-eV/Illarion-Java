@@ -17,15 +17,9 @@ package illarion.client.states;
 
 import de.lessvoid.nifty.Nifty;
 import illarion.client.Game;
-import illarion.client.IllaClient;
-import illarion.client.Login;
 import illarion.client.input.InputReceiver;
 import illarion.client.world.MapDimensions;
 import illarion.client.world.World;
-import illarion.client.world.events.ServerNotFoundEvent;
-import illarion.common.data.SkillLoader;
-import org.bushe.swing.event.EventBus;
-import org.illarion.engine.EngineException;
 import org.illarion.engine.GameContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,22 +98,8 @@ public class PlayingState implements GameState {
 
     @Override
     public void enterState(@Nonnull GameContainer container, @Nonnull Nifty nifty) {
-        SkillLoader.load();
-        try {
-            World.initWorldComponents(container.getEngine());
-        } catch (EngineException e) {
-            log.error("Initialization failed.");
-            IllaClient.errorExit("World init failed!");
-        }
-
         nifty.gotoScreen("gamescreen");
         receiver.setEnabled(true);
-
-        if (Login.getInstance().login()) {
-            MapDimensions.getInstance().reportScreenSize(container.getWidth(), container.getHeight(), true);
-        } else {
-            EventBus.publish(new ServerNotFoundEvent());
-        }
     }
 
     @Override

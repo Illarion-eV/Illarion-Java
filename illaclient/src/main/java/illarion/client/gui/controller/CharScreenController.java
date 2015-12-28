@@ -16,6 +16,9 @@
 package illarion.client.gui.controller;
 
 import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.NiftyEventSubscriber;
+import de.lessvoid.nifty.controls.DropDown;
+import de.lessvoid.nifty.controls.DropDownSelectionChangedEvent;
 import de.lessvoid.nifty.controls.Label;
 import de.lessvoid.nifty.controls.ListBox;
 import de.lessvoid.nifty.elements.Element;
@@ -26,14 +29,21 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.Game;
-import illarion.client.Login;
+import illarion.client.states.PlayingState;
 import illarion.client.util.Lang;
+import illarion.client.util.account.AccountSystem;
+import illarion.client.util.account.AccountSystemEndpoint;
+import illarion.client.util.account.Credentials;
+import illarion.client.util.account.response.AccountGetCharResponse;
+import illarion.client.util.account.response.AccountGetCharsResponse;
+import illarion.client.util.account.response.AccountGetResponse;
 import illarion.common.config.ConfigChangedEvent;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.*;
 
 /**
  * This is the screen controller that takes care for the logic behind the character selection screen.
@@ -53,17 +63,13 @@ public final class CharScreenController implements ScreenController, KeyInputHan
     @Nullable
     private Screen screen;
 
+    private DropDown<String> serverSelect;
+
     /**
      * The list box that stores the character entries.
      */
     @Nullable
-    private ListBox<String> listBox;
-
-    /**
-     * The game instance that is used.
-     */
-    @Nonnull
-    private final Game game;
+    private ListBox<String> characterList;
 
     /**
      * The label that displays any problems to the player.
@@ -85,11 +91,8 @@ public final class CharScreenController implements ScreenController, KeyInputHan
 
     /**
      * Create a instance of the character screen controller.
-     *
-     * @param game the reference to the game that is required by the controller
      */
-    public CharScreenController(@Nonnull Game game) {
-        this.game = game;
+    public CharScreenController() {
         AnnotationProcessor.process(this);
     }
 
@@ -99,16 +102,21 @@ public final class CharScreenController implements ScreenController, KeyInputHan
         this.nifty = nifty;
         this.screen = screen;
 
+        serverSelect = screen.findNiftyControl("server", DropDown.class);
+
         nifty.setLocale(Lang.getInstance().getLocale());
-        listBox = (ListBox<String>) screen.findNiftyControl("myListBox", ListBox.class);
+        characterList = (ListBox<String>) screen.findNiftyControl("myListBox", ListBox.class);
         statusLabel = screen.findNiftyControl("statusText", Label.class);
         statusLabel.setHeight(SizeValue.px(20));
         statusLabel.setWidth(SizeValue.px(180));
 
-        listBox.getElement().addInputHandler(this);
+        characterList.getElement().addInputHandler(this);
         popupLanguageChange = nifty.createPopup("languageChanged");
 
-        fillMyListBox();
+        /* Values for the server list are already set. */
+        if (credentials != null && accountData != null) {
+            populateServerList();
+        }
     }
 
     /**
@@ -122,15 +130,18 @@ public final class CharScreenController implements ScreenController, KeyInputHan
         showLanguageChangedPopup = true;
     }
 
+    @NiftyEventSubscriber(pattern = "server")
+    public void onServerChanged(String topic, DropDownSelectionChangedEvent event) {
+        setSelectedServer(event.getSelectionItemIndex());
+    }
+
     @Override
     public void onStartScreen() {
-        if (nifty == null) {
-            throw new IllegalStateException("Instance of Nifty is not set. Controller was not properly bound.");
-        }
-        if (popupLanguageChange == null) {
-            throw new IllegalStateException(
-                    "Language change popup was not created. Controller was not properly bound.");
-        }
+        assert nifty != null: "The Nifty instance is null, binding seems to have failed.";
+        assert popupLanguageChange != null: "The Nifty instance is null, binding seems to have failed.";
+
+        nifty.subscribeAnnotations(this);
+
         if (showLanguageChangedPopup) {
             nifty.showPopup(screen, popupLanguageChange.getId(), null);
             if (Lang.getInstance().isGerman()) {
@@ -144,28 +155,132 @@ public final class CharScreenController implements ScreenController, KeyInputHan
 
     @Override
     public void onEndScreen() {
+        assert nifty != null: "The Nifty instance is null, binding seems to have failed.";
+
         showLanguageChangedPopup = false;
+        nifty.unsubscribeAnnotations(this);
     }
 
-    public void fillMyListBox() {
-        if (listBox != null) {
-            listBox.clear();
-            Login.getInstance().getCharacterList().stream().filter(entry -> entry.getStatus() == 0).forEach(entry -> listBox.addItem(entry.getName()));
+    private static final class LastUsedFirstComparator implements Comparator<AccountGetCharResponse> {
+        @Override
+        public int compare(AccountGetCharResponse o1, AccountGetCharResponse o2) {
+            return -1 * o1.getLastSaveTime().compareTo(o2.getLastSaveTime());
+        }
+    }
+
+    @Nullable
+    private Credentials credentials;
+    @Nullable
+    private AccountGetResponse accountData;
+
+    private void populateServerList() {
+        assert accountData != null;
+        assert serverSelect != null;
+
+        serverSelect.clear();
+        accountData.getChars().stream()
+                .forEachOrdered(response -> serverSelect.addItem(response.getName()));
+
+        Element serverSelectElement = serverSelect.getElement();
+        assert serverSelectElement != null;
+        if (serverSelect.getItems().size() == 1) {
+            if (serverSelectElement.isVisible()) {
+                serverSelectElement.hide();
+            }
+        } else {
+            if (!serverSelectElement.isVisible()) {
+                serverSelectElement.show();
+            }
+        }
+
+        setDefaultSelectedServer();
+    }
+
+    private void setSelectedServer(int index) {
+        assert accountData != null;
+        assert serverSelect != null;
+        assert characterList != null;
+        assert index >= 0 && index < serverSelect.getItems().size();
+
+        serverSelect.selectItemByIndex(index);
+
+        AccountGetCharsResponse chars = accountData.getChars().get(index);
+
+        chars.getList().stream()
+                .filter(chr -> chr.getStatus() == 0)
+                .map(AccountGetCharResponse::getName)
+                .forEach(characterList::addItem);
+    }
+
+    private void setDefaultSelectedServer() {
+        assert accountData != null;
+        assert serverSelect != null;
+        assert serverSelect.getItems().size() == accountData.getChars().size();
+
+        List<Date> latestUsed = new ArrayList<>(accountData.getChars().size());
+        Comparator<AccountGetCharResponse> sortCharsComparator = new LastUsedFirstComparator();
+        for (AccountGetCharsResponse chars : accountData.getChars()) {
+            Optional<AccountGetCharResponse> lastUsedChar =
+                    chars.getList().stream().sorted(sortCharsComparator).findFirst();
+            if (lastUsedChar.isPresent()) {
+                latestUsed.add(lastUsedChar.get().getLastSaveTime());
+            } else {
+                latestUsed.add(null);
+            }
+        }
+
+        int serverIndex = 0;
+        Date selectedDate = null;
+        for (int i = 0; i < latestUsed.size(); i++) {
+            Date current = latestUsed.get(i);
+            if (current != null) {
+                if (selectedDate == null || selectedDate.compareTo(current) < 0) {
+                    selectedDate = current;
+                    serverIndex = i;
+                }
+            }
+        }
+
+        setSelectedServer(serverIndex);
+    }
+
+    public void applyAccountData(@Nonnull Credentials credentials, @Nonnull AccountGetResponse accountData) {
+        this.credentials = credentials;
+        this.accountData = accountData;
+
+        /* Checking if the controller is already bound. */
+        if (nifty != null) {
+            populateServerList();
         }
     }
 
     public void play() {
-        if ((listBox == null) || (statusLabel == null)) {
-            throw new IllegalStateException("CharScreenController was not bound properly.");
-        }
-        if (listBox.getSelection().isEmpty()) {
+        assert nifty != null;
+        assert accountData != null;
+        assert credentials != null;
+        assert characterList != null;
+        assert statusLabel != null;
+
+        if (characterList.getSelection().isEmpty()) {
             statusLabel.setText("No character selected");
             statusLabel.getElement().getParent().layoutElements();
             return;
         }
 
-        Login.getInstance().setLoginCharacter(listBox.getSelection().get(0));
-        game.enterState(Game.STATE_PLAYING);
+        int serverIndex = serverSelect.getSelectedIndex();
+        AccountGetCharsResponse accountChars = accountData.getChars().get(serverIndex);
+
+
+        Screen enteringScreen = nifty.getScreen("entering");
+        assert enteringScreen != null;
+        EnteringScreenController enteringSC = (EnteringScreenController) enteringScreen.getScreenController();
+
+        enteringSC.setLoginInformation(credentials.getEndpoint(),
+                accountChars.getId(),
+                characterList.getSelection().get(0),
+                credentials.getPassword());
+
+        nifty.gotoScreen(enteringScreen.getScreenId());
     }
 
     public void logout() {

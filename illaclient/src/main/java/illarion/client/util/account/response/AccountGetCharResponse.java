@@ -17,6 +17,8 @@ package illarion.client.util.account.response;
 
 import com.google.gson.annotations.SerializedName;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.time.Duration;
 import java.util.Date;
 
@@ -24,21 +26,57 @@ import java.util.Date;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class AccountGetCharResponse {
+    @Nullable
     @SerializedName("name")
     private String name;
 
     @SerializedName("status")
-    private String status;
+    private int status;
 
     @SerializedName("race")
-    private String raceId;
+    private int raceId;
 
     @SerializedName("sex")
-    private String typeId;
+    private int typeId;
 
+    @Nullable
     @SerializedName("lastSaveTime")
     private Date lastSaveTime;
 
+    @Nullable
     @SerializedName("onlineTime")
     private Duration onlineTime;
+
+    @Nonnull
+    public String getName() {
+        assert name != null;
+
+        return name;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public int getRaceId() {
+        return raceId;
+    }
+
+    public int getTypeId() {
+        return typeId;
+    }
+
+    @Nonnull
+    public Date getLastSaveTime() {
+        assert lastSaveTime != null;
+
+        return lastSaveTime;
+    }
+
+    @Nonnull
+    public Duration getOnlineTime() {
+        assert onlineTime != null;
+
+        return onlineTime;
+    }
 }

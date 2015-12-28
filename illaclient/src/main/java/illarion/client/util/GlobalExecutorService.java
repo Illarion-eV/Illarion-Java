@@ -15,6 +15,9 @@
  */
 package illarion.client.util;
 
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
+
 import javax.annotation.Nonnull;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,7 +31,9 @@ public final class GlobalExecutorService {
     /**
      * The executor service instance.
      */
-    private static final ExecutorService SERVICE = Executors.newSingleThreadExecutor();
+    @Nonnull
+    private static final ListeningExecutorService SERVICE = MoreExecutors.listeningDecorator(
+            Executors.newSingleThreadExecutor());
 
     /**
      * Get the service instance.
@@ -36,7 +41,7 @@ public final class GlobalExecutorService {
      * @return the service instance
      */
     @Nonnull
-    public static ExecutorService getService() {
+    public static ListeningExecutorService getService() {
         return SERVICE;
     }
 

@@ -16,41 +16,54 @@
 package illarion.client.states;
 
 import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.screen.Screen;
 import illarion.client.Game;
 import illarion.client.gui.controller.CharScreenController;
 import illarion.client.gui.controller.CreditsStartScreenController;
+import illarion.client.gui.controller.EnteringScreenController;
 import illarion.client.gui.controller.LoginScreenController;
+import illarion.client.util.account.AccountSystem;
 import org.illarion.engine.GameContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
- * This game state is used to display the login and character selection dialog. Also the option dialog is displayed in
- * this state.
+ * This state contains the login, options, character creation, account creation, character selection and character
+ * information editing.
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class LoginState implements GameState {
-    /**
-     * The screen controller that takes care for the login screen.
-     */
-    private LoginScreenController loginScreenController;
-
+public class AccountSystemState implements GameState {
     /**
      * The logger that is used for the logging output of this class.
      */
-    private static final Logger log = LoggerFactory.getLogger(LoginState.class);
+    @Nonnull
+    private static final Logger log = LoggerFactory.getLogger(AccountSystemState.class);
+
+    @Nullable
+    private Nifty nifty;
+
+    @Nullable
+    private String switchToScreen;
 
     @Override
     public void create(@Nonnull Game game, @Nonnull GameContainer container, @Nonnull Nifty nifty) {
-        loginScreenController = new LoginScreenController(game, container.getEngine());
-        nifty.registerScreenController(loginScreenController, new CharScreenController(game),
-                                       new CreditsStartScreenController(container.getEngine()));
+        this.nifty = nifty;
+        switchToScreen = null;
+
+        AccountSystem accountSystem = new AccountSystem();
+        nifty.registerScreenController(
+                new LoginScreenController(container.getEngine(), accountSystem),
+                new CharScreenController(),
+                new CreditsStartScreenController(container.getEngine()),
+                new EnteringScreenController(game, container));
 
         Util.loadXML(nifty, "illarion/client/gui/xml/login.xml");
         Util.loadXML(nifty, "illarion/client/gui/xml/charselect.xml");
+        Util.loadXML(nifty, "illarion/client/gui/xml/entering.xml");
         Util.loadXML(nifty, "illarion/client/gui/xml/options.xml");
         Util.loadXML(nifty, "illarion/client/gui/xml/credits.xml");
     }
@@ -65,8 +78,13 @@ public class LoginState implements GameState {
 
     @Override
     public void update(@Nonnull GameContainer container, int delta) {
-        if (loginScreenController != null) {
-            loginScreenController.update();
+        if (switchToScreen != null && nifty != null) {
+            Screen current = nifty.getCurrentScreen();
+            if (current == null || !current.getScreenId().equals(switchToScreen)) {
+                nifty.gotoScreen(switchToScreen);
+            } else {
+                switchToScreen = null;
+            }
         }
     }
 
@@ -79,9 +97,20 @@ public class LoginState implements GameState {
         return true;
     }
 
+    public void setErrorMessage(@Nonnull String errorMessage) {
+        if (nifty != null) {
+            Screen loginScreen = nifty.getScreen("login");
+            if (loginScreen != null) {
+                LoginScreenController controller = (LoginScreenController) loginScreen.getScreenController();
+                controller.showError(errorMessage);
+            }
+        }
+    }
+
     @Override
     public void enterState(@Nonnull GameContainer container, @Nonnull Nifty nifty) {
         nifty.gotoScreen("login");
+        switchToScreen = "login";
     }
 
     @Override

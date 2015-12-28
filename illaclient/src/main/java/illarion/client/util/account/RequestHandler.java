@@ -15,6 +15,9 @@
  */
 package illarion.client.util.account;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -49,12 +52,12 @@ import java.util.zip.GZIPInputStream;
  * This class is sending out requests and handling the responses.
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class RequestHandler {
+class RequestHandler implements AutoCloseable {
     @Nonnull
     private final String rootUrl;
 
     @Nonnull
-    private final ExecutorService executorService;
+    private final ListeningExecutorService executorService;
 
     @Nonnull
     private final Gson gson;
@@ -64,10 +67,11 @@ class RequestHandler {
 
     RequestHandler(@Nonnull String rootUrl) {
         this.rootUrl = rootUrl;
-        executorService = Executors.newCachedThreadPool(new ThreadFactoryBuilder()
-                .setDaemon(true)
-                .setNameFormat("AccountSystem-REST-Thread %d")
-                .build());
+        executorService = MoreExecutors.listeningDecorator(
+                Executors.newCachedThreadPool(new ThreadFactoryBuilder()
+                        .setDaemon(true)
+                        .setNameFormat("AccountSystem-REST-Thread %d")
+                        .build()));
 
         gson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
@@ -98,7 +102,7 @@ class RequestHandler {
     }
 
     @Nonnull
-    public <T> Future<T> sendRequestAsync(@Nonnull Request<T> request) {
+    public <T> ListenableFuture<T> sendRequestAsync(@Nonnull Request<T> request) {
         return executorService.submit(() -> sendRequest(request));
     }
 
@@ -162,5 +166,10 @@ class RequestHandler {
                 return gson.fromJson(rd, responseClass);
             }
         }
+    }
+
+    @Override
+    public void close() throws Exception {
+        executorService.shutdown();
     }
 }

@@ -15,22 +15,27 @@
  */
 package illarion.client.gui.controller;
 
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.*;
 import de.lessvoid.nifty.elements.Element;
+import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.input.NiftyStandardInputEvent;
 import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
-import illarion.client.Game;
 import illarion.client.IllaClient;
-import illarion.client.Login;
-import illarion.client.Servers;
 import illarion.client.resources.SongFactory;
 import illarion.client.util.AudioPlayer;
 import illarion.client.util.Lang;
+import illarion.client.util.account.AccountSystem;
+import illarion.client.util.account.AccountSystemEndpoint;
+import illarion.client.util.account.Credentials;
+import illarion.client.util.account.response.AccountGetResponse;
 import org.illarion.engine.Engine;
 import org.illarion.engine.sound.Music;
 import org.slf4j.Logger;
@@ -38,6 +43,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * This is the screen controller that takes care of displaying the login screen.
@@ -49,70 +56,77 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
      * This is the logging instance for this class.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(LoginScreenController.class);
+
     /**
      * The engine that is used in this game instance.
      */
     @Nonnull
     private final Engine engine;
-    /**
-     * The game that is the parent of this class.
-     */
-    @Nonnull
-    private final Game game;
-    /**
-     * The last error code that was received from the server. This will be {@code 0} in case there was no error or
-     * any larger value in case there is a error.
-     */
-    private int lastErrorCode;
+
     /**
      * The text field that contains the login name.
      */
-    @Nonnull
+    @Nullable
     private TextField nameTxt;
+
     /**
      * The instance of the Nifty-GUI that was bound to this controller.
      */
+    @Nullable
     private Nifty nifty;
+
     /**
      * The text field that contains the password.
      */
-    @Nonnull
+    @Nullable
     private TextField passwordTxt;
+
     /**
      * The generated popup that is shown in case a error occurred during the login.
      */
+    @Nullable
     private Element popupError;
+
     /**
      * This variable is set true in case the popup is visible.
      */
     private boolean popupIsVisible;
+
     /**
      * The generated popup that is shown while the client is busy fetching the characters from the server.
      */
+    @Nullable
     private Element popupReceiveChars;
-    /**
-     * This value is set {@code true} in case a new response was received from the server that needs to be processed
-     * upon the next update loop.
-     */
-    private boolean receivedLoginResponse;
+
     /**
      * The checkbox that is ticked in case the password is supposed to be saved.
      */
     @Nullable
     private CheckBox savePassword;
+
     /**
      * The screen this controller is a part of.
      */
     private Screen screen;
+
     /**
      * The drop down box is used to select a server.
      */
     @Nullable
     private DropDown<String> server;
 
-    public LoginScreenController(@Nonnull Game game, @Nonnull Engine engine) {
-        this.game = game;
+    @Nonnull
+    private final AccountSystem accountSystem;
+
+    @Nullable
+    private Credentials credentials;
+
+    @Nullable
+    private String errorMessage;
+
+    public LoginScreenController(@Nonnull Engine engine, @Nonnull AccountSystem accountSystem) {
         this.engine = engine;
+        this.accountSystem = accountSystem;
     }
 
     @Override
@@ -124,33 +138,34 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         passwordTxt = screen.findNiftyControl("passwordTxt", TextField.class);
         savePassword = screen.findNiftyControl("savePassword", CheckBox.class);
 
+        assert nameTxt != null: "The login name text field was not found.";
+        assert passwordTxt != null: "The password text field was not found.";
+        assert savePassword != null: "The save password checkbox was not found.";
+
+        assert nameTxt.getElement() != null: "Binding the login text field is not done.";
+        assert passwordTxt.getElement() != null: "Binding the password text field is not done.";
+
         nameTxt.getElement().addInputHandler(this);
         passwordTxt.getElement().addInputHandler(this);
 
-        Login login = Login.getInstance();
-        login.restoreServer();
-        restoreLoginData();
+        List<AccountSystemEndpoint> endpointList = accountSystem.getEndPoints();
 
-        if (IllaClient.DEFAULT_SERVER == Servers.Illarionserver) {
-            @Nullable Element serverPanel = screen.findElementById("serverPanel");
-            if (serverPanel != null) {
-                serverPanel.hide();
-            } else {
-                LOGGER.error("Failed to find server panel on the screen.");
-            }
-        } else {
-            //noinspection unchecked
-            server = screen.findNiftyControl("server", DropDown.class);
-            if (server != null) {
-                server.addItem("${login-bundle.server.develop}");
-                server.addItem("${login-bundle.server.test}");
-                server.addItem("${login-bundle.server.game}");
-                server.addItem("${login-bundle.server.custom}");
-                server.selectItemByIndex(IllaClient.getCfg().getInteger("server"));
-            } else {
-                LOGGER.error("Failed to find server drop down on the login screen.");
-            }
+        if (endpointList.size() == 1) {
+            Element serverPanel = screen.findElementById("serverPanel");
+            assert serverPanel != null: "Failed to locate the server planel on the login screen.";
+            serverPanel.hide();
         }
+
+        //noinspection unchecked
+        server = screen.findNiftyControl("server", DropDown.class);
+        assert server != null: "Failed to locate server selection drop down.";
+
+        for (AccountSystemEndpoint endpoint : endpointList) {
+            server.addItem(endpoint.getName());
+        }
+        server.selectItemByIndex(IllaClient.getCfg().getInteger("server"));
+        credentials = new Credentials(endpointList.get(server.getSelectedIndex()), IllaClient.getCfg());
+        restoreLoginData();
 
         popupError = nifty.createPopup("loginError");
         popupReceiveChars = nifty.createPopup("receivingCharacters");
@@ -159,17 +174,22 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     }
 
     private void restoreLoginData() {
-        Login login = Login.getInstance();
-        login.restoreLoginData();
-        nameTxt.setText(login.getLoginName());
-        passwordTxt.setText(login.getPassword());
-        savePassword.setChecked(login.getStorePassword());
+        assert nameTxt != null: "Binding the login field seems to have failed.";
+        assert passwordTxt != null: "Binding the password field seems to have failed.";
+        assert savePassword != null: "Binding the store check box seems to have failed.";
+        assert credentials != null: "The credentials are not set to a valid object.";
+
+        nameTxt.setText(credentials.getUserName());
+        passwordTxt.setText(credentials.getPassword());
+        savePassword.setChecked(credentials.isStorePassword());
     }
 
     @Override
     public void onStartScreen() {
+        assert nameTxt != null;
+        assert passwordTxt != null;
+
         AudioPlayer audioPlayer = AudioPlayer.getInstance();
-        audioPlayer.initAudioPlayer(engine.getSounds());
         Music illarionTheme = SongFactory.getInstance().getSong(2, engine.getAssets().getSoundsManager());
         audioPlayer.setLastMusic(illarionTheme);
         if (IllaClient.getCfg().getBoolean("musicOn")) {
@@ -184,6 +204,14 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
             nameTxt.setFocus();
         } else {
             passwordTxt.setFocus();
+        }
+
+        if (errorMessage == null) {
+            closeError();
+        } else {
+            String msg = errorMessage;
+            errorMessage = null;
+            showError(msg);
         }
     }
 
@@ -219,8 +247,35 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
      * This function closes the error popup that is displayed in case the login to the server failed.
      */
     private void closeError() {
-        popupIsVisible = false;
-        nifty.closePopup(popupError.getId(), () -> nameTxt.getElement().setFocus());
+        assert nifty != null;
+        assert popupError != null;
+        assert popupError.getId() != null;
+        assert nameTxt != null;
+        assert nameTxt.getElement() != null;
+
+        if (popupIsVisible) {
+            popupIsVisible = false;
+            nifty.closePopup(popupError.getId(), () -> nameTxt.getElement().setFocus());
+        }
+    }
+
+    public void showError(@Nonnull String message) {
+        assert nifty != null;
+        assert popupError != null;
+        assert popupError.getId() != null;
+
+        if (screen == null || !screen.equals(nifty.getCurrentScreen())) {
+            errorMessage = message;
+        } else {
+            Label errorText = popupError.findNiftyControl("#errorText", Label.class);
+            assert errorText != null;
+
+            errorText.setText(message);
+            if (!popupIsVisible) {
+                nifty.showPopup(screen, popupError.getId(), popupError.findElementById("#closeButton"));
+                popupIsVisible = true;
+            }
+        }
     }
 
     /**
@@ -231,7 +286,22 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
      */
     @NiftyEventSubscriber(id = "creditsBtn")
     public void onCreditsButtonClicked(String topic, ButtonClickedEvent event) {
+        assert nifty != null;
+
         nifty.gotoScreen("creditsStart");
+    }
+
+    @NiftyEventSubscriber(id = "nameTxt")
+    public void onNameTxtFocusGained(String topic, FocusGainedEvent event) {
+        assert nameTxt != null;
+
+        Element nameTxtElement = nameTxt.getElement();
+        if (nameTxtElement != null) {
+            TextRenderer renderer = nameTxtElement.getRenderer(TextRenderer.class);
+            if (renderer != null) {
+                renderer.setSelection(0, nameTxt.getDisplayedText().length() - 1);
+            }
+        }
     }
 
     /**
@@ -260,32 +330,68 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
      * This function triggers the login process. It will request the character list of the player from the server.
      */
     private void login() {
+        final Nifty nifty = Objects.requireNonNull(this.nifty);
+        final Screen screen = Objects.requireNonNull(this.screen);
+        final TextField nameTxt = Objects.requireNonNull(this.nameTxt);
+        final TextField passwordTxt = Objects.requireNonNull(this.passwordTxt);
+        final CheckBox savePassword = Objects.requireNonNull(this.savePassword);
+        final Credentials credentials = Objects.requireNonNull(this.credentials);
+        final Element popupReceiveChars = Objects.requireNonNull(this.popupReceiveChars);
+        assert popupReceiveChars.getId() != null: "ID of the receiving characters popup is not set.";
+
+        credentials.setUserName(nameTxt.getRealText());
+        credentials.setUserName(passwordTxt.getRealText());
+        credentials.setStorePassword(savePassword.isChecked());
+        credentials.storeCredentials();
+
+        if (credentials.getEndpoint().isUseConfigParameters()) {
+            if (!IllaClient.getCfg().getBoolean("customServer.accountSystem")) {
+                Screen enteringScreen = nifty.getScreen("entering");
+                assert enteringScreen != null;
+                EnteringScreenController controller = (EnteringScreenController) enteringScreen.getScreenController();
+                controller.setLoginInformation(credentials.getEndpoint(), "customserver",
+                        credentials.getUserName(), credentials.getPassword());
+                nifty.gotoScreen(enteringScreen.getScreenId());
+                return;
+            }
+        }
+
         nifty.showPopup(screen, popupReceiveChars.getId(), null);
-        Login login = Login.getInstance();
-        login.setLoginData(nameTxt.getRealText(), passwordTxt.getRealText());
 
-        if (server != null) {
-            login.applyServerByKey(server.getSelectedIndex());
-        } else {
-            login.setServer(Servers.Illarionserver);
-        }
+        accountSystem.setAuthentication(credentials);
 
-        login.storeData(savePassword.isChecked());
+        ListenableFuture<AccountGetResponse> response = accountSystem.getAccountInformation();
+        Futures.addCallback(response, new FutureCallback<AccountGetResponse>() {
+            @Override
+            public void onSuccess(@Nullable AccountGetResponse result) {
+                nifty.scheduleEndOfFrameElementAction(() -> {
+                    nifty.closePopup(popupReceiveChars.getId());
+                    if (result == null) {
+                        return;
+                    }
 
-        if (login.isCharacterListRequired()) {
-            //AccountSystem system = new AccountSystem(AccountSystem.LOCAL, nameTxt.getRealText(), passwordTxt.getRealText());
-            //AccountGetResponse info = system.getAccountInformation();
-            login.requestCharacterList(errorCode -> {
-                lastErrorCode = errorCode;
-                receivedLoginResponse = true;
+                    @Nullable Screen charSelectScreen = nifty.getScreen("charSelect");
+                    if (charSelectScreen == null) {
+                        throw new IllegalStateException("The character select screen was not found! This is bad.");
+                    }
+                    @Nonnull ScreenController charScreenController = charSelectScreen.getScreenController();
+                    if (charScreenController instanceof CharScreenController) {
+                        ((CharScreenController) charScreenController).applyAccountData(credentials, result);
+                    }
+                    nifty.gotoScreen(charSelectScreen.getScreenId());
+                }, null);
+            }
 
-                nifty.closePopup(popupReceiveChars.getId());
-            });
-        } else {
-            engine.getSounds().stopMusic(15);
-            game.enterState(Game.STATE_PLAYING);
-        }
+            @Override
+            public void onFailure(@Nonnull Throwable t) {
+                assert popupError != null;
+                assert popupError.getId() != null;
+                nifty.scheduleEndOfFrameElementAction(() -> showError(t.getLocalizedMessage()), null);
+            }
+        });
     }
+
+
 
     /**
      * This function is called in case the option button is clicked.
@@ -307,48 +413,11 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
 
     @NiftyEventSubscriber(id = "server")
     public void onServerChanged(@Nonnull String topic, @Nonnull DropDownSelectionChangedEvent<String> data) {
-        Login.getInstance().applyServerByKey(server.getSelectedIndex());
-        restoreLoginData();
-    }
-
-    @NiftyEventSubscriber(id = "server")
-    public void onServerChangedEvent(String topic, @Nonnull DropDownSelectionChangedEvent<String> event) {
-        if (event.getSelectionItemIndex() == 4) {
-            nameTxt.setText(IllaClient.getCfg().getString("testserverLogin"));
-            passwordTxt.setText(IllaClient.getCfg().getString("testserverPass"));
-        } else {
-            Login login = Login.getInstance();
-            nameTxt.setText(login.getLoginName());
-            passwordTxt.setText(login.getPassword());
-        }
-    }
-
-    /**
-     * This function has to be called at every update loop of Nifty. It will ensure that all updates are processed
-     * synchronized to the Nifty-GUI update loop.
-     */
-    public void update() {
-        if (!receivedLoginResponse || (nifty.getCurrentScreen() != screen)) {
-            return;
-        }
-
-        receivedLoginResponse = false;
-
-        if (lastErrorCode > 0) {
-            Label errorText = popupError.findNiftyControl("#errorText", Label.class);
-            errorText.setText(getErrorText(lastErrorCode));
-            nifty.showPopup(screen, popupError.getId(), popupError.findElementById("#closeButton"));
-            popupIsVisible = true;
-        } else {
-            @Nullable Screen charSelectScreen = nifty.getScreen("charSelect");
-            if (charSelectScreen == null) {
-                throw new IllegalStateException("The character select screen was not found! This is bad.");
-            }
-            @Nonnull ScreenController charScreenController = charSelectScreen.getScreenController();
-            if (charScreenController instanceof CharScreenController) {
-                ((CharScreenController) charScreenController).fillMyListBox();
-            }
-            nifty.gotoScreen(charSelectScreen.getScreenId());
+        List<AccountSystemEndpoint> endpoints = accountSystem.getEndPoints();
+        int selectedIndex = data.getSelectionItemIndex();
+        if (selectedIndex >= 0 && selectedIndex < endpoints.size()) {
+            credentials = new Credentials(endpoints.get(selectedIndex), IllaClient.getCfg());
+            restoreLoginData();
         }
     }
 

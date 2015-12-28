@@ -42,19 +42,18 @@ import javax.annotation.Nullable;
  * @author Mike Kay
  */
 public final class AudioPlayer implements EventTopicSubscriber<ConfigChangedEvent> {
-
     /**
      * The singleton instance of this class.
      */
     @Nonnull
     private static final AudioPlayer INSTANCE = new AudioPlayer();
 
-
-    @Nonnull
+    @Nullable
     private Sounds sounds;
 
-
+    @Nullable
     private Music lastMusic;
+
     /**
      * This variable is set {@code true} once the music player is initialized.
      */
@@ -77,7 +76,7 @@ public final class AudioPlayer implements EventTopicSubscriber<ConfigChangedEven
         if (init){
             return;
         }
-        INSTANCE.sounds = sounds;
+        this.sounds = sounds;
         AnnotationProcessor.process(this);
         updateSettings(null, IllaClient.getCfg());
 
@@ -95,12 +94,14 @@ public final class AudioPlayer implements EventTopicSubscriber<ConfigChangedEven
      * @param music the track to be compared against
      * @return  true if music is the track  being played
      */
-    public boolean isCurrentMusic(Music music){
-        return sounds.isMusicPlaying(music);
+    public boolean isCurrentMusic(Music music) {
+        Sounds sounds = this.sounds;
+        return sounds != null && sounds.isMusicPlaying(music);
     }
 
     public boolean isCurrentSound(Sound sound, int handle){
-        return sounds.isSoundPlaying(sound, handle);
+        Sounds sounds = this.sounds;
+        return sounds != null && sounds.isSoundPlaying(sound, handle);
     }
 
     /**
@@ -108,9 +109,13 @@ public final class AudioPlayer implements EventTopicSubscriber<ConfigChangedEven
      * Sets the last track to the given track
      * @param music the track to be played
      */
-    public void playMusic(Music music){
+    public void playMusic(@Nonnull Music music){
+        Sounds sounds = this.sounds;
         lastMusic = music;
-        sounds.playMusic(music, 0, 0);
+
+        if (sounds != null) {
+            sounds.playMusic(music, 0, 0);
+        }
     }
 
     /**
@@ -118,8 +123,11 @@ public final class AudioPlayer implements EventTopicSubscriber<ConfigChangedEven
      * @param sound     the sound to be played
      * @param volume    the volume to the play sound at
      */
-    public void playSound(Sound sound, float volume){
-        sounds.playSound(sound, volume);
+    public void playSound(@Nonnull Sound sound, float volume){
+        Sounds sounds = this.sounds;
+        if (sounds != null) {
+            sounds.playSound(sound, volume);
+        }
     }
 
     /**
@@ -127,15 +135,23 @@ public final class AudioPlayer implements EventTopicSubscriber<ConfigChangedEven
      * Does NOT save the change to the config file
      * @param volume the new value of the volume
      */
-    public void setMusicVolume(float volume){
-        sounds.setMusicVolume(volume / Player.MAX_CLIENT_VOL);
+    public void setMusicVolume(float volume) {
+        Sounds sounds = this.sounds;
+        if (sounds != null) {
+            sounds.setMusicVolume(volume / Player.MAX_CLIENT_VOL);
+        }
     }
 
     /**
      * Gets the current volume used by the music
      */
     public float getMusicVolume(){
-        return sounds.getMusicVolume();
+        Sounds sounds = this.sounds;
+        if (sounds != null) {
+            return sounds.getMusicVolume();
+        } else {
+            return 0.0f;
+        }
     }
 
     /**
@@ -144,13 +160,21 @@ public final class AudioPlayer implements EventTopicSubscriber<ConfigChangedEven
      * @param volume the new value of the volume
      */
     public void setSoundVolume(float volume){
-        sounds.setSoundVolume(volume / Player.MAX_CLIENT_VOL);
+        Sounds sounds = this.sounds;
+        if (sounds != null) {
+            sounds.setSoundVolume(volume / Player.MAX_CLIENT_VOL);
+        }
     }
     /**
      * Gets the current volume used by the sound effects
      */
     public float getSoundVolume(){
-        return sounds.getSoundVolume();
+        Sounds sounds = this.sounds;
+        if (sounds != null) {
+            return sounds.getSoundVolume();
+        } else {
+            return 0.0f;
+        }
     }
 
 
@@ -160,7 +184,12 @@ public final class AudioPlayer implements EventTopicSubscriber<ConfigChangedEven
      * lastMusic is set through playMusic or setLastMusic
      */
     public void playLastMusic(){
-        sounds.playMusic(lastMusic, 0, 0);
+        Sounds sounds = this.sounds;
+        Music lastMusic = this.lastMusic;
+
+        if (sounds != null && lastMusic != null) {
+            sounds.playMusic(lastMusic, 0, 0);
+        }
     }
 
     /**
@@ -168,21 +197,30 @@ public final class AudioPlayer implements EventTopicSubscriber<ConfigChangedEven
      * Used in conjunction with playLastMusic()
      * @param music the Music value to be played
      */
-    public void setLastMusic(Music music){
+    public void setLastMusic(@Nullable Music music){
         lastMusic = music;
     }
 
+    @Nullable
     public Music getLastMusic(){
         return lastMusic;
     }
+
     public void stopMusic(){
-        sounds.stopMusic(0);
+        Sounds sounds = this.sounds;
+        if (sounds != null) {
+            sounds.stopMusic(0);
+        }
     }
 
-    public void stopSound(Sound sound){
-        sounds.stopSound(sound);
+    public void stopSound(@Nonnull Sound sound){
+        Sounds sounds = this.sounds;
+        if (sounds != null) {
+            sounds.stopSound(sound);
+        }
     }
 
+    @Nonnull
     public static AudioPlayer getInstance(){
         return INSTANCE;
     }
@@ -194,6 +232,11 @@ public final class AudioPlayer implements EventTopicSubscriber<ConfigChangedEven
     }
 
     private void updateSettings(@Nullable String setting, @Nonnull Config cfg) {
+        Sounds sounds = this.sounds;
+        if (sounds == null) {
+            return;
+        }
+
         if ((setting == null) || "musicOn".equals(setting)) {
             boolean musicEnabled = cfg.getBoolean("musicOn");
             if (musicEnabled) {

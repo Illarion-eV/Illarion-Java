@@ -14,7 +14,20 @@
  * GNU General Public License for more details.
  */
 /**
- * This package contains all the states the client can be in. 
+ * This package contains all the states the client can be in.
+ *
+ * These stages basically follow always the same structure.
+ * <code>
+ *        Loading
+ *           ↓
+ *     AccountSystem ←┐
+ *     │     ↓        │
+ *     │  Playing     │
+ *     │     ↓        │
+ *     │  Logout ─────┘
+ *     │     ↓
+ *     └──→ End
+ * </code>
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */

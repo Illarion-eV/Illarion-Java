@@ -15,30 +15,25 @@
  */
 package illarion.client.util.account;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import illarion.client.IllaClient;
+import illarion.client.util.Lang;
 import illarion.client.util.account.response.AccountGetResponse;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.net.URL;
+import java.util.*;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class AccountSystem {
-    /**
-     * The root URL for the official account system.
-     */
-    @Nonnull
-    public static final String OFFICIAL = "https://illarion.org/app.php";
-
-    /**
-     * The root URL for the local server account system.
-     */
-    @Nonnull
-    public static final String LOCAL = "http://localhost/app.php";
-
-    @Nonnull
-    private final String endpoint;
+public class AccountSystem implements AutoCloseable {
+    @Nullable
+    private String endpoint;
 
     /**
      * The authenticator used to handle authenticated requests.
@@ -46,37 +41,114 @@ public class AccountSystem {
     @Nullable
     private Authenticator authenticator;
 
-    public AccountSystem(@Nonnull String endpoint) {
-        this.endpoint = endpoint;
+    @Nonnull
+    private final List<AccountSystemEndpoint> endPoints;
+
+    @Nullable
+    private RequestHandler requestHandler;
+
+    public AccountSystem() {
+        AccountSystemEndpoint official = new AccountSystemEndpoint(
+                "https://illarion.org/app.php",
+                Lang.getMsg("accountsystem.server.official"),
+                "server.official");
+        if (IllaClient.IS_DEVELOP) {
+            // every client but the release client gets the selection of two servers.
+            AccountSystemEndpoint local = new AccountSystemEndpoint(
+                    "http://localhost/app.php",
+                    Lang.getMsg("accountsystem.server.local"),
+                    "server.local",
+                    true, "test", "test");
+            endPoints = Arrays.asList(official, local);
+        } else {
+            endPoints = Collections.singletonList(official);
+        }
+    }
+
+    public void setEndpoint(@Nonnull AccountSystemEndpoint endpoint) {
+        String newEndpoint = endpoint.getUrl();
+        if (!Objects.equals(newEndpoint, this.endpoint)) {
+            try {
+                closeRequestHandler();
+            } catch (Exception ignored) {
+            }
+            this.endpoint = newEndpoint;
+        }
     }
 
     /**
      * Set the authentication that is used for the interaction with the account system.
      *
-     * @param userName the user name
-     * @param password the password
+     * @param credentials the authentication credentials
      * @throws IllegalStateException in case the authentication is already set
      */
-    public void setAuthentication(@Nonnull String userName, @Nonnull String password) {
-        if (authenticator != null) {
-            throw new IllegalStateException("Setting the authentication credentials is now allowed once they are set.");
+    public void setAuthentication(@Nullable Credentials credentials) {
+        if (credentials == null) {
+            authenticator = null;
+            endpoint = null;
+            try {
+                closeRequestHandler();
+            } catch (Exception ignored) {
+            }
+        } else {
+            authenticator = new Authenticator(credentials.getUserName(), credentials.getPassword());
+            setEndpoint(credentials.getEndpoint());
         }
-        authenticator = new Authenticator(userName, password);
     }
 
-    @Nullable
-    public AccountGetResponse getAccountInformation() {
-        if (authenticator == null) {
-            throw new IllegalStateException("This function requires the account system to be authenticated.");
+    @Nonnull
+    private RequestHandler getRequestHandler() {
+        if (endpoint == null) {
+            throw new IllegalStateException("Communicating with the account system is not possible until the endpoint is set.");
         }
+
+        RequestHandler handler = requestHandler;
+        if (handler == null) {
+            handler = new RequestHandler(endpoint);
+            requestHandler = handler;
+        }
+        return handler;
+    }
+
+    @Nonnull
+    private Authenticator getAuthenticator() {
+        Authenticator authenticator = this.authenticator;
+        if (authenticator == null) {
+            throw new IllegalStateException("The request requires authentication credentials.");
+        }
+        return authenticator;
+    }
+
+    @Nonnull
+    public ListenableFuture<AccountGetResponse> getAccountInformation() {
+        RequestHandler handler = getRequestHandler();
+        Authenticator authenticator = getAuthenticator();
 
         AccountGetRequest request = new AccountGetRequest(authenticator);
-        RequestHandler handler = new RequestHandler(endpoint);
 
-        try {
-            return handler.sendRequest(request);
-        } catch (IOException e) {
-            return null;
+        return handler.sendRequestAsync(request);
+    }
+
+    /**
+     * Fetch the list of endpoints that can be served by the account system.
+     *
+     * @return thel ist of endpoints
+     */
+    @Nonnull
+    public List<AccountSystemEndpoint> getEndPoints() {
+        return Collections.unmodifiableList(endPoints);
+    }
+
+    private void closeRequestHandler() throws Exception {
+        RequestHandler handler = requestHandler;
+        requestHandler = null;
+        if (handler != null) {
+            handler.close();
         }
+    }
+
+    @Override
+    public void close() throws Exception {
+        closeRequestHandler();
     }
 }

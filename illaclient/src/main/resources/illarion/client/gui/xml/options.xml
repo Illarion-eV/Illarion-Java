@@ -128,11 +128,6 @@
                             <control name="textfield" filter="digits" id="serverPort" width="220px"/>
                         </panel>
                         <panel width="100%" childLayout="horizontal">
-                            <control name="label" text="${options-bundle.clientVersion}"/>
-                            <panel width="*"/>
-                            <control name="textfield" filter="digits" id="clientVersion" width="220px"/>
-                        </panel>
-                        <panel width="100%" childLayout="horizontal">
                             <control name="label" text="${options-bundle.serverAccountLogin}"/>
                             <panel width="*"/>
                             <control name="checkbox" id="serverAccountLogin"/>

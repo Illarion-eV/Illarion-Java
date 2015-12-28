@@ -17,6 +17,8 @@ package illarion.common.data;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -43,26 +45,28 @@ public final class Credits {
      * The singleton instance of this credits class.
      */
     @Nullable
-    @SuppressWarnings("RedundantFieldInitialization")
-    private static volatile Credits instance = null;
+    private static Reference<Credits> instance = null;
 
     /**
      * Get the singleton instance of the credits class.
      * <p/>
-     * The class instance is created upon the first call of this function.
+     * The instance is created once this function is called. It is also only stored weakly, so once there is on use for
+     * it anymore the instance is being disposed of.
      *
      * @return the credits instance
      */
-    @Nullable
+    @Nonnull
     public static Credits getInstance() {
-        if (instance == null) {
-            synchronized (Credits.class) {
-                if (instance == null) {
-                    instance = new Credits();
-                }
-            }
+        Reference<Credits> usedInstance = instance;
+        Credits usedCredits = null;
+        if (usedInstance != null) {
+            usedCredits = usedInstance.get();
         }
-        return instance;
+        if (usedCredits == null) {
+            usedCredits = new Credits();
+            instance = new SoftReference<>(usedCredits);
+        }
+        return usedCredits;
     }
 
     /**

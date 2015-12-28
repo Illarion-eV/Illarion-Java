@@ -53,18 +53,20 @@ dependencies {
 jar {
     dependsOn { gitVersion }
     manifest {
-        attributes       \
-               'Main-Class': 'illarion.client.IllaClient',       \
-               'Permissions': 'all-permissions',       \
-               'Codebase': 'illarion.org',       \
-               'Application-Name': 'Illarion Client',       \
-               'Application-Library-Allowable-Codebase': 'illarion.org',       \
-               'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),       \
-               'Built-By': System.getProperty('user.name'),       \
-               'Built-JDK': System.getProperty('java.version'),       \
-               'Implementation-Title': 'Illarion Client',       \
-               'Implementation-Vendor': 'Illarion e.V.',       \
-               'Implementation-Version': project.ext.fullVersion
+        attributes(
+                'Main-Class': 'illarion.client.IllaClient',
+                'Permissions': 'all-permissions',
+                'Codebase': 'illarion.org',
+                'Application-Name': 'Illarion Client',
+                'Application-Library-Allowable-Codebase': 'illarion.org',
+                'Built-Date': new Date().format('yyyy-MM-dd HH:mm:ssZ'),
+                'Built-By': System.getProperty('user.name'),
+                'Built-JDK': System.getProperty('java.version'),
+                'Implementation-Title': 'Illarion Client',
+                'Implementation-Vendor': 'Illarion e.V.',
+                'Implementation-Version': project.ext.fullVersion,
+                'Source-Branch': project.ext.branch,
+        )
     }
 }
 

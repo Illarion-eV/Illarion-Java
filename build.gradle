@@ -73,6 +73,7 @@ allprojects {
 
         task.project.version = mainVersion
         task.project.ext.fullVersion = gitVersion
+        task.project.ext.branch = branch
     }
 
     configurations.all {
