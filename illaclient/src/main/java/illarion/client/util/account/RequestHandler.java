@@ -25,7 +25,6 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import illarion.client.util.Lang;
 import illarion.common.data.IllarionSSLSocketFactory;
-import sun.plugin.dom.exception.InvalidStateException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,10 +40,7 @@ import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.time.Duration;
 import java.time.Period;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.zip.DeflaterInputStream;
 import java.util.zip.GZIPInputStream;
 
@@ -109,7 +105,7 @@ class RequestHandler implements AutoCloseable {
     @Nullable
     public <T> T sendRequest(@Nonnull Request<T> request) throws IOException {
         if (request instanceof AuthenticatedRequest) {
-            java.net.Authenticator.setDefault(((AuthenticatedRequest) request).getAuthenticator());
+            java.net.Authenticator.setDefault(((AuthenticatedRequest<T>) request).getAuthenticator());
         }
         URL requestUrl = new URL(buildRequestUrl(rootUrl, request.getRoute()));
         URLConnection urlConnection = requestUrl.openConnection();
@@ -140,7 +136,7 @@ class RequestHandler implements AutoCloseable {
 
         int response = httpConnection.getResponseCode();
         if (response / 100 == 5) {
-            throw new InvalidStateException("Server responded with a server error.");
+            throw new IllegalStateException("Server responded with a server error.");
         }
         Class<T> responseClass = request.getResponseClass();
 
