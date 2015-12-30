@@ -28,11 +28,7 @@ import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
-import illarion.client.Game;
-import illarion.client.states.PlayingState;
 import illarion.client.util.Lang;
-import illarion.client.util.account.AccountSystem;
-import illarion.client.util.account.AccountSystemEndpoint;
 import illarion.client.util.account.Credentials;
 import illarion.client.util.account.response.AccountGetCharResponse;
 import illarion.client.util.account.response.AccountGetCharsResponse;
@@ -88,6 +84,10 @@ public final class CharScreenController implements ScreenController, KeyInputHan
      */
     @Nullable
     private Element popupLanguageChange;
+    @Nullable
+    private Credentials credentials;
+    @Nullable
+    private AccountGetResponse accountData;
 
     /**
      * Create a instance of the character screen controller.
@@ -119,22 +119,6 @@ public final class CharScreenController implements ScreenController, KeyInputHan
         }
     }
 
-    /**
-     * This class is used to react on changes of the configuration.
-     *
-     * @param topic the event topic
-     * @param event the actual event data
-     */
-    @EventTopicSubscriber(topic = Lang.LOCALE_CFG)
-    public void onConfigChanged(String topic, ConfigChangedEvent event) {
-        showLanguageChangedPopup = true;
-    }
-
-    @NiftyEventSubscriber(pattern = "server")
-    public void onServerChanged(String topic, DropDownSelectionChangedEvent event) {
-        setSelectedServer(event.getSelectionItemIndex());
-    }
-
     @Override
     public void onStartScreen() {
         assert nifty != null: "The Nifty instance is null, binding seems to have failed.";
@@ -161,17 +145,21 @@ public final class CharScreenController implements ScreenController, KeyInputHan
         nifty.unsubscribeAnnotations(this);
     }
 
-    private static final class LastUsedFirstComparator implements Comparator<AccountGetCharResponse> {
-        @Override
-        public int compare(AccountGetCharResponse o1, AccountGetCharResponse o2) {
-            return -1 * o1.getLastSaveTime().compareTo(o2.getLastSaveTime());
-        }
+    /**
+     * This class is used to react on changes of the configuration.
+     *
+     * @param topic the event topic
+     * @param event the actual event data
+     */
+    @EventTopicSubscriber(topic = Lang.LOCALE_CFG)
+    public void onConfigChanged(String topic, ConfigChangedEvent event) {
+        showLanguageChangedPopup = true;
     }
 
-    @Nullable
-    private Credentials credentials;
-    @Nullable
-    private AccountGetResponse accountData;
+    @NiftyEventSubscriber(pattern = "server")
+    public void onServerChanged(String topic, DropDownSelectionChangedEvent event) {
+        setSelectedServer(event.getSelectionItemIndex());
+    }
 
     private void populateServerList() {
         assert accountData != null;
@@ -202,10 +190,13 @@ public final class CharScreenController implements ScreenController, KeyInputHan
         assert characterList != null;
         assert index >= 0 && index < serverSelect.getItems().size();
 
-        serverSelect.selectItemByIndex(index);
+        if (serverSelect.getSelectedIndex() != index) {
+            serverSelect.selectItemByIndex(index);
+        }
 
         AccountGetCharsResponse chars = accountData.getChars().get(index);
 
+        characterList.clear();
         chars.getList().stream()
                 .filter(chr -> chr.getStatus() == 0)
                 .map(AccountGetCharResponse::getName)
@@ -298,5 +289,12 @@ public final class CharScreenController implements ScreenController, KeyInputHan
             return true;
         }
         return false;
+    }
+
+    private static final class LastUsedFirstComparator implements Comparator<AccountGetCharResponse> {
+        @Override
+        public int compare(AccountGetCharResponse o1, AccountGetCharResponse o2) {
+            return -1 * o1.getLastSaveTime().compareTo(o2.getLastSaveTime());
+        }
     }
 }

@@ -62,62 +62,51 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
      */
     @Nonnull
     private final Engine engine;
-
+    @Nonnull
+    private final AccountSystem accountSystem;
     /**
      * The text field that contains the login name.
      */
     @Nullable
     private TextField nameTxt;
-
     /**
      * The instance of the Nifty-GUI that was bound to this controller.
      */
     @Nullable
     private Nifty nifty;
-
     /**
      * The text field that contains the password.
      */
     @Nullable
     private TextField passwordTxt;
-
     /**
      * The generated popup that is shown in case a error occurred during the login.
      */
     @Nullable
     private Element popupError;
-
     /**
      * This variable is set true in case the popup is visible.
      */
     private boolean popupIsVisible;
-
     /**
      * The generated popup that is shown while the client is busy fetching the characters from the server.
      */
     @Nullable
     private Element popupReceiveChars;
-
     /**
      * The checkbox that is ticked in case the password is supposed to be saved.
      */
     @Nullable
     private CheckBox savePassword;
-
     /**
      * The screen this controller is a part of.
      */
     private Screen screen;
-
     /**
      * The drop down box is used to select a server.
      */
     @Nullable
     private DropDown<String> server;
-
-    @Nonnull
-    private final AccountSystem accountSystem;
-
     @Nullable
     private Credentials credentials;
 
@@ -127,6 +116,16 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     public LoginScreenController(@Nonnull Engine engine, @Nonnull AccountSystem accountSystem) {
         this.engine = engine;
         this.accountSystem = accountSystem;
+    }
+
+    /**
+     * Get the text that describes a error code.
+     *
+     * @param error the error code
+     * @return the localized text that describes the error for the player
+     */
+    public static String getErrorText(int error) {
+        return Lang.getMsg("login.error." + Integer.toString(error));
     }
 
     @Override
@@ -173,17 +172,6 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         nifty.subscribeAnnotations(this);
     }
 
-    private void restoreLoginData() {
-        assert nameTxt != null: "Binding the login field seems to have failed.";
-        assert passwordTxt != null: "Binding the password field seems to have failed.";
-        assert savePassword != null: "Binding the store check box seems to have failed.";
-        assert credentials != null: "The credentials are not set to a valid object.";
-
-        nameTxt.setText(credentials.getUserName());
-        passwordTxt.setText(credentials.getPassword());
-        savePassword.setChecked(credentials.isStorePassword());
-    }
-
     @Override
     public void onStartScreen() {
         assert nameTxt != null;
@@ -217,6 +205,17 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
 
     @Override
     public void onEndScreen() {
+    }
+
+    private void restoreLoginData() {
+        assert nameTxt != null: "Binding the login field seems to have failed.";
+        assert passwordTxt != null: "Binding the password field seems to have failed.";
+        assert savePassword != null: "Binding the store check box seems to have failed.";
+        assert credentials != null: "The credentials are not set to a valid object.";
+
+        nameTxt.setText(credentials.getUserName());
+        passwordTxt.setText(credentials.getPassword());
+        savePassword.setChecked(credentials.isStorePassword());
     }
 
     @Override
@@ -330,17 +329,17 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
      * This function triggers the login process. It will request the character list of the player from the server.
      */
     private void login() {
-        final Nifty nifty = Objects.requireNonNull(this.nifty);
-        final Screen screen = Objects.requireNonNull(this.screen);
-        final TextField nameTxt = Objects.requireNonNull(this.nameTxt);
-        final TextField passwordTxt = Objects.requireNonNull(this.passwordTxt);
-        final CheckBox savePassword = Objects.requireNonNull(this.savePassword);
-        final Credentials credentials = Objects.requireNonNull(this.credentials);
-        final Element popupReceiveChars = Objects.requireNonNull(this.popupReceiveChars);
+        Nifty nifty = Objects.requireNonNull(this.nifty);
+        Screen screen = Objects.requireNonNull(this.screen);
+        TextField nameTxt = Objects.requireNonNull(this.nameTxt);
+        TextField passwordTxt = Objects.requireNonNull(this.passwordTxt);
+        CheckBox savePassword = Objects.requireNonNull(this.savePassword);
+        Credentials credentials = Objects.requireNonNull(this.credentials);
+        Element popupReceiveChars = Objects.requireNonNull(this.popupReceiveChars);
         assert popupReceiveChars.getId() != null: "ID of the receiving characters popup is not set.";
 
         credentials.setUserName(nameTxt.getRealText());
-        credentials.setUserName(passwordTxt.getRealText());
+        credentials.setPassword(passwordTxt.getRealText());
         credentials.setStorePassword(savePassword.isChecked());
         credentials.storeCredentials();
 
@@ -386,12 +385,11 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
             public void onFailure(@Nonnull Throwable t) {
                 assert popupError != null;
                 assert popupError.getId() != null;
+                nifty.closePopup(popupReceiveChars.getId());
                 nifty.scheduleEndOfFrameElementAction(() -> showError(t.getLocalizedMessage()), null);
             }
         });
     }
-
-
 
     /**
      * This function is called in case the option button is clicked.
@@ -415,19 +413,9 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
     public void onServerChanged(@Nonnull String topic, @Nonnull DropDownSelectionChangedEvent<String> data) {
         List<AccountSystemEndpoint> endpoints = accountSystem.getEndPoints();
         int selectedIndex = data.getSelectionItemIndex();
-        if (selectedIndex >= 0 && selectedIndex < endpoints.size()) {
+        if ((selectedIndex >= 0) && (selectedIndex < endpoints.size())) {
             credentials = new Credentials(endpoints.get(selectedIndex), IllaClient.getCfg());
             restoreLoginData();
         }
-    }
-
-    /**
-     * Get the text that describes a error code.
-     *
-     * @param error the error code
-     * @return the localized text that describes the error for the player
-     */
-    public static String getErrorText(int error) {
-        return Lang.getMsg("login.error." + Integer.toString(error));
     }
 }
