@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -227,7 +227,7 @@ public class ApplicationGameContainer implements DesktopGameContainer {
         windowWidth = width;
         windowHeight = height;
         if (!isFullScreen() && (gdxApplication != null)) {
-            gdxApplication.getGraphics().setDisplayMode(width, height, false);
+            gdxApplication.getGraphics().setWindowedMode(width, height);
         }
     }
 
@@ -235,7 +235,22 @@ public class ApplicationGameContainer implements DesktopGameContainer {
     public void setFullScreenResolution(@Nonnull GraphicResolution resolution) throws GdxEngineException {
         fullScreenResolution = resolution;
         if (isFullScreen() && (gdxApplication != null)) {
-            gdxApplication.getGraphics().setDisplayMode(resolution.getWidth(), resolution.getHeight(), true);
+            DisplayMode[] modes = gdxApplication.getGraphics().getDisplayModes();
+            for (@Nullable DisplayMode mode : modes) {
+                if (mode == null) {
+                    continue;
+                }
+                if ((mode.width != fullScreenResolution.getWidth()) ||
+                    (mode.height != fullScreenResolution.getHeight()) ||
+                    (mode.bitsPerPixel != fullScreenResolution.getBPP())) {
+                    continue;
+                }
+
+                if ((resolution.getRefreshRate() == -1) || (resolution.getRefreshRate() == mode.refreshRate)) {
+                    gdxApplication.getGraphics().setFullscreenMode(mode);
+                    return;
+                }
+            }
         }
     }
 

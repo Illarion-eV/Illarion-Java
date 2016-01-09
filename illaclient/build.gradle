@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -29,7 +29,6 @@ dependencies {
     compile project(':engine-nifty')
     compile project(':nifty-controls')
     runtime project(':nifty-style')
-    compile group: 'org.jetbrains', name: 'annotations', version: '15.0'
     compile group: 'org.slf4j', name: 'slf4j-api', version: project.ext.slf4jVersion
     compile group: 'org.slf4j', name: 'jul-to-slf4j', version: project.ext.slf4jVersion
     compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: project.ext.slf4jVersion

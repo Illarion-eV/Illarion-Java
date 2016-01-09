@@ -1,3 +1,18 @@
+/*
+ * This file is part of the Illarion project.
+ *
+ * Copyright © 2016 - Illarion e.V.
+ *
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Illarion is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
 package illarion.client.gui.controller;
 
 import com.google.common.io.Resources;
@@ -33,13 +48,6 @@ import java.util.concurrent.Executors;
 public final class EnteringScreenController implements ScreenController {
     @Nonnull
     private static final Logger log = LoggerFactory.getLogger(EnteringScreenController.class);
-
-    @Nullable
-    private Nifty nifty;
-
-    @Nullable
-    private Screen screen;
-
     @Nonnull
     private final GameContainer container;
     @Nonnull
@@ -59,20 +67,18 @@ public final class EnteringScreenController implements ScreenController {
         this.container = container;
     }
 
-    @Override
-    public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
-        this.nifty = nifty;
-        this.screen = screen;
+    @Nonnull
+    private static Properties getServerConfig() throws IOException {
+        URL serverConfig = Resources.getResource(EnteringScreenController.class, "/server-config.properties");
+        Properties result = new Properties();
+        try (InputStream stream = serverConfig.openStream()) {
+            result.load(stream);
+        }
+        return result;
     }
 
-    public void setLoginInformation(@Nonnull AccountSystemEndpoint endpoint,
-                                    @Nonnull String serverId,
-                                    @Nonnull String characterName,
-                                    @Nonnull String password) {
-        this.endpoint = endpoint;
-        this.serverId = serverId;
-        this.characterName = characterName;
-        this.password = password;
+    @Override
+    public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
     }
 
     @Override
@@ -93,7 +99,7 @@ public final class EnteringScreenController implements ScreenController {
             return;
         }
 
-        final ListeningExecutorService service = MoreExecutors.listeningDecorator(Executors.newCachedThreadPool());
+        ListeningExecutorService service = MoreExecutors.listeningDecorator(Executors.newCachedThreadPool());
 
         ListenableFuture<Void> worldInit = service.submit(() -> {
 
@@ -151,13 +157,14 @@ public final class EnteringScreenController implements ScreenController {
 
     }
 
-    private static Properties getServerConfig() throws IOException {
-        URL serverConfig = Resources.getResource(EnteringScreenController.class, "server-config.properties");
-        Properties result = new Properties();
-        try (InputStream stream = serverConfig.openStream()) {
-            result.load(stream);
-        }
-        return result;
+    public void setLoginInformation(@Nonnull AccountSystemEndpoint endpoint,
+                                    @Nonnull String serverId,
+                                    @Nonnull String characterName,
+                                    @Nonnull String password) {
+        this.endpoint = endpoint;
+        this.serverId = serverId;
+        this.characterName = characterName;
+        this.password = password;
     }
 
     private static final class ServerNotFoundException extends Exception {

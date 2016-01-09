@@ -188,7 +188,7 @@ public final class CharScreenController implements ScreenController, KeyInputHan
         assert accountData != null;
         assert serverSelect != null;
         assert characterList != null;
-        assert index >= 0 && index < serverSelect.getItems().size();
+        assert (index >= 0) && (index < serverSelect.getItems().size());
 
         if (serverSelect.getSelectedIndex() != index) {
             serverSelect.selectItemByIndex(index);
@@ -225,7 +225,7 @@ public final class CharScreenController implements ScreenController, KeyInputHan
         for (int i = 0; i < latestUsed.size(); i++) {
             Date current = latestUsed.get(i);
             if (current != null) {
-                if (selectedDate == null || selectedDate.compareTo(current) < 0) {
+                if ((selectedDate == null) || (selectedDate.compareTo(current) < 0)) {
                     selectedDate = current;
                     serverIndex = i;
                 }
