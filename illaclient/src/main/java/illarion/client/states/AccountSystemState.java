@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,10 +18,7 @@ package illarion.client.states;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import illarion.client.Game;
-import illarion.client.gui.controller.CharScreenController;
-import illarion.client.gui.controller.CreditsStartScreenController;
-import illarion.client.gui.controller.EnteringScreenController;
-import illarion.client.gui.controller.LoginScreenController;
+import illarion.client.gui.controller.*;
 import illarion.client.util.account.AccountSystem;
 import org.illarion.engine.GameContainer;
 import org.slf4j.Logger;
@@ -57,11 +54,13 @@ public class AccountSystemState implements GameState {
         AccountSystem accountSystem = new AccountSystem();
         nifty.registerScreenController(
                 new LoginScreenController(container.getEngine(), accountSystem),
+                new RegisterScreenController(accountSystem),
                 new CharScreenController(),
                 new CreditsStartScreenController(container.getEngine()),
                 new EnteringScreenController(game, container));
 
         Util.loadXML(nifty, "illarion/client/gui/xml/login.xml");
+        Util.loadXML(nifty, "illarion/client/gui/xml/register.xml");
         Util.loadXML(nifty, "illarion/client/gui/xml/charselect.xml");
         Util.loadXML(nifty, "illarion/client/gui/xml/entering.xml");
         Util.loadXML(nifty, "illarion/client/gui/xml/options.xml");
@@ -78,9 +77,9 @@ public class AccountSystemState implements GameState {
 
     @Override
     public void update(@Nonnull GameContainer container, int delta) {
-        if (switchToScreen != null && nifty != null) {
+        if ((switchToScreen != null) && (nifty != null)) {
             Screen current = nifty.getCurrentScreen();
-            if (current == null || !current.getScreenId().equals(switchToScreen)) {
+            if ((current == null) || !current.getScreenId().equals(switchToScreen)) {
                 nifty.gotoScreen(switchToScreen);
             } else {
                 switchToScreen = null;
@@ -97,16 +96,6 @@ public class AccountSystemState implements GameState {
         return true;
     }
 
-    public void setErrorMessage(@Nonnull String errorMessage) {
-        if (nifty != null) {
-            Screen loginScreen = nifty.getScreen("login");
-            if (loginScreen != null) {
-                LoginScreenController controller = (LoginScreenController) loginScreen.getScreenController();
-                controller.showError(errorMessage);
-            }
-        }
-    }
-
     @Override
     public void enterState(@Nonnull GameContainer container, @Nonnull Nifty nifty) {
         nifty.gotoScreen("login");
@@ -115,5 +104,15 @@ public class AccountSystemState implements GameState {
 
     @Override
     public void leaveState(@Nonnull GameContainer container) {
+    }
+
+    public void setErrorMessage(@Nonnull String errorMessage) {
+        if (nifty != null) {
+            Screen loginScreen = nifty.getScreen("login");
+            if (loginScreen != null) {
+                LoginScreenController controller = (LoginScreenController) loginScreen.getScreenController();
+                controller.showError(errorMessage);
+            }
+        }
     }
 }

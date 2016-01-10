@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ This file is part of the Illarion project.
+  ~
+  ~ Copyright © 2016 - Illarion e.V.
+  ~
+  ~ Illarion is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Illarion is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  -->
+<nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
+    <resourceBundle id="register-bundle" filename="register"/>
+
+    <screen id="register" controller="illarion.client.gui.controller.RegisterScreenController">
+        <layer childLayout="vertical" visibleToMouse="false">
+            <effect>
+                <onStartScreen name="fade" start="#00" end="#ff" length="500" inherit="true"/>
+                <onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true"/>
+            </effect>
+
+            <panel height="422px" width="*" backgroundImage="gui/window_background.png"
+                   imageMode="repeat:0,0,1024,422"/>
+        </layer>
+
+        <layer id="layer" childLayout="center">
+            <effect>
+                <onStartScreen name="fade" start="#00" end="#ff" inherit="true"/>
+                <onEndScreen name="fade" start="#ff" end="#00" length="500" inherit="true"/>
+            </effect>
+
+            <panel height="300px" width="400px" childLayout="vertical">
+                <image filename="gui/illarion_title.png" imageMode="normal" align="center" marginBottom="30px"/>
+                <panel childLayout="vertical">
+                    <panel id="serverPanel" childLayout="horizontal" marginBottom="2px">
+                        <control name="label" text="${register-bundle.server}" font="captionFont" textHAlign="left"
+                                 width="130px" />
+                        <control name="dropDown" id="server" marginLeft="10px" merginRight="10px" />
+                    </panel>
+
+                    <panel childLayout="horizontal" marginBottom="2px">
+                        <control name="label" text="${register-bundle.account}" font="captionFont" textHAlign="left"
+                                 width="130px"/>
+                        <control name="textfield" id="accountName" maxLength="20" marginLeft="10px"/>
+                        <control name="label" text="*" font="captionFont" width="10px" />
+                    </panel>
+
+                    <panel childLayout="horizontal" marginBottom="8px" width="100%">
+                        <control name="label" text="" font="textFont" visible="false" id="accountAlreadyUsed"
+                                 textHAlign="right" width="100%" />
+                    </panel>
+
+                    <panel childLayout="horizontal" marginBottom="2px">
+                        <control name="label" text="${register-bundle.email}" font="captionFont" textHAlign="left"
+                                 width="130px"/>
+                        <control name="textfield" id="eMail" maxLength="20" marginLeft="10px" marginRight="10px" />
+                        <control name="label" text="" font="captionFont" width="10px" />
+                    </panel>
+
+                    <panel childLayout="horizontal" marginBottom="8px" width="100%">
+                        <control name="label" text="" font="textFont" visible="false" id="eMailAlreadyUsed"
+                                 textHAlign="right" width="100%" />
+                    </panel>
+
+                    <panel childLayout="horizontal" marginBottom="2px">
+                        <control name="label" text="${register-bundle.password}" font="captionFont" textHAlign="left"
+                                 width="130px"/>
+                        <control name="textfield" id="password" passwordChar="*" maxLength="20" marginLeft="10px"/>
+                        <control name="label" text="*" font="captionFont" width="10px" />
+                    </panel>
+
+                    <panel childLayout="horizontal" marginBottom="30px" width="100%">
+                        <control name="label" text="" font="textFont" visible="false" id="passwordQuality"
+                                 textHAlign="right" width="100%" />
+                    </panel>
+
+                    <panel width="100%" childLayout="center">
+                        <panel childLayout="vertical">
+                            <panel childLayout="center" marginBottom="15px" width="350">
+                                <control id="registerBtn" name="button" label="${register-bundle.register}"
+                                         style="nifty-button-large" width="225px" height="45px">
+                                    <control id="#text" font="menuFont"/>
+                                </control>
+                            </panel>
+                            <panel childLayout="center">
+                                <control id="backBtn" name="button" label="${register-bundle.back}" width="100px"
+                                         height="35px"/>
+                            </panel>
+                        </panel>
+                    </panel>
+                </panel>
+            </panel>
+        </layer>
+    </screen>
+    <popup id="loginError" childLayout="center">
+        <panel style="nifty-panel" childLayout="vertical" id="#numberSelectPopup">
+            <control name="label" id="#errorText" width="300px" style="nifty-label" wrap="true"/>
+            <panel childLayout="center" width="300px" marginTop="10px">
+                <control name="button" id="errorButtonClose" label="OK"/>
+            </panel>
+        </panel>
+    </popup>
+    <popup id="receivingCharacters" childLayout="center">
+        <panel style="nifty-panel-small" childLayout="vertical">
+            <control name="label" style="nifty-label" text="${login-bundle.receivingCharacters}"/>
+        </panel>
+    </popup>
+</nifty>

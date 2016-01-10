@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -105,7 +105,7 @@ public final class CharScreenController implements ScreenController, KeyInputHan
         serverSelect = screen.findNiftyControl("server", DropDown.class);
 
         nifty.setLocale(Lang.getInstance().getLocale());
-        characterList = (ListBox<String>) screen.findNiftyControl("myListBox", ListBox.class);
+        characterList = (ListBox<String>) screen.findNiftyControl("characterList", ListBox.class);
         statusLabel = screen.findNiftyControl("statusText", Label.class);
         statusLabel.setHeight(SizeValue.px(20));
         statusLabel.setWidth(SizeValue.px(180));
@@ -114,7 +114,7 @@ public final class CharScreenController implements ScreenController, KeyInputHan
         popupLanguageChange = nifty.createPopup("languageChanged");
 
         /* Values for the server list are already set. */
-        if (credentials != null && accountData != null) {
+        if ((credentials != null) && (accountData != null)) {
             populateServerList();
         }
     }

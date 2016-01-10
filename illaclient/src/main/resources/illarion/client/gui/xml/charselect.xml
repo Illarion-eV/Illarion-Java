@@ -2,7 +2,7 @@
 <!--
   ~ This file is part of the Illarion project.
   ~
-  ~ Copyright © 2015 - Illarion e.V.
+  ~ Copyright © 2016 - Illarion e.V.
   ~
   ~ Illarion is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU Affero General Public License as published by
@@ -38,7 +38,7 @@
                     <control name="dropDown" id="server" marginBottom="10px" />
 
                     <panel childLayout="center" visibleToMouse="true" align="center" marginBottom="30px">
-                        <control id="myListBox" name="listBox" vertical="on" horizontal="off"
+                        <control id="characterList" name="listBox" vertical="on" horizontal="off"
                                  displayItems="5" selection="Single" forceSelection="true"/>
                     </panel>
 

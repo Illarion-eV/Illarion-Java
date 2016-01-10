@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,38 +18,38 @@ package illarion.client.util.account;
 import com.google.common.util.concurrent.ListenableFuture;
 import illarion.client.IllaClient;
 import illarion.client.util.Lang;
+import illarion.client.util.account.form.AccountCheckForm;
+import illarion.client.util.account.form.AccountCreateForm;
+import illarion.client.util.account.response.AccountCheckResponse;
+import illarion.client.util.account.response.AccountCreateResponse;
 import illarion.client.util.account.response.AccountGetResponse;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.IOException;
-import java.net.URL;
-import java.util.*;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class AccountSystem implements AutoCloseable {
+    @Nonnull
+    private final List<AccountSystemEndpoint> endPoints;
     @Nullable
     private String endpoint;
-
     /**
      * The authenticator used to handle authenticated requests.
      */
     @Nullable
     private Authenticator authenticator;
-
-    @Nonnull
-    private final List<AccountSystemEndpoint> endPoints;
-
     @Nullable
     private RequestHandler requestHandler;
 
     public AccountSystem() {
         AccountSystemEndpoint official = new AccountSystemEndpoint(
-                "https://illarion.org/app.php",
+                "http://illarion.org/app.php",
                 Lang.getMsg("accountsystem.server.official"),
                 "server.official");
         if (IllaClient.IS_DEVELOP) {
@@ -62,6 +62,15 @@ public class AccountSystem implements AutoCloseable {
             endPoints = Arrays.asList(official, local);
         } else {
             endPoints = Collections.singletonList(official);
+        }
+
+        performLazyInit();
+    }
+
+    public void performLazyInit() {
+        RequestHandler handler = requestHandler;
+        if (handler != null) {
+            new Thread(this::getRequestHandler).start();
         }
     }
 
@@ -104,8 +113,13 @@ public class AccountSystem implements AutoCloseable {
 
         RequestHandler handler = requestHandler;
         if (handler == null) {
-            handler = new RequestHandler(endpoint);
-            requestHandler = handler;
+            synchronized (this) {
+                handler = requestHandler;
+                if (handler == null) {
+                    handler = new RequestHandler(endpoint);
+                    requestHandler = handler;
+                }
+            }
         }
         return handler;
     }
@@ -124,7 +138,30 @@ public class AccountSystem implements AutoCloseable {
         RequestHandler handler = getRequestHandler();
         Authenticator authenticator = getAuthenticator();
 
-        AccountGetRequest request = new AccountGetRequest(authenticator);
+        Request<AccountGetResponse> request = new AccountGetRequest(authenticator);
+
+        return handler.sendRequestAsync(request);
+    }
+
+    @Nonnull
+    public ListenableFuture<AccountCheckResponse> performAccountCredentialsCheck(@Nullable String userName,
+                                                                                 @Nullable String eMail) {
+        RequestHandler handler = getRequestHandler();
+
+        AccountCheckForm payload = new AccountCheckForm(userName, eMail);
+        Request<AccountCheckResponse> request = new AccountCheckRequest(payload);
+
+        return handler.sendRequestAsync(request);
+    }
+
+    @Nonnull
+    public ListenableFuture<AccountCreateResponse> createAccount(@Nonnull String userName,
+                                                                @Nullable String eMail,
+                                                                @Nonnull String password) {
+        RequestHandler handler = getRequestHandler();
+
+        AccountCreateForm payload = new AccountCreateForm(userName, password, eMail);
+        Request<AccountCreateResponse> request = new AccountCreateRequest(payload);
 
         return handler.sendRequestAsync(request);
     }

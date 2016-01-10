@@ -102,7 +102,6 @@ public final class EnteringScreenController implements ScreenController {
         ListeningExecutorService service = MoreExecutors.listeningDecorator(Executors.newCachedThreadPool());
 
         ListenableFuture<Void> worldInit = service.submit(() -> {
-
             String serverHost;
             int serverPort;
             if (endpoint.isUseConfigParameters()) {
@@ -112,6 +111,9 @@ public final class EnteringScreenController implements ScreenController {
                 try {
                     Properties config = getServerConfig();
                     serverHost = config.getProperty("official.domain");
+                    if (serverHost == null) {
+                        serverHost = config.getProperty("official." + serverId + ".domain");
+                    }
                     serverPort = Integer.parseInt(config.getProperty("official." + serverId + ".port"));
                 } catch (IOException e) {
                     throw new CriticalLoadingFailureException("Failed to fetch server configuration file.", e);

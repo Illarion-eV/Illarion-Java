@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -38,8 +38,6 @@ import illarion.client.util.account.Credentials;
 import illarion.client.util.account.response.AccountGetResponse;
 import org.illarion.engine.Engine;
 import org.illarion.engine.sound.Music;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -53,55 +51,63 @@ import java.util.Objects;
  */
 public final class LoginScreenController implements ScreenController, KeyInputHandler {
     /**
-     * This is the logging instance for this class.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoginScreenController.class);
-
-    /**
      * The engine that is used in this game instance.
      */
     @Nonnull
     private final Engine engine;
+
+    /**
+     * The reference to the account system.
+     */
     @Nonnull
     private final AccountSystem accountSystem;
+
     /**
      * The text field that contains the login name.
      */
     @Nullable
     private TextField nameTxt;
+
     /**
      * The instance of the Nifty-GUI that was bound to this controller.
      */
     @Nullable
     private Nifty nifty;
+
     /**
      * The text field that contains the password.
      */
     @Nullable
     private TextField passwordTxt;
+
     /**
      * The generated popup that is shown in case a error occurred during the login.
      */
     @Nullable
     private Element popupError;
+
     /**
      * This variable is set true in case the popup is visible.
      */
     private boolean popupIsVisible;
+
     /**
      * The generated popup that is shown while the client is busy fetching the characters from the server.
      */
     @Nullable
     private Element popupReceiveChars;
+
     /**
      * The checkbox that is ticked in case the password is supposed to be saved.
      */
     @Nullable
     private CheckBox savePassword;
+
     /**
      * The screen this controller is a part of.
      */
     private Screen screen;
+
     /**
      * The drop down box is used to select a server.
      */
@@ -263,7 +269,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         assert popupError != null;
         assert popupError.getId() != null;
 
-        if (screen == null || !screen.equals(nifty.getCurrentScreen())) {
+        if ((screen == null) || !screen.equals(nifty.getCurrentScreen())) {
             errorMessage = message;
         } else {
             Label errorText = popupError.findNiftyControl("#errorText", Label.class);
@@ -288,6 +294,13 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         assert nifty != null;
 
         nifty.gotoScreen("creditsStart");
+    }
+
+    @NiftyEventSubscriber(id = "registerBtn")
+    public void onRegisterButtonClicked(String topic, ButtonClickedEvent event) {
+        assert nifty != null;
+
+        nifty.gotoScreen("register");
     }
 
     @NiftyEventSubscriber(id = "nameTxt")
@@ -414,7 +427,11 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         List<AccountSystemEndpoint> endpoints = accountSystem.getEndPoints();
         int selectedIndex = data.getSelectionItemIndex();
         if ((selectedIndex >= 0) && (selectedIndex < endpoints.size())) {
-            credentials = new Credentials(endpoints.get(selectedIndex), IllaClient.getCfg());
+            AccountSystemEndpoint endpoint = endpoints.get(selectedIndex);
+            assert endpoint != null;
+
+            accountSystem.setEndpoint(endpoint);
+            credentials = new Credentials(endpoint, IllaClient.getCfg());
             restoreLoginData();
         }
     }

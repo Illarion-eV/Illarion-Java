@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -98,6 +98,16 @@ class RequestHandler implements AutoCloseable {
     }
 
     @Nonnull
+    private static InputStream getInputStream(@Nonnull HttpURLConnection connection) {
+        try {
+            return connection.getInputStream();
+        } catch (Throwable t) {
+            InputStream stream = connection.getErrorStream();
+            return (stream == null) ? new NullInputStream() : stream;
+        }
+    }
+
+    @Nonnull
     public <T> ListenableFuture<T> sendRequestAsync(@Nonnull Request<T> request) {
         return executorService.submit(() -> sendRequest(request));
     }
@@ -120,14 +130,19 @@ class RequestHandler implements AutoCloseable {
                 ((HttpsURLConnection) urlConnection).setSSLSocketFactory(factory);
             }
         }
+
+        Object payload = request.getData();
+        if (payload != null) {
+            httpConnection.setDoOutput(true);
+        }
+
         httpConnection.setRequestMethod(request.getMethod());
         httpConnection.setRequestProperty("Accept", "application/json");
         httpConnection.setRequestProperty("Accept-Encoding", "gzip, deflate");
         httpConnection.setRequestProperty("Accept-Language", Lang.getInstance().isGerman() ? "de-DE,de" : "en-US,en-GB,en");
 
-        Object payload = request.getData();
         if (payload != null) {
-            httpConnection.setDoOutput(true);
+            httpConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
             try (JsonWriter wr = new JsonWriter(new OutputStreamWriter(httpConnection.getOutputStream(), utf8))) {
                 gson.toJson(payload, payload.getClass(), wr);
                 wr.flush();
@@ -135,12 +150,12 @@ class RequestHandler implements AutoCloseable {
         }
 
         int response = httpConnection.getResponseCode();
-        if (response / 100 == 5) {
+        if ((response / 100) == 5) {
             throw new IllegalStateException("Server responded with a server error.");
         }
         Class<T> responseClass = request.getResponseClass();
 
-        try (InputStream in = httpConnection.getInputStream()) {
+        try (InputStream in = getInputStream(httpConnection)) {
             InputStream usedIn = in;
             String contentEncoding = httpConnection.getHeaderField("Content-Encoding");
             if (contentEncoding != null) {
@@ -167,5 +182,12 @@ class RequestHandler implements AutoCloseable {
     @Override
     public void close() throws Exception {
         executorService.shutdown();
+    }
+
+    private static class NullInputStream extends InputStream {
+        @Override
+        public int read() throws IOException {
+            return -1;
+        }
     }
 }
