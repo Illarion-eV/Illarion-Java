@@ -49,7 +49,7 @@ public class AccountSystem implements AutoCloseable {
 
     public AccountSystem() {
         AccountSystemEndpoint official = new AccountSystemEndpoint(
-                "http://illarion.org/app.php",
+                "https://illarion.org/app.php",
                 Lang.getMsg("accountsystem.server.official"),
                 "server.official");
         if (IllaClient.IS_DEVELOP) {
