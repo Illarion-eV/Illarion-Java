@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -215,6 +215,7 @@ class MoveAnimator implements AnimatedMove {
     }
 
     void cancelAll() {
+        log.debug("All moves canceled!");
         taskQueue.clear();
         moveAnimation.stop();
         lastRequestedTurn = null;
