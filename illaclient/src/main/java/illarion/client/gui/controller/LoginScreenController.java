@@ -376,32 +376,31 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         Futures.addCallback(response, new FutureCallback<AccountGetResponse>() {
             @Override
             public void onSuccess(@Nullable AccountGetResponse result) {
-                nifty.scheduleEndOfFrameElementAction(() -> {
-                    nifty.closePopup(popupReceiveChars.getId());
-                    if (result == null) {
-                        return;
-                    }
+                nifty.closePopup(popupReceiveChars.getId());
+                if (result == null) {
+                    return;
+                }
 
-                    @Nullable Screen charSelectScreen = nifty.getScreen("charSelect");
-                    if (charSelectScreen == null) {
-                        throw new IllegalStateException("The character select screen was not found! This is bad.");
-                    }
-                    @Nonnull ScreenController charScreenController = charSelectScreen.getScreenController();
-                    if (charScreenController instanceof CharScreenController) {
-                        ((CharScreenController) charScreenController).applyAccountData(credentials, result);
-                    }
-                    nifty.gotoScreen(charSelectScreen.getScreenId());
-                }, null);
+                @Nullable Screen charSelectScreen = nifty.getScreen("charSelect");
+                if (charSelectScreen == null) {
+                    throw new IllegalStateException("The character select screen was not found! This is bad.");
+                }
+                @Nonnull ScreenController charScreenController = charSelectScreen.getScreenController();
+                if (charScreenController instanceof CharScreenController) {
+                    ((CharScreenController) charScreenController).applyAccountData(credentials, result);
+                }
+                nifty.gotoScreen(charSelectScreen.getScreenId());
             }
 
             @Override
             public void onFailure(@Nonnull Throwable t) {
                 assert popupError != null;
                 assert popupError.getId() != null;
+
                 nifty.closePopup(popupReceiveChars.getId());
                 nifty.scheduleEndOfFrameElementAction(() -> showError(t.getLocalizedMessage()), null);
             }
-        });
+        }, new NiftyExecutor(nifty));
     }
 
     /**

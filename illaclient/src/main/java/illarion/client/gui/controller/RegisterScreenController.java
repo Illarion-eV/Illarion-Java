@@ -24,11 +24,11 @@ import de.lessvoid.nifty.controls.*;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import illarion.client.IllaClient;
 import illarion.client.util.account.AccountSystem;
 import illarion.client.util.account.AccountSystemEndpoint;
-import illarion.client.util.account.response.AccountCheckResponse;
-import illarion.client.util.account.response.AccountCreateResponse;
-import illarion.client.util.account.response.CheckResponse;
+import illarion.client.util.account.Credentials;
+import illarion.client.util.account.response.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -72,6 +72,12 @@ public final class RegisterScreenController implements ScreenController {
     @Nullable
     private Label labelPasswordQuality;
 
+    @Nullable
+    private Element popupCurrentAction;
+
+    @Nullable
+    private Element popupError;
+
     public RegisterScreenController(@Nonnull AccountSystem accountSystem) {
         this.accountSystem = accountSystem;
     }
@@ -89,6 +95,9 @@ public final class RegisterScreenController implements ScreenController {
         labelAccountUsed = screen.findNiftyControl("accountAlreadyUsed", Label.class);
         labelEMailUsed = screen.findNiftyControl("eMailAlreadyUsed", Label.class);
         labelPasswordQuality = screen.findNiftyControl("passwordQuality", Label.class);
+
+        popupCurrentAction = nifty.createPopup(screen, "currentActionPopup");
+        popupError = nifty.createPopup(screen, "errorPopup");
     }
 
     @Override
@@ -96,7 +105,6 @@ public final class RegisterScreenController implements ScreenController {
         assert nifty != null;
 
         populateEndpointList();
-
         nifty.subscribeAnnotations(this);
     }
 
@@ -121,18 +129,10 @@ public final class RegisterScreenController implements ScreenController {
             mail = null;
         }
 
+        showStatus("${register-bundle.creatingAccount}");
+
         ListenableFuture<AccountCreateResponse> lFuture = accountSystem.createAccount(account, mail, password);
-        Futures.addCallback(lFuture, new FutureCallback<AccountCreateResponse>() {
-            @Override
-            public void onSuccess(@Nullable AccountCreateResponse result) {
-
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-
-            }
-        });
+        Futures.addCallback(lFuture, new AccountCreateResponseFutureCallback(account, password));
     }
 
     @NiftyEventSubscriber(id = "backBtn")
@@ -159,14 +159,22 @@ public final class RegisterScreenController implements ScreenController {
 
     @NiftyEventSubscriber(id = "server")
     public void onServerChanged(@Nonnull String topic, @Nonnull DropDownSelectionChangedEvent<String> data) {
-        List<AccountSystemEndpoint> endpoints = accountSystem.getEndPoints();
-        int selectedIndex = data.getSelectionItemIndex();
-        if ((selectedIndex >= 0) && (selectedIndex < endpoints.size())) {
-            AccountSystemEndpoint endpoint = endpoints.get(selectedIndex);
-            assert endpoint != null;
-
+        AccountSystemEndpoint endpoint = getCurrentSelectedEndpoint();
+        if (endpoint != null) {
             accountSystem.setEndpoint(endpoint);
         }
+    }
+
+    @Nullable
+    private AccountSystemEndpoint getCurrentSelectedEndpoint() {
+        assert dropDownServer != null;
+
+        List<AccountSystemEndpoint> endpoints = accountSystem.getEndPoints();
+        int selectedIndex = dropDownServer.getSelectedIndex();
+        if ((selectedIndex >= 0) && (selectedIndex < endpoints.size())) {
+            return endpoints.get(selectedIndex);
+        }
+        return null;
     }
 
     private void performCredentialsCheck() {
@@ -228,7 +236,44 @@ public final class RegisterScreenController implements ScreenController {
         }
     }
 
-    private class AccountCheckResponseFutureCallback implements FutureCallback<AccountCheckResponse> {
+    private void showStatus(@Nonnull String message) {
+        assert screen != null;
+        assert popupCurrentAction != null;
+
+        Label popupMessage = popupCurrentAction.findNiftyControl("#message", Label.class);
+        assert popupMessage != null: "The control for the message of the popup was not found.";
+
+        popupMessage.setText(message);
+        if (!screen.isActivePopup(popupCurrentAction)) {
+            screen.addPopup(popupCurrentAction, null);
+        }
+    }
+
+    private void hideStatus() {
+        assert screen != null;
+        assert popupCurrentAction != null;
+
+        if (screen.isActivePopup(popupCurrentAction)) {
+            screen.closePopup(popupCurrentAction, null);
+        }
+    }
+
+    private void showError(@Nonnull String message) {
+        assert nifty != null;
+        assert screen != null;
+        assert popupError != null;
+        assert popupError.getId() != null;
+
+        Label errorText = popupError.findNiftyControl("#errorText", Label.class);
+        assert errorText != null;
+
+        errorText.setText(message);
+        if (!screen.isActivePopup(popupError)) {
+            nifty.showPopup(screen, popupError.getId(), popupError.findElementById("#closeButton"));
+        }
+    }
+
+    private final class AccountCheckResponseFutureCallback implements FutureCallback<AccountCheckResponse> {
         @Nullable
         private final String account;
         @Nullable
@@ -239,30 +284,7 @@ public final class RegisterScreenController implements ScreenController {
             this.eMail = eMail;
         }
 
-        private void publishValues(@Nullable String nameMessage, @Nullable String eMailMessage) {
-            assert labelAccountUsed != null;
-            assert labelEMailUsed != null;
-            assert labelAccountUsed.getElement() != null;
-            assert labelEMailUsed.getElement() != null;
-
-            if (nifty != null) {
-                nifty.scheduleEndOfFrameElementAction(() -> {
-                    if (nameMessage == null) {
-                        labelAccountUsed.getElement().setVisible(false);
-                    } else {
-                        labelAccountUsed.setText(nameMessage);
-                        labelAccountUsed.getElement().setVisible(true);
-                    }
-
-                    if (eMailMessage == null) {
-                        labelEMailUsed.getElement().setVisible(false);
-                    } else {
-                        labelEMailUsed.setText(eMailMessage);
-                        labelEMailUsed.getElement().setVisible(true);
-                    }
-                }, null);
-            }
-        }        @Override
+        @Override
         public void onSuccess(@Nullable AccountCheckResponse result) {
             assert textFieldAccount != null;
             assert textFieldEMail != null;
@@ -295,10 +317,130 @@ public final class RegisterScreenController implements ScreenController {
             publishValues(nameCheckError, eMailCheckError);
         }
 
+        private void publishValues(@Nullable String nameMessage, @Nullable String eMailMessage) {
+            assert labelAccountUsed != null;
+            assert labelEMailUsed != null;
+            assert labelAccountUsed.getElement() != null;
+            assert labelEMailUsed.getElement() != null;
 
+            if (nifty != null) {
+                nifty.scheduleEndOfFrameElementAction(() -> {
+                    if (nameMessage == null) {
+                        labelAccountUsed.getElement().setVisible(false);
+                    } else {
+                        labelAccountUsed.setText(nameMessage);
+                        labelAccountUsed.getElement().setVisible(true);
+                    }
+
+                    if (eMailMessage == null) {
+                        labelEMailUsed.getElement().setVisible(false);
+                    } else {
+                        labelEMailUsed.setText(eMailMessage);
+                        labelEMailUsed.getElement().setVisible(true);
+                    }
+                }, null);
+            }
+        }
 
         @Override
         public void onFailure(@Nonnull Throwable t) {
+        }
+    }
+
+    private final class AccountCreateResponseFutureCallback implements FutureCallback<AccountCreateResponse> {
+        @Nonnull
+        private final String account;
+        @Nonnull
+        private final String password;
+
+        public AccountCreateResponseFutureCallback(@Nonnull String account, @Nonnull String password) {
+            this.account = account;
+            this.password = password;
+        }
+
+        @Override
+        public void onSuccess(@Nullable AccountCreateResponse result) {
+            assert nifty != null;
+            if (result != null) {
+                ErrorResponse response = result.getError();
+                if (response != null) {
+                    nifty.scheduleEndOfFrameElementAction(() -> {
+                        hideStatus();
+                        String message = response.getMessage();
+                        if (message != null) {
+                            showError(message);
+                        }
+                    }, null);
+                }
+            }
+
+            nifty.scheduleEndOfFrameElementAction(() -> showStatus("${register-bundle.createdAccount}"), null);
+
+            /* Account was created. Lets continue to the character selection. */
+            AccountSystemEndpoint endpoint = getCurrentSelectedEndpoint();
+            if (endpoint == null) {
+                return;
+            }
+
+            Credentials credentials = new Credentials(endpoint, IllaClient.getCfg());
+            credentials.setUserName(account);
+            credentials.setPassword(password);
+            credentials.setStorePassword(false);
+            accountSystem.setAuthentication(credentials);
+
+            ListenableFuture<AccountGetResponse> response = accountSystem.getAccountInformation();
+            Futures.addCallback(response, new AccountGetResponseFutureCallback(credentials), new NiftyExecutor(nifty));
+        }
+
+        @Override
+        public void onFailure(@Nonnull Throwable t) {
+            assert nifty != null;
+
+            nifty.scheduleEndOfFrameElementAction(() -> {
+                hideStatus();
+                String msg = t.getLocalizedMessage();
+                if (msg != null) {
+                    showError(msg);
+                }
+            }, null);
+        }
+    }
+
+    private final class AccountGetResponseFutureCallback implements FutureCallback<AccountGetResponse> {
+        @Nonnull
+        private final Credentials credentials;
+
+        public AccountGetResponseFutureCallback(@Nonnull Credentials credentials) {
+            this.credentials = credentials;
+        }
+
+        @Override
+        public void onSuccess(@Nullable AccountGetResponse result) {
+            assert nifty != null;
+            hideStatus();
+
+            if (result == null) {
+                return;
+            }
+
+            @Nullable Screen charSelectScreen = nifty.getScreen("charSelect");
+            if (charSelectScreen == null) {
+                throw new IllegalStateException("The character select screen was not found! This is bad.");
+            }
+            @Nonnull ScreenController charScreenController = charSelectScreen.getScreenController();
+            if (charScreenController instanceof CharScreenController) {
+                ((CharScreenController) charScreenController).applyAccountData(credentials, result);
+            }
+            nifty.gotoScreen(charSelectScreen.getScreenId());
+        }
+
+        @Override
+        public void onFailure(@Nonnull Throwable t) {
+            hideStatus();
+            String msg = t.getLocalizedMessage();
+            if (msg != null) {
+                showError(msg);
+            }
         }
     }
 }

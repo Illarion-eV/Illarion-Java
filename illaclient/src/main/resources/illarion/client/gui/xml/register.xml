@@ -97,7 +97,7 @@
             </panel>
         </layer>
     </screen>
-    <popup id="loginError" childLayout="center">
+    <popup id="errorPopup" childLayout="center">
         <panel style="nifty-panel" childLayout="vertical" id="#numberSelectPopup">
             <control name="label" id="#errorText" width="300px" style="nifty-label" wrap="true"/>
             <panel childLayout="center" width="300px" marginTop="10px">
@@ -105,9 +105,9 @@
             </panel>
         </panel>
     </popup>
-    <popup id="receivingCharacters" childLayout="center">
+    <popup id="currentActionPopup" childLayout="center">
         <panel style="nifty-panel-small" childLayout="vertical">
-            <control name="label" style="nifty-label" text="${login-bundle.receivingCharacters}"/>
+            <control name="label" style="nifty-label" text="" id="#message"/>
         </panel>
     </popup>
 </nifty>

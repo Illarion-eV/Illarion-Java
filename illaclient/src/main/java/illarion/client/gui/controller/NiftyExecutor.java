@@ -13,44 +13,26 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-package illarion.client.util.account.response;
+package illarion.client.gui.controller;
 
-import com.google.gson.annotations.SerializedName;
+import de.lessvoid.nifty.Nifty;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
+import java.util.concurrent.Executor;
 
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class ErrorResponse {
-    @SerializedName("status")
-    private int status;
+final class NiftyExecutor implements Executor {
+    @Nonnull
+    private final Nifty nifty;
 
-    @SerializedName("message")
-    private String message;
-
-    @SerializedName("value")
-    private Object value;
-
-    @SerializedName("form")
-    private Object form;
-
-    public int getStatus() {
-        return status;
+    NiftyExecutor(@Nonnull Nifty nifty) {
+        this.nifty = nifty;
     }
 
-    @Nullable
-    public String getMessage() {
-        return message;
-    }
-
-    @Nullable
-    public Object getValue() {
-        return value;
-    }
-
-    @Nullable
-    public Object getForm() {
-        return form;
+    @Override
+    public void execute(@Nonnull Runnable command) {
+        nifty.scheduleEndOfFrameElementAction(command::run, null);
     }
 }
