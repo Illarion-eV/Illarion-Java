@@ -168,8 +168,12 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
         for (AccountSystemEndpoint endpoint : endpointList) {
             server.addItem(endpoint.getName());
         }
-        server.selectItemByIndex(IllaClient.getCfg().getInteger("server"));
-        credentials = new Credentials(endpointList.get(server.getSelectedIndex()), IllaClient.getCfg());
+        int serverIndex = IllaClient.getCfg().getInteger("server");
+        if ((serverIndex < 0) || (serverIndex > endpointList.size())) {
+            serverIndex = 0;
+        }
+        server.selectItemByIndex(serverIndex);
+        credentials = new Credentials(endpointList.get(serverIndex), IllaClient.getCfg());
         restoreLoginData();
 
         popupError = nifty.createPopup("loginError");
