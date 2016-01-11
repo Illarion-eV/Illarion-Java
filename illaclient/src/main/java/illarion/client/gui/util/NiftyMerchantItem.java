@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2014 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,7 @@ package illarion.client.gui.util;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.render.NiftyImage;
-import illarion.client.gui.EntitySlickRenderImage;
+import illarion.client.gui.TextureRenderImage;
 import illarion.client.resources.ItemFactory;
 import illarion.client.world.items.MerchantItem;
 import org.illarion.nifty.controls.MerchantListEntry;
@@ -48,7 +48,7 @@ public final class NiftyMerchantItem extends MerchantItem implements MerchantLis
     public NiftyMerchantItem(@Nonnull Nifty nifty, @Nonnull MerchantItem org) {
         super(org);
 
-        itemImage = new NiftyImage(nifty.getRenderEngine(), new EntitySlickRenderImage(
+        itemImage = new NiftyImage(nifty.getRenderEngine(), new TextureRenderImage(
                 ItemFactory.getInstance().getTemplate(org.getItemId().getValue())));
     }
 

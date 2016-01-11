@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,7 +17,7 @@ package illarion.client.gui.util;
 
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.render.NiftyImage;
-import illarion.client.gui.EntitySlickRenderImage;
+import illarion.client.gui.TextureRenderImage;
 import illarion.client.resources.ItemFactory;
 import illarion.client.world.items.CraftingItem;
 import illarion.common.types.ItemCount;
@@ -42,32 +42,14 @@ public class NiftyCraftingItem extends CraftingItem implements CraftingItemEntry
     public NiftyCraftingItem(@Nonnull Nifty nifty, @Nonnull CraftingItem org) {
         super(org);
 
-        craftImage = new NiftyImage(nifty.getRenderEngine(), new EntitySlickRenderImage(
+        craftImage = new NiftyImage(nifty.getRenderEngine(), new TextureRenderImage(
                 ItemFactory.getInstance().getTemplate(getItemId().getValue())));
 
         ingredientImages = new NiftyImage[getIngredientCount()];
         for (int i = 0; i < ingredientImages.length; i++) {
-            ingredientImages[i] = new NiftyImage(nifty.getRenderEngine(), new EntitySlickRenderImage(
+            ingredientImages[i] = new NiftyImage(nifty.getRenderEngine(), new TextureRenderImage(
                     ItemFactory.getInstance().getTemplate(getIngredientItemId(i).getValue())));
         }
-    }
-
-    @Nonnull
-    @Override
-    public ItemId getIngredientItemId(int index) {
-        return getIngredient(index).getItemId();
-    }
-
-    @Nonnull
-    @Override
-    public ItemCount getIngredientAmount(int index) {
-        return getIngredient(index).getCount();
-    }
-
-    @Nonnull
-    @Override
-    public NiftyImage getImage() {
-        return craftImage;
     }
 
     /**
@@ -82,8 +64,26 @@ public class NiftyCraftingItem extends CraftingItem implements CraftingItemEntry
 
     @Nonnull
     @Override
+    public NiftyImage getImage() {
+        return craftImage;
+    }
+
+    @Nonnull
+    @Override
+    public ItemCount getIngredientAmount(int index) {
+        return getIngredient(index).getCount();
+    }
+
+    @Nonnull
+    @Override
     public NiftyImage getIngredientImage(int index) {
         return ingredientImages[index];
+    }
+
+    @Nonnull
+    @Override
+    public ItemId getIngredientItemId(int index) {
+        return getIngredient(index).getItemId();
     }
 
     /**

@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,6 +15,7 @@
  */
 package illarion.client.gui;
 
+import illarion.client.resources.data.AbstractEntityTemplate;
 import illarion.client.resources.data.ItemTemplate;
 import org.illarion.engine.nifty.IgeTextureRenderImage;
 
@@ -26,13 +27,16 @@ import javax.annotation.Nonnull;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public class EntitySlickRenderImage extends IgeTextureRenderImage {
+public class TextureRenderImage extends IgeTextureRenderImage {
     /**
      * Create this render image that refers to a specified entity.
      *
      * @param entity the entity the image refers to
      */
-    public EntitySlickRenderImage(@Nonnull ItemTemplate entity) {
+    public TextureRenderImage(@Nonnull ItemTemplate entity) {
         super(entity.getGuiTexture());
+    }
+    public TextureRenderImage(@Nonnull AbstractEntityTemplate entity) {
+        super(entity.getSprite().getFrame(0));
     }
 }
