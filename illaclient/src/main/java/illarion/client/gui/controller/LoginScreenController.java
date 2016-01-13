@@ -169,7 +169,7 @@ public final class LoginScreenController implements ScreenController, KeyInputHa
             server.addItem(endpoint.getName());
         }
         int serverIndex = IllaClient.getCfg().getInteger("server");
-        if ((serverIndex < 0) || (serverIndex > endpointList.size())) {
+        if ((serverIndex < 0) || (serverIndex >= endpointList.size())) {
             serverIndex = 0;
         }
         server.selectItemByIndex(serverIndex);
