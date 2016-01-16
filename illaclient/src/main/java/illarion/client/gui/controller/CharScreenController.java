@@ -15,12 +15,10 @@
  */
 package illarion.client.gui.controller;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
-import de.lessvoid.nifty.controls.DropDown;
-import de.lessvoid.nifty.controls.DropDownSelectionChangedEvent;
-import de.lessvoid.nifty.controls.Label;
-import de.lessvoid.nifty.controls.ListBox;
+import de.lessvoid.nifty.controls.*;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.input.NiftyStandardInputEvent;
@@ -28,12 +26,21 @@ import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
+import illarion.client.graphics.AvatarEntity;
+import illarion.client.resources.CharacterFactory;
+import illarion.client.resources.data.AvatarTemplate;
 import illarion.client.util.Lang;
+import illarion.client.util.account.AccountSystem;
 import illarion.client.util.account.Credentials;
 import illarion.client.util.account.response.AccountGetCharResponse;
 import illarion.client.util.account.response.AccountGetCharsResponse;
 import illarion.client.util.account.response.AccountGetResponse;
+import illarion.client.util.account.response.CharacterGetResponse;
 import illarion.common.config.ConfigChangedEvent;
+import illarion.common.graphics.CharAnimations;
+import illarion.common.types.AvatarId;
+import illarion.common.types.CharacterId;
+import illarion.common.types.Direction;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 
@@ -47,38 +54,34 @@ import java.util.*;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public final class CharScreenController implements ScreenController, KeyInputHandler {
+    @Nonnull
+    private final AccountSystem accountSystem;
     /**
      * The instance of the Nifty-GUI that is used.
      */
     @Nullable
     private Nifty nifty;
-
     /**
      * The screen this controller is bound to.
      */
     @Nullable
     private Screen screen;
-
     private DropDown<String> serverSelect;
-
     /**
      * The list box that stores the character entries.
      */
     @Nullable
-    private ListBox<String> characterList;
-
+    private ListBox<CharacterEntry> characterList;
     /**
      * The label that displays any problems to the player.
      */
     @Nullable
     private Label statusLabel;
-
     /**
      * This flag is set {@code true} in case the language of the client was changed and the player needs to be
      * informed that a restart of the client is required.
      */
     private boolean showLanguageChangedPopup;
-
     /**
      * The generated popup that is shown in case the client language got changed.
      */
@@ -91,8 +94,10 @@ public final class CharScreenController implements ScreenController, KeyInputHan
 
     /**
      * Create a instance of the character screen controller.
+     * @param accountSystem
      */
-    public CharScreenController() {
+    public CharScreenController(@Nonnull AccountSystem accountSystem) {
+        this.accountSystem = accountSystem;
         AnnotationProcessor.process(this);
     }
 
@@ -105,7 +110,7 @@ public final class CharScreenController implements ScreenController, KeyInputHan
         serverSelect = screen.findNiftyControl("server", DropDown.class);
 
         nifty.setLocale(Lang.getInstance().getLocale());
-        characterList = (ListBox<String>) screen.findNiftyControl("characterList", ListBox.class);
+        characterList = (ListBox<CharacterEntry>) screen.findNiftyControl("characterList", ListBox.class);
         statusLabel = screen.findNiftyControl("statusText", Label.class);
         statusLabel.setHeight(SizeValue.px(20));
         statusLabel.setWidth(SizeValue.px(180));
@@ -157,8 +162,26 @@ public final class CharScreenController implements ScreenController, KeyInputHan
     }
 
     @NiftyEventSubscriber(pattern = "server")
-    public void onServerChanged(String topic, DropDownSelectionChangedEvent event) {
+    public void onServerChanged(@Nonnull String topic, @Nonnull DropDownSelectionChangedEvent<String> event) {
         setSelectedServer(event.getSelectionItemIndex());
+    }
+
+    @NiftyEventSubscriber(pattern = "characterList")
+    public void onSelectedCharacterChanged(@Nonnull String topic,
+                                           @Nonnull ListBoxSelectionChangedEvent<CharacterEntry> event) {
+
+    }
+
+    private void updateCharacterPreview(@Nonnull CharacterEntry character) {
+        ListenableFuture<CharacterGetResponse> response =
+                accountSystem.getCharacterInformation(character.getServerId(), character.getCharacterId());
+    }
+
+    private void buildAvatar(@Nonnull CharacterGetResponse response) {
+        AvatarId id = new AvatarId(response.getRace(), response.getRaceType(), Direction.West, CharAnimations.STAND);
+
+        AvatarTemplate template = CharacterFactory.getInstance().getTemplate(id.getAvatarId());
+        AvatarEntity avatarEntity = new AvatarEntity(template);
     }
 
     private void populateServerList() {
@@ -195,11 +218,12 @@ public final class CharScreenController implements ScreenController, KeyInputHan
         }
 
         AccountGetCharsResponse chars = accountData.getChars().get(index);
+        assert chars != null;
 
         characterList.clear();
         chars.getList().stream()
                 .filter(chr -> chr.getStatus() == 0)
-                .map(AccountGetCharResponse::getName)
+                .map(chr -> new CharacterEntry(chars.getId(), chr))
                 .forEach(characterList::addItem);
     }
 
@@ -268,7 +292,7 @@ public final class CharScreenController implements ScreenController, KeyInputHan
 
         enteringSC.setLoginInformation(credentials.getEndpoint(),
                 accountChars.getId(),
-                characterList.getSelection().get(0),
+                characterList.getSelection().get(0).getName(),
                 credentials.getPassword());
 
         nifty.gotoScreen(enteringScreen.getScreenId());
@@ -294,7 +318,56 @@ public final class CharScreenController implements ScreenController, KeyInputHan
     private static final class LastUsedFirstComparator implements Comparator<AccountGetCharResponse> {
         @Override
         public int compare(AccountGetCharResponse o1, AccountGetCharResponse o2) {
+            if ((o1 == null) && (o2 == null)) {
+                return 0;
+            }
+            if (o1 == null) {
+                return 1;
+            }
+            if (o2 == null) {
+                return -1;
+            }
             return -1 * o1.getLastSaveTime().compareTo(o2.getLastSaveTime());
+        }
+    }
+
+    private static final class CharacterEntry {
+        @Nonnull
+        private final String serverId;
+        @Nonnull
+        private final CharacterId characterId;
+        @Nonnull
+        private final String name;
+
+        private CharacterEntry(@Nonnull String serverId, @Nonnull CharacterId characterId, @Nonnull String name) {
+            this.serverId = serverId;
+            this.characterId = characterId;
+            this.name = name;
+        }
+
+        private CharacterEntry(@Nonnull String serverId, @Nonnull AccountGetCharResponse response) {
+            this(serverId, response.getCharId(), response.getName());
+        }
+
+        @Nonnull
+        public String getServerId() {
+            return serverId;
+        }
+
+        @Nonnull
+        public CharacterId getCharacterId() {
+            return characterId;
+        }
+
+        @Nonnull
+        public String getName() {
+            return name;
+        }
+
+        @Nonnull
+        @Override
+        public String toString() {
+            return name;
         }
     }
 }

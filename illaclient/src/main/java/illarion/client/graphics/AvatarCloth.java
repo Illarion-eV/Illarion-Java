@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -33,7 +33,7 @@ public final class AvatarCloth extends AbstractEntity<AvatarClothTemplate> imple
      * The avatar that is the parent to this cloth instance.
      */
     @Nonnull
-    private final Avatar parent;
+    private final AbstractEntity<?> parent;
 
     /**
      * Standard constructor.
@@ -41,7 +41,7 @@ public final class AvatarCloth extends AbstractEntity<AvatarClothTemplate> imple
      * @param template the template this new cloth instance is build from
      * @param parentAvatar the parent avatar this cloth belong to
      */
-    public AvatarCloth(@Nonnull AvatarClothTemplate template, @Nonnull Avatar parentAvatar) {
+    public AvatarCloth(@Nonnull AvatarClothTemplate template, @Nonnull AbstractEntity<?> parentAvatar) {
         super(template);
         parent = parentAvatar;
     }

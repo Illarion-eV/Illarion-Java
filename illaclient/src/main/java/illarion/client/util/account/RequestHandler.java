@@ -25,6 +25,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import illarion.client.util.Lang;
 import illarion.common.data.IllarionSSLSocketFactory;
+import illarion.common.types.CharacterId;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -73,6 +74,7 @@ class RequestHandler implements AutoCloseable {
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
                 .registerTypeAdapter(Period.class, new PeriodTypeAdapter())
                 .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
+                .registerTypeAdapter(CharacterId.class, new CharacterIdTypeAdapter())
                 .create();
 
         utf8 = Charset.forName("UTF-8");

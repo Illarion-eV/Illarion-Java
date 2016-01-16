@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,14 +16,11 @@
 package illarion.client.graphics;
 
 import illarion.client.IllaClient;
-import illarion.client.graphics.AvatarClothManager.AvatarClothGroup;
 import illarion.client.input.AbstractMouseLocationEvent;
 import illarion.client.input.ClickOnMapEvent;
 import illarion.client.input.CurrentMouseLocationEvent;
 import illarion.client.input.DoubleClickOnMapEvent;
 import illarion.client.resources.CharacterFactory;
-import illarion.client.resources.MiscImageFactory;
-import illarion.client.resources.Resource;
 import illarion.client.resources.data.AvatarTemplate;
 import illarion.client.util.Lang;
 import illarion.client.world.Char;
@@ -32,7 +29,6 @@ import illarion.client.world.World;
 import illarion.client.world.interactive.InteractiveChar;
 import illarion.client.world.movement.TargetMovementHandler;
 import illarion.common.gui.AbstractMultiActionHelper;
-import illarion.common.types.DisplayCoordinate;
 import illarion.common.types.ServerCoordinate;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
@@ -55,7 +51,7 @@ import javax.annotation.Nullable;
  * @author Nop
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-public final class Avatar extends AbstractEntity<AvatarTemplate> implements Resource {
+public final class Avatar extends AvatarEntity {
     @Nonnull
     private static final Logger log = LoggerFactory.getLogger(Avatar.class);
     /**
@@ -68,23 +64,6 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
     private static final Color COLOR_BADLY_HARMED = new ImmutableColor(255, 127, 0);
     private static final Color COLOR_NEAR_DEATH = new ImmutableColor(255, 0, 0);
     private static final Color COLOR_DEAD = new ImmutableColor(173, 173, 173);
-    /**
-     * The frame animation that handles the animation of this avatar.
-     */
-    @Nullable
-    private final FrameAnimation animation;
-    /**
-     * The render system for the clothes of this avatar.
-     */
-    @Nonnull
-    private final transient AvatarClothRenderer clothRender;
-    /**
-     * The mark that is displayed in case the character is the target of a attack.
-     */
-    @Nonnull
-    private final AvatarMarker attackMark;
-    @Nonnull
-    private final AvatarMarker attackAvailableMark;
     /**
      * The text tag is the small text box shown above the avatar that contains
      * the name of the avatar.
@@ -99,49 +78,18 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
     @Nullable
     private final AbstractMultiActionHelper delayedWalkingHandler;
     /**
-     * In case the light shall be animated this value is set to true. In special cases its not good if the light is
-     * animated, such as the switch of levels and the sudden appearance of characters on the map. In such cases
-     */
-    private boolean animateLight;
-    /**
-     * This variable changes to true in case the attack marker is supposed to be displayed.
-     */
-    private boolean attackMarkerVisible;
-    private boolean showAttackAvailable;
-    /**
      * Stores if the name shall be rendered or not. It is checked at every
      * update if this flag is valid or not.
      */
     private boolean renderName;
-    /**
-     * The target light of this avatar. In case the light is set to be animated
-     * the color this avatar is rendered with will approach this target light.
-     */
-    @Nonnull
-    private Color targetLight;
-    private int showHighlight;
 
     private Avatar(@Nonnull AvatarTemplate template, @Nonnull Char parentChar) {
         super(template);
-        attackMark = new AvatarMarker(MiscImageFactory.ATTACK_MARKER, this);
-        attackAvailableMark = new AvatarMarker(MiscImageFactory.ATTACK_MARKER, this);
-
-        clothRender = new AvatarClothRenderer(template.getDirection(), template.getFrames());
-        clothRender.setLight(getLight());
-        clothRender.setFrame(0);
-
-        targetLight = DEFAULT_LIGHT;
-        animateLight = false;
 
         avatarTextTag = new AvatarTextTag();
         avatarTextTag.setAvatarHeight(template.getSprite().getHeight());
 
-        if (template.getFrames() > 1) {
-            animation = new FrameAnimation(this);
-            animation.setup(template.getFrames(), template.getStillFrame(), 150);
-        } else {
-            animation = null;
-        }
+
         this.parentChar = parentChar;
 
         if (parentChar.isHuman()) {
@@ -178,62 +126,6 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         return null;
     }
 
-    public void changeAnimationDuration(int newDuration) {
-        if ((animation != null) && animation.isRunning()) {
-            animation.setDuration(newDuration);
-        }
-    }
-
-    /**
-     * Start a animation for this avatar.
-     *
-     * @param duration the duration of the animation in milliseconds
-     * @param loop true in case the animation shall never stop and rather run
-     * forever
-     */
-    public void animate(int duration, boolean loop) {
-        animate(duration, loop, false, 1.f);
-    }
-
-    /**
-     * Start a animation for this avatar.
-     *
-     * @param duration the duration of the animation in milliseconds
-     * @param loop true in case the animation shall never stop and rather run
-     * forever
-     */
-    public void animate(int duration, boolean loop, boolean expandStorybook, float length) {
-        if (isMarkedAsRemoved()) {
-            log.warn("Animating a removed avatar is illegal.");
-            return;
-        }
-        if (animation == null) {
-            return;
-        }
-
-        if (expandStorybook) {
-            animation.continueStoryboard(length);
-        } else {
-            animation.resetStoryboard();
-        }
-        animation.setDuration(duration);
-        if (loop) {
-            animation.updateMode(FrameAnimationMode.Looped);
-        } else {
-            animation.updateMode();
-        }
-        animation.restart();
-    }
-
-    /**
-     * Stop the execution of the current animation.
-     */
-    public void stopAnimation() {
-        if (animation != null) {
-            animation.stop();
-        }
-    }
-
     /**
      * This function is triggered in case a animation that is not looped finished.
      *
@@ -246,34 +138,6 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         if (isShown()) {
             parentChar.resetAnimation(finished);
         }
-    }
-
-    @Override
-    public int getHighlight() {
-        return showHighlight;
-    }
-
-    /**
-     * Set the light this avatar is colored with. Setting the light with this
-     * function will disable the smooth change of the light and sets the light
-     * color right away.
-     *
-     * @param light the light the avatar is enlighten with
-     */
-    @Override
-    public void setLight(@Nonnull Color light) {
-        super.setLight(light);
-        clothRender.setLight(light);
-        attackMark.setLight(light);
-        attackAvailableMark.setLight(light);
-        attackAvailableMark.setBaseColor(Color.BLACK);
-        animateLight = false;
-    }
-
-    @Override
-    public void setScale(float newScale) {
-        super.setScale(newScale);
-        clothRender.setScale(newScale);
     }
 
     @Override
@@ -291,87 +155,6 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         }
     }
 
-    /**
-     * Draw the avatar to the game screen. Calling this function causes the light value to approach the target light
-     * in case the light values are different. It also draws the name above the avatar in case it needs to be shown.
-     */
-    @Override
-    public void render(@Nonnull Graphics graphics) {
-        if (performRendering()) {
-            if (attackMarkerVisible) {
-                attackMark.render(graphics);
-            } else if (showAttackAvailable) {
-                attackAvailableMark.render(graphics);
-            }
-
-            // draw the avatar, naked!! :O
-            super.render(graphics);
-
-            // draw the clothes
-            clothRender.render(graphics);
-
-            if (renderName) {
-                avatarTextTag.render(graphics);
-            }
-            showHighlight = 0;
-        }
-    }
-
-    @Override
-    public void update(@Nonnull GameContainer container, int delta) {
-        super.update(container, delta);
-
-        if (!isShown()) {
-            return;
-        }
-
-        int usedAlpha = getAlpha();
-
-        clothRender.setAlpha(usedAlpha);
-        clothRender.update(container, delta);
-
-        Color locLight = getLight();
-        if (animateLight && !AnimationUtility.approach(locLight, targetLight, delta)) {
-            targetLight = locLight;
-            animateLight = false;
-        }
-        locLight.setAlpha(usedAlpha);
-
-        Input input = container.getEngine().getInput();
-
-        if (World.getPlayer().isPlayer(parentChar.getCharId())) {
-            renderName = false;
-        } else if (getAlpha() > HIDE_NAME_ALPHA) {
-            renderName = World.getPeople().isAvatarTagShown(parentChar.getCharId()) || input.isKeyDown(Key.RightAlt) ||
-                         isMouseInInteractionRect(input);
-        }
-
-        if (isMouseInInteractionRect(input) && World.getPlayer().getCombatHandler().canBeAttacked(parentChar)) {
-            showAttackAvailable = true;
-            attackAvailableMark.setAlpha(usedAlpha);
-            attackAvailableMark.update(container, delta);
-        } else {
-            showAttackAvailable = false;
-        }
-
-        if (renderName) {
-            avatarTextTag.setDisplayLocation(getDisplayCoordinate());
-            avatarTextTag.update(container, delta);
-        }
-
-        if (World.getPlayer().getCombatHandler().isAttacking(parentChar)) {
-            attackMarkerVisible = true;
-            attackMark.setAlpha(usedAlpha);
-            attackMark.update(container, delta);
-        } else if (World.getPlayer().getCombatHandler().isGoingToAttack(parentChar)) {
-            attackMarkerVisible = true;
-            attackMark.setAlpha(usedAlpha / 2);
-            attackMark.update(container, delta);
-        } else {
-            attackMarkerVisible = false;
-        }
-    }
-
     @Override
     public boolean isEventProcessed(@Nonnull GameContainer container, int delta, @Nonnull SceneEvent event) {
         if (event instanceof ClickOnMapEvent) {
@@ -384,10 +167,10 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
                     return false;
                 }
 
-                showHighlight = 1;
+                setHighlight(1);
                 InteractiveChar interactiveChar = parentChar.getInteractive();
                 if (interactiveChar.isInUseRange()) {
-                    showHighlight = 2;
+                    setHighlight(2);
                 }
                 return true;
             }
@@ -403,41 +186,51 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         return super.isEventProcessed(container, delta, event);
     }
 
-    @Override
-    public void hide() {
-        super.hide();
-        stopAnimation();
-    }
-
     /**
-     * Set the current frame of the avatar. This forwards the frame to the Entity super function but sends it also to
-     * the cloth render.
-     *
-     * @param frame the index of the frame that shall be rendered next
+     * Draw the avatar to the game screen. Calling this function causes the light value to approach the target light
+     * in case the light values are different. It also draws the name above the avatar in case it needs to be shown.
      */
     @Override
-    public void setFrame(int frame) {
-        super.setFrame(frame);
-        clothRender.setFrame(frame);
-        log.debug("{}: Now showing animation frame {}", this, frame);
+    public void render(@Nonnull Graphics graphics) {
+        super.render(graphics);
+        if (performRendering()) {
+            if (renderName) {
+                avatarTextTag.render(graphics);
+            }
+        }
     }
 
     @Override
-    public void setScreenPos(@Nonnull DisplayCoordinate coordinate) {
-        super.setScreenPos(coordinate);
-        clothRender.setScreenPos(coordinate);
-        attackMark.setScreenPos(coordinate);
-        attackAvailableMark.setScreenPos(coordinate);
-    }
+    public void update(@Nonnull GameContainer container, int delta) {
+        if (!isShown()) {
+            return;
+        }
 
-    /**
-     * Change the color of one paper dolling object.
-     *
-     * @param group the group of the object that shall get a different color
-     * @param color the new color that shall be used to color the graphic itself
-     */
-    public void changeClothColor(@Nonnull AvatarClothGroup group, Color color) {
-        clothRender.changeBaseColor(group, color);
+        Input input = container.getEngine().getInput();
+
+        if (World.getPlayer().getCombatHandler().isAttacking(parentChar)) {
+            setAttackMarkerState(AvatarAttackMarkerState.Attacking);
+        } else if (World.getPlayer().getCombatHandler().isGoingToAttack(parentChar)) {
+            setAttackMarkerState(AvatarAttackMarkerState.AttackStarting);
+        } else if (isMouseInInteractionRect(input) && World.getPlayer().getCombatHandler().canBeAttacked(parentChar)) {
+            setAttackMarkerState(AvatarAttackMarkerState.AttackPossible);
+        } else {
+            setAttackMarkerState(AvatarAttackMarkerState.Hidden);
+        }
+
+        super.update(container, delta);
+
+        if (World.getPlayer().isPlayer(parentChar.getCharId())) {
+            renderName = false;
+        } else if (getAlpha() > HIDE_NAME_ALPHA) {
+            renderName = World.getPeople().isAvatarTagShown(parentChar.getCharId()) || input.isKeyDown(Key.RightAlt) ||
+                         isMouseInInteractionRect(input);
+        }
+
+        if (renderName) {
+            avatarTextTag.setDisplayLocation(getDisplayCoordinate());
+            avatarTextTag.update(container, delta);
+        }
     }
 
     /**
@@ -555,51 +348,6 @@ public final class Avatar extends AbstractEntity<AvatarTemplate> implements Reso
         }
 
         return isMouseInInteractionRect(event.getX(), event.getY());
-    }
-
-    /**
-     * Check if the light is currently animated. Means the light is currently changing towards a target light color.
-     *
-     * @return true in case the light is currently animated
-     */
-    public boolean hasAnimatedLight() {
-        return animateLight;
-    }
-
-    /**
-     * Remove a item from the list of items that are shown as clothes.
-     *
-     * @param group the group that shall be cleaned
-     */
-    public void removeClothItem(@Nonnull AvatarClothGroup group) {
-        clothRender.setCloth(group, null);
-    }
-
-    /**
-     * Set a item as a clothing item to a specified body location. In case its defined the cloth renderer will try to
-     * show the cloth on the avatar.
-     *
-     * @param group the group of the item, so the location of the item, where it shall be displayed
-     * @param itemID the ID of the item that shall be displayed
-     */
-    public void setClothItem(@Nonnull AvatarClothGroup group, int itemID) {
-        clothRender.setCloth(group, getTemplate().getClothes().getCloth(group, itemID, this));
-    }
-
-    /**
-     * Set the light this avatar is colored with. Setting the light with this function will enable the smooth change
-     * of the light and so the light color of the avatar will slowly approach the color of the light set with
-     * this function.
-     *
-     * @param light the target light color for this avatar
-     */
-    public void setLightTarget(@Nonnull Color light) {
-        targetLight = light;
-        clothRender.setLight(light);
-        attackMark.setLight(light);
-        attackAvailableMark.setLight(light);
-        attackAvailableMark.setBaseColor(Color.BLACK);
-        animateLight = true;
     }
 
     /**

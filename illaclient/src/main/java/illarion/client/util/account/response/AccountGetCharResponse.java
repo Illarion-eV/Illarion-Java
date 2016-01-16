@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -16,6 +16,7 @@
 package illarion.client.util.account.response;
 
 import com.google.gson.annotations.SerializedName;
+import illarion.common.types.CharacterId;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,6 +27,10 @@ import java.util.Date;
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
 public class AccountGetCharResponse {
+    @Nullable
+    @SerializedName("id")
+    private CharacterId charId;
+
     @Nullable
     @SerializedName("name")
     private String name;
@@ -46,6 +51,13 @@ public class AccountGetCharResponse {
     @Nullable
     @SerializedName("onlineTime")
     private Duration onlineTime;
+
+    @Nonnull
+    public CharacterId getCharId() {
+        assert charId != null;
+
+        return charId;
+    }
 
     @Nonnull
     public String getName() {

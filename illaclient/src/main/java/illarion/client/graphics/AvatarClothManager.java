@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -109,7 +109,7 @@ public final class AvatarClothManager {
      * defined in this storage
      */
     @Nullable
-    public AvatarCloth getCloth(@Nonnull AvatarClothGroup group, int itemID, @Nonnull Avatar parentAvatar) {
+    public AvatarCloth getCloth(@Nonnull AvatarClothGroup group, int itemID, @Nonnull AbstractEntity<?> parentAvatar) {
         ClothFactory factory = existingClothes.get(group);
         if (factory == null) {
             return null;

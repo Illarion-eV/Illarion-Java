@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -58,7 +58,10 @@ public final class AppearanceMsg implements ServerReply {
      * Appearance of the character. This value contains the race and the gender
      * of the character.
      */
-    private int appearance;
+    private int raceId;
+
+    private int typeId;
+
     /**
      * The name of the character.
      */
@@ -112,107 +115,14 @@ public final class AppearanceMsg implements ServerReply {
         itemSlots = new ItemId[Inventory.SLOT_COUNT];
     }
 
-    /**
-     * Get the appearance for a race and a gender.
-     * TODO: This function is plain and utter crap. It needs to go away. Far away. Soon.
-     *
-     * @param race the race ID
-     * @param male {@code true} in case the character is male
-     * @return the appearance ID
-     */
-    private static int getAppearance(int race, boolean male) {
-        switch (race) {
-            case 0: //human
-                return male ? 1 : 16;
-            case 1: //dwarf
-                return male ? 12 : 17;
-            case 2: //halfling
-                return male ? 24 : 25;
-            case 3: //elf
-                return male ? 20 : 19;
-            case 4: //orc
-                return male ? 13 : 18;
-            case 5: //lizardman
-                return 7;
-            case 7: // column of resurrection
-                return 3;
-            case 9: //forest troll
-                return 21;
-            case 10: //mummy
-                return 2;
-            case 11: //skeleton
-                return 5;
-            case 12: //floating eye
-                return 6;
-            case 18: //sheep
-                return 9;
-            case 19: //spider
-                return 10;
-            case 24: //pig
-                return 23;
-            case 27: //wasp
-                return 28;
-            case 30: //golem
-                return 31;
-            case 37: //cow
-                return 40;
-            case 39: //wolf
-                return 42;
-            case 51: //bear
-                return 51;
-            case 52: //raptor
-                return 52;
-            case 53: //zombie
-                return 53;
-            case 54: //hellhound
-                return 54;
-            case 55: //imp
-                return 55;
-            case 56: //iron golem
-                return 56;
-            case 57: //ratman
-                return 57;
-            case 58: //dog
-                return 58;
-            case 59: //beetle
-                return 59;
-            case 60: //fox
-                return 60;
-            case 61: //slime
-                return 61;
-            case 62: //chicken
-                return 62;
-            case 63: //bone dragon
-                return 63;
-            case 111: //rat
-                return 111;
-            case 112: //black dragon
-                return 112;
-            case 113: //rabbit
-                return 113;
-            case 114: //Akaltut
-                return 114;
-            case 115: //fairy
-                return 115;
-            case 116: //deer
-                return 116;
-            case 117: //Ettin
-                return 117;
-            default:
-                log.warn("Unexpected race id {}. Using appearance with the same ID by chance.", race);
-                return race;
-        }
-    }
-
     @Override
     public void decode(@Nonnull NetCommReader reader) throws IOException {
         charId = new CharacterId(reader);
         name = reader.readString();
         customName = reader.readString();
 
-        int race = reader.readUShort();
-        boolean male = reader.readUByte() == 0;
-        appearance = getAppearance(race, male);
+        raceId = reader.readUShort();
+        typeId = reader.readUByte();
         hitPoints = reader.readUShort();
         size = reader.readUByte();
         hairID = reader.readUByte();
@@ -249,7 +159,7 @@ public final class AppearanceMsg implements ServerReply {
         character.setName(name);
         character.setCustomName(customName);
 
-        character.setAppearance(appearance);
+        character.setAppearance(raceId, typeId);
         character.setWearingItem(AvatarClothGroup.Hair, hairID);
         character.setWearingItem(AvatarClothGroup.Beard, beardID);
 
