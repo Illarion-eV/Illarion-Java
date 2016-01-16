@@ -17,4 +17,20 @@ public class CharacterItemResponse {
 
     @SerializedName("quality")
     private int quality;
+
+    public int getId() {
+        return id;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public int getQuality() {
+        return quality;
+    }
 }

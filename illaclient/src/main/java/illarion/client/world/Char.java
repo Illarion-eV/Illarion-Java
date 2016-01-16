@@ -1279,30 +1279,9 @@ public final class Char implements AnimatedMove {
             return;
         }
         applyLightValue(itemId);
-        switch (slot) {
-            case 1:
-                setWearingItem(AvatarClothGroup.Hat, itemId.getValue());
-                break;
-            case 3:
-                setWearingItem(AvatarClothGroup.Chest, itemId.getValue());
-                break;
-            case 5:
-                setWearingItem(AvatarClothGroup.FirstHand, itemId.getValue());
-                break;
-            case 6:
-                setWearingItem(AvatarClothGroup.SecondHand, itemId.getValue());
-                break;
-            case 9:
-                setWearingItem(AvatarClothGroup.Trousers, itemId.getValue());
-                break;
-            case 10:
-                setWearingItem(AvatarClothGroup.Shoes, itemId.getValue());
-                break;
-            case 11:
-                setWearingItem(AvatarClothGroup.Coat, itemId.getValue());
-                break;
-            default:
-                break;
+        AvatarClothGroup group = AvatarClothGroup.getFromInventorySlot(slot);
+        if (group != null) {
+            setWearingItem(group, itemId.getValue());
         }
     }
 

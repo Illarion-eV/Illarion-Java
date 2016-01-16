@@ -15,27 +15,30 @@
  */
 package illarion.client.gui.controller;
 
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.NiftyEventSubscriber;
 import de.lessvoid.nifty.controls.*;
 import de.lessvoid.nifty.elements.Element;
+import de.lessvoid.nifty.elements.render.ImageRenderer;
 import de.lessvoid.nifty.input.NiftyInputEvent;
 import de.lessvoid.nifty.input.NiftyStandardInputEvent;
+import de.lessvoid.nifty.render.NiftyImage;
 import de.lessvoid.nifty.screen.KeyInputHandler;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.SizeValue;
+import illarion.client.graphics.AvatarClothManager.AvatarClothGroup;
 import illarion.client.graphics.AvatarEntity;
+import illarion.client.gui.EntityRenderImage;
 import illarion.client.resources.CharacterFactory;
 import illarion.client.resources.data.AvatarTemplate;
 import illarion.client.util.Lang;
 import illarion.client.util.account.AccountSystem;
 import illarion.client.util.account.Credentials;
-import illarion.client.util.account.response.AccountGetCharResponse;
-import illarion.client.util.account.response.AccountGetCharsResponse;
-import illarion.client.util.account.response.AccountGetResponse;
-import illarion.client.util.account.response.CharacterGetResponse;
+import illarion.client.util.account.response.*;
 import illarion.common.config.ConfigChangedEvent;
 import illarion.common.graphics.CharAnimations;
 import illarion.common.types.AvatarId;
@@ -43,6 +46,7 @@ import illarion.common.types.CharacterId;
 import illarion.common.types.Direction;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
+import org.illarion.engine.GameContainer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -56,6 +60,9 @@ import java.util.*;
 public final class CharScreenController implements ScreenController, KeyInputHandler {
     @Nonnull
     private final AccountSystem accountSystem;
+    @Nonnull
+    private final GameContainer container;
+
     /**
      * The instance of the Nifty-GUI that is used.
      */
@@ -91,12 +98,15 @@ public final class CharScreenController implements ScreenController, KeyInputHan
     private Credentials credentials;
     @Nullable
     private AccountGetResponse accountData;
+    @Nullable
+    private Element characterPreviewImage;
 
     /**
      * Create a instance of the character screen controller.
      * @param accountSystem
      */
-    public CharScreenController(@Nonnull AccountSystem accountSystem) {
+    public CharScreenController(@Nonnull GameContainer container, @Nonnull AccountSystem accountSystem) {
+        this.container = container;
         this.accountSystem = accountSystem;
         AnnotationProcessor.process(this);
     }
@@ -117,6 +127,8 @@ public final class CharScreenController implements ScreenController, KeyInputHan
 
         characterList.getElement().addInputHandler(this);
         popupLanguageChange = nifty.createPopup("languageChanged");
+
+        characterPreviewImage = screen.findElementById("characterImage");
 
         /* Values for the server list are already set. */
         if ((credentials != null) && (accountData != null)) {
@@ -169,19 +181,77 @@ public final class CharScreenController implements ScreenController, KeyInputHan
     @NiftyEventSubscriber(pattern = "characterList")
     public void onSelectedCharacterChanged(@Nonnull String topic,
                                            @Nonnull ListBoxSelectionChangedEvent<CharacterEntry> event) {
-
+        List<CharacterEntry> selection = event.getSelection();
+        if (selection.isEmpty()) {
+            clearAvatar();
+        } else {
+            updateCharacterPreview(event.getSelection().get(0));
+        }
     }
 
     private void updateCharacterPreview(@Nonnull CharacterEntry character) {
+        assert nifty != null;
+
         ListenableFuture<CharacterGetResponse> response =
                 accountSystem.getCharacterInformation(character.getServerId(), character.getCharacterId());
+
+        Futures.addCallback(response, new FutureCallback<CharacterGetResponse>() {
+            @Override
+            public void onSuccess(@Nullable CharacterGetResponse result) {
+                if (result == null) {
+                    clearAvatar();
+                } else {
+                    buildAvatar(result);
+                }
+            }
+
+            @Override
+            public void onFailure(@Nonnull Throwable t) {
+                clearAvatar();
+            }
+        }, new NiftyExecutor(nifty));
     }
 
     private void buildAvatar(@Nonnull CharacterGetResponse response) {
+        assert nifty != null;
+        assert characterPreviewImage != null;
+
         AvatarId id = new AvatarId(response.getRace(), response.getRaceType(), Direction.West, CharAnimations.STAND);
 
         AvatarTemplate template = CharacterFactory.getInstance().getTemplate(id.getAvatarId());
-        AvatarEntity avatarEntity = new AvatarEntity(template);
+        AvatarEntity avatarEntity = new AvatarEntity(template, true);
+
+        avatarEntity.setClothItem(AvatarClothGroup.Hair, response.getPaperDoll().getHairId());
+        avatarEntity.setClothItem(AvatarClothGroup.Beard, response.getPaperDoll().getBeardId());
+        avatarEntity.changeClothColor(AvatarClothGroup.Hair, response.getPaperDoll().getHairColour().getColour());
+        avatarEntity.changeBaseColor(response.getPaperDoll().getSkinColour().getColour());
+
+        for (CharacterItemResponse item : response.getItems()) {
+            AvatarClothGroup group = AvatarClothGroup.getFromPositionNumber(item.getPosition());
+            if (group == null) {
+                continue;
+            }
+            if (item.getId() == 0) {
+                avatarEntity.removeClothItem(group);
+            } else {
+                avatarEntity.setClothItem(group, item.getId());
+            }
+        }
+
+        ImageRenderer renderer = characterPreviewImage.getRenderer(ImageRenderer.class);
+        assert renderer != null;
+
+        NiftyImage image = new NiftyImage(nifty.getRenderEngine(), new EntityRenderImage(container, avatarEntity));
+        renderer.setImage(image);
+        characterPreviewImage.setConstraintHeight(SizeValue.px(image.getHeight()));
+        characterPreviewImage.setConstraintWidth(SizeValue.px(image.getWidth()));
+        characterPreviewImage.getParent().layoutElements();
+    }
+
+    private void clearAvatar() {
+        ImageRenderer renderer = characterPreviewImage.getRenderer(ImageRenderer.class);
+        assert renderer != null;
+        renderer.setImage(null);
     }
 
     private void populateServerList() {
@@ -225,6 +295,13 @@ public final class CharScreenController implements ScreenController, KeyInputHan
                 .filter(chr -> chr.getStatus() == 0)
                 .map(chr -> new CharacterEntry(chars.getId(), chr))
                 .forEach(characterList::addItem);
+
+        if (!characterList.getItems().isEmpty()) {
+            characterList.selectItemByIndex(0);
+            updateCharacterPreview(characterList.getSelection().get(0));
+        } else {
+            clearAvatar();
+        }
     }
 
     private void setDefaultSelectedServer() {

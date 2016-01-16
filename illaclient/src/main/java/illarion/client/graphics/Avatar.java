@@ -84,7 +84,7 @@ public final class Avatar extends AvatarEntity {
     private boolean renderName;
 
     private Avatar(@Nonnull AvatarTemplate template, @Nonnull Char parentChar) {
-        super(template);
+        super(template, false);
 
         avatarTextTag = new AvatarTextTag();
         avatarTextTag.setAvatarHeight(template.getSprite().getHeight());

@@ -56,6 +56,11 @@ public final class AvatarCloth extends AbstractEntity<AvatarClothTemplate> imple
         // do nothing
     }
 
+    @Override
+    protected boolean performRendering() {
+        return parent.performRendering();
+    }
+
     /**
      * {@inheritDoc}
      * <p>

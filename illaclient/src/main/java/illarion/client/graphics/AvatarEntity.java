@@ -67,8 +67,12 @@ public class AvatarEntity extends AbstractEntity<AvatarTemplate> implements Reso
     @Nonnull
     private Color targetLight;
 
-    public AvatarEntity(@Nonnull AvatarTemplate template) {
+    private final boolean uiMode;
+
+    public AvatarEntity(@Nonnull AvatarTemplate template, boolean uiMode) {
         super(template);
+
+        this.uiMode = uiMode;
 
         targetLight = DEFAULT_LIGHT;
 
@@ -191,6 +195,16 @@ public class AvatarEntity extends AbstractEntity<AvatarTemplate> implements Reso
     public void hide() {
         super.hide();
         stopAnimation();
+    }
+
+    @Override
+    public boolean isShown() {
+        return uiMode || super.isShown();
+    }
+
+    @Override
+    protected boolean performRendering() {
+        return uiMode || super.performRendering();
     }
 
     /**

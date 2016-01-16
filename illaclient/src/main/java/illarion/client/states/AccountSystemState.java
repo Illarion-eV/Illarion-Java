@@ -55,7 +55,7 @@ public class AccountSystemState implements GameState {
         nifty.registerScreenController(
                 new LoginScreenController(container.getEngine(), accountSystem),
                 new RegisterScreenController(accountSystem),
-                new CharScreenController(accountSystem),
+                new CharScreenController(container, accountSystem),
                 new CreditsStartScreenController(container.getEngine()),
                 new EnteringScreenController(game, container));
 

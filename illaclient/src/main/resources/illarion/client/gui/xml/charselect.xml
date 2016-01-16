@@ -27,10 +27,10 @@
             <effect>
                 <onStartScreen name="fade" start="#00" end="#ff" inherit="true"/>
             </effect>
-            <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#0000"
+            <panel height="300px" width="100%" align="center" valign="center" backgroundColor="#0000"
                    childLayout="vertical" visibleToMouse="true">
                 <image filename="gui/illarion_title.png" imageMode="normal" align="center"/>
-                <control name="label" id="statusText" text=""/>
+                <control name="label" id="statusText" text="" align="center"/>
                 <panel height="30px"/>
                 <panel height="300px" width="400px" align="center" valign="center" backgroundColor="#0000"
                        childLayout="vertical" visibleToMouse="true">
@@ -40,6 +40,9 @@
                     <panel childLayout="center" visibleToMouse="true" align="center" marginBottom="30px">
                         <control id="characterList" name="listBox" vertical="on" horizontal="off"
                                  displayItems="5" selection="Single" forceSelection="true"/>
+                        <panel style="nifty-panel-small" childLayout="center" marginLeft="320px" width="200px">
+                            <image id="characterImage" valign="bottom" align="center" marginBottom="10px" />
+                        </panel>
                     </panel>
 
                     <panel childLayout="horizontal" visibleToMouse="true">

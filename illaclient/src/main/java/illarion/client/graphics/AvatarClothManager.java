@@ -145,57 +145,82 @@ public final class AvatarClothManager {
         /**
          * The index of the group of clothes that contains the beards types this avatar could wear.
          */
-        Beard(1),
+        Beard(1, -1, -1),
 
         /**
          * The index of the groups of all chest parts, such as shirts, armors and so on this avatar can wear.
          */
-        Chest(3),
+        Chest(3, 3, 4),
 
         /**
          * The index of the groups of all coats a avatar can wear. Such as coats, capes, dresses.
          */
-        Coat(4),
+        Coat(4, 11, 12),
 
         /**
          * The index of the group of items the avatar can wear in the right hand. Tools weapons and similar things could
          * be listed there.
          */
-        FirstHand(5),
+        FirstHand(5, 5, 7),
 
         /**
          * The index of the group of clothes that contains the hair types this avatar could wear.
          */
-        Hair(0),
+        Hair(0, -1, -1),
 
         /**
          * The index of the groups of all hats this avatar can wear.
          */
-        Hat(2),
+        Hat(2, 1, 1),
 
         /**
          * The index of the group of items the avatar can wear in the left hand. Tools weapons and similar things could
          * be listed there.
          */
-        SecondHand(6),
+        SecondHand(6, 6, 6),
 
         /**
          * The index of the group of shoes and boots a avatar can wear.
          */
-        Shoes(8),
+        Shoes(8, 10, 11),
 
         /**
          * The index of the group of trousers a avatar can wear.
          */
-        Trousers(7);
-        private final int groupId;
+        Trousers(7, 9, 10);
 
-        AvatarClothGroup(int id) {
+        private final int groupId;
+        private final int inventorySlot;
+        private final int positionNumber;
+
+        AvatarClothGroup(int id, int inventorySlot, int positionNumber) {
             groupId = id;
+            this.inventorySlot = inventorySlot;
+            this.positionNumber = positionNumber;
         }
 
         public int getGroupId() {
             return groupId;
+        }
+
+        @Nullable
+        public static AvatarClothGroup getFromInventorySlot(int slotId) {
+            for (AvatarClothGroup group : values()) {
+                if (group.inventorySlot == slotId) {
+                    return group;
+                }
+            }
+            return null;
+        }
+
+        @Nullable
+        public static AvatarClothGroup getFromPositionNumber(int position) {
+            for (AvatarClothGroup group : values()) {
+                if (group.positionNumber == position) {
+                    return group;
+                }
+            }
+            return null;
         }
     }
 }

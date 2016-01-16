@@ -17,4 +17,20 @@ public class CharacterPaperDollResponse {
 
     @SerializedName("hairColour")
     private ColourResponse hairColour;
+
+    public int getHairId() {
+        return hairId;
+    }
+
+    public int getBeardId() {
+        return beardId;
+    }
+
+    public ColourResponse getSkinColour() {
+        return skinColour;
+    }
+
+    public ColourResponse getHairColour() {
+        return hairColour;
+    }
 }
