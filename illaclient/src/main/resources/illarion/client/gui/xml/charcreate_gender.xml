@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ This file is part of the Illarion project.
+  ~
+  ~ Copyright © 2016 - Illarion e.V.
+  ~
+  ~ Illarion is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Illarion is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  -->
+<nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
+    <resourceBundle id="charCreateGender-bundle" filename="charCreateGender"/>
+
+    <screen id="characterCreateGender" controller="illarion.client.gui.controller.create.GenderScreenController">
+        <layer childLayout="vertical">
+            <panel height="422px" width="*" backgroundImage="gui/window_background.png"
+                   imageMode="repeat:0,0,1024,422"/>
+        </layer>
+
+        <layer childLayout="center">
+            <effect>
+                <onStartScreen name="fade" start="#00" end="#ff" inherit="true"/>
+            </effect>
+            <panel height="300px" width="100%" align="center" valign="center" backgroundColor="#0000"
+                   childLayout="vertical" marginBottom="25px">
+                <control name="label" text="${charCreateGender-bundle.description}" align="center"
+                         wrap="true" width="450px" marginBottom="30px" />
+                <panel width="600px" childLayout="horizontal">
+                    <panel width="300px" childLayout="vertical">
+                        <control id="maleBtn" name="button" label="${charCreateGender-bundle.male}" width="250px"
+                                 height="35px" align="center" />
+                        <panel width="300px" height="100px" childLayout="horizontal">
+                            <panel height="100px" width="50px" childLayout="center">
+                                <image id="humanMale" align="center" valign="bottom" />
+                            </panel>
+                            <panel height="100px" width="50px" childLayout="center">
+                                <image id="dwarfMale" align="center" valign="bottom" />
+                            </panel>
+                            <panel height="100px" width="50px" childLayout="center">
+                                <image id="elfMale" align="center" valign="bottom" />
+                            </panel>
+                            <panel height="100px" width="50px" childLayout="center">
+                                <image id="halflingMale" align="center" valign="bottom" />
+                            </panel>
+                            <panel height="100px" width="50px" childLayout="center">
+                                <image id="orcMale" align="center" valign="bottom" />
+                            </panel>
+                            <panel height="100px" width="50px" childLayout="center">
+                                <image id="lizardMale" align="center" valign="bottom" />
+                            </panel>
+                        </panel>
+                    </panel>
+                    <panel width="300px">
+                        <control id="maleBtn" name="button" label="${charCreateGender-bundle.female}" width="250px"
+                                 height="35px" align="center" />
+                        <panel width="300px" height="100px" childLayout="horizontal">
+                            <panel height="100px" width="50px" childLayout="center">
+                                <image id="humanFemale" align="center" valign="bottom" />
+                            </panel>
+                            <panel height="100px" width="50px" childLayout="center">
+                                <image id="dwarfFemale" align="center" valign="bottom" />
+                            </panel>
+                            <panel height="100px" width="50px" childLayout="center">
+                                <image id="elfFemale" align="center" valign="bottom" />
+                            </panel>
+                            <panel height="100px" width="50px" childLayout="center">
+                                <image id="halflingFemale" align="center" valign="bottom" />
+                            </panel>
+                            <panel height="100px" width="50px" childLayout="center">
+                                <image id="orcFemale" align="center" valign="bottom" />
+                            </panel>
+                            <panel height="100px" width="50px" childLayout="center">
+                                <image id="lizardFemale" align="center" valign="bottom" />
+                            </panel>
+                        </panel>
+                    </panel>
+                </panel>
+
+                <control id="cancelBtn" name="button" label="${charCreateGender-bundle.cancel}"
+                         width="100px" height="35px" />
+            </panel>
+        </layer>
+    </screen>
+</nifty>
