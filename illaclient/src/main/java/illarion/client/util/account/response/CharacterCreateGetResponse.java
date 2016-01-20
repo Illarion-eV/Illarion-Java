@@ -17,6 +17,7 @@ package illarion.client.util.account.response;
 
 import com.google.gson.annotations.SerializedName;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
@@ -34,6 +35,7 @@ public class CharacterCreateGetResponse {
     @SerializedName("error")
     private ErrorResponse error;
 
+    @Nonnull
     public List<RaceResponse> getRaces() {
         if (races == null) {
             throw new IllegalStateException("This object is in error state. Can't fetch anything but the error.");
@@ -41,6 +43,7 @@ public class CharacterCreateGetResponse {
         return Collections.unmodifiableList(races);
     }
 
+    @Nonnull
     public List<StartPackResponse> getStartPacks() {
         if (startPacks == null) {
             throw new IllegalStateException("This object is in error state. Can't fetch anything but the error.");

@@ -1,6 +1,22 @@
+/*
+ * This file is part of the Illarion project.
+ *
+ * Copyright © 2016 - Illarion e.V.
+ *
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Illarion is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
 package illarion.client.util.account;
 
 import javax.annotation.Nonnull;
+import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 
 /**
@@ -8,7 +24,7 @@ import java.net.PasswordAuthentication;
  *
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-class Authenticator extends java.net.Authenticator {
+class IllarionAuthenticator extends Authenticator {
     /**
      * The user name that is used to authenticate with the account system.
      */
@@ -28,11 +44,12 @@ class Authenticator extends java.net.Authenticator {
      * @param userName the user name
      * @param password the password
      */
-    Authenticator(@Nonnull String userName, @Nonnull String password) {
+    IllarionAuthenticator(@Nonnull String userName, @Nonnull String password) {
         this.userName = userName;
         this.password = password;
     }
 
+    @Nonnull
     @Override
     public PasswordAuthentication getPasswordAuthentication() {
         return new PasswordAuthentication(userName, password.toCharArray());

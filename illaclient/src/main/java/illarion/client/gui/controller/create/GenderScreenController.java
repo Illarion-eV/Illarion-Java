@@ -39,6 +39,7 @@ import illarion.common.types.AvatarId;
 import illarion.common.types.Direction;
 import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -102,65 +103,7 @@ public final class GenderScreenController implements ScreenController {
         }
 
         ListenableFuture<CharacterCreateGetResponse> response = accountSystem.getCharacterCreateInformation(serverId);
-        ListenableFuture<EntityRenderImage[]> renderImages = Futures.transform(response, new Function<CharacterCreateGetResponse, EntityRenderImage[]>() {
-            @Nullable
-            @Override
-            public EntityRenderImage[] apply(@Nullable CharacterCreateGetResponse input) {
-                if (input == null) {
-                    return null;
-                }
-
-                EntityRenderImage[] result = new EntityRenderImage[raceImages.length];
-
-                for (@Nonnull RaceResponse race : input.getRaces()) {
-                    for (@Nonnull RaceTypeResponse raceType : race.getTypes()) {
-                        AvatarId id = new AvatarId(race.getId(), raceType.getId(),
-                                                   (raceType.getId() == 0) ? Direction.South : Direction.West,
-                                                   CharAnimations.STAND);
-
-                        AvatarTemplate template = CharacterFactory.getInstance().getTemplate(id.getAvatarId());
-                        AvatarEntity avatarEntity = new AvatarEntity(template, true);
-
-                        List<IdNameResponse> beards = raceType.getBeards();
-                        if (!beards.isEmpty()) {
-                            avatarEntity.setClothItem(AvatarClothGroup.Beard, getRandom(beards).getId());
-                        }
-                        List<IdNameResponse> hairs = raceType.getHairs();
-                        if (!hairs.isEmpty()) {
-                            avatarEntity.setClothItem(AvatarClothGroup.Hair, getRandom(hairs).getId());
-                        }
-                        List<ColourResponse> skinColours = raceType.getSkinColours();
-                        if (!skinColours.isEmpty()) {
-                            avatarEntity.changeBaseColor(getRandom(skinColours).getColour()) ;
-                        }
-                        List<ColourResponse> hairColours = raceType.getHairColours();
-                        if (!hairColours.isEmpty()) {
-                            Color hairColor = getRandom(hairColours).getColour();
-                            avatarEntity.changeClothColor(AvatarClothGroup.Hair, hairColor);
-                            avatarEntity.changeClothColor(AvatarClothGroup.Beard, hairColor);
-                        }
-
-                        List<StartPackResponse> startPacks = input.getStartPacks();
-                        StartPackResponse startPack = getRandom(startPacks);
-
-                        for (StartPackItemsResponse item : startPack.getItems()) {
-                            AvatarClothGroup group = AvatarClothGroup.getFromPositionNumber(item.getPosition());
-                            if (group == null) {
-                                continue;
-                            }
-                            if (item.getItemId() != 0) {
-                                avatarEntity.setClothItem(group, item.getItemId());
-                            }
-                        }
-
-                        int arrayIndex = (race.getId() * 2) + raceType.getId();
-                        result[arrayIndex] = new EntityRenderImage(container, avatarEntity);
-                    }
-                }
-
-                return result;
-            }
-        });
+        ListenableFuture<EntityRenderImage[]> renderImages = Futures.transform(response, new CreateEntityImagesFunction());
         Futures.addCallback(renderImages, new FutureCallback<EntityRenderImage[]>() {
             @Override
             public void onSuccess(@Nullable EntityRenderImage[] result) {
@@ -207,5 +150,67 @@ public final class GenderScreenController implements ScreenController {
 
     public void setServerId(@Nullable String serverId) {
         this.serverId = serverId;
+    }
+
+    private final class CreateEntityImagesFunction implements Function<CharacterCreateGetResponse, EntityRenderImage[]> {
+        @Nullable
+        @Override
+        @Contract("null -> null; !null -> !null")
+        public EntityRenderImage[] apply(@Nullable CharacterCreateGetResponse input) {
+            if (input == null) {
+                return null;
+            }
+            assert raceImages != null;
+
+            EntityRenderImage[] result = new EntityRenderImage[raceImages.length];
+
+            for (@Nonnull RaceResponse race : input.getRaces()) {
+                for (@Nonnull RaceTypeResponse raceType : race.getTypes()) {
+                    AvatarId id = new AvatarId(race.getId(), raceType.getId(),
+                                               (raceType.getId() == 0) ? Direction.South : Direction.West,
+                                               CharAnimations.STAND);
+
+                    AvatarTemplate template = CharacterFactory.getInstance().getTemplate(id.getAvatarId());
+                    AvatarEntity avatarEntity = new AvatarEntity(template, true);
+
+                    List<IdNameResponse> beards = raceType.getBeards();
+                    if (!beards.isEmpty()) {
+                        avatarEntity.setClothItem(AvatarClothGroup.Beard, getRandom(beards).getId());
+                    }
+                    List<IdNameResponse> hairs = raceType.getHairs();
+                    if (!hairs.isEmpty()) {
+                        avatarEntity.setClothItem(AvatarClothGroup.Hair, getRandom(hairs).getId());
+                    }
+                    List<ColourResponse> skinColours = raceType.getSkinColours();
+                    if (!skinColours.isEmpty()) {
+                        avatarEntity.changeBaseColor(getRandom(skinColours).getColour()) ;
+                    }
+                    List<ColourResponse> hairColours = raceType.getHairColours();
+                    if (!hairColours.isEmpty()) {
+                        Color hairColor = getRandom(hairColours).getColour();
+                        avatarEntity.changeClothColor(AvatarClothGroup.Hair, hairColor);
+                        avatarEntity.changeClothColor(AvatarClothGroup.Beard, hairColor);
+                    }
+
+                    List<StartPackResponse> startPacks = input.getStartPacks();
+                    StartPackResponse startPack = getRandom(startPacks);
+
+                    for (StartPackItemsResponse item : startPack.getItems()) {
+                        AvatarClothGroup group = AvatarClothGroup.getFromPositionNumber(item.getPosition());
+                        if (group == null) {
+                            continue;
+                        }
+                        if (item.getItemId() != 0) {
+                            avatarEntity.setClothItem(group, item.getItemId());
+                        }
+                    }
+
+                    int arrayIndex = (race.getId() * 2) + raceType.getId();
+                    result[arrayIndex] = new EntityRenderImage(container, avatarEntity);
+                }
+            }
+
+            return result;
+        }
     }
 }

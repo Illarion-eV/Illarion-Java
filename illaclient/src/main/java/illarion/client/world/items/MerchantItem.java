@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -29,54 +29,29 @@ import javax.annotation.Nonnull;
  */
 public class MerchantItem {
     /**
-     * This enumerator contains all possible item types.
-     */
-    public enum MerchantItemType {
-        /**
-         * This item is a item that is sold by the NPC.
-         */
-        SellingItem,
-
-        /**
-         * This item is a item that is bought by the NPC for a good price.
-         */
-        BuyingPrimaryItem,
-
-        /**
-         * This item is a item that is bought by the NPC for a poor price.
-         */
-        BuyingSecondaryItem
-    }
-
-    /**
      * The index of the item inside the list of items as it was transferred.
      */
     private final int index;
-
     /**
      * The ID of the item.
      */
     @Nonnull
     private final ItemId itemId;
-
     /**
      * The name that is supposed to be displayed along with the item.
      */
     @Nonnull
     private final String name;
-
     /**
      * The price of the item in copper coins.
      */
     @Nonnull
     private final Money price;
-
     /**
      * The type of this item.
      */
     @Nonnull
     private final MerchantItemType type;
-
     /**
      * The amount of items sold at once.
      */
@@ -94,7 +69,7 @@ public class MerchantItem {
      * @param amount the amount of items sold at once
      */
     public MerchantItem(
-            int itemIndex, MerchantItemType itemType, ItemId id, String itemName, long itemPrice, ItemCount amount) {
+            int itemIndex, @Nonnull MerchantItemType itemType, @Nonnull ItemId id, @Nonnull String itemName, long itemPrice, @Nonnull ItemCount amount) {
         index = itemIndex;
         type = itemType;
         itemId = id;
@@ -113,7 +88,7 @@ public class MerchantItem {
      * @param itemPrice the price of the item in copper coins
      */
     public MerchantItem(
-            int itemIndex, MerchantItemType itemType, ItemId id, String itemName, long itemPrice) {
+            int itemIndex, @Nonnull MerchantItemType itemType, @Nonnull ItemId id, @Nonnull String itemName, long itemPrice) {
         this(itemIndex, itemType, id, itemName, itemPrice, ItemCount.getInstance(1));
     }
 
@@ -191,6 +166,12 @@ public class MerchantItem {
     }
 
     @Override
+    @Contract(pure = true)
+    public int hashCode() {
+        return getItemId().hashCode();
+    }
+
+    @Override
     @Contract(value = "null -> false", pure = true)
     public boolean equals(Object obj) {
         if (super.equals(obj)) {
@@ -207,15 +188,29 @@ public class MerchantItem {
         return false;
     }
 
-    @Override
-    @Contract(pure = true)
-    public int hashCode() {
-        return getItemId().hashCode();
-    }
-
     @Nonnull
     @Override
     public String toString() {
         return "Merchant Item ID(" + itemId + ") " + name + " at index: " + index;
+    }
+
+    /**
+     * This enumerator contains all possible item types.
+     */
+    public enum MerchantItemType {
+        /**
+         * This item is a item that is sold by the NPC.
+         */
+        SellingItem,
+
+        /**
+         * This item is a item that is bought by the NPC for a good price.
+         */
+        BuyingPrimaryItem,
+
+        /**
+         * This item is a item that is bought by the NPC for a poor price.
+         */
+        BuyingSecondaryItem
     }
 }

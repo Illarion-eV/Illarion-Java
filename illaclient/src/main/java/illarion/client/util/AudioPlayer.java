@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -66,6 +66,11 @@ public final class AudioPlayer implements EventTopicSubscriber<ConfigChangedEven
     private AudioPlayer(){
     }
 
+    @Nonnull
+    public static AudioPlayer getInstance(){
+        return INSTANCE;
+    }
+
     /**
      * Initiates the AudioPlayer and subscribes to the proper config changes
      * Needs to be called before the AudioPlayer can be used
@@ -94,14 +99,14 @@ public final class AudioPlayer implements EventTopicSubscriber<ConfigChangedEven
      * @param music the track to be compared against
      * @return  true if music is the track  being played
      */
-    public boolean isCurrentMusic(Music music) {
+    public boolean isCurrentMusic(@Nonnull Music music) {
         Sounds sounds = this.sounds;
-        return sounds != null && sounds.isMusicPlaying(music);
+        return (sounds != null) && sounds.isMusicPlaying(music);
     }
 
-    public boolean isCurrentSound(Sound sound, int handle){
+    public boolean isCurrentSound(@Nonnull Sound sound, int handle){
         Sounds sounds = this.sounds;
-        return sounds != null && sounds.isSoundPlaying(sound, handle);
+        return (sounds != null) && sounds.isSoundPlaying(sound, handle);
     }
 
     /**
@@ -131,6 +136,18 @@ public final class AudioPlayer implements EventTopicSubscriber<ConfigChangedEven
     }
 
     /**
+     * Gets the current volume used by the music
+     */
+    public float getMusicVolume(){
+        Sounds sounds = this.sounds;
+        if (sounds != null) {
+            return sounds.getMusicVolume();
+        } else {
+            return 0.0f;
+        }
+    }
+
+    /**
      * Sets the volume of the music played
      * Does NOT save the change to the config file
      * @param volume the new value of the volume
@@ -143,12 +160,12 @@ public final class AudioPlayer implements EventTopicSubscriber<ConfigChangedEven
     }
 
     /**
-     * Gets the current volume used by the music
+     * Gets the current volume used by the sound effects
      */
-    public float getMusicVolume(){
+    public float getSoundVolume(){
         Sounds sounds = this.sounds;
         if (sounds != null) {
-            return sounds.getMusicVolume();
+            return sounds.getSoundVolume();
         } else {
             return 0.0f;
         }
@@ -165,18 +182,6 @@ public final class AudioPlayer implements EventTopicSubscriber<ConfigChangedEven
             sounds.setSoundVolume(volume / Player.MAX_CLIENT_VOL);
         }
     }
-    /**
-     * Gets the current volume used by the sound effects
-     */
-    public float getSoundVolume(){
-        Sounds sounds = this.sounds;
-        if (sounds != null) {
-            return sounds.getSoundVolume();
-        } else {
-            return 0.0f;
-        }
-    }
-
 
     /**
      * Plays the last Music given
@@ -187,9 +192,14 @@ public final class AudioPlayer implements EventTopicSubscriber<ConfigChangedEven
         Sounds sounds = this.sounds;
         Music lastMusic = this.lastMusic;
 
-        if (sounds != null && lastMusic != null) {
+        if ((sounds != null) && (lastMusic != null)) {
             sounds.playMusic(lastMusic, 0, 0);
         }
+    }
+
+    @Nullable
+    public Music getLastMusic(){
+        return lastMusic;
     }
 
     /**
@@ -199,11 +209,6 @@ public final class AudioPlayer implements EventTopicSubscriber<ConfigChangedEven
      */
     public void setLastMusic(@Nullable Music music){
         lastMusic = music;
-    }
-
-    @Nullable
-    public Music getLastMusic(){
-        return lastMusic;
     }
 
     public void stopMusic(){
@@ -218,11 +223,6 @@ public final class AudioPlayer implements EventTopicSubscriber<ConfigChangedEven
         if (sounds != null) {
             sounds.stopSound(sound);
         }
-    }
-
-    @Nonnull
-    public static AudioPlayer getInstance(){
-        return INSTANCE;
     }
 
     @Override

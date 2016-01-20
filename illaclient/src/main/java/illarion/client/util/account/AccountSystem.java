@@ -42,7 +42,7 @@ public class AccountSystem implements AutoCloseable {
      * The authenticator used to handle authenticated requests.
      */
     @Nullable
-    private Authenticator authenticator;
+    private IllarionAuthenticator authenticator;
     @Nullable
     private RequestHandler requestHandler;
 
@@ -99,7 +99,7 @@ public class AccountSystem implements AutoCloseable {
             } catch (Exception ignored) {
             }
         } else {
-            authenticator = new Authenticator(credentials.getUserName(), credentials.getPassword());
+            authenticator = new IllarionAuthenticator(credentials.getUserName(), credentials.getPassword());
             setEndpoint(credentials.getEndpoint());
         }
     }
@@ -124,8 +124,8 @@ public class AccountSystem implements AutoCloseable {
     }
 
     @Nonnull
-    private Authenticator getAuthenticator() {
-        Authenticator authenticator = this.authenticator;
+    private IllarionAuthenticator getAuthenticator() {
+        IllarionAuthenticator authenticator = this.authenticator;
         if (authenticator == null) {
             throw new IllegalStateException("The request requires authentication credentials.");
         }
@@ -135,7 +135,7 @@ public class AccountSystem implements AutoCloseable {
     @Nonnull
     public ListenableFuture<AccountGetResponse> getAccountInformation() {
         RequestHandler handler = getRequestHandler();
-        Authenticator authenticator = getAuthenticator();
+        IllarionAuthenticator authenticator = getAuthenticator();
 
         Request<AccountGetResponse> request = new AccountGetRequest(authenticator);
 
@@ -146,7 +146,7 @@ public class AccountSystem implements AutoCloseable {
     public ListenableFuture<CharacterGetResponse> getCharacterInformation(@Nonnull String serverId,
                                                                           @Nonnull CharacterId id) {
         RequestHandler handler = getRequestHandler();
-        Authenticator authenticator = getAuthenticator();
+        IllarionAuthenticator authenticator = getAuthenticator();
 
         Request<CharacterGetResponse> request = new CharacterGetRequest(authenticator, serverId, id);
 
@@ -179,7 +179,7 @@ public class AccountSystem implements AutoCloseable {
     @Nonnull
     public ListenableFuture<CharacterCreateGetResponse> getCharacterCreateInformation(@Nonnull String serverId) {
         RequestHandler handler = getRequestHandler();
-        Authenticator authenticator = getAuthenticator();
+        IllarionAuthenticator authenticator = getAuthenticator();
 
         Request<CharacterCreateGetResponse> request = new CharacterCreateGetRequest(authenticator, serverId);
 

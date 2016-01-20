@@ -94,7 +94,7 @@ public final class EnteringScreenController implements ScreenController {
 
         try {
             World.initWorldComponents(container.getEngine(), characterName);
-        } catch (EngineException | RuntimeException e) {
+        } catch (@Nonnull EngineException | RuntimeException e) {
             IllaClient.errorExit("Initialization of the world components failed.");
             return;
         }

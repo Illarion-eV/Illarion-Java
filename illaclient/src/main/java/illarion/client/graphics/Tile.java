@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -83,9 +83,13 @@ public class Tile extends AbstractEntity<TileTemplate> implements Resource {
     private int overlayShape;
     private int showHighlight;
     private TileLightEffect tileLightEffect;
+    @Nullable
     private Color topColor;
+    @Nullable
     private Color leftColor;
+    @Nullable
     private Color rightColor;
+    @Nullable
     private Color bottomColor;
 
     public Tile(int tileId, @Nonnull MapTile parentTile) {

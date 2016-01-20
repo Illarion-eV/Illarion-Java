@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -29,7 +29,7 @@ import java.util.Objects;
  */
 class PeriodTypeAdapter extends TypeAdapter<Period> {
     @Override
-    public void write(JsonWriter out, Period value) throws IOException {
+    public void write(JsonWriter out, @Nullable Period value) throws IOException {
         out = Objects.requireNonNull(out);
         if (value == null) {
             out.nullValue();

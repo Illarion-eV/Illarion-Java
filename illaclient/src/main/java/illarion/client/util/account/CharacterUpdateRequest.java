@@ -1,7 +1,21 @@
+/*
+ * This file is part of the Illarion project.
+ *
+ * Copyright © 2016 - Illarion e.V.
+ *
+ * Illarion is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Illarion is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
 package illarion.client.util.account;
 
 import illarion.client.util.account.form.CharacterUpdateForm;
-import illarion.client.util.account.response.CharacterGetResponse;
 import illarion.client.util.account.response.CharacterUpdateResponse;
 import illarion.common.types.CharacterId;
 
@@ -13,7 +27,7 @@ import javax.annotation.Nullable;
  */
 class CharacterUpdateRequest implements AuthenticatedRequest<CharacterUpdateResponse> {
     @Nonnull
-    private final Authenticator authenticator;
+    private final IllarionAuthenticator authenticator;
     @Nonnull
     private final String serverId;
     @Nonnull
@@ -21,7 +35,7 @@ class CharacterUpdateRequest implements AuthenticatedRequest<CharacterUpdateResp
     @Nonnull
     private final CharacterUpdateForm data;
 
-    CharacterUpdateRequest(@Nonnull Authenticator authenticator,
+    CharacterUpdateRequest(@Nonnull IllarionAuthenticator authenticator,
                            @Nonnull String serverId,
                            @Nonnull CharacterId charId,
                            @Nonnull CharacterUpdateForm data) {
@@ -33,7 +47,7 @@ class CharacterUpdateRequest implements AuthenticatedRequest<CharacterUpdateResp
 
     @Nonnull
     @Override
-    public Authenticator getAuthenticator() {
+    public IllarionAuthenticator getAuthenticator() {
         return authenticator;
     }
 

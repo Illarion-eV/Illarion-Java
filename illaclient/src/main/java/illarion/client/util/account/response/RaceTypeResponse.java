@@ -17,6 +17,7 @@ package illarion.client.util.account.response;
 
 import com.google.gson.annotations.SerializedName;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,6 +45,7 @@ public class RaceTypeResponse {
         return id;
     }
 
+    @Nonnull
     public List<IdNameResponse> getHairs() {
         if (hairs == null) {
             return Collections.emptyList();
@@ -51,6 +53,7 @@ public class RaceTypeResponse {
         return Collections.unmodifiableList(hairs);
     }
 
+    @Nonnull
     public List<IdNameResponse> getBeards() {
         if (beards == null) {
             return Collections.emptyList();
@@ -58,6 +61,7 @@ public class RaceTypeResponse {
         return Collections.unmodifiableList(beards);
     }
 
+    @Nonnull
     public List<ColourResponse> getHairColours() {
         if (hairColours == null) {
             return Collections.emptyList();
@@ -65,6 +69,7 @@ public class RaceTypeResponse {
         return Collections.unmodifiableList(hairColours);
     }
 
+    @Nonnull
     public List<ColourResponse> getSkinColours() {
         if (skinColours == null) {
             return Collections.emptyList();

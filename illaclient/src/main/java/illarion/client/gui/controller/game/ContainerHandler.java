@@ -424,7 +424,7 @@ public final class ContainerHandler implements ContainerGui, ScreenController {
     }
 
     @NiftyEventSubscriber(pattern = ".*container[0-9]+.*slot[0-9]+.*")
-    public void onMouseMoveOverSlot(String topic, @Nonnull NiftyMouseMovedEvent event) {
+    public void onMouseMoveOverSlot(@Nonnull String topic, @Nonnull NiftyMouseMovedEvent event) {
         int slotId = getSlotId(topic);
         int containerId = getContainerId(topic);
 

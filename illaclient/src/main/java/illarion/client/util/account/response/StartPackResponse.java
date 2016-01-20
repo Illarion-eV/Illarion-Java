@@ -17,6 +17,7 @@ package illarion.client.util.account.response;
 
 import com.google.gson.annotations.SerializedName;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,6 +45,7 @@ public class StartPackResponse {
         return name;
     }
 
+    @Nonnull
     public List<IdNameResponse> getSkills() {
         if (skills == null) {
             return Collections.emptyList();
@@ -51,6 +53,7 @@ public class StartPackResponse {
         return Collections.unmodifiableList(skills);
     }
 
+    @Nonnull
     public List<StartPackItemsResponse> getItems() {
         if (items == null) {
             return Collections.emptyList();

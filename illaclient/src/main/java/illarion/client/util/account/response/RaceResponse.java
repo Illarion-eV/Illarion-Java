@@ -17,6 +17,7 @@ package illarion.client.util.account.response;
 
 import com.google.gson.annotations.SerializedName;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
@@ -50,6 +51,7 @@ public class RaceResponse {
         return attributes;
     }
 
+    @Nonnull
     public List<RaceTypeResponse> getTypes() {
         assert types != null;
         return Collections.unmodifiableList(types);

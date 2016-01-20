@@ -29,7 +29,7 @@ import java.util.Objects;
  */
 class CharacterIdTypeAdapter extends TypeAdapter<CharacterId> {
     @Override
-    public void write(JsonWriter out, CharacterId value) throws IOException {
+    public void write(JsonWriter out, @Nullable CharacterId value) throws IOException {
         out = Objects.requireNonNull(out);
         if (value == null) {
             out.nullValue();

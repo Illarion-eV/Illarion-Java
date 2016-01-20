@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -43,30 +43,63 @@ public final class OptionScreenController implements ScreenController {
 
     //private DropDown<String> charNameLength;
     //private CheckBox showCharId;
+    @Nullable
     private CheckBox wasdWalk;
+    @Nullable
     private CheckBox disableChatAfterSending;
+    @Nullable
     private CheckBox showQuestsOnGameMap;
+    @Nullable
     private CheckBox showQuestsOnMiniMap;
 
+    @Nullable
     private DropDown<String> sendCrashReports;
 
+    @Nullable
     private DropDown<String> resolutions;
+    @Nullable
     private CheckBox fullscreen;
+    @Nullable
     private CheckBox showFps;
+    @Nullable
     private CheckBox showPing;
+    @Nullable
     private DropDown<String> translationProviders;
+    @Nullable
     private DropDown<String> translationDirections;
 
+    @Nullable
     private CheckBox soundOn;
+    @Nullable
     private Slider soundVolume;
+    @Nullable
     private CheckBox musicOn;
+    @Nullable
     private Slider musicVolume;
 
+    @Nullable
     private TextField serverAddress;
+    @Nullable
     private TextField serverPort;
+    @Nullable
     private CheckBox serverAccountLogin;
     @Nullable
     private CheckBox serverResetSettings;
+
+    @Nonnull
+    public static List<String> getResolutionList() {
+        DesktopGameContainer container = IllaClient.getInstance().getContainer();
+
+        GraphicResolution[] resolutions = container.getFullScreenResolutions();
+
+        List<String> resList = new ArrayList<>();
+
+        for (GraphicResolution resolution : resolutions) {
+            resList.add(resolution.toString());
+        }
+
+        return resList;
+    }
 
     @Override
     public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
@@ -164,21 +197,6 @@ public final class OptionScreenController implements ScreenController {
 
     @Override
     public void onEndScreen() {
-    }
-
-    @Nonnull
-    public static List<String> getResolutionList() {
-        DesktopGameContainer container = IllaClient.getInstance().getContainer();
-
-        GraphicResolution[] resolutions = container.getFullScreenResolutions();
-
-        List<String> resList = new ArrayList<>();
-
-        for (GraphicResolution resolution : resolutions) {
-            resList.add(resolution.toString());
-        }
-
-        return resList;
     }
 
     @NiftyEventSubscriber(pattern = "tabRoot#tab-content-panel#[a-z]+Tab")

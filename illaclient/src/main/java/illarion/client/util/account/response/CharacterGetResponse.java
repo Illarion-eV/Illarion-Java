@@ -18,6 +18,7 @@ package illarion.client.util.account.response;
 import com.google.gson.annotations.SerializedName;
 import illarion.common.types.CharacterId;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
@@ -101,6 +102,7 @@ public class CharacterGetResponse {
         return paperDoll;
     }
 
+    @Nonnull
     public List<CharacterItemResponse> getItems() {
         assert items != null;
         return Collections.unmodifiableList(items);

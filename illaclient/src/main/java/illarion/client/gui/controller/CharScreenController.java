@@ -74,6 +74,7 @@ public final class CharScreenController implements ScreenController, KeyInputHan
      */
     @Nullable
     private Screen screen;
+    @Nullable
     private DropDown<String> serverSelect;
     /**
      * The list box that stores the character entries.
@@ -409,7 +410,7 @@ public final class CharScreenController implements ScreenController, KeyInputHan
 
     private static final class LastUsedFirstComparator implements Comparator<AccountGetCharResponse> {
         @Override
-        public int compare(AccountGetCharResponse o1, AccountGetCharResponse o2) {
+        public int compare(@Nullable AccountGetCharResponse o1, @Nullable AccountGetCharResponse o2) {
             if ((o1 == null) && (o2 == null)) {
                 return 0;
             }
