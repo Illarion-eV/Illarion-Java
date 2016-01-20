@@ -27,11 +27,13 @@
             <effect>
                 <onStartScreen name="fade" start="#00" end="#ff" inherit="true"/>
             </effect>
-            <panel height="300px" width="100%" align="center" valign="center" backgroundColor="#0000"
+            <panel height="300px" width="600px" align="center" valign="center" backgroundColor="#0000"
                    childLayout="vertical" marginBottom="25px">
+                <control name="label" text="${charCreateGender-bundle.title}" align="center"
+                         width="600px" marginBottom="23px" font="captionFont" textHAlign="left" />
                 <control name="label" text="${charCreateGender-bundle.description}" align="center"
-                         wrap="true" width="450px" marginBottom="30px" />
-                <panel width="600px" childLayout="horizontal">
+                         wrap="true" width="600px" marginBottom="30px" textHAlign="left" />
+                <panel width="650px" childLayout="horizontal" align="center">
                     <panel width="300px" childLayout="vertical">
                         <control id="maleBtn" name="button" label="${charCreateGender-bundle.male}" width="250px"
                                  height="35px" align="center" />
@@ -56,8 +58,9 @@
                             </panel>
                         </panel>
                     </panel>
-                    <panel width="300px">
-                        <control id="maleBtn" name="button" label="${charCreateGender-bundle.female}" width="250px"
+                    <panel width="50px" />
+                    <panel width="300px" childLayout="vertical">
+                        <control id="femaleBtn" name="button" label="${charCreateGender-bundle.female}" width="250px"
                                  height="35px" align="center" />
                         <panel width="300px" height="100px" childLayout="horizontal">
                             <panel height="100px" width="50px" childLayout="center">
@@ -83,7 +86,7 @@
                 </panel>
 
                 <control id="cancelBtn" name="button" label="${charCreateGender-bundle.cancel}"
-                         width="100px" height="35px" />
+                         width="100px" height="35px" align="center" />
             </panel>
         </layer>
     </screen>

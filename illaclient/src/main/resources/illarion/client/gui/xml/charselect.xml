@@ -51,6 +51,10 @@
                                  height="35px" marginRight="20px">
                             <interact onRelease="play()"/>
                         </control>
+                        <control id="createBtn" name="button" label="${charselect-bundle.create}" width="100px"
+                                 height="35px" marginRight="20px">
+                            <interact onRelease="createChar()"/>
+                        </control>
                         <control id="logoutBtn" name="button" label="${charselect-bundle.logout}" width="100px"
                                  height="35px">
                             <interact onRelease="logout()"/>

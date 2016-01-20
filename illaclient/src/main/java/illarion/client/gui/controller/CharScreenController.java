@@ -33,6 +33,7 @@ import de.lessvoid.nifty.tools.SizeValue;
 import illarion.client.graphics.AvatarClothManager.AvatarClothGroup;
 import illarion.client.graphics.AvatarEntity;
 import illarion.client.gui.EntityRenderImage;
+import illarion.client.gui.controller.create.GenderScreenController;
 import illarion.client.resources.CharacterFactory;
 import illarion.client.resources.data.AvatarTemplate;
 import illarion.client.util.Lang;
@@ -224,6 +225,7 @@ public final class CharScreenController implements ScreenController, KeyInputHan
         avatarEntity.setClothItem(AvatarClothGroup.Hair, response.getPaperDoll().getHairId());
         avatarEntity.setClothItem(AvatarClothGroup.Beard, response.getPaperDoll().getBeardId());
         avatarEntity.changeClothColor(AvatarClothGroup.Hair, response.getPaperDoll().getHairColour().getColour());
+        avatarEntity.changeClothColor(AvatarClothGroup.Beard, response.getPaperDoll().getHairColour().getColour());
         avatarEntity.changeBaseColor(response.getPaperDoll().getSkinColour().getColour());
 
         for (CharacterItemResponse item : response.getItems()) {
@@ -381,6 +383,19 @@ public final class CharScreenController implements ScreenController, KeyInputHan
         }
         statusLabel.setText("");
         nifty.gotoScreen("login");
+    }
+
+    public void createChar() {
+        assert nifty != null;
+
+        Screen nextScreen = nifty.getScreen("characterCreateGender");
+        ScreenController controller = nextScreen.getScreenController();
+        if (controller instanceof GenderScreenController) {
+            int serverIndex = serverSelect.getSelectedIndex();
+            String serverId = accountData.getChars().get(serverIndex).getId();
+            ((GenderScreenController) controller).setServerId(serverId);
+        }
+        nifty.gotoScreen("characterCreateGender");
     }
 
     @Override

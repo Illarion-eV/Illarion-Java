@@ -20,10 +20,7 @@ import illarion.client.IllaClient;
 import illarion.client.util.Lang;
 import illarion.client.util.account.form.AccountCheckForm;
 import illarion.client.util.account.form.AccountCreateForm;
-import illarion.client.util.account.response.AccountCheckResponse;
-import illarion.client.util.account.response.AccountCreateResponse;
-import illarion.client.util.account.response.AccountGetResponse;
-import illarion.client.util.account.response.CharacterGetResponse;
+import illarion.client.util.account.response.*;
 import illarion.common.types.CharacterId;
 
 import javax.annotation.Nonnull;
@@ -169,12 +166,22 @@ public class AccountSystem implements AutoCloseable {
 
     @Nonnull
     public ListenableFuture<AccountCreateResponse> createAccount(@Nonnull String userName,
-                                                                @Nullable String eMail,
-                                                                @Nonnull String password) {
+                                                                 @Nullable String eMail,
+                                                                 @Nonnull String password) {
         RequestHandler handler = getRequestHandler();
 
         AccountCreateForm payload = new AccountCreateForm(userName, password, eMail);
         Request<AccountCreateResponse> request = new AccountCreateRequest(payload);
+
+        return handler.sendRequestAsync(request);
+    }
+
+    @Nonnull
+    public ListenableFuture<CharacterCreateGetResponse> getCharacterCreateInformation(@Nonnull String serverId) {
+        RequestHandler handler = getRequestHandler();
+        Authenticator authenticator = getAuthenticator();
+
+        Request<CharacterCreateGetResponse> request = new CharacterCreateGetRequest(authenticator, serverId);
 
         return handler.sendRequestAsync(request);
     }

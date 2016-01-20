@@ -17,7 +17,7 @@
 <nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui">
     <resourceBundle id="charCreateRace-bundle" filename="charCreateRace"/>
 
-    <screen id="characterCreateGender" controller="illarion.client.gui.controller.create.RaceScreenController">
+    <screen id="characterCreateRace" controller="illarion.client.gui.controller.create.RaceScreenController">
         <layer childLayout="vertical">
             <panel height="422px" width="*" backgroundImage="gui/window_background.png"
                    imageMode="repeat:0,0,1024,422"/>

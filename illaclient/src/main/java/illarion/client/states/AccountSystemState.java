@@ -19,6 +19,7 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import illarion.client.Game;
 import illarion.client.gui.controller.*;
+import illarion.client.gui.controller.create.GenderScreenController;
 import illarion.client.util.account.AccountSystem;
 import org.illarion.engine.GameContainer;
 import org.slf4j.Logger;
@@ -46,18 +47,24 @@ public class AccountSystemState implements GameState {
     @Nullable
     private String switchToScreen;
 
+    @Nullable
+    private AccountSystem accountSystem;
+
     @Override
     public void create(@Nonnull Game game, @Nonnull GameContainer container, @Nonnull Nifty nifty) {
         this.nifty = nifty;
         switchToScreen = null;
 
         AccountSystem accountSystem = new AccountSystem();
+        this.accountSystem = accountSystem;
+
         nifty.registerScreenController(
                 new LoginScreenController(container.getEngine(), accountSystem),
                 new RegisterScreenController(accountSystem),
                 new CharScreenController(container, accountSystem),
                 new CreditsStartScreenController(container.getEngine()),
-                new EnteringScreenController(game, container));
+                new EnteringScreenController(game, container),
+                new GenderScreenController(container, accountSystem));
 
         Util.loadXML(nifty, "illarion/client/gui/xml/login.xml");
         Util.loadXML(nifty, "illarion/client/gui/xml/register.xml");
@@ -65,10 +72,20 @@ public class AccountSystemState implements GameState {
         Util.loadXML(nifty, "illarion/client/gui/xml/entering.xml");
         Util.loadXML(nifty, "illarion/client/gui/xml/options.xml");
         Util.loadXML(nifty, "illarion/client/gui/xml/credits.xml");
+
+        Util.loadXML(nifty, "illarion/client/gui/xml/charcreate_gender.xml");
+        Util.loadXML(nifty, "illarion/client/gui/xml/charcreate_race.xml");
     }
 
     @Override
     public void dispose() {
+        AccountSystem accountSystem = this.accountSystem;
+        if (accountSystem != null) {
+            try {
+                accountSystem.close();
+            } catch (Exception ignored) {
+            }
+        }
     }
 
     @Override

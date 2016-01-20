@@ -23,11 +23,11 @@ import java.util.concurrent.Executor;
 /**
  * @author Martin Karing &lt;nitram@illarion.org&gt;
  */
-final class NiftyExecutor implements Executor {
+public final class NiftyExecutor implements Executor {
     @Nonnull
     private final Nifty nifty;
 
-    NiftyExecutor(@Nonnull Nifty nifty) {
+    public NiftyExecutor(@Nonnull Nifty nifty) {
         this.nifty = nifty;
     }
 
