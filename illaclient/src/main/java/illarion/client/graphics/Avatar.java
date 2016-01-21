@@ -58,11 +58,17 @@ public final class Avatar extends AvatarEntity {
      * The minimal alpha value of a avatar that is needed to show the name tag above the avatar graphic.
      */
     private static final int HIDE_NAME_ALPHA = 127;
+    @Nonnull
     private static final Color COLOR_UNHARMED = new ImmutableColor(0, 255, 0);
+    @Nonnull
     private static final Color COLOR_SLIGHTLY_HARMED = new ImmutableColor(127, 255, 0);
+    @Nonnull
     private static final Color COLOR_HARMED = new ImmutableColor(255, 255, 0);
+    @Nonnull
     private static final Color COLOR_BADLY_HARMED = new ImmutableColor(255, 127, 0);
+    @Nonnull
     private static final Color COLOR_NEAR_DEATH = new ImmutableColor(255, 0, 0);
+    @Nonnull
     private static final Color COLOR_DEAD = new ImmutableColor(173, 173, 173);
     /**
      * The text tag is the small text box shown above the avatar that contains
@@ -370,7 +376,7 @@ public final class Avatar extends AvatarEntity {
      * @param color the color that is used for the font of the the text that is
      * shown above the character and shows the name of the character
      */
-    public void setNameColor(Color color) {
+    public void setNameColor(@Nonnull  Color color) {
         avatarTextTag.setCharNameColor(color);
     }
 

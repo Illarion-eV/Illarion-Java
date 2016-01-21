@@ -36,7 +36,7 @@
                                 <image id="humanImage" align="center" valign="bottom" />
                             </panel>
                             <panel height="100px" childLayout="vertical" width="190px">
-                                <control id="humanBtn" name="button" label="${charCreateGender-bundle.human.title}"
+                                <control id="humanBtn" name="button" label="${charCreateRace-bundle.human.title}"
                                          width="170px" height="35px" align="center" marginBottom="10" />
                                 <control name="label" text="${charCreateRace-bundle.human.description}" width="170px"
                                          wrap="true" />
@@ -47,7 +47,7 @@
                                 <image id="dwarfImage" align="center" valign="bottom" />
                             </panel>
                             <panel height="100px" childLayout="vertical" width="190px">
-                                <control id="dwarfBtn" name="button" label="${charCreateGender-bundle.dwarf.title}"
+                                <control id="dwarfBtn" name="button" label="${charCreateRace-bundle.dwarf.title}"
                                          width="170px" height="35px" align="center" marginBottom="10" />
                                 <control name="label" text="${charCreateRace-bundle.dwarf.description}" width="170px"
                                          wrap="true" />
@@ -58,7 +58,7 @@
                                 <image id="elfImage" align="center" valign="bottom" />
                             </panel>
                             <panel height="100px" childLayout="vertical" width="190px">
-                                <control id="elfBtn" name="button" label="${charCreateGender-bundle.elf.title}"
+                                <control id="elfBtn" name="button" label="${charCreateRace-bundle.elf.title}"
                                          width="170px" height="35px" align="center" marginBottom="10" />
                                 <control name="label" text="${charCreateRace-bundle.elf.description}" width="170px"
                                          wrap="true" />
@@ -71,7 +71,7 @@
                                 <image id="halflingImage" align="center" valign="bottom" />
                             </panel>
                             <panel height="100px" childLayout="vertical" width="190px">
-                                <control id="halflingBtn" name="button" label="${charCreateGender-bundle.halfling.title}"
+                                <control id="halflingBtn" name="button" label="${charCreateRace-bundle.halfling.title}"
                                          width="170px" height="35px" align="center" marginBottom="10" />
                                 <control name="label" text="${charCreateRace-bundle.halfling.description}" width="170px"
                                          wrap="true" />
@@ -82,7 +82,7 @@
                                 <image id="orcImage" align="center" valign="bottom" />
                             </panel>
                             <panel height="100px" childLayout="vertical" width="190px">
-                                <control id="orcBtn" name="button" label="${charCreateGender-bundle.orc.title}"
+                                <control id="orcBtn" name="button" label="${charCreateRace-bundle.orc.title}"
                                          width="170px" height="35px" align="center" marginBottom="10" />
                                 <control name="label" text="${charCreateRace-bundle.orc.description}" width="170px"
                                          wrap="true" />
@@ -93,7 +93,7 @@
                                 <image id="lizardImage" align="center" valign="bottom" />
                             </panel>
                             <panel height="100px" childLayout="vertical" width="190px">
-                                <control id="lizardBtn" name="button" label="${charCreateGender-bundle.lizard.title}"
+                                <control id="lizardBtn" name="button" label="${charCreateRace-bundle.lizard.title}"
                                          width="170px" height="35px" align="center" marginBottom="10" />
                                 <control name="label" text="${charCreateRace-bundle.lizard.description}" width="170px"
                                          wrap="true" />
@@ -103,9 +103,9 @@
                 </panel>
 
                 <panel width="250px" height="35px" childLayout="center" align="center">
-                    <control id="backBtn" name="button" label="${charCreateGender-bundle.back}"
+                    <control id="backBtn" name="button" label="${charCreateRace-bundle.back}"
                              width="100px" height="35px" align="left" />
-                    <control id="cancelBtn" name="button" label="${charCreateGender-bundle.cancel}"
+                    <control id="cancelBtn" name="button" label="${charCreateRace-bundle.cancel}"
                              width="100px" height="35px" align="right" />
                 </panel>
             </panel>

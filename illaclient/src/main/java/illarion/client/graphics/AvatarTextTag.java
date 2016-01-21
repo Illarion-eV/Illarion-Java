@@ -1,7 +1,7 @@
 /*
  * This file is part of the Illarion project.
  *
- * Copyright © 2015 - Illarion e.V.
+ * Copyright © 2016 - Illarion e.V.
  *
  * Illarion is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,6 +21,7 @@ import org.illarion.engine.GameContainer;
 import org.illarion.engine.graphic.Color;
 import org.illarion.engine.graphic.Font;
 import org.illarion.engine.graphic.Graphics;
+import org.illarion.engine.graphic.ImmutableColor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -132,12 +133,12 @@ public final class AvatarTextTag {
      *
      * @param newColor the color that is used to render the characterName tag.
      */
-    public void setCharNameColor(@Nullable Color newColor) {
-        if ((newColor == null) || newColor.equals(charNameColor)) {
-            return;
+    public void setCharNameColor(@Nonnull Color newColor) {
+        if (newColor instanceof ImmutableColor) {
+            charNameColor = newColor;
+        } else if ((charNameColor == null) || charNameColor.equals(newColor)) {
+            charNameColor = new ImmutableColor(newColor);
         }
-
-        charNameColor = newColor;
     }
 
     /**
@@ -145,12 +146,12 @@ public final class AvatarTextTag {
      *
      * @param newColor the color that is used to render the characterName tag.
      */
-    public void setHealthStateColor(@Nullable Color newColor) {
-        if ((newColor == null) || newColor.equals(healthStateColor)) {
-            return;
+    public void setHealthStateColor(@Nonnull Color newColor) {
+        if (newColor instanceof ImmutableColor) {
+            healthStateColor = newColor;
+        } else if ((healthStateColor == null) || healthStateColor.equals(newColor)) {
+            healthStateColor = new ImmutableColor(newColor);
         }
-
-        healthStateColor = newColor;
     }
 
     /**
